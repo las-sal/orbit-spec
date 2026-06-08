@@ -10,7 +10,7 @@ describe('FishInstaller', () => {
   let installer: FishInstaller;
 
   beforeEach(async () => {
-    testHomeDir = path.join(os.tmpdir(), `openspec-fish-test-${randomUUID()}`);
+    testHomeDir = path.join(os.tmpdir(), `orbit-fish-test-${randomUUID()}`);
     await fs.mkdir(testHomeDir, { recursive: true });
     installer = new FishInstaller(testHomeDir);
   });

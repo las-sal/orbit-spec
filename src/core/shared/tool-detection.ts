@@ -12,17 +12,17 @@ import { AI_TOOLS } from '../config.js';
  * Names of skill directories created by orbit init.
  */
 export const SKILL_NAMES = [
-  'openspec-explore',
-  'openspec-new-change',
-  'openspec-continue-change',
-  'openspec-apply-change',
-  'openspec-ff-change',
-  'openspec-sync-specs',
-  'openspec-archive-change',
-  'openspec-bulk-archive-change',
-  'openspec-verify-change',
-  'openspec-onboard',
-  'openspec-propose',
+  'orbit-explore',
+  'orbit-new-change',
+  'orbit-continue-change',
+  'orbit-apply-change',
+  'orbit-ff-change',
+  'orbit-sync-specs',
+  'orbit-archive-change',
+  'orbit-bulk-archive-change',
+  'orbit-verify-change',
+  'orbit-onboard',
+  'orbit-propose',
 ] as const;
 
 export type SkillName = (typeof SKILL_NAMES)[number];

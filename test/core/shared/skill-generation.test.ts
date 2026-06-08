@@ -24,17 +24,17 @@ describe('skill-generation', () => {
       const templates = getSkillTemplates();
       const dirNames = templates.map(t => t.dirName);
 
-      expect(dirNames).toContain('openspec-explore');
-      expect(dirNames).toContain('openspec-new-change');
-      expect(dirNames).toContain('openspec-continue-change');
-      expect(dirNames).toContain('openspec-apply-change');
-      expect(dirNames).toContain('openspec-ff-change');
-      expect(dirNames).toContain('openspec-sync-specs');
-      expect(dirNames).toContain('openspec-archive-change');
-      expect(dirNames).toContain('openspec-bulk-archive-change');
-      expect(dirNames).toContain('openspec-verify-change');
-      expect(dirNames).toContain('openspec-onboard');
-      expect(dirNames).toContain('openspec-propose');
+      expect(dirNames).toContain('orbit-explore');
+      expect(dirNames).toContain('orbit-new-change');
+      expect(dirNames).toContain('orbit-continue-change');
+      expect(dirNames).toContain('orbit-apply-change');
+      expect(dirNames).toContain('orbit-ff-change');
+      expect(dirNames).toContain('orbit-sync-specs');
+      expect(dirNames).toContain('orbit-archive-change');
+      expect(dirNames).toContain('orbit-bulk-archive-change');
+      expect(dirNames).toContain('orbit-verify-change');
+      expect(dirNames).toContain('orbit-onboard');
+      expect(dirNames).toContain('orbit-propose');
     });
 
     it('should have valid template structure', () => {
@@ -83,7 +83,7 @@ describe('skill-generation', () => {
       const filtered = getSkillTemplates(['propose']);
       expect(filtered).toHaveLength(1);
       expect(filtered[0].workflowId).toBe('propose');
-      expect(filtered[0].dirName).toBe('openspec-propose');
+      expect(filtered[0].dirName).toBe('orbit-propose');
     });
   });
 

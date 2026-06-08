@@ -10,7 +10,7 @@ describe('FileSystemUtils', () => {
   let testDir: string;
 
   beforeEach(async () => {
-    testDir = path.join(os.tmpdir(), `openspec-test-${randomUUID()}`);
+    testDir = path.join(os.tmpdir(), `orbit-test-${randomUUID()}`);
     await fs.mkdir(testDir, { recursive: true });
   });
 
@@ -302,20 +302,20 @@ describe('FileSystemUtils', () => {
     it('should join Windows paths that use forward slashes', () => {
       const result = FileSystemUtils.joinPath(
         'D:/workspace/app',
-        '.cursor/commands/openspec-apply.md'
+        '.cursor/commands/orbit-apply.md'
       );
       expect(result).toBe(
-        'D:\\workspace\\app\\.cursor\\commands\\openspec-apply.md'
+        'D:\\workspace\\app\\.cursor\\commands\\orbit-apply.md'
       );
     });
 
     it('should join UNC-style Windows paths', () => {
       const result = FileSystemUtils.joinPath(
         '\\server\\share\\repo',
-        '.windsurf/workflows/openspec-archive.md'
+        '.windsurf/workflows/orbit-archive.md'
       );
       expect(result).toBe(
-        '\\server\\share\\repo\\.windsurf\\workflows\\openspec-archive.md'
+        '\\server\\share\\repo\\.windsurf\\workflows\\orbit-archive.md'
       );
     });
   });

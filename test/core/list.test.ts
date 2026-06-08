@@ -11,7 +11,7 @@ describe('ListCommand', () => {
 
   beforeEach(async () => {
     // Create temp directory
-    tempDir = path.join(os.tmpdir(), `openspec-list-test-${Date.now()}`);
+    tempDir = path.join(os.tmpdir(), `orbit-list-test-${Date.now()}`);
     await fs.mkdir(tempDir, { recursive: true });
 
     // Mock console.log to capture output

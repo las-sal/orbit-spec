@@ -18,7 +18,7 @@ describe('ArchiveCommand', () => {
 
   beforeEach(async () => {
     // Create temp directory
-    tempDir = path.join(os.tmpdir(), `openspec-archive-test-${Date.now()}`);
+    tempDir = path.join(os.tmpdir(), `orbit-archive-test-${Date.now()}`);
     await fs.mkdir(tempDir, { recursive: true });
     
     // Change to temp directory

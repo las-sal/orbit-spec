@@ -12,7 +12,7 @@ describe('PowerShellInstaller', () => {
   let originalEnv: NodeJS.ProcessEnv;
 
   beforeEach(async () => {
-    testHomeDir = path.join(os.tmpdir(), `openspec-powershell-test-${randomUUID()}`);
+    testHomeDir = path.join(os.tmpdir(), `orbit-powershell-test-${randomUUID()}`);
     await fs.mkdir(testHomeDir, { recursive: true });
     installer = new PowerShellInstaller(testHomeDir);
     originalPlatform = process.platform;

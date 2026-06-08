@@ -11,7 +11,7 @@ describe('ZshInstaller', () => {
 
   beforeEach(async () => {
     // Create a temporary home directory for testing
-    testHomeDir = path.join(os.tmpdir(), `openspec-zsh-test-${randomUUID()}`);
+    testHomeDir = path.join(os.tmpdir(), `orbit-zsh-test-${randomUUID()}`);
     await fs.mkdir(testHomeDir, { recursive: true });
     installer = new ZshInstaller(testHomeDir);
   });

@@ -55,17 +55,17 @@ export interface CommandTemplateEntry {
  */
 export function getSkillTemplates(workflowFilter?: readonly string[]): SkillTemplateEntry[] {
   const all: SkillTemplateEntry[] = [
-    { template: getExploreSkillTemplate(), dirName: 'openspec-explore', workflowId: 'explore' },
-    { template: getNewChangeSkillTemplate(), dirName: 'openspec-new-change', workflowId: 'new' },
-    { template: getContinueChangeSkillTemplate(), dirName: 'openspec-continue-change', workflowId: 'continue' },
-    { template: getApplyChangeSkillTemplate(), dirName: 'openspec-apply-change', workflowId: 'apply' },
-    { template: getFfChangeSkillTemplate(), dirName: 'openspec-ff-change', workflowId: 'ff' },
-    { template: getSyncSpecsSkillTemplate(), dirName: 'openspec-sync-specs', workflowId: 'sync' },
-    { template: getArchiveChangeSkillTemplate(), dirName: 'openspec-archive-change', workflowId: 'archive' },
-    { template: getBulkArchiveChangeSkillTemplate(), dirName: 'openspec-bulk-archive-change', workflowId: 'bulk-archive' },
-    { template: getVerifyChangeSkillTemplate(), dirName: 'openspec-verify-change', workflowId: 'verify' },
-    { template: getOnboardSkillTemplate(), dirName: 'openspec-onboard', workflowId: 'onboard' },
-    { template: getOpsxProposeSkillTemplate(), dirName: 'openspec-propose', workflowId: 'propose' },
+    { template: getExploreSkillTemplate(), dirName: 'orbit-explore', workflowId: 'explore' },
+    { template: getNewChangeSkillTemplate(), dirName: 'orbit-new-change', workflowId: 'new' },
+    { template: getContinueChangeSkillTemplate(), dirName: 'orbit-continue-change', workflowId: 'continue' },
+    { template: getApplyChangeSkillTemplate(), dirName: 'orbit-apply-change', workflowId: 'apply' },
+    { template: getFfChangeSkillTemplate(), dirName: 'orbit-ff-change', workflowId: 'ff' },
+    { template: getSyncSpecsSkillTemplate(), dirName: 'orbit-sync-specs', workflowId: 'sync' },
+    { template: getArchiveChangeSkillTemplate(), dirName: 'orbit-archive-change', workflowId: 'archive' },
+    { template: getBulkArchiveChangeSkillTemplate(), dirName: 'orbit-bulk-archive-change', workflowId: 'bulk-archive' },
+    { template: getVerifyChangeSkillTemplate(), dirName: 'orbit-verify-change', workflowId: 'verify' },
+    { template: getOnboardSkillTemplate(), dirName: 'orbit-onboard', workflowId: 'onboard' },
+    { template: getOpsxProposeSkillTemplate(), dirName: 'orbit-propose', workflowId: 'propose' },
   ];
 
   if (!workflowFilter) return all;

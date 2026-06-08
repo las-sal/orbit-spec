@@ -84,18 +84,18 @@ describe('config profile interactive flow', () => {
 
   function setupDriftedProjectArtifacts(projectDir: string): void {
     fs.mkdirSync(path.join(projectDir, 'orbit'), { recursive: true });
-    const exploreSkillPath = path.join(projectDir, '.claude', 'skills', 'openspec-explore', 'SKILL.md');
+    const exploreSkillPath = path.join(projectDir, '.claude', 'skills', 'orbit-explore', 'SKILL.md');
     fs.mkdirSync(path.dirname(exploreSkillPath), { recursive: true });
-    fs.writeFileSync(exploreSkillPath, 'name: openspec-explore\n', 'utf-8');
+    fs.writeFileSync(exploreSkillPath, 'name: orbit-explore\n', 'utf-8');
   }
 
   function setupSyncedCoreBothArtifacts(projectDir: string): void {
     fs.mkdirSync(path.join(projectDir, 'orbit'), { recursive: true });
     const coreSkillDirs = [
-      'openspec-propose',
-      'openspec-explore',
-      'openspec-apply-change',
-      'openspec-archive-change',
+      'orbit-propose',
+      'orbit-explore',
+      'orbit-apply-change',
+      'orbit-archive-change',
     ];
     for (const dirName of coreSkillDirs) {
       const skillPath = path.join(projectDir, '.claude', 'skills', dirName, 'SKILL.md');
@@ -112,9 +112,9 @@ describe('config profile interactive flow', () => {
   }
 
   function addExtraSyncWorkflowArtifacts(projectDir: string): void {
-    const syncSkillPath = path.join(projectDir, '.claude', 'skills', 'openspec-sync-specs', 'SKILL.md');
+    const syncSkillPath = path.join(projectDir, '.claude', 'skills', 'orbit-sync-specs', 'SKILL.md');
     fs.mkdirSync(path.dirname(syncSkillPath), { recursive: true });
-    fs.writeFileSync(syncSkillPath, 'name: openspec-sync-specs\n', 'utf-8');
+    fs.writeFileSync(syncSkillPath, 'name: orbit-sync-specs\n', 'utf-8');
 
     const syncCommandPath = path.join(projectDir, '.claude', 'commands', 'opsx', 'sync.md');
     fs.mkdirSync(path.dirname(syncCommandPath), { recursive: true });
@@ -124,7 +124,7 @@ describe('config profile interactive flow', () => {
   beforeEach(() => {
     vi.resetModules();
 
-    tempDir = path.join(os.tmpdir(), `openspec-config-profile-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+    tempDir = path.join(os.tmpdir(), `orbit-config-profile-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
     fs.mkdirSync(tempDir, { recursive: true });
 
     originalEnv = { ...process.env };

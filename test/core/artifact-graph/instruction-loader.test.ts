@@ -47,7 +47,7 @@ describe('instruction-loader', () => {
     let tempDir: string;
 
     beforeEach(() => {
-      tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'openspec-test-'));
+      tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'orbit-test-'));
     });
 
     afterEach(() => {
@@ -128,7 +128,7 @@ describe('instruction-loader', () => {
     let tempDir: string;
 
     beforeEach(() => {
-      tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'openspec-test-'));
+      tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'orbit-test-'));
     });
 
     afterEach(() => {
@@ -449,7 +449,7 @@ rules:
 
       it('should deduplicate validation warnings within session', () => {
         // Create a fresh temp directory to avoid cache pollution
-        const freshTempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'openspec-test-'));
+        const freshTempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'orbit-test-'));
 
         try {
           // Create project config with a uniquely named invalid artifact ID
@@ -511,7 +511,7 @@ rules:
     let tempDir: string;
 
     beforeEach(() => {
-      tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'openspec-test-'));
+      tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'orbit-test-'));
     });
 
     afterEach(() => {

@@ -11,7 +11,7 @@ describe('BashInstaller', () => {
 
   beforeEach(async () => {
     // Create a temporary home directory for testing
-    testHomeDir = path.join(os.tmpdir(), `openspec-bash-test-${randomUUID()}`);
+    testHomeDir = path.join(os.tmpdir(), `orbit-bash-test-${randomUUID()}`);
     await fs.mkdir(testHomeDir, { recursive: true });
     installer = new BashInstaller(testHomeDir);
   });
