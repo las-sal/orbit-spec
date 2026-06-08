@@ -15,12 +15,14 @@ The fork bootstrap (phase **A1**) is complete:
 - Vendored pristine v1.3.1 baseline (`upstream/v1.3.1` tag), fresh detached history.
 - **Telemetry removed** (no PostHog; `src/telemetry/` gone; `cli/index.ts` keeps only `--no-color`).
 - Upstream's own `openspec/` dogfooding dir stripped.
-- Rebranded to `orbit-spec`. **A2 (user-facing rename) is complete (D13):** the CLI bin is **`orbit`**,
-  the project working dir is **`orbit/`** (where `specs/`, `changes/`, `config.yaml` live), and skill
-  dirs are **`orbit-*`** (e.g. `.claude/skills/orbit-explore/`). Deferred to a later Tier-C scrub (kept
-  as-is for now): the `/opsx:` namespace, `OpenSpec` branding prose, `.openspec.yaml`, data-format tags
-  (`openspec-change`), the global config/data dir, and legacy-openspec detection. See the dogfooded
-  change `orbit/changes/rename-user-facing-to-orbit/`.
+- Rebranded to `orbit-spec`. **The user-facing rename is complete (D13):** the CLI bin is **`orbit`**,
+  the project working dir is **`orbit/`** (where `specs/`, `changes/`, `config.yaml` live), skill dirs
+  are **`orbit-*`** (e.g. `.claude/skills/orbit-explore/`), and the command namespace is **`/orbit:*`**
+  (`.claude/commands/orbit/<id>.md`). Deferred to a later Tier-C scrub (kept as-is for now): `OpenSpec`
+  branding prose, `.openspec.yaml`, data-format tags (`openspec-change`), the global config/data dir,
+  and legacy-openspec detection. See the dogfooded changes
+  `orbit/changes/archive/2026-06-08-rename-user-facing-to-orbit/` (A2) and
+  `orbit/changes/rename-command-namespace-to-orbit/` (namespace).
 - **Toolchain is npm, not pnpm.** `npm install` works end-to-end. Build = `npm run build`
   (`node build.js` → `tsc`); tests = `npm test` (vitest). Baseline: ~1369 tests passing.
 
