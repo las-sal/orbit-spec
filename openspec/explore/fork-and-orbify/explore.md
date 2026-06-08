@@ -92,7 +92,7 @@ audit-drift     → a PROJECT-WIDE check, not change-scoped                     
 
 This collapses the engine scope a lot: of the four, only `review` is a genuine new graph phase.
 
-### D6 — markdown-as-source over inline-TS-literals (content workstream)
+### D6 — markdown-as-source over inline-TS-literals (content workstream) — DEFERRED by D13
 
 Upstream inlines all prose as TS template literals (`explore.ts` ≈ 470 lines, mostly one backtick
 string with escaped ASCII diagrams). That fights orbit's grain: orbit's entire editorial-review
@@ -119,7 +119,7 @@ skill shape. Two gaps verified against source:
   (`author`, `version`, `generatedBy`) and passes nothing else through. Orbit uses
   `metadata.capability: orbit-review` → currently **silently dropped**. → generalize metadata emission.
 
-### D8 — Single-source kills a drift class; conventions become DRY-at-source
+### D8 — Single-source kills a drift class; conventions become DRY-at-source — PARTIALLY SUPERSEDED by D13
 
 Today orbit hand-maintains a `SKILL.md` *and* an `opsx/*.md` per workflow — they can diverge
 (`audit-drift` literally polices this). From a single template module both derive from one source →
@@ -245,6 +245,39 @@ the first-run notice (`maybeShowTelemetryNotice`). Isolated, low-risk; done as p
 last substantive A1 gate — only the parkable naming sub-decisions (repo / npm package / bin name)
 remain before A1 can start.
 
+### D13 — B-arc mimics upstream's inline-TS structure; D6/D8 architecture changes deferred (RATIFIED 2026-06-08)
+
+**Directive (user, 2026-06-08):** orbit-spec adds orbit's commands *natively*, mimicking how
+upstream openspec 1.3.1 structures its own commands (the `templates/workflows/*.ts` + `.md` files),
+**as closely as possible, so the whole spec-dev package feels cohesive.** Architecture changes away
+from upstream's grain are allowed — but made later, deliberately, and **all together as one cohesive
+move**, not smuggled in piecemeal during relocation.
+
+**Consequence for B1 (and B3): pure surgical relocation into upstream's existing shape, no new
+architecture.**
+
+- **Reverses D6's lean for B-arc.** Prose stays as **inline TS template literals** in
+  `src/core/templates/workflows/*.ts`. No `content/<wf>/` markdown tree, no thin-shell readers, no
+  `build.js` asset-copy. B1 folds orbit's deltas into the existing skill `instructions` / command
+  `content` literals; B3's 4 net-new workflows are authored the same inline way. D6's stated costs
+  (markdown-native review, backtick-escaping of code-fenced prose) are **deferred, not eliminated**.
+- **Defers D8's DRY-conventions half (resolves Q9 *for B-arc*).** The three execution disciplines
+  stay **inlined per body**, exactly as upstream bodies are self-contained and as the overlay already
+  does. No `transformInstructions` injection / shared-snippet mechanism in B-arc.
+- **Corrects D8's factual premise.** Verified against source: each upstream workflow module exports
+  **two** functions with **two** literals — `getXSkillTemplate().instructions` (a fat body) and
+  `getOpsxXCommandTemplate().content` (a thinner launcher) — e.g. `explore.ts` skill ≈ lines 9–294,
+  command ≈ 296–469. Orbit's overlay deliberately mirrors this (fat skill / thin command). So "a
+  single template module → both derive from one source → drift class disappears" **does not hold**:
+  skill and command remain two hand-kept bodies even at-source. The audit-drift skill that polices
+  SKILL.md↔opsx divergence therefore stays relevant post-fork.
+
+**The deferred work becomes its own future change, decided cohesively:** markdown-as-source (D6) +
+DRY-at-source conventions injection (D8) are a *single later architecture change* (post-parity,
+optionally bundled with a Codex-polish or authoring-ergonomics arc), not part of the B-arc relocation.
+This keeps the fork byte-faithful to upstream's pipeline through parity, then evolves the authoring
+model in one deliberate step.
+
 ---
 
 ## Open questions
@@ -300,11 +333,13 @@ granularity → parallel changes touching the same requirement silently drop sce
 upstream's own `openspec-parallel-merge-plan.md`). The fork is the natural place to fix the root
 cause; orbit's audit-drift/review currently only *detect* the symptom. Fix now vs. later vs. never?
 
-### Q9 — Cross-cutting conventions delivery shape
+### Q9 — Cross-cutting conventions delivery shape ✅ RESOLVED *for B-arc* by D13 (full decision deferred)
 
 `orbit-conventions` (read-before-reference / change-completeness / pushback): injected snippet into
 every workflow template (DRY source, matches D8) vs. a standalone always-installed skill. Interacts
-with the markdown-as-source decision (D6).
+with the markdown-as-source decision (D6). **Resolved for B-arc by D13:** stays **inlined per body**
+(mimic upstream's self-contained bodies) — no injection mechanism during relocation. The DRY-injection
+vs standalone-skill choice is **deferred** to the same later cohesive architecture change that owns D6.
 
 ### Q10 — A1 bootstrap chicken-and-egg ✅ RESOLVED by D10
 
