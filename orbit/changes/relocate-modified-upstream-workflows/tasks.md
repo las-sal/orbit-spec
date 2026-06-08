@@ -15,15 +15,15 @@
 
 ## 2. Explore spike (prove the loop on ONE workflow — D1)
 
-- [ ] 2.1 Diff overlay `openspec-explore/SKILL.md` body vs current pristine `explore.ts`
+- [x] 2.1 Diff overlay `openspec-explore/SKILL.md` body vs current pristine `explore.ts`
   `instructions`; identify the exact orbit delta.
-- [ ] 2.2 Fold the delta into the `instructions` literal (mechanism-neutral per D11; backtick-escape
+- [x] 2.2 Fold the delta into the `instructions` literal (mechanism-neutral per D11; backtick-escape
   code fences/diagrams).
-- [ ] 2.3 Fold the command delta into the `content` literal (preserve thin-launcher shape).
-- [ ] 2.4 `npm run build && npm test` green (1369 baseline).
-- [ ] 2.5 Acceptance gate: `orbit init --tools claude` in a scratch dir reproduces orbit's
+- [x] 2.3 Fold the command delta into the `content` literal (preserve thin-launcher shape).
+- [x] 2.4 `npm run build && npm test` green (1369 baseline).
+- [x] 2.5 Acceptance gate: `orbit init --tools claude` in a scratch dir reproduces orbit's
   expected explore skill + command; `--tools codex` produces a sane skill.
-- [ ] 2.6 Add a generation-fidelity test asserting the explore skill/command content.
+- [x] 2.6 Add a generation-fidelity test asserting the explore skill/command content.
 
 ## 3. Roll out the remaining 10
 

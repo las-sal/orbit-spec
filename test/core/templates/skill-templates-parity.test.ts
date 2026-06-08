@@ -30,14 +30,14 @@ import {
 import { generateSkillContent } from '../../../src/core/shared/skill-generation.js';
 
 const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
-  getExploreSkillTemplate: 'c17e0e557f13454839dd2435357972649f4028753f7aee9dc7c95364df54ffbe',
+  getExploreSkillTemplate: '278d0d4fff3fd91554c862c9f7a4bbbc5823f09c61d3b26f2129379ab76fc07d',
   getNewChangeSkillTemplate: 'e08e2b0b51ca6e820a886df1893ff649fe1d5988935a19a88fa3b32740ced156',
   getContinueChangeSkillTemplate: '2e6fb52e5cab42c85accc2dfd947e2077543777a54b6c2b29dfa0e7efc19c54a',
   getApplyChangeSkillTemplate: '471e23bea7b29a8eeca2d502a387a488ff1df45e49a43d302ad76cb40ad23cec',
   getFfChangeSkillTemplate: 'e63ecaac630af686df60ff3c64f76e4612776f8259e687093cc7f686132363fb',
   getSyncSpecsSkillTemplate: '051c7fbb52cf2e87d8da2ffc45e6dbd2b4663f9b37add611abe430695e9694b1',
   getOnboardSkillTemplate: 'db7e816f43c97375e1414fae6092866eb9a76b6fbe126abbc276ae2d93d96b70',
-  getOrbitExploreCommandTemplate: 'e5b17dd8273e394f88996bf82ed84cf236f8e58092fc963c905bdf385f74ac67',
+  getOrbitExploreCommandTemplate: '67d3c493798424aa9f2dc524c0ddb18c5f2b44ef6a29cdbbc0fdf644a3b50f8a',
   getOrbitNewCommandTemplate: '291c8347f65dcc38184dafa932c78b0a3e3218e5a105daff9046f33020febf0c',
   getOrbitContinueCommandTemplate: '93442585519372325506d445d28c1ca3828fe5b2e027ad8a413a47e139228295',
   getOrbitApplyCommandTemplate: '7f6f2fdd707fe599e9d5d6f9b851e5e52f95c0de8e969a1a8025aec3e698d523',
@@ -56,7 +56,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
 };
 
 const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
-  'orbit-explore': '287e551a604d041ad3bb67341cd26d88eacd692f9cd7177768c34a8fb0d77c22',
+  'orbit-explore': 'f6c729269cf9c81fc34559918c06fe8062ccc8492fadb136fc474e5d0c9bc7b0',
   'orbit-new-change': '0a0e2b19dfb444f72d5e813e7a719be3200c327807ad027f23d2059fe1ecea40',
   'orbit-continue-change': 'a7ebec8f27a2bdbc4d4c0762ef5913833cab493452d8238985f1d6623964feac',
   'orbit-apply-change': '845492f025cdd78f1b6eeeb0b2ba325719322549ae73f539f6ceac89c14cb84c',
