@@ -11,7 +11,7 @@
 - [ ] 1.5 Author `specs/orbit-archive-modifications/spec.md` (ADDED) — flag the deferred reference
   file as a B2 dependency, not a B1 requirement.
 - [ ] 1.6 Author `specs/orbit-onboard/spec.md` (ADDED).
-- [ ] 1.7 `openspec validate relocate-modified-upstream-workflows --strict` passes.
+- [ ] 1.7 `orbit validate relocate-modified-upstream-workflows --strict` passes.
 
 ## 2. Explore spike (prove the loop on ONE workflow — D1)
 
@@ -21,7 +21,7 @@
   code fences/diagrams).
 - [ ] 2.3 Fold the command delta into the `content` literal (preserve thin-launcher shape).
 - [ ] 2.4 `npm run build && npm test` green (1369 baseline).
-- [ ] 2.5 Acceptance gate: `openspec init --tools claude` in a scratch dir reproduces orbit's
+- [ ] 2.5 Acceptance gate: `orbit init --tools claude` in a scratch dir reproduces orbit's
   expected explore skill + command; `--tools codex` produces a sane skill.
 - [ ] 2.6 Add a generation-fidelity test asserting the explore skill/command content.
 
@@ -44,10 +44,10 @@ run-summary where applicable):
 ## 4. Validation & completeness
 
 - [ ] 4.1 `npm run build && npm test` green after the full roll-out.
-- [ ] 4.2 Generation-fidelity: `openspec init --tools claude` reproduces all 11 workflows' expected
+- [ ] 4.2 Generation-fidelity: `orbit init --tools claude` reproduces all 11 workflows' expected
   content; diff against the overlay (modulo intentional mechanism-neutral edits) shows only expected
   deltas.
 - [ ] 4.3 Change-completeness sweep (per CLAUDE.md): no half-relocated bodies, no Claude-only residue,
-  no stale `/opsx:` mechanism assumptions, no dropped run-summary sections.
+  no stale `/orbit:` mechanism assumptions, no dropped run-summary sections.
 - [ ] 4.4 Confirm no generator/engine files were touched (B1 scope discipline).
 - [ ] 4.5 Update CLAUDE.md "Current state" from A1 → B1-complete when done.

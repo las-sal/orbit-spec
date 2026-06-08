@@ -143,7 +143,7 @@ Main specs are now updated. The change remains active - archive when implementat
   };
 }
 
-export function getOpsxSyncCommandTemplate(): CommandTemplate {
+export function getOrbitSyncCommandTemplate(): CommandTemplate {
   return {
     name: 'ORBIT: Sync',
     description: 'Sync delta specs from a change to main specs',

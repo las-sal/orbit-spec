@@ -251,7 +251,7 @@ No active changes found. Create a new change to get started.
   };
 }
 
-export function getOpsxBulkArchiveCommandTemplate(): CommandTemplate {
+export function getOrbitBulkArchiveCommandTemplate(): CommandTemplate {
   return {
     name: 'ORBIT: Bulk Archive',
     description: 'Archive multiple completed changes at once',

@@ -4,7 +4,7 @@
  * Postinstall script that hints about shell completions
  *
  * Completion installation is opt-in: the user must run
- * `openspec completion install` explicitly. This script only
+ * `orbit completion install` explicitly. This script only
  * prints a one-line tip after npm install.
  *
  * The tip is suppressed when:
@@ -70,7 +70,7 @@ async function main() {
     }
 
     // Completions are opt-in — just print a hint
-    console.log(`\nTip: Run 'openspec completion install' for shell completions`);
+    console.log(`\nTip: Run 'orbit completion install' for shell completions`);
   } catch (error) {
     // Fail gracefully - never break npm install
   }

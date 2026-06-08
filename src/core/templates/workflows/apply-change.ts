@@ -161,7 +161,7 @@ This skill supports the "actions on a change" model:
   };
 }
 
-export function getOpsxApplyCommandTemplate(): CommandTemplate {
+export function getOrbitApplyCommandTemplate(): CommandTemplate {
   return {
     name: 'ORBIT: Apply',
     description: 'Implement tasks from an OpenSpec change (Experimental)',

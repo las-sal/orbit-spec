@@ -173,7 +173,7 @@ Use clear markdown with:
   };
 }
 
-export function getOpsxVerifyCommandTemplate(): CommandTemplate {
+export function getOrbitVerifyCommandTemplate(): CommandTemplate {
   return {
     name: 'ORBIT: Verify',
     description: 'Verify implementation matches change artifacts before archiving',

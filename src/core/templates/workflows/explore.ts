@@ -293,7 +293,7 @@ But this summary is optional. Sometimes the thinking IS the value.
   };
 }
 
-export function getOpsxExploreCommandTemplate(): CommandTemplate {
+export function getOrbitExploreCommandTemplate(): CommandTemplate {
   return {
     name: 'ORBIT: Explore',
     description: 'Enter explore mode - think through ideas, investigate problems, clarify requirements',

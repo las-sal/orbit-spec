@@ -119,7 +119,7 @@ All artifacts complete. All tasks complete.
   };
 }
 
-export function getOpsxArchiveCommandTemplate(): CommandTemplate {
+export function getOrbitArchiveCommandTemplate(): CommandTemplate {
   return {
     name: 'ORBIT: Archive',
     description: 'Archive a completed change in the experimental workflow',

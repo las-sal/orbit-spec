@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import { spawn, execSync } from 'node:child_process';
+import { spawn } from 'node:child_process';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import {
@@ -21,6 +21,7 @@ import {
 } from '../core/config-schema.js';
 import { CORE_WORKFLOWS, ALL_WORKFLOWS, getProfileWorkflows } from '../core/profiles.js';
 import { OPENSPEC_DIR_NAME } from '../core/config.js';
+import { UpdateCommand } from '../core/update.js';
 import { hasProjectConfigDrift } from '../core/profile-sync-drift.js';
 
 type ProfileAction = 'both' | 'delivery' | 'workflows' | 'keep';
@@ -622,7 +623,9 @@ export function registerConfigCommand(program: Command): void {
 
           if (applyNow) {
             try {
-              execSync('npx orbit update', { stdio: 'inherit', cwd: projectDir });
+              // Invoke this CLI's update in-process — never shell out to `npx orbit`,
+              // which would resolve to the unrelated `orbit` npm package, not orbit-spec.
+              await new UpdateCommand().execute(projectDir);
               console.log('Run `orbit update` in your other projects to apply.');
             } catch {
               console.error('`orbit update` failed. Please run it manually to apply the profile changes.');

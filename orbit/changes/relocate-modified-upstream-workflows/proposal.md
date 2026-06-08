@@ -27,7 +27,7 @@ two existing literals per module (skill `instructions` + command `content`), no 
 - **Inline run-summary emit** (`orbit-run-summary-emit`) into the 9 workflows that emit
   (all except `sync-specs` and `bulk-archive-change`, which explicitly do not emit).
 - **Keep bodies mechanism-neutral** (D11): no Claude-only constructs ("the Skill tool", hardcoded
-  `.claude/...` paths). The `/opsx:` colon syntax stays — it is already rewritten per-tool by
+  `.claude/...` paths). The `/orbit:` colon syntax is fine — it is already rewritten per-tool by
   `transformToHyphenCommands`. Bodies must serve Claude (primary) + Codex from one source.
 - **No generator changes** in B1. The `references[]` and metadata pass-through growth is B2 (D7).
   Consequence: `archive-change`'s one bundled reference file (`archive-summary-schema.md`) is the
@@ -38,7 +38,7 @@ two existing literals per module (skill `instructions` + command `content`), no 
 
 ### New Capabilities
 
-(These capabilities are new to *orbit-spec's* `openspec/specs/` — the repo had no specs before this
+(These capabilities are new to *orbit-spec's* `orbit/specs/` — the repo had no specs before this
 change. They are brought over from the overlay as the migration source of truth, D10. The 4 net-new
 workflows — review, review-external, address-reviews, audit-drift — are **out of scope** for B1; they
 land first-class in B3.)
@@ -62,10 +62,11 @@ land first-class in B3.)
   No changes to the generator (`shared/skill-generation.ts`, `command-generation/`), `init.ts`,
   `update.ts`, or the engine.
 - **Affected tests**: existing generation/snapshot tests must stay green (~1369). Add a
-  generation-fidelity check that `openspec init --tools claude` reproduces orbit's expected workflow
+  generation-fidelity check that `orbit init --tools claude` reproduces orbit's expected workflow
   content, and that `--tools codex` produces a sane skill.
 - **Deferred to B2**: `archive-change` reference file; any other bundled `references/` for the 11.
-- **Backward compatibility**: the bin remains `openspec` (explore.md D11/CLAUDE.md); skill dir names
-  and command ids are unchanged from upstream, so `init`/`update` continue to work.
+- **Naming**: the user-facing rename is already done (bin `orbit`, working dir `orbit/`, skill dirs
+  `orbit-*`, command namespace `/orbit:`). B1 authors orbit-native bodies from the start; command ids
+  (`explore`, `propose`, …) are unchanged, so `init`/`update` continue to work.
 - **Parity tracking**: B1 + B2 + B3 reach behavioral parity with today's overlay. After parity, the
   overlay repo (`../openspec-orbit`) retires (D10).

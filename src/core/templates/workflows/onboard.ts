@@ -563,7 +563,7 @@ Exit gracefully.
 - **Adjust scope gently**—guide toward smaller tasks but respect user choice`;
 }
 
-export function getOpsxOnboardCommandTemplate(): CommandTemplate {
+export function getOrbitOnboardCommandTemplate(): CommandTemplate {
   return {
     name: 'ORBIT: Onboard',
     description: 'Guided onboarding - walk through a complete OpenSpec workflow cycle with narration',

@@ -79,7 +79,7 @@ After completing the steps, summarize:
   };
 }
 
-export function getOpsxNewCommandTemplate(): CommandTemplate {
+export function getOrbitNewCommandTemplate(): CommandTemplate {
   return {
     name: 'ORBIT: New',
     description: 'Start a new change using the experimental artifact workflow (ORBIT)',

@@ -106,7 +106,7 @@ After completing all artifacts, summarize:
   };
 }
 
-export function getOpsxFfCommandTemplate(): CommandTemplate {
+export function getOrbitFfCommandTemplate(): CommandTemplate {
   return {
     name: 'ORBIT: Fast Forward',
     description: 'Create a change and generate all artifacts needed for implementation in one go',

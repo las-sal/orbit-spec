@@ -15,18 +15,18 @@ import {
   getBulkArchiveChangeSkillTemplate,
   getVerifyChangeSkillTemplate,
   getOnboardSkillTemplate,
-  getOpsxProposeSkillTemplate,
-  getOpsxExploreCommandTemplate,
-  getOpsxNewCommandTemplate,
-  getOpsxContinueCommandTemplate,
-  getOpsxApplyCommandTemplate,
-  getOpsxFfCommandTemplate,
-  getOpsxSyncCommandTemplate,
-  getOpsxArchiveCommandTemplate,
-  getOpsxBulkArchiveCommandTemplate,
-  getOpsxVerifyCommandTemplate,
-  getOpsxOnboardCommandTemplate,
-  getOpsxProposeCommandTemplate,
+  getOrbitProposeSkillTemplate,
+  getOrbitExploreCommandTemplate,
+  getOrbitNewCommandTemplate,
+  getOrbitContinueCommandTemplate,
+  getOrbitApplyCommandTemplate,
+  getOrbitFfCommandTemplate,
+  getOrbitSyncCommandTemplate,
+  getOrbitArchiveCommandTemplate,
+  getOrbitBulkArchiveCommandTemplate,
+  getOrbitVerifyCommandTemplate,
+  getOrbitOnboardCommandTemplate,
+  getOrbitProposeCommandTemplate,
   type SkillTemplate,
 } from '../templates/skill-templates.js';
 import type { CommandContent } from '../command-generation/index.js';
@@ -44,7 +44,7 @@ export interface SkillTemplateEntry {
  * Command template with ID mapping.
  */
 export interface CommandTemplateEntry {
-  template: ReturnType<typeof getOpsxExploreCommandTemplate>;
+  template: ReturnType<typeof getOrbitExploreCommandTemplate>;
   id: string;
 }
 
@@ -65,7 +65,7 @@ export function getSkillTemplates(workflowFilter?: readonly string[]): SkillTemp
     { template: getBulkArchiveChangeSkillTemplate(), dirName: 'orbit-bulk-archive-change', workflowId: 'bulk-archive' },
     { template: getVerifyChangeSkillTemplate(), dirName: 'orbit-verify-change', workflowId: 'verify' },
     { template: getOnboardSkillTemplate(), dirName: 'orbit-onboard', workflowId: 'onboard' },
-    { template: getOpsxProposeSkillTemplate(), dirName: 'orbit-propose', workflowId: 'propose' },
+    { template: getOrbitProposeSkillTemplate(), dirName: 'orbit-propose', workflowId: 'propose' },
   ];
 
   if (!workflowFilter) return all;
@@ -81,17 +81,17 @@ export function getSkillTemplates(workflowFilter?: readonly string[]): SkillTemp
  */
 export function getCommandTemplates(workflowFilter?: readonly string[]): CommandTemplateEntry[] {
   const all: CommandTemplateEntry[] = [
-    { template: getOpsxExploreCommandTemplate(), id: 'explore' },
-    { template: getOpsxNewCommandTemplate(), id: 'new' },
-    { template: getOpsxContinueCommandTemplate(), id: 'continue' },
-    { template: getOpsxApplyCommandTemplate(), id: 'apply' },
-    { template: getOpsxFfCommandTemplate(), id: 'ff' },
-    { template: getOpsxSyncCommandTemplate(), id: 'sync' },
-    { template: getOpsxArchiveCommandTemplate(), id: 'archive' },
-    { template: getOpsxBulkArchiveCommandTemplate(), id: 'bulk-archive' },
-    { template: getOpsxVerifyCommandTemplate(), id: 'verify' },
-    { template: getOpsxOnboardCommandTemplate(), id: 'onboard' },
-    { template: getOpsxProposeCommandTemplate(), id: 'propose' },
+    { template: getOrbitExploreCommandTemplate(), id: 'explore' },
+    { template: getOrbitNewCommandTemplate(), id: 'new' },
+    { template: getOrbitContinueCommandTemplate(), id: 'continue' },
+    { template: getOrbitApplyCommandTemplate(), id: 'apply' },
+    { template: getOrbitFfCommandTemplate(), id: 'ff' },
+    { template: getOrbitSyncCommandTemplate(), id: 'sync' },
+    { template: getOrbitArchiveCommandTemplate(), id: 'archive' },
+    { template: getOrbitBulkArchiveCommandTemplate(), id: 'bulk-archive' },
+    { template: getOrbitVerifyCommandTemplate(), id: 'verify' },
+    { template: getOrbitOnboardCommandTemplate(), id: 'onboard' },
+    { template: getOrbitProposeCommandTemplate(), id: 'propose' },
   ];
 
   if (!workflowFilter) return all;

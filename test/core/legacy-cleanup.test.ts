@@ -336,13 +336,13 @@ ${OPENSPEC_MARKERS.end}`);
       expect(result.files).toContain('.continue/prompts/openspec-apply.prompt');
     });
 
-    it('should detect legacy OpenCode orbit-* command files', async () => {
+    it('should detect legacy OpenCode opsx-* command files', async () => {
       const dirPath = path.join(testDir, '.opencode', 'command');
       await fs.mkdir(dirPath, { recursive: true });
-      await fs.writeFile(path.join(dirPath, 'orbit-propose.md'), 'content');
+      await fs.writeFile(path.join(dirPath, 'opsx-propose.md'), 'content');
 
       const result = await detectLegacySlashCommands(testDir);
-      expect(result.files).toContain('.opencode/command/orbit-propose.md');
+      expect(result.files).toContain('.opencode/command/opsx-propose.md');
     });
 
     it('should detect legacy OpenCode openspec-* command files', async () => {
@@ -354,15 +354,27 @@ ${OPENSPEC_MARKERS.end}`);
       expect(result.files).toContain('.opencode/command/openspec-new.md');
     });
 
-    it('should detect both orbit-* and openspec-* OpenCode command files', async () => {
+    it('should detect both opsx-* and openspec-* OpenCode command files', async () => {
       const dirPath = path.join(testDir, '.opencode', 'command');
       await fs.mkdir(dirPath, { recursive: true });
-      await fs.writeFile(path.join(dirPath, 'orbit-propose.md'), 'content');
+      await fs.writeFile(path.join(dirPath, 'opsx-propose.md'), 'content');
       await fs.writeFile(path.join(dirPath, 'openspec-new.md'), 'content');
 
       const result = await detectLegacySlashCommands(testDir);
-      expect(result.files).toContain('.opencode/command/orbit-propose.md');
+      expect(result.files).toContain('.opencode/command/opsx-propose.md');
       expect(result.files).toContain('.opencode/command/openspec-new.md');
+    });
+
+    it('should NOT treat current orbit-* command files as legacy', async () => {
+      // Regression guard: the opsx->orbit namespace rename must not turn the
+      // current command artifacts into "legacy" detections. Legacy patterns
+      // intentionally match only the old opsx-*/openspec-* names.
+      const dirPath = path.join(testDir, '.opencode', 'command');
+      await fs.mkdir(dirPath, { recursive: true });
+      await fs.writeFile(path.join(dirPath, 'orbit-propose.md'), 'content');
+
+      const result = await detectLegacySlashCommands(testDir);
+      expect(result.files).not.toContain('.opencode/command/orbit-propose.md');
     });
   });
 
@@ -1087,12 +1099,12 @@ ${OPENSPEC_MARKERS.end}`);
       expect(tools).toHaveLength(1);
     });
 
-    it('should handle opencode orbit-* legacy files', () => {
+    it('should handle opencode opsx-* legacy files', () => {
       const detection = {
         configFiles: [],
         configFilesToUpdate: [],
         slashCommandDirs: [],
-        slashCommandFiles: ['.opencode/command/orbit-propose.md'],
+        slashCommandFiles: ['.opencode/command/opsx-propose.md'],
         hasOpenspecAgents: false,
         hasProjectMd: false,
         hasRootAgentsWithMarkers: false,
@@ -1121,13 +1133,13 @@ ${OPENSPEC_MARKERS.end}`);
       expect(tools).toHaveLength(1);
     });
 
-    it('should deduplicate opencode when both orbit-* and openspec-* files exist', () => {
+    it('should deduplicate opencode when both opsx-* and openspec-* files exist', () => {
       const detection = {
         configFiles: [],
         configFilesToUpdate: [],
         slashCommandDirs: [],
         slashCommandFiles: [
-          '.opencode/command/orbit-propose.md',
+          '.opencode/command/opsx-propose.md',
           '.opencode/command/openspec-new.md',
         ],
         hasOpenspecAgents: false,
