@@ -48,7 +48,7 @@ describe('UpdateCommand', () => {
     await fs.mkdir(testDir, { recursive: true });
 
     // Create openspec directory
-    const openspecDir = path.join(testDir, 'openspec');
+    const openspecDir = path.join(testDir, 'orbit');
     await fs.mkdir(openspecDir, { recursive: true });
 
     updateCommand = new UpdateCommand();
@@ -71,7 +71,7 @@ describe('UpdateCommand', () => {
   describe('basic validation', () => {
     it('should throw error if openspec directory does not exist', async () => {
       // Remove openspec directory
-      await fs.rm(path.join(testDir, 'openspec'), {
+      await fs.rm(path.join(testDir, 'orbit'), {
         recursive: true,
         force: true,
       });
@@ -1000,7 +1000,8 @@ ${OPENSPEC_MARKERS.end}
         'old'
       );
 
-      // Create legacy openspec/AGENTS.md
+      // Create legacy openspec/AGENTS.md (legacy layout dir is separate from the orbit/ working dir)
+      await fs.mkdir(path.join(testDir, 'openspec'), { recursive: true });
       await fs.writeFile(
         path.join(testDir, 'openspec', 'AGENTS.md'),
         '# Old AGENTS.md content'

@@ -42,7 +42,7 @@ export function getUserSchemasDir(): string {
  * @returns The path to the project's schemas directory
  */
 export function getProjectSchemasDir(projectRoot: string): string {
-  return path.join(projectRoot, 'openspec', 'schemas');
+  return path.join(projectRoot, 'orbit', 'schemas');
 }
 
 /**

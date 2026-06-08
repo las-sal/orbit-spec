@@ -6,7 +6,7 @@ import { MarkdownParser } from './parsers/markdown-parser.js';
 
 export class ViewCommand {
   async execute(targetPath: string = '.'): Promise<void> {
-    const openspecDir = path.join(targetPath, 'openspec');
+    const openspecDir = path.join(targetPath, 'orbit');
     
     if (!fs.existsSync(openspecDir)) {
       console.error(chalk.red('No openspec directory found'));

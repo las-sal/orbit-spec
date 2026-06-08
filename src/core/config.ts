@@ -1,4 +1,4 @@
-export const OPENSPEC_DIR_NAME = 'openspec';
+export const OPENSPEC_DIR_NAME = 'orbit';
 
 export const OPENSPEC_MARKERS = {
   start: '<!-- OPENSPEC:START -->',

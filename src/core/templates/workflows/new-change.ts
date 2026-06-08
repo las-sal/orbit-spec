@@ -40,7 +40,7 @@ export function getNewChangeSkillTemplate(): SkillTemplate {
    openspec new change "<name>"
    \`\`\`
    Add \`--schema <name>\` only if the user requested a specific workflow.
-   This creates a scaffolded change at \`openspec/changes/<name>/\` with the selected schema.
+   This creates a scaffolded change at \`orbit/changes/<name>/\` with the selected schema.
 
 4. **Show the artifact status**
    \`\`\`bash
@@ -115,7 +115,7 @@ export function getOpsxNewCommandTemplate(): CommandTemplate {
    openspec new change "<name>"
    \`\`\`
    Add \`--schema <name>\` only if the user requested a specific workflow.
-   This creates a scaffolded change at \`openspec/changes/<name>/\` with the selected schema.
+   This creates a scaffolded change at \`orbit/changes/<name>/\` with the selected schema.
 
 4. **Show the artifact status**
    \`\`\`bash

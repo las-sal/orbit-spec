@@ -29,7 +29,7 @@ export function getFfChangeSkillTemplate(): SkillTemplate {
    \`\`\`bash
    openspec new change "<name>"
    \`\`\`
-   This creates a scaffolded change at \`openspec/changes/<name>/\`.
+   This creates a scaffolded change at \`orbit/changes/<name>/\`.
 
 3. **Get the artifact build order**
    \`\`\`bash
@@ -131,7 +131,7 @@ export function getOpsxFfCommandTemplate(): CommandTemplate {
    \`\`\`bash
    openspec new change "<name>"
    \`\`\`
-   This creates a scaffolded change at \`openspec/changes/<name>/\`.
+   This creates a scaffolded change at \`orbit/changes/<name>/\`.
 
 3. **Get the artifact build order**
    \`\`\`bash

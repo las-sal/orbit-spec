@@ -6,8 +6,8 @@ import { runCLI } from '../helpers/run-cli.js';
 describe('top-level validate command', () => {
   const projectRoot = process.cwd();
   const testDir = path.join(projectRoot, 'test-validate-command-tmp');
-  const changesDir = path.join(testDir, 'openspec', 'changes');
-  const specsDir = path.join(testDir, 'openspec', 'specs');
+  const changesDir = path.join(testDir, 'orbit', 'changes');
+  const specsDir = path.join(testDir, 'orbit', 'specs');
 
   beforeEach(async () => {
     await fs.mkdir(changesDir, { recursive: true });

@@ -179,7 +179,7 @@ export function loadChangeContext(
   schemaName?: string
 ): ChangeContext {
   const changeDir = FileSystemUtils.canonicalizeExistingPath(
-    path.join(projectRoot, 'openspec', 'changes', changeName)
+    path.join(projectRoot, 'orbit', 'changes', changeName)
   );
 
   // Resolve schema: explicit > metadata > default
