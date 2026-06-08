@@ -458,6 +458,11 @@ archive merge bug (§7) if you choose to.
 
 ## 11. Fork & orbify: what you're taking on
 
+> **Note:** this section is the pre-decomposition framing (workstreams + decisions). The **ratified
+> phased program** (the 6 changes A1→C2 across 3 arcs, with the parity milestone and per-phase
+> dependencies) lives in `openspec/explore/fork-and-orbify/explore.md` **D9** — that is the
+> authoritative plan; the decisions below feed it.
+
 **Cleanly forkable** because the architecture cooperates:
 - Prompt content is already factored into per-workflow modules with a tiny central registry.
 - Adding workflows is a 3-touch operation (module + facade + two array lines).
