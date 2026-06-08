@@ -772,13 +772,13 @@ E1 updated`);
   });
 
   describe('error handling', () => {
-    it('should throw error when openspec directory does not exist', async () => {
-      // Remove openspec directory
+    it('should throw error when orbit directory does not exist', async () => {
+      // Remove orbit directory
       await fs.rm(path.join(tempDir, 'orbit'), { recursive: true });
       
       await expect(
         archiveCommand.execute('any-change', { yes: true })
-      ).rejects.toThrow("No OpenSpec changes directory found. Run 'openspec init' first.");
+      ).rejects.toThrow("No OpenSpec changes directory found. Run 'orbit init' first.");
     });
   });
 

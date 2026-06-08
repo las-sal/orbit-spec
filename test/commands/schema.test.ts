@@ -18,7 +18,7 @@ describe('schema command', () => {
     );
     fs.mkdirSync(tempDir, { recursive: true });
 
-    // Create openspec directory structure
+    // Create orbit directory structure
     fs.mkdirSync(path.join(tempDir, 'orbit', 'schemas'), { recursive: true });
 
     // Save original cwd and env

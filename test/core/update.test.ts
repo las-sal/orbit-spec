@@ -47,7 +47,7 @@ describe('UpdateCommand', () => {
     testDir = path.join(os.tmpdir(), `openspec-test-${randomUUID()}`);
     await fs.mkdir(testDir, { recursive: true });
 
-    // Create openspec directory
+    // Create orbit directory
     const openspecDir = path.join(testDir, 'orbit');
     await fs.mkdir(openspecDir, { recursive: true });
 
@@ -69,15 +69,15 @@ describe('UpdateCommand', () => {
   });
 
   describe('basic validation', () => {
-    it('should throw error if openspec directory does not exist', async () => {
-      // Remove openspec directory
+    it('should throw error if orbit directory does not exist', async () => {
+      // Remove orbit directory
       await fs.rm(path.join(testDir, 'orbit'), {
         recursive: true,
         force: true,
       });
 
       await expect(updateCommand.execute(testDir)).rejects.toThrow(
-        "No OpenSpec directory found. Run 'openspec init' first."
+        "No OpenSpec directory found. Run 'orbit init' first."
       );
     });
 
@@ -106,7 +106,7 @@ describe('UpdateCommand', () => {
 name: openspec-explore (old)
 description: Old description
 license: MIT
-compatibility: Requires openspec CLI.
+compatibility: Requires orbit CLI.
 metadata:
   author: openspec
   version: "0.9"
@@ -1631,7 +1631,7 @@ content
         call.map(arg => String(arg)).join(' ')
       );
       const hasNewToolMessage = calls.some(call =>
-        call.includes("Detected new tool: Cursor. Run 'openspec init' to add it.")
+        call.includes("Detected new tool: Cursor. Run 'orbit init' to add it.")
       );
       expect(hasNewToolMessage).toBe(true);
 
@@ -1663,7 +1663,7 @@ content
       expect(consolidatedCalls).toHaveLength(1);
       expect(consolidatedCalls[0]).toContain('GitHub Copilot');
       expect(consolidatedCalls[0]).toContain('Windsurf');
-      expect(consolidatedCalls[0]).toContain("Run 'openspec init' to add them.");
+      expect(consolidatedCalls[0]).toContain("Run 'orbit init' to add them.");
 
       const repeatedSingularCalls = calls.filter(call =>
         call.includes('Detected new tool:')

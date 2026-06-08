@@ -7,7 +7,7 @@ describe('spec show (interactive behavior)', () => {
   const projectRoot = process.cwd();
   const testDir = path.join(projectRoot, 'test-spec-show-tmp');
   const specsDir = path.join(testDir, 'orbit', 'specs');
-  const bin = path.join(projectRoot, 'bin', 'openspec.js');
+  const bin = path.join(projectRoot, 'bin', 'orbit.js');
 
 
   beforeEach(async () => {

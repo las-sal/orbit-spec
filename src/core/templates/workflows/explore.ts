@@ -84,7 +84,7 @@ You have full context of the OpenSpec system. Use it naturally, don't force it.
 
 At the start, quickly check what exists:
 \`\`\`bash
-openspec list --json
+orbit list --json
 \`\`\`
 
 This tells you:
@@ -288,7 +288,7 @@ But this summary is optional. Sometimes the thinking IS the value.
 - **Do explore the codebase** - Ground discussions in reality
 - **Do question assumptions** - Including the user's and your own`,
     license: 'MIT',
-    compatibility: 'Requires openspec CLI.',
+    compatibility: 'Requires orbit CLI.',
     metadata: { author: 'openspec', version: '1.0' },
   };
 }
@@ -380,7 +380,7 @@ You have full context of the OpenSpec system. Use it naturally, don't force it.
 
 At the start, quickly check what exists:
 \`\`\`bash
-openspec list --json
+orbit list --json
 \`\`\`
 
 This tells you:

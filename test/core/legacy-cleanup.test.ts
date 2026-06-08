@@ -28,7 +28,7 @@ describe('legacy-cleanup', () => {
   beforeEach(async () => {
     testDir = path.join(os.tmpdir(), `openspec-legacy-test-${randomUUID()}`);
     await fs.mkdir(testDir, { recursive: true });
-    // Create openspec directory structure
+    // Create orbit directory structure
     await fs.mkdir(path.join(testDir, 'openspec'), { recursive: true });
   });
 
@@ -303,7 +303,7 @@ ${OPENSPEC_MARKERS.end}`);
       expect(result.files).toContain('.cursor/commands/openspec-proposal.md');
     });
 
-    it('should not detect non-openspec files', async () => {
+    it('should not detect non-orbit files', async () => {
       const dirPath = path.join(testDir, '.cursor', 'commands');
       await fs.mkdir(dirPath, { recursive: true });
       await fs.writeFile(path.join(dirPath, 'other-command.md'), 'content');
@@ -535,7 +535,7 @@ ${OPENSPEC_MARKERS.end}`);
 
       expect(result.deletedFiles).toContain('openspec/AGENTS.md');
       await expect(fs.access(agentsPath)).rejects.toThrow();
-      // openspec directory should still exist
+      // orbit directory should still exist
       await expect(fs.access(path.join(testDir, 'openspec'))).resolves.not.toThrow();
     });
 

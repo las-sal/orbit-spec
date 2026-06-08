@@ -36,7 +36,7 @@ const require = createRequire(import.meta.url);
 const { version } = require('../../package.json');
 
 program
-  .name('openspec')
+  .name('orbit')
   .description('AI-native system for spec-driven development')
   .version(version);
 
@@ -103,7 +103,7 @@ program
   .option('--no-interactive', 'Disable interactive prompts')
   .action(async (options?: { tool?: string; noInteractive?: boolean }) => {
     try {
-      console.log('Note: "openspec experimental" is deprecated. Use "openspec init" instead.');
+      console.log('Note: "orbit experimental" is deprecated. Use "orbit init" instead.');
       const { InitCommand } = await import('../core/init.js');
       const initCommand = new InitCommand({
         tools: options?.tool,
@@ -174,7 +174,7 @@ const changeCmd = program
 
 // Deprecation notice for noun-based commands
 changeCmd.hook('preAction', () => {
-  console.error('Warning: The "openspec change ..." commands are deprecated. Prefer verb-first commands (e.g., "openspec list", "openspec validate --changes").');
+  console.error('Warning: The "orbit change ..." commands are deprecated. Prefer verb-first commands (e.g., "orbit list", "orbit validate --changes").');
 });
 
 changeCmd
@@ -196,12 +196,12 @@ changeCmd
 
 changeCmd
   .command('list')
-  .description('List all active changes (DEPRECATED: use "openspec list" instead)')
+  .description('List all active changes (DEPRECATED: use "orbit list" instead)')
   .option('--json', 'Output as JSON')
   .option('--long', 'Show id and title with counts')
   .action(async (options?: { json?: boolean; long?: boolean }) => {
     try {
-      console.error('Warning: "openspec change list" is deprecated. Use "openspec list".');
+      console.error('Warning: "orbit change list" is deprecated. Use "orbit list".');
       const changeCommand = new ChangeCommand();
       await changeCommand.list(options);
     } catch (error) {

@@ -139,7 +139,7 @@ describe('artifact-workflow CLI commands', () => {
       const result = await runCLI(['status'], { cwd: tempDir });
       expect(result.exitCode).toBe(0);
       expect(result.stdout).toContain('No active changes');
-      expect(result.stdout).toContain('openspec new change');
+      expect(result.stdout).toContain('orbit new change');
     });
 
     it('exits gracefully with JSON when no changes exist', async () => {
@@ -760,7 +760,7 @@ artifacts:
 
       it('CLI schema overrides config schema', async () => {
         // Create project config with spec-driven schema
-        // Note: openspec directory already exists (from changesDir creation in beforeEach)
+        // Note: orbit directory already exists (from changesDir creation in beforeEach)
         await fs.writeFile(
           path.join(tempDir, 'orbit', 'config.yaml'),
           'schema: spec-driven\n'
@@ -783,7 +783,7 @@ artifacts:
     describe('instructions command with config', () => {
       it('injects context and rules from config into instructions', async () => {
         // Create project config with context and rules
-        // Note: openspec directory already exists (from changesDir creation in beforeEach)
+        // Note: orbit directory already exists (from changesDir creation in beforeEach)
         await fs.writeFile(
           path.join(tempDir, 'orbit', 'config.yaml'),
           `schema: spec-driven
@@ -818,7 +818,7 @@ rules:
 
       it('does not inject rules for non-matching artifact', async () => {
         // Create project config with rules only for proposal
-        // Note: openspec directory already exists (from changesDir creation in beforeEach)
+        // Note: orbit directory already exists (from changesDir creation in beforeEach)
         await fs.writeFile(
           path.join(tempDir, 'orbit', 'config.yaml'),
           `schema: spec-driven
@@ -887,7 +887,7 @@ rules:
     describe('config changes reflected immediately', () => {
       it('config changes are reflected without restart', async () => {
         // Create initial config
-        // Note: openspec directory already exists (from changesDir creation in beforeEach)
+        // Note: orbit directory already exists (from changesDir creation in beforeEach)
         await fs.writeFile(
           path.join(tempDir, 'orbit', 'config.yaml'),
           `schema: spec-driven

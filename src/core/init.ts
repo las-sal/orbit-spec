@@ -708,7 +708,7 @@ export class InitCommand {
       console.log(chalk.bold('Getting started:'));
       console.log('  Start your first change: /opsx:new "your idea"');
     } else {
-      console.log("Done. Run 'openspec config profile' to configure your workflows.");
+      console.log("Done. Run 'orbit config profile' to configure your workflows.");
     }
 
     // Links

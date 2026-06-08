@@ -28,7 +28,7 @@
     }
   },
   "bin": {
-    "openspec": "./bin/openspec.js"
+    "orbit": "./bin/orbit.js"
   },
   "files": [
     "dist",
@@ -43,7 +43,7 @@
     "lint": "eslint src/",
     "build": "node build.js",
     "dev": "tsc --watch",
-    "dev:cli": "npm run build && node bin/openspec.js",
+    "dev:cli": "npm run build && node bin/orbit.js",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
