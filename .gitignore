@@ -142,8 +142,10 @@ vite.config.ts.timestamp-*
 
 
 # Claude
+# .claude/ stays ignored: in orbit-spec it is *generated* output of the
+# template pipeline (source-of-truth lives in src/core/templates/, per fork plan
+# D5/D6). CLAUDE.md is hand-authored project instructions and IS tracked.
 .claude/
-CLAUDE.md
 .DS_Store
 
 # Pnpm
