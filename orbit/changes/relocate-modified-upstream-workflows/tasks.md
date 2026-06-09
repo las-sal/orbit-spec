@@ -30,20 +30,20 @@
 Apply the proven pattern to each (skill `instructions` + command `content`, inline conventions +
 run-summary where applicable):
 
-- [ ] 3.1 `propose.ts`
-- [ ] 3.2 `new-change.ts`
-- [ ] 3.3 `continue-change.ts`
-- [ ] 3.4 `apply-change.ts`
-- [ ] 3.5 `ff-change.ts`
-- [ ] 3.6 `sync-specs.ts` (conventions only; no run-summary)
-- [ ] 3.7 `archive-change.ts` (inline body + Step 5.5; reference file deferred to B2)
-- [ ] 3.8 `bulk-archive-change.ts` (conventions only; explicitly no run-summary)
-- [ ] 3.9 `verify-change.ts`
-- [ ] 3.10 `onboard.ts`
+- [x] 3.1 `propose.ts`
+- [x] 3.2 `new-change.ts`
+- [x] 3.3 `continue-change.ts`
+- [x] 3.4 `apply-change.ts`
+- [x] 3.5 `ff-change.ts`
+- [x] 3.6 `sync-specs.ts` (conventions only; no run-summary)
+- [x] 3.7 `archive-change.ts` (inline body + Step 5.5; reference file deferred to B2)
+- [x] 3.8 `bulk-archive-change.ts` (conventions only; explicitly no run-summary)
+- [x] 3.9 `verify-change.ts`
+- [x] 3.10 `onboard.ts`
 
 ## 4. Validation & completeness
 
-- [ ] 4.1 `npm run build && npm test` green after the full roll-out.
+- [x] 4.1 `npm run build && npm test` green after the full roll-out.
 - [ ] 4.2 Generation-fidelity: `orbit init --tools claude` reproduces all 11 workflows' expected
   content; diff against the overlay (modulo intentional mechanism-neutral edits) shows only expected
   deltas.

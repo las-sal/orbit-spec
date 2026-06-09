@@ -244,7 +244,19 @@ No active changes found. Create a new change to get started.
 - Track and report all outcomes (success/skip/fail)
 - Preserve .openspec.yaml when moving to archive
 - Archive directory target uses current date: YYYY-MM-DD-<name>
-- If archive target exists, fail that change but continue with others`,
+- If archive target exists, fail that change but continue with others
+
+---
+
+# Orbit additions
+
+## Scope: does NOT emit run-summary JSON
+
+(Per \`orbit-run-summary-emit\` capability)
+
+\`/orbit:bulk-archive\` is a wrapper around \`/orbit:archive\`; each inner \`/orbit:archive\` invocation emits its own \`archive-<TS>.json\` per the universal-spine convention. The outer \`/orbit:bulk-archive\` wrapper adds NO additional "what's next" signal and SHALL NOT emit a separate \`bulk-archive-<TS>.json\`.
+
+Downstream consumers see N \`archive-<TS>.json\` files (one per inner archive) and read each independently.`,
     license: 'MIT',
     compatibility: 'Requires orbit CLI.',
     metadata: { author: 'openspec', version: '1.0' },

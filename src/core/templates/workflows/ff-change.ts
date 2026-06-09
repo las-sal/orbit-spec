@@ -99,7 +99,51 @@ After completing all artifacts, summarize:
 - Always read dependency artifacts before creating a new one
 - If context is critically unclear, ask the user - but prefer making reasonable decisions to keep momentum
 - If a change with that name already exists, suggest continuing that change instead
-- Verify each artifact file exists after writing before proceeding to next`,
+- Verify each artifact file exists after writing before proceeding to next
+
+---
+
+# Orbit additions
+
+## Three execution disciplines (apply throughout this command)
+
+The three execution disciplines from \`orbit-conventions\` apply: read-before-reference, change completeness, pushback. See \`orbit/specs/orbit-conventions/spec.md\`.
+
+## Run-summary emit (one-shot at command completion)
+
+(Per \`orbit-run-summary-emit\` capability)
+
+\`/orbit:ff\` is a one-shot command per \`orbit-run-summary-emit\`'s \`Emit timing semantics\` requirement (emit ONCE on natural command completion). After all artifacts (proposal/design/tasks/specs) are generated, write:
+
+\`\`\`
+orbit/changes/<name>/.orbit-runs/ff-<TS>.json
+\`\`\`
+
+Where \`<TS>\` is ISO-8601 UTC with hyphens. Create \`.orbit-runs/\` if it doesn't exist. The filename prefix is \`ff-\` (NOT \`propose-\`) to preserve entry-point provenance per the per-variant filename rule.
+
+### JSON shape
+
+Per the universal spine in \`orbit-conventions\`'s \`Internal-run JSON summary format\` + per-command extensions:
+
+\`\`\`json
+{
+  "command": "ff",
+  "timestamp": "<ISO-8601 UTC>",
+  "change": "<name>",
+  "final_assessment": "<narrative, e.g., 'Fast-forwarded <name>: generated all artifacts (proposal/design/tasks/specs) in one pass.'>",
+  "next_recommended": "/orbit:review <name> — all proposal artifacts ready; review before apply",
+  "kind": "workflow",
+  "artifacts_created": ["proposal", "design", "tasks", "specs/<capability>"],
+  "delta_count": <int — sum of normative requirements across spec deltas>,
+  "from": "scratch"
+}
+\`\`\`
+
+### \`next_recommended\` — always recommend review next
+
+Per \`orbit-run-summary-emit\`'s \`Propose-shaped and artifact-completion-aware recommendation logic\` requirement and \`\`, \`/orbit:ff\` ALWAYS recommends \`/orbit:review\` next, never \`/orbit:apply\` directly. Same rule as \`/orbit:propose\` (both are propose-shaped — produce the canonical artifact set in one invocation). \`/orbit:new\` and \`/orbit:continue\` follow a different rule (artifact-completion-aware; defer to upstream \`isComplete\`).
+
+orbit-status's tier-1 reader parses the leading \`/orbit:review <name>\` token into \`command\`/\`args\`.`,
     license: 'MIT',
     compatibility: 'Requires orbit CLI.',
     metadata: { author: 'openspec', version: '1.0' },

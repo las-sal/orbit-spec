@@ -116,7 +116,54 @@ For other schemas, follow the \`instruction\` field from the CLI output.
 - Use the schema's artifact sequence, don't assume specific artifact names
 - **IMPORTANT**: \`context\` and \`rules\` are constraints for YOU, not content for the file
   - Do NOT copy \`<context>\`, \`<rules>\`, \`<project_context>\` blocks into the artifact
-  - These guide what you write, but should never appear in the output`,
+  - These guide what you write, but should never appear in the output
+
+---
+
+# Orbit additions
+
+## Three execution disciplines (apply throughout this command)
+
+The three execution disciplines from \`orbit-conventions\` apply: read-before-reference, change completeness, pushback. See \`orbit/specs/orbit-conventions/spec.md\`.
+
+## Run-summary emit (one-shot at command completion)
+
+(Per \`orbit-run-summary-emit\` capability)
+
+\`/orbit:continue\` is a one-shot command per \`orbit-run-summary-emit\`'s \`Emit timing semantics\` requirement (emit ONCE on natural command completion). After the next missing artifact is generated (or all artifacts are now present), write:
+
+\`\`\`
+orbit/changes/<name>/.orbit-runs/continue-<TS>.json
+\`\`\`
+
+Where \`<TS>\` is ISO-8601 UTC with hyphens. Create \`.orbit-runs/\` if it doesn't exist. The filename prefix is \`continue-\` (NOT \`propose-\`) to preserve entry-point provenance.
+
+### JSON shape
+
+Per the universal spine in \`orbit-conventions\`'s \`Internal-run JSON summary format\` + per-command extensions:
+
+\`\`\`json
+{
+  "command": "continue",
+  "timestamp": "<ISO-8601 UTC>",
+  "change": "<name>",
+  "final_assessment": "<narrative, e.g., 'Generated design.md; tasks.md still pending.'>",
+  "next_recommended": "<per artifact-completeness rule below>",
+  "kind": "workflow",
+  "artifacts_created": ["<artifact added this session, e.g., 'design'>"],
+  "delta_count": <int — running total across all spec deltas if specs are present>,
+  "from": "continued"
+}
+\`\`\`
+
+### \`next_recommended\` — artifact-completeness-aware
+
+Per \`orbit-run-summary-emit\`'s \`Propose-shaped and artifact-completion-aware recommendation logic\` requirement, defer to upstream \`orbit status --change <name> --json\`'s \`isComplete\` field (the same field upstream \`orbit-continue-change\` uses to gate completion). This keeps the recommendation schema-agnostic:
+
+- **\`isComplete: true\`** (all required artifacts present): \`next_recommended: "/orbit:review <name> — all proposal artifacts now present"\`
+- **\`isComplete: false\`** (more artifacts pending): \`next_recommended: "/orbit:continue <name> — <next missing artifact> still pending"\` (where \`<next missing artifact>\` is the first artifact in upstream's \`applyRequires\` array whose \`status\` is not \`done\`)
+
+orbit-status's tier-1 reader parses the leading \`/orbit:<verb> <name>\` token into \`command\`/\`args\`.`,
     license: 'MIT',
     compatibility: 'Requires orbit CLI.',
     metadata: { author: 'openspec', version: '1.0' },

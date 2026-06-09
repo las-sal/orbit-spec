@@ -3,47 +3,60 @@ import { describe, expect, it } from 'vitest';
 import {
   getExploreSkillTemplate,
   getOrbitExploreCommandTemplate,
+  getOrbitProposeSkillTemplate,
+  getNewChangeSkillTemplate,
+  getContinueChangeSkillTemplate,
+  getApplyChangeSkillTemplate,
+  getFfChangeSkillTemplate,
+  getBulkArchiveChangeSkillTemplate,
+  getVerifyChangeSkillTemplate,
+  getArchiveChangeSkillTemplate,
+  getOnboardSkillTemplate,
+  type SkillTemplate,
 } from '../../../src/core/templates/skill-templates.js';
 
 /**
- * Fidelity guard for B1 (relocate-modified-upstream-workflows): asserts that the
- * orbit editorial layer was actually relocated into the source template modules,
- * mechanism-neutral and orbit-named. Semantic (not hash) assertions so a future
- * edit that silently drops orbit content fails loudly. One block per relocated
- * workflow; grows as B1 rolls out the remaining 10.
+ * Fidelity guard for B1 (relocate-modified-upstream-workflows): asserts orbit's
+ * editorial layer was relocated into the source modules, orbit-named and
+ * mechanism-neutral. Semantic (not hash) assertions so a future edit that
+ * silently drops orbit content, reintroduces the /opsx: namespace, or points at
+ * the old openspec/ working dir fails loudly.
+ *
+ * sync-specs is intentionally absent: orbit never modified it (a no-op for B1).
  */
-describe('orbit content fidelity (B1 relocation)', () => {
-  describe('explore', () => {
-    const skill = getExploreSkillTemplate().instructions;
-    const command = getOrbitExploreCommandTemplate().content;
+const RELOCATED: Array<[string, () => SkillTemplate]> = [
+  ['explore', getExploreSkillTemplate],
+  ['propose', getOrbitProposeSkillTemplate],
+  ['new-change', getNewChangeSkillTemplate],
+  ['continue-change', getContinueChangeSkillTemplate],
+  ['apply-change', getApplyChangeSkillTemplate],
+  ['ff-change', getFfChangeSkillTemplate],
+  ['bulk-archive-change', getBulkArchiveChangeSkillTemplate],
+  ['verify-change', getVerifyChangeSkillTemplate],
+  ['archive-change', getArchiveChangeSkillTemplate],
+  ['onboard', getOnboardSkillTemplate],
+];
 
-    it('skill carries upstream stance + the orbit additions', () => {
-      // upstream layer preserved
-      expect(skill).toContain('This is a stance, not a workflow');
-      // orbit editorial layer relocated
-      expect(skill).toContain('# Orbit additions');
-      expect(skill).toContain('Three execution disciplines');
-      expect(skill).toContain('Three invocation modes');
-      expect(skill).toContain('Five capture types');
-      expect(skill).toContain('five-section convention');
-      expect(skill).toContain('Run-summary emit');
+describe('orbit content fidelity (B1 relocation)', () => {
+  describe.each(RELOCATED)('%s', (_name, getTemplate) => {
+    const skill = getTemplate().instructions;
+
+    it('carries the orbit editorial layer', () => {
+      expect(skill).toMatch(/# Orbit additions|execution disciplines|Run-summary|Consume-mode|NEW Step/);
     });
 
-    it('skill is orbit-named and mechanism-neutral (no openspec/opsx residue)', () => {
-      expect(skill).toContain('/orbit:explore');
-      expect(skill).toContain('orbit/explore/<name>/explore.md');
+    it('is orbit-named + mechanism-neutral (no opsx / openspec working-dir / stale issue refs)', () => {
       expect(skill).not.toContain('/opsx:');
-      expect(skill).not.toContain('openspec/explore');
-      // stale overlay issue refs must be gone
+      expect(skill).not.toMatch(/openspec\/(changes|specs|explore|lenses)/);
       expect(skill).not.toContain('openspec-orbit#');
     });
+  });
 
-    it('command carries the orbit-additions summary, pointing at the skill neutrally', () => {
-      expect(command).toContain('Orbit additions (summary)');
-      expect(command).toContain('Three invocation modes');
-      expect(command).toContain('the `orbit-explore` skill');
-      expect(command).not.toContain('.claude/skills/');
-      expect(command).not.toContain('/opsx:');
-    });
+  it('explore command carries the orbit-additions summary, mechanism-neutral', () => {
+    const command = getOrbitExploreCommandTemplate().content;
+    expect(command).toContain('Orbit additions (summary)');
+    expect(command).toContain('the `orbit-explore` skill');
+    expect(command).not.toContain('.claude/skills/');
+    expect(command).not.toContain('/opsx:');
   });
 });

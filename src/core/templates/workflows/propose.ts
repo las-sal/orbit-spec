@@ -17,7 +17,7 @@ I'll create a change with artifacts:
 - design.md (how)
 - tasks.md (implementation steps)
 
-When ready to implement, run /orbit:apply
+When ready to implement, run \`/orbit:review\` (proposal mode) first, then \`/orbit:apply\`. Per orbit's canonical flow, propose → review → apply; review is the pre-apply checkpoint. See the \`Orbit additions\` section below for full rationale.
 
 ---
 
@@ -108,7 +108,146 @@ After completing all artifacts, summarize:
 - Always read dependency artifacts before creating a new one
 - If context is critically unclear, ask the user - but prefer making reasonable decisions to keep momentum
 - If a change with that name already exists, ask if user wants to continue it or create a new one
-- Verify each artifact file exists after writing before proceeding to next`,
+- Verify each artifact file exists after writing before proceeding to next
+
+---
+
+# Orbit additions
+
+The sections below describe orbit-specific additions on top of upstream's standalone propose flow. The upstream content above is unchanged. Orbit adds a **consume mode** that activates when \`orbit/explore/<name>/explore.md\` exists from a prior \`/orbit:explore\` session — the exploration becomes the authoritative seed for artifact generation rather than asking the user for a description.
+
+## Three execution disciplines (apply throughout this command)
+
+**Read-before-reference (authoring-time)**. When generating artifacts (proposal/design/specs/tasks) that reference specific constructs in the codebase, read the actual definitions first. Don't infer function signatures, file paths, or capability names from training-data patterns. The artifacts you generate become the normative contract; false-precision references corrupt that contract.
+
+**Change completeness (modification-time)**. In consume mode, the section-mapping from \`explore.md\` → generated artifacts is a substantive modification. Apply it fully: if a Decision informs both a spec requirement AND a design entry AND a task, write all three. If an Open question becomes a \`@review:\` marker, insert it in the relevant artifact (don't just note it in explore.md and forget the marker). After artifact generation but before the staging-directory move, sweep for incomplete propagation.
+
+**Pushback (review-time)**. When mid-generation the user pushes back on something (e.g., "that decision actually changed in the last conversation"), verify against current state of \`explore.md\` and the conversation before re-editing. If the explore.md content is current, ask the user whether to update it or to override for this generation. Don't silently diverge from the captured exploration.
+
+## Mode detection (NEW Step 0 — runs before upstream Step 1)
+
+Before any upstream step, detect whether to run in consume mode or fall through to upstream standalone behavior:
+
+1. **Check for staging directory**: does \`orbit/explore/<name>/explore.md\` exist?
+   - **If user provided \`<name>\`** as the argument: check that specific name.
+   - **If user provided no name** but exactly one staging directory exists under \`orbit/explore/\`: propose that name to the user via \`AskUserQuestion\`. On accept, treat as if the name was provided.
+   - **If user provided no name and zero or multiple staging directories exist**: prompt user to specify a name (zero) or pick one (multiple).
+
+2. **Check for conflict**: do both \`orbit/explore/<name>/\` AND \`orbit/changes/<name>/\` exist?
+   - If yes, halt with a conflict report and prompt via \`AskUserQuestion\`:
+     - **Regenerate from explore** — overwrite the existing change directory with new artifacts.
+     - **Continue from change** — discard the explore staging directory, proceed in standalone-like mode on the existing change.
+     - **Abort** — do nothing; user decides next.
+
+3. **Resolve mode**:
+   - Staging exists, no conflict → **consume mode** (continue with consume-mode flow below; skip upstream Step 1).
+   - No staging → **standalone mode** (skip the consume-mode flow; resume at upstream Step 1).
+
+## Consume-mode flow
+
+Replaces upstream Step 1 (the "ask what to build" prompt). All later upstream steps (create change directory, generate artifacts in dependency order) still run, but they read the exploration material rather than prompting the user.
+
+### Step 0a — Validate \`explore.md\` structure
+
+Read \`orbit/explore/<name>/explore.md\`. Check for the five-section structure (Premise / Decisions / Open questions / Considered & out / References).
+
+- **All five sections present** → proceed normally.
+- **Missing one or more sections** → warn the user about the missing sections; prompt via \`AskUserQuestion\` to confirm proceed-anyway (default: proceed).
+- **Cannot read or parse** → halt with a clear error; user fixes and re-invokes.
+
+### Step 0b — Handle Open questions
+
+For each entry in the Open questions section, prompt the user via \`AskUserQuestion\` with three options:
+
+- **Resolve now** — user provides a resolution. The resolution becomes a Decision: appended to the Decisions section of \`explore.md\` (the file is updated, not just the in-memory parse), and used to inform generated artifacts.
+- **Defer as \`@review:\` marker** — a \`@review: <question text>\` marker is inserted at the most relevant location in the generated artifacts (typically \`design.md\` or the relevant spec). The Open question is moved to a "Deferred to markers" subsection of Open questions in \`explore.md\` (or tagged \`deferred\`).
+- **Abandon** — the question is moved to Considered & out with a brief rationale; no marker is created.
+
+**Bulk handling**: if more than ~5 Open questions exist, offer "Resolve all (walk one by one)" / "Defer all (mark in artifacts)" / "Abandon all" / "Walk each individually" via \`AskUserQuestion\`. Default: walk each individually.
+
+### Step 0c — Section-to-artifact mapping
+
+When generating artifacts in upstream Step 4, apply this mapping:
+
+| \`explore.md\` section | Feeds into |
+|---|---|
+| **Premise** | \`proposal.md\`'s "Why" / motivation section |
+| **Decisions** | Spec requirements + \`design.md\` decisions + \`tasks.md\` task seeds. **Preserve specific decision wording** where artifact format permits; don't paraphrase. |
+| **Open questions** (resolved at Step 0b) | Promoted to Decisions and treated as above |
+| **Open questions** (deferred at Step 0b) | \`@review:\` markers in \`design.md\` or the relevant spec |
+| **Considered & out** | \`design.md\`'s "Alternatives considered" section (prevents future rediscovery) |
+| **References** | Read during artifact generation as context; cited in \`design.md\` where relevant; not copied verbatim |
+
+When \`design.md\` references background or decisions originally from \`explore.md\`, **cite the source** (\`see explore.md\`) rather than paraphrasing without attribution.
+
+### Step 0d — Move the staging directory
+
+After all upstream steps complete successfully (artifacts generated, validation passes):
+
+\`\`\`bash
+mv orbit/explore/<name>/* orbit/changes/<name>/
+rmdir orbit/explore/<name>
+\`\`\`
+
+(Or equivalent — preserve \`explore.md\` AND any sibling files like \`sketches/\` AND any draft convention files. The staging directory should no longer exist; its contents land alongside the generated artifacts in the change directory.)
+
+After the move, \`orbit/changes/<name>/\` contains both:
+- The moved exploration files (\`explore.md\`, \`sketches/\`, draft conventions)
+- The generated artifacts (\`proposal.md\`, \`design.md\`, \`specs/\`, \`tasks.md\`)
+
+\`explore.md\` persists unchanged as the historical record of how the change took shape.
+
+## Standalone mode (unchanged from upstream)
+
+When no \`orbit/explore/<name>/\` exists, fall through to upstream Step 1: prompt for description, generate artifacts from the description. This mode is fully unchanged from upstream behavior.
+
+## Graceful degradation
+
+- **\`explore.md\` missing one or more sections** → warn, proceed-anyway by default; missing sections don't have a feeding role in generation.
+- **\`explore.md\` has no Decisions** → the generated artifacts proceed but flag that they're being generated from Premise + Open questions alone, which usually means the exploration wasn't ready for promotion. Suggest user run more \`/orbit:explore\` work before applying.
+- **\`orbit/changes/<name>/\` already exists in conflict** → three-way prompt (regenerate / continue / abort) is mandatory; do not silently overwrite.
+- **No staging directory but user explicitly invoked propose** → standalone mode, no message.
+
+## Run-summary emit (one-shot at command completion)
+
+(Per \`orbit-run-summary-emit\` capability)
+
+\`/orbit:propose\` is a one-shot command per \`orbit-run-summary-emit\`'s \`Emit timing semantics\` requirement (emit ONCE on natural command completion). After all artifacts are generated and any staging-directory move has completed, write:
+
+\`\`\`
+orbit/changes/<name>/.orbit-runs/propose-<TS>.json
+\`\`\`
+
+Where \`<TS>\` is ISO-8601 UTC with hyphens (e.g., \`propose-2026-05-21T13-34-12Z.json\`). Create \`.orbit-runs/\` if it doesn't exist.
+
+### JSON shape
+
+Per the universal spine in \`orbit-conventions\`'s \`Internal-run JSON summary format\` + per-command extensions:
+
+\`\`\`json
+{
+  "command": "propose",
+  "timestamp": "<ISO-8601 UTC>",
+  "change": "<name>",
+  "final_assessment": "<narrative, e.g., 'Generated proposal/design/tasks/specs for <name>; consumed prior explore.md (X decisions seeded).'>",
+  "next_recommended": "/orbit:review <name> — proposal artifacts ready; review before apply",
+  "kind": "workflow",
+  "artifacts_created": ["proposal", "design", "tasks", "specs/<capability>"],
+  "delta_count": <int — sum of ADDED/MODIFIED/REMOVED/RENAMED requirements across all spec deltas>,
+  "from": "explore" | "scratch"
+}
+\`\`\`
+
+Field notes:
+- \`artifacts_created\` lists artifact IDs actually written (proposal, design, tasks, specs/\`<capability>\`). Use the capability-specific paths under \`specs/\`.
+- \`delta_count\` totals normative requirements across spec delta files; helps downstream tools answer "is this change small or large?"
+- \`from\`: \`"explore"\` for consume-mode (explore.md existed and was promoted), \`"scratch"\` for standalone-mode (no prior explore).
+
+### \`next_recommended\` — always recommend review next
+
+Per \`orbit-run-summary-emit\`'s \`Propose-shaped and artifact-completion-aware recommendation logic\` requirement and \`\`, propose ALWAYS recommends \`/orbit:review\` next, never \`/orbit:apply\` directly. Even if the user is confident the artifacts are ready, the canonical orbit flow is propose → review → apply, with review acting as the pre-apply checkpoint.
+
+orbit-status's tier-1 reader parses the leading \`/orbit:review <name>\` token into \`command\`/\`args\`.`,
     license: 'MIT',
     compatibility: 'Requires orbit CLI.',
     metadata: { author: 'openspec', version: '1.0' },
@@ -128,7 +267,7 @@ I'll create a change with artifacts:
 - design.md (how)
 - tasks.md (implementation steps)
 
-When ready to implement, run /orbit:apply
+When ready to implement, run \`/orbit:review\` (proposal mode) first, then \`/orbit:apply\`. Per orbit's canonical flow, propose → review → apply; review is the pre-apply checkpoint. See the \`Orbit additions\` section below for full rationale.
 
 ---
 
@@ -219,6 +358,24 @@ After completing all artifacts, summarize:
 - Always read dependency artifacts before creating a new one
 - If context is critically unclear, ask the user - but prefer making reasonable decisions to keep momentum
 - If a change with that name already exists, ask if user wants to continue it or create a new one
-- Verify each artifact file exists after writing before proceeding to next`
+- Verify each artifact file exists after writing before proceeding to next
+
+---
+
+## Orbit additions (summary)
+
+The \`orbit-propose\` skill is extended by orbit-spec with a **consume mode** that activates when \`orbit/explore/<name>/explore.md\` exists (typically from a prior \`/orbit:explore <name>\` session):
+
+- **Mode detection** runs before Step 1: if a staging directory exists for the change name, switch to consume mode.
+- **Consume mode** reads \`explore.md\` as the authoritative seed instead of prompting for a description. Section mapping: Premise → proposal motivation; Decisions → spec deltas + design + tasks; Considered & out → design "Alternatives considered"; References → contextual reads.
+- **Open-question handling**: per-question prompt with three resolution paths — resolve now (becomes Decision), defer (becomes \`@review:\` marker in generated artifacts), abandon (moves to Considered & out). Bulk-handle UX for ~5+ questions.
+- **Move staging directory** to \`orbit/changes/<name>/\` after artifact generation completes; \`explore.md\` and sibling files persist as historical record.
+- **Conflict detection**: if both \`orbit/explore/<name>/\` and \`orbit/changes/<name>/\` exist, three-way prompt (regenerate / continue / abort).
+- **Naming inference**: invoked without \`<name>\` when exactly one staging directory exists → propose that name.
+- **Standalone mode preserved**: when no staging directory exists, falls through to upstream behavior unchanged.
+- **Always recommends \`/orbit:review\` next, never \`/orbit:apply\` directly** (per \`orbit-run-summary-emit\`'s \`Propose-shaped and artifact-completion-aware recommendation logic\` baseline requirement). The canonical orbit flow is propose → review → apply, with review as the pre-apply checkpoint. The run-summary JSON's \`next_recommended\` field follows this rule, and the same recommendation appears in chat output.
+- **Three execution disciplines** (read-before-reference / change completeness / pushback) per orbit-conventions.
+
+See the \`orbit-propose\` skill for full consume-mode flow, section mapping, and graceful-degradation cases.`
   };
 }
