@@ -26,10 +26,15 @@ The fork bootstrap (phase **A1**) is complete:
 - **Toolchain is npm, not pnpm.** `npm install` works end-to-end. Build = `npm run build`
   (`node build.js` → `tsc`); tests = `npm test` (vitest). Baseline: ~1369 tests passing.
 
-Next phase is **B1** (relocate orbit's prompt content from the old overlay into the source template
-modules), dogfooded as `orbit/changes/relocate-modified-upstream-workflows/`. Per **D13**, B-arc keeps
-prose as **inline TS template literals** (markdown-as-source/D6 deferred). The full plan and all design
-decisions live in the docs below — **read them before doing B-arc work.**
+**B1 (relocate)** is underway on branch `b1-relocate-workflows`, dogfooded as
+`orbit/changes/relocate-modified-upstream-workflows/`. Done: orbit's editorial content relocated into
+all 11 workflow modules (inline-TS per **D13**; `sync-specs` was a no-op — orbit never modified it) +
+6 spec deltas (`orbit-conventions`, `orbit-run-summary-emit`, `orbit-{explore,propose,archive}-modifications`,
+`orbit-onboard`) relocated as ADDED capabilities. Change validates `--strict`; ~1391 tests green;
+generation-fidelity tests assert the orbit layer per workflow. Per D13, B-arc keeps prose as **inline
+TS template literals** (markdown-as-source/D6 deferred). **Deferred follow-ups:** onboard content-
+accuracy + D11 genericization (issue #2), `archive-change` `references/` file (B2), broader user-docs
+rewrite (issue #1). The full plan and design decisions live in the docs below — **read them before B-arc work.**
 
 ## Source of truth for the plan
 

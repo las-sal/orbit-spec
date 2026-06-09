@@ -2,16 +2,16 @@
 
 ## 1. Spec deltas (bring the 6 capabilities into orbit-spec)
 
-- [ ] 1.1 Author `specs/orbit-conventions/spec.md` (ADDED) — the three execution disciplines, from
+- [x] 1.1 Author `specs/orbit-conventions/spec.md` (ADDED) — the three execution disciplines, from
   the overlay spec, mechanism-neutral.
-- [ ] 1.2 Author `specs/orbit-run-summary-emit/spec.md` (ADDED) — `.orbit-runs/` JSON emit; note the
+- [x] 1.2 Author `specs/orbit-run-summary-emit/spec.md` (ADDED) — `.orbit-runs/` JSON emit; note the
   two non-emitters (`sync-specs`, `bulk-archive-change`).
-- [ ] 1.3 Author `specs/orbit-explore-modifications/spec.md` (ADDED).
-- [ ] 1.4 Author `specs/orbit-propose-modifications/spec.md` (ADDED).
-- [ ] 1.5 Author `specs/orbit-archive-modifications/spec.md` (ADDED) — flag the deferred reference
+- [x] 1.3 Author `specs/orbit-explore-modifications/spec.md` (ADDED).
+- [x] 1.4 Author `specs/orbit-propose-modifications/spec.md` (ADDED).
+- [x] 1.5 Author `specs/orbit-archive-modifications/spec.md` (ADDED) — flag the deferred reference
   file as a B2 dependency, not a B1 requirement.
-- [ ] 1.6 Author `specs/orbit-onboard/spec.md` (ADDED).
-- [ ] 1.7 `orbit validate relocate-modified-upstream-workflows --strict` passes.
+- [x] 1.6 Author `specs/orbit-onboard/spec.md` (ADDED).
+- [x] 1.7 `orbit validate relocate-modified-upstream-workflows --strict` passes.
 
 ## 2. Explore spike (prove the loop on ONE workflow — D1)
 
@@ -44,10 +44,10 @@ run-summary where applicable):
 ## 4. Validation & completeness
 
 - [x] 4.1 `npm run build && npm test` green after the full roll-out.
-- [ ] 4.2 Generation-fidelity: `orbit init --tools claude` reproduces all 11 workflows' expected
+- [x] 4.2 Generation-fidelity: `orbit init --tools claude` reproduces all 11 workflows' expected
   content; diff against the overlay (modulo intentional mechanism-neutral edits) shows only expected
   deltas.
-- [ ] 4.3 Change-completeness sweep (per CLAUDE.md): no half-relocated bodies, no Claude-only residue,
+- [x] 4.3 Change-completeness sweep (per CLAUDE.md): no half-relocated bodies, no Claude-only residue,
   no stale `/orbit:` mechanism assumptions, no dropped run-summary sections.
-- [ ] 4.4 Confirm no generator/engine files were touched (B1 scope discipline).
-- [ ] 4.5 Update CLAUDE.md "Current state" from A1 → B1-complete when done.
+- [x] 4.4 Confirm no generator/engine files were touched (B1 scope discipline).
+- [x] 4.5 Update CLAUDE.md "Current state" from A1 → B1-complete when done.
