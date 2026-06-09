@@ -2,180 +2,141 @@
 
 ### Requirement: Skill body 5-section structure
 
-The orbit-authored `orbit-onboard` SKILL.md SHALL have exactly 5 sections in this order: Setup verification, Identity statement, Canonical-flow walkthrough, Quick-reference command table, Try-it nudge. The 5-section structure is the reference-leaning hybrid walkthrough style — single-pass read with no interactive demo, no auto-generated sample change, no simulation of cross-AI loops.
+The orbit-authored `orbit-onboard` SKILL body SHALL have exactly 5 sections in this order: Orientation, Identity statement, Canonical-flow walkthrough, Quick-reference command table, Try-it nudge. The structure is a reference-leaning single-pass read — no interactive demo, no auto-generated sample change, no simulated cross-AI loops.
 
 #### Scenario: Sections appear in order
 
-- **WHEN** a reader (human or AI) reads `.claude/skills/orbit-onboard/SKILL.md`
-- **THEN** the body presents Section 1 (Setup verification), then Section 2 (Identity statement), then Section 3 (Canonical-flow walkthrough), then Section 4 (Quick-reference command table), then Section 5 (Try-it nudge), in that order; sections do not interleave; section boundaries are clearly delimited by H2 headings
+- **WHEN** a reader (human or AI) reads the `orbit-onboard` skill body
+- **THEN** the body presents Section 1 (Orientation), then Section 2 (Identity statement), then Section 3 (Canonical-flow walkthrough), then Section 4 (Quick-reference command table), then Section 5 (Try-it nudge), in that order; sections do not interleave; boundaries are delimited by H2 headings
 
 #### Scenario: Single-pass reference, not interactive
 
 - **WHEN** a user invokes `/orbit:onboard`
-- **THEN** the skill executes Section 1 (Setup verification) as gating logic, then renders Sections 2-5 as a sequential read; the skill does NOT create demo changes in the user's project, does NOT auto-invoke other `/orbit:*` commands, does NOT prompt the user for interactive choices outside Section 1's verification
+- **THEN** the skill renders Sections 1-5 as a sequential read; it does NOT create demo changes in the user's project, does NOT auto-invoke other `/orbit:*` commands, and does NOT prompt the user for interactive choices
 
 #### Scenario: Audience-tuned for AI cold-load and human reference
 
-- **WHEN** the SKILL body is authored or revised
-- **THEN** the prose is tuned for the audience triple: (a) AI sessions loading orbit context cold, (b) future-self after a context break, (c) eventual collaborators / handoff readers. Content is parseable workflow documentation, NOT a tutorial requiring step-by-step execution
+- **WHEN** the body is authored or revised
+- **THEN** the prose is tuned for: (a) AI sessions loading orbit context cold, (b) future-self after a context break, (c) collaborators / handoff readers. Content is parseable workflow documentation, not a step-by-step tutorial
 
-### Requirement: Setup verification section
+### Requirement: Orientation section
 
-Section 1 of the SKILL body SHALL perform setup verification before any walkthrough content renders. Verification has three outcomes (hard-stop, warn-continue, pass-with-layered-checks) keyed to specific failure modes.
+Section 1 of the body SHALL orient the reader to orbit as a self-contained tool. It does NOT perform install-integrity verification and does NOT gate the remaining sections.
 
-#### Scenario: Hard-stop on overlay-incomplete
+#### Scenario: States the self-contained model
 
-- **WHEN** the user's `.claude/` state is missing any required orbit-shipped skill or command (failure modes: overlay step skipped entirely, partial overlay, wrong `--tools` install profile, `orbit-sync-specs` missing) OR `orbit --version` does not match the pinned upstream version per `orbit-conventions` `Upstream version pinning` requirement
-- **THEN** Section 1 emits a lumped "overlay incomplete; see README install section #2" error message pointing the user at the documented install steps, AND halts the onboard session — Sections 2-5 do NOT render
+- **WHEN** the Orientation section is read
+- **THEN** the prose states that orbit-spec is self-contained (a hard fork of openspec@1.3.1 with orbit's editorial layer built into the `orbit` CLI) — there is nothing to "overlay" and no separate engine to install
 
-#### Scenario: Warn-and-continue on prune-step-skipped
+#### Scenario: Points at the CLI and workspace
 
-- **WHEN** the user's `.claude/skills/feedback/` directory is present (indicating the documented `rm -rf .claude/skills/feedback` prune step from the README install section was not run after the overlay)
-- **THEN** Section 1 emits an inline `⚠` warning with the remediation hint (`rm -rf .claude/skills/feedback`) and proceeds to Sections 2-5; the user is informed but not blocked
+- **WHEN** the Orientation section is read
+- **THEN** it identifies the CLI as `orbit` (engine pinned at 1.3.1), the project workspace as `orbit/` (specs in `orbit/specs/`, in-flight changes in `orbit/changes/`), notes `orbit init` as the setup step if `orbit/` is absent, and notes that the `/orbit:*` commands and skills are generated by `orbit init`
 
-#### Scenario: Pass with layered ✓ checks
+#### Scenario: No gating, no overlay-integrity checks
 
-- **WHEN** the user's `.claude/` state matches the documented post-install surface (15 skills + 15 commands total — 9 upstream-modified + 5 orbit-authored + 1 upstream-required primitive `orbit-sync-specs` skills; 9 orbit-modified + 5 orbit-authored + 1 upstream-untouched (`ff.md`) commands — after this change archives. Command total drops from 16 to 15 because orbit's verbatim-duplicate `fast-forward.md` is removed from the overlay per `orbit-conventions` `Verbatim upstream files not in orbit's overlay`; upstream's `ff.md` is what users have for the fast-forward workflow)
-- **THEN** Section 1 emits a layered ✓ output mirroring the four `orbit-conventions` `Overlay file disposition` categories: ✓ orbit CLI version match; ✓ N upstream-modified skills present (where N matches the disposition baseline); ✓ M orbit-authored skills present (where M matches baseline); ✓ orbit-sync-specs upstream-required primitive present; ✓ feedback/ absent (prune-step verified). Then proceeds to Sections 2-5.
-
-#### Scenario: Lumped messaging for overlay-incomplete sub-modes
-
-- **WHEN** any hard-stop sub-mode fires (overlay-incomplete, partial overlay, wrong `--tools` profile, `orbit-sync-specs` alone missing, OR wrong upstream version)
-- **THEN** the emitted message does NOT distinguish between sub-modes; a single lumped message points to the README's `## Installation` section as a whole (both `### 1. Initialize upstream OpenSpec` for version-pin issues and `### 2. Overlay orbit` for overlay-incomplete issues). The user re-reads install steps from the top; this is the trade-off accepted by the lumping decision (per design D-onboard-4) — slightly broader remediation reading in exchange for one detection branch + one prose message vs five sub-variants
-
-#### Scenario: Verification cannot detect stale AI client cache
-
-- **WHEN** the user's `.claude/` state is correct on disk but the AI client has cached an older `.claude/` snapshot
-- **THEN** Section 1's checks pass (it cannot read the client's cache state); the SKILL body's gotcha section MAY mention this limitation with the remediation "restart your AI client after install"; this is a documented limitation, not a verification responsibility
+- **WHEN** a user invokes `/orbit:onboard`
+- **THEN** Section 1 does NOT hard-stop, does NOT count installed skills/commands against a baseline, does NOT check for a removed `feedback` skill, and does NOT verify an overlay against a separately-installed upstream — Sections 2-5 always render
 
 ### Requirement: Identity statement section
 
-Section 2 of the SKILL body SHALL state what orbit IS using post-pegging framing and enumerate orbit-distinctive layers.
+Section 2 of the body SHALL state what orbit IS and enumerate its distinctive layers, using self-contained-fork framing.
 
-#### Scenario: Post-pegging framing
+#### Scenario: Self-contained-fork framing
 
 - **WHEN** the Identity section is read
-- **THEN** the prose positions orbit as a workflow tool that owns the `.claude/` surface and uses `@fission-ai/openspec` at the pinned version as a CLI engine; the prose does NOT use augmentation language (`augments cleanly`, `overlay on top of`, `layered on top of`, `extends upstream`) — orbit is a distinct workflow tool that shares concepts with upstream, not an additive layer
+- **THEN** the prose positions orbit (orbit-spec) as a self-contained hard fork of `@fission-ai/openspec@1.3.1` — the upstream engine and orbit's editorial/judgment layer live together in one tool invoked as `orbit`, with no overlay and no separately-installed CLI; the engine is pinned (deliberate, surgical upgrades only)
 
 #### Scenario: Enumerates orbit-distinctive layers
 
 - **WHEN** the Identity section is read
-- **THEN** the prose names the orbit-distinctive layers concretely: editorial review (`/orbit:review`, `/orbit:review-external`, `/orbit:address-reviews`), drift audit (`/orbit:audit-drift`), capture (lenses — `orbit/lenses/perspectives.md`, `orbit/lenses/critical-paths.md`), JSON run-summary emission, three execution disciplines (read-before-reference / change completeness / pushback)
+- **THEN** the prose names the distinctive layers concretely: editorial review (`/orbit:review`, `/orbit:review-external`, `/orbit:address-reviews`), drift audit (`/orbit:audit-drift`), capture (lenses — `orbit/lenses/perspectives.md`, `orbit/lenses/critical-paths.md`), JSON run-summary emission, three execution disciplines (read-before-reference / change completeness / pushback)
+
+#### Scenario: No augmentation / overlay language
+
+- **WHEN** the Identity section is reviewed (manually or via grep)
+- **THEN** the prose does not frame orbit as an additive layer on upstream — phrases like `augments cleanly`, `overlay on top of`, `layered on top of`, `extends upstream` are absent
 
 ### Requirement: Canonical-flow walkthrough section
 
-Section 3 of the SKILL body SHALL present orbit's 9-phase canonical workflow as an ASCII diagram followed by one paragraph per phase.
+Section 3 of the body SHALL present orbit's canonical workflow as a diagram followed by one paragraph per phase.
 
-#### Scenario: 9-phase diagram
+#### Scenario: Flow diagram
 
 - **WHEN** the Canonical-flow section is read
-- **THEN** an ASCII diagram (or equivalent markdown structure) shows the phases in order: explore → propose → review → address-reviews → apply → verify → review --as system → address-reviews → archive
+- **THEN** a diagram (ASCII or equivalent markdown) shows the phases in order: explore → propose → review → address-reviews → apply → verify → review --as system → address-reviews → archive
 
 #### Scenario: One paragraph per phase
 
 - **WHEN** the Canonical-flow section is read
-- **THEN** each of the 9 phases has one paragraph describing the phase's purpose, the primary `/orbit:*` command that drives it, and the typical output the user will see
+- **THEN** each phase has one paragraph describing its purpose, the primary `/orbit:*` command that drives it, and the typical output the user sees
 
 #### Scenario: Lenses introduced contextually
 
 - **WHEN** the Canonical-flow section is read
-- **THEN** lenses (`perspectives.md` + `critical-paths.md`) are introduced in the explore-phase paragraph (where lenses are captured per `orbit-explore`'s capture triggers) and re-referenced in the review-phase paragraphs (where `/orbit:review --as system` Passes 4-5 consult them)
+- **THEN** lenses (`perspectives.md` + `critical-paths.md`) are introduced in the explore-phase paragraph (where they are captured) and re-referenced in the review-phase paragraphs (where system-mode review consults them)
 
-#### Scenario: External-review demoed abstractly
+#### Scenario: External-review named, not demoed
 
-- **WHEN** the Canonical-flow section's review or address-reviews phase paragraphs are read
-- **THEN** the external-review loop is named (`/orbit:review-external`) with a one-paragraph what-it-does (packages a review request for a different AI; emits findings file; consumed via `/orbit:address-reviews --from-file`) and a pointer to `.claude/skills/orbit-review-external/SKILL.md` for details; NO bundled sample prompt artifact is included in the SKILL body; NO simulated cross-AI exchange is rendered
+- **WHEN** the review / address-reviews phase paragraphs are read
+- **THEN** the external-review loop is named (`/orbit:review-external`) with a one-paragraph description and a pointer to the `orbit-review-external` skill for details; no bundled sample prompt and no simulated cross-AI exchange is rendered in the body
 
 ### Requirement: Quick-reference command table section
 
-Section 4 of the SKILL body SHALL list every `/orbit:*` command in orbit's overlay with a one-line description in a markdown table.
+Section 4 of the body SHALL list every `/orbit:*` command orbit generates, with a one-line description in a markdown table.
 
 #### Scenario: Complete enumeration
 
 - **WHEN** the Quick-reference section is read
-- **THEN** the table lists every slash command in the user's post-install `.claude/commands/opsx/` (15 files: 14 from orbit's overlay + 1 from upstream init untouched). Enumeration: `address-reviews`, `apply`, `archive`, `audit-drift`, `bulk-archive`, `continue`, `explore`, `ff` (upstream-installed, untouched by overlay — orbit's previous `fast-forward.md` was removed per the verbatim-duplicates principle), `new`, `onboard`, `propose`, `review`, `review-external`, `sync`, `verify`; each row has the command name and a one-line description
+- **THEN** the table lists each `/orbit:*` command orbit generates into the project (via `orbit init`), one row per command with a one-line description
 
-#### Scenario: Table does NOT include a disposition column
+#### Scenario: No disposition column
 
 - **WHEN** the Quick-reference table is rendered
-- **THEN** the table does NOT include a column distinguishing orbit-authored / orbit-modified / upstream-required-primitive / upstream-untouched (that classification is canonical in `orbit-conventions` `Overlay file disposition`; duplicating it here creates drift risk). The table MAY include a brief pointer line to `Overlay file disposition` for readers who want categorization
+- **THEN** the table documents the user-invocable command surface only; it does not add a column classifying how each file is shipped
 
 ### Requirement: Try-it nudge section
 
-Section 5 of the SKILL body SHALL conclude with two closing recommendations covering both audiences: users with a concrete project idea AND users orienting without a concrete idea yet.
+Section 5 of the body SHALL conclude with two closing recommendations covering both audiences: users with a concrete project idea AND users orienting without one yet.
 
 #### Scenario: Named-mode recommendation for concrete-idea users
 
 - **WHEN** the Try-it nudge section is read
-- **THEN** one recommendation is "If you have a concrete project idea, run `/orbit:explore <name>`" — pointing users with substantive work to start named-mode explore immediately. The recommendation does NOT use "for practice" or "try a demo" framing (no synthetic-change creation)
+- **THEN** one recommendation is "If you have a concrete project idea, run `/orbit:explore <name>`"; it does not use "for practice" / "try a demo" framing (no synthetic-change creation)
 
 #### Scenario: Bare-mode recommendation for orientation-only users
 
 - **WHEN** the Try-it nudge section is read
-- **THEN** a second recommendation is "If you're just orienting and don't have a concrete idea yet, run `/orbit:explore` (no name)" — pointing orientation-only users to bare-mode explore as a no-decision-yet entry. This preserves the no-demo-change discipline (named-mode forces a name; bare-mode is thinking-mode without commitment)
-
-#### Scenario: Try-it nudge is the section designated for future extension
-
-- **WHEN** future orbit work explores an interactive guided-tour enhancement to onboard (currently rejected as over-built per design.md Non-Goals)
-- **THEN** the Try-it nudge section is the natural extension point — it MAY grow to invite the user into an interactive prompt without rewriting Sections 1-4
+- **THEN** a second recommendation is "If you're just orienting, run `/orbit:explore` (no name)" — bare-mode explore as a no-commitment entry, preserving the no-demo-change discipline
 
 ### Requirement: Non-emission of run-summary JSON
 
-The orbit-authored `orbit-onboard` SKILL SHALL NOT emit a run-summary JSON to `orbit/.orbit-runs/` (or any per-change `.orbit-runs/`) when invoked. This composes with the existing `orbit-run-summary-emit` baseline `Emit scope` requirement, which lists `/orbit:onboard` as a non-emit command.
+The `orbit-onboard` skill SHALL NOT emit a run-summary JSON when invoked. This composes with `orbit-run-summary-emit`'s `Emit scope`, which lists `/orbit:onboard` as a non-emit command.
 
-#### Scenario: Brief metadata note in SKILL body asserts non-emission
+#### Scenario: Brief metadata note asserts non-emission
 
-- **WHEN** the SKILL body is authored or revised
-- **THEN** a brief metadata note (one or two lines) placed at the SKILL body's discretion (footer, near-frontmatter, or other natural reading position — flexibility is intentional) explicitly states that `/orbit:onboard` does NOT emit run-summary JSON, citing `orbit-run-summary-emit` `Emit scope`; the note prevents future orbit-additions or refactors from silently introducing emit behavior
+- **WHEN** the body is authored or revised
+- **THEN** a brief note (one or two lines, placement at the body's discretion) states that `/orbit:onboard` does NOT emit run-summary JSON, citing `orbit-run-summary-emit` `Emit scope`, preventing future refactors from silently introducing emit behavior
 
 #### Scenario: No `.orbit-runs/` writes during invocation
 
-- **WHEN** a user invokes `/orbit:onboard` (regardless of verification outcome)
-- **THEN** no JSON file is written to `orbit/.orbit-runs/`, `orbit/changes/<name>/.orbit-runs/`, or any per-change subdirectory; the SKILL's effects are limited to producing the verification output and rendering Sections 2-5 (or halting at Section 1 on hard-stop)
+- **WHEN** a user invokes `/orbit:onboard`
+- **THEN** no JSON file is written to `orbit/.orbit-runs/` or any per-change `.orbit-runs/`; the skill's effect is limited to rendering Sections 1-5
 
-### Requirement: Command-file body matches SKILL.md body (duplicate-pattern discipline)
+### Requirement: Skill and command share one body
 
-The `.claude/commands/opsx/onboard.md` slash-command file SHALL carry the same body as `.claude/skills/orbit-onboard/SKILL.md`, differing only in frontmatter. This follows the existing convention for orbit-authored command/skill pairs and is tracked for cross-cutting cleanup as [](https://github.com/las-sal/orbit-spec/issues/29).
+The `orbit-onboard` skill and the `/orbit:onboard` command SHALL be generated from a single source body, so the two outputs differ only in frontmatter.
 
-#### Scenario: Bodies are duplicate prose, frontmatter differs
+#### Scenario: Single source body
 
-- **WHEN** a reader compares `.claude/commands/opsx/onboard.md` to `.claude/skills/orbit-onboard/SKILL.md` (excluding the frontmatter block at the top of each)
-- **THEN** the prose body is identical: same Section 1 verification logic, same Section 2 identity, same Section 3 walkthrough paragraphs, same Section 4 table, same Section 5 nudge. Differences are limited to frontmatter (the command file has `category` + `tags`; the SKILL has `license` + `compatibility` + `metadata`)
-
-#### Scenario: Edit-time discipline — update both files
-
-- **WHEN** an orbit contributor revises either `.claude/commands/opsx/onboard.md` OR `.claude/skills/orbit-onboard/SKILL.md`
-- **THEN** the contributor SHALL update the other file in the same edit (or in a same-change task) so the bodies stay in sync; review processes that surface drift between the two files treat the drift as a CRITICAL finding
-
-#### Scenario: Discipline is transitional, tracked for refactor
-
-- **WHEN** orbit considers refactoring orbit-authored skill/command pairs to a single-source pattern
-- **THEN** the work is tracked at [](https://github.com/las-sal/orbit-spec/issues/29) and applies to all 5 orbit-authored pairs (review, review-external, audit-drift, address-reviews, onboard); resolving #29 SHALL be its own change, not bundled with onboard-specific work
+- **WHEN** the skill and command templates are generated
+- **THEN** both derive their body from one shared source (the workflow module's onboarding-instructions helper); the generated `SKILL.md` and command file have identical prose, differing only in their frontmatter blocks
 
 ### Requirement: Slash-command surface `/orbit:onboard`
 
-The orbit-authored skill SHALL preserve the `/orbit:onboard` slash-command surface; the new body replaces the upstream-bodied content without changing the user-facing command name or invocation pattern.
-
-#### Scenario: Same directory, same name
-
-- **WHEN** orbit ships the new orbit-authored body
-- **THEN** the skill lives at `.claude/skills/orbit-onboard/` (matching sibling `orbit-*` naming convention per `orbit-conventions` `Overlay file disposition` `Orbit-authored — full ownership` scenario); the slash command is `/orbit:onboard` (matching pre-rewrite invocation); no transitional rename to `orbit-onboard` or `orbit-onboard-orbit` is performed
+The orbit-authored skill SHALL preserve the `/orbit:onboard` slash-command surface; command id `onboard` and skill dir `orbit-onboard` are unchanged.
 
 #### Scenario: Invocation unchanged for users
 
-- **WHEN** a user types `/orbit:onboard` in their AI client (regardless of prior orbit version)
-- **THEN** the command resolves to the orbit-authored skill body; users familiar with the pre-rewrite invocation pattern do not need to learn a new command surface
-
-### Requirement: Identity section MUST NOT contain augmentation language
-
-The Identity statement section (Section 2) SHALL avoid language that frames orbit as an additive layer on upstream (e.g., "augments cleanly", "overlay on top of", "layered on top of", "extends upstream OpenSpec"). This composes with the post-pegging framing in `orbit-conventions` `Distribution model — pegged engine + orbit-owned surface`.
-
-#### Scenario: Negative test — augmentation language is absent
-
-- **WHEN** the Identity section is reviewed (manually or via grep at apply time)
-- **THEN** the prose does not contain the phrases `augments cleanly`, `overlay on top of`, `layered on top of`, or `extends upstream` (in the senses described above); a grep `grep -E 'augments cleanly|overlay on top of|layered on top of|extends upstream' .claude/skills/orbit-onboard/SKILL.md` returns no matches
-
-#### Scenario: Positive framing — workflow tool with pinned engine
-
-- **WHEN** the Identity section is read
-- **THEN** the prose positions orbit as a workflow tool that owns the `.claude/` surface and uses `@fission-ai/openspec@1.3.1` as a pinned CLI engine — the same framing established in `orbit-conventions` `Distribution model — pegged engine + orbit-owned surface`
+- **WHEN** a user types `/orbit:onboard`
+- **THEN** the command resolves to the orbit-authored onboarding body; the skill dir is `orbit-onboard`, the command id is `onboard`

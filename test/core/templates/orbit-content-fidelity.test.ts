@@ -52,6 +52,17 @@ describe('orbit content fidelity (B1 relocation)', () => {
     });
   });
 
+  it('onboard reflects the self-contained fork, not the dead overlay model', () => {
+    const skill = getOnboardSkillTemplate().instructions;
+    // new orbit-spec framing present
+    expect(skill).toContain('self-contained');
+    // overlay-model residue gone
+    expect(skill).not.toMatch(/orbit's overlay|Overlay orbit|Setup verification/);
+    expect(skill).not.toContain('rm -rf .claude/skills/feedback');
+    expect(skill).not.toMatch(/MUST equal `?\d+/);
+    expect(skill).not.toContain('.claude/skills/');
+  });
+
   it('explore command carries the orbit-additions summary, mechanism-neutral', () => {
     const command = getOrbitExploreCommandTemplate().content;
     expect(command).toContain('Orbit additions (summary)');

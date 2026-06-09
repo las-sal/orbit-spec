@@ -36,7 +36,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   getApplyChangeSkillTemplate: '61fdea1685f88500ee4894d2857084d75b0949746d016349c74d8c89cee15570',
   getFfChangeSkillTemplate: '5e9c7afc1532ce58eeefc678cc7f628019df67ccc422b94ab1e60e2bfddeec96',
   getSyncSpecsSkillTemplate: '051c7fbb52cf2e87d8da2ffc45e6dbd2b4663f9b37add611abe430695e9694b1',
-  getOnboardSkillTemplate: '300e89a14dc9faed297dc5250b198302dc0c6af34f49f1260ec86d34105335c1',
+  getOnboardSkillTemplate: 'd245a8771e27ff26fb45162cdca922c07c7cf67b7d5b85e9bdf32d4d912e22cc',
   getOrbitExploreCommandTemplate: '67d3c493798424aa9f2dc524c0ddb18c5f2b44ef6a29cdbbc0fdf644a3b50f8a',
   getOrbitNewCommandTemplate: '291c8347f65dcc38184dafa932c78b0a3e3218e5a105daff9046f33020febf0c',
   getOrbitContinueCommandTemplate: '93442585519372325506d445d28c1ca3828fe5b2e027ad8a413a47e139228295',
@@ -47,7 +47,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   getOrbitSyncCommandTemplate: 'fac20e37231338129b53cf0bb8f97b4f3ca1f317ed1868dc7555e5bb139083da',
   getVerifyChangeSkillTemplate: '6362a75dd5a1a75bf54a2794d014c5654dab872893f5e8d8dca817f32d818d47',
   getOrbitArchiveCommandTemplate: '729cc242b591501dfa6c7661af4eae58a0a6d69fdae7acf97bd2b35d982c8913',
-  getOrbitOnboardCommandTemplate: 'eba2c3806f16da726bc47ceeb31cfaa5870b5aac70a2eaa25a4430279b24eee3',
+  getOrbitOnboardCommandTemplate: '1b242978883155481782fa8304dca9419b9361373f83728a72abb91c3a316e21',
   getOrbitBulkArchiveCommandTemplate: 'a84f4da07a4f116bd187e6775889ee8698f57a71249fd4cee6c90c49143cb0fd',
   getOrbitVerifyCommandTemplate: '8aa5765188bb0d8b73b00dd5a6133a8fb1594c732140c99191beb3bc8862a6cc',
   getOrbitProposeSkillTemplate: 'b33592bb6ba7a39cc317acd54c76847f1972c3ba785cf53018a56dfbf3398777',
@@ -65,7 +65,7 @@ const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
   'orbit-archive-change': '4662c1a35205ada0415d5606d82fee4f9628a818cb034f602f8b46ed677d7bf3',
   'orbit-bulk-archive-change': '1bd94762c8d0b2f8ec86e06d2552be7e2ad14574147839018988071b33abccf8',
   'orbit-verify-change': 'caba1afc11f1d67a19bafea077003f86d320cda7a6600d44572281c95b66ffaf',
-  'orbit-onboard': '712bc442332750b63362047074eb419aea2d0b6df34f37c0b03b1f5617f7b0d4',
+  'orbit-onboard': '938eb1f529eb4001dd9d0e465c5f101aa3aaf095ae994e3fe631c431964092e2',
   'orbit-propose': '1b71d8875a7252284e2f7e88f240029b6985dccf169c03c0a5f1b0e4cc32b534',
 };
 
