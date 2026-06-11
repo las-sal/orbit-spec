@@ -32,9 +32,8 @@ all 11 workflow modules (inline-TS per **D13**; `sync-specs` was a no-op — orb
 6 spec deltas (`orbit-conventions`, `orbit-run-summary-emit`, `orbit-{explore,propose,archive}-modifications`,
 `orbit-onboard`) relocated as ADDED capabilities. Change validates `--strict`; ~1391 tests green;
 generation-fidelity tests assert the orbit layer per workflow. Per D13, B-arc keeps prose as **inline
-TS template literals** (markdown-as-source/D6 deferred). **Deferred follow-ups:** onboard content-
-accuracy + D11 genericization (issue #2), `archive-change` `references/` file (B2), broader user-docs
-rewrite (issue #1). The full plan and design decisions live in the docs below — **read them before B-arc work.**
+TS template literals** (markdown-as-source/D6 deferred). **Deferred follow-ups:** `archive-change`
+`references/` file (B2), broader user-docs rewrite (issue #1). The full plan and design decisions live in the docs below — **read them before B-arc work.**
 
 ## Source of truth for the plan
 

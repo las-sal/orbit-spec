@@ -9,7 +9,7 @@ import type { SkillTemplate, CommandTemplate } from '../types.js';
 export function getOnboardSkillTemplate(): SkillTemplate {
   return {
     name: 'orbit-onboard',
-    description: 'Guided onboarding for OpenSpec - walk through a complete workflow cycle with narration and real codebase work.',
+    description: 'Single-pass onboarding reference for orbit - orientation to the self-contained tool, the canonical workflow, and the full command table. No demo changes, no interactive walkthrough.',
     instructions: getOnboardInstructions(),
     license: 'MIT',
     compatibility: 'Requires orbit CLI.',
@@ -93,14 +93,14 @@ Orbit's canonical flow has 9 phases. Each maps to a \`/orbit:*\` slash command. 
 
 ## Section 4: Quick-reference command table
 
-Every \`/orbit:*\` slash command orbit generates into your project (via \`orbit init\`). One-line descriptions follow.
+The \`/orbit:*\` command surface. Rows marked *(planned)* are orbit's editorial-layer commands that have not landed in the generator yet; every other row is generated into your project by \`orbit init\`. One-line descriptions follow.
 
 | Command | One-line description |
 |---------|---------------------|
-| \`/orbit:address-reviews [<scope>] [--from-file <path>] [--batch] [--no-cascade]\` | Walk inline \`@review:\` markers or \`--from-file\` findings (external-review markdown, internal review JSON, or audit-drift JSON — auto-detected by content sniff) through pushback → classify → fix → ripple-cascade → remove. Walk-mode per-finding by default (\`--batch\` opts in); cascade auto-applies to IN-set files by default (\`--no-cascade\` opts out; OUT-set = audit-trail, baseline specs, cross-change/archive, safe-exclusions). Resolves rather than scans. Auto-discovers internal review/audit-drift JSON when invoked with a change name and no markers found. Disjunctive recommendations surface as structured A/B/discuss forks. |
+| \`/orbit:address-reviews [<scope>] [--from-file <path>] [--batch] [--no-cascade]\` | *(planned)* Walk inline \`@review:\` markers or \`--from-file\` findings (external-review markdown, internal review JSON, or audit-drift JSON — auto-detected by content sniff) through pushback → classify → fix → ripple-cascade → remove. Walk-mode per-finding by default (\`--batch\` opts in); cascade auto-applies to IN-set files by default (\`--no-cascade\` opts out; OUT-set = audit-trail, baseline specs, cross-change/archive, safe-exclusions). Resolves rather than scans. Auto-discovers internal review/audit-drift JSON when invoked with a change name and no markers found. Disjunctive recommendations surface as structured A/B/discuss forks. |
 | \`/orbit:apply <name>\` | Implement tasks from \`tasks.md\` chunk-by-chunk with end-of-chunk run-summary emits. Pauses on premise problems. |
 | \`/orbit:archive <name>\` | Move change to \`orbit/changes/archive/\`, run sync-specs to propagate deltas to baseline. Pre-archive \`@review:\` marker check + audit-drift sweep. |
-| \`/orbit:audit-drift [<change-name>]\` | Scan for drift between captured knowledge and reality (4 categories: vocabulary, lens, cross-doc, archive). Standalone or library-call. |
+| \`/orbit:audit-drift [<change-name>]\` | *(planned)* Scan for drift between captured knowledge and reality (4 categories: vocabulary, lens, cross-doc, archive). Standalone or library-call. |
 | \`/orbit:bulk-archive\` | Archive multiple completed changes at once. |
 | \`/orbit:continue <name>\` | Create the next artifact in the change's workflow. |
 | \`/orbit:explore [<name>]\` | Thinking-mode entry. Named: auto-captures decisions to \`explore.md\`. Bare: stays in chat until crystallization. |
@@ -108,8 +108,8 @@ Every \`/orbit:*\` slash command orbit generates into your project (via \`orbit 
 | \`/orbit:new <name>\` | Start a new change using the experimental artifact workflow. |
 | \`/orbit:onboard\` | Run this skill (the reference walkthrough you're reading now). |
 | \`/orbit:propose <name>\` | Generate proposal + design + specs + tasks artifacts in one step. Consume mode reads \`orbit/explore/<name>/explore.md\` if present. |
-| \`/orbit:review <name> [--as proposal\\|system] [--fresh]\` | Editorial review: 9 passes proposal-mode (pre-apply) or 7 passes system-mode (post-apply, wraps \`verify-change\` as Pass 0). |
-| \`/orbit:review-external <name> [--as proposal\\|system]\` | Package a self-contained prompt for a different AI to do a second-opinion review. Commits prompt to repo; external AI commits findings back. |
+| \`/orbit:review <name> [--as proposal\\|system] [--fresh]\` | *(planned)* Editorial review: 9 passes proposal-mode (pre-apply) or 7 passes system-mode (post-apply, wraps \`verify-change\` as Pass 0). |
+| \`/orbit:review-external <name> [--as proposal\\|system]\` | *(planned)* Package a self-contained prompt for a different AI to do a second-opinion review. Commits prompt to repo; external AI commits findings back. |
 | \`/orbit:sync <name>\` | Sync delta specs from a change to main specs without archiving. |
 | \`/orbit:verify <name>\` | Run upstream's structural verify-change (tasks done, spec coverage, design adherence). Composed as Pass 0 of system-mode review. |
 
@@ -131,9 +131,9 @@ When you've gathered findings worth acting on, see \`/orbit:address-reviews\` to
 export function getOrbitOnboardCommandTemplate(): CommandTemplate {
   return {
     name: 'ORBIT: Onboard',
-    description: 'Guided onboarding - walk through a complete OpenSpec workflow cycle with narration',
+    description: 'Single-pass onboarding reference - orient to orbit, its canonical workflow, and the command surface',
     category: 'Workflow',
-    tags: ['workflow', 'onboarding', 'tutorial', 'learning'],
+    tags: ['workflow', 'onboarding', 'reference', 'learning'],
     content: getOnboardInstructions(),
   };
 }

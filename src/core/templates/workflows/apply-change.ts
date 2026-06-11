@@ -236,7 +236,7 @@ orbit-status's tier-1 reader parses the leading \`/orbit:<verb> <name>\` token i
 
 ### Why chunk-aware (forensic + resumability)
 
-Per the design rationale ( + orbit-status retrospective): per-chunk emit enables forensic timeline reconstruction ("which chunk introduced this regression?") and provides clean resume boundaries between sessions. Without chunk-aware emit, post-apply regression bisection has to span the full task universe; with chunk-aware emit, blast radius is bounded to a single chunk's task set (typically 10-20× reduction).`,
+Per the design rationale: per-chunk emit enables forensic timeline reconstruction ("which chunk introduced this regression?") and provides clean resume boundaries between sessions. Without chunk-aware emit, post-apply regression bisection has to span the full task universe; with chunk-aware emit, blast radius is bounded to a single chunk's task set (typically 10-20× reduction).`,
     license: 'MIT',
     compatibility: 'Requires orbit CLI.',
     metadata: { author: 'openspec', version: '1.0' },

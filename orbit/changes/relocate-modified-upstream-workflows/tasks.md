@@ -35,9 +35,9 @@ run-summary where applicable):
 - [x] 3.3 `continue-change.ts`
 - [x] 3.4 `apply-change.ts`
 - [x] 3.5 `ff-change.ts`
-- [x] 3.6 `sync-specs.ts` (conventions only; no run-summary)
+- [x] 3.6 `sync-specs.ts` (no-op — upstream-verbatim; orbit never modified this workflow)
 - [x] 3.7 `archive-change.ts` (inline body + Step 5.5; reference file deferred to B2)
-- [x] 3.8 `bulk-archive-change.ts` (conventions only; explicitly no run-summary)
+- [x] 3.8 `bulk-archive-change.ts` (non-emission note only — defers to inner archive emits; no disciplines block)
 - [x] 3.9 `verify-change.ts`
 - [x] 3.10 `onboard.ts`
 

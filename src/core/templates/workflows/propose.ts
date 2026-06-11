@@ -245,7 +245,7 @@ Field notes:
 
 ### \`next_recommended\` — always recommend review next
 
-Per \`orbit-run-summary-emit\`'s \`Propose-shaped and artifact-completion-aware recommendation logic\` requirement and \`\`, propose ALWAYS recommends \`/orbit:review\` next, never \`/orbit:apply\` directly. Even if the user is confident the artifacts are ready, the canonical orbit flow is propose → review → apply, with review acting as the pre-apply checkpoint.
+Per \`orbit-run-summary-emit\`'s \`Propose-shaped and artifact-completion-aware recommendation logic\` requirement, propose ALWAYS recommends \`/orbit:review\` next, never \`/orbit:apply\` directly. Even if the user is confident the artifacts are ready, the canonical orbit flow is propose → review → apply, with review acting as the pre-apply checkpoint.
 
 orbit-status's tier-1 reader parses the leading \`/orbit:review <name>\` token into \`command\`/\`args\`.`,
     license: 'MIT',

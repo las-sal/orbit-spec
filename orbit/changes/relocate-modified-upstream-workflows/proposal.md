@@ -22,10 +22,12 @@ two existing literals per module (skill `instructions` + command `content`), no 
   verify-change, onboard}.ts`. For each: fold orbit's additions into the skill `instructions` literal
   and the command `content` literal, preserving upstream's fat-skill / thin-command two-tier shape.
 - **Inline the three execution disciplines** (read-before-reference / change-completeness / pushback,
-  i.e. `orbit-conventions`) into every one of the 11 bodies — hand-duplicated per body, mimicking
+  i.e. `orbit-conventions`) into 9 of the 11 bodies — hand-duplicated per body, mimicking
   upstream's self-contained bodies (Q9 resolved-for-B-arc by D13; no injection mechanism).
-- **Inline run-summary emit** (`orbit-run-summary-emit`) into the 9 workflows that emit
-  (all except `sync-specs` and `bulk-archive-change`, which explicitly do not emit).
+  `sync-specs` stays upstream-verbatim (orbit never modified it); `bulk-archive-change` carries
+  only the non-emission note.
+- **Inline run-summary emit** (`orbit-run-summary-emit`) into the 8 workflows that emit
+  (all except `sync-specs`, `bulk-archive-change`, and `onboard`, which explicitly do not emit).
 - **Keep bodies mechanism-neutral** (D11): no Claude-only constructs ("the Skill tool", hardcoded
   `.claude/...` paths). The `/orbit:` colon syntax is fine — it is already rewritten per-tool by
   `transformToHyphenCommands`. Bodies must serve Claude (primary) + Codex from one source.
