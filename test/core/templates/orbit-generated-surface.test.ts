@@ -120,6 +120,28 @@ describe('generated surface fidelity (real init, all workflows, claude + codex)'
     });
   });
 
+  it('archive ships its reference on disk for both tools, byte-identical', async () => {
+    const claudeRef = await fs.readFile(
+      path.join(testDir, '.claude', 'skills', 'orbit-archive-change', 'references', 'archive-summary-schema.md'),
+      'utf-8'
+    );
+    const codexRef = await fs.readFile(
+      path.join(testDir, '.codex', 'skills', 'orbit-archive-change', 'references', 'archive-summary-schema.md'),
+      'utf-8'
+    );
+    expect(codexRef).toBe(claudeRef);
+    expect(claudeRef).toContain('archive run-summary schema');
+    expect(claudeRef).toContain('"unresolved_markers": ["<file>:<line>');
+  });
+
+  it('reference-less skills have no references/ dir on disk', async () => {
+    for (const [dirName] of SURFACE) {
+      if (dirName === 'orbit-archive-change') continue;
+      const refsDir = path.join(testDir, '.claude', 'skills', dirName, 'references');
+      await expect(fs.access(refsDir)).rejects.toThrow();
+    }
+  });
+
   it('generates exactly the 11 registered skills, no extras (e.g., no feedback)', async () => {
     const dirs = await fs.readdir(path.join(testDir, '.claude', 'skills'));
     expect(dirs.sort()).toEqual(SURFACE.map(([d]) => d).sort());

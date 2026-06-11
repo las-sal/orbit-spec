@@ -94,6 +94,35 @@ describe('orbit content fidelity (B1 relocation)', () => {
     expect(skill).not.toContain('.claude/skills/');
   });
 
+  describe('references declarations (orbit-skill-generation, D-b2-4 lean scope)', () => {
+    it('archive-change declares exactly archive-summary-schema.md', () => {
+      const refs = getArchiveChangeSkillTemplate().references ?? [];
+      expect(refs.map((r) => r.name)).toEqual(['archive-summary-schema.md']);
+    });
+
+    it('no other workflow declares references', () => {
+      for (const [name, getTemplate] of RELOCATED) {
+        if (name === 'archive-change') continue;
+        expect(getTemplate().references ?? [], `${name} must not declare references`).toEqual([]);
+      }
+    });
+
+    it('archive schema content matches the baseline-canonical shape and vocabulary', () => {
+      const schema = (getArchiveChangeSkillTemplate().references ?? [])[0].content;
+      // canonical shapes (orbit-archive-modifications delta scenarios)
+      expect(schema).toContain('"unresolved_markers": ["<file>:<line>'); // ARRAY, not object
+      expect(schema).not.toContain('"counts": {'); // flat sync_specs counts
+      expect(schema).toContain('"added": 0,');
+      expect(schema).toContain('audit_skipped_via_flag'); // flat skip flag
+      expect(schema).not.toContain('"skipped_via_flag"'); // not nested in audit
+      expect(schema).not.toContain('"aborted"'); // three user_decision values only
+      // vocabulary: zero opsx/openspec-era residue
+      expect(schema).not.toContain('/opsx:');
+      expect(schema).not.toMatch(/openspec\/(changes|specs)/);
+      expect(schema).not.toContain('openspec-sync-specs');
+    });
+  });
+
   describe.each(LAUNCHERS)('command %s', (_name, getTemplate, skillDir) => {
     const content = getTemplate().content;
 

@@ -81,6 +81,39 @@ describe('profile sync drift detection', () => {
     expect(hasDrift).toBe(true);
   });
 
+  it('detects reference drift: missing declared reference (current-stamps case)', () => {
+    setupCoreSkills(tempDir);
+    setupCoreCommands(tempDir);
+    fs.rmSync(
+      path.join(tempDir, '.claude', 'skills', 'orbit-archive-change', 'references'),
+      { recursive: true, force: true }
+    );
+
+    expect(hasProjectConfigDrift(tempDir, CORE_WORKFLOWS, 'both')).toBe(true);
+  });
+
+  it('detects reference drift: stray undeclared entry', () => {
+    setupCoreSkills(tempDir);
+    setupCoreCommands(tempDir);
+    fs.writeFileSync(
+      path.join(tempDir, '.claude', 'skills', 'orbit-archive-change', 'references', 'stray.md'),
+      'parked'
+    );
+
+    expect(hasProjectConfigDrift(tempDir, CORE_WORKFLOWS, 'both')).toBe(true);
+  });
+
+  it('detects reference drift: undesired references/ root on a reference-less skill', () => {
+    setupCoreSkills(tempDir);
+    setupCoreCommands(tempDir);
+    fs.mkdirSync(
+      path.join(tempDir, '.claude', 'skills', 'orbit-explore', 'references'),
+      { recursive: true }
+    );
+
+    expect(hasProjectConfigDrift(tempDir, CORE_WORKFLOWS, 'both')).toBe(true);
+  });
+
   it('returns false when project files match core profile and delivery', () => {
     setupCoreSkills(tempDir);
     setupCoreCommands(tempDir);

@@ -134,6 +134,24 @@ describe('InitCommand', () => {
       }
     });
 
+    it('extend-mode re-init reconciles references/ and reports removals (orbit-skill-generation)', async () => {
+      await new InitCommand({ tools: 'claude', force: true }).execute(testDir);
+
+      const refsDir = path.join(testDir, '.claude', 'skills', 'orbit-archive-change', 'references');
+      expect(await fileExists(path.join(refsDir, 'archive-summary-schema.md'))).toBe(true);
+      // park a stray entry inside the generated references/ dir
+      await fs.writeFile(path.join(refsDir, 'stray.md'), 'parked');
+
+      await new InitCommand({ tools: 'claude', force: true }).execute(testDir);
+
+      expect(await fileExists(path.join(refsDir, 'stray.md'))).toBe(false);
+      expect(await fileExists(path.join(refsDir, 'archive-summary-schema.md'))).toBe(true);
+      const calls = (console.log as unknown as { mock: { calls: unknown[][] } }).mock.calls
+        .flat()
+        .map(String);
+      expect(calls.some((c) => c.includes('undeclared reference'))).toBe(true);
+    });
+
     it('should create skills in Cursor skills directory', async () => {
       const initCommand = new InitCommand({ tools: 'cursor', force: true });
 

@@ -54,17 +54,17 @@ Implementation chunks:
 
 ## 4. Tests
 
-- [ ] 4.1 Parity: reference content participates in the function-payload hashes (template object
+- [x] 4.1 Parity: reference content participates in the function-payload hashes (template object
   now includes `references`); rebaseline.
-- [ ] 4.2 Fidelity: assert `archive-change` declares exactly `archive-summary-schema.md` and that
+- [x] 4.2 Fidelity: assert `archive-change` declares exactly `archive-summary-schema.md` and that
   no other workflow declares references (D-b2-4 lean-scope guard); semantic content assertions on
   the schema — `unresolved_markers` documented as array, flat `sync_specs` counts, exactly the
   three baseline `user_decision` values, flat `audit_skipped_via_flag`, and zero
   opsx/openspec-era vocabulary.
-- [ ] 4.3 e2e generated-surface: after default init, `references/archive-summary-schema.md`
+- [x] 4.3 e2e generated-surface: after default init, `references/archive-summary-schema.md`
   exists on disk for claude AND codex, byte-identical; non-reference skills have no
   `references/` dir.
-- [ ] 4.4 Writer units (init/update suites): emission on init; refresh on update; remove-unknown
+- [x] 4.4 Writer units (init/update suites): emission on init; refresh on update; remove-unknown
   on update AND on extend-mode re-init (seed a stray file, assert removal + report);
   has-references→none transition removes the `references/` dir entirely; legacy-upgrade path
   (`upgradeLegacyTools`) emits references; reference drift defeats current-stamps smart detection
@@ -85,11 +85,11 @@ Implementation chunks:
 
 ## 5. Validation & completeness
 
-- [ ] 5.1 `npm run build && npm test` green (baseline 1459 + new tests).
-- [ ] 5.2 `node bin/orbit.js validate b2-grow-generator --strict` passes.
-- [ ] 5.3 Self-host refresh: `node bin/orbit.js update --force` in this repo (template edits
+- [x] 5.1 `npm run build && npm test` green (baseline 1459 + new tests).
+- [x] 5.2 `node bin/orbit.js validate b2-grow-generator --strict` passes.
+- [x] 5.3 Self-host refresh: `node bin/orbit.js update --force` in this repo (template edits
   don't bump the version; --force is the dev-loop path — though 2.3's reference-drift detection
   should also catch the missing reference, verify both routes); confirm
   `.claude/skills/orbit-archive-change/references/archive-summary-schema.md` materializes.
-- [ ] 5.4 Residue sweep: grep for remaining "deferred to B2" / dangling-reference language that
+- [x] 5.4 Residue sweep: grep for remaining "deferred to B2" / dangling-reference language that
   this change resolves (CLAUDE.md deferred-follow-ups list, proposal/design provenance).

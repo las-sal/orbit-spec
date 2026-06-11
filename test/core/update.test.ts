@@ -192,6 +192,43 @@ Old instructions content
     });
   });
 
+  describe('reference reconciliation (orbit-skill-generation)', () => {
+    it('generates declared references, prunes strays, and reports during update', async () => {
+      const skillsDir = path.join(testDir, '.claude', 'skills');
+      await fs.mkdir(path.join(skillsDir, 'orbit-explore'), { recursive: true });
+      await fs.writeFile(path.join(skillsDir, 'orbit-explore', 'SKILL.md'), 'old content');
+      const refsDir = path.join(skillsDir, 'orbit-archive-change', 'references');
+      await fs.mkdir(refsDir, { recursive: true });
+      await fs.writeFile(path.join(refsDir, 'stray.md'), 'parked');
+
+      const consoleSpy = vi.spyOn(console, 'log');
+      await updateCommand.execute(testDir);
+
+      expect(await FileSystemUtils.fileExists(
+        path.join(refsDir, 'archive-summary-schema.md')
+      )).toBe(true);
+      expect(await FileSystemUtils.fileExists(path.join(refsDir, 'stray.md'))).toBe(false);
+      const calls = consoleSpy.mock.calls.map((call) => call.map(String).join(' '));
+      expect(calls.some((c) => c.includes('undeclared reference'))).toBe(true);
+      consoleSpy.mockRestore();
+    });
+
+    it('legacy-upgrade path generates references too', async () => {
+      await fs.mkdir(path.join(testDir, '.claude', 'commands', 'openspec'), { recursive: true });
+      await fs.writeFile(
+        path.join(testDir, '.claude', 'commands', 'openspec', 'proposal.md'),
+        'content'
+      );
+
+      const forceUpdateCommand = new UpdateCommand({ force: true });
+      await forceUpdateCommand.execute(testDir);
+
+      expect(await FileSystemUtils.fileExists(
+        path.join(testDir, '.claude', 'skills', 'orbit-archive-change', 'references', 'archive-summary-schema.md')
+      )).toBe(true);
+    });
+  });
+
   describe('command updates', () => {
     it('should update orbit commands for configured Claude tool', async () => {
       // Set up a configured Claude tool
