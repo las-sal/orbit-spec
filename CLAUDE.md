@@ -9,7 +9,7 @@ IS the complete tool** (upstream's engine + orbit's editorial/judgment layer, in
 Upstream is registered as a **read-only git remote** (`upstream`, push disabled) for deliberate,
 surgical cherry-picks only — there is no auto-ingest. A version bump is its own deliberate decision.
 
-## Current state (as of A2)
+## Current state (as of B1 + external-review remediation)
 
 The fork bootstrap (phase **A1**) is complete:
 - Vendored pristine v1.3.1 baseline (`upstream/v1.3.1` tag), fresh detached history.
@@ -24,23 +24,37 @@ The fork bootstrap (phase **A1**) is complete:
   `orbit/changes/archive/2026-06-08-rename-user-facing-to-orbit/` (A2) and
   `orbit/changes/rename-command-namespace-to-orbit/` (namespace).
 - **Toolchain is npm, not pnpm.** `npm install` works end-to-end. Build = `npm run build`
-  (`node build.js` → `tsc`); tests = `npm test` (vitest). Baseline: ~1369 tests passing.
+  (`node build.js` → `tsc`); tests = `npm test` (vitest). Baseline at bootstrap: ~1369 tests (1459 as of B1).
 
-**B1 (relocate)** is underway on branch `b1-relocate-workflows`, dogfooded as
-`orbit/changes/relocate-modified-upstream-workflows/`. Done: orbit's editorial content relocated into
-all 11 workflow modules (inline-TS per **D13**; `sync-specs` was a no-op — orbit never modified it) +
-6 spec deltas (`orbit-conventions`, `orbit-run-summary-emit`, `orbit-{explore,propose,archive}-modifications`,
-`orbit-onboard`) relocated as ADDED capabilities. Change validates `--strict`; ~1391 tests green;
-generation-fidelity tests assert the orbit layer per workflow. Per D13, B-arc keeps prose as **inline
-TS template literals** (markdown-as-source/D6 deferred). **Deferred follow-ups:** `archive-change`
-`references/` file (B2), broader user-docs rewrite (issue #1). The full plan and design decisions live in the docs below — **read them before B-arc work.**
+**B1 (relocate)** is complete on `main` (pending archive of the dogfooded change
+`orbit/changes/relocate-modified-upstream-workflows/`). Orbit's editorial content is relocated into
+the workflow modules (inline-TS per **D13**; `sync-specs` upstream-verbatim — orbit never modified it)
++ 6 spec deltas (`orbit-conventions`, `orbit-run-summary-emit`, `orbit-{explore,propose,archive}-modifications`,
+`orbit-onboard`) relocated as ADDED capabilities. The change passed a fresh internal system review AND
+two external (GPT-5 Codex) system-review iterations; all findings resolved (audit trail in the change's
+`.orbit-runs/`). Three decisions were ratified during remediation — **read these before touching templates**:
+- **D14 — thin launcher commands**: each skill `instructions` literal is the single behavioral source
+  (pristine upstream body + `# Orbit additions`); each command `content` literal is a ~3-line launcher
+  invoking the skill. Do NOT regrow workflow bodies in command literals.
+- **D15 — full surface always**: `getProfileWorkflows` (src/core/profiles.ts) always returns all 11
+  workflows; profile gating is deliberately inert (`delivery` still honored). Do NOT reintroduce
+  profile-filtered installs.
+- **D11 refinement — Claude primacy**: never trade Claude efficacy for cross-tool neutrality; upstream's
+  named-tool idiom (`AskUserQuestion`, `Task tool`) stays in bodies by design.
+Change validates `--strict`; **1459 tests green** (incl. per-workflow marker fidelity, launcher
+assertions, and an e2e generated-surface test that runs a real default init for claude+codex).
+Per D13, B-arc keeps prose as **inline TS template literals** (markdown-as-source/D6 deferred).
+**Deferred follow-ups:** `archive-change` `references/` file + disciplines-reference consolidation
+(B2, issue #4), orbit-status absorption (post-parity, issue #3), broader user-docs rewrite (issue #1).
+The full plan and design decisions live in the docs below — **read them before B-arc work.**
 
 ## Source of truth for the plan
 
-- `orbit/explore/fork-and-orbify/explore.md` — the live design exploration. Decisions **D1–D12**
-  (incl. the ratified **6-phase program** D9, new-repo/baseline strategy D10, tool-breadth D11, rip
-  telemetry D12) and open questions Q1–Q10 (Q1/Q6/Q7/Q10 resolved). **This is the working spec for
-  the fork.**
+- `orbit/explore/fork-and-orbify/explore.md` — the live design exploration. Decisions **D1–D15**
+  (incl. the ratified **6-phase program** D9, new-repo/baseline strategy D10, tool-breadth D11 +
+  its Claude-primacy refinement, rip telemetry D12, inline-TS D13, thin-launcher commands D14,
+  full-surface installs D15) and open questions Q1–Q10 (Q1/Q6/Q7/Q10 resolved). **This is the
+  working spec for the fork.**
 - `orbit/architecture/openspec-1.3.1-architecture.md` — verified deep-dive of the v1.3.1 codebase
   (the three-layer model, schema/artifact-graph engine, the template→generation→adapter pipeline that
   B-arc edits, init/update lifecycle, and the archive merge bug).
@@ -61,7 +75,9 @@ A1 ✅ fork bootstrap          → B1 relocate content → B2 grow generator →
 
 Before parity (B-arc) is *relocation* (mechanical/testable); after (C-arc) is *net-new capability*
 (novel/design-heavy). Targets are **Claude (primary) + Codex** — both consume the same
-`SKILL.md` + `references/` artifact, so bodies must stay **mechanism-neutral** (D11).
+`SKILL.md` + `references/` artifact from one source body. Mechanism-neutrality is bounded by
+**Claude primacy** (D11 refinement): upstream's named-tool idiom stays; only hardcoded `.claude/...`
+paths are kept out of bodies.
 
 ## Execution disciplines (apply whether or not a workflow command is active)
 
