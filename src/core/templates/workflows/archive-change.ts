@@ -220,7 +220,7 @@ Audit-drift findings are **informational** unless the user explicitly chooses to
 - Attempt to resolve audit findings automatically (user's responsibility via \`/orbit:address-reviews\` or manual edit).
 - Auto-invoke \`/orbit:review --as system\` even if it hasn't run for this change. System-mode review is the user's gate — their responsibility to run it before archiving if they want that signal.
 
-This is a deliberate choice (per D11 in the bootstrap design): users may legitimately archive with known drift (e.g., follow-up commit planned). orbit captures the decision in the summary for traceability, but doesn't override.`,
+This is a deliberate choice (per \`orbit-archive-modifications\`' \`Audit informational, not blocking by default\` requirement): users may legitimately archive with known drift (e.g., follow-up commit planned). orbit captures the decision in the summary for traceability, but doesn't override.`,
     license: 'MIT',
     compatibility: 'Requires orbit CLI.',
     metadata: { author: 'openspec', version: '1.0' },

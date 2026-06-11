@@ -151,7 +151,7 @@ When the user requests crystallization during a bare-mode explore (e.g., "give t
 1. A new directory `orbit/explore/<name>/` will be created with `explore.md` capturing decisions to date
 2. A `.orbit-runs/explore-<TS>.json` will start the change's audit trail
 3. The change will become visible to any consumer that scans `orbit/explore/` (e.g., a downstream status reader). Note: upstream `orbit list` does NOT scan `orbit/explore/`; the change appears in `orbit list` only after `/orbit:propose` moves the staging directory to `orbit/changes/<name>/`.
-4. Abandonment after this point requires formal archive/discard, not just deleting the directory
+4. Abandonment after this point requires formal archive/discard, not just deleting the directory, once it's been moved to `orbit/changes/<name>/` by `/orbit:propose`
 
 The AI MUST wait for explicit user confirmation before proceeding.
 

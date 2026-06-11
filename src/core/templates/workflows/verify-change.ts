@@ -238,7 +238,7 @@ next_recommended: "/orbit:apply <name> — N tasks remain unchecked; complete im
 next_recommended: "/orbit:review --as system <name> — N spec scenarios fail against implementation; system review will surface findings in its scorecard for you to walk each as code fix or spec revision"
 \`\`\`
 
-The recommendation does NOT use \`/orbit:review --as system --mark\` because \`--mark\` is proposal-mode only and silently ignored in system mode (per \`orbit-review/spec.md\`'s \`Requirement: --mark flag is proposal-mode only\`). System-mode marker writing is v2 work tracked elsewhere; until then, the user manually walks each system-review finding to decide whether it's a code bug (fix via \`/orbit:apply\` or direct edit) or a spec revision (edit specs directly).
+The recommendation does NOT use \`/orbit:review --as system --mark\` because \`--mark\` is proposal-mode only and silently ignored in system mode (the rule lands formally with the \`orbit-review\` capability in a later phase; it is the operative rule now). Until system-mode marker writing exists, the user manually walks each system-review finding to decide whether it's a code bug (fix via \`/orbit:apply\` or direct edit) or a spec revision (edit specs directly).
 
 **Verdict: fail — Mode ③ (orbit-validate failure)** — \`orbit validate\` itself errors (e.g., malformed spec frontmatter).
 

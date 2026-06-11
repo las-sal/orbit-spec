@@ -214,6 +214,7 @@ Workflow-kind example — `apply-2026-05-21T13-34-12Z.json` written at chunk 2 c
   "kind": "workflow",
   "tasks_completed": 28,
   "tasks_remaining": 48,
+  "user_validation_remaining": 0,
   "chunk": "2 of 5",
   "chunk_name": "inventory+parsing",
   "chunk_complete": true,
@@ -228,7 +229,7 @@ Editorial-kind example — `review-proposal-2026-05-21T00-18-14Z.json` written b
   "command": "review",
   "timestamp": "2026-05-21T00:18:14Z",
   "change": "emit-run-summary-jsons-from-workflow-commands",
-  "final_assessment": "5 CRITICAL findings + 7 WARNING + 7 SUGGESTION. Ready for /orbit:address-reviews.",
+  "final_assessment": "1 CRITICAL finding + 2 WARNING. Ready for /orbit:address-reviews.",
   "next_recommended": "/orbit:address-reviews emit-run-summary-jsons-from-workflow-commands --from-file <findings-bridge>",
   "kind": "editorial",
   "mode": "proposal",
@@ -236,10 +237,15 @@ Editorial-kind example — `review-proposal-2026-05-21T00-18-14Z.json` written b
   "depth": "full",
   "passes_run": ["1","2","3","4","5","6","7","8","9"],
   "findings_summary": {
-    "critical": 5,
-    "warning": 7,
-    "suggestion": 7
-  }
+    "critical": 1,
+    "warning": 2,
+    "suggestion": 0
+  },
+  "finding_titles": [
+    "Emit timing undefined for bare-mode explore",
+    "Apply chunk-preamble format unspecified",
+    "Verify fail-mode precedence missing"
+  ]
 }
 ```
 
@@ -258,6 +264,14 @@ Lifecycle-kind example — `archive-2026-05-20T16-31-59Z.json` written after `/o
     "ran": true,
     "findings_summary": { "critical": 0, "warning": 0, "suggestion": 0 }
   },
+  "sync_specs": {
+    "capabilities_updated": ["orbit-status-output"],
+    "added": 3,
+    "modified": 1,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
   "user_decision": "proceeded_with_no_critical",
   "warnings": []
 }
