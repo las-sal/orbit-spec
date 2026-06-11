@@ -1,0 +1,15 @@
+{
+  "command": "apply",
+  "timestamp": "2026-06-11T16:33:43Z",
+  "change": "b2-grow-generator",
+  "final_assessment": "Completed chunk 2 of 3 (content): archive-summary-schema.md migrated from the overlay into archive-change.ts as an inline-TS reference literal, RECONCILED to the baselines — unresolved_markers as array, flat sync_specs counts, exactly three user_decision values (abort writes no summary), flat top-level audit_skipped_via_flag, orbit vocabulary throughout (no opsx/openspec-era residue). Body cites match the shipped filename (3 cites). Drift-detection fixtures updated to carry declared references (the new detection caught the stale 'synced' fixtures — working as specified). 9 of 19 tasks done.",
+  "next_recommended": "/orbit:apply b2-grow-generator — next chunk: tests + validation + self-host refresh",
+  "kind": "workflow",
+  "tasks_completed": 9,
+  "tasks_remaining": 10,
+  "user_validation_remaining": 0,
+  "chunk": "2 of 3",
+  "chunk_name": "Content — archive schema reference",
+  "chunk_complete": true,
+  "tasks_completed_this_session": 2
+}

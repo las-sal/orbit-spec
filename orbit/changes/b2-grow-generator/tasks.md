@@ -41,7 +41,7 @@ Implementation chunks:
 
 ## 3. Content: archive schema reference
 
-- [ ] 3.1 Migrate `archive-summary-schema.md` content from the overlay
+- [x] 3.1 Migrate `archive-summary-schema.md` content from the overlay
   (`../openspec-orbit/.claude/skills/openspec-archive-change/references/`) into
   `archive-change.ts` as an inline-TS literal on the skill template's `references`, RECONCILING
   to the baseline-canonical shape AND vocabulary (read both baselines first):
@@ -49,7 +49,7 @@ Implementation chunks:
   three baseline `user_decision` values (no `aborted` — abort writes no summary); flat
   `audit_skipped_via_flag: true` (not nested `audit.skipped_via_flag`); zero opsx/openspec-era
   vocabulary (no `/opsx:`, `openspec/` paths, `openspec-*` skill names); orbit-named paths.
-- [ ] 3.2 Confirm the skill body's existing cites ("read `references/archive-summary-schema.md`")
+- [x] 3.2 Confirm the skill body's existing cites ("read `references/archive-summary-schema.md`")
   match the shipped filename exactly.
 
 ## 4. Tests

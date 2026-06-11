@@ -6,6 +6,77 @@
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
 
+
+// Reference: full schema for the Step 5.5 archive run summary. Migrated from the overlay
+// and RECONCILED to the B1 baselines (orbit-archive-modifications + orbit-conventions):
+// unresolved_markers is an ARRAY; sync delta counts sit directly under sync_specs; exactly
+// three user_decision values (abort writes no summary); flat audit_skipped_via_flag; orbit
+// vocabulary throughout (no opsx/openspec-era residue).
+const ARCHIVE_SUMMARY_SCHEMA_REFERENCE = `# Reference: archive run-summary schema
+
+The orbit additions to \`/orbit:archive\` write a JSON summary to \`orbit/changes/archive/<YYYY-MM-DD>-<change-name>/.orbit-runs/archive-<TS>.json\` after a successful archive operation (the \`<YYYY-MM-DD>-\` prefix is added by upstream's archive move step). An aborted archive writes NO summary.
+
+## Universal spine inheritance
+
+This schema inherits the 6-field **universal spine** from \`orbit-conventions\`'s \`Internal-run JSON summary format\` requirement (see \`orbit/specs/orbit-conventions/spec.md\`):
+
+- \`command\` (here: \`"archive"\`)
+- \`timestamp\` (ISO-8601 UTC; JSON field \`YYYY-MM-DDTHH:MM:SSZ\`; filename \`<TS>\` token \`YYYY-MM-DDTHH-MM-SSZ\` with colons replaced by hyphens for filesystem safety)
+- \`change\` (change name string)
+- \`final_assessment\` (narrative of what was archived, e.g., \`"Archived <change-name> to <archive_path>."\`)
+- \`next_recommended\` (verbatim recommendation, e.g., \`"Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."\`)
+- \`kind: "lifecycle"\` (archive is THE lifecycle command per the kind taxonomy — transitions a change out of the active set)
+
+The schema below documents the per-command extensions ADDED to that spine (\`archive_path\`, \`audit\`, \`sync_specs\`, \`unresolved_markers\`, \`user_decision\`, \`warnings\`), per the \`kind: "lifecycle"\` extensions in \`orbit-conventions\`.
+
+**Note on \`sync_specs\`**: this field reports the result of the archive flow invoking the \`orbit-sync-specs\` upstream primitive (kept upstream-verbatim per \`orbit-conventions\`' \`Generated-file disposition\`).
+
+## Schema
+
+\`\`\`json
+{
+  "command": "archive",
+  "timestamp": "<ISO-8601>",
+  "change": "<change-name>",
+  "final_assessment": "<narrative of what was archived>",
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check.",
+  "kind": "lifecycle",
+  "archive_path": "orbit/changes/archive/<YYYY-MM-DD>-<change-name>/",
+  "audit": {
+    "ran": true | false,
+    "failure_reason": "<text or null>",
+    "findings_summary": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "summary_path": "<path to the audit-drift-<TS>.json summary, or null if not run>"
+  },
+  "audit_skipped_via_flag": true,
+  "sync_specs": {
+    "ran": true | false,
+    "skipped_reason": "<text or null>",
+    "capabilities_updated": ["<capability name>"],
+    "added": 0,
+    "modified": 0,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": ["<file>:<line> — <marker text>"],
+  "user_decision": "proceeded_with_no_critical" | "proceeded_despite_critical" | "audit_skipped_via_flag",
+  "warnings": [
+    "<text — e.g., 'Archived with 2 incomplete artifacts'>"
+  ]
+}
+\`\`\`
+
+## Field notes
+
+- **\`audit.ran\`** = \`false\` either because \`--skip-audit\` was set (then the top-level \`audit_skipped_via_flag: true\` is recorded) or because audit-drift failed (then \`failure_reason\` is set). The two cases are disambiguated by those flags.
+- **\`audit.findings_summary\`** mirrors the audit-drift run summary's counts; the full audit detail lives at the path in \`audit.summary_path\`.
+- **\`audit_skipped_via_flag\`** (top-level boolean): recorded as \`true\` only when \`/orbit:archive --skip-audit\` was used; omit the field otherwise. This is the flat field the skill body and the \`orbit-archive-modifications\` baseline require — it is NOT nested inside \`audit\`.
+- **\`sync_specs.capabilities_updated\`** lists capability names whose \`orbit/specs/<capability>/spec.md\` was edited; the delta counts (\`added\`/\`modified\`/\`removed\`/\`renamed\`) sit DIRECTLY under \`sync_specs\`, mirroring \`orbit-conventions\`' canonical lifecycle example.
+- **\`unresolved_markers\`** is an ARRAY of the \`@review:\` markers still present when the archive proceeded (empty array when none) — one \`"<file>:<line> — <marker text>"\` entry per marker. Marker-prompt outcomes that halt the archive write no summary at all.
+- **\`user_decision\`** captures the gate decision and has exactly three values: \`proceeded_with_no_critical\` (clean audit or warnings only), \`proceeded_despite_critical\` (user explicitly proceeded past CRITICAL findings), \`audit_skipped_via_flag\` (\`--skip-audit\` used). An abort at the critical-findings prompt cancels the archive and writes no summary.
+- **\`warnings\`** captures the upstream warning surfaces (incomplete artifacts, incomplete tasks, sync skipped) — kept human-readable since they vary in shape.
+`;
+
 export function getArchiveChangeSkillTemplate(): SkillTemplate {
   return {
     name: 'orbit-archive-change',
@@ -221,6 +292,12 @@ Audit-drift findings are **informational** unless the user explicitly chooses to
 - Auto-invoke \`/orbit:review --as system\` even if it hasn't run for this change. System-mode review is the user's gate — their responsibility to run it before archiving if they want that signal.
 
 This is a deliberate choice (per \`orbit-archive-modifications\`' \`Audit informational, not blocking by default\` requirement): users may legitimately archive with known drift (e.g., follow-up commit planned). orbit captures the decision in the summary for traceability, but doesn't override.`,
+    references: [
+      {
+        name: 'archive-summary-schema.md',
+        content: ARCHIVE_SUMMARY_SCHEMA_REFERENCE,
+      },
+    ],
     license: 'MIT',
     compatibility: 'Requires orbit CLI.',
     metadata: { author: 'openspec', version: '1.0' },

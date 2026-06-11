@@ -111,6 +111,13 @@ describe('config profile interactive flow', () => {
       fs.writeFileSync(skillPath, `name: ${dirName}\n`, 'utf-8');
     }
 
+    // archive declares a reference (orbit-skill-generation); a synced surface carries it
+    const archiveRefPath = path.join(
+      projectDir, '.claude', 'skills', 'orbit-archive-change', 'references', 'archive-summary-schema.md'
+    );
+    fs.mkdirSync(path.dirname(archiveRefPath), { recursive: true });
+    fs.writeFileSync(archiveRefPath, '# archive run-summary schema\n', 'utf-8');
+
     const allCommands = ['propose', 'explore', 'apply', 'archive', 'new', 'continue', 'ff', 'sync', 'bulk-archive', 'verify', 'onboard'];
     for (const commandId of allCommands) {
       const commandPath = path.join(projectDir, '.claude', 'commands', 'orbit', `${commandId}.md`);

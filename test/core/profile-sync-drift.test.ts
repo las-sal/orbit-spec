@@ -7,6 +7,7 @@ import {
   WORKFLOW_TO_SKILL_DIR,
 } from '../../src/core/profile-sync-drift.js';
 import { CORE_WORKFLOWS } from '../../src/core/profiles.js';
+import { getSkillTemplates } from '../../src/core/shared/skill-generation.js';
 import { CommandAdapterRegistry } from '../../src/core/command-generation/index.js';
 
 function writeSkill(projectDir: string, workflowId: string): void {
@@ -14,6 +15,14 @@ function writeSkill(projectDir: string, workflowId: string): void {
   const skillPath = path.join(projectDir, '.claude', 'skills', skillDirName, 'SKILL.md');
   fs.mkdirSync(path.dirname(skillPath), { recursive: true });
   fs.writeFileSync(skillPath, `name: ${skillDirName}\n`);
+
+  // A synced skill also carries its declared references (presence-only drift check)
+  const entry = getSkillTemplates([workflowId]).find((e) => e.workflowId === workflowId);
+  for (const ref of entry?.template.references ?? []) {
+    const refPath = path.join(projectDir, '.claude', 'skills', skillDirName, 'references', ref.name);
+    fs.mkdirSync(path.dirname(refPath), { recursive: true });
+    fs.writeFileSync(refPath, ref.content);
+  }
 }
 
 function writeCommand(projectDir: string, workflowId: string): void {

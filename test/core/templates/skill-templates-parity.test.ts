@@ -42,7 +42,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   getOrbitContinueCommandTemplate: 'e1ecd4fffee224e284453be717226824c7567041d7c1676b6b6bca4727e3a9dd',
   getOrbitApplyCommandTemplate: 'e5a4f72b65777d13fdd9d968e3ba50ec3c9d49c890a604a64e8dbb472bf130f8',
   getOrbitFfCommandTemplate: '57607811009ca5ece844affae130fa47efc8e64f2c14c181113f581c81978405',
-  getArchiveChangeSkillTemplate: '0dcd56207f10689f64da427e7233786827330a3f7dde23207430b1fb0b45f6d3',
+  getArchiveChangeSkillTemplate: '0b7e3228fc1824e8604c08a7bc9979c0d2ad863a3a3b2bc5cf6972da2c07d8ed',
   getBulkArchiveChangeSkillTemplate: 'bc683abfd941a6ee78c9e464b01a63bfd941f21e814537317f58dbfec7cbf632',
   getOrbitSyncCommandTemplate: '1067039e869d8dedf7922da46230b53a88253cf3fe27c7a5d60c96bc9a43453f',
   getVerifyChangeSkillTemplate: '123ee1f310b73729492ad69bfa7f8de584599487b25a748c324bd6f1e76c9907',
