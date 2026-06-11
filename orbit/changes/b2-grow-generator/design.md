@@ -13,8 +13,8 @@ outright without this. The full exploration record is `explore.md` (D-b2-1…6) 
 **Goals:**
 - `SkillTemplate.references` → `references/*.md` emitted next to `SKILL.md` by the shared
   skill-writer, identically for every skill-capable tool.
-- Update-time convergence: a generated skill dir matches fresh-init output exactly (declared
-  references written, undeclared files under `references/` removed).
+- (Re)generation-time convergence: a regenerated skill dir matches fresh-init output exactly
+  (declared references written, undeclared entries under `references/` removed).
 - Full metadata pass-through with `generatedBy` still generator-owned.
 - Archive's schema reference becomes real — overlay content **reconciled to the
   baseline-canonical shape**, not verbatim (the overlay source predates the B1 baselines and
@@ -40,8 +40,10 @@ outright without this. The full exploration record is `explore.md` (D-b2-1…6) 
   AND `upgradeLegacyTools()`). One writer, one semantics. Ordering: all declared writes succeed
   BEFORE any pruning; on write failure nothing is removed. Scope of deletion: ONLY entries under
   `<skill-dir>/references/` (every entry type — files, dirs, symlinks-as-links); containment is
-  physical, links never followed. Reference names validate at generation time (bare filename,
-  unique) and fail fast.
+  physical, links never followed — including DECLARED-path collisions: a symlink or directory
+  sitting at a declared name is replaced as part of the write phase, never followed (the
+  write-before-prune ordering governs undeclared pruning only). Reference names and metadata keys
+  validate PREFLIGHT, before any file write in the operation.
 - **Smart update detection grows reference drift**: `update`'s stamp short-circuit
   (`update.ts:151`) + drift check (`profile-sync-drift.ts`) currently see only `SKILL.md` and
   command presence — a current-version install would never reach the reconciler. Detection gains
@@ -67,6 +69,6 @@ outright without this. The full exploration record is `explore.md` (D-b2-1…6) 
   deletion is scoped to `references/` entries only, write-before-prune ordered, symlink-safe.
 - **Frontmatter key collisions** (template declares `generatedBy`): generator wins; unit-tested.
 - **Self-host lag**: this repo's own `.claude/` won't show the new reference until
-  `build + update` is run (documented loop in CLAUDE.md).
+  `build + update --force` is run (documented loop in CLAUDE.md).
 - **Cherry-pick surface**: touches `init.ts`/`update.ts`/`skill-generation.ts` — upstream-active
   files. Kept small and additive (new helper + one loop) to minimize future merge friction.

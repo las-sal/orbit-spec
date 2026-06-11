@@ -35,15 +35,17 @@ configured (e.g., Claude `.claude/skills/`, Codex `.codex/skills/`).
 
 The generator SHALL validate reference names before writing: a valid `name` is a bare filename —
 no path separators, not `.` or `..`, not absolute, and unique within the skill's declared set.
-An invalid or duplicate name SHALL fail generation with an error naming the offending template
-and reference; it is never silently skipped and never written outside `references/`.
+Validation SHALL run as a PREFLIGHT over every skill in the generation operation, before any
+file write (including `SKILL.md`): an invalid or duplicate name fails the operation with an error
+naming the offending template and reference, with no file written or modified anywhere in the
+operation — never silently skipped, never written outside `references/`.
 
 #### Scenario: Path-escaping name rejected
 
 - **WHEN** a template declares a reference named `../evil.md` (or any name containing a path
   separator, `.`/`..` segment, or absolute path)
-- **THEN** generation fails with an error identifying the template and the invalid name; no file
-  is written
+- **THEN** the operation fails preflight with an error identifying the template and the invalid
+  name; no file has been written or modified — not even other skills' `SKILL.md`
 
 #### Scenario: Duplicate names rejected
 
@@ -55,8 +57,11 @@ and reference; it is never silently skipped and never written outside `reference
 The shared skill-writer SHALL reconcile each generated skill's `references/` directory to the
 template's declared set whenever the skill is (re)generated — by `orbit init` (including
 extend-mode re-runs) and by `orbit update` (including its legacy-upgrade path): write every
-declared reference and remove undeclared entries, so the generated surface is indistinguishable
-from a fresh install at the current version. Reconciliation SHALL be scoped to entries within
+declared reference and remove undeclared entries, so the regenerated surface is byte-identical
+to a fresh install at the current version. Smart update detection guarantees DECLARED-SET and
+ROOT-SHAPE convergence on current-stamps projects; content of a same-name, user-edited declared
+reference is restored only when regeneration actually runs (detected drift, `--force`, or a
+version bump) — content tamper is deliberately outside detection scope. Reconciliation SHALL be scoped to entries within
 `<skill-dir>/references/` only, SHALL treat every entry type uniformly (files, directories,
 symlinks — an undeclared symlink is removed as an entry; its target is never touched and links
 are never followed), and SHALL complete all declared writes successfully before any removal
@@ -85,9 +90,17 @@ begins.
 #### Scenario: Reference drift defeats smart update detection
 
 - **WHEN** `orbit update` runs on a project whose version and config stamps are current, but a
-  generated skill's `references/` is missing a declared file or contains an undeclared entry
+  generated skill's `references/` is missing a declared file, contains an undeclared entry,
+  exists at all for a reference-less skill, or is not a real directory (e.g., a symlinked root)
 - **THEN** smart update detection treats this as drift and proceeds to generation/reconciliation
-  rather than short-circuiting; the convergence contract holds without `--force`
+  rather than short-circuiting; declared-set and root-shape convergence hold without `--force`
+
+#### Scenario: Declared-path collisions are replaced, never followed
+
+- **WHEN** an existing entry at a DECLARED reference name is a symlink or a directory
+- **THEN** the writer replaces it with the declared regular file without ever following the link
+  (the symlink's target is untouched); replacing a non-regular declared entry is part of the WRITE
+  phase — the write-before-prune ordering governs UNDECLARED-entry pruning only
 
 #### Scenario: Write failure aborts pruning
 
@@ -115,8 +128,10 @@ begins.
 generated `SKILL.md` frontmatter `metadata:` block, in template-declared order. The generator
 SHALL append `generatedBy: <CLI version>`; `generatedBy` is generator-owned: a template-declared
 `generatedBy` is dropped from its declared position and the generator's value appears exactly
-once, appended last. Values SHALL be emitted YAML-safe (quoted whenever required) such that the
-parsed value is string-equal to the declared value.
+once, appended last. Metadata keys SHALL match `[A-Za-z][A-Za-z0-9_-]*` (rejecting integer-like
+and YAML-significant keys preflight, like reference names — this also makes "declared order" and
+JavaScript property-enumeration order identical). Values SHALL be emitted YAML-safe (quoted
+whenever required) such that the parsed value is string-equal to the declared value.
 
 #### Scenario: Arbitrary metadata keys survive generation
 
@@ -131,6 +146,13 @@ parsed value is string-equal to the declared value.
 - **THEN** the generated frontmatter `metadata:` block contains only the declared keys plus the
   generator-injected `generatedBy`; the generator emits NO fallback values (every current
   template declares `author` and `version` explicitly, so no generated output changes)
+
+#### Scenario: Invalid metadata key fails preflight
+
+- **WHEN** a template declares a metadata key that is integer-like (e.g., `"1"`) or contains
+  YAML-significant characters (e.g., `a: b`)
+- **THEN** the operation fails preflight with an error naming the template and key; no file is
+  written
 
 #### Scenario: generatedBy is generator-owned
 

@@ -18,10 +18,12 @@ can ship an 8-file skill without touching the generator again.
   `.codex/skills/` — same bytes, per the e2e identity contract).
 - **Generated `references/` dirs converge on every (re)generation** (D-b2-1 as amended): the
   shared writer — used by `init` (including extend-mode re-runs) and BOTH of update's generation
-  paths — writes all declared references AND removes undeclared entries, so the surface is
-  indistinguishable from a fresh install at the current version. **Smart update detection grows
-  reference-set drift** (missing declared / stray undeclared defeats the current-stamps
-  short-circuit), so the contract holds without `--force`.
+  paths — writes all declared references AND removes undeclared entries, so the regenerated
+  surface is byte-identical to a fresh install at the current version. **Smart update detection
+  grows reference-set and root-shape drift** (missing declared / stray undeclared / undesired or
+  non-directory `references/` root defeats the current-stamps short-circuit), so declared-set and
+  root-shape convergence hold without `--force`; user-edited declared CONTENT is deliberately
+  outside detection scope and restores on actual regeneration.
 - **`generateSkillContent()` passes ALL template `metadata` keys through** to frontmatter in
   template-declared order (D-b2-5); `generatedBy` remains generator-injected and not overridable.
 - **Content payload: exactly one file** (D-b2-4): `orbit-archive-change/references/
@@ -38,7 +40,7 @@ can ship an 8-file skill without touching the generator again.
 ### New Capabilities
 
 - `orbit-skill-generation`: the generated-skill production surface — multi-file emission
-  (`SKILL.md` + `references/*.md`), frontmatter metadata pass-through, and update-time
+  (`SKILL.md` + `references/*.md`), frontmatter metadata pass-through, and (re)generation-time
   convergence semantics for generated skill dirs.
 
 ### Modified Capabilities
