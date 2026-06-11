@@ -116,7 +116,16 @@ Per the universal spine in \`orbit-conventions\`'s \`Internal-run JSON summary f
 }
 \`\`\`
 
-(\`/orbit:new\` scaffolds only — upstream's guardrail above is explicit: do NOT create artifacts at new-time. Artifact generation happens via \`/orbit:continue\` or \`/orbit:ff\`, so \`artifacts_created\` is always \`[]\` in this emit.)`,
+(\`/orbit:new\` scaffolds only — upstream's guardrail above is explicit: do NOT create artifacts at new-time. Artifact generation happens via \`/orbit:continue\` or \`/orbit:ff\`, so \`artifacts_created\` is always \`[]\` in this emit.)
+
+### \`next_recommended\` — artifact-completeness-aware
+
+Per \`orbit-run-summary-emit\`'s \`Propose-shaped and artifact-completion-aware recommendation logic\` requirement, do NOT hardcode the next artifact — defer to upstream \`orbit status --change <name> --json\` (the example above shows the default spec-driven schema's outcome, not a fixed string):
+
+- **\`isComplete: false\`** (the typical case right after scaffolding): \`next_recommended: "/orbit:continue <name> — <next missing artifact> still pending"\` (where \`<next missing artifact>\` is the first entry in upstream's \`artifacts\` array with \`status: "ready"\` — the array is sorted by build order; \`proposal\` in the default schema, but other schemas may start elsewhere)
+- **\`isComplete: true\`** (atypical for new — a schema with no required artifacts): \`next_recommended: "/orbit:review <name> — all proposal artifacts now present"\`
+
+A downstream status reader parses the leading \`/orbit:<verb> <name>\` token into \`command\`/\`args\`.`,
     license: 'MIT',
     compatibility: 'Requires orbit CLI.',
     metadata: { author: 'openspec', version: '1.0' },

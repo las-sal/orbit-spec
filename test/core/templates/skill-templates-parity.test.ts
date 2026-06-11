@@ -31,12 +31,12 @@ import { generateSkillContent } from '../../../src/core/shared/skill-generation.
 
 const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   getExploreSkillTemplate: 'e7460329e6ed9ea02e334cb6fb62194cf40cda09f1c2123d5b510ec548aeadbb',
-  getNewChangeSkillTemplate: '862dcd56a99a20f08a31f4cd003243fbc39629ee4361f917cf8d4f3760540647',
+  getNewChangeSkillTemplate: '2819eb47ceb2d8cb00f542641a4f63b1c00f57f1f961c75064fda028dc04219d',
   getContinueChangeSkillTemplate: '55e01617f7937cbf2a80446f82bce69675a9feef454b0a2df6ee4d62f22554ab',
   getApplyChangeSkillTemplate: '535a8e496c36248b1bf13db43caa9fb252a2d283f2a750da2a2ec2fce90a5ea4',
   getFfChangeSkillTemplate: '11b6cfab83702b51c025fa3e9c249f62fe1d71cb2a368fcb271508659c1f58a5',
   getSyncSpecsSkillTemplate: '051c7fbb52cf2e87d8da2ffc45e6dbd2b4663f9b37add611abe430695e9694b1',
-  getOnboardSkillTemplate: 'c562fbf0f9283b0e071ea4d5c951a76d9b8cad2010b1fd501a616497e4654f87',
+  getOnboardSkillTemplate: 'a317ebdce77503bd06678c6f12a0c1267a689a13cc18a04c37b91b34f3e2b7eb',
   getOrbitExploreCommandTemplate: '52892dbd4b5eb72264dc6eb54f8126a09fc903adc1c1654c58e0650df609bfb6',
   getOrbitNewCommandTemplate: '47d97305a2d3abca6eafa8f7ed5fe13fb83ea8ca0b71f007975b217135f5f5aa',
   getOrbitContinueCommandTemplate: 'e1ecd4fffee224e284453be717226824c7567041d7c1676b6b6bca4727e3a9dd',
@@ -50,14 +50,14 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   getOrbitOnboardCommandTemplate: '3a3e98c6a01517896dfdccaba4fa4477edea62fd69dc4189df1dd105bbedcc5b',
   getOrbitBulkArchiveCommandTemplate: '6bc94ce2a406ceb934f461665bdd1e96f5a7149c798172c04f50d83c3630819a',
   getOrbitVerifyCommandTemplate: 'b98377960f7416452e77f6042ffbb037df4c6461619aebe9b595a6883a752a9a',
-  getOrbitProposeSkillTemplate: 'd22697731aa4f873f4fafe61810ceaffdc9eb879d3ba33b1e010fad9e9b5c22e',
+  getOrbitProposeSkillTemplate: 'f31ea6166a99413f37d17917727fd1ecccfeddad8cbff5f6e30cbcb53d6f6f9c',
   getOrbitProposeCommandTemplate: 'b91222654d5050d7ae7f2f49b5d6c4b34e65638bd8c5ae3e622550eb1329c168',
   getFeedbackSkillTemplate: 'ded61ad85c5050f7bf241870b14bfcdd929f0be68a028c1130fd30a66efbda3b',
 };
 
 const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
   'orbit-explore': '5ddcc19bc1688c154a1eda1f2e44ff35249b4f4c4b858e4d61f7f530e4040981',
-  'orbit-new-change': 'bf07a6c933e49baabd3c6f3ffe3ed7fcd9a5db70dfc7db92848804bad39eb3db',
+  'orbit-new-change': '9a04bac3f36845add2cd665ce1bc6953e383465c5adc865c1ebe4eb34ece3b25',
   'orbit-continue-change': '204d55aced963145cf0dedc1b1b9d177fb735a280d17a2648f01b19e095e4331',
   'orbit-apply-change': '4361b49613dcfdae494c73e35c8737212f7de8573b0622d646d71a05699f0d02',
   'orbit-ff-change': 'f7e9049782da4dfcc6269c29d32f3325be7dd42ebabf7a0b37d829d8aa91727e',
@@ -65,8 +65,8 @@ const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
   'orbit-archive-change': '85b475a228ebe66a2f3267ed2668b651b534c0518d58f1304a0bd494b86c92b4',
   'orbit-bulk-archive-change': '1bd94762c8d0b2f8ec86e06d2552be7e2ad14574147839018988071b33abccf8',
   'orbit-verify-change': 'a88afebd17504c36be7c233d3062a49f3c2a842f5c84f5761051c479d4283628',
-  'orbit-onboard': 'b8e30a94ead922366152a50b45c912709589fabf974440032eff084b29472eb0',
-  'orbit-propose': '4d2bf5d5c850a3a142e054f6ac5f871111c1f5e36eb1221a92b895b6ee44ccd9',
+  'orbit-onboard': 'c1b89b483782883e996f1f97120c6ab05f8457e956b5d0c033905d38cfd4590f',
+  'orbit-propose': '2b2bcaf214e2ee56185db4d0c21da41cee62605c44c62c42536937a1dfae530d',
 };
 
 function stableStringify(value: unknown): string {
