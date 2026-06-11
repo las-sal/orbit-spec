@@ -14,9 +14,10 @@ in B1.
 
 - **WHEN** `orbit init` generates the `orbit-archive-change` skill
 - **THEN** `<skills-dir>/orbit-archive-change/references/archive-summary-schema.md` exists and
-  documents the archive emit's fields: the universal spine plus the lifecycle-kind extensions
-  (`archive_path`, `audit`, `sync_specs`, `unresolved_markers`, `user_decision`, `warnings`) per
-  `orbit-conventions`' `Internal-run JSON summary format` requirement — and covers the field list
+  documents the archive emit's fields: the universal spine plus the five named lifecycle-kind
+  extensions (`archive_path`, `audit`, `sync_specs`, `unresolved_markers`, `user_decision`) per
+  `orbit-conventions`' `Internal-run JSON summary format` requirement, plus `warnings` (present
+  in that requirement's canonical lifecycle example) — and covers the field list
   in this capability's own `Archive run summary written` requirement
 
 #### Scenario: Schema shapes match the baselines, not the overlay source

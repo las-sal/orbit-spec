@@ -1,7 +1,9 @@
 # Explore: b2-grow-generator
 
-> **Status**: exploring — pre-propose staging record for phase B2 of the D9 program
-> (grow generator: `references[]` + metadata pass-through, per D7).
+> **Status**: proposed / in review — promoted into `orbit/changes/b2-grow-generator/` at
+> propose-time (D-b2-3…6 ratified then; D-b2-1 amended at external review iter 1). Originally the
+> pre-propose staging record for phase B2 of the D9 program (grow generator: `references[]` +
+> metadata pass-through, per D7).
 
 ## Premise
 
@@ -41,6 +43,11 @@ Concrete content payload queued for B2 (one file — see D-b2-2):
   references AND removes undeclared files within `references/`; the skill dir is generated
   territory — user files don't belong inside it. Consistent with D14's "generated files are
   regenerated, not merged".
+  **Amended (external review iter 1)**: reconciliation is a property of the SHARED WRITER, not of
+  `update` alone — it applies on `init` extend-mode re-runs and on BOTH update generation paths
+  (the refresh loop and `upgradeLegacyTools()`), with write-before-prune ordering, generation-time
+  name validation, and entry-type/symlink containment. design.md Decisions carries the full
+  amended form; the `orbit-skill-generation` delta is the normative statement.
 
 - **D-b2-2 (2026-06-11) — Disciplines stay inline per body; the issue-#4 shared-reference
   consolidation is REVERSED; Q6 is moot.** User: as the workflow evolves and disciplines gain

@@ -47,7 +47,10 @@ outright without this. The full exploration record is `explore.md` (D-b2-1…6) 
   command presence — a current-version install would never reach the reconciler. Detection gains
   reference-set drift (missing declared / stray undeclared ⇒ proceed to generation). Within a
   version, declared content cannot change, so presence/stray detection suffices; the self-host
-  dev loop (template edits without version bumps) uses `update --force` instead.
+  dev loop (template edits without version bumps) uses `update --force` instead. User-edited
+  *declared* references (right name, tampered content) are deliberately outside detection scope —
+  consistent with the existing presence-only `SKILL.md` drift checks; `--force` or the next
+  version bump restores them.
 - **D-b2-5 — metadata pass-through**: emit every `template.metadata` key in declared order;
   `generatedBy` appended by the generator and wins over any template-declared key of the same
   name (generator-owned provenance).

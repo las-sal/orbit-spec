@@ -113,8 +113,10 @@ begins.
 
 `generateSkillContent()` SHALL emit every key of the template's `metadata` record into the
 generated `SKILL.md` frontmatter `metadata:` block, in template-declared order. The generator
-SHALL append `generatedBy: <CLI version>`; `generatedBy` is generator-owned and overrides any
-template-declared key of the same name.
+SHALL append `generatedBy: <CLI version>`; `generatedBy` is generator-owned: a template-declared
+`generatedBy` is dropped from its declared position and the generator's value appears exactly
+once, appended last. Values SHALL be emitted YAML-safe (quoted whenever required) such that the
+parsed value is string-equal to the declared value.
 
 #### Scenario: Arbitrary metadata keys survive generation
 
@@ -134,4 +136,5 @@ template-declared key of the same name.
 
 - **WHEN** a template declares its own `generatedBy` metadata key
 - **THEN** the generated frontmatter carries the generator-injected CLI version for `generatedBy`,
-  not the template's value
+  not the template's value — exactly once, in the final position (the template's declared
+  position is dropped)

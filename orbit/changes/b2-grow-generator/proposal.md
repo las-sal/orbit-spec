@@ -16,9 +16,12 @@ can ship an 8-file skill without touching the generator again.
 - **The shared skill-writer (used by `init` and `update`) emits `references/<name>` files**
   alongside `SKILL.md`, for every tool's skills dir (Claude `.claude/skills/`, Codex
   `.codex/skills/` — same bytes, per the e2e identity contract).
-- **`update` converges `references/`** (D-b2-1): writes all declared references AND removes
-  undeclared files within a generated skill's `references/` dir — after update, the surface is
-  indistinguishable from a fresh init at the current version.
+- **Generated `references/` dirs converge on every (re)generation** (D-b2-1 as amended): the
+  shared writer — used by `init` (including extend-mode re-runs) and BOTH of update's generation
+  paths — writes all declared references AND removes undeclared entries, so the surface is
+  indistinguishable from a fresh install at the current version. **Smart update detection grows
+  reference-set drift** (missing declared / stray undeclared defeats the current-stamps
+  short-circuit), so the contract holds without `--force`.
 - **`generateSkillContent()` passes ALL template `metadata` keys through** to frontmatter in
   template-declared order (D-b2-5); `generatedBy` remains generator-injected and not overridable.
 - **Content payload: exactly one file** (D-b2-4): `orbit-archive-change/references/
@@ -48,7 +51,8 @@ can ship an 8-file skill without touching the generator again.
 
 - **Affected source**: `src/core/templates/types.ts` (`SkillTemplate`),
   `src/core/shared/skill-generation.ts` (metadata emission + reference helpers),
-  `src/core/init.ts` / `src/core/update.ts` (skill-writers), and
+  `src/core/init.ts` / `src/core/update.ts` (skill-writers, both update generation paths),
+  `src/core/profile-sync-drift.ts` (reference-set drift detection), and
   `src/core/templates/workflows/archive-change.ts` (declares the one reference).
 - **Affected tests**: `skill-templates-parity` (reference hashes), `orbit-content-fidelity`
   (archive reference declaration), `orbit-generated-surface` (on-disk references, both tools),
@@ -57,6 +61,10 @@ can ship an 8-file skill without touching the generator again.
   no references concept (D7 flagged it as "plausibly something upstream wants back"; upstreaming
   is out of scope per the exploration's Considered & out).
 - **Self-host loop**: after apply, regenerate this repo's own surface
-  (`npm run build && node bin/orbit.js update`) so the archive skill's reference materializes here too.
+  (`npm run build && node bin/orbit.js update --force` — dev-loop template edits do not bump the
+  version) so the archive skill's reference materializes here too.
+- **Docs inheritance (issue #1)**: B2 grows the per-tool generated install surface by one file;
+  the deferred README rewrite inherits documenting the `references/` surface (per the
+  `orbit-conventions` install-documentation requirement).
 - **Exit criterion**: B3 can ship `review`/`review-external`/`address-reviews`/`audit-drift` as
   multi-file skills with `capability:` metadata, with zero further generator changes.

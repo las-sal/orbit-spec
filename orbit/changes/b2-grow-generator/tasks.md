@@ -18,6 +18,7 @@ Implementation chunks:
   writes every declared reference to `<skill-dir>/references/<name>`; all writes succeed BEFORE
   any pruning; removes undeclared entries (files/dirs/symlinks-as-links, never following links;
   if `references/` is itself a symlink, replace with a real dir) within `references/` only;
+  when the declared set is empty, removes the `references/` dir itself (no empty-dir litter);
   returns written/removed counts for reporting.
 
 ## 2. Engine: wiring init + update
@@ -27,10 +28,10 @@ Implementation chunks:
 - [ ] 2.2 `update.ts` calls the same helper on BOTH generation paths: the skill refresh loop AND
   `upgradeLegacyTools()` (single writer — entry points cannot diverge); removed-entry counts
   surface in update's output.
-- [ ] 2.4 Smart update detection (`profile-sync-drift.ts`) gains reference drift: a generated
+- [ ] 2.3 Smart update detection (`profile-sync-drift.ts`) gains reference drift: a generated
   skill missing a declared reference, or carrying an undeclared entry, counts as drift and
   defeats the current-stamps short-circuit (`update.ts:151`).
-- [ ] 2.3 Skills with no `references` produce no `references/` dir (no empty-dir litter).
+- [ ] 2.4 Skills with no `references` produce no `references/` dir (no empty-dir litter).
 
 ## 3. Content: archive schema reference
 
