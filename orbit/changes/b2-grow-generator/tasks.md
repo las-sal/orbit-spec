@@ -44,8 +44,9 @@ Implementation chunks:
   exists on disk for claude AND codex, byte-identical; non-reference skills have no
   `references/` dir.
 - [ ] 4.4 Writer units (init/update suites): emission on init; refresh on update; remove-unknown
-  on update (seed a stray file in `references/`, assert removal + report); reconciliation never
-  touches files outside `references/`; `generatedBy` override; arbitrary metadata key
+  on update (seed a stray file in `references/`, assert removal + report); has-references→none
+  transition removes the `references/` dir entirely; reconciliation never touches files outside
+  `references/`; `generatedBy` override; no-fallback-defaults metadata; arbitrary metadata key
   pass-through.
 
 ## 5. Validation & completeness

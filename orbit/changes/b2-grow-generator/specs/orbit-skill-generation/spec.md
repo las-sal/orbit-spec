@@ -49,6 +49,13 @@ Reconciliation SHALL be scoped to files within `<skill-dir>/references/` only.
   declare (e.g., a reference renamed or removed in a newer CLI version, or a user-parked file)
 - **THEN** `orbit update` removes that file, and reports the removal in its output
 
+#### Scenario: Dropping all references removes the directory
+
+- **WHEN** a newer CLI version's template declares no references for a skill that previously
+  shipped some, and `orbit update` runs
+- **THEN** the skill's `references/` directory is removed entirely (not left empty) — matching the
+  fresh-init surface, which creates no `references/` dir for reference-less skills
+
 #### Scenario: Reconciliation never escapes references/
 
 - **WHEN** `orbit update` reconciles a skill's references
@@ -67,6 +74,14 @@ template-declared key of the same name.
 - **WHEN** a template declares `metadata: { author, version, capability: "orbit-review" }`
 - **THEN** the generated frontmatter contains `author`, `version`, AND `capability: orbit-review`
   (no key is silently dropped)
+
+#### Scenario: No fallback defaults — templates are the source of truth
+
+- **WHEN** a template's `metadata` omits a key the legacy generator defaulted (e.g., `author`,
+  `version`) or declares no `metadata` at all
+- **THEN** the generated frontmatter `metadata:` block contains only the declared keys plus the
+  generator-injected `generatedBy`; the generator emits NO fallback values (every current
+  template declares `author` and `version` explicitly, so no generated output changes)
 
 #### Scenario: generatedBy is generator-owned
 

@@ -49,8 +49,11 @@ two external (GPT-5 Codex) system-review iterations; all findings resolved (audi
 Change validates `--strict`; **1459 tests green** (incl. per-workflow marker fidelity, launcher
 assertions, and an e2e generated-surface test that runs a real default init for claude+codex).
 Per D13, B-arc keeps prose as **inline TS template literals** (markdown-as-source/D6 deferred).
-**Deferred follow-ups:** `archive-change` `references/` file + disciplines-reference consolidation
-(B2, issue #4), orbit-status absorption (post-parity, issue #3), broader user-docs rewrite (issue #1).
+**Deferred follow-ups:** `archive-change` `references/` file (B2 — in flight as
+`orbit/changes/b2-grow-generator/`), orbit-status absorption (post-parity, issue #3), broader
+user-docs rewrite (issue #1). The disciplines-reference consolidation was REVERSED (D-b2-2 in the
+B2 exploration; issue #4 closed) — per-command divergence is the desired trajectory; disciplines
+stay inline per body.
 The full plan and design decisions live in the docs below — **read them before B-arc work.**
 
 ## Source of truth for the plan

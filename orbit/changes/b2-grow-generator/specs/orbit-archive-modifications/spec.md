@@ -12,9 +12,10 @@ content is migrated from the overlay's `openspec-archive-change/references/archi
 
 - **WHEN** `orbit init` generates the `orbit-archive-change` skill
 - **THEN** `<skills-dir>/orbit-archive-change/references/archive-summary-schema.md` exists and
-  documents the archive emit's fields (spine + `archive_path`, `audit`, `sync_specs`,
-  `unresolved_markers`, `user_decision`, `warnings`), consistent with the baseline
-  `Archive run summary written` requirement's field list
+  documents the archive emit's fields: the universal spine plus the lifecycle-kind extensions
+  (`archive_path`, `audit`, `sync_specs`, `unresolved_markers`, `user_decision`, `warnings`) per
+  `orbit-conventions`' `Internal-run JSON summary format` requirement — and covers the field list
+  in this capability's own `Archive run summary written` requirement
 
 #### Scenario: Body cite resolves
 
