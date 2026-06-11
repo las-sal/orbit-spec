@@ -670,10 +670,10 @@ The system SHALL classify every skill and command file orbit generates into one 
 - **WHEN** orbit's contributors evaluate a new upstream skill arriving via a future engine upgrade or cherry-pick
 - **THEN** the disposition decision is recorded in the change proposal that performs the upgrade; the new skill is assigned to one of the four categories with rationale
 
-#### Scenario: Commands follow the same 4-category framework
+#### Scenario: Commands are thin launchers delegating to skills
 
 - **WHEN** orbit generates (or declines to generate) a `/orbit:*` command file
-- **THEN** the command surface mirrors the skill surface — each command's disposition is the same category as its corresponding skill, on the same criteria; a skill that is not generated has no command either
+- **THEN** the command is a thin launcher that invokes its corresponding skill (the skill is the single source of workflow behavior and carries the disposition above); the command surface mirrors the skill surface 1:1, and a skill that is not generated has no command either
 
 ### Requirement: Verb-prefix naming taxonomy preserved
 

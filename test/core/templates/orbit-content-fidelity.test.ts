@@ -4,6 +4,16 @@ import {
   getExploreSkillTemplate,
   getOrbitExploreCommandTemplate,
   getOrbitProposeSkillTemplate,
+  getOrbitProposeCommandTemplate,
+  getOrbitNewCommandTemplate,
+  getOrbitContinueCommandTemplate,
+  getOrbitApplyCommandTemplate,
+  getOrbitFfCommandTemplate,
+  getOrbitSyncCommandTemplate,
+  getOrbitArchiveCommandTemplate,
+  getOrbitBulkArchiveCommandTemplate,
+  getOrbitVerifyCommandTemplate,
+  getOrbitOnboardCommandTemplate,
   getNewChangeSkillTemplate,
   getContinueChangeSkillTemplate,
   getApplyChangeSkillTemplate,
@@ -24,25 +34,46 @@ import {
  *
  * sync-specs is intentionally absent: orbit never modified it (a no-op for B1).
  */
-const RELOCATED: Array<[string, () => SkillTemplate]> = [
-  ['explore', getExploreSkillTemplate],
-  ['propose', getOrbitProposeSkillTemplate],
-  ['new-change', getNewChangeSkillTemplate],
-  ['continue-change', getContinueChangeSkillTemplate],
-  ['apply-change', getApplyChangeSkillTemplate],
-  ['ff-change', getFfChangeSkillTemplate],
-  ['bulk-archive-change', getBulkArchiveChangeSkillTemplate],
-  ['verify-change', getVerifyChangeSkillTemplate],
-  ['archive-change', getArchiveChangeSkillTemplate],
-  ['onboard', getOnboardSkillTemplate],
+// Per-workflow REQUIRED markers (every listed marker must appear in the skill body).
+// A workflow that silently loses its disciplines block, run-summary section, or
+// completion-prompt override fails its own assertion — no disjunctive escape hatch.
+const RELOCATED: Array<[string, () => SkillTemplate, string[]]> = [
+  ['explore', getExploreSkillTemplate, ['execution disciplines', 'Run-summary emit']],
+  ['propose', getOrbitProposeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
+  ['new-change', getNewChangeSkillTemplate, ['execution disciplines', 'Run-summary emit']],
+  ['continue-change', getContinueChangeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
+  ['apply-change', getApplyChangeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
+  ['ff-change', getFfChangeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
+  ['bulk-archive-change', getBulkArchiveChangeSkillTemplate, ['# Orbit additions']],
+  ['verify-change', getVerifyChangeSkillTemplate, ['execution disciplines', 'Run-summary emit']],
+  ['archive-change', getArchiveChangeSkillTemplate, ['execution disciplines', 'run summary']],
+  ['onboard', getOnboardSkillTemplate, ['execution disciplines', 'self-contained']],
+];
+
+// Every generated /orbit:* command is a thin launcher delegating to its skill —
+// the skill is the single source of workflow behavior (external-review CRITICAL fix).
+const LAUNCHERS: Array<[string, () => { content: string }, string]> = [
+  ['explore', getOrbitExploreCommandTemplate, 'orbit-explore'],
+  ['new', getOrbitNewCommandTemplate, 'orbit-new-change'],
+  ['continue', getOrbitContinueCommandTemplate, 'orbit-continue-change'],
+  ['apply', getOrbitApplyCommandTemplate, 'orbit-apply-change'],
+  ['ff', getOrbitFfCommandTemplate, 'orbit-ff-change'],
+  ['sync', getOrbitSyncCommandTemplate, 'orbit-sync-specs'],
+  ['archive', getOrbitArchiveCommandTemplate, 'orbit-archive-change'],
+  ['bulk-archive', getOrbitBulkArchiveCommandTemplate, 'orbit-bulk-archive-change'],
+  ['verify', getOrbitVerifyCommandTemplate, 'orbit-verify-change'],
+  ['onboard', getOrbitOnboardCommandTemplate, 'orbit-onboard'],
+  ['propose', getOrbitProposeCommandTemplate, 'orbit-propose'],
 ];
 
 describe('orbit content fidelity (B1 relocation)', () => {
-  describe.each(RELOCATED)('%s', (_name, getTemplate) => {
+  describe.each(RELOCATED)('%s', (_name, getTemplate, requiredMarkers) => {
     const skill = getTemplate().instructions;
 
-    it('carries the orbit editorial layer', () => {
-      expect(skill).toMatch(/# Orbit additions|execution disciplines|Run-summary|Consume-mode|NEW Step/);
+    it('carries every required orbit editorial marker', () => {
+      for (const marker of requiredMarkers) {
+        expect(skill).toContain(marker);
+      }
     });
 
     it('is orbit-named + mechanism-neutral (no opsx / openspec working-dir / stale issue refs)', () => {
@@ -63,11 +94,20 @@ describe('orbit content fidelity (B1 relocation)', () => {
     expect(skill).not.toContain('.claude/skills/');
   });
 
-  it('explore command carries the orbit-additions summary, mechanism-neutral', () => {
-    const command = getOrbitExploreCommandTemplate().content;
-    expect(command).toContain('Orbit additions (summary)');
-    expect(command).toContain('the `orbit-explore` skill');
-    expect(command).not.toContain('.claude/skills/');
-    expect(command).not.toContain('/opsx:');
+  describe.each(LAUNCHERS)('command %s', (_name, getTemplate, skillDir) => {
+    const content = getTemplate().content;
+
+    it('is a thin launcher delegating to its skill', () => {
+      expect(content).toContain('thin launcher');
+      expect(content).toContain(`\`${skillDir}\` skill`);
+      // a launcher that grows a workflow body again is a regression
+      expect(content.length).toBeLessThan(600);
+    });
+
+    it('is mechanism-neutral', () => {
+      expect(content).not.toContain('/opsx:');
+      expect(content).not.toContain('.claude/skills/');
+      expect(content).not.toMatch(/openspec\/(changes|specs|explore|lenses)/);
+    });
   });
 });

@@ -23,7 +23,7 @@ function getOnboardInstructions(): string {
 
 This skill is the orbit-authored onboarding read for the \`/orbit:onboard\` slash command. Single-pass; renders Sections 1-5 sequentially.
 
-The \`/orbit:onboard\` skill and command share one body (only frontmatter differs); when revising one, update the other in the same edit.
+This skill is the single source of the onboarding body; the \`/orbit:onboard\` command is a thin launcher that invokes it.
 
 ---
 
@@ -134,6 +134,8 @@ export function getOrbitOnboardCommandTemplate(): CommandTemplate {
     description: 'Single-pass onboarding reference - orient to orbit, its canonical workflow, and the command surface',
     category: 'Workflow',
     tags: ['workflow', 'onboarding', 'reference', 'learning'],
-    content: getOnboardInstructions(),
+    content: `Single-pass onboarding reference for orbit.
+
+This command is a thin launcher: invoke the \`orbit-onboard\` skill (e.g., \`/orbit:onboard\`). The skill carries the complete onboarding body. Do not improvise the walkthrough from this file; load the skill.`,
   };
 }

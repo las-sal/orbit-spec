@@ -247,6 +247,8 @@ Field notes:
 
 Per \`orbit-run-summary-emit\`'s \`Propose-shaped and artifact-completion-aware recommendation logic\` requirement, propose ALWAYS recommends \`/orbit:review\` next, never \`/orbit:apply\` directly. Even if the user is confident the artifacts are ready, the canonical orbit flow is propose → review → apply, with review acting as the pre-apply checkpoint.
 
+**Completion-prompt override (chat)**: where the upstream steps above prompt "Run \`/orbit:apply\` or ask me to implement", instead prompt: "Run \`/orbit:review <name>\` — review the artifacts before implementation." The upstream text above is kept verbatim; this override is the operative instruction.
+
 A downstream status reader parses the leading \`/orbit:review <name>\` token into \`command\`/\`args\`.`,
     license: 'MIT',
     compatibility: 'Requires orbit CLI.',
@@ -260,122 +262,8 @@ export function getOrbitProposeCommandTemplate(): CommandTemplate {
     description: 'Propose a new change - create it and generate all artifacts in one step',
     category: 'Workflow',
     tags: ['workflow', 'artifacts', 'experimental'],
-    content: `Propose a new change - create the change and generate all artifacts in one step.
+    content: `Generate proposal, design, specs, and tasks for a change.
 
-I'll create a change with artifacts:
-- proposal.md (what & why)
-- design.md (how)
-- tasks.md (implementation steps)
-
-When ready to implement, run \`/orbit:review\` (proposal mode) first, then \`/orbit:apply\`. Per orbit's canonical flow, propose → review → apply; review is the pre-apply checkpoint. See the \`Orbit additions\` section below for full rationale.
-
----
-
-**Input**: The argument after \`/orbit:propose\` is the change name (kebab-case), OR a description of what the user wants to build.
-
-**Steps**
-
-1. **If no input provided, ask what they want to build**
-
-   Use the **AskUserQuestion tool** (open-ended, no preset options) to ask:
-   > "What change do you want to work on? Describe what you want to build or fix."
-
-   From their description, derive a kebab-case name (e.g., "add user authentication" → \`add-user-auth\`).
-
-   **IMPORTANT**: Do NOT proceed without understanding what the user wants to build.
-
-2. **Create the change directory**
-   \`\`\`bash
-   orbit new change "<name>"
-   \`\`\`
-   This creates a scaffolded change at \`orbit/changes/<name>/\` with \`.openspec.yaml\`.
-
-3. **Get the artifact build order**
-   \`\`\`bash
-   orbit status --change "<name>" --json
-   \`\`\`
-   Parse the JSON to get:
-   - \`applyRequires\`: array of artifact IDs needed before implementation (e.g., \`["tasks"]\`)
-   - \`artifacts\`: list of all artifacts with their status and dependencies
-
-4. **Create artifacts in sequence until apply-ready**
-
-   Use the **TodoWrite tool** to track progress through the artifacts.
-
-   Loop through artifacts in dependency order (artifacts with no pending dependencies first):
-
-   a. **For each artifact that is \`ready\` (dependencies satisfied)**:
-      - Get instructions:
-        \`\`\`bash
-        orbit instructions <artifact-id> --change "<name>" --json
-        \`\`\`
-      - The instructions JSON includes:
-        - \`context\`: Project background (constraints for you - do NOT include in output)
-        - \`rules\`: Artifact-specific rules (constraints for you - do NOT include in output)
-        - \`template\`: The structure to use for your output file
-        - \`instruction\`: Schema-specific guidance for this artifact type
-        - \`outputPath\`: Where to write the artifact
-        - \`dependencies\`: Completed artifacts to read for context
-      - Read any completed dependency files for context
-      - Create the artifact file using \`template\` as the structure
-      - Apply \`context\` and \`rules\` as constraints - but do NOT copy them into the file
-      - Show brief progress: "Created <artifact-id>"
-
-   b. **Continue until all \`applyRequires\` artifacts are complete**
-      - After creating each artifact, re-run \`orbit status --change "<name>" --json\`
-      - Check if every artifact ID in \`applyRequires\` has \`status: "done"\` in the artifacts array
-      - Stop when all \`applyRequires\` artifacts are done
-
-   c. **If an artifact requires user input** (unclear context):
-      - Use **AskUserQuestion tool** to clarify
-      - Then continue with creation
-
-5. **Show final status**
-   \`\`\`bash
-   orbit status --change "<name>"
-   \`\`\`
-
-**Output**
-
-After completing all artifacts, summarize:
-- Change name and location
-- List of artifacts created with brief descriptions
-- What's ready: "All artifacts created! Ready for implementation."
-- Prompt: "Run \`/orbit:apply\` to start implementing."
-
-**Artifact Creation Guidelines**
-
-- Follow the \`instruction\` field from \`orbit instructions\` for each artifact type
-- The schema defines what each artifact should contain - follow it
-- Read dependency artifacts for context before creating new ones
-- Use \`template\` as the structure for your output file - fill in its sections
-- **IMPORTANT**: \`context\` and \`rules\` are constraints for YOU, not content for the file
-  - Do NOT copy \`<context>\`, \`<rules>\`, \`<project_context>\` blocks into the artifact
-  - These guide what you write, but should never appear in the output
-
-**Guardrails**
-- Create ALL artifacts needed for implementation (as defined by schema's \`apply.requires\`)
-- Always read dependency artifacts before creating a new one
-- If context is critically unclear, ask the user - but prefer making reasonable decisions to keep momentum
-- If a change with that name already exists, ask if user wants to continue it or create a new one
-- Verify each artifact file exists after writing before proceeding to next
-
----
-
-## Orbit additions (summary)
-
-The \`orbit-propose\` skill is extended by orbit-spec with a **consume mode** that activates when \`orbit/explore/<name>/explore.md\` exists (typically from a prior \`/orbit:explore <name>\` session):
-
-- **Mode detection** runs before Step 1: if a staging directory exists for the change name, switch to consume mode.
-- **Consume mode** reads \`explore.md\` as the authoritative seed instead of prompting for a description. Section mapping: Premise → proposal motivation; Decisions → spec deltas + design + tasks; Considered & out → design "Alternatives considered"; References → contextual reads.
-- **Open-question handling**: per-question prompt with three resolution paths — resolve now (becomes Decision), defer (becomes \`@review:\` marker in generated artifacts), abandon (moves to Considered & out). Bulk-handle UX for ~5+ questions.
-- **Move staging directory** to \`orbit/changes/<name>/\` after artifact generation completes; \`explore.md\` and sibling files persist as historical record.
-- **Conflict detection**: if both \`orbit/explore/<name>/\` and \`orbit/changes/<name>/\` exist, three-way prompt (regenerate / continue / abort).
-- **Naming inference**: invoked without \`<name>\` when exactly one staging directory exists → propose that name.
-- **Standalone mode preserved**: when no staging directory exists, falls through to upstream behavior unchanged.
-- **Always recommends \`/orbit:review\` next, never \`/orbit:apply\` directly** (per \`orbit-run-summary-emit\`'s \`Propose-shaped and artifact-completion-aware recommendation logic\` baseline requirement). The canonical orbit flow is propose → review → apply, with review as the pre-apply checkpoint. The run-summary JSON's \`next_recommended\` field follows this rule, and the same recommendation appears in chat output.
-- **Three execution disciplines** (read-before-reference / change completeness / pushback) per orbit-conventions.
-
-See the \`orbit-propose\` skill for full consume-mode flow, section mapping, and graceful-degradation cases.`
+This command is a thin launcher: invoke the \`orbit-propose\` skill, passing along any arguments given with the command (e.g., \`/orbit:propose <name>\`). The skill carries the complete workflow instructions — upstream openspec behavior plus orbit's additions. Do not improvise the workflow from this file; load the skill.`
   };
 }

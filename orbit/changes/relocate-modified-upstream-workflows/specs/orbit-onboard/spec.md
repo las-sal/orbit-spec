@@ -123,14 +123,14 @@ The `orbit-onboard` skill SHALL NOT emit a run-summary JSON when invoked. This c
 - **WHEN** a user invokes `/orbit:onboard`
 - **THEN** no JSON file is written to `orbit/.orbit-runs/` or any per-change `.orbit-runs/`; the skill's effect is limited to rendering Sections 1-5
 
-### Requirement: Skill and command share one body
+### Requirement: Command is a thin launcher for the skill
 
-The `orbit-onboard` skill and the `/orbit:onboard` command SHALL be generated from a single source body, so the two outputs differ only in frontmatter.
+The `orbit-onboard` skill SHALL be the single source of the onboarding body; the `/orbit:onboard` command SHALL be a thin launcher that invokes the skill rather than duplicating its prose.
 
 #### Scenario: Single source body
 
 - **WHEN** the skill and command templates are generated
-- **THEN** both derive their body from one shared source (the workflow module's onboarding-instructions helper); the generated `SKILL.md` and command file have identical prose, differing only in their frontmatter blocks
+- **THEN** the onboarding prose lives only in the generated `SKILL.md`; the generated command file is a short launcher that instructs invoking the `orbit-onboard` skill
 
 ### Requirement: Slash-command surface `/orbit:onboard`
 
@@ -139,4 +139,4 @@ The orbit-authored skill SHALL preserve the `/orbit:onboard` slash-command surfa
 #### Scenario: Invocation unchanged for users
 
 - **WHEN** a user types `/orbit:onboard`
-- **THEN** the command resolves to the orbit-authored onboarding body; the skill dir is `orbit-onboard`, the command id is `onboard`
+- **THEN** the command resolves (via the launcher) to the orbit-authored onboarding body; the skill dir is `orbit-onboard`, the command id is `onboard`

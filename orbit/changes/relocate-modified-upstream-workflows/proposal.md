@@ -19,8 +19,10 @@ two existing literals per module (skill `instructions` + command `content`), no 
 - **Relocate the orbit delta for all 11 modified-upstream workflows** from the overlay into the
   existing source modules `src/core/templates/workflows/{explore, propose, new-change,
   continue-change, apply-change, ff-change, sync-specs, archive-change, bulk-archive-change,
-  verify-change, onboard}.ts`. For each: fold orbit's additions into the skill `instructions` literal
-  and the command `content` literal, preserving upstream's fat-skill / thin-command two-tier shape.
+  verify-change, onboard}.ts`. The skill `instructions` literal is the single source of workflow
+  behavior (upstream body + orbit's additions); the command `content` literal is a **thin launcher**
+  that invokes the skill (decided during external review remediation — eliminates skill/command
+  behavior divergence by construction; both D11 targets, Claude and Codex, are skill-capable).
 - **Inline the three execution disciplines** (read-before-reference / change-completeness / pushback,
   i.e. `orbit-conventions`) into 9 of the 11 bodies — hand-duplicated per body, mimicking
   upstream's self-contained bodies (Q9 resolved-for-B-arc by D13; no injection mechanism).

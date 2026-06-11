@@ -280,6 +280,34 @@ model in one deliberate step.
 
 ---
 
+### D14 — Skills are the single behavioral source; commands are thin launchers (RATIFIED 2026-06-11)
+
+**Directive (user, 2026-06-11, during B1 external-review remediation):** the user only invokes
+skills in practice and wants complexity shed wherever possible, while replicating openspec behavior
+exactly. Codex's external system review of B1 found the CRITICAL consequence of upstream's
+dual-surface model: the generated `/orbit:*` command files (full standalone instruction sets,
+upstream-style) carried none of orbit's editorial layer, so the command path silently skipped
+disciplines + run-summary emit (a gap inherited from the overlay, which also only enriched skills).
+
+**Decision: each skill `instructions` literal is the single source of workflow behavior (pristine
+upstream body + `# Orbit additions`); each command `content` literal is a ~3-line thin launcher
+that invokes the skill.**
+
+- **Behavior replication holds exactly** — the upstream instructions execute verbatim from the
+  skill body; only where the text lives changed. Delegation-to-skill is upstream's own pattern
+  (its archive flow invokes `orbit-sync-specs` via the Skill tool).
+- **Divergence-by-duplication becomes structurally impossible** — there is no second behavior copy
+  to drift. This was chosen over (a) duplicating the orbit layer into both literals (permanent
+  dual maintenance) and (b) skills-only delivery as the product default (upstream's
+  `delivery: 'skills'` config knob exists and remains available per-user, but flipping the product
+  default would orphan the `/orbit:*` colon notation that is load-bearing across all deltas and
+  emit strings — too big a ripple for B1).
+- **Both D11 targets are skill-capable** (Claude: `.claude/skills/`; Codex: `.codex/skills/`).
+  A future tool target with commands but no skill runtime would need launcher rethinking for that
+  tool — known boundary.
+- **No engine changes** — command-generation pipeline untouched (upstream code, dormant complexity
+  is cheaper than divergence); only the 11 command content literals shrank.
+
 ## Open questions
 
 ### Q1 — Tool breadth: all 26 adapters or Claude-only? ✅ RESOLVED by D11
