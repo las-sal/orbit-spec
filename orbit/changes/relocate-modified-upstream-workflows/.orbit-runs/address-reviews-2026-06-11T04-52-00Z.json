@@ -1,0 +1,31 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-06-11T04:52:00Z",
+  "change": "relocate-modified-upstream-workflows",
+  "final_assessment": "Walked all 10 findings from external-system-2026-06-11T02-35-57Z.md (1 CRITICAL / 5 WARNING / 4 SUGGESTION). All resolved or ratified-as-designed across 6 commits (0976c0c, 2885ae2, 4578a23, 14ed46f, de7f3f5, 1b47435). Three design decisions ratified during the walk: D14 (commands are thin launchers; skills the single behavioral source), D11 refinement (Claude primacy bounds mechanism-neutrality), D15 (full workflow surface installs every time; profile gating inert). Suite grew 1392 -> 1459 (launcher/marker assertions + e2e generated-surface test against a default init).",
+  "next_recommended": "/orbit:archive relocate-modified-upstream-workflows — external system review iter 1 fully addressed; verification clean (1459/1459, --strict valid)",
+  "kind": "editorial",
+  "iteration": 1,
+  "from_file": "orbit/changes/relocate-modified-upstream-workflows/.orbit-runs/external-system-2026-06-11T02-35-57Z.md",
+  "findings_summary": {
+    "critical": 1,
+    "warning": 5,
+    "suggestion": 4
+  },
+  "finding_titles": [
+    "Generated slash commands omit the relocated runtime behavior",
+    "Stale completion prompts route users around review and verify",
+    "New and continue derive the next artifact from the wrong status field",
+    "Codex output is not mechanism-neutral",
+    "Checked generation-fidelity claim ignores the default core profile",
+    "Canonical JSON examples omit fields their requirements mandate",
+    "Fidelity guard can pass after losing required sections",
+    "Crystallization consequence has conflicting abandonment semantics",
+    "Archive cites the wrong D11",
+    "Verify points at a spec that does not exist"
+  ],
+  "resolutions": {
+    "fixed": 8,
+    "ratified_as_designed": 2
+  }
+}
