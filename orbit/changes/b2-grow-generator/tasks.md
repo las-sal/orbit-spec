@@ -64,7 +64,7 @@ Implementation chunks:
 - [x] 4.3 e2e generated-surface: after default init, `references/archive-summary-schema.md`
   exists on disk for claude AND codex, byte-identical; non-reference skills have no
   `references/` dir.
-- [x] 4.4 Writer units (init/update suites): emission on init; refresh on update; remove-unknown
+- [x] 4.4 (expanded at external system review) Writer units (init/update suites): emission on init; refresh on update; remove-unknown
   on update AND on extend-mode re-init (seed a stray file, assert removal + report);
   has-references→none transition removes the `references/` dir entirely; legacy-upgrade path
   (`upgradeLegacyTools`) emits references; reference drift defeats current-stamps smart detection
@@ -82,6 +82,15 @@ Implementation chunks:
   order with mid-position template `generatedBy` and a value requiring quoting → parsed
   frontmatter preserves order, quotes correctly, generator-owned `generatedBy`); arbitrary
   metadata key pass-through.
+
+- [x] 2.5 (external system review remediation) Physical containment hardened: symlinked SKILL
+  dirs replaced before generation (`ensureRealSkillDir`, all 3 generation sites); preflight
+  hoisted to the FIRST step of init/update execute (before permission probe, migration, legacy
+  cleanup); reference-name whitelist (`[A-Za-z0-9][A-Za-z0-9._-]*`, no reserved device names);
+  staged-commit writes (temp + rename, cleanup on failure); structured root-removal reporting
+  (no `references/references` artifacts); init surfaces written counts. NOTE: preflight ordering
+  relative to migrations is enforced by code placement + unit validation tests; a true
+  invalid-template integration test would require template mocking and is deliberately omitted.
 
 ## 5. Validation & completeness
 

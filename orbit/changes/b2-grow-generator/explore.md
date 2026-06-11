@@ -34,7 +34,7 @@ Concrete content payload queued for B2 (one file — see D-b2-2):
 
 ## Decisions
 
-- **D-b2-1 (2026-06-11) — `update` removes unknown files from generated `references/` dirs.**
+- **D-b2-1 (2026-06-11; SUPERSEDED BY AMENDMENT below — reconciliation is shared-writer-wide, not update-only) — `update` removes unknown files from generated `references/` dirs.**
   Ratified from first principles: `orbit update`'s charter is *convergence* — after update, the
   generated surface must be indistinguishable from a fresh `init` at the current version (it is the
   delivery channel for orbit's editorial layer; `generatedBy` stamps + smart detection exist to

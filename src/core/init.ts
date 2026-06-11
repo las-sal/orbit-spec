@@ -43,7 +43,7 @@ import {
 } from './shared/index.js';
 import { getGlobalConfig, type Delivery, type Profile } from './global-config.js';
 import { getProfileWorkflows, CORE_WORKFLOWS, ALL_WORKFLOWS } from './profiles.js';
-import { validateSkillTemplates, reconcileSkillReferences } from './shared/skill-generation.js';
+import { validateSkillTemplates, reconcileSkillReferences, ensureRealSkillDir } from './shared/skill-generation.js';
 import { getAvailableTools } from './available-tools.js';
 import { migrateIfNeeded } from './migration.js';
 
@@ -108,6 +108,12 @@ export class InitCommand {
     const openspecDir = OPENSPEC_DIR_NAME;
     const openspecPath = path.join(projectPath, openspecDir);
 
+    // Preflight validation (orbit-skill-generation): the VERY FIRST step — before the
+    // permission probe, legacy cleanup, migration, or any other mutating operation.
+    // D15 makes profile resolution inert, so the full template set is the operation's
+    // template set; validation is pure and throws before anything touches disk.
+    validateSkillTemplates(getSkillTemplates());
+
     // Validation happens silently in the background
     const extendMode = await this.validate(projectPath, openspecPath);
 
@@ -133,20 +139,6 @@ export class InitCommand {
     // The resolved value is consumed later when generation reads effective config.
     this.resolveProfileOverride();
 
-    // Preflight validation (orbit-skill-generation): runs BEFORE any file write in the
-    // operation — including the orbit/ workspace scaffold — so an invalid reference name
-    // or metadata key mutates nothing.
-    {
-      const preflightConfig = getGlobalConfig();
-      const preflightDelivery: Delivery = preflightConfig.delivery ?? 'both';
-      if (preflightDelivery !== 'commands') {
-        const preflightProfile: Profile =
-          this.resolveProfileOverride() ?? preflightConfig.profile ?? 'core';
-        validateSkillTemplates(
-          getSkillTemplates(getProfileWorkflows(preflightProfile, preflightConfig.workflows))
-        );
-      }
-    }
 
     // Get tool states before processing
     const toolStates = getToolStates(projectPath);
@@ -565,6 +557,8 @@ export class InitCommand {
             const transformer = (tool.value === 'opencode' || tool.value === 'pi') ? transformToHyphenCommands : undefined;
             const skillContent = generateSkillContent(template, OPENSPEC_VERSION, transformer);
 
+            // Physical containment: a symlinked skill dir must not route writes outside
+            await ensureRealSkillDir(skillDir);
             // Write the skill file
             await FileSystemUtils.writeFile(skillFile, skillContent);
 
@@ -574,6 +568,9 @@ export class InitCommand {
             referenceEntriesRemoved.push(
               ...refResult.removed.map((name) => `${dirName}/references/${name}`)
             );
+            if (refResult.rootRemoved && refResult.removed.length === 0) {
+              referenceEntriesRemoved.push(`${dirName}/references`);
+            }
           }
         }
         if (!shouldGenerateSkills) {
@@ -612,6 +609,11 @@ export class InitCommand {
       }
     }
 
+    if (referenceEntriesWritten > 0) {
+      console.log(
+        chalk.dim(`Generated ${referenceEntriesWritten} reference file${referenceEntriesWritten === 1 ? '' : 's'}`)
+      );
+    }
     if (referenceEntriesRemoved.length > 0) {
       console.log(
         chalk.dim(

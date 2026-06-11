@@ -213,19 +213,28 @@ Old instructions content
       consoleSpy.mockRestore();
     });
 
-    it('legacy-upgrade path generates references too', async () => {
+    it('legacy-upgrade path generates references, prunes strays, and reports', async () => {
       await fs.mkdir(path.join(testDir, '.claude', 'commands', 'openspec'), { recursive: true });
       await fs.writeFile(
         path.join(testDir, '.claude', 'commands', 'openspec', 'proposal.md'),
         'content'
       );
+      // a stray parked in the not-yet-generated skill's references/ dir
+      const refsDir = path.join(testDir, '.claude', 'skills', 'orbit-archive-change', 'references');
+      await fs.mkdir(refsDir, { recursive: true });
+      await fs.writeFile(path.join(refsDir, 'stray.md'), 'parked');
 
+      const consoleSpy = vi.spyOn(console, 'log');
       const forceUpdateCommand = new UpdateCommand({ force: true });
       await forceUpdateCommand.execute(testDir);
 
       expect(await FileSystemUtils.fileExists(
-        path.join(testDir, '.claude', 'skills', 'orbit-archive-change', 'references', 'archive-summary-schema.md')
+        path.join(refsDir, 'archive-summary-schema.md')
       )).toBe(true);
+      expect(await FileSystemUtils.fileExists(path.join(refsDir, 'stray.md'))).toBe(false);
+      const calls = consoleSpy.mock.calls.map((call) => call.map(String).join(' '));
+      expect(calls.some((c) => c.includes('undeclared reference'))).toBe(true);
+      consoleSpy.mockRestore();
     });
   });
 

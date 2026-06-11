@@ -29,6 +29,7 @@ export {
   generateSkillContent,
   validateSkillTemplates,
   reconcileSkillReferences,
+  ensureRealSkillDir,
   skillReferencesDrifted,
   type ReferenceReconcileResult,
 } from './skill-generation.js';

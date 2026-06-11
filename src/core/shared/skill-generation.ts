@@ -195,16 +195,21 @@ export function validateSkillTemplates(entries: SkillTemplateEntry[]): void {
     const seen = new Set<string>();
     for (const ref of template.references ?? []) {
       const name = ref.name;
+      // Conservative cross-platform whitelist: letters/digits/dot/underscore/hyphen only
+      // (rejects separators, dot-segments, NUL/control bytes, spaces, and YAML-hostile
+      // characters by construction), plus Windows reserved device basenames.
+      const REFERENCE_NAME_RE = /^[A-Za-z0-9][A-Za-z0-9._-]*$/;
+      const WINDOWS_RESERVED = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])(\.|$)/i;
       const invalid =
         !name ||
         name === '.' ||
         name === '..' ||
-        name.includes('/') ||
-        name.includes('\\') ||
-        path.isAbsolute(name);
+        !REFERENCE_NAME_RE.test(name) ||
+        WINDOWS_RESERVED.test(name) ||
+        name.endsWith('.');
       if (invalid) {
         throw new Error(
-          `Invalid reference name "${name}" in skill template "${dirName}": must be a bare filename`
+          `Invalid reference name "${name}" in skill template "${dirName}": must match ${REFERENCE_NAME_RE} (bare filename, no reserved device names)`
         );
       }
       if (seen.has(name)) {
@@ -217,10 +222,27 @@ export function validateSkillTemplates(entries: SkillTemplateEntry[]): void {
   }
 }
 
+/**
+ * Ensures a skill directory is a REAL directory before any generation write
+ * (orbit-skill-generation physical containment): a symlink (or stray file) at the
+ * skill-dir path is removed and replaced with a real directory, so neither the
+ * SKILL.md write nor reference reconciliation can follow a link outside the tree.
+ */
+export async function ensureRealSkillDir(skillDir: string): Promise<void> {
+  const stat = await fs.lstat(skillDir).catch(() => null);
+  if (stat && !stat.isDirectory()) {
+    // symlink or regular file at the skill-dir path: remove the entry itself
+    await fs.rm(skillDir, { force: true });
+  }
+  await fs.mkdir(skillDir, { recursive: true });
+}
+
 export interface ReferenceReconcileResult {
   written: number;
   /** Relative names of undeclared entries removed from references/ */
   removed: string[];
+  /** True when the references/ root itself was removed or replaced (empty declared set, or non-directory root) */
+  rootRemoved: boolean;
 }
 
 /**
@@ -236,21 +258,25 @@ export async function reconcileSkillReferences(
   skillDir: string,
   references: SkillReference[] | undefined
 ): Promise<ReferenceReconcileResult> {
+  // Physical containment: the skill dir itself must be a real directory (a symlinked
+  // skill dir would route every write/delete outside the tree).
+  await ensureRealSkillDir(skillDir);
+
   const refsDir = path.join(skillDir, 'references');
   const declared = references ?? [];
-  const result: ReferenceReconcileResult = { written: 0, removed: [] };
+  const result: ReferenceReconcileResult = { written: 0, removed: [], rootRemoved: false };
 
   const rootStat = await fs.lstat(refsDir).catch(() => null);
 
   if (declared.length === 0) {
     if (rootStat) {
+      result.rootRemoved = true;
       if (rootStat.isDirectory()) {
         const entries = await fs.readdir(refsDir);
         result.removed.push(...entries);
         await fs.rm(refsDir, { recursive: true, force: true });
       } else {
         // file or symlink at the references path — remove the entry itself
-        result.removed.push('references');
         await fs.rm(refsDir, { force: true });
       }
     }
@@ -259,19 +285,37 @@ export async function reconcileSkillReferences(
 
   if (rootStat && !rootStat.isDirectory()) {
     // symlinked or non-directory root: replace with a real directory (never follow)
+    result.rootRemoved = true;
     await fs.rm(refsDir, { force: true });
   }
   await fs.mkdir(refsDir, { recursive: true });
 
-  // WRITE phase — all declared writes complete before any pruning
-  for (const ref of declared) {
-    const target = path.join(refsDir, ref.name);
-    const existing = await fs.lstat(target).catch(() => null);
+  // WRITE phase — STAGED: declared content is written to temp names first, then swapped
+  // in via rename, so a mid-phase failure leaves every declared regular file with either
+  // its prior content or its new content — never partial, and never pruned.
+  const staged: Array<{ tmp: string; target: string; name: string }> = [];
+  try {
+    for (const ref of declared) {
+      const tmp = path.join(refsDir, `.orbit-staging-${ref.name}`);
+      await fs.writeFile(tmp, ref.content, 'utf-8');
+      staged.push({ tmp, target: path.join(refsDir, ref.name), name: ref.name });
+    }
+  } catch (error) {
+    // staging failed: remove temp files, leave the existing surface untouched
+    for (const s of staged) {
+      await fs.rm(s.tmp, { force: true }).catch(() => {});
+    }
+    throw error;
+  }
+
+  // COMMIT phase — replace non-regular declared entries and swap staged content in
+  for (const s of staged) {
+    const existing = await fs.lstat(s.target).catch(() => null);
     if (existing && !existing.isFile()) {
       // declared-path collision (symlink or directory): replace, never follow
-      await fs.rm(target, { recursive: true, force: true });
+      await fs.rm(s.target, { recursive: true, force: true });
     }
-    await fs.writeFile(target, ref.content, 'utf-8');
+    await fs.rename(s.tmp, s.target);
     result.written += 1;
   }
 

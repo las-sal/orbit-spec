@@ -33,10 +33,14 @@ configured (e.g., Claude `.claude/skills/`, Codex `.codex/skills/`).
 
 ### Requirement: Reference names validate at generation time
 
-The generator SHALL validate reference names before writing: a valid `name` is a bare filename —
-no path separators, not `.` or `..`, not absolute, and unique within the skill's declared set.
-Validation SHALL run as a PREFLIGHT over every skill in the generation operation, before any
-file write (including `SKILL.md`): an invalid or duplicate name fails the operation with an error
+The generator SHALL validate reference names before writing: a valid `name` matches
+`[A-Za-z0-9][A-Za-z0-9._-]*` (bare filename — which excludes path separators, dot-segments,
+NUL/control bytes, and spaces by construction), is not a Windows-reserved device basename
+(`CON`/`PRN`/`AUX`/`NUL`/`COM1-9`/`LPT1-9`), does not end with a dot, and is unique within the
+skill's declared set.
+Validation SHALL run as a PREFLIGHT over every skill in the generation operation, as the
+command's FIRST step — before any mutating operation, including permission probes, config
+migration, legacy cleanup, workspace scaffolding, and every file write (`SKILL.md` included): an invalid or duplicate name fails the operation with an error
 naming the offending template and reference, with no file written or modified anywhere in the
 operation — never silently skipped, never written outside `references/`.
 
@@ -78,7 +82,10 @@ begins.
   declare (a file, directory, or symlink — e.g., a reference renamed in a newer CLI version, or a
   user-parked file)
 - **THEN** `orbit update` removes that entry (a symlink is removed as a link; its target is
-  untouched), and reports the removal in its output
+  untouched), and reports the removal in its output; when the `references/` ROOT itself is
+  removed or replaced, the report names the `references` path once (no malformed
+  `references/references` double-suffix), and init additionally reports its written-reference
+  count
 
 #### Scenario: Re-run init reconciles too
 
@@ -95,6 +102,13 @@ begins.
 - **THEN** smart update detection treats this as drift and proceeds to generation/reconciliation
   rather than short-circuiting; declared-set and root-shape convergence hold without `--force`
 
+#### Scenario: Symlinked skill directory is replaced before generation
+
+- **WHEN** the skill-dir path itself is a symlink (or a stray regular file)
+- **THEN** the writer replaces it with a real directory before writing `SKILL.md` or reconciling
+  references — neither writes nor deletions ever route through the link; the link target keeps
+  all of its content
+
 #### Scenario: Declared-path collisions are replaced, never followed
 
 - **WHEN** an existing entry at a DECLARED reference name is a symlink or a directory
@@ -102,11 +116,14 @@ begins.
   (the symlink's target is untouched); replacing a non-regular declared entry is part of the WRITE
   phase — the write-before-prune ordering governs UNDECLARED-entry pruning only
 
-#### Scenario: Write failure aborts pruning
+#### Scenario: Write failure aborts pruning (staged commit)
 
 - **WHEN** a declared-reference write fails partway through reconciliation
-- **THEN** no removal occurs (all declared writes must succeed before pruning begins); the
-  failure is reported and the existing surface is left no worse than before
+- **THEN** no pruning occurs, and every declared regular file retains either its prior content
+  or its complete new content — never partial (declared content is staged to temp names and
+  swapped in by rename; staging failures clean up their temp files and leave the surface
+  untouched). Replacement of non-regular declared entries and of an invalid root is committed
+  only at swap time
 
 #### Scenario: Dropping all references removes the directory
 

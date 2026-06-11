@@ -43,6 +43,11 @@ describe('validateSkillTemplates (preflight, orbit-skill-generation)', () => {
     ['dot', '.'],
     ['dot-dot', '..'],
     ['absolute', '/etc/passwd'],
+    ['NUL byte', 'evil\u0000.md'],
+    ['control char', 'evil\n.md'],
+    ['Windows reserved', 'CON.md'],
+    ['trailing dot', 'bad.'],
+    ['space', 'a b.md'],
   ])('rejects %s reference names, naming the template', (_label, bad) => {
     expect(() =>
       validateSkillTemplates([entry({ references: [{ name: bad, content: 'x' }] })])
@@ -156,6 +161,27 @@ describe('reconcileSkillReferences (write-before-prune, containment)', () => {
     expect(await fsp.readFile(path.join(realDir, 'a.md'), 'utf-8')).toBe('VIA-LINK');
   });
 
+  it('replaces a symlinked SKILL DIRECTORY before reconciling (physical containment)', async () => {
+    // outside target with its own references/ content + a sentinel stray
+    const outsideSkill = path.join(outsideDir, 'outside-skill');
+    await fsp.mkdir(path.join(outsideSkill, 'references'), { recursive: true });
+    await fsp.writeFile(path.join(outsideSkill, 'references', 'sentinel.md'), 'SENTINEL');
+    // the skill-dir path is a symlink to the outside target
+    const linkedSkillDir = path.join(skillDir, 'linked-skill');
+    await fsp.symlink(outsideSkill, linkedSkillDir);
+
+    const res = await reconcileSkillReferences(linkedSkillDir, [{ name: 'a.md', content: 'NEW' }]);
+
+    // the link was replaced with a real directory; declared content landed inside it
+    expect(fs.lstatSync(linkedSkillDir).isSymbolicLink()).toBe(false);
+    expect(fs.lstatSync(linkedSkillDir).isDirectory()).toBe(true);
+    expect(await fsp.readFile(path.join(linkedSkillDir, 'references', 'a.md'), 'utf-8')).toBe('NEW');
+    // the outside target was neither written into nor pruned
+    expect(await fsp.readFile(path.join(outsideSkill, 'references', 'sentinel.md'), 'utf-8')).toBe('SENTINEL');
+    expect(fs.existsSync(path.join(outsideSkill, 'references', 'a.md'))).toBe(false);
+    expect(res.written).toBe(1);
+  });
+
   it('removes the references/ dir entirely when the declared set is empty', async () => {
     await fsp.mkdir(refsDir, { recursive: true });
     await fsp.writeFile(path.join(refsDir, 'old.md'), 'old');
@@ -167,7 +193,7 @@ describe('reconcileSkillReferences (write-before-prune, containment)', () => {
 
   it('no-ops for a reference-less skill with no references/ dir', async () => {
     const res = await reconcileSkillReferences(skillDir, undefined);
-    expect(res).toEqual({ written: 0, removed: [] });
+    expect(res).toEqual({ written: 0, removed: [], rootRemoved: false });
     expect(fs.existsSync(refsDir)).toBe(false);
   });
 
@@ -183,6 +209,34 @@ describe('reconcileSkillReferences (write-before-prune, containment)', () => {
 
     // failure occurred during the write phase — nothing was pruned
     expect(fs.existsSync(path.join(refsDir, 'stray.md'))).toBe(true);
+  });
+
+  it('staged writes: a later staging failure leaves earlier declared content UNCHANGED and prunes nothing', async () => {
+    await fsp.mkdir(refsDir, { recursive: true });
+    await fsp.writeFile(path.join(refsDir, 'a.md'), 'OLD-A');
+    await fsp.writeFile(path.join(refsDir, 'stray.md'), 'stray');
+
+    let call = 0;
+    const real = fsp.writeFile.bind(fsp);
+    const spy = vi.spyOn(fsp, 'writeFile').mockImplementation(async (...args: Parameters<typeof real>) => {
+      call += 1;
+      if (call === 2) throw new Error('disk full at b');
+      return real(...args);
+    });
+    await expect(
+      reconcileSkillReferences(skillDir, [
+        { name: 'a.md', content: 'NEW-A' },
+        { name: 'b.md', content: 'NEW-B' },
+      ])
+    ).rejects.toThrow('disk full at b');
+    spy.mockRestore();
+
+    // a.md retains its PRIOR content (staging never committed), stray untouched, no temp litter
+    expect(await fsp.readFile(path.join(refsDir, 'a.md'), 'utf-8')).toBe('OLD-A');
+    expect(fs.existsSync(path.join(refsDir, 'stray.md'))).toBe(true);
+    expect(fs.existsSync(path.join(refsDir, 'b.md'))).toBe(false);
+    const leftovers = fs.readdirSync(refsDir).filter((e) => e.startsWith('.orbit-staging-'));
+    expect(leftovers).toEqual([]);
   });
 });
 

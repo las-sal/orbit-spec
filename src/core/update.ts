@@ -24,6 +24,7 @@ import {
   generateSkillContent,
   validateSkillTemplates,
   reconcileSkillReferences,
+  ensureRealSkillDir,
   getToolsWithSkillsDir,
   type ToolVersionStatus,
 } from './shared/index.js';
@@ -89,6 +90,11 @@ export class UpdateCommand {
     if (!await FileSystemUtils.directoryExists(openspecPath)) {
       throw new Error(`No OpenSpec directory found. Run 'orbit init' first.`);
     }
+
+    // Preflight validation (orbit-skill-generation): the VERY FIRST step after the
+    // existence check — before config migration, legacy cleanup, or any mutating
+    // operation. D15 makes resolution inert; validation is pure.
+    validateSkillTemplates(getSkillTemplates());
 
     // 2. Perform one-time migration if needed before any legacy upgrade generation.
     // Use detected tool directories to preserve existing orbit skills/commands.
@@ -172,10 +178,6 @@ export class UpdateCommand {
     const skillTemplates = shouldGenerateSkills ? getSkillTemplates(desiredWorkflows) : [];
     const commandContents = shouldGenerateCommands ? getCommandContents(desiredWorkflows) : [];
 
-    // Preflight validation (orbit-skill-generation): fail before any write.
-    if (shouldGenerateSkills) {
-      validateSkillTemplates(skillTemplates);
-    }
 
     // 10. Update tools (all if force, otherwise only those needing update)
     const toolsToUpdate = this.force ? configuredTools : [...toolsToUpdateSet];
@@ -205,6 +207,8 @@ export class UpdateCommand {
             // Use hyphen-based command references for OpenCode
             const transformer = (tool.value === 'opencode' || tool.value === 'pi') ? transformToHyphenCommands : undefined;
             const skillContent = generateSkillContent(template, OPENSPEC_VERSION, transformer);
+            // Physical containment: a symlinked skill dir must not route writes outside
+            await ensureRealSkillDir(skillDir);
             await FileSystemUtils.writeFile(skillFile, skillContent);
 
             // Reconcile references/ (orbit-skill-generation)
@@ -212,6 +216,9 @@ export class UpdateCommand {
             referenceEntriesRemoved.push(
               ...refResult.removed.map((name) => `${dirName}/references/${name}`)
             );
+            if (refResult.rootRemoved && refResult.removed.length === 0) {
+              referenceEntriesRemoved.push(`${dirName}/references`);
+            }
           }
 
           removedDeselectedSkillCount += await this.removeUnselectedSkillDirs(skillsDir, desiredWorkflows);
@@ -668,10 +675,6 @@ export class UpdateCommand {
     const skillTemplates = shouldGenerateSkills ? getSkillTemplates(desiredWorkflows) : [];
     const commandContents = shouldGenerateCommands ? getCommandContents(desiredWorkflows) : [];
 
-    // Preflight validation (orbit-skill-generation): fail before any write.
-    if (shouldGenerateSkills) {
-      validateSkillTemplates(skillTemplates);
-    }
 
     for (const toolId of selectedTools) {
       const tool = AI_TOOLS.find((t) => t.value === toolId);
@@ -691,6 +694,8 @@ export class UpdateCommand {
             // Use hyphen-based command references for OpenCode
             const transformer = (tool.value === 'opencode' || tool.value === 'pi') ? transformToHyphenCommands : undefined;
             const skillContent = generateSkillContent(template, OPENSPEC_VERSION, transformer);
+            // Physical containment: a symlinked skill dir must not route writes outside
+            await ensureRealSkillDir(skillDir);
             await FileSystemUtils.writeFile(skillFile, skillContent);
 
             // Reconcile references/ (orbit-skill-generation) — legacy-upgrade path included
@@ -698,6 +703,9 @@ export class UpdateCommand {
             legacyReferenceRemovals.push(
               ...refResult.removed.map((name) => `${dirName}/references/${name}`)
             );
+            if (refResult.rootRemoved && refResult.removed.length === 0) {
+              legacyReferenceRemovals.push(`${dirName}/references`);
+            }
           }
         }
 

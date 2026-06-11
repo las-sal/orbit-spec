@@ -3,6 +3,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import os from 'os';
 import { InitCommand } from '../../../src/core/init.js';
+import { UpdateCommand } from '../../../src/core/update.js';
 
 vi.mock('@inquirer/prompts', () => ({
   confirm: vi.fn().mockResolvedValue(true),
@@ -145,6 +146,25 @@ describe('generated surface fidelity (real init, all workflows, claude + codex)'
   it('generates exactly the 11 registered skills, no extras (e.g., no feedback)', async () => {
     const dirs = await fs.readdir(path.join(testDir, '.claude', 'skills'));
     expect(dirs.sort()).toEqual(SURFACE.map(([d]) => d).sort());
+  });
+
+  it('PLAIN update on a current-stamps project reconciles reference drift (no --force)', async () => {
+    // the surface was just generated at the current version — stamps are current
+    const refPath = path.join(
+      testDir, '.claude', 'skills', 'orbit-archive-change', 'references', 'archive-summary-schema.md'
+    );
+    const strayPath = path.join(
+      testDir, '.claude', 'skills', 'orbit-archive-change', 'references', 'stray.md'
+    );
+    await fs.rm(refPath);
+    await fs.writeFile(strayPath, 'parked');
+
+    await new UpdateCommand({}).execute(testDir);
+
+    // drift detection defeated the current-stamps short-circuit: declared restored, stray pruned
+    const restored = await fs.readFile(refPath, 'utf-8');
+    expect(restored).toContain('archive run-summary schema');
+    await expect(fs.access(strayPath)).rejects.toThrow();
   });
 
   it('generates exactly the 11 registered commands', async () => {

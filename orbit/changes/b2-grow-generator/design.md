@@ -18,7 +18,8 @@ outright without this. The full exploration record is `explore.md` (D-b2-1…6) 
 - Full metadata pass-through with `generatedBy` still generator-owned.
 - Archive's schema reference becomes real — overlay content **reconciled to the
   baseline-canonical shape**, not verbatim (the overlay source predates the B1 baselines and
-  disagrees on `unresolved_markers` shape, `sync_specs` nesting, and `user_decision` values),
+  disagrees on `unresolved_markers` shape, `sync_specs` nesting, `user_decision` values, and the
+  flat `audit_skipped_via_flag` skip flag),
   paths orbit-named.
 
 **Non-Goals:**

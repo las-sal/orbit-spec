@@ -1,0 +1,12 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-06-11T19:39:20Z",
+  "change": "b2-grow-generator",
+  "final_assessment": "Walked all 7 findings from the external system review (1C/3W/3S), all fixed: CRITICAL symlinked-skill-dir escape closed via ensureRealSkillDir at all 3 generation sites + inside the reconciler (unit regression with outside sentinel); preflight hoisted to the literal FIRST step of init/update execute, before permission probe/migration/cleanup; reference names now validated against a conservative whitelist (NUL/control/reserved/trailing-dot rejected — regression table expanded); reconciler writes are staged-commit (temp + rename, cleanup on failure; later-failure-leaves-prior-content regression added); root-removal reporting structured (rootRemoved flag, no references/references artifacts; init surfaces written counts); true current-stamps e2e added (plain update on a just-generated surface restores deleted reference and prunes stray — no --force); legacy path test asserts pruning + report; design/explore/spec wording aligned (four schema points, superseded D-b2-1 flagged, spec scenarios updated to staged-commit + containment + first-step preflight). Suite 1496 -> 1504; --strict valid.",
+  "next_recommended": "/orbit:archive b2-grow-generator — external system review resolved (0 open findings across 6 cycles, 38 total); B2 ready to archive",
+  "kind": "editorial",
+  "iteration": 6,
+  "from_file": "orbit/changes/b2-grow-generator/.orbit-runs/external-system-2026-06-11T19-25-55Z.md",
+  "findings_summary": { "critical": 1, "warning": 3, "suggestion": 3 },
+  "resolutions": { "fixed": 7, "ratified_as_designed": 0 }
+}
