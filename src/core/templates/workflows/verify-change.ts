@@ -220,7 +220,7 @@ Inspect verify-change's output and classify into one of these states, then compo
 next_recommended: "/orbit:review --as system <name> — verification clean; formal pre-archive review recommended (or /orbit:archive <name> if you're skipping the editorial pass)"
 \`\`\`
 
-orbit-status's tier-1 parses the leading \`/orbit:review --as system <name>\` token into \`command\`/\`args\`. The \`/orbit:archive <name>\` alternative lives in the reason text for users who want to skip the formal review.
+A downstream status reader parses the leading \`/orbit:review --as system <name>\` token into \`command\`/\`args\`. The \`/orbit:archive <name>\` alternative lives in the reason text for users who want to skip the formal review.
 
 **Verdict: fail — Mode ① (tasks-incomplete)** — tasks.md has unchecked items.
 
@@ -242,7 +242,7 @@ The recommendation does NOT use \`/orbit:review --as system --mark\` because \`-
 next_recommended: "Fix artifact validation errors: <validator message verbatim>"
 \`\`\`
 
-No leading orbit command in this case; the reason field carries the validator output. orbit-status's tier-1 parse finds no leading slash command and preserves the full text in \`reason\`.
+No leading orbit command in this case; the reason field carries the validator output. a downstream status reader's parse finds no leading slash command and preserves the full text in \`reason\`.
 
 **Verdict: warn** — verify passes but with non-blocking findings.
 

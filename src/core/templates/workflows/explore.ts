@@ -499,7 +499,7 @@ Per \`orbit-run-summary-emit\`'s \`Named-mode explore recommendation by maturity
 - **Mature (4+ decisions captured AND ≤1 open question)**: \`"/orbit:propose <name> — substantial thinking captured; ready to formalize the design (or /orbit:explore <name> to keep refining)"\`
 - **Stalled (4+ decisions captured AND >1 open question)**: \`"/orbit:explore <name> — N decisions captured but M open questions remain; resolve open questions before formalizing"\` (N = \`decisions_captured\`, M = \`open_questions_count\`). Does NOT surface \`/orbit:propose\` as alternative — high open-question count signals NOT-ready regardless of decision count.
 
-orbit-status's tier-1 reader parses the leading \`/orbit:<verb> <name>\` token into \`command\`/\`args\`; the alternative path (Mid and Mature only) lives in the reason text.
+A downstream status reader parses the leading \`/orbit:<verb> <name>\` token into \`command\`/\`args\`; the alternative path (Mid and Mature only) lives in the reason text.
 
 ### Bare-mode non-emission
 
@@ -515,7 +515,7 @@ When the user requests crystallization during a bare-mode explore (e.g., "save t
 
 1. A new directory \`orbit/explore/<name>/\` will be created with \`explore.md\` capturing decisions to date.
 2. The first run-summary JSON (\`orbit/explore/<name>/.orbit-runs/explore-<TS>.json\`) will start the change's audit trail.
-3. The change will become visible to orbit-status (which scans \`orbit/explore/\` via its \`enumerate_explorations()\` function) and any other consumer that scans \`orbit/explore/\`. Note: upstream \`orbit list\` does NOT scan \`orbit/explore/\`; the change appears in \`orbit list\` only after \`/orbit:propose\` moves the staging directory to \`orbit/changes/<name>/\`.
+3. The change will become visible to any consumer that scans \`orbit/explore/\` (e.g., a downstream status reader). Note: upstream \`orbit list\` does NOT scan \`orbit/explore/\`; the change appears in \`orbit list\` only after \`/orbit:propose\` moves the staging directory to \`orbit/changes/<name>/\`.
 4. Abandonment after this point requires formal archive/discard, not just deleting the directory once it's been moved to \`orbit/changes/<name>/\` by \`/orbit:propose\`.
 
 **Confirmation gate**: the AI MUST wait for explicit user confirmation before proceeding with file creation. Examples of confirmation: "yes", "go ahead", "create it", "do it". If the user expresses any hesitation or asks a clarifying question, treat as not-yet-confirmed and answer the question rather than proceed.
@@ -532,7 +532,7 @@ Sketch of the warning text (for reference; phrasing may adapt to conversation):
 This will:
   • Create orbit/explore/<name>/explore.md (decisions captured so far)
   • Emit orbit/explore/<name>/.orbit-runs/explore-<TS>.json
-  • Make <name> visible to orbit-status (and any consumer scanning orbit/explore/)
+  • Make <name> visible to consumers scanning orbit/explore/ (e.g., a status reader)
   • Start the change's audit trail — every subsequent orbit command emits a JSON here
 
 Note: upstream \`orbit list\` does NOT scan orbit/explore/; the change

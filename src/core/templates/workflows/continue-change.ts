@@ -163,7 +163,7 @@ Per \`orbit-run-summary-emit\`'s \`Propose-shaped and artifact-completion-aware 
 - **\`isComplete: true\`** (all required artifacts present): \`next_recommended: "/orbit:review <name> — all proposal artifacts now present"\`
 - **\`isComplete: false\`** (more artifacts pending): \`next_recommended: "/orbit:continue <name> — <next missing artifact> still pending"\` (where \`<next missing artifact>\` is the first artifact in upstream's \`applyRequires\` array whose \`status\` is not \`done\`)
 
-orbit-status's tier-1 reader parses the leading \`/orbit:<verb> <name>\` token into \`command\`/\`args\`.`,
+A downstream status reader parses the leading \`/orbit:<verb> <name>\` token into \`command\`/\`args\`.`,
     license: 'MIT',
     compatibility: 'Requires orbit CLI.',
     metadata: { author: 'openspec', version: '1.0' },

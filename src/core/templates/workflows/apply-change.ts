@@ -232,7 +232,7 @@ Per the universal spine in \`orbit-conventions\`'s \`Internal-run JSON summary f
 - **Apply complete** (all chunks done OR no-chunking apply with all tasks done): \`/orbit:verify <name>\`
 - **Mid-chunk pause**: \`/orbit:apply <name>\` (resume current chunk)
 
-orbit-status's tier-1 reader parses the leading \`/orbit:<verb> <name>\` token into \`command\`/\`args\`.
+A downstream status reader parses the leading \`/orbit:<verb> <name>\` token into \`command\`/\`args\`.
 
 ### Why chunk-aware (forensic + resumability)
 

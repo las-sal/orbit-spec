@@ -190,7 +190,7 @@ timestamp        string       ISO-8601 UTC; JSON field uses standard colon forma
                               colons aren't filesystem-safe across all platforms.
 change           string|null  the change name (or null for project-scope commands)
 final_assessment string       narrative of what just happened (human-readable)
-next_recommended string       verbatim recommendation, suitable for orbit-status best-effort parse
+next_recommended string       verbatim recommendation, suitable for best-effort parse by downstream status readers
 kind             enum         "workflow" | "editorial" | "lifecycle"
 ```
 
@@ -288,9 +288,9 @@ Lifecycle-kind example — `archive-2026-05-20T16-31-59Z.json` written after `/o
 - **WHEN** `/orbit:archive` writes its JSON
 - **THEN** `kind` equals `"lifecycle"`; per-command extensions include `archive_path`, `audit`, `sync_specs`, `unresolved_markers`, `user_decision` per the archive skill's emit
 
-#### Scenario: orbit-status tier-1 reader parses next_recommended uniformly across kinds
+#### Scenario: Downstream status readers parse next_recommended uniformly across kinds
 
-- **WHEN** orbit-status reads any run-summary JSON (regardless of `kind`) and best-effort parses `next_recommended` per `orbit-status-recommendation/spec.md:7`
+- **WHEN** a downstream status reader reads any run-summary JSON (regardless of `kind`) and best-effort parses `next_recommended`
 - **THEN** the leading `/orbit:<verb> [args]` token (if present) is extracted into `command` and `args`; on parse failure (e.g., prose recommendation), the full string is preserved in `reason`
 
 #### Scenario: Future consumers route by `kind` field rather than parsing filename prefix

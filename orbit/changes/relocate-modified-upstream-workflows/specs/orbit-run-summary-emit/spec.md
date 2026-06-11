@@ -43,7 +43,7 @@ command          string       identifies which command emitted (matches filename
 timestamp        string       ISO-8601 UTC; JSON field uses standard colon format `YYYY-MM-DDTHH:MM:SSZ`. Filename embeds a colon-replaced `<TS>` token `YYYY-MM-DDTHH-MM-SSZ` (colons aren't filesystem-safe across all platforms).
 change           string|null  the change name (or null for project-scope commands)
 final_assessment string       narrative of what just happened (human-readable)
-next_recommended string       verbatim recommendation, suitable for orbit-status best-effort parse
+next_recommended string       verbatim recommendation, suitable for best-effort parse by downstream status readers
 kind             enum         "workflow" | "editorial" | "lifecycle"  (always "workflow" for commands in this capability's scope)
 ```
 
@@ -63,8 +63,8 @@ Filenames SHALL use the per-command prefix (preserving entry-point provenance): 
 - **WHEN** the user invokes `/orbit:new foo` and the emit-layer writes a JSON
 - **THEN** the filename is `new-<TS>.json`, NOT `propose-<TS>.json`
 
-#### Scenario: orbit-status tier-1 reader parses next_recommended verbatim
-- **WHEN** orbit-status reads any run-summary JSON and best-effort parses `next_recommended` per `orbit-status-recommendation/spec.md:7`
+#### Scenario: Downstream status reader parses next_recommended verbatim
+- **WHEN** a downstream status reader reads any run-summary JSON and best-effort parses `next_recommended`
 - **THEN** the leading `/orbit:<verb> [args]` token (if present) is extracted into `command` and `args`; on parse failure (e.g., prose recommendation), the full string is preserved in `reason`
 
 ### Requirement: Emit timing semantics
@@ -150,7 +150,7 @@ When the user requests crystallization during a bare-mode explore (e.g., "give t
 
 1. A new directory `orbit/explore/<name>/` will be created with `explore.md` capturing decisions to date
 2. A `.orbit-runs/explore-<TS>.json` will start the change's audit trail
-3. The change will become visible to orbit-status (which scans `orbit/explore/` via its `enumerate_explorations()` function) and any other consumer that scans `orbit/explore/`. Note: upstream `orbit list` does NOT scan `orbit/explore/`; the change appears in `orbit list` only after `/orbit:propose` moves the staging directory to `orbit/changes/<name>/`.
+3. The change will become visible to any consumer that scans `orbit/explore/` (e.g., a downstream status reader). Note: upstream `orbit list` does NOT scan `orbit/explore/`; the change appears in `orbit list` only after `/orbit:propose` moves the staging directory to `orbit/changes/<name>/`.
 4. Abandonment after this point requires formal archive/discard, not just deleting the directory
 
 The AI MUST wait for explicit user confirmation before proceeding.
@@ -176,7 +176,7 @@ Named-mode `/orbit:explore` emits SHALL include `next_recommended` text that ada
 - **Mature (4+ decisions captured AND ≤1 open question)**: `"/orbit:propose <name> — substantial thinking captured; ready to formalize the design (or /orbit:explore <name> to keep refining)"`
 - **Stalled (4+ decisions captured AND >1 open question)**: `"/orbit:explore <name> — N decisions captured but M open questions remain; resolve open questions before formalizing"` (N = `decisions_captured`, M = `open_questions_count`). NOTE: this state does NOT surface `/orbit:propose` as an alternative because high open-question count signals NOT-ready regardless of decision count; the user is directed back to exploration to close out the open questions first.
 
-In each case the leading `/orbit:<verb> <name>` token is the canonical recommendation that orbit-status parses into `command`/`args`; the alternative path (when present, Mid and Mature only) lives in the reason text.
+In each case the leading `/orbit:<verb> <name>` token is the canonical recommendation that a downstream status reader parses into `command`/`args`; the alternative path (when present, Mid and Mature only) lives in the reason text.
 
 #### Scenario: 1-decision explore recommends continued exploration
 - **WHEN** named-mode explore emits with `decisions_captured: 1` and `open_questions_count: 3`
@@ -306,14 +306,14 @@ When standalone `/orbit:verify <name>` passes (verify-change reports no failures
  editorial pass)"
 ```
 
-The leading `/orbit:review --as system <name>` token is the canonical recommendation; orbit-status's tier-1 parse extracts this into `command`/`args`. The alternative `/orbit:archive <name>` path lives in the reason text and is surfaced to the user via orbit-status's `recommended_next.reason` field.
+The leading `/orbit:review --as system <name>` token is the canonical recommendation; a downstream status reader extracts this into `command`/`args`. The alternative `/orbit:archive <name>` path lives in the reason text and is surfaced to the user via the reader's `reason` field.
 
 #### Scenario: Verify pass emit recommends review-as-system canonically
 - **WHEN** `/orbit:verify foo` passes
 - **THEN** `verify-<TS>.json`'s `next_recommended` begins with `"/orbit:review --as system foo"` and the reason text mentions `/orbit:archive foo` as alternative
 
-#### Scenario: orbit-status parses verify-pass recommendation
-- **WHEN** orbit-status reads the verify-pass JSON and best-effort parses
+#### Scenario: Status reader parses verify-pass recommendation
+- **WHEN** a downstream status reader reads the verify-pass JSON and best-effort parses
 - **THEN** `command` is `"/orbit:review --as system"`, `args` is the change name, `reason` is the full verbatim string
 
 ### Requirement: Verify fail-mode recommendations
@@ -349,7 +349,7 @@ This precedence directs the user to the root cause first: fix the spec (mode ③
 
 #### Scenario: Mode-③ fail preserves verbatim validator message
 - **WHEN** `/orbit:verify foo` fails because `orbit validate` itself errors (e.g., malformed spec frontmatter)
-- **THEN** `verify-<TS>.json`'s `next_recommended` text begins with `"Fix artifact validation errors:"` and includes the validator's verbatim error message; orbit-status's tier-1 parse finds no leading slash command and preserves the full text in `reason`
+- **THEN** `verify-<TS>.json`'s `next_recommended` text begins with `"Fix artifact validation errors:"` and includes the validator's verbatim error message; a downstream status reader's parse finds no leading slash command and preserves the full text in `reason`
 
 #### Scenario: Multiple fail signals — precedence ③ > ① > ②
 - **WHEN** `/orbit:verify foo` reports BOTH unchecked tasks (mode ① signal) AND `orbit validate` errors (mode ③ signal) simultaneously
@@ -375,7 +375,7 @@ awaiting_findings     bool     always true at T0
  then /orbit:address-reviews <name> --from-file <path>"
 ```
 
-orbit-status's tier-1 best-effort parse SHALL find no leading `/orbit:<verb>` (because the string leads with "Paste"); `command` and `args` are left null, and the full verbatim string is surfaced in `reason`. This is the expected behavior — multi-step user actions are accurately represented as prose, not collapsed into a single command.
+A downstream status reader's best-effort parse will find no leading `/orbit:<verb>` (because the string leads with "Paste"); `command` and `args` are left null, and the full verbatim string is surfaced in `reason`. This is the expected behavior — multi-step user actions are accurately represented as prose, not collapsed into a single command.
 
 T1 (findings returned, `/orbit:address-reviews --from-file` invoked) is the existing `/orbit:address-reviews` emit and is unaffected by this requirement.
 
@@ -384,7 +384,7 @@ T1 (findings returned, `/orbit:address-reviews --from-file` invoked) is the exis
 - **THEN** `review-external-<TS>.json` is written with `mode: "proposal"`, `awaiting_findings: true`, `prompt_path` pointing at the just-written `external-prompt-proposal-<TS>.md`
 
 #### Scenario: Review-external T0 recommendation is prose-only
-- **WHEN** orbit-status reads the review-external T0 JSON and best-effort parses `next_recommended`
+- **WHEN** a downstream status reader reads the review-external T0 JSON and best-effort parses `next_recommended`
 - **THEN** no leading slash command is found; `command` and `args` are null; the full multi-step instruction is preserved verbatim in `reason`
 
 ### Requirement: Audit-drift standalone recommendations

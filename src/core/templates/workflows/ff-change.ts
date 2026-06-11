@@ -143,7 +143,7 @@ Per the universal spine in \`orbit-conventions\`'s \`Internal-run JSON summary f
 
 Per \`orbit-run-summary-emit\`'s \`Propose-shaped and artifact-completion-aware recommendation logic\` requirement, \`/orbit:ff\` ALWAYS recommends \`/orbit:review\` next, never \`/orbit:apply\` directly. Same rule as \`/orbit:propose\` (both are propose-shaped — produce the canonical artifact set in one invocation). \`/orbit:new\` and \`/orbit:continue\` follow a different rule (artifact-completion-aware; defer to upstream \`isComplete\`).
 
-orbit-status's tier-1 reader parses the leading \`/orbit:review <name>\` token into \`command\`/\`args\`.`,
+A downstream status reader parses the leading \`/orbit:review <name>\` token into \`command\`/\`args\`.`,
     license: 'MIT',
     compatibility: 'Requires orbit CLI.',
     metadata: { author: 'openspec', version: '1.0' },
