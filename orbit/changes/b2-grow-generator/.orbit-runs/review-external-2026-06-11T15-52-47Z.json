@@ -1,0 +1,12 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-06-11T15:52:47Z",
+  "change": "b2-grow-generator",
+  "final_assessment": "External review prompt packaged for b2-grow-generator (iter 2, mode proposal); awaiting findings. Last planned gate before apply: reviewer directed at what all three prior cycles missed, resolution verification, and an implementer's dry-run of tasks.md.",
+  "next_recommended": "Paste orbit/changes/b2-grow-generator/.orbit-runs/external-prompt-proposal-2026-06-11T15-52-46Z.md into the target AI, save the response as orbit/changes/b2-grow-generator/.orbit-runs/external-proposal-<TS>.md, then /orbit:address-reviews b2-grow-generator --from-file <path>",
+  "kind": "editorial",
+  "mode": "proposal",
+  "prompt_path": "orbit/changes/b2-grow-generator/.orbit-runs/external-prompt-proposal-2026-06-11T15-52-46Z.md",
+  "target": null,
+  "awaiting_findings": true
+}
