@@ -57,20 +57,29 @@ Concrete content payload queued for B2 (one file — see D-b2-2):
   identical-forever blob appears); (d) B2's content payload is exactly one file (archive's
   summary schema).
 
+- **D-b2-3 (2026-06-11, propose-time ratification) — Source representation**: `SkillTemplate`
+  gains `references?: Array<{ name: string; content: string }>`; reference content lives as
+  inline-TS template literals in the workflow modules, exactly like bodies (D13-consistent;
+  upstream has no grain to mimic; markdown-as-source remains the deferred D6 move).
+- **D-b2-4 (2026-06-11, propose-time ratification) — Content scope**: capability + exactly one
+  reference file (`orbit-archive-change/references/archive-summary-schema.md`, migrated from the
+  overlay). B3 brings its own 7 per-skill files. No invented references.
+- **D-b2-5 (2026-06-11, propose-time ratification) — Metadata emission**: `generateSkillContent()`
+  passes ALL template `metadata` keys through to frontmatter in template-declared order, with
+  `generatedBy` still generator-injected (and not overridable by a template key).
+- **D-b2-6 (2026-06-11, propose-time ratification) — Test growth**: three existing layers extend
+  to references (parity hashes over reference content; fidelity assertions for the archive
+  reference declaration; e2e generated-surface test asserts `references/*.md` on disk for
+  claude + codex incl. byte-identity) plus init/update unit tests for emission and D-b2-1's
+  remove-unknown cleanup.
+
 ## Open questions
 
-- **Q1 — Source representation**: how does reference content live in source? Lean: extend
-  `SkillTemplate` with `references?: Array<{ name: string; content: string }>` as inline-TS
-  template literals — D13-consistent (upstream has no grain to mimic here; inline literals match
-  how bodies live). Markdown-as-source remains the deferred D6 move.
-- **Q3 — B2 content scope**: capability + archive schema ref only (per D-b2-2; B3 brings its own
-  7 files)? Lean: yes — keep B2 lean and testable; do NOT invent reference files the overlay never
-  had.
-- **Q4 — Metadata emission shape**: pass through all `metadata` keys (stable order), with
-  `generatedBy` still injected by the generator. Any keys to reserve/forbid?
-- **Q5 — Test growth**: parity hashes for reference content; fidelity markers for the disciplines
-  pointer; e2e generated-surface test asserts `references/*.md` on disk for claude + codex
-  (including the Codex-identical assertion).
+(none — all resolved; see Decisions)
+
+
+
+
 
 ## Considered & out
 

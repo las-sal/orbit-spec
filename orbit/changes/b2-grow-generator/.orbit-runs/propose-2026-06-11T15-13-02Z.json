@@ -1,0 +1,11 @@
+{
+  "command": "propose",
+  "timestamp": "2026-06-11T15:13:02Z",
+  "change": "b2-grow-generator",
+  "final_assessment": "Consume-mode propose complete: explore.md (6 decisions, 0 open questions after propose-time ratification of D-b2-3..6) seeded proposal.md, design.md, 2 spec deltas (orbit-skill-generation ADDED — multi-file emission, references convergence, metadata pass-through; orbit-archive-modifications ADDED requirement — the repo's first delta against an existing baseline), and tasks.md (3 chunks, 15 tasks). Staging dir promoted dotfile-safe (.orbit-runs traveled). Validates --strict; isComplete: true.",
+  "next_recommended": "/orbit:review b2-grow-generator — proposal artifacts ready; review before apply",
+  "kind": "workflow",
+  "artifacts_created": ["proposal", "design", "specs", "tasks"],
+  "consume_mode": true,
+  "decisions_consumed": 6
+}
