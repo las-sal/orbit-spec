@@ -30,12 +30,18 @@ The fork bootstrap (phase **A1**) is complete:
   `npm run build && node bin/orbit.js update --force` (template edits don't bump the version,
 so plain update's smart detection may skip) so your local surface doesn't lag the source.
 - **Toolchain is npm, not pnpm.** `npm install` works end-to-end. Build = `npm run build`
-  (`node build.js` → `tsc`); tests = `npm test` (vitest). Baseline at bootstrap: ~1369 tests (1459 as of B1).
+  (`node build.js` → `tsc`); tests = `npm test` (vitest). Baseline at bootstrap: ~1369 tests (1504 as of B2).
 
 **B1 (relocate)** is complete and ARCHIVED
 (`orbit/changes/archive/2026-06-11-relocate-modified-upstream-workflows/`); its six baseline
-capabilities are live in `orbit/specs/`. **B2 (grow generator)** is in flight as
-`orbit/changes/b2-grow-generator/`. Orbit's editorial content is relocated into
+capabilities are live in `orbit/specs/`. **B2 (grow generator) is complete and ARCHIVED**
+(`orbit/changes/archive/2026-06-11-b2-grow-generator/`): the generator emits **multi-file skills**
+(`SkillTemplate.references` → `references/*.md`) with preflight validation, staged-commit writes,
+physical symlink containment, convergent reconciliation on init + both update paths,
+reference-drift smart detection, and full frontmatter metadata pass-through —
+`orbit-skill-generation` is the 7th baseline capability. **Next: B3** (net-new editorial
+workflows: review, review-external, address-reviews, audit-drift — multi-file skills, zero further
+generator changes needed). Orbit's editorial content is relocated into
 the workflow modules (inline-TS per **D13**; `sync-specs` upstream-verbatim — orbit never modified it)
 + 6 spec deltas (`orbit-conventions`, `orbit-run-summary-emit`, `orbit-{explore,propose,archive}-modifications`,
 `orbit-onboard`) relocated as ADDED capabilities. The change passed a fresh internal system review AND
@@ -49,7 +55,7 @@ two external (GPT-5 Codex) system-review iterations; all findings resolved (audi
   profile-filtered installs.
 - **D11 refinement — Claude primacy**: never trade Claude efficacy for cross-tool neutrality; upstream's
   named-tool idiom (`AskUserQuestion`, `Task tool`) stays in bodies by design.
-Change validates `--strict`; **1459 tests green** (incl. per-workflow marker fidelity, launcher
+Change validates `--strict`; **1504 tests green** (incl. per-workflow marker fidelity, launcher
 assertions, and an e2e generated-surface test that runs a real default init for claude+codex).
 Per D13, B-arc keeps prose as **inline TS template literals** (markdown-as-source/D6 deferred).
 **Deferred follow-ups:** orbit-status absorption (post-parity, issue #3), broader user-docs
