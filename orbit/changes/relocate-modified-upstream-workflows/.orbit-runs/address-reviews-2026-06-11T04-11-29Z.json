@@ -1,0 +1,26 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-06-11T04:11:29Z",
+  "change": "relocate-modified-upstream-workflows",
+  "final_assessment": "Walked all 5 findings from external-system-2026-06-11T04-05-19Z.md (0 CRITICAL / 3 WARNING / 2 SUGGESTION), all verified then fixed in commits 6f28fac + 62c7aa9: consume-mode promotion now moves .orbit-runs/ explicitly (dotfile-safe); /orbit:new gained continue's artifact-completion-aware recommendation rule; CLAUDE.md handoff refreshed to post-remediation state (D14/D15/D11-refinement guardrails, 1459 baseline); propose's pre-additions body restored to upstream verbatim (override carries the review-first rule); onboard's propose-emit terminology corrected (completion, not T0). Reviewer confirmed all 10 iter-1 resolutions landed.",
+  "next_recommended": "/orbit:archive relocate-modified-upstream-workflows — two external system-review iterations complete, zero CRITICAL across both, all findings resolved; verification clean (1459/1459, --strict valid)",
+  "kind": "editorial",
+  "iteration": 2,
+  "from_file": "orbit/changes/relocate-modified-upstream-workflows/.orbit-runs/external-system-2026-06-11T04-05-19Z.md",
+  "findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 2
+  },
+  "finding_titles": [
+    "Consume-mode promotion leaves hidden run history behind",
+    "/orbit:new still hardcodes the default schema's next artifact",
+    "The contributor handoff predates the remediation decisions",
+    "Onboard calls propose's completion emit T0",
+    "Propose claims its upstream body is unchanged after editing it"
+  ],
+  "resolutions": {
+    "fixed": 5,
+    "ratified_as_designed": 0
+  }
+}
