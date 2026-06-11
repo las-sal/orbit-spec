@@ -235,6 +235,17 @@ Implications (refine D11):
 
 Sources: developers.openai.com/codex/skills · github.com/openai/codex/blob/main/docs/skills.md
 
+**Refinement (RATIFIED 2026-06-11, during B1 external-review remediation): mechanism-neutrality is
+bounded by Claude primacy — never trade Claude efficacy for cross-tool neutrality.** Codex's external
+review flagged that skill bodies retain upstream's named-tool idiom (`AskUserQuestion`, `Task tool` →
+`Skill tool`); verification showed this is upstream's house style, shipped verbatim to every tool, and
+orbit's additions follow the same idiom. Decision: keep it. The named-tool idiom is precisely what
+Claude executes best; Codex reads it as instruction prose and copes; rewriting to vaguer "neutral"
+phrasing would degrade the primary target to gain imaginary ground. Codex-equal is redundancy
+good-practice ("two heavy-duty agents"), not a parity contract. What stays out of bodies: hardcoded
+`.claude/...` paths. The launcher conversion (D14) already neutralized the command/prompt surface, and
+the e2e surface test pins Codex skill output as byte-identical to Claude's by design.
+
 ### D12 — Rip out telemetry entirely in A1 (RATIFIED; resolves Q6)
 
 A hard fork that is deliberately *not* upstream-affiliated and runs as a personal tool has no reason

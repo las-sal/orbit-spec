@@ -30,9 +30,12 @@ two existing literals per module (skill `instructions` + command `content`), no 
   only the non-emission note.
 - **Inline run-summary emit** (`orbit-run-summary-emit`) into the 8 workflows that emit
   (all except `sync-specs`, `bulk-archive-change`, and `onboard`, which explicitly do not emit).
-- **Keep bodies mechanism-neutral** (D11): no Claude-only constructs ("the Skill tool", hardcoded
-  `.claude/...` paths). The `/orbit:` colon syntax is fine — it is already rewritten per-tool by
-  `transformToHyphenCommands`. Bodies must serve Claude (primary) + Codex from one source.
+- **One body serves both targets, Claude-first** (D11, refined 2026-06-11): body prose MUST NOT
+  trade Claude efficacy for cross-tool neutrality. Upstream's named-tool idiom (`AskUserQuestion`,
+  `Task tool`) stays — upstream ships it verbatim to every tool, Codex reads it as instruction
+  prose, and it is what Claude executes best; orbit's additions follow the same idiom. What stays
+  out of bodies: hardcoded `.claude/...` paths. Per-tool transformation remains upstream's existing
+  mechanism (`transformToHyphenCommands` colon-command rewriting for opencode/pi).
 - **No generator changes** in B1. The `references[]` and metadata pass-through growth is B2 (D7).
   Consequence: `archive-change`'s one bundled reference file (`archive-summary-schema.md`) is the
   single piece **deferred to B2** — B1 relocates archive's body and inlines what it can; the sibling
