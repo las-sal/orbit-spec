@@ -8,13 +8,13 @@ The following orbit commands SHALL emit `orbit/changes/<name>/.orbit-runs/<comma
   - Workflow commands: `/orbit:explore` (named mode only — bare mode does NOT emit), `/orbit:propose`, `/orbit:new`, `/orbit:continue`, `/orbit:ff`, `/orbit:apply`, `/orbit:verify`
   - `/orbit:review-external` at T0 (when the prompt is packaged, before findings return — today it writes only the `.md` prompt file)
 - **Refined existing emit** (already emits today; this change refines the recommendation logic and aligns with the universal spine from orbit-conventions):
-  - Standalone `/orbit:audit-drift` (already documented at `.claude/skills/orbit-audit-drift/references/run-summary-schema.md`)
+  - Standalone `/orbit:audit-drift` (schema documented in the `orbit-audit-drift` skill's `references/run-summary-schema.md`, shipped alongside the generated skill)
 
 The following commands SHALL NOT emit additional JSONs as part of this change:
 
 - `/orbit:bulk-archive` — wrapper; each inner `/orbit:archive` invocation emits separately
 - `/orbit:onboard` — meta walkthrough; no change-state transition
-- `/orbit:sync-specs` — deprecated upstream; slated for removal by 
+- `/orbit:sync-specs` — deprecated upstream; slated for removal in a follow-up change
 
 Existing emit-producing commands (`/orbit:review`, `/orbit:address-reviews`, `/orbit:archive`, inline `/orbit:audit-drift` during archive) continue emitting as today; this change does not modify their emit behavior.
 
@@ -132,11 +132,11 @@ Specifically:
 
 - `/orbit:verify` SHALL NOT gain marker-dropping, spec-edit shortcuts, or other behaviors that change what verify itself does. The recommendation-classification logic for verify-fail modes (per `Requirement: Verify fail-mode recommendations`) lives in the emit-layer, not in verify.
 - `/orbit:apply` SHALL NOT gain task-ordering changes, parallel-task execution, or other behaviors that change what apply itself does. The chunk-end emit logic (per `Requirement: Apply per-chunk-end emission`) lives in the emit-layer, not in apply.
-- Where orbit modifies an upstream skill via the existing `## Orbit additions` pattern (currently used in `orbit-explore`, `orbit-propose`, `orbit-archive-change`), the emit-layer instructions MAY be added to those `## Orbit additions` sections; they MUST NOT modify the upstream-authored body above the additions marker.
+- Where orbit modifies an upstream skill via the `# Orbit additions` pattern (the orbit-modified workflows per `orbit-conventions`'s `Generated-file disposition` requirement), the emit-layer instructions MAY be added to those `# Orbit additions` sections; they MUST NOT modify the upstream-authored body above the additions marker.
 
 #### Scenario: /orbit:verify upstream behavior unchanged
-- **WHEN** an `orbit update` brings a new version of `orbit-verify-change` from upstream
-- **THEN** the upstream skill body in `.claude/skills/orbit-verify-change/SKILL.md` is overwritten by the update, and orbit's emit-layer additions (if scoped to `## Orbit additions`) are preserved or re-added without conflict; the emit-layer never silently overrides upstream verify behavior
+- **WHEN** a deliberate engine upgrade cherry-picks a newer upstream `verify-change` body into orbit's bundled template
+- **THEN** the upstream-authored portion of the template is replaced wholesale while the `# Orbit additions` section (including any emit-layer instructions) carries over unchanged; the emit-layer never silently overrides upstream verify behavior
 
 #### Scenario: emit-layer does not modify task-checking
 - **WHEN** `/orbit:apply` runs and checks off tasks per upstream behavior
@@ -204,7 +204,7 @@ The four propose-family commands SHALL emit their `next_recommended` per one of 
 next_recommended: "/orbit:review <name> — proposal artifacts ready; review before apply"
 ```
 
-(Per `` — propose should recommend review, not apply.)
+(Propose should recommend review, not apply — review precedes apply in orbit's canonical flow.)
 
 **Artifact-completion-aware** commands (`/orbit:new`, `/orbit:continue`) produce partial artifact state — `/orbit:new` scaffolds the change directory without generating artifacts; `/orbit:continue` generates the next missing artifact. Both SHALL emit a recommendation that depends on upstream `orbit status --change <name> --json`'s `isComplete` field (the same field upstream `orbit-continue-change` uses to gate completion). This keeps the emit-layer schema-agnostic — whatever upstream's authoritative completeness definition is, the emit recommendation follows it:
 
@@ -389,7 +389,7 @@ T1 (findings returned, `/orbit:address-reviews --from-file` invoked) is the exis
 
 ### Requirement: Audit-drift standalone recommendations
 
-Standalone `/orbit:audit-drift` already emits `audit-drift-<TS>.json` today per `.claude/skills/orbit-audit-drift/references/run-summary-schema.md`. The emit SHALL include the universal spine from `orbit-conventions`'s `Internal-run JSON summary format` (with `kind: "editorial"`). The emit-layer recognizes TWO standalone invocation modes — **change-scoped** (`/orbit:audit-drift <name>`) and **project-wide** (`/orbit:audit-drift` with no argument) — each with distinct emit path, `change` value, and recommendation logic:
+Standalone `/orbit:audit-drift` already emits `audit-drift-<TS>.json` per the `orbit-audit-drift` skill's `references/run-summary-schema.md` (shipped alongside the generated skill). The emit SHALL include the universal spine from `orbit-conventions`'s `Internal-run JSON summary format` (with `kind: "editorial"`). The emit-layer recognizes TWO standalone invocation modes — **change-scoped** (`/orbit:audit-drift <name>`) and **project-wide** (`/orbit:audit-drift` with no argument) — each with distinct emit path, `change` value, and recommendation logic:
 
 **Change-scoped standalone** (`/orbit:audit-drift <name>`):
 - Emit path: `orbit/changes/<name>/.orbit-runs/audit-drift-<TS>.json`
@@ -440,16 +440,16 @@ This requirement applies only to **standalone** `/orbit:audit-drift` invocations
 - **WHEN** `/orbit:archive foo` runs and the inline audit-drift step produces findings
 - **THEN** the findings are captured in `archive-<TS>.json` per existing archive emit behavior; no separate `audit-drift-<TS>.json` is written for the inline pass
 
-### Requirement: No forward-look at other-issue future behavior changes
+### Requirement: No forward-look at planned future behavior changes
 
-Emit text SHALL recommend canonical command names without anticipating behavior changes scheduled in other open issues. Specifically:
+Emit text SHALL recommend canonical command names without anticipating behavior changes planned in other (not-yet-landed) changes. Specifically:
 
-- When a future issue inverts a command's default behavior (e.g.,  will invert `/orbit:review --as system`'s default to external/fresh-context reviewer mode), the emit text SHALL recommend `/orbit:review --as system` without qualifiers like "external recommended" or "fresh-context preferred"
-- When a future issue adds a flag or sub-behavior, the emit text SHALL NOT preview the new flag or behavior
+- When a planned change inverts a command's default behavior (e.g., inverting `/orbit:review --as system`'s default to external/fresh-context reviewer mode), the emit text SHALL recommend `/orbit:review --as system` without qualifiers like "external recommended" or "fresh-context preferred"
+- When a planned change adds a flag or sub-behavior, the emit text SHALL NOT preview the new flag or behavior
 
-When the future issue lands, every prior emit that recommended its command automatically benefits because users invoking the recommended command experience the new default behavior at that moment; no emit-time forward-references are needed.
+When the planned change lands, every prior emit that recommended its command automatically benefits because users invoking the recommended command experience the new default behavior at that moment; no emit-time forward-references are needed.
 
-#### Scenario: Verify-pass recommendation does not reference 
+#### Scenario: Verify-pass recommendation does not reference planned reviewer-mode changes
 - **WHEN** the emit-layer writes a verify-pass JSON's `next_recommended`
 - **THEN** the text contains `"/orbit:review --as system <name>"` and does NOT contain qualifiers about external review, fresh-context, or reviewer-mode defaults
 

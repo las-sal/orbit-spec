@@ -197,8 +197,8 @@ kind             enum         "workflow" | "editorial" | "lifecycle"
 Per-kind extensions:
 
 - **`kind: "workflow"`** — emitted by `explore`, `propose`, `new`, `continue`, `ff`, `apply`, `verify`. Per-command extensions are defined in the `orbit-run-summary-emit` capability (e.g., `apply.chunk_complete`, `verify.verdict`, `explore.decisions_captured`).
-- **`kind: "editorial"`** — emitted by `review`, `address-reviews`, `audit-drift`, `review-external`. Per-command extensions include: `iteration` (when applicable to the command — e.g., review iter-N, address-reviews iter-N), `findings_summary` (counts by severity; included when findings are present — i.e., review/address-reviews/audit-drift completion emits; review-external at T0 emits before external findings return and SHALL omit this field), `finding_titles` (array of brief titles; included with `findings_summary`, omitted in the same cases), plus command-specific fields defined in per-skill schema references at `.claude/skills/orbit-<skill>/references/run-summary-schema.md`.
-- **`kind: "lifecycle"`** — emitted by `archive` only. Per-command extensions include: `archive_path`, `audit`, `sync_specs` (transitional — persists from pre-#6 architecture when `/orbit:sync-specs` was a separate command;  will deprecate/remove `/orbit:sync-specs` entirely, at which point this field will be removed or repurposed in a follow-up change), `unresolved_markers`, `user_decision`, plus other fields defined in the archive skill.
+- **`kind: "editorial"`** — emitted by `review`, `address-reviews`, `audit-drift`, `review-external`. Per-command extensions include: `iteration` (when applicable to the command — e.g., review iter-N, address-reviews iter-N), `findings_summary` (counts by severity; included when findings are present — i.e., review/address-reviews/audit-drift completion emits; review-external at T0 emits before external findings return and SHALL omit this field), `finding_titles` (array of brief titles; included with `findings_summary`, omitted in the same cases), plus command-specific fields defined in per-skill schema references (`references/run-summary-schema.md`, shipped alongside the generated skill).
+- **`kind: "lifecycle"`** — emitted by `archive` only. Per-command extensions include: `archive_path`, `audit`, `sync_specs` (transitional — persists from when `/orbit:sync-specs` was a separate command; a follow-up change will deprecate/remove `/orbit:sync-specs` entirely, at which point this field will be removed or repurposed), `unresolved_markers`, `user_decision`, plus other fields defined in the archive skill.
 
 **Canonical examples** (one per kind, illustrating spine + per-kind extensions):
 
@@ -276,7 +276,7 @@ Lifecycle-kind example — `archive-2026-05-20T16-31-59Z.json` written after `/o
 #### Scenario: Editorial command emit shape (with findings)
 
 - **WHEN** an editorial command that has produced findings (`/orbit:review`, `/orbit:address-reviews`, `/orbit:audit-drift`) writes its JSON
-- **THEN** `kind` equals `"editorial"`; per-command extensions include `iteration` (when the command tracks iterations), `findings_summary` (counts by severity), `finding_titles` (array of brief titles), plus command-specific fields documented at `.claude/skills/orbit-<skill>/references/run-summary-schema.md`
+- **THEN** `kind` equals `"editorial"`; per-command extensions include `iteration` (when the command tracks iterations), `findings_summary` (counts by severity), `finding_titles` (array of brief titles), plus command-specific fields documented in the emitting skill's `references/run-summary-schema.md`
 
 #### Scenario: Editorial command emit shape (pre-findings T0 case)
 
@@ -593,102 +593,87 @@ The system SHALL define convention files as an AI-readable rules layer that coex
 - **WHEN** an orbit command (e.g., `/orbit:review --as system` Pass 2) "lightly checks" code against conventions
 - **THEN** "light" means: grep-pattern matching against expected names; spot-checks against named rules; spot-reading of representative files. "Heavy" means: full AST analysis; exhaustive walk of every line; per-file conformance certification — these are the linter's job, not orbit's. Light checks surface SUGGESTIONS for the user to investigate; the AI does not certify full conformance
 
-### Requirement: Distribution model — pegged engine + orbit-owned surface
+### Requirement: Distribution model — self-contained fork
 
-The system SHALL be distributed as a `.claude/` overlay pegged to a specific upstream `@fission-ai/openspec` version, not as a fork of the upstream OpenSpec CLI. Orbit owns the `.claude/` surface (skills, commands, supporting docs); upstream supplies the CLI binary as a pinned engine.
+The system SHALL be distributed as a self-contained hard fork of upstream `@fission-ai/openspec` — one CLI (`orbit`) containing both the vendored upstream engine and orbit's editorial/judgment layer. Skill and command files in user projects are generated artifacts (`orbit init` / `orbit update`) produced from templates bundled in the CLI; there is no overlay, no separately-installed upstream CLI, and no file copy-step.
 
-#### Scenario: Overlay shape
+#### Scenario: Fork shape
 
 - **WHEN** orbit ships
-- **THEN** the deliverable is markdown content under `.claude/commands/opsx/` and `.claude/skills/orbit-*/`, plus supporting docs; the upstream `@fission-ai/openspec` CLI binary is unchanged
+- **THEN** the deliverable is the `orbit` CLI; orbit's editorial content lives in the CLI's bundled workflow templates, and the per-project skill/command files are generated from those templates — never hand-copied into place
 
-#### Scenario: Consumers install after orbit init at pinned version
+#### Scenario: Consumers adopt via orbit init
 
 - **WHEN** a user adopts orbit in a project
-- **THEN** they first install upstream `@fission-ai/openspec` at orbit's pinned version (see `Upstream version pinning` requirement), run upstream `orbit init` to scaffold the project's `.claude/` and `orbit/` directories, then drop orbit's overrides + new files into the same locations; orbit does not include or replace upstream's CLI
+- **THEN** they install the single `orbit` tool and run `orbit init`, which scaffolds the `orbit/` workspace and generates the tool-specific skills and commands; no upstream `@fission-ai/openspec` install is required or consulted
 
-#### Scenario: Pinned upstream version is contractual
+#### Scenario: Generated files are regenerated, not merged
 
-- **WHEN** orbit is in use against an upstream version other than the pinned one
-- **THEN** orbit's behavior is undefined; users are responsible for verifying their installed upstream version matches orbit's pin (per `Upstream version pinning` requirement)
+- **WHEN** `orbit update` runs in a project
+- **THEN** skill/command files are rewritten from the CLI's bundled templates; the customization surface is orbit's source (the templates), not hand-edits to generated files
 
-#### Scenario: Overlay-overwrite behavior is intentional under pegging
+#### Scenario: Upstream is a read-only cherry-pick source
 
-- **WHEN** orbit's overlay copies files into `.claude/skills/` or `.claude/commands/opsx/` that share names with upstream-`init`-installed files
-- **THEN** the overwrite is the intended distribution mechanism; under pegging there is no "fresh upstream copy to preserve" — the pinned upstream version produces deterministic files, and orbit's overrides are the orbit-owned versions for that pinned upstream
+- **WHEN** an upstream improvement is wanted in orbit
+- **THEN** it arrives via a deliberate, surgical cherry-pick from the read-only `upstream` remote, landed as an ordinary orbit commit; there is no auto-ingest
 
 ### Requirement: Upstream version pinning
 
-The system SHALL declare a specific pinned upstream `@fission-ai/openspec` version that orbit is tested against and contractually depends on. Orbit's behavior outside the pinned version is undefined. Version upgrade is a deliberate change-proposal event, not an automatic ingest.
+The system SHALL declare the specific upstream `@fission-ai/openspec` version its vendored engine is based on (currently 1.3.1 — the repo's root commit, tagged `upstream/v1.3.1`). Version upgrade is a deliberate change-proposal event, not an automatic ingest.
 
-#### Scenario: Pinned version declared in CLAUDE.md
+#### Scenario: Pinned baseline declared in CLAUDE.md
 
 - **WHEN** a user or AI reads `CLAUDE.md` at the orbit repo root
-- **THEN** the pinned upstream version is clearly stated in the introductory or installation context
+- **THEN** the vendored upstream baseline version is clearly stated in the introductory context
 
-#### Scenario: Pinned version declared in README
+#### Scenario: Pinned baseline declared in README
 
 - **WHEN** a user reads the orbit `README.md`
-- **THEN** the install section names the exact pinned version (e.g., `@fission-ai/openspec@1.3.1`) as a required prerequisite
-
-#### Scenario: Doc-only enforcement is acceptable
-
-- **WHEN** orbit ships without an install script (current state)
-- **THEN** documentation-only declaration is sufficient enforcement; install-time version-check is tracked as a separate future enhancement (orbit issue #26)
+- **THEN** the engine's upstream baseline (e.g., `@fission-ai/openspec@1.3.1`) is named, so consumers know which upstream behavior set the engine carries
 
 #### Scenario: Version upgrade is a deliberate change
 
-- **WHEN** orbit's contributors consider upgrading the pinned upstream version
-- **THEN** the upgrade is proposed as its own OpenSpec change (with explicit upgrade-and-port scope), not performed as silent maintenance; the new pinned version replaces the prior one in CLAUDE.md + README + this requirement's documented value
+- **WHEN** orbit's contributors consider moving the vendored engine to a newer upstream version
+- **THEN** the upgrade is proposed as its own change (with explicit upgrade-and-port scope) and lands as reviewed cherry-picks, not silent maintenance; the new baseline replaces the prior one in CLAUDE.md + README + this requirement's documented value
 
 #### Scenario: Upstream improvements do not auto-propagate
 
-- **WHEN** upstream releases `@fission-ai/openspec` v1.3.2, v1.4.0, or later while orbit is pinned to an earlier version
-- **THEN** orbit users do not receive those improvements until a deliberate upgrade change lands in orbit; this is an accepted trade-off (per design.md D-arch-1)
+- **WHEN** upstream releases `@fission-ai/openspec` v1.3.2, v1.4.0, or later
+- **THEN** orbit users do not receive those improvements until a deliberate upgrade or cherry-pick change lands in orbit; this is an accepted trade-off of the self-contained fork model
 
-### Requirement: Overlay file disposition
+### Requirement: Generated-file disposition
 
-The system SHALL classify every file orbit ships in `.claude/` into one of four disposition categories. Each category dictates the file's lifecycle in orbit's overlay.
+The system SHALL classify every skill and command file orbit generates into one of four disposition categories by template provenance. Each category dictates how the file's source template is maintained in the fork.
 
 #### Scenario: Orbit-authored — full ownership
 
-- **WHEN** orbit ships a file with no upstream-derived content (e.g., `orbit-review`, `orbit-audit-drift`, `orbit-review-external`, `orbit-address-reviews`, `orbit-onboard` — the orbit-authored onboarding skill replaces upstream's guided-tour body with 100% orbit-authored content)
-- **THEN** the file is fully owned by orbit; orbit's contributors edit it freely; the file MAY use the `orbit-*` directory naming convention for consistency with siblings even when the body is 100% orbit-authored
+- **WHEN** a generated file's template body has no upstream-derived content (currently `orbit-onboard`, whose body replaces upstream's guided-tour content entirely; the net-new editorial workflows — review, audit-drift, review-external, address-reviews — join this category when they land)
+- **THEN** the template is fully owned by orbit; orbit's contributors edit it freely; the file uses the `orbit-*` directory naming convention for consistency with siblings even when the body is 100% orbit-authored
 
 #### Scenario: Orbit-modified — upstream body with `# Orbit additions`
 
-- **WHEN** orbit ships a file that bundles upstream's body with an appended `# Orbit additions` section (e.g., `orbit-explore`, `orbit-propose`, `orbit-archive-change`, `orbit-apply-change`, `orbit-verify-change`, `orbit-continue-change`, `orbit-ff-change`, `orbit-new-change`, `orbit-bulk-archive-change`)
-- **THEN** the upstream body is the pinned-version snapshot; orbit's additions append behavior or constraints; this pattern is transitional and a subject of future Option-2 work (dropping the additions pattern in favor of fully orbit-authored versions of these skills)
+- **WHEN** a generated file's template bundles upstream's body with an appended `# Orbit additions` section (`orbit-explore`, `orbit-propose`, `orbit-archive-change`, `orbit-apply-change`, `orbit-verify-change`, `orbit-continue-change`, `orbit-ff-change`, `orbit-new-change`, `orbit-bulk-archive-change`)
+- **THEN** the upstream-authored portion is the vendored-baseline snapshot and is left intact (keeping future upstream cherry-picks tractable); orbit's behavior and constraints land in the additions section
 
-#### Scenario: Upstream-required primitive — kept verbatim
+#### Scenario: Upstream-verbatim — kept unchanged
 
-- **WHEN** orbit depends on an upstream skill as a callable primitive (invoked at the orchestration layer, not modified at the skill-body layer) — the concrete example is `orbit-sync-specs`, which orbit's archive flow invokes as a callable primitive even though upstream `init --tools claude` does not materialize the skill directory
-- **THEN** orbit ships the upstream skill unchanged; orbit's use of the primitive matches upstream's internal use pattern; no `# Orbit additions` are needed because orbit's interaction is at the invocation layer, not the skill body
+- **WHEN** orbit generates an upstream skill it never modified because its interaction is at the invocation layer, not the skill-body layer (currently `orbit-sync-specs`, which orbit's archive flow invokes as a callable primitive)
+- **THEN** the template carries the upstream body unchanged; no `# Orbit additions` section is needed
 
-#### Scenario: Not shipped — pruned from overlay
+#### Scenario: Not generated — excluded from the install surface
 
-- **WHEN** an upstream skill is truly unmodified, not used by orbit, and provides no orbit-mission value (e.g., `feedback`, which sends user feedback to Fission-AI and has no role in orbit's pegged workflow)
-- **THEN** orbit does NOT ship the file in its overlay; the skill is simply absent from orbit's `.claude/skills/` directory. NOTE: because the overlay install model is `cp -r` (which does not delete target-only files), absence-in-overlay is necessary but not sufficient to ensure absence-in-user-project. The README install/update sections SHALL document explicit `rm` commands for pruned files so user-project state matches overlay intent.
+- **WHEN** an upstream skill provides no orbit-mission value (e.g., `feedback`, which sends user feedback to Fission-AI and has no role in orbit's workflow)
+- **THEN** orbit does not register its template for generation; a fresh `orbit init` produces no such skill or command in the project
 
 #### Scenario: Per-skill disposition is documented
 
-- **WHEN** orbit's contributors evaluate whether to ship a new upstream skill that lands in a future pinned-version upgrade
+- **WHEN** orbit's contributors evaluate a new upstream skill arriving via a future engine upgrade or cherry-pick
 - **THEN** the disposition decision is recorded in the change proposal that performs the upgrade; the new skill is assigned to one of the four categories with rationale
 
 #### Scenario: Commands follow the same 4-category framework
 
-- **WHEN** orbit ships (or chooses not to ship) a slash-command file in `.claude/commands/opsx/`
-- **THEN** the file's disposition is one of the four categories on the same criteria as skills: orbit-authored (e.g., `opsx/review.md`, `opsx/audit-drift.md`, `opsx/review-external.md`, `opsx/address-reviews.md`, `opsx/onboard.md`); orbit-modified (mirrors an upstream-bound capability with orbit-specific behavior, e.g., `opsx/propose.md`, `opsx/explore.md`, `opsx/archive.md`, `opsx/apply.md`, `opsx/verify.md`, `opsx/continue.md`, `opsx/new.md`, `opsx/bulk-archive.md`, `opsx/sync.md`); upstream-required primitive (none currently — orbit does not depend on any upstream command file as a callable primitive); not shipped (applied per-file when orbit would otherwise ship a verbatim duplicate of an upstream-installed file, or when an upstream command provides no orbit-mission value — see `Verbatim upstream files not in orbit's overlay` scenario)
-
-#### Scenario: Verbatim upstream files not in orbit's overlay
-
-- **WHEN** orbit's overlay would otherwise ship a file (skill or command) that is byte-identical, or near-byte-identical modulo trailing whitespace, to a file `init --tools claude` produces at the pinned upstream version
-- **THEN** orbit does NOT include that file in its overlay; the user gets the file from upstream init alone. orbit's overlay contains ONLY orbit-authored, orbit-modified, or upstream-required-primitive files — never verbatim duplicates of upstream's own install set. Applied to `.claude/commands/opsx/fast-forward.md` in the `orbit-onboard-follow-up` change (the file was byte-identical to upstream's `ff.md` minus trailing whitespace; orbit no longer ships it, and `ff.md` from upstream init is what users have)
-
-#### Scenario: Command-file disposition documented in the same change as a removal or addition
-
-- **WHEN** orbit decides a command should be added to the overlay or pruned from it
-- **THEN** the decision is recorded in the change proposal that performs the addition/removal with the disposition category cited; pruned commands must include `rm` step in README install/update documentation (analogous to pruned-skill handling)
+- **WHEN** orbit generates (or declines to generate) a `/orbit:*` command file
+- **THEN** the command surface mirrors the skill surface — each command's disposition is the same category as its corresponding skill, on the same criteria; a skill that is not generated has no command either
 
 ### Requirement: Verb-prefix naming taxonomy preserved
 
@@ -706,12 +691,12 @@ The system SHALL preserve the four-verb-prefix naming taxonomy across all curren
 
 ### Requirement: Install documentation describes actual install surface
 
-The README's installation, update, and uninstall sections SHALL describe the actual install surface produced by the pinned `@fission-ai/openspec` version (per `Upstream version pinning`). Skill counts, command counts, file lists, CLI invocations, and behavior warnings SHALL match what a fresh sandbox install produces. This requirement exists because the README-vs-install-surface drift has caused two cluster-2 change cuts (issue #6's original delete-9-files framing and the original `lean-overlay-and-add-orbit-onboard` chunks 3-5 cut on 2026-05-23); discipline alone was not sufficient to prevent recurrence.
+The README's installation, update, and uninstall sections SHALL describe the actual surface `orbit init` (and `orbit update`) produces at the current orbit version. Skill counts, command counts, file lists, CLI invocations, and behavior warnings SHALL match what a fresh sandbox install produces. This requirement exists because README-vs-install-surface drift recurred under orbit's predecessor overlay distribution despite discipline alone; sandbox verification is the structural guard.
 
 #### Scenario: README skill and command counts match install output
 
-- **WHEN** a reader follows the README's documented install steps in a fresh sandbox (`mktemp -d` + same Node version as the pinned upstream supports)
-- **THEN** the resulting `.claude/skills/` and `.claude/commands/opsx/` directories contain exactly the files the README's "What you should see after install" section enumerates, with counts matching exactly; no file is documented that isn't installed, and no installed file is omitted from the documentation
+- **WHEN** a reader follows the README's documented install steps in a fresh sandbox (`mktemp -d` + a supported Node version) and runs `orbit init` for their tool
+- **THEN** the generated skill and command directories for that tool contain exactly the files the README's "What you should see after install" section enumerates, with counts matching exactly; no file is documented that isn't generated, and no generated file is omitted from the documentation
 
 #### Scenario: CLI invocations in README are non-interactively executable
 
@@ -723,15 +708,15 @@ The README's installation, update, and uninstall sections SHALL describe the act
 - **WHEN** a change proposal modifies README install/update/uninstall sections
 - **THEN** the change SHALL include an apply-time fresh-sandbox verification task that runs the documented CLI sequence end-to-end and confirms the file-system state matches the documentation; verification failures escalate via `@review(escalated):` rather than ship undocumented behavior
 
-#### Scenario: Upgrade and overlay-change proposals include README sync
+#### Scenario: Engine upgrades and surface changes include README sync
 
-- **WHEN** a change proposal upgrades the pinned upstream version (per `Upstream version pinning`) OR modifies overlay file disposition (per `Overlay file disposition` — adding to or removing from the four categories)
-- **THEN** the proposal SHALL include a README install-section synchronization task that updates counts, file lists, and CLI invocations to match the new install surface; the synchronization task is required before the upgrade/overlay-change is considered apply-complete
+- **WHEN** a change proposal upgrades the vendored upstream engine (per `Upstream version pinning`) OR modifies the generated surface (per `Generated-file disposition` — adding, removing, or recategorizing a workflow template)
+- **THEN** the proposal SHALL include a README install-section synchronization task that updates counts, file lists, and CLI invocations to match the new install surface; the synchronization task is required before the upgrade/surface-change is considered apply-complete
 
 #### Scenario: User-facing behavior warnings are accurate, not pessimistic
 
-- **WHEN** the README documents the behavior of a CLI command (e.g., `init --force` overwrite scope, `cp -r` overlay non-deletion behavior)
-- **THEN** the warning text SHALL accurately describe what the command does in the pinned version, neither understating nor overstating risk; overly-cautious warnings that don't match actual behavior are themselves drift and SHALL be corrected to match sandbox-verified facts
+- **WHEN** the README documents the behavior of a CLI command (e.g., `init --force` overwrite scope, `orbit update` regeneration of skill/command files)
+- **THEN** the warning text SHALL accurately describe what the command does at the current version, neither understating nor overstating risk; overly-cautious warnings that don't match actual behavior are themselves drift and SHALL be corrected to match sandbox-verified facts
 
 ### Requirement: Review mode decision framework
 
