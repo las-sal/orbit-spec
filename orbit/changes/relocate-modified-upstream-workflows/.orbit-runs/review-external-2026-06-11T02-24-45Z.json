@@ -1,0 +1,12 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-06-11T02:24:45Z",
+  "change": "relocate-modified-upstream-workflows",
+  "final_assessment": "External review prompt packaged for relocate-modified-upstream-workflows (iter 1, mode system); awaiting findings from codex.",
+  "next_recommended": "Paste orbit/changes/relocate-modified-upstream-workflows/.orbit-runs/external-prompt-system-2026-06-11T02-24-44Z.md into the target AI, save the response as orbit/changes/relocate-modified-upstream-workflows/.orbit-runs/external-system-<TS>.md, then /orbit:address-reviews relocate-modified-upstream-workflows --from-file <path>",
+  "kind": "editorial",
+  "mode": "system",
+  "prompt_path": "orbit/changes/relocate-modified-upstream-workflows/.orbit-runs/external-prompt-system-2026-06-11T02-24-44Z.md",
+  "target": "codex",
+  "awaiting_findings": true
+}
