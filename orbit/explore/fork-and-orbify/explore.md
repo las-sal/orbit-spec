@@ -319,6 +319,28 @@ that invokes the skill.**
 - **No engine changes** — command-generation pipeline untouched (upstream code, dormant complexity
   is cheaper than divergence); only the 11 command content literals shrank.
 
+### D15 — Full workflow surface installs every time; profile gating is inert (RATIFIED 2026-06-11)
+
+**Directive (user, 2026-06-11, during B1 external-review remediation):** "What I want for orbit is
+for all commands to be installed every time. Having different levels of install is confusing and
+does not work towards my specific use cases at all. It was my intent the entire time — it was just
+not clear how to get there."
+
+Context: Codex's external review proved bare `orbit init` installed only upstream's core profile
+(explore/propose/apply/archive — 4 of 11; there is no 'expanded' profile in the vendored code,
+only core/custom). That default couldn't even run orbit's own canonical flow (`verify` and
+`onboard` are outside core). The install-level confusion predates the fork (the overlay-era
+"openspec install dance" suffered the same).
+
+**Decision: `getProfileWorkflows` always returns `ALL_WORKFLOWS`.** One choke point in
+`src/core/profiles.ts` feeds init, update, and config — every install/update produces the full
+11-workflow surface regardless of profile configuration. The profile machinery (config schema,
+prompts, CLI flags, migration) is upstream code kept intact for cherry-pick compatibility;
+resolution is deliberately inert. `delivery` (skills/commands/both) remains fully honored — it's
+orthogonal and useful. This is a deliberate, recorded engine deviation (the D13 "no piecemeal
+smuggling" concern is satisfied by it being explicit and user-ratified). The e2e surface test
+asserts a DEFAULT init produces all 11 skills + 11 commands.
+
 ## Open questions
 
 ### Q1 — Tool breadth: all 26 adapters or Claude-only? ✅ RESOLVED by D11

@@ -89,36 +89,34 @@ describe('config profile interactive flow', () => {
     fs.writeFileSync(exploreSkillPath, 'name: orbit-explore\n', 'utf-8');
   }
 
-  function setupSyncedCoreBothArtifacts(projectDir: string): void {
+  // D15: a "synced" project carries the FULL workflow surface.
+  function setupSyncedFullSurfaceArtifacts(projectDir: string): void {
     fs.mkdirSync(path.join(projectDir, 'orbit'), { recursive: true });
-    const coreSkillDirs = [
+    const allSkillDirs = [
       'orbit-propose',
       'orbit-explore',
       'orbit-apply-change',
       'orbit-archive-change',
+      'orbit-new-change',
+      'orbit-continue-change',
+      'orbit-ff-change',
+      'orbit-sync-specs',
+      'orbit-bulk-archive-change',
+      'orbit-verify-change',
+      'orbit-onboard',
     ];
-    for (const dirName of coreSkillDirs) {
+    for (const dirName of allSkillDirs) {
       const skillPath = path.join(projectDir, '.claude', 'skills', dirName, 'SKILL.md');
       fs.mkdirSync(path.dirname(skillPath), { recursive: true });
       fs.writeFileSync(skillPath, `name: ${dirName}\n`, 'utf-8');
     }
 
-    const coreCommands = ['propose', 'explore', 'apply', 'archive'];
-    for (const commandId of coreCommands) {
+    const allCommands = ['propose', 'explore', 'apply', 'archive', 'new', 'continue', 'ff', 'sync', 'bulk-archive', 'verify', 'onboard'];
+    for (const commandId of allCommands) {
       const commandPath = path.join(projectDir, '.claude', 'commands', 'orbit', `${commandId}.md`);
       fs.mkdirSync(path.dirname(commandPath), { recursive: true });
       fs.writeFileSync(commandPath, `# ${commandId}\n`, 'utf-8');
     }
-  }
-
-  function addExtraSyncWorkflowArtifacts(projectDir: string): void {
-    const syncSkillPath = path.join(projectDir, '.claude', 'skills', 'orbit-sync-specs', 'SKILL.md');
-    fs.mkdirSync(path.dirname(syncSkillPath), { recursive: true });
-    fs.writeFileSync(syncSkillPath, 'name: orbit-sync-specs\n', 'utf-8');
-
-    const syncCommandPath = path.join(projectDir, '.claude', 'commands', 'orbit', 'sync.md');
-    fs.mkdirSync(path.dirname(syncCommandPath), { recursive: true });
-    fs.writeFileSync(syncCommandPath, '# sync\n', 'utf-8');
   }
 
   beforeEach(() => {
@@ -219,7 +217,8 @@ describe('config profile interactive flow', () => {
     const proposeChoice = checkboxCall.choices.find((choice: { value: string }) => choice.value === 'propose');
     const onboardChoice = checkboxCall.choices.find((choice: { value: string }) => choice.value === 'onboard');
     expect(proposeChoice.checked).toBe(true);
-    expect(onboardChoice.checked).toBe(false);
+    // D15: resolution is inert — the picker shows everything as effectively on
+    expect(onboardChoice.checked).toBe(true);
     expect(getGlobalConfig().workflows).toEqual(['propose', 'explore']);
   });
 
@@ -305,7 +304,7 @@ describe('config profile interactive flow', () => {
     const { select } = await getPromptMocks();
 
     saveGlobalConfig({ featureFlags: {}, profile: 'core', delivery: 'both', workflows: ['propose', 'explore', 'apply', 'archive'] });
-    setupSyncedCoreBothArtifacts(tempDir);
+    setupSyncedFullSurfaceArtifacts(tempDir);
     select.mockResolvedValueOnce('keep');
 
     await runConfigCommand(['profile']);
@@ -330,13 +329,14 @@ describe('config profile interactive flow', () => {
     expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('Warning: Global config is not applied to this project.'));
   });
 
-  it('keep action should warn when project has extra workflows beyond global config', async () => {
+  it('keep action should warn when project is missing part of the full surface (D15)', async () => {
     const { saveGlobalConfig } = await import('../../src/core/global-config.js');
     const { select } = await getPromptMocks();
 
     saveGlobalConfig({ featureFlags: {}, profile: 'core', delivery: 'both', workflows: ['propose', 'explore', 'apply', 'archive'] });
-    setupSyncedCoreBothArtifacts(tempDir);
-    addExtraSyncWorkflowArtifacts(tempDir);
+    setupSyncedFullSurfaceArtifacts(tempDir);
+    // D15: every workflow is in scope, so drift means MISSING surface, never "extras"
+    fs.rmSync(path.join(tempDir, '.claude', 'skills', 'orbit-verify-change'), { recursive: true, force: true });
     select.mockResolvedValueOnce('keep');
 
     await runConfigCommand(['profile']);

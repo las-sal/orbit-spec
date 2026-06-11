@@ -77,20 +77,27 @@ describe('InitCommand', () => {
       expect(content).toContain('schema: spec-driven');
     });
 
-    it('should create core profile skills for Claude Code by default', async () => {
+    it('should create ALL workflow skills for Claude Code by default (D15)', async () => {
       const initCommand = new InitCommand({ tools: 'claude', force: true });
 
       await initCommand.execute(testDir);
 
-      // Core profile: propose, explore, apply, archive
-      const coreSkillNames = [
+      // D15: every install gets the full workflow surface
+      const allSkillNames = [
         'orbit-propose',
         'orbit-explore',
         'orbit-apply-change',
         'orbit-archive-change',
+        'orbit-new-change',
+        'orbit-continue-change',
+        'orbit-ff-change',
+        'orbit-sync-specs',
+        'orbit-bulk-archive-change',
+        'orbit-verify-change',
+        'orbit-onboard',
       ];
 
-      for (const skillName of coreSkillNames) {
+      for (const skillName of allSkillNames) {
         const skillFile = path.join(testDir, '.claude', 'skills', skillName, 'SKILL.md');
         expect(await fileExists(skillFile)).toBe(true);
 
@@ -99,54 +106,31 @@ describe('InitCommand', () => {
         expect(content).toContain('name:');
         expect(content).toContain('description:');
       }
-
-      // Non-core skills should NOT be created
-      const nonCoreSkillNames = [
-        'orbit-new-change',
-        'orbit-continue-change',
-        'orbit-ff-change',
-        'orbit-sync-specs',
-        'orbit-bulk-archive-change',
-        'orbit-verify-change',
-      ];
-
-      for (const skillName of nonCoreSkillNames) {
-        const skillFile = path.join(testDir, '.claude', 'skills', skillName, 'SKILL.md');
-        expect(await fileExists(skillFile)).toBe(false);
-      }
     });
 
-    it('should create core profile commands for Claude Code by default', async () => {
+    it('should create ALL workflow commands for Claude Code by default (D15)', async () => {
       const initCommand = new InitCommand({ tools: 'claude', force: true });
 
       await initCommand.execute(testDir);
 
-      // Core profile: propose, explore, apply, archive
-      const coreCommandNames = [
+      // D15: every install gets the full command surface
+      const allCommandNames = [
         'orbit/propose.md',
         'orbit/explore.md',
         'orbit/apply.md',
         'orbit/archive.md',
-      ];
-
-      for (const cmdName of coreCommandNames) {
-        const cmdFile = path.join(testDir, '.claude', 'commands', cmdName);
-        expect(await fileExists(cmdFile)).toBe(true);
-      }
-
-      // Non-core commands should NOT be created
-      const nonCoreCommandNames = [
         'orbit/new.md',
         'orbit/continue.md',
         'orbit/ff.md',
         'orbit/sync.md',
         'orbit/bulk-archive.md',
         'orbit/verify.md',
+        'orbit/onboard.md',
       ];
 
-      for (const cmdName of nonCoreCommandNames) {
+      for (const cmdName of allCommandNames) {
         const cmdFile = path.join(testDir, '.claude', 'commands', cmdName);
-        expect(await fileExists(cmdFile)).toBe(false);
+        expect(await fileExists(cmdFile)).toBe(true);
       }
     });
 
@@ -503,13 +487,12 @@ describe('InitCommand - profile and detection features', () => {
     const initCommand = new InitCommand({ tools: 'claude', force: true, profile: 'core' });
     await initCommand.execute(testDir);
 
-    // Core profile skills should be created
+    // D15: profile is inert — the full surface installs regardless of override
     const proposeSkill = path.join(testDir, '.claude', 'skills', 'orbit-propose', 'SKILL.md');
     expect(await fileExists(proposeSkill)).toBe(true);
 
-    // Non-core skills (from the custom profile) should NOT be created
     const newChangeSkill = path.join(testDir, '.claude', 'skills', 'orbit-new-change', 'SKILL.md');
-    expect(await fileExists(newChangeSkill)).toBe(false);
+    expect(await fileExists(newChangeSkill)).toBe(true);
   });
 
   it('should reject invalid --profile values', async () => {
@@ -615,18 +598,17 @@ describe('InitCommand - profile and detection features', () => {
     const initCommand = new InitCommand({ tools: 'claude', force: true });
     await initCommand.execute(testDir);
 
-    // Custom profile skills should be created
+    // D15: profile is inert — the full surface installs regardless of custom selection
     const exploreSkill = path.join(testDir, '.claude', 'skills', 'orbit-explore', 'SKILL.md');
     const newChangeSkill = path.join(testDir, '.claude', 'skills', 'orbit-new-change', 'SKILL.md');
     expect(await fileExists(exploreSkill)).toBe(true);
     expect(await fileExists(newChangeSkill)).toBe(true);
 
-    // Non-selected skills should NOT be created
     const proposeSkill = path.join(testDir, '.claude', 'skills', 'orbit-propose', 'SKILL.md');
-    expect(await fileExists(proposeSkill)).toBe(false);
+    expect(await fileExists(proposeSkill)).toBe(true);
   });
 
-  it('should migrate commands-only extend mode to custom profile without injecting propose', async () => {
+  it('should migrate commands-only extend mode to custom profile (full command surface per D15, delivery honored)', async () => {
     await fs.mkdir(path.join(testDir, 'orbit'), { recursive: true });
     await fs.mkdir(path.join(testDir, '.claude', 'commands', 'orbit'), { recursive: true });
     await fs.writeFile(path.join(testDir, '.claude', 'commands', 'orbit', 'explore.md'), '# explore\n');
@@ -639,10 +621,13 @@ describe('InitCommand - profile and detection features', () => {
     expect(config.delivery).toBe('commands');
     expect(config.workflows).toEqual(['explore']);
 
+    // D15: the migrated config records what was detected, but resolution is
+    // inert — the full command surface installs; delivery (commands-only) is
+    // still honored, so no skills are generated.
     const exploreCommand = path.join(testDir, '.claude', 'commands', 'orbit', 'explore.md');
     const proposeCommand = path.join(testDir, '.claude', 'commands', 'orbit', 'propose.md');
     expect(await fileExists(exploreCommand)).toBe(true);
-    expect(await fileExists(proposeCommand)).toBe(false);
+    expect(await fileExists(proposeCommand)).toBe(true);
 
     const exploreSkill = path.join(testDir, '.claude', 'skills', 'orbit-explore', 'SKILL.md');
     const proposeSkill = path.join(testDir, '.claude', 'skills', 'orbit-propose', 'SKILL.md');

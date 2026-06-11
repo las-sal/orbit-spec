@@ -140,7 +140,7 @@ Old instructions content
       consoleSpy.mockRestore();
     });
 
-    it('should update core profile skill files when tool is configured', async () => {
+    it('should update ALL workflow skill files when tool is configured (D15)', async () => {
       // Set up a configured tool with one skill directory
       const skillsDir = path.join(testDir, '.claude', 'skills');
 
@@ -155,7 +155,7 @@ Old instructions content
 
       await updateCommand.execute(testDir);
 
-      // Verify core profile skill files were created/updated (propose, explore, apply, archive)
+      // D15: update regenerates the full workflow surface
       const coreSkillNames = [
         'orbit-explore',
         'orbit-apply-change',
@@ -174,7 +174,7 @@ Old instructions content
         expect(content).toContain('description:');
       }
 
-      // Verify non-core skills are NOT created
+      // D15: formerly-non-core skills are created too
       const nonCoreSkillNames = [
         'orbit-new-change',
         'orbit-continue-change',
@@ -187,7 +187,7 @@ Old instructions content
       for (const skillName of nonCoreSkillNames) {
         const skillFile = path.join(skillsDir, skillName, 'SKILL.md');
         const exists = await FileSystemUtils.fileExists(skillFile);
-        expect(exists).toBe(false);
+        expect(exists).toBe(true);
       }
     });
   });
@@ -220,7 +220,7 @@ Old instructions content
       expect(content).toContain('tags:');
     });
 
-    it('should update core profile orbit commands when tool is configured', async () => {
+    it('should update ALL orbit commands when tool is configured (D15)', async () => {
       // Set up a configured tool
       const skillsDir = path.join(testDir, '.claude', 'skills');
       await fs.mkdir(path.join(skillsDir, 'orbit-explore'), {
@@ -242,12 +242,12 @@ Old instructions content
         expect(exists).toBe(true);
       }
 
-      // Verify non-core commands are NOT created
+      // D15: formerly-non-core commands are created too
       const nonCoreCommandIds = ['new', 'continue', 'ff', 'sync', 'bulk-archive', 'verify'];
       for (const cmdId of nonCoreCommandIds) {
         const cmdFile = path.join(commandsDir, `${cmdId}.md`);
         const exists = await FileSystemUtils.fileExists(cmdFile);
-        expect(exists).toBe(false);
+        expect(exists).toBe(true);
       }
     });
 
@@ -1308,7 +1308,7 @@ More user content after markers.
       consoleSpy.mockRestore();
     });
 
-    it('should create only effective profile skills when upgrading legacy tools', async () => {
+    it('should create the full workflow surface when upgrading legacy tools (D15)', async () => {
       // Create legacy command directory
       await fs.mkdir(path.join(testDir, '.claude', 'commands', 'openspec'), { recursive: true });
       await fs.writeFile(
@@ -1320,7 +1320,7 @@ More user content after markers.
       const forceUpdateCommand = new UpdateCommand({ force: true });
       await forceUpdateCommand.execute(testDir);
 
-      // Default profile is core, so only core workflows should be generated.
+      // D15: profile is inert — the full surface is generated.
       const skillNames = [
         'orbit-propose',
         'orbit-explore',
@@ -1336,7 +1336,7 @@ More user content after markers.
       }
 
       const nonCoreSkill = path.join(skillsDir, 'orbit-new-change', 'SKILL.md');
-      expect(await FileSystemUtils.fileExists(nonCoreSkill)).toBe(false);
+      expect(await FileSystemUtils.fileExists(nonCoreSkill)).toBe(true);
     });
 
     it('should create commands when upgrading legacy tools', async () => {
@@ -1358,7 +1358,7 @@ More user content after markers.
       expect(exists).toBe(true);
     });
 
-    it('should not inject non-profile workflows when upgrading legacy tools', async () => {
+    it('should upgrade legacy tools to the full surface regardless of custom profile (D15)', async () => {
       setMockConfig({
         featureFlags: {},
         profile: 'custom',
@@ -1381,7 +1381,7 @@ More user content after markers.
       )).toBe(true);
       expect(await FileSystemUtils.fileExists(
         path.join(skillsDir, 'orbit-propose', 'SKILL.md')
-      )).toBe(false);
+      )).toBe(true);
 
       const commandsDir = path.join(testDir, '.claude', 'commands', 'orbit');
       expect(await FileSystemUtils.fileExists(
@@ -1389,12 +1389,12 @@ More user content after markers.
       )).toBe(true);
       expect(await FileSystemUtils.fileExists(
         path.join(commandsDir, 'propose.md')
-      )).toBe(false);
+      )).toBe(true);
     });
   });
 
   describe('profile-aware updates', () => {
-    it('should generate only profile workflows when custom profile is set', async () => {
+    it('should generate all workflows regardless of custom profile (D15)', async () => {
       // Set custom profile with only explore and new
       setMockConfig({
         featureFlags: {},
@@ -1418,13 +1418,13 @@ More user content after markers.
         path.join(skillsDir, 'orbit-new-change', 'SKILL.md')
       )).toBe(true);
 
-      // Should NOT create non-profile skills
+      // D15: full surface regardless of the custom selection
       expect(await FileSystemUtils.fileExists(
         path.join(skillsDir, 'orbit-apply-change', 'SKILL.md')
-      )).toBe(false);
+      )).toBe(true);
       expect(await FileSystemUtils.fileExists(
         path.join(skillsDir, 'orbit-propose', 'SKILL.md')
-      )).toBe(false);
+      )).toBe(true);
     });
 
     it('should respect skills-only delivery setting', async () => {
@@ -1569,7 +1569,7 @@ content
       consoleSpy.mockRestore();
     });
 
-    it('should remove workflows outside profile during update sync', async () => {
+    it('does not remove any workflow during update sync (D15 — nothing is outside the profile)', async () => {
       // Set core profile (propose, explore, apply, archive)
       setMockConfig({
         featureFlags: {},
@@ -1593,20 +1593,20 @@ content
 
       await updateCommand.execute(testDir);
 
-      // Deselected workflow artifacts should be removed for both delivery surfaces.
+      // D15: every workflow is in scope, so nothing is "deselected" — the
+      // formerly-extra files are regenerated, not removed.
       expect(await FileSystemUtils.fileExists(
         path.join(skillsDir, 'orbit-new-change', 'SKILL.md')
-      )).toBe(false);
-      expect(await FileSystemUtils.fileExists(extraCommandFile)).toBe(false);
+      )).toBe(true);
+      expect(await FileSystemUtils.fileExists(extraCommandFile)).toBe(true);
 
-      // Should report deselected workflow cleanup.
       const calls = consoleSpy.mock.calls.map(call =>
         call.map(arg => String(arg)).join(' ')
       );
       const hasDeselectedRemovalNote = calls.some(call =>
         call.includes('deselected workflows')
       );
-      expect(hasDeselectedRemovalNote).toBe(true);
+      expect(hasDeselectedRemovalNote).toBe(false);
 
       consoleSpy.mockRestore();
     });

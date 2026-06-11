@@ -34,30 +34,31 @@ describe('profiles', () => {
   });
 
   describe('getProfileWorkflows', () => {
-    it('should return core workflows for core profile', () => {
+    // orbit (D15): profile resolution is deliberately inert — every install
+    // gets the full workflow surface regardless of profile configuration.
+    it('returns all workflows for core profile', () => {
       const result = getProfileWorkflows('core');
-      expect(result).toEqual(CORE_WORKFLOWS);
+      expect(result).toEqual(ALL_WORKFLOWS);
     });
 
-    it('should return core workflows for core profile even if customWorkflows provided', () => {
+    it('returns all workflows for core profile even if customWorkflows provided', () => {
       const result = getProfileWorkflows('core', ['new', 'apply']);
-      expect(result).toEqual(CORE_WORKFLOWS);
+      expect(result).toEqual(ALL_WORKFLOWS);
     });
 
-    it('should return custom workflows for custom profile', () => {
-      const customWorkflows = ['explore', 'new', 'apply', 'ff'];
-      const result = getProfileWorkflows('custom', customWorkflows);
-      expect(result).toEqual(customWorkflows);
+    it('returns all workflows for custom profile regardless of customWorkflows', () => {
+      const result = getProfileWorkflows('custom', ['explore', 'new', 'apply', 'ff']);
+      expect(result).toEqual(ALL_WORKFLOWS);
     });
 
-    it('should return empty array for custom profile with no customWorkflows', () => {
+    it('returns all workflows for custom profile with no customWorkflows', () => {
       const result = getProfileWorkflows('custom');
-      expect(result).toEqual([]);
+      expect(result).toEqual(ALL_WORKFLOWS);
     });
 
-    it('should return empty array for custom profile with empty customWorkflows', () => {
+    it('returns all workflows for custom profile with empty customWorkflows', () => {
       const result = getProfileWorkflows('custom', []);
-      expect(result).toEqual([]);
+      expect(result).toEqual(ALL_WORKFLOWS);
     });
   });
 });

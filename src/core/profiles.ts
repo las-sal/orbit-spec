@@ -34,17 +34,18 @@ export type WorkflowId = (typeof ALL_WORKFLOWS)[number];
 export type CoreWorkflowId = (typeof CORE_WORKFLOWS)[number];
 
 /**
- * Resolves which workflows should be active for a given profile configuration.
+ * Resolves which workflows should be active.
  *
- * - 'core' profile always returns CORE_WORKFLOWS
- * - 'custom' profile returns the provided customWorkflows, or empty array if not provided
+ * orbit (D15): every install gets the full workflow surface, regardless of
+ * profile configuration. Partial installs were a recurring source of
+ * confusion (the canonical flow itself needs `verify` and `onboard`, which
+ * upstream's core profile omits) and serve no orbit use case. The profile
+ * machinery is upstream code kept for cherry-pick compatibility; resolution
+ * is deliberately inert.
  */
 export function getProfileWorkflows(
-  profile: Profile,
-  customWorkflows?: string[]
+  _profile: Profile,
+  _customWorkflows?: string[]
 ): readonly string[] {
-  if (profile === 'custom') {
-    return customWorkflows ?? [];
-  }
-  return CORE_WORKFLOWS;
+  return ALL_WORKFLOWS;
 }

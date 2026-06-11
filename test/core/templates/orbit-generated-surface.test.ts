@@ -3,8 +3,6 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import os from 'os';
 import { InitCommand } from '../../../src/core/init.js';
-import { saveGlobalConfig } from '../../../src/core/global-config.js';
-import { ALL_WORKFLOWS } from '../../../src/core/profiles.js';
 
 vi.mock('@inquirer/prompts', () => ({
   confirm: vi.fn().mockResolvedValue(true),
@@ -20,7 +18,8 @@ vi.mock('../../../src/prompts/searchable-multi-select.js', () => ({
 
 /**
  * End-to-end fidelity for the generated surface (external-review follow-up):
- * runs a REAL `orbit init` (custom profile = all 11 workflows; claude + codex)
+ * runs a REAL default `orbit init` (claude + codex; no profile config — D15:
+ * all workflows install every time)
  * into a temp dir, then applies orbit's content assertions to the files ON
  * DISK — closing the gap between the template-level fidelity tests and the
  * generation pipeline. The original external-review CRITICAL (command files
@@ -58,8 +57,8 @@ describe('generated surface fidelity (real init, all workflows, claude + codex)'
 
     vi.spyOn(console, 'log').mockImplementation(() => {});
 
-    saveGlobalConfig({ profile: 'custom', workflows: [...ALL_WORKFLOWS], delivery: 'both' });
-
+    // No profile/delivery configuration on purpose: a DEFAULT init must
+    // produce the full surface (D15 — all workflows installed every time).
     const initCommand = new InitCommand({ tools: 'claude,codex', force: true });
     await initCommand.execute(testDir);
   });

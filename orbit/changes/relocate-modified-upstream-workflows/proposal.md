@@ -36,7 +36,10 @@ two existing literals per module (skill `instructions` + command `content`), no 
   prose, and it is what Claude executes best; orbit's additions follow the same idiom. What stays
   out of bodies: hardcoded `.claude/...` paths. Per-tool transformation remains upstream's existing
   mechanism (`transformToHyphenCommands` colon-command rewriting for opencode/pi).
-- **No generator changes** in B1. The `references[]` and metadata pass-through growth is B2 (D7).
+- **No generator changes** in B1, with one deliberate, user-ratified exception (D15, added during
+  external-review remediation): `getProfileWorkflows` now always resolves to the full workflow
+  surface — every `orbit init`/`update` installs all 11 workflows; profile gating is inert
+  (`delivery` remains honored). The `references[]` and metadata pass-through growth is B2 (D7).
   Consequence: `archive-change`'s one bundled reference file (`archive-summary-schema.md`) is the
   single piece **deferred to B2** — B1 relocates archive's body and inlines what it can; the sibling
   reference file lands when the generator can emit it.
@@ -66,9 +69,10 @@ land first-class in B3.)
 
 ## Impact
 
-- **Affected source**: the 11 `src/core/templates/workflows/*.ts` modules (skill + command literals).
-  No changes to the generator (`shared/skill-generation.ts`, `command-generation/`), `init.ts`,
-  `update.ts`, or the engine.
+- **Affected source**: the 11 `src/core/templates/workflows/*.ts` modules (skill + command literals),
+  plus one engine line (D15): `profiles.ts` workflow resolution is inert (always the full surface).
+  No other changes to the generator (`shared/skill-generation.ts`, `command-generation/`), `init.ts`,
+  or `update.ts`.
 - **Affected tests**: existing generation/snapshot tests must stay green (~1369). Add a
   generation-fidelity check that `orbit init --tools claude` reproduces orbit's expected workflow
   content, and that `--tools codex` produces a sane skill.
