@@ -124,7 +124,11 @@ For other schemas, follow the \`instruction\` field from the CLI output.
 
 ## Three execution disciplines (apply throughout this command)
 
-The three execution disciplines from \`orbit-conventions\` apply: read-before-reference, change completeness, pushback. See \`orbit/specs/orbit-conventions/spec.md\`.
+The three execution disciplines from \`orbit-conventions\` bracket the authoring lifecycle; they're embedded in every orbit command for self-contained reliability.
+
+- **Read-before-reference (authoring-time)**: before naming a specific construct (function, type, file path, capability, spec requirement, command flag), read its actual definition — never infer a plausible reference. If you can't verify, ask the user or leave a \`@review:\` marker instead of guessing.
+- **Change completeness (modification-time)**: apply substantive modifications fully across ALL affected artifacts before calling them done; after mechanical edits, sweep for residue the pattern missed AND new bugs the replacement introduced.
+- **Pushback (review-time)**: verify each flagged issue against current state before acting; suppress stale findings with evidence rather than re-fixing already-fixed state.
 
 ## Run-summary emit (one-shot at command completion)
 
