@@ -14,7 +14,7 @@ The following commands SHALL NOT emit additional JSONs as part of this change:
 
 - `/orbit:bulk-archive` — wrapper; each inner `/orbit:archive` invocation emits separately
 - `/orbit:onboard` — meta walkthrough; no change-state transition
-- `/orbit:sync-specs` — deprecated upstream; slated for removal in a follow-up change
+- `/orbit:sync` (the `orbit-sync-specs` skill) — upstream primitive, unmodified by orbit; no emit behavior is added to it
 
 Existing emit-producing commands (`/orbit:review`, `/orbit:address-reviews`, `/orbit:archive`, inline `/orbit:audit-drift` during archive) continue emitting as today; this change does not modify their emit behavior.
 

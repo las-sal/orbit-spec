@@ -198,7 +198,7 @@ Per-kind extensions:
 
 - **`kind: "workflow"`** — emitted by `explore`, `propose`, `new`, `continue`, `ff`, `apply`, `verify`. Per-command extensions are defined in the `orbit-run-summary-emit` capability (e.g., `apply.chunk_complete`, `verify.verdict`, `explore.decisions_captured`).
 - **`kind: "editorial"`** — emitted by `review`, `address-reviews`, `audit-drift`, `review-external`. Per-command extensions include: `iteration` (when applicable to the command — e.g., review iter-N, address-reviews iter-N), `findings_summary` (counts by severity; included when findings are present — i.e., review/address-reviews/audit-drift completion emits; review-external at T0 emits before external findings return and SHALL omit this field), `finding_titles` (array of brief titles; included with `findings_summary`, omitted in the same cases), plus command-specific fields defined in per-skill schema references (`references/run-summary-schema.md`, shipped alongside the generated skill).
-- **`kind: "lifecycle"`** — emitted by `archive` only. Per-command extensions include: `archive_path`, `audit`, `sync_specs` (transitional — persists from when `/orbit:sync-specs` was a separate command; a follow-up change will deprecate/remove `/orbit:sync-specs` entirely, at which point this field will be removed or repurposed), `unresolved_markers`, `user_decision`, plus other fields defined in the archive skill.
+- **`kind: "lifecycle"`** — emitted by `archive` only. Per-command extensions include: `archive_path`, `audit`, `sync_specs` (reports what the archive flow's spec-sync step did, mirroring upstream's archive summary), `unresolved_markers`, `user_decision`, plus other fields defined in the archive skill.
 
 **Canonical examples** (one per kind, illustrating spine + per-kind extensions):
 
@@ -657,7 +657,7 @@ The system SHALL classify every skill and command file orbit generates into one 
 
 #### Scenario: Upstream-verbatim — kept unchanged
 
-- **WHEN** orbit generates an upstream skill it never modified because its interaction is at the invocation layer, not the skill-body layer (currently `orbit-sync-specs`, which orbit's archive flow invokes as a callable primitive)
+- **WHEN** orbit generates an upstream skill it never modified because its interaction is at the invocation layer, not the skill-body layer (currently `orbit-sync-specs`, which upstream's own archive flow invokes as a callable primitive)
 - **THEN** the template carries the upstream body unchanged; no `# Orbit additions` section is needed
 
 #### Scenario: Not generated — excluded from the install surface
