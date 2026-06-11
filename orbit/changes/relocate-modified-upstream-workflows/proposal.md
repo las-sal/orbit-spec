@@ -45,8 +45,9 @@ change. They are brought over from the overlay as the migration source of truth,
 workflows — review, review-external, address-reviews, audit-drift — are **out of scope** for B1; they
 land first-class in B3.)
 
-- `orbit-conventions` — the three execution disciplines, inlined into all 11 workflow bodies.
-- `orbit-run-summary-emit` — the `.orbit-runs/` audit-trail JSON emit, inlined into the 9 emitting
+- `orbit-conventions` — the three execution disciplines, inlined into 9 of the 11 workflow bodies
+  (`sync-specs` upstream-verbatim; `bulk-archive-change` non-emission note only).
+- `orbit-run-summary-emit` — the `.orbit-runs/` audit-trail JSON emit, inlined into the 8 emitting
   workflows.
 - `orbit-explore-modifications` — explore's orbit layer: capture modes/types, `explore.md` five-
   section convention, crystallization, offer-don't-auto.
@@ -67,6 +68,12 @@ land first-class in B3.)
   generation-fidelity check that `orbit init --tools claude` reproduces orbit's expected workflow
   content, and that `--tools codex` produces a sane skill.
 - **Deferred to B2**: `archive-change` reference file; any other bundled `references/` for the 11.
+- **Docs dependency (issue #1)**: three `orbit-conventions` requirements are README-facing —
+  `Upstream version pinning`'s `Pinned baseline declared in README` scenario, `Install documentation
+  describes actual install surface`, and the README complement of `Review mode decision framework`
+  ("Choosing a review mode"). At B1 time `README.md` is still upstream's, so these requirements are
+  not yet satisfied; they are satisfied by the deferred comprehensive docs rewrite (issue #1), not by
+  this change. They are intentionally kept in the delta so the rewrite has normative targets to hit.
 - **Naming**: the user-facing rename is already done (bin `orbit`, working dir `orbit/`, skill dirs
   `orbit-*`, command namespace `/orbit:`). B1 authors orbit-native bodies from the start; command ids
   (`explore`, `propose`, …) are unchanged, so `init`/`update` continue to work.
