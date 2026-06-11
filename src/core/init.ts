@@ -43,6 +43,7 @@ import {
 } from './shared/index.js';
 import { getGlobalConfig, type Delivery, type Profile } from './global-config.js';
 import { getProfileWorkflows, CORE_WORKFLOWS, ALL_WORKFLOWS } from './profiles.js';
+import { validateSkillTemplates, reconcileSkillReferences } from './shared/skill-generation.js';
 import { getAvailableTools } from './available-tools.js';
 import { migrateIfNeeded } from './migration.js';
 
@@ -521,6 +522,14 @@ export class InitCommand {
     const skillTemplates = shouldGenerateSkills ? getSkillTemplates(workflows) : [];
     const commandContents = shouldGenerateCommands ? getCommandContents(workflows) : [];
 
+    // Preflight validation (orbit-skill-generation): an invalid reference name or metadata
+    // key fails the operation BEFORE any file write — including SKILL.md.
+    if (shouldGenerateSkills) {
+      validateSkillTemplates(skillTemplates);
+    }
+    let referenceEntriesWritten = 0;
+    const referenceEntriesRemoved: string[] = [];
+
     // Process each tool
     for (const tool of tools) {
       const spinner = ora(`Setting up ${tool.name}...`).start();
@@ -543,6 +552,13 @@ export class InitCommand {
 
             // Write the skill file
             await FileSystemUtils.writeFile(skillFile, skillContent);
+
+            // Reconcile references/ (orbit-skill-generation): extend-mode re-runs converge too
+            const refResult = await reconcileSkillReferences(skillDir, template.references);
+            referenceEntriesWritten += refResult.written;
+            referenceEntriesRemoved.push(
+              ...refResult.removed.map((name) => `${dirName}/references/${name}`)
+            );
           }
         }
         if (!shouldGenerateSkills) {
@@ -579,6 +595,14 @@ export class InitCommand {
         spinner.fail(`Failed for ${tool.name}`);
         failedTools.push({ name: tool.name, error: error as Error });
       }
+    }
+
+    if (referenceEntriesRemoved.length > 0) {
+      console.log(
+        chalk.dim(
+          `Removed ${referenceEntriesRemoved.length} undeclared reference entr${referenceEntriesRemoved.length === 1 ? 'y' : 'ies'}: ${referenceEntriesRemoved.join(', ')}`
+        )
+      );
     }
 
     return {

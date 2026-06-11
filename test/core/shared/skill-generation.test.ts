@@ -211,20 +211,17 @@ describe('skill-generation', () => {
       expect(content).toContain('Test instructions');
     });
 
-    it('should use default values for optional fields', () => {
-      const template = {
+    it('emits no fallback metadata defaults — templates are the source of truth (orbit-skill-generation)', () => {
+      const minimal: SkillTemplate = {
         name: 'minimal-skill',
         description: 'Minimal description',
         instructions: 'Minimal instructions',
       };
-
-      const content = generateSkillContent(template, '0.24.0');
-
-      expect(content).toContain('license: MIT');
-      expect(content).toContain('compatibility: Requires orbit CLI.');
-      expect(content).toContain('author: openspec');
-      expect(content).toContain('version: "1.0"');
-      expect(content).toContain('generatedBy: "0.24.0"');
+      const content = generateSkillContent(minimal, '1.2.3');
+      // only the generator-injected generatedBy appears; no author/version fallbacks
+      expect(content).toContain('generatedBy: "1.2.3"');
+      expect(content).not.toContain('author:');
+      expect(content).not.toContain('version: "1.0"');
     });
 
     it('should embed the provided version in generatedBy field', () => {

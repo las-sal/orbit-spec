@@ -1,0 +1,15 @@
+{
+  "command": "apply",
+  "timestamp": "2026-06-11T16:31:12Z",
+  "change": "b2-grow-generator",
+  "final_assessment": "Completed chunk 1 of 3 (engine): SkillTemplate.references + SkillReference type; generateSkillContent metadata pass-through (no fallback defaults, generatedBy generator-owned and always quoted — generated output byte-identical for current templates); preflight validateSkillTemplates (reference names + metadata keys, before any write in init AND update); reconcileSkillReferences (write-before-prune, declared-path collision replacement, symlink containment, empty-set dir removal); skillReferencesDrifted wired into profile-sync-drift (declared-set + root-shape drift defeats current-stamps short-circuit); reconciliation wired into init skill loop (with removal reporting) and BOTH update generation paths. 7 of 19 tasks done.",
+  "next_recommended": "/orbit:apply b2-grow-generator — next chunk: content (reconciled archive-summary-schema reference)",
+  "kind": "workflow",
+  "tasks_completed": 7,
+  "tasks_remaining": 12,
+  "user_validation_remaining": 0,
+  "chunk": "1 of 3",
+  "chunk_name": "Engine — references field, writer, metadata pass-through",
+  "chunk_complete": true,
+  "tasks_completed_this_session": 7
+}

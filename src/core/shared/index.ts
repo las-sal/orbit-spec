@@ -27,4 +27,8 @@ export {
   getCommandTemplates,
   getCommandContents,
   generateSkillContent,
+  validateSkillTemplates,
+  reconcileSkillReferences,
+  skillReferencesDrifted,
+  type ReferenceReconcileResult,
 } from './skill-generation.js';

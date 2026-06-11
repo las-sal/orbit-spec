@@ -22,6 +22,8 @@ import {
   getSkillTemplates,
   getCommandContents,
   generateSkillContent,
+  validateSkillTemplates,
+  reconcileSkillReferences,
   getToolsWithSkillsDir,
   type ToolVersionStatus,
 } from './shared/index.js';
@@ -170,6 +172,11 @@ export class UpdateCommand {
     const skillTemplates = shouldGenerateSkills ? getSkillTemplates(desiredWorkflows) : [];
     const commandContents = shouldGenerateCommands ? getCommandContents(desiredWorkflows) : [];
 
+    // Preflight validation (orbit-skill-generation): fail before any write.
+    if (shouldGenerateSkills) {
+      validateSkillTemplates(skillTemplates);
+    }
+
     // 10. Update tools (all if force, otherwise only those needing update)
     const toolsToUpdate = this.force ? configuredTools : [...toolsToUpdateSet];
     const updatedTools: string[] = [];
@@ -178,6 +185,7 @@ export class UpdateCommand {
     let removedSkillCount = 0;
     let removedDeselectedCommandCount = 0;
     let removedDeselectedSkillCount = 0;
+    const referenceEntriesRemoved: string[] = [];
 
     for (const toolId of toolsToUpdate) {
       const tool = AI_TOOLS.find((t) => t.value === toolId);
@@ -198,6 +206,12 @@ export class UpdateCommand {
             const transformer = (tool.value === 'opencode' || tool.value === 'pi') ? transformToHyphenCommands : undefined;
             const skillContent = generateSkillContent(template, OPENSPEC_VERSION, transformer);
             await FileSystemUtils.writeFile(skillFile, skillContent);
+
+            // Reconcile references/ (orbit-skill-generation)
+            const refResult = await reconcileSkillReferences(skillDir, template.references);
+            referenceEntriesRemoved.push(
+              ...refResult.removed.map((name) => `${dirName}/references/${name}`)
+            );
           }
 
           removedDeselectedSkillCount += await this.removeUnselectedSkillDirs(skillsDir, desiredWorkflows);
@@ -259,6 +273,9 @@ export class UpdateCommand {
     }
     if (removedDeselectedCommandCount > 0) {
       console.log(chalk.dim(`Removed: ${removedDeselectedCommandCount} command files (deselected workflows)`));
+    }
+    if (referenceEntriesRemoved.length > 0) {
+      console.log(chalk.dim(`Removed ${referenceEntriesRemoved.length} undeclared reference entr${referenceEntriesRemoved.length === 1 ? 'y' : 'ies'}: ${referenceEntriesRemoved.join(', ')}`));
     }
     if (removedDeselectedSkillCount > 0) {
       console.log(chalk.dim(`Removed: ${removedDeselectedSkillCount} skill directories (deselected workflows)`));
@@ -650,6 +667,11 @@ export class UpdateCommand {
     const skillTemplates = shouldGenerateSkills ? getSkillTemplates(desiredWorkflows) : [];
     const commandContents = shouldGenerateCommands ? getCommandContents(desiredWorkflows) : [];
 
+    // Preflight validation (orbit-skill-generation): fail before any write.
+    if (shouldGenerateSkills) {
+      validateSkillTemplates(skillTemplates);
+    }
+
     for (const toolId of selectedTools) {
       const tool = AI_TOOLS.find((t) => t.value === toolId);
       if (!tool?.skillsDir) continue;
@@ -669,6 +691,9 @@ export class UpdateCommand {
             const transformer = (tool.value === 'opencode' || tool.value === 'pi') ? transformToHyphenCommands : undefined;
             const skillContent = generateSkillContent(template, OPENSPEC_VERSION, transformer);
             await FileSystemUtils.writeFile(skillFile, skillContent);
+
+            // Reconcile references/ (orbit-skill-generation) — legacy-upgrade path included
+            await reconcileSkillReferences(skillDir, template.references);
           }
         }
 

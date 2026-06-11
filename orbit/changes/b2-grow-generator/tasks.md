@@ -9,11 +9,11 @@ Implementation chunks:
 
 ## 1. Engine: template shape + generation
 
-- [ ] 1.1 `SkillTemplate` gains `references?: Array<{ name: string; content: string }>`
+- [x] 1.1 `SkillTemplate` gains `references?: Array<{ name: string; content: string }>`
   (`src/core/templates/types.ts`).
-- [ ] 1.2 `generateSkillContent()` emits ALL `template.metadata` keys in declared order;
+- [x] 1.2 `generateSkillContent()` emits ALL `template.metadata` keys in declared order;
   `generatedBy` generator-injected and overriding (`src/core/shared/skill-generation.ts`).
-- [ ] 1.3 Add a shared reference-writer/reconciler helper in `skill-generation.ts`: exposes a
+- [x] 1.3 Add a shared reference-writer/reconciler helper in `skill-generation.ts`: exposes a
   PREFLIGHT validation (reference names: bare filename, no separators/dot-segments, unique;
   metadata keys: `[A-Za-z][A-Za-z0-9_-]*` — fail fast naming the template, before any write);
   replaces non-regular entries (symlink/dir) at DECLARED names during the write phase, never
@@ -26,18 +26,18 @@ Implementation chunks:
 
 ## 2. Engine: wiring init + update
 
-- [ ] 2.1 `init.ts` runs the preflight validation BEFORE any skill write (an invalid template
+- [x] 2.1 `init.ts` runs the preflight validation BEFORE any skill write (an invalid template
   must not mutate any file, including other skills' `SKILL.md`), then calls the reference writer
   per skill (extend-mode re-runs reconcile too — D-b2-1 as amended); aggregates written/removed
   reference counts into init's output (removals reported, per the spec's re-run-init scenario).
-- [ ] 2.2 `update.ts` calls the same helper on BOTH generation paths: the skill refresh loop AND
+- [x] 2.2 `update.ts` calls the same helper on BOTH generation paths: the skill refresh loop AND
   `upgradeLegacyTools()` (single writer — entry points cannot diverge); removed-entry counts
   surface in update's output.
-- [ ] 2.3 Smart update detection (`profile-sync-drift.ts`) gains reference drift: a generated
+- [x] 2.3 Smart update detection (`profile-sync-drift.ts`) gains reference drift: a generated
   skill missing a declared reference, carrying an undeclared entry, having a `references/` root
   that shouldn't exist (reference-less skill), or whose root is not a real directory (symlinked
   root), counts as drift and defeats the current-stamps short-circuit (`update.ts:151`).
-- [ ] 2.4 Skills with no `references` produce no `references/` dir (no empty-dir litter).
+- [x] 2.4 Skills with no `references` produce no `references/` dir (no empty-dir litter).
 
 ## 3. Content: archive schema reference
 

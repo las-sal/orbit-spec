@@ -4,7 +4,7 @@ import { AI_TOOLS } from './config.js';
 import type { Delivery } from './global-config.js';
 import { ALL_WORKFLOWS } from './profiles.js';
 import { CommandAdapterRegistry } from './command-generation/index.js';
-import { COMMAND_IDS, getConfiguredTools } from './shared/index.js';
+import { COMMAND_IDS, getConfiguredTools, getSkillTemplates, skillReferencesDrifted } from './shared/index.js';
 
 type WorkflowId = (typeof ALL_WORKFLOWS)[number];
 
@@ -102,10 +102,21 @@ export function hasToolProfileOrDeliveryDrift(
   const shouldGenerateCommands = delivery !== 'skills';
 
   if (shouldGenerateSkills) {
+    const templatesByWorkflow = new Map(
+      getSkillTemplates([...knownDesiredWorkflows]).map((entry) => [entry.workflowId, entry])
+    );
     for (const workflow of knownDesiredWorkflows) {
       const dirName = WORKFLOW_TO_SKILL_DIR[workflow];
-      const skillFile = path.join(skillsDir, dirName, 'SKILL.md');
+      const skillDir = path.join(skillsDir, dirName);
+      const skillFile = path.join(skillDir, 'SKILL.md');
       if (!fs.existsSync(skillFile)) {
+        return true;
+      }
+      // Reference drift (orbit-skill-generation): missing declared file, undeclared entry,
+      // undesired root on a reference-less skill, or a root that is not a real directory —
+      // all defeat the current-stamps short-circuit. Declared-content tamper is out of scope.
+      const entry = templatesByWorkflow.get(workflow);
+      if (skillReferencesDrifted(skillDir, entry?.template.references)) {
         return true;
       }
     }
