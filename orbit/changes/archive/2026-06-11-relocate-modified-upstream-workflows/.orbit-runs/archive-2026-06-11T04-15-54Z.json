@@ -1,0 +1,30 @@
+{
+  "command": "archive",
+  "timestamp": "2026-06-11T04:15:54Z",
+  "change": "relocate-modified-upstream-workflows",
+  "final_assessment": "Archived relocate-modified-upstream-workflows to orbit/changes/archive/2026-06-11-relocate-modified-upstream-workflows/. Spec sync created orbit-spec's first 6 baseline capabilities (76 requirements, all ADDED): orbit-conventions, orbit-run-summary-emit, orbit-{explore,propose,archive}-modifications, orbit-onboard. B1 (relocate) is complete: editorial layer relocated inline-TS (D13), commands are thin launchers (D14), full surface installs every time (D15), Claude primacy bounds neutrality (D11 refinement). Cleared by one fresh internal system review + two external GPT-5 Codex system-review iterations (0 CRITICAL across both external iters; all findings resolved).",
+  "next_recommended": "Change archived. B1 complete — start B2 (grow generator: references[] + metadata pass-through; covers issue #4 disciplines/schema reference files) via /orbit:explore or /orbit:new.",
+  "kind": "lifecycle",
+  "archive_path": "orbit/changes/archive/2026-06-11-relocate-modified-upstream-workflows/",
+  "audit": {
+    "ran": false,
+    "reason": "audit-drift workflow lands in B3; two external system-review iterations (iter 1: 1C/5W/4S, iter 2: 0C/3W/2S, all resolved) stood in as the pre-archive sweep"
+  },
+  "sync_specs": {
+    "capabilities_updated": [
+      "orbit-archive-modifications",
+      "orbit-conventions",
+      "orbit-explore-modifications",
+      "orbit-onboard",
+      "orbit-propose-modifications",
+      "orbit-run-summary-emit"
+    ],
+    "added": 76,
+    "modified": 0,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "warnings": []
+}

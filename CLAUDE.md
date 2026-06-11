@@ -22,7 +22,7 @@ The fork bootstrap (phase **A1**) is complete:
   branding prose, `.openspec.yaml`, data-format tags (`openspec-change`), the global config/data dir,
   and legacy-openspec detection. See the dogfooded changes
   `orbit/changes/archive/2026-06-08-rename-user-facing-to-orbit/` (A2) and
-  `orbit/changes/rename-command-namespace-to-orbit/` (namespace).
+  `orbit/changes/archive/2026-06-08-rename-command-namespace-to-orbit/` (namespace).
 - **Toolchain is npm, not pnpm.** `npm install` works end-to-end. Build = `npm run build`
   (`node build.js` → `tsc`); tests = `npm test` (vitest). Baseline at bootstrap: ~1369 tests (1459 as of B1).
 
