@@ -662,6 +662,7 @@ export class UpdateCommand {
 
     // Create skills/commands for selected tools using effective profile+delivery.
     const newlyConfigured: string[] = [];
+    const legacyReferenceRemovals: string[] = [];
     const shouldGenerateSkills = delivery !== 'commands';
     const shouldGenerateCommands = delivery !== 'skills';
     const skillTemplates = shouldGenerateSkills ? getSkillTemplates(desiredWorkflows) : [];
@@ -693,7 +694,10 @@ export class UpdateCommand {
             await FileSystemUtils.writeFile(skillFile, skillContent);
 
             // Reconcile references/ (orbit-skill-generation) — legacy-upgrade path included
-            await reconcileSkillReferences(skillDir, template.references);
+            const refResult = await reconcileSkillReferences(skillDir, template.references);
+            legacyReferenceRemovals.push(
+              ...refResult.removed.map((name) => `${dirName}/references/${name}`)
+            );
           }
         }
 
@@ -716,6 +720,14 @@ export class UpdateCommand {
         spinner.fail(`Failed to set up ${tool.name}`);
         console.log(chalk.red(`  ${error instanceof Error ? error.message : String(error)}`));
       }
+    }
+
+    if (legacyReferenceRemovals.length > 0) {
+      console.log(
+        chalk.dim(
+          `Removed ${legacyReferenceRemovals.length} undeclared reference entr${legacyReferenceRemovals.length === 1 ? 'y' : 'ies'}: ${legacyReferenceRemovals.join(', ')}`
+        )
+      );
     }
 
     if (newlyConfigured.length > 0) {

@@ -133,6 +133,21 @@ export class InitCommand {
     // The resolved value is consumed later when generation reads effective config.
     this.resolveProfileOverride();
 
+    // Preflight validation (orbit-skill-generation): runs BEFORE any file write in the
+    // operation — including the orbit/ workspace scaffold — so an invalid reference name
+    // or metadata key mutates nothing.
+    {
+      const preflightConfig = getGlobalConfig();
+      const preflightDelivery: Delivery = preflightConfig.delivery ?? 'both';
+      if (preflightDelivery !== 'commands') {
+        const preflightProfile: Profile =
+          this.resolveProfileOverride() ?? preflightConfig.profile ?? 'core';
+        validateSkillTemplates(
+          getSkillTemplates(getProfileWorkflows(preflightProfile, preflightConfig.workflows))
+        );
+      }
+    }
+
     // Get tool states before processing
     const toolStates = getToolStates(projectPath);
 
