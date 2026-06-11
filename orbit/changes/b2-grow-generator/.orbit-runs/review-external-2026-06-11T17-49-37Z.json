@@ -1,0 +1,12 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-06-11T17:49:37Z",
+  "change": "b2-grow-generator",
+  "final_assessment": "External review prompt packaged for b2-grow-generator (iter 1, mode system); awaiting findings. Post-apply code-vs-spec pass: reviewer directed at independent scenario-by-scenario verification of the two deltas against the implementation (afb0754..HEAD), net-new implementation bug hunting, and confirmation of the in-context system review's resolutions.",
+  "next_recommended": "Paste orbit/changes/b2-grow-generator/.orbit-runs/external-prompt-system-2026-06-11T17-49-36Z.md into the target AI, save the response as orbit/changes/b2-grow-generator/.orbit-runs/external-system-<TS>.md, then /orbit:address-reviews b2-grow-generator --from-file <path>",
+  "kind": "editorial",
+  "mode": "system",
+  "prompt_path": "orbit/changes/b2-grow-generator/.orbit-runs/external-prompt-system-2026-06-11T17-49-36Z.md",
+  "target": null,
+  "awaiting_findings": true
+}
