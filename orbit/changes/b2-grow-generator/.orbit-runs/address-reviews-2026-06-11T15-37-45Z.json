@@ -1,0 +1,22 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-06-11T15:37:45Z",
+  "change": "b2-grow-generator",
+  "final_assessment": "Walked all 8 findings from external-proposal-2026-06-11T15-30-39Z.md (1 CRITICAL / 4 WARNING / 3 SUGGESTION), all fixed as pre-apply artifact edits: smart update detection gains reference drift so the convergence contract holds without --force (CRITICAL; self-host dev loop uses --force for unbumped-version template edits); D-b2-1 amended — reconciliation is a property of the shared writer, applying to init extend-mode re-runs and BOTH update generation paths incl. upgradeLegacyTools (W2, W3); archive schema migration respecified as reconciled-to-baseline-canonical-shape, not verbatim, with semantic fidelity assertions (W1); reference-name validation + entry-type/symlink containment requirement added (W4); write-before-prune failure ordering specified (S1); metadata order/YAML-quoting test added to tasks (S2); CLAUDE.md B1-pending-archive staleness corrected (S3).",
+  "next_recommended": "/orbit:apply b2-grow-generator — external proposal review resolved; specs are implementation-ready",
+  "kind": "editorial",
+  "iteration": 2,
+  "from_file": "orbit/changes/b2-grow-generator/.orbit-runs/external-proposal-2026-06-11T15-30-39Z.md",
+  "findings_summary": { "critical": 1, "warning": 4, "suggestion": 3 },
+  "finding_titles": [
+    "Plain update bypasses reference reconciliation when stamps are current",
+    "Verbatim archive-schema migration would contradict the baselines",
+    "Re-running init has unspecified destructive reconciliation semantics",
+    "Update's legacy-upgrade generation path is missing from the wiring plan",
+    "Reference-name and filesystem safety behavior is undefined",
+    "Define failure ordering before destructive reconciliation",
+    "Test metadata order and YAML-safe string preservation",
+    "CLAUDE.md still says the B1 change is pending archive"
+  ],
+  "resolutions": { "fixed": 8, "ratified_as_designed": 0 }
+}

@@ -6,7 +6,9 @@ The generated `orbit-archive-change` skill SHALL include
 `references/archive-summary-schema.md` — the full schema for the Step 5.5 archive run-summary
 JSON that the skill body already instructs the AI to read when composing the summary. The
 content is migrated from the overlay's `openspec-archive-change/references/archive-summary-schema.md`
-(orbit-named paths), satisfying the deferral recorded in B1.
+and **reconciled to the baseline-canonical shape** — the overlay source predates the B1 baselines
+and disagrees on three points that path renaming does not fix — satisfying the deferral recorded
+in B1.
 
 #### Scenario: Reference exists after init
 
@@ -16,6 +18,14 @@ content is migrated from the overlay's `openspec-archive-change/references/archi
   (`archive_path`, `audit`, `sync_specs`, `unresolved_markers`, `user_decision`, `warnings`) per
   `orbit-conventions`' `Internal-run JSON summary format` requirement — and covers the field list
   in this capability's own `Archive run summary written` requirement
+
+#### Scenario: Schema shapes match the baselines, not the overlay source
+
+- **WHEN** the shipped schema is compared against the B1 baselines
+- **THEN** it documents `unresolved_markers` as an ARRAY (not the overlay's object), the sync
+  delta counts directly under `sync_specs` (not nested under `sync_specs.counts`), and exactly
+  the three baseline `user_decision` values — no `aborted` (per the baseline, an aborted archive
+  writes no summary)
 
 #### Scenario: Body cite resolves
 

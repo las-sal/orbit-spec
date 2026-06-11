@@ -16,7 +16,10 @@ outright without this. The full exploration record is `explore.md` (D-b2-1…6) 
 - Update-time convergence: a generated skill dir matches fresh-init output exactly (declared
   references written, undeclared files under `references/` removed).
 - Full metadata pass-through with `generatedBy` still generator-owned.
-- Archive's schema reference becomes real (overlay content migrated verbatim, paths orbit-named).
+- Archive's schema reference becomes real — overlay content **reconciled to the
+  baseline-canonical shape**, not verbatim (the overlay source predates the B1 baselines and
+  disagrees on `unresolved_markers` shape, `sync_specs` nesting, and `user_decision` values),
+  paths orbit-named.
 
 **Non-Goals:**
 - No new reference files beyond archive's (B3 brings its own 7; disciplines stay inline per D-b2-2).
@@ -31,11 +34,20 @@ outright without this. The full exploration record is `explore.md` (D-b2-1…6) 
   bare filename (e.g., `archive-summary-schema.md`); the writer owns the `references/` path
   segment. Rationale: matches how bodies live; upstream has no grain to mimic; keeps the future
   D6 migration a single cohesive move.
-- **D-b2-1 — remove-unknown on update**: the writer reconciles `references/` to the declared set
-  (write all, delete undeclared). Update's charter is convergence (`generatedBy` stamps + smart
-  detection exist for exactly this); overwrite-only would leave projects in states no CLI version
-  generates. Scope of deletion: ONLY files under `<skill-dir>/references/` — never the skill dir
-  itself, never user project files.
+- **D-b2-1 (amended at external review iter 1) — reconciliation on init AND update**: the shared
+  writer reconciles `references/` to the declared set (write all, delete undeclared) on every
+  (re)generation — `init` extend-mode re-runs and both of update's generation paths (refresh loop
+  AND `upgradeLegacyTools()`). One writer, one semantics. Ordering: all declared writes succeed
+  BEFORE any pruning; on write failure nothing is removed. Scope of deletion: ONLY entries under
+  `<skill-dir>/references/` (every entry type — files, dirs, symlinks-as-links); containment is
+  physical, links never followed. Reference names validate at generation time (bare filename,
+  unique) and fail fast.
+- **Smart update detection grows reference drift**: `update`'s stamp short-circuit
+  (`update.ts:151`) + drift check (`profile-sync-drift.ts`) currently see only `SKILL.md` and
+  command presence — a current-version install would never reach the reconciler. Detection gains
+  reference-set drift (missing declared / stray undeclared ⇒ proceed to generation). Within a
+  version, declared content cannot change, so presence/stray detection suffices; the self-host
+  dev loop (template edits without version bumps) uses `update --force` instead.
 - **D-b2-5 — metadata pass-through**: emit every `template.metadata` key in declared order;
   `generatedBy` appended by the generator and wins over any template-declared key of the same
   name (generator-owned provenance).
@@ -47,9 +59,9 @@ outright without this. The full exploration record is `explore.md` (D-b2-1…6) 
 
 ## Risks / Trade-offs
 
-- **Remove-unknown deletes user files parked inside a generated `references/` dir.** Accepted:
-  the skill dir is generated territory (documented stance since D14); deletion is scoped to
-  `references/` only.
+- **Remove-unknown deletes user files parked inside a generated `references/` dir — on update AND
+  re-init.** Accepted: the skill dir is generated territory (documented stance since D14);
+  deletion is scoped to `references/` entries only, write-before-prune ordered, symlink-safe.
 - **Frontmatter key collisions** (template declares `generatedBy`): generator wins; unit-tested.
 - **Self-host lag**: this repo's own `.claude/` won't show the new reference until
   `build + update` is run (documented loop in CLAUDE.md).

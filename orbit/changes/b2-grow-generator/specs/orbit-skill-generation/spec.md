@@ -31,23 +31,69 @@ configured (e.g., Claude `.claude/skills/`, Codex `.codex/skills/`).
 - **THEN** its `name` is a bare filename (e.g., `archive-summary-schema.md`); the writer owns the
   `references/` path segment — templates do not embed directory separators in `name`
 
-### Requirement: Update converges generated references directories
+### Requirement: Reference names validate at generation time
 
-`orbit update` SHALL reconcile each generated skill's `references/` directory to the template's
-declared set: write every declared reference and remove undeclared files, so that after update
-the generated surface is indistinguishable from a fresh `orbit init` at the current version.
-Reconciliation SHALL be scoped to files within `<skill-dir>/references/` only.
+The generator SHALL validate reference names before writing: a valid `name` is a bare filename —
+no path separators, not `.` or `..`, not absolute, and unique within the skill's declared set.
+An invalid or duplicate name SHALL fail generation with an error naming the offending template
+and reference; it is never silently skipped and never written outside `references/`.
+
+#### Scenario: Path-escaping name rejected
+
+- **WHEN** a template declares a reference named `../evil.md` (or any name containing a path
+  separator, `.`/`..` segment, or absolute path)
+- **THEN** generation fails with an error identifying the template and the invalid name; no file
+  is written
+
+#### Scenario: Duplicate names rejected
+
+- **WHEN** a template declares two references with the same `name`
+- **THEN** generation fails with an error identifying the duplicate; no partial write occurs
+
+### Requirement: Generated references directories converge on init and update
+
+The shared skill-writer SHALL reconcile each generated skill's `references/` directory to the
+template's declared set whenever the skill is (re)generated — by `orbit init` (including
+extend-mode re-runs) and by `orbit update` (including its legacy-upgrade path): write every
+declared reference and remove undeclared entries, so the generated surface is indistinguishable
+from a fresh install at the current version. Reconciliation SHALL be scoped to entries within
+`<skill-dir>/references/` only, SHALL treat every entry type uniformly (files, directories,
+symlinks — an undeclared symlink is removed as an entry; its target is never touched and links
+are never followed), and SHALL complete all declared writes successfully before any removal
+begins.
 
 #### Scenario: Declared references refreshed on update
 
 - **WHEN** a template's reference content changes between CLI versions and `orbit update` runs
 - **THEN** the on-disk reference file is overwritten with the current content
 
-#### Scenario: Undeclared files removed on update
+#### Scenario: Undeclared entries removed on update
 
-- **WHEN** a generated skill's `references/` dir contains a file the current template does not
-  declare (e.g., a reference renamed or removed in a newer CLI version, or a user-parked file)
-- **THEN** `orbit update` removes that file, and reports the removal in its output
+- **WHEN** a generated skill's `references/` dir contains an entry the current template does not
+  declare (a file, directory, or symlink — e.g., a reference renamed in a newer CLI version, or a
+  user-parked file)
+- **THEN** `orbit update` removes that entry (a symlink is removed as a link; its target is
+  untouched), and reports the removal in its output
+
+#### Scenario: Re-run init reconciles too
+
+- **WHEN** `orbit init` re-runs for an already-configured tool (extend mode) and a generated
+  skill's `references/` contains an undeclared entry
+- **THEN** the entry is removed and reported — reconciliation is a property of the shared
+  skill-writer, identical for init and update
+
+#### Scenario: Reference drift defeats smart update detection
+
+- **WHEN** `orbit update` runs on a project whose version and config stamps are current, but a
+  generated skill's `references/` is missing a declared file or contains an undeclared entry
+- **THEN** smart update detection treats this as drift and proceeds to generation/reconciliation
+  rather than short-circuiting; the convergence contract holds without `--force`
+
+#### Scenario: Write failure aborts pruning
+
+- **WHEN** a declared-reference write fails partway through reconciliation
+- **THEN** no removal occurs (all declared writes must succeed before pruning begins); the
+  failure is reported and the existing surface is left no worse than before
 
 #### Scenario: Dropping all references removes the directory
 
@@ -60,7 +106,8 @@ Reconciliation SHALL be scoped to files within `<skill-dir>/references/` only.
 
 - **WHEN** `orbit update` reconciles a skill's references
 - **THEN** it deletes nothing outside `<skill-dir>/references/` — not the skill dir, not
-  `SKILL.md`, not project files
+  `SKILL.md`, not project files; containment is physical (symlinks are never followed), and if
+  `references/` itself is a symlink it is replaced with a real directory before writing
 
 ### Requirement: Frontmatter metadata pass-through
 
