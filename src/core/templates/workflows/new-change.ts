@@ -90,7 +90,7 @@ The three execution disciplines from \`orbit-conventions\` bracket the authoring
 
 (Per \`orbit-run-summary-emit\` capability)
 
-\`/orbit:new\` is a one-shot command per \`orbit-run-summary-emit\`'s \`Emit timing semantics\` requirement (emit ONCE on natural command completion). After the change is scaffolded (and any initial artifacts created), write:
+\`/orbit:new\` is a one-shot command per \`orbit-run-summary-emit\`'s \`Emit timing semantics\` requirement (emit ONCE on natural command completion). After the change is scaffolded, write:
 
 \`\`\`
 orbit/changes/<name>/.orbit-runs/new-<TS>.json
@@ -107,16 +107,16 @@ Per the universal spine in \`orbit-conventions\`'s \`Internal-run JSON summary f
   "command": "new",
   "timestamp": "<ISO-8601 UTC>",
   "change": "<name>",
-  "final_assessment": "<narrative, e.g., 'Scaffolded new change <name>; created proposal.md as the first artifact.'>",
-  "next_recommended": "/orbit:continue <name> — continue generating artifacts (next: design/specs/tasks per schema)",
+  "final_assessment": "<narrative, e.g., 'Scaffolded new change <name>; no artifacts generated yet.'>",
+  "next_recommended": "/orbit:continue <name> — proposal still pending (first \`status: \"ready\"\` artifact)",
   "kind": "workflow",
-  "artifacts_created": ["proposal"],
+  "artifacts_created": [],
   "delta_count": 0,
   "from": "scratch"
 }
 \`\`\`
 
-(\`/orbit:new\` typically creates only the initial scaffolded proposal; subsequent artifact generation happens via \`/orbit:continue\` or \`/orbit:ff\`. If the user provides enough context for a more complete initial scaffold, \`artifacts_created\` may include additional artifacts and \`next_recommended\` may advance to \`/orbit:review\` directly.)`,
+(\`/orbit:new\` scaffolds only — upstream's guardrail above is explicit: do NOT create artifacts at new-time. Artifact generation happens via \`/orbit:continue\` or \`/orbit:ff\`, so \`artifacts_created\` is always \`[]\` in this emit.)`,
     license: 'MIT',
     compatibility: 'Requires orbit CLI.',
     metadata: { author: 'openspec', version: '1.0' },

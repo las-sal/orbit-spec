@@ -209,7 +209,7 @@ next_recommended: "/orbit:review <name> — proposal artifacts ready; review bef
 **Artifact-completion-aware** commands (`/orbit:new`, `/orbit:continue`) produce partial artifact state — `/orbit:new` scaffolds the change directory without generating artifacts; `/orbit:continue` generates the next missing artifact. Both SHALL emit a recommendation that depends on upstream `orbit status --change <name> --json`'s `isComplete` field (the same field upstream `orbit-continue-change` uses to gate completion). This keeps the emit-layer schema-agnostic — whatever upstream's authoritative completeness definition is, the emit recommendation follows it:
 
 - **`isComplete: true`** (all required artifacts present): `next_recommended: "/orbit:review <name> — all proposal artifacts now present"`
-- **`isComplete: false`** (more artifacts pending): `next_recommended: "/orbit:continue <name> — <next missing artifact> still pending"` (where `<next missing artifact>` is the first artifact in upstream's `applyRequires` array whose `status` is not `done`)
+- **`isComplete: false`** (more artifacts pending): `next_recommended: "/orbit:continue <name> — <next missing artifact> still pending"` (where `<next missing artifact>` is the first entry in upstream's `artifacts` array with `status: "ready"` — the array is sorted by build order; `applyRequires` is the terminal pre-apply requirement set, not the next-artifact queue)
 
 For `/orbit:new` specifically, `isComplete: false` is the typical case immediately after scaffolding (upstream `/orbit:new` doesn't auto-generate artifacts; the user is expected to run `/orbit:continue` next). For `/orbit:continue`, `isComplete: true` is the typical terminal state.
 
@@ -222,7 +222,7 @@ For `/orbit:new` specifically, `isComplete: false` is the typical case immediate
 - **THEN** the `new-<TS>.json`'s `next_recommended` begins with `"/orbit:continue foo"` (artifact-completion-aware class, NOT propose-shaped — even though `/orbit:new` is in the propose family, it doesn't produce the canonical artifact set in one go)
 
 #### Scenario: /orbit:continue with missing tasks.md recommends /orbit:continue
-- **WHEN** `/orbit:continue foo` completes after generating design.md but tasks.md is still missing; `orbit status --change foo --json` reports `isComplete: false` with `tasks` next in `applyRequires`
+- **WHEN** `/orbit:continue foo` completes after generating design.md but tasks.md is still missing; `orbit status --change foo --json` reports `isComplete: false` with `tasks` as the first `status: "ready"` artifact
 - **THEN** the `continue-<TS>.json`'s `next_recommended` begins with `"/orbit:continue foo"` and identifies `tasks.md` as the next missing artifact
 
 #### Scenario: /orbit:continue with all artifacts present recommends /orbit:review

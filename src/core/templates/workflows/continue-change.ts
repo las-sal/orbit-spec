@@ -165,7 +165,7 @@ Per the universal spine in \`orbit-conventions\`'s \`Internal-run JSON summary f
 Per \`orbit-run-summary-emit\`'s \`Propose-shaped and artifact-completion-aware recommendation logic\` requirement, defer to upstream \`orbit status --change <name> --json\`'s \`isComplete\` field (the same field upstream \`orbit-continue-change\` uses to gate completion). This keeps the recommendation schema-agnostic:
 
 - **\`isComplete: true\`** (all required artifacts present): \`next_recommended: "/orbit:review <name> — all proposal artifacts now present"\`
-- **\`isComplete: false\`** (more artifacts pending): \`next_recommended: "/orbit:continue <name> — <next missing artifact> still pending"\` (where \`<next missing artifact>\` is the first artifact in upstream's \`applyRequires\` array whose \`status\` is not \`done\`)
+- **\`isComplete: false\`** (more artifacts pending): \`next_recommended: "/orbit:continue <name> — <next missing artifact> still pending"\` (where \`<next missing artifact>\` is the first entry in upstream's \`artifacts\` array with \`status: "ready"\` — the array is sorted by build order; \`applyRequires\` is the terminal pre-apply requirement set, not the next-artifact queue)
 
 A downstream status reader parses the leading \`/orbit:<verb> <name>\` token into \`command\`/\`args\`.
 

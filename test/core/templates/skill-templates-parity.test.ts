@@ -31,8 +31,8 @@ import { generateSkillContent } from '../../../src/core/shared/skill-generation.
 
 const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   getExploreSkillTemplate: 'e7460329e6ed9ea02e334cb6fb62194cf40cda09f1c2123d5b510ec548aeadbb',
-  getNewChangeSkillTemplate: 'bacb23a4a723e80e4b9d440ee84560425083561a88c24c334021d0b87fe689cd',
-  getContinueChangeSkillTemplate: '2963d858543fc465f43d52594fe5025ec6fd71a34c613f4f331c141c14edbfd2',
+  getNewChangeSkillTemplate: '862dcd56a99a20f08a31f4cd003243fbc39629ee4361f917cf8d4f3760540647',
+  getContinueChangeSkillTemplate: '55e01617f7937cbf2a80446f82bce69675a9feef454b0a2df6ee4d62f22554ab',
   getApplyChangeSkillTemplate: '535a8e496c36248b1bf13db43caa9fb252a2d283f2a750da2a2ec2fce90a5ea4',
   getFfChangeSkillTemplate: '11b6cfab83702b51c025fa3e9c249f62fe1d71cb2a368fcb271508659c1f58a5',
   getSyncSpecsSkillTemplate: '051c7fbb52cf2e87d8da2ffc45e6dbd2b4663f9b37add611abe430695e9694b1',
@@ -57,8 +57,8 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
 
 const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
   'orbit-explore': '5ddcc19bc1688c154a1eda1f2e44ff35249b4f4c4b858e4d61f7f530e4040981',
-  'orbit-new-change': '2742ce854143b3a463981aca416a8455bef4f73614994e47f723f581a0e39607',
-  'orbit-continue-change': '8095131b4e11464045e64c2ce6f8e78d3fe808efec19436aa29777c7562ef045',
+  'orbit-new-change': 'bf07a6c933e49baabd3c6f3ffe3ed7fcd9a5db70dfc7db92848804bad39eb3db',
+  'orbit-continue-change': '204d55aced963145cf0dedc1b1b9d177fb735a280d17a2648f01b19e095e4331',
   'orbit-apply-change': '4361b49613dcfdae494c73e35c8737212f7de8573b0622d646d71a05699f0d02',
   'orbit-ff-change': 'f7e9049782da4dfcc6269c29d32f3325be7dd42ebabf7a0b37d829d8aa91727e',
   'orbit-sync-specs': '69fce0ecb0f9cf76b6abf5c463ee2a11a8898859c449ba984a16f7f2c9015fe5',
