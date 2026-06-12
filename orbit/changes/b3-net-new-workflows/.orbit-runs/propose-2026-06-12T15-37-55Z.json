@@ -1,0 +1,11 @@
+{
+  "command": "propose",
+  "timestamp": "2026-06-12T15:37:55Z",
+  "change": "b3-net-new-workflows",
+  "final_assessment": "Generated proposal/design/specs/tasks for b3-net-new-workflows; consumed prior explore.md (5 decisions seeded, 0 open questions to walk). Four overlay capability specs relocated as ADDED deltas (47 requirements) with mechanical rebrand + D-b3-1 citation scrub applied and bidirectional citation verification done at propose time (D-b3-3): cited requirement names verified against baseline orbit-conventions (Internal-run JSON summary format, Review mode decision framework) and the emit spec's pinned 'Address-reviews command available' landed verbatim. Purpose paragraphs staged in purposes.md for the apply-time emit-spec rider and archive-time stub replacement. Staging directory moved; validate --strict passes.",
+  "next_recommended": "/orbit:review b3-net-new-workflows — proposal artifacts ready; review before apply",
+  "kind": "workflow",
+  "artifacts_created": ["proposal", "design", "tasks", "specs/orbit-review", "specs/orbit-review-external", "specs/orbit-address-reviews", "specs/orbit-audit-drift"],
+  "delta_count": 47,
+  "from": "explore"
+}

@@ -28,7 +28,7 @@ describe('tool-detection', () => {
 
   describe('SKILL_NAMES', () => {
     it('should contain all skill names matching COMMAND_IDS', () => {
-      expect(SKILL_NAMES).toHaveLength(11);
+      expect(SKILL_NAMES).toHaveLength(15);
       expect(SKILL_NAMES).toContain('orbit-explore');
       expect(SKILL_NAMES).toContain('orbit-new-change');
       expect(SKILL_NAMES).toContain('orbit-continue-change');
@@ -40,6 +40,10 @@ describe('tool-detection', () => {
       expect(SKILL_NAMES).toContain('orbit-verify-change');
       expect(SKILL_NAMES).toContain('orbit-onboard');
       expect(SKILL_NAMES).toContain('orbit-propose');
+      expect(SKILL_NAMES).toContain('orbit-review');
+      expect(SKILL_NAMES).toContain('orbit-review-external');
+      expect(SKILL_NAMES).toContain('orbit-address-reviews');
+      expect(SKILL_NAMES).toContain('orbit-audit-drift');
     });
   });
 

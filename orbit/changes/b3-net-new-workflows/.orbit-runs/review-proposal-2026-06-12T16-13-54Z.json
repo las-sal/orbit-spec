@@ -1,0 +1,153 @@
+{
+  "command": "review",
+  "timestamp": "2026-06-12T16:13:54Z",
+  "change": "b3-net-new-workflows",
+  "final_assessment": "2 critical issue(s) found. Fix before /orbit:apply.",
+  "next_recommended": "/orbit:address-reviews b3-net-new-workflows — 2 critical(s) + 6 warning(s) to walk before /orbit:apply (auto-discovers this JSON)",
+  "kind": "editorial",
+  "mode": "proposal",
+  "iteration": 1,
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "passes_run": ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+  "passes_skipped": [],
+  "findings_summary": {
+    "critical": 2,
+    "warning": 6,
+    "suggestion": 4,
+    "by_pass": {
+      "1": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "2": { "critical": 0, "warning": 1, "suggestion": 1 },
+      "3": { "critical": 0, "warning": 1, "suggestion": 0 },
+      "4": { "critical": 1, "warning": 1, "suggestion": 0 },
+      "5": { "critical": 0, "warning": 0, "suggestion": 1 },
+      "6": { "critical": 0, "warning": 2, "suggestion": 1 },
+      "7": { "critical": 1, "warning": 1, "suggestion": 0 },
+      "8": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "9": { "critical": 0, "warning": 0, "suggestion": 1 }
+    }
+  },
+  "findings": [
+    {
+      "pass": "4",
+      "severity": "CRITICAL",
+      "file": "specs/orbit-audit-drift/spec.md",
+      "line": 141,
+      "title": "Persistence requirement contradicts baseline orbit-run-summary-emit's invocation/emit model",
+      "recommendation": "The requirement writes audit-drift-<TS>.json to the change's .orbit-runs/ 'when invoked in a change context (e.g., from system-mode review or pre-archive)' and to a project-level location only 'when invoked standalone with no change context'. The fork baseline contradicts both halves: orbit/specs/orbit-run-summary-emit/spec.md:419 scopes audit-drift emits to STANDALONE invocations only; :441-444 state no separate audit-drift JSON is written for the inline-during-archive pass (corroborated by the B2 archive's .orbit-runs/, which has zero audit-drift JSONs); and :397-401 define a change-scoped standalone form /orbit:audit-drift <name> that the delta's model omits. Overlay-internal inconsistency the D-b3-3 bidirectional check missed.",
+      "recommendation_options": [
+        { "label": "A", "body": "Align the delta to the baseline: rewrite the persistence requirement around the emit spec's model — change-scoped standalone (/orbit:audit-drift <name>) → change .orbit-runs/; project-wide standalone → orbit/.orbit-runs/; library call → folded into the review emit; pre-archive → captured in archive-<TS>.json audit.* fields, no separate file. Add an 'Invoke change-scoped' scenario defining the <name> positional the baseline depends on." },
+        { "label": "B", "body": "If a separate pre-archive audit-drift JSON is actually desired, add MODIFIED deltas for orbit-run-summary-emit (:419/:441-444) and orbit-archive-modifications in this change rather than shipping a silent contradiction (cuts against D-b3-2's relocation-only framing)." }
+      ]
+    },
+    {
+      "pass": "7",
+      "severity": "CRITICAL",
+      "file": "specs/orbit-address-reviews/spec.md",
+      "line": 469,
+      "title": "Overlay-era archived-change citation shipped in spec delta — dangling in the fork and every end-user repo",
+      "recommendation": "The v1-format example cites orbit/changes/archive/2026-05-24-lean-overlay-and-add-orbit-onboard/.orbit-runs/address-reviews-2026-05-23T18-03-25Z.json:59-66. That archive exists only in the retired overlay repo (this fork's archive holds only 2026-06-08/2026-06-11 entries; the path was mechanically rebranded but the referent never relocated). Exactly the D-b3-1 class; escaped the residue greps because the path contains no grep-listed term. Drop the parenthetical example or genericize ('repos carrying pre-v2 address-reviews logs retain the v1 shape')."
+    },
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "file": "specs/orbit-audit-drift/spec.md",
+      "line": 194,
+      "title": "Pre-archive scenario pins archive-flow fork-surfacing behavior the archive baseline doesn't specify, via a skill-body citation",
+      "recommendation": "The scenario asserts the archive flow surfaces the disjunction as a fork, citing 'orbit-archive-change ## NEW Step 3.5' (a generated-skill body heading, not a baseline requirement name). The owning baseline orbit-archive-modifications 'Critical-drift prompt, not gate' requirement specifies an AskUserQuestion Address-now/Proceed/Abort prompt — no recommendation_options fork-surfacing. Also inherits the pre-archive-JSON contradiction from the CRITICAL above.",
+      "recommendation_options": [
+        { "label": "A", "body": "Rescope the scenario to standalone contexts (where the audit-drift JSON genuinely exists) and cite orbit-archive-modifications 'Critical-drift prompt, not gate' for the pre-archive presentation path." },
+        { "label": "B", "body": "If archive-time fork-surfacing of recommendation_options is desired behavior, add a MODIFIED delta on orbit-archive-modifications to specify it in the owning capability, then keep a thin cross-cite here." }
+      ]
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "file": "specs/orbit-review/spec.md",
+      "line": 151,
+      "title": "Stock phrasings recommend /orbit:review --fresh but no requirement defines a --fresh flag",
+      "recommendation": "Lines 151 and 171 embed '/orbit:review --fresh for a lighter pass (same model, fresh context)' in EXACT stock phrasings, but the delta's flag set has no --fresh requirement, scenario, or semantics (gap inherited verbatim from the overlay spec). Either add a thin --fresh requirement (what it changes vs a plain re-run) or reword the stock phrasings to drop the flag."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "file": "specs/orbit-review/spec.md",
+      "line": 160,
+      "title": "Path B's artifact-change guard conflicts with precedence rule (1)'s external-token comparison",
+      "recommendation": "Path B converges when no apply-*.json is newer than the ADDRESS-REVIEWS JSON's token, but state 5 fires on any apply newer than the EXTERNAL's token and precedence rule (1) says stale wins regardless of resolution. In the ordering external < apply < address-reviews, Path B's WHEN is satisfied yet precedence forces stale — dead code implying post-apply resolution converges. Either compare apply against the EXTERNAL token in Path B (consistent with rule 1), or carve an explicit rule-1 exception for externals resolved after the intervening apply."
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "file": "CLAUDE.md",
+      "line": null,
+      "title": "CLAUDE.md goes stale post-apply on five claims; no task covers the refresh",
+      "recommendation": "Post-apply these claims are false: '11 skills + 11 thin launcher commands' (→15+15), D15's 'always returns all 11 workflows' (→15), '1504 tests green' (→1504+new), 'Next: B3' (→ parity reached, next C1), '7th baseline capability' framing (→11 capabilities). Add a CLAUDE.md-refresh task (B1/B2 precedent updated it as part of landing)."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "file": "purposes.md",
+      "line": 17,
+      "title": "orbit-address-reviews Purpose paragraph is stale relative to the delta it will sit atop",
+      "recommendation": "The staged paragraph says '(lean v1)' and 'pushback → classify → fix → ripple-flag → remove-marker', but the delta's defaults are walk-mode + ripple-CASCADE-by-default with decision forks and auto-discovery. At archive time this becomes the baseline Purpose and immediately contradicts its own requirements. Update now: drop 'lean v1', say ripple-cascade, mention auto-discovery."
+    },
+    {
+      "pass": "7",
+      "severity": "WARNING",
+      "file": "specs/orbit-address-reviews/spec.md",
+      "line": 252,
+      "title": "Hardcoded .claude/skills/ and .claude/commands/ example paths in shipped spec content",
+      "recommendation": "The 'orbit develops itself' scenario enumerates orbit's own .claude/skills/, .claude/commands/ — the fork keeps hardcoded .claude/ paths out of shipped content (the delta's other two occurrences were made path-neutral at :79/:84; this one was missed), and it's Claude-specific in a spec governing Codex installs too. Genericize to 'orbit's own generated skill/command surface (the tool-specific skills and commands directories)'."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "file": "specs/orbit-audit-drift/spec.md",
+      "line": 127,
+      "title": "Flag-parity requirement mandates --thorough and --strict with no semantics anywhere; --focus semantics diverge from review's",
+      "recommendation": "'Flag family parity with review commands' SHALL-requires --thorough and --strict but neither has a scenario here and neither exists in the orbit-review delta; review's --focus adds emphasis without skipping passes while audit-drift's --focus skips other categories — opposite semantics under a 'parity' title. Add minimal scenarios (or trim the flags) and clarify parity means spelling, not semantics."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "file": "specs/orbit-review/spec.md",
+      "line": 275,
+      "title": "Persistence scenario under-enumerates the findings[] entry shape its consumers depend on",
+      "recommendation": "The scenario lists 'findings summary (counts...) and finding titles', but recommendation_options (:339) and the orbit-address-reviews parser (maps severity/title/file/line/recommendation from findings[]) assume full per-finding entries. Add 'and a findings[] array per the skill's references/run-summary-schema.md' so the spec-level contract names the shape the consumer pins."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "file": "specs/orbit-review/spec.md",
+      "line": 176,
+      "title": "Precedence rule (2) is vacuous and 'exhaustive' used loosely",
+      "recommendation": "Rule (2)'s 'unresolved beats Path A clean' clause compares mutually-exclusive-by-content states; only the Path-B half does work. 'Exhaustive: every change-state falls into exactly one of states 1-5' means exhaustive AND mutually exclusive. Tighten wording — cheap clarity fix, not behavioral."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "file": "tasks.md",
+      "line": 35,
+      "title": "Residue-sweep task scope narrower than design's stated scope",
+      "recommendation": "design.md commits to a residue grep over 'the four modules + spec deltas'; task 1.6 sweeps the modules only. Align task 1.6 to include the spec deltas (this review found one delta miss the greps can't catch — apply-time re-verification should cover deltas too)."
+    }
+  ],
+  "stale_suppressed": [
+    { "pass": "7", "title": "'OpenSpec' prose-brand mentions in the spec deltas", "evidence": "Tier-C deferral explicitly exempts OpenSpec prose branding (CLAUDE.md; design.md 'Out of scope for this map (Tier-C)')." },
+    { "pass": "7", "title": "author: 'openspec' frontmatter in tasks.md 1.1 and design.md D-b3-5", "evidence": "Deliberate per D-b3-5 (B1 precedent); orbit rename catalogued as Tier-C in design.md Non-Goals." },
+    { "pass": "7", "title": "openspec-orbit paths / scrub vocabulary in design.md, tasks.md, explore.md", "evidence": "All occurrences are scrub-instruction text or migration-source paths in repo-internal planning docs; shipped spec deltas grep clean." },
+    { "pass": "8", "title": "@review: appearances across deltas, proposal.md, purposes.md", "evidence": "All are documentation of the marker convention inside inline-code spans or scenario text; zero bare unresolved markers." },
+    { "pass": "4", "title": "orbit-review-external delta has no run-summary emit requirement", "evidence": "Deliberate ownership split per D-b3-3; T0 emit owned by baseline orbit-run-summary-emit 'Review-external T0 multi-step recommendation' (:361), verified present." },
+    { "pass": "2", "title": "Three run-summary-schema.md references look like dedupe candidates", "evidence": "Verified distinct per-command schema docs in the overlay; explore.md Q-b3-3 resolved with same evidence." },
+    { "pass": "2", "title": "Code/test line citations in explore.md Q-b3-1 might be invented", "evidence": "Spot-verified: profiles.ts:19, tool-detection.ts:14, skill-generation.ts registries, profiles.test.ts:24 — all accurate." }
+  ],
+  "iteration_note": null
+}

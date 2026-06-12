@@ -104,6 +104,10 @@ describe('config profile interactive flow', () => {
       'orbit-bulk-archive-change',
       'orbit-verify-change',
       'orbit-onboard',
+      'orbit-review',
+      'orbit-review-external',
+      'orbit-address-reviews',
+      'orbit-audit-drift',
     ];
     for (const dirName of allSkillDirs) {
       const skillPath = path.join(projectDir, '.claude', 'skills', dirName, 'SKILL.md');
@@ -118,7 +122,22 @@ describe('config profile interactive flow', () => {
     fs.mkdirSync(path.dirname(archiveRefPath), { recursive: true });
     fs.writeFileSync(archiveRefPath, '# archive run-summary schema\n', 'utf-8');
 
-    const allCommands = ['propose', 'explore', 'apply', 'archive', 'new', 'continue', 'ff', 'sync', 'bulk-archive', 'verify', 'onboard'];
+    // B3 editorial skills declare references too; a synced surface carries them
+    const editorialRefs: Record<string, string[]> = {
+      'orbit-review': ['run-summary-schema.md'],
+      'orbit-review-external': ['mode-sections.md', 'prompt-template.md'],
+      'orbit-address-reviews': ['external-findings-format.md', 'internal-findings-format.md', 'run-summary-schema.md'],
+      'orbit-audit-drift': ['run-summary-schema.md'],
+    };
+    for (const [dirName, refNames] of Object.entries(editorialRefs)) {
+      for (const refName of refNames) {
+        const refPath = path.join(projectDir, '.claude', 'skills', dirName, 'references', refName);
+        fs.mkdirSync(path.dirname(refPath), { recursive: true });
+        fs.writeFileSync(refPath, `# ${refName}\n`, 'utf-8');
+      }
+    }
+
+    const allCommands = ['propose', 'explore', 'apply', 'archive', 'new', 'continue', 'ff', 'sync', 'bulk-archive', 'verify', 'onboard', 'review', 'review-external', 'address-reviews', 'audit-drift'];
     for (const commandId of allCommands) {
       const commandPath = path.join(projectDir, '.claude', 'commands', 'orbit', `${commandId}.md`);
       fs.mkdirSync(path.dirname(commandPath), { recursive: true });

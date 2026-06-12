@@ -16,6 +16,10 @@ import {
   getVerifyChangeSkillTemplate,
   getOnboardSkillTemplate,
   getOrbitProposeSkillTemplate,
+  getReviewSkillTemplate,
+  getReviewExternalSkillTemplate,
+  getAddressReviewsSkillTemplate,
+  getAuditDriftSkillTemplate,
   getOrbitExploreCommandTemplate,
   getOrbitNewCommandTemplate,
   getOrbitContinueCommandTemplate,
@@ -27,6 +31,10 @@ import {
   getOrbitVerifyCommandTemplate,
   getOrbitOnboardCommandTemplate,
   getOrbitProposeCommandTemplate,
+  getOrbitReviewCommandTemplate,
+  getOrbitReviewExternalCommandTemplate,
+  getOrbitAddressReviewsCommandTemplate,
+  getOrbitAuditDriftCommandTemplate,
   type SkillTemplate,
 } from '../templates/skill-templates.js';
 import type { CommandContent } from '../command-generation/index.js';
@@ -70,6 +78,10 @@ export function getSkillTemplates(workflowFilter?: readonly string[]): SkillTemp
     { template: getVerifyChangeSkillTemplate(), dirName: 'orbit-verify-change', workflowId: 'verify' },
     { template: getOnboardSkillTemplate(), dirName: 'orbit-onboard', workflowId: 'onboard' },
     { template: getOrbitProposeSkillTemplate(), dirName: 'orbit-propose', workflowId: 'propose' },
+    { template: getReviewSkillTemplate(), dirName: 'orbit-review', workflowId: 'review' },
+    { template: getReviewExternalSkillTemplate(), dirName: 'orbit-review-external', workflowId: 'review-external' },
+    { template: getAddressReviewsSkillTemplate(), dirName: 'orbit-address-reviews', workflowId: 'address-reviews' },
+    { template: getAuditDriftSkillTemplate(), dirName: 'orbit-audit-drift', workflowId: 'audit-drift' },
   ];
 
   if (!workflowFilter) return all;
@@ -96,6 +108,10 @@ export function getCommandTemplates(workflowFilter?: readonly string[]): Command
     { template: getOrbitVerifyCommandTemplate(), id: 'verify' },
     { template: getOrbitOnboardCommandTemplate(), id: 'onboard' },
     { template: getOrbitProposeCommandTemplate(), id: 'propose' },
+    { template: getOrbitReviewCommandTemplate(), id: 'review' },
+    { template: getOrbitReviewExternalCommandTemplate(), id: 'review-external' },
+    { template: getOrbitAddressReviewsCommandTemplate(), id: 'address-reviews' },
+    { template: getOrbitAuditDriftCommandTemplate(), id: 'audit-drift' },
   ];
 
   if (!workflowFilter) return all;

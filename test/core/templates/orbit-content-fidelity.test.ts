@@ -22,6 +22,14 @@ import {
   getVerifyChangeSkillTemplate,
   getArchiveChangeSkillTemplate,
   getOnboardSkillTemplate,
+  getReviewSkillTemplate,
+  getOrbitReviewCommandTemplate,
+  getReviewExternalSkillTemplate,
+  getOrbitReviewExternalCommandTemplate,
+  getAddressReviewsSkillTemplate,
+  getOrbitAddressReviewsCommandTemplate,
+  getAuditDriftSkillTemplate,
+  getOrbitAuditDriftCommandTemplate,
   type SkillTemplate,
 } from '../../../src/core/templates/skill-templates.js';
 
@@ -48,6 +56,19 @@ const RELOCATED: Array<[string, () => SkillTemplate, string[]]> = [
   ['verify-change', getVerifyChangeSkillTemplate, ['execution disciplines', 'Run-summary emit']],
   ['archive-change', getArchiveChangeSkillTemplate, ['execution disciplines', 'run summary']],
   ['onboard', getOnboardSkillTemplate, ['execution disciplines', 'self-contained']],
+  // B3 editorial workflows (net-new relocation; parity proof per D-b3-4)
+  ['review', getReviewSkillTemplate, ['execution disciplines', 'convergence states', 'Persist the run summary', 'recommendation_options']],
+  ['review-external', getReviewExternalSkillTemplate, ['execution disciplines', 'Run-summary emit (T0', 'awaiting_findings']],
+  ['address-reviews', getAddressReviewsSkillTemplate, ['execution disciplines', 'Ripple cascade', 'Decision-fork detection', 'resolution log']],
+  ['audit-drift', getAuditDriftSkillTemplate, ['execution disciplines', 'Vocabulary residue', 'Persist the run summary', 'recommendation_options']],
+];
+
+// dirName -> exact reference declarations for the B3 multi-file editorial skills
+const B3_REFERENCES: Array<[string, () => SkillTemplate, string[]]> = [
+  ['review', getReviewSkillTemplate, ['run-summary-schema.md']],
+  ['review-external', getReviewExternalSkillTemplate, ['mode-sections.md', 'prompt-template.md']],
+  ['address-reviews', getAddressReviewsSkillTemplate, ['external-findings-format.md', 'internal-findings-format.md', 'run-summary-schema.md']],
+  ['audit-drift', getAuditDriftSkillTemplate, ['run-summary-schema.md']],
 ];
 
 // Every generated /orbit:* command is a thin launcher delegating to its skill —
@@ -64,6 +85,10 @@ const LAUNCHERS: Array<[string, () => { content: string }, string]> = [
   ['verify', getOrbitVerifyCommandTemplate, 'orbit-verify-change'],
   ['onboard', getOrbitOnboardCommandTemplate, 'orbit-onboard'],
   ['propose', getOrbitProposeCommandTemplate, 'orbit-propose'],
+  ['review', getOrbitReviewCommandTemplate, 'orbit-review'],
+  ['review-external', getOrbitReviewExternalCommandTemplate, 'orbit-review-external'],
+  ['address-reviews', getOrbitAddressReviewsCommandTemplate, 'orbit-address-reviews'],
+  ['audit-drift', getOrbitAuditDriftCommandTemplate, 'orbit-audit-drift'],
 ];
 
 describe('orbit content fidelity (B1 relocation)', () => {
@@ -101,9 +126,26 @@ describe('orbit content fidelity (B1 relocation)', () => {
     });
 
     it('no other workflow declares references', () => {
+      const withReferences = new Set(['archive-change', ...B3_REFERENCES.map(([n]) => n)]);
       for (const [name, getTemplate] of RELOCATED) {
-        if (name === 'archive-change') continue;
+        if (withReferences.has(name)) continue;
         expect(getTemplate().references ?? [], `${name} must not declare references`).toEqual([]);
+      }
+    });
+
+    it.each(B3_REFERENCES)('%s declares its exact reference set', (_name, getTemplate, expected) => {
+      const refs = getTemplate().references ?? [];
+      expect(refs.map((r) => r.name)).toEqual(expected);
+      for (const ref of refs) {
+        expect(ref.content).toBeTruthy();
+        expect(ref.content).not.toContain('/opsx:');
+        expect(ref.content).not.toMatch(/openspec\/(changes|specs|explore|lenses)/);
+      }
+    });
+
+    it('B3 editorial skills declare their capability metadata (B2 pass-through consumer)', () => {
+      for (const [name, getTemplate] of B3_REFERENCES) {
+        expect(getTemplate().metadata?.capability).toBe(`orbit-${name}`);
       }
     });
 

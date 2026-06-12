@@ -1,0 +1,15 @@
+{
+  "command": "apply",
+  "timestamp": "2026-06-12T18:29:55Z",
+  "change": "b3-net-new-workflows",
+  "final_assessment": "Implemented all apply-time tasks (groups 1-5, 21 of 22): four workflow modules relocated via asserted-scrub transform (review 465L+1ref, review-external 213L+2refs, address-reviews 441L+3refs, audit-drift 328L+1ref; zero residue; audit-drift body+schema persistence prose aligned to the baseline emit model per the iter-1 review fix), registration 11→15 across five registries (the planned four plus WORKFLOW_TO_SKILL_DIR in profile-sync-drift.ts, surfaced by the Record<WorkflowId> type), tests extended (SURFACE/RELOCATED/LAUNCHERS rows ×4, B3_REFERENCES exact-set + capability-metadata + references-on-disk assertions, synced-surface fixture extended) — 1543/1543 green across two consecutive runs, orbit-run-summary-emit Purpose stub restored, parity diff confirms all generated files byte-match their source templates, own surface refreshed to 15+15 (the four commands are live in-session), CLAUDE.md updated to post-B3 state. Task 6.1 (replace the four new baseline specs' TBD Purpose stubs from purposes.md) executes at archive time by design.",
+  "next_recommended": "/orbit:verify b3-net-new-workflows — implementation complete (the one unchecked task is archive-time by design); verify before archive",
+  "kind": "workflow",
+  "tasks_completed": 21,
+  "tasks_remaining": 1,
+  "user_validation_remaining": 0,
+  "chunk": null,
+  "chunk_name": null,
+  "chunk_complete": true,
+  "tasks_completed_this_session": 21
+}

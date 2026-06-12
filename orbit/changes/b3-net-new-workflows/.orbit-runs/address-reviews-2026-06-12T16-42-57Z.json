@@ -1,0 +1,187 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-06-12T16:42:57Z",
+  "change": "b3-net-new-workflows",
+  "final_assessment": "All 12 findings from the iter-1 proposal review walked and resolved (2 CRITICAL, 6 WARNING, 4 SUGGESTION); 0 stale, 0 deferred, 0 escalated. Three decision forks fired (2 structured, 1 heuristic); user chose option A on all three. Change re-validates --strict after fixes.",
+  "next_recommended": "/orbit:review b3-net-new-workflows --as proposal — confirm convergence (iteration 2)",
+  "kind": "editorial",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/b3-net-new-workflows/.orbit-runs/review-proposal-2026-06-12T16-13-54Z.json",
+  "source_command": "review",
+  "source_token": "2026-06-12T16-13-54Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": { "critical": 2, "warning": 6, "suggestion": 4 },
+  "pushback_verification": "All 12 findings verified against current state before fixing (the two CRITICALs re-verified by direct reads of the baseline emit spec :419/:441-444 and the fork's archive listing); 0 stale suppressions.",
+  "resolution_summary": { "resolved": 12, "stale_suppressed": 0, "deferred": 0, "escalated": 0 },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "Persistence requirement contradicts baseline orbit-run-summary-emit's invocation/emit model",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-audit-drift/spec.md",
+      "line": 141,
+      "classification": "decision_required",
+      "action": "Applied option A: rewrote 'Internal run summary persisted' around the baseline's model (standalone-only emits; change-scoped + project-wide scenarios; explicit no-separate-JSON scenario for library/pre-archive citing review-system emit and archive audit.* fields); added the missing 'Invoke change-scoped standalone' scenario citing orbit-run-summary-emit's 'Audit-drift standalone recommendations'.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          { "label": "A", "body": "Align the delta to the baseline emit model; add change-scoped scenario" },
+          { "label": "B", "body": "Keep separate pre-archive JSON; add MODIFIED deltas on orbit-run-summary-emit and orbit-archive-modifications" }
+        ],
+        "chosen": "A",
+        "discuss_invoked": false
+      },
+      "ripple_cascade": {
+        "applied": ["tasks.md"],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "Overlay-era archived-change citation shipped in spec delta — dangling in the fork and every end-user repo",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-address-reviews/spec.md",
+      "line": 469,
+      "classification": "trivial_fix",
+      "action": "Genericized: 'Repos carrying address-reviews logs emitted before this field split retain the v1 shape in their archived .orbit-runs/ JSONs' — keeps the reader guidance, drops the dangling referent.",
+      "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Pre-archive scenario pins archive-flow fork-surfacing behavior the archive baseline doesn't specify, via a skill-body citation",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-audit-drift/spec.md",
+      "line": 194,
+      "classification": "decision_required",
+      "action": "Applied option A: split into 'Standalone contexts preserve the field' (where the JSON genuinely exists) + 'Pre-archive findings surface via the archive prompt' citing orbit-archive-modifications 'Critical-drift prompt, not gate' (requirement name verified at baseline :29); dropped the skill-body-heading citation and the fork-surfacing pin.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          { "label": "A", "body": "Rescope to standalone contexts; cite orbit-archive-modifications 'Critical-drift prompt, not gate'" },
+          { "label": "B", "body": "Spec archive-time fork-surfacing via a MODIFIED delta on orbit-archive-modifications" }
+        ],
+        "chosen": "A",
+        "discuss_invoked": false
+      },
+      "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Stock phrasings recommend /orbit:review --fresh but no requirement defines a --fresh flag",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-review/spec.md",
+      "line": 151,
+      "classification": "trivial_fix",
+      "action": "Added a thin '--fresh runs pass work in a clean execution context' requirement + scenario, semantics taken from the canonical skill body's flag table (spawn clean-context execution for pass work; report/emit unchanged; fresh: true in flags). Spec now matches today's body behavior per D-b3-2; stock phrasings unchanged.",
+      "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Path B's artifact-change guard conflicts with precedence rule (1)'s external-token comparison",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-review/spec.md",
+      "line": 160,
+      "classification": "decision_required",
+      "action": "Applied option A: Path B's guard now compares apply-*.json tokens against the EXTERNAL file's token, consistent with precedence rule (1). Note: the canonical skill body's iteration-aware logic never had the address-reviews-token comparison — the fix aligns the spec with the body.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          { "label": "A", "body": "Compare apply tokens against the EXTERNAL file's token (consistent with rule 1)" },
+          { "label": "B", "body": "Carve a rule-1 exception for externals fully resolved after the intervening apply" }
+        ],
+        "chosen": "A",
+        "discuss_invoked": false
+      },
+      "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "CLAUDE.md goes stale post-apply on five claims; no task covers the refresh",
+      "marker_source": "internal-review",
+      "file": "CLAUDE.md",
+      "line": null,
+      "classification": "trivial_fix",
+      "action": "Added task 5.4 to tasks.md enumerating the five stale-post-apply claims (15+15 surface, D15 wording, test count, 'Next: B3', baseline-capability framing). CLAUDE.md itself is deliberately NOT edited now — the claims are true until apply lands.",
+      "ripple_cascade": { "applied": ["tasks.md"], "flagged_not_applied": [] },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "orbit-address-reviews Purpose paragraph is stale relative to the delta it will sit atop",
+      "marker_source": "internal-review",
+      "file": "purposes.md",
+      "line": 17,
+      "classification": "trivial_fix",
+      "action": "Updated the staged paragraph: dropped '(lean v1)', ripple-flag → ripple-cascade, added auto-discovery + dual-format ingest + walk/batch and cascade defaults.",
+      "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Hardcoded .claude/skills/ and .claude/commands/ example paths in shipped spec content",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-address-reviews/spec.md",
+      "line": 252,
+      "classification": "trivial_fix",
+      "action": "Genericized to 'orbit's own generated skill/command surface — the tool-specific skills and commands directories'.",
+      "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Flag-parity requirement mandates --thorough and --strict with no semantics anywhere; --focus semantics diverge from review's",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-audit-drift/spec.md",
+      "line": 127,
+      "classification": "trivial_fix",
+      "action": "Added '--strict fails fast on first CRITICAL' and '--thorough accepted with fallback to --full' scenarios (semantics from the canonical body's flag table); added the parity-means-spelling clarification naming the --focus divergence explicitly.",
+      "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Persistence scenario under-enumerates the findings[] entry shape its consumers depend on",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-review/spec.md",
+      "line": 275,
+      "classification": "trivial_fix",
+      "action": "Extended the 'Summary written after run' THEN to name the findings[] array of full per-finding entries per the skill's references/run-summary-schema.md — the shape address-reviews maps on ingest.",
+      "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Precedence rule (2) is vacuous and 'exhaustive' used loosely",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-review/spec.md",
+      "line": 176,
+      "classification": "trivial_fix",
+      "action": "Rule (2) rewritten to compare against Path B only (noting Path A clean vs unresolved is mutually exclusive by content); 'exhaustive' → 'exhaustive and mutually exclusive'.",
+      "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Residue-sweep task scope narrower than design's stated scope",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 35,
+      "classification": "trivial_fix",
+      "action": "Task 1.6 extended to cover the four spec deltas alongside the modules, with a note about the grep-invisible miss class this review caught.",
+      "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": []
+}

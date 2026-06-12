@@ -1,0 +1,49 @@
+{
+  "command": "review",
+  "timestamp": "2026-06-12T16:55:43Z",
+  "change": "b3-net-new-workflows",
+  "final_assessment": "No critical issues. 1 suggestion to consider. Ready to apply (with noted improvements).",
+  "next_recommended": "/orbit:apply b3-net-new-workflows — proposal converged after iter-1 findings resolved; one optional SUGGESTION may be folded in during apply",
+  "kind": "editorial",
+  "mode": "proposal",
+  "iteration": 2,
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "passes_run": ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+  "passes_skipped": [],
+  "findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 1,
+    "by_pass": {
+      "1": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "2": { "critical": 0, "warning": 0, "suggestion": 1 },
+      "3": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "4": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "5": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "6": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "7": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "8": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "9": { "critical": 0, "warning": 0, "suggestion": 0 }
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "file": "design.md",
+      "line": 88,
+      "title": "Pure-relocation framing no longer fully describes the deltas after iter-1 amendments; parity-diff 'modulo' lists are incomplete",
+      "recommendation": "Three prose spots still describe the relocation as renames+scrub only, but the iter-1 review legitimately amended the deltas beyond that (persistence-model alignment, --fresh requirement, Path B guard, flag-parity scenarios): design.md:88 and tasks.md 5.1 say the one-time parity diff is 'modulo deliberate renames / the rebranding map + D-b3-1 scrub' (the audit-drift body's Step-10 alignment per task 1.4 will also show in that diff), and proposal.md:56 says specs relocate 'as-is structurally'. Add a one-line 'Amendments from iter-1 proposal review (see .orbit-runs/)' note to design.md and extend the two modulo lists with 'plus review-driven corrections recorded in the change audit trail'. Cosmetic-coherence only — the audit trail already documents every deviation."
+    }
+  ],
+  "stale_suppressed": [],
+  "iteration_note": "12 of 12 findings from the iter-1 run (2026-06-12T16-13-54Z) verified resolved; 0 repeats this run. 1 new finding (SUGGESTION), itself a consequence of the iter-1 fixes."
+}

@@ -40,7 +40,19 @@ const SURFACE: Array<[string, string, string[]]> = [
   ['orbit-bulk-archive-change', 'bulk-archive', ['# Orbit additions']],
   ['orbit-verify-change', 'verify', ['execution disciplines', 'Run-summary emit']],
   ['orbit-onboard', 'onboard', ['execution disciplines', 'self-contained']],
+  ['orbit-review', 'review', ['execution disciplines', 'convergence states', 'Persist the run summary']],
+  ['orbit-review-external', 'review-external', ['execution disciplines', 'Run-summary emit (T0', 'references/prompt-template.md']],
+  ['orbit-address-reviews', 'address-reviews', ['execution disciplines', 'Ripple cascade', 'resolution log']],
+  ['orbit-audit-drift', 'audit-drift', ['execution disciplines', 'Vocabulary residue', 'Persist the run summary']],
 ];
+
+// B3 editorial skills bundle reference files (multi-file skills)
+const REFERENCE_SKILLS: Record<string, string[]> = {
+  'orbit-review': ['run-summary-schema.md'],
+  'orbit-review-external': ['mode-sections.md', 'prompt-template.md'],
+  'orbit-address-reviews': ['external-findings-format.md', 'internal-findings-format.md', 'run-summary-schema.md'],
+  'orbit-audit-drift': ['run-summary-schema.md'],
+};
 
 describe('generated surface fidelity (real init, all workflows, claude + codex)', () => {
   let testDir: string;
@@ -137,15 +149,42 @@ describe('generated surface fidelity (real init, all workflows, claude + codex)'
 
   it('reference-less skills have no references/ dir on disk', async () => {
     for (const [dirName] of SURFACE) {
-      if (dirName === 'orbit-archive-change') continue;
+      if (dirName === 'orbit-archive-change' || dirName in REFERENCE_SKILLS) continue;
       const refsDir = path.join(testDir, '.claude', 'skills', dirName, 'references');
       await expect(fs.access(refsDir)).rejects.toThrow();
     }
   });
 
-  it('generates exactly the 11 registered skills, no extras (e.g., no feedback)', async () => {
+  it('generates exactly the 15 registered skills, no extras (e.g., no feedback)', async () => {
     const dirs = await fs.readdir(path.join(testDir, '.claude', 'skills'));
     expect(dirs.sort()).toEqual(SURFACE.map(([d]) => d).sort());
+  });
+
+  it('editorial skills ship their references on disk for both tools, byte-identical', async () => {
+    for (const [dirName, refNames] of Object.entries(REFERENCE_SKILLS)) {
+      const refsDir = path.join(testDir, '.claude', 'skills', dirName, 'references');
+      const onDisk = (await fs.readdir(refsDir)).sort();
+      expect(onDisk).toEqual([...refNames].sort());
+      for (const refName of refNames) {
+        const claudeRef = await fs.readFile(path.join(refsDir, refName), 'utf-8');
+        const codexRef = await fs.readFile(
+          path.join(testDir, '.codex', 'skills', dirName, 'references', refName),
+          'utf-8'
+        );
+        expect(codexRef).toBe(claudeRef);
+        expect(claudeRef).not.toContain('/opsx:');
+      }
+    }
+  });
+
+  it('editorial skills carry their capability metadata in frontmatter (B2 pass-through)', async () => {
+    for (const dirName of Object.keys(REFERENCE_SKILLS)) {
+      const skill = await fs.readFile(
+        path.join(testDir, '.claude', 'skills', dirName, 'SKILL.md'),
+        'utf-8'
+      );
+      expect(skill).toContain(`capability: ${dirName}`);
+    }
   });
 
   it('PLAIN update on a current-stamps project reconciles reference drift (no --force)', async () => {
@@ -167,7 +206,7 @@ describe('generated surface fidelity (real init, all workflows, claude + codex)'
     await expect(fs.access(strayPath)).rejects.toThrow();
   });
 
-  it('generates exactly the 11 registered commands', async () => {
+  it('generates exactly the 15 registered commands', async () => {
     const files = await fs.readdir(path.join(testDir, '.claude', 'commands', 'orbit'));
     expect(files.sort()).toEqual(SURFACE.map(([, id]) => `${id}.md`).sort());
   });

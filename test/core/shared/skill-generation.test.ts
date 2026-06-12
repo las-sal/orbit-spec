@@ -8,9 +8,9 @@ import {
 
 describe('skill-generation', () => {
   describe('getSkillTemplates', () => {
-    it('should return all 11 skill templates', () => {
+    it('should return all 15 skill templates', () => {
       const templates = getSkillTemplates();
-      expect(templates).toHaveLength(11);
+      expect(templates).toHaveLength(15);
     });
 
     it('should have unique directory names', () => {
@@ -35,6 +35,10 @@ describe('skill-generation', () => {
       expect(dirNames).toContain('orbit-verify-change');
       expect(dirNames).toContain('orbit-onboard');
       expect(dirNames).toContain('orbit-propose');
+      expect(dirNames).toContain('orbit-review');
+      expect(dirNames).toContain('orbit-review-external');
+      expect(dirNames).toContain('orbit-address-reviews');
+      expect(dirNames).toContain('orbit-audit-drift');
     });
 
     it('should have valid template structure', () => {
@@ -88,9 +92,9 @@ describe('skill-generation', () => {
   });
 
   describe('getCommandTemplates', () => {
-    it('should return all 11 command templates', () => {
+    it('should return all 15 command templates', () => {
       const templates = getCommandTemplates();
-      expect(templates).toHaveLength(11);
+      expect(templates).toHaveLength(15);
     });
 
     it('should have unique IDs', () => {
@@ -115,6 +119,10 @@ describe('skill-generation', () => {
       expect(ids).toContain('verify');
       expect(ids).toContain('onboard');
       expect(ids).toContain('propose');
+      expect(ids).toContain('review');
+      expect(ids).toContain('review-external');
+      expect(ids).toContain('address-reviews');
+      expect(ids).toContain('audit-drift');
     });
 
     it('should filter by workflow IDs when provided', () => {
@@ -142,9 +150,9 @@ describe('skill-generation', () => {
   });
 
   describe('getCommandContents', () => {
-    it('should return all 11 command contents', () => {
+    it('should return all 15 command contents', () => {
       const contents = getCommandContents();
-      expect(contents).toHaveLength(11);
+      expect(contents).toHaveLength(15);
     });
 
     it('should have valid content structure', () => {
