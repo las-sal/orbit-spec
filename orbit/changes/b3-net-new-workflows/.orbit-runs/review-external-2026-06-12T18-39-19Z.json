@@ -1,0 +1,12 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-06-12T18:39:19Z",
+  "change": "b3-net-new-workflows",
+  "final_assessment": "External review prompt packaged for b3-net-new-workflows (iter 1, mode system); awaiting findings. Note: repo had uncommitted changes at packaging time (the entire B3 implementation) — the external review runs against committed state, so commit and push before invoking the external AI.",
+  "next_recommended": "Commit and push the B3 work, paste orbit/changes/b3-net-new-workflows/.orbit-runs/external-prompt-system-2026-06-12T18-39-18Z.md into the target AI, save the response as orbit/changes/b3-net-new-workflows/.orbit-runs/external-system-<TS>.md, then /orbit:address-reviews b3-net-new-workflows --from-file <path>",
+  "kind": "editorial",
+  "mode": "system",
+  "prompt_path": "orbit/changes/b3-net-new-workflows/.orbit-runs/external-prompt-system-2026-06-12T18-39-18Z.md",
+  "target": null,
+  "awaiting_findings": true
+}
