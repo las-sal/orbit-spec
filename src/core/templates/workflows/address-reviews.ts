@@ -127,7 +127,7 @@ This parser contract is consumed by BOTH explicit \`--from-file <path>\` invocat
 
 The \`--from-file <path>\` flag accepts TWO format families: (a) external-review markdown (see \`external-findings-format.md\`), (b) internal findings JSON (this file). The parser auto-detects format via content sniff: leading \`{\` routes to JSON; leading \`# External Review:\` routes to markdown; anything else triggers a format-mismatch error.
 
-This format MUST match what \`/orbit:review\` writes to \`orbit/changes/<name>/.orbit-runs/review-<mode>-<TS>.json\` OR what \`/orbit:audit-drift\` writes to its summary JSON paths (per the audit-drift run-summary-schema). V1 accepts BOTH \`command: "review"\` AND \`command: "audit-drift"\` JSON; other \`command\` values are rejected. The full JSON schemas live at \`.claude/skills/orbit-review/references/run-summary-schema.md\` and \`.claude/skills/orbit-audit-drift/references/run-summary-schema.md\`; this file documents the \`--from-file\` parser's subset of those schemas (the fields it reads to construct virtual markers).
+This format MUST match what \`/orbit:review\` writes to \`orbit/changes/<name>/.orbit-runs/review-<mode>-<TS>.json\` OR what \`/orbit:audit-drift\` writes to its summary JSON paths (per the audit-drift run-summary-schema). V1 accepts BOTH \`command: "review"\` AND \`command: "audit-drift"\` JSON; other \`command\` values are rejected. The full JSON schemas live in the producer skills' bundled references — the \`orbit-review\` skill's \`references/run-summary-schema.md\` and the \`orbit-audit-drift\` skill's \`references/run-summary-schema.md\` (shipped alongside each generated skill); this file documents the \`--from-file\` parser's subset of those schemas (the fields it reads to construct virtual markers).
 
 ## Expected file format
 
@@ -233,7 +233,7 @@ The parser MUST check the top-level \`command\` field after JSON parse succeeds:
 - \`command: "audit-drift"\` → proceed with \`findings[]\` extraction; tag virtual markers \`source: "audit-drift"\`; use the per-finding \`category\` field as the provenance-detail slot (rather than \`pass\`).
 - Any other \`command\` value (e.g., \`"address-reviews"\`, \`"apply"\`, \`"archive"\`, \`"propose"\`, \`"explore"\`, \`"new"\`, \`"continue"\`, \`"ff"\`, \`"review-external"\`) → emit a clean error message naming the supported \`command\` values (\`"review"\`, \`"audit-drift"\`) and the observed value, then exit without acting on any findings.
 
-V1 supports \`review-<mode>-*.json\` AND \`audit-drift-*.json\` (both standalone and library/pre-archive contexts). Other internal JSONs are rejected explicitly rather than silently mis-parsed. **\`command: "address-reviews"\` is rejected on purpose**: address-reviews ingest of its own resolution log would loop (the lifecycle would feed itself recursively); cycle prevention requires explicit rejection.
+V1 supports \`review-<mode>-*.json\` AND \`audit-drift-*.json\` (standalone audit-drift only — library/pre-archive contexts write no separate audit-drift JSON; their findings travel inside the caller's emit). Other internal JSONs are rejected explicitly rather than silently mis-parsed. **\`command: "address-reviews"\` is rejected on purpose**: address-reviews ingest of its own resolution log would loop (the lifecycle would feed itself recursively); cycle prevention requires explicit rejection.
 
 ### Fresh pushback applies to JSON virtual markers (both review and audit-drift)
 
@@ -289,7 +289,7 @@ The reason for the strict/lenient split: the strict items are what the orbit run
     {
       "pass": "2",
       "severity": "SUGGESTION",
-      "file": ".claude/skills/orbit-review/references/run-summary-schema.md",
+      "file": "<skills-dir>/orbit-review/references/run-summary-schema.md",
       "line": 22,
       "title": "Schema reference does not document new convergence fields emitted by iteration-aware logic",
       "recommendation": "Out of scope for this change. Track as a follow-up: future change touching the run-summary contract should add convergence_state / convergence_state_label / convergence_inputs (plus skip_reasons and dogfood_note) to references/run-summary-schema.md."
@@ -302,7 +302,7 @@ This example has 0 CRITICAL, 0 WARNING, 1 SUGGESTION. Ingesting it via \`--from-
 
 - \`severity\`: \`SUGGESTION\`
 - \`title\`: \`Schema reference does not document new convergence fields emitted by iteration-aware logic\`
-- \`file:line\`: \`.claude/skills/orbit-review/references/run-summary-schema.md:22\`
+- \`file:line\`: \`<skills-dir>/orbit-review/references/run-summary-schema.md:22\`
 - \`description\`: (the \`recommendation\` text)
 - \`source\`: \`internal-review\`
 

@@ -36,7 +36,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   getApplyChangeSkillTemplate: '535a8e496c36248b1bf13db43caa9fb252a2d283f2a750da2a2ec2fce90a5ea4',
   getFfChangeSkillTemplate: '11b6cfab83702b51c025fa3e9c249f62fe1d71cb2a368fcb271508659c1f58a5',
   getSyncSpecsSkillTemplate: '051c7fbb52cf2e87d8da2ffc45e6dbd2b4663f9b37add611abe430695e9694b1',
-  getOnboardSkillTemplate: 'a317ebdce77503bd06678c6f12a0c1267a689a13cc18a04c37b91b34f3e2b7eb',
+  getOnboardSkillTemplate: 'a7269ad428672a56d17f0f0bb3ebc605183c4f714b62e372d3bdf438e8856170',
   getOrbitExploreCommandTemplate: '52892dbd4b5eb72264dc6eb54f8126a09fc903adc1c1654c58e0650df609bfb6',
   getOrbitNewCommandTemplate: '47d97305a2d3abca6eafa8f7ed5fe13fb83ea8ca0b71f007975b217135f5f5aa',
   getOrbitContinueCommandTemplate: 'e1ecd4fffee224e284453be717226824c7567041d7c1676b6b6bca4727e3a9dd',
@@ -65,7 +65,7 @@ const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
   'orbit-archive-change': '85b475a228ebe66a2f3267ed2668b651b534c0518d58f1304a0bd494b86c92b4',
   'orbit-bulk-archive-change': '1bd94762c8d0b2f8ec86e06d2552be7e2ad14574147839018988071b33abccf8',
   'orbit-verify-change': 'a88afebd17504c36be7c233d3062a49f3c2a842f5c84f5761051c479d4283628',
-  'orbit-onboard': 'c1b89b483782883e996f1f97120c6ab05f8457e956b5d0c033905d38cfd4590f',
+  'orbit-onboard': 'f89ec01929327336471d80f812e145fb27028e68e777953660037bd05a8081c4',
   'orbit-propose': '2b2bcaf214e2ee56185db4d0c21da41cee62605c44c62c42536937a1dfae530d',
 };
 

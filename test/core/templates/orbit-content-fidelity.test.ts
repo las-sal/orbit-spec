@@ -58,7 +58,7 @@ const RELOCATED: Array<[string, () => SkillTemplate, string[]]> = [
   ['onboard', getOnboardSkillTemplate, ['execution disciplines', 'self-contained']],
   // B3 editorial workflows (net-new relocation; parity proof per D-b3-4)
   ['review', getReviewSkillTemplate, ['execution disciplines', 'convergence states', 'Persist the run summary', 'recommendation_options']],
-  ['review-external', getReviewExternalSkillTemplate, ['execution disciplines', 'Run-summary emit (T0', 'awaiting_findings']],
+  ['review-external', getReviewExternalSkillTemplate, ['execution disciplines', 'Run-summary emit (T0', 'awaiting_findings', 'Handoff preflight']],
   ['address-reviews', getAddressReviewsSkillTemplate, ['execution disciplines', 'Ripple cascade', 'Decision-fork detection', 'resolution log']],
   ['audit-drift', getAuditDriftSkillTemplate, ['execution disciplines', 'Vocabulary residue', 'Persist the run summary', 'recommendation_options']],
 ];
@@ -117,6 +117,8 @@ describe('orbit content fidelity (B1 relocation)', () => {
     expect(skill).not.toContain('rm -rf .claude/skills/feedback');
     expect(skill).not.toMatch(/MUST equal `?\d+/);
     expect(skill).not.toContain('.claude/skills/');
+    // B3: all four editorial commands are generated — no row may be labeled planned
+    expect(skill).not.toContain('(planned)');
   });
 
   describe('references declarations (orbit-skill-generation, D-b2-4 lean scope)', () => {

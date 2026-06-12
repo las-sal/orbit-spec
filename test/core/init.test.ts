@@ -95,6 +95,10 @@ describe('InitCommand', () => {
         'orbit-bulk-archive-change',
         'orbit-verify-change',
         'orbit-onboard',
+        'orbit-review',
+        'orbit-review-external',
+        'orbit-address-reviews',
+        'orbit-audit-drift',
       ];
 
       for (const skillName of allSkillNames) {
@@ -126,6 +130,10 @@ describe('InitCommand', () => {
         'orbit/bulk-archive.md',
         'orbit/verify.md',
         'orbit/onboard.md',
+        'orbit/review.md',
+        'orbit/review-external.md',
+        'orbit/address-reviews.md',
+        'orbit/audit-drift.md',
       ];
 
       for (const cmdName of allCommandNames) {
@@ -715,6 +723,41 @@ describe('InitCommand - profile and detection features', () => {
     // Commands should exist
     const cmdFile = path.join(testDir, '.claude', 'commands', 'orbit', 'explore.md');
     expect(await fileExists(cmdFile)).toBe(true);
+  });
+
+  it('should remove ALL 15 skill dirs on re-init when delivery changes to commands', async () => {
+    saveGlobalConfig({
+      featureFlags: {},
+      profile: 'core',
+      delivery: 'both',
+    });
+
+    const initCommand1 = new InitCommand({ tools: 'claude', force: true });
+    await initCommand1.execute(testDir);
+
+    const skillsDir = path.join(testDir, '.claude', 'skills');
+    const installed = await fs.readdir(skillsDir);
+    expect(installed.filter((d) => d.startsWith('orbit-'))).toHaveLength(15);
+
+    saveGlobalConfig({
+      featureFlags: {},
+      profile: 'core',
+      delivery: 'commands',
+    });
+
+    const initCommand2 = new InitCommand({ tools: 'claude', force: true });
+    await initCommand2.execute(testDir);
+
+    // every workflow skill dir is removed — incl. the B3 four (regression:
+    // init.ts once kept a private workflow→skill-dir map that ended at propose)
+    for (const dirName of [
+      'orbit-propose', 'orbit-explore', 'orbit-apply-change', 'orbit-archive-change',
+      'orbit-new-change', 'orbit-continue-change', 'orbit-ff-change', 'orbit-sync-specs',
+      'orbit-bulk-archive-change', 'orbit-verify-change', 'orbit-onboard',
+      'orbit-review', 'orbit-review-external', 'orbit-address-reviews', 'orbit-audit-drift',
+    ]) {
+      expect(await fileExists(path.join(skillsDir, dirName, 'SKILL.md'))).toBe(false);
+    }
   });
 
   it('should remove commands on re-init when delivery changes to skills', async () => {

@@ -218,15 +218,16 @@ Mode comes from \`--as proposal|system\` if specified. If omitted:
 
 Emit a one-line inference note in chat output when \`--as\` was omitted: \`Generating external-review prompt as \\\`<as>\\\` (inferred from tasks state).\`
 
-### 3. Detect uncommitted changes
+### 3. Handoff preflight — committed-and-pushed state
 
-Run \`git status --porcelain\`. If any output: include this warning in chat output before the recommended-session note:
+The pull-based handoff only works if the external AI can actually see the reviewed state. Record two facts (used by Step 8):
 
-\`\`\`
-Repo has uncommitted changes; external review will be against committed state.
-\`\`\`
+1. **Working tree**: \`git status --porcelain\` — any output means the reviewed state is not fully committed (and the prompt file written in Step 7 will itself be uncommitted).
+2. **Remote sync**: \`git rev-list @{u}..HEAD --count\` (skip if no upstream) — a non-zero count means local commits aren't pushed.
 
-(The external AI pulls the repo, so it only sees what's committed and pushed.)
+(The external AI pulls the repo, so it only sees what's committed AND pushed. A pull-based invocation emitted against dirty or unpushed state hands the external AI a repo without the change — the handoff silently reviews stale state or fails.)
+
+If the repo has no remote at all, the preflight is satisfied by the local-path handoff route (see Graceful degradation).
 
 ### 4. Count iterations (per mode)
 
@@ -278,13 +279,14 @@ The **"Output format"** block inside the prompt MUST appear verbatim — the sec
 Print to chat, in this exact order:
 
 1. **(optional)** Mode-inference note when \`--as\` was omitted: \`Generating external-review prompt as \\\`<as>\\\` (inferred from tasks state).\`
-2. **(optional)** Uncommitted-changes warning when applicable: \`Repo has uncommitted changes; external review will be against committed state.\`
-3. **(required)** Recommended-session note: \`Recommended session: <phrasing from Step 6>\`
-4. **(required)** The prompt file path: \`Prompt: orbit/changes/<change-name>/.orbit-runs/external-prompt-<as>-<TS>.md\`
-5. **(required)** A 1–3 sentence copy-paste-ready invocation: \`Pull <repo URL> and read <prompt-file-path>. Follow its instructions; write findings to the path specified inside.\`
-6. **(required)** The eventual findings path: \`When findings come back: /orbit:address-reviews --from-file orbit/changes/<change-name>/.orbit-runs/external-<as>-<TS>.md (TS will be set by the external AI when it writes).\`
+2. **(required)** Recommended-session note: \`Recommended session: <phrasing from Step 6>\`
+3. **(required)** The prompt file path: \`Prompt: orbit/changes/<change-name>/.orbit-runs/external-prompt-<as>-<TS>.md\`
+4. **(conditional — preflight gate)** ONE of:
+   - **Preflight satisfied** (clean tree, no unpushed commits — or local-path route): the copy-paste-ready invocation: \`Pull <repo URL> and read <prompt-file-path>. Follow its instructions; write findings to the path specified inside.\`
+   - **Preflight failed** (dirty tree and/or unpushed commits): the pull invocation is WITHHELD. Emit instead: \`Handoff blocked: <dirty tree | N unpushed commit(s)>. Commit the pending work (including the prompt file above) and push, then hand off: Pull <repo URL> and read <prompt-file-path>. ...\` — the commit+push action leads; the pull text is framed as the after-push step, never as an immediately-usable instruction.
+5. **(required)** The eventual findings path: \`When findings come back: /orbit:address-reviews --from-file orbit/changes/<change-name>/.orbit-runs/external-<as>-<TS>.md (TS will be set by the external AI when it writes).\`
 
-No other items. Required items always appear in the specified order.
+No other items. Required items always appear in the specified order. (The T0 emit's \`next_recommended\` mirrors the gate: when the preflight failed, it leads with the commit+push action before the paste step.)
 
 ## Reference prompt template
 
@@ -298,7 +300,6 @@ Mode-specific content (the "What to read for THIS review" file list and the "Wha
 
 \`\`\`
 Generating external-review prompt as \`proposal\` (inferred from tasks state).
-Repo has uncommitted changes; external review will be against committed state.
 
 Recommended session: Iter 5 — either (a) carry context from your iter-3 codex
 chat (codex verifies whether its iter-3 findings actually landed after the most recent
@@ -308,7 +309,7 @@ For this iter, (b) is the higher-signal choice given how much changed after iter
 
 Prompt: orbit/changes/add-review-workflows/.orbit-runs/external-prompt-proposal-2026-05-18T14-35-23Z.md
 
-To run: Pull <repo URL> and read
+To run (handoff preflight satisfied — tree clean, remote in sync): Pull <repo URL> and read
 orbit/changes/add-review-workflows/.orbit-runs/external-prompt-proposal-2026-05-18T14-35-23Z.md.
 Follow its instructions; write findings to the path specified inside.
 

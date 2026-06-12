@@ -21,7 +21,7 @@ This schema inherits the 6-field **universal spine** from \`orbit-conventions\`'
 
 - \`command\` (here: \`"audit-drift"\`)
 - \`timestamp\` (ISO-8601 UTC; JSON field \`YYYY-MM-DDTHH:MM:SSZ\`; filename \`<TS>\` token \`YYYY-MM-DDTHH-MM-SSZ\` with colons replaced by hyphens for filesystem safety)
-- \`change\` (change name string for change-scoped / library / pre-archive contexts; \`null\` for project-wide standalone)
+- \`change\` (change name string for change-scoped standalone; \`null\` for project-wide standalone)
 - \`final_assessment\` (narrative)
 - \`next_recommended\` (verbatim recommendation; varies by findings-vs-clean per \`orbit-run-summary-emit\`'s \`Audit-drift standalone recommendations\` requirement)
 - \`kind: "editorial"\` (audit-drift is an editorial command per the kind taxonomy)
@@ -34,12 +34,12 @@ The schema below documents per-command extensions ADDED to that spine (\`context
 {
   "command": "audit-drift",
   "timestamp": "<ISO-8601>",
-  "change": "<change-name string for change-scoped/library/pre-archive; null for project-wide standalone>",
-  "final_assessment": "<stock phrasing or null for library context>",
-  "next_recommended": "<e.g., '/orbit:address-reviews <name> --from-file <this-json>' on findings; verbatim copy from prior latest JSON on clean (per orbit-run-summary-emit's Audit-drift standalone recommendations); null for library/pre-archive>",
+  "change": "<change-name string for change-scoped standalone; null for project-wide standalone>",
+  "final_assessment": "<stock phrasing per invocation mode>",
+  "next_recommended": "<on findings — change-scoped: '/orbit:address-reviews <name>' WITHOUT --from-file (auto-discovery selects this just-written JSON); project-wide: '/orbit:address-reviews --from-file <this-json>' (no change-directory anchor, so --from-file IS required). On clean — change-scoped: verbatim copy from the prior latest JSON; project-wide: the periodic-re-run phrasing. Per orbit-run-summary-emit's Audit-drift standalone recommendations.>",
   "kind": "editorial",
-  "context": "standalone" | "library" | "pre-archive",
-  "caller": "<calling command if library/pre-archive, else null>",
+  "context": "standalone",
+  "caller": null,
   "depth": "fast" | "full" | "thorough",
   "flags": {
     "parallel": false,
@@ -82,11 +82,10 @@ The schema below documents per-command extensions ADDED to that spine (\`context
 
 ## Field notes
 
-- **\`context\`** drives \`final_assessment\` phrasing — one of \`standalone | library | pre-archive\`. Note: \`context\` alone does NOT distinguish project-wide from change-scoped standalone — that distinction is inferred from the \`change\` field (\`null\` = project-wide standalone; \`<name>\` = change-scoped standalone, library, or pre-archive). The four cells are: standalone-project-wide (\`context: "standalone"\`, \`change: null\`), standalone-change-scoped (\`context: "standalone"\`, \`change: <name>\`), library (\`context: "library"\`, \`change: <name>\`), pre-archive (\`context: "pre-archive"\`, \`change: <name>\`).
-- **\`caller\`** only populated for library + pre-archive contexts.
+- **\`context\`** is \`"standalone"\` in every audit-drift-<TS>.json — library and pre-archive contexts write no separate file (their findings travel in the caller's emit), so the \`"library"\` / \`"pre-archive"\` values appear only when a caller chooses to embed this shape inside its own emit. Project-wide vs change-scoped standalone is distinguished by the \`change\` field (\`null\` = project-wide; \`<name>\` = change-scoped).
+- **\`caller\`** is \`null\` for standalone emits (the only contexts that write this file).
 - **\`categories_run\` / \`categories_skipped\`** are strings (category IDs); skip reasons in the report body, not the array.
 - **\`findings_summary.by_category\`** keys are category IDs \`"1"\` through \`"4"\`.
-- **\`final_assessment\`** is \`null\` for library context (findings handed back to the caller for folding into the caller's report).
 - **\`recommendation_options\`** is OPTIONAL on each finding. Present only when the finding's recommendation is genuinely disjunctive — multiple defensible remediation paths the user must choose between. Producer-side contract (per \`orbit-audit-drift\` spec's \`Optional recommendation_options field on audit-drift finding entries\`): MUST contain ≥ 2 entries; each entry MUST have non-empty \`label\` (typically \`"A"\`, \`"B"\`, \`"C"\`, …) and non-empty \`body\`. Per-category emit guidance: Category 1 (vocabulary residue) typically single-recommendation; Category 2 (lens staleness) often disjunctive (rename-vs-remove); Category 3 (cross-doc consistency) often disjunctive (which side is canonical); Category 4 (archive coherence) typically single. The prose \`recommendation\` field still summarizes the disjunction for human readers. Field shape is identical to \`orbit-review\`'s \`recommendation_options\`; consumer (address-reviews) parses both producers uniformly. Omit for single-recommendation findings.
 `;
 

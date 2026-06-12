@@ -41,7 +41,7 @@ const SURFACE: Array<[string, string, string[]]> = [
   ['orbit-verify-change', 'verify', ['execution disciplines', 'Run-summary emit']],
   ['orbit-onboard', 'onboard', ['execution disciplines', 'self-contained']],
   ['orbit-review', 'review', ['execution disciplines', 'convergence states', 'Persist the run summary']],
-  ['orbit-review-external', 'review-external', ['execution disciplines', 'Run-summary emit (T0', 'references/prompt-template.md']],
+  ['orbit-review-external', 'review-external', ['execution disciplines', 'Run-summary emit (T0', 'references/prompt-template.md', 'Handoff preflight']],
   ['orbit-address-reviews', 'address-reviews', ['execution disciplines', 'Ripple cascade', 'resolution log']],
   ['orbit-audit-drift', 'audit-drift', ['execution disciplines', 'Vocabulary residue', 'Persist the run summary']],
 ];

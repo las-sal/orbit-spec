@@ -43,6 +43,7 @@ import {
 } from './shared/index.js';
 import { getGlobalConfig, type Delivery, type Profile } from './global-config.js';
 import { getProfileWorkflows, CORE_WORKFLOWS, ALL_WORKFLOWS } from './profiles.js';
+import { WORKFLOW_TO_SKILL_DIR } from './profile-sync-drift.js';
 import { validateSkillTemplates, reconcileSkillReferences, ensureRealSkillDir } from './shared/skill-generation.js';
 import { getAvailableTools } from './available-tools.js';
 import { migrateIfNeeded } from './migration.js';
@@ -59,20 +60,6 @@ const DEFAULT_SCHEMA = 'spec-driven';
 const PROGRESS_SPINNER = {
   interval: 80,
   frames: ['░░░', '▒░░', '▒▒░', '▒▒▒', '▓▒▒', '▓▓▒', '▓▓▓', '▒▓▓', '░▒▓'],
-};
-
-const WORKFLOW_TO_SKILL_DIR: Record<string, string> = {
-  'explore': 'orbit-explore',
-  'new': 'orbit-new-change',
-  'continue': 'orbit-continue-change',
-  'apply': 'orbit-apply-change',
-  'ff': 'orbit-ff-change',
-  'sync': 'orbit-sync-specs',
-  'archive': 'orbit-archive-change',
-  'bulk-archive': 'orbit-bulk-archive-change',
-  'verify': 'orbit-verify-change',
-  'onboard': 'orbit-onboard',
-  'propose': 'orbit-propose',
 };
 
 // -----------------------------------------------------------------------------
