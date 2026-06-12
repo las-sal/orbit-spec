@@ -1,4 +1,10 @@
-## ADDED Requirements
+# orbit-review-external Specification
+
+## Purpose
+
+The `/orbit:review-external` command — packages a review request for an external AI (codex, fresh Claude, GPT, etc.) to perform a second-opinion review. Writes a self-contained markdown prompt to `.orbit-runs/external-prompt-<as>-<TS>.md` and emits a short chat invocation snippet. Does NOT run the review or ingest findings; ingestion is `/orbit:address-reviews --from-file`. Includes mode inference, iteration counting per mode, cycle-context population from prior runs, and a recommended-session note tailored to iteration history.
+
+## Requirements
 
 ### Requirement: Review-external command available
 
@@ -18,9 +24,9 @@ The system SHALL expose a `/orbit:review-external` command that packages a revie
 
 The system SHALL accept a `--as proposal|system` flag and, when omitted, infer the mode from the change's `tasks.md` state.
 
-#### Scenario: Tasks unchecked → infer proposal mode
+#### Scenario: All tasks unchecked → infer proposal mode
 
-- **WHEN** `--as` is omitted and the change's `tasks.md` has any unchecked task boxes
+- **WHEN** `--as` is omitted and ALL task boxes in the change's `tasks.md` are unchecked
 - **THEN** the command proceeds as `--as proposal` and the chat output includes "Generating external-review prompt as `proposal` (inferred from tasks state)."
 
 #### Scenario: All tasks checked + code exists → infer system mode
@@ -30,8 +36,8 @@ The system SHALL accept a `--as proposal|system` flag and, when omitted, infer t
 
 #### Scenario: Ambiguous state → prompt user
 
-- **WHEN** the inference cannot determine mode unambiguously (e.g., partial implementation)
-- **THEN** the command prompts the user via `AskUserQuestion` to choose proposal or system
+- **WHEN** the inference cannot determine mode unambiguously — mixed checked/unchecked task boxes (partial implementation), or all boxes checked without visible code changes
+- **THEN** the command prompts the user via `AskUserQuestion` to choose proposal or system (mixed state never silently infers either mode)
 
 ### Requirement: Prompt written to versioned file with chat invocation snippet
 
@@ -52,10 +58,9 @@ The system SHALL write the full handoff prompt to a versioned, committed file in
 - **WHEN** the file is written
 - **THEN** the chat output contains the following items, in this order:
   - **(optional)** Mode-inference note when `--as` was omitted (per the State-based inference scenario): `Generating external-review prompt as \`<as>\` (inferred from tasks state).`
-  - **(optional)** Uncommitted-changes warning when applicable (per the Repo-state-validation requirement): `Repo has uncommitted changes; external review will be against committed state.`
   - **(required)** Recommended-session note (per the Recommended-session requirement): a single line summarizing which AI session the user should paste into.
   - **(required)** The prompt file path.
-  - **(required)** A 1-3 sentence copy-paste-ready invocation that tells the external AI to pull the repo and read the prompt file: `Pull <repo URL> and read <prompt-file-path>. Follow its instructions; write findings to the path specified inside.`
+  - **(conditional — handoff preflight gate, per the Handoff-preflight requirement)** ONE of: the copy-paste-ready pull invocation (`Pull <repo URL> and read <prompt-file-path>. Follow its instructions; write findings to the path specified inside.`) when the preflight is satisfied, OR the handoff-blocked output (commit+push action leading; pull text framed as the after-push step) when it is not.
   - **(required)** The eventual findings path the user will pass to `/orbit:address-reviews --from-file` once findings come back.
 
   No other items are emitted; required items are always present in the specified order.
@@ -259,14 +264,24 @@ The system SHALL include a "Cycle context" section in the prompt with iteration 
 - **WHEN** the change has a prior `external-<as>-<TS>.md` in `.orbit-runs/`
 - **THEN** the cycle context section summarizes those findings so the external AI knows what was previously flagged
 
-### Requirement: Repo state validation
+### Requirement: Handoff preflight blocks unusable pull invocations
 
-The system SHALL warn if the repo has uncommitted changes when `/orbit:review-external` is invoked.
+The system SHALL verify the handoff state before emitting a pull-based invocation: the working tree is clean (`git status --porcelain` empty) AND no local commits are unpushed (`git rev-list @{u}..HEAD --count` is zero, when an upstream exists). When either check fails, the pull invocation is withheld; the chat output instead leads with the required commit-and-push action (naming the just-written prompt file among the pending work) and frames the pull text as the after-push step. A repo with no remote satisfies the preflight via the local-path handoff route.
 
-#### Scenario: Uncommitted changes present
+#### Scenario: Dirty working tree blocks the pull invocation
 
-- **WHEN** the command runs and `git status` reports uncommitted changes
-- **THEN** the chat output includes a warning "Repo has uncommitted changes; external review will be against committed state."
+- **WHEN** the command runs and `git status --porcelain` reports uncommitted changes
+- **THEN** the chat output does NOT present the pull invocation as immediately usable; it emits a handoff-blocked output naming the dirty-tree cause, instructs the user to commit (including the prompt file) and push, and frames the pull invocation as the step after pushing
+
+#### Scenario: Unpushed commits block the pull invocation
+
+- **WHEN** the working tree is clean but `git rev-list @{u}..HEAD --count` reports N > 0 unpushed commits
+- **THEN** the chat output emits the handoff-blocked output naming the N-unpushed-commits cause, with the same commit/push-then-pull framing
+
+#### Scenario: Clean and pushed emits the pull invocation directly
+
+- **WHEN** the working tree is clean and no unpushed commits exist (or the repo has no remote and the local-path route is used)
+- **THEN** the chat output presents the invocation (pull-based, or local-path per graceful degradation) as immediately usable
 
 ### Requirement: Command does not run the review or ingest findings
 

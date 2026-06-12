@@ -1,0 +1,30 @@
+{
+  "command": "archive",
+  "timestamp": "2026-06-12T21:36:24Z",
+  "change": "b3-net-new-workflows",
+  "final_assessment": "Archived b3-net-new-workflows to orbit/changes/archive/2026-06-12-b3-net-new-workflows/. Sync-specs created 4 new baseline capabilities (48 requirements; baseline 7→11) with real Purpose sections written directly from the change's purposes.md (task 6.1 executed during this archive — no TBD stubs created). PARITY MILESTONE: the fork now has full behavioral parity with the openspec-orbit overlay; the companion repo retires as migration source-of-truth.",
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change (C1 — engine gates/freshness), or /orbit:audit-drift for a project-wide drift check.",
+  "kind": "lifecycle",
+  "archive_path": "orbit/changes/archive/2026-06-12-b3-net-new-workflows/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": { "critical": 0, "warning": 0, "suggestion": 1 },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": ["orbit-review", "orbit-review-external", "orbit-address-reviews", "orbit-audit-drift"],
+    "added": 48,
+    "modified": 0,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "warnings": [
+    "Pre-archive audit (library context; findings folded here per the standalone-only emit model): 1 SUGGESTION — baseline orbit-conventions spec.md:261 lifecycle-emit example uses overlay-era change name 'bootstrap-orbit-status-cli'; pre-existing from B1, parked for the Tier-C scrub delta. Same class noted: orbit-skill-generation baseline carries B2's TBD Purpose stub.",
+    "Task 6.1 (the only unchecked task at archive invocation) was executed during this archive run and checked off before the move — the archived tasks.md is 22/22."
+  ]
+}

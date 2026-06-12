@@ -96,6 +96,6 @@ module, with Tier-C "OpenSpec" prose exempted).
 
 ## 6. At archive time (not apply time)
 
-- [ ] 6.1 After `/orbit:archive` creates the four new baseline specs, replace their stubbed
+- [x] 6.1 After `/orbit:archive` creates the four new baseline specs, replace their stubbed
       `TBD` Purpose sections with the paragraphs staged in `purposes.md` (prevents repeating
       the orbit-run-summary-emit TBD gap this change fixes in 4.1).

@@ -1,0 +1,112 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-06-12T19:48:31Z",
+  "change": "b3-net-new-workflows",
+  "final_assessment": "All 7 findings from the external system review (GPT-5.1 Codex, iter 1) walked and resolved (5 WARNING, 2 SUGGESTION; 0 stale, 0 deferred, 0 escalated). One decision fork fired (handoff preflight; user chose A: blocking). Suite 1544/1544 green after fixes (one new regression test); change re-validates --strict; surface regenerated.",
+  "next_recommended": "/orbit:review b3-net-new-workflows --as system — confirm external findings resolved (Path B convergence) before archive",
+  "kind": "editorial",
+  "source": "from-file",
+  "source_path": "orbit/changes/b3-net-new-workflows/.orbit-runs/external-system-2026-06-12T19-16-46Z.md",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": "2026-06-12T18-29-55Z",
+  "external_reviewer": "GPT-5.1 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": { "critical": 0, "warning": 5, "suggestion": 2 },
+  "pushback_verification": "All 7 findings verified against current state by direct reads (init.ts map, onboard table, review-external Step 3/8, audit-drift schema reference, address-reviews reference paths and claims, both specs' inference scenarios); 0 stale suppressions.",
+  "resolution_summary": { "resolved": 7, "stale_suppressed": 0, "deferred": 0, "escalated": 0 },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Commands-only re-init leaves the four B3 skill directories installed",
+      "marker_source": "external",
+      "file": "src/core/init.ts",
+      "line": 64,
+      "classification": "trivial_fix",
+      "action": "Applied the finding's stated preference: removed init.ts's private WORKFLOW_TO_SKILL_DIR map and imported the shared typed map from profile-sync-drift.ts (no import cycle). Added a both→commands re-init regression test asserting all 15 skill dirs removed; extended the two D15 init-test arrays 11→15.",
+      "ripple_cascade": { "applied": ["test/core/init.test.ts"], "flagged_not_applied": [] },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Generated onboarding still describes all four new commands as planned",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/onboard.ts",
+      "line": 96,
+      "classification": "trivial_fix",
+      "action": "Removed the *(planned)* intro framing and all four row markers; added a fidelity assertion that the onboard body contains no '(planned)' label. Updated the two pinned onboard hashes in skill-templates-parity.test.ts (deliberate content change).",
+      "ripple_cascade": { "applied": ["test/core/templates/orbit-content-fidelity.test.ts", "test/core/templates/skill-templates-parity.test.ts"], "flagged_not_applied": [] },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Review-external can emit an unusable pull instruction before the prompt is remotely available",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/review-external.ts",
+      "line": 223,
+      "classification": "decision_required",
+      "action": "Applied option A (blocking preflight): body Step 3 became 'Handoff preflight — committed-and-pushed state' (git status --porcelain + git rev-list @{u}..HEAD --count); Step 8's pull invocation became a conditional preflight gate (withheld with commit+push leading when dirty/unpushed; local-path route satisfies preflight for remote-less repos); worked example updated; spec delta requirement 'Repo state validation' replaced by 'Handoff preflight blocks unusable pull invocations' (3 scenarios) and the chat-snippet ordered list updated; 'Handoff preflight' marker added to fidelity + e2e tests.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          { "label": "A", "body": "Blocking preflight: verify committed+pushed state; withhold the pull invocation until satisfied; spec strengthened" },
+          { "label": "B", "body": "Keep warn-only; enrich the warning and T0 next_recommended with commit+push guidance" }
+        ],
+        "chosen": "A",
+        "discuss_invoked": false
+      },
+      "ripple_cascade": {
+        "applied": ["orbit/changes/b3-net-new-workflows/specs/orbit-review-external/spec.md", "test/core/templates/orbit-content-fidelity.test.ts", "test/core/templates/orbit-generated-surface.test.ts", "orbit/changes/b3-net-new-workflows/design.md"],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Audit-drift schema reference contradicts the change-scoped recommendation contract",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/audit-drift.ts",
+      "line": 39,
+      "classification": "trivial_fix",
+      "action": "Replaced the next_recommended example with the two distinct forms (change-scoped WITHOUT --from-file via auto-discovery; project-wide WITH it). Change-completeness sweep also aligned the schema's change/context/caller field docs to the standalone-only emit contract (library/pre-archive values appear only when a caller embeds the shape in its own emit).",
+      "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Address-reviews reference hard-codes Claude-only skill paths",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/address-reviews.ts",
+      "line": 130,
+      "classification": "trivial_fix",
+      "action": "All three .claude/skills/ occurrences in internal-findings-format.md neutralized: producer-schema pointers reworded to 'the <skill> skill's references/run-summary-schema.md (shipped alongside each generated skill)'; the worked-example file fields use <skills-dir>/.",
+      "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Address-reviews still claims audit-drift JSON exists for non-standalone contexts",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/address-reviews.ts",
+      "line": 236,
+      "classification": "trivial_fix",
+      "action": "Tightened to 'standalone audit-drift only — library/pre-archive contexts write no separate audit-drift JSON; their findings travel inside the caller's emit'.",
+      "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Partial-task mode inference is contradictory across spec and skill bodies",
+      "marker_source": "external",
+      "file": "orbit/changes/b3-net-new-workflows/specs/orbit-review-external/spec.md",
+      "line": 23,
+      "classification": "trivial_fix",
+      "action": "Aligned both specs to the bodies' rule (D14: bodies are the behavioral source; both bodies already agree): 'ALL task boxes unchecked → proposal; mixed → ambiguous → prompt'. review-external spec scenario retitled 'All tasks unchecked → infer proposal mode' with the ambiguity scenario enumerating mixed state explicitly; review spec's inference scenario got the same wording. No body edits needed.",
+      "ripple_cascade": { "applied": ["orbit/changes/b3-net-new-workflows/specs/orbit-review/spec.md"], "flagged_not_applied": [] },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": []
+}

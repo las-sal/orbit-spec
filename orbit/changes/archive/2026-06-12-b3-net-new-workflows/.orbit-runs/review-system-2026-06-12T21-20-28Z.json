@@ -1,0 +1,70 @@
+{
+  "command": "review",
+  "timestamp": "2026-06-12T21:20:28Z",
+  "change": "b3-net-new-workflows",
+  "final_assessment": "No critical issues. 1 warning(s) to consider. External system review findings resolved via /orbit:address-reviews. Ready to archive (with noted improvements).",
+  "next_recommended": "/orbit:archive b3-net-new-workflows — Path B convergence reached (external findings resolved); the 1 warning is a one-token CLAUDE.md count fix",
+  "kind": "editorial",
+  "mode": "system",
+  "iteration": 1,
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "passes_run": ["0", "1", "2", "3", "6"],
+  "passes_skipped": ["4", "5"],
+  "findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 1,
+    "by_pass": {
+      "0": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "1": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "2": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "3": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "6": { "critical": 0, "warning": 1, "suggestion": 1 }
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "file": "CLAUDE.md",
+      "line": 34,
+      "title": "Test-count claim drifted: '1543 as of B3' but the suite is 1544 after the external-review fixes",
+      "recommendation": "The address-reviews walk of the external findings added a regression test (both-to-commands re-init removes all 15 skill dirs), growing the suite 1543 -> 1544. Update CLAUDE.md line 34 to '1544 as of B3'. One-token fix; audit-drift Category 3 (cross-doc quantitative claim vs current state)."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "file": "orbit/specs/orbit-conventions/spec.md",
+      "line": 261,
+      "title": "Baseline conventions spec's lifecycle-emit example uses an overlay-era change name (bootstrap-orbit-status-cli)",
+      "recommendation": "Pre-existing from B1 relocation, not introduced by B3 (D-b3-1's scope was B3 shipped content). The worked-example JSON in the Internal-run JSON summary format requirement cites 'bootstrap-orbit-status-cli' as its example change name. Baseline spec = OUT-set for cascade; capture via a delta in a future change (natural fit: the Tier-C branding scrub), replacing the example change name with a neutral one."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "pass": "1",
+      "title": "Onboarding command table labels generated commands as planned (external W2)",
+      "evidence": "Resolved during the external address-reviews walk: generated .claude/skills/orbit-onboard/SKILL.md greps 0 '(planned)'; the orbit-onboard baseline 'Complete enumeration' scenario is satisfied with all 15 rows. Fidelity assertion added."
+    },
+    {
+      "pass": "2",
+      "title": "Registry enumerations might still lag 11-workflow surface",
+      "evidence": "All six registries verified extended (ALL_WORKFLOWS, SKILL_NAMES, COMMAND_IDS, getSkillTemplates/getCommandTemplates, WORKFLOW_TO_SKILL_DIR shared into init.ts per external W1); src/core/completions/command-registry.ts enumerates CLI subcommands for shell completion, not workflow slash commands — no drift. Surface on disk: 15 skills + 15 commands."
+    }
+  ],
+  "iteration_note": null,
+  "convergence": {
+    "state": 3,
+    "external": "external-system-2026-06-12T19-16-46Z.md",
+    "stale_check": "latest apply-*.json token 2026-06-12T18-29-55Z predates the external's 2026-06-12T19-16-46Z — not stale (post-external fixes were address-reviews resolutions, which per the per-external scoping rule do not trigger stale; they ARE the Path B resolution)",
+    "path_b": "address-reviews-2026-06-12T19-48-31Z.json source_path references the external; deferred=0, escalated=0"
+  }
+}

@@ -31,7 +31,7 @@ The fork bootstrap (phase **A1**) is complete:
 so plain update's smart detection may skip) so your local surface doesn't lag the source.
 - **Toolchain is npm, not pnpm.** `npm install` works end-to-end. Build = `npm run build`
   (`node build.js` → `tsc`); tests = `npm test` (vitest). Baseline at bootstrap: ~1369 tests
-  (1504 as of B2; 1543 as of B3).
+  (1504 as of B2; 1544 as of B3).
 
 **B1 (relocate)** is complete and ARCHIVED
 (`orbit/changes/archive/2026-06-11-relocate-modified-upstream-workflows/`); its six baseline
@@ -41,13 +41,16 @@ capabilities are live in `orbit/specs/`. **B2 (grow generator) is complete and A
 physical symlink containment, convergent reconciliation on init + both update paths,
 reference-drift smart detection, and full frontmatter metadata pass-through —
 `orbit-skill-generation` is the 7th baseline capability. **B3 (net-new editorial workflows) is
-IMPLEMENTED** (`orbit/changes/b3-net-new-workflows/`, pending verify+archive): the four editorial
-workflows — **review, review-external, address-reviews, audit-drift** — are first-class generated
-workflows (4 modules under `src/core/templates/workflows/`, surface 11→15, zero generator changes —
-B3 is the first real consumer of B2's metadata pass-through via `capability:` keys). Their four
-capability specs ride in the change as ADDED deltas (baseline 7→11 at archive). This is the
-**parity milestone**: `../openspec-orbit` retires as migration source once the change archives.
-**Next: C1** (engine gates/freshness). Orbit's editorial content is relocated into
+complete and ARCHIVED** (`orbit/changes/archive/2026-06-12-b3-net-new-workflows/`): the four
+editorial workflows — **review, review-external, address-reviews, audit-drift** — are first-class
+generated workflows (4 modules under `src/core/templates/workflows/`, surface 11→15, zero generator
+changes — B3 is the first real consumer of B2's metadata pass-through via `capability:` keys), and
+their four capability specs are live in baseline (7→11, with real Purpose sections). The change
+passed two internal proposal-review iterations, an external (GPT-5.1 Codex) system review (7
+findings, all resolved — incl. a sixth registry in init.ts and a user-ratified handoff preflight
+for review-external), and a converged internal system review (Path B); full audit trail in the
+archived `.orbit-runs/`. **PARITY REACHED** — `../openspec-orbit` is retired as migration
+source-of-truth. **Next: C1** (engine gates/freshness). Orbit's editorial content is relocated into
 the workflow modules (inline-TS per **D13**; `sync-specs` upstream-verbatim — orbit never modified it)
 + 6 spec deltas (`orbit-conventions`, `orbit-run-summary-emit`, `orbit-{explore,propose,archive}-modifications`,
 `orbit-onboard`) relocated as ADDED capabilities. The change passed a fresh internal system review AND

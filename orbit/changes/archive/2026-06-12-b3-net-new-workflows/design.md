@@ -89,6 +89,22 @@ a direct edit task, not a spec delta.
   D-b3-1 scrub, and the review-driven corrections recorded in the change audit trail
   (`.orbit-runs/`) — recorded in the change's review, not a permanent test.
 
+### Amendments from external system review (iter 1, GPT-5.1 Codex)
+
+The external pass (audit trail: `.orbit-runs/external-system-2026-06-12T19-16-46Z.md` + its
+address-reviews JSON) drove five implementation fixes and two consistency fixes: init.ts's
+private workflow→skill-dir map replaced with the shared `WORKFLOW_TO_SKILL_DIR` (commands-only
+re-init now removes all 15 skill dirs; regression test added); onboard's `*(planned)*` framing
+removed (all four commands are generated; fidelity assertion added); **review-external gained a
+handoff preflight** (user-ratified: dirty-tree or unpushed-commits state now withholds the pull
+invocation and leads with commit+push — spec requirement `Handoff preflight blocks unusable
+pull invocations` replaces the warn-only `Repo state validation`); audit-drift's bundled schema
+aligned to the standalone-only emit contract (change-scoped recommendation without
+`--from-file`); remaining `.claude/skills/` paths in address-reviews' internal-findings
+reference neutralized; the library/pre-archive audit-drift JSON claim tightened; and the
+mode-inference rule unified across both specs ("ALL unchecked → proposal; mixed → prompt",
+matching the bodies).
+
 ### Amendments from iter-1 proposal review
 
 The relocated deltas deviate from the overlay specs beyond renames+scrub in spots the iter-1

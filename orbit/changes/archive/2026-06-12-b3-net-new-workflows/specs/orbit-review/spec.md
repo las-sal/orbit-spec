@@ -17,7 +17,7 @@ The system SHALL expose a single `/orbit:review` command that runs an editorial 
 #### Scenario: Mode inference when `--as` omitted
 
 - **WHEN** the user invokes `/orbit:review <change-name>` without `--as`
-- **THEN** the command infers the mode from `tasks.md` state: unchecked task boxes → `proposal`; all tasks checked and code exists → `system`; ambiguous → prompt the user via `AskUserQuestion` to pick; the inferred mode is shown in the report header
+- **THEN** the command infers the mode from `tasks.md` state: ALL task boxes unchecked → `proposal`; all tasks checked and code exists → `system`; ambiguous (mixed checked/unchecked, or checked without visible code changes) → prompt the user via `AskUserQuestion` to pick; the inferred mode is shown in the report header
 
 ### Requirement: Proposal mode runs nine passes
 
