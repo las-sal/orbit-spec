@@ -1,0 +1,137 @@
+{
+  "command": "review",
+  "timestamp": "2026-06-13T00:38:15Z",
+  "change": "c1-engine-gates",
+  "final_assessment": "2 critical issue(s) found. Fix before /orbit:apply.",
+  "next_recommended": "/orbit:address-reviews c1-engine-gates — 2 critical(s) + 7 warning(s) + 2 suggestion(s) to walk before /orbit:apply (auto-discovers this JSON)",
+  "kind": "editorial",
+  "mode": "proposal",
+  "iteration": 1,
+  "depth": "full",
+  "flags": { "parallel": false, "focus": null, "strict": false, "fresh": true, "mark": false, "skip_verify": false },
+  "reviewer_class": "fresh",
+  "passes_run": ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+  "passes_skipped": [],
+  "findings_summary": {
+    "critical": 2,
+    "warning": 7,
+    "suggestion": 2,
+    "by_pass": {
+      "1": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "2": { "critical": 1, "warning": 2, "suggestion": 0 },
+      "3": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "4": { "critical": 1, "warning": 2, "suggestion": 0 },
+      "5": { "critical": 0, "warning": 2, "suggestion": 0 },
+      "6": { "critical": 0, "warning": 1, "suggestion": 1 },
+      "7": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "8": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "9": { "critical": 0, "warning": 0, "suggestion": 1 }
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "CRITICAL",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 101,
+      "title": "Convergence clause (c) ('0 new findings') contradicts the system cadence repeat rule and the MODIFIED orbit-review Path A/B 'gate review-system PASSED' phrasings",
+      "recommendation": "A first external system pass with any findings yields all-new findings by definition, so under clause (c) the gate stays unpassed even after address-reviews fully resolves them — yet the MODIFIED orbit-review Path B phrasing renders 'gate review-system PASSED' for exactly that state, and D-c1-4/design.md say the system external repeats only while it yields CRITICALs. An implementer cannot satisfy both specs. Reconcile before apply.",
+      "recommendation_options": [
+        { "label": "A", "body": "Per-gate confirmation rule declared in the schema YAML alongside cadence: proposal gate keeps '0 CRITICAL and 0 new findings'; system gate relaxes to '0 CRITICAL, all findings resolved' (matches D-c1-4 and Path A/B)." },
+        { "label": "B", "body": "Weaken clause (c) globally to '0 CRITICAL and 0 unresolved new findings' (resolution satisfies it); recast D-c1-4's proposal repeat rule as cadence recommendation rather than pass-condition." }
+      ]
+    },
+    {
+      "pass": "4",
+      "severity": "CRITICAL",
+      "file": "proposal.md",
+      "line": 52,
+      "title": "Missing MODIFIED deltas: orbit-conventions and orbit-archive-modifications baseline requirements directly contradict the gate model",
+      "recommendation": "Post-archive the corpus contradicts itself: orbit-conventions 'Review mode decision framework' says advisory-not-a-gate and 'Framework guidance does NOT enforce cycle patterns... orbit's archive flow proceeds' (spec.md:768-771) and its low-stakes scenario waives independent passes (:751) while the prescribed proposal cadence requires one; orbit-archive-modifications says 'WHEN the pre-archive audit reports no CRITICAL findings THEN the archive proceeds without prompting' (:55-56) — false once the review-system inflection prompt exists — and 'system-mode review is the user's gate (their responsibility)' (:116). Add MODIFIED deltas updating these scenarios to gate-aware wording (advisory→gate-with-recorded-override; scope 'proceeds without prompting' to the audit prompt; reconcile or override-path the low-stakes scenario)."
+    },
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "file": "specs/orbit-review-external/spec.md",
+      "line": 152,
+      "title": "Inline reference template not updated with the attestation instruction its own modified scenario requires",
+      "recommendation": "The modified 'Commit-and-push instructions' scenario mandates the STATE PLAINLY attestation, but the inline template block is byte-identical to baseline. Extend the template's 'After completing the review' steps with the attestation line so the normative structure carries D-c1-6(b)."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "file": "specs/orbit-review-external/spec.md",
+      "line": 46,
+      "title": "Packaging attestation conflicts with the chat-snippet scenario's closed item list",
+      "recommendation": "The snippet scenario's ordered list ends 'No other items are emitted' and wasn't modified. Amend the conditional bullet to 'the affirmative committed-and-pushed attestation followed by the pull invocation' so the requirements compose."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 64,
+      "title": "v1 freshness rule is vacuous for the review-proposal gate — proposal passes can never go stale",
+      "recommendation": "Only apply-*.json events mark staleness, and none can exist before apply. Artifact edits (address-reviews fixes, regeneration, hand edits) never invalidate a proposal pass, while the gate declares an `inputs` freshness scope v1 never consults. Either state the limitation explicitly in the requirement + Risks, or add a v1 proposal-phase event source.",
+      "recommendation_options": [
+        { "label": "A", "body": "Document the limitation: v1 freshness covers post-apply staleness only; `inputs` is declared for the hash upgrade; add to Risks." },
+        { "label": "B", "body": "Add a v1 proposal-phase event source (e.g., address-reviews-*.json emits that record artifact edits count as artifact-changing events for proposal gates)." }
+      ]
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 10,
+      "title": "`independent` cadence token is outside the declared reviewer-class vocabulary",
+      "recommendation": "cadence is typed as a reviewer-class list and clause (a) iterates reviewer classes, but spec-driven's proposal cadence uses `independent`, defined only inside the spec-driven requirement and absent from the reviewer_class enum. Define the cadence-entry vocabulary once in the gate-declaration requirement (three classes + the `independent` meta-class) and reference it from clause (a) and spec-driven."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 10,
+      "title": "`before: archive` targets a phase the engine does not model; legal targets and the archive query surface unspecified",
+      "recommendation": "The CLI special-cases `instructions apply` and has no archive phase, so `orbit instructions archive` cannot return blocked-by-gate, yet task 5.3 sources gate reasons 'from orbit instructions'. Specify (a) legal `before:` targets (declared ids + an enumerated lifecycle-token set defining `archive`) and (b) the archive workflow's query surface (e.g., `orbit status --change <name> --json` gates[]/next_command)."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "file": "specs/orbit-run-summary-emit/spec.md",
+      "line": 5,
+      "title": "T0 review-external emits carry reviewer_class 'external' but must not count as class coverage — exclusion unstated",
+      "recommendation": "A packaged-but-never-returned external (awaiting_findings: true) could satisfy external coverage. State in the convergence or class-resolution requirement: an external pass exists only when an external-<as>-<TS>.md findings file exists; emits with awaiting_findings: true are never passes."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 97,
+      "title": "Cadence ordering / 'cadence position' undefined — the trailing in-context confirm is unverifiable",
+      "recommendation": "Clause (a) treats cadence as a set, so a pre-external in-context pass satisfies both in-context slots and nothing requires a confirm after the final fix wave; canonical-next derives from an undefined 'cadence position'. Define slot ordering (each slot satisfied by a pass with a later token than the previous slot's) or drop the duplicate slot; specify how position-readout step tokens map from artifact/gate ids."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 103,
+      "title": "'New finding' matching scope and normalization underspecified",
+      "recommendation": "Add one sentence: same-gate prior passes only; trimmed case-sensitive title equality; repo-relative file path with :line stripped."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "file": "design.md",
+      "line": 3,
+      "title": "Apply state machine misattributed to artifact-graph/instruction-loader.ts",
+      "recommendation": "The blocked|all_done|ready apply state machine lives in src/commands/workflow/shared.ts:35 + instructions.ts:318; instruction-loader.ts holds per-artifact done|ready|blocked statuses. Correct design.md (and note explore.md is historical) so chunk-1 implementers start in the right file."
+    }
+  ],
+  "stale_suppressed": [
+    { "pass": "2", "title": "explore.md D-c1-5 promises MODIFIED on orbit-run-summary-emit but change ships ADDED", "evidence": "Correct per the schema's own delta guidance (new concern → ADDED); proposal.md:60 records the correction; explore.md is the historical record." },
+    { "pass": "2", "title": "Chunk preamble might not match the apply parser", "evidence": "Verified against orbit-apply-change SKILL.md chunk-detection format — matches exactly." },
+    { "pass": "4", "title": "Full-command address-reviews invocation diverges from baseline phrasing", "evidence": "Positional + --from-file is a specified baseline combination; the fuller form matches D-c1-2." },
+    { "pass": "2", "title": "gate_overridden field lacks an emit-spec delta", "evidence": "Normatively specified in the override-contract requirement; conventions' per-kind extension lists are open." },
+    { "pass": "3", "title": "CLAUDE.md stale post-apply", "evidence": "Task 7.3 covers the post-C1 refresh; current text accurate pre-apply." }
+  ],
+  "iteration_note": null
+}

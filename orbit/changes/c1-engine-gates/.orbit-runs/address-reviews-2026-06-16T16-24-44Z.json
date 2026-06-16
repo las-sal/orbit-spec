@@ -1,0 +1,201 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-06-16T16:24:44Z",
+  "change": "c1-engine-gates",
+  "final_assessment": "All 11 findings from review-proposal iteration 1 resolved (2 CRITICAL / 7 WARNING / 2 SUGGESTION). 0 stale (artifacts unchanged since the source review ran). Three structured/heuristic decision forks resolved (all option A). Finding 2 expanded the MODIFIED-capability set 3 -> 5 (orbit-conventions + orbit-archive-modifications gate-reconciled). Change validates --strict.",
+  "next_recommended": "re-run /orbit:review --as proposal c1-engine-gates to confirm convergence (iteration 2)",
+  "kind": "editorial",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/c1-engine-gates/.orbit-runs/review-proposal-2026-06-13T00-38-15Z.json",
+  "source_command": "review",
+  "source_token": "2026-06-13T00-38-15Z",
+  "latest_apply_token": null,
+  "tie_break_rationale": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": { "critical": 2, "warning": 7, "suggestion": 2 },
+  "pushback_verification": "All 11 findings verified against current state; 0 stale. No artifact edits between the source review (2026-06-13T00:38:15Z) and this resolve, so cited lines/symbols all still present. Code references independently confirmed: finding 11's apply state machine is in src/commands/workflow/shared.ts:35 + instructions.ts:318 (not instruction-loader.ts, which holds per-artifact done|ready|blocked at :98); finding 2's baseline contradictions live at orbit-conventions:761,771 and orbit-archive-modifications:56,116.",
+  "resolution_summary": { "resolved": 11, "stale_suppressed": 0, "deferred": 0, "escalated": 0 },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "Convergence clause (c) ('0 new findings') contradicts the system cadence repeat rule and Path A/B 'gate review-system PASSED' phrasings",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 101,
+      "classification": "decision_required",
+      "action": "Applied option A — per-gate `confirm` predicate added to the gate declaration (no-new-findings | findings-resolved, closed set, default no-new-findings). Clause (c) now reads per-gate; review-proposal=no-new-findings, review-system=findings-resolved. Added a 'System gate converges on a resolved external' scenario and reframed the 'Independent confirmation required' scenario around `confirm`.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          { "label": "A", "body": "Per-gate confirmation rule in schema YAML: proposal keeps '0 CRITICAL and 0 new findings'; system relaxes to '0 CRITICAL, all findings resolved'." },
+          { "label": "B", "body": "Weaken clause (c) globally to '0 CRITICAL and 0 unresolved new findings'; recast D-c1-4 proposal repeat as cadence recommendation." }
+        ],
+        "chosen": "A",
+        "discuss_invoked": false
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/c1-engine-gates/specs/orbit-engine-gates/spec.md",
+          "orbit/changes/c1-engine-gates/design.md",
+          "orbit/changes/c1-engine-gates/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "Missing MODIFIED deltas: orbit-conventions and orbit-archive-modifications baseline requirements contradict the gate model",
+      "marker_source": "internal-review",
+      "file": "proposal.md",
+      "line": 52,
+      "classification": "decision_required",
+      "action": "User chose 'Add 2 MODIFIED deltas now'. Authored specs/orbit-conventions/spec.md (MODIFIED 'Review mode decision framework' — advisory->gate-surfaced-not-enforced; reconciled the 'advisory, not a gate' and 'does NOT enforce cycle patterns' scenarios) and specs/orbit-archive-modifications/spec.md (MODIFIED 'Critical-drift prompt, not gate' + 'Audit informational, not blocking by default' — scoped 'proceeds without prompting' to the audit prompt; reconciled 'system review is the user's gate' with the engine gate + gate_overridden recording). Updated proposal Modified-Capabilities list and impact count (3 -> 5 MODIFIED).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/c1-engine-gates/specs/orbit-conventions/spec.md",
+          "orbit/changes/c1-engine-gates/specs/orbit-archive-modifications/spec.md",
+          "orbit/changes/c1-engine-gates/proposal.md"
+        ],
+        "flagged_not_applied": [
+          { "path": "orbit/specs/orbit-conventions/spec.md", "reason": "baseline spec; the gate-reconciliation is captured as a MODIFIED delta in the change's specs/orbit-conventions/spec.md (the intended fix), not a baseline edit" },
+          { "path": "orbit/specs/orbit-archive-modifications/spec.md", "reason": "baseline spec; the gate-reconciliation is captured as a MODIFIED delta in the change's specs/orbit-archive-modifications/spec.md (the intended fix), not a baseline edit" }
+        ]
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Inline reference template not updated with the attestation instruction its own modified scenario requires",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-review-external/spec.md",
+      "line": 152,
+      "classification": "trivial_fix",
+      "action": "Extended the inline prompt template's 'After completing the review' step 2 with the STATE PLAINLY attestation ('Findings committed (<short-sha>) and pushed') and a could-not-commit statement in the chat-only fallback, carrying D-c1-6(b) into the normative template body.",
+      "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Packaging attestation conflicts with the chat-snippet scenario's closed item list",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-review-external/spec.md",
+      "line": 46,
+      "classification": "trivial_fix",
+      "action": "Amended the conditional chat-snippet bullet to 'the affirmative committed-and-pushed attestation immediately followed by the pull invocation' when the preflight is satisfied, so the closed item list composes with the modified 'Clean and pushed' scenario.",
+      "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "v1 freshness rule is vacuous for the review-proposal gate — proposal passes can never go stale",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 64,
+      "classification": "decision_required",
+      "action": "Applied option A — added a 'v1 scope limitation' clause to the freshness requirement stating v1 detects post-apply staleness only and `inputs` is declared but unconsulted in v1; added a matching Risks/Trade-offs entry in design.md.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          { "label": "A", "body": "Document the limitation: v1 freshness covers post-apply staleness only; inputs declared for the hash upgrade; add to Risks." },
+          { "label": "B", "body": "Add a v1 proposal-phase event source (address-reviews-*.json edits count as artifact-changing for proposal gates)." }
+        ],
+        "chosen": "A",
+        "discuss_invoked": false
+      },
+      "ripple_cascade": {
+        "applied": ["orbit/changes/c1-engine-gates/design.md"],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "`independent` cadence token is outside the declared reviewer-class vocabulary",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 10,
+      "classification": "trivial_fix",
+      "action": "Defined the cadence-entry vocabulary once in the Gate-declaration requirement (three reviewer classes + the `independent` meta-class; noted `independent` is cadence-only and never a reviewer_class emit value); referenced it from clause (a) and the spec-driven requirement.",
+      "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "`before: archive` targets a phase the engine does not model; legal targets and archive query surface unspecified",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 10,
+      "classification": "decision_required",
+      "action": "Applied the natural in-scope spec: defined legal `before:` targets (declared gate/artifact id OR lifecycle-phase token from {apply, archive}) and the archive query surface (`orbit status --change <name> --json` gates[]/next_command, since there is no `orbit instructions archive` phase). Updated tasks.md 5.3 to source archive gate reasons from `status --json` (apply from `instructions apply --json`).",
+      "ripple_cascade": {
+        "applied": ["orbit/changes/c1-engine-gates/tasks.md"],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "T0 review-external emits carry reviewer_class 'external' but must not count as class coverage — exclusion unstated",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-run-summary-emit/spec.md",
+      "line": 5,
+      "classification": "trivial_fix",
+      "action": "Stated the exclusion in the Reviewer-class requirement: a T0 review-external emit carries awaiting_findings: true and is a packaging record, never a counted pass; an external pass exists only when an external-<as>-<TS>.md findings file exists. Added a 'Packaged-but-unreturned external is not class coverage' scenario.",
+      "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Cadence ordering / 'cadence position' undefined — the trailing in-context confirm is unverifiable",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 97,
+      "classification": "decision_required",
+      "action": "Applied option A — redefined clause (a) as ordered SLOTS (each slot satisfied by a fresh pass with a token strictly later than the prior slot's), so the trailing in-context confirm requires a distinct later pass; specified position-readout step-token mapping (gate id / lifecycle-phase token; order from requires/before edges, ties by schema declaration order) in the status requirement.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          { "label": "A", "body": "Define slot ordering: each slot satisfied by a pass with a later token than the previous slot's." },
+          { "label": "B", "body": "Drop the duplicate slot." }
+        ],
+        "chosen": "A",
+        "discuss_invoked": false
+      },
+      "ripple_cascade": {
+        "applied": ["orbit/changes/c1-engine-gates/design.md"],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "'New finding' matching scope and normalization underspecified",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 103,
+      "classification": "trivial_fix",
+      "action": "Added the normalization sentence to clause (c): new = matched against same-gate prior passes only, by trimmed case-sensitive title equality AND repo-relative file path with any :line suffix stripped.",
+      "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Apply state machine misattributed to artifact-graph/instruction-loader.ts",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 3,
+      "classification": "trivial_fix",
+      "action": "Corrected design.md Context: the blocked|ready|all_done apply state machine lives in src/commands/workflow/shared.ts:35 + instructions.ts:318; instruction-loader.ts holds per-artifact done|ready|blocked statuses. Noted explore.md's attribution is historical and chunk-1 implementers start in src/commands/workflow/. Verified against the code before editing.",
+      "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": []
+}
