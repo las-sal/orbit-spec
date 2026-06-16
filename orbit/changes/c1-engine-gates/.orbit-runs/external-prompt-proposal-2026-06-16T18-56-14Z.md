@@ -8,6 +8,9 @@ inconsistent, or unclear. Don't be charitable to the authoring AI's reasoning.
 
 https://github.com/las-sal/orbit-spec.git
 
+**Check out the `c1-engine-gates` branch** — this change lives there, not on
+`main`. After cloning/pulling: `git checkout c1-engine-gates`.
+
 ## Project context (read first)
 
 - `CLAUDE.md` — handoff orientation (read this first; it explains the fork, the
