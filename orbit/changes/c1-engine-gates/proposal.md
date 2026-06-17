@@ -21,10 +21,12 @@ render a position readout plus one canonical full command.
   tokens + review/address-reviews JSON contents + `tasks.md` checkboxes + artifact existence.
   No new state files. v1 freshness = promoted timestamp-token ordering (B3's spec'd convergence
   semantics moved from prose into the engine); content hashes are a later precision upgrade.
-- **Computed review convergence** replaces AI self-assessment: a `reviewed` gate passes when every
-  cadence-required reviewer class has a fresh, resolved pass AND the latest independent-class
-  iteration yielded 0 CRITICAL and 0 new findings. Emits gain a first-class
-  `reviewer_class: in-context|fresh|external` field.
+- **Computed review convergence** replaces AI self-assessment: a `reviewed` gate passes when its
+  **ordered cadence slots** are each covered by a fresh pass strictly later than the prior slot,
+  every pass's findings are resolved, AND the latest independent pass satisfies the gate's `confirm`
+  predicate (`review-proposal: no-new-findings` — 0 CRITICAL + 0 new findings;
+  `review-system: findings-resolved` — 0 CRITICAL + that pass's findings resolved). Emits gain a
+  first-class `reviewer_class: in-context|fresh|external` field.
 - **v1 gate edges** in `spec-driven`: `review-proposal` gates `apply`; `review-system` gates
   `archive`. Verify stays a command (Pass 0 inside system review); audit-drift stays orthogonal.
 - **Single-voiced recommendations**: stock phrasings lose their advertised skip paths ("or proceed
@@ -58,7 +60,9 @@ render a position readout plus one canonical full command.
   attestation; the prompt template's "After completing the review" section requires the external
   AI's own commit/push statement.
 - `orbit-run-summary-emit`: review-cycle emits gain the `reviewer_class` field (ADDED requirement;
-  new concern, no existing behavior changed).
+  new concern), and the apply emit's field list gains the conditional `gate_overridden` field
+  (MODIFIED `Apply per-chunk-end emission`) so a proceed-anyway past the `review-proposal` gate is
+  recorded in the apply run summary.
 - `orbit-conventions`: the `Review mode decision framework` requirement becomes gate-aware — the
   advisory recommendation is now backed by the engine-computed `review-system` gate (apply-parity:
   surfaced and recorded, never hard-blocked); the "advisory, not a gate" and "does NOT enforce

@@ -67,7 +67,11 @@ Implementation chunks:
       gain the gate prompt (address / proceed-anyway / abort). The apply body sources gate state +
       reason from `orbit instructions apply --json` (modeled phase); the archive body sources from
       `orbit status --change <name> --json` (`gates[]`/`next_command`) — there is NO
-      `orbit instructions archive` phase. Run summaries record `gate_overridden`.
+      `orbit instructions archive` phase. Run summaries record `gate_overridden` per the MODIFIED
+      field-list deltas: document the field in the apply emit's inline JSON shape (apply body's
+      "Run-summary emit (chunk-aware)" section, `apply-change.ts`) and in the archive emit schema
+      reference (`orbit-archive-change`'s `references/archive-summary-schema.md`, `archive-change.ts`)
+      — present only on proceed-anyway, absent otherwise.
 
 ## 6. Editorial bodies — single-voiced + position readout
 

@@ -1,0 +1,70 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-06-17T17:52:12Z",
+  "change": "c1-engine-gates",
+  "source": "--from-file orbit/changes/c1-engine-gates/.orbit-runs/external-proposal-2026-06-17T13-41-06Z.md",
+  "source_format": "external-review markdown",
+  "source_path": "orbit/changes/c1-engine-gates/.orbit-runs/external-proposal-2026-06-17T13-41-06Z.md",
+  "external_reviewer": "GPT-5 Codex",
+  "review_mode": "proposal",
+  "review_iteration": 1,
+  "walk_mode": "per_finding",
+  "walk_mode_source": "default",
+  "input_findings": { "critical": 0, "warning": 2, "suggestion": 0 },
+  "markers_found": 2,
+  "markers_walked": 2,
+  "subset_specified": false,
+  "pushback": {
+    "verified": 2,
+    "stale_suppressed": 0,
+    "note": "Both warnings verified as STILL APPLY against current state. W2 explicitly checked against the prior internal resolution (review-proposal-2026-06-13 finding 'gate_overridden field lacks an emit-spec delta', resolved 2026-06-16): that resolution wired the override narrative into orbit-conventions + orbit-archive-modifications prose but did NOT extend the enumerated field-list contracts (apply emit, archive summary, archive schema reference) — so W2's sharper claim is a real residual gap, not already-fixed."
+  },
+  "resolution_summary": { "resolved": 2, "stale": 0, "deferred": 0, "escalated": 0 },
+  "findings": [
+    {
+      "ref": "W1",
+      "severity": "WARNING",
+      "title": "Proposal summary still states the old convergence rule",
+      "file": "orbit/changes/c1-engine-gates/proposal.md:24",
+      "classification": "decision required",
+      "pushback": "STILL APPLIES — proposal bullet described the pre-remediation class-set rule and omitted the per-gate confirm predicate; contradicts specs/orbit-engine-gates/spec.md (Reviewed-gate pass condition, lines 117-134), design.md, tasks.md.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          { "label": "A", "body": "Rewrite the bullet inline: ordered cadence slots + per-gate confirm (review-proposal: no-new-findings; review-system: findings-resolved)." },
+          { "label": "B", "body": "Replace the abbreviated rule with a one-line pointer to the orbit-engine-gates spec." }
+        ],
+        "chosen": "A",
+        "discuss_invoked": true
+      },
+      "action": "Applied option A (user-chosen after discuss). Rewrote the 'Computed review convergence' bullet at proposal.md:24-29 to state ordered cadence slots covered by strictly-later fresh passes, all findings resolved, and the latest independent pass satisfying the gate's confirm predicate (review-proposal: no-new-findings / 0 CRITICAL + 0 new; review-system: findings-resolved / 0 CRITICAL + that pass's findings resolved).",
+      "ripple_cascade": { "applied": [], "flagged_not_applied": [], "note": "No ripple — the fix brings proposal.md into line with design.md/spec.md (the correct sources); they did not need editing." },
+      "marker_removal": "no-op (virtual marker; external-review markdown is an audit artifact)"
+    },
+    {
+      "ref": "W2",
+      "severity": "WARNING",
+      "title": "Override recording is not wired into the emit and archive summary schemas",
+      "file": "orbit/changes/c1-engine-gates/specs/orbit-engine-gates/spec.md:241",
+      "classification": "fix (multi-artifact, unambiguous)",
+      "pushback": "STILL APPLIES — see top-level pushback note; the three enumerated field-list contracts omitted gate_overridden.",
+      "action": "Added three MODIFIED deltas wiring the conditional gate_overridden {gate, state, reason} field (present only on proceed-anyway, absent otherwise): (1) orbit-run-summary-emit — new MODIFIED 'Apply per-chunk-end emission' adding gate_overridden to the apply emit field list + a scenario; (2) orbit-archive-modifications — MODIFIED 'Archive run summary written' adding gate_overridden + a scenario (distinguished from user_decision); (3) orbit-archive-modifications — MODIFIED 'Archive summary schema reference ships with the skill' documenting gate_overridden in the reference doc field list.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/c1-engine-gates/proposal.md (Modified-Capabilities bullet for orbit-run-summary-emit: now notes both the ADDED reviewer_class requirement and the MODIFIED Apply per-chunk-end emission gaining gate_overridden)",
+          "orbit/changes/c1-engine-gates/tasks.md (task 5.3: extended to document gate_overridden in the apply body's inline emit JSON shape (apply-change.ts) and the archive emit schema reference (orbit-archive-change references/archive-summary-schema.md, archive-change.ts))"
+        ],
+        "flagged_not_applied": [
+          { "file": "orbit/specs/orbit-run-summary-emit/spec.md", "reason": "baseline spec; the ripple is captured as a MODIFIED delta in the current change's specs/orbit-run-summary-emit/spec.md" },
+          { "file": "orbit/specs/orbit-archive-modifications/spec.md", "reason": "baseline spec; the ripple is captured as MODIFIED deltas in the current change's specs/orbit-archive-modifications/spec.md" }
+        ]
+      },
+      "read_before_reference_correction": "Initial tasks.md edit cited a non-existent orbit-apply references/run-summary-schema.md; verified the apply emit schema is documented inline in orbit-apply-change SKILL.md (source apply-change.ts) and only orbit-archive-change ships references/archive-summary-schema.md — corrected the task wording.",
+      "marker_removal": "no-op (virtual marker; external-review markdown is an audit artifact)"
+    }
+  ],
+  "validation": "node bin/orbit.js validate c1-engine-gates --strict → valid (exit 0) after npm run build",
+  "final_assessment": "2 of 2 external WARNING findings resolved (0 CRITICAL, 0 SUGGESTION). 0 deferred, 0 escalated, 0 stale. Change validates --strict. This is a second-external-pass candidate: per the review-system gate's confirm: findings-resolved semantics, a no-CRITICAL external whose findings are resolved converges — but this was a PROPOSAL-mode external (review-proposal gate, confirm: no-new-findings), whose convergence requires an independent pass with 0 new findings, so a re-review (internal --fresh or external iter 2) is the cadence-correct next step.",
+  "next_recommended": "Commit the resolutions, then re-review for proposal convergence: /orbit:review-external --as proposal c1-engine-gates (external iter 2), or /orbit:review --as proposal --fresh c1-engine-gates for an in-repo independent pass."
+}
