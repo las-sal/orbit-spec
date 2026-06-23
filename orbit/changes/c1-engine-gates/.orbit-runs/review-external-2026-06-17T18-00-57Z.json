@@ -1,0 +1,12 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-06-17T18:00:57Z",
+  "change": "c1-engine-gates",
+  "final_assessment": "External review prompt packaged for c1-engine-gates (iter 2, mode proposal); awaiting findings. Handoff preflight at packaging time was SATISFIED (working tree clean, 0 unpushed commits) — but the prompt file and this T0 emit are themselves now uncommitted; commit and push them before handing off so the pulling external AI can see the prompt on the c1-engine-gates branch.",
+  "next_recommended": "Commit and push orbit/changes/c1-engine-gates/.orbit-runs/external-prompt-proposal-2026-06-17T17-59-43Z.md (and this T0 emit), then paste that prompt file into a fresh DIFFERENT AI than iter 1's GPT-5 Codex (e.g. fresh Claude or GPT-5), save its response as orbit/changes/c1-engine-gates/.orbit-runs/external-proposal-<TS>.md, then /orbit:address-reviews c1-engine-gates --from-file orbit/changes/c1-engine-gates/.orbit-runs/external-proposal-<TS>.md",
+  "kind": "editorial",
+  "mode": "proposal",
+  "prompt_path": "orbit/changes/c1-engine-gates/.orbit-runs/external-prompt-proposal-2026-06-17T17-59-43Z.md",
+  "target": null,
+  "awaiting_findings": true
+}
