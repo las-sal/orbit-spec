@@ -223,7 +223,12 @@ carry the same fields for downstream readers.
 
 The engine SHALL compute ONE canonical next command per change state — the full invocation with
 all applicable arguments and flags (e.g. `/orbit:review-external --as system <change>`) — derived
-from the gate graph and cadence position. Recommendation surfaces (gate reasons, blocked-by-gate
+from the gate graph and cadence position. When the next uncovered cadence slot is the `independent`
+meta-class (satisfiable by a `fresh` OR an `external` pass), the engine's single canonical command
+SHALL be the fresh-context review (`/orbit:review --as <mode> --fresh <change>`) — the lighter
+proposal-phase default. An external pass also satisfies an `independent` slot for class-coverage
+purposes, but the rendered recommendation stays single-voiced: the fresh-context command only, never
+co-offered with the external alternative. Recommendation surfaces (gate reasons, blocked-by-gate
 payloads, and the workflow handoffs that render them) SHALL present only this canonical command:
 no advertised alternatives, no skip paths, and no bare command names without arguments. Skills
 render the engine-computed command verbatim.

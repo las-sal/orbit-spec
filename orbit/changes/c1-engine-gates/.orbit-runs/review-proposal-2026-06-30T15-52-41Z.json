@@ -1,0 +1,63 @@
+{
+  "command": "review",
+  "timestamp": "2026-06-30T15:52:41Z",
+  "change": "c1-engine-gates",
+  "final_assessment": "No critical issues. 2 warning(s) to consider. Ready to apply (with noted improvements).",
+  "next_recommended": "/orbit:address-reviews c1-engine-gates — 2 warning(s) + 1 suggestion(s) to walk (auto-discovers this JSON); all concern the proposal-mode gate-aware phrasings added this session",
+  "kind": "editorial",
+  "mode": "proposal",
+  "iteration": 2,
+  "depth": "full",
+  "flags": { "parallel": false, "focus": null, "strict": false, "fresh": false, "mark": false, "skip_verify": false },
+  "reviewer_class": "in-context",
+  "passes_run": ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+  "passes_skipped": [],
+  "findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 1,
+    "by_pass": {
+      "1": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "2": { "critical": 0, "warning": 1, "suggestion": 0 },
+      "3": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "4": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "5": { "critical": 0, "warning": 1, "suggestion": 0 },
+      "6": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "7": { "critical": 0, "warning": 0, "suggestion": 1 },
+      "8": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "9": { "critical": 0, "warning": 0, "suggestion": 0 }
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 222,
+      "title": "Canonical command for an uncovered `independent` meta-class slot is unpinned in the engine spec; orbit-review's new proposal phrasings unilaterally pick `--fresh`",
+      "recommendation": "orbit-engine-gates' 'Single-voiced canonical-next computation' requires the ENGINE to compute the one canonical next command and skills to render it verbatim, but neither that requirement nor 'spec-driven v1 gates and cadence' pins which command an uncovered `independent` slot (fresh OR external) resolves to. The new orbit-review proposal scenarios (P1/P3, specs/orbit-review/spec.md:12,22) hardcode `/orbit:review --as proposal --fresh <change>` with no engine-side anchor — if an implementer wires the engine to emit `/orbit:review-external` for the independent slot, the two specs contradict. Pin it in orbit-engine-gates: an uncovered `independent` slot's canonical command is the fresh-context review (the proposal-phase default), with external named as a user substitute that also satisfies the slot; orbit-review then renders the engine-computed command."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "file": "specs/orbit-review/spec.md",
+      "line": 27,
+      "title": "Current in-context pass's counting toward the trailing `in-context` slot is unspecified — the P4↔P5 boundary is ambiguous and the gate can't converge cleanly through an in-context confirm run",
+      "recommendation": "The trailing cadence slot is `in-context`, which is exactly what a `/orbit:review --as proposal` (in-context) run produces. But gate state is 'a pure function of existing on-disk artifacts' (orbit-engine-gates) and the final assessment is computed at Step 9, BEFORE this run's emit is written at Step 10 — so when a user runs the in-context confirm right after a clean independent pass, the engine reads a trail lacking this pass and emits P4 ('Next: /orbit:review --as proposal <change>' — telling the user to run what they just ran) instead of P5 (gate passed → apply). Specify that orbit-review's proposal final-assessment computes gate state as-of THIS pass's completion (the current in-context pass satisfies the trailing in-context slot), so a clean independent pass followed by this in-context review yields P5. Otherwise the gate only converges on a confusing second in-context run."
+    },
+    {
+      "pass": "7",
+      "severity": "SUGGESTION",
+      "file": "specs/orbit-review/spec.md",
+      "line": 5,
+      "title": "orbit-review intro restates the literal proposal cadence `[independent, in-context]`, duplicating orbit-engine-gates' spec-driven cadence (drift risk)",
+      "recommendation": "The cadence literal now lives in two specs; the system-mode intro does not restate its cadence. If the cadence is later tuned in the schema YAML (a deliberately cheap edit per D-c1-4), this parenthetical drifts. Reference `orbit-engine-gates`' spec-driven cadence rather than restating `[independent, in-context]` inline (or accept the duplication and rely on audit-drift Cat 3 to catch it — the recommendation-prose-auditable scenario already covers drift of this kind)."
+    }
+  ],
+  "stale_suppressed": [
+    { "pass": "all", "title": "iter-1 findings (2 CRITICAL / 7 WARNING / 2 SUGGESTION)", "evidence": "All resolved by address-reviews-2026-06-16T16-24-44Z.json (0 deferred/escalated); spot-verified the two iter-1 CRITICALs — clause (c) per-gate confirm is now in orbit-engine-gates:115-134, and orbit-conventions + orbit-archive-modifications MODIFIED deltas exist. Not re-flagged." },
+    { "pass": "3", "title": "CLAUDE.md baseline-count stale post-apply (says PARITY/11, change goes 11→12)", "evidence": "Task 7.3 covers the post-C1 CLAUDE.md refresh; current text is accurate pre-apply. Same suppression as iter 1." },
+    { "pass": "2", "title": "P2 canonical command uses --from-file <independent-path> which looks external-only", "evidence": "Not a finding: address-reviews --from-file accepts BOTH external markdown AND internal review-proposal JSON, so the placeholder resolves correctly for a fresh internal pass too." }
+  ],
+  "iteration_note": "Iteration 2 (in-context). All iter-1 findings resolved (2 external iters also resolved since). All 3 findings this run are net-new and concern the proposal-mode gate-aware phrasings added in this session's address-reviews run."
+}
