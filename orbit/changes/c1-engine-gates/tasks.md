@@ -82,8 +82,8 @@ Implementation chunks:
       canonical next command verbatim (replacing hand-written next-step prose); audit each of
       the 15 bodies' handoff text once.
 - [ ] 6.3 Residue sweep: grep bodies for the retired phrasings ("Proceed directly to",
-      "Or /orbit:review --fresh for a lighter", "Ready to archive.") and bare command-name
-      recommendations.
+      "Or /orbit:review --fresh for a lighter", "Ready to apply.", "Ready to archive.") and bare
+      command-name recommendations.
 
 ## 7. Verification + docs
 

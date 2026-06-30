@@ -82,6 +82,16 @@ discipline kept all gate language out of them.
   first-class `reviewer_class: "in-context" | "fresh" | "external"` field (today the class is
   inferable but scattered across `flags.fresh` and the external `**Reviewer**:` line) — a small
   emit-schema addition (MODIFIED delta on `orbit-run-summary-emit` / conventions spine).
+  > **Superseded (proposal-review remediation)** — clauses (a) and (c) were refined after this
+  > dated decision; the NORMATIVE form lives in
+  > `specs/orbit-engine-gates/spec.md` → "Reviewed-gate pass condition — the computed convergence
+  > criterion". Two changes: (a) cadence is an **ordered slot list, not a class set** — each slot
+  > is satisfied by a FRESH pass of that class whose token is strictly later than the prior slot's
+  > (`independent` is a cadence-only meta-class = fresh OR external); (c) the universal "0 CRITICAL
+  > and 0 new findings" independent pass became a **per-gate `confirm` predicate** —
+  > `review-proposal: no-new-findings` (0 CRITICAL AND 0 new findings) vs
+  > `review-system: findings-resolved` (0 CRITICAL AND that pass's findings resolved). Treat the
+  > spec, not this bullet, as authoritative for codegen.
 
 - **D-c1-6 (2026-06-12) — External-handoff state must be affirmatively attested, both
   directions.** Observed inconsistency in real use: whether the prompt commit/push happened
@@ -108,6 +118,13 @@ discipline kept all gate language out of them.
   and is normalized into the gates list as the `kind: tracked` instance — third-party and
   project-local schemas (resolver supports both) keep working; cherry-pick compatibility
   preserved.
+  > **Superseded (proposal-review remediation)** — the per-gate declaration grew a `confirm`
+  > field (`no-new-findings` | `findings-resolved`, a closed set) and `cadence` is an **ordered
+  > slot list** whose entries are the three reviewer classes OR the `independent` meta-class — not
+  > the flat `[reviewer classes]` set shown above. The NORMATIVE declaration shape lives in
+  > `specs/orbit-engine-gates/spec.md` → "Gate declaration in schema YAML" (and the shipped v1
+  > gates in "spec-driven v1 gates and cadence"). Treat the spec, not this bullet, as authoritative
+  > for codegen.
 
 - **D-c1-8 (2026-06-12) — Gate state is a pure function of existing on-disk artifacts; no new
   state files.** `gate_state(change) = f(.orbit-runs/ filename tokens + review JSONs' findings

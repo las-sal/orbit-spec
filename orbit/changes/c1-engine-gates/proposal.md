@@ -53,9 +53,11 @@ render a position readout plus one canonical full command.
 
 ### Modified Capabilities
 
-- `orbit-review`: the system-mode final-assessment stock phrasings become single-voiced and
-  engine-sourced (skip clauses removed from recommendations; convergence states computed by the
-  engine, rendered by the skill).
+- `orbit-review`: the proposal- AND system-mode final-assessment stock phrasings become
+  single-voiced and engine-sourced (skip clauses removed from recommendations; the "Ready to
+  apply" / "Ready to archive" placeholders replaced by the engine-computed gate state plus one
+  canonical next command — proposal mode varies on the `review-proposal` gate, system mode on
+  `review-system`; convergence states computed by the engine, rendered by the skill).
 - `orbit-review-external`: the handoff preflight gains the affirmative committed-and-pushed
   attestation; the prompt template's "After completing the review" section requires the external
   AI's own commit/push statement.
