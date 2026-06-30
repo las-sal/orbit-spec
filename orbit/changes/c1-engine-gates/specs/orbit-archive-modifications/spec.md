@@ -78,3 +78,24 @@ residue that path renaming alone does not fix — satisfying the deferral record
   field (`{gate, state, reason}`; present only when the user proceeded past an unpassed/stale
   `review-system` gate, per `orbit-engine-gates`' override contract) — and covers the field list
   in this capability's own `Archive run summary written` requirement
+
+#### Scenario: Schema shapes match the baselines, not the overlay source
+
+- **WHEN** the shipped schema is compared against the B1 baselines
+- **THEN** it documents `unresolved_markers` as an ARRAY (not the overlay's object), the sync
+  delta counts directly under `sync_specs` (not nested under `sync_specs.counts`), exactly the
+  three baseline `user_decision` values — no `aborted` (per the baseline, an aborted archive
+  writes no summary) — and the flat `audit_skipped_via_flag: true` skip-flag field (not the
+  overlay's nested `audit.skipped_via_flag`), matching the baseline and the skill body
+
+#### Scenario: No predecessor-era vocabulary survives
+
+- **WHEN** the shipped reference content is scanned
+- **THEN** it contains no `/opsx:` command references, no `openspec/` workspace paths, and no
+  `openspec-*` skill names — all command, path, and skill vocabulary is orbit-named
+
+#### Scenario: Body cite resolves
+
+- **WHEN** the archive skill body instructs reading `references/archive-summary-schema.md`
+- **THEN** that path resolves within the generated skill directory (the B1-era dangling cite is
+  closed)

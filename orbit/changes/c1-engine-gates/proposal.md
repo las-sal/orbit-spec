@@ -67,13 +67,17 @@ render a position readout plus one canonical full command.
   recorded in the apply run summary.
 - `orbit-conventions`: the `Review mode decision framework` requirement becomes gate-aware — the
   advisory recommendation is now backed by the engine-computed `review-system` gate (apply-parity:
-  surfaced and recorded, never hard-blocked); the "advisory, not a gate" and "does NOT enforce
-  cycle patterns" scenarios are reconciled with the gate model (gate-surfaced, not gate-enforced).
-- `orbit-archive-modifications`: the `Critical-drift prompt, not gate` and `Audit informational,
-  not blocking by default` requirements are scoped against the new gate inflection prompt — "archive
-  proceeds without prompting" now scopes to the audit-drift prompt only (the `review-system` gate
-  fires its own inflection prompt), and "system review is the user's gate" is reconciled with the
-  engine-computed gate that surfaces at archive and records `gate_overridden` on override.
+  surfaced and recorded, never hard-blocked); the "advisory, not a gate" framing and the
+  cycle-pattern-enforcement scenario are reconciled with the gate model (gate-surfaced, not gate-enforced).
+- `orbit-archive-modifications`: four requirements modified. `Critical-drift prompt, not gate` and
+  `Audit informational, not blocking by default` are scoped against the new gate inflection prompt —
+  "archive proceeds without prompting" now scopes to the audit-drift prompt only (the `review-system`
+  gate fires its own inflection prompt), and "system review is the user's gate" is reconciled with the
+  engine-computed gate that surfaces at archive and records `gate_overridden` on override. `Archive run
+  summary written` gains the conditional `gate_overridden` field on the archive summary, and `Archive
+  summary schema reference ships with the skill` adds `gate_overridden` to the documented field list
+  (its three baseline guard scenarios — schema-shape, no-predecessor-vocabulary, body-cite — are
+  preserved unchanged).
 
 ## Impact
 

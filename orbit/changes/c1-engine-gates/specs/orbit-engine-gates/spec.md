@@ -186,7 +186,10 @@ gate's `findings-resolved` confirm matches its repeat rule (external repeats onl
 CRITICALs, so a resolved no-CRITICAL external converges). The cadence arrays live in the schema
 YAML — tuning the review rhythm is a schema revision (version bump), not engine or config change.
 Verify remains a command (Pass 0 inside system review), not a gate; audit-drift remains orthogonal
-to the gate graph.
+to the gate graph. The system cadence's two `in-context` slots require a pass of reviewer_class
+`in-context`: a `--fresh` system run (reviewer_class `fresh`) does NOT satisfy them (`fresh` covers
+the meta-class `independent`, which the system cadence does not use), so a fresh run cannot close
+the trailing system confirm — it surfaces the gate as still needing its in-context slot.
 
 #### Scenario: Cadence tuning is a schema edit
 
