@@ -1,0 +1,69 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-06-30T20:14:59Z",
+  "change": "c1-engine-gates",
+  "final_assessment": "Auto-discovered internal fresh-context review JSON (review-proposal-2026-06-30T18-27-54Z.json, iteration 4 confirming): 1 CRITICAL / 0 WARNING / 1 SUGGESTION, both resolved (0 deferred, 0 escalated). CRITICAL: Path B convergence omitted the external's 0-CRITICAL check that orbit-engine-gates' confirm: findings-resolved requires — fixed by adding the 0-CRITICAL clause to Path B's WHEN, extending the intro subordination clause to cover BOTH ordered-slot coverage AND the confirm predicate, and adding a dedicated routing scenario (user-chosen) 'System mode — external resolved but carried a CRITICAL → fresh external'. SUGGESTION: guarded the 'no prior external' scenario against a --fresh-first system run (routes to the leading in-context pass per the engine, since fresh doesn't satisfy an in-context slot). validate --strict passes. All edits isolated to orbit-review/spec.md; engine was already correct.",
+  "next_recommended": "/orbit:review --as proposal c1-engine-gates (iteration 5) to confirm convergence — a fresh or external independent pass yielding 0 new findings satisfies the no-new-findings confirm; only then /orbit:apply c1-engine-gates.",
+  "kind": "editorial",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/c1-engine-gates/.orbit-runs/review-proposal-2026-06-30T18-27-54Z.json",
+  "source_command": "review",
+  "source_token": "2026-06-30T18-27-54Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 0,
+    "suggestion": 1
+  },
+  "pushback_verification": "Both findings verified against current state: engine clause (c) requires 0 CRITICAL (orbit-engine-gates:129, :159); Path B WHEN lacked the check; intro subordination clause covered only ordered-slot coverage. Confirmed real cross-spec contradiction. 0 stale suppressions.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "Path B convergence omits the external's '0 CRITICAL' check that orbit-engine-gates' confirm: findings-resolved requires",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/c1-engine-gates/specs/orbit-review/spec.md",
+      "line": 63,
+      "classification": "decision_required",
+      "action": "Three-part fix. (1) Added 'AND that external pass itself yielded 0 CRITICAL findings' to Path B's WHEN, citing engine clause (c) and D-c1-4's external-repeats-on-CRITICALs rule. (2) Extended the intro subordination clause: Path A/B render PASSED only when the engine reports PASSED on BOTH ordered-slot coverage AND the confirm predicate; the two unpassed sub-cases route by reason (missing slot → in-context scenario; failed predicate → fresh-external scenario). (3) Added the user-chosen dedicated routing scenario 'System mode — external resolved but carried a CRITICAL (confirm predicate unmet)' → Next: /orbit:review-external --as system <change>, explicitly distinguished from the ordered-slot-grounds scenario. Path A unaffected (clean = 0 findings = 0 CRITICAL trivially).",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          { "label": "A", "body": "Add a dedicated routing scenario for the resolved-CRITICAL-external case (→ fresh external); keeps each scenario's canonical command unambiguous" },
+          { "label": "B", "body": "Widen scenario 12 from 'ordered-slot grounds' to 'ordered-slot OR confirm-predicate grounds' with internal branching on the unpassed reason" }
+        ],
+        "chosen": "A",
+        "discuss_invoked": false
+      },
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "'No prior external' system scenario recommends external without guarding the leading in-context slot for a --fresh-first system run",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/c1-engine-gates/specs/orbit-review/spec.md",
+      "line": 51,
+      "classification": "trivial_fix",
+      "action": "Added a guard to the 'no prior external' WHEN: the scenario matches only when the leading in-context slot is covered (current run is in-context, or a prior in-context system pass exists); a --fresh-first system run with no external does NOT match — it routes to the engine's canonical leading-in-context command, since fresh does not satisfy an in-context slot.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": []
+}
