@@ -1,0 +1,59 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-06-30T16:43:24Z",
+  "change": "c1-engine-gates",
+  "final_assessment": "External proposal review iter 3 (GPT-5 Codex) resolved: 0 CRITICAL / 2 WARNING / 0 SUGGESTION, both resolved (0 deferred, 0 escalated). Both deepened the proposal/system gate-aware convergence machinery added in the prior two cycles. W1: generalized the as-of-completion scenario into a cross-mode synthetic-current-pass rule (covers proposal-fresh-first-run and system trailing-in-context-after-external, not just the proposal in-context trailing slot); added a governing intro sentence so ALL convergence branches evaluate over trail+synthetic-pass. W2: broadened the unresolved-findings branch from 'latest independent pass' to ANY gate-relevant pass (per engine clause (b) 'every pass resolved'), with neutral source wording (review-<mode>-<TS>.json OR external-<as>-<TS>.md), a most-recent-token tie-break for multiple unresolved sources, and an explicit precedence note. Rippled to tasks.md 6.1. validate --strict passes.",
+  "next_recommended": "/orbit:review --as proposal c1-engine-gates to confirm convergence (iteration 4) — ideally a fresh independent pass yielding 0 new findings (the proposal cadence's no-new-findings confirm); only then /orbit:apply c1-engine-gates.",
+  "kind": "editorial",
+  "source": "from-file",
+  "source_path": "orbit/changes/c1-engine-gates/.orbit-runs/external-proposal-2026-06-30T16-35-35Z.md",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-5 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 0
+  },
+  "pushback_verification": "Both findings verified against current state: the as-of-completion scenario (orbit-review/spec.md:37-40) was indeed scoped only to the proposal in-context trailing slot, and the unresolved branch (:17-20) keyed only on the most recent independent pass with /orbit:review-only source wording. Both gaps real; 0 stale suppressions.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "As-of-completion gate computation is scoped too narrowly for current review passes",
+      "marker_source": "external",
+      "file": "orbit/changes/c1-engine-gates/specs/orbit-review/spec.md",
+      "line": 40,
+      "classification": "decision_required",
+      "action": "Rewrote the as-of-completion scenario into 'Final assessment counts the current pass (as-of-completion, both modes)': orbit-review computes gate state over the on-disk trail PLUS a synthetic pass for the active run (mode, reviewer_class, now-token, about-to-be-written review-<mode>-<TS>.json path, current findings), with explicit consequences for (a) proposal current --fresh run with no prior independent pass, (b) proposal current in-context trailing slot, (c) system current in-context after a converged external (supplies the trailing in-context slot so Path A/B PASSED is reachable), (d) any-mode current pass with findings -> address-reviews targets the just-written JSON. status/instructions stay on-disk only. Added a governing intro sentence so ALL convergence branches evaluate over trail+synthetic-pass (fixes the literal-P1-fires-for-current-fresh-run bug).",
+      "ripple_cascade": {
+        "applied": ["orbit/changes/c1-engine-gates/tasks.md"],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Proposal unresolved-findings branch does not cover mixed independent-pass histories",
+      "marker_source": "external",
+      "file": "orbit/changes/c1-engine-gates/specs/orbit-review/spec.md",
+      "line": 19,
+      "classification": "decision_required",
+      "action": "Broadened the unresolved branch from 'the most recent independent-class pass' to ANY gate-relevant pass (independent OR in-context), matching orbit-engine-gates clause (b) 'every pass's findings resolved'. Neutral source wording ('a prior gate-relevant pass'; <unresolved-path> resolves to review-<mode>-<TS>.json OR external-<as>-<TS>.md, both valid --from-file inputs). Defined the multi-source tie-break (most recent unresolved by <TS>; each address-reviews run clears one, the next assessment surfaces the next until clause (b) holds for all). Added an explicit precedence note (this branch beats new-findings/trailing-in-context/gate-passed).",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": []
+}

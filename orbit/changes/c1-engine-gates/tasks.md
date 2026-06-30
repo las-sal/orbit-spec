@@ -77,7 +77,11 @@ Implementation chunks:
 
 - [ ] 6.1 `review.ts` body: Step 9 phrasings replaced with the MODIFIED-delta single-voiced
       texts (engine-sourced convergence; full commands; no skip clauses); worked examples
-      updated to match.
+      updated to match. Implement the as-of-completion rule (both modes): orbit-review renders
+      its final assessment over the on-disk trail PLUS a synthetic pass for the active run
+      (mode, reviewer_class, now-token, about-to-be-written `review-<mode>-<TS>.json` path,
+      current findings) so a current `--fresh`/`in-context` pass counts toward its cadence slot;
+      `status`/`instructions` stay on-disk only.
 - [ ] 6.2 All workflow bodies' completion prompts: render the engine's position readout + the
       canonical next command verbatim (replacing hand-written next-step prose); audit each of
       the 15 bodies' handoff text once.
