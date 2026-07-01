@@ -1,0 +1,70 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-06-30T20:33:40Z",
+  "change": "c1-engine-gates",
+  "final_assessment": "Auto-discovered internal fresh-context review JSON (review-proposal-2026-06-30T20-24-48Z.json, iteration 5 convergence-check): 0 CRITICAL / 0 WARNING / 2 SUGGESTION, both resolved (0 deferred, 0 escalated). S1: the 'external resolved but carried a CRITICAL' scenario's WHEN didn't enforce ordered-slot coverage (contradicting its own note), and the literal option A would have left the doubly-off-cadence corner uncovered — applied the change-complete fix: broadened the ordered-slot-grounds scenario to fire for any resolved/clean+not-stale external with a missing slot REGARDLESS of CRITICAL count (with explicit precedence over the resolved-CRITICAL scenario, clause (a) before clause (c)), required slot coverage in the resolved-CRITICAL scenario's WHEN, and added the precedence note to the intro routing clause. The three system unpassed sub-cases (Path B / ordered-slot-grounds / resolved-CRITICAL) are now mutually exclusive AND exhaustive. S2: made the off-cadence --fresh-first delegation explicit (renders the engine canonical command directly, no dedicated stock phrasing). validate --strict passes. All edits isolated to orbit-review/spec.md.",
+  "next_recommended": "Proposal gate is converged: 0 CRITICAL / 0 WARNING / 0 unresolved across the latest independent (fresh) pass. Next: /orbit:apply c1-engine-gates. (Optional belt-and-suspenders: one more fresh /orbit:review --as proposal yielding 0 new findings would make no-new-findings strictly observable.)",
+  "kind": "editorial",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/c1-engine-gates/.orbit-runs/review-proposal-2026-06-30T20-24-48Z.json",
+  "source_command": "review",
+  "source_token": "2026-06-30T20-24-48Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 2
+  },
+  "pushback_verification": "Both findings verified against current state. S1 confirmed a real internal inconsistency (the resolved-CRITICAL scenario's WHEN did not enforce ordered-slot coverage despite its distinction note claiming it); analysis showed the finding's literal option A would create a NEW gap (the missing-slot + resolved-CRITICAL corner matching neither scenario), so the change-complete combined fix was applied instead. 0 stale suppressions.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "'External resolved but carried a CRITICAL' scenario WHEN does not require ordered-slot coverage, contradicting its own distinction note",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/c1-engine-gates/specs/orbit-review/spec.md",
+      "line": 74,
+      "classification": "decision_required",
+      "action": "Applied a change-complete superset of option A (option A alone would have left the doubly-off-cadence corner matching neither scenario). (1) Broadened the ordered-slot-grounds scenario WHEN to fire for any content-clean OR fully-resolved, not-stale external with a missing ordered slot REGARDLESS of the external's CRITICAL count, and gave it explicit precedence over the resolved-CRITICAL scenario (clause (a) evaluated before clause (c)). (2) Added 'AND the gate's ordered cadence slots are otherwise COVERED' to the resolved-CRITICAL scenario WHEN (only the confirm predicate unmet). (3) Added the precedence note to the intro routing clause. Result: Path B / ordered-slot-grounds / resolved-CRITICAL are now mutually exclusive AND exhaustive over the no-current-CRITICAL system sub-states.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          { "label": "A", "body": "Add 'ordered slots covered' to the resolved-CRITICAL scenario's WHEN (making it mutually exclusive with the ordered-slot-grounds scenario)" },
+          { "label": "B", "body": "Add a precedence sentence to the intro routing clause (missing slot takes precedence over failed predicate)" }
+        ],
+        "chosen": "A",
+        "discuss_invoked": false,
+        "structured_path_skipped_reason": "Applied a superset of both A and B: option A alone leaves the combined corner uncovered (ordered-slot-grounds keys on 'resolved per Path B' which now excludes CRITICALs), so the ordered-slot scenario was also broadened to catch the combined case, plus B's precedence note added. Documented in action."
+      },
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Off-cadence `--fresh`-first-no-external system state has no dedicated exact-phrasing scenario (delegated to the engine canonical-next)",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/c1-engine-gates/specs/orbit-review/spec.md",
+      "line": 51,
+      "classification": "trivial_fix",
+      "action": "Appended a clause to the 'no prior external' scenario's --fresh-first guard parenthetical making the delegation explicit: the off-cadence case is rendered directly as the engine canonical command (`/orbit:review --as system <change>`) with NO dedicated stock phrasing, per the intro's general subordination rule. Confirms the delegation is intentional, not a coverage hole.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": []
+}
