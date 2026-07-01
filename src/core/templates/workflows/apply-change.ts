@@ -47,8 +47,9 @@ export function getApplyChangeSkillTemplate(): SkillTemplate {
 
    **Handle states:**
    - If \`state: "blocked"\` (missing artifacts): show message, suggest using orbit-continue-change
-   - If \`state: "all_done"\`: congratulate, suggest archive
-   - Otherwise: proceed to implementation
+   - If \`state: "blocked-by-gate"\` (C1 — the \`review-proposal\` gate is unpassed/stale at apply entry): fire the gate INFLECTION PROMPT via **AskUserQuestion** — **Address the gate** (halt; run the \`next_command\` the CLI returned, e.g. \`/orbit:review --as proposal --fresh <name>\`) / **Proceed anyway** / **Abort**. The gate NEVER hard-blocks (apply-parity). On **Proceed anyway**, record the override in this session's apply emit as \`gate_overridden: {gate, state, reason}\` (copied from the CLI's \`gate\` object) and continue to implementation. On **Address**, stop and run the next command. On **Abort**, stop with no changes.
+   - If \`state: "all_done"\`: congratulate, suggest \`/orbit:verify <name>\`
+   - Otherwise (\`ready\`): proceed to implementation
 
 4. **Read context files**
 
@@ -116,8 +117,12 @@ Working on task 4/7: <task description>
 - [x] Task 2
 ...
 
-All tasks complete! Ready to archive this change.
+All tasks complete.
+Position: <the position readout from \`orbit status --change <name> --json\` — e.g. \`propose ✓ → review(proposal) ✓ → apply ✓ → review(system) blocked-by-gate → archive blocked-by-gate\`>
+Next: /orbit:verify <change-name>
 \`\`\`
+
+**Position-readout convention (C1, D-c1-2)**: every handoff — this completion output AND the emit's \`next_recommended\` — states WHERE the change is in the canonical flow (the engine-computed \`position\` string from \`orbit status --json\`) and the FULL next command with flags. Render them verbatim; the engine computes the token, the skill does not hand-write next-step prose.
 
 **Output On Pause (Issue Encountered)**
 
@@ -226,9 +231,12 @@ Per the universal spine in \`orbit-conventions\`'s \`Internal-run JSON summary f
   "chunk": "<N of M>" | null,
   "chunk_name": "<from preamble>" | null,
   "chunk_complete": true | false,
-  "tasks_completed_this_session": <int — delta since prior apply JSON, for forensic timeline>
+  "tasks_completed_this_session": <int — delta since prior apply JSON, for forensic timeline>,
+  "gate_overridden": { "gate": "review-proposal", "state": "<unpassed|stale>", "reason": "<gate reason at decision time>" }
 }
 \`\`\`
+
+**\`gate_overridden\`** (C1) is present ONLY when the user chose **Proceed anyway** past an unpassed/stale \`review-proposal\` gate at the apply inflection prompt (Step 3); the shape is \`{gate, state, reason}\` captured at decision time. Absent when no override occurred; REQUIRED when proceed-anyway was chosen.
 
 ### \`next_recommended\` advancement rules
 

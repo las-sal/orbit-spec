@@ -56,14 +56,14 @@ Implementation chunks:
 
 ## 5. Emits + attestations
 
-- [ ] 5.1 `reviewer_class` on review emits: review body's run-summary section + its
+- [x] 5.1 `reviewer_class` on review emits: review body's run-summary section + its
       `references/run-summary-schema.md`; review-external T0 emit documents `"external"`.
-- [ ] 5.2 Review-external attestations: packaging-side `Prompt committed (<short-sha>) and
+- [x] 5.2 Review-external attestations: packaging-side `Prompt committed (<short-sha>) and
       pushed to <remote>/<branch>` in the preflight-satisfied output (body Step 8 +
       worked example); template's "After completing the review" gains the external-side
       `Findings committed (<short-sha>) and pushed` statement requirement (body reference
       `prompt-template.md`).
-- [ ] 5.3 Inflection-prompt override recording: archive (and apply, for review-proposal) bodies
+- [x] 5.3 Inflection-prompt override recording: archive (and apply, for review-proposal) bodies
       gain the gate prompt (address / proceed-anyway / abort). The apply body sources gate state +
       reason from `orbit instructions apply --json` (modeled phase); the archive body sources from
       `orbit status --change <name> --json` (`gates[]`/`next_command`) — there is NO
@@ -75,17 +75,17 @@ Implementation chunks:
 
 ## 6. Editorial bodies — single-voiced + position readout
 
-- [ ] 6.1 `review.ts` body: Step 9 phrasings replaced with the MODIFIED-delta single-voiced
+- [x] 6.1 `review.ts` body: Step 9 phrasings replaced with the MODIFIED-delta single-voiced
       texts (engine-sourced convergence; full commands; no skip clauses); worked examples
       updated to match. Implement the as-of-completion rule (both modes): orbit-review renders
       its final assessment over the on-disk trail PLUS a synthetic pass for the active run
       (mode, reviewer_class, now-token, about-to-be-written `review-<mode>-<TS>.json` path,
       current findings) so a current `--fresh`/`in-context` pass counts toward its cadence slot;
       `status`/`instructions` stay on-disk only.
-- [ ] 6.2 All workflow bodies' completion prompts: render the engine's position readout + the
+- [x] 6.2 All workflow bodies' completion prompts: render the engine's position readout + the
       canonical next command verbatim (replacing hand-written next-step prose); audit each of
       the 15 bodies' handoff text once.
-- [ ] 6.3 Residue sweep: grep bodies for the retired phrasings ("Proceed directly to",
+- [x] 6.3 Residue sweep: grep bodies for the retired phrasings ("Proceed directly to",
       "Or /orbit:review --fresh for a lighter", "Ready to apply.", "Ready to archive.") and bare
       command-name recommendations.
 

@@ -172,8 +172,13 @@ the markdown directly and the user will save it.
    git push
    \`\`\`
 
+   Then STATE PLAINLY in your chat output that the findings landed —
+   \`Findings committed (<short-sha>) and pushed\` — so the human never has to
+   infer whether they reached the repo.
+
 If you don't have git access, just output the findings markdown in this chat
-(per the chat-only fallback above) and the user will commit it manually.
+(per the chat-only fallback above), state explicitly that you could NOT
+commit/push, and the user will commit it manually.
 \`\`\`\`
 `;
 
@@ -282,7 +287,7 @@ Print to chat, in this exact order:
 2. **(required)** Recommended-session note: \`Recommended session: <phrasing from Step 6>\`
 3. **(required)** The prompt file path: \`Prompt: orbit/changes/<change-name>/.orbit-runs/external-prompt-<as>-<TS>.md\`
 4. **(conditional — preflight gate)** ONE of:
-   - **Preflight satisfied** (clean tree, no unpushed commits — or local-path route): the copy-paste-ready invocation: \`Pull <repo URL> and read <prompt-file-path>. Follow its instructions; write findings to the path specified inside.\`
+   - **Preflight satisfied** (clean tree, no unpushed commits — or local-path route): FIRST affirmatively state the prompt's committed-and-pushed state with evidence — \`Prompt committed (<short-sha>) and pushed to <remote>/<branch>\` (or, on the local-path route, the equivalent naming the path) — NEVER implied by the mere absence of a warning; THEN the copy-paste-ready invocation: \`Pull <repo URL> and read <prompt-file-path>. Follow its instructions; write findings to the path specified inside.\` (Get \`<short-sha>\` from \`git rev-parse --short HEAD\` and \`<remote>/<branch>\` from \`git rev-parse --abbrev-ref --symbolic-full-name @{u}\` after the push.)
    - **Preflight failed** (dirty tree and/or unpushed commits): the pull invocation is WITHHELD. Emit instead: \`Handoff blocked: <dirty tree | N unpushed commit(s)>. Commit the pending work (including the prompt file above) and push, then hand off: Pull <repo URL> and read <prompt-file-path>. ...\` — the commit+push action leads; the pull text is framed as the after-push step, never as an immediately-usable instruction.
 5. **(required)** The eventual findings path: \`When findings come back: /orbit:address-reviews --from-file orbit/changes/<change-name>/.orbit-runs/external-<as>-<TS>.md (TS will be set by the external AI when it writes).\`
 
@@ -365,13 +370,14 @@ Per the universal spine in \`orbit-conventions\`'s \`Internal-run JSON summary f
   "next_recommended": "<multi-step prose; see below>",
   "kind": "editorial",
   "mode": "proposal" | "system",
+  "reviewer_class": "external",
   "prompt_path": "orbit/changes/<name>/.orbit-runs/external-prompt-<as>-<TS>.md",
   "target": "<named external AI if user specified; null otherwise>",
   "awaiting_findings": true
 }
 \`\`\`
 
-\`awaiting_findings: true\` is always set at T0. Future tooling may flip this when findings land; for now it's a flag that downstream consumers can use to identify "T0 emit, not yet completed cycle."
+\`awaiting_findings: true\` is always set at T0. Future tooling may flip this when findings land; for now it's a flag that downstream consumers can use to identify "T0 emit, not yet completed cycle." \`reviewer_class: "external"\` (C1) describes the intended handoff class for audit readability — but per \`orbit-run-summary-emit\`, a T0 emit is a PACKAGING record, NOT a completed pass: an \`external\` cadence slot is satisfied ONLY when an \`external-<as>-<TS>.md\` findings file exists, so a packaged-but-unreturned external never counts as class coverage.
 
 ### \`next_recommended\` — multi-step prose
 

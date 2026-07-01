@@ -1,0 +1,15 @@
+{
+  "command": "apply",
+  "timestamp": "2026-07-01T15:11:31Z",
+  "change": "c1-engine-gates",
+  "final_assessment": "Completed chunk 3 of 4 (Editorial alignment): review.ts Step 9 replaced with single-voiced engine-sourced gate-aware phrasings (proposal + system convergence states, as-of-completion, precedence) + worked examples updated; reviewer_class added to the review run-summary schema reference + field notes + the review-external T0 emit ('external', with the packaged-≠-pass note); review-external attestations both sides (packaging: 'Prompt committed (<sha>) and pushed'; external template: 'Findings committed (<sha>) and pushed' / state-inability); gate inflection prompts + gate_overridden in the apply body (blocked-by-gate handling + apply emit shape) and the archive body (new Step 3.4 review-system gate prompt sourced from orbit status --json + archive-summary-schema.md reference); position-readout convention in the apply completion handoff; residue sweep fixed onboard + audit-drift. Fidelity/parity test hashes + markers updated for the new bodies. 17 of 21 tasks done. Full suite 1567 green.",
+  "next_recommended": "/orbit:apply c1-engine-gates — next chunk: Verification + docs (fidelity tests, surface refresh, CLAUDE.md post-C1, live validation)",
+  "kind": "workflow",
+  "tasks_completed": 17,
+  "tasks_remaining": 4,
+  "user_validation_remaining": 0,
+  "chunk": "3 of 4",
+  "chunk_name": "Editorial alignment",
+  "chunk_complete": true,
+  "tasks_completed_this_session": 6
+}
