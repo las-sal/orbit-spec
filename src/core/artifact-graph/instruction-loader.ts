@@ -3,10 +3,12 @@ import * as path from 'node:path';
 import { getSchemaDir, resolveSchema } from './resolver.js';
 import { ArtifactGraph } from './graph.js';
 import { detectCompleted } from './state.js';
+import { normalizeGates } from './schema.js';
+import { computeGateStates } from './gates.js';
 import { resolveSchemaForChange } from '../../utils/change-metadata.js';
 import { FileSystemUtils } from '../../utils/file-system.js';
 import { readProjectConfig, validateConfigRules } from '../project-config.js';
-import type { Artifact, CompletedSet } from './types.js';
+import type { Artifact, CompletedSet, SchemaYaml } from './types.js';
 
 // Session-level cache for validation warnings (avoid repeating same warnings)
 const shownWarnings = new Set<string>();
@@ -30,6 +32,8 @@ export class TemplateLoadError extends Error {
 export interface ChangeContext {
   /** The artifact dependency graph */
   graph: ArtifactGraph;
+  /** The resolved schema (includes any gates). */
+  schema: SchemaYaml;
   /** Set of completed artifact IDs */
   completed: CompletedSet;
   /** Schema name being used */
@@ -114,6 +118,23 @@ export interface ChangeStatus {
   applyRequires: string[];
   /** Status of each artifact */
   artifacts: ArtifactStatus[];
+  /** C1: computed gate rows (empty for ungated schemas). */
+  gates: GateStatusRow[];
+  /** C1: one-line position readout of the canonical flow (undefined for ungated schemas). */
+  position?: string;
+  /** C1: the single canonical next command for the current state, if any. */
+  next_command?: string;
+}
+
+/** A gate row surfaced in status (C1). */
+export interface GateStatusRow {
+  id: string;
+  kind: string;
+  state: string;
+  reason?: string;
+  checked?: number;
+  total?: number;
+  nextCommand?: string;
 }
 
 /**
@@ -191,6 +212,7 @@ export function loadChangeContext(
 
   return {
     graph,
+    schema,
     completed,
     schemaName: resolvedSchemaName,
     changeName,
@@ -320,9 +342,11 @@ function getUnlockedArtifacts(graph: ArtifactGraph, artifactId: string): string[
  * @returns Formatted change status
  */
 export function formatChangeStatus(context: ChangeContext): ChangeStatus {
-  // Load schema to get apply phase configuration
-  const schema = resolveSchema(context.schemaName, context.projectRoot);
-  const applyRequires = schema.apply?.requires ?? schema.artifacts.map(a => a.id);
+  // Derive apply-phase requires from the normalized `apply` gate (folds the
+  // upstream `apply:` block or a declared tracked gate; C1).
+  const schema = context.schema;
+  const applyGate = normalizeGates(schema).find(g => g.id === 'apply');
+  const applyRequires = applyGate?.requires ?? schema.artifacts.map(a => a.id);
 
   const artifacts = context.graph.getAllArtifacts();
   const ready = new Set(context.graph.getNextArtifacts(context.completed));
@@ -358,11 +382,50 @@ export function formatChangeStatus(context: ChangeContext): ChangeStatus {
   const orderMap = new Map(buildOrder.map((id, idx) => [id, idx]));
   artifactStatuses.sort((a, b) => (orderMap.get(a.id) ?? 0) - (orderMap.get(b.id) ?? 0));
 
+  // C1: compute gate rows + position readout. Empty/undefined for ungated schemas.
+  const hasGates =
+    (context.schema.gates && context.schema.gates.length > 0) || !!context.schema.apply;
+  let gateRows: GateStatusRow[] = [];
+  let position: string | undefined;
+  let nextCommand: string | undefined;
+  if (hasGates) {
+    const computation = computeGateStates(
+      context.schema,
+      context.changeName,
+      context.changeDir,
+      context.completed
+    );
+    gateRows = computation.gates.map(g => ({
+      id: g.id,
+      kind: g.kind,
+      state: g.state,
+      reason: g.reason,
+      checked: g.checked,
+      total: g.total,
+      nextCommand: g.nextCommand,
+    }));
+    position = computation.position;
+    for (const g of computation.gates) {
+      if (g.state === 'passed') continue;
+      if (g.nextCommand) {
+        nextCommand = g.nextCommand;
+        break;
+      }
+      if (g.kind === 'tracked' && g.state === 'ready') {
+        nextCommand = `/orbit:apply ${context.changeName}`;
+        break;
+      }
+    }
+  }
+
   return {
     changeName: context.changeName,
     schemaName: context.schemaName,
     isComplete: context.graph.isComplete(context.completed),
     applyRequires,
     artifacts: artifactStatuses,
+    gates: gateRows,
+    position,
+    next_command: nextCommand,
   };
 }

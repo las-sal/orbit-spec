@@ -67,4 +67,5 @@ export {
   type DependencyInfo,
   type ArtifactStatus,
   type ChangeStatus,
+  type GateStatusRow,
 } from './instruction-loader.js';

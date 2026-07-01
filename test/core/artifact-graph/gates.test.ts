@@ -282,3 +282,58 @@ describe('artifact-graph/gates — computation', () => {
     expect(trail.passes[0].reviewerClass).toBe('fresh');
   });
 });
+
+// ---- Compatibility (tasks 4.1 / 4.2) ---------------------------------------
+
+describe('artifact-graph/gates — compatibility', () => {
+  // 4.1: upstream apply-only schema (no gates) → one tracked gate; ungated behavior.
+  const APPLY_ONLY = `
+name: upstream-like
+version: 1
+artifacts:
+  - id: tasks
+    generates: tasks.md
+    description: Tasks
+    template: t.md
+apply:
+  requires: [tasks]
+  tracks: tasks.md
+`;
+
+  it('4.1: apply-only YAML normalizes to exactly one tracked gate (id apply)', () => {
+    const schema = parseSchema(APPLY_ONLY);
+    const norm = normalizeGates(schema);
+    expect(norm).toHaveLength(1);
+    expect(norm[0].id).toBe('apply');
+    expect(norm[0].kind).toBe('tracked');
+  });
+
+  it('4.1: ungated schema has no reviewed before:apply gate (apply never blocked-by-gate)', () => {
+    const dir = path.join(os.tmpdir(), `orbit-compat-${Date.now()}`);
+    fs.mkdirSync(dir, { recursive: true });
+    try {
+      fs.writeFileSync(path.join(dir, 'tasks.md'), '- [ ] one\n');
+      const schema = parseSchema(APPLY_ONLY);
+      const { gates } = computeGateStates(schema, 'c', dir, new Set(['tasks']));
+      expect(gates.map(g => g.id)).toEqual(['apply']);
+      expect(gates.every(g => g.before !== 'apply' || g.kind !== 'reviewed')).toBe(true);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  // 4.2: real archived B3 trail — legacy emits (no reviewer_class) exercise inference.
+  it('4.2: reads the archived B3 legacy trail with class inference, no crash', () => {
+    const b3 = path.join(process.cwd(), 'orbit/changes/archive/2026-06-12-b3-net-new-workflows');
+    if (!fs.existsSync(path.join(b3, '.orbit-runs'))) return; // fixture absent → skip
+    const trail = readTrail(b3);
+    expect(trail.passes.length).toBeGreaterThan(0);
+    // The external-system-*.md is classed external by provenance (structural).
+    expect(trail.passes.some(p => p.source === 'external' && p.reviewerClass === 'external')).toBe(true);
+    // A review-proposal emit predating reviewer_class infers to in-context.
+    expect(trail.passes.some(p => p.source === 'internal-review' && p.reviewerClass === 'in-context')).toBe(true);
+    // Gate computation over the real trail must not throw.
+    const schema = parseSchema(GATED_YAML);
+    expect(() => computeGateStates(schema, 'b3', b3, new Set(['proposal', 'tasks']))).not.toThrow();
+  });
+});

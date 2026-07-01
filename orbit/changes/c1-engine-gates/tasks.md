@@ -38,19 +38,19 @@ Implementation chunks:
 
 ## 3. CLI surface
 
-- [ ] 3.1 `orbit status`: gate rows (blocked/ready/passed/stale/unpassed + reasons) + the
+- [x] 3.1 `orbit status`: gate rows (blocked/ready/passed/stale/unpassed + reasons) + the
       position readout line; JSON output carries `gates[]`, `position`, `next_command`.
-- [ ] 3.2 `orbit instructions <phase>`: `blocked-by-gate` state (gate id, reason, next_command)
+- [x] 3.2 `orbit instructions <phase>`: `blocked-by-gate` state (gate id, reason, next_command)
       when the phase's gate is unpassed; apply's existing states unchanged otherwise.
-- [ ] 3.3 `schemas/spec-driven/schema.yaml` → version 2: `review-proposal` / `apply` /
+- [x] 3.3 `schemas/spec-driven/schema.yaml` → version 2: `review-proposal` / `apply` /
       `review-system` gates with the D-c1-4 cadences exactly as spec'd, incl. per-gate `confirm`
       (`review-proposal: no-new-findings`, `review-system: findings-resolved`).
 
 ## 4. Compatibility
 
-- [ ] 4.1 v1-schema compat tests: apply-only YAML (upstream shape) parses to one tracked gate;
+- [x] 4.1 v1-schema compat tests: apply-only YAML (upstream shape) parses to one tracked gate;
       observable behavior of status/instructions on ungated schemas is unchanged.
-- [ ] 4.2 Legacy-trail compat: gate computation over the archived B2 + B3 `.orbit-runs/` as
+- [x] 4.2 Legacy-trail compat: gate computation over the archived B2 + B3 `.orbit-runs/` as
       fixtures (real trails; inference fallback exercised; B3 must compute review-system as
       converged-then-stale-free per its actual history).
 

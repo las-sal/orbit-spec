@@ -32,9 +32,13 @@ export interface ApplyInstructions {
     remaining: number;
   };
   tasks: TaskItem[];
-  state: 'blocked' | 'all_done' | 'ready';
+  state: 'blocked' | 'all_done' | 'ready' | 'blocked-by-gate';
   missingArtifacts?: string[];
   instruction: string;
+  /** C1: populated when `state === 'blocked-by-gate'` — the unpassed/stale gate. */
+  gate?: { id: string; state: string; reason?: string };
+  /** C1: the single canonical next command (from the gate when blocked-by-gate). */
+  next_command?: string;
 }
 
 // -----------------------------------------------------------------------------
