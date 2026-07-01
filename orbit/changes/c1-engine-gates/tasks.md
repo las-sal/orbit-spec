@@ -10,17 +10,17 @@ Implementation chunks:
 
 ## 1. Gate model in the artifact graph
 
-- [ ] 1.1 Extend `src/core/artifact-graph/types.ts`: `GateSchema` (`id`, `kind: tracked|reviewed`
+- [x] 1.1 Extend `src/core/artifact-graph/types.ts`: `GateSchema` (`id`, `kind: tracked|reviewed`
       closed enum, `requires`, `inputs`, `tracks`, `cadence`, `confirm: no-new-findings|findings-resolved`
       closed enum (reviewed kind; default `no-new-findings`), `before`, `instruction`);
       `SchemaYamlSchema` gains optional `gates:` list. Keep `ApplyPhaseSchema` intact.
-- [ ] 1.2 Normalization in `schema.ts`: `apply:` block → `kind: tracked` gate id `apply` when no
+- [x] 1.2 Normalization in `schema.ts`: `apply:` block → `kind: tracked` gate id `apply` when no
       `gates:` entry claims the id; double-declaration fails validation; gate ids join the
       duplicate/reference/cycle checks.
-- [ ] 1.3 Trail reader module (new, e.g. `artifact-graph/trail.ts`): enumerate `.orbit-runs/`,
+- [x] 1.3 Trail reader module (new, e.g. `artifact-graph/trail.ts`): enumerate `.orbit-runs/`,
       parse filename `<TS>` tokens (unparseable → absent), read review/address-reviews/external
       artifacts, resolve `reviewer_class` with the legacy-inference fallback.
-- [ ] 1.4 Gate state computation (extend `state.ts` or sibling `gates.ts`): tracked checkbox
+- [x] 1.4 Gate state computation (extend `state.ts` or sibling `gates.ts`): tracked checkbox
       arithmetic (reuse apply's tracker parsing); reviewed convergence criterion — ordered-slot
       class coverage (each slot a fresh pass with a token strictly later than the prior slot's;
       `independent` slot ← fresh|external), resolution (`deferred=0, escalated=0` via
@@ -30,9 +30,9 @@ Implementation chunks:
 
 ## 2. Freshness + canonical-next
 
-- [ ] 2.1 Freshness rule: pass stale iff latest `apply-*.json` token > pass token; resolution
+- [x] 2.1 Freshness rule: pass stale iff latest `apply-*.json` token > pass token; resolution
       traffic excluded. Unit-tested against token edge cases (same-second, unparseable).
-- [ ] 2.2 Canonical-next computation: from gate graph + cadence position, derive ONE full
+- [x] 2.2 Canonical-next computation: from gate graph + cadence position, derive ONE full
       invocation string (`/orbit:review-external --as system <change>` etc.) + position-readout
       string; exposed to status/instructions and JSON consumers.
 

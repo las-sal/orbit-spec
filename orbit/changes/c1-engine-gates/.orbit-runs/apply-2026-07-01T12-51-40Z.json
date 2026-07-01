@@ -1,0 +1,15 @@
+{
+  "command": "apply",
+  "timestamp": "2026-07-01T12:51:40Z",
+  "change": "c1-engine-gates",
+  "final_assessment": "Completed chunk 1 of 4 (Engine core): gate types (GateSchema + closed kind/confirm enums + cadence vocabulary), apply→tracked-gate normalization with gate-inclusive reference/cycle validation, the pure .orbit-runs/ trail reader (token parsing, reviewer_class + legacy inference, external-markdown finding counts), gate-state computation (tracked checkbox arithmetic + reviewed convergence: ordered slots / resolution-over-every-pass / per-gate confirm), the v1 freshness rule, and single-voiced canonical-next + position readout. 6 of 21 tasks done. New modules: trail.ts, gates.ts; extended types.ts, schema.ts, index.ts. 20 new unit tests; full suite 1564 green.",
+  "next_recommended": "/orbit:apply c1-engine-gates — next chunk: CLI surface (gate-aware status/instructions, spec-driven v2)",
+  "kind": "workflow",
+  "tasks_completed": 6,
+  "tasks_remaining": 15,
+  "user_validation_remaining": 0,
+  "chunk": "1 of 4",
+  "chunk_name": "Engine core",
+  "chunk_complete": true,
+  "tasks_completed_this_session": 6
+}
