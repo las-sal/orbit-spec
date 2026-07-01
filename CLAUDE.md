@@ -50,12 +50,19 @@ passed two internal proposal-review iterations, an external (GPT-5.1 Codex) syst
 findings, all resolved — incl. a sixth registry in init.ts and a user-ratified handoff preflight
 for review-external), and a converged internal system review (Path B); full audit trail in the
 archived `.orbit-runs/`. **PARITY REACHED** — `../openspec-orbit` is retired as migration
-source-of-truth. **Next: C1** (engine gates/freshness). Orbit's editorial content is relocated into
-the workflow modules (inline-TS per **D13**; `sync-specs` upstream-verbatim — orbit never modified it)
-+ 6 spec deltas (`orbit-conventions`, `orbit-run-summary-emit`, `orbit-{explore,propose,archive}-modifications`,
-`orbit-onboard`) relocated as ADDED capabilities. The change passed a fresh internal system review AND
-two external (GPT-5 Codex) system-review iterations; all findings resolved (audit trail in the change's
-`.orbit-runs/`). Three decisions were ratified during remediation — **read these before touching templates**:
+source-of-truth. **C1 (engine gates/freshness) is IMPLEMENTED** on branch `c1-engine-gates` (chunked
+apply): the engine is now **review-aware**. A schema `gates:` list with a CLOSED two-kind set —
+`tracked` (checkbox arithmetic; upstream `apply` normalized in) and `reviewed` (a convergence criterion
+COMPUTED from the `.orbit-runs/` trail: ordered cadence slots + resolution-over-every-pass + per-gate
+`confirm`) — plus the v1 timestamp-token **freshness** rule, **single-voiced canonical-next** + a
+one-line **position readout**, and **gate inflection prompts** (apply-parity: surfaced + recorded via
+`gate_overridden`, never hard-blocking). Gate state is a pure function of on-disk artifacts (no new
+state files); new engine modules `src/core/artifact-graph/{trail,gates}.ts`. `spec-driven` is now
+**version 2** (`review-proposal → apply → review-system`). Baseline capabilities **11→12**
+(`orbit-engine-gates` ADDED; the 5 editorial baselines gained gate-aware MODIFIED deltas). The C1
+proposal converged through **5 internal + 3 external** review iterations (all resolved) before apply;
+full audit trail in the change's `.orbit-runs/`. **Next: C2** (archive parallel-merge fix). Three
+decisions were ratified during remediation — **read these before touching templates**:
 - **D14 — thin launcher commands**: each skill `instructions` literal is the single behavioral source
   (pristine upstream body + `# Orbit additions`); each command `content` literal is a ~3-line launcher
   invoking the skill. Do NOT regrow workflow bodies in command literals.
@@ -64,8 +71,9 @@ two external (GPT-5 Codex) system-review iterations; all findings resolved (audi
   profile-filtered installs.
 - **D11 refinement — Claude primacy**: never trade Claude efficacy for cross-tool neutrality; upstream's
   named-tool idiom (`AskUserQuestion`, `Task tool`) stays in bodies by design.
-Change validates `--strict`; **1504 tests green** (incl. per-workflow marker fidelity, launcher
-assertions, and an e2e generated-surface test that runs a real default init for claude+codex).
+Change validates `--strict`; **1567 tests green** (incl. the C1 gate-model unit suite, per-workflow
+marker fidelity, launcher assertions, and an e2e generated-surface test that runs a real default init
+for claude+codex).
 Per D13, B-arc keeps prose as **inline TS template literals** (markdown-as-source/D6 deferred).
 **Deferred follow-ups:** orbit-status absorption (post-parity, issue #3), broader user-docs
 rewrite (issue #1). (B1's archive-reference deferral is DELIVERED by B2: the generator now emits
@@ -95,8 +103,8 @@ source-of-truth** for B-arc (the prose to relocate) and **retires after parity (
 ```
 A1 ✅ fork bootstrap          → B1 relocate content → B2 grow generator → B3 net-new workflows
 (done; +A2 rename)              (inline-TS, D13)      (refs + metadata)   ══ PARITY ══
-                                                                          → C1 engine gates/freshness
-                                                                          → C2 archive merge fix
+                                                                          → C1 ✅ engine gates/freshness
+                                                                          → C2 archive merge fix  (next)
 ```
 
 Before parity (B-arc) is *relocation* (mechanical/testable); after (C-arc) is *net-new capability*

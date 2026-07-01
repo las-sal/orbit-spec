@@ -91,10 +91,10 @@ Implementation chunks:
 
 ## 7. Verification + docs
 
-- [ ] 7.1 Fidelity tests updated for the new phrasings + position-readout markers; launcher
+- [x] 7.1 Fidelity tests updated for the new phrasings + position-readout markers; launcher
       and surface tests stay green.
-- [ ] 7.2 Engine unit tests green incl. the archive-fixture suite; `npm test` fully green.
-- [ ] 7.3 Refresh own surface (`npm run build && node bin/orbit.js update --force`); CLAUDE.md
+- [x] 7.2 Engine unit tests green incl. the archive-fixture suite; `npm test` fully green.
+- [x] 7.3 Refresh own surface (`npm run build && node bin/orbit.js update --force`); CLAUDE.md
       post-C1 state (baseline 12 capabilities; engine gate summary; next C2).
-- [ ] 7.4 `node bin/orbit.js validate c1-engine-gates --strict` + `orbit status` on a live
+- [x] 7.4 `node bin/orbit.js validate c1-engine-gates --strict` + `orbit status` on a live
       change shows the position readout.
