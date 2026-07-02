@@ -135,6 +135,8 @@ export interface GateStatusRow {
   checked?: number;
   total?: number;
   nextCommand?: string;
+  /** C1: the gate's `before` phase already ran — moot / no longer the frontier. */
+  superseded?: boolean;
 }
 
 /**
@@ -403,10 +405,14 @@ export function formatChangeStatus(context: ChangeContext): ChangeStatus {
       checked: g.checked,
       total: g.total,
       nextCommand: g.nextCommand,
+      superseded: g.superseded,
     }));
     position = computation.position;
     for (const g of computation.gates) {
       if (g.state === 'passed') continue;
+      // C1: skip a reviewed gate whose gated phase already ran (moot) — the frontier
+      // has advanced past it, so it must not drive the canonical next command.
+      if (g.superseded) continue;
       if (g.nextCommand) {
         nextCommand = g.nextCommand;
         break;

@@ -48,7 +48,7 @@ export function getApplyChangeSkillTemplate(): SkillTemplate {
    **Handle states:**
    - If \`state: "blocked"\` (missing artifacts): show message, suggest using orbit-continue-change
    - If \`state: "blocked-by-gate"\` (C1 — the \`review-proposal\` gate is unpassed/stale at apply entry): fire the gate INFLECTION PROMPT via **AskUserQuestion** — **Address the gate** (halt; run the \`next_command\` the CLI returned, e.g. \`/orbit:review --as proposal --fresh <name>\`) / **Proceed anyway** / **Abort**. The gate NEVER hard-blocks (apply-parity). On **Proceed anyway**, record the override in this session's apply emit as \`gate_overridden: {gate, state, reason}\` (copied from the CLI's \`gate\` object) and continue to implementation. On **Address**, stop and run the next command. On **Abort**, stop with no changes.
-   - If \`state: "all_done"\`: congratulate, suggest \`/orbit:verify <name>\`
+   - If \`state: "all_done"\`: congratulate, then render the ENGINE-computed next step — read \`next_command\` (and \`position\`) from \`orbit status --change "<name>" --json\` and surface it verbatim. Do NOT hard-code the next command: the gate graph owns the lifecycle flow. Post-apply this resolves to the \`review-system\` gate's first step (\`/orbit:review --as system <name>\`), which runs verify as its Pass 0 — verify is NOT a separate lifecycle step (it is Pass 0 of system review; a standalone verify gate would double-count).
    - Otherwise (\`ready\`): proceed to implementation
 
 4. **Read context files**
@@ -118,11 +118,11 @@ Working on task 4/7: <task description>
 ...
 
 All tasks complete.
-Position: <the position readout from \`orbit status --change <name> --json\` — e.g. \`propose ✓ → review(proposal) ✓ → apply ✓ → review(system) blocked-by-gate → archive blocked-by-gate\`>
-Next: /orbit:verify <change-name>
+Position: <the \`position\` string from \`orbit status --change <name> --json\` — e.g. \`propose ✓ → review(proposal) (past) → apply ✓ → review(system) unpassed → archive blocked-by-gate\`>
+Next: <the \`next_command\` from \`orbit status --change <name> --json\` — post-apply the gate graph yields \`/orbit:review --as system <change-name>\`>
 \`\`\`
 
-**Position-readout convention (C1, D-c1-2)**: every handoff — this completion output AND the emit's \`next_recommended\` — states WHERE the change is in the canonical flow (the engine-computed \`position\` string from \`orbit status --json\`) and the FULL next command with flags. Render them verbatim; the engine computes the token, the skill does not hand-write next-step prose.
+**Position-readout convention (C1, D-c1-2)**: every handoff — this completion output AND the emit's \`next_recommended\` — renders the GATE GRAPH's computed \`position\` + \`next_command\` from \`orbit status --json\`. The skill does NOT hand-write the next lifecycle command — the graph owns the flow (\`propose → review-proposal → apply → review-system → archive\`), so the "what's next" token is always read from the engine, never authored here. Post-apply the graph yields the \`review-system\` gate's first step (\`/orbit:review --as system\`), which executes verify as its Pass 0.
 
 **Output On Pause (Issue Encountered)**
 
@@ -207,11 +207,11 @@ Implementation chunks:
 
 Three cases:
 
-1. **Chunk completion** (rule 1): when the last task in chunk N is checked, write \`apply-<TS>.json\` with \`chunk: "N of M"\`, \`chunk_complete: true\`, \`chunk_name: <name>\`. \`next_recommended\` advances to next chunk (\`/orbit:apply <name>\`) or to \`/orbit:verify <name>\` on apply-complete (chunk N == M).
+1. **Chunk completion** (rule 1): when the last task in chunk N is checked, write \`apply-<TS>.json\` with \`chunk: "N of M"\`, \`chunk_complete: true\`, \`chunk_name: <name>\`. \`next_recommended\` advances to next chunk (\`/orbit:apply <name>\`) or, on apply-complete (chunk N == M), to the gate graph's \`next_command\` from \`orbit status --change <name> --json\` (post-apply: \`/orbit:review --as system <name>\`).
 
 2. **Mid-chunk session pause** (rule 2): when the user pauses or hands off mid-chunk-N (per the conversation-boundary signals in \`Emit timing semantics\` — explicit "stop"/"pause" OR AI-initiated wrap), emit with \`chunk: "N of M"\`, \`chunk_complete: false\`, and \`next_recommended: "/orbit:apply <name>"\` to resume.
 
-3. **No-chunking apply** (rule 3): when tasks.md has no chunk preamble, emit once at session end with \`chunk: null\`, \`chunk_complete: true\`, and \`next_recommended\` advancing to \`/orbit:verify <name>\` on apply-complete or \`/orbit:apply <name>\` if tasks remain.
+3. **No-chunking apply** (rule 3): when tasks.md has no chunk preamble, emit once at session end with \`chunk: null\`, \`chunk_complete: true\`, and \`next_recommended\` = the gate graph's \`next_command\` from \`orbit status --json\` on apply-complete (post-apply: \`/orbit:review --as system <name>\`), or \`/orbit:apply <name>\` if tasks remain.
 
 ### JSON shape
 
@@ -241,12 +241,12 @@ Per the universal spine in \`orbit-conventions\`'s \`Internal-run JSON summary f
 ### \`next_recommended\` advancement rules
 
 - **Chunk N done, more chunks** (N < M): \`/orbit:apply <name> — next chunk: <chunk N+1 name from preamble>\`
-- **Apply complete** (all chunks done OR no-chunking apply with all tasks done): \`/orbit:verify <name>\`
+- **Apply complete** (all chunks done OR no-chunking apply with all tasks done): the gate graph's \`next_command\` from \`orbit status --change <name> --json\` — post-apply this is \`/orbit:review --as system <name>\` (the \`review-system\` gate's first step, which runs verify as its Pass 0). Do NOT hard-code a lifecycle command here; read it from the engine.
 - **Mid-chunk pause**: \`/orbit:apply <name>\` (resume current chunk)
 
 A downstream status reader parses the leading \`/orbit:<verb> <name>\` token into \`command\`/\`args\`.
 
-**Completion-prompt override (chat)**: where the upstream steps above say to congratulate and suggest archive on \`all_done\`, instead suggest \`/orbit:verify <name>\` — verification precedes archive in the canonical flow (matching the emit's \`next_recommended\`).
+**Completion-prompt override (chat)**: on \`all_done\`, do NOT congratulate-and-suggest-archive (upstream) and do NOT hand-write \`/orbit:verify\` — instead render the gate graph's computed \`next_command\` + \`position\` from \`orbit status --json\`. The lifecycle flow lives in the gate graph, not in this body; verify is Pass 0 of the \`review-system\` step the graph points to, not a separate lifecycle node (D5 — a separate verify gate would double-count).
 
 ### Why chunk-aware (forensic + resumability)
 

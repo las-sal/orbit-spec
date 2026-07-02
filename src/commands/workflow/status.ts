@@ -115,6 +115,10 @@ export function printStatusText(status: ChangeStatus): void {
     console.log();
     console.log('Gates:');
     for (const g of status.gates) {
+      if (g.superseded) {
+        console.log(`  ${chalk.dim('·')} ${g.id}: ${chalk.dim('(past — phase already ran)')}`);
+        continue;
+      }
       const detail =
         g.kind === 'tracked' && g.total !== undefined && g.total > 0
           ? ` (${g.checked}/${g.total})`

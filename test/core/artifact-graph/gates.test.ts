@@ -196,6 +196,19 @@ describe('artifact-graph/gates — computation', () => {
     expect(rp.nextCommand).toBe('/orbit:review --as proposal --fresh mychange');
   });
 
+  it('review-proposal is superseded (moot) once apply is passed; canonical-next skips it', () => {
+    // apply complete, no proposal review ran → proposal gate would be unpassed, but its
+    // `before` phase (apply) is done, so it is superseded and no longer the frontier.
+    writeFile('tasks.md', '- [x] one\n- [x] two\n');
+    const { gates, position } = computeGateStates(schema, 'mychange', dir, allArtifacts);
+    const rp = gates.find(g => g.id === 'review-proposal')!;
+    expect(rp.superseded).toBe(true);
+    expect(position).toContain('review(proposal) (past)');
+    // review-system is now the frontier (requires apply, which is passed).
+    const rs = gates.find(g => g.id === 'review-system')!;
+    expect(rs.state).toBe('unpassed');
+  });
+
   it('review-proposal passes with clean independent + in-context confirm', () => {
     writeJson('review-proposal-2026-06-30T10-00-00Z.json', {
       command: 'review', mode: 'proposal', reviewer_class: 'fresh',
