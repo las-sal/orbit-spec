@@ -234,6 +234,37 @@ describe('artifact-graph/gates — computation', () => {
     expect(rp.nextCommand).toMatch(/^\/orbit:address-reviews mychange --from-file /);
   });
 
+  it('no-new-findings: a finding first seen in an in-context pass is NOT new when an independent pass re-surfaces it', () => {
+    // in-context@T0 finds X (resolved); fresh@T1 re-finds X (resolved); in-context@T2 clean.
+    // X was already surfaced by the in-context pass → not new → gate converges.
+    writeJson('review-proposal-2020-01-01T00-00-00Z.json', {
+      command: 'review', mode: 'proposal', reviewer_class: 'in-context',
+      findings_summary: { critical: 0, warning: 1, suggestion: 0 },
+      findings: [{ severity: 'WARNING', title: 'X', file: 'a.md', line: 1 }],
+    });
+    writeJson('address-reviews-2020-01-01T00-05-00Z.json', {
+      command: 'address-reviews',
+      source_path: 'orbit/changes/c/.orbit-runs/review-proposal-2020-01-01T00-00-00Z.json',
+      resolution_summary: { deferred: 0, escalated: 0 },
+    });
+    writeJson('review-proposal-2020-01-01T00-10-00Z.json', {
+      command: 'review', mode: 'proposal', reviewer_class: 'fresh',
+      findings_summary: { critical: 0, warning: 1, suggestion: 0 },
+      findings: [{ severity: 'WARNING', title: 'X', file: 'a.md', line: 1 }],
+    });
+    writeJson('address-reviews-2020-01-01T00-15-00Z.json', {
+      command: 'address-reviews',
+      source_path: 'orbit/changes/c/.orbit-runs/review-proposal-2020-01-01T00-10-00Z.json',
+      resolution_summary: { deferred: 0, escalated: 0 },
+    });
+    writeJson('review-proposal-2020-01-01T00-20-00Z.json', {
+      command: 'review', mode: 'proposal', reviewer_class: 'in-context',
+      findings_summary: { critical: 0, warning: 0, suggestion: 0 }, findings: [],
+    });
+    const rp = computeGateStates(schema, 'c', dir, allArtifacts).gates.find(g => g.id === 'review-proposal')!;
+    expect(rp.state).toBe('passed'); // in-context finding counts toward the independent's known-set
+  });
+
   it('review-proposal unpassed on new findings even after resolution (no-new-findings confirm)', () => {
     writeJson('review-proposal-2026-06-30T10-00-00Z.json', {
       command: 'review', mode: 'proposal', reviewer_class: 'fresh',

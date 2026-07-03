@@ -1,0 +1,70 @@
+{
+  "command": "review",
+  "timestamp": "2026-07-02T23:51:05Z",
+  "change": "c1-engine-gates",
+  "final_assessment": "No critical issues. 1 warning + 3 suggestion(s) to consider. This in-context system review has unresolved findings; gate review-system UNPASSED. Next: /orbit:address-reviews c1-engine-gates --from-file orbit/changes/c1-engine-gates/.orbit-runs/review-system-2026-07-02T23-51-05Z.json.",
+  "next_recommended": "/orbit:address-reviews c1-engine-gates --from-file orbit/changes/c1-engine-gates/.orbit-runs/review-system-2026-07-02T23-51-05Z.json",
+  "kind": "editorial",
+  "mode": "system",
+  "iteration": 1,
+  "depth": "full",
+  "flags": { "parallel": false, "focus": null, "strict": false, "fresh": false, "mark": false, "skip_verify": false },
+  "reviewer_class": "in-context",
+  "passes_run": ["0", "1", "2", "3", "6"],
+  "passes_skipped": ["4", "5"],
+  "findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 3,
+    "by_pass": {
+      "0": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "1": { "critical": 0, "warning": 0, "suggestion": 1 },
+      "2": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "3": { "critical": 0, "warning": 0, "suggestion": 1 },
+      "6": { "critical": 0, "warning": 1, "suggestion": 1 }
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "file": "src/core/artifact-graph/gates.ts",
+      "line": 175,
+      "title": "no-new-findings compares against prior INDEPENDENT passes only; spec says 'same-gate prior passes' (includes in-context)",
+      "recommendation": "evaluateReviewed computes the new-finding comparison set as `priorIndep = independents.slice(0, -1)` — only prior independent-class passes. orbit-engine-gates spec.md:132-134 says a new finding is matched against 'same-gate prior passes only' (all prior passes for the gate, including in-context). Verified: gates.ts:175 vs spec:132-134. Impact: if an in-context pass surfaced finding X and a later independent pass re-surfaces X, the code flags X as new (fails no-new-findings, extra cycle) though the spec treats it as not-new. Largely inert for the shipped proposal cadence [independent, in-context] (independent comes first, no prior in-context), but a real deviation and would bite a cadence with an in-context slot before the independent one. No test distinguishes (gates.test.ts:237 has an empty prior set).",
+      "recommendation_options": [
+        { "label": "A", "body": "Fix the code: compare latestIndep against ALL same-gate passes preceding it (ordered.slice(0, ordered.indexOf(latestIndep))), not just prior independents" },
+        { "label": "B", "body": "Amend orbit-engine-gates spec.md:133 to say 'prior independent-class passes' if the stricter loop is the intended semantics" }
+      ]
+    },
+    {
+      "pass": "1",
+      "severity": "SUGGESTION",
+      "file": "src/core/artifact-graph/schema.ts",
+      "line": 56,
+      "title": "Gate reference-validation now hard-fails apply-only schemas with a dangling apply.requires (previously silently accepted)",
+      "recommendation": "validateGates runs whenever an apply: block is present and reference-checks the normalized apply gate's requires/inputs. Pre-C1, apply.requires was never reference-validated (only artifacts were), so a schema with apply:{requires:[typo]} parsed. It now throws. Valid upstream/XDG schemas are unaffected (test 4.1 confirms), so this is a defensible tightening, but it is an observable change for MALFORMED apply-only schemas — mildly in tension with the 'no behavior change is observable' phrasing. Recommend accepting as an intentional improvement and adding a one-line note to the 'Upstream apply: block normalized' requirement that apply.requires references are now validated."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "file": "src/commands/workflow/instructions.ts",
+      "line": 341,
+      "title": "instructions apply blocked-by-gate is entry-gated (complete===0) — not stated in the spec scenario",
+      "recommendation": "The blocked-by-gate branch is guarded by `state === 'ready' && complete === 0` (dogfooding-added: post-apply the proposal gate is moot; don't re-block mid-implementation). Well-reasoned and consistent with design.md, but the spec scenario (orbit-engine-gates:220-223) says only 'runs while review-proposal is unpassed → state: blocked-by-gate' with no task-completion qualifier. Add a clause to the gate-aware instructions requirement noting apply's blocked-by-gate is entry-gated (fires only before any task is checked), so the spec matches shipped behavior."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "file": "src/core/artifact-graph/gates.ts",
+      "line": 348,
+      "title": "Position-readout render tokens ((past), unpassed) and declaration-order not documented in the spec",
+      "recommendation": "buildPositionReadout renders gates in declaration order only (spec.md:205 says 'Step order follows requires/before edges; ties by declaration order' — coincidentally correct for spec-driven, but an arbitrarily-ordered gated schema would render out of flow). renderGate emits a literal 'unpassed' and an undocumented '(past)' token for superseded gates (the dogfooding-added moot-gate feature), neither in the spec's enumerated render set (spec.md:200-208). Document the superseded '(past)' render + the 'unpassed' token + the superseded-gate concept in the position-readout / gate-aware-status requirement (the superseded concept isn't in the spec at all); topological sort by requires/before is a lower-priority generality improvement."
+    }
+  ],
+  "stale_suppressed": [
+    { "pass": "0", "title": "task checkboxes", "evidence": "Pass 0 verify-change: all 21 tasks spot-checked against actual code (not trusting checkboxes) — schema v2, trail reader, gate computation, emits, attestations, override recording all present; every orbit-engine-gates requirement has implementation; design.md adhered. Clean." },
+    { "pass": "2", "title": "cohesion of ChangeContext.schema + ApplyInstructions new state", "evidence": "ChangeContext.schema has a single construction site (loadChangeContext); ApplyInstructions' blocked-by-gate + gate/next_command handled by consumers; type-checked build + 1568-green suite confirm no missed sites. Clean." }
+  ],
+  "iteration_note": "First system-mode review (iteration 1, in-context — leading slot of the review-system cadence [in-context, external, in-context]). Deep code-vs-spec analysis delegated to a fresh-context subagent (author heavily anchored). Implementation faithful: 0 CRITICAL; Passes 0/2 clean; 4/5 skipped (no lenses). The 1 WARNING is a real convergence-computation deviation (new-finding set); 2 of the 3 SUGGESTIONs are spec gaps for behaviors added reactively during dogfooding (superseded gates, entry-gating). Project-wide audit-drift (Pass 6 library) deferred to the canonical pre-archive sweep; code/spec drift covered here."
+}

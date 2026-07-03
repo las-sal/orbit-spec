@@ -43,13 +43,18 @@ The upstream `apply:` block (`requires` / `tracks` / `instruction`) SHALL remain
 present, the loader normalizes it into the gates list as a `kind: tracked` gate with id `apply`.
 A schema declaring BOTH an `apply:` block AND a `gates:` entry with id `apply` fails validation
 (double declaration). Schemas with no `gates:` list and only `apply:` (upstream and existing
-project-local/XDG schemas) parse and behave exactly as today.
+project-local/XDG schemas) parse and behave exactly as today. As part of gate reference-validation,
+the normalized `apply` gate's `requires`/`inputs` are now checked against declared artifact/gate ids
+— so an `apply:` block with a dangling reference (e.g. `requires: [<typo>]`) fails schema validation
+eagerly rather than surfacing as a missing artifact at apply time. Well-formed apply-only schemas
+are unaffected.
 
 #### Scenario: apply-only schema unchanged
 
-- **WHEN** a v1 schema with only an `apply:` block loads
+- **WHEN** a WELL-FORMED v1 schema with only an `apply:` block loads
 - **THEN** the engine produces one tracked gate (id `apply`) with today's `blocked|ready|all_done`
-  semantics; no behavior change is observable
+  semantics; no behavior change is observable (the reference-validation tightening affects only
+  malformed schemas with dangling `apply.requires`)
 
 #### Scenario: Double apply declaration rejected
 
@@ -201,13 +206,19 @@ the trailing system confirm — it surfaces the gate as still needing its in-con
 
 `orbit status` SHALL render gate rows (state: `blocked | ready | passed | stale | unpassed`, with
 reasons) alongside artifact rows, and a one-line POSITION READOUT of the canonical flow (e.g.
-`propose ✓ → review(proposal) ✓ → apply ✓ → review(system) STALE → archive blocked-by-gate`). Each
-position-readout step token is a gate id or lifecycle-phase token (`propose`, `review(proposal)`,
+`propose ✓ → review(proposal) (past) → apply ✓ → review(system) unpassed → archive blocked-by-gate`).
+Each position-readout step token is a gate id or lifecycle-phase token (`propose`, `review(proposal)`,
 `apply`, `review(system)`, `archive`); a gate step renders its computed state (`✓` passed, `STALE`,
-`blocked-by-gate`, or the unpassed-class reason). Step order follows the gate graph's
-`requires`/`before` edges; ties broken by declaration order in the schema YAML.
-`orbit instructions` for a phase whose gate is unpassed SHALL return a `blocked-by-gate` state
-carrying the gate id, the human-readable reason, and the canonical next command. JSON outputs
+`ready`, `blocked-by-gate`, `unpassed`, or `(past)` for a superseded gate). **Superseded gates**: a
+`reviewed` gate whose `before` phase is already complete (e.g. `review-proposal` after `apply` has
+passed) is no longer the active frontier — it gated ENTRY to a phase that has since run. Such a gate
+is marked SUPERSEDED (distinct from `passed`: it may never have converged; the flow simply advanced
+past it), renders as `(past)`, and is SKIPPED by the single-voiced canonical-next computation so the
+recommendation advances to the next actionable gate rather than re-surfacing a moot earlier one.
+Step order follows the gate graph's `requires`/`before` edges; ties broken by declaration order in
+the schema YAML (v1 relies on declaration order matching flow order, as the shipped `spec-driven`
+schema does). `orbit instructions` for a phase whose gate is unpassed SHALL return a `blocked-by-gate`
+state carrying the gate id, the human-readable reason, and the canonical next command. JSON outputs
 carry the same fields for downstream readers.
 
 #### Scenario: Status shows the position readout
@@ -218,9 +229,20 @@ carry the same fields for downstream readers.
 #### Scenario: Instructions surface blocked-by-gate
 
 - **WHEN** `orbit instructions apply --change <name> --json` runs while `review-proposal` is
-  unpassed
+  unpassed AND no task has been checked yet (apply has not started)
 - **THEN** the JSON includes `state: "blocked-by-gate"`, the gate id, the reason, and
   `next_command` (the canonical full invocation)
+
+#### Scenario: blocked-by-gate is entry-gated, not a mid-apply re-block
+
+- **WHEN** `orbit instructions apply` runs while `review-proposal` is unpassed/stale BUT one or more
+  tasks are already checked (implementation is underway)
+- **THEN** the state is `ready` (not `blocked-by-gate`): the gate gates ENTRY to apply and is checked
+  only before the first task is completed. Post-apply the `review-proposal` pass goes stale relative
+  to the `apply-*.json` emit (expected + moot per the v1 freshness scope) and the gate has already
+  served its purpose, so mid-apply continuation is never re-blocked. Apply-parity holds throughout:
+  even at entry the gate NEVER hard-blocks — the consuming skill prompts (address / proceed-anyway /
+  abort) and records `gate_overridden` on proceed-anyway.
 
 ### Requirement: Single-voiced canonical-next computation
 

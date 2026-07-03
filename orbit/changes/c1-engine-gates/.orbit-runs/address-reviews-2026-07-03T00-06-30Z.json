@@ -1,0 +1,88 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-03T00:06:30Z",
+  "change": "c1-engine-gates",
+  "final_assessment": "Auto-discovered internal system review JSON (review-system-2026-07-02T23-51-05Z.json, iteration 1 in-context): 0 CRITICAL / 1 WARNING / 3 SUGGESTION, all resolved (0 deferred, 0 escalated). W1 (user option A): fixed the no-new-findings comparison in gates.ts to match against ALL prior same-gate passes (not just prior independents), matching orbit-engine-gates clause (c); added a discriminating test. S1-S3: documented in the orbit-engine-gates spec the three behaviors the review flagged as spec gaps — apply.requires reference-validation tightening, the entry-gated (complete===0) blocked-by-gate refinement, and the superseded-gate concept + (past)/unpassed position-readout render tokens (S2/S3 were behaviors added reactively during dogfooding, now captured in the contract). validate --strict passes; full suite 1569 green.",
+  "next_recommended": "/orbit:review --as system c1-engine-gates (in-context) to confirm the leading slot's findings are resolved, OR per the cadence proceed to /orbit:review-external --as system c1-engine-gates (the external slot); the review-system gate needs [in-context, external, in-context] coverage before archive.",
+  "kind": "editorial",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/c1-engine-gates/.orbit-runs/review-system-2026-07-02T23-51-05Z.json",
+  "source_command": "review",
+  "source_token": "2026-07-02T23-51-05Z",
+  "latest_apply_token": "2026-07-01T15-17-04Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 3
+  },
+  "pushback_verification": "All 4 findings verified against current code/spec during the system review: W1 confirmed at gates.ts:175 vs orbit-engine-gates:132-134; S1-S3 confirmed as real spec gaps (S2/S3 for behaviors added during dogfooding). 0 stale suppressions.",
+  "resolution_summary": {
+    "resolved": 4,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "no-new-findings compares against prior INDEPENDENT passes only; spec says same-gate prior passes",
+      "marker_source": "internal-review",
+      "file": "src/core/artifact-graph/gates.ts",
+      "line": 175,
+      "classification": "decision_required",
+      "action": "Applied user-chosen option A (fix code to match spec). Replaced `independents.slice(0, -1)` with `ordered.slice(0, ordered.indexOf(latestIndep))` so the new-finding comparison set is ALL prior same-gate passes (including in-context), matching orbit-engine-gates' 'same-gate prior passes' semantics — a finding first surfaced by an in-context pass is not 'new' when an independent pass re-surfaces it. Added a discriminating test (in-context@T0 finds X, fresh@T1 re-finds X, both resolved, in-context@T2 clean → gate PASSED).",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          { "label": "A", "body": "Fix code to compare against all prior same-gate passes (matches spec semantics)" },
+          { "label": "B", "body": "Amend spec to 'prior independent-class passes' (keep the stricter code)" }
+        ],
+        "chosen": "A",
+        "discuss_invoked": false
+      },
+      "ripple_cascade": {
+        "applied": ["test/core/artifact-graph/gates.test.ts"],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Gate reference-validation now hard-fails apply-only schemas with a dangling apply.requires",
+      "marker_source": "internal-review",
+      "file": "src/core/artifact-graph/schema.ts",
+      "line": 56,
+      "classification": "trivial_fix",
+      "action": "Documented the tightening in orbit-engine-gates' 'Upstream apply: block normalized' requirement: the normalized apply gate's requires/inputs are now reference-validated, so a dangling apply.requires fails schema validation eagerly; well-formed apply-only schemas unaffected. Scoped the 'apply-only schema unchanged' scenario to WELL-FORMED schemas.",
+      "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "instructions apply blocked-by-gate entry-gating (complete===0) not in the spec",
+      "marker_source": "internal-review",
+      "file": "src/commands/workflow/instructions.ts",
+      "line": 341,
+      "classification": "trivial_fix",
+      "action": "Added a scenario to orbit-engine-gates' gate-aware status/instructions requirement: blocked-by-gate is entry-gated (fires only before the first task is checked); mid-apply continuation returns `ready` (post-apply proposal staleness is expected + moot). Also scoped the existing 'Instructions surface blocked-by-gate' scenario WHEN to 'no task checked yet'.",
+      "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Position-readout (past)/unpassed render tokens + superseded-gate concept not in the spec",
+      "marker_source": "internal-review",
+      "file": "src/core/artifact-graph/gates.ts",
+      "line": 348,
+      "classification": "trivial_fix",
+      "action": "Documented in orbit-engine-gates' position-readout requirement: the full render-token set (✓/STALE/ready/blocked-by-gate/unpassed/(past)) and the SUPERSEDED-gate concept — a reviewed gate whose `before` phase is complete is no longer the frontier, renders (past), and is skipped by canonical-next. Noted the v1 declaration-order-matches-flow-order assumption (topological sort a future generality improvement).",
+      "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": []
+}
