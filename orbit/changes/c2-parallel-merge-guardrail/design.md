@@ -14,9 +14,12 @@ see `explore.md` Premise; upstream analysis: `openspec-parallel-merge-plan.md`).
 Code facts this design is grounded on (read during exploration and re-verified at propose):
 
 - Archive (`src/core/archive.ts:228`) is the **only programmatic caller** of `buildUpdatedSpec`;
-  `applySpecs` is an unused export, and the sync-specs workflow is agent-driven (the AI edits main
-  specs directly). Guarding the spec-apply engine therefore covers the destructive path, and
-  bulk-archive (which shells out to `orbit archive` per change) inherits the guard for free.
+  `applySpecs` is an unused export. The **generated archive workflows do NOT run it**: both
+  `archive-change.ts` and `bulk-archive-change.ts` apply deltas via the agent-driven
+  `orbit-sync-specs` primitive (a Task subagent that edits main specs directly) and archive via
+  `mv` — so the engine guard covers CLI-direct/programmatic archives only, and the workflow paths
+  need their own check step (the two-layer coverage model, D4/D7). This corrects an earlier draft
+  of this design that assumed the workflows shell out to `orbit archive`.
 - `extractRequirementsSection` (`src/core/parsers/requirement-blocks.ts`) is fence-aware (C1 fix)
   and already normalizes `\r\n?` → `\n` and `trimEnd()`s each block's `raw` — the D-c2-8
   normalization comes for free by hashing `raw` verbatim.
@@ -46,8 +49,11 @@ Code facts this design is grounded on (read during exploration and re-verified a
 - **Phase 2** — scenario-level delta granularity (makes sibling adds commutative).
 - Fingerprint surfacing in `orbit status` / the gate graph — the guard is an archive-time check,
   not a gate (D-c1 gate model untouched).
-- Guarding the agent-driven sync-specs workflow — it performs intelligent merging by design and
-  does not pass through `buildUpdatedSpec`.
+- Guarding the *standalone* `/orbit:sync` workflow — it performs intelligent agent-driven merging
+  by design and does not pass through `buildUpdatedSpec`. (When the archive flow invokes the
+  sync-specs primitive, the D7 fingerprint check has already run — the archive path is covered;
+  a user-initiated mid-flight sync is not, and the D5 idempotent skip plus re-stamp guidance
+  handle its aftermath.)
 
 ## Decisions
 
@@ -116,8 +122,9 @@ every touched requirement (same FROM-name mapping as capture) and compares again
 `base_fingerprints` read from the change's `.openspec.yaml`.
 
 - **Diverged + no override** → the engine throws with a divergence report; archive's existing
-  error path prints it and aborts with "No files were changed." Non-interactive runs
-  (`--yes`, bulk archive) can therefore never clobber silently.
+  error path prints it and aborts with "No files were changed." Non-interactive CLI runs
+  (`--yes`) can therefore never clobber silently. (The generated workflows never reach this
+  layer — they apply deltas agent-driven; their guard is the D7 check step.)
 - **Override** (`orbit archive --override-fingerprints`, plumbed from `archive.ts` into
   `buildUpdatedSpec`) → proceed; the engine prints a notice naming each overridden requirement
   (CLI-direct runs write no run summary), and the *workflow* records the override in the run
@@ -155,13 +162,16 @@ inflection prompt.
 ### D7. Archive-flow prompt + trail (explore.md D-c2-4, D-c2-7 strengthened)
 
 A new step in the archive workflow body (after C1's Step 3.4 review-system gate prompt, before the
-Step 3.5 audit sweep) runs `orbit fingerprint <name> --check --json`:
+Step 3.5 audit sweep) runs `orbit fingerprint <name> --check --json`. This step is the ONLY guard
+layer on the workflow path (the body applies deltas agent-driven via sync-specs and moves with
+`mv`, never reaching the engine guard), and bulk-archive gains the same check + prompt per change:
 
 - **Any `diverged`** → AskUserQuestion inflection prompt with the divergence diff:
   **Reconcile** (halt; print guided-manual instructions — hand-edit the delta to incorporate the
-  live content, then `orbit fingerprint <name> --refresh`) / **Proceed anyway** (re-invoke
-  archive with `--override-fingerprints`; record
-  `fingerprint_overridden: [{capability, requirement, base_hash, live_hash}]` in the run summary) /
+  live content, then `orbit fingerprint <name> --refresh`) / **Proceed anyway** (continue the
+  flow past the check; record
+  `fingerprint_overridden: [{capability, requirement, base_hash, live_hash}]` in the run summary —
+  no CLI flag involved on this path; `--override-fingerprints` is the CLI-direct equivalent) /
   **Abort**.
 - **Any `unverified`** (and none diverged) → AskUserQuestion: proceed / abort. Proceeding records
   `fingerprints_unverified: [{capability, requirement}]` in the run summary. Rationale for

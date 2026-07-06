@@ -1,0 +1,94 @@
+{
+  "command": "review",
+  "timestamp": "2026-07-06T21:41:33Z",
+  "change": "c2-parallel-merge-guardrail",
+  "final_assessment": "2 critical issue(s) found. Fix before /orbit:apply.",
+  "next_recommended": "/orbit:address-reviews c2-parallel-merge-guardrail --from-file orbit/changes/c2-parallel-merge-guardrail/.orbit-runs/review-proposal-2026-07-06T21-41-33Z.json",
+  "kind": "editorial",
+  "mode": "proposal",
+  "iteration": 2,
+  "depth": "full",
+  "reviewer_class": "fresh",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "passes_run": ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+  "passes_skipped": [],
+  "findings_summary": {
+    "critical": 2,
+    "warning": 3,
+    "suggestion": 1,
+    "by_pass": {
+      "1": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "2": { "critical": 1, "warning": 1, "suggestion": 0 },
+      "3": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "4": { "critical": 1, "warning": 0, "suggestion": 0 },
+      "5": { "critical": 0, "warning": 2, "suggestion": 1 },
+      "6": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "7": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "8": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "9": { "critical": 0, "warning": 0, "suggestion": 0 }
+    }
+  },
+  "findings": [
+    {
+      "pass": "4",
+      "severity": "CRITICAL",
+      "file": "specs/orbit-archive-modifications/spec.md",
+      "line": 77,
+      "title": "MODIFIED block silently drops three baseline scenarios from 'Archive summary schema reference ships with the skill'",
+      "recommendation": "The MODIFIED snapshot of this requirement carries only the intro paragraph plus the (correctly extended) 'Reference exists after init' scenario, but the current baseline (orbit/specs/orbit-archive-modifications/spec.md:123-164) has THREE more scenarios — 'Schema shapes match the baselines, not the overlay source', 'No predecessor-era vocabulary survives', and 'Body cite resolves' — that are absent from the delta. Because MODIFIED is a wholesale replace (nameToBlock.set in buildUpdatedSpec), archiving C2 as-is would delete those three scenarios from the baseline: the exact stale-snapshot silent-loss failure mode this very change exists to prevent, live in its own delta. Restore the three baseline scenarios verbatim beneath the extended 'Reference exists after init' scenario. (The other MODIFIED block, 'Archive run summary written', diffs clean: baseline verbatim + the two intended new scenarios.)"
+    },
+    {
+      "pass": "2",
+      "severity": "CRITICAL",
+      "file": "specs/orbit-base-fingerprints/spec.md",
+      "line": 148,
+      "title": "Guard-coverage claims rest on a false code model — neither generated archive workflow invokes `orbit archive`, so the engine guard does not cover the workflow or bulk-archive paths",
+      "recommendation": "The spec's normative closing ('The guard lives in the engine so every archive path (single archive, bulk archive, --yes non-interactive runs) inherits it', spec:148-149), design.md:19 ('bulk-archive (which shells out to `orbit archive` per change) inherits the guard for free' — presented as a re-verified code fact), proposal.md's bulk bullet ('the guard fires per-archive'), and tasks.md 4.4 (add a note that 'the engine guard fires per archive; on refusal surface the per-change divergence') are all contradicted by the actual templates. src/core/templates/workflows/archive-change.ts Step 4 applies deltas via the AGENT-DRIVEN orbit-sync-specs skill (Task tool) and Step 5 archives via raw `mkdir -p` + `mv` — the body never invokes the `orbit archive` CLI, so buildUpdatedSpec (and the D4 guard) never runs on the canonical /orbit:archive path (the D7 workflow check step is what actually covers it). src/core/templates/workflows/bulk-archive-change.ts Step 8a likewise uses 'the orbit-sync-specs approach (agent-driven intelligent merge)' and Step 8b a raw `mv` — bulk-archive gets NEITHER the engine guard NOR any fingerprint-check step under this proposal (task 4.4's note describes refusals that can never occur), leaving bulk-archive a fully silent-loss path while the artifacts claim it is covered. (Context: baseline orbit-run-summary-emit:19 models /orbit:bulk-archive as a wrapper of inner /orbit:archive invocations, which likely misled the grounding — the template bodies disagree with that model today.) Fix by picking a consistent execution model: either (A) make the archive/bulk-archive workflow bodies actually shell out to `orbit archive` (--yes/--override-fingerprints) per change so the engine guard genuinely fires on every path, or (B) keep the agent-driven bodies and respec: scope the engine guard's every-path sentence to CLI/programmatic archives, state that workflow paths are covered by the workflow-layer `orbit fingerprint --check` step, and extend task 4.4 to add a real per-change fingerprint-check + divergence prompt to bulk-archive-change.ts instead of the false note.",
+      "recommendation_options": [
+        { "label": "A", "body": "Change archive-change.ts and bulk-archive-change.ts so the archive execution shells out to the `orbit archive` CLI per change (with --yes / --override-fingerprints plumbing), making the engine guard genuinely fire on every archive path as claimed" },
+        { "label": "B", "body": "Keep the agent-driven workflow bodies: respec the guard's coverage sentence (engine guard = CLI/programmatic archives; workflow paths covered by the D7 `orbit fingerprint --check` step), and rewrite task 4.4 to add a real per-change fingerprint-check + divergence prompt to bulk-archive-change.ts rather than a note about engine refusals that cannot occur there" }
+      ]
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "file": "specs/orbit-archive-modifications/spec.md",
+      "line": 12,
+      "title": "Proceed-anyway mechanics ('re-invoke the archive with --override-fingerprints') don't fit the agent-driven workflow body being modified",
+      "recommendation": "The inflection-prompt requirement (spec:12) and the 'Proceed-anyway is recorded' scenario (spec:35), mirrored in design.md D7:162 and tasks.md 4.2:55, require the workflow to re-invoke the archive with `--override-fingerprints` — but the archive-change.ts body this delta modifies never invokes the `orbit archive` CLI (agent-driven sync + raw mv), so there is nothing to attach the flag to as spec'd; a codegen implementer cannot satisfy this without inventing a flow change. Resolves with the coverage-model CRITICAL: under option A the re-invoke wording becomes literal; under option B respec proceed-anyway as 'continue the archive flow past the check, recording fingerprint_overridden in the run summary', reserving --override-fingerprints for CLI-direct/engine paths (same applies to the 'Unverified-only proceeds WITHOUT --override-fingerprints' scenario at spec:38-44)."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "file": "specs/orbit-base-fingerprints/spec.md",
+      "line": 65,
+      "title": "verified-vs-unverified precedence unstated for a no-fingerprint requirement whose write is idempotent",
+      "recommendation": "Check mode's closed status set defines `verified` as 'stored fingerprint matches live hash, or the idempotent-write skip applies' and `unverified` as 'touched requirement with no stored fingerprint' (spec:62-66). A touched requirement with NO stored fingerprint whose live block hash equals the incoming delta block hash matches both definitions, and the two readings produce different archive behavior (the unverified-only prompt and the `fingerprints_unverified` summary field fire or don't). The guard requirement's 'regardless of the stored fingerprint' (spec:137-139) suggests idempotent wins, but the CLI status definitions don't say so. State the precedence explicitly in the check-mode paragraph (e.g. 'the idempotent-write skip takes precedence: such a requirement reports verified even with no stored fingerprint')."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "file": "tasks.md",
+      "line": 35,
+      "title": "Task 3.1 omits the reconcile guidance the engine-refusal scenario normatively requires",
+      "recommendation": "The 'Reconcile instructions ordered edit-then-refresh' scenario (specs/orbit-base-fingerprints/spec.md:201-205) applies when the user 'hits the engine refusal directly' — the printed guidance must name the diverged requirements, show/reference the diff, AND list hand-editing the delta BEFORE the `orbit fingerprint <name> --refresh` re-stamp. Task 3.1 specifies the throw with 'requirement names + current-live ▸ would-be-written diff' but not the edit-then-refresh reconcile instructions, so an implementer following tasks would fail that scenario on the CLI-direct path (task 4.2 covers only the workflow prompt). Add the guided-manual instruction text to task 3.1's divergence-report contents."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "file": "specs/orbit-base-fingerprints/spec.md",
+      "line": 66,
+      "title": "Check-mode exit-code contract unspecified",
+      "recommendation": "Check mode specifies statuses, --json, and no-file-modification, but not the process exit code when any requirement reports `diverged`/`missing` (vs all `verified`/`unverified`). Scripts and CI (and the bulk flow, depending on the coverage-model fix) will want a non-zero exit on divergence; two implementers could reasonably differ. One sentence pinning exit-code semantics for `--check` would close it."
+    }
+  ],
+  "stale_suppressed": [],
+  "iteration_note": "Note: 0 of these findings appeared in the last run on 2026-07-06 (all 6 iter-1 findings verified resolved by address-reviews-2026-07-06T21-31-58Z). 6 new this run."
+}

@@ -63,7 +63,11 @@ is passed. A touched requirement absent from the live baseline SHALL be skipped 
 per-requirement status from the closed set: `verified` (stored fingerprint matches live hash, or
 the idempotent-write skip applies), `diverged` (stored fingerprint differs from live hash),
 `unverified` (touched requirement with no stored fingerprint), `missing` (touched requirement
-absent from the live baseline). Check mode SHALL NOT modify any file.
+absent from the live baseline). The idempotent-write skip takes precedence over `unverified`: a
+no-fingerprint requirement whose live hash equals the incoming block hash reports `verified`
+(the write is a no-op; nothing can be lost). Check mode SHALL NOT modify any file, and SHALL
+exit non-zero when any requirement reports `diverged` or `missing` (zero for
+verified/unverified-only results).
 
 #### Scenario: Stamp after delta generation
 
@@ -145,8 +149,13 @@ capture) and compare against the change's stored `base_fingerprints`:
   naming each requirement whose divergence was overridden — CLI-direct runs write no run summary,
   so the console notice keeps the deliberate-loss act visible in terminal and CI logs.
 
-The guard lives in the engine so every archive path (single archive, bulk archive, `--yes`
-non-interactive runs) inherits it; a non-interactive run can never clobber silently.
+Coverage model (two layers): the engine guard covers every path that runs `buildUpdatedSpec` —
+the `orbit archive` CLI (including `--yes` non-interactive runs) and any programmatic caller.
+The generated archive workflows (`/orbit:archive`, `/orbit:bulk-archive`) apply deltas
+agent-driven (via the sync-specs primitive) and move with `mv`, so they never run
+`buildUpdatedSpec`; those paths are covered by the mandatory pre-archive fingerprint check step
+(per `orbit-archive-modifications`' `Fingerprint-divergence inflection prompt` requirement,
+which bulk-archive SHALL apply per change). Neither layer has a silent path.
 
 #### Scenario: Stale snapshot refused
 
@@ -170,11 +179,20 @@ non-interactive runs) inherits it; a non-interactive run can never clobber silen
   MODIFIED/REMOVED/RENAMED target; the fingerprint check's `missing` status adds context but
   introduces no path that proceeds silently
 
-#### Scenario: Non-interactive archive cannot clobber silently
+#### Scenario: Non-interactive CLI archive cannot clobber silently
 
 - **WHEN** `orbit archive <name> --yes` runs against a diverged requirement without the override
   flag
 - **THEN** the archive aborts exactly as in the interactive case
+
+#### Scenario: Agent-driven archive path is covered by the check step
+
+- **WHEN** the generated `/orbit:archive` or `/orbit:bulk-archive` workflow (which applies deltas
+  agent-driven rather than through `buildUpdatedSpec`) reaches its pre-archive fingerprint check
+  and a requirement reports `diverged`
+- **THEN** the workflow fires the divergence inflection prompt (per `orbit-archive-modifications`)
+  before any baseline write or archive move; there is no workflow path that syncs or moves past a
+  diverged requirement without an explicit recorded decision
 
 #### Scenario: Own delta already applied (idempotent skip)
 

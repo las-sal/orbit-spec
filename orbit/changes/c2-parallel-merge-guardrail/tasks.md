@@ -25,7 +25,8 @@ archive.
       `writeChangeMetadata` (add-missing-only by default; `--refresh` overwrites; warn + skip
       requirements absent from the live baseline)
 - [ ] 2.2 Check mode: report per-requirement `{capability, requirement, status, base_hash,
-      live_hash}` human-readably and as `--json`; exit without modifying files
+      live_hash}` human-readably and as `--json`; never modify files; exit non-zero on any
+      `diverged`/`missing`, zero otherwise; idempotent-skip precedence over `unverified`
 - [ ] 2.3 Unit/CLI tests: stamp writes expected map; re-stamp without `--refresh` preserves a
       stale fingerprint; `--refresh` overwrites; `--check --json` shape and statuses;
       ADDED-only change stamps nothing
@@ -35,7 +36,8 @@ archive.
 - [ ] 3.1 Guard in `buildUpdatedSpec` (`src/core/specs-apply.ts`), before the mutation sequence:
       read the change's `base_fingerprints`, compute per-requirement status; on `diverged`
       without override throw with the divergence report (requirement names + current-live ▸
-      would-be-written diff); on `unverified` warn and proceed; on `missing` defer to the
+      would-be-written diff + the edit-then-refresh reconcile guidance, hand-edit listed BEFORE
+      `--refresh`); on `unverified` warn and proceed; on `missing` defer to the
       existing not-found errors; honor the idempotent-write skip; print the override notice
       (names each overridden requirement) when the flag is exercised
 - [ ] 3.2 Plumb the change directory + `--override-fingerprints` flag through
@@ -52,13 +54,16 @@ archive.
       `orbit fingerprint <name>` immediately after delta-spec generation (D-c2-3/D-c2-7)
 - [ ] 4.2 `archive-change.ts`: new fingerprint-check step after the Step 3.4 gate prompt and
       before the Step 3.5 audit sweep — `--check --json`, diverged → reconcile / proceed-anyway
-      (re-invoke with `--override-fingerprints`) / abort, unverified-only → proceed/abort prompt;
-      run-summary fields `fingerprint_overridden` / `fingerprints_unverified`; update the
-      summary-shape documentation block in the body
+      (continue the flow past the check; no CLI flag — the body applies deltas agent-driven) /
+      abort, unverified-only → proceed/abort prompt; run-summary fields `fingerprint_overridden`
+      / `fingerprints_unverified`; update the summary-shape documentation block in the body.
+      This step is the workflow path's ONLY guard layer (the body never runs `orbit archive`)
 - [ ] 4.3 `archive-change.ts` references: extend `archive-summary-schema.md` content with the two
       conditional fingerprint fields
-- [ ] 4.4 `bulk-archive-change.ts`: brief orbit-addition note — the engine guard fires per
-      archive; on refusal surface the per-change divergence and options rather than retrying
+- [ ] 4.4 `bulk-archive-change.ts`: add the same per-change fingerprint check + divergence prompt
+      (Step 8-adjacent, before each change's sync/move) — its agent-driven path never reaches the
+      engine guard, so the check step is its only guard layer; record per-change outcomes in the
+      bulk summary
 - [ ] 4.5 Template-fidelity/generated-surface tests as needed (per-workflow marker fidelity suite);
       `npm run build && node bin/orbit.js update --force` to refresh the local `.claude/` surface
 

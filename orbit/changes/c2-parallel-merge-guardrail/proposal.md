@@ -64,7 +64,8 @@ impossible.
   module + `orbit fingerprint` CLI registration.
 - **Workflow templates** (`src/core/templates/workflows/`): `propose.ts`, `continue-change.ts`,
   `ff-change.ts` (capture step), `archive-change.ts` (divergence prompt + summary fields),
-  `bulk-archive-change.ts` (brief note: the guard fires per-archive; handle refusals per change).
+  `bulk-archive-change.ts` (per-change fingerprint check + divergence prompt — its agent-driven
+  path never reaches the engine guard, so the check step is its only guard layer).
 - **Dogfood recursion**: C2's own delta is the first change verified by the guard it defines —
   the apply order in `tasks.md` must land guard + capture before C2 itself archives.
 - **Compatibility**: `base_fingerprints` is optional — existing changes and archives (which lack

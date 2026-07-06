@@ -9,10 +9,11 @@ before the pre-archive audit sweep, and prompt on anything not `verified`:
 - **Any requirement `diverged`** → fire an inflection prompt (AskUserQuestion) presenting the
   divergence report (requirement names plus the live-vs-would-be-written diff) with exactly three
   options: **Reconcile** (halt the archive; print the guided-manual reconcile instructions per
-  `orbit-base-fingerprints`), **Proceed anyway** (re-invoke the archive with
-  `--override-fingerprints`; the run summary records the override), or **Abort**. When
-  `unverified` requirements exist alongside diverged ones, the divergence prompt SHALL list them
-  too (proceeding records both run-summary fields).
+  `orbit-base-fingerprints`), **Proceed anyway** (continue the archive flow past the check; the
+  run summary records the override — the workflow applies deltas agent-driven, so no CLI flag is
+  involved; `--override-fingerprints` is the equivalent for CLI-direct `orbit archive` runs), or
+  **Abort**. When `unverified` requirements exist alongside diverged ones, the divergence prompt
+  SHALL list them too (proceeding records both run-summary fields).
 - **Any requirement `unverified` and none `diverged`** → prompt proceed / abort ("can't verify —
   no base recorded"); proceeding records the unverified requirements in the run summary. The
   engine-level warn alone is not sufficient interactively — a console warning in a `--yes` flow is
@@ -20,7 +21,9 @@ before the pre-archive audit sweep, and prompt on anything not `verified`:
 - **All requirements `verified`** (or the change touches no existing requirements) → no prompt.
 
 This prompt is DISTINCT from the `review-system` gate prompt and the audit-drift prompt; all three
-MAY fire in one archive invocation (gate first, then fingerprints, then audit).
+MAY fire in one archive invocation (gate first, then fingerprints, then audit). The bulk-archive
+workflow SHALL run the same check and prompt per change before that change's sync and move steps
+(its agent-driven path never runs the engine guard, so the check step is its only guard layer).
 
 #### Scenario: Divergence prompt fires with the diff
 
@@ -32,15 +35,14 @@ MAY fire in one archive invocation (gate first, then fingerprints, then audit).
 #### Scenario: Proceed-anyway is recorded
 
 - **WHEN** the user chooses proceed-anyway at the divergence prompt
-- **THEN** the archive is re-invoked with `--override-fingerprints` and the run summary records
-  `fingerprint_overridden` for every diverged requirement
+- **THEN** the archive flow continues past the check and the run summary records
+  `fingerprint_overridden` for every diverged requirement, captured at decision time
 
-#### Scenario: Unverified-only prompts without the override flag
+#### Scenario: Unverified-only proceed is recorded
 
 - **WHEN** the check reports `unverified` requirements and no `diverged` ones, and the user
   chooses to proceed
-- **THEN** the archive proceeds WITHOUT `--override-fingerprints` (the engine warn-and-proceed
-  path per `orbit-base-fingerprints` covers unverified) and the run summary records
+- **THEN** the archive flow continues normally and the run summary records
   `fingerprints_unverified`
 
 #### Scenario: Clean check is silent
@@ -98,3 +100,24 @@ residue that path renaming alone does not fix — satisfying the deferral record
   and `fingerprints_unverified: [{capability, requirement}]`; present only when the corresponding
   fingerprint outcome occurred, per this capability's `Archive run summary written` requirement)
   — and covers the field list in this capability's own `Archive run summary written` requirement
+
+#### Scenario: Schema shapes match the baselines, not the overlay source
+
+- **WHEN** the shipped schema is compared against the B1 baselines
+- **THEN** it documents `unresolved_markers` as an ARRAY (not the overlay's object), the sync
+  delta counts directly under `sync_specs` (not nested under `sync_specs.counts`), exactly the
+  three baseline `user_decision` values — no `aborted` (per the baseline, an aborted archive
+  writes no summary) — and the flat `audit_skipped_via_flag: true` skip-flag field (not the
+  overlay's nested `audit.skipped_via_flag`), matching the baseline and the skill body
+
+#### Scenario: No predecessor-era vocabulary survives
+
+- **WHEN** the shipped reference content is scanned
+- **THEN** it contains no `/opsx:` command references, no `openspec/` workspace paths, and no
+  `openspec-*` skill names — all command, path, and skill vocabulary is orbit-named
+
+#### Scenario: Body cite resolves
+
+- **WHEN** the archive skill body instructs reading `references/archive-summary-schema.md`
+- **THEN** that path resolves within the generated skill directory (the B1-era dangling cite is
+  closed)
