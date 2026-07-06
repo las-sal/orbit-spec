@@ -1,5 +1,5 @@
 name: spec-driven
-version: 1
+version: 2
 description: Default OpenSpec workflow - proposal → specs → design → tasks
 artifacts:
   - id: proposal
@@ -145,9 +145,28 @@ artifacts:
       - specs
       - design
 
-apply:
-  requires: [tasks]
-  tracks: tasks.md
-  instruction: |
-    Read context files, work through pending tasks, mark complete as you go.
-    Pause if you hit blockers or need clarification.
+# Gates (C1 engine gates). `apply` is a first-class tracked gate; the two review
+# gates make the engine review-aware. Cadences live here (tuning = a version bump).
+gates:
+  - id: review-proposal
+    kind: reviewed
+    requires: [proposal, specs, design, tasks]
+    inputs: [proposal, specs, design, tasks]
+    cadence: [independent, in-context]
+    confirm: no-new-findings
+    before: apply
+
+  - id: apply
+    kind: tracked
+    requires: [tasks]
+    tracks: tasks.md
+    instruction: |
+      Read context files, work through pending tasks, mark complete as you go.
+      Pause if you hit blockers or need clarification.
+
+  - id: review-system
+    kind: reviewed
+    requires: [apply]
+    cadence: [in-context, external, in-context]
+    confirm: findings-resolved
+    before: archive

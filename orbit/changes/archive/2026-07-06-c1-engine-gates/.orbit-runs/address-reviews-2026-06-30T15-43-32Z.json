@@ -1,0 +1,82 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-06-30T15:43:32Z",
+  "change": "c1-engine-gates",
+  "final_assessment": "External proposal review iter 2 (GPT-5 Codex) resolved: 0 CRITICAL / 2 WARNING / 0 SUGGESTION; both WARNINGs resolved (decision-required, user-chosen options), 0 deferred, 0 escalated. W1: explore.md D-c1-5/D-c1-7 annotated as superseded (dated decision text preserved, pointer to the normative orbit-engine-gates spec added). W2: orbit-review proposal-mode final-assessment phrasings made gate-aware (5 review-proposal convergence-state scenarios replacing the bare 'Ready to apply' placeholders), rippled to proposal.md and tasks.md. validate --strict passes.",
+  "next_recommended": "Re-run /orbit:review --as proposal c1-engine-gates to confirm convergence after these edits (an independent pass yielding 0 new findings satisfies the proposal cadence's no-new-findings confirm); only then /orbit:apply c1-engine-gates.",
+  "kind": "editorial",
+  "source": "from-file",
+  "source_path": "orbit/changes/c1-engine-gates/.orbit-runs/external-proposal-2026-06-30T13-41-49Z.md",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-5 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 0
+  },
+  "pushback_verification": "Both findings verified against current state before acting: explore.md D-c1-5 (lines 76-84) and D-c1-7 (line 104) still stated the pre-remediation class-set/no-confirm rule, conflicting with orbit-engine-gates/spec.md; orbit-review/spec.md proposal-mode phrasings (lines 15, 20) still read 'Ready to apply' with no gate state or canonical command while the intro promised single-voiced full commands. 0 stale suppressions.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Authoritative explore decision still states the old convergence rule",
+      "marker_source": "external",
+      "file": "orbit/changes/c1-engine-gates/explore.md",
+      "line": 76,
+      "classification": "decision_required",
+      "action": "Applied user-chosen option A — appended a 'Superseded (proposal-review remediation)' note to D-c1-5 and D-c1-7 pointing to the normative orbit-engine-gates spec (Reviewed-gate pass condition / Gate declaration in schema YAML), preserving the dated 2026-06-12 decision text rather than rewriting it.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          { "label": "A", "body": "Annotate D-c1-5/D-c1-7 as superseded with a pointer to the normative spec, preserving the dated decision text" },
+          { "label": "B", "body": "Rewrite the D-c1-5/D-c1-7 decision bodies to state the ordered-slot cadence + per-gate confirm rule" }
+        ],
+        "chosen": "A",
+        "discuss_invoked": false
+      },
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Proposal-mode review phrasings still bypass the gate-aware canonical next command",
+      "marker_source": "external",
+      "file": "orbit/changes/c1-engine-gates/specs/orbit-review/spec.md",
+      "line": 15,
+      "classification": "decision_required",
+      "action": "Applied user-chosen option A — made proposal-mode final assessments gate-aware: updated the requirement intro to state both modes vary on the computed review gate state, and replaced the two bare 'Ready to apply' scenarios with five review-proposal convergence-state scenarios (no independent pass / unresolved findings / new-findings loop / trailing in-context confirm / gate passed), each rendering the gate state + one canonical next command, paralleling system mode.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          { "label": "A", "body": "Make proposal-mode assessments gate-aware: render the engine-computed review-proposal state + canonical next command (independent review/address loop until the gate passes; only then Next: /orbit:apply)" },
+          { "label": "B", "body": "Explicitly separate pass-local assessment from required handoff text, requiring the position readout + canonical command alongside it" }
+        ],
+        "chosen": "A",
+        "discuss_invoked": false
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/c1-engine-gates/proposal.md",
+          "orbit/changes/c1-engine-gates/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": []
+}

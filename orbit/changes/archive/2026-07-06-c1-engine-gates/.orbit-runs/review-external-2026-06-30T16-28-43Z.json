@@ -1,0 +1,12 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-06-30T16:28:43Z",
+  "change": "c1-engine-gates",
+  "final_assessment": "External review prompt packaged for c1-engine-gates (iter 3, mode proposal); awaiting findings. Handoff preflight FAILED at packaging time: working tree is dirty (2 modified specs from the iter-2 internal address-reviews — orbit-engine-gates, orbit-review — plus 2 untracked .orbit-runs emits, and this prompt+emit are themselves now uncommitted). The pull invocation is withheld until the pending work is committed and pushed so the pulling external AI sees the reviewed state on the c1-engine-gates branch.",
+  "next_recommended": "Commit ALL pending work (the 2 modified specs, the 2 untracked .orbit-runs JSONs, this prompt file, and this T0 emit) and push to origin/c1-engine-gates; THEN hand off: paste orbit/changes/c1-engine-gates/.orbit-runs/external-prompt-proposal-2026-06-30T16-28-42Z.md into a fresh DIFFERENT AI than iters 1-2's GPT-5 Codex (fresh Claude or Gemini for net-new independence), save the response as orbit/changes/c1-engine-gates/.orbit-runs/external-proposal-<TS>.md, then /orbit:address-reviews c1-engine-gates --from-file <that path>.",
+  "kind": "editorial",
+  "mode": "proposal",
+  "prompt_path": "orbit/changes/c1-engine-gates/.orbit-runs/external-prompt-proposal-2026-06-30T16-28-42Z.md",
+  "target": null,
+  "awaiting_findings": true
+}

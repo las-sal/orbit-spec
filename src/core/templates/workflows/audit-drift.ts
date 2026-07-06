@@ -233,8 +233,8 @@ Stock phrasings, context-specific:
 | standalone | Only WARNING/SUGGESTION | \`No critical issues. Y warning(s) to consider.\` |
 | standalone | All clear | \`No drift detected.\` |
 | pre-archive | ≥1 CRITICAL | \`X critical issue(s) found. Address before /orbit:archive?\` (prompt, not gate) |
-| pre-archive | Only WARNING/SUGGESTION | \`No critical drift. Y warning(s) to consider. Ready to archive (with noted drift).\` |
-| pre-archive | All clear | \`No drift detected. Ready to archive.\` |
+| pre-archive | Only WARNING/SUGGESTION | \`No critical drift. Y warning(s) to consider (noted drift).\` |
+| pre-archive | All clear | \`No drift detected.\` |
 | library | any | No standalone final-assessment emitted; findings handed to caller (folded into review report's Coherence dimension). |
 
 ### 10. Persist the run summary

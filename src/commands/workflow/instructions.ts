@@ -13,6 +13,8 @@ import {
   generateInstructions,
   resolveSchema,
   resolveArtifactOutputs,
+  normalizeGates,
+  computeGateStates,
   type ArtifactInstructions,
 } from '../../core/artifact-graph/index.js';
 import {
@@ -252,15 +254,14 @@ export async function generateApplyInstructions(
   const context = loadChangeContext(projectRoot, changeName, schemaName);
   const changeDir = context.changeDir;
 
-  // Get the full schema to access the apply phase configuration
-  const schema = resolveSchema(context.schemaName, projectRoot);
-  const applyConfig = schema.apply;
-
-  // Determine required artifacts and tracking file from schema
-  // Fallback: if no apply block, require all artifacts
-  const requiredArtifactIds = applyConfig?.requires ?? schema.artifacts.map((a) => a.id);
-  const tracksFile = applyConfig?.tracks ?? null;
-  const schemaInstruction = applyConfig?.instruction ?? null;
+  // Derive apply-phase config from the normalized `apply` gate (folds the upstream
+  // `apply:` block or a declared tracked gate; C1). Fallback: require all artifacts.
+  const schema = context.schema;
+  const normalizedGates = normalizeGates(schema);
+  const applyGate = normalizedGates.find((g) => g.id === 'apply');
+  const requiredArtifactIds = applyGate?.requires ?? schema.artifacts.map((a) => a.id);
+  const tracksFile = applyGate?.tracks ?? null;
+  const schemaInstruction = applyGate?.instruction ?? null;
 
   // Check which required artifacts are missing
   const missingArtifacts: string[] = [];
@@ -326,6 +327,34 @@ export async function generateApplyInstructions(
     instruction = schemaInstruction?.trim() ?? 'Read context files, work through pending tasks, mark complete as you go.\nPause if you hit blockers or need clarification.';
   }
 
+  // C1: gate-awareness. When apply is otherwise runnable (`ready`) but the gate
+  // that gates the apply phase (`before: apply`, e.g. review-proposal) is unpassed
+  // or stale, surface `blocked-by-gate` with the gate + canonical next command.
+  // Apply-parity: this is informational — the consuming skill prompts; it never
+  // hard-blocks. Gates without a `before: apply` reviewed gate leave `ready` intact.
+  // Only gate ENTRY to apply (no task completed yet). Once implementation is
+  // underway, don't re-block: post-apply, proposal passes go stale relative to the
+  // apply emit (expected + moot per the v1 freshness scope) and the gate already
+  // served its purpose gating entry.
+  let gate: ApplyInstructions['gate'];
+  let nextCommand: string | undefined;
+  if (state === 'ready' && complete === 0) {
+    const { gates } = computeGateStates(schema, changeName, changeDir, context.completed);
+    const applyGateStatus = gates.find(
+      (g) => g.before === 'apply' && g.kind === 'reviewed'
+    );
+    if (applyGateStatus && (applyGateStatus.state === 'unpassed' || applyGateStatus.state === 'stale')) {
+      state = 'blocked-by-gate';
+      gate = { id: applyGateStatus.id, state: applyGateStatus.state, reason: applyGateStatus.reason };
+      nextCommand = applyGateStatus.nextCommand;
+      instruction =
+        `The '${applyGateStatus.id}' gate is ${applyGateStatus.state}` +
+        (applyGateStatus.reason ? ` (${applyGateStatus.reason})` : '') +
+        `. Address it, or proceed anyway at the inflection prompt (the override is recorded).` +
+        (nextCommand ? `\nCanonical next: ${nextCommand}` : '');
+    }
+  }
+
   return {
     changeName,
     changeDir,
@@ -336,6 +365,8 @@ export async function generateApplyInstructions(
     state,
     missingArtifacts: missingArtifacts.length > 0 ? missingArtifacts : undefined,
     instruction,
+    gate,
+    next_command: nextCommand,
   };
 }
 

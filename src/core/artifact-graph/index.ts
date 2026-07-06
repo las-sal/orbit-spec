@@ -2,14 +2,39 @@
 export {
   ArtifactSchema,
   SchemaYamlSchema,
+  GateSchema,
   type Artifact,
   type SchemaYaml,
+  type Gate,
+  type NormalizedGate,
+  type GateKind,
+  type GateConfirm,
+  type CadenceEntry,
   type CompletedSet,
   type BlockedArtifacts,
 } from './types.js';
 
 // Schema loading and validation
-export { loadSchema, parseSchema, SchemaValidationError } from './schema.js';
+export { loadSchema, parseSchema, normalizeGates, SchemaValidationError } from './schema.js';
+
+// Gate model (C1): trail reader + gate-state computation
+export {
+  readTrail,
+  parseTsToken,
+  type Trail,
+  type TrailPass,
+  type TrailResolution,
+  type TrailFinding,
+  type ReviewMode,
+  type ReviewerClass,
+} from './trail.js';
+export {
+  computeGateStates,
+  isPassStale,
+  type GateState,
+  type GateStatus,
+  type GateComputation,
+} from './gates.js';
 
 // Graph operations
 export { ArtifactGraph } from './graph.js';
@@ -42,4 +67,5 @@ export {
   type DependencyInfo,
   type ArtifactStatus,
   type ChangeStatus,
+  type GateStatusRow,
 } from './instruction-loader.js';

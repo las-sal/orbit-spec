@@ -1,0 +1,77 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-06T15:22:03Z",
+  "change": "c1-engine-gates",
+  "final_assessment": "External system review iter 1 (GPT-5 Codex) resolved: 2 CRITICAL / 2 WARNING / 1 SUGGESTION, all resolved (0 deferred, 0 escalated). All five were real correctness/hygiene bugs in the engine that the in-context system review missed — three 'false convergence' holes where malformed/stale input could let a reviewed gate pass. All fixed in code (the specs were correct; the code deviated), each with a regression test. C1: resolution (clause b) now runs over ALL relevant same-gate passes (incl. stale), not just fresh — freshness gates only cadence coverage. C2: parseExternalMarkdown now rejects malformed files (requires the header + all three severity sections) instead of counting them as clean externals. W1: parseAddressReviews treats missing resolution_summary as null/unresolved, not 0. W2: canonical-next + position readout now follow requires/before edges (topological sort), not declaration order. S1: removed the literal NUL byte from gates.ts's finding key (was making the file binary to git/grep). validate --strict passes; full suite 1573 green.",
+  "next_recommended": "/orbit:review --as system c1-engine-gates (in-context) — the trailing in-context confirm slot; the review-system cadence [in-context, external, in-context] then has full coverage with all findings resolved, converging the gate and unblocking archive.",
+  "kind": "editorial",
+  "source": "from-file",
+  "source_path": "orbit/changes/c1-engine-gates/.orbit-runs/external-system-2026-07-06T14-26-32Z.md",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": "2026-07-01T15-17-04Z",
+  "external_reviewer": "GPT-5 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": { "critical": 2, "warning": 2, "suggestion": 1 },
+  "pushback_verification": "All 5 findings verified against the actual code before fixing: NUL byte confirmed via git-binary detection + tr; C1 confirmed at computeReviewedStatus (evaluateReviewed over fresh only); C2/W1 confirmed at trail.ts (parseExternalMarkdown 0-count default; parseAddressReviews missing→0); W2 confirmed at buildPositionReadout/formatChangeStatus (declaration order). 0 stale suppressions. The reviewer's 24 unrelated full-suite failures were a path-with-spaces harness issue in their environment, not C1.",
+  "resolution_summary": { "resolved": 5, "stale_suppressed": 0, "deferred": 0, "escalated": 0 },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "Stale unresolved review passes bypass clause (b) — resolution only checked over fresh passes",
+      "marker_source": "external",
+      "file": "src/core/artifact-graph/gates.ts",
+      "line": 286,
+      "classification": "trivial_fix",
+      "action": "Refactored evaluateReviewed to take separate coveragePasses (fresh) and resolutionPasses (ALL relevant). Clause (b) resolution now runs over every relevant same-gate pass including stale ones; freshness gates only cadence coverage (a) + stale reporting. computeReviewedStatus passes (fresh, relevant) for freshEval and (relevant, relevant) for allEval. A stale unresolved pass now blocks the gate → address-reviews. Regression test added (stale unresolved system pass + clean later cadence → UNPASSED).",
+      "ripple_cascade": { "applied": ["test/core/artifact-graph/gates.test.ts"], "flagged_not_applied": [] },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "Malformed external markdown counts as a clean external pass",
+      "marker_source": "external",
+      "file": "src/core/artifact-graph/trail.ts",
+      "line": 192,
+      "classification": "trivial_fix",
+      "action": "parseExternalMarkdown now validates shape: requires the `# External Review` header AND all three severity sections (## CRITICAL/## WARNING/## SUGGESTION). Content lacking that structure returns null (absent) — a malformed/plain-text external-*.md can no longer count as a clean external and advance the gate. Regression test added (plain-text external → 0 external passes).",
+      "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "address-reviews JSON without resolution_summary falsely resolves a pass",
+      "marker_source": "external",
+      "file": "src/core/artifact-graph/trail.ts",
+      "line": 175,
+      "classification": "trivial_fix",
+      "action": "TrailResolution.deferred/escalated are now number|null; parseAddressReviews records null (not 0) for missing/non-numeric fields, so passResolved's `=== 0` check treats a missing resolution_summary as UNRESOLVED (per the edge-case contract: malformed/missing fields = as if no address-reviews ran). Regression test added.",
+      "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Canonical-next + position readout use declaration order instead of gate edges",
+      "marker_source": "external",
+      "file": "src/core/artifact-graph/instruction-loader.ts",
+      "line": 411,
+      "classification": "trivial_fix",
+      "action": "Added flowOrderGates (topological sort by requires/before edges, declaration-order tie-break) in gates.ts; computeGateStates now returns gates in flow order, so both buildPositionReadout AND formatChangeStatus's canonical-next loop follow the graph. A schema declaring apply before review-proposal now renders review(proposal) before apply and picks the correct next_command. Regression test added. (This escalates the internal system review's SUGGESTION #4, which had merely documented the declaration-order limitation.)",
+      "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Literal NUL byte in gates.ts makes the main engine file look binary",
+      "marker_source": "external",
+      "file": "src/core/artifact-graph/gates.ts",
+      "line": 113,
+      "classification": "trivial_fix",
+      "action": "Replaced the literal U+0000 separator in hasNewFindings's finding key with JSON.stringify([f.title, f.file]) — printable, unambiguous. gates.ts is now UTF-8 text (0 NUL bytes; git/grep no longer treat it as binary).",
+      "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": []
+}

@@ -109,4 +109,46 @@ export function printStatusText(status: ChangeStatus): void {
     console.log();
     console.log(chalk.green('All artifacts complete!'));
   }
+
+  // C1: gate rows + position readout.
+  if (status.gates && status.gates.length > 0) {
+    console.log();
+    console.log('Gates:');
+    for (const g of status.gates) {
+      if (g.superseded) {
+        console.log(`  ${chalk.dim('·')} ${g.id}: ${chalk.dim('(past — phase already ran)')}`);
+        continue;
+      }
+      const detail =
+        g.kind === 'tracked' && g.total !== undefined && g.total > 0
+          ? ` (${g.checked}/${g.total})`
+          : g.reason
+            ? ` (${g.reason})`
+            : '';
+      console.log(`  ${gateIndicator(g.state)} ${g.id}: ${g.state}${detail}`);
+    }
+    if (status.position) {
+      console.log();
+      console.log(`Position: ${status.position}`);
+    }
+    if (status.next_command) {
+      console.log(`Next: ${status.next_command}`);
+    }
+  }
+}
+
+function gateIndicator(state: string): string {
+  switch (state) {
+    case 'passed':
+      return chalk.green('✓');
+    case 'stale':
+      return chalk.yellow('~');
+    case 'blocked':
+    case 'blocked-by-gate':
+      return chalk.red('✗');
+    case 'ready':
+      return chalk.cyan('•');
+    default:
+      return chalk.yellow('○'); // unpassed
+  }
 }

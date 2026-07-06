@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-07-03T00:10:49Z",
+  "change": "c1-engine-gates",
+  "final_assessment": "External review prompt packaged for c1-engine-gates (system mode, iter 1 — first external system review; the review-system cadence's external slot). Handoff preflight was SATISFIED at packaging time (working tree clean, 0 unpushed) — but this prompt file and the T0 emit are themselves now uncommitted; commit and push them before handing off so the pulling external AI sees the prompt on the c1-engine-gates branch.",
+  "next_recommended": "Commit orbit/changes/c1-engine-gates/.orbit-runs/external-prompt-system-2026-07-03T00-10-48Z.md (and this T0 emit) and push to origin/c1-engine-gates; THEN hand off: paste that prompt into a fresh strong code-review AI (fresh Claude / GPT-5 / codex — this is code-vs-spec, pick one good at reading implementation against a contract), save the response as orbit/changes/c1-engine-gates/.orbit-runs/external-system-<TS>.md, then /orbit:address-reviews c1-engine-gates --from-file <that path>.",
+  "kind": "editorial",
+  "mode": "system",
+  "reviewer_class": "external",
+  "prompt_path": "orbit/changes/c1-engine-gates/.orbit-runs/external-prompt-system-2026-07-03T00-10-48Z.md",
+  "target": null,
+  "awaiting_findings": true
+}

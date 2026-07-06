@@ -1,0 +1,58 @@
+{
+  "command": "review",
+  "timestamp": "2026-06-30T18:27:54Z",
+  "change": "c1-engine-gates",
+  "final_assessment": "1 critical issue found. Fix before /orbit:apply.",
+  "next_recommended": "/orbit:address-reviews c1-engine-gates — 1 critical + 1 suggestion to walk before /orbit:apply (auto-discovers this JSON)",
+  "kind": "editorial",
+  "mode": "proposal",
+  "iteration": 4,
+  "depth": "full",
+  "flags": { "parallel": false, "focus": null, "strict": false, "fresh": true, "mark": false, "skip_verify": false },
+  "reviewer_class": "fresh",
+  "passes_run": ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+  "passes_skipped": [],
+  "findings_summary": {
+    "critical": 1,
+    "warning": 0,
+    "suggestion": 1,
+    "by_pass": {
+      "1": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "2": { "critical": 1, "warning": 0, "suggestion": 0 },
+      "3": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "4": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "5": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "6": { "critical": 0, "warning": 0, "suggestion": 1 },
+      "7": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "8": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "9": { "critical": 0, "warning": 0, "suggestion": 0 }
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "CRITICAL",
+      "file": "specs/orbit-review/spec.md",
+      "line": 63,
+      "title": "Path B convergence omits the external's '0 CRITICAL' check that orbit-engine-gates' `confirm: findings-resolved` requires — renders 'gate PASSED, archive' for a resolved-CRITICAL external the engine computes UNPASSED",
+      "recommendation": "orbit-engine-gates clause (c) for `findings-resolved` requires '0 CRITICAL AND that pass's findings all resolved' (spec.md:129), and its 'System gate converges on a resolved external' scenario conditions convergence on 'that external pass yielded 0 CRITICAL' (:159). Path B's WHEN gates `gate review-system PASSED → Next: /orbit:archive` solely on `deferred==0 AND escalated==0` + ordered-slot coverage + no-later-apply — it never checks the external pass's own CRITICAL count. An external that FOUND a CRITICAL, had it resolved via address-reviews (deferred/escalated both 0), with no subsequent apply-*.json (reachable — address-reviews cascade edits files and emits no apply-*.json, so the external isn't stale under v1 freshness) is rendered 'archive now' while the engine computes UNPASSED and D-c1-4 ('external repeats while it yields CRITICALs') wants a fresh external — the exact wrong-recommendation C1 exists to prevent. The intro subordination clause (:5) parenthesizes only 'full ordered-slot coverage', not the confirm predicate, so a literal Path B reader contradicts the engine and a subordination-honoring reader falls through (scenario 12 is scoped to 'ordered-slot grounds' only). Verified: engine requires 0 CRITICAL (lines 129, 159); Path B WHEN lacks it; intro clause covers only ordered-slot. FIX: (a) add 'AND that external pass yielded 0 CRITICAL findings' to Path B's WHEN; (b) extend the intro subordination clause to include the confirm predicate (0 CRITICAL on the latest independent/external pass), not just ordered-slot coverage; (c) cover the resolved-CRITICAL-external routing.",
+      "recommendation_options": [
+        { "label": "A", "body": "Widen scenario 12's title + condition from 'ordered-slot grounds' to 'ordered-slot OR confirm-predicate grounds', so a resolved-CRITICAL external (gate UNPASSED on the confirm predicate) routes through it and defers to the engine-computed canonical-next (a fresh external)" },
+        { "label": "B", "body": "Add a dedicated routing scenario 'System mode — external resolved but carried a CRITICAL → engine wants a fresh external; Next: /orbit:review-external --as system <change>', mirroring the engine's 'external repeats only on CRITICALs' rule" }
+      ]
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "file": "specs/orbit-review/spec.md",
+      "line": 51,
+      "title": "'No prior external' system scenario recommends external without guarding the leading in-context slot for a --fresh-first system run",
+      "recommendation": "The `System mode — no CRITICAL, no prior external system review` scenario recommends `/orbit:review-external` whenever no external exists, without restricting reviewer_class. Per orbit-engine-gates' spec-driven note, a `--fresh` system run (class fresh) does NOT satisfy an in-context slot — so for a fresh-first system review with no external, the engine's canonical-next is the leading in-context pass (`/orbit:review --as system <change>`), not external. Narrow (fresh-first system review is off-cadence; the common in-context-first path is handled via as-of-completion), but a minor mis-sequencing. Either add a guard ('AND the leading in-context slot is covered per the as-of-completion rule — current run is in-context, or a prior in-context system pass exists') routing the fresh-first case to the in-context recommendation, or note this scenario assumes an in-context current run (consistent with the as-of-completion consequence list)."
+    }
+  ],
+  "stale_suppressed": [
+    { "pass": "1-9", "title": "iter-3 findings (1C/4W/3S)", "evidence": "Independently re-verified all resolved: archive-modifications now has all 4 baseline scenarios; Path A/B + scenario 12 mutually exclusive on ordered-slot grounds; as-of-completion synthetic-pass rule internally consistent; intro reconciliation clean; cadence literals de-duped; --fresh system-slot note present. Not re-flagged." },
+    { "pass": "3", "title": "CLAUDE.md baseline count (11 vs 11->12)", "evidence": "Task 7.3 post-apply refresh; internal counts agree. Same suppression as prior iterations." }
+  ],
+  "iteration_note": "Iteration 4 (fresh-context confirming pass). Confirmed all iter-3 fixes landed cleanly with no new inconsistencies. The 1 CRITICAL is a pre-existing cross-spec gap in Path B convergence (missing 0-CRITICAL-on-external clause vs engine clause (c)) that the iter-3 ordered-slot work did not touch and scenario 12 does not cover — surfaced now because the fresh lens probed the confirm-predicate dimension. NOT a regression from iter-3."
+}

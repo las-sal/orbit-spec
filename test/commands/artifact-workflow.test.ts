@@ -418,7 +418,12 @@ describe('artifact-workflow CLI commands', () => {
       const expectedSpecPath = canonical(path.join(changesDir, 'json-apply', 'specs', 'test-spec.md'));
       expect(json.changeName).toBe('json-apply');
       expect(json.schemaName).toBe('spec-driven');
-      expect(json.state).toBe('ready');
+      // spec-driven v2 gates apply on review-proposal; with no review pass the gate
+      // is unpassed → apply surfaces blocked-by-gate (apply-parity: the skill prompts,
+      // never hard-blocks).
+      expect(json.state).toBe('blocked-by-gate');
+      expect(json.gate.id).toBe('review-proposal');
+      expect(json.next_command).toContain('/orbit:review');
       expect(json.contextFiles).toBeDefined();
       expect(typeof json.contextFiles).toBe('object');
       expect(json.contextFiles.proposal).toEqual([expectedProposalPath]);
@@ -482,13 +487,28 @@ apply:
     });
 
     it('shows schema instruction from apply block', async () => {
-      await createTestChange('instr-apply', ['proposal', 'design', 'specs', 'tasks']);
+      const changeDir = await createTestChange('instr-apply', ['proposal', 'design', 'specs', 'tasks']);
+
+      // Satisfy the review-proposal gate (spec-driven v2) so apply is `ready` and the
+      // apply gate's instruction renders: an independent (fresh) pass + a later
+      // in-context confirm, both clean, cover cadence [independent, in-context].
+      const runsDir = path.join(changeDir, '.orbit-runs');
+      await fs.mkdir(runsDir, { recursive: true });
+      const clean = { mode: 'proposal', findings_summary: { critical: 0, warning: 0, suggestion: 0 }, findings: [] };
+      await fs.writeFile(
+        path.join(runsDir, 'review-proposal-2020-01-01T00-00-00Z.json'),
+        JSON.stringify({ command: 'review', reviewer_class: 'fresh', ...clean })
+      );
+      await fs.writeFile(
+        path.join(runsDir, 'review-proposal-2020-01-01T00-00-01Z.json'),
+        JSON.stringify({ command: 'review', reviewer_class: 'in-context', ...clean })
+      );
 
       const result = await runCLI(['instructions', 'apply', '--change', 'instr-apply'], {
         cwd: tempDir,
       });
       expect(result.exitCode).toBe(0);
-      // Should show the instruction from spec-driven schema apply block
+      // Should show the instruction from the spec-driven apply gate
       expect(result.stdout).toContain('work through pending tasks');
     });
 
@@ -536,9 +556,11 @@ apply:
       expect(result.exitCode).toBe(0);
 
       const json = JSON.parse(result.stdout);
-      // spec-driven schema has apply block with requires: [tasks], so should be ready
+      // spec-driven v2 apply gate requires [tasks] (all present) → not blocked on
+      // missing artifacts; the review-proposal gate then surfaces blocked-by-gate.
       expect(json.schemaName).toBe('spec-driven');
-      expect(json.state).toBe('ready');
+      expect(json.state).toBe('blocked-by-gate');
+      expect(json.missingArtifacts).toBeUndefined();
     });
 
     it('fallback: requires all artifacts when schema has no apply block', async () => {

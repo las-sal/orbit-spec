@@ -1,0 +1,12 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-06-16T18:56:15Z",
+  "change": "c1-engine-gates",
+  "final_assessment": "External review prompt packaged for c1-engine-gates (iter 1, mode proposal); awaiting findings. NOTE: handoff preflight FAILED — the change directory orbit/changes/c1-engine-gates/ is untracked/uncommitted, so a pulling external AI cannot see the change. Commit and push the change (including the prompt file) before handing off.",
+  "next_recommended": "Commit and push orbit/changes/c1-engine-gates/ (including .orbit-runs/external-prompt-proposal-2026-06-16T18-56-14Z.md), then paste that prompt file into a fresh external AI session, save its response as orbit/changes/c1-engine-gates/.orbit-runs/external-proposal-<TS>.md, then /orbit:address-reviews c1-engine-gates --from-file orbit/changes/c1-engine-gates/.orbit-runs/external-proposal-<TS>.md",
+  "kind": "editorial",
+  "mode": "proposal",
+  "prompt_path": "orbit/changes/c1-engine-gates/.orbit-runs/external-prompt-proposal-2026-06-16T18-56-14Z.md",
+  "target": null,
+  "awaiting_findings": true
+}

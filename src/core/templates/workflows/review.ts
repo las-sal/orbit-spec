@@ -24,7 +24,7 @@ This schema inherits the 6-field **universal spine** from \`orbit-conventions\`'
 - \`next_recommended\` (verbatim recommendation, e.g., \`"/orbit:address-reviews <name> --from-file <path>"\`)
 - \`kind: "editorial"\` (review is an editorial command per the kind taxonomy)
 
-The schema below documents per-command extensions ADDED to that spine (\`mode\`, \`iteration\`, \`depth\`, \`flags\`, \`passes_run\`, \`passes_skipped\`, \`findings_summary\`, \`findings\`, \`stale_suppressed\`, \`iteration_note\`). Per-command extensions are review-specific state; they supplement, not replace, the spine.
+The schema below documents per-command extensions ADDED to that spine (\`mode\`, \`iteration\`, \`depth\`, \`reviewer_class\`, \`flags\`, \`passes_run\`, \`passes_skipped\`, \`findings_summary\`, \`findings\`, \`stale_suppressed\`, \`iteration_note\`). Per-command extensions are review-specific state; they supplement, not replace, the spine.
 
 ## Schema
 
@@ -39,6 +39,7 @@ The schema below documents per-command extensions ADDED to that spine (\`mode\`,
   "mode": "proposal" | "system",
   "iteration": <integer, per-mode>,
   "depth": "fast" | "full" | "thorough",
+  "reviewer_class": "in-context" | "fresh" | "external",
   "flags": {
     "parallel": false,
     "focus": null,
@@ -85,6 +86,7 @@ The schema below documents per-command extensions ADDED to that spine (\`mode\`,
 
 ## Field notes
 
+- **\`reviewer_class\`** (C1) is the first-class execution-context field the engine's reviewed-gate convergence reads for cadence class coverage: \`"fresh"\` when the pass ran in a clean context (\`--fresh\`), else \`"in-context"\` (externally-sourced findings in \`external-<as>-<TS>.md\` are structurally \`"external"\`). For emits predating this field the engine infers (\`flags.fresh: true\` → \`fresh\`; \`external-*.md\` provenance → \`external\`; otherwise \`in-context\`), so absence never breaks gate computation.
 - **\`iteration\`** is per-mode: proposal-mode and system-mode iterations count separately on the same change.
 - **\`passes_run\` / \`passes_skipped\`** are strings (pass IDs); skip reasons go in the report body but not the summary array.
 - **\`findings_summary.by_pass\`** mirrors the report's per-pass grouping for quick downstream parsing.
@@ -338,45 +340,35 @@ If no prior matching summaries: emit \`First <mode>-mode run for this change.\` 
 
 ### 9. Emit the final assessment
 
-Stock phrasings, mode-specific gate text. Proposal mode uses three phrasings (CRITICAL / Only W/S / all clear). System mode is more nuanced: when CRITICALs are present, one stock phrasing applies; when no CRITICAL is present, the recommendation depends on which of **5 convergence states** the change is in (see the iteration-aware logic below).
+**Single-voiced + engine-sourced (C1).** The final assessment renders the ENGINE-computed gate state (one of the convergence states below) plus ONE canonical next command — never a bare "Ready to apply" / "Ready to archive" and never an advertised skip path. Compute the gate verdict from \`orbit status --change <name> --json\` (fields \`gates[]\`, \`position\`, \`next_command\`) — the engine reads the \`.orbit-runs/\` trail. **As-of-completion**: evaluate the gate as-of THIS pass's completion — fold in a synthetic pass for the run you are finishing (its mode, reviewer_class, a now-token, the about-to-be-written \`review-<mode>-<TS>.json\`, and this run's findings) so a current \`--fresh\`/\`in-context\` pass counts toward its cadence slot. If this pass has findings, the address-reviews command targets the just-written \`review-<mode>-<TS>.json\`.
 
-#### Proposal mode (3 phrasings)
+#### Proposal mode
 
-| State | Phrasing |
+| Gate state | Phrasing |
 |---|---|
 | ≥1 CRITICAL | \`X critical issue(s) found. Fix before /orbit:apply.\` |
-| Only WARNING/SUGGESTION | \`No critical issues. Y warning(s) to consider. Ready to apply (with noted improvements).\` |
-| All clear | \`All checks passed. Ready to apply.\` |
+| A gate-relevant pass has unresolved findings | \`No critical issues. Y warning(s) to consider. A prior gate-relevant pass has unresolved findings; gate review-proposal UNPASSED. Next: /orbit:address-reviews <change> --from-file <unresolved-path>.\` |
+| No fresh independent pass (leading slot uncovered) | \`... gate review-proposal UNPASSED — the cadence's independent slot is uncovered. Next: /orbit:review --as proposal --fresh <change>.\` |
+| Independent pass yielded new findings (no-new-findings not met) | \`... gate review-proposal UNPASSED until an independent pass yields none. Next: /orbit:review --as proposal --fresh <change>.\` |
+| Independent converged, trailing in-context slot uncovered | \`... Independent review converged; gate review-proposal needs its closing in-context confirm. Next: /orbit:review --as proposal <change>.\` |
+| Gate passed | \`All checks passed. gate review-proposal PASSED. Next: /orbit:apply <change>.\` (Only-W/S opener: \`No critical issues. Y warning(s) to consider.\` + \`... Next: /orbit:apply <change> (with noted improvements).\`) |
 
-#### System mode — ≥1 CRITICAL
+(Openers: \`All checks passed.\` when this pass is clean, else \`No critical issues. Y warning(s) to consider.\` The unresolved-pass branch takes precedence over all other no-CRITICAL branches. v1: a proposal pass never goes stale — no stale state.)
 
-| State | Phrasing |
+#### System mode
+
+| Gate state | Phrasing |
 |---|---|
 | ≥1 CRITICAL | \`X critical issue(s) found. Fix before /orbit:archive.\` |
+| No prior external (leading in-context covered) | \`All checks passed (in-context pass). Next: /orbit:review-external --as system <change> — external cross-check required by the review cadence before archive (per orbit-conventions Review mode decision framework; in an early dogfooding cycle, in-context system review missed 3 of 3 real implementation bugs — all caught by external review).\` |
+| Path A — external clean, gate PASSED | \`All checks passed. External system review (clean) converged; gate review-system PASSED. Next: /orbit:archive <change>.\` |
+| Path B — external resolved, 0 CRITICAL, gate PASSED | \`All checks passed. External system review findings resolved via /orbit:address-reviews; gate review-system PASSED. Next: /orbit:archive <change>.\` |
+| External converged but an ordered slot uncovered | \`... gate review-system is UNPASSED — the cadence's leading in-context slot is uncovered. Next: /orbit:review --as system <change>.\` |
+| External resolved but carried a CRITICAL (confirm unmet) | \`... the prior /orbit:review-external found and resolved a CRITICAL, so gate review-system is UNPASSED until a fresh external yields none. Next: /orbit:review-external --as system <change>.\` |
+| External present with unresolved findings | \`... the prior /orbit:review-external has unresolved findings. Next: /orbit:address-reviews <change> --from-file <external-path>.\` |
+| External stale (apply landed after it) | \`... the prior /orbit:review-external is older than the most recent apply step; gate review-system STALE. Next: /orbit:review-external --as system <change>.\` |
 
-#### System mode — no CRITICAL (5 convergence states × 2 sub-cases = 10 phrasings)
-
-When the report has zero CRITICAL findings, orbit-review applies the iteration-aware logic (below) to determine which convergence state applies, then emits one of 10 stock phrasings. The empirical basis for nudging toward external review on State 1: in an early dogfooding cycle, in-context system review missed **3 of 3** real implementation bugs — all caught by external review.
-
-**State 1 — no prior external system review** (no \`external-system-*.md\` in \`.orbit-runs/\`):
-- All clear: \`All checks passed. Recommend /orbit:review-external for fresh-context cross-check before archive (per orbit-conventions Review mode decision framework; in an early dogfooding cycle, in-context system review missed 3 of 3 real implementation bugs — all caught by external review). Or /orbit:review --fresh for a lighter pass (same model, fresh context). Proceed directly to /orbit:archive if accepting that risk.\`
-- Only W/S: \`No critical issues. Y warning(s) to consider. Recommend /orbit:review-external for fresh-context cross-check before archive (per orbit-conventions Review mode decision framework). Or /orbit:review --fresh for a lighter pass. Proceed to /orbit:archive (with noted improvements) if accepting the in-context-only risk.\`
-
-**State 2 — Path A convergence: external content is clean**:
-- All clear: \`All checks passed. External system review (clean) converged. Ready to archive.\`
-- Only W/S: \`No critical issues. Y warning(s) to consider. External system review (clean) converged. Ready to archive (with noted improvements).\`
-
-**State 3 — Path B convergence: external findings resolved via address-reviews**:
-- All clear: \`All checks passed. External system review findings resolved via /orbit:address-reviews. Ready to archive.\`
-- Only W/S: \`No critical issues. Y warning(s) to consider. External system review findings resolved via /orbit:address-reviews. Ready to archive (with noted improvements).\`
-
-**State 4 — external present with unresolved findings**:
-- All clear: \`All checks passed against current state, but the prior /orbit:review-external has unresolved findings. Run /orbit:address-reviews --from-file <external-path> to walk them before archive. Or accept the unresolved-external risk and proceed to /orbit:archive.\`
-- Only W/S: \`No critical issues. Y warning(s) to consider. Prior /orbit:review-external has unresolved findings. Run /orbit:address-reviews --from-file <external-path> to walk them before archive.\`
-
-**State 5 — external stale relative to artifact changes** (takes precedence over States 2-4 per the precedence rules below):
-- All clear: \`All checks passed against current state, but the prior /orbit:review-external is older than the most recent apply step (artifacts changed since external evaluated). Re-run /orbit:review-external to validate against current product state before archive. Or /orbit:review --fresh for a lighter re-check.\`
-- Only W/S: \`No critical issues. Y warning(s) to consider. Prior /orbit:review-external is older than the most recent apply step. Re-run /orbit:review-external to validate against current product state. Or /orbit:review --fresh for a lighter re-check.\`
+(Precedence when a gate is unpassed for more than one reason: stale > unresolved > a missing ordered slot (→ in-context) > a failed confirm predicate (→ fresh external). Path A/B render \`PASSED\` ONLY when the engine reports full ordered-slot coverage AND the confirm predicate; otherwise defer to the engine-computed state above. A \`--fresh\` system run does NOT satisfy an \`in-context\` slot.)
 
 #### Iteration-aware logic (system mode, no CRITICAL)
 
@@ -516,7 +508,7 @@ None.
 
 ### Final assessment
 
-No critical issues. 4 warning(s) to consider. Ready to apply (with noted improvements).
+No critical issues. 4 warning(s) to consider. A prior gate-relevant pass has unresolved findings; gate review-proposal UNPASSED. Next: /orbit:address-reviews add-review-workflows --from-file orbit/changes/add-review-workflows/.orbit-runs/review-proposal-2026-05-18T14-43-41Z.json.
 
 Run summary: orbit/changes/add-review-workflows/.orbit-runs/review-proposal-2026-05-18T14-43-41Z.json
 \`\`\`
@@ -546,12 +538,12 @@ None.
 
 ### Final assessment
 
-All checks passed. Recommend /orbit:review-external for fresh-context cross-check before archive (per orbit-conventions Review mode decision framework; in an early dogfooding cycle, in-context system review missed 3 of 3 real implementation bugs — all caught by external review). Or /orbit:review --fresh for a lighter pass (same model, fresh context). Proceed directly to /orbit:archive if accepting that risk.
+All checks passed (in-context pass). Next: /orbit:review-external --as system example-change — external cross-check required by the review cadence before archive (per orbit-conventions Review mode decision framework; in an early dogfooding cycle, in-context system review missed 3 of 3 real implementation bugs — all caught by external review).
 
 Run summary: orbit/changes/example-change/.orbit-runs/review-system-2026-05-26T15-12-08Z.json
 \`\`\`
 
-In State 2 (Path A — external content is clean) or State 3 (Path B — external findings resolved via address-reviews), the recommendation simplifies to \`Ready to archive\` — the iteration-aware logic stops nudging once the external converges.
+Once the external converges — Path A (clean) or Path B (findings resolved, 0 CRITICAL) with full ordered-slot coverage — the engine reports \`gate review-system PASSED\` and the phrasing becomes \`Next: /orbit:archive <change>\`. Single-voiced throughout: one canonical command, no advertised skip path.
 
 `,
     references: [

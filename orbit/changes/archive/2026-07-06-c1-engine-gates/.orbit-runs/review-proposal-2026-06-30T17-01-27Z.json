@@ -1,0 +1,110 @@
+{
+  "command": "review",
+  "timestamp": "2026-06-30T17:01:27Z",
+  "change": "c1-engine-gates",
+  "final_assessment": "1 critical issue found. Fix before /orbit:apply.",
+  "next_recommended": "/orbit:address-reviews c1-engine-gates — 1 critical + 4 warning + 3 suggestion to walk before /orbit:apply (auto-discovers this JSON)",
+  "kind": "editorial",
+  "mode": "proposal",
+  "iteration": 3,
+  "depth": "full",
+  "flags": { "parallel": false, "focus": null, "strict": false, "fresh": true, "mark": false, "skip_verify": false },
+  "reviewer_class": "fresh",
+  "passes_run": ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+  "passes_skipped": [],
+  "findings_summary": {
+    "critical": 1,
+    "warning": 4,
+    "suggestion": 3,
+    "by_pass": {
+      "1": { "critical": 1, "warning": 0, "suggestion": 0 },
+      "2": { "critical": 0, "warning": 4, "suggestion": 0 },
+      "3": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "4": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "5": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "6": { "critical": 0, "warning": 0, "suggestion": 1 },
+      "7": { "critical": 0, "warning": 0, "suggestion": 1 },
+      "8": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "9": { "critical": 0, "warning": 0, "suggestion": 1 }
+    }
+  },
+  "findings": [
+    {
+      "pass": "1",
+      "severity": "CRITICAL",
+      "file": "specs/orbit-archive-modifications/spec.md",
+      "line": 60,
+      "title": "MODIFIED `Archive summary schema reference ships with the skill` silently drops 3 of 4 baseline scenarios",
+      "recommendation": "The delta reproduces only the `Reference exists after init` scenario; the baseline (orbit/specs/orbit-archive-modifications/spec.md) has four under this requirement — also `Schema shapes match the baselines, not the overlay source`, `No predecessor-era vocabulary survives`, `Body cite resolves`. Verified: baseline=4 scenarios, delta=1. Since sync-specs replaces a MODIFIED requirement wholesale, archiving deletes the three guard scenarios (overlay/opsx-era residue + dangling-cite guards). The requirement was only modified to add `gate_overridden` to the documented field list — the three drops are collateral. Add the three missing baseline scenarios back into the delta requirement body verbatim."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "file": "specs/orbit-review/spec.md",
+      "line": 56,
+      "title": "Path A/B `gate review-system PASSED` omits the leading in-context ordered-slot coverage the engine requires; five-state model isn't exhaustive over in-context-slot failures",
+      "recommendation": "The system cadence is `[in-context, external, in-context]`; orbit-engine-gates' reviewed-gate pass condition (and its `System gate converges on a resolved external` scenario, which requires full ordered class coverage) demands the leading in-context slot be covered by a pass earlier than the external. Path A/B WHEN clauses test only the external dimension (clean/resolved/not-stale) then render PASSED — there is no bucket for `external clean/resolved but leading in-context slot uncovered`. The intro's claim that the engine `implements the comparison logic specified in the scenarios below` makes a literal implementer never check slot 1.",
+      "recommendation_options": [
+        { "label": "A", "body": "Make Path A/B WHEN clauses contingent on the engine's full ordered-slot verdict (e.g. '...AND the review-system gate's ordered cadence slots are otherwise covered per orbit-engine-gates')" },
+        { "label": "B", "body": "State explicitly that Path A/B render PASSED only when orbit-engine-gates reports the gate PASSED — the five states are external-dimension rendering buckets layered on the base verdict — and add a rendering for the 'leading in-context slot uncovered' case" }
+      ]
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "file": "specs/orbit-review/spec.md",
+      "line": 17,
+      "title": "Proposal-mode branch precedence between 'no fresh independent pass yet' and 'a gate-relevant pass has unresolved findings' is unspecified",
+      "recommendation": "Scenario 3's precedence note claims precedence over the new-findings / trailing-in-context / gate-passed branches but NOT over scenario 2 (`no fresh independent pass yet`). When only in-context passes exist, one carries unresolved findings, and the current run is clean, BOTH match and recommend different canonical commands (`/orbit:review --as proposal --fresh` vs `/orbit:address-reviews --from-file <unresolved-path>`). State the precedence explicitly (extend scenario 3's note to include scenario 2, or exclude the unresolved case from scenario 2), mirroring the system-mode precedence scenario."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "file": "specs/orbit-review/spec.md",
+      "line": 5,
+      "title": "'five-state determination COMPUTED BY THE ENGINE ... skill never composes from its own judgment' contradicts the as-of-completion rule (skill computes over a synthetic, not-on-disk pass)",
+      "recommendation": "The intro asserts the determination is engine-computed and the skill 'never composes the recommendation from its own judgment'; the as-of-completion scenario requires orbit-review to evaluate branches over the on-disk trail PLUS a synthetic pass NOT on disk and NOT seen by the engine (status/instructions stay pure-function-of-disk). So the skill DOES compute a synthetic-augmented verdict the engine cannot produce. Reconcile the mechanism.",
+      "recommendation_options": [
+        { "label": "A", "body": "Acknowledge orbit-review's final assessment computes the verdict itself over the documented synthetic pass (distinct from the engine's on-disk-only computation backing status/instructions); soften 'never composes' to 'never composes from subjective judgment; the synthetic-pass computation is deterministic over documented inputs'" },
+        { "label": "B", "body": "Specify an engine API that accepts the in-flight pass so the engine still computes the verdict" }
+      ]
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "file": "proposal.md",
+      "line": 72,
+      "title": "Proposal 'What Changes' under-describes the orbit-archive-modifications delta (2 of 4 MODIFIED requirements narrated)",
+      "recommendation": "The delta modifies four requirements (Critical-drift prompt; Audit informational; Archive run summary written — adds gate_overridden; Archive summary schema reference — adds gate_overridden to the field list); the proposal bullet names only the first two. The unnarrated `Archive summary schema reference` modification is exactly where the CRITICAL scenario-loss occurred — foregrounding it would have surfaced the loss. Extend the bullet to note the gate_overridden additions to both `Archive run summary written` and the `Archive summary schema reference` field list."
+    },
+    {
+      "pass": "7",
+      "severity": "SUGGESTION",
+      "file": "specs/orbit-review/spec.md",
+      "line": 43,
+      "title": "System cadence literal `[in-context, external, in-context]` restated outside its schema source-of-truth",
+      "recommendation": "The same requirement defers the PROPOSAL cadence to the schema (line 5, 'not restated here') but restates the SYSTEM cadence literal at line 43. For consistency / drift-safety, reference it by name (e.g. 'the system gate's trailing in-context slot') rather than the literal."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 175,
+      "title": "A `--fresh` system run cannot satisfy the trailing `in-context` slot; no scenario explains the dead-end",
+      "recommendation": "System cadence slots 1 and 3 are literally `in-context` (reviewer_class `fresh` != `in-context`). A user running `/orbit:review --as system --fresh` as the closing confirm leaves slot 3 uncovered with no scenario clarifying why. Add a one-line note (spec-driven-gates requirement or an edge scenario) that system in-context slots require an in-context pass; `--fresh` does not satisfy them."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "file": "proposal.md",
+      "line": 70,
+      "title": "Proposal references an 'advisory, not a gate' scenario that isn't a scenario title",
+      "recommendation": "Only `Framework guidance does NOT enforce cycle patterns` is a baseline scenario; 'advisory, not a gate' is requirement prose. Reword to 'the advisory-not-a-gate framing and the `... does NOT enforce cycle patterns` scenario'."
+    }
+  ],
+  "stale_suppressed": [
+    { "pass": "8", "title": "@review: markers in change dir", "evidence": "All @review: hits are inside .orbit-runs/ audit files (external reports/prompts) describing marker absence or documenting the convention; none in artifact content. Pass 8 clean." },
+    { "pass": "3", "title": "CLAUDE.md baseline count stale (PARITY/11 vs 11->12)", "evidence": "Task 7.3 covers the post-apply refresh; pre-apply staleness intentional. Internal counts agree (proposal/impact both 11->12; 1 ADDED + 5 MODIFIED = 6 spec dirs). Same suppression as prior iterations." }
+  ],
+  "iteration_note": "Iteration 3 (fresh-context subagent — anchoring-break run after 2 internal + 3 external in-context/Codex iterations). 7 of 8 findings are NET-NEW; the CRITICAL (archive-modifications baseline scenario-loss) was never surfaced across the 5 prior review iterations, which all concentrated on the proposal/system convergence phrasings. Verified directly: baseline=4 scenarios, delta=1; the loss is isolated to that one requirement (all other MODIFIED requirements have delta >= baseline)."
+}

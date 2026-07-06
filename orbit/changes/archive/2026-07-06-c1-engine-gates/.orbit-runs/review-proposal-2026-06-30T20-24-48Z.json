@@ -1,0 +1,58 @@
+{
+  "command": "review",
+  "timestamp": "2026-06-30T20:24:48Z",
+  "change": "c1-engine-gates",
+  "final_assessment": "No critical issues. 2 suggestion(s) to consider. Ready to apply (with noted improvements).",
+  "next_recommended": "/orbit:address-reviews c1-engine-gates — 2 low-severity suggestions to walk (auto-discovers this JSON); or accept as v1 and proceed to /orbit:apply",
+  "kind": "editorial",
+  "mode": "proposal",
+  "iteration": 5,
+  "depth": "full",
+  "flags": { "parallel": false, "focus": null, "strict": false, "fresh": true, "mark": false, "skip_verify": false },
+  "reviewer_class": "fresh",
+  "passes_run": ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+  "passes_skipped": [],
+  "findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 2,
+    "by_pass": {
+      "1": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "2": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "3": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "4": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "5": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "6": { "critical": 0, "warning": 0, "suggestion": 2 },
+      "7": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "8": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "9": { "critical": 0, "warning": 0, "suggestion": 0 }
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "file": "specs/orbit-review/spec.md",
+      "line": 74,
+      "title": "'External resolved but carried a CRITICAL' scenario WHEN does not require ordered-slot coverage, contradicting its own distinction note for the doubly-off-cadence corner",
+      "recommendation": "The new scenario's distinction note asserts 'coverage is complete but the confirm PREDICATE fails', but its WHEN does not actually require ordered-slot coverage. In the pathological state where the leading in-context slot was never run AND the external resolved a CRITICAL, the engine reports UNPASSED for BOTH reasons (clause (a) missing slot AND clause (c) failed predicate); this scenario hardcodes 'Next: /orbit:review-external' while the engine's slot-ordered canonical-next (clause (a) first) could compute the in-context command — a possible skill-vs-engine divergence. Rare (external run before any in-context system pass, that external found+resolved a CRITICAL). FIX (disjunctive): (A) add 'AND ordered slots covered' to this scenario's WHEN, matching its distinction-note claim and making it strictly mutually exclusive with the ordered-slot-grounds scenario; OR (B) add a sentence to the intro routing clause giving missing-slot precedence over failed-predicate (so the engine's clause-(a)-first canonical-next governs the combined case).",
+      "recommendation_options": [
+        { "label": "A", "body": "Add 'AND ordered slots covered' to the 'external resolved but carried a CRITICAL' scenario's WHEN (matches its distinction note; strictly mutually exclusive with the ordered-slot-grounds scenario)" },
+        { "label": "B", "body": "Add a precedence sentence to the intro routing clause: a missing ordered slot takes precedence over a failed confirm predicate, so the engine's clause-(a)-first canonical-next governs the combined case" }
+      ]
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "file": "specs/orbit-review/spec.md",
+      "line": 51,
+      "title": "Off-cadence `--fresh`-first-no-external system state has no dedicated exact-phrasing scenario (delegated to the engine canonical-next)",
+      "recommendation": "Delta 9's WHEN requires the leading in-context slot covered and its parenthetical routes the --fresh-first/no-external case 'through the engine-computed gate state, not this recommend-external scenario'. That routing is functionally defined (engine computes canonical-next = the in-context pass; skill renders it verbatim per the intro's subordination rule) — NOT a coverage hole — but unlike every other system state it lacks an 'Exact stock phrasing' scenario. Optional: add a one-line note in delta 9 (or a brief scenario) confirming the off-cadence case renders the engine canonical command directly with no dedicated stock phrasing, making the delegation explicit. Low value; the general rule already covers rendering."
+    }
+  ],
+  "stale_suppressed": [
+    { "pass": "all", "title": "all prior-iteration findings (internal iters 1-4 + external iters 1-3)", "evidence": "Independently re-verified the four iter-4 convergence fixes present and correct (Path B 0-CRITICAL clause; intro covers ordered-slot AND confirm predicate; dedicated resolved-CRITICAL routing scenario; no-prior-external --fresh guard). Delta/baseline integrity re-checked across all 5 MODIFIED capabilities — no unintentional scenario drops. Not re-flagged." },
+    { "pass": "3", "title": "CLAUDE.md baseline count (11 vs 11->12)", "evidence": "Task 7.3 post-apply refresh; internal counts agree." }
+  ],
+  "iteration_note": "Iteration 5 (fresh-context convergence-check). 0 CRITICAL / 0 WARNING — the cleanest pass in the cycle; the system-convergence area that drew CRITICALs in iters 3 and 4 is now fully consistent with orbit-engine-gates' reviewed-gate pass condition. The only 2 findings are low-severity SUGGESTIONs about deeply pathological doubly-off-cadence corners (external run before any in-context system pass), both likely acceptable as v1. The no-new-findings confirm is one decision away: address/accept these 2 SUGGESTIONs to reach strict convergence, or accept-as-v1 and proceed to apply."
+}

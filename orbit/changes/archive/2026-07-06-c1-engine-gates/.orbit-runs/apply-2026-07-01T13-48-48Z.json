@@ -1,0 +1,15 @@
+{
+  "command": "apply",
+  "timestamp": "2026-07-01T13:48:48Z",
+  "change": "c1-engine-gates",
+  "final_assessment": "Completed chunk 2 of 4 (CLI surface): spec-driven → version 2 with the three gates (review-proposal/apply/review-system, D-c1-4 cadences + per-gate confirm); apply-phase config routed through normalizeGates (ChangeContext.schema exposed) so status/instructions read the normalized apply gate; orbit status gains gate rows + position readout + next_command (JSON + text); orbit instructions apply returns blocked-by-gate (gate id/reason/next_command) when the before:apply gate is unpassed/stale AND apply hasn't started (entry-gating only — mid-apply is not re-blocked). Compat: apply-only YAML → one tracked gate; ungated schemas unchanged; real archived B3 legacy trail parses via reviewer_class inference and computes without crash. 11 of 21 tasks done. +3 compat tests; full suite 1567 green. Live-verified on c1 itself.",
+  "next_recommended": "/orbit:apply c1-engine-gates — next chunk: Editorial alignment (emits, attestations, single-voiced bodies)",
+  "kind": "workflow",
+  "tasks_completed": 11,
+  "tasks_remaining": 10,
+  "user_validation_remaining": 0,
+  "chunk": "2 of 4",
+  "chunk_name": "CLI surface",
+  "chunk_complete": true,
+  "tasks_completed_this_session": 5
+}

@@ -60,6 +60,7 @@ The schema below documents the per-command extensions ADDED to that spine (\`arc
   },
   "unresolved_markers": ["<file>:<line> — <marker text>"],
   "user_decision": "proceeded_with_no_critical" | "proceeded_despite_critical" | "audit_skipped_via_flag",
+  "gate_overridden": { "gate": "review-system", "state": "<unpassed|stale>", "reason": "<gate reason at decision time>" },
   "warnings": [
     "<text — e.g., 'Archived with 2 incomplete artifacts'>"
   ]
@@ -73,7 +74,8 @@ The schema below documents the per-command extensions ADDED to that spine (\`arc
 - **\`audit_skipped_via_flag\`** (top-level boolean): recorded as \`true\` only when \`/orbit:archive --skip-audit\` was used; omit the field otherwise. This is the flat field the skill body and the \`orbit-archive-modifications\` baseline require — it is NOT nested inside \`audit\`.
 - **\`sync_specs.capabilities_updated\`** lists capability names whose \`orbit/specs/<capability>/spec.md\` was edited; the delta counts (\`added\`/\`modified\`/\`removed\`/\`renamed\`) sit DIRECTLY under \`sync_specs\`, mirroring \`orbit-conventions\`' canonical lifecycle example.
 - **\`unresolved_markers\`** is an ARRAY of the \`@review:\` markers still present when the archive proceeded (empty array when none) — one \`"<file>:<line> — <marker text>"\` entry per marker. Marker-prompt outcomes that halt the archive write no summary at all.
-- **\`user_decision\`** captures the gate decision and has exactly three values: \`proceeded_with_no_critical\` (clean audit or warnings only), \`proceeded_despite_critical\` (user explicitly proceeded past CRITICAL findings), \`audit_skipped_via_flag\` (\`--skip-audit\` used). An abort at the critical-findings prompt cancels the archive and writes no summary.
+- **\`user_decision\`** captures the AUDIT-drift prompt decision and has exactly three values: \`proceeded_with_no_critical\` (clean audit or warnings only), \`proceeded_despite_critical\` (user explicitly proceeded past CRITICAL findings), \`audit_skipped_via_flag\` (\`--skip-audit\` used). An abort at the critical-findings prompt cancels the archive and writes no summary.
+- **\`gate_overridden\`** (C1) is DISTINCT from \`user_decision\` (which is the audit-drift outcome): it is present ONLY when the \`review-system\` gate was unpassed/stale at archive and the user chose **Proceed anyway** at the gate inflection prompt (Step 3.5); shape \`{gate, state, reason}\` captured at decision time. Absent when no gate override occurred.
 - **\`warnings\`** captures the upstream warning surfaces (incomplete artifacts, incomplete tasks, sync skipped) — kept human-readable since they vary in shape.
 `;
 
@@ -222,6 +224,18 @@ Prompt via \`AskUserQuestion\`:
 - **Proceed** — archive with the markers in place; record this decision in the archive run summary.
 
 If no markers, proceed without prompting.
+
+## NEW Step 3.4 — review-system gate inflection prompt (C1)
+
+After upstream Step 3 (task-completion check) but before the audit sweep (Step 3.5) — the gate prompt fires FIRST per the gated-phase contract:
+
+Query the gate: \`orbit status --change "<change-name>" --json\` and read the \`gates[]\` entry with \`id: "review-system"\` (there is NO \`orbit instructions archive\` phase — the archive workflow sources gate state from \`status\`). If that gate's \`state\` is \`unpassed\` or \`stale\`, fire the inflection prompt via **AskUserQuestion** with the gate's \`reason\` and the top-level \`next_command\` shown:
+
+- **Address the gate** — halt; run the canonical \`next_command\` (e.g. \`/orbit:review-external --as system <change>\`).
+- **Proceed anyway** — continue the archive; record \`gate_overridden: {gate: "review-system", state, reason}\` in the archive run summary (captured at decision time).
+- **Abort** — cancel the archive; no move, no sync-specs, no summary.
+
+The gate NEVER hard-blocks (apply-parity): the engine reports, the skill prompts, the user decides, the trail records. If \`review-system\` is \`passed\` (or the schema declares no such gate), proceed without prompting. This gate prompt is DISTINCT from the audit-drift prompt below; both MAY fire in one archive invocation (gate first, then audit).
 
 ## NEW Step 3.5 — Pre-archive audit-drift sweep
 
