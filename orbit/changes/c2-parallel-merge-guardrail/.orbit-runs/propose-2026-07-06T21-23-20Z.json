@@ -1,0 +1,11 @@
+{
+  "command": "propose",
+  "timestamp": "2026-07-06T21:23:20Z",
+  "change": "c2-parallel-merge-guardrail",
+  "final_assessment": "Generated proposal/design/specs/tasks for c2-parallel-merge-guardrail; consumed prior explore.md (8 decisions D-c2-1..8 seeded, 0 open questions). New capability orbit-base-fingerprints (6 requirements) + orbit-archive-modifications delta (1 ADDED, 2 MODIFIED). Design refines D-c2-5/7 at codegen level: CLI stamp/check subcommand (add-missing-only default, --refresh for deliberate re-stamp), refuse-by-default engine guard with --override-fingerprints, idempotent-write skip, live-vs-would-be-written divergence diff. Validates --strict.",
+  "next_recommended": "/orbit:review c2-parallel-merge-guardrail — proposal artifacts ready; review before apply",
+  "kind": "workflow",
+  "artifacts_created": ["proposal", "design", "tasks", "specs/orbit-base-fingerprints", "specs/orbit-archive-modifications"],
+  "delta_count": 9,
+  "from": "explore"
+}
