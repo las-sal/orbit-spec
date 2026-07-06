@@ -3,7 +3,6 @@
 ## Purpose
 
 Defines the emit-layer that writes per-command `.orbit-runs/<command>-<TS>.json` run-summary JSONs for orbit workflow commands (`explore`, `propose`, `new`, `continue`, `ff`, `apply`, `verify`) plus `/orbit:review-external` at T0 — alongside the existing editorial and lifecycle emit-producing commands. Specifies emit scope (which commands emit, which don't), the workflow-kind JSON shape (extends the universal spine from `orbit-conventions`), emit timing semantics (one-shot vs. multi-turn-phase-boundary vs. conversation-boundary), the wrapper architecture (upstream skill bodies are NOT modified), per-command recommendation logic (propose-shaped vs. artifact-completion-aware; explore maturity grid; apply per-chunk-end with chunk preamble parsing; verify pass/fail mode classification; review-external T0 multi-step prose; audit-drift standalone change-scoped vs. project-wide), and the no-forward-look discipline that keeps emit text scoped to today's behavior.
-
 ## Requirements
 ### Requirement: Emit scope
 
@@ -277,6 +276,11 @@ chunk_complete               bool             true when AI-doable work in this c
                                               tasks_remaining - user_validation_remaining == 0 for this chunk's tasks);
                                               user_validation_remaining > 0 does NOT block chunk_complete: true
 tasks_completed_this_session int             delta since prior apply JSON
+gate_overridden              object | absent  present ONLY when the user proceeds past an unpassed or stale gate
+                                              at the apply phase (the `review-proposal` gate gates `apply`, per
+                                              orbit-engine-gates) via the inflection prompt; shape
+                                              {gate, state, reason} captured at decision time. Absent when no
+                                              override occurred; REQUIRED when proceed-anyway was chosen.
 ```
 
 **Semantic rule**: `chunk_complete: true` means "AI-doable work in this chunk is done." `tasks_remaining > 0` AND `user_validation_remaining == tasks_remaining` is the expected state at the final chunk's emit when user-validation tasks exist — the AI is done; the remaining work is user-driven runtime testing. `tasks_remaining > 0` AND `user_validation_remaining < tasks_remaining` with `chunk_complete: true` is a contradiction the emit-layer MUST NOT produce.
@@ -300,6 +304,10 @@ tasks_completed_this_session int             delta since prior apply JSON
 #### Scenario: Final chunk completes with user-validation tasks remaining
 - **WHEN** `/orbit:apply foo` completes the last AI-doable task in the final chunk, but 6 user-validation tasks (e.g., "9.1 Live-test ...", "9.9 (User-validation handoff)") remain explicitly unchecked per the user-validation convention
 - **THEN** `apply-<TS>.json` is written with `chunk_complete: true`, `tasks_remaining: 6`, `user_validation_remaining: 6` (matching `tasks_remaining`), and `next_recommended` begins with `"/orbit:verify foo"` — the AI is done; user-validation happens at verify time
+
+#### Scenario: Apply past an unpassed proposal gate records the override
+- **WHEN** the user invokes `/orbit:apply foo` while the `review-proposal` gate is unpassed or stale and chooses proceed-anyway at the inflection prompt
+- **THEN** the `apply-<TS>.json` emit includes `gate_overridden: {gate: "review-proposal", state: "<unpassed|stale>", reason: "<gate reason at decision time>"}`; emits for applies with no gate override omit the field entirely
 
 ### Requirement: Verify pass recommendation
 
@@ -461,4 +469,30 @@ When the planned change lands, every prior emit that recommended its command aut
 #### Scenario: Emit text contains no other-issue references
 - **WHEN** any run-summary JSON is inspected
 - **THEN** `next_recommended` and `final_assessment` text contain no issue numbers (e.g., `#20`, `#15`) or references to future-issue behavior changes
+
+### Requirement: Reviewer-class field on review-cycle emits
+
+Review-cycle emits SHALL carry a first-class `reviewer_class` field identifying the execution context that produced the pass: `"in-context"` (the authoring conversation), `"fresh"` (a clean-context execution, e.g. `--fresh`), or `"external"` (a different AI via the review-external handoff). The field appears on `review-<mode>-<TS>.json` emits and on `review-external-<TS>.json` T0 emits (where it is `"external"` by definition, describing the packaged-but-not-yet-returned handoff). The field exists so the engine's reviewed-gate convergence computation (per `orbit-engine-gates`) can count class coverage from the audit trail without inference.
+
+A `review-external-<TS>.json` T0 emit is a PACKAGING record, NOT a completed pass: it carries `awaiting_findings: true`. For class-coverage purposes an `external` pass exists ONLY when an `external-<as>-<TS>.md` findings file exists in `.orbit-runs/`; a T0 emit with `awaiting_findings: true` SHALL NEVER satisfy external class coverage, so a packaged-but-never-returned external cannot converge a `reviewed` gate. Its `reviewer_class: "external"` describes the intended handoff class for audit readability, not a counted pass.
+
+#### Scenario: Review emit records its reviewer class
+
+- **WHEN** `/orbit:review` completes and persists `review-<mode>-<TS>.json`
+- **THEN** the JSON includes `reviewer_class`: `"fresh"` when the pass work ran in a clean execution context (`--fresh`), otherwise `"in-context"`
+
+#### Scenario: Externally-sourced findings are classed external
+
+- **WHEN** the engine computes class coverage and encounters an `external-<as>-<TS>.md` findings file
+- **THEN** that pass counts as `reviewer_class: "external"` (the markdown's `**Reviewer**:` line carries the specific model; the class is structural)
+
+#### Scenario: Packaged-but-unreturned external is not class coverage
+
+- **WHEN** a `review-external-<TS>.json` T0 emit exists with `awaiting_findings: true` but no corresponding `external-<as>-<TS>.md` findings file has landed
+- **THEN** the engine counts NO external pass for class coverage; the `external` cadence slot stays unsatisfied and the gate remains unpassed with the canonical next command targeting the external return
+
+#### Scenario: Legacy emits without the field degrade to inference
+
+- **WHEN** the engine reads an emit that predates this field
+- **THEN** the class is inferred — `flags.fresh: true` → `"fresh"`; `external-*.md` provenance → `"external"`; otherwise `"in-context"` — and the absence of the field never breaks gate computation
 

@@ -3,9 +3,7 @@
 ## Purpose
 
 The `/orbit:review-external` command — packages a review request for an external AI (codex, fresh Claude, GPT, etc.) to perform a second-opinion review. Writes a self-contained markdown prompt to `.orbit-runs/external-prompt-<as>-<TS>.md` and emits a short chat invocation snippet. Does NOT run the review or ingest findings; ingestion is `/orbit:address-reviews --from-file`. Includes mode inference, iteration counting per mode, cycle-context population from prior runs, and a recommended-session note tailored to iteration history.
-
 ## Requirements
-
 ### Requirement: Review-external command available
 
 The system SHALL expose a `/orbit:review-external` command that packages a review request for an external AI (codex, fresh Claude, GPT, etc.) to perform a second-opinion review.
@@ -60,7 +58,7 @@ The system SHALL write the full handoff prompt to a versioned, committed file in
   - **(optional)** Mode-inference note when `--as` was omitted (per the State-based inference scenario): `Generating external-review prompt as \`<as>\` (inferred from tasks state).`
   - **(required)** Recommended-session note (per the Recommended-session requirement): a single line summarizing which AI session the user should paste into.
   - **(required)** The prompt file path.
-  - **(conditional — handoff preflight gate, per the Handoff-preflight requirement)** ONE of: the copy-paste-ready pull invocation (`Pull <repo URL> and read <prompt-file-path>. Follow its instructions; write findings to the path specified inside.`) when the preflight is satisfied, OR the handoff-blocked output (commit+push action leading; pull text framed as the after-push step) when it is not.
+  - **(conditional — handoff preflight gate, per the Handoff-preflight requirement)** ONE of: the affirmative committed-and-pushed attestation (`Prompt committed (<short-sha>) and pushed to <remote>/<branch>`, or the local-path equivalent) immediately followed by the copy-paste-ready pull invocation (`Pull <repo URL> and read <prompt-file-path>. Follow its instructions; write findings to the path specified inside.`) when the preflight is satisfied, OR the handoff-blocked output (commit+push action leading; pull text framed as the after-push step) when it is not.
   - **(required)** The eventual findings path the user will pass to `/orbit:address-reviews --from-file` once findings come back.
 
   No other items are emitted; required items are always present in the specified order.
@@ -170,8 +168,13 @@ the markdown directly and the user will save it.
    git push
    ```
 
+   Then STATE PLAINLY in your chat output that the findings landed —
+   `Findings committed (<short-sha>) and pushed` — so the human never has to
+   infer whether they reached the repo.
+
 If you don't have git access, just output the findings markdown in this chat
-(per the chat-only fallback above) and the user will commit it manually.
+(per the chat-only fallback above), state that you could NOT commit/push, and
+the user will commit it manually.
 ```
 
 #### Scenario: Output-format block must be verbatim
@@ -182,7 +185,7 @@ If you don't have git access, just output the findings markdown in this chat
 #### Scenario: Commit / push instructions in prompt
 
 - **WHEN** the prompt is generated
-- **THEN** it includes an "After completing the review" section instructing the external AI to commit and push the findings file if it has git access (with a `git add` / `git commit` / `git push` block showing the path and a one-line summary commit message), with a fallback note that chat-only environments should output the markdown for the user to commit manually
+- **THEN** it includes an "After completing the review" section instructing the external AI to commit and push the findings file if it has git access (with a `git add` / `git commit` / `git push` block showing the path and a one-line summary commit message), AND to STATE PLAINLY in its chat output that the findings file was committed and pushed — `Findings committed (<short-sha>) and pushed` — or to state explicitly that it could not (chat-only fallback: output the markdown for the user to commit manually). The human never has to infer whether the findings landed in the repo
 
 #### Scenario: Commit message format in prompt
 
@@ -278,10 +281,10 @@ The system SHALL verify the handoff state before emitting a pull-based invocatio
 - **WHEN** the working tree is clean but `git rev-list @{u}..HEAD --count` reports N > 0 unpushed commits
 - **THEN** the chat output emits the handoff-blocked output naming the N-unpushed-commits cause, with the same commit/push-then-pull framing
 
-#### Scenario: Clean and pushed emits the pull invocation directly
+#### Scenario: Clean and pushed emits the pull invocation with an affirmative attestation
 
 - **WHEN** the working tree is clean and no unpushed commits exist (or the repo has no remote and the local-path route is used)
-- **THEN** the chat output presents the invocation (pull-based, or local-path per graceful degradation) as immediately usable
+- **THEN** the chat output AFFIRMATIVELY STATES the prompt's handoff state with evidence — `Prompt committed (<short-sha>) and pushed to <remote>/<branch>` (or the local-path equivalent naming the path) — and presents the invocation as immediately usable alongside that attestation; the committed-and-pushed state is never implied by the mere absence of a warning
 
 ### Requirement: Command does not run the review or ingest findings
 
@@ -291,3 +294,4 @@ The system SHALL NOT execute the review itself nor ingest the external AI's find
 
 - **WHEN** the command completes
 - **THEN** only a prompt is emitted; no review passes execute and no findings are processed; ingestion is the responsibility of `/orbit:address-reviews --from-file <path>`
+

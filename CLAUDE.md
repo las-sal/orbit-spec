@@ -50,8 +50,8 @@ passed two internal proposal-review iterations, an external (GPT-5.1 Codex) syst
 findings, all resolved — incl. a sixth registry in init.ts and a user-ratified handoff preflight
 for review-external), and a converged internal system review (Path B); full audit trail in the
 archived `.orbit-runs/`. **PARITY REACHED** — `../openspec-orbit` is retired as migration
-source-of-truth. **C1 (engine gates/freshness) is IMPLEMENTED** on branch `c1-engine-gates` (chunked
-apply): the engine is now **review-aware**. A schema `gates:` list with a CLOSED two-kind set —
+source-of-truth. **C1 (engine gates/freshness) is COMPLETE and ARCHIVED**
+(`orbit/changes/archive/2026-07-06-c1-engine-gates/`): the engine is now **review-aware**. A schema `gates:` list with a CLOSED two-kind set —
 `tracked` (checkbox arithmetic; upstream `apply` normalized in) and `reviewed` (a convergence criterion
 COMPUTED from the `.orbit-runs/` trail: ordered cadence slots + resolution-over-every-pass + per-gate
 `confirm`) — plus the v1 timestamp-token **freshness** rule, **single-voiced canonical-next** + a
@@ -60,8 +60,12 @@ one-line **position readout**, and **gate inflection prompts** (apply-parity: su
 state files); new engine modules `src/core/artifact-graph/{trail,gates}.ts`. `spec-driven` is now
 **version 2** (`review-proposal → apply → review-system`). Baseline capabilities **11→12**
 (`orbit-engine-gates` ADDED; the 5 editorial baselines gained gate-aware MODIFIED deltas). The C1
-proposal converged through **5 internal + 3 external** review iterations (all resolved) before apply;
-full audit trail in the change's `.orbit-runs/`. **Next: C2** (archive parallel-merge fix). Three
+proposal converged through **5 internal + 3 external** review iterations (all resolved) before apply,
+then a full system-review cadence post-apply (in-context → **external (GPT-5 Codex)** → fresh →
+in-context confirm) — the external slot caught **2 CRITICAL false-convergence bugs** the in-context
+passes missed, vindicating the cadence on its own engine. Archiving surfaced+fixed a fence-unaware
+bug in the spec-sync parser (`requirement-blocks.ts`). Full audit trail in the archived `.orbit-runs/`.
+**Next: C2** (archive parallel-merge fix). Three
 decisions were ratified during remediation — **read these before touching templates**:
 - **D14 — thin launcher commands**: each skill `instructions` literal is the single behavioral source
   (pristine upstream body + `# Orbit additions`); each command `content` literal is a ~3-line launcher
