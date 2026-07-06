@@ -40,8 +40,9 @@ export interface TrailResolution {
   token: string;
   /** Repo-relative-normalized `source_path`, or null. */
   sourcePath: string | null;
-  deferred: number;
-  escalated: number;
+  /** `null` when the field was absent/non-numeric — treated as UNRESOLVED (not zero). */
+  deferred: number | null;
+  escalated: number | null;
 }
 
 export interface Trail {
@@ -178,8 +179,11 @@ function parseAddressReviews(token: string, json: any): TrailResolution {
   return {
     token,
     sourcePath: rawPath ? stripLineSuffix(toRepoRelative(String(rawPath))) : null,
-    deferred: typeof rs.deferred === 'number' ? rs.deferred : 0,
-    escalated: typeof rs.escalated === 'number' ? rs.escalated : 0,
+    // Missing/non-numeric → null (unresolved), NOT 0: an address-reviews JSON without a
+    // proper resolution_summary must not falsely resolve a pass (per the edge-case contract:
+    // malformed/missing fields are treated as if no address-reviews ran).
+    deferred: typeof rs.deferred === 'number' ? rs.deferred : null,
+    escalated: typeof rs.escalated === 'number' ? rs.escalated : null,
   };
 }
 
@@ -202,11 +206,20 @@ function parseExternalMarkdown(file: string, token: string, mode: ReviewMode): T
   const counts = { CRITICAL: 0, WARNING: 0, SUGGESTION: 0 };
   const findings: TrailFinding[] = [];
   let pendingTitle: string | null = null;
+  // Shape validation: a well-formed external findings file has the `# External Review:`
+  // header AND all three severity sections. Content that doesn't parse to this shape is
+  // NOT a valid external pass — return null (absent) so a malformed/plain-text file can
+  // never count as a clean external and advance the gate (per orbit-review: external
+  // parse failure → NOT-clean; Path A requires confident parse success).
+  let hasHeader = false;
+  const sawSections = new Set<string>();
 
   for (const line of lines) {
+    if (/^#\s+External Review\b/i.test(line)) hasHeader = true;
     const sec = line.match(/^##\s+(CRITICAL|WARNING|SUGGESTION)\s*$/);
     if (sec) {
       section = sec[1] as 'CRITICAL' | 'WARNING' | 'SUGGESTION';
+      sawSections.add(sec[1]);
       pendingTitle = null;
       continue;
     }
@@ -229,6 +242,9 @@ function parseExternalMarkdown(file: string, token: string, mode: ReviewMode): T
       findings[findings.length - 1].file = stripLineSuffix(toRepoRelative(fileField[1]));
     }
   }
+
+  // Reject malformed/incomplete files: not a confidently-parsed external findings artifact.
+  if (!hasHeader || sawSections.size < 3) return null;
 
   return {
     token,

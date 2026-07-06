@@ -286,6 +286,71 @@ describe('artifact-graph/gates — computation', () => {
     expect(rp.nextCommand).toBe('/orbit:review --as proposal --fresh mychange');
   });
 
+  // --- Regression tests for the external-system-review bypass findings ---
+
+  it('CRITICAL bypass: a stale UNRESOLVED pass still blocks the gate (resolution over ALL passes, not just fresh)', () => {
+    writeFile('tasks.md', '- [x] one\n'); // apply passed → review-system evaluated
+    // old in-context system pass with an unresolved WARNING
+    writeJson('review-system-2020-01-01T00-00-00Z.json', {
+      command: 'review', mode: 'system', reviewer_class: 'in-context',
+      findings_summary: { critical: 0, warning: 1, suggestion: 0 },
+      findings: [{ severity: 'WARNING', title: 'unresolved', file: 'x.ts', line: 1 }],
+    });
+    // apply lands AFTER it → the pass goes stale
+    writeJson('apply-2020-01-01T00-01-00Z.json', { command: 'apply', chunk_complete: true });
+    // then a clean in-context / external / in-context cadence, all after the apply
+    writeJson('review-system-2020-01-01T00-02-00Z.json', { command: 'review', mode: 'system', reviewer_class: 'in-context', findings_summary: { critical: 0, warning: 0, suggestion: 0 }, findings: [] });
+    external('external-system-2020-01-01T00-03-00Z.md', '# External Review\n\n## CRITICAL\n\nNone.\n\n## WARNING\n\nNone.\n\n## SUGGESTION\n\nNone.\n');
+    writeJson('review-system-2020-01-01T00-04-00Z.json', { command: 'review', mode: 'system', reviewer_class: 'in-context', findings_summary: { critical: 0, warning: 0, suggestion: 0 }, findings: [] });
+    const rs = computeGateStates(schema, 'c', dir, allArtifacts).gates.find(g => g.id === 'review-system')!;
+    expect(rs.state).toBe('unpassed'); // the stale unresolved pass must still block
+    expect(rs.nextCommand).toMatch(/^\/orbit:address-reviews /);
+  });
+
+  it('CRITICAL bypass: a malformed external-system file does NOT count as an external pass', () => {
+    external('external-system-2020-01-01T00-00-00Z.md', 'just some plain text, not a real review file');
+    const trail = readTrail(dir);
+    expect(trail.passes.filter(p => p.source === 'external')).toHaveLength(0);
+  });
+
+  it('WARNING bypass: an address-reviews JSON without resolution_summary does NOT resolve a pass', () => {
+    writeJson('review-proposal-2020-01-01T00-00-00Z.json', {
+      command: 'review', mode: 'proposal', reviewer_class: 'fresh',
+      findings_summary: { critical: 0, warning: 1, suggestion: 0 },
+      findings: [{ severity: 'WARNING', title: 'X', file: 'a.md', line: 1 }],
+    });
+    writeJson('address-reviews-2020-01-01T00-05-00Z.json', {
+      command: 'address-reviews',
+      source_path: 'orbit/changes/c/.orbit-runs/review-proposal-2020-01-01T00-00-00Z.json',
+      // NO resolution_summary → must be treated as unresolved
+    });
+    const rp = computeGateStates(schema, 'c', dir, allArtifacts).gates.find(g => g.id === 'review-proposal')!;
+    expect(rp.state).toBe('unpassed');
+    expect(rp.nextCommand).toMatch(/^\/orbit:address-reviews /);
+  });
+
+  it('WARNING bypass: position/canonical-next follow requires/before edges, not declaration order', () => {
+    // gates declared OUT of flow order (apply before review-proposal, which gates apply)
+    const outOfOrder = parseSchema(`
+name: t
+version: 2
+artifacts:
+  - { id: proposal, generates: proposal.md, description: P, template: p.md }
+  - { id: tasks, generates: tasks.md, description: T, template: t.md, requires: [proposal] }
+gates:
+  - { id: apply, kind: tracked, requires: [tasks], tracks: tasks.md }
+  - id: review-proposal
+    kind: reviewed
+    requires: [proposal, tasks]
+    cadence: [independent, in-context]
+    before: apply
+`);
+    writeFile('tasks.md', '- [ ] one\n');
+    const { position } = computeGateStates(outOfOrder, 'c', dir, new Set(['proposal', 'tasks']));
+    // review(proposal) must appear BEFORE apply despite declaration order
+    expect(position.indexOf('review(proposal)')).toBeLessThan(position.indexOf('apply'));
+  });
+
   it('parses external markdown findings and counts CRITICAL', () => {
     external(
       'external-system-2026-06-30T09-00-00Z.md',
