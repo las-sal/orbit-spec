@@ -17,7 +17,7 @@ impossible.
   (propose / continue / ff), the current baseline block of every MODIFIED/REMOVED/RENAMED
   requirement is hashed (SHA-256 over the parser's normalized `raw`) and stored in the change's
   `.openspec.yaml` under a new optional `base_fingerprints:` map (capability → requirement → hash).
-- **A deterministic CLI capture/check surface**: a new `orbit change fingerprint <name>` subcommand
+- **A deterministic CLI capture/check surface**: a new top-level `orbit fingerprint <name>` command
   stamps fingerprints (idempotent; add-missing-only by default, `--refresh` for the deliberate
   re-stamp) and verifies them (`--check [--json]`), so AI workflow bodies never hand-compute hashes.
 - **Archive-time divergence guard**: before `buildUpdatedSpec` mutates a spec, the live hash of
@@ -33,7 +33,7 @@ impossible.
   fingerprint warns at archive ("can't verify — no base recorded") and the proceed is recorded in
   the run summary; it never silently passes.
 - **Guided-manual reconcile (Phase 0)**: on reconcile, the user hand-edits the delta to incorporate
-  the divergent content, then re-stamps via `orbit change fingerprint <name> --refresh`. The known
+  the divergent content, then re-stamps via `orbit fingerprint <name> --refresh`. The known
   blind-re-stamp footgun is accepted for Phase 0 (only reachable after the loud diff) and is what
   the deferred Phase-1 3-way merge removes.
 - **Explicitly deferred** (scope discipline, per explore.md D-c2-1): Phase 1 (3-way merge /
@@ -45,7 +45,7 @@ impossible.
 
 - `orbit-base-fingerprints`: base-fingerprint capture at every spec-authoring point
   (propose/continue/ff), the `base_fingerprints` metadata format in `.openspec.yaml`, the hashing
-  rule (verbatim block `raw`, line-ending normalization only), the `orbit change fingerprint`
+  rule (verbatim block `raw`, line-ending normalization only), the `orbit fingerprint`
   stamp/check CLI surface, the archive-time divergence guard in the spec-apply engine (refuse by
   default, explicit override, idempotent-write skip), and the guided-manual reconcile flow.
 
@@ -61,7 +61,7 @@ impossible.
 - **Engine**: `src/core/artifact-graph/types.ts` (`ChangeMetadataSchema` + `base_fingerprints`),
   `src/utils/change-metadata.ts` (round-trips the new field), `src/core/specs-apply.ts`
   (`buildUpdatedSpec` guard), `src/core/archive.ts` (override flag plumbing), new fingerprint
-  module + `orbit change fingerprint` CLI registration.
+  module + `orbit fingerprint` CLI registration.
 - **Workflow templates** (`src/core/templates/workflows/`): `propose.ts`, `continue-change.ts`,
   `ff-change.ts` (capture step), `archive-change.ts` (divergence prompt + summary fields),
   `bulk-archive-change.ts` (brief note: the guard fires per-archive; handle refusals per change).

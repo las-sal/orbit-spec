@@ -20,9 +20,9 @@ changes or archives).
 #### Scenario: Metadata without fingerprints stays valid
 
 - **WHEN** a change's `.openspec.yaml` contains only `{schema, created}` (any pre-C2 change or
-  archive)
-- **THEN** the metadata parses as valid and downstream consumers treat every touched requirement
-  as having no stored fingerprint
+  archive), or the change has no `.openspec.yaml` at all (the metadata read returns null)
+- **THEN** the metadata layer raises no error and downstream consumers treat every touched
+  requirement as having no stored fingerprint
 
 ### Requirement: Fingerprint hashing rule
 
@@ -44,10 +44,11 @@ cosmetic — is content the delta author did not see and SHALL register as diver
 - **THEN** the recomputed live hash differs from the stored fingerprint and the requirement
   reports `diverged`
 
-### Requirement: Fingerprint stamp and check CLI subcommand
+### Requirement: Fingerprint stamp and check CLI command
 
-The CLI SHALL provide `orbit change fingerprint <change-name>` with a stamp mode (default) and a
-check mode (`--check`), plus `--json` output for workflow consumption.
+The CLI SHALL provide `orbit fingerprint <change-name>` — a top-level verb-first command (the
+`orbit change ...` namespace is deprecated and gains no new subcommands) — with a stamp mode
+(default) and a check mode (`--check`), plus `--json` output for workflow consumption.
 
 **Stamp mode** SHALL: parse each delta spec under the change's `specs/`, derive the
 touched-requirement set per capability — `RENAMED[].from` ∪ `REMOVED[]` ∪ `MODIFIED[]`, with each
@@ -66,21 +67,21 @@ absent from the live baseline). Check mode SHALL NOT modify any file.
 
 #### Scenario: Stamp after delta generation
 
-- **WHEN** `orbit change fingerprint <name>` runs on a change whose delta specs contain MODIFIED,
+- **WHEN** `orbit fingerprint <name>` runs on a change whose delta specs contain MODIFIED,
   REMOVED, and RENAMED requirements
 - **THEN** `.openspec.yaml` gains one fingerprint per touched requirement, keyed by capability and
   live requirement name, hashed from the current baseline blocks
 
 #### Scenario: Re-stamp does not silently overwrite
 
-- **WHEN** `orbit change fingerprint <name>` runs again (without `--refresh`) after the baseline
+- **WHEN** `orbit fingerprint <name>` runs again (without `--refresh`) after the baseline
   diverged from a stored fingerprint
 - **THEN** the existing fingerprint is left unchanged (the divergence stays detectable) and only
   requirements with no stored fingerprint gain one
 
 #### Scenario: Deliberate refresh
 
-- **WHEN** the user runs `orbit change fingerprint <name> --refresh` after hand-editing the delta
+- **WHEN** the user runs `orbit fingerprint <name> --refresh` after hand-editing the delta
   to incorporate divergent live content
 - **THEN** every touched requirement's fingerprint is recomputed from the current baseline and
   overwritten
@@ -93,7 +94,7 @@ absent from the live baseline). Check mode SHALL NOT modify any file.
 
 #### Scenario: Check reports machine-readable statuses
 
-- **WHEN** `orbit change fingerprint <name> --check --json` runs
+- **WHEN** `orbit fingerprint <name> --check --json` runs
 - **THEN** the output lists every touched requirement with `{capability, requirement, status}`
   from the closed status set, plus `base_hash`/`live_hash` where applicable, and no file is
   modified
@@ -101,7 +102,7 @@ absent from the live baseline). Check mode SHALL NOT modify any file.
 ### Requirement: Fingerprint capture at every spec-authoring point
 
 Every workflow that generates delta specs SHALL invoke the fingerprint stamp
-(`orbit change fingerprint <name>`) — `/orbit:propose`, `/orbit:continue` (when it creates
+(`orbit fingerprint <name>`) — `/orbit:propose`, `/orbit:continue` (when it creates
 spec artifacts), and `/orbit:ff` — immediately after delta-spec generation completes, so that
 MODIFIED/REMOVED/RENAMED requirements are fingerprinted against the baseline the author actually
 read.
@@ -136,6 +137,13 @@ capture) and compare against the change's stored `base_fingerprints`:
 - **Idempotent write**: when the live block's hash equals the hash of the incoming delta block
   itself, the write cannot destroy content and the requirement SHALL be treated as `verified`
   regardless of the stored fingerprint. REMOVED requirements get no such skip.
+- **Missing** (touched requirement absent from the live baseline, e.g. a sibling renamed or
+  removed it): the guard SHALL defer to the spec-apply engine's existing not-found hard errors
+  (a MODIFIED/REMOVED/RENAMED target absent from the live spec already aborts the archive);
+  no new lenient path is introduced.
+- **Override visibility**: when the override flag is exercised, the engine SHALL print a notice
+  naming each requirement whose divergence was overridden — CLI-direct runs write no run summary,
+  so the console notice keeps the deliberate-loss act visible in terminal and CI logs.
 
 The guard lives in the engine so every archive path (single archive, bulk archive, `--yes`
 non-interactive runs) inherits it; a non-interactive run can never clobber silently.
@@ -151,7 +159,16 @@ non-interactive runs) inherits it; a non-interactive run can never clobber silen
 
 - **WHEN** the same archive is re-invoked with `--override-fingerprints`
 - **THEN** the replace proceeds (deliberate, recorded loss — the workflow layer records the
-  override in the run summary)
+  override in the run summary) and the engine prints a console notice naming each overridden
+  requirement
+
+#### Scenario: Touched requirement missing from the live baseline
+
+- **WHEN** a fingerprinted requirement no longer exists in the live baseline at archive time (a
+  sibling change renamed or removed it)
+- **THEN** the archive aborts via the engine's existing not-found error for that
+  MODIFIED/REMOVED/RENAMED target; the fingerprint check's `missing` status adds context but
+  introduces no path that proceeds silently
 
 #### Scenario: Non-interactive archive cannot clobber silently
 
@@ -175,7 +192,7 @@ non-interactive runs) inherits it; a non-interactive run can never clobber silen
 When divergence is detected, the reconcile path SHALL be guided-manual (Phase 0): the CLI/workflow
 prints the divergence report and instructs the user to (1) hand-edit the change's delta spec to
 incorporate the divergent live content, THEN (2) re-stamp via
-`orbit change fingerprint <name> --refresh`. The instructions SHALL present editing before
+`orbit fingerprint <name> --refresh`. The instructions SHALL present editing before
 re-stamping — a refresh without incorporating the content re-opens the loss hole (the guard checks
 hash equality, not semantic incorporation); this residual footgun is accepted for Phase 0 because
 it is reachable only after the divergence was shown, and is removed by the deferred Phase-1 3-way
@@ -190,6 +207,6 @@ merge.
 #### Scenario: After a true reconcile the archive passes
 
 - **WHEN** the user incorporates the divergent content into the delta and runs
-  `orbit change fingerprint <name> --refresh`, then re-invokes archive
+  `orbit fingerprint <name> --refresh`, then re-invokes archive
 - **THEN** the guard reports `verified` for the reconciled requirement and the archive proceeds,
   with the formerly-divergent sibling content preserved in the written baseline

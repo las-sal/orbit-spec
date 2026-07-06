@@ -1,0 +1,61 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-06T21:31:58Z",
+  "change": "c2-parallel-merge-guardrail",
+  "final_assessment": "All 6 findings from review-proposal iter 1 resolved (3 WARNING, 3 SUGGESTION; all trivial-fix class, 0 stale, 0 deferred, 0 escalated). Verb-first rename applied across all 5 artifacts (19 citations, 0 residue); guard requirement gained missing-status + override-notice normative text and 2 scenarios; metadata scenario broadened to file-absent; mixed-prompt disclosure clause added; design D3/D4 and tasks 2.1/3.1 rippled. Change validates --strict.",
+  "next_recommended": "/orbit:review --as proposal --fresh c2-parallel-merge-guardrail — re-review to confirm convergence; the cadence's independent slot is uncovered",
+  "kind": "editorial",
+  "source": "--from-file orbit/changes/c2-parallel-merge-guardrail/.orbit-runs/review-proposal-2026-07-06T21-26-37Z.json",
+  "source_path": "orbit/changes/c2-parallel-merge-guardrail/.orbit-runs/review-proposal-2026-07-06T21-26-37Z.json",
+  "source_format": "internal-review",
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "resolution_summary": {
+    "resolved": 6,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "finding": "New subcommand spec'd into the deprecated `orbit change` namespace",
+      "severity": "WARNING",
+      "classification": "trivial fix",
+      "action": "Renamed `orbit change fingerprint` to top-level verb-first `orbit fingerprint` across specs/orbit-base-fingerprints/spec.md, specs/orbit-archive-modifications/spec.md, design.md, proposal.md, tasks.md; reworded requirement name and D3/2.1 namespace phrasing; residue sweep clean (0 remaining)."
+    },
+    {
+      "finding": "Guard requirement omits engine behavior for the `missing` status",
+      "severity": "WARNING",
+      "classification": "trivial fix",
+      "action": "Added a Missing bullet to the archive-time guard requirement (defers to existing not-found hard errors) plus scenario 'Touched requirement missing from the live baseline'; rippled to design.md D4 and tasks.md 3.1."
+    },
+    {
+      "finding": "Metadata requirement covers field-absent but not file-absent `.openspec.yaml`",
+      "severity": "WARNING",
+      "classification": "trivial fix",
+      "action": "Broadened the 'Metadata without fingerprints stays valid' scenario WHEN to include a null metadata read (no .openspec.yaml)."
+    },
+    {
+      "finding": "Mixed diverged+unverified prompt disclosure unstated",
+      "severity": "SUGGESTION",
+      "classification": "trivial fix",
+      "action": "Added clause to the fingerprint-divergence inflection prompt requirement: divergence prompt lists unverified requirements too; proceeding records both run-summary fields."
+    },
+    {
+      "finding": "CLI-direct override leaves no visible record outside the workflow",
+      "severity": "SUGGESTION",
+      "classification": "trivial fix",
+      "action": "Added Override-visibility bullet to the guard requirement (engine prints a notice naming each overridden requirement) and extended the override scenario; rippled to design.md D4 and tasks.md 3.1."
+    },
+    {
+      "finding": "D3 closing sentence garbles the no-heavy-command point",
+      "severity": "SUGGESTION",
+      "classification": "trivial fix",
+      "action": "Reworded design.md D3 closing bullet: no heavy new reconcile command is introduced (Phase-1 territory); re-running the stamp with --refresh is the D-c2-5 re-stamp vehicle."
+    }
+  ],
+  "ripple_cascade": {
+    "applied": ["design.md", "tasks.md", "proposal.md"],
+    "flagged_not_applied": []
+  }
+}

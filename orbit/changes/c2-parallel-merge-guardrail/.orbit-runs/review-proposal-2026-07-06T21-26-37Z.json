@@ -1,0 +1,90 @@
+{
+  "command": "review",
+  "timestamp": "2026-07-06T21:26:37Z",
+  "change": "c2-parallel-merge-guardrail",
+  "final_assessment": "No critical issues. 3 warning(s) to consider. A prior gate-relevant pass has unresolved findings; gate review-proposal UNPASSED. Next: /orbit:address-reviews c2-parallel-merge-guardrail --from-file orbit/changes/c2-parallel-merge-guardrail/.orbit-runs/review-proposal-2026-07-06T21-26-37Z.json.",
+  "next_recommended": "/orbit:address-reviews c2-parallel-merge-guardrail --from-file orbit/changes/c2-parallel-merge-guardrail/.orbit-runs/review-proposal-2026-07-06T21-26-37Z.json",
+  "kind": "editorial",
+  "mode": "proposal",
+  "iteration": 1,
+  "depth": "full",
+  "reviewer_class": "in-context",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "passes_run": ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+  "passes_skipped": [],
+  "findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 3,
+    "by_pass": {
+      "1": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "2": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "3": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "4": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "5": { "critical": 0, "warning": 1, "suggestion": 1 },
+      "6": { "critical": 0, "warning": 2, "suggestion": 1 },
+      "7": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "8": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "9": { "critical": 0, "warning": 0, "suggestion": 1 }
+    }
+  },
+  "findings": [
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "file": "specs/orbit-base-fingerprints/spec.md",
+      "line": 46,
+      "title": "New subcommand spec'd into the deprecated `orbit change` namespace",
+      "recommendation": "The spec mandates `orbit change fingerprint <change-name>`, but every `orbit change ...` invocation emits 'Warning: The \"orbit change ...\" commands are deprecated. Prefer verb-first commands' (src/cli/index.ts:177). A new capability should not be born deprecated, and every workflow invocation would print the warning into AI-driven runs. Respec as the verb-first top-level `orbit fingerprint <change-name>` (pattern: `orbit validate <name>`, `orbit archive <name>`). Ripple to every citation: specs/orbit-base-fingerprints/spec.md (8), specs/orbit-archive-modifications/spec.md (1), design.md D3/D7 (3), proposal.md (4), tasks.md 2.1/4.2/5.2 (3)."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "file": "specs/orbit-base-fingerprints/spec.md",
+      "line": 116,
+      "title": "Guard requirement omits engine behavior for the `missing` status",
+      "recommendation": "The check-status set defines `missing` (touched requirement absent from the live baseline — e.g. a sibling renamed or removed it), and design.md's Risks section notes the existing hard error covers it, but the 'Archive-time divergence guard' requirement itself only specifies diverged/unverified/idempotent/verified. State normatively that `missing` defers to the spec-apply engine's existing not-found hard errors (MODIFIED/REMOVED target absent → abort), with one scenario, so implementers don't invent a new lenient path."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "file": "specs/orbit-base-fingerprints/spec.md",
+      "line": 27,
+      "title": "Metadata requirement covers field-absent but not file-absent `.openspec.yaml`",
+      "recommendation": "The 'Metadata without fingerprints stays valid' scenario covers a `.openspec.yaml` containing only {schema, created}; it does not cover the metadata file being absent entirely (readChangeMetadata returns null). Broaden the scenario WHEN (or add one) so both absences yield the same all-unverified treatment."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "file": "specs/orbit-archive-modifications/spec.md",
+      "line": 9,
+      "title": "Mixed diverged+unverified prompt disclosure unstated",
+      "recommendation": "When both `diverged` and `unverified` requirements exist, only the divergence prompt fires; the run-summary scenario records both, but the prompt requirement doesn't say the divergence prompt must also disclose the unverified requirements. Add a clause: the divergence prompt lists unverified requirements alongside the diff."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "file": "specs/orbit-base-fingerprints/spec.md",
+      "line": 130,
+      "title": "CLI-direct override leaves no visible record outside the workflow",
+      "recommendation": "Run summaries are workflow-written; a direct `orbit archive --override-fingerprints` records nothing (parity with gate_overridden, which is also workflow-recorded). Cheap hardening: require the engine to print a console notice naming each overridden requirement when the override flag is exercised, so the deliberate-loss act is visible in terminal/CI logs."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "file": "design.md",
+      "line": 87,
+      "title": "D3 closing sentence garbles the no-heavy-command point",
+      "recommendation": "\"Idempotent stamp = the D-c2-5 're-run over the touched specs'; no separate `--refresh`-style heavy command\" is confusing since --refresh IS a flag this design defines. Reword to: no heavy new reconcile command (e.g. /orbit:rebase) is introduced; re-running the stamp (with --refresh) is the re-stamp vehicle."
+    }
+  ],
+  "stale_suppressed": [],
+  "iteration_note": null
+}

@@ -17,9 +17,10 @@ archive.
 - [ ] 1.3 Unit tests: schema round-trip (with/without the field), hashing (LF/CRLF equal, cosmetic
       edit diverges), touched-set rename mapping, all four check statuses, idempotent skip
 
-## 2. `orbit change fingerprint` CLI subcommand
+## 2. `orbit fingerprint` CLI command
 
-- [ ] 2.1 Register `fingerprint <change-name>` under the `change` command (`src/cli/index.ts`)
+- [ ] 2.1 Register the top-level verb-first `fingerprint <change-name>` command (`src/cli/index.ts`;
+      NOT under the deprecated `orbit change` namespace)
       with `--check`, `--refresh`, `--json`; stamp mode writes `base_fingerprints` via
       `writeChangeMetadata` (add-missing-only by default; `--refresh` overwrites; warn + skip
       requirements absent from the live baseline)
@@ -34,7 +35,9 @@ archive.
 - [ ] 3.1 Guard in `buildUpdatedSpec` (`src/core/specs-apply.ts`), before the mutation sequence:
       read the change's `base_fingerprints`, compute per-requirement status; on `diverged`
       without override throw with the divergence report (requirement names + current-live ▸
-      would-be-written diff); on `unverified` warn and proceed; honor the idempotent-write skip
+      would-be-written diff); on `unverified` warn and proceed; on `missing` defer to the
+      existing not-found errors; honor the idempotent-write skip; print the override notice
+      (names each overridden requirement) when the flag is exercised
 - [ ] 3.2 Plumb the change directory + `--override-fingerprints` flag through
       `orbit archive` (`src/cli/index.ts`, `src/core/archive.ts`) into `buildUpdatedSpec`;
       refusal exits via the existing "Aborted. No files were changed." path
@@ -46,7 +49,7 @@ archive.
 ## 4. Workflow template updates (then regenerate surface)
 
 - [ ] 4.1 `propose.ts`, `continue-change.ts`, `ff-change.ts`: add the capture step — run
-      `orbit change fingerprint <name>` immediately after delta-spec generation (D-c2-3/D-c2-7)
+      `orbit fingerprint <name>` immediately after delta-spec generation (D-c2-3/D-c2-7)
 - [ ] 4.2 `archive-change.ts`: new fingerprint-check step after the Step 3.4 gate prompt and
       before the Step 3.5 audit sweep — `--check --json`, diverged → reconcile / proceed-anyway
       (re-invoke with `--override-fingerprints`) / abort, unverified-only → proceed/abort prompt;
@@ -63,7 +66,7 @@ archive.
 
 - [ ] 5.1 Full suite green (`npm test`; baseline 1576 + new coverage), and
       `node bin/orbit.js validate c2-parallel-merge-guardrail --strict` passes
-- [ ] 5.2 Stamp C2's own fingerprints (`orbit change fingerprint c2-parallel-merge-guardrail`) —
+- [ ] 5.2 Stamp C2's own fingerprints (`orbit fingerprint c2-parallel-merge-guardrail`) —
       first guarded change; confirm `.openspec.yaml` records the `orbit-archive-modifications`
       MODIFIED requirements
 - [ ] 5.3 Manual end-to-end sanity in a scratch project: two changes touching the same

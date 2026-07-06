@@ -81,12 +81,13 @@ author did not see, so it counts as divergence; only pure line-ending noise is n
 Because the parser already normalizes and trims, capture and check use the same code path and are
 trivially consistent.
 
-### D3. Capture surface: a deterministic CLI subcommand, not AI-computed hashes (new, design-level)
+### D3. Capture surface: a deterministic CLI command, not AI-computed hashes (new, design-level)
 
-Workflow bodies cannot reliably hand-compute SHA-256. A new subcommand:
+Workflow bodies cannot reliably hand-compute SHA-256. A new top-level verb-first command (NOT
+under `orbit change` — that namespace is deprecated, `src/cli/index.ts:177`):
 
 ```
-orbit change fingerprint <change-name> [--check] [--refresh] [--json]
+orbit fingerprint <change-name> [--check] [--refresh] [--json]
 ```
 
 - **Stamp mode** (default): parse each delta spec (`parseDeltaSpec`), derive the touched-requirement
@@ -102,8 +103,8 @@ orbit change fingerprint <change-name> [--check] [--refresh] [--json]
 - **Check mode** (`--check`): recompute live hashes, compare, and report per-requirement status —
   `verified` | `diverged` | `unverified` (no stored fingerprint) | `missing` (requirement absent
   from live baseline) — with `--json` for workflow consumption.
-- Idempotent stamp = the D-c2-5 "re-run over the touched specs"; no separate `--refresh`-style
-  heavy command.
+- No heavy new reconcile command (e.g. an `/orbit:rebase`) is introduced — that is Phase-1
+  territory. Re-running the stamp (with `--refresh`) is the D-c2-5 re-stamp vehicle.
 
 Capture is invoked by the propose/continue/ff workflow bodies immediately after delta-spec
 generation (explore.md D-c2-3, D-c2-7).
@@ -118,7 +119,11 @@ every touched requirement (same FROM-name mapping as capture) and compares again
   error path prints it and aborts with "No files were changed." Non-interactive runs
   (`--yes`, bulk archive) can therefore never clobber silently.
 - **Override** (`orbit archive --override-fingerprints`, plumbed from `archive.ts` into
-  `buildUpdatedSpec`) → proceed; the *workflow* records the override in the run summary.
+  `buildUpdatedSpec`) → proceed; the engine prints a notice naming each overridden requirement
+  (CLI-direct runs write no run summary), and the *workflow* records the override in the run
+  summary.
+- **Missing** (touched requirement absent from the live baseline) → the engine's existing
+  not-found hard errors already abort; the check status adds context, no new lenient path.
 - **Unverified** (no stored fingerprint) → warn and proceed (explore.md D-c2-7 chose warn, not
   block, for hand-added deltas and pre-C2 changes); the workflow layer strengthens this
   interactively (D6 below).
@@ -150,11 +155,11 @@ inflection prompt.
 ### D7. Archive-flow prompt + trail (explore.md D-c2-4, D-c2-7 strengthened)
 
 A new step in the archive workflow body (after C1's Step 3.4 review-system gate prompt, before the
-Step 3.5 audit sweep) runs `orbit change fingerprint <name> --check --json`:
+Step 3.5 audit sweep) runs `orbit fingerprint <name> --check --json`:
 
 - **Any `diverged`** → AskUserQuestion inflection prompt with the divergence diff:
   **Reconcile** (halt; print guided-manual instructions — hand-edit the delta to incorporate the
-  live content, then `orbit change fingerprint <name> --refresh`) / **Proceed anyway** (re-invoke
+  live content, then `orbit fingerprint <name> --refresh`) / **Proceed anyway** (re-invoke
   archive with `--override-fingerprints`; record
   `fingerprint_overridden: [{capability, requirement, base_hash, live_hash}]` in the run summary) /
   **Abort**.

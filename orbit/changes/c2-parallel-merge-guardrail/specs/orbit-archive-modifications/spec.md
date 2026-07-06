@@ -2,7 +2,7 @@
 
 ### Requirement: Fingerprint-divergence inflection prompt
 
-The archive workflow SHALL check base fingerprints (`orbit change fingerprint <name> --check
+The archive workflow SHALL check base fingerprints (`orbit fingerprint <name> --check
 --json`, per `orbit-base-fingerprints`) after the `review-system` gate inflection prompt and
 before the pre-archive audit sweep, and prompt on anything not `verified`:
 
@@ -10,7 +10,9 @@ before the pre-archive audit sweep, and prompt on anything not `verified`:
   divergence report (requirement names plus the live-vs-would-be-written diff) with exactly three
   options: **Reconcile** (halt the archive; print the guided-manual reconcile instructions per
   `orbit-base-fingerprints`), **Proceed anyway** (re-invoke the archive with
-  `--override-fingerprints`; the run summary records the override), or **Abort**.
+  `--override-fingerprints`; the run summary records the override), or **Abort**. When
+  `unverified` requirements exist alongside diverged ones, the divergence prompt SHALL list them
+  too (proceeding records both run-summary fields).
 - **Any requirement `unverified` and none `diverged`** → prompt proceed / abort ("can't verify —
   no base recorded"); proceeding records the unverified requirements in the run summary. The
   engine-level warn alone is not sufficient interactively — a console warning in a `--yes` flow is
