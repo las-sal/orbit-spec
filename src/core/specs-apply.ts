@@ -20,6 +20,7 @@ import {
   deriveTouchedSet,
   computeStatuses,
   formatDivergenceReport,
+  synthesizeRenamedBlock,
 } from './fingerprints.js';
 import { readChangeMetadata } from '../utils/change-metadata.js';
 
@@ -106,7 +107,12 @@ export async function findSpecUpdates(changeDir: string, mainSpecsDir: string): 
  * Returns the rebuilt content and counts of operations.
  */
 export interface BuildUpdatedSpecOptions {
-  /** Change directory holding .openspec.yaml — enables the base-fingerprint guard (C2). */
+  /**
+   * Change directory holding .openspec.yaml — overrides the default derivation for the
+   * base-fingerprint guard (C2). When omitted, the guard derives it from `update.source`
+   * (which is always `<changeDir>/specs/<capability>/spec.md`), so direct programmatic
+   * callers cannot silently bypass the guard.
+   */
   changeDir?: string;
   /** Proceed past fingerprint divergence (deliberate, visible override). */
   overrideFingerprints?: boolean;
@@ -258,12 +264,16 @@ export async function buildUpdatedSpec(
   // Base-fingerprint guard (C2): before any mutation, recompute the live hash of every
   // MODIFIED/REMOVED/RENAMED requirement and compare against the change's stored
   // base_fingerprints. `missing` defers to the existing not-found errors below.
-  if (!isNewSpec && options.changeDir) {
+  // The change dir defaults to a derivation from update.source so that direct
+  // programmatic calls are guarded too (no silent bypass path).
+  const guardChangeDir =
+    options.changeDir ?? path.dirname(path.dirname(path.dirname(update.source)));
+  if (!isNewSpec) {
     const touched = deriveTouchedSet(plan);
     if (touched.length > 0) {
       let stored: Record<string, Record<string, string>> = {};
       try {
-        stored = readChangeMetadata(options.changeDir)?.base_fingerprints ?? {};
+        stored = readChangeMetadata(guardChangeDir)?.base_fingerprints ?? {};
       } catch {
         // unreadable metadata → no stored fingerprints (all unverified)
       }
@@ -277,8 +287,19 @@ export async function buildUpdatedSpec(
       }
       const diverged = entries.filter((e) => e.status === 'diverged');
       if (diverged.length > 0) {
+        // What the delta would actually write: the MODIFIED block; or, for a pure rename,
+        // the live block with only its header replaced (a rename never removes the body).
         const incomingByName = new Map(
-          touched.filter((t) => t.incomingRaw !== undefined).map((t) => [t.liveName, t.incomingRaw!])
+          touched
+            .map((t) => {
+              if (t.incomingRaw !== undefined) return [t.liveName, t.incomingRaw] as const;
+              if (t.renamedTo && !t.ops.includes('removed')) {
+                const live = nameToBlock.get(t.liveName);
+                if (live) return [t.liveName, synthesizeRenamedBlock(live.raw, t.renamedTo)] as const;
+              }
+              return null;
+            })
+            .filter((e): e is readonly [string, string] => e !== null)
         );
         if (!options.overrideFingerprints) {
           throw new Error(

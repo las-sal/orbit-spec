@@ -221,6 +221,16 @@ Body.
       const parsed = ChangeMetadataSchema.parse({ schema: 'spec-driven' });
       expect(parsed.base_fingerprints).toBeUndefined();
     });
+
+    it('rejects malformed fingerprint values (documented sha256:<hex> format enforced)', () => {
+      for (const bad of ['deadbeef', 'sha256:XYZ', 'sha256:' + 'a'.repeat(63), 'md5:' + 'a'.repeat(64)]) {
+        const result = ChangeMetadataSchema.safeParse({
+          schema: 'spec-driven',
+          base_fingerprints: { demo: { Req: bad } },
+        });
+        expect(result.success).toBe(false);
+      }
+    });
   });
 
   describe('on-disk stamp/check/guard', () => {
@@ -362,11 +372,11 @@ Body.
         expect(logged).toContain("can't verify");
       });
 
-      it('matching fingerprints produce byte-identical output to the unguarded path', async () => {
+      it('matching fingerprints: explicit changeDir and derived-changeDir output byte-identical', async () => {
         stampFingerprints(tempDir, changeName);
-        const guarded = await buildUpdatedSpec(update(), changeName, { changeDir: changeDir() });
-        const unguarded = await buildUpdatedSpec(update(), changeName);
-        expect(guarded.rebuilt).toBe(unguarded.rebuilt);
+        const explicit = await buildUpdatedSpec(update(), changeName, { changeDir: changeDir() });
+        const derived = await buildUpdatedSpec(update(), changeName);
+        expect(explicit.rebuilt).toBe(derived.rebuilt);
       });
 
       it('idempotent write passes even with a stale fingerprint (own delta already applied)', async () => {
@@ -376,6 +386,37 @@ Body.
         await fs.writeFile(path.join(capDir(), 'spec.md'), applied.rebuilt);
         const { rebuilt } = await buildUpdatedSpec(update(), changeName, { changeDir: changeDir() });
         expect(rebuilt).toBe(applied.rebuilt);
+      });
+
+      it('direct call without options is still guarded (no programmatic bypass)', async () => {
+        stampFingerprints(tempDir, changeName);
+        await fs.writeFile(path.join(capDir(), 'spec.md'), LIVE_WITH_SIBLING);
+        // no options argument at all — changeDir must be derived from update.source
+        await expect(buildUpdatedSpec(update(), changeName)).rejects.toThrow(/divergence/i);
+        expect(await fs.readFile(path.join(capDir(), 'spec.md'), 'utf-8')).toBe(LIVE_WITH_SIBLING);
+      });
+
+      it('pure-rename divergence reports a header change, not removal', async () => {
+        await fs.writeFile(
+          path.join(changeDir(), 'specs', 'demo', 'spec.md'),
+          `## RENAMED Requirements
+
+- FROM: \`### Requirement: Slash Command Configuration\`
+- TO: \`### Requirement: Command Configuration\`
+`
+        );
+        stampFingerprints(tempDir, changeName);
+        await fs.writeFile(path.join(capDir(), 'spec.md'), LIVE_WITH_SIBLING);
+        try {
+          await buildUpdatedSpec(update(), changeName, { changeDir: changeDir() });
+          expect.unreachable('expected divergence refusal');
+        } catch (err: any) {
+          expect(err.message).not.toContain('REMOVE this live block');
+          expect(err.message).toContain('- ### Requirement: Slash Command Configuration');
+          expect(err.message).toContain('+ ### Requirement: Command Configuration');
+          // the live body (including the sibling scenario) is carried forward, not destroyed
+          expect(err.message).toContain('  #### Scenario: Kilo Code');
+        }
       });
 
       it('REMOVED divergence is refused (no idempotent skip)', async () => {

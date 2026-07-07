@@ -39,6 +39,8 @@ export interface TouchedRequirement {
   ops: Array<'modified' | 'removed' | 'renamed'>;
   /** The delta block that would replace the live block (MODIFIED only). */
   incomingRaw?: string;
+  /** The rename target (RENAMED only) — lets reports synthesize the would-be-written block. */
+  renamedTo?: string;
 }
 
 export interface FingerprintCheckEntry {
@@ -99,7 +101,10 @@ export function deriveTouchedSet(plan: DeltaPlan): TouchedRequirement[] {
     }
   };
 
-  for (const { from } of plan.renamed) touch(from, 'renamed');
+  for (const { from, to } of plan.renamed) {
+    touch(from, 'renamed');
+    byLiveName.get(normalizeRequirementName(from))!.renamedTo = normalizeRequirementName(to);
+  }
   for (const name of plan.removed) touch(name, 'removed');
   for (const mod of plan.modified) {
     const modName = normalizeRequirementName(mod.name);
@@ -323,6 +328,17 @@ export function diffLines(liveRaw: string, incomingRaw: string): string[] {
   while (i < a.length) out.push('- ' + a[i++]);
   while (j < b.length) out.push('+ ' + b[j++]);
   return out;
+}
+
+/**
+ * The block a pure RENAME would write: the live block with only its header line replaced.
+ * A rename preserves the (possibly divergent) live body — it never removes or overwrites it —
+ * so divergence reports must diff against this, not claim removal.
+ */
+export function synthesizeRenamedBlock(liveRaw: string, to: string): string {
+  const lines = normalizeLineEndings(liveRaw).split('\n');
+  lines[0] = `### Requirement: ${to}`;
+  return lines.join('\n');
 }
 
 export function formatDivergenceReport(
