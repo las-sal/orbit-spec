@@ -1,5 +1,10 @@
 # OpenSpec Parallel Delta Remediation Plan
 
+> **Status (2026-07-07)**: Phase 0 (base fingerprints + detect-and-block) is IMPLEMENTED by the
+> `c2-parallel-merge-guardrail` change — see the `orbit-base-fingerprints` capability and
+> `orbit fingerprint --help`. Phases 1–3 (rebase/3-way merge, scenario-level granularity, spec
+> graph) remain future work. This document is preserved as the original upstream analysis.
+
 ## Problem Summary
 - Active changes apply requirement-level replacements when archiving. When two changes touch the same requirement, the second archive overwrites the first and silently drops scenarios (e.g., Windsurf vs. Kilo Code slash command updates).
 - The archive workflow (`src/core/archive.ts:191` and `src/core/archive.ts:501`) rebuilds main specs by replacing entire requirement blocks with the content contained in the change delta. The delta format (`src/core/parsers/requirement-blocks.ts:113`) has no notion of base versions or scenario-level operations.

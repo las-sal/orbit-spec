@@ -65,8 +65,13 @@ then a full system-review cadence post-apply (in-context → **external (GPT-5 C
 in-context confirm) — the external slot caught **2 CRITICAL false-convergence bugs** the in-context
 passes missed, vindicating the cadence on its own engine. Archiving surfaced+fixed a fence-unaware
 bug in the spec-sync parser (`requirement-blocks.ts`). Full audit trail in the archived `.orbit-runs/`.
-**Next: C2** (archive parallel-merge fix). Three
-decisions were ratified during remediation — **read these before touching templates**:
+**C2 (parallel-merge guardrail) is APPLIED, archive pending**: base fingerprints
+(`base_fingerprints` in `.openspec.yaml`), the verb-first `orbit fingerprint` stamp/check command,
+the refuse-by-default divergence guard in `buildUpdatedSpec` (+ `orbit archive
+--override-fingerprints`), and the workflow-layer check steps (capture in propose/continue/ff;
+Step 3.45 divergence prompt in archive; per-change check in bulk-archive) are live — 1605 tests
+green; system-review cadence in progress. Three
+decisions were ratified during C1 remediation — **read these before touching templates**:
 - **D14 — thin launcher commands**: each skill `instructions` literal is the single behavioral source
   (pristine upstream body + `# Orbit additions`); each command `content` literal is a ~3-line launcher
   invoking the skill. Do NOT regrow workflow bodies in command literals.
@@ -108,7 +113,7 @@ source-of-truth** for B-arc (the prose to relocate) and **retires after parity (
 A1 ✅ fork bootstrap          → B1 relocate content → B2 grow generator → B3 net-new workflows
 (done; +A2 rename)              (inline-TS, D13)      (refs + metadata)   ══ PARITY ══
                                                                           → C1 ✅ engine gates/freshness
-                                                                          → C2 archive merge fix  (next)
+                                                                          → C2 archive merge fix  (applied; archive pending)
 ```
 
 Before parity (B-arc) is *relocation* (mechanical/testable); after (C-arc) is *net-new capability*

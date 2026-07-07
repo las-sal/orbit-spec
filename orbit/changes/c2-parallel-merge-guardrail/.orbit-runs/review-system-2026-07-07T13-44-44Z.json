@@ -1,0 +1,62 @@
+{
+  "command": "review",
+  "timestamp": "2026-07-07T13:44:44Z",
+  "change": "c2-parallel-merge-guardrail",
+  "final_assessment": "No critical issues. 2 warning(s) to consider (both Coherence/Pass 6 drift; core implementation clean across Passes 0-3). This gate-relevant pass has unresolved findings. Next: /orbit:address-reviews c2-parallel-merge-guardrail --from-file orbit/changes/c2-parallel-merge-guardrail/.orbit-runs/review-system-2026-07-07T13-44-44Z.json.",
+  "next_recommended": "/orbit:address-reviews c2-parallel-merge-guardrail --from-file orbit/changes/c2-parallel-merge-guardrail/.orbit-runs/review-system-2026-07-07T13-44-44Z.json",
+  "kind": "editorial",
+  "mode": "system",
+  "iteration": 1,
+  "depth": "full",
+  "reviewer_class": "in-context",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "passes_run": ["0", "1", "2", "3", "6"],
+  "passes_skipped": ["4", "5"],
+  "findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 1,
+    "by_pass": {
+      "0": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "1": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "2": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "3": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "6": { "critical": 0, "warning": 2, "suggestion": 1 }
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "file": "CLAUDE.md",
+      "line": 68,
+      "title": "CLAUDE.md still frames C2 as 'next'/planned; goes stale the moment C2 archives",
+      "recommendation": "Update the 'Current state' narrative for C2 (lines 68 and 111 frame it as the upcoming phase). Accurate now: C2 is applied (guard + capture + CLI live, 1605 tests) with system review in progress. At archive, finalize to the C1-style archived entry (baseline 12→13, orbit-base-fingerprints ADDED, archive-modifications deltas synced) in the same commit, as C1 did."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "file": "orbit/specs/orbit-engine-gates/spec.md",
+      "line": 4,
+      "title": "PRE-EXISTING drift: orbit-engine-gates baseline Purpose is still the C1 archive skeleton TBD",
+      "recommendation": "'TBD - created by archiving change c1-engine-gates. Update Purpose after archive.' was never replaced — the C1 archive's own follow-up instruction went unexecuted. Write a real Purpose paragraph. Same trap awaits C2: when its archive creates orbit/specs/orbit-base-fingerprints/spec.md via the skeleton, replace that TBD Purpose in the same commit. Not caused by C2 (predates this change); surfaced by the audit sweep."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "file": "openspec-parallel-merge-plan.md",
+      "line": 1,
+      "title": "Plan doc still presents Phase 0 as unimplemented future work",
+      "recommendation": "Add a short status header noting Phase 0 (fingerprint capture + detect-and-block) is implemented by c2-parallel-merge-guardrail (capability orbit-base-fingerprints; Phases 1-3 remain future), so future readers don't re-plan solved work."
+    }
+  ],
+  "stale_suppressed": [],
+  "iteration_note": "First system-mode run for this change. Pass 0 (verify): 17/17 tasks implemented and verified — spec-requirement→implementation mapping confirmed by targeted greps, 1605/1605 tests (baseline 1576 + 29 new), --strict valid, scratch-project e2e reproduced and then prevented the Windsurf/Kilo clobber. Pass 1: no baseline violations (upstream archive steps untouched; additions only; unverified-warn on pre-C2 changes is spec'd D-c2-7 behavior). Pass 2: buildUpdatedSpec's new options param is optional — all callers (archive.ts, applySpecs, tests) updated; parity hashes re-pinned deliberately for the 5 edited templates. Pass 3: new verb-first `orbit fingerprint` surface coherent; zero 'orbit change fingerprint' residue; no surface removed. Passes 4/5 skipped: no orbit/lenses/ directory."
+}
