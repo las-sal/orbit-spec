@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-07-07T13:49:45Z",
+  "change": "c2-parallel-merge-guardrail",
+  "final_assessment": "External review prompt packaged for c2-parallel-merge-guardrail (iter 1, mode system); awaiting findings from the user's external AI (codex / GPT / fresh Claude).",
+  "next_recommended": "Pull https://github.com/las-sal/orbit-spec.git (branch c2-parallel-merge-guardrail) in the external AI and have it read orbit/changes/c2-parallel-merge-guardrail/.orbit-runs/external-prompt-system-2026-07-07T13-49-44Z.md; save the response as orbit/changes/c2-parallel-merge-guardrail/.orbit-runs/external-system-<TS>.md, then /orbit:address-reviews c2-parallel-merge-guardrail --from-file <that path>",
+  "kind": "editorial",
+  "mode": "system",
+  "reviewer_class": "external",
+  "prompt_path": "orbit/changes/c2-parallel-merge-guardrail/.orbit-runs/external-prompt-system-2026-07-07T13-49-44Z.md",
+  "target": null,
+  "awaiting_findings": true
+}
