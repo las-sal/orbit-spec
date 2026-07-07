@@ -130,6 +130,25 @@ The three execution disciplines from \`orbit-conventions\` bracket the authoring
 - **Change completeness (modification-time)**: apply substantive modifications fully across ALL affected artifacts before calling them done; after mechanical edits, sweep for residue the pattern missed AND new bugs the replacement introduced.
 - **Pushback (review-time)**: verify each flagged issue against current state before acting; suppress stale findings with evidence rather than re-fixing already-fixed state.
 
+## Base-fingerprint capture (NEW step — fires when the created artifact is \`specs\`)
+
+(Per \`orbit-base-fingerprints\`' \`Fingerprint capture at every spec-authoring point\` requirement)
+
+When the artifact this invocation created is the change's delta specs (the \`specs\` artifact),
+run — immediately after writing them, before the run-summary emit:
+
+\`\`\`bash
+orbit fingerprint "<name>"
+\`\`\`
+
+This stamps \`base_fingerprints\` into the change's \`.openspec.yaml\` — the SHA-256 of each
+MODIFIED/REMOVED/RENAMED requirement's CURRENT baseline block — so the archive-time guard can
+detect a parallel change landing on the same requirements (no silent spec data-loss). Stamping is
+add-missing-only (\`--refresh\` is the deliberate re-stamp after reconciling a divergence);
+ADDED-only changes stamp nothing; a "skipped — requirement not found in live baseline" warning
+means the delta references a nonexistent requirement (fix the delta; validation also catches it).
+For artifacts other than \`specs\`, skip this step.
+
 ## Run-summary emit (one-shot at command completion)
 
 (Per \`orbit-run-summary-emit\` capability)

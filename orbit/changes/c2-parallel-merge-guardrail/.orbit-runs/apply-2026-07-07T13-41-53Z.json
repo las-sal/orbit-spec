@@ -1,0 +1,15 @@
+{
+  "command": "apply",
+  "timestamp": "2026-07-07T13:41:53Z",
+  "change": "c2-parallel-merge-guardrail",
+  "final_assessment": "Completed all 17 tasks (no-chunking apply, single session): base_fingerprints in ChangeMetadataSchema; src/core/fingerprints.ts (hashing D-c2-8, touched-set with RENAMED mapping, statuses with idempotent-skip precedence, stamp/check, LCS divergence diff); top-level verb-first `orbit fingerprint` command (stamp add-missing-only / --refresh / --check --json with exit codes); engine guard in buildUpdatedSpec (refuse-by-default, --override-fingerprints plumbed through orbit archive, override notice, unverified warn, missing defers to not-found errors); workflow templates updated (capture step in propose/continue/ff, Step 3.45 divergence check + prompt in archive-change, per-change check in bulk-archive superseding the 'newer overwrites' heuristic, archive-summary-schema.md gains fingerprint fields); parity-test hashes re-pinned. Suite 1605/1605 green (baseline 1576 + 29 new); change validates --strict; C2's own fingerprints stamped (first guarded change, 2 verified); scratch-project e2e reproduced the Windsurf/Kilo failure mode → refused with the Windsurf scenario shown as a deletion under --yes → guided-manual reconcile → both scenarios in the final baseline.",
+  "next_recommended": "/orbit:review --as system c2-parallel-merge-guardrail",
+  "kind": "workflow",
+  "tasks_completed": 17,
+  "tasks_remaining": 0,
+  "user_validation_remaining": 0,
+  "chunk": null,
+  "chunk_name": null,
+  "chunk_complete": true,
+  "tasks_completed_this_session": 17
+}

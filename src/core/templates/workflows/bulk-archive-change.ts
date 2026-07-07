@@ -250,6 +250,37 @@ No active changes found. Create a new change to get started.
 
 # Orbit additions
 
+## Per-change base-fingerprint check (C2 — NEW step inside upstream Step 8)
+
+(Per \`orbit-base-fingerprints\` and \`orbit-archive-modifications\`' \`Fingerprint-divergence inflection prompt\` requirement)
+
+For EACH confirmed change, immediately before its Step 8a sync and Step 8b move, run:
+
+\`\`\`bash
+orbit fingerprint "<name>" --check --json
+\`\`\`
+
+This check is the bulk path's ONLY guard layer — Step 8 applies deltas agent-driven and moves
+with \`mv\`, so the engine guard inside the \`orbit archive\` CLI never runs here. Branch per
+change on the \`status\` values, exactly as \`orbit-archive-change\`'s Step 3.45 defines:
+
+- **any \`diverged\`** → fire the divergence inflection prompt (reconcile / proceed-anyway /
+  abort) for THAT change, showing what the sync would overwrite. Reconcile or abort skips that
+  change (record as Skipped in the Step 9 summary) without stopping the rest of the batch;
+  proceed-anyway records \`fingerprint_overridden: [{capability, requirement, base_hash,
+  live_hash}]\` in that change's own archive run summary.
+- **\`unverified\` present, none \`diverged\`** → prompt proceed/abort for that change; proceeding
+  records \`fingerprints_unverified\` in its run summary.
+- **all \`verified\`** → proceed silently.
+- **any \`missing\`** → surface with the diverged prompt if one fires; otherwise skip the change
+  with the check output shown (its sync would fail regardless).
+
+NOTE this interacts with Step 5's conflict resolution: when two selected changes touch the same
+requirement, the FIRST one's sync changes the baseline, so the SECOND one's check will report
+\`diverged\` by design — that per-change prompt (showing exactly what the second sync would
+overwrite) supersedes Step 5c's "newer overwrites" heuristic. Do not proceed past it without the
+user's explicit choice, and record the per-change outcome in the Step 9 summary table.
+
 ## Scope: does NOT emit run-summary JSON
 
 (Per \`orbit-run-summary-emit\` capability)

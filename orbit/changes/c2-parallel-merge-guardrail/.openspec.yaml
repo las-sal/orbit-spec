@@ -1,2 +1,6 @@
 schema: spec-driven
 created: 2026-07-06
+base_fingerprints:
+  orbit-archive-modifications:
+    Archive run summary written: sha256:d826cee734a1d627aa3bf3ff882f936d9bd0dfee723be5cb6d47ad1fd717dfff
+    Archive summary schema reference ships with the skill: sha256:e308b56b0588abd7bea44b254657ebf5434793f43241c407e5e5ca98db4ca8b1

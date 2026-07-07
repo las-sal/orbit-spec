@@ -209,6 +209,29 @@ When no \`orbit/explore/<name>/\` exists, fall through to upstream Step 1: promp
 - **\`orbit/changes/<name>/\` already exists in conflict** → three-way prompt (regenerate / continue / abort) is mandatory; do not silently overwrite.
 - **No staging directory but user explicitly invoked propose** → standalone mode, no message.
 
+## Base-fingerprint capture (NEW step — both modes)
+
+(Per \`orbit-base-fingerprints\`' \`Fingerprint capture at every spec-authoring point\` requirement)
+
+Immediately after the change's delta specs are generated (the \`specs\` artifact is written, in
+consume mode or standalone mode alike), run:
+
+\`\`\`bash
+orbit fingerprint "<name>"
+\`\`\`
+
+This stamps \`base_fingerprints\` into the change's \`.openspec.yaml\` — the SHA-256 of each
+MODIFIED/REMOVED/RENAMED requirement's CURRENT baseline block — so the archive-time guard can
+detect a parallel change landing on the same requirements (no silent spec data-loss). Notes:
+
+- Stamping is **add-missing-only**: it never overwrites an existing fingerprint (\`--refresh\` is
+  the deliberate re-stamp reserved for after reconciling a divergence).
+- ADDED-only changes stamp nothing — that's normal (new requirements have no base).
+- A "skipped — requirement not found in live baseline" warning means the delta references a
+  requirement that doesn't exist; fix the delta spec (validation also catches this).
+- If delta specs are edited again later in the session, re-run the stamp so newly touched
+  requirements gain fingerprints too (still add-missing-only; safe to repeat).
+
 ## Run-summary emit (one-shot at command completion)
 
 (Per \`orbit-run-summary-emit\` capability)
