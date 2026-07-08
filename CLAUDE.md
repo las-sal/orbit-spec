@@ -65,8 +65,25 @@ then a full system-review cadence post-apply (in-context → **external (GPT-5 C
 in-context confirm) — the external slot caught **2 CRITICAL false-convergence bugs** the in-context
 passes missed, vindicating the cadence on its own engine. Archiving surfaced+fixed a fence-unaware
 bug in the spec-sync parser (`requirement-blocks.ts`). Full audit trail in the archived `.orbit-runs/`.
-**Next: C2** (archive parallel-merge fix). Three
-decisions were ratified during remediation — **read these before touching templates**:
+**C2 (parallel-merge guardrail) is COMPLETE and ARCHIVED**
+(`orbit/changes/archive/2026-07-07-c2-parallel-merge-guardrail/`) — **the 6-phase fork program
+(D9) is DONE.** Silent spec data-loss at archive is now impossible: base fingerprints
+(`base_fingerprints` in `.openspec.yaml`, SHA-256 per touched baseline requirement, captured at
+propose/continue/ff), the verb-first `orbit fingerprint` stamp/check command (add-missing-only;
+`--refresh` = deliberate re-stamp; `--check --json` with non-zero exit on diverged/missing), the
+refuse-by-default divergence guard in `buildUpdatedSpec` (change dir derived from the delta path —
+no programmatic bypass; `orbit archive --override-fingerprints` is the recorded escape), and the
+workflow-layer check steps (Step 3.45 divergence prompt in archive; per-change check in
+bulk-archive superseding the upstream "newer overwrites" heuristic). Two-layer coverage: engine
+guard for CLI/programmatic paths, workflow check for the agent-driven paths. Baseline capabilities
+**12→13** (`orbit-base-fingerprints` ADDED; `orbit-archive-modifications` gained the prompt
+requirement + fingerprint summary fields). The proposal converged through 4 internal iterations
+(a fresh independent pass caught 2 CRITICALs — including C2's own delta silently dropping 3
+baseline scenarios, the exact bug C2 fixes); the system cadence ran in-context → **external
+(GPT-5 Codex**, 0 CRITICAL, guard-bypass + rename-report fixes) → in-context confirm. **1608
+tests green.** Phase 1 (3-way merge) and Phase 2 (scenario-level deltas) are explicit deferred
+follow-ups; `openspec-parallel-merge-plan.md` carries the status header. Three
+decisions were ratified during C1 remediation — **read these before touching templates**:
 - **D14 — thin launcher commands**: each skill `instructions` literal is the single behavioral source
   (pristine upstream body + `# Orbit additions`); each command `content` literal is a ~3-line launcher
   invoking the skill. Do NOT regrow workflow bodies in command literals.
@@ -108,7 +125,7 @@ source-of-truth** for B-arc (the prose to relocate) and **retires after parity (
 A1 ✅ fork bootstrap          → B1 relocate content → B2 grow generator → B3 net-new workflows
 (done; +A2 rename)              (inline-TS, D13)      (refs + metadata)   ══ PARITY ══
                                                                           → C1 ✅ engine gates/freshness
-                                                                          → C2 archive merge fix  (next)
+                                                                          → C2 ✅ archive merge fix — PROGRAM COMPLETE
 ```
 
 Before parity (B-arc) is *relocation* (mechanical/testable); after (C-arc) is *net-new capability*

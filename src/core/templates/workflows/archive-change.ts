@@ -27,7 +27,7 @@ This schema inherits the 6-field **universal spine** from \`orbit-conventions\`'
 - \`next_recommended\` (verbatim recommendation, e.g., \`"Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."\`)
 - \`kind: "lifecycle"\` (archive is THE lifecycle command per the kind taxonomy — transitions a change out of the active set)
 
-The schema below documents the per-command extensions ADDED to that spine (\`archive_path\`, \`audit\`, \`sync_specs\`, \`unresolved_markers\`, \`user_decision\`, \`warnings\`), per the \`kind: "lifecycle"\` extensions in \`orbit-conventions\`.
+The schema below documents the per-command extensions ADDED to that spine (\`archive_path\`, \`audit\`, \`sync_specs\`, \`unresolved_markers\`, \`user_decision\`, \`warnings\`), per the \`kind: "lifecycle"\` extensions in \`orbit-conventions\`, plus the conditional \`gate_overridden\` (C1) and \`fingerprint_overridden\` / \`fingerprints_unverified\` (C2) fields.
 
 **Note on \`sync_specs\`**: this field reports the result of the archive flow invoking the \`orbit-sync-specs\` upstream primitive (kept upstream-verbatim per \`orbit-conventions\`' \`Generated-file disposition\`).
 
@@ -61,6 +61,12 @@ The schema below documents the per-command extensions ADDED to that spine (\`arc
   "unresolved_markers": ["<file>:<line> — <marker text>"],
   "user_decision": "proceeded_with_no_critical" | "proceeded_despite_critical" | "audit_skipped_via_flag",
   "gate_overridden": { "gate": "review-system", "state": "<unpassed|stale>", "reason": "<gate reason at decision time>" },
+  "fingerprint_overridden": [
+    { "capability": "<name>", "requirement": "<name>", "base_hash": "sha256:<hex>", "live_hash": "sha256:<hex>" }
+  ],
+  "fingerprints_unverified": [
+    { "capability": "<name>", "requirement": "<name>" }
+  ],
   "warnings": [
     "<text — e.g., 'Archived with 2 incomplete artifacts'>"
   ]
@@ -75,7 +81,9 @@ The schema below documents the per-command extensions ADDED to that spine (\`arc
 - **\`sync_specs.capabilities_updated\`** lists capability names whose \`orbit/specs/<capability>/spec.md\` was edited; the delta counts (\`added\`/\`modified\`/\`removed\`/\`renamed\`) sit DIRECTLY under \`sync_specs\`, mirroring \`orbit-conventions\`' canonical lifecycle example.
 - **\`unresolved_markers\`** is an ARRAY of the \`@review:\` markers still present when the archive proceeded (empty array when none) — one \`"<file>:<line> — <marker text>"\` entry per marker. Marker-prompt outcomes that halt the archive write no summary at all.
 - **\`user_decision\`** captures the AUDIT-drift prompt decision and has exactly three values: \`proceeded_with_no_critical\` (clean audit or warnings only), \`proceeded_despite_critical\` (user explicitly proceeded past CRITICAL findings), \`audit_skipped_via_flag\` (\`--skip-audit\` used). An abort at the critical-findings prompt cancels the archive and writes no summary.
-- **\`gate_overridden\`** (C1) is DISTINCT from \`user_decision\` (which is the audit-drift outcome): it is present ONLY when the \`review-system\` gate was unpassed/stale at archive and the user chose **Proceed anyway** at the gate inflection prompt (Step 3.5); shape \`{gate, state, reason}\` captured at decision time. Absent when no gate override occurred.
+- **\`gate_overridden\`** (C1) is DISTINCT from \`user_decision\` (which is the audit-drift outcome): it is present ONLY when the \`review-system\` gate was unpassed/stale at archive and the user chose **Proceed anyway** at the gate inflection prompt (Step 3.4); shape \`{gate, state, reason}\` captured at decision time. Absent when no gate override occurred.
+- **\`fingerprint_overridden\`** (C2) is present ONLY when the Step 3.45 fingerprint check reported \`diverged\` requirement(s) and the user chose **Proceed anyway** at the divergence inflection prompt — one \`{capability, requirement, base_hash, live_hash}\` entry per diverged requirement, captured at decision time. Absent when no fingerprint override occurred; REQUIRED when proceed-anyway was chosen. DISTINCT from \`gate_overridden\` (review-cadence override) and \`user_decision\` (audit-drift outcome).
+- **\`fingerprints_unverified\`** (C2) is present ONLY when the archive proceeded past requirement(s) whose fingerprint status was \`unverified\` (no base recorded — e.g. a hand-authored or pre-C2 delta) — one \`{capability, requirement}\` entry each. Absent when every touched requirement was verified.
 - **\`warnings\`** captures the upstream warning surfaces (incomplete artifacts, incomplete tasks, sync skipped) — kept human-readable since they vary in shape.
 `;
 
@@ -191,7 +199,7 @@ All artifacts complete. All tasks complete.
 
 # Orbit additions
 
-The sections below describe orbit-specific additions on top of upstream's archive flow. The upstream content above is unchanged. Orbit adds a **pre-archive \`audit-drift\` sweep**, a \`--skip-audit\` opt-out, an **unresolved \`@review:\` marker warning**, an **archive run summary** written to \`.orbit-runs/\`, and a small set of edge-case behaviors.
+The sections below describe orbit-specific additions on top of upstream's archive flow. The upstream content above is unchanged. Orbit adds a **pre-archive \`audit-drift\` sweep**, a \`--skip-audit\` opt-out, an **unresolved \`@review:\` marker warning**, a **base-fingerprint divergence check** (C2), an **archive run summary** written to \`.orbit-runs/\`, and a small set of edge-case behaviors.
 
 ## Three execution disciplines (apply throughout this command)
 
@@ -235,7 +243,51 @@ Query the gate: \`orbit status --change "<change-name>" --json\` and read the \`
 - **Proceed anyway** — continue the archive; record \`gate_overridden: {gate: "review-system", state, reason}\` in the archive run summary (captured at decision time).
 - **Abort** — cancel the archive; no move, no sync-specs, no summary.
 
-The gate NEVER hard-blocks (apply-parity): the engine reports, the skill prompts, the user decides, the trail records. If \`review-system\` is \`passed\` (or the schema declares no such gate), proceed without prompting. This gate prompt is DISTINCT from the audit-drift prompt below; both MAY fire in one archive invocation (gate first, then audit).
+The gate NEVER hard-blocks (apply-parity): the engine reports, the skill prompts, the user decides, the trail records. If \`review-system\` is \`passed\` (or the schema declares no such gate), proceed without prompting. This gate prompt is DISTINCT from the fingerprint prompt (Step 3.45) and the audit-drift prompt (Step 3.5); all three MAY fire in one archive invocation (gate first, then fingerprints, then audit).
+
+## NEW Step 3.45 — Base-fingerprint divergence check (C2)
+
+After the Step 3.4 gate prompt resolves but before the Step 3.5 audit sweep. **This check is the
+workflow path's ONLY guard layer**: this flow applies deltas agent-driven (sync-specs at Step 4)
+and moves with \`mv\` (Step 5), so the engine guard inside the \`orbit archive\` CLI never runs
+here (per \`orbit-base-fingerprints\`' two-layer coverage model).
+
+Run:
+
+\`\`\`bash
+orbit fingerprint "<change-name>" --check --json
+\`\`\`
+
+and branch on the per-requirement \`status\` values:
+
+| Check state | Action |
+|---|---|
+| any \`diverged\` | Fire the divergence inflection prompt (below). |
+| \`unverified\` present, none \`diverged\` | Prompt via \`AskUserQuestion\`: proceed / abort — "can't verify — no base recorded" (hand-authored or pre-C2 delta). Proceeding records \`fingerprints_unverified: [{capability, requirement}]\` in the run summary. |
+| all \`verified\` (or the change touches no existing requirements) | Proceed silently; no prompt, no summary fields. |
+| any \`missing\` | The touched requirement no longer exists in baseline (a sibling renamed/removed it). Include it in the divergence prompt if one fires; otherwise halt and show the check output — the sync would fail on it regardless. |
+
+### Divergence inflection prompt (\`AskUserQuestion\`)
+
+Present each diverged requirement (capability / requirement / \`base_hash\` → \`live_hash\`) plus
+the divergence detail: read the LIVE requirement block from \`orbit/specs/<capability>/spec.md\`
+and the delta's MODIFIED block, and show what the sync would overwrite — content present live but
+absent from the delta is exactly what would be destroyed. When \`unverified\` requirements exist
+alongside diverged ones, list them too (proceeding records both summary fields). Exactly three
+options:
+
+- **Reconcile** — halt the archive. Print the guided-manual instructions IN THIS ORDER: (1)
+  hand-edit the delta spec(s) under \`orbit/changes/<name>/specs/\` to incorporate the divergent
+  live content shown; (2) re-stamp via \`orbit fingerprint <name> --refresh\`. Then re-invoke
+  \`/orbit:archive\`. (A refresh WITHOUT the edit re-opens the loss hole — an accepted,
+  deliberate-only Phase-0 footgun; the Phase-1 3-way merge removes it.)
+- **Proceed anyway** — continue the archive flow past the check (no CLI flag is involved on this
+  agent-driven path; \`--override-fingerprints\` is the equivalent for CLI-direct \`orbit archive\`
+  runs). Record \`fingerprint_overridden: [{capability, requirement, base_hash, live_hash}]\` in
+  the archive run summary, captured at decision time.
+- **Abort** — cancel the archive; no move, no sync-specs, no summary.
+
+This prompt is DISTINCT from the Step 3.4 gate prompt and the Step 3.5 audit prompt.
 
 ## NEW Step 3.5 — Pre-archive audit-drift sweep
 

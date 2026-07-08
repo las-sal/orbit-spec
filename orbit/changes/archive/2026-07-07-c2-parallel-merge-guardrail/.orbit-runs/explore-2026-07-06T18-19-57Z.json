@@ -1,0 +1,12 @@
+{
+  "command": "explore",
+  "timestamp": "2026-07-06T18:19:57Z",
+  "change": "c2-parallel-merge-guardrail",
+  "final_assessment": "Crystallized C2 exploration. The archive parallel-merge bug is NOT a sequencing problem (archives already sequence B onto BASE+A) — it is that a MODIFIED delta is an ABSOLUTE whole-requirement snapshot authored against a stale base, applied via wholesale replace, so a stale snapshot clobbers a sibling scenario. 3 decisions captured: C2 = Phase-0 base-fingerprint detect-and-block first (scenario-granularity/rebase deferred); fingerprints stored in .openspec.yaml (extend ChangeMetadataSchema); captured at propose. 5 open questions remain (hash-only, capture-beyond-propose, divergence outcome as apply-parity-loud override, the reconcile affordance, hash normalization).",
+  "next_recommended": "/orbit:explore c2-parallel-merge-guardrail — continue thinking, or /orbit:propose c2-parallel-merge-guardrail if ready to formalize",
+  "kind": "workflow",
+  "mode": "named",
+  "decisions_captured": 3,
+  "open_questions_count": 5,
+  "crystallized_to_name": "c2-parallel-merge-guardrail"
+}

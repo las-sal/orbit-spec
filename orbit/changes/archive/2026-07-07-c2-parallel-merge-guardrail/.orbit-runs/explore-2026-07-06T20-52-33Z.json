@@ -1,0 +1,12 @@
+{
+  "command": "explore",
+  "timestamp": "2026-07-06T20:52:33Z",
+  "change": "c2-parallel-merge-guardrail",
+  "final_assessment": "Resolved the coupled divergence-interaction questions. D-c2-4: divergence at archive fires C1's apply-parity inflection prompt (reconcile/proceed-anyway/abort); proceed-anyway records fingerprint_overridden, mirroring gate_overridden. D-c2-5: reconcile is guided-manual for Phase 0 (CLI prints the base▸live diff; user hand-edits + re-stamps via a propose --refresh) — the residual blind-restamp footgun is accepted (deliberate-after-warning) and concretely motivates the Phase-1 3-way merge. Refined D-c2-1's promise to 'no SILENT loss' (deliberate/recorded override still possible). Architecture is settled (5 decisions); the 3 remaining open questions (hash-only, capture-beyond-propose/missing-fingerprint-warn, hash normalization) are low-stakes implementation details with clear leans.",
+  "next_recommended": "/orbit:explore c2-parallel-merge-guardrail — 5 decisions captured but 3 open questions remain; resolve open questions before formalizing",
+  "kind": "workflow",
+  "mode": "named",
+  "decisions_captured": 5,
+  "open_questions_count": 3,
+  "crystallized_to_name": null
+}

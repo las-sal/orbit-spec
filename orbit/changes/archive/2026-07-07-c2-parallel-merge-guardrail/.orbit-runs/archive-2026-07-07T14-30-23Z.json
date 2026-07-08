@@ -1,0 +1,27 @@
+{
+  "command": "archive",
+  "timestamp": "2026-07-07T14:30:23Z",
+  "change": "c2-parallel-merge-guardrail",
+  "final_assessment": "Archived c2-parallel-merge-guardrail to orbit/changes/archive/2026-07-07-c2-parallel-merge-guardrail/. Sync applied through the guarded engine path (buildUpdatedSpec with C2's own fingerprints — 2 verified, 0 diverged/unverified/missing): orbit-archive-modifications +1 ADDED / ~2 MODIFIED (all 27 baseline scenarios intact), orbit-base-fingerprints created with 6 requirements. Baseline 12→13; all 13 specs validate. Skeleton Purpose replaced with a real Purpose in the same commit (closing the C1-era trap); CLAUDE.md updated to program-complete state. The 6-phase fork program (D9) is complete.",
+  "next_recommended": "Change archived. Program complete. Run /orbit:new or /orbit:explore to start the next change (Phase-1 3-way merge is the named follow-up), or /orbit:audit-drift for a project-wide drift check.",
+  "kind": "lifecycle",
+  "archive_path": "orbit/changes/archive/2026-07-07-c2-parallel-merge-guardrail/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "summary_path": "orbit/changes/archive/2026-07-07-c2-parallel-merge-guardrail/.orbit-runs/review-system-2026-07-07T14-27-56Z.json"
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": ["orbit-archive-modifications", "orbit-base-fingerprints"],
+    "added": 7,
+    "modified": 2,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "warnings": []
+}

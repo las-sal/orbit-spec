@@ -1,0 +1,44 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-07T14:27:01Z",
+  "change": "c2-parallel-merge-guardrail",
+  "final_assessment": "All 3 external findings (GPT-5 Codex, system iter 1: 0 CRITICAL, 2 WARNING, 1 SUGGESTION) resolved; 0 stale, 0 deferred, 0 escalated. Guard bypass closed: buildUpdatedSpec now derives the change dir from update.source when options.changeDir is absent, so direct programmatic calls are guarded (regression test added). Pure-rename divergence reports now synthesize the true would-be-written block (header change only) instead of claiming removal (renamedTo threaded through TouchedRequirement; synthesizeRenamedBlock; regression test). ChangeMetadataSchema now enforces sha256:<64 lowercase hex> on fingerprint values (rejection test). Suite 1608/1608 (3 new tests); --strict valid. Reviewer's note about 24 pre-existing shell-out test failures on space-containing checkout paths is out of C2 scope (reviewer's own assessment; not reproducible here) — left as a known repo issue for a follow-up.",
+  "next_recommended": "/orbit:review --as system c2-parallel-merge-guardrail — trailing in-context confirm closes the review-system cadence (external resolved, 0 CRITICAL, confirm: findings-resolved)",
+  "kind": "editorial",
+  "source": "--from-file orbit/changes/c2-parallel-merge-guardrail/.orbit-runs/external-system-2026-07-07T14-13-09Z.md",
+  "source_path": "orbit/changes/c2-parallel-merge-guardrail/.orbit-runs/external-system-2026-07-07T14-13-09Z.md",
+  "source_format": "external",
+  "external_reviewer": "GPT-5 Codex",
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "finding": "Public buildUpdatedSpec callers can still bypass the guard",
+      "severity": "WARNING",
+      "classification": "trivial fix",
+      "action": "Adopted the finding's first option: buildUpdatedSpec derives guardChangeDir from update.source (always <changeDir>/specs/<capability>/spec.md) when options.changeDir is absent; explicit changeDir remains an override. A derivation miss degrades to the unverified warn path (readChangeMetadata null/throw), never a silent bypass. Regression test 'direct call without options is still guarded'; stale 'unguarded path' test title renamed."
+    },
+    {
+      "finding": "Pure-rename divergence reports claim the live block will be removed",
+      "severity": "WARNING",
+      "classification": "trivial fix",
+      "action": "Adopted the finding's first option: TouchedRequirement gains renamedTo (set by deriveTouchedSet); new synthesizeRenamedBlock(liveRaw, to) produces the true would-be-written block (live body preserved, header replaced); the guard's report diffs against it, so a pure-rename divergence shows only the header change and carries the sibling content as context lines. Regression test asserts no 'REMOVE this live block' text and the preserved sibling scenario."
+    },
+    {
+      "finding": "Validate stored fingerprint hashes in the metadata schema",
+      "severity": "SUGGESTION",
+      "classification": "trivial fix",
+      "action": "Tightened the base_fingerprints value schema to z.string().regex(/^sha256:[0-9a-f]{64}$/) — hand-edited malformed hashes now fail metadata validation (loud, at read/write) instead of surfacing later as ordinary divergence. Rejection test added; checkFingerprints' existing catch keeps corrupt metadata on the warn/unverified path at archive."
+    }
+  ],
+  "ripple_cascade": {
+    "applied": ["src/core/specs-apply.ts", "src/core/fingerprints.ts", "src/core/artifact-graph/types.ts", "test/core/fingerprints.test.ts"],
+    "flagged_not_applied": []
+  }
+}

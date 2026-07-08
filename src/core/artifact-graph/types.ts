@@ -107,6 +107,21 @@ export const ChangeMetadataSchema = z.object({
       message: 'created must be YYYY-MM-DD format',
     })
     .optional(),
+
+  // Optional: base fingerprints for parallel-merge divergence detection (C2).
+  // capability directory name -> requirement name (as parsed) -> "sha256:<hex>"
+  // of the baseline requirement block the delta was authored against.
+  base_fingerprints: z
+    .record(
+      z.string(),
+      z.record(
+        z.string(),
+        z.string().regex(/^sha256:[0-9a-f]{64}$/, {
+          message: 'fingerprint must be sha256:<64 lowercase hex chars>',
+        })
+      )
+    )
+    .optional(),
 });
 
 export type ChangeMetadata = z.infer<typeof ChangeMetadataSchema>;

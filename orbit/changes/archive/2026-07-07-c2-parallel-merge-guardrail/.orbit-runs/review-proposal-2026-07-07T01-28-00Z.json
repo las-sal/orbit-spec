@@ -1,0 +1,41 @@
+{
+  "command": "review",
+  "timestamp": "2026-07-07T01:28:00Z",
+  "change": "c2-parallel-merge-guardrail",
+  "final_assessment": "All checks passed. gate review-proposal PASSED. Next: /orbit:apply c2-parallel-merge-guardrail.",
+  "next_recommended": "/orbit:apply c2-parallel-merge-guardrail",
+  "kind": "editorial",
+  "mode": "proposal",
+  "iteration": 4,
+  "depth": "full",
+  "reviewer_class": "in-context",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "passes_run": ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+  "passes_skipped": [],
+  "findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 0,
+    "by_pass": {
+      "1": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "2": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "3": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "4": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "5": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "6": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "7": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "8": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "9": { "critical": 0, "warning": 0, "suggestion": 0 }
+    }
+  },
+  "findings": [],
+  "stale_suppressed": [],
+  "iteration_note": "Trailing in-context confirm after the iteration-3 fresh pass converged with zero findings. Confirm sweep: --strict valid; 0 @review: markers; 0 stale single-layer coverage claims or re-invoke phrasing remain; MODIFIED-block baseline containment and the two-layer coverage model were verified programmatically in iterations 2-3. Zero new findings — no-new-findings confirm holds across both closing passes."
+}

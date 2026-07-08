@@ -1,0 +1,71 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-06T21:46:56Z",
+  "change": "c2-parallel-merge-guardrail",
+  "final_assessment": "All 6 findings from the fresh independent review (iter 2: 2 CRITICAL, 3 WARNING, 1 SUGGESTION) resolved; 0 stale, 0 deferred, 0 escalated. C1: the three silently-dropped baseline scenarios restored verbatim into the MODIFIED block (containment re-verified: only the intended splice differs). C2: coverage model respec'd via option B — two layers (engine guard for CLI/programmatic paths; mandatory workflow check step for the agent-driven archive/bulk-archive paths, per-change for bulk) — across both specs, design Context/D4/D7/Non-Goals, proposal, and tasks 4.2/4.4; proceed-anyway respec'd as record-and-continue on the workflow path with --override-fingerprints reserved for CLI-direct. Precedence (idempotent-skip beats unverified), check exit codes, and task 3.1 reconcile-guidance added. Validates --strict.",
+  "next_recommended": "/orbit:review --as proposal --fresh c2-parallel-merge-guardrail — the independent pass yielded findings; no-new-findings confirm requires an independent pass that yields none",
+  "kind": "editorial",
+  "source": "--from-file orbit/changes/c2-parallel-merge-guardrail/.orbit-runs/review-proposal-2026-07-06T21-41-33Z.json",
+  "source_path": "orbit/changes/c2-parallel-merge-guardrail/.orbit-runs/review-proposal-2026-07-06T21-41-33Z.json",
+  "source_format": "internal-review",
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "resolution_summary": {
+    "resolved": 6,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "finding": "MODIFIED block silently drops three baseline scenarios from 'Archive summary schema reference ships with the skill'",
+      "severity": "CRITICAL",
+      "classification": "trivial fix",
+      "action": "Restored the three baseline scenarios verbatim ('Schema shapes match the baselines, not the overlay source', 'No predecessor-era vocabulary survives', 'Body cite resolves') into the MODIFIED block. Root cause: the propose-time Read window truncated the baseline at line 144 and the prefix-only diff check missed the omission — the exact stale-partial-snapshot failure C2 guards against. Full line-containment now verified programmatically (only the intended splice clause differs)."
+    },
+    {
+      "finding": "Guard-coverage claims rest on a false code model: neither generated archive workflow invokes orbit archive",
+      "severity": "CRITICAL",
+      "classification": "decision required",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          { "label": "A", "body": "make both workflow bodies actually shell out to orbit archive per change" },
+          { "label": "B", "body": "keep agent-driven bodies, respec the coverage sentence (engine guard = CLI/programmatic; workflow paths covered by the D7 check step), and rewrite task 4.4 to add a real per-change orbit fingerprint --check + divergence prompt to bulk-archive" }
+        ],
+        "chosen": "B",
+        "discuss_invoked": false
+      },
+      "action": "Chose B (autonomous, rationale recorded): the agent-driven sync-specs primitive is deliberately upstream-verbatim (orbit-conventions Generated-file disposition, cited in the archive body itself), and D7 already places the mandatory check in the workflow layer; option A would replace upstream's archive flow wholesale — unratified scope. Applied: guard requirement's coverage paragraph rewritten as the two-layer model + new scenario 'Agent-driven archive path is covered by the check step'; archive-mods prompt requirement gains the bulk-archive per-change sentence; design Context bullet corrected (with an explicit note that it corrects the earlier draft's false fact), D4/D7/Non-Goals aligned; proposal Impact bullet and tasks 4.2/4.4 rewritten."
+    },
+    {
+      "finding": "Proceed-anyway mechanics don't fit the agent-driven workflow body being modified",
+      "severity": "WARNING",
+      "classification": "trivial fix",
+      "action": "Resolved with the coverage-model decision (option B): proceed-anyway respec'd as continue-the-flow-past-the-check + record fingerprint_overridden; --override-fingerprints documented as the CLI-direct equivalent. Edited the prompt requirement + both scenarios ('Proceed-anyway is recorded', 'Unverified-only proceed is recorded'), design D7, tasks 4.2."
+    },
+    {
+      "finding": "verified-vs-unverified precedence unstated for a no-fingerprint requirement whose write is idempotent",
+      "severity": "WARNING",
+      "classification": "trivial fix",
+      "action": "Added explicit precedence to the CLI check requirement: idempotent-write skip beats unverified (reports verified); rippled to tasks 2.2."
+    },
+    {
+      "finding": "Task 3.1 omits the reconcile guidance the engine-refusal scenario normatively requires",
+      "severity": "WARNING",
+      "classification": "trivial fix",
+      "action": "Task 3.1 divergence-report contents now include the edit-then-refresh reconcile guidance with hand-edit listed BEFORE --refresh."
+    },
+    {
+      "finding": "Check-mode exit-code contract unspecified",
+      "severity": "SUGGESTION",
+      "classification": "trivial fix",
+      "action": "Pinned in the CLI check requirement: exit non-zero on any diverged/missing; zero for verified/unverified-only. Rippled to tasks 2.2."
+    }
+  ],
+  "ripple_cascade": {
+    "applied": ["design.md", "proposal.md", "tasks.md", "specs/orbit-base-fingerprints/spec.md", "specs/orbit-archive-modifications/spec.md"],
+    "flagged_not_applied": []
+  }
+}

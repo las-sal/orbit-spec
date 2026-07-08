@@ -1,7 +1,12 @@
 # orbit-engine-gates Specification
 
 ## Purpose
-TBD - created by archiving change c1-engine-gates. Update Purpose after archive.
+Make the engine review-aware: schemas declare `gates:` (a CLOSED two-kind set — `tracked`
+checkbox arithmetic and `reviewed` convergence computed from the `.orbit-runs/` trail), whose
+state is a pure function of on-disk artifacts. The engine computes gate state, freshness
+(v1 timestamp-token ordering), a single-voiced canonical-next command, and a one-line position
+readout; consuming workflows surface inflection prompts at gated phases (apply-parity — the
+engine reports, the skill prompts, the user decides, the trail records; gates never hard-block).
 ## Requirements
 ### Requirement: Gate declaration in schema YAML
 

@@ -235,7 +235,8 @@ program
   .option('-y, --yes', 'Skip confirmation prompts')
   .option('--skip-specs', 'Skip spec update operations (useful for infrastructure, tooling, or doc-only changes)')
   .option('--no-validate', 'Skip validation (not recommended, requires confirmation)')
-  .action(async (changeName?: string, options?: { yes?: boolean; skipSpecs?: boolean; noValidate?: boolean; validate?: boolean }) => {
+  .option('--override-fingerprints', 'Proceed past base-fingerprint divergence (deliberate; overwrites divergent live content)')
+  .action(async (changeName?: string, options?: { yes?: boolean; skipSpecs?: boolean; noValidate?: boolean; validate?: boolean; overrideFingerprints?: boolean }) => {
     try {
       const archiveCommand = new ArchiveCommand();
       await archiveCommand.execute(changeName, options);
@@ -266,6 +267,25 @@ program
     try {
       const validateCommand = new ValidateCommand();
       await validateCommand.execute(itemName, options);
+    } catch (error) {
+      console.log();
+      ora().fail(`Error: ${(error as Error).message}`);
+      process.exit(1);
+    }
+  });
+
+// Top-level fingerprint command (C2 parallel-merge guardrail)
+program
+  .command('fingerprint <change-name>')
+  .description("Stamp or check base fingerprints for a change's delta specs")
+  .option('--check', 'Check mode: recompute live hashes and report per-requirement status (never writes)')
+  .option('--refresh', 'Stamp mode: overwrite existing fingerprints (deliberate re-stamp after reconciling)')
+  .option('--json', 'Output results as JSON')
+  .action(async (changeName: string, options?: { check?: boolean; refresh?: boolean; json?: boolean }) => {
+    try {
+      const { FingerprintCommand } = await import('../commands/fingerprint.js');
+      const exitCode = await new FingerprintCommand().execute(changeName, options ?? {});
+      if (exitCode !== 0) process.exit(exitCode);
     } catch (error) {
       console.log();
       ora().fail(`Error: ${(error as Error).message}`);

@@ -1,0 +1,43 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-07T13:45:52Z",
+  "change": "c2-parallel-merge-guardrail",
+  "final_assessment": "All 3 findings from the in-context system review (iter 1: 2 WARNING, 1 SUGGESTION — all Pass 6 drift) resolved; 0 stale, 0 deferred, 0 escalated. CLAUDE.md now states C2 as applied/archive-pending (final C1-style archived entry lands in the archive commit); orbit-engine-gates baseline gained a real Purpose (pre-existing C1 archive follow-up executed); openspec-parallel-merge-plan.md gained a Phase-0-implemented status header. Suite still 1605/1605.",
+  "next_recommended": "/orbit:review-external --as system c2-parallel-merge-guardrail — external cross-check required by the review cadence before archive",
+  "kind": "editorial",
+  "source": "--from-file orbit/changes/c2-parallel-merge-guardrail/.orbit-runs/review-system-2026-07-07T13-44-44Z.json",
+  "source_path": "orbit/changes/c2-parallel-merge-guardrail/.orbit-runs/review-system-2026-07-07T13-44-44Z.json",
+  "source_format": "internal-review",
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "finding": "CLAUDE.md still frames C2 as 'next'/planned",
+      "severity": "WARNING",
+      "classification": "trivial fix",
+      "action": "Replaced the 'Next: C2' framing (prose line 68 and the D9 diagram line) with an accurate applied/archive-pending entry naming the shipped surfaces; noted the C1-remediation attribution explicitly. Final archived-state entry (baseline 12→13) lands in the archive commit, mirroring C1's practice."
+    },
+    {
+      "finding": "PRE-EXISTING drift: orbit-engine-gates baseline Purpose still the C1 archive skeleton TBD",
+      "severity": "WARNING",
+      "classification": "trivial fix",
+      "action": "Wrote a real Purpose paragraph for orbit/specs/orbit-engine-gates/spec.md (gate model, pure-function state, apply-parity philosophy). Baseline-spec edit performed deliberately as drift remediation (this was the finding's primary fix, not a cascade ripple). Reminder captured: replace orbit-base-fingerprints' skeleton TBD Purpose in C2's own archive commit."
+    },
+    {
+      "finding": "Plan doc still presents Phase 0 as unimplemented future work",
+      "severity": "SUGGESTION",
+      "classification": "trivial fix",
+      "action": "Added a dated status header to openspec-parallel-merge-plan.md: Phase 0 implemented by c2-parallel-merge-guardrail (orbit-base-fingerprints); Phases 1-3 remain future; doc preserved as original analysis."
+    }
+  ],
+  "ripple_cascade": {
+    "applied": ["CLAUDE.md", "orbit/specs/orbit-engine-gates/spec.md", "openspec-parallel-merge-plan.md"],
+    "flagged_not_applied": []
+  }
+}
