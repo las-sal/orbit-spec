@@ -81,27 +81,11 @@ nudge, not enforcement.
   honest-actor legibility ("who decided?") + a mechanical tripwire, NOT enforcement (that's
   D-elc-1/D-elc-2). Do not oversell this layer in the specs.
 
-- **D-elc-6 (2026-07-07) — PRs become a DESIGNED lifecycle step, not a policed ad-hoc action
-  (resolves Q-elc-b).** Reframed from "where does the don't-open-PRs rule live" to "where does a
-  PR belong in the workflow": **propose opens a DRAFT PR** on the change's branch (after
-  artifacts are committed + pushed), and **archive flips it DRAFT → READY**; merging stays a
-  human act outside orbit. Rationale: the end-of-lifecycle PR (the incident's shape) shows human
-  stakeholders a fait accompli after every decision is ratified; an early draft makes the PR the
-  human-facing window onto the change for its whole life — artifacts, `.orbit-runs/` trail, and
-  review iterations visible as they happen, CI from day one, and the pushed-branch requirement is
-  shared with the review-external handoff preflight. Future hook noted: GitHub PR review comments
-  are another external-findings source for `address-reviews --from-file`. With the PR's home
-  defined, the residual outward-actions rule only covers OFF-SCRIPT acts (unrequested
-  merge/release/issue-filing, PRs outside the designed trigger) — a much smaller rule, living as
-  a short `orbit-conventions` requirement echoed into lifecycle-command completion outputs
-  (eligibility phrasing per D-elc-4), plus a CLAUDE.md line for non-orbit sessions in this repo
-  (the `gh`-can-target-upstream-fork hazard stays CLAUDE.md/project-level, not orbit-shipped).
-  Feature MUST be optional: config surface (e.g. `pr: draft-at-propose | at-archive | never`)
-  with graceful no-remote/no-GitHub degradation, same pattern as review-external's preflight.
-  Prerequisite acknowledged: orbit does not manage branches today — branch-per-change is hand
-  practice in this repo; PR-at-propose implies orbit knowing/creating the change's branch
-  (upstream foresaw this: `openspec-parallel-merge-plan.md` Phase 3.3 "openspec branch"
-  scaffolding). See Q-elc-e/f/g.
+- **D-elc-6 (2026-07-07) — MOVED to the D-arc program, Stage D6 (2026-07-08).** PRs as a
+  designed lifecycle step (draft at propose, READY at archive, merge human) — ratified here, then
+  split out with its open questions (draft→READY trigger; PR-open ratification; branch
+  bite-size) so the consent core can propose without waiting on git machinery. Full direction,
+  leanings, and prior art now live in `orbit/architecture/d-arc-arbitered-flow.md` § Stage D6.
 
 - **D-elc-7 (2026-07-07) — The canonical user-arbitered workflow is the design's spine; consent
   points ARE the gated phase transitions (resolves Q-elc-a).** The user's stated core workflow:
@@ -140,25 +124,14 @@ nudge, not enforcement.
   (where the AI drives). But confirm the boundary so the specs don't accidentally promise an
   engine prompt.
 
-- **Q-elc-e — Draft→READY trigger: archive, or earlier?** Archive = all orbit gates passed +
-  baseline synced on the branch (READY as merge-eligibility, the leaning). Alternative:
-  apply-complete or review-system-passed flips READY ("humans, please review now") with archive
-  as a later PR comment/label. Draft PRs are commentable either way, which weakens the case for
-  an early flip.
-
-- **Q-elc-f — Who ratifies the draft-PR open at propose: a one-time AskUserQuestion in the
-  propose flow, or silent config policy?** Opening even a draft PR is outward. If
-  `pr: draft-at-propose` is set in config, is that standing consent (no prompt), or does propose
-  still ask once per change? Interacts with D-elc-2's provenance rule — a user-typed
-  `/orbit:propose` arguably covers the PR step it's spec'd to include.
-
-- **Q-elc-g — Branch management scope.** PR-at-propose implies orbit knows/creates the change's
-  branch (branch-per-change becoming machinery, not hand practice). How much does this change
-  bite off: (1) convention-only (document branch-per-change; PR step assumes/detects a branch and
-  degrades if on the default branch); (2) propose creates the branch; (3) full
-  `openspec branch`-style scaffolding (upstream plan Phase 3.3 territory — likely too big).
-  Also: the user's "repo(s)" plural — single-repo orbit is today's reality; multi-repo changes
-  would be a separate, much larger exploration.
+- **Q-elc-h — Layer-1 option: declare the consent set as schema gate data, or leave it as body
+  prose?** The gated seams are already schema data (`before: apply` / `before: archive`); a
+  `consent:`-style gate attribute would let the engine SURFACE "this boundary requires a
+  user-typed invocation" (status/instructions readouts) while the bodies implement the prompt —
+  and would let custom schemas define their own consent points. Alternative: hard-code the set in
+  the three workflow bodies (smaller change; the set is fixed in v1 anyway). Leaning: schema
+  attribute — it is the same declare/interpret/narrate grain as everything else, and D-elc-4's
+  readout work touches the same engine code anyway.
 
 ## Considered & out
 
@@ -204,7 +177,3 @@ nudge, not enforcement.
   `archive-2026-07-07T14-30-23Z.json`); PR #7 (the unrequested outward action, Q-elc-b).
 - `orbit/specs/orbit-audit-drift/spec.md` — home for D-elc-5's consent-record check (archive
   coherence category).
-- `openspec-parallel-merge-plan.md` Phase 3.3 — upstream's "openspec branch" scaffolding idea
-  (git-branch alignment); the D-elc-6 prerequisite's prior art.
-- `.claude/skills/orbit-review-external/SKILL.md` — the handoff preflight (committed-and-pushed
-  checks) whose pushed-branch requirement and graceful degradation D-elc-6's PR step mirrors.

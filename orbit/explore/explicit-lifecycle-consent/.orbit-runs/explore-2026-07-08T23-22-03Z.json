@@ -1,0 +1,12 @@
+{
+  "command": "explore",
+  "timestamp": "2026-07-08T23:22:03Z",
+  "change": "explicit-lifecycle-consent",
+  "final_assessment": "Split executed per user: the PR-lifecycle theme (D-elc-6 + Q-elc-e/f/g and its two prior-art references) moved to the D-arc program's new Stage D6 (orbit/architecture/d-arc-arbitered-flow.md); D-elc-6 tombstoned in place pointing there. D1 is now the consent core only — 6 live decisions (D-elc-1..5,7; D-elc-6 tombstone) and 3 open questions: Q-elc-c (emit field shape), Q-elc-d (CLI-direct boundary), and the newly formalized Q-elc-h (Layer-1: declare the consent set as schema gate data vs body prose; leaning schema attribute). Recommendations for all three are on the table — the stage is near propose-ready pending the user's ratification.",
+  "next_recommended": "/orbit:explore explicit-lifecycle-consent — resolve Q-elc-c/d/h, then the stage is ready for /orbit:propose (user-invoked)",
+  "kind": "workflow",
+  "mode": "named",
+  "decisions_captured": 6,
+  "open_questions_count": 3,
+  "crystallized_to_name": null
+}

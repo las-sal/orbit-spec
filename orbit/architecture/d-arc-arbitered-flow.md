@@ -41,15 +41,16 @@ patched by hand (D2).
 
 ### Stage D1 — explicit-lifecycle-consent (IN FLIGHT)
 
-`orbit/explore/explicit-lifecycle-consent/` — 7 decisions, 5 open questions; near-converged.
-The consent/arbiter layer: AskUserQuestion as the only harness-enforceable primitive (D-elc-1);
-provenance-conditioned consent prompts — user-typed commands never prompt, AI-mediated arrivals
-at the gated seams (`→ apply`, `→ archive`) must (D-elc-2/7); the no-chaining contract — the AI
-recommends, never invokes (D-elc-3); eligibility phrasing replacing imperative readouts
-(D-elc-4); consent provenance in emits (D-elc-5); PRs as a designed lifecycle step — draft at
-propose, READY at archive, merge human (D-elc-6). Remaining: emit field shape, CLI-direct
-boundary, draft→READY trigger, PR-open ratification, branch bite-size — plus the Layer-1 option
-(declare the consent set as gate data in the schema rather than body prose).
+`orbit/explore/explicit-lifecycle-consent/` — the consent/arbiter core; NEAR PROPOSE-READY.
+AskUserQuestion as the only harness-enforceable primitive (D-elc-1); provenance-conditioned
+consent prompts — user-typed commands never prompt, AI-mediated arrivals at the gated seams
+(`→ apply`, `→ archive`) must (D-elc-2/7); the no-chaining contract — the AI recommends, never
+invokes (D-elc-3); eligibility phrasing replacing imperative readouts (D-elc-4); consent
+provenance in emits (D-elc-5). Remaining: emit field shape (Q-elc-c), CLI-direct boundary
+(Q-elc-d), and the Layer-1 option — declare the consent set as gate data in the schema rather
+than body prose (Q-elc-h); recommendations for all three are on the table. (The PR-lifecycle
+theme originally explored here as D-elc-6 was SPLIT OUT to Stage D6 on 2026-07-08 so it stops
+blocking this stage's propose.)
 
 ### Stage D2 — architect (the program layer; TOP OF LIST)
 
@@ -107,6 +108,30 @@ Three braided threads, one governing concern (what's in the window and who's rea
   a fresh session (or different model) reads to pick up cold; record model identity in emits
   (provenance: which model authored these specs / this review).
 
+### Stage D6 — pr-lifecycle (orbit-native git integration)
+
+Split out of Stage D1 (2026-07-08) once its true size was visible. The ratified direction
+(originally D-elc-6, full rationale in D1's explore.md tombstone): **PRs are a DESIGNED
+lifecycle step, not a policed ad-hoc action** — propose opens a DRAFT PR on the change's branch
+(after artifacts are committed + pushed); archive flips it DRAFT → READY; merging stays a human
+act outside orbit. The early draft makes the PR the human-facing window onto the change for its
+whole life (artifacts, `.orbit-runs/` trail, and review iterations visible as they happen; CI
+from day one; the pushed-branch requirement shared with review-external's handoff preflight).
+Optional via config (e.g. `pr: draft-at-propose | at-archive | never`) with graceful
+no-remote/no-GitHub degradation. The residual outward-actions rule (off-script merges, releases,
+issue-filing) shrinks to a short conventions requirement echoed into lifecycle-completion
+outputs, plus a CLAUDE.md line per project for non-orbit sessions.
+
+Open questions carried from D1: **(e)** draft→READY trigger — leaning archive (READY =
+merge-eligible: all gates passed, baseline synced); **(f)** who ratifies the draft-PR open —
+leaning provenance (user-typed `/orbit:propose` + config = standing consent; AI-mediated propose
+SKIPS the PR step rather than prompting); **(g)** branch-management bite-size — leaning zero
+engine git: branch/commit/push/`gh pr` as workflow-body steps (propose offers to create
+`<change-name>` off the default branch), full `openspec branch`-style scaffolding out; multi-repo
+changes explicitly deferred. Prior art: `openspec-parallel-merge-plan.md` Phase 3.3. Affinity
+with D5's handoff/boot thread (both make phase boundaries produce durable, transferable
+artifacts); depends on D1's consent vocabulary shipping first.
+
 ## Cross-cutting constraint
 
 **Token/context economy is a decision criterion in every stage above**, not a stage of its own
@@ -116,9 +141,10 @@ tokens).
 
 ## Sequencing and rules of engagement
 
-- **Order**: D1 finishes first (near-converged) → D2 (top of list; retrofits this document) →
-  D3 → D4 → D5, with D3–D5 order flexible and economy decisions landing inside whichever stage
-  touches them first.
+- **Order**: D1 finishes first (near propose-ready) → D2 (top of list; retrofits this document) →
+  D3 → D4 → D5 → D6, with D3–D6 order flexible (D6 after D1 ships its consent vocabulary;
+  natural pairing with D5) and economy decisions landing inside whichever stage touches them
+  first.
 - **One exploration in flight per stage**; each stage spins its `orbit/explore/<name>/` when its
   turn comes, citing this document. Stage premises live HERE until then (deliberately: an
   `orbit/explore/` dir means "actively being thought about").
@@ -143,3 +169,6 @@ tokens).
 - **2026-07-08** — Document created from the explicit-lifecycle-consent exploration session
   (which outgrew a single explore): goals, five stages, sequencing, and the economy constraint
   ratified in conversation with Sal. D1 in flight; D2–D5 premised here, not yet explored.
+- **2026-07-08** — Stage D6 (pr-lifecycle) split out of D1: the PR-integration theme (D-elc-6 +
+  its three open questions) moved here so the consent core can propose without waiting on git
+  machinery. D1 narrowed to consent-only; now 6 decisions / 3 open questions.
