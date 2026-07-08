@@ -1,0 +1,12 @@
+{
+  "command": "explore",
+  "timestamp": "2026-07-07T14:54:03Z",
+  "change": "explicit-lifecycle-consent",
+  "final_assessment": "Refined D-elc-2 on user pushback ('if I issued the command, why a consent prompt?'): the prompt is now conditioned on invocation PROVENANCE — user-typed slash commands (or unambiguous same-turn prose) are never prompted; the consent AskUserQuestion fires only when a consent-scoped command is reached via AI-mediated entry (delegation, inference, handoff docs). Rationale captured: the C2 incident was misread delegated authority, and provenance is observable in the transcript while 'prompt when unsure' routes through the judgment that failed. Q-elc-a narrowed accordingly: scope now costs the user nothing, so the question is which commands the AI may never self-supply the go for — leaning baseline writers (archive, bulk-archive, sync) as the prompt-backed set with D-elc-3 covering the rest.",
+  "next_recommended": "/orbit:explore explicit-lifecycle-consent — 5 decisions captured but 4 open questions remain; resolve open questions before formalizing",
+  "kind": "workflow",
+  "mode": "named",
+  "decisions_captured": 5,
+  "open_questions_count": 4,
+  "crystallized_to_name": null
+}

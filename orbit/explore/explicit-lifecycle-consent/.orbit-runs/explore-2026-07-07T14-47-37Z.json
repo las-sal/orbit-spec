@@ -1,0 +1,12 @@
+{
+  "command": "explore",
+  "timestamp": "2026-07-07T14:47:37Z",
+  "change": "explicit-lifecycle-consent",
+  "final_assessment": "Seeded exploration from the C2 delivery incident (AI auto-ran the cadence through archive + PR because all safeguards are anomaly-gated and the clean path never asks the human). 5 decisions captured: AskUserQuestion as the only real enforcement primitive in an AI-driven tool (D-elc-1); always-on consent prompt at archive entry (D-elc-2); no-chaining contract — one orbit command per explicit user request, AI recommends never invokes (D-elc-3); canonical-next rewords from imperative to eligibility phrasing (D-elc-4); consent provenance in emits with an audit-drift tripwire, explicitly legibility-not-enforcement (D-elc-5). Considered & out: engine-side enforcement as primary (AI drives the shell), consent-as-gate (would break gate purity), refusing blanket delegation. 4 open questions: consent scope/config knob, where the PR-rule lives, emit field shape, CLI-direct boundary.",
+  "next_recommended": "/orbit:explore explicit-lifecycle-consent — 5 decisions captured but 4 open questions remain; resolve open questions before formalizing",
+  "kind": "workflow",
+  "mode": "named",
+  "decisions_captured": 5,
+  "open_questions_count": 4,
+  "crystallized_to_name": null
+}

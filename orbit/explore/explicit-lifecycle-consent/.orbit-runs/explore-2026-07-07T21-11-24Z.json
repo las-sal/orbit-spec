@@ -1,0 +1,12 @@
+{
+  "command": "explore",
+  "timestamp": "2026-07-07T21:11:24Z",
+  "change": "explicit-lifecycle-consent",
+  "final_assessment": "Resolved Q-elc-b as D-elc-6 via the user's workflow-view reframe: PRs become a designed lifecycle step — propose opens a DRAFT PR (after artifacts committed+pushed), archive flips DRAFT→READY, merge stays human; optional via config with no-remote degradation. The residual outward-actions rule shrinks to off-script acts only (short conventions requirement + completion-output echo + CLAUDE.md line; gh-fork hazard stays project-level). Prerequisite acknowledged: orbit doesn't manage branches today (upstream plan Phase 3.3 is prior art). Three new open questions: Q-elc-e draft→READY trigger point, Q-elc-f who ratifies the draft-PR open (prompt vs config as standing consent, interacts with D-elc-2 provenance), Q-elc-g branch-management bite size (+multi-repo explicitly deferred).",
+  "next_recommended": "/orbit:explore explicit-lifecycle-consent — 6 decisions captured but 6 open questions remain; resolve open questions before formalizing",
+  "kind": "workflow",
+  "mode": "named",
+  "decisions_captured": 6,
+  "open_questions_count": 6,
+  "crystallized_to_name": null
+}

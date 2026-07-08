@@ -1,0 +1,12 @@
+{
+  "command": "explore",
+  "timestamp": "2026-07-07T21:31:24Z",
+  "change": "explicit-lifecycle-consent",
+  "final_assessment": "Resolved Q-elc-a as D-elc-7 after user correction of the sorting axis: commitment points, not blast-radius/reversibility. The user's canonical workflow (explore → propose → proposal-review cycle → apply → system-review cycle → archive, user as arbiter of every transition) is now the design spine; the prompt-backed consent set = {apply, archive, bulk-archive per-change}, aligning 1:1 with the C1 gate graph's before: targets — apply must NEVER run automatically (requirements→code is the biggest commitment; humans read requirements after the proposal cycle before authorizing generation). sync is not separately prompted: never user-typed in practice, it runs inside archive Step 4 and inherits the containing flow's consent. Unifying contract statement captured: engine computes eligible, only the human supplies go, the prompt is the backstop for inferred-authority arrivals. Corollary folded into D-elc-4: post-proposal-cycle readout invites the human requirements-review explicitly.",
+  "next_recommended": "/orbit:explore explicit-lifecycle-consent — 7 decisions captured but 5 open questions remain; resolve open questions before formalizing",
+  "kind": "workflow",
+  "mode": "named",
+  "decisions_captured": 7,
+  "open_questions_count": 5,
+  "crystallized_to_name": null
+}
