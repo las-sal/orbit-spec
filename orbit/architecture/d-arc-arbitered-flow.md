@@ -82,16 +82,17 @@ disk — per R-d-1, state is never hand-authored once the engine owns it):
 
 ### Stage D1 — explicit-lifecycle-consent
 
-*State (manual until D2): **exploring** — 3 open questions from propose-ready.*
+*State (manual until D2): **exploring** — PROPOSE-READY (0 open questions as of 2026-07-09).*
 
 `orbit/explore/explicit-lifecycle-consent/` — the consent/arbiter core.
 AskUserQuestion as the only harness-enforceable primitive (D-elc-1); provenance-conditioned
 consent prompts — user-typed commands never prompt, AI-mediated arrivals at the gated seams
 (`→ apply`, `→ archive`) must (D-elc-2/7); the no-chaining contract — the AI recommends, never
 invokes (D-elc-3); eligibility phrasing replacing imperative readouts (D-elc-4); consent
-provenance in emits (D-elc-5). Remaining: emit field shape (Q-elc-c), CLI-direct boundary
-(Q-elc-d), and the Layer-1 option — declare the consent set as gate data in the schema rather
-than body prose (Q-elc-h); recommendations for all three are on the table. (The PR-lifecycle
+provenance in emits (D-elc-5); flat `consent: "user-invoked" | "prompted"` emit field
+(D-elc-8); no engine prompt for CLI-direct, ever (D-elc-9); consent set declared as SCHEMA gate
+data — a `consent:` attribute on the gated seams (D-elc-10, consistent with R-d-1). All open
+questions resolved 2026-07-09; the stage awaits the user's /orbit:propose. (The PR-lifecycle
 theme originally explored here as D-elc-6 was SPLIT OUT to Stage D6 on 2026-07-08 so it stops
 blocking this stage's propose.) Enforcement ceiling accepted deliberately: the body-prompt layer
 is the ONLY enforcement layer — harness hooks were considered and deferred with a named re-entry
@@ -368,3 +369,6 @@ render are what gets cut (everything else).
   active-program pointer). Systemic fixes ratified into the arc: **R-d-8 file-residency rule**;
   D5's boot test extended to ALL seams with touchpoints mandatory in boot material; D3's
   cold-start test now starts from CLAUDE.md alone.
+- **2026-07-09** — D1's last three open questions ratified as recommended (D-elc-8/9/10: flat
+  consent field; no engine prompt for CLI-direct; consent as schema gate data per R-d-1 grain).
+  **Stage D1 is propose-ready** — the propose is the user's to invoke.

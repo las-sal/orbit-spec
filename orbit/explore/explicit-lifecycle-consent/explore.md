@@ -109,31 +109,31 @@ nudge, not enforcement.
   "gate review-proposal PASSED — review the artifacts, then /orbit:apply when ready"). No config
   knob for the set in v1.
 
+- **D-elc-8 (2026-07-09) — Consent emit field: one flat field, `consent: "user-invoked" |
+  "prompted"` (resolves Q-elc-c).** Two values suffice because aborts write NO summary (existing
+  convention) — a summary that exists has exactly two consent stories. Sits beside
+  `user_decision` / `gate_overridden` / `fingerprint_overridden` without a new nesting scheme; a
+  separate `source` field was dropped as unverifiable self-report. Design.md detail: how the
+  audit-drift tripwire avoids flagging pre-consent-era emits (timestamp cutoff vs schema-version
+  marker).
+
+- **D-elc-9 (2026-07-09) — No engine prompt for CLI-direct invocations, ever (resolves
+  Q-elc-d).** A human typing `orbit archive` IS the consent; the engine's contribution stays
+  wording-only (D-elc-4 eligibility phrasing). The specs SHALL state plainly that consent
+  prompting is a workflow-body concern — the engine reports, never asks.
+
+- **D-elc-10 (2026-07-09) — Consent set declared as SCHEMA GATE DATA, not body prose (resolves
+  Q-elc-h).** A `consent:` attribute on the gated seams in the schema YAML: the engine surfaces
+  "this boundary requires a user-typed invocation" in readouts; custom schemas can define their
+  own consent points; the bodies implement the prompt the schema declares. Consistent with the
+  arc's R-d-1 (declare/interpret/narrate — D1 should not be the one stage putting declarable
+  structure in prose), and D-elc-4's readout work touches the same engine code. Sizing accepted:
+  grows D1 from template-only to a small schema+engine touch (schema field, gate parser,
+  readout surfacing) — well short of C1-class.
+
 ## Open questions
 
-- **Q-elc-c — Field shape for consent in emits.** STANDING RECOMMENDATION (2026-07-07, awaiting
-  ratification): one flat field on consent-scoped lifecycle emits — `consent: "user-invoked" |
-  "prompted"`. Rationale: an `invocation: {source, consent}` object over-models it — aborts write
-  NO summary (existing convention), so a summary that exists has exactly two consent stories;
-  flat field sits beside `user_decision` / `gate_overridden` / `fingerprint_overridden` without a
-  new nesting scheme. `source` as a separate field was dropped as unverifiable self-report.
-  Deferred detail for design.md: how audit-drift's tripwire avoids flagging pre-consent-era
-  emits (timestamp cutoff vs schema-version marker).
-
-- **Q-elc-d — Does the consent prompt fire on CLI-direct `orbit archive` (human typing it)?** The
-  interactive CLI already confirms; a human typing the command IS explicit consent. Leaning: no
-  engine-side change beyond D-elc-4 wording — the consent prompt is a workflow-body concern
-  (where the AI drives). But confirm the boundary so the specs don't accidentally promise an
-  engine prompt.
-
-- **Q-elc-h — Layer-1 option: declare the consent set as schema gate data, or leave it as body
-  prose?** The gated seams are already schema data (`before: apply` / `before: archive`); a
-  `consent:`-style gate attribute would let the engine SURFACE "this boundary requires a
-  user-typed invocation" (status/instructions readouts) while the bodies implement the prompt —
-  and would let custom schemas define their own consent points. Alternative: hard-code the set in
-  the three workflow bodies (smaller change; the set is fixed in v1 anyway). Leaning: schema
-  attribute — it is the same declare/interpret/narrate grain as everything else, and D-elc-4's
-  readout work touches the same engine code anyway.
+(none — all resolved 2026-07-09; the exploration is propose-ready.)
 
 ## Considered & out
 
