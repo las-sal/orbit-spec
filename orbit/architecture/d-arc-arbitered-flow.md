@@ -62,6 +62,11 @@ is owned by each stage's explore/change per R-d-7 — this index holds only cros
 - **R-d-7** — Ownership rule: the arc owns premise, exit criteria, state vocabulary, and
   cross-stage rulings; a stage's explore/change owns decision detail; once an explore exists the
   arc POINTS rather than duplicates (Sequencing).
+- **R-d-8** — File-residency rule: at every conversation boundary, anything awaiting the user's
+  ratification (standing recommendations, leanings, options) must be written into the owning
+  artifact — chat is never the store of record (Sequencing; encoded into bodies/conventions by
+  D5). Found empirically 2026-07-08: a model-handoff audit caught a chat-resident recommendation
+  (Q-elc-c) that every captured decision had survived but pending material had not.
 
 ## Open questions (arc-level)
 
@@ -153,8 +158,8 @@ test project as first-class engine functionality (issue #3; extend built-in `orb
 Constraint from D1: renders eligibility, never imperatives; constraint from goal 3: reading it
 must cost near-zero context.
 
-**Exit criteria**: (1) the cold-start test passes — fresh session, several active changes, ONE
-command answers per change: position in the flow, last workflow command run, next one-or-two
+**Exit criteria**: (1) the cold-start test passes — fresh session whose ONLY prior read is
+CLAUDE.md, several active changes, ONE command answers per change: position in the flow, last workflow command run, next one-or-two
 eligible commands, with no artifact reading beyond the command's own output; (2)
 `~/code/orbit-status` is retired as a separate project (the `../openspec-orbit`-at-parity
 pattern).
@@ -199,15 +204,20 @@ Three braided threads, one governing concern (what's in the window and who's rea
   authoring model (C1+C2 empirics: the external slot caught what same-model passes missed).
   Switch only at phase boundaries, never within one. Mechanism: `models:` hints in
   `orbit/config.yaml`, echoed by eligibility readouts, never enforced by bodies.
-- **Handoff/boot formalization**: generalize the C2 HANDOFF.md pattern — per-phase boot material
-  a fresh session (or different model) reads to pick up cold; record model identity in emits
-  (provenance: which model authored these specs / this review).
+- **Handoff/boot formalization**: generalize the C2 HANDOFF.md pattern — boot material a fresh
+  session (or different model) reads to pick up cold at ANY seam, not just phase entries:
+  mid-explore, post-review-pre-address, pre-apply, mid-apply chunk, pre-archive. Boot material
+  MUST include the code-touchpoints map (the C2-handoff §5 pattern — where the work lands) and
+  point only at file-resident state (R-d-8). Record model identity in emits (provenance: which
+  model authored these specs / this review). D5 also encodes R-d-8 into the explore/architect
+  bodies and orbit-conventions.
 
 **Exit criteria**: (1) generated surface size measured before/after against a stated reduction
 target picked at explore time — the criterion is a NUMBER hit, not "smaller"; (2) an inventory
 pass finds no body instructing the AI to hand-compose output the engine can render; (3) the
-model-handoff boot test passes — a different model picks up a phase cold from generated boot
-material alone and proceeds correctly; (4) `models:` config hints appear in eligibility
+model-handoff boot test passes AT EVERY SEAM — a different model picks up mid-explore,
+post-review, pre-apply, mid-apply-chunk, and pre-archive cold, from file-resident material
+alone, and proceeds correctly; (4) `models:` config hints appear in eligibility
 readouts.
 
 ### Stage D6 — pr-lifecycle (orbit-native git integration)
@@ -269,6 +279,10 @@ render are what gets cut (everything else).
   `orbit/explore/` dir means "actively being thought about").
 - **Every lifecycle transition in this arc is user-invoked** — this arc practices D1's contract
   before D1 ships it: the AI recommends; Sal types the command.
+- **File residency (R-d-8)**: session boundaries assume nothing of the conversation — pending
+  recommendations live in the owning file (explore.md open questions carry their standing
+  recommendation; arc open questions carry theirs). The handoff test is: a different model, cold,
+  loses only conversational shorthand — never state.
 - **Ownership (R-d-7)**: the arc owns premise, exit criteria, state vocabulary, and cross-stage
   rulings; a stage's explore/change owns its decision detail. Once a stage's explore exists, the
   arc's stage section POINTS at it rather than duplicating — summary drift between the layers is
@@ -348,3 +362,9 @@ render are what gets cut (everything else).
   (`docs/concepts.md` @ upstream/v1.3.1: "organize specs by domain"): current granularity
   (13 domain dirs) RATIFIED; naming rationalization (drop overlay-era `-modifications` suffix +
   `orbit-` prefix) queued into D5's scope, standalone-shippable.
+- **2026-07-08** — Model-handoff audit (manual run of D5's boot test, today's state): captured
+  decisions all survived; three leaks found and fixed (chat-resident Q-elc-c recommendation →
+  written in-file; D1 code-touchpoints map added to its explore References; CLAUDE.md gained the
+  active-program pointer). Systemic fixes ratified into the arc: **R-d-8 file-residency rule**;
+  D5's boot test extended to ALL seams with touchpoints mandatory in boot material; D3's
+  cold-start test now starts from CLAUDE.md alone.

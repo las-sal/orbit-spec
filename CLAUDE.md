@@ -103,6 +103,16 @@ B2 exploration; issue #4 closed) — per-command divergence is the desired traje
 stay inline per body.
 The full plan and design decisions live in the docs below — **read them before B-arc work.**
 
+## The ACTIVE program: the D-arc
+
+The fork program is COMPLETE; the live program is the **D-arc** —
+`orbit/architecture/d-arc-arbitered-flow.md` (goals, rulings R-d-1.., six stages with exit
+criteria, status log). Read it before any D-arc work. Position (hand-maintained until D2
+computes it): **Stage D1 (`explicit-lifecycle-consent`) is `exploring`** —
+`orbit/explore/explicit-lifecycle-consent/explore.md`, 3 open questions (Q-elc-c/d/h, each with
+a standing recommendation in-file) from propose-ready. Every lifecycle transition in this arc is
+USER-invoked: recommend, never invoke (arc rules of engagement).
+
 ## Source of truth for the plan
 
 - `orbit/architecture/fork-and-orbify.md` — the COMPLETED fork-program architecture (historical record; relocated from orbit/explore/ 2026-07-08). Decisions **D1–D15**

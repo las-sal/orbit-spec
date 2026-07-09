@@ -111,12 +111,14 @@ nudge, not enforcement.
 
 ## Open questions
 
-- **Q-elc-c — Field shape for consent in emits.** `user_consent: "prompted"` (flat, minimal) vs
-  `invocation: {source: user-command|ai-continuation, consent: prompted|aborted}` (richer, but
-  `source` is unverifiable self-report). Interplay with existing archive-summary fields
-  (`user_decision` = audit prompt outcome; `gate_overridden`; `fingerprint_overridden`) — the
-  summary is accumulating per-prompt fields; consider whether a single `prompts: {...}` grouping
-  is a cleaner v2 or over-engineering.
+- **Q-elc-c — Field shape for consent in emits.** STANDING RECOMMENDATION (2026-07-07, awaiting
+  ratification): one flat field on consent-scoped lifecycle emits — `consent: "user-invoked" |
+  "prompted"`. Rationale: an `invocation: {source, consent}` object over-models it — aborts write
+  NO summary (existing convention), so a summary that exists has exactly two consent stories;
+  flat field sits beside `user_decision` / `gate_overridden` / `fingerprint_overridden` without a
+  new nesting scheme. `source` as a separate field was dropped as unverifiable self-report.
+  Deferred detail for design.md: how audit-drift's tripwire avoids flagging pre-consent-era
+  emits (timestamp cutoff vs schema-version marker).
 
 - **Q-elc-d — Does the consent prompt fire on CLI-direct `orbit archive` (human typing it)?** The
   interactive CLI already confirms; a human typing the command IS explicit consent. Leaning: no
@@ -153,6 +155,19 @@ nudge, not enforcement.
   would fight orbit's AI-driven design instead of channeling it.
 
 ## References
+
+**Code touchpoints for the eventual change** (the C2-handoff §5 pattern; verified against source
+2026-07-08): consent prompts → `src/core/templates/workflows/apply-change.ts`,
+`archive-change.ts`, `bulk-archive-change.ts` (new steps at the two seams; bulk per-change);
+no-chaining discipline echo → all 15 workflow bodies' disciplines block +
+`orbit/specs/orbit-conventions/spec.md` (new requirement delta); eligibility wording (D-elc-4) →
+`src/core/artifact-graph/gates.ts` (`position` / canonical-next strings) and the
+status/instructions renderers registered in `src/cli/index.ts`; consent emit field (Q-elc-c) →
+the archive body's `ARCHIVE_SUMMARY_SCHEMA_REFERENCE` literal + the apply body's emit section +
+`orbit/specs/orbit-run-summary-emit` delta; tripwire (D-elc-5) →
+`src/core/templates/workflows/audit-drift.ts` + `orbit/specs/orbit-audit-drift` delta;
+consent-as-gate-data (Q-elc-h, if ratified) → `schemas/spec-driven/schema.yaml` `gates:` +
+`src/core/artifact-graph/{types,schema,gates}.ts`.
 
 - `orbit/architecture/d-arc-arbitered-flow.md` — **this exploration is Stage D1 of the D-arc
   program** (created 2026-07-08 when the session's scope outgrew a single explore). The program
