@@ -1,5 +1,8 @@
 # D-arc — The Arbitered Flow (orbit program architecture)
 
+> **Status**: living program architecture — hand-maintained until Stage D2 gives the genre engine
+> standing. Never consumed by propose; stages spin explores/changes that cite this document.
+
 A program-level architecture document spanning multiple explorations and changes. **This is
 design-direction, not an OpenSpec change** — explorations and proposals are staged against it,
 cite it, and it is updated as stages archive. It is the hand-rolled predecessor of the
@@ -50,20 +53,55 @@ provenance in emits (D-elc-5). Remaining: emit field shape (Q-elc-c), CLI-direct
 (Q-elc-d), and the Layer-1 option — declare the consent set as gate data in the schema rather
 than body prose (Q-elc-h); recommendations for all three are on the table. (The PR-lifecycle
 theme originally explored here as D-elc-6 was SPLIT OUT to Stage D6 on 2026-07-08 so it stops
-blocking this stage's propose.)
+blocking this stage's propose.) Enforcement ceiling accepted deliberately: the body-prompt layer
+is the ONLY enforcement layer — harness hooks were considered and deferred with a named re-entry
+trigger (see Considered & out); D-elc-5's audit tripwire is what makes the deferral empirical
+rather than hopeful.
+
+**Exit criteria**: (1) every post-D1 lifecycle emit carries `consent: user-invoked | prompted`,
+and audit-drift DEMONSTRABLY flags an emit missing it (tripwire proven live, not just spec'd);
+(2) a user-typed `/orbit:apply` / `/orbit:archive` runs with ZERO added prompts (only anomaly
+prompts can interrupt); (3) no imperative `Next:` phrasing survives in engine output or generated
+bodies — greppable.
 
 ### Stage D2 — architect (the program layer; TOP OF LIST)
 
-Formalize this document's genre as a first-class capability: `/orbit:architect` produces a
-durable artifact (home: `orbit/architecture/`) that is NEVER consumed by propose — explorations
-and changes cite it; it tracks which stages have archived; audit-drift checks baseline reality
-against it (a stale architecture doc is the most expensive drift there is). Answers the
-program-level half of "where am I" (D3 answers the positional half). Sources: home-env's two
-strategy docs and its chat history (an extended record of real orbit use, including where the
-flow is clunky); `fork-and-orbify/explore.md` as the prior in-repo instance; THIS document as
-the live dogfood. Open design territory: artifact shape (stages, goals, terminology rulings,
-companion-doc links, archive back-references), update triggers (stage archive → status log
-entry?), relationship to explore (architect frames many explores; explore feeds one change).
+**RULED (Sal, 2026-07-08): architecture is FIRST-CLASS ENGINE, not prose.** "Part of the goal of
+forking orbit was to evolve the engine into what I wanted — not just layer prose on top of the
+existing engine." The fork thesis, applied upward: A→C turned prose conventions into
+engine-computed state (gates, fingerprints); D2 does the same for the program layer. The engine
+grows a third declaration tier — architecture (cross-change program) above schema (per-change
+flow) — both data, both engine-interpreted.
+
+Concretely (each with in-repo precedent): (1) **parseable structure** — the doc keeps prose but
+gains engine-readable sections (stages, states, goals), as specs have parsed requirement blocks;
+this document is retrofitted as the first instance; (2) **linkage** — `.openspec.yaml` gains an
+`architecture:` citation (precedent: C2's `base_fingerprints` schema extension) so every change
+names its program + stage; (3) **computed program position** — stage state as a pure function of
+disk, extending C1's principle upward: premised (arch doc only) → exploring (`orbit/explore/`
+dir) → in-change (citing change) → archived (archive back-reference); no new state files;
+(4) **CLI surface** — `orbit architecture show/status` + validation, which D3's orientation
+surface consumes for mechanical program position (a session loads ONE stage section, not the
+whole doc — engine standing IS the economy answer for this layer's read-cost); (5) **trail +
+review standing** — the architecture gets its own `.orbit-runs/`, enabling evidence-graded
+`/orbit:review --as architecture` (dogfooded by hand 2026-07-08; working pass set: cohesion /
+traceability, completeness / exit-criteria, dependencies / sequencing, layer-fit, route-level
+alternatives, economy self-audit). Plus `/orbit:architect` the workflow body, and the
+audit-drift hook (a stale architecture doc is the most expensive drift there is).
+
+Sizing acknowledged: a C1-class engine change — the arc's biggest single effort, spent where
+everything downstream leans. **D3 now DEPENDS on D2** (program position is D2 machinery), so
+D2-before-D3 is a dependency, not a preference. Sources: home-env's two strategy docs + chat
+history; `fork-and-orbify/explore.md`; this document as live dogfood. Remaining design territory
+for the explore: the parseable format itself, update triggers, explore/change linkage details,
+and how much of the review mode ships in D2 v1.
+
+**Exit criteria**: (1) this document retrofitted to the parseable format and
+`orbit architecture status` renders program position (stage states computed from disk) matching
+reality; (2) a change's `.openspec.yaml` cites its architecture+stage and validation fails on a
+dangling citation; (3) `/orbit:review --as architecture` runs from a generated body and leaves
+evidence in the architecture's own `.orbit-runs/`; (4) a session can load a single stage section
+via CLI instead of the whole doc.
 
 ### Stage D3 — orientation (status absorption)
 
@@ -76,6 +114,12 @@ test project as first-class engine functionality (issue #3; extend built-in `orb
 Constraint from D1: renders eligibility, never imperatives; constraint from goal 3: reading it
 must cost near-zero context.
 
+**Exit criteria**: (1) the cold-start test passes — fresh session, several active changes, ONE
+command answers per change: position in the flow, last workflow command run, next one-or-two
+eligible commands, with no artifact reading beyond the command's own output; (2)
+`~/code/orbit-status` is retired as a separate project (the `../openspec-orbit`-at-parity
+pattern).
+
 ### Stage D4 — review-consistency
 
 Reviews are effective; their PRESENTATION varies per AI interpretation, and the address-reviews
@@ -87,13 +131,21 @@ then ratify; AskUserQuestion ratifies a discussion's conclusion rather than gati
 (the dismissed-prompt-loses-context failure). Source: home-env chat history for concrete clunk
 instances.
 
+**Exit criteria**: (1) the same findings JSON produces a BYTE-IDENTICAL rendered report
+regardless of which model ran the review (engine-rendered, golden-tested); (2) the
+address-reviews walk provably follows discuss-then-ratify — the ratification prompt for finding
+N cannot be issued before finding N's discussion concludes, batch prompts are prohibited in the
+body, and a dismissed prompt loses nothing (the finding re-presents). (Walk criterion is
+body-text-checkable plus one observed cycle — the honest limit for a UX behavior.)
+
 ### Stage D5 — context-economy, native execution, and model strategy
 
 Three braided threads, one governing concern (what's in the window and who's reading it):
 
 - **Skill size / native execution**: audit generated bodies; move rarely-needed detail to
   `references/` (B2 built the machinery; the bodies kept growing inline); move mechanical work
-  (report rendering, checklist grading, summary composition) from AI prose into the engine;
+  (checklist grading, summary composition; report rendering is D4's — D5 inventories and
+  generalizes the pattern) from AI prose into the engine;
   ensure the AI executes orbit natively instead of drifting to upstream flow.
 - **Model-per-phase strategy**: orbit's artifacts ARE the handoff material — every phase boundary
   is a designed context reset, so model switching is naming who sits at existing seams. Working
@@ -107,6 +159,13 @@ Three braided threads, one governing concern (what's in the window and who's rea
 - **Handoff/boot formalization**: generalize the C2 HANDOFF.md pattern — per-phase boot material
   a fresh session (or different model) reads to pick up cold; record model identity in emits
   (provenance: which model authored these specs / this review).
+
+**Exit criteria**: (1) generated surface size measured before/after against a stated reduction
+target picked at explore time — the criterion is a NUMBER hit, not "smaller"; (2) an inventory
+pass finds no body instructing the AI to hand-compose output the engine can render; (3) the
+model-handoff boot test passes — a different model picks up a phase cold from generated boot
+material alone and proceeds correctly; (4) `models:` config hints appear in eligibility
+readouts.
 
 ### Stage D6 — pr-lifecycle (orbit-native git integration)
 
@@ -132,12 +191,19 @@ changes explicitly deferred. Prior art: `openspec-parallel-merge-plan.md` Phase 
 with D5's handoff/boot thread (both make phase boundaries produce durable, transferable
 artifacts); depends on D1's consent vocabulary shipping first.
 
+**Exit criteria**: (1) one change dogfoods the full arc — draft PR opened at propose, CI running
+from day one, flipped READY at archive, merged by the user; (2) `pr: never` yields zero PR
+behavior and a remote-less repo degrades gracefully (tested, not assumed); (3) no PR/merge/release
+action occurs outside the config+provenance rules across the dogfood.
+
 ## Cross-cutting constraint
 
 **Token/context economy is a decision criterion in every stage above**, not a stage of its own
 (D5 carries the dedicated mechanisms, but D2–D4 each weigh it: architect docs must be cheap to
 consult; orientation must cost near-zero context; engine-rendered reports save narration
-tokens).
+tokens). **Subtraction rule**: every stage that ADDS instruction text to the generated surface
+must name what it removes or shrinks — D4/D5 are net-negative by design; D1/D2/D6 must account
+for their additions. Ceremony creep is the failure mode of process tooling at AI speed.
 
 ## Sequencing and rules of engagement
 
@@ -152,6 +218,25 @@ tokens).
   before D1 ships it: the AI recommends; Sal types the command.
 - **This document updates when a stage's change archives** (status log below) — the maintenance
   burden D2 will automate.
+- **Arc-level done**: all six stages archived, plus one closing `/orbit:review --as architecture`
+  grading the arc against each stage's exit criteria and the three goals.
+
+## Considered & out
+
+- **Harness-hook enforcement (generated PreToolUse config) — DEFERRED, not rejected
+  (2026-07-08).** Claude Code hooks could hard-block `orbit archive` / `gh pr create` at the
+  harness layer — the only mechanism that enforces against a session that MISREADS rather than
+  merely misbehaves (AskUserQuestion fires only when the body-following AI chooses to call it).
+  Deferred because the risk it guards is low-severity and recoverable post-C2 (fingerprint-guarded
+  baseline, git-revertible archive, closeable PR), D1 removes all three enablers of the original
+  incident (ambiguous delegation as authority, imperative readouts, no green-path prompt), hooks
+  are provenance-blind (redundant click on user-typed transitions), Claude-only (two-tier vs
+  codex), and another config knob + generated artifact against the over-engineering budget.
+  **Re-entry trigger (named, empirical)**: if D-elc-5's tripwire ever fires — audit-drift finds a
+  lifecycle emit missing its consent record — or a second C2-class unconsented transition occurs,
+  add the generated-hooks layer then. It is purely additive (orbit already generates the
+  `.claude/` surface; a hooks block is the same generator pattern); nothing in D1's design
+  changes to accept it later.
 
 ## Sources
 
@@ -172,3 +257,18 @@ tokens).
 - **2026-07-08** — Stage D6 (pr-lifecycle) split out of D1: the PR-integration theme (D-elc-6 +
   its three open questions) moved here so the consent core can propose without waiting on git
   machinery. D1 narrowed to consent-only; now 6 decisions / 3 open questions.
+- **2026-07-08** — First `--as architecture` review (in-context, dogfooded by hand): 0 CRITICAL,
+  5 WARNING, 3 SUGGESTION. Ruled from its findings: **D2 is first-class engine, not prose**
+  (stage section rewritten; D2→D3 now a hard dependency; the layer's read-cost answered by
+  engine-parsed stage sections). Still open from that review: harness-hooks-as-enforcement
+  Considered-&-out entry, per-stage exit criteria, the economy-vs-legibility resolution rule,
+  D4 ownership of engine-rendered reports, status-header vocabulary.
+- **2026-07-08** — Hooks question resolved: generated harness-hook enforcement DEFERRED with a
+  named empirical re-entry trigger (D-elc-5 tripwire firing, or a repeat incident); body-prompt
+  layer stands alone as D1's enforcement. Review finding #1 closed; exit criteria + economy rule
+  remain.
+- **2026-07-08** — Per-stage exit criteria ratified and added (falsifiable, mechanically
+  checkable where possible) + arc-level done condition; D4 given explicit ownership of
+  engine-rendered reports; subtraction rule added to the cross-cutting constraint; status header
+  added to this document. Review findings #2 closed; the economy-vs-legibility resolution rule
+  (#3) is the last open finding.
