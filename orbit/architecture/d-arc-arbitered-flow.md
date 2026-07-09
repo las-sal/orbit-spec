@@ -205,6 +205,14 @@ tokens). **Subtraction rule**: every stage that ADDS instruction text to the gen
 must name what it removes or shrinks — D4/D5 are net-negative by design; D1/D2/D6 must account
 for their additions. Ceremony creep is the failure mode of process tooling at AI speed.
 
+**Economy-vs-legibility resolution rule** (goals 2 and 3 pull opposite ways; this is how stages
+decide locally without re-arguing): **spend interaction only at commitment points; spend tokens
+only on durable artifacts; economize everything else.** Applied: consent prompts exist only at
+the two gated seams and only on AI-mediated arrival (interaction at commitment points);
+architecture docs, specs, boot material, and trail emits are worth their tokens (durable
+artifacts); narration, re-reading, re-orientation, and AI-composed formatting the engine could
+render are what gets cut (everything else).
+
 ## Sequencing and rules of engagement
 
 - **Order**: D1 finishes first (near propose-ready) → D2 (top of list; retrofits this document) →
@@ -272,3 +280,8 @@ for their additions. Ceremony creep is the failure mode of process tooling at AI
   engine-rendered reports; subtraction rule added to the cross-cutting constraint; status header
   added to this document. Review findings #2 closed; the economy-vs-legibility resolution rule
   (#3) is the last open finding.
+- **2026-07-08** — Economy-vs-legibility resolution rule ratified as-is ("interaction only at
+  commitment points; tokens only on durable artifacts; economize everything else") and added to
+  the cross-cutting constraint. **All findings from the first `--as architecture` review are
+  resolved** — the arc is pressure-tested; next milestone: resume the Stage D1 explore
+  (Q-elc-c/d/h) toward its propose.
