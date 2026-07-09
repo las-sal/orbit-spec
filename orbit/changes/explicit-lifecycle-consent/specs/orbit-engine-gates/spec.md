@@ -96,3 +96,35 @@ names (`next_recommended`) are unchanged — display wording only.
 - **WHEN** `orbit status --change <name>` renders the canonical next command
 - **THEN** the label is `Ready when you are:` (with ` — user-invoked` appended for
   consent-marked phase entries); no recommendation surface renders an imperative `Next:` label
+
+### Requirement: spec-driven v1 gates and cadence
+
+The shipped `spec-driven` schema (version 3) SHALL declare: `review-proposal`
+(`kind: reviewed`, requires/inputs the four artifacts, `cadence: [independent, in-context]`,
+`confirm: no-new-findings`, `before: apply`, `consent: user-invoked`), `apply` (`kind: tracked`, today's block normalized),
+and `review-system` (`kind: reviewed`, `requires: [apply]`,
+`cadence: [in-context, external, in-context]`, `confirm: findings-resolved`, `before: archive`, `consent: user-invoked`).
+`independent` in a cadence is the meta-class satisfiable by either `fresh` or `external` (per the
+cadence-entry vocabulary). The proposal gate's `no-new-findings` confirm matches its repeat rule
+(the independent+address pair repeats while the independent pass yields new findings); the system
+gate's `findings-resolved` confirm matches its repeat rule (external repeats only while it yields
+CRITICALs, so a resolved no-CRITICAL external converges). The cadence arrays live in the schema
+YAML — tuning the review rhythm is a schema revision (version bump), not engine or config change.
+Verify remains a command (Pass 0 inside system review), not a gate; audit-drift remains orthogonal
+to the gate graph. The system cadence's two `in-context` slots require a pass of reviewer_class
+`in-context`: a `--fresh` system run (reviewer_class `fresh`) does NOT satisfy them (`fresh` covers
+the meta-class `independent`, which the system cadence does not use), so a fresh run cannot close
+the trailing system confirm — it surfaces the gate as still needing its in-context slot.
+
+#### Scenario: Cadence tuning is a schema edit
+
+- **WHEN** a future revision changes the system cadence
+- **THEN** the change is an edit to `schemas/spec-driven/schema.yaml` with a version bump; no
+  engine code changes
+
+#### Scenario: v3 declares the consent-marked seams
+
+- **WHEN** the shipped `spec-driven` schema (version 3) is parsed
+- **THEN** both reviewed gates carry `consent: user-invoked` (per the consent vocabulary in the
+  gate-declaration requirement), and a v2-era schema without the attribute parses and behaves
+  exactly as before the bump

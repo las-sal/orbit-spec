@@ -7,7 +7,9 @@ the AI's judgment of delegated intent. **User-invoked** means the triggering tur
 explicit user invocation of the command: the typed slash command (the harness injects a literal
 command invocation), or an unambiguous same-turn prose request naming the act ("archive it").
 **AI-mediated** means everything else: delegation phrases ("finish the cadence"), inference
-("continue"), handoff documents, or a gate reporting a phase eligible. Rationale (normative
+("continue"), handoff documents, or a gate reporting a phase eligible. **When provenance is
+uncertain, the AI SHALL treat the arrival as AI-mediated** — erring toward one extra click,
+never toward a silent proceed. Rationale (normative
 context): the motivating incident was the AI *misreading delegated authority* as consent — any
 "prompt only when unsure" rule routes through the same judgment that failed, while provenance is
 in the transcript.

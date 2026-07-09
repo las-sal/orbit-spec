@@ -31,7 +31,8 @@ built: every lifecycle transition is user-invoked.
 - [ ] 2.3 `bulk-archive-change.ts`: per-change consent on AI-mediated arrival (user-typed bulk
       whose flow confirmed the batch = user-invoked for the set); note sync's consent inheritance
       in both archive bodies (no double-prompt)
-- [ ] 2.4 `review.ts` (+ any body quoting stock assessments): final-assessment tables re-labeled
+- [ ] 2.4 `review.ts` + `onboard.ts` (line ~78 quotes the stock phrasings; `apply-change.ts`'s
+      literal `Next:` completion line is covered by 2.5): final-assessment tables re-labeled
       to `Ready when you are:` with the ` — user-invoked` marker on apply/archive
       recommendations (per the orbit-review spec delta)
 - [ ] 2.5 All 15 bodies: no-chaining contract as the FOURTH disciplines entry (echo of the new

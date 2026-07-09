@@ -1,0 +1,23 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-09T18:00:58Z",
+  "change": "explicit-lifecycle-consent",
+  "final_assessment": "All 3 findings from the fresh independent review (iter 2: 1 CRITICAL, 1 WARNING, 1 SUGGESTION) resolved; 0 stale/deferred/escalated. CRITICAL: third MODIFIED block added to the engine-gates delta — 'spec-driven v1 gates and cadence' transformed from verbatim baseline (version 2→3; consent: user-invoked added to both reviewed-gate enumerations; new v3 scenario) with containment verified (only the 3 intended edit sites differ) and its fingerprint stamped (now 6/6 verified). WARNING: the iter-1 resolution that silently failed (uncertainty default) is NOW verifiably landed in the provenance requirement — applied via the Edit tool (errors on mismatch) instead of silent str.replace, and grep-confirmed post-edit. SUGGESTION: tasks 2.4 names onboard.ts:~78 as the other stock-phrasing carrier. Process lesson recorded: mechanical resolutions must use match-verified edits; the resolution log is only as honest as its verification.",
+  "next_recommended": "/orbit:review --as proposal --fresh explicit-lifecycle-consent — the latest independent pass yielded new findings (now resolved); no-new-findings confirm requires an independent pass that yields none",
+  "kind": "editorial",
+  "source": "--from-file orbit/changes/explicit-lifecycle-consent/.orbit-runs/review-proposal-2026-07-09T17-56-51Z.json",
+  "source_path": "orbit/changes/explicit-lifecycle-consent/.orbit-runs/review-proposal-2026-07-09T17-56-51Z.json",
+  "source_format": "internal-review",
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "resolution_summary": { "resolved": 3, "stale": 0, "deferred": 0, "escalated": 0 },
+  "resolutions": [
+    { "finding": "Un-delta'd 'spec-driven v1 gates and cadence' pins version 2 without consent — scope miss", "severity": "CRITICAL", "classification": "trivial fix", "action": "Third MODIFIED block appended to specs/orbit-engine-gates/spec.md via verified transformation of the verbatim baseline block: '(version 2)'→'(version 3)', consent: user-invoked appended to both reviewed gates' declaration enumerations, plus a 'v3 declares the consent-marked seams' scenario (incl. v2 back-compat). Containment-checked (3 intended edit sites only); fingerprint stamped — 6/6 verified." },
+    { "finding": "Iter-1 resolution #3 did not land (silent str.replace no-op)", "severity": "WARNING", "classification": "trivial fix", "action": "Uncertainty default landed in the Invocation-provenance requirement via the Edit tool (fails loudly on mismatch) and grep-verified after: 'When provenance is uncertain, the AI SHALL treat the arrival as AI-mediated — erring toward one extra click, never toward a silent proceed.' Prior emit left untouched (audit trail)." },
+    { "finding": "Task 2.4's vague 'any body quoting stock assessments'", "severity": "SUGGESTION", "classification": "trivial fix", "action": "tasks.md 2.4 now names onboard.ts (~line 78) explicitly and notes apply-change.ts's literal Next: line is 2.5's; 2.6's grep test remains the backstop." }
+  ],
+  "ripple_cascade": {
+    "applied": ["specs/orbit-engine-gates/spec.md", "specs/orbit-lifecycle-consent/spec.md", "tasks.md"],
+    "flagged_not_applied": []
+  }
+}
