@@ -20,7 +20,17 @@ existed). Two projects growing the same organ independently is the evidence this
 The fork program (A1 → B1–B3 → C1 → C2) is complete: orbit is a self-contained tool whose engine
 computes the workflow and whose review cadence demonstrably catches real bugs. This arc is about
 what orbit should BE now that it works — honed from sustained daily use (orbit-spec itself,
-home-env, and the C2 delivery session):
+home-env, and the C2 delivery session). Goals are first-class below; exit criteria and the
+closing review grade against them.
+
+Motivating incidents: the C2 session's AI-driven auto-archive + unrequested PR (Stage D1's
+origin); multi-session disorientation across 3–4 concurrent changes and step-away-and-return
+(D3); review presentation varying per AI interpretation and batch-prompt walks losing discussion
+context (D4); generated skills growing large while the AI occasionally drifts back to upstream
+flow instead of native orbit commands (D5); and the program-layer gap both home-env and this repo
+patched by hand (D2).
+
+## Goals
 
 1. **An AI can generate complex code predictably, matching the user's requirements and
    expectations** — the details governing generation live in written artifacts more permanent
@@ -33,18 +43,43 @@ home-env, and the C2 delivery session):
    decisions: what each command forces into context, what the AI re-narrates versus the engine
    renders, what a fresh session must read to boot a phase.
 
-Motivating incidents: the C2 session's AI-driven auto-archive + unrequested PR (Stage D1's
-origin); multi-session disorientation across 3–4 concurrent changes and step-away-and-return
-(D3); review presentation varying per AI interpretation and batch-prompt walks losing discussion
-context (D4); generated skills growing large while the AI occasionally drifts back to upstream
-flow instead of native orbit commands (D5); and the program-layer gap both home-env and this repo
-patched by hand (D2).
+## Rulings index
+
+Arc-level rulings, addressable by ID; full text lives where cited. (Stage-level decision detail
+is owned by each stage's explore/change per R-d-7 — this index holds only cross-stage rulings.)
+
+- **R-d-1** — Architecture is FIRST-CLASS ENGINE, not prose (Stage D2 section).
+- **R-d-2** — Harness-hook enforcement DEFERRED with a named empirical re-entry trigger
+  (Considered & out).
+- **R-d-3** — Every stage carries falsifiable exit criteria; arc-done = all stages archived +
+  a closing `--as architecture` review (stage sections; Sequencing).
+- **R-d-4** — Subtraction rule: additions to the generated surface must name what they remove
+  (Cross-cutting constraint).
+- **R-d-5** — Economy-vs-legibility resolution rule: interaction only at commitment points;
+  tokens only on durable artifacts; economize everything else (Cross-cutting constraint).
+- **R-d-6** — Stage D6 split out of D1 so the consent core proposes without git machinery
+  (Stage D6; status log 2026-07-08).
+- **R-d-7** — Ownership rule: the arc owns premise, exit criteria, state vocabulary, and
+  cross-stage rulings; a stage's explore/change owns decision detail; once an explore exists the
+  arc POINTS rather than duplicates (Sequencing).
+
+## Open questions (arc-level)
+
+None open — the first architecture review's three arc-level questions (D2 engine standing,
+enforcement placement, exit-criteria regime) were resolved 2026-07-08 (R-d-1/2/3). Questions that
+belong to a single stage live in that stage's explore, not here.
 
 ## Program stages
 
-### Stage D1 — explicit-lifecycle-consent (IN FLIGHT)
+**Stage state vocabulary** (controlled; hand-maintained *provisionally* until D2 computes it from
+disk — per R-d-1, state is never hand-authored once the engine owns it):
+`premised → exploring → in-change → archived`.
 
-`orbit/explore/explicit-lifecycle-consent/` — the consent/arbiter core; NEAR PROPOSE-READY.
+### Stage D1 — explicit-lifecycle-consent
+
+*State (manual until D2): **exploring** — 3 open questions from propose-ready.*
+
+`orbit/explore/explicit-lifecycle-consent/` — the consent/arbiter core.
 AskUserQuestion as the only harness-enforceable primitive (D-elc-1); provenance-conditioned
 consent prompts — user-typed commands never prompt, AI-mediated arrivals at the gated seams
 (`→ apply`, `→ archive`) must (D-elc-2/7); the no-chaining contract — the AI recommends, never
@@ -64,9 +99,11 @@ and audit-drift DEMONSTRABLY flags an emit missing it (tripwire proven live, not
 prompts can interrupt); (3) no imperative `Next:` phrasing survives in engine output or generated
 bodies — greppable.
 
-### Stage D2 — architect (the program layer; TOP OF LIST)
+### Stage D2 — architect (the program layer)
 
-**RULED (Sal, 2026-07-08): architecture is FIRST-CLASS ENGINE, not prose.** "Part of the goal of
+*State (manual until D2): **premised**. First in sequence after D1 (see Sequencing).*
+
+**RULED (R-d-1, Sal, 2026-07-08): architecture is FIRST-CLASS ENGINE, not prose.** "Part of the goal of
 forking orbit was to evolve the engine into what I wanted — not just layer prose on top of the
 existing engine." The fork thesis, applied upward: A→C turned prose conventions into
 engine-computed state (gates, fingerprints); D2 does the same for the program layer. The engine
@@ -105,6 +142,8 @@ via CLI instead of the whole doc.
 
 ### Stage D3 — orientation (status absorption)
 
+*State (manual until D2): **premised**.*
+
 The positional half of "where am I": a surface answering, across ALL active changes at once —
 what phase is each in, what workflow command ran last, what are the one-or-two sensible next
 commands — cheap enough to consult after a day away, without burning a session's context to
@@ -121,6 +160,8 @@ eligible commands, with no artifact reading beyond the command's own output; (2)
 pattern).
 
 ### Stage D4 — review-consistency
+
+*State (manual until D2): **premised**.*
 
 Reviews are effective; their PRESENTATION varies per AI interpretation, and the address-reviews
 walk drifts into batch questioning. Two moves: (1) make report rendering deterministic — the
@@ -139,6 +180,8 @@ body, and a dismissed prompt loses nothing (the finding re-presents). (Walk crit
 body-text-checkable plus one observed cycle — the honest limit for a UX behavior.)
 
 ### Stage D5 — context-economy, native execution, and model strategy
+
+*State (manual until D2): **premised**.*
 
 Three braided threads, one governing concern (what's in the window and who's reading it):
 
@@ -168,6 +211,8 @@ material alone and proceeds correctly; (4) `models:` config hints appear in elig
 readouts.
 
 ### Stage D6 — pr-lifecycle (orbit-native git integration)
+
+*State (manual until D2): **premised**.*
 
 Split out of Stage D1 (2026-07-08) once its true size was visible. The ratified direction
 (originally D-elc-6, full rationale in D1's explore.md tombstone): **PRs are a DESIGNED
@@ -201,11 +246,11 @@ action occurs outside the config+provenance rules across the dogfood.
 **Token/context economy is a decision criterion in every stage above**, not a stage of its own
 (D5 carries the dedicated mechanisms, but D2–D4 each weigh it: architect docs must be cheap to
 consult; orientation must cost near-zero context; engine-rendered reports save narration
-tokens). **Subtraction rule**: every stage that ADDS instruction text to the generated surface
+tokens). **Subtraction rule (R-d-4)**: every stage that ADDS instruction text to the generated surface
 must name what it removes or shrinks — D4/D5 are net-negative by design; D1/D2/D6 must account
 for their additions. Ceremony creep is the failure mode of process tooling at AI speed.
 
-**Economy-vs-legibility resolution rule** (goals 2 and 3 pull opposite ways; this is how stages
+**Economy-vs-legibility resolution rule (R-d-5)** (goals 2 and 3 pull opposite ways; this is how stages
 decide locally without re-arguing): **spend interaction only at commitment points; spend tokens
 only on durable artifacts; economize everything else.** Applied: consent prompts exist only at
 the two gated seams and only on AI-mediated arrival (interaction at commitment points);
@@ -224,15 +269,19 @@ render are what gets cut (everything else).
   `orbit/explore/` dir means "actively being thought about").
 - **Every lifecycle transition in this arc is user-invoked** — this arc practices D1's contract
   before D1 ships it: the AI recommends; Sal types the command.
+- **Ownership (R-d-7)**: the arc owns premise, exit criteria, state vocabulary, and cross-stage
+  rulings; a stage's explore/change owns its decision detail. Once a stage's explore exists, the
+  arc's stage section POINTS at it rather than duplicating — summary drift between the layers is
+  a defect, not a convenience.
 - **This document updates when a stage's change archives** (status log below) — the maintenance
   burden D2 will automate.
-- **Arc-level done**: all six stages archived, plus one closing `/orbit:review --as architecture`
+- **Arc-level done (R-d-3)**: all six stages archived, plus one closing `/orbit:review --as architecture`
   grading the arc against each stage's exit criteria and the three goals.
 
 ## Considered & out
 
 - **Harness-hook enforcement (generated PreToolUse config) — DEFERRED, not rejected
-  (2026-07-08).** Claude Code hooks could hard-block `orbit archive` / `gh pr create` at the
+  (R-d-2, 2026-07-08).** Claude Code hooks could hard-block `orbit archive` / `gh pr create` at the
   harness layer — the only mechanism that enforces against a session that MISREADS rather than
   merely misbehaves (AskUserQuestion fires only when the body-following AI chooses to call it).
   Deferred because the risk it guards is low-severity and recoverable post-C2 (fingerprint-guarded
@@ -285,3 +334,9 @@ render are what gets cut (everything else).
   the cross-cutting constraint. **All findings from the first `--as architecture` review are
   resolved** — the arc is pressure-tested; next milestone: resume the Stage D1 explore
   (Q-elc-c/d/h) toward its propose.
+- **2026-07-08** — Exemplar-structure pass (this doc models what D2 formalizes): Goals hoisted to
+  a first-class section; arc-level rulings given addressable IDs (R-d-1..7) with an index;
+  hand-written stage states replaced by the controlled vocabulary and marked provisional-manual
+  until D2 computes them (hand-authored state is the anti-pattern the retrofit deletes);
+  arc-level Open-questions section added (currently none); ownership rule between arc and
+  stage explores stated (R-d-7).
