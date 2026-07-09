@@ -105,7 +105,7 @@ The full plan and design decisions live in the docs below — **read them before
 
 ## Source of truth for the plan
 
-- `orbit/explore/fork-and-orbify/explore.md` — the live design exploration. Decisions **D1–D15**
+- `orbit/architecture/fork-and-orbify.md` — the COMPLETED fork-program architecture (historical record; relocated from orbit/explore/ 2026-07-08). Decisions **D1–D15**
   (incl. the ratified **6-phase program** D9, new-repo/baseline strategy D10, tool-breadth D11 +
   its Claude-primacy refinement, rip telemetry D12, inline-TS D13, thin-launcher commands D14,
   full-surface installs D15) and open questions Q1–Q10 (Q1/Q6/Q7/Q10 resolved). **This is the
@@ -147,7 +147,7 @@ paths are kept out of bodies.
 
 ## When in doubt
 
-- The fork plan and its decisions are normative — `orbit/explore/fork-and-orbify/explore.md`.
+- The fork plan's decisions remain citable — `orbit/architecture/fork-and-orbify.md` (program complete; the live program is `orbit/architecture/d-arc-arbitered-flow.md`).
 - Engine behavior is defined in the vendored TypeScript under `src/` (the architecture doc maps it).
 - Keep tests green: run `npm test` before and after substantive changes; the green baseline is the
   contract.

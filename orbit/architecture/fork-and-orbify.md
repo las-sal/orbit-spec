@@ -1,5 +1,10 @@
 # Explore: fork-and-orbify
 
+> **Status**: COMPLETE program architecture — the fork program (A1 → B1–B3 → C1 → C2) fully
+> archived as of 2026-07-07 (PR #7). Historical record; decisions D1–D15 remain citable.
+> Relocated from `orbit/explore/` on 2026-07-08 when the architecture layer got a home — this
+> was a program plan in an explore's clothing (see `d-arc-arbitered-flow.md`, genre precedents).
+
 ## Premise
 
 Collapse orbit's **overlay model** into a single cohesive **fork of openspec@1.3.1**, integrating

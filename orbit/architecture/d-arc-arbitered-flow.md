@@ -11,9 +11,9 @@ until then, this document is maintained by hand, dogfooding the shape.
 
 Genre precedents: `../home-env/architect-host-first-strategy.md` +
 `vendor-backends-strategy.md` (the "strategy doc changes are proposed against" pattern, grown
-independently there), and this repo's own `orbit/explore/fork-and-orbify/explore.md` (the A→C
-fork program — a program plan that lived in an explore's clothing because no better home
-existed). Two projects growing the same organ independently is the evidence this layer is real.
+independently there), and this repo's own `fork-and-orbify.md` (sibling in this directory — the A→C
+fork program, a program plan that lived in an explore's clothing until this layer existed;
+relocated here 2026-07-08). Two projects growing the same organ independently is the evidence this layer is real.
 
 ## Premise
 
@@ -303,7 +303,7 @@ render are what gets cut (everything else).
 - `~/code/orbit-status` — D3's seed project (issue #3).
 - `orbit/changes/archive/2026-07-07-c2-parallel-merge-guardrail/.orbit-runs/` — D1's motivating
   incident trail (auto-archive at `archive-2026-07-07T14-30-23Z.json`; unrequested PR #7).
-- `orbit/explore/fork-and-orbify/explore.md` — the prior program (A→C), D1–D15 decisions.
+- `orbit/architecture/fork-and-orbify.md` — the prior program (A→C), D1–D15 decisions.
 - `orbit/explore/explicit-lifecycle-consent/explore.md` — Stage D1, in flight.
 
 ## Status log
@@ -340,3 +340,7 @@ render are what gets cut (everything else).
   until D2 computes them (hand-authored state is the anti-pattern the retrofit deletes);
   arc-level Open-questions section added (currently none); ownership rule between arc and
   stage explores stated (R-d-7).
+- **2026-07-08** — Bookkeeping: `fork-and-orbify` relocated from `orbit/explore/` to
+  `orbit/architecture/fork-and-orbify.md` with a COMPLETE status header — the completed program
+  plan was the last violation of "an explore dir means actively being thought about"; live
+  references updated (CLAUDE.md, this doc, the 1.3.1 survey).
