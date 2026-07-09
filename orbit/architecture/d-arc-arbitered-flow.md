@@ -82,9 +82,9 @@ disk — per R-d-1, state is never hand-authored once the engine owns it):
 
 ### Stage D1 — explicit-lifecycle-consent
 
-*State (manual until D2): **exploring** — PROPOSE-READY (0 open questions as of 2026-07-09).*
+*State (manual until D2): **in-change** — `orbit/changes/explicit-lifecycle-consent/` (proposed 2026-07-09; proposal review cycle next).*
 
-`orbit/explore/explicit-lifecycle-consent/` — the consent/arbiter core.
+`orbit/changes/explicit-lifecycle-consent/` — the consent/arbiter core (explore.md rides inside the change as the decision record).
 AskUserQuestion as the only harness-enforceable primitive (D-elc-1); provenance-conditioned
 consent prompts — user-typed commands never prompt, AI-mediated arrivals at the gated seams
 (`→ apply`, `→ archive`) must (D-elc-2/7); the no-chaining contract — the AI recommends, never
@@ -384,6 +384,10 @@ render are what gets cut (everything else).
 - **2026-07-09** — D1's last three open questions ratified as recommended (D-elc-8/9/10: flat
   consent field; no engine prompt for CLI-direct; consent as schema gate data per R-d-1 grain).
   **Stage D1 is propose-ready** — the propose is the user's to invoke.
+- **2026-07-09** — User invoked /orbit:propose: D1 is **in-change** at
+  `orbit/changes/explicit-lifecycle-consent/` (1 new capability + 5 deltas, 12 delta
+  requirements; fingerprints stamped; --strict valid). Design settles the consent-era boundary
+  (schema-version-based). Proposal review cycle is the stage's next seam — user-invoked.
 - **2026-07-09** — R-d-8 mechanization designed into D5 (three-layer leak hardening: format slot
   for standing recommendations, boundary residency sweep piggybacking the emit trigger, emit
   attestation field). The format layer is PRACTICED from today in all explores/architecture docs,

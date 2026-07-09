@@ -1,0 +1,9 @@
+schema: spec-driven
+created: 2026-07-09
+base_fingerprints:
+  orbit-archive-modifications:
+    Archive run summary written: sha256:2e8fbe6c47b8e961e0350311d9f0ecd4aa735f40f379a9b5a19f441b98fb5567
+    Archive summary schema reference ships with the skill: sha256:79ecbc17f2b3ef7d598ab1472e355444cc7f4ed9f63e513f6c32218512e54889
+  orbit-engine-gates:
+    Gate declaration in schema YAML: sha256:81aa1bffdf73670db7dda6f77043599a464bf520031c4e0175e853b16d3feb3e
+    Single-voiced canonical-next computation: sha256:e9bc8f1d8e912d11624f16cd11f7d429385af8099a4e0aa2c1202aaee7838589
