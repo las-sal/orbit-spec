@@ -211,7 +211,19 @@ Three braided threads, one governing concern (what's in the window and who's rea
   MUST include the code-touchpoints map (the C2-handoff §5 pattern — where the work lands) and
   point only at file-resident state (R-d-8). Record model identity in emits (provenance: which
   model authored these specs / this review). D5 also encodes R-d-8 into the explore/architect
-  bodies and orbit-conventions.
+  bodies and orbit-conventions via the **three-layer leak hardening** (designed 2026-07-09, after
+  the Q-elc-c leak showed pending leanings had no named home): (1) FORMAT — open-question entries
+  gain a required slot, `Standing recommendation: … | none yet` (orbit-conventions explore.md
+  format requirement; AIs fill template slots far more reliably than they obey prose rules);
+  (2) PROTOCOL — a boundary residency sweep in the explore/architect bodies, tied to the EXISTING
+  emit trigger ("no emit without sweep": decisions / leanings / rejections / citations discussed
+  this session must be file-resident before the emit writes — inherits the emit's mandatory
+  boundary trigger, costing nothing against R-d-4); (3) ATTESTATION — the explore emit gains
+  `open_questions_with_recommendation: "n of m"` (orbit-run-summary-emit delta); computing it
+  forces re-reading the file, and audit-drift cross-checks counts against the actual file. Same
+  enforcement ladder as D1 (structure → instruction → trail); same honest ceiling (nothing
+  outside the conversation knows what was discussed). Practiced as authoring discipline from
+  2026-07-09 forward, ahead of the spec.
 
 **Exit criteria**: (1) generated surface size measured before/after against a stated reduction
 target picked at explore time — the criterion is a NUMBER hit, not "smaller"; (2) an inventory
@@ -372,3 +384,7 @@ render are what gets cut (everything else).
 - **2026-07-09** — D1's last three open questions ratified as recommended (D-elc-8/9/10: flat
   consent field; no engine prompt for CLI-direct; consent as schema gate data per R-d-1 grain).
   **Stage D1 is propose-ready** — the propose is the user's to invoke.
+- **2026-07-09** — R-d-8 mechanization designed into D5 (three-layer leak hardening: format slot
+  for standing recommendations, boundary residency sweep piggybacking the emit trigger, emit
+  attestation field). The format layer is PRACTICED from today in all explores/architecture docs,
+  ahead of D5 spec'ing it.
