@@ -98,6 +98,13 @@ Emits predating this capability lack the field and are exempt.
 - **WHEN** a consent prompt fired on AI-mediated arrival and the user chose Proceed
 - **THEN** the command's emit includes `consent: "prompted"`
 
+#### Scenario: User-typed bulk propagates to inner archive emits
+
+- **WHEN** the user types `/orbit:bulk-archive` and confirms the batch, and the inner archives
+  emit their summaries
+- **THEN** each inner archive emit records `consent: "user-invoked"` (the confirmed batch is the
+  user's invocation for the set)
+
 #### Scenario: Abort writes nothing
 
 - **WHEN** the user chooses Abort at a consent prompt

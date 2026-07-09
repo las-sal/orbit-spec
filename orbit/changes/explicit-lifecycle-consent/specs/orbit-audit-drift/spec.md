@@ -7,9 +7,12 @@ archive) for the `consent` field required by `orbit-lifecycle-consent`: a post-c
 missing the field is a WARNING finding ("lifecycle emit lacks consent record — an unconsented or
 contract-violating transition may have occurred"). This is the empirical tripwire behind the
 D-arc's harness-hooks deferral (R-d-2): its firing is the named re-entry trigger for hard
-enforcement. Pre-capability emits are EXEMPT — the era boundary mechanism (timestamp cutoff vs a
-schema-version marker) is a design.md decision of the consent change; the check SHALL NOT flag
-emits older than that boundary.
+enforcement. Pre-capability emits are EXEMPT. **Era boundary mechanism**: the check applies only
+to emits of changes whose `.openspec.yaml` schema resolves to a consent-aware schema version
+(`spec-driven` v3+), falling back to a timestamp cutoff ONLY when version resolution fails —
+version-based detection is deterministic and travels with the change (no magic dates that break
+for projects adopting orbit at different times); the check SHALL NOT flag emits older than that
+boundary.
 
 #### Scenario: Post-capability emit without consent flagged
 

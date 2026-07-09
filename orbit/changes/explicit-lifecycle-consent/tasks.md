@@ -31,11 +31,14 @@ built: every lifecycle transition is user-invoked.
 - [ ] 2.3 `bulk-archive-change.ts`: per-change consent on AI-mediated arrival (user-typed bulk
       whose flow confirmed the batch = user-invoked for the set); note sync's consent inheritance
       in both archive bodies (no double-prompt)
-- [ ] 2.4 All 15 bodies: no-chaining contract as the FOURTH disciplines entry (echo of the new
+- [ ] 2.4 `review.ts` (+ any body quoting stock assessments): final-assessment tables re-labeled
+      to `Ready when you are:` with the ` — user-invoked` marker on apply/archive
+      recommendations (per the orbit-review spec delta)
+- [ ] 2.5 All 15 bodies: no-chaining contract as the FOURTH disciplines entry (echo of the new
       `orbit-conventions` requirement); completion sections render the engine readout verbatim
       (subtraction per design D7: remove hand-written next-step prose variants + any quoted
       imperative `Next:` phrasing)
-- [ ] 2.5 Template parity hashes re-pinned; per-workflow fidelity tests updated (incl. a grep
+- [ ] 2.6 Template parity hashes re-pinned; per-workflow fidelity tests updated (incl. a grep
       test: no body renders an imperative `Next:` label)
 
 ## 3. Audit tripwire
@@ -55,4 +58,6 @@ built: every lifecycle transition is user-invoked.
       `orbit fingerprint explicit-lifecycle-consent --check` all verified
 - [ ] 4.3 `npm run build && node bin/orbit.js update --force` — regenerate the local `.claude/`
       surface; spot-check one regenerated SKILL.md for the fourth discipline + consent step
-- [ ] 4.4 Sync the D-arc doc (R-d-7): D1 state → in-change complete; status log entry
+- [ ] 4.4 Sync the D-arc doc (R-d-7): D1 state → in-change complete; status log entry. CLAUDE.md
+      archive-time note: the execution-disciplines section gains the fourth discipline
+      (no-chaining) when this change archives

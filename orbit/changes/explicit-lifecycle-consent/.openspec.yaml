@@ -7,3 +7,5 @@ base_fingerprints:
   orbit-engine-gates:
     Gate declaration in schema YAML: sha256:81aa1bffdf73670db7dda6f77043599a464bf520031c4e0175e853b16d3feb3e
     Single-voiced canonical-next computation: sha256:e9bc8f1d8e912d11624f16cd11f7d429385af8099a4e0aa2c1202aaee7838589
+  orbit-review:
+    Final assessment phrasings depend on mode: sha256:1213f00597acd2dcc7f7038056b8436bd11bfe6db18104e5339d74877ddb20e3

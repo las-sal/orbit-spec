@@ -60,7 +60,11 @@ lifecycle transition** — apply (requirements→code, the flow's biggest commit
   AI-mediated-entry consent prompt step.
 - `orbit-run-summary-emit`: the apply emit shape gains the `consent` field scenario.
 - `orbit-audit-drift`: archive-coherence category gains the missing-consent-record check
-  (WARNING; pre-consent-era emits exempt per design.md).
+  (WARNING; pre-consent-era emits exempt via schema-version era detection).
+- `orbit-review`: the exact stock final-assessment phrasings (8+ scenarios across both modes)
+  re-labeled from imperative `Next:` to `Ready when you are:` with the ` — user-invoked` marker
+  on apply/archive recommendations — the review reports are recommendation surfaces and were the
+  only baseline carrier of the imperative label (repo-wide grep).
 
 ## Impact
 
@@ -72,7 +76,7 @@ lifecycle transition** — apply (requirements→code, the flow's biggest commit
   `archive-change.ts`, `bulk-archive-change.ts` (consent prompt steps + emit field docs,
   including the archive body's `ARCHIVE_SUMMARY_SCHEMA_REFERENCE` literal); `audit-drift.ts`
   (tripwire check); ALL 15 bodies (no-chaining discipline echo + any quoted `Next:` phrasing).
-- **Baseline specs**: 1 new + 5 delta'd capabilities (13 → 14).
+- **Baseline specs**: 1 new + 6 delta'd capabilities (13 → 14).
 - **Tests**: gate-schema parsing, eligibility-phrasing fidelity (grep: no imperative `Next:`
   survives), emit-schema docs, template parity hash re-pins, and the D1 exit-criteria checks
   (zero-prompt user path; tripwire demonstrably fires).

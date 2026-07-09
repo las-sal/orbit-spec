@@ -27,7 +27,7 @@ NOT model as an `instructions` target — a gate with `before: archive` is queri
 archive workflow's gate surface (`orbit status --change <name> --json`, which carries `gates[]` and
 `next_command`), never through `orbit instructions archive`.
 
-**Consent vocabulary** (C-arc D1, per `orbit-lifecycle-consent`): `consent` is an optional gate
+**Consent vocabulary** (D-arc Stage D1, per `orbit-lifecycle-consent`): `consent` is an optional gate
 attribute with the single legal value `user-invoked` (a CLOSED set of one for v1; any other value
 fails schema validation). It declares that entry into the gate's `before:` phase requires an
 explicit user invocation — the engine PARSES and SURFACES the marker (in `gates[]` JSON and the
@@ -75,7 +75,7 @@ payloads, and the workflow handoffs that render them) SHALL present only this ca
 no advertised alternatives, no skip paths, and no bare command names without arguments. Skills
 render the engine-computed command verbatim.
 
-**Eligibility phrasing (C-arc D1, D-elc-4)**: the canonical-next command SHALL be rendered under
+**Eligibility phrasing (D-arc Stage D1, D-elc-4)**: the canonical-next command SHALL be rendered under
 an eligibility-framed label — `Ready when you are:` — never an imperative label (`Next:` and
 equivalents are prohibited on every recommendation surface: `orbit status` output,
 `instructions` payload rendering, and generated workflow bodies that quote the readout). When the
