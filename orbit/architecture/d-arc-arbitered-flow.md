@@ -344,3 +344,7 @@ render are what gets cut (everything else).
   `orbit/architecture/fork-and-orbify.md` with a COMPLETE status header — the completed program
   plan was the last violation of "an explore dir means actively being thought about"; live
   references updated (CLAUDE.md, this doc, the 1.3.1 survey).
+- **2026-07-08** — Baseline-spec taxonomy question examined against upstream's vendored docs
+  (`docs/concepts.md` @ upstream/v1.3.1: "organize specs by domain"): current granularity
+  (13 domain dirs) RATIFIED; naming rationalization (drop overlay-era `-modifications` suffix +
+  `orbit-` prefix) queued into D5's scope, standalone-shippable.
