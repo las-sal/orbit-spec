@@ -26,10 +26,13 @@ built: every lifecycle transition is user-invoked.
 - [ ] 2.1 `apply-change.ts`: consent step at entry — provenance check per
       `orbit-lifecycle-consent` (user-typed → no prompt; AI-mediated → AskUserQuestion with
       position readout + task-count write preview, Proceed/Abort; uncertain → treat as
-      AI-mediated); emit docs gain `consent` field (constant across chunk emits)
+      AI-mediated); at entry, stamp `consent_era_from` into `.openspec.yaml` when the change
+      lacks `schema_version` (migrate-on-touch); emit docs gain `consent` field (constant across
+      chunk emits)
 - [ ] 2.2 `archive-change.ts`: consent step BEFORE Step 3.4 (same provenance rule; write preview
       = deltas/capabilities to sync + move); summary-shape docs + `ARCHIVE_SUMMARY_SCHEMA_REFERENCE`
-      literal gain the `consent` field; abort writes no summary
+      literal gain the `consent` field; abort writes no summary; same migrate-on-touch stamp at
+      entry as 2.1 (bulk: per change)
 - [ ] 2.3 `bulk-archive-change.ts`: per-change consent on AI-mediated arrival (user-typed bulk
       whose flow confirmed the batch = user-invoked for the set); note sync's consent inheritance
       in both archive bodies (no double-prompt)
@@ -48,11 +51,13 @@ built: every lifecycle transition is user-invoked.
 ## 3. Audit tripwire
 
 - [ ] 3.1 `audit-drift.ts` body: Category 4 gains the missing-consent-record check (WARNING;
-      era boundary per design D6 — consent-aware schema version, timestamp fallback); wording
-      names the emit path and the missing field
+      era boundary per design D6 THREE-TIER rule — schema_version / consent_era_from /
+      neither-exempt; NO timestamp fallback); wording names the emit path and the missing field
 - [ ] 3.2 Test: post-era emit (change metadata `schema_version >= 3`) without `consent` →
-      WARNING surfaced; regression: a REAL pre-D1 archive (`.openspec.yaml` with only
-      `schema: spec-driven`, no `schema_version` — e.g. the C2 archive fixture) scans exempt
+      WARNING surfaced; straddler regression: an active no-`schema_version` change stamped
+      `consent_era_from` mid-life → pre-stamp emits exempt, at-or-after-stamp emits checked;
+      and a REAL pre-D1 archive (only `schema: spec-driven` — e.g. the C2 archive fixture)
+      scans exempt
 
 ## 4. Verification sweep (arc D1 exit criteria) + surface refresh
 

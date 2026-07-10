@@ -123,9 +123,20 @@ The change metadata schema SHALL gain an optional `schema_version` field (intege
 scaffold time. **Absence of the field is the consent-era signal**: a change whose metadata lacks
 `schema_version` (every pre-D1 change and archive — the field did not exist) is pre-consent era
 and exempt from the audit tripwire; a change recording `schema_version >= 3` is consent-era. No
-timestamp cutoff and no backfill are needed — absence is deterministic, travels with the change
-into archive, and is portable across projects adopting orbit at different times. The field
-round-trips through the metadata read/write helpers without loss.
+timestamp cutoff and no backfill are needed for changes that never straddle the boundary. The
+field round-trips through the metadata read/write helpers without loss.
+
+**Straddler transition (migrate-on-touch)**: a change scaffolded BEFORE this capability that runs
+a consent-scoped command AFTER it must not stay exempt forever. The consent-scoped workflow
+bodies (apply, archive, bulk-archive per change) SHALL, at entry against a change whose metadata
+lacks `schema_version`, stamp `consent_era_from: <current TS>` into `.openspec.yaml` (same write
+step that later records the consent field). Tripwire semantics become three-tier and per-change:
+`schema_version >= 3` (born post-capability) → ALL its apply/archive emits are checked;
+`consent_era_from` present (straddler) → only emits with TS at-or-after the stamp are checked
+(its genuinely pre-capability emits stay exempt); NEITHER field → fully pre-capability, exempt.
+The invariant this buys by construction: any change a post-capability body has touched is
+tripwire-covered from that touch onward — including the archive emit of the change that
+introduces this capability (itself a straddler).
 
 #### Scenario: New change records the schema version
 
@@ -133,6 +144,13 @@ round-trips through the metadata read/write helpers without loss.
   (version 3)
 - **THEN** the change's `.openspec.yaml` records `schema_version: 3` alongside `schema` and
   `created`
+
+#### Scenario: Straddler is covered from first post-capability touch
+
+- **WHEN** a change scaffolded before this capability (no `schema_version`) runs a
+  consent-scoped command after the new bodies ship — e.g. the introducing change itself archiving
+- **THEN** the body stamps `consent_era_from` at entry; that run's emit (and every later one)
+  carries `consent` and is tripwire-checked, while the change's pre-stamp emits remain exempt
 
 #### Scenario: Pre-D1 archives are exempt by absence
 

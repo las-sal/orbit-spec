@@ -77,7 +77,8 @@ Workflow-kind example — `apply-2026-05-21T13-34-12Z.json` written at chunk 2 c
   "chunk": "2 of 5",
   "chunk_name": "inventory+parsing",
   "chunk_complete": true,
-  "tasks_completed_this_session": 16
+  "tasks_completed_this_session": 16,
+  "consent": "user-invoked"
 }
 ```
 

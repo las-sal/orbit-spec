@@ -7,18 +7,19 @@ archive) for the `consent` field required by `orbit-lifecycle-consent`: a post-c
 missing the field is a WARNING finding ("lifecycle emit lacks consent record — an unconsented or
 contract-violating transition may have occurred"). This is the empirical tripwire behind the
 D-arc's harness-hooks deferral (R-d-2): its firing is the named re-entry trigger for hard
-enforcement. Pre-capability emits are EXEMPT. **Era boundary mechanism**: the check applies only to emits
-of changes whose `.openspec.yaml` records `schema_version >= 3` (per `orbit-lifecycle-consent`'s
-`Consent-era metadata marker` requirement — the field is written at scaffold from the loaded
-schema's version); a change whose metadata LACKS `schema_version` is pre-consent era and exempt.
-Absence-as-signal is deterministic and needs no backfill or timestamp cutoff — resolving the
-schema NAME to the current built-in definition would misclassify old archives as v3, so the
-marker, not resolution, is the authority.
+enforcement. Pre-capability emits are EXEMPT. **Era boundary mechanism (three-tier, per change — per
+`orbit-lifecycle-consent`'s `Consent-era metadata marker` requirement)**: `schema_version >= 3`
+in the change's `.openspec.yaml` → ALL its apply/archive emits are checked; `consent_era_from`
+present (a straddler stamped at first post-capability touch) → only emits with TS at-or-after
+the stamp are checked; NEITHER field → fully pre-capability, exempt. The metadata markers, not
+schema-name resolution and not any timestamp constant, are the authority — resolving the schema
+NAME to the current built-in definition would misclassify old archives as v3.
 
 #### Scenario: Post-capability emit without consent flagged
 
-- **WHEN** the audit scans an `apply-*.json` or `archive-*.json` belonging to a change whose
-  metadata records `schema_version >= 3`, and the emit lacks the `consent` field
+- **WHEN** the audit scans an `apply-*.json` or `archive-*.json` that the three-tier rule marks
+  as checked (change has `schema_version >= 3`, OR has `consent_era_from` and the emit's TS is
+  at-or-after it), and the emit lacks the `consent` field
 - **THEN** a WARNING finding names the emit path and the missing field
 
 #### Scenario: Pre-capability emits exempt

@@ -95,6 +95,14 @@ gains optional `schema_version` (precedent: C2's `base_fingerprints` extension),
 pre-D1 change lacks the field and is exempt by construction; no backfill, no timestamp constant,
 portable across adoption dates. Regression test: a real pre-D1 archive (C1/C2) must scan exempt.
 
+REVISED AGAIN (external iter 2, user-ratified option B): absence-as-exempt over-exempted ACTIVE
+straddlers — a pre-D1 change emitting post-D1 (this change itself is the specimen) would dodge
+its own tripwire. Fix: migrate-on-touch — consent-scoped bodies stamp `consent_era_from: <TS>`
+at entry on unmarked changes; tripwire is three-tier (schema_version → check all;
+consent_era_from → check emits at-or-after stamp; neither → exempt). Invariant by construction:
+post-capability body touch ⇒ tripwire coverage from that moment. Regressions: straddler's
+post-touch emit checked; its pre-touch emits exempt; C1/C2 archives exempt.
+
 ### D7. The no-chaining echo rides the disciplines block (explore D-elc-3)
 
 The `orbit-conventions` requirement is echoed into all 15 generated bodies as a fourth
