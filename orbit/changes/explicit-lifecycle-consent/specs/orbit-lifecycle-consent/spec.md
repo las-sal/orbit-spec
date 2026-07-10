@@ -44,8 +44,12 @@ command's writes:
   `/orbit:bulk-archive` invocation (whose flow already confirms the batch) is user-invoked for
   the confirmed set.
 - **Sync inheritance**: `sync` invoked as a step inside a consented flow (e.g. archive Step 4)
-  inherits that flow's consent and SHALL NOT prompt separately; a standalone AI-mediated
-  `/orbit:sync` — a baseline writer — fires the consent prompt.
+  inherits that flow's consent and SHALL NOT prompt separately. Standalone `/orbit:sync` is NOT
+  consent-scoped in this change — it has no consent-marked gate, no run-summary emit, and no
+  prompt; AI-mediated invocation of it is already barred by the no-chaining contract
+  (`orbit-conventions`). Promoting sync to a consent-scoped command (own emit + prompt + audit
+  scope) is explicitly DEFERRED — the consent-scoped set stays exactly the schema-declared
+  consent gates.
 - **Distinctness**: the consent prompt is DISTINCT from the anomaly prompts (gate inflection,
   fingerprint divergence, audit drift); a single invocation MAY fire consent first and anomaly
   prompts after.
@@ -111,3 +115,28 @@ Emits predating this capability lack the field and are exempt.
 
 - **WHEN** the user chooses Abort at a consent prompt
 - **THEN** no run summary is written (there is no third consent value)
+
+### Requirement: Consent-era metadata marker
+
+The change metadata schema SHALL gain an optional `schema_version` field (integer; persisted in
+`.openspec.yaml`), written by `orbit new change` from the loaded schema's declared `version` at
+scaffold time. **Absence of the field is the consent-era signal**: a change whose metadata lacks
+`schema_version` (every pre-D1 change and archive — the field did not exist) is pre-consent era
+and exempt from the audit tripwire; a change recording `schema_version >= 3` is consent-era. No
+timestamp cutoff and no backfill are needed — absence is deterministic, travels with the change
+into archive, and is portable across projects adopting orbit at different times. The field
+round-trips through the metadata read/write helpers without loss.
+
+#### Scenario: New change records the schema version
+
+- **WHEN** `orbit new change` scaffolds a change under the shipped `spec-driven` schema
+  (version 3)
+- **THEN** the change's `.openspec.yaml` records `schema_version: 3` alongside `schema` and
+  `created`
+
+#### Scenario: Pre-D1 archives are exempt by absence
+
+- **WHEN** the audit tripwire evaluates an archived change whose `.openspec.yaml` records only
+  `schema: spec-driven` with no `schema_version` (e.g. the C1/C2 archives)
+- **THEN** the change is pre-consent era; its emits are exempt and never flagged
+

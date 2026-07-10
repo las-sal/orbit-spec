@@ -84,14 +84,16 @@ ownership: semantics in `orbit-lifecycle-consent`; apply-emit carriage in
 `orbit-run-summary-emit`; archive-emit carriage in `orbit-archive-modifications` (matches the
 C1/C2 precedent for `gate_overridden`/`fingerprint_overridden`).
 
-### D6. Consent-era boundary for the tripwire: schema-version marker (settles the explore's deferred detail)
+### D6. Consent-era boundary: a persisted `schema_version` metadata marker; absence = exempt (REVISED after external iter 1)
 
-The audit-drift check exempts pre-capability emits. Mechanism: **presence-based era detection** —
-the check applies only to emits in changes whose `.openspec.yaml` schema resolves to a
-consent-aware schema version (`spec-driven` v3+), falling back to a timestamp cutoff ONLY if
-version resolution fails. Rationale: version-based is deterministic and travels with the change;
-a hardcoded date would be a magic constant that breaks for forks/other projects adopting orbit at
-different times. Archived pre-C3 changes resolve to older schema state and are exempt naturally.
+Original mechanism ("schema resolves to a consent-aware version") was refuted by GPT-5 Codex's
+external review: `.openspec.yaml` stores only the schema NAME, and the resolver loads the CURRENT
+built-in definition — post-bump, pre-D1 archives would resolve as v3 and be falsely flagged on
+the tripwire's first run. Revised mechanism (user-ratified option A): `ChangeMetadataSchema`
+gains optional `schema_version` (precedent: C2's `base_fingerprints` extension), written by
+`orbit new change` from the loaded schema's `version`. **Absence is the era signal** — every
+pre-D1 change lacks the field and is exempt by construction; no backfill, no timestamp constant,
+portable across adoption dates. Regression test: a real pre-D1 archive (C1/C2) must scan exempt.
 
 ### D7. The no-chaining echo rides the disciplines block (explore D-elc-3)
 

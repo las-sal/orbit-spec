@@ -10,7 +10,9 @@ built: every lifecycle transition is user-invoked.
       `consent: z.literal('user-invoked')`; parse/validation in `schema.ts` rejects other values
       naming the gate id and the single legal value; `gates[]` JSON carries the marker
 - [ ] 1.2 `schemas/spec-driven/schema.yaml`: `consent: user-invoked` on `review-proposal` and
-      `review-system`; version 2 → 3
+      `review-system`; version 2 → 3. `ChangeMetadataSchema` gains optional `schema_version`
+      (int); `orbit new change` scaffold writes it from the loaded schema's version; round-trip
+      test
 - [ ] 1.3 Eligibility phrasing (`src/core/artifact-graph/gates.ts` + the status/instructions
       renderers registered via `src/cli/index.ts`): canonical-next renders under
       `Ready when you are:` (never `Next:`), appending ` — user-invoked` when the target phase's
@@ -47,8 +49,9 @@ built: every lifecycle transition is user-invoked.
 - [ ] 3.1 `audit-drift.ts` body: Category 4 gains the missing-consent-record check (WARNING;
       era boundary per design D6 — consent-aware schema version, timestamp fallback); wording
       names the emit path and the missing field
-- [ ] 3.2 Test: post-era emit without `consent` → WARNING surfaced; pre-era emits (C1/C2
-      archives) exempt
+- [ ] 3.2 Test: post-era emit (change metadata `schema_version >= 3`) without `consent` →
+      WARNING surfaced; regression: a REAL pre-D1 archive (`.openspec.yaml` with only
+      `schema: spec-driven`, no `schema_version` — e.g. the C2 archive fixture) scans exempt
 
 ## 4. Verification sweep (arc D1 exit criteria) + surface refresh
 

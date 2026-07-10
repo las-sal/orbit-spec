@@ -1,0 +1,59 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-10T14:31:32Z",
+  "change": "explicit-lifecycle-consent",
+  "final_assessment": "All 3 external findings (GPT-5 Codex, proposal iter 1: 2 CRITICAL, 1 WARNING) resolved; 0 stale/deferred/escalated. C1 (era detection false-positives, user-ratified fork option A): consent era now signaled by a persisted schema_version metadata field written at scaffold — ABSENCE is the exemption, so pre-D1 archives are exempt by construction; new 'Consent-era metadata marker' requirement, audit-drift delta rewritten (schema-name resolution explicitly rejected as the authority), design D6 revised with attribution to the external refutation, tasks 1.2/3.2 extended (incl. regression test against a real pre-D1 archive). C2 (standalone sync unimplementable, user-ratified fork option A): descoped — sync inherits containing-flow consent only; standalone sync stays under the no-chaining contract; promotion to consent-scoped explicitly deferred; the consent-scoped set = exactly the schema-declared consent gates; explore.md D-elc-7 carries a dated refinement note. W1: orbit-conventions delta gains a MODIFIED 'Internal-run JSON summary format' block (verified transformation: consent added to the canonical lifecycle example, both per-kind extension lines, and the lifecycle scenario; 0 baseline lines lost; splice seam punctuation fixed); 7th fingerprint stamped — 7/7 verified. Validates --strict.",
+  "next_recommended": "/orbit:review --as proposal --fresh explicit-lifecycle-consent — the external carried CRITICALs (now resolved); the no-new-findings confirm requires an independent pass that yields none",
+  "kind": "editorial",
+  "source": "--from-file orbit/changes/explicit-lifecycle-consent/.orbit-runs/external-proposal-2026-07-10T00-46-16Z.md",
+  "source_path": "orbit/changes/explicit-lifecycle-consent/.orbit-runs/external-proposal-2026-07-10T00-46-16Z.md",
+  "source_format": "external",
+  "external_reviewer": "GPT-5 Codex",
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "resolution_summary": { "resolved": 3, "stale": 0, "deferred": 0, "escalated": 0 },
+  "resolutions": [
+    {
+      "finding": "Era detection resolves old spec-driven changes as v3",
+      "severity": "CRITICAL",
+      "classification": "decision required",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          { "label": "A", "body": "persist schema version in per-change metadata; absence of the field = pre-consent era = exempt (no backfill)" },
+          { "label": "B", "body": "make the timestamp/capability-landed cutoff the primary path when metadata lacks a version" }
+        ],
+        "chosen": "A",
+        "discuss_invoked": false
+      },
+      "action": "Option A applied: new 'Consent-era metadata marker' requirement in orbit-lifecycle-consent (optional schema_version int, scaffold-written, absence = exempt); audit-drift delta era mechanism rewritten (marker is the authority; schema-NAME resolution explicitly rejected); design D6 revised crediting the external refutation; tasks 1.2 (metadata field + scaffold write + round-trip) and 3.2 (regression vs real pre-D1 archive) extended."
+    },
+    {
+      "finding": "Standalone sync consent is specified but has no implementation path",
+      "severity": "CRITICAL",
+      "classification": "decision required",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          { "label": "A", "body": "remove standalone sync from D1; sync only inherits archive consent; promotion deferred" },
+          { "label": "B", "body": "add explicit sync-specs/conventions/run-summary/tasks coverage for the standalone prompt and consent record" }
+        ],
+        "chosen": "A",
+        "discuss_invoked": false
+      },
+      "action": "Option A applied: Sync-inheritance bullet rewritten — standalone /orbit:sync is NOT consent-scoped (no gate, no emit, no prompt; governed by the no-chaining contract); promotion explicitly deferred; consent-scoped set = exactly the schema-declared consent gates. explore.md D-elc-7 gained a dated refinement note (2026-07-10)."
+    },
+    {
+      "finding": "Canonical run-summary examples still omit consent",
+      "severity": "WARNING",
+      "classification": "trivial fix",
+      "action": "orbit-conventions delta gains MODIFIED 'Internal-run JSON summary format' (verified transformation of the 136-line baseline block: consent in the canonical lifecycle example, workflow + lifecycle per-kind extension lines, and the lifecycle scenario THEN; 0 baseline lines unaccounted; splice punctuation fixed). Fingerprint stamped — 7/7 verified."
+    }
+  ],
+  "ripple_cascade": {
+    "applied": ["specs/orbit-lifecycle-consent/spec.md", "specs/orbit-audit-drift/spec.md", "specs/orbit-conventions/spec.md", "design.md", "tasks.md", "explore.md"],
+    "flagged_not_applied": []
+  }
+}

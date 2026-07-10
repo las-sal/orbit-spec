@@ -10,3 +10,5 @@ base_fingerprints:
     spec-driven v1 gates and cadence: sha256:f03ae91d0546721a6c3a5e7cc9aafc5315ad08844a5f85647a0541f13abee1c8
   orbit-review:
     Final assessment phrasings depend on mode: sha256:1213f00597acd2dcc7f7038056b8436bd11bfe6db18104e5339d74877ddb20e3
+  orbit-conventions:
+    Internal-run JSON summary format: sha256:fcfe129474e93c23bd82b23e02ad7583e833ff9de3be9ddace5ed25928399236

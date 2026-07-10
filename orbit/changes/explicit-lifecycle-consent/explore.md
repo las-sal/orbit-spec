@@ -101,7 +101,11 @@ nudge, not enforcement.
   **prompt-backed set = {apply, archive, bulk-archive (per change)}**. `sync` is NOT separately
   prompted: it is in practice never user-typed — it runs inside archive's Step 4 (agent-driven
   sync-specs) and **inherits the containing flow's consent**; a standalone AI-mediated sync
-  (never observed) falls back to a prompt as a baseline writer. Unifying statement for the specs:
+  (never observed) falls back to a prompt as a baseline writer. *(REFINED 2026-07-10, external
+  review iter 1: the standalone-sync prompt clause is DESCOPED — sync has no consent-marked gate
+  and no emit to record consent in; standalone sync stays under the no-chaining contract, and
+  promotion to consent-scoped is explicitly deferred. The consent-scoped set = exactly the
+  schema-declared consent gates.)* Unifying statement for the specs:
   *the engine computes "eligible" at a phase boundary; only the human supplies "go"; the consent
   prompt is the backstop when the AI reached the boundary on inferred authority* — gates and
   consent are two halves of one contract at the same two seams. Corollary for D-elc-4's wording:
