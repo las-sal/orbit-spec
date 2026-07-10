@@ -1,0 +1,59 @@
+{
+  "command": "review",
+  "timestamp": "2026-07-10T14:46:07Z",
+  "change": "explicit-lifecycle-consent",
+  "final_assessment": "1 critical issue(s) found. Fix before /orbit:apply.",
+  "next_recommended": "/orbit:address-reviews explicit-lifecycle-consent --from-file orbit/changes/explicit-lifecycle-consent/.orbit-runs/review-proposal-2026-07-10T14-46-07Z.json",
+  "kind": "editorial",
+  "mode": "proposal",
+  "iteration": 3,
+  "depth": "full",
+  "reviewer_class": "fresh",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "passes_run": ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+  "passes_skipped": [],
+  "findings_summary": {
+    "critical": 1,
+    "warning": 1,
+    "suggestion": 1,
+    "by_pass": {
+      "2": { "critical": 0, "warning": 1, "suggestion": 1 },
+      "4": { "critical": 1, "warning": 0, "suggestion": 0 }
+    }
+  },
+  "findings": [
+    {
+      "pass": "4",
+      "severity": "CRITICAL",
+      "file": "orbit/specs/orbit-onboard/spec.md",
+      "line": 56,
+      "title": "Un-delta'd orbit-onboard baseline pins 'three execution disciplines' — contradicted by the fourth (no-chaining) discipline this change adds",
+      "recommendation": "The baseline scenario 'Enumerates orbit-distinctive layers' (Identity statement section) requires onboard's prose to name 'three execution disciplines (read-before-reference / change completeness / pushback)'. This change's orbit-conventions ADDED requirement makes the no-chaining contract a discipline 'echoed in every generated workflow body (the self-contained-disciplines pattern)' and tasks.md 2.5 installs it as 'the FOURTH disciplines entry' in all 15 bodies including onboard's. Post-apply the regenerated onboard body either keeps 'three' (factually wrong, contradicting the conventions echo) or says 'four' (violating its own un-delta'd baseline scenario). Same class as every prior CRITICAL in this cadence (un-delta'd baseline text contradicting new behavior); repo-wide baseline grep confirms orbit-onboard/spec.md:56 is the only remaining 'three execution disciplines' carrier. Add a specs/orbit-onboard/spec.md MODIFIED block for 'Identity statement section' updating the enumeration to four execution disciplines (read-before-reference / change completeness / pushback / no-chaining), and extend task 2.4 (or add a task) to cover the onboard identity-prose count alongside the stock-phrasing relabel; update proposal.md's capability list (6 -> 7 modified, 13 -> 14 stays correct for total count only if worded per-capability)."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "file": "orbit/changes/explicit-lifecycle-consent/proposal.md",
+      "line": 55,
+      "title": "proposal.md orbit-conventions bullet omits the MODIFIED 'Internal-run JSON summary format' block added by the external-W1 resolution",
+      "recommendation": "The Modified Capabilities bullet for orbit-conventions describes only the ADDED no-chaining requirement, but the delta (specs/orbit-conventions/spec.md) also carries a MODIFIED 'Internal-run JSON summary format' block (consent in the canonical lifecycle example, workflow + lifecycle per-kind extension lines, lifecycle scenario) — the W1 ripple cascade (address-reviews-2026-07-10T14-31-32Z.json) touched specs/design/tasks/explore but not proposal.md. Extend the bullet: '...the no-chaining contract (...); MODIFIED Internal-run JSON summary format — consent field added to the per-kind extension lines and the canonical lifecycle example.'"
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "file": "orbit/changes/explicit-lifecycle-consent/proposal.md",
+      "line": 53,
+      "title": "proposal.md says 'the position-readout / single-voiced canonical-next requirements adopt eligibility phrasing' (plural) but only the single-voiced requirement is delta'd",
+      "recommendation": "The orbit-engine-gates delta modifies 'Single-voiced canonical-next computation' only; the baseline 'Gate-aware status and instructions with position readout' requirement is untouched (defensibly — it pins no label; the eligibility rule in the single-voiced block already covers status output and instructions rendering). Reword the bullet to name the one modified requirement, e.g. 'the single-voiced canonical-next requirement adopts eligibility phrasing (Ready when you are:) and surfaces the consent marker', so an implementer does not hunt for a nonexistent position-readout delta."
+    }
+  ],
+  "stale_suppressed": [],
+  "iteration_note": "Iteration 3 (fresh, independent slot). All 12 prior findings (iter-1 in-context: 6; iter-2 fresh: 3; external iter-1 GPT-5 Codex: 3) verified resolved and landed: 'Consent-era metadata marker' requirement present with absence-as-exempt semantics and the audit-drift delta names the marker (not schema-name resolution) as authority; standalone sync descoped with the dated D-elc-7 refinement in explore.md; conventions MODIFIED block carries consent in the lifecycle example and both per-kind extension lines. Programmatic containment diff of all 7 MODIFIED blocks vs baseline: 0 lost lines (all removals pair with intended transforms — Next:->Ready-when-you-are label swaps, ' — user-invoked' appends, consent insertions, version 2->3, splice punctuation). validate --strict passes; fingerprint 7/7 verified. 0 findings repeat from prior runs; 3 new this run (1 CRITICAL / 1 WARNING / 1 SUGGESTION), the CRITICAL in the same un-delta'd-baseline class as all prior CRITICALs. The no-new-findings confirm is NOT met by this pass."
+}
