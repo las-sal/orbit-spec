@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-07-10T16:18:02Z",
+  "change": "explicit-lifecycle-consent",
+  "final_assessment": "External review prompt packaged for explicit-lifecycle-consent (iter 2, mode proposal); awaiting findings. This external targets the no-new-findings confirm: all 18 findings from 4 prior passes (in-context, fresh x2, external x1) are resolved; if this pass yields none, the independent slot converges and only the trailing in-context confirm remains.",
+  "next_recommended": "Paste orbit/changes/explicit-lifecycle-consent/.orbit-runs/external-prompt-proposal-2026-07-10T16-18-01Z.md into the target AI (pull https://github.com/las-sal/orbit-spec.git branch d-arc; a DIFFERENT model than iter 1's GPT-5 Codex is recommended for diversity), save the response as orbit/changes/explicit-lifecycle-consent/.orbit-runs/external-proposal-<TS>.md, then /orbit:address-reviews explicit-lifecycle-consent --from-file <that path>",
+  "kind": "editorial",
+  "mode": "proposal",
+  "reviewer_class": "external",
+  "prompt_path": "orbit/changes/explicit-lifecycle-consent/.orbit-runs/external-prompt-proposal-2026-07-10T16-18-01Z.md",
+  "target": null,
+  "awaiting_findings": true
+}
