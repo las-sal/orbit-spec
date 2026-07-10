@@ -50,17 +50,21 @@ lifecycle transition** — apply (requirements→code, the flow's biggest commit
 ### Modified Capabilities
 
 - `orbit-engine-gates`: gate declaration vocabulary gains the optional `consent` attribute
-  (parsed, validated, surfaced); the position-readout / single-voiced canonical-next requirements
-  adopt eligibility phrasing (`Ready when you are:`) and surface the consent marker.
+  (parsed, validated, surfaced); the single-voiced canonical-next requirement adopts eligibility
+  phrasing (`Ready when you are:`) and surfaces the consent marker; the `spec-driven v1 gates and
+  cadence` requirement bumps to version 3 with both reviewed gates consent-marked.
 - `orbit-conventions`: ADDED requirement — the no-chaining contract (one command per explicit
   user request; recommend-never-invoke; blanket-delegation scope limited to work WITHIN the
-  requested command).
+  requested command) — plus a MODIFIED `Internal-run JSON summary format` block: the canonical
+  lifecycle example and both per-kind extension lines gain the `consent` field.
 - `orbit-archive-modifications`: the archive run summary gains the `consent` field (scenario +
   shipped `archive-summary-schema.md` reference updated); the archive body gains the
   AI-mediated-entry consent prompt step.
 - `orbit-run-summary-emit`: the apply emit shape gains the `consent` field scenario.
 - `orbit-audit-drift`: archive-coherence category gains the missing-consent-record check
   (WARNING; pre-consent-era emits exempt via schema-version era detection).
+- `orbit-onboard`: the identity-statement enumeration updates from three execution disciplines
+  to four (no-chaining joins read-before-reference / change completeness / pushback).
 - `orbit-review`: the exact stock final-assessment phrasings (8+ scenarios across both modes)
   re-labeled from imperative `Next:` to `Ready when you are:` with the ` — user-invoked` marker
   on apply/archive recommendations — the review reports are recommendation surfaces and were the
@@ -76,7 +80,7 @@ lifecycle transition** — apply (requirements→code, the flow's biggest commit
   `archive-change.ts`, `bulk-archive-change.ts` (consent prompt steps + emit field docs,
   including the archive body's `ARCHIVE_SUMMARY_SCHEMA_REFERENCE` literal); `audit-drift.ts`
   (tripwire check); ALL 15 bodies (no-chaining discipline echo + any quoted `Next:` phrasing).
-- **Baseline specs**: 1 new + 6 delta'd capabilities (13 → 14).
+- **Baseline specs**: 1 new + 7 delta'd capabilities (13 → 14).
 - **Tests**: gate-schema parsing, eligibility-phrasing fidelity (grep: no imperative `Next:`
   survives), emit-schema docs, template parity hash re-pins, and the D1 exit-criteria checks
   (zero-prompt user path; tripwire demonstrably fires).

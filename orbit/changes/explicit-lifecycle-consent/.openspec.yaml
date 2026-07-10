@@ -12,3 +12,5 @@ base_fingerprints:
     Final assessment phrasings depend on mode: sha256:1213f00597acd2dcc7f7038056b8436bd11bfe6db18104e5339d74877ddb20e3
   orbit-conventions:
     Internal-run JSON summary format: sha256:fcfe129474e93c23bd82b23e02ad7583e833ff9de3be9ddace5ed25928399236
+  orbit-onboard:
+    Identity statement section: sha256:b9075ca5ffc70dd8a559891b20983acb85d40bacdb24c93f2b0823f23ab18d98

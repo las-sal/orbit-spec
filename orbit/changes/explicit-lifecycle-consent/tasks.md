@@ -36,7 +36,8 @@ built: every lifecycle transition is user-invoked.
 - [ ] 2.4 `review.ts` + `onboard.ts` (line ~78 quotes the stock phrasings; `apply-change.ts`'s
       literal `Next:` completion line is covered by 2.5): final-assessment tables re-labeled
       to `Ready when you are:` with the ` — user-invoked` marker on apply/archive
-      recommendations (per the orbit-review spec delta)
+      recommendations (per the orbit-review spec delta); onboard's identity enumeration updates
+      to FOUR execution disciplines (per the orbit-onboard spec delta)
 - [ ] 2.5 All 15 bodies: no-chaining contract as the FOURTH disciplines entry (echo of the new
       `orbit-conventions` requirement); completion sections render the engine readout verbatim
       (subtraction per design D7: remove hand-written next-step prose variants + any quoted
