@@ -112,7 +112,27 @@ stage-state lines + status log — do NOT trust any position stated here** (a ha
 in this file went stale within minutes on 2026-07-09; until D2 computes state, the arc doc is
 the single manual copy and `orbit/explore/` shows what's actively being thought about). Every
 lifecycle transition in this arc is USER-invoked: recommend, never invoke (arc rules of
-engagement).
+engagement — now also a SHIPPED contract, see D1 below).
+
+**Stage D1 (explicit-lifecycle-consent) is COMPLETE and ARCHIVED**
+(`orbit/changes/archive/2026-07-13-explicit-lifecycle-consent/`): the engine is **consent-aware**.
+The gate vocabulary gains optional `consent: user-invoked` (spec-driven is **version 3**, both
+reviewed gates consent-marked); readouts are eligibility-framed (`Ready when you are:`, with the
+` — user-invoked` marker on lifecycle phase entries; imperative `Next:` is prohibited and
+grep-tested); apply/archive/bulk-archive bodies fire provenance-conditioned consent prompts
+(user-typed = zero prompts; AI-mediated = AskUserQuestion before any write; uncertain =
+AI-mediated); lifecycle emits carry `consent: "user-invoked" | "prompted"`; consent-era detection
+is the three-tier per-change rule (`schema_version` ≥ 3 / migrate-on-touch `consent_era_from` /
+neither = exempt — metadata markers only, no timestamp fallback) with the audit-drift tripwire as
+the named re-entry trigger for the deferred harness hooks (R-d-2). The no-chaining contract is the
+FOURTH execution discipline (below), echoed in all 15 bodies. Baseline capabilities **13 → 14**
+(`orbit-lifecycle-consent` ADDED). The cycle: 6-pass proposal review, apply via a recorded
+`gate_overridden` proceed-anyway (the change's own thesis operating), then a full system cadence —
+in-context → **external (GPT-5 Codex**, 0 CRITICAL, 3 findings resolved) → fresh (6 findings
+resolved, incl. the single-voiced fall-through at the archive seam) → in-context confirm
+(CONVERGED). **1670 tests green.** This archive itself ran under the shipped contract:
+user-typed, zero consent prompts, gate PASSED, fingerprints 8/8, `consent: "user-invoked"`
+recorded.
 
 ## Source of truth for the plan
 
@@ -155,6 +175,11 @@ paths are kept out of bodies.
   artifacts before being called done; sweep for residue AND new bugs after mechanical edits.
 - **Pushback** — verify each flagged issue against current state before acting; report and suppress
   stale findings with evidence rather than re-fixing already-fixed state.
+- **No-chaining** (D1, `orbit-conventions`) — invoke at most the orbit workflow commands the user's
+  message explicitly requests; recommend, never invoke. Completing a command ENDS the turn at the
+  position readout + the engine's eligibility line (`Ready when you are:`); blanket delegation covers
+  work WITHIN the requested command, never the next one — gate `passed` means *eligible*, not
+  *commanded*.
 
 ## When in doubt
 

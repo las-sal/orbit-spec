@@ -79,6 +79,11 @@ The system SHALL write a JSON summary to `orbit/changes/archive/<YYYY-MM-DD>-<ch
 - **WHEN** the archive proceeds past requirements whose fingerprint status was `unverified` (no base recorded)
 - **THEN** the archive run summary additionally includes `fingerprints_unverified: [{capability, requirement}]` — one entry per unverified requirement; the field is absent when every touched requirement was verified
 
+#### Scenario: Consent recorded in the summary
+
+- **WHEN** the archive completes (post-consent-capability)
+- **THEN** the archive run summary includes `consent: "user-invoked" | "prompted"` per `orbit-lifecycle-consent`'s emit-field requirement — `user-invoked` for a user-typed invocation, `prompted` when the AI-mediated-entry consent prompt fired and the user proceeded; there is no third value (a consent abort writes no summary). Distinct from `user_decision` (audit outcome), `gate_overridden` (cadence override), and the fingerprint fields (content guard).
+
 ### Requirement: `.orbit-runs/` directory moves with the change
 
 The system SHALL move the change's `.orbit-runs/` directory along with the rest of the change content into the archive.
@@ -152,7 +157,9 @@ residue that path renaming alone does not fix — satisfying the deferral record
   `review-system` gate, per `orbit-engine-gates`' override contract), plus the conditional
   fingerprint fields (`fingerprint_overridden: [{capability, requirement, base_hash, live_hash}]`
   and `fingerprints_unverified: [{capability, requirement}]`; present only when the corresponding
-  fingerprint outcome occurred, per this capability's `Archive run summary written` requirement)
+  fingerprint outcome occurred, per this capability's `Archive run summary written` requirement),
+  plus the `consent` field (`"user-invoked" | "prompted"`; present on every post-capability
+  archive emit, per `orbit-lifecycle-consent`'s emit-field requirement)
   — and covers the field list in this capability's own `Archive run summary written` requirement
 
 #### Scenario: Schema shapes match the baselines, not the overlay source
@@ -226,3 +233,29 @@ workflow SHALL run the same check and prompt per change before that change's syn
 - **WHEN** every touched requirement reports `verified`
 - **THEN** no fingerprint prompt fires and no fingerprint fields appear in the run summary
 
+### Requirement: Consent prompt on AI-mediated archive entry
+
+The archive workflow SHALL apply `orbit-lifecycle-consent`'s provenance rule at command entry:
+provenance is CLASSIFIED at entry (a fact about the triggering turn), and on AI-mediated arrival
+the consent AskUserQuestion fires AFTER read-only discovery (change selection; the read-only look
+at the change's `specs/` that supplies the write preview) and BEFORE any of the command's writes
+or anomaly prompts (before the Step 3.4 gate prompt — consent asks "should we be here at all";
+the anomaly prompts ask "is the state sound"). The prompt content: position readout + what the
+archive will write (N deltas across M capabilities synced to baseline, change moved to archive —
+Proceed / Abort). A user-typed `/orbit:archive` runs with no consent prompt. Proceeding records
+`consent: "prompted"` in the archive run summary; an abort writes no summary. The bulk-archive
+workflow applies the same rule per change (a user-typed `/orbit:bulk-archive` whose flow confirms
+the batch is user-invoked for the confirmed set).
+
+#### Scenario: AI-mediated entry prompts first
+
+- **WHEN** the archive workflow is reached via delegation/inference (no same-turn user
+  invocation)
+- **THEN** the consent prompt fires before the gate, fingerprint, and audit steps; Abort leaves
+  no writes and no summary
+
+#### Scenario: User-typed entry skips the consent prompt
+
+- **WHEN** the user types `/orbit:archive <name>`
+- **THEN** no consent prompt fires; the flow proceeds directly to Step 1.5 onward, and the run
+  summary records `consent: "user-invoked"`

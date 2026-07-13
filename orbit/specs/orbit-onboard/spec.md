@@ -53,7 +53,7 @@ Section 2 of the body SHALL state what orbit IS and enumerate its distinctive la
 #### Scenario: Enumerates orbit-distinctive layers
 
 - **WHEN** the Identity section is read
-- **THEN** the prose names the distinctive layers concretely: editorial review (`/orbit:review`, `/orbit:review-external`, `/orbit:address-reviews`), drift audit (`/orbit:audit-drift`), capture (lenses — `orbit/lenses/perspectives.md`, `orbit/lenses/critical-paths.md`), JSON run-summary emission, three execution disciplines (read-before-reference / change completeness / pushback)
+- **THEN** the prose names the distinctive layers concretely: editorial review (`/orbit:review`, `/orbit:review-external`, `/orbit:address-reviews`), drift audit (`/orbit:audit-drift`), capture (lenses — `orbit/lenses/perspectives.md`, `orbit/lenses/critical-paths.md`), JSON run-summary emission, four execution disciplines (read-before-reference / change completeness / pushback / no-chaining)
 
 #### Scenario: No augmentation / overlay language
 

@@ -82,7 +82,7 @@ disk — per R-d-1, state is never hand-authored once the engine owns it):
 
 ### Stage D1 — explicit-lifecycle-consent
 
-*State (manual until D2): **in-change, APPLIED** — `orbit/changes/explicit-lifecycle-consent/`; all 16 tasks complete (2026-07-13). The user invoked /orbit:apply and chose proceed-anyway at the review-proposal inflection prompt (gate formally UNPASSED on the severity-blind confirm; `gate_overridden` recorded in the apply emit — the change's own thesis operating). Shipped: spec-driven v3 (consent on both reviewed gates), engine parse/surface + `Ready when you are:` phrasing with the ` — user-invoked` marker, consent steps in apply/archive/bulk-archive bodies (migrate-on-touch `consent_era_from` stamp), no-chaining as the fourth discipline in all 15 bodies, the audit-drift three-tier tripwire, 1668 tests green. Next seam: system review cadence — user-invoked.*
+*State (manual until D2): **COMPLETE — ARCHIVED 2026-07-13** (`orbit/changes/archive/2026-07-13-explicit-lifecycle-consent/`). All three exit criteria met: (1) lifecycle emits carry `consent` and the tripwire demonstrably flags absence (on-disk fixture harness incl. the at-stamp straddler boundary; this change is itself the covered straddler specimen); (2) user-typed apply AND archive both ran with zero consent prompts (live-proven in the delivery cycle itself); (3) no imperative `Next:` in engine output or generated bodies (grep-tested at engine, template, and on-disk-surface levels). System cadence converged: in-context → external (GPT-5 Codex, 0 CRITICAL) → fresh (+6 findings incl. the single-voiced fall-through at the archive seam) → in-context confirm. Baseline 13 → 14; 1670 tests green.*
 
 `orbit/changes/explicit-lifecycle-consent/` — the consent/arbiter core (explore.md rides inside the change as the decision record).
 AskUserQuestion as the only harness-enforceable primitive (D-elc-1); provenance-conditioned
@@ -417,3 +417,18 @@ render are what gets cut (everything else).
   1668 tests green vs 1608 baseline; 8/8 fingerprints; local surface regenerated). Deferred to
   archive time by design: CLAUDE.md's execution-disciplines section gains the fourth discipline
   when the change's deltas sync to baseline. Next seam: `/orbit:review --as system` — user-invoked.
+- **2026-07-13** — **D1 COMPLETE and ARCHIVED** (user-invoked archive; the full system cadence
+  before it: in-context clean → external GPT-5 Codex (1 W + 2 S, resolved — delta era-exemption
+  text tightened to require absence of BOTH markers; ordering invariant added to bodies; on-disk
+  tripwire fixture harness) → fresh independent (3 W + 3 S, resolved — four-disciplines residue in
+  review --parallel; delta placement text aligned to the ordering invariant; upstream
+  suggest-archive bullet replaced; single-voiced fall-through so status renders
+  `/orbit:archive <name> — user-invoked` at the all-passed seam instead of nothing; all_done
+  instruction defers to the gate graph; this doc's stale propose clause) → in-context confirm
+  CONVERGED. Sync: baseline 13 → 14 (orbit-lifecycle-consent NEW; 9 ADDED + 8 MODIFIED
+  requirements, containment-verified). The archive itself exercised the shipped contract
+  end-to-end: user-typed → zero consent prompts, gate PASSED, fingerprints 8/8, summary records
+  `consent: "user-invoked"`. CLAUDE.md gained the fourth discipline + the D1 completion entry.
+  Cycle lesson (already ledgered 2026-07-13 above) stands for D4: the external + fresh
+  independent slots again out-caught the in-context passes (9 real findings vs 0). **Next stage
+  per Sequencing: D2 (architect) — its explore is the user's to invoke.**

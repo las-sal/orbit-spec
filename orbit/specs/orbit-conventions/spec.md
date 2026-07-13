@@ -199,9 +199,9 @@ kind             enum         "workflow" | "editorial" | "lifecycle"
 
 Per-kind extensions:
 
-- **`kind: "workflow"`** — emitted by `explore`, `propose`, `new`, `continue`, `ff`, `apply`, `verify`. Per-command extensions are defined in the `orbit-run-summary-emit` capability (e.g., `apply.chunk_complete`, `verify.verdict`, `explore.decisions_captured`).
+- **`kind: "workflow"`** — emitted by `explore`, `propose`, `new`, `continue`, `ff`, `apply`, `verify`. Per-command extensions are defined in the `orbit-run-summary-emit` capability (e.g., `apply.chunk_complete`, `verify.verdict`, `explore.decisions_captured`). Consent-era `apply` emits additionally carry `consent: "user-invoked" | "prompted"` (per `orbit-lifecycle-consent`).
 - **`kind: "editorial"`** — emitted by `review`, `address-reviews`, `audit-drift`, `review-external`. Per-command extensions include: `iteration` (when applicable to the command — e.g., review iter-N, address-reviews iter-N), `findings_summary` (counts by severity; included when findings are present — i.e., review/address-reviews/audit-drift completion emits; review-external at T0 emits before external findings return and SHALL omit this field), `finding_titles` (array of brief titles; included with `findings_summary`, omitted in the same cases), plus command-specific fields defined in per-skill schema references (`references/run-summary-schema.md`, shipped alongside the generated skill).
-- **`kind: "lifecycle"`** — emitted by `archive` only. Per-command extensions include: `archive_path`, `audit`, `sync_specs` (reports what the archive flow's spec-sync step did, mirroring upstream's archive summary), `unresolved_markers`, `user_decision`, plus other fields defined in the archive skill.
+- **`kind: "lifecycle"`** — emitted by `archive` only. Per-command extensions include: `archive_path`, `audit`, `sync_specs` (reports what the archive flow's spec-sync step did, mirroring upstream's archive summary), `unresolved_markers`, `user_decision`, plus other fields defined in the archive skill. Consent-era emits (per `orbit-lifecycle-consent`) additionally carry the flat `consent: "user-invoked" | "prompted"` field.
 
 **Canonical examples** (one per kind, illustrating spine + per-kind extensions):
 
@@ -221,7 +221,8 @@ Workflow-kind example — `apply-2026-05-21T13-34-12Z.json` written at chunk 2 c
   "chunk": "2 of 5",
   "chunk_name": "inventory+parsing",
   "chunk_complete": true,
-  "tasks_completed_this_session": 16
+  "tasks_completed_this_session": 16,
+  "consent": "user-invoked"
 }
 ```
 
@@ -276,6 +277,7 @@ Lifecycle-kind example — `archive-2026-05-20T16-31-59Z.json` written after `/o
   },
   "unresolved_markers": [],
   "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
   "warnings": []
 }
 ```
@@ -303,7 +305,7 @@ Lifecycle-kind example — `archive-2026-05-20T16-31-59Z.json` written after `/o
 #### Scenario: Lifecycle command emit shape
 
 - **WHEN** `/orbit:archive` writes its JSON
-- **THEN** `kind` equals `"lifecycle"`; per-command extensions include `archive_path`, `audit`, `sync_specs`, `unresolved_markers`, `user_decision` per the archive skill's emit
+- **THEN** `kind` equals `"lifecycle"`; per-command extensions include `archive_path`, `audit`, `sync_specs`, `unresolved_markers`, `user_decision` per the archive skill's emit. Consent-era archive emits also include `consent`.
 
 #### Scenario: Downstream status readers parse next_recommended uniformly across kinds
 
@@ -770,3 +772,35 @@ The three modes:
 - **WHEN** a change is "substantial" by the README's guidance (would benefit from external review per the framework) BUT the user chooses to archive without running external
 - **THEN** orbit's archive flow proceeds via the inflection-prompt override (per `orbit-engine-gates`): the `review-system` gate computes as unpassed and the archive flow fires the address / proceed-anyway / abort prompt; choosing proceed records `gate_overridden` in the archive run summary. The gate NEVER refuses the archive — apply-parity enforcement. orbit's role is to surface the engine-computed recommendation and record the override, not to refuse archive of changes that skip the recommendation.
 
+### Requirement: No-chaining contract
+
+The AI SHALL invoke at most the orbit workflow commands the user's message explicitly requests —
+one command per explicit user request; the AI recommends, never invokes. Completing a command
+ENDS the turn at the position readout and the engine's canonical-next line (eligibility-framed,
+per `orbit-engine-gates`); the AI SHALL NOT invoke the next orbit command — any `/orbit:*`
+workflow, review iterations included — unless the user's message requests it. Blanket delegation
+("follow the cadence", "take it through review") covers work WITHIN each explicitly requested
+command (the passes of one review, the tasks of one apply), never the next command; gate `passed`
+means *eligible*, not *commanded*. This contract is echoed in every generated workflow body
+(the self-contained-disciplines pattern) and is the behavior layer the consent prompts
+(`orbit-lifecycle-consent`) backstop at the consent-marked seams.
+
+#### Scenario: Command completion ends the turn
+
+- **WHEN** an orbit workflow command completes and a next command is eligible
+- **THEN** the AI renders the position readout + the engine's canonical-next line and stops;
+  it does not invoke the eligible command
+
+#### Scenario: Blanket delegation does not cross commands
+
+- **WHEN** the user has said "run the review cadence" and one review command completes with the
+  gate still unpassed
+- **THEN** the AI reports position and recommends; the next review invocation is the user's
+  (review-cycle COUNT is the user's call)
+
+#### Scenario: Explicit multi-command requests are honored as scoped
+
+- **WHEN** the user's message explicitly names multiple commands ("run a fresh review, then
+  address its findings")
+- **THEN** exactly those named commands are run — the request defines the scope; nothing beyond
+  it is invoked

@@ -18,7 +18,8 @@ scope: artifact ids whose change invalidates a pass; `reviewed` kind; defaults t
 `cadence` (ordered slot list, `reviewed` kind — see the cadence-entry vocabulary below), `confirm`
 (the independent-confirmation predicate, `reviewed` kind: `no-new-findings` | `findings-resolved` —
 a CLOSED set; selects which clause-(c) rule the gate uses; defaults to `no-new-findings`), `before`
-(the target this gate blocks — see legal `before:` targets below), and optional `instruction`.
+(the target this gate blocks — see legal `before:` targets below), optional `consent` (see the
+consent vocabulary below), and optional `instruction`.
 There is NO generic pass-condition plugin mechanism — the two kinds are the extension surface.
 
 **Cadence-entry vocabulary** (defined once here; referenced by clause (a) of the reviewed-gate
@@ -34,6 +35,16 @@ NOT model as an `instructions` target — a gate with `before: archive` is queri
 archive workflow's gate surface (`orbit status --change <name> --json`, which carries `gates[]` and
 `next_command`), never through `orbit instructions archive`.
 
+**Consent vocabulary** (D-arc Stage D1, per `orbit-lifecycle-consent`): `consent` is an optional gate
+attribute with the single legal value `user-invoked` (a CLOSED set of one for v1; any other value
+fails schema validation). It declares that entry into the gate's `before:` phase requires an
+explicit user invocation — the engine PARSES and SURFACES the marker (in `gates[]` JSON and the
+readouts per the single-voiced requirement below); the consuming workflow bodies implement the
+consent prompt per `orbit-lifecycle-consent`'s provenance rule. The attribute changes NO gate
+pass-condition computation — consent is orthogonal to gate state (a gate can be `passed` while
+its phase still awaits the user's invocation). `spec-driven` sets `consent: user-invoked` on
+`review-proposal` (before: apply) and `review-system` (before: archive).
+
 #### Scenario: Valid gates list parses
 
 - **WHEN** a schema YAML declares `gates:` entries with valid ids, kinds, and references
@@ -44,6 +55,19 @@ archive workflow's gate surface (`orbit status --change <name> --json`, which ca
 
 - **WHEN** a schema YAML declares a gate with `kind: scored` (or any value outside the closed set)
 - **THEN** schema validation fails with an error naming the gate id and the allowed kinds
+
+#### Scenario: Consent attribute parses, surfaces, and rejects unknown values
+
+- **WHEN** a schema YAML declares `consent: user-invoked` on a gate
+- **THEN** `parseSchema` accepts it and `orbit status --json` carries the marker on that gate's
+  `gates[]` entry; a schema declaring any other consent value fails validation naming the gate id
+  and the single legal value
+
+#### Scenario: Consent does not alter gate computation
+
+- **WHEN** a gate with `consent: user-invoked` meets its pass condition
+- **THEN** its computed state is `passed` exactly as without the attribute — eligibility and
+  consent are independent axes
 
 ### Requirement: Upstream `apply:` block normalized as a tracked gate
 
@@ -187,11 +211,11 @@ otherwise `in-context`. Absence of the field never fails gate computation.
 
 ### Requirement: spec-driven v1 gates and cadence
 
-The shipped `spec-driven` schema (version 2) SHALL declare: `review-proposal`
+The shipped `spec-driven` schema (version 3) SHALL declare: `review-proposal`
 (`kind: reviewed`, requires/inputs the four artifacts, `cadence: [independent, in-context]`,
-`confirm: no-new-findings`, `before: apply`), `apply` (`kind: tracked`, today's block normalized),
+`confirm: no-new-findings`, `before: apply`, `consent: user-invoked`), `apply` (`kind: tracked`, today's block normalized),
 and `review-system` (`kind: reviewed`, `requires: [apply]`,
-`cadence: [in-context, external, in-context]`, `confirm: findings-resolved`, `before: archive`).
+`cadence: [in-context, external, in-context]`, `confirm: findings-resolved`, `before: archive`, `consent: user-invoked`).
 `independent` in a cadence is the meta-class satisfiable by either `fresh` or `external` (per the
 cadence-entry vocabulary). The proposal gate's `no-new-findings` confirm matches its repeat rule
 (the independent+address pair repeats while the independent pass yields new findings); the system
@@ -209,6 +233,13 @@ the trailing system confirm — it surfaces the gate as still needing its in-con
 - **WHEN** a future revision changes the system cadence
 - **THEN** the change is an edit to `schemas/spec-driven/schema.yaml` with a version bump; no
   engine code changes
+
+#### Scenario: v3 declares the consent-marked seams
+
+- **WHEN** the shipped `spec-driven` schema (version 3) is parsed
+- **THEN** both reviewed gates carry `consent: user-invoked` (per the consent vocabulary in the
+  gate-declaration requirement), and a v2-era schema without the attribute parses and behaves
+  exactly as before the bump
 
 ### Requirement: Gate-aware status and instructions with position readout
 
@@ -266,11 +297,27 @@ payloads, and the workflow handoffs that render them) SHALL present only this ca
 no advertised alternatives, no skip paths, and no bare command names without arguments. Skills
 render the engine-computed command verbatim.
 
+**Eligibility phrasing (D-arc Stage D1, D-elc-4)**: the canonical-next command SHALL be rendered under
+an eligibility-framed label — `Ready when you are:` — never an imperative label (`Next:` and
+equivalents are prohibited on every recommendation surface: `orbit status` output,
+`instructions` payload rendering, and generated workflow bodies that quote the readout). When the
+canonical-next command's phase entry is consent-marked (`consent: user-invoked` on the gate whose
+`before:` is that phase), the rendered line SHALL append the marker ` — user-invoked`
+(e.g. `Ready when you are: /orbit:apply <name> — user-invoked`). Rationale: words are the API
+when the consumer is a model; an imperative label reads as an instruction to execute. Emit FIELD
+names (`next_recommended`) are unchanged — display wording only.
+
 #### Scenario: One command, fully specified
 
 - **WHEN** any recommendation surface renders the next step
 - **THEN** it is a single complete invocation; phrasings like "run review-external next" (no
   arguments) or "or proceed directly to archive" (advertised skip) do not appear
+
+#### Scenario: Eligibility label, never imperative
+
+- **WHEN** `orbit status --change <name>` renders the canonical next command
+- **THEN** the label is `Ready when you are:` (with ` — user-invoked` appended for
+  consent-marked phase entries); no recommendation surface renders an imperative `Next:` label
 
 ### Requirement: Inflection-prompt override contract
 
