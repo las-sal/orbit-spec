@@ -61,13 +61,13 @@ built: every lifecycle transition is user-invoked.
 
 ## 4. Verification sweep (arc D1 exit criteria) + surface refresh
 
-- [ ] 4.1 Exit-criterion greps as tests: no `Next:` in engine output or generated bodies;
+- [x] 4.1 Exit-criterion greps as tests: no `Next:` in engine output or generated bodies;
       user-typed path zero-prompt assertion (body text: prompt instruction is provenance-gated)
-- [ ] 4.2 Full suite green (baseline 1608 + new coverage);
+- [x] 4.2 Full suite green (baseline 1608 + new coverage);
       `node bin/orbit.js validate explicit-lifecycle-consent --strict` passes;
       `orbit fingerprint explicit-lifecycle-consent --check` all verified
-- [ ] 4.3 `npm run build && node bin/orbit.js update --force` — regenerate the local `.claude/`
+- [x] 4.3 `npm run build && node bin/orbit.js update --force` — regenerate the local `.claude/`
       surface; spot-check one regenerated SKILL.md for the fourth discipline + consent step
-- [ ] 4.4 Sync the D-arc doc (R-d-7): D1 state → in-change complete; status log entry. CLAUDE.md
+- [x] 4.4 Sync the D-arc doc (R-d-7): D1 state → in-change complete; status log entry. CLAUDE.md
       archive-time note: the execution-disciplines section gains the fourth discipline
       (no-chaining) when this change archives

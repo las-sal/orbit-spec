@@ -82,7 +82,7 @@ disk — per R-d-1, state is never hand-authored once the engine owns it):
 
 ### Stage D1 — explicit-lifecycle-consent
 
-*State (manual until D2): **in-change** — `orbit/changes/explicit-lifecycle-consent/`; proposal review cycle ran 6 passes (in-context, fresh ×2, external GPT-5 Codex ×2 + the in-context origin), 21 findings all resolved; gate review-proposal formally UNPASSED (severity-blind no-new-findings confirm); apply is the user's call via the inflection prompt — the change's own thesis operating.*
+*State (manual until D2): **in-change, APPLIED** — `orbit/changes/explicit-lifecycle-consent/`; all 16 tasks complete (2026-07-13). The user invoked /orbit:apply and chose proceed-anyway at the review-proposal inflection prompt (gate formally UNPASSED on the severity-blind confirm; `gate_overridden` recorded in the apply emit — the change's own thesis operating). Shipped: spec-driven v3 (consent on both reviewed gates), engine parse/surface + `Ready when you are:` phrasing with the ` — user-invoked` marker, consent steps in apply/archive/bulk-archive bodies (migrate-on-touch `consent_era_from` stamp), no-chaining as the fourth discipline in all 15 bodies, the audit-drift three-tier tripwire, 1668 tests green. Next seam: system review cadence — user-invoked.*
 
 `orbit/changes/explicit-lifecycle-consent/` — the consent/arbiter core (explore.md rides inside the change as the decision record).
 AskUserQuestion as the only harness-enforceable primitive (D-elc-1); provenance-conditioned
@@ -404,3 +404,15 @@ render are what gets cut (everything else).
   for standing recommendations, boundary residency sweep piggybacking the emit trigger, emit
   attestation field). The format layer is PRACTICED from today in all explores/architecture docs,
   ahead of D5 spec'ing it.
+- **2026-07-13** — **D1 APPLIED** (user-invoked /orbit:apply; proceed-anyway at the
+  review-proposal inflection prompt, `gate_overridden` recorded — the first live exercise of the
+  C1 override trail on this repo's own flow). Four groups landed in three commits: engine
+  (consent vocabulary, spec-driven v3, `schema_version`/`consent_era_from` metadata, eligibility
+  phrasing incl. the ` — user-invoked` marker in canonical-next), bodies (consent steps at the
+  apply/archive/bulk seams; no-chaining echoed as the fourth discipline in all 15 bodies —
+  sync-specs gained its first orbit layer; review stock phrasings re-labeled), tripwire
+  (audit-drift Cat-4 three-tier check + tests incl. the real C1/C2 archives scanning exempt),
+  verification (exit-criterion greps live as tests: engine + templates + on-disk surface;
+  1668 tests green vs 1608 baseline; 8/8 fingerprints; local surface regenerated). Deferred to
+  archive time by design: CLAUDE.md's execution-disciplines section gains the fourth discipline
+  when the change's deltas sync to baseline. Next seam: `/orbit:review --as system` — user-invoked.
