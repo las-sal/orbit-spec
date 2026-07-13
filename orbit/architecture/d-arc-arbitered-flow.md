@@ -82,7 +82,7 @@ disk — per R-d-1, state is never hand-authored once the engine owns it):
 
 ### Stage D1 — explicit-lifecycle-consent
 
-*State (manual until D2): **in-change** — `orbit/changes/explicit-lifecycle-consent/` (proposed 2026-07-09; proposal review cycle next).*
+*State (manual until D2): **in-change** — `orbit/changes/explicit-lifecycle-consent/`; proposal review cycle ran 6 passes (in-context, fresh ×2, external GPT-5 Codex ×2 + the in-context origin), 21 findings all resolved; gate review-proposal formally UNPASSED (severity-blind no-new-findings confirm); apply is the user's call via the inflection prompt — the change's own thesis operating.*
 
 `orbit/changes/explicit-lifecycle-consent/` — the consent/arbiter core (explore.md rides inside the change as the decision record).
 AskUserQuestion as the only harness-enforceable primitive (D-elc-1); provenance-conditioned
@@ -384,6 +384,18 @@ render are what gets cut (everything else).
 - **2026-07-09** — D1's last three open questions ratified as recommended (D-elc-8/9/10: flat
   consent field; no engine prompt for CLI-direct; consent as schema gate data per R-d-1 grain).
   **Stage D1 is propose-ready** — the propose is the user's to invoke.
+- **2026-07-13** — Two lessons from D1's 6-pass proposal cycle captured (R-d-8; the second had
+  been claimed-captured in an emit but never written — the phantom-claim class again):
+  **(a) Severity-blind confirm over-iterates**: `confirm: no-new-findings` lets a stale-checklist
+  WARNING reset the cadence like a baseline-contradiction CRITICAL; rounds 4-6 were mostly
+  polishing material earlier fixes introduced. Candidate fix: a `no-new-criticals` confirm
+  vocabulary option (schema edit per engine-gates' cadence-tuning rule) and/or later iterations
+  scoped to contract-integrity passes only. Home: D4 (review consistency) / the schema vocabulary.
+  **(b) Contradiction sweep is mechanizable**: ALL 5 proposal-cycle CRITICALs (and C2's dropped
+  scenarios) were one class — un-delta'd baseline text contradicting what a delta redefines. A
+  mechanical sweep (grep baselines for every construct/enumeration/label a delta touches) at
+  propose or review Pass 4 would catch the class deterministically. Home: D4 or D5
+  (engine-absorbed mechanical work).
 - **2026-07-09** — User invoked /orbit:propose: D1 is **in-change** at
   `orbit/changes/explicit-lifecycle-consent/` (1 new capability + 5 deltas, 12 delta
   requirements; fingerprints stamped; --strict valid). Design settles the consent-era boundary
