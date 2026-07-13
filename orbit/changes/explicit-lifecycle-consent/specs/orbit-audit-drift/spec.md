@@ -24,6 +24,16 @@ NAME to the current built-in definition would misclassify old archives as v3.
 
 #### Scenario: Pre-capability emits exempt
 
-- **WHEN** the audit scans lifecycle emits of changes whose metadata lacks `schema_version`
-  (e.g. the C1/C2 archives, scaffolded before the field existed)
+- **WHEN** the audit scans lifecycle emits of changes whose metadata lacks both `schema_version`
+  and `consent_era_from` (e.g. the C1/C2 archives, scaffolded before the fields existed and
+  never touched by a consent-scoped body)
 - **THEN** no finding is raised for the absent field
+
+#### Scenario: Straddler checked from its stamp onward
+
+- **WHEN** the audit scans a change whose metadata lacks `schema_version` but records
+  `consent_era_from` (a straddler stamped at first post-capability touch), and an `apply-*.json`
+  or `archive-*.json` whose filename `<TS>` token is at-or-after the stamp lacks the `consent`
+  field
+- **THEN** the WARNING finding is raised for that emit, while the change's pre-stamp emits raise
+  nothing

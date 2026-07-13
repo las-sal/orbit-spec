@@ -23,6 +23,8 @@ export function getApplyChangeSkillTemplate(): SkillTemplate {
    - **AI-mediated**: everything else — delegation phrases ("finish the cadence"), inference ("continue"), a handoff document, or an eligibility readout pointing here. Fire a consent **AskUserQuestion** BEFORE any write (after the read-only status/instructions loads in Steps 2–3, so the prompt can show real state): the position readout, what apply will write ("begin implementing N tasks from the artifacts"), and exactly two options — **Proceed** / **Abort**. On Abort: stop; no writes, no run summary.
    - **When provenance is uncertain, treat the arrival as AI-mediated** — erring toward one extra click, never toward a silent proceed.
 
+   **Ordering invariant**: provenance is CLASSIFIED at entry (it is a fact about the triggering turn, known before anything runs); the consent prompt itself — and the era stamp below — fire AFTER read-only discovery (change selection, the Step 2–3 status/instructions loads) and BEFORE any write or anomaly prompt. Read-only steps never require consent; writes always follow it.
+
    Record the consent story for this invocation: \`user-invoked\` (user-typed) or \`prompted\` (prompt fired, user proceeded) — it lands in every apply emit this session writes.
 
    **Consent-era stamp (migrate-on-touch)**: once consent is established (user-typed provenance, or Proceed at the prompt), read the change's \`.openspec.yaml\`. If it lacks \`schema_version\`, stamp \`consent_era_from: <current UTC timestamp, YYYY-MM-DDTHH:MM:SSZ>\` into it (add-only; never overwrite an existing stamp). This marks a pre-capability change as tripwire-covered from this touch onward (per \`orbit-lifecycle-consent\`'s consent-era marker).

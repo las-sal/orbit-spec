@@ -1,8 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import * as fs from 'node:fs';
+import * as os from 'node:os';
 import * as path from 'node:path';
 import { getAuditDriftSkillTemplate } from '../../../src/core/templates/skill-templates.js';
-import { readChangeMetadata } from '../../../src/utils/change-metadata.js';
+import { readChangeMetadata, writeChangeMetadata } from '../../../src/utils/change-metadata.js';
 import type { ChangeMetadata } from '../../../src/core/artifact-graph/types.js';
 
 /**
@@ -88,6 +89,65 @@ describe('D1 tripwire — three-tier rule semantics (spec scenarios)', () => {
     expect(flagged({ command: 'apply' }, '2026-07-13T10-00-00Z')).toBe(true);
     expect(flagged({ command: 'apply', consent: 'user-invoked' }, '2026-07-13T10-00-00Z')).toBe(false);
     expect(flagged({ command: 'archive', consent: 'prompted' }, '2026-07-13T10-00-00Z')).toBe(false);
+  });
+
+  it('fixture harness: the documented scan flags a real missing-consent emit on disk', () => {
+    // End-to-end over REAL files (external iter-1 suggestion): build a change dir with
+    // metadata + .orbit-runs emits, run the documented scan procedure (read metadata via
+    // the production helpers, list lifecycle emits, apply the three-tier rule), and
+    // assert the WARNING entries the audit-drift body specifies.
+    const projectRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'orbit-tripwire-fx-'));
+    try {
+      const scan = (changeName: string): Array<{ path: string; missingField: string }> => {
+        const dir = path.join(projectRoot, 'orbit', 'changes', changeName);
+        const meta = readChangeMetadata(dir, projectRoot)!;
+        const runs = path.join(dir, '.orbit-runs');
+        const warnings: Array<{ path: string; missingField: string }> = [];
+        for (const f of fs.readdirSync(runs).filter(n => /^(apply|archive)-.*\.json$/.test(n))) {
+          const token = f.replace(/^(apply|archive)-/, '').replace(/\.json$/, '');
+          if (!emitIsChecked(meta, token)) continue;
+          const emit = JSON.parse(fs.readFileSync(path.join(runs, f), 'utf-8'));
+          if (!('consent' in emit)) {
+            warnings.push({ path: `orbit/changes/${changeName}/.orbit-runs/${f}`, missingField: 'consent' });
+          }
+        }
+        return warnings;
+      };
+      const mkChange = (name: string, meta: ChangeMetadata, emits: Record<string, object>) => {
+        const dir = path.join(projectRoot, 'orbit', 'changes', name);
+        fs.mkdirSync(path.join(dir, '.orbit-runs'), { recursive: true });
+        writeChangeMetadata(dir, meta, projectRoot);
+        for (const [f, body] of Object.entries(emits)) {
+          fs.writeFileSync(path.join(dir, '.orbit-runs', f), JSON.stringify(body));
+        }
+      };
+
+      // Post-capability change: missing-consent apply emit → flagged; consent-carrying → clean.
+      mkChange('born-post', { schema: 'spec-driven', schema_version: 3 }, {
+        'apply-2026-07-14T10-00-00Z.json': { command: 'apply' },
+        'archive-2026-07-14T11-00-00Z.json': { command: 'archive', consent: 'user-invoked' },
+      });
+      expect(scan('born-post')).toEqual([
+        { path: 'orbit/changes/born-post/.orbit-runs/apply-2026-07-14T10-00-00Z.json', missingField: 'consent' },
+      ]);
+
+      // Straddler: pre-stamp emit exempt; at-stamp emit missing consent → flagged (boundary case).
+      mkChange('straddler', { schema: 'spec-driven', consent_era_from: '2026-07-14T12:00:00Z' }, {
+        'apply-2026-07-10T09-00-00Z.json': { command: 'apply' }, // pre-stamp, no consent — exempt
+        'apply-2026-07-14T12-00-00Z.json': { command: 'apply' }, // AT the stamp, no consent — flagged
+      });
+      expect(scan('straddler')).toEqual([
+        { path: 'orbit/changes/straddler/.orbit-runs/apply-2026-07-14T12-00-00Z.json', missingField: 'consent' },
+      ]);
+
+      // Fully pre-capability: nothing flagged.
+      mkChange('pre-cap', { schema: 'spec-driven', created: '2026-06-01' }, {
+        'archive-2026-06-02T08-00-00Z.json': { command: 'archive' },
+      });
+      expect(scan('pre-cap')).toEqual([]);
+    } finally {
+      fs.rmSync(projectRoot, { recursive: true, force: true });
+    }
   });
 
   it('REAL pre-D1 archives scan exempt by absence (C1 + C2 fixtures)', () => {

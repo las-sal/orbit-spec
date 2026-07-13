@@ -120,11 +120,13 @@ Emits predating this capability lack the field and are exempt.
 
 The change metadata schema SHALL gain an optional `schema_version` field (integer; persisted in
 `.openspec.yaml`), written by `orbit new change` from the loaded schema's declared `version` at
-scaffold time. **Absence of the field is the consent-era signal**: a change whose metadata lacks
-`schema_version` (every pre-D1 change and archive — the field did not exist) is pre-consent era
-and exempt from the audit tripwire; a change recording `schema_version >= 3` is consent-era. No
-timestamp cutoff and no backfill are needed for changes that never straddle the boundary. The
-field round-trips through the metadata read/write helpers without loss.
+scaffold time. **Absence of BOTH era markers is the consent-era signal**: a change whose metadata
+lacks `schema_version` AND lacks `consent_era_from` (every untouched pre-D1 change and archive —
+neither field existed) is pre-consent era and exempt from the audit tripwire; a change recording
+`schema_version >= 3` is consent-era for ALL its lifecycle emits, and a no-`schema_version`
+change stamped `consent_era_from` (the straddler transition below) is consent-era from the stamp
+onward. No timestamp cutoff and no backfill are needed for changes that never straddle the
+boundary. Both fields round-trip through the metadata read/write helpers without loss.
 
 **Straddler transition (migrate-on-touch)**: a change scaffolded BEFORE this capability that runs
 a consent-scoped command AFTER it must not stay exempt forever. The consent-scoped workflow
@@ -155,6 +157,7 @@ introduces this capability (itself a straddler).
 #### Scenario: Pre-D1 archives are exempt by absence
 
 - **WHEN** the audit tripwire evaluates an archived change whose `.openspec.yaml` records only
-  `schema: spec-driven` with no `schema_version` (e.g. the C1/C2 archives)
+  `schema: spec-driven` with neither `schema_version` nor `consent_era_from` (e.g. the C1/C2
+  archives)
 - **THEN** the change is pre-consent era; its emits are exempt and never flagged
 

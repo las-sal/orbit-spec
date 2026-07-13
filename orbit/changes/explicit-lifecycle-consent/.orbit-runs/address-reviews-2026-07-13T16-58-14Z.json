@@ -1,0 +1,46 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-13T16:58:14Z",
+  "change": "explicit-lifecycle-consent",
+  "final_assessment": "All 3 external system iter-1 findings (GPT-5 Codex: 1 WARNING, 2 SUGGESTION) resolved; 0 stale/deferred/escalated. WARNING (straddler readable-as-exempt): the orbit-lifecycle-consent requirement's opening paragraph and both exemption scenarios (lifecycle-consent 'Pre-D1 archives are exempt by absence', audit-drift 'Pre-capability emits exempt') now require absence of BOTH era markers (schema_version AND consent_era_from), and the audit-drift delta gains an explicit 'Straddler checked from its stamp onward' scenario — the delta text now matches the already-ratified three-tier rule that design D6, the audit-drift body, and the tests carried all along. S1 (Step 0 ordering): apply + archive bodies gain the ordering invariant — provenance CLASSIFIED at entry; prompt + era stamp fire AFTER read-only discovery, BEFORE any write or anomaly prompt (bulk-archive's phrasing was already write-scoped; no edit). S2 (concrete tripwire fixture): consent-tripwire.test.ts gains an on-disk fixture harness — real change dirs (metadata via production helpers + .orbit-runs emit files) scanned per the documented procedure; asserts the WARNING entry for a post-era missing-consent emit, the at-stamp straddler boundary flag with pre-stamp exemption, and pre-capability silence. Parity hashes re-pinned (apply/archive); surface regenerated (ordering invariant confirmed on disk); 1669 tests green; validate --strict passes; fingerprints 8/8 (delta-side edits move no baseline fingerprints).",
+  "next_recommended": "/orbit:review --as system explicit-lifecycle-consent — the external's findings are resolved with 0 CRITICAL, so the findings-resolved confirm is met; the cadence's trailing in-context slot is what remains",
+  "kind": "editorial",
+  "source": "--from-file orbit/changes/explicit-lifecycle-consent/.orbit-runs/external-system-2026-07-13T16-48-59Z.md",
+  "source_path": "orbit/changes/explicit-lifecycle-consent/.orbit-runs/external-system-2026-07-13T16-48-59Z.md",
+  "source_format": "external",
+  "external_reviewer": "GPT-5 Codex",
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "resolution_summary": { "resolved": 3, "stale": 0, "deferred": 0, "escalated": 0 },
+  "resolutions": [
+    {
+      "finding": "Straddler metadata can still be read as exempt",
+      "severity": "WARNING",
+      "classification": "trivial fix",
+      "action": "Both exemption spots now require absence of BOTH era markers; requirement opening paragraph restated as three-tier-consistent; audit-drift delta gains the straddler scenario (at-or-after-stamp checked, pre-stamp exempt). Implementation (body + tests) already correct — this was delta text lagging the ratified D6 rev-2."
+    },
+    {
+      "finding": "Clarify consent Step 0 ordering around read-only discovery",
+      "severity": "SUGGESTION",
+      "classification": "trivial fix",
+      "action": "Ordering invariant added to apply-change.ts and archive-change.ts Step 0: provenance classified at entry; prompt + era stamp after read-only discovery, before any write or anomaly prompt. bulk-archive already write-scoped ('BEFORE that change's writes') — no edit."
+    },
+    {
+      "finding": "Add a concrete missing-consent fixture for the tripwire",
+      "severity": "SUGGESTION",
+      "classification": "trivial fix",
+      "action": "On-disk fixture harness added to consent-tripwire.test.ts: real change dirs with production-helper-written metadata + emit files, scanned per the documented procedure; asserts WARNING for post-era missing-consent emit, at-stamp straddler boundary, pre-capability silence."
+    }
+  ],
+  "ripple_cascade": {
+    "applied": [
+      "orbit/changes/explicit-lifecycle-consent/specs/orbit-lifecycle-consent/spec.md",
+      "orbit/changes/explicit-lifecycle-consent/specs/orbit-audit-drift/spec.md",
+      "src/core/templates/workflows/apply-change.ts",
+      "src/core/templates/workflows/archive-change.ts",
+      "test/core/templates/consent-tripwire.test.ts",
+      "test/core/templates/skill-templates-parity.test.ts"
+    ],
+    "flagged_not_applied": []
+  }
+}

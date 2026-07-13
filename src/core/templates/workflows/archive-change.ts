@@ -217,6 +217,8 @@ The sections below describe orbit-specific additions on top of upstream's archiv
 
 BEFORE any other step — before the Step 1.5 marker scan, the Step 3.4 gate prompt, and every write. Archive is a consent-scoped command (the \`review-system\` gate carries \`consent: user-invoked\`); consent asks "should we be here at all", the anomaly prompts (gate, fingerprint, audit) ask "is the state sound".
 
+**Ordering invariant**: provenance is CLASSIFIED at entry (a fact about the triggering turn); the consent prompt itself — and the era stamp below — fire AFTER read-only discovery (change selection; the read-only look at \`orbit/changes/<name>/specs/\` that supplies the write preview) and BEFORE any write or anomaly prompt. Read-only steps never require consent; writes always follow it.
+
 Determine invocation provenance — an observable transcript fact, never a judgment of delegated intent:
 
 - **User-invoked**: the triggering turn contains an explicit user invocation — the typed \`/orbit:archive\` command, or an unambiguous same-turn prose request naming the act ("archive it"). Proceed with ZERO added prompts (only the anomaly prompts may interrupt); the run summary records \`consent: "user-invoked"\`.
