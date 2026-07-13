@@ -4,12 +4,14 @@ import {
   SchemaYamlSchema,
   CADENCE_ENTRIES,
   LIFECYCLE_PHASE_TOKENS,
+  CONSENT_VALUES,
   type SchemaYaml,
   type Artifact,
   type NormalizedGate,
   type GateKind,
   type GateConfirm,
   type CadenceEntry,
+  type ConsentValue,
 } from './types.js';
 
 export class SchemaValidationError extends Error {
@@ -81,6 +83,7 @@ export function normalizeGates(schema: SchemaYaml): NormalizedGate[] {
       cadence: (g.cadence ?? []) as CadenceEntry[],
       confirm: (g.confirm ?? 'no-new-findings') as GateConfirm,
       before: g.before,
+      consent: g.consent as ConsentValue | undefined,
       instruction: g.instruction,
     });
   }
@@ -138,6 +141,14 @@ function validateGates(schema: SchemaYaml): void {
     if (g.kind === 'reviewed' && (!g.cadence || g.cadence.length === 0)) {
       throw new SchemaValidationError(
         `Reviewed gate '${g.id}': cadence must declare at least one slot (${CADENCE_ENTRIES.join(', ')})`
+      );
+    }
+
+    // Consent vocabulary is a CLOSED set of one (D-arc D1) — name the gate id and
+    // the single legal value, matching the kind-validation error shape.
+    if (g.consent !== undefined && !(CONSENT_VALUES as readonly string[]).includes(g.consent)) {
+      throw new SchemaValidationError(
+        `Gate '${g.id}': invalid consent '${g.consent}' (allowed: ${CONSENT_VALUES.join(', ')})`
       );
     }
   }

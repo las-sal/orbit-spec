@@ -135,6 +135,8 @@ export interface GateStatusRow {
   checked?: number;
   total?: number;
   nextCommand?: string;
+  /** D1: consent marker from the gate declaration (entry into `before:` is user-invoked). */
+  consent?: string;
   /** C1: the gate's `before` phase already ran — moot / no longer the frontier. */
   superseded?: boolean;
 }
@@ -405,9 +407,15 @@ export function formatChangeStatus(context: ChangeContext): ChangeStatus {
       checked: g.checked,
       total: g.total,
       nextCommand: g.nextCommand,
+      consent: g.consent,
       superseded: g.superseded,
     }));
     position = computation.position;
+    // D1: entry into the apply phase carries the ` — user-invoked` marker when the
+    // gate declaring `before: apply` is consent-marked (eligibility phrasing).
+    const applyConsentMarked = computation.gates.some(
+      g => g.before === 'apply' && g.consent === 'user-invoked'
+    );
     for (const g of computation.gates) {
       if (g.state === 'passed') continue;
       // C1: skip a reviewed gate whose gated phase already ran (moot) — the frontier
@@ -418,7 +426,8 @@ export function formatChangeStatus(context: ChangeContext): ChangeStatus {
         break;
       }
       if (g.kind === 'tracked' && g.state === 'ready') {
-        nextCommand = `/orbit:apply ${context.changeName}`;
+        nextCommand =
+          `/orbit:apply ${context.changeName}` + (applyConsentMarked ? ' — user-invoked' : '');
         break;
       }
     }

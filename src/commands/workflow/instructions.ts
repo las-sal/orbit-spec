@@ -351,7 +351,7 @@ export async function generateApplyInstructions(
         `The '${applyGateStatus.id}' gate is ${applyGateStatus.state}` +
         (applyGateStatus.reason ? ` (${applyGateStatus.reason})` : '') +
         `. Address it, or proceed anyway at the inflection prompt (the override is recorded).` +
-        (nextCommand ? `\nCanonical next: ${nextCommand}` : '');
+        (nextCommand ? `\nReady when you are: ${nextCommand}` : '');
     }
   }
 

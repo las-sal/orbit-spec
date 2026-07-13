@@ -38,6 +38,13 @@ export const CadenceEntrySchema = z.enum(CADENCE_ENTRIES);
 // declared gate/artifact id).
 export const LIFECYCLE_PHASE_TOKENS = ['apply', 'archive'] as const;
 
+// Consent vocabulary (D-arc Stage D1, per orbit-lifecycle-consent): a CLOSED set of
+// one. Declares that entry into the gate's `before:` phase requires an explicit user
+// invocation. The engine parses and surfaces the marker; workflow bodies prompt.
+// Consent changes NO gate pass-condition computation.
+export const CONSENT_VALUES = ['user-invoked'] as const;
+export type ConsentValue = (typeof CONSENT_VALUES)[number];
+
 export const GateSchema = z.object({
   id: z.string().min(1, { error: 'Gate ID is required' }),
   // Validated against the closed set in schema.ts so the error can name the gate id.
@@ -54,6 +61,9 @@ export const GateSchema = z.object({
   confirm: GateConfirmSchema.optional(),
   // Target this gate blocks: a declared gate id, a declared artifact id, or a lifecycle-phase token
   before: z.string().optional(),
+  // Optional consent marker. Validated against the closed set in schema.ts so the
+  // error can name the gate id and the single legal value.
+  consent: z.string().optional(),
   instruction: z.string().optional(),
 });
 
@@ -90,6 +100,7 @@ export interface NormalizedGate {
   cadence: CadenceEntry[];
   confirm: GateConfirm;
   before?: string;
+  consent?: ConsentValue;
   instruction?: string;
 }
 
@@ -105,6 +116,24 @@ export const ChangeMetadataSchema = z.object({
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, {
       message: 'created must be YYYY-MM-DD format',
+    })
+    .optional(),
+
+  // Optional: the loaded schema's declared version at scaffold time (D-arc D1).
+  // Written by `orbit new change`. ABSENCE is the consent-era signal: a change whose
+  // metadata lacks the field predates the consent capability (see orbit-lifecycle-consent
+  // "Consent-era metadata marker"); >= 3 marks a consent-era change.
+  schema_version: z.number().int().positive().optional(),
+
+  // Optional: straddler transition stamp (migrate-on-touch, D-arc D1). Written by
+  // consent-scoped workflow bodies at entry against a change lacking schema_version.
+  // Tripwire semantics are three-tier: schema_version >= 3 → all lifecycle emits
+  // checked; consent_era_from present → emits at-or-after the stamp checked; neither
+  // → fully pre-capability, exempt.
+  consent_era_from: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/, {
+      message: 'consent_era_from must be ISO-8601 UTC (YYYY-MM-DDTHH:MM:SSZ)',
     })
     .optional(),
 

@@ -1,5 +1,5 @@
 name: spec-driven
-version: 2
+version: 3
 description: Default OpenSpec workflow - proposal → specs → design → tasks
 artifacts:
   - id: proposal
@@ -147,6 +147,8 @@ artifacts:
 
 # Gates (C1 engine gates). `apply` is a first-class tracked gate; the two review
 # gates make the engine review-aware. Cadences live here (tuning = a version bump).
+# `consent: user-invoked` (D1) marks the gate's `before:` phase as entered only on
+# an explicit user invocation — the engine surfaces the marker; bodies prompt.
 gates:
   - id: review-proposal
     kind: reviewed
@@ -155,6 +157,7 @@ gates:
     cadence: [independent, in-context]
     confirm: no-new-findings
     before: apply
+    consent: user-invoked
 
   - id: apply
     kind: tracked
@@ -170,3 +173,4 @@ gates:
     cadence: [in-context, external, in-context]
     confirm: findings-resolved
     before: archive
+    consent: user-invoked

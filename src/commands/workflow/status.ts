@@ -132,7 +132,9 @@ export function printStatusText(status: ChangeStatus): void {
       console.log(`Position: ${status.position}`);
     }
     if (status.next_command) {
-      console.log(`Next: ${status.next_command}`);
+      // D1 eligibility phrasing: never an imperative label — the user is the arbiter
+      // of lifecycle transitions; the engine reports eligibility only.
+      console.log(`Ready when you are: ${status.next_command}`);
     }
   }
 }

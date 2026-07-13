@@ -2,6 +2,7 @@ import path from 'path';
 import { FileSystemUtils } from './file-system.js';
 import { writeChangeMetadata, validateSchemaName } from './change-metadata.js';
 import { readProjectConfig } from '../core/project-config.js';
+import { resolveSchema } from '../core/artifact-graph/resolver.js';
 
 const DEFAULT_SCHEMA = 'spec-driven';
 
@@ -149,11 +150,14 @@ export async function createChange(
   // Create the directory (including parent directories if needed)
   await FileSystemUtils.createDirectory(changeDir);
 
-  // Write metadata file with schema and creation date
+  // Write metadata file with schema, creation date, and the loaded schema's declared
+  // version (D1 consent-era marker: absence of schema_version = pre-consent era).
   const today = new Date().toISOString().split('T')[0];
+  const schemaVersion = resolveSchema(schemaName, projectRoot).version;
   writeChangeMetadata(changeDir, {
     schema: schemaName,
     created: today,
+    schema_version: schemaVersion,
   }, projectRoot);
 
   return { schema: schemaName };

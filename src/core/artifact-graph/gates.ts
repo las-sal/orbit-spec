@@ -1,6 +1,6 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import type { SchemaYaml, NormalizedGate, GateKind, CadenceEntry } from './types.js';
+import type { SchemaYaml, NormalizedGate, GateKind, CadenceEntry, ConsentValue } from './types.js';
 import { normalizeGates } from './schema.js';
 import { readTrail, type Trail, type TrailPass, type ReviewMode, type ReviewerClass } from './trail.js';
 
@@ -23,6 +23,12 @@ export interface GateStatus {
   checked?: number;
   total?: number;
   before?: string;
+  /**
+   * D1: consent marker from the gate declaration — entry into the gate's `before:`
+   * phase requires an explicit user invocation. Surfaced only; the engine never
+   * prompts, and consent alters no gate-state computation.
+   */
+  consent?: ConsentValue;
   /**
    * C1: true when this reviewed gate's `before` phase is already complete — the gate
    * gated ENTRY to a phase that has since run, so it is no longer the active frontier
@@ -72,11 +78,17 @@ function commandForClass(slot: CadenceEntry, mode: ReviewMode, change: string): 
   return `/orbit:review --as ${mode} ${change}`; // in-context
 }
 
-/** Lifecycle command for a gate's `before` target when the gate passes. */
-function nextAfterPass(before: string | undefined, change: string): string | undefined {
-  if (before === 'apply') return `/orbit:apply ${change}`;
-  if (before === 'archive') return `/orbit:archive ${change}`;
-  return undefined;
+/**
+ * Lifecycle command for a gate's `before` target when the gate passes. When the
+ * gate is consent-marked, the rendered command carries the ` — user-invoked` marker
+ * (D1 eligibility phrasing): entry into the phase is the user's call.
+ */
+function nextAfterPass(gate: NormalizedGate, change: string): string | undefined {
+  let cmd: string | undefined;
+  if (gate.before === 'apply') cmd = `/orbit:apply ${change}`;
+  if (gate.before === 'archive') cmd = `/orbit:archive ${change}`;
+  if (cmd && gate.consent === 'user-invoked') cmd += ' — user-invoked';
+  return cmd;
 }
 
 /** Count `- [ ]` vs `- [x]` checkboxes in a tracks file. */
@@ -285,6 +297,7 @@ export function computeGateStates(
         state: 'blocked',
         reason: `blocked by incomplete requires: ${unmet.join(', ')}`,
         before: gate.before,
+        consent: gate.consent,
       };
     } else if (gate.kind === 'tracked') {
       const { checked, total } = gate.tracks
@@ -299,7 +312,8 @@ export function computeGateStates(
         checked,
         total,
         before: gate.before,
-        nextCommand: passed ? nextAfterPass(gate.before, changeName) : undefined,
+        consent: gate.consent,
+        nextCommand: passed ? nextAfterPass(gate, changeName) : undefined,
       };
     } else {
       status = computeReviewedStatus(gate, changeName, trail);
@@ -341,7 +355,8 @@ function computeReviewedStatus(gate: NormalizedGate, changeName: string, trail: 
       kind: gate.kind,
       state: 'passed',
       before: gate.before,
-      nextCommand: nextAfterPass(gate.before, changeName),
+      consent: gate.consent,
+      nextCommand: nextAfterPass(gate, changeName),
     };
   }
 
@@ -357,6 +372,7 @@ function computeReviewedStatus(gate: NormalizedGate, changeName: string, trail: 
     reason: stale ? `a review pass is stale (an apply landed after it)` : freshEval.reason,
     nextCommand: next,
     before: gate.before,
+    consent: gate.consent,
   };
 }
 

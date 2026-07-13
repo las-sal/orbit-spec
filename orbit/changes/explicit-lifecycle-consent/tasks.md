@@ -6,18 +6,18 @@ built: every lifecycle transition is user-invoked.
 
 ## 1. Schema + engine (consent declaration and eligibility phrasing)
 
-- [ ] 1.1 `GateSchema` (`src/core/artifact-graph/types.ts`) gains optional
+- [x] 1.1 `GateSchema` (`src/core/artifact-graph/types.ts`) gains optional
       `consent: z.literal('user-invoked')`; parse/validation in `schema.ts` rejects other values
       naming the gate id and the single legal value; `gates[]` JSON carries the marker
-- [ ] 1.2 `schemas/spec-driven/schema.yaml`: `consent: user-invoked` on `review-proposal` and
+- [x] 1.2 `schemas/spec-driven/schema.yaml`: `consent: user-invoked` on `review-proposal` and
       `review-system`; version 2 → 3. `ChangeMetadataSchema` gains optional `schema_version`
       (int); `orbit new change` scaffold writes it from the loaded schema's version; round-trip
       test
-- [ ] 1.3 Eligibility phrasing (`src/core/artifact-graph/gates.ts` + the status/instructions
+- [x] 1.3 Eligibility phrasing (`src/core/artifact-graph/gates.ts` + the status/instructions
       renderers registered via `src/cli/index.ts`): canonical-next renders under
       `Ready when you are:` (never `Next:`), appending ` — user-invoked` when the target phase's
       gate carries the consent marker; JSON field names unchanged
-- [ ] 1.4 Tests: consent attribute parses/surfaces/rejects; consent does not alter gate state;
+- [x] 1.4 Tests: consent attribute parses/surfaces/rejects; consent does not alter gate state;
       v2-style schemas without `consent` behave byte-identically; readout label + marker
       rendering; NO imperative `Next:` in any engine output (grep-style assertion)
 
