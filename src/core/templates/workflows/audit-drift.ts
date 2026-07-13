@@ -217,6 +217,16 @@ Empty or absent lens files → skip Category 2 with the note \`lenses empty or a
 - **REMOVED requirement** in archived delta but **still present** in baseline → CRITICAL.
 - **RENAMED FROM** name still appearing in baseline (the rename didn't propagate) → WARNING.
 
+**Missing consent-record check (D1 tripwire, per \`orbit-lifecycle-consent\`)** — also scan ACTIVE changes, not only archived ones (any change with lifecycle emits is in scope):
+
+For each change in scope, scan its \`.orbit-runs/\` for consent-scoped lifecycle emits (\`apply-*.json\`, \`archive-*.json\`) and apply the **three-tier era rule** from the change's \`.openspec.yaml\` metadata — the metadata markers are the ONLY authority (NOT schema-name resolution, which would misclassify old archives as the current version, and NOT any timestamp constant):
+
+1. **\`schema_version >= 3\`** (born post-capability) → ALL its apply/archive emits are checked.
+2. **\`consent_era_from\` present** (a straddler stamped at first post-capability touch) → only emits whose filename \`<TS>\` token is at-or-after the stamp are checked; earlier emits stay exempt.
+3. **NEITHER field** → fully pre-capability; every emit exempt (e.g. the C1/C2 archives).
+
+A checked emit **missing the \`consent\` field** → WARNING: \`lifecycle emit lacks consent record — an unconsented or contract-violating transition may have occurred\`, naming the emit path (e.g. \`orbit/changes/<name>/.orbit-runs/apply-<TS>.json\`) and the missing field (\`consent\`). This is the empirical tripwire behind the D-arc's harness-hooks deferral (R-d-2): its firing is the named re-entry trigger for hard enforcement.
+
 ### 8. Apply scorecard rollup
 
 | Dimension | Categories contributing |

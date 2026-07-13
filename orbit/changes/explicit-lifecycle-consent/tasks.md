@@ -50,10 +50,10 @@ built: every lifecycle transition is user-invoked.
 
 ## 3. Audit tripwire
 
-- [ ] 3.1 `audit-drift.ts` body: Category 4 gains the missing-consent-record check (WARNING;
+- [x] 3.1 `audit-drift.ts` body: Category 4 gains the missing-consent-record check (WARNING;
       era boundary per design D6 THREE-TIER rule — schema_version / consent_era_from /
       neither-exempt; NO timestamp fallback); wording names the emit path and the missing field
-- [ ] 3.2 Test: post-era emit (change metadata `schema_version >= 3`) without `consent` →
+- [x] 3.2 Test: post-era emit (change metadata `schema_version >= 3`) without `consent` →
       WARNING surfaced; straddler regression: an active no-`schema_version` change stamped
       `consent_era_from` mid-life → pre-stamp emits exempt, at-or-after-stamp emits checked;
       and a REAL pre-D1 archive (only `schema: spec-driven` — e.g. the C2 archive fixture)
