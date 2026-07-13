@@ -605,5 +605,44 @@ rules:
       expect(proposalIdx).toBeLessThan(specsIdx);
       expect(specsIdx).toBeLessThan(tasksIdx);
     });
+
+    it('renders the passed frontier gate command at the archive-ready state (never a silent seam)', () => {
+      // All artifacts + all tasks done + a trail that passes BOTH reviewed gates:
+      // the single-voiced canonical-next must fall through to the flow-latest
+      // passed gate's before-phase command, with the D1 consent marker.
+      const changeDir = path.join(tempDir, 'orbit', 'changes', 'my-change');
+      const runs = path.join(changeDir, '.orbit-runs');
+      fs.mkdirSync(path.join(changeDir, 'specs'), { recursive: true });
+      fs.mkdirSync(runs, { recursive: true });
+      fs.writeFileSync(path.join(changeDir, 'proposal.md'), '# Proposal');
+      fs.writeFileSync(path.join(changeDir, 'specs', 'test.md'), '# Spec');
+      fs.writeFileSync(path.join(changeDir, 'design.md'), '# Design');
+      fs.writeFileSync(path.join(changeDir, 'tasks.md'), '- [x] one\n- [x] two\n');
+
+      const emit = (name: string, mode: string, cls: string) =>
+        fs.writeFileSync(
+          path.join(runs, name),
+          JSON.stringify({
+            command: 'review', mode, reviewer_class: cls,
+            findings_summary: { critical: 0, warning: 0, suggestion: 0 }, findings: [],
+          })
+        );
+      // review-proposal: independent + in-context, clean.
+      emit('review-proposal-2026-07-01T10-00-00Z.json', 'proposal', 'fresh');
+      emit('review-proposal-2026-07-01T11-00-00Z.json', 'proposal', 'in-context');
+      // review-system: in-context, external (clean md), in-context.
+      emit('review-system-2026-07-02T10-00-00Z.json', 'system', 'in-context');
+      fs.writeFileSync(
+        path.join(runs, 'external-system-2026-07-02T11-00-00Z.md'),
+        '# External Review\n\n**Reviewer**: X\n\n## CRITICAL\n\nNone.\n\n## WARNING\n\nNone.\n\n## SUGGESTION\n\nNone.\n'
+      );
+      emit('review-system-2026-07-02T12-00-00Z.json', 'system', 'in-context');
+
+      const context = loadChangeContext(tempDir, 'my-change');
+      const status = formatChangeStatus(context);
+
+      expect(status.gates.every(g => g.state === 'passed')).toBe(true);
+      expect(status.next_command).toBe('/orbit:archive my-change — user-invoked');
+    });
   });
 });

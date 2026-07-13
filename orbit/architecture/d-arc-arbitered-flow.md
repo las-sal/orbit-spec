@@ -92,7 +92,8 @@ invokes (D-elc-3); eligibility phrasing replacing imperative readouts (D-elc-4);
 provenance in emits (D-elc-5); flat `consent: "user-invoked" | "prompted"` emit field
 (D-elc-8); no engine prompt for CLI-direct, ever (D-elc-9); consent set declared as SCHEMA gate
 data — a `consent:` attribute on the gated seams (D-elc-10, consistent with R-d-1). All open
-questions resolved 2026-07-09; the stage awaits the user's /orbit:propose. (The PR-lifecycle
+questions resolved 2026-07-09; the user proposed the same day (see the state line + status log
+for position). (The PR-lifecycle
 theme originally explored here as D-elc-6 was SPLIT OUT to Stage D6 on 2026-07-08 so it stops
 blocking this stage's propose.) Enforcement ceiling accepted deliberately: the body-prompt layer
 is the ONLY enforcement layer — harness hooks were considered and deferred with a named re-entry

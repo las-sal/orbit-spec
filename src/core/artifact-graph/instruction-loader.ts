@@ -431,6 +431,19 @@ export function formatChangeStatus(context: ChangeContext): ChangeStatus {
         break;
       }
     }
+    // Single-voiced canonical-next: ONE command per change state — including the
+    // all-gates-passed state, where no unpassed gate supplies one. Fall through to
+    // the flow-latest PASSED gate's before-phase command (e.g. review-system passed
+    // → `/orbit:archive <name> — user-invoked`), so the eligibility line never goes
+    // silent at exactly the lifecycle seam.
+    if (!nextCommand) {
+      for (const g of [...computation.gates].reverse()) {
+        if (g.state === 'passed' && g.nextCommand) {
+          nextCommand = g.nextCommand;
+          break;
+        }
+      }
+    }
   }
 
   return {

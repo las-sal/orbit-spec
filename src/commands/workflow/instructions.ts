@@ -317,7 +317,10 @@ export async function generateApplyInstructions(
     instruction = `The ${tracksFilename} file exists but contains no tasks.\nAdd tasks to ${tracksFilename} or regenerate it with orbit-continue-change.`;
   } else if (tracksFile && remaining === 0 && total > 0) {
     state = 'all_done';
-    instruction = 'All tasks are complete! This change is ready to be archived.\nConsider running tests and reviewing the changes before archiving.';
+    // D1 eligibility framing: don't advertise archive here — the gate graph owns the
+    // lifecycle flow (post-apply it points at review-system, not archive).
+    instruction =
+      'All tasks are complete.\nRun `orbit status --change "<name>" --json` for the gate graph\'s next step (the position readout and eligibility line own what comes next).';
   } else if (!tracksFile) {
     // No tracking file configured in schema - ready to apply
     state = 'ready';

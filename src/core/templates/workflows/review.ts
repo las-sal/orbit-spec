@@ -424,7 +424,7 @@ If \`--parallel\` is set:
 - Proposal mode: spawn subagents for Passes 2 (Internal Coherence), 4 (Archive Consistency), 6 (Gap Hunt). Run Passes 1, 3, 5, 7, 8, 9 in the main context.
 - System mode: spawn subagents for Passes 2 (Cohesion), 3 (Surface Walk), 4 (Perspectives), 5 (Critical Paths). Run Passes 0, 1, 6 in the main context.
 
-Each subagent gets a focused brief (the pass description + the relevant context files). Merge findings into the unified report. Subagents inherit the three execution disciplines.
+Each subagent gets a focused brief (the pass description + the relevant context files). Merge findings into the unified report. Subagents inherit the four execution disciplines.
 
 ### 13. \`--focus\` lens
 

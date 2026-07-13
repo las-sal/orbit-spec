@@ -99,7 +99,7 @@ export function getApplyChangeSkillTemplate(): SkillTemplate {
    Display:
    - Tasks completed this session
    - Overall progress: "N/M tasks complete"
-   - If all done: suggest archive
+   - If all done: render the engine's position + eligibility line (per Step 3's \`all_done\` handling — the gate graph owns what comes next)
    - If paused: explain why and wait for guidance
 
 **Output During Implementation**

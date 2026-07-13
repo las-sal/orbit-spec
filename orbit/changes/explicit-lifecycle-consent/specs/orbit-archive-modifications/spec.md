@@ -2,11 +2,13 @@
 
 ### Requirement: Consent prompt on AI-mediated archive entry
 
-The archive workflow SHALL apply `orbit-lifecycle-consent`'s provenance rule at command entry,
-BEFORE any other step (before the Step 3.4 gate prompt — consent asks "should we be here at all";
-the anomaly prompts ask "is the state sound"): when the archive is reached without an explicit
-same-turn user invocation, fire the consent AskUserQuestion (position readout + what the archive
-will write: N deltas across M capabilities synced to baseline, change moved to archive —
+The archive workflow SHALL apply `orbit-lifecycle-consent`'s provenance rule at command entry:
+provenance is CLASSIFIED at entry (a fact about the triggering turn), and on AI-mediated arrival
+the consent AskUserQuestion fires AFTER read-only discovery (change selection; the read-only look
+at the change's `specs/` that supplies the write preview) and BEFORE any of the command's writes
+or anomaly prompts (before the Step 3.4 gate prompt — consent asks "should we be here at all";
+the anomaly prompts ask "is the state sound"). The prompt content: position readout + what the
+archive will write (N deltas across M capabilities synced to baseline, change moved to archive —
 Proceed / Abort). A user-typed `/orbit:archive` runs with no consent prompt. Proceeding records
 `consent: "prompted"` in the archive run summary; an abort writes no summary. The bulk-archive
 workflow applies the same rule per change (a user-typed `/orbit:bulk-archive` whose flow confirms

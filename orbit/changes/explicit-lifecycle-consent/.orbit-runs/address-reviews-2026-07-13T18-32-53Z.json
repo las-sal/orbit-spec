@@ -1,0 +1,67 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-13T18:32:53Z",
+  "change": "explicit-lifecycle-consent",
+  "final_assessment": "All 6 fresh-pass (system iter 2) findings resolved; 0 stale/deferred/escalated. W1: review body's --parallel section now says FOUR execution disciplines (fictional worked-example mentions left as example content per the finding). W2: both delta placement spots (orbit-lifecycle-consent Placement bullet; orbit-archive-modifications requirement opening) now carry the ordering invariant — provenance classified at entry; prompt + stamp after read-only discovery, before any write or anomaly prompt — matching the 907e2f9 body wording, so archive-sync propagates consistent baseline text. W3: apply body's upstream 'If all done: suggest archive' bullet replaced with render-the-engine-readout (the contradictory hand-written next-step variant is gone; the Completion-prompt override it contradicted stands). S1: engine single-voiced fall-through — at the all-gates-passed state, formatChangeStatus now renders the flow-latest PASSED gate's before-phase command ('/orbit:archive <name> — user-invoked'), closing the silent-seam gap against the C1 baseline's one-command-per-state requirement; regression test added (all-gates-passed fixture). S2: instructions.ts all_done text no longer advertises archive — it defers to the gate graph's readout; e2e pin updated. S3: arc doc's stale 'awaits the user's /orbit:propose' clause rewritten past-tense. Parity hashes re-pinned (apply-change); surface regenerated; 1670 tests green (baseline 1608; +1 this round); validate --strict passes; fingerprints 8/8.",
+  "next_recommended": "/orbit:review --as system explicit-lifecycle-consent — all passes' findings are resolved and the latest independent pass (fresh, 0 CRITICAL) meets the findings-resolved confirm; the cadence's trailing in-context slot is the one remaining uncovered slot",
+  "kind": "editorial",
+  "source": "--from-file orbit/changes/explicit-lifecycle-consent/.orbit-runs/review-system-2026-07-13T18-24-12Z.json",
+  "source_path": "orbit/changes/explicit-lifecycle-consent/.orbit-runs/review-system-2026-07-13T18-24-12Z.json",
+  "source_format": "internal-review",
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "resolution_summary": { "resolved": 6, "stale": 0, "deferred": 0, "escalated": 0 },
+  "resolutions": [
+    {
+      "finding": "Stale three-execution-disciplines in review body's --parallel section",
+      "severity": "WARNING",
+      "classification": "trivial fix",
+      "action": "review.ts:427 'three' -> 'four execution disciplines'. Repo-wide sweep confirmed the only other matches are fictional worked-example content (review.ts:498, address-reviews.ts:602) — left per the finding's own note."
+    },
+    {
+      "finding": "Delta spec placement language contradicts the shipped Step 0 ordering invariant",
+      "severity": "WARNING",
+      "classification": "trivial fix",
+      "action": "orbit-lifecycle-consent Placement bullet + orbit-archive-modifications requirement opening rewritten to the ordering invariant (classify at entry; prompt/stamp after read-only discovery, before writes/anomaly prompts); SHALL stays on the requirement's first line; adjacent scenarios already consistent."
+    },
+    {
+      "finding": "Hand-written 'If all done: suggest archive' survived the task 2.5 subtraction",
+      "severity": "WARNING",
+      "classification": "trivial fix",
+      "action": "apply-change.ts Step 7 bullet now renders the engine's position + eligibility line per Step 3 all_done handling; parity hashes re-pinned."
+    },
+    {
+      "finding": "next_command is null in the archive-ready state",
+      "severity": "SUGGESTION",
+      "classification": "trivial fix",
+      "action": "formatChangeStatus falls through to the flow-latest PASSED gate's before-phase command when no unpassed gate supplies one — brings the engine into compliance with the C1 baseline's 'ONE canonical next command per change state'; regression test (all-gates-passed -> '/orbit:archive my-change — user-invoked') added to instruction-loader.test.ts."
+    },
+    {
+      "finding": "all_done instruction advertises archive, skipping review-system",
+      "severity": "SUGGESTION",
+      "classification": "trivial fix",
+      "action": "instructions.ts all_done instruction defers to the gate graph's readout instead of declaring archive readiness; artifact-workflow e2e pin updated (asserts the new text and the absence of 'ready to be archived')."
+    },
+    {
+      "finding": "Stale 'awaits the user's /orbit:propose' in the arc doc's D1 section",
+      "severity": "SUGGESTION",
+      "classification": "trivial fix",
+      "action": "Clause rewritten past-tense, pointing at the state line + status log as position authority."
+    }
+  ],
+  "ripple_cascade": {
+    "applied": [
+      "src/core/templates/workflows/review.ts",
+      "orbit/changes/explicit-lifecycle-consent/specs/orbit-lifecycle-consent/spec.md",
+      "orbit/changes/explicit-lifecycle-consent/specs/orbit-archive-modifications/spec.md",
+      "src/core/templates/workflows/apply-change.ts",
+      "src/core/artifact-graph/instruction-loader.ts",
+      "test/core/artifact-graph/instruction-loader.test.ts",
+      "src/commands/workflow/instructions.ts",
+      "test/commands/artifact-workflow.test.ts",
+      "orbit/architecture/d-arc-arbitered-flow.md",
+      "test/core/templates/skill-templates-parity.test.ts"
+    ],
+    "flagged_not_applied": []
+  }
+}

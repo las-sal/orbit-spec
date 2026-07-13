@@ -38,8 +38,12 @@ command's writes:
 - **Content**: the position readout, what the command will write (apply: begin implementing N
   tasks from the artifacts; archive: sync N deltas across M capabilities to baseline + move the
   change to archive), and exactly two options — **Proceed** / **Abort**.
-- **Placement**: at command entry, before any other step (for archive: before the Step 3.4 gate
-  prompt — consent asks "should we be here at all"; anomaly prompts ask "is the state sound").
+- **Placement**: provenance is CLASSIFIED at command entry (it is a fact about the triggering
+  turn, known before anything runs); the prompt itself — and the consent-era stamp — fire AFTER
+  read-only discovery (change selection; the status/spec reads that supply the prompt's content)
+  and BEFORE any of the command's writes or anomaly prompts (for archive: before the Step 3.4
+  gate prompt — consent asks "should we be here at all"; anomaly prompts ask "is the state
+  sound"). Read-only steps never require consent; writes always follow it.
 - **Bulk-archive**: the consent prompt fires per change on AI-mediated arrival; a user-typed
   `/orbit:bulk-archive` invocation (whose flow already confirms the batch) is user-invoked for
   the confirmed set.

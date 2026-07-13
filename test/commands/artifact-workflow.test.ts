@@ -530,7 +530,11 @@ apply:
       });
       expect(result.exitCode).toBe(0);
       expect(result.stdout).toContain('complete ✓');
-      expect(result.stdout).toContain('ready to be archived');
+      // D1: the all_done instruction defers to the gate graph instead of
+      // advertising archive (post-apply the graph points at review-system).
+      expect(result.stdout).toContain('All tasks are complete.');
+      expect(result.stdout).toContain('gate graph');
+      expect(result.stdout).not.toContain('ready to be archived');
     });
 
     it('uses spec-driven schema apply configuration', async () => {
