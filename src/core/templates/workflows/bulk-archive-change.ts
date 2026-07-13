@@ -250,6 +250,27 @@ No active changes found. Create a new change to get started.
 
 # Orbit additions
 
+## Four execution disciplines (apply throughout this command)
+
+The four execution disciplines from \`orbit-conventions\` bracket the authoring lifecycle; they're embedded in every orbit command for self-contained reliability.
+
+- **Read-before-reference (authoring-time)**: before naming a specific construct (capability, requirement, file path, flag), read its actual definition — the conflict-resolution step's implementation-evidence claims must be backed by actual code reads, never inferred.
+- **Change completeness (modification-time)**: each inner archive's moves + syncs must complete fully before the batch reports it archived; sweep the Step 9 summary against what actually happened on disk.
+- **Pushback (review-time)**: verify each flagged issue (conflict, incomplete artifact, fingerprint divergence) against current state before acting; suppress stale findings with evidence.
+- **No-chaining (turn boundary)**: invoke at most the orbit workflow commands the user's message explicitly requests — one command per explicit request; recommend, never invoke. Completing a command ENDS the turn at the position readout and the engine's eligibility line; blanket delegation covers work WITHIN the requested command, never the next one — gate \`passed\` means *eligible*, not *commanded*.
+
+## Per-change consent (D1 — per \`orbit-lifecycle-consent\`)
+
+Archive is a consent-scoped command; the bulk wrapper applies the provenance rule PER CHANGE:
+
+- **User-typed \`/orbit:bulk-archive\`**: the Step 7 batch confirmation IS the user's invocation for the confirmed set — no per-change consent prompt fires, and each inner archive's run summary records \`consent: "user-invoked"\`.
+- **AI-mediated arrival** (delegation, inference, handoff — no explicit same-turn user invocation of the bulk command): fire the consent **AskUserQuestion** per change BEFORE that change's writes (position readout + what that archive will write: deltas/capabilities to sync + the move — Proceed / Abort). Proceed records \`consent: "prompted"\` in that change's run summary; Abort skips that change (no writes, no summary for it) without stopping the rest of the batch.
+- **When provenance is uncertain, treat the arrival as AI-mediated.**
+
+**Consent-era stamp (migrate-on-touch, per change)**: once consent is established for a change, read its \`.openspec.yaml\`; if it lacks \`schema_version\`, stamp \`consent_era_from: <current UTC timestamp, YYYY-MM-DDTHH:MM:SSZ>\` (add-only) before proceeding with that change.
+
+**Sync inheritance (no double-prompt)**: each inner sync-specs step (Step 8a) inherits its containing archive's consent — it never fires a separate consent prompt.
+
 ## Per-change base-fingerprint check (C2 — NEW step inside upstream Step 8)
 
 (Per \`orbit-base-fingerprints\` and \`orbit-archive-modifications\`' \`Fingerprint-divergence inflection prompt\` requirement)

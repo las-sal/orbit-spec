@@ -116,13 +116,15 @@ After completing all artifacts, summarize:
 
 The sections below describe orbit-specific additions on top of upstream's standalone propose flow. The upstream content above is unchanged. Orbit adds a **consume mode** that activates when \`orbit/explore/<name>/explore.md\` exists from a prior \`/orbit:explore\` session — the exploration becomes the authoritative seed for artifact generation rather than asking the user for a description.
 
-## Three execution disciplines (apply throughout this command)
+## Four execution disciplines (apply throughout this command)
 
 **Read-before-reference (authoring-time)**. When generating artifacts (proposal/design/specs/tasks) that reference specific constructs in the codebase, read the actual definitions first. Don't infer function signatures, file paths, or capability names from training-data patterns. The artifacts you generate become the normative contract; false-precision references corrupt that contract.
 
 **Change completeness (modification-time)**. In consume mode, the section-mapping from \`explore.md\` → generated artifacts is a substantive modification. Apply it fully: if a Decision informs both a spec requirement AND a design entry AND a task, write all three. If an Open question becomes a \`@review:\` marker, insert it in the relevant artifact (don't just note it in explore.md and forget the marker). After artifact generation but before the staging-directory move, sweep for incomplete propagation.
 
 **Pushback (review-time)**. When mid-generation the user pushes back on something (e.g., "that decision actually changed in the last conversation"), verify against current state of \`explore.md\` and the conversation before re-editing. If the explore.md content is current, ask the user whether to update it or to override for this generation. Don't silently diverge from the captured exploration.
+
+**No-chaining (turn boundary)**. Invoke at most the orbit workflow commands the user's message explicitly requests — one command per explicit user request; recommend, never invoke. Completing a command ENDS the turn at the position readout and the engine's eligibility line; blanket delegation ("take it through review") covers work WITHIN the requested command, never the next command — gate \`passed\` means *eligible*, not *commanded*.
 
 ## Mode detection (NEW Step 0 — runs before upstream Step 1)
 

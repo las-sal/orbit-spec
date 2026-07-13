@@ -106,15 +106,17 @@ export function getReviewSkillTemplate(): SkillTemplate {
 
 **Input**: Optional change name and optional \`--as proposal|system\` mode flag plus secondary flags. If change name omitted, prompt via \`AskUserQuestion\` over \`orbit list --json\`. If mode omitted, infer from \`tasks.md\` state (see Step 3).
 
-## Three execution disciplines (apply throughout this command)
+## Four execution disciplines (apply throughout this command)
 
-These three disciplines are embedded in every orbit command as a self-contained reminder. They bracket the authoring lifecycle (authoring-time / modification-time / review-time) and combine with the per-command behavior below. Intentional text duplication across SKILL.md files is the price for self-contained reliability.
+These four disciplines are embedded in every orbit command as a self-contained reminder. They bracket the authoring lifecycle (authoring-time / modification-time / review-time / turn boundary) and combine with the per-command behavior below. Intentional text duplication across SKILL.md files is the price for self-contained reliability.
 
 **Read-before-reference (authoring-time)**. When you author a finding that names a specific construct — a function, type, interface, field, file path, spec requirement name, CLI flag, capability name — read the actual definition first. Use \`Read\`, \`grep\`, or \`orbit instructions\` as appropriate. Do NOT assume the shape based on common patterns or training-data conventions. A finding that says \`"foo.ts:42 declares getUser() returning Promise<User>"\` must be backed by an actual file read; otherwise the recommendation is unverifiable and the user has no way to trust the report. If you can't verify the reference, downgrade the severity or omit the finding.
 
 **Change completeness (modification-time)**. The \`--mark\` flag (proposal mode) modifies artifacts by writing \`@review:\` markers based on findings. When \`--mark\` runs, apply the markers fully across all affected artifacts in one pass. After mechanical insertion, sweep for residue (markers landed in the wrong place; markers that overwrite existing content; doubled markers). Do NOT leave the user to clean up partial marker placement. For the non-\`--mark\` path this discipline rarely applies (review is read-only), but if a stale \`.orbit-runs/\` file or partial prior run is discovered, clean it before persisting the new summary.
 
 **Pushback (review-time)**. **Primary discipline for this command.** Before reporting a finding, verify it against current state. Use \`grep\`, file inspection, or \`git log\` to confirm the issue still applies. Stale findings (issue already fixed) get suppressed with an explanatory note (\`stale finding suppressed: <evidence>\`) and not surfaced in the user-facing report. Do NOT re-flag already-fixed state. When prior \`.orbit-runs/review-<mode>-*.json\` summaries exist, compare to surface only what's new or unresolved.
+
+**No-chaining (turn boundary)**. Invoke at most the orbit workflow commands the user's message explicitly requests — one command per explicit user request; recommend, never invoke. Completing a command ENDS the turn at the position readout and the engine's eligibility line; blanket delegation ("run the review cadence") covers work WITHIN the requested command (the passes of one review), never the next command — review-cycle COUNT is the user's call. Gate \`passed\` means *eligible*, not *commanded*.
 
 ## Steps
 
@@ -347,26 +349,26 @@ If no prior matching summaries: emit \`First <mode>-mode run for this change.\` 
 | Gate state | Phrasing |
 |---|---|
 | ≥1 CRITICAL | \`X critical issue(s) found. Fix before /orbit:apply.\` |
-| A gate-relevant pass has unresolved findings | \`No critical issues. Y warning(s) to consider. A prior gate-relevant pass has unresolved findings; gate review-proposal UNPASSED. Next: /orbit:address-reviews <change> --from-file <unresolved-path>.\` |
-| No fresh independent pass (leading slot uncovered) | \`... gate review-proposal UNPASSED — the cadence's independent slot is uncovered. Next: /orbit:review --as proposal --fresh <change>.\` |
-| Independent pass yielded new findings (no-new-findings not met) | \`... gate review-proposal UNPASSED until an independent pass yields none. Next: /orbit:review --as proposal --fresh <change>.\` |
-| Independent converged, trailing in-context slot uncovered | \`... Independent review converged; gate review-proposal needs its closing in-context confirm. Next: /orbit:review --as proposal <change>.\` |
-| Gate passed | \`All checks passed. gate review-proposal PASSED. Next: /orbit:apply <change>.\` (Only-W/S opener: \`No critical issues. Y warning(s) to consider.\` + \`... Next: /orbit:apply <change> (with noted improvements).\`) |
+| A gate-relevant pass has unresolved findings | \`No critical issues. Y warning(s) to consider. A prior gate-relevant pass has unresolved findings; gate review-proposal UNPASSED. Ready when you are: /orbit:address-reviews <change> --from-file <unresolved-path>.\` |
+| No fresh independent pass (leading slot uncovered) | \`... gate review-proposal UNPASSED — the cadence's independent slot is uncovered. Ready when you are: /orbit:review --as proposal --fresh <change> — independent cross-check required by the review cadence before apply (per orbit-conventions Review mode decision framework).\` |
+| Independent pass yielded new findings (no-new-findings not met) | \`... gate review-proposal UNPASSED until an independent pass yields none. Ready when you are: /orbit:review --as proposal --fresh <change>.\` |
+| Independent converged, trailing in-context slot uncovered | \`... Independent review converged; gate review-proposal needs its closing in-context confirm. Ready when you are: /orbit:review --as proposal <change>.\` |
+| Gate passed | \`All checks passed. gate review-proposal PASSED. Ready when you are: /orbit:apply <change> — user-invoked.\` (Only-W/S opener: \`No critical issues. Y warning(s) to consider.\` + \`... Ready when you are: /orbit:apply <change> (with noted improvements) — user-invoked.\`) |
 
-(Openers: \`All checks passed.\` when this pass is clean, else \`No critical issues. Y warning(s) to consider.\` The unresolved-pass branch takes precedence over all other no-CRITICAL branches. v1: a proposal pass never goes stale — no stale state.)
+(Openers: \`All checks passed.\` when this pass is clean, else \`No critical issues. Y warning(s) to consider.\` The unresolved-pass branch takes precedence over all other no-CRITICAL branches. v1: a proposal pass never goes stale — no stale state. Labels are eligibility-framed per \`orbit-engine-gates\` (D1): \`Ready when you are:\` — never an imperative next-step label — with \` — user-invoked\` appended when the recommended command enters a consent-marked phase (\`/orbit:apply\`, \`/orbit:archive\`).)
 
 #### System mode
 
 | Gate state | Phrasing |
 |---|---|
 | ≥1 CRITICAL | \`X critical issue(s) found. Fix before /orbit:archive.\` |
-| No prior external (leading in-context covered) | \`All checks passed (in-context pass). Next: /orbit:review-external --as system <change> — external cross-check required by the review cadence before archive (per orbit-conventions Review mode decision framework; in an early dogfooding cycle, in-context system review missed 3 of 3 real implementation bugs — all caught by external review).\` |
-| Path A — external clean, gate PASSED | \`All checks passed. External system review (clean) converged; gate review-system PASSED. Next: /orbit:archive <change>.\` |
-| Path B — external resolved, 0 CRITICAL, gate PASSED | \`All checks passed. External system review findings resolved via /orbit:address-reviews; gate review-system PASSED. Next: /orbit:archive <change>.\` |
-| External converged but an ordered slot uncovered | \`... gate review-system is UNPASSED — the cadence's leading in-context slot is uncovered. Next: /orbit:review --as system <change>.\` |
-| External resolved but carried a CRITICAL (confirm unmet) | \`... the prior /orbit:review-external found and resolved a CRITICAL, so gate review-system is UNPASSED until a fresh external yields none. Next: /orbit:review-external --as system <change>.\` |
-| External present with unresolved findings | \`... the prior /orbit:review-external has unresolved findings. Next: /orbit:address-reviews <change> --from-file <external-path>.\` |
-| External stale (apply landed after it) | \`... the prior /orbit:review-external is older than the most recent apply step; gate review-system STALE. Next: /orbit:review-external --as system <change>.\` |
+| No prior external (leading in-context covered) | \`All checks passed (in-context pass). Ready when you are: /orbit:review-external --as system <change> — external cross-check required by the review cadence before archive (per orbit-conventions Review mode decision framework; in an early dogfooding cycle, in-context system review missed 3 of 3 real implementation bugs — all caught by external review).\` |
+| Path A — external clean, gate PASSED | \`All checks passed. External system review (clean) converged; gate review-system PASSED. Ready when you are: /orbit:archive <change> — user-invoked.\` |
+| Path B — external resolved, 0 CRITICAL, gate PASSED | \`All checks passed. External system review findings resolved via /orbit:address-reviews; gate review-system PASSED. Ready when you are: /orbit:archive <change> — user-invoked.\` |
+| External converged but an ordered slot uncovered | \`... gate review-system is UNPASSED — the cadence's leading in-context slot is uncovered. Ready when you are: /orbit:review --as system <change>.\` |
+| External resolved but carried a CRITICAL (confirm unmet) | \`... the prior /orbit:review-external found and resolved a CRITICAL, so gate review-system is UNPASSED until a fresh external yields none. Ready when you are: /orbit:review-external --as system <change>.\` |
+| External present with unresolved findings | \`... the prior /orbit:review-external has unresolved findings. Ready when you are: /orbit:address-reviews <change> --from-file <external-path>.\` |
+| External stale (apply landed after it) | \`... the prior /orbit:review-external is older than the most recent apply step; gate review-system STALE. Ready when you are: /orbit:review-external --as system <change> — re-validate against current product state.\` |
 
 (Precedence when a gate is unpassed for more than one reason: stale > unresolved > a missing ordered slot (→ in-context) > a failed confirm predicate (→ fresh external). Path A/B render \`PASSED\` ONLY when the engine reports full ordered-slot coverage AND the confirm predicate; otherwise defer to the engine-computed state above. A \`--fresh\` system run does NOT satisfy an \`in-context\` slot.)
 
@@ -508,7 +510,7 @@ None.
 
 ### Final assessment
 
-No critical issues. 4 warning(s) to consider. A prior gate-relevant pass has unresolved findings; gate review-proposal UNPASSED. Next: /orbit:address-reviews add-review-workflows --from-file orbit/changes/add-review-workflows/.orbit-runs/review-proposal-2026-05-18T14-43-41Z.json.
+No critical issues. 4 warning(s) to consider. A prior gate-relevant pass has unresolved findings; gate review-proposal UNPASSED. Ready when you are: /orbit:address-reviews add-review-workflows --from-file orbit/changes/add-review-workflows/.orbit-runs/review-proposal-2026-05-18T14-43-41Z.json.
 
 Run summary: orbit/changes/add-review-workflows/.orbit-runs/review-proposal-2026-05-18T14-43-41Z.json
 \`\`\`
@@ -538,12 +540,12 @@ None.
 
 ### Final assessment
 
-All checks passed (in-context pass). Next: /orbit:review-external --as system example-change — external cross-check required by the review cadence before archive (per orbit-conventions Review mode decision framework; in an early dogfooding cycle, in-context system review missed 3 of 3 real implementation bugs — all caught by external review).
+All checks passed (in-context pass). Ready when you are: /orbit:review-external --as system example-change — external cross-check required by the review cadence before archive (per orbit-conventions Review mode decision framework; in an early dogfooding cycle, in-context system review missed 3 of 3 real implementation bugs — all caught by external review).
 
 Run summary: orbit/changes/example-change/.orbit-runs/review-system-2026-05-26T15-12-08Z.json
 \`\`\`
 
-Once the external converges — Path A (clean) or Path B (findings resolved, 0 CRITICAL) with full ordered-slot coverage — the engine reports \`gate review-system PASSED\` and the phrasing becomes \`Next: /orbit:archive <change>\`. Single-voiced throughout: one canonical command, no advertised skip path.
+Once the external converges — Path A (clean) or Path B (findings resolved, 0 CRITICAL) with full ordered-slot coverage — the engine reports \`gate review-system PASSED\` and the phrasing becomes \`Ready when you are: /orbit:archive <change> — user-invoked\`. Single-voiced throughout: one canonical command, no advertised skip path; entry into the archive phase is the user's call.
 
 `,
     references: [

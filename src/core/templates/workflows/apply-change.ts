@@ -16,6 +16,17 @@ export function getApplyChangeSkillTemplate(): SkillTemplate {
 
 **Steps**
 
+0. **Consent at entry (provenance rule — per \`orbit-lifecycle-consent\`)**
+
+   Apply is a consent-scoped command (the \`review-proposal\` gate carries \`consent: user-invoked\`). Determine invocation provenance — an observable transcript fact, never a judgment of delegated intent:
+   - **User-invoked**: the triggering turn contains an explicit user invocation — the typed \`/orbit:apply\` command, or an unambiguous same-turn prose request naming the act ("apply it", "implement the change"). Proceed with ZERO added prompts (only anomaly prompts — the Step 3 gate inflection — may interrupt).
+   - **AI-mediated**: everything else — delegation phrases ("finish the cadence"), inference ("continue"), a handoff document, or an eligibility readout pointing here. Fire a consent **AskUserQuestion** BEFORE any write (after the read-only status/instructions loads in Steps 2–3, so the prompt can show real state): the position readout, what apply will write ("begin implementing N tasks from the artifacts"), and exactly two options — **Proceed** / **Abort**. On Abort: stop; no writes, no run summary.
+   - **When provenance is uncertain, treat the arrival as AI-mediated** — erring toward one extra click, never toward a silent proceed.
+
+   Record the consent story for this invocation: \`user-invoked\` (user-typed) or \`prompted\` (prompt fired, user proceeded) — it lands in every apply emit this session writes.
+
+   **Consent-era stamp (migrate-on-touch)**: once consent is established (user-typed provenance, or Proceed at the prompt), read the change's \`.openspec.yaml\`. If it lacks \`schema_version\`, stamp \`consent_era_from: <current UTC timestamp, YYYY-MM-DDTHH:MM:SSZ>\` into it (add-only; never overwrite an existing stamp). This marks a pre-capability change as tripwire-covered from this touch onward (per \`orbit-lifecycle-consent\`'s consent-era marker).
+
 1. **Select the change**
 
    If a name is provided, use it. Otherwise:
@@ -119,7 +130,7 @@ Working on task 4/7: <task description>
 
 All tasks complete.
 Position: <the \`position\` string from \`orbit status --change <name> --json\` — e.g. \`propose ✓ → review(proposal) (past) → apply ✓ → review(system) unpassed → archive blocked-by-gate\`>
-Next: <the \`next_command\` from \`orbit status --change <name> --json\` — post-apply the gate graph yields \`/orbit:review --as system <change-name>\`>
+Ready when you are: <the \`next_command\` from \`orbit status --change <name> --json\`, rendered verbatim — post-apply the gate graph yields \`/orbit:review --as system <change-name>\`>
 \`\`\`
 
 **Position-readout convention (C1, D-c1-2)**: every handoff — this completion output AND the emit's \`next_recommended\` — renders the GATE GRAPH's computed \`position\` + \`next_command\` from \`orbit status --json\`. The skill does NOT hand-write the next lifecycle command — the graph owns the flow (\`propose → review-proposal → apply → review-system → archive\`), so the "what's next" token is always read from the engine, never authored here. Post-apply the graph yields the \`review-system\` gate's first step (\`/orbit:review --as system\`), which executes verify as its Pass 0.
@@ -165,13 +176,14 @@ This skill supports the "actions on a change" model:
 
 # Orbit additions
 
-## Three execution disciplines (apply throughout this command)
+## Four execution disciplines (apply throughout this command)
 
-The three execution disciplines from \`orbit-conventions\` bracket the authoring lifecycle; they're embedded in every orbit command for self-contained reliability.
+The four execution disciplines from \`orbit-conventions\` bracket the authoring lifecycle; they're embedded in every orbit command for self-contained reliability.
 
 - **Read-before-reference (authoring-time)**: before naming a specific construct (function, type, file path, capability, spec requirement, command flag), read its actual definition — never infer a plausible reference. If you can't verify, ask the user or leave a \`@review:\` marker instead of guessing.
 - **Change completeness (modification-time)**: apply substantive modifications fully across ALL affected artifacts before calling them done; after mechanical edits, sweep for residue the pattern missed AND new bugs the replacement introduced.
 - **Pushback (review-time)**: verify each flagged issue against current state before acting; suppress stale findings with evidence rather than re-fixing already-fixed state.
+- **No-chaining (turn boundary)**: invoke at most the orbit workflow commands the user's message explicitly requests — one command per explicit request; recommend, never invoke. Completing a command ENDS the turn at the position readout and the engine's eligibility line; blanket delegation ("take it through review") covers work WITHIN the requested command, never the next one — gate \`passed\` means *eligible*, not *commanded*.
 
 ## Run-summary emit (chunk-aware)
 
@@ -232,9 +244,12 @@ Per the universal spine in \`orbit-conventions\`'s \`Internal-run JSON summary f
   "chunk_name": "<from preamble>" | null,
   "chunk_complete": true | false,
   "tasks_completed_this_session": <int — delta since prior apply JSON, for forensic timeline>,
+  "consent": "user-invoked" | "prompted",
   "gate_overridden": { "gate": "review-proposal", "state": "<unpassed|stale>", "reason": "<gate reason at decision time>" }
 }
 \`\`\`
+
+**\`consent\`** (D1, per \`orbit-lifecycle-consent\`) records the invocation's consent story from Step 0: \`"user-invoked"\` (user-typed) or \`"prompted"\` (AI-mediated arrival, consent prompt fired, user proceeded). Exactly two values — a consent Abort writes NO summary. The value is CONSTANT across one apply invocation's chunk emits (provenance is a property of the invocation, not the chunk). REQUIRED on every post-capability apply emit; its absence is the audit-drift tripwire condition. Independent of \`gate_overridden\`.
 
 **\`gate_overridden\`** (C1) is present ONLY when the user chose **Proceed anyway** past an unpassed/stale \`review-proposal\` gate at the apply inflection prompt (Step 3); the shape is \`{gate, state, reason}\` captured at decision time. Absent when no override occurred; REQUIRED when proceed-anyway was chosen.
 

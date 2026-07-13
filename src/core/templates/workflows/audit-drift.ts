@@ -103,7 +103,7 @@ Findings roll into the standard 3-dimension scorecard. The final-assessment phra
 - **Project-wide standalone** — \`/orbit:audit-drift\` (no positional): user invokes with no args; no caller signal. Operates project-wide; emits to \`orbit/.orbit-runs/audit-drift-<TS>.json\`.
 - **Library / pre-archive** — caller signal present (set by \`/orbit:review --as system\` Pass 6 or \`/orbit:archive\` pre-archive sweep): invocation context comes from the caller; positional args ignored.
 
-## Three execution disciplines (apply throughout this command)
+## Four execution disciplines (apply throughout this command)
 
 **Read-before-reference (authoring-time)**. Findings cite file:line. Before reporting that \`BridgeServer\` appears at \`orbit/specs/foo/spec.md:42\`, read that line. Don't grep-and-cite without verifying — false-positive vocabulary residue (e.g., the term appears in a code block discussing the rename itself) is the most common audit-drift mistake. Distinguishing "actual residue" from "documentation of the residue pattern" requires reading.
 
@@ -116,6 +116,8 @@ Findings roll into the standard 3-dimension scorecard. The final-assessment phra
 - **Archive coherence (Cat 4)**: confirm the ADDED requirement really is absent from baseline — not just present under a renamed name.
 
 Suppress stale findings with an evidence note (\`stale finding suppressed: <evidence>\`); show in summary's \`stale_suppressed\` array but not in the user-facing report.
+
+**No-chaining (turn boundary)**. Invoke at most the orbit workflow commands the user's message explicitly requests — one command per explicit user request; recommend, never invoke. Completing a command ENDS the turn at the position readout and the engine's eligibility line; blanket delegation ("take it through review") covers work WITHIN the requested command, never the next command — gate \`passed\` means *eligible*, not *commanded*.
 
 **Bias toward lower severity when uncertain.** SUGGESTION beats WARNING beats CRITICAL. The goal is signal, not volume — same false-positive bias as \`/orbit:review\`.
 

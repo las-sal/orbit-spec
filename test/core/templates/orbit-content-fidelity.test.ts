@@ -22,6 +22,7 @@ import {
   getVerifyChangeSkillTemplate,
   getArchiveChangeSkillTemplate,
   getOnboardSkillTemplate,
+  getSyncSpecsSkillTemplate,
   getReviewSkillTemplate,
   getOrbitReviewCommandTemplate,
   getReviewExternalSkillTemplate,
@@ -40,7 +41,8 @@ import {
  * silently drops orbit content, reintroduces the /opsx: namespace, or points at
  * the old openspec/ working dir fails loudly.
  *
- * sync-specs is intentionally absent: orbit never modified it (a no-op for B1).
+ * sync-specs joined RELOCATED in D1 (explicit-lifecycle-consent): it gained the
+ * disciplines block + the consent-inheritance note (it was a B1 no-op before).
  */
 // Per-workflow REQUIRED markers (every listed marker must appear in the skill body).
 // A workflow that silently loses its disciplines block, run-summary section, or
@@ -50,17 +52,40 @@ const RELOCATED: Array<[string, () => SkillTemplate, string[]]> = [
   ['propose', getOrbitProposeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
   ['new-change', getNewChangeSkillTemplate, ['execution disciplines', 'Run-summary emit']],
   ['continue-change', getContinueChangeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
-  ['apply-change', getApplyChangeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override', 'blocked-by-gate', 'gate_overridden']],
+  ['apply-change', getApplyChangeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override', 'blocked-by-gate', 'gate_overridden', 'Consent at entry', 'consent_era_from', '"consent": "user-invoked" | "prompted"']],
   ['ff-change', getFfChangeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
-  ['bulk-archive-change', getBulkArchiveChangeSkillTemplate, ['# Orbit additions']],
+  ['bulk-archive-change', getBulkArchiveChangeSkillTemplate, ['# Orbit additions', 'execution disciplines', 'Per-change consent', 'consent_era_from']],
   ['verify-change', getVerifyChangeSkillTemplate, ['execution disciplines', 'Run-summary emit']],
-  ['archive-change', getArchiveChangeSkillTemplate, ['execution disciplines', 'run summary', 'review-system gate inflection', 'gate_overridden']],
-  ['onboard', getOnboardSkillTemplate, ['execution disciplines', 'self-contained']],
+  ['archive-change', getArchiveChangeSkillTemplate, ['execution disciplines', 'run summary', 'review-system gate inflection', 'gate_overridden', 'Consent at entry', 'consent_era_from', 'Sync inheritance']],
+  ['onboard', getOnboardSkillTemplate, ['execution disciplines', 'self-contained', 'Four execution disciplines']],
+  ['sync-specs', getSyncSpecsSkillTemplate, ['execution disciplines', 'Consent inheritance']],
   // B3 editorial workflows (net-new relocation; parity proof per D-b3-4)
-  ['review', getReviewSkillTemplate, ['execution disciplines', 'convergence states', 'Persist the run summary', 'recommendation_options', 'gate review-proposal', 'reviewer_class']],
+  ['review', getReviewSkillTemplate, ['execution disciplines', 'convergence states', 'Persist the run summary', 'recommendation_options', 'gate review-proposal', 'reviewer_class', 'Ready when you are']],
   ['review-external', getReviewExternalSkillTemplate, ['execution disciplines', 'Run-summary emit (T0', 'awaiting_findings', 'Handoff preflight', 'Prompt committed']],
   ['address-reviews', getAddressReviewsSkillTemplate, ['execution disciplines', 'Ripple cascade', 'Decision-fork detection', 'resolution log']],
   ['audit-drift', getAuditDriftSkillTemplate, ['execution disciplines', 'Vocabulary residue', 'Persist the run summary', 'recommendation_options']],
+];
+
+// D1 (explicit-lifecycle-consent): every generated body echoes the no-chaining
+// contract as the FOURTH disciplines entry, and no body renders an imperative
+// `Next:` label — eligibility phrasing (`Ready when you are:`) is the only
+// recommendation label. Exit-criterion greps per the D-arc D1 acceptance tests.
+const ALL_SURFACE_SKILLS: Array<[string, () => SkillTemplate]> = [
+  ['explore', getExploreSkillTemplate],
+  ['propose', getOrbitProposeSkillTemplate],
+  ['new-change', getNewChangeSkillTemplate],
+  ['continue-change', getContinueChangeSkillTemplate],
+  ['apply-change', getApplyChangeSkillTemplate],
+  ['ff-change', getFfChangeSkillTemplate],
+  ['sync-specs', getSyncSpecsSkillTemplate],
+  ['bulk-archive-change', getBulkArchiveChangeSkillTemplate],
+  ['verify-change', getVerifyChangeSkillTemplate],
+  ['archive-change', getArchiveChangeSkillTemplate],
+  ['onboard', getOnboardSkillTemplate],
+  ['review', getReviewSkillTemplate],
+  ['review-external', getReviewExternalSkillTemplate],
+  ['address-reviews', getAddressReviewsSkillTemplate],
+  ['audit-drift', getAuditDriftSkillTemplate],
 ];
 
 // dirName -> exact reference declarations for the B3 multi-file editorial skills
@@ -105,6 +130,34 @@ describe('orbit content fidelity (B1 relocation)', () => {
       expect(skill).not.toContain('/opsx:');
       expect(skill).not.toMatch(/openspec\/(changes|specs|explore|lenses)/);
       expect(skill).not.toContain('openspec-orbit#');
+    });
+  });
+
+  describe('D1 lifecycle-consent exit criteria (every surface body)', () => {
+    describe.each(ALL_SURFACE_SKILLS)('%s', (_name, getTemplate) => {
+      const skill = getTemplate().instructions;
+
+      it('echoes the no-chaining contract (fourth discipline)', () => {
+        expect(skill).toContain('No-chaining');
+        expect(skill).toContain('execution disciplines');
+      });
+
+      it('renders no imperative Next: label', () => {
+        expect(skill).not.toContain('Next:');
+      });
+    });
+
+    it('consent-scoped bodies instruct the provenance-gated prompt (user-typed = zero prompts)', () => {
+      for (const getTemplate of [getApplyChangeSkillTemplate, getArchiveChangeSkillTemplate]) {
+        const skill = getTemplate().instructions;
+        expect(skill).toContain('User-invoked');
+        expect(skill).toContain('AI-mediated');
+        expect(skill).toContain('ZERO added prompts');
+        expect(skill).toContain('uncertain, treat the arrival as AI-mediated');
+      }
+      const bulk = getBulkArchiveChangeSkillTemplate().instructions;
+      expect(bulk).toContain("the user's invocation for the confirmed set");
+      expect(bulk).toContain('treat the arrival as AI-mediated');
     });
   });
 

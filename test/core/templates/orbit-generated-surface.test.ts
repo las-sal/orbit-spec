@@ -35,7 +35,7 @@ const SURFACE: Array<[string, string, string[]]> = [
   ['orbit-continue-change', 'continue', ['execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
   ['orbit-apply-change', 'apply', ['execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
   ['orbit-ff-change', 'ff', ['execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
-  ['orbit-sync-specs', 'sync', []], // upstream-verbatim: no orbit markers expected
+  ['orbit-sync-specs', 'sync', ['execution disciplines', 'Consent inheritance']], // gained the orbit layer in D1
   ['orbit-archive-change', 'archive', ['execution disciplines', 'run summary']],
   ['orbit-bulk-archive-change', 'bulk-archive', ['# Orbit additions']],
   ['orbit-verify-change', 'verify', ['execution disciplines', 'Run-summary emit']],
@@ -93,11 +93,10 @@ describe('generated surface fidelity (real init, all workflows, claude + codex)'
       for (const marker of requiredMarkers) {
         expect(skill).toContain(marker);
       }
-      if (requiredMarkers.length === 0) {
-        // sync-specs stays upstream-verbatim
-        expect(skill).not.toContain('Orbit additions');
-      }
       expect(skill).not.toContain('/opsx:');
+      // D1: no body renders an imperative Next: label; every body echoes no-chaining.
+      expect(skill).not.toContain('Next:');
+      expect(skill).toContain('No-chaining');
     });
 
     it('codex skill on disk matches the claude body (single source)', async () => {

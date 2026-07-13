@@ -23,29 +23,29 @@ built: every lifecycle transition is user-invoked.
 
 ## 2. Workflow bodies (consent prompts + no-chaining echo)
 
-- [ ] 2.1 `apply-change.ts`: consent step at entry — provenance check per
+- [x] 2.1 `apply-change.ts`: consent step at entry — provenance check per
       `orbit-lifecycle-consent` (user-typed → no prompt; AI-mediated → AskUserQuestion with
       position readout + task-count write preview, Proceed/Abort; uncertain → treat as
       AI-mediated); at entry, stamp `consent_era_from` into `.openspec.yaml` when the change
       lacks `schema_version` (migrate-on-touch); emit docs gain `consent` field (constant across
       chunk emits)
-- [ ] 2.2 `archive-change.ts`: consent step BEFORE Step 3.4 (same provenance rule; write preview
+- [x] 2.2 `archive-change.ts`: consent step BEFORE Step 3.4 (same provenance rule; write preview
       = deltas/capabilities to sync + move); summary-shape docs + `ARCHIVE_SUMMARY_SCHEMA_REFERENCE`
       literal gain the `consent` field; abort writes no summary; same migrate-on-touch stamp at
       entry as 2.1 (bulk: per change)
-- [ ] 2.3 `bulk-archive-change.ts`: per-change consent on AI-mediated arrival (user-typed bulk
+- [x] 2.3 `bulk-archive-change.ts`: per-change consent on AI-mediated arrival (user-typed bulk
       whose flow confirmed the batch = user-invoked for the set); note sync's consent inheritance
       in both archive bodies (no double-prompt)
-- [ ] 2.4 `review.ts` + `onboard.ts` (line ~78 quotes the stock phrasings; `apply-change.ts`'s
+- [x] 2.4 `review.ts` + `onboard.ts` (line ~78 quotes the stock phrasings; `apply-change.ts`'s
       literal `Next:` completion line is covered by 2.5): final-assessment tables re-labeled
       to `Ready when you are:` with the ` — user-invoked` marker on apply/archive
       recommendations (per the orbit-review spec delta); onboard's identity enumeration updates
       to FOUR execution disciplines (per the orbit-onboard spec delta)
-- [ ] 2.5 All 15 bodies: no-chaining contract as the FOURTH disciplines entry (echo of the new
+- [x] 2.5 All 15 bodies: no-chaining contract as the FOURTH disciplines entry (echo of the new
       `orbit-conventions` requirement); completion sections render the engine readout verbatim
       (subtraction per design D7: remove hand-written next-step prose variants + any quoted
       imperative `Next:` phrasing)
-- [ ] 2.6 Template parity hashes re-pinned; per-workflow fidelity tests updated (incl. a grep
+- [x] 2.6 Template parity hashes re-pinned; per-workflow fidelity tests updated (incl. a grep
       test: no body renders an imperative `Next:` label)
 
 ## 3. Audit tripwire

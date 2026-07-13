@@ -515,7 +515,7 @@ export function getAddressReviewsSkillTemplate(): SkillTemplate {
 
 **Input**: Optional scope (path or pattern) and optional flags. Default: whole-repo scan with safe exclusions.
 
-## Three execution disciplines (apply throughout this command)
+## Four execution disciplines (apply throughout this command)
 
 **Pushback (review-time). Primary discipline for this command.** Before fixing any marker, verify the claim against current state. Procedure:
 
@@ -531,6 +531,8 @@ Do NOT re-edit already-fixed state. Stale markers get removed without further ed
 **Read-before-reference (authoring-time)**. When a marker resolution edits a file (trivial fix or applied decision), reference the actual current content of the file — read first. Don't assume the structure based on what the marker text describes; the file may have evolved since the marker was placed. Re-read after any edit cycle to confirm the change landed correctly.
 
 **Change completeness (modification-time)**. When a marker's resolution touches related artifacts (e.g., resolving a spec marker has downstream design.md / proposal.md implications), derive the **ripple-flag set** and apply parallel edits via the Step 3d ripple cascade. Cascade-by-default auto-applies edits to IN-set files (everything outside the four lifecycle-invariant OUT categories: audit trail, baseline specs, cross-change/archive, safe-exclusions); OUT-set files are recorded in \`ripple_cascade.flagged_not_applied[]\` with a structural reason. \`--no-cascade\` opts out — ALL ripple-flagged files land in \`flagged_not_applied[]\` with reason \`--no-cascade suppressed\` regardless of IN/OUT classification. After mechanical replacement as part of a trivial fix, sweep the just-touched files for residue (doubled words, broken references, content overwrites). Known residue must not be left for a downstream review to catch.
+
+**No-chaining (turn boundary)**. Invoke at most the orbit workflow commands the user's message explicitly requests — one command per explicit user request; recommend, never invoke. Completing a command ENDS the turn at the position readout and the engine's eligibility line; blanket delegation ("take it through review") covers work WITHIN the requested command, never the next command — gate \`passed\` means *eligible*, not *commanded*.
 
 ## Steps
 

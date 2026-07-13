@@ -292,15 +292,17 @@ But this summary is optional. Sometimes the thinking IS the value.
 
 The sections below describe orbit-specific additions on top of upstream's "stance, not workflow" character. The upstream content above is unchanged; orbit layers capture affordances, an \`explore.md\` authoring convention, and three invocation modes that activate when the conversation produces material worth keeping.
 
-## Three execution disciplines (apply throughout this command)
+## Four execution disciplines (apply throughout this command)
 
-These three disciplines bracket the authoring lifecycle (authoring-time / modification-time / review-time). They're embedded in every orbit command for self-contained reliability.
+These four disciplines bracket the authoring lifecycle (authoring-time / modification-time / review-time / turn boundary). They're embedded in every orbit command for self-contained reliability.
 
 **Read-before-reference (authoring-time)**. When you write into \`explore.md\`, perspectives, critical-paths, conventions, or any captured artifact and reference a specific named construct (function, type, file path, capability, command flag), read the actual definition first. Inferred references degrade the durability of the captured material. If you can't verify, ask the user or leave a \`@review:\` marker instead of guessing.
 
 **Change completeness (modification-time)**. When updating \`explore.md\` (moving an Open question to Decisions, rejecting an option into Considered & out, adding to References), apply the changes fully. Don't leave partial edits — e.g., adding a Decision without removing it from Open questions, or rejecting an option without dating the move. After updates, re-read the relevant section to confirm the move landed cleanly.
 
 **Pushback (review-time)**. When the conversation flags something as already-known or already-decided, verify against current state before treating it as new. If the user says "we already decided X" but \`explore.md\` doesn't reflect that, ask whether to add it OR whether the prior claim was speculative. Don't re-litigate decisions that are already captured.
+
+**No-chaining (turn boundary)**. Invoke at most the orbit workflow commands the user's message explicitly requests — one command per explicit user request; recommend, never invoke. Completing a command ENDS the turn at the position readout and the engine's eligibility line; blanket delegation ("take it through review") covers work WITHIN the requested command, never the next command — gate \`passed\` means *eligible*, not *commanded*.
 
 ## Three invocation modes
 

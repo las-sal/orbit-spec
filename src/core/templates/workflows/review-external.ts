@@ -192,15 +192,17 @@ export function getReviewExternalSkillTemplate(): SkillTemplate {
 
 **Input**: Optional change name and optional \`--as proposal|system\`. If omitted, change is selected via \`AskUserQuestion\`, mode is inferred from \`tasks.md\` state.
 
-## Three execution disciplines (apply throughout this command)
+## Four execution disciplines (apply throughout this command)
 
-These three disciplines are embedded in every orbit command as a self-contained reminder. They bracket the authoring lifecycle (authoring-time / modification-time / review-time).
+These four disciplines are embedded in every orbit command as a self-contained reminder. They bracket the authoring lifecycle (authoring-time / modification-time / review-time / turn boundary).
 
 **Read-before-reference (authoring-time)**. The prompt file you generate references project paths (\`CLAUDE.md\`, \`orbit/lenses/perspectives.md\`, etc.) and counts (iteration N, prior open findings, resolved-since-last). Read the actual files before citing them — don't assume \`orbit/lenses/perspectives.md\` exists; check. Don't fabricate iteration history; compute from \`.orbit-runs/\`. A prompt that names files that don't exist degrades the external AI's trust in the handoff.
 
 **Change completeness (modification-time)**. The prompt file is written once per invocation. If you discover mid-generation that a section needs updating (e.g., iteration count was wrong because you missed a prior file), regenerate the whole file rather than partially overwriting. The prompt file becomes the canonical artifact for the external review; partial writes leak inconsistency.
 
 **Pushback (review-time)**. Does not apply directly — this command generates packaging, not findings. But: the prompt instructs the external AI **not** to apply pushback discipline (\`Do not push back on stale findings — pushback discipline is enforced on resolution, not review.\`). This is deliberate: the external AI should flag what it observes; \`/orbit:address-reviews\` applies the pushback when ingesting findings.
+
+**No-chaining (turn boundary)**. Invoke at most the orbit workflow commands the user's message explicitly requests — one command per explicit user request; recommend, never invoke. Completing a command ENDS the turn at the position readout and the engine's eligibility line; blanket delegation ("take it through review") covers work WITHIN the requested command, never the next command — gate \`passed\` means *eligible*, not *commanded*.
 
 ## Steps
 

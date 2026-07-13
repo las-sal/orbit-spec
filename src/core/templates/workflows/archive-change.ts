@@ -27,7 +27,7 @@ This schema inherits the 6-field **universal spine** from \`orbit-conventions\`'
 - \`next_recommended\` (verbatim recommendation, e.g., \`"Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."\`)
 - \`kind: "lifecycle"\` (archive is THE lifecycle command per the kind taxonomy — transitions a change out of the active set)
 
-The schema below documents the per-command extensions ADDED to that spine (\`archive_path\`, \`audit\`, \`sync_specs\`, \`unresolved_markers\`, \`user_decision\`, \`warnings\`), per the \`kind: "lifecycle"\` extensions in \`orbit-conventions\`, plus the conditional \`gate_overridden\` (C1) and \`fingerprint_overridden\` / \`fingerprints_unverified\` (C2) fields.
+The schema below documents the per-command extensions ADDED to that spine (\`archive_path\`, \`audit\`, \`sync_specs\`, \`unresolved_markers\`, \`user_decision\`, \`warnings\`), per the \`kind: "lifecycle"\` extensions in \`orbit-conventions\`, plus the \`consent\` field (D1) and the conditional \`gate_overridden\` (C1) and \`fingerprint_overridden\` / \`fingerprints_unverified\` (C2) fields.
 
 **Note on \`sync_specs\`**: this field reports the result of the archive flow invoking the \`orbit-sync-specs\` upstream primitive (kept upstream-verbatim per \`orbit-conventions\`' \`Generated-file disposition\`).
 
@@ -60,6 +60,7 @@ The schema below documents the per-command extensions ADDED to that spine (\`arc
   },
   "unresolved_markers": ["<file>:<line> — <marker text>"],
   "user_decision": "proceeded_with_no_critical" | "proceeded_despite_critical" | "audit_skipped_via_flag",
+  "consent": "user-invoked" | "prompted",
   "gate_overridden": { "gate": "review-system", "state": "<unpassed|stale>", "reason": "<gate reason at decision time>" },
   "fingerprint_overridden": [
     { "capability": "<name>", "requirement": "<name>", "base_hash": "sha256:<hex>", "live_hash": "sha256:<hex>" }
@@ -81,6 +82,7 @@ The schema below documents the per-command extensions ADDED to that spine (\`arc
 - **\`sync_specs.capabilities_updated\`** lists capability names whose \`orbit/specs/<capability>/spec.md\` was edited; the delta counts (\`added\`/\`modified\`/\`removed\`/\`renamed\`) sit DIRECTLY under \`sync_specs\`, mirroring \`orbit-conventions\`' canonical lifecycle example.
 - **\`unresolved_markers\`** is an ARRAY of the \`@review:\` markers still present when the archive proceeded (empty array when none) — one \`"<file>:<line> — <marker text>"\` entry per marker. Marker-prompt outcomes that halt the archive write no summary at all.
 - **\`user_decision\`** captures the AUDIT-drift prompt decision and has exactly three values: \`proceeded_with_no_critical\` (clean audit or warnings only), \`proceeded_despite_critical\` (user explicitly proceeded past CRITICAL findings), \`audit_skipped_via_flag\` (\`--skip-audit\` used). An abort at the critical-findings prompt cancels the archive and writes no summary.
+- **\`consent\`** (D1, per \`orbit-lifecycle-consent\`) records the invocation's consent story from the Step 0 provenance check: \`"user-invoked"\` (user-typed \`/orbit:archive\`, or a user-typed \`/orbit:bulk-archive\` whose flow confirmed the batch) or \`"prompted"\` (AI-mediated arrival, consent prompt fired, user proceeded). Exactly two values — a consent Abort writes NO summary. REQUIRED on every post-capability archive emit; absence is the audit-drift tripwire condition. DISTINCT from \`user_decision\` (audit outcome), \`gate_overridden\` (cadence override), and the fingerprint fields (content guard).
 - **\`gate_overridden\`** (C1) is DISTINCT from \`user_decision\` (which is the audit-drift outcome): it is present ONLY when the \`review-system\` gate was unpassed/stale at archive and the user chose **Proceed anyway** at the gate inflection prompt (Step 3.4); shape \`{gate, state, reason}\` captured at decision time. Absent when no gate override occurred.
 - **\`fingerprint_overridden\`** (C2) is present ONLY when the Step 3.45 fingerprint check reported \`diverged\` requirement(s) and the user chose **Proceed anyway** at the divergence inflection prompt — one \`{capability, requirement, base_hash, live_hash}\` entry per diverged requirement, captured at decision time. Absent when no fingerprint override occurred; REQUIRED when proceed-anyway was chosen. DISTINCT from \`gate_overridden\` (review-cadence override) and \`user_decision\` (audit-drift outcome).
 - **\`fingerprints_unverified\`** (C2) is present ONLY when the archive proceeded past requirement(s) whose fingerprint status was \`unverified\` (no base recorded — e.g. a hand-authored or pre-C2 delta) — one \`{capability, requirement}\` entry each. Absent when every touched requirement was verified.
@@ -199,15 +201,31 @@ All artifacts complete. All tasks complete.
 
 # Orbit additions
 
-The sections below describe orbit-specific additions on top of upstream's archive flow. The upstream content above is unchanged. Orbit adds a **pre-archive \`audit-drift\` sweep**, a \`--skip-audit\` opt-out, an **unresolved \`@review:\` marker warning**, a **base-fingerprint divergence check** (C2), an **archive run summary** written to \`.orbit-runs/\`, and a small set of edge-case behaviors.
+The sections below describe orbit-specific additions on top of upstream's archive flow. The upstream content above is unchanged. Orbit adds a **consent check at entry** (D1), a **pre-archive \`audit-drift\` sweep**, a \`--skip-audit\` opt-out, an **unresolved \`@review:\` marker warning**, a **base-fingerprint divergence check** (C2), an **archive run summary** written to \`.orbit-runs/\`, and a small set of edge-case behaviors.
 
-## Three execution disciplines (apply throughout this command)
+## Four execution disciplines (apply throughout this command)
 
 **Read-before-reference (authoring-time)**. The archive run summary cites the pre-archive audit findings, user decision, and sync-specs results. Read the audit-drift output and the sync-specs assessment before writing the summary — don't infer counts from intent. The summary becomes the audit trail for the archived change; false claims corrupt later inspection.
 
 **Change completeness (modification-time)**. The archive flow modifies multiple artifacts: it moves the change directory, runs \`sync-specs\` (which writes to baseline), and writes the archive run summary. Apply these fully: a moved change should not leave dangling references in baseline; a sync-specs run should not leave delta-only requirements unreflected in baseline. Sweep after each step to confirm completion before proceeding to the next.
 
 **Pushback (review-time)**. The pre-archive audit produces findings. Before presenting them to the user, verify each against current state (audit-drift's own pushback discipline applies, but apply a second-pass check at the archive layer): is the finding still applicable given any commits since the audit ran in the current session? Stale findings get a note in the summary, not a re-prompt.
+
+**No-chaining (turn boundary)**. Invoke at most the orbit workflow commands the user's message explicitly requests — one command per explicit request; recommend, never invoke. Completing a command ENDS the turn at the position readout and the engine's eligibility line; blanket delegation ("take it through review") covers work WITHIN the requested command, never the next one — gate \`passed\` means *eligible*, not *commanded*.
+
+## NEW Step 0 — Consent at entry (provenance rule, per \`orbit-lifecycle-consent\`)
+
+BEFORE any other step — before the Step 1.5 marker scan, the Step 3.4 gate prompt, and every write. Archive is a consent-scoped command (the \`review-system\` gate carries \`consent: user-invoked\`); consent asks "should we be here at all", the anomaly prompts (gate, fingerprint, audit) ask "is the state sound".
+
+Determine invocation provenance — an observable transcript fact, never a judgment of delegated intent:
+
+- **User-invoked**: the triggering turn contains an explicit user invocation — the typed \`/orbit:archive\` command, or an unambiguous same-turn prose request naming the act ("archive it"). Proceed with ZERO added prompts (only the anomaly prompts may interrupt); the run summary records \`consent: "user-invoked"\`.
+- **AI-mediated**: everything else — delegation phrases ("finish the cadence"), inference ("continue"), a handoff document, or an eligibility readout pointing here. Fire a consent **AskUserQuestion** BEFORE any of the command's writes: the position readout, what the archive will write (N deltas across M capabilities synced to baseline + the change moved to archive — from a read-only look at \`orbit/changes/<name>/specs/\`), and exactly two options — **Proceed** / **Abort**. Proceed records \`consent: "prompted"\` in the run summary; **Abort leaves no baseline write, no sync, no move, and no run summary**.
+- **When provenance is uncertain, treat the arrival as AI-mediated** — erring toward one extra click, never toward a silent proceed.
+
+**Consent-era stamp (migrate-on-touch)**: once consent is established (user-typed provenance, or Proceed at the prompt), read the change's \`.openspec.yaml\`. If it lacks \`schema_version\`, stamp \`consent_era_from: <current UTC timestamp, YYYY-MM-DDTHH:MM:SSZ>\` into it (add-only; never overwrite an existing stamp) — this marks a pre-capability change as tripwire-covered from this touch onward.
+
+**Sync inheritance (no double-prompt)**: the sync-specs step this flow invokes (upstream Step 4) inherits THIS flow's consent — it never fires a separate consent prompt.
 
 ## NEW Step 1.5 — Unresolved \`@review:\` marker warning
 
@@ -243,7 +261,7 @@ Query the gate: \`orbit status --change "<change-name>" --json\` and read the \`
 - **Proceed anyway** — continue the archive; record \`gate_overridden: {gate: "review-system", state, reason}\` in the archive run summary (captured at decision time).
 - **Abort** — cancel the archive; no move, no sync-specs, no summary.
 
-The gate NEVER hard-blocks (apply-parity): the engine reports, the skill prompts, the user decides, the trail records. If \`review-system\` is \`passed\` (or the schema declares no such gate), proceed without prompting. This gate prompt is DISTINCT from the fingerprint prompt (Step 3.45) and the audit-drift prompt (Step 3.5); all three MAY fire in one archive invocation (gate first, then fingerprints, then audit).
+The gate NEVER hard-blocks (apply-parity): the engine reports, the skill prompts, the user decides, the trail records. If \`review-system\` is \`passed\` (or the schema declares no such gate), proceed without prompting. This gate prompt is DISTINCT from the Step 0 consent prompt (consent asks "should we be here at all"; this asks "is the state sound"), the fingerprint prompt (Step 3.45), and the audit-drift prompt (Step 3.5); a single invocation MAY fire consent first and the anomaly prompts after (gate, then fingerprints, then audit).
 
 ## NEW Step 3.45 — Base-fingerprint divergence check (C2)
 
