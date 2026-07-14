@@ -107,7 +107,7 @@ change's acceptance tests, and D3 (orientation) hard-depends on the machinery bu
   resolution.
 - **Workflow templates** (`src/core/templates/workflows/`): NEW `architect.ts` (skill + thin
   launcher — must register in EVERY registry; grep-enumerate first, per the B3 sixth-registry
-  lesson); edits to `review.ts`, `audit-drift.ts`, `explore.ts`, `propose.ts`,
+  lesson); edits to `review.ts`, `audit-drift.ts`, `explore.ts`, `propose.ts`, `address-reviews.ts`,
   `archive-change.ts`, `onboard.ts`. Surface 15 → 16 (profiles comment + D15 count mentions
   swept 15→16; CLAUDE.md count updates at archive).
 - **Docs**: `orbit/architecture/d-arc-arbitered-flow.md` retrofitted (state lines deleted);

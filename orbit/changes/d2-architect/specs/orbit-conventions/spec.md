@@ -68,7 +68,7 @@ timestamp        string       ISO-8601 UTC; JSON field uses standard colon forma
                               (e.g., `"2026-05-21T13:34:12Z"`). Filename embeds a colon-replaced `<TS>` token
                               `YYYY-MM-DDTHH-MM-SSZ` (e.g., `propose-2026-05-21T13-34-12Z.json`) because
                               colons aren't filesystem-safe across all platforms.
-change           string|null  the change name (or null for project-scope commands)
+change           string|null  the change name (or null for project-scope and architecture-scoped commands)
 final_assessment string       narrative of what just happened (human-readable)
 next_recommended string       verbatim recommendation, suitable for best-effort parse by downstream status readers
 kind             enum         "workflow" | "editorial" | "lifecycle"

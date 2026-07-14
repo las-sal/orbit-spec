@@ -73,10 +73,15 @@ by hand at the phase seams.
 - [ ] 4.3 `audit-drift.ts` body: architecture staleness check (computed-vs-prose contradiction;
       falsified `Complete:` mark CRITICAL; hand-written state line WARNING; dangling citations
       CRITICAL; clean skip with no parseable docs; flow-entry rule — origin never flagged)
-- [ ] 4.4 `onboard.ts`: identity enumeration gains the program-architecture layer; sweep ALL
-      surface-count mentions 15→16 (profiles.ts comment, generated-surface expectations, any
-      "15 workflows/skills" pins — the D1-cycle contradiction class, swept proactively)
-- [ ] 4.5 Parity hashes re-pinned (+ architect joins the hash maps); fidelity markers for the
+- [ ] 4.4 `onboard.ts`: identity enumeration gains the program-architecture layer AND the
+      quick-reference table gains the `/orbit:architect` row; sweep ALL surface-count mentions
+      15→16 (profiles.ts comment, generated-surface expectations, any "15 workflows/skills"
+      pins — the D1-cycle contradiction class, swept proactively)
+- [ ] 4.5 `address-reviews.ts` body: cascade OUT table's audit-trail row gains the explore +
+      architecture trails (all four `.orbit-runs/` locations, per the orbit-address-reviews
+      delta); resolution-log destination list gains the architecture route (`--from-file` into
+      the architecture trail → the log lands there, `change: null` + `doc` carried)
+- [ ] 4.6 Parity hashes re-pinned (+ architect joins the hash maps); fidelity markers for the
       new body + edited bodies; on-disk generated-surface test expects 16 commands/skills
 
 ## 5. Verification sweep (arc §D2 exit criteria) + surface refresh

@@ -47,8 +47,9 @@ stage's `Complete:` slot is ratified (`[x]` with date); a quiescent stage with a
 renders as quiescent-awaiting-ratification. A ratified `Complete:` mark on a stage whose OBSERVED
 state is not quiescent — live citing work (active change or live explore) OR no citing artifacts
 at all (`premised`, e.g. a pre-D2 archived stage whose archive was never backfilled with its
-citation) — is an inconsistency surfaced by validation and the audit-drift staleness check, not
-silently honored. The propose staging-move and the archive move
+citation) — is an inconsistency surfaced by the STATUS RENDER (which never shows a silent
+`complete`) and raised as a finding by the audit-drift staleness check; `orbit architecture
+validate` stays structure-only and does not run the citation scan. The propose staging-move and the archive move
 are the state transitions — no additional bookkeeping exists.
 
 #### Scenario: Precedence over multiple citations
@@ -69,7 +70,7 @@ are the state transitions — no additional bookkeeping exists.
 #### Scenario: Ratified mark without observable quiescence is an inconsistency
 
 - **WHEN** a stage's `Complete:` slot is ratified but the observed state is `premised` (no citing artifact exists — e.g. its work archived before the citation field existed and was never backfilled)
-- **THEN** the status surface renders the inconsistency (never a silent `complete`), and validation/audit-drift flag it; the remedy is backfilling the archived change's `architecture:` citation (a deliberate migration edit — the citation records a true historical fact)
+- **THEN** the status surface renders the inconsistency (never a silent `complete`), and audit-drift raises the finding; the remedy is backfilling the archived change's `architecture:` citation (a deliberate migration edit — the citation records a true historical fact)
 
 #### Scenario: Re-exploration reopens honestly
 

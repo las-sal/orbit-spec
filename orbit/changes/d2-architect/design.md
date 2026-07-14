@@ -63,7 +63,8 @@ for `.openspec.yaml` presence as is-a-change (verified during the explore: `orbi
 `quiescent` (not "archived") is the observed all-work-landed state — deliberately not claiming
 doneness. `complete` is not a stored state: it renders when quiescent AND the `Complete:` slot is
 ratified. Falsified marks (`[x]` on any non-quiescent observation — live citing work or `premised`)
-surface via validate + audit-drift, never silently honored. Precedence when multiple artifacts cite one stage: in-change > exploring >
+surface via the status render + audit-drift, never silently honored (architecture validate
+stays structure-only). Precedence when multiple artifacts cite one stage: in-change > exploring >
 quiescent > premised (live activity outranks history; the status payload lists ALL citing
 artifacts for detail).
 
@@ -147,8 +148,8 @@ metadata at apply, once the field exists).
 - **[16th body grows the surface]** → R-d-4 paid by the retrofit deleting all hand-maintained
   state lines + the "manual until D2" caveats; the body itself is rungs 1–5 only.
 - **[Ratified-mark honesty] a user could check `Complete:` on a non-quiescent stage** → rendered
-  state stays honest (completion requires the composition); validate + audit flag the
-  inconsistency (CRITICAL) rather than silently trusting either side.
+  state stays honest (completion requires the composition); the status render surfaces it and
+  audit-drift raises the CRITICAL rather than silently trusting either side.
 
 ## Migration Plan
 
