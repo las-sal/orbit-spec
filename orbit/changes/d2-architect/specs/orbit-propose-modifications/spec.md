@@ -14,6 +14,11 @@ The system SHALL move `orbit/explore/<name>/` to `orbit/changes/<name>/` after g
 - **WHEN** the staged `.openspec.yaml` carries `architecture: {doc: d-arc-arbitered-flow, stage: d2-architect}` and consume-mode propose completes
 - **THEN** the change's `.openspec.yaml` contains that citation alongside its fresh `schema`/`created`/`schema_version`, written through the metadata helpers (never by file overwrite)
 
+#### Scenario: Conflicting citations — staged metadata is authoritative
+
+- **WHEN** the freshly-created change metadata already carries an `architecture:` value (manual edit or future scaffold behavior) that differs from the staged metadata's citation
+- **THEN** the staged citation wins (the exploration's citation is the captured decision; the merge is deterministic and loss-free) and the merge step notes the override in chat
+
 #### Scenario: No staged metadata, no merge step
 
 - **WHEN** the staging directory has no `.openspec.yaml` (a pre-D2 exploration)

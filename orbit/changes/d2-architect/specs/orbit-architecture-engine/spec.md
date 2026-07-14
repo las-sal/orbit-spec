@@ -44,9 +44,11 @@ ACTIVE change whose metadata cites `{doc, stage: <id>}` → `in-change`; (2) els
 → `quiescent`; (4) else → `premised`. **Completion is a composition of observation and
 ratification**: the engine renders `complete` ONLY when the observed state is `quiescent` AND the
 stage's `Complete:` slot is ratified (`[x]` with date); a quiescent stage with an unratified slot
-renders as quiescent-awaiting-ratification. A ratified `Complete:` mark on a stage with live
-citing work (active change or live explore) is an inconsistency surfaced by validation and the
-audit-drift staleness check, not silently honored. The propose staging-move and the archive move
+renders as quiescent-awaiting-ratification. A ratified `Complete:` mark on a stage whose OBSERVED
+state is not quiescent — live citing work (active change or live explore) OR no citing artifacts
+at all (`premised`, e.g. a pre-D2 archived stage whose archive was never backfilled with its
+citation) — is an inconsistency surfaced by validation and the audit-drift staleness check, not
+silently honored. The propose staging-move and the archive move
 are the state transitions — no additional bookkeeping exists.
 
 #### Scenario: Precedence over multiple citations
@@ -63,6 +65,11 @@ are the state transitions — no additional bookkeeping exists.
 
 - **WHEN** a stage is quiescent and its `Complete:` slot is `[x] 2026-08-01 (Sal)`
 - **THEN** the engine renders the stage `complete`
+
+#### Scenario: Ratified mark without observable quiescence is an inconsistency
+
+- **WHEN** a stage's `Complete:` slot is ratified but the observed state is `premised` (no citing artifact exists — e.g. its work archived before the citation field existed and was never backfilled)
+- **THEN** the status surface renders the inconsistency (never a silent `complete`), and validation/audit-drift flag it; the remedy is backfilling the archived change's `architecture:` citation (a deliberate migration edit — the citation records a true historical fact)
 
 #### Scenario: Re-exploration reopens honestly
 

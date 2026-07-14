@@ -46,7 +46,10 @@ by hand at the phase seams.
       ids (d1-explicit-lifecycle-consent … d6-pr-lifecycle), `Depends-on:` + `Complete:` slots
       added (D1's mark `[x] 2026-07-13 (Sal)` — confirm with the user at apply), ALL
       `*State (manual until D2):*` lines DELETED (the R-d-4 subtraction); status log untouched;
-      `orbit architecture validate` passes and `status` matches reality; in the SAME commit,
+      `orbit architecture validate` passes and `status` matches reality; backfill the archived
+      D1 change's `.openspec.yaml` with `architecture: {doc: d-arc-arbitered-flow, stage:
+      d1-explicit-lifecycle-consent}` so d1's ratified `Complete:` mark composes with an
+      observable quiescent state (external iter 1, option A); in the SAME commit,
       update CLAUDE.md's position-pointer sentence ("Position lives in the arc doc's stage-state
       lines + status log") to point at `orbit architecture status` — it breaks the moment the
       state lines are deleted (apply-seam fix, not archive-time)

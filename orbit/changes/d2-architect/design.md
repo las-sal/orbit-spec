@@ -52,7 +52,9 @@ directory, so explore dirs reuse them unchanged. `orbit validate <change>` gains
 resolution (dangling doc vs dangling stage, error names the level); `orbit architecture validate`
 covers doc structure. Consume-mode propose merges the staged metadata explicitly BEFORE the bulk
 move (read staged → carry `architecture:` forward via helpers → discard staged file), the same
-explicit-handling slot where `.orbit-runs/` already moves. Nothing outside `orbit/changes/` scans
+explicit-handling slot where `.orbit-runs/` already moves; on a conflicting pre-existing
+citation in the fresh metadata, the STAGED citation wins (deterministic; the exploration's
+citation is the captured decision). Nothing outside `orbit/changes/` scans
 for `.openspec.yaml` presence as is-a-change (verified during the explore: `orbit list` reads
 `orbit/changes/` only).
 
@@ -60,8 +62,8 @@ for `.openspec.yaml` presence as is-a-change (verified during the explore: `orbi
 
 `quiescent` (not "archived") is the observed all-work-landed state — deliberately not claiming
 doneness. `complete` is not a stored state: it renders when quiescent AND the `Complete:` slot is
-ratified. Falsified marks (`[x]` with live citing work) surface via validate + audit-drift, never
-silently honored. Precedence when multiple artifacts cite one stage: in-change > exploring >
+ratified. Falsified marks (`[x]` on any non-quiescent observation — live citing work or `premised`)
+surface via validate + audit-drift, never silently honored. Precedence when multiple artifacts cite one stage: in-change > exploring >
 quiescent > premised (live activity outranks history; the status payload lists ALL citing
 artifacts for detail).
 
@@ -101,7 +103,14 @@ bodies' recommendation prose (no body recommends architect as required entry).
 ids; prose references survive), `Depends-on:`/`Complete:` slots added (D1's slot ratified
 `[x] 2026-07-13 (Sal)` — the user ratified D1 complete in the D1-completion status entry;
 confirm at apply), and **every `*State (manual until D2):*` line is DELETED** — the R-d-4
-subtraction: the retrofit removes more hand-maintained text than the slots add. The status log
+subtraction: the retrofit removes more hand-maintained text than the slots add. **Archived-stage
+backfill (external iter 1, user-ratified option A)**: the retrofit also backfills the archived
+D1 change's metadata with `architecture: {doc: d-arc-arbitered-flow, stage:
+d1-explicit-lifecycle-consent}` — without it, nothing observable cites d1 and its ratified
+`Complete:` mark would contradict a `premised` observation on the first retrofitted doc (exit
+criterion 1). A deliberate one-time migration edit recording a true historical fact; the
+falsified-mark rule is correspondingly tightened to flag ratified marks on ANY non-quiescent
+observation. The status log
 stays untouched (append-only ledger). D2's own change carries the first live citation
 (`architecture: {doc: d-arc-arbitered-flow, stage: d2-architect}` stamped into this change's
 metadata at apply, once the field exists).
