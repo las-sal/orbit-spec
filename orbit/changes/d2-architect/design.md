@@ -38,9 +38,11 @@ Three files by analogy to the C1 module set: `parser.ts` (fence-aware; stage hea
 the fence-scanning approach `requirement-blocks.ts` landed after its C1 bug, but do NOT couple to
 that module: different grammar), `state.ts` (computed stage state: citation scan over
 `orbit/changes/*/`, `orbit/changes/archive/*/`, `orbit/explore/*/` metadata + precedence +
-completion composition — pure function, no caching, corpus is small), `validate.ts` (structure +
-slot syntax + id uniqueness + Depends-on resolution + citation resolution). CLI subcommands in
-`src/commands/architecture.ts`, registered in `src/cli/index.ts`.
+completion composition — pure function, no caching, corpus is small), `validate.ts` (doc
+structure: slot syntax + id uniqueness + Depends-on resolution; ALSO hosts the citation-resolution
+helper, but that helper is CALLED by change validation — see D2: `orbit architecture validate`
+itself checks doc structure only). CLI subcommands in `src/commands/architecture.ts`, registered
+in `src/cli/index.ts`.
 
 ### D2. Citation is `architecture: {doc, stage}`; validation is two-level; explores get real metadata (explore D-d2-2/7)
 

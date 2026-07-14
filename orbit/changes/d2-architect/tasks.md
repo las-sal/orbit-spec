@@ -46,7 +46,10 @@ by hand at the phase seams.
       ids (d1-explicit-lifecycle-consent … d6-pr-lifecycle), `Depends-on:` + `Complete:` slots
       added (D1's mark `[x] 2026-07-13 (Sal)` — confirm with the user at apply), ALL
       `*State (manual until D2):*` lines DELETED (the R-d-4 subtraction); status log untouched;
-      `orbit architecture validate` passes and `status` matches reality
+      `orbit architecture validate` passes and `status` matches reality; in the SAME commit,
+      update CLAUDE.md's position-pointer sentence ("Position lives in the arc doc's stage-state
+      lines + status log") to point at `orbit architecture status` — it breaks the moment the
+      state lines are deleted (apply-seam fix, not archive-time)
 - [ ] 3.2 Stamp this change's own citation
       (`architecture: {doc: d-arc-arbitered-flow, stage: d2-architect}`) into its
       `.openspec.yaml`; `orbit validate d2-architect` resolves it (exit criterion 2 live)
@@ -87,4 +90,6 @@ by hand at the phase seams.
 - [ ] 5.4 Arc sync (R-d-7): D2 stage section updated THROUGH the retrofit (its own state line is
       gone — `orbit architecture status` is the position source from here on); status log entry;
       R-d-9 handoff audit at the post-apply seam. CLAUDE.md archive-time notes: surface 15→16,
-      baseline 14→16, the architecture tier paragraph
+      baseline 14→16, the architecture tier paragraph. Archive-time Purpose updates (sync
+      carries requirements only): orbit-review's Purpose gains the third mode; 
+      orbit-run-summary-emit's Purpose emitter list gains architect

@@ -58,8 +58,10 @@ how much of the review mode ships in v1.
   files claiming one truth — the C2 divergence class). Convention fragility (typo'd heading,
   duplicate id) is handled the same way specs handle it: `orbit architecture validate` (structure
   + citations per exit criterion 2) and the audit-drift hook. Fence-awareness is non-negotiable —
-  `requirement-blocks.ts` earned that lesson at C1's archive, and the arc doc itself contains
-  fenced diagrams with stage-like text.
+  `requirement-blocks.ts` earned that lesson at C1's archive. (Correction 2026-07-14, review
+  iter 1: this entry originally also claimed the arc doc itself contains fenced diagrams — it
+  contains none; the fences are in `fork-and-orbify.md`. The C1 lesson carries the justification
+  alone.)
 - **D-d2-4 (2026-07-14, Sal) — No automatic doc updates, no new triggers.** Nothing edits the
   architecture doc when a stage's change archives — the archive move IS the state transition
   (computed, D-d2-1). The doc's manual surface shrinks to exactly two things, manual by design:

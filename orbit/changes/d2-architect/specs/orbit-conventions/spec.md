@@ -39,7 +39,7 @@ In all four locations, files are committed (the directory SHOULD NOT be in `.git
 #### Scenario: Committed, not gitignored (all four locations)
 
 - **WHEN** orbit writes a run summary or external-review file to any of the four `.orbit-runs/` locations
-- **THEN** the file is intended to be committed (none of the three directories should be in `.gitignore`); each represents real iteration history
+- **THEN** the file is intended to be committed (none of the four directories should be in `.gitignore`); each represents real iteration history
 
 #### Scenario: Internal run summary file name pattern
 
@@ -193,3 +193,21 @@ Lifecycle-kind example — `archive-2026-05-20T16-31-59Z.json` written after `/o
 
 - **WHEN** a downstream consumer (dashboard, CI bot, IDE plugin) reads `.orbit-runs/*.json` files
 - **THEN** the consumer MAY route by reading the `kind` field directly rather than pattern-matching filename prefixes (e.g., `review-*`, `address-reviews-*`); filename prefix routing remains valid as a fallback
+
+### Requirement: Final-assessment phrasings
+
+The system SHALL use stock phrasings for the final-assessment line of review and audit reports.
+
+#### Scenario: Stock phrasings
+
+- **WHEN** a scorecard report is emitted
+- **THEN** the final-assessment line uses one of:
+  - `X critical issue(s) found. Fix before <gate>.`
+  - `No critical issues. Y warning(s) to consider. Ready <gate> (with noted improvements).`
+  - `All checks passed. Ready <gate>.`
+  where `<gate>` is `/orbit:apply` for `/orbit:review --as proposal`, `/orbit:archive` for `/orbit:review --as system`, and varies per audit-drift invocation context
+
+#### Scenario: Gate-less architecture-mode phrasings (D-arc Stage D2)
+
+- **WHEN** `/orbit:review --as architecture` emits its final-assessment line
+- **THEN** the gate-referencing phrasings above do NOT apply (no gate exists over architecture docs); the line uses the gate-less forms specified in `orbit-review`'s `Architecture-mode final assessment has no gate` requirement (`X critical / Y warning(s). Ready when you are: /orbit:address-reviews --from-file <emit>.` with findings; `No findings. The architecture trail records this pass.` when clean)

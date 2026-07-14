@@ -87,7 +87,7 @@ change/explore and imposes no ceremony.
 
 #### Scenario: Two-level dangling validation
 
-- **WHEN** change validation (or `orbit architecture validate`) resolves a citation whose `doc` has no file under `orbit/architecture/`, OR whose `doc` exists but declares no stage with the cited id
+- **WHEN** change validation (`orbit validate <change>` — the citation's OWNER: citations live in change/explore metadata, so they are validated where that metadata is validated; `orbit architecture validate` checks doc structure only) resolves a citation whose `doc` has no file under `orbit/architecture/`, OR whose `doc` exists but declares no stage with the cited id
 - **THEN** validation fails with an error naming WHICH level dangled (the doc, or the stage within the named doc)
 
 #### Scenario: Uncited metadata unaffected
@@ -120,6 +120,16 @@ stages). All three support `--json`.
 
 - **WHEN** a stage declares `Depends-on: d9-nonexistent` and no such stage exists in the doc
 - **THEN** `orbit architecture validate` fails naming the stage and the unresolvable dependency
+
+#### Scenario: Show on a legacy doc or a nonexistent stage
+
+- **WHEN** `show <doc>` targets a legacy (zero-parseable-stage) doc, or `show <doc> <stage>` names a stage id the doc does not declare
+- **THEN** the legacy case prints an empty stage index with a legacy/opaque note (exit 0 — not an error); the nonexistent-stage case fails with an error listing the doc's declared stage ids
+
+#### Scenario: Status with zero parseable docs
+
+- **WHEN** `orbit architecture status` runs in a repo whose `orbit/architecture/` has no parseable docs (or does not exist)
+- **THEN** it reports `no parseable architecture docs` cleanly (exit 0; `--json` yields an empty docs list) — never an error
 
 ### Requirement: Architecture trail location
 

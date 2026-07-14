@@ -93,6 +93,9 @@ change's acceptance tests, and D3 (orientation) hard-depends on the machinery bu
 - `orbit-run-summary-emit`: the Emit scope requirement gains `/orbit:architect` (and notes
   review's architecture mode rides review's existing emit).
 - `orbit-onboard`: the identity enumeration gains the program-architecture layer.
+- `orbit-address-reviews`: the cascade OUT-set's audit-trail category covers all four
+  `.orbit-runs/` locations (architecture + explore trails added); ADDED architecture-scoped
+  resolution-log destination.
 
 ## Impact
 
@@ -109,7 +112,7 @@ change's acceptance tests, and D3 (orientation) hard-depends on the machinery bu
   swept 15→16; CLAUDE.md count updates at archive).
 - **Docs**: `orbit/architecture/d-arc-arbitered-flow.md` retrofitted (state lines deleted);
   `orbit/architecture/.orbit-runs/` created.
-- **Baseline specs**: 2 new + 8 delta'd capabilities (14 → 16).
+- **Baseline specs**: 2 new + 9 delta'd capabilities (14 → 16).
 - **Tests**: architecture-module unit suite (parser incl. fences, state computation incl.
   precedence + ratification composition, citation validation both-levels); CLI surface tests;
   parity hash additions + re-pins; fidelity markers incl. the new body; exit-criteria checks

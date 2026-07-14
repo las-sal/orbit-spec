@@ -113,8 +113,8 @@ bodies — greppable.
 ### Stage D2 — architect (the program layer)
 
 *State (manual until D2): **in-change** — `orbit/changes/d2-architect/` (proposed 2026-07-14
-from 7 ratified decisions D-d2-1..7; 2 new + 8 modified capabilities, 23 delta requirements;
-fingerprints 8/8; --strict valid). This is the LAST hand-maintained update of any state line —
+from 7 ratified decisions D-d2-1..7; 2 new + 9 modified capabilities, 29 delta requirements
+after review iter 1; fingerprints 13/13; --strict valid). This is the LAST hand-maintained update of any state line —
 D2's retrofit deletes them all (D-d2-1). First in sequence after D1 (see Sequencing).*
 
 **RULED (R-d-1, Sal, 2026-07-08): architecture is FIRST-CLASS ENGINE, not prose.** "Part of the goal of
