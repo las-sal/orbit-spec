@@ -1,0 +1,60 @@
+{
+  "command": "review",
+  "timestamp": "2026-07-14T23:03:09Z",
+  "change": "d2-architect",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "iteration": 5,
+  "depth": "full",
+  "scorecard": {
+    "completeness": { "critical": 0, "warning": 1, "suggestion": 1 },
+    "correctness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "coherence": { "critical": 0, "warning": 2, "suggestion": 1 }
+  },
+  "findings": [
+    {
+      "pass": 5,
+      "severity": "WARNING",
+      "file": "orbit/changes/d2-architect/specs/orbit-explore-modifications/spec.md",
+      "line": 15,
+      "title": "Minimal explore .openspec.yaml contents unspecified — conflicts with the required `schema` field the reused helpers enforce",
+      "recommendation": "The delta requires explore Mode B/C to write \"a minimal `.openspec.yaml` (same metadata genre as changes)\" and design.md D2 claims `readChangeMetadata`/`writeChangeMetadata` are reused unchanged — but `writeChangeMetadata` (src/utils/change-metadata.ts) Zod-requires `schema` and calls `validateSchemaName`, which throws on any name not in the schema registry. Nothing in the deltas, design, or task 2.2 says what base fields the minimal explore file carries (which `schema` value? `created`? `schema_version`?). Codegen must guess, and either choice strains a stated claim (a `schema: spec-driven` line in an exploration is semantically odd; relaxing the helpers contradicts \"unchanged\"). Specify the minimal file's contents explicitly — e.g. `schema: spec-driven` + `created` mirroring change metadata (which also makes the propose merge rule's fresh-fields-win concretely meaningful) — in the orbit-explore-modifications delta, design D2, and task 2.2."
+    },
+    {
+      "pass": 3,
+      "severity": "WARNING",
+      "file": "orbit/specs/orbit-review/spec.md",
+      "line": 378,
+      "title": "Un-delta'd pass-surface enumeration: recommendation_options \"When to emit\" covers only 9 proposal + 7 system passes",
+      "recommendation": "The live baseline's `Optional recommendation_options field on finding entries` requirement scopes its normative emit rule to \"all 9 proposal-mode passes + 7 system-mode passes\" — a full-surface enumeration D2 outgrows by adding six architecture-mode passes whose findings are, per the delta, ingestible by /orbit:address-reviews exactly like other internal review JSON (and the modified `Internal run summary persisted per mode` scenario includes `recommendation_options` for architecture-mode summaries). Same enumeration class that produced prior CRITICALs (final-assessment scoping; Emit timing); here there is no hard contradiction (omission degrades to the prose-recommendation fallback), so WARNING. Add a MODIFIED block extending the \"When to emit\" scope to the architecture-mode passes."
+    },
+    {
+      "pass": 3,
+      "severity": "WARNING",
+      "file": "orbit/specs/orbit-conventions/spec.md",
+      "line": 669,
+      "title": "Generated-file disposition's orbit-authored enumeration not extended to orbit-architect",
+      "recommendation": "The `Generated-file disposition` requirement's orbit-authored scenario enumerates the category's members (currently `orbit-onboard` + the four net-new editorial workflows). `orbit-architect` is a fully orbit-authored 16th template (design D6) but no delta adds it, leaving the disposition list stale the moment architect lands — the exact list audit-drift Category 3 would then flag, and inconsistent with how this change DID delta the analogous orbit-onboard identity enumeration. Add a small orbit-conventions MODIFIED block adding `orbit-architect` to the orbit-authored enumeration (optionally also retiring the now-landed \"when they land\" future tense, which is pre-existing B3-era wording)."
+    },
+    {
+      "pass": 7,
+      "severity": "SUGGESTION",
+      "file": "orbit/architecture/d-arc-arbitered-flow.md",
+      "line": 116,
+      "title": "D2 state line's cycle counts are stale vs the on-disk trail (5 passes/30 findings vs 6 passes/34 findings)",
+      "recommendation": "The hand-maintained D2 state line says \"across 5 review passes (fresh x3, external x2 — 30 findings, all resolved)\" but the change's `.orbit-runs/` shows 4 internal proposal reviews (12+6+6+4 = 28 findings) plus 2 externals (3+3 = 6) — 6 passes, 34 findings — and this iteration-5 run lags it further. Harmless in the long run (the retrofit deletes every state line — the change's own thesis), but until apply this line is the arc's manual position record. Correct the counts on next touch, or replace them with a pointer to the trail rather than hand-copied numbers."
+    },
+    {
+      "pass": 5,
+      "severity": "SUGGESTION",
+      "file": "orbit/changes/d2-architect/specs/orbit-architecture-engine/spec.md",
+      "line": 154,
+      "title": "Status rendering of a malformed doc's well-formed stages is ambiguous between two scenarios",
+      "recommendation": "`Citations resolve against a malformed doc's well-formed stages` (line 154) says such stages participate in state computation, while `Status buckets parseable, legacy, and malformed docs` (line 177) says malformed docs are listed with their grammar violations in the `malformed` bucket — whether `status` also renders per-stage computed state for the well-formed stages of a malformed doc (and in which bucket) is unspecified. One sentence in either scenario would settle it for codegen (e.g. \"a malformed doc's well-formed stages render their computed state within the malformed listing\")."
+    }
+  ],
+  "stale_suppressed": [],
+  "iteration_note": "0 of these findings appeared in the last run on 2026-07-14 (iter 4, 4 findings, all resolved). 5 new this run. Verification: all four iter-4 resolutions confirmed landed (tasks 1.2 any-non-quiescent arm, tasks 1.4 ratified+premised fixture, arc charter item (3) quiescent wording, audit check (d) parenthetical + three engine degradation scenarios). The three CRITICAL-class sweeps came up empty: all 16 MODIFIED blocks diff cleanly against current baselines (fingerprints 16/16), every delta requirement has a tasks.md carrier, triggered baseline obligations are carried. Counts consistent everywhere (11 delta files, 32 delta requirements, 20 tasks, 14→16, 15→16); --strict passes.",
+  "final_assessment": "Fresh iteration-5 pass: 0 CRITICAL, 3 WARNING, 2 SUGGESTION — all new, residue-grade (two un-delta'd baseline enumerations, one codegen gap on minimal explore metadata, one arc-doc count drift, one scenario ambiguity). The no-new-findings confirm is NOT met by this pass.",
+  "next_recommended": "/orbit:address-reviews d2-architect --from-file orbit/changes/d2-architect/.orbit-runs/review-proposal-2026-07-14T23-03-09Z.json"
+}
