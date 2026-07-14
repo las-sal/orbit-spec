@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-07-14T20:49:31Z",
+  "change": "d2-architect",
+  "final_assessment": "External review prompt packaged for d2-architect (iter 2, mode proposal); awaiting findings. This external targets the no-new-findings confirm alongside the pending fresh option: all 21 findings from 4 prior passes (fresh x2, external x1, + resolutions) are resolved; the prompt carries both exhausted-CRITICAL-class beliefs as explicit probes (un-delta'd enumerations; carrier-less deltas) plus the completion-composition edges and the four-trail consistency sweep.",
+  "next_recommended": "Paste orbit/changes/d2-architect/.orbit-runs/external-prompt-proposal-2026-07-14T20-49-30Z.md into the target AI (pull https://github.com/las-sal/orbit-spec.git branch d-arc; a DIFFERENT model than iter 1's GPT-5 Codex is recommended for diversity), save the response as orbit/changes/d2-architect/.orbit-runs/external-proposal-<TS>.md, then /orbit:address-reviews d2-architect --from-file <that path>",
+  "kind": "editorial",
+  "mode": "proposal",
+  "reviewer_class": "external",
+  "prompt_path": "orbit/changes/d2-architect/.orbit-runs/external-prompt-proposal-2026-07-14T20-49-30Z.md",
+  "target": null,
+  "awaiting_findings": true
+}
