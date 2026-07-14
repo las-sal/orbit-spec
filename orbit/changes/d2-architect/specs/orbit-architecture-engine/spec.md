@@ -6,11 +6,19 @@ Architecture docs SHALL declare engine-readable structure via markdown heading c
 remaining judgment-dense prose documents: a stage is declared by a heading of the form
 `### Stage <id> — <title>` (kebab-case `<id>`, unique within the doc), and a stage section MAY
 carry two labeled slot lines — `Depends-on: <id>[, <id>…]` (or `Depends-on: (none)`) and
-`Complete: [ ]` / `Complete: [x] <YYYY-MM-DD> (<who>)`. The engine reads ONLY: stage ids/titles,
-the two slots, and section boundaries (a stage section runs from its heading to the next
-same-or-higher-level heading). All other content — charter prose, exit criteria, premise,
+`Complete: [ ]` / `Complete: [x] <YYYY-MM-DD> (<who>)`. Both slots are OPTIONAL with defined
+omission semantics: an absent `Depends-on:` parses as no dependencies; an absent `Complete:`
+parses as unratified; validation accepts either omission; the architect ratification flow INSERTS
+a missing `Complete:` line when writing a mark (per `orbit-architect`). The engine reads ONLY:
+stage ids/titles, the two slots, and section boundaries (a stage section runs from its heading to
+the next same-or-higher-level heading). All other content — charter prose, exit criteria, premise,
 rulings, status log — is engine-opaque. The parser SHALL be fence-aware: headings and slot lines
-inside fenced code blocks are content, never declarations. Architecture docs live at
+inside fenced code blocks are content, never declarations. **Near-miss rule** (a doc intended to
+be parseable must not silently degrade to legacy): a heading starting `### Stage ` that fails the
+exact grammar (malformed id, missing ` — <title>`), or a stage-like slot line that fails slot
+syntax, is a VALIDATION ERROR naming the line — never silently ignored; `status` lists such a doc
+as malformed rather than legacy. LEGACY means zero `### Stage `-prefixed headings anywhere
+outside fences (genuinely opaque prose). Architecture docs live at
 `orbit/architecture/<name>.md`; `<name>` (the filename stem) is the doc's citable identity.
 
 #### Scenario: Stage declarations parse
@@ -28,10 +36,19 @@ inside fenced code blocks are content, never declarations. Architecture docs liv
 - **WHEN** a doc declares two stages with the same `<id>`
 - **THEN** `orbit architecture validate` fails with an error naming the duplicated id
 
+#### Scenario: Slotless stage parses with omission defaults
+
+- **WHEN** a parseable stage carries neither slot line
+- **THEN** it parses as no-dependencies + unratified; `validate` passes; ratifying its completion later inserts the `Complete:` line
+
+#### Scenario: Near-miss heading is a validation error, not silent legacy
+
+- **WHEN** a doc's only stage heading is mistyped (e.g. `### Stage d2_architect architect` — bad id form, missing em-dash)
+- **THEN** `orbit architecture validate` FAILS naming the line and the grammar violation, and `status` lists the doc as malformed — the doc never silently downgrades to legacy
+
 #### Scenario: Legacy prose docs degrade gracefully
 
-- **WHEN** a doc under `orbit/architecture/` declares no parseable stages (e.g. a pre-D2 prose
-  document)
+- **WHEN** a doc under `orbit/architecture/` contains zero `### Stage `-prefixed headings outside fences (e.g. a pre-D2 prose document)
 - **THEN** it is listed as legacy/opaque by the status surface and is never an error; only
   parseable docs participate in stage-state computation
 

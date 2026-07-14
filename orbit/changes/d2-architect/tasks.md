@@ -76,7 +76,10 @@ by hand at the phase seams.
 - [ ] 4.4 `onboard.ts`: identity enumeration gains the program-architecture layer AND the
       quick-reference table gains the `/orbit:architect` row; sweep ALL surface-count mentions
       15→16 (profiles.ts comment, generated-surface expectations, any "15 workflows/skills"
-      pins — the D1-cycle contradiction class, swept proactively)
+      pins — the D1-cycle contradiction class, swept proactively); AUDIT + SYNC the README's
+      install/update sections for the 16th workflow (counts, file lists, CLI invocations — the
+      triggered `orbit-conventions` install-documentation baseline; record no-edit-needed only
+      if the audit proves no count/list/invocation is affected)
 - [ ] 4.5 `address-reviews.ts` body: cascade OUT table's audit-trail row gains the explore +
       architecture trails (all four `.orbit-runs/` locations, per the orbit-address-reviews
       delta); resolution-log destination list gains the architecture route (`--from-file` into
@@ -94,7 +97,11 @@ by hand at the phase seams.
       `node bin/orbit.js validate d2-architect --strict` passes;
       `orbit fingerprint d2-architect --check` all verified
 - [ ] 5.3 `npm run build && node bin/orbit.js update --force` — regenerate the local surface;
-      spot-check the new orbit-architect SKILL.md + review's architecture mode on disk
+      spot-check the new orbit-architect SKILL.md + review's architecture mode on disk; if 4.4's
+      README audit edited install/update sections, run the fresh-sandbox verification the
+      install-documentation baseline requires (mktemp -d + orbit init; counts/files match the
+      README; the on-disk generated-surface e2e test doubles as the sandbox check for skill/command
+      counts)
 - [ ] 5.4 Arc sync (R-d-7): D2 stage section updated THROUGH the retrofit (its own state line is
       gone — `orbit architecture status` is the position source from here on); status log entry;
       R-d-9 handoff audit at the post-apply seam. CLAUDE.md archive-time notes: surface 15→16,

@@ -60,7 +60,9 @@ deletion rather than updating them.
 The architect body SHALL offer the completion ratification as a recorded interaction: when
 `orbit architecture status` shows a stage quiescent-awaiting-ratification, the body surfaces it
 and asks (AskUserQuestion — ratify / not yet); on the user's yes it writes
-`Complete: [x] <date> (<who>)` into that stage's slot and records the ratification in the
+`Complete: [x] <date> (<who>)` into that stage's slot (inserting the slot line directly after
+the stage's `Depends-on:` line — or after the heading when no slots exist — if the stage was
+slotless, per the format's omission semantics) and records the ratification in the
 session's emit. The body never checks the box on its own judgment, and never nags: the offer
 fires when the user opens the doc's architect session, not as an interruption elsewhere.
 
