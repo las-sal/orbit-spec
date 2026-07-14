@@ -1,0 +1,69 @@
+{
+  "command": "review",
+  "timestamp": "2026-07-14T22:42:59Z",
+  "change": "d2-architect",
+  "final_assessment": "No critical issues. 3 warning(s) to consider. A prior gate-relevant pass has unresolved findings; gate review-proposal UNPASSED. Ready when you are: /orbit:address-reviews d2-architect --from-file orbit/changes/d2-architect/.orbit-runs/review-proposal-2026-07-14T22-42-59Z.json.",
+  "next_recommended": "/orbit:address-reviews d2-architect --from-file orbit/changes/d2-architect/.orbit-runs/review-proposal-2026-07-14T22-42-59Z.json",
+  "kind": "editorial",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "iteration": 4,
+  "depth": "full",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 1
+  },
+  "finding_titles": [
+    "Task 1.2 completion-composition omits the ratified+premised case",
+    "Arc charter still uses superseded state name archived (section Stage D2 item 3)",
+    "'(they also fail validation)' overclaims for explore-metadata citations",
+    "Degradation matrix has three unspecified cells"
+  ],
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "file": "orbit/changes/d2-architect/tasks.md",
+      "line": 19,
+      "title": "Task 1.2 completion-composition omits the ratified+premised case",
+      "recommendation": "Task 1.2's enumeration covers only the live-work inconsistency arm; the tightened rule covers ANY non-quiescent observation incl. premised (the D1-backfill motivation). Amend 1.2 to 'ratified + any non-quiescent observation (live work OR premised) -> inconsistency surfaced, never honored'; add a ratified+premised fixture to 1.4."
+    },
+    {
+      "pass": "7",
+      "severity": "WARNING",
+      "file": "orbit/architecture/d-arc-arbitered-flow.md",
+      "line": 136,
+      "title": "Arc charter still uses superseded state name archived (section Stage D2 item 3)",
+      "recommendation": "Iter 3's reconciliation stopped at the controlled-vocabulary line; the charter's concrete item (3) still reads 'archived (archive back-reference)'. Fold the vocabulary-residue reconciliation into task 3.1's retrofit sweep (the section is edited there anyway)."
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "file": "orbit/changes/d2-architect/specs/orbit-audit-drift/spec.md",
+      "line": 14,
+      "title": "'(they also fail validation)' overclaims for explore-metadata citations",
+      "recommendation": "Only change citations fail orbit validate; no surface validates explore metadata, so the audit is the sole detector there. Scope the parenthetical: '(change citations also fail orbit validate; explore citations are caught only here)'."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "file": "orbit/changes/d2-architect/specs/orbit-architecture-engine/spec.md",
+      "line": 123,
+      "title": "Degradation matrix has three unspecified cells",
+      "recommendation": "One-line rulings for: validate against a LEGACY doc (exit behavior); show against a MALFORMED doc; change-citation resolution into a MALFORMED doc that declares some parseable stages."
+    }
+  ],
+  "iteration_note": "Fourth proposal-mode run (fresh; independent slot). FIRST ZERO-CRITICAL independent pass. RESOLUTION VERIFICATION: all 6 iter-3 resolutions landed and are mutually consistent; earlier-round spot-checks all confirmed — except the any-non-quiescent tightening did not ripple into task 1.2's enumeration (finding 1, the round's carrier-precision residue). All 16 MODIFIED blocks re-diffed strictly-additive; fingerprints 16/16; three-classes sweep clean. Remaining findings are precision/residue-grade: a task enumeration arm, an arc-charter vocabulary residue routed to the 3.1 retrofit, a scoping parenthetical, and three degradation-matrix edge cells."
+}
