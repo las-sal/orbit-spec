@@ -100,15 +100,16 @@ how much of the review mode ships in v1.
   is not a gatekeeper; architecture content born in explore sessions (how this very arc was built)
   is a first-class path, no body recommends architect as required entry, and no drift check flags
   architecture material for having originated in explore.
+- **D-d2-7 (2026-07-14, Sal — resolved at propose)** — Citation field shape + validation
+  semantics: structured object `architecture: {doc: <name>, stage: <id>}` (in-genre with
+  `base_fingerprints`; Zod-natural; extensible), validation fails on BOTH dangling levels — doc
+  file missing under `orbit/architecture/`, or stage id not declared in an existing doc — with
+  the error naming which level failed; the citation stays re-pointable by hand-edit (validation
+  checks resolvability; no immutability enforcement, consistent with the rest of metadata).
 
 ## Open questions
 
-- **Q-d2-3 (residue) — Citation field format + validation semantics**: the carrier is decided
-  (D-d2-2); still open: the field's exact shape (`architecture: {doc: <name>, stage: <id>}` vs a
-  single `architecture: <doc>/<stage>` token), and what validation fails on — dangling doc name,
-  dangling stage id within a real doc, or both (exit criterion 2 says "fails on a dangling
-  citation"). Also: is the citation immutable after propose, or re-pointable?
-  Standing recommendation: none yet (proposal-level detail unless discussion surfaces a fork).
+(none — Q-d2-3's residue resolved to D-d2-7 at propose, 2026-07-14)
 
 ## Considered & out
 

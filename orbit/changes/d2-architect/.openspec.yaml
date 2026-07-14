@@ -1,0 +1,18 @@
+schema: spec-driven
+created: 2026-07-14
+schema_version: 3
+base_fingerprints:
+  orbit-conventions:
+    "`.orbit-runs/` per-change persistence": sha256:bdcb9e3a86891ee1fb3f2d40bf2eb22f22427d3e620cc399d171e83165134d53
+    Internal-run JSON summary format: sha256:30ee51ddf661fab51a43de04525a9f94391d1a807469f1b5aad535c2eefb42bf
+  orbit-explore-modifications:
+    Three invocation modes supported: sha256:49cc34895e603f9aae936f3b72c511813d473d36e553db696c7962d249d4dc3f
+  orbit-onboard:
+    Identity statement section: sha256:5165540000ca1df1bf186ee2baae5d6c4867e1b437729fac4ba725f63aa4bece
+  orbit-propose-modifications:
+    Move staging directory to changes: sha256:ffc6df7ff4e1fd9dd77366579b8026bb854d7690f14106489f28116056597807
+  orbit-review:
+    Review command available with `--as` mode flag: sha256:68792aed6f6739f2e6d58380b805c9f24b5f366c4b7ef07f3e431df4bbdaad06
+    Internal run summary persisted per mode: sha256:c8fdec171a6db12e0da1294e0ce8f3ad4393c5e8ecff99098057ef6ca317816b
+  orbit-run-summary-emit:
+    Emit scope: sha256:558ed6e586a6935ed3bc03c4ecfea3b332aea3357fda45b9bcc7993b19492b77

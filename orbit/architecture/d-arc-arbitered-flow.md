@@ -112,10 +112,10 @@ bodies — greppable.
 
 ### Stage D2 — architect (the program layer)
 
-*State (manual until D2): **exploring** — `orbit/explore/d2-architect/` (5 decisions ratified
-2026-07-13/14: computed stage state + completion-as-ratification; explore metadata; heading-convention
-format; no auto doc updates; review standing without a gate. 1 proposal-level open question).
-First in sequence after D1 (see Sequencing).*
+*State (manual until D2): **in-change** — `orbit/changes/d2-architect/` (proposed 2026-07-14
+from 7 ratified decisions D-d2-1..7; 2 new + 8 modified capabilities, 23 delta requirements;
+fingerprints 8/8; --strict valid). This is the LAST hand-maintained update of any state line —
+D2's retrofit deletes them all (D-d2-1). First in sequence after D1 (see Sequencing).*
 
 **RULED (R-d-1, Sal, 2026-07-08): architecture is FIRST-CLASS ENGINE, not prose.** "Part of the goal of
 forking orbit was to evolve the engine into what I wanted — not just layer prose on top of the

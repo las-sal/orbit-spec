@@ -1,0 +1,22 @@
+{
+  "command": "propose",
+  "timestamp": "2026-07-14T16:42:58Z",
+  "change": "d2-architect",
+  "final_assessment": "Generated proposal/design/tasks + 10 spec deltas for d2-architect; consumed explore.md (7 ratified decisions D-d2-1..7 seeded; the one open question resolved at propose to D-d2-7 — citation shape {doc, stage} with two-level dangling validation). 2 NEW capabilities (orbit-architecture-engine: parseable format, computed stage state + completion-as-ratification, citation, CLI, architecture trail; orbit-architect: the authoring workflow, floor-plus-ratification scope, R-d-9 handoff on emits, never-a-gatekeeper) + 8 MODIFIED (review gains --as architecture doc-targeted/never-inferred/no-gate; audit-drift staleness check; explore metadata scaffold; propose metadata merge; archive stage-line garnish; conventions fourth trail location + architect in the workflow-kind list; emit scope; onboard identity layer). MODIFIED blocks diff-audited against baseline (only intended edits); conventions blocks composed programmatically from baseline. Validates --strict; fingerprints 8/8 stamped+verified. R-d-9 handoff audit at this seam: residency clean, arc D2 state line refreshed to in-change (the LAST manual state update by design), coverage-vs-charter complete (all five engine pieces + architect body + audit hook), touchpoints map traveled with explore.md into the change.",
+  "next_recommended": "/orbit:review d2-architect — proposal artifacts ready; review before apply",
+  "kind": "workflow",
+  "artifacts_created": ["proposal", "design", "tasks", "specs/orbit-architecture-engine", "specs/orbit-architect", "specs/orbit-review", "specs/orbit-audit-drift", "specs/orbit-explore-modifications", "specs/orbit-propose-modifications", "specs/orbit-archive-modifications", "specs/orbit-conventions", "specs/orbit-run-summary-emit", "specs/orbit-onboard"],
+  "delta_count": 23,
+  "from": "explore",
+  "handoff": {
+    "boot_sequence": [
+      "CLAUDE.md — orientation + four disciplines + D-arc pointer",
+      "orbit/architecture/d-arc-arbitered-flow.md §Stage D2 — charter, R-d-1/R-d-9 rulings, the four exit criteria (= acceptance tests)",
+      "orbit/changes/d2-architect/ — proposal.md, design.md (D1-D7 code mapping), tasks.md (5 groups), specs/ (10 deltas), explore.md (decision record + code-touchpoints map)"
+    ],
+    "next_command": "/orbit:review d2-architect",
+    "model_hint": "review models chosen for DIVERSITY from the authoring model (R-d-9(a)); this proposal was authored by the session model — an independent-class pass gains most from a different reasoner",
+    "seam": "propose→review-cycle",
+    "handoff_audit": "run 2026-07-14 at this seam: residency clean; boot-chain current (arc D2 state line refreshed — final manual update); coverage-vs-charter complete; touchpoints present in explore.md References"
+  }
+}
