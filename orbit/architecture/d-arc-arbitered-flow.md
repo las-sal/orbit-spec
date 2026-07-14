@@ -108,7 +108,10 @@ bodies — greppable.
 
 ### Stage D2 — architect (the program layer)
 
-*State (manual until D2): **premised**. First in sequence after D1 (see Sequencing).*
+*State (manual until D2): **exploring** — `orbit/explore/d2-architect/` (5 decisions ratified
+2026-07-13/14: computed stage state + completion-as-ratification; explore metadata; heading-convention
+format; no auto doc updates; review standing without a gate. 1 proposal-level open question).
+First in sequence after D1 (see Sequencing).*
 
 **RULED (R-d-1, Sal, 2026-07-08): architecture is FIRST-CLASS ENGINE, not prose.** "Part of the goal of
 forking orbit was to evolve the engine into what I wanted — not just layer prose on top of the

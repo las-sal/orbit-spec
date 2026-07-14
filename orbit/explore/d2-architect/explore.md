@@ -88,6 +88,17 @@ how much of the review mode ships in v1.
   dangling stage id within a real doc, or both (exit criterion 2 says "fails on a dangling
   citation"). Also: is the citation immutable after propose, or re-pointable?
   Standing recommendation: none yet (proposal-level detail unless discussion surfaces a fork).
+- **Q-d2-6 — `/orbit:architect` authoring-body scope for v1**: the arc's D2 charter names "the
+  `/orbit:architect` workflow body, and the audit-drift hook" alongside the five engine pieces —
+  neither is covered by D-d2-1..5. Does v1 ship a dedicated authoring/maintenance body (a 16th
+  generated skill — R-d-4 subtraction applies), or is architecture authoring served by
+  `/orbit:explore` + hand-editing (the current practice) until the need is felt? And the
+  audit-drift hook (staleness checks over architecture docs) — v1 or follow-up?
+  Standing recommendation: ship a MINIMAL `/orbit:architect` body in v1 (the charter explicitly
+  names it; the 2026-07-08 review ran "by hand" precisely because no body existed; scope it to
+  create/resume + the R-d-8 residency sweep + rendering engine-computed status — no duplicated
+  explore machinery), and include the audit-drift architecture-staleness check (the arc calls a
+  stale architecture doc "the most expensive drift there is"). User's call at or before propose.
 
 ## Considered & out
 
@@ -111,3 +122,26 @@ how much of the review mode ships in v1.
   dependencies/sequencing, layer-fit, route-level alternatives, economy self-audit.
 - Arc status log 2026-07-13 (D1 completion entry) — cycle lessons queued for D4 but relevant to
   D2's review standing: severity-aware confirm vocabulary; mechanizable contradiction sweep.
+
+**Code touchpoints (where the work lands — R-d-8 boot material)**:
+
+- New engine module home: `src/core/architecture/` (by analogy to `src/core/artifact-graph/` —
+  parser, computed stage state, validation). Nothing exists there today.
+- CLI registration: `src/cli/index.ts` (where `orbit architecture show/status/validate`
+  subcommands register; existing commands under `src/commands/` show the genre).
+- Metadata extension: `ChangeMetadataSchema` in `src/core/artifact-graph/types.ts` gains the
+  optional `architecture:` citation (D1/C2 precedent fields sit right there); read/write helpers
+  in `src/utils/change-metadata.ts` round-trip it for free once declared.
+- Propose merge step: `src/core/templates/workflows/propose.ts` (consume-mode Step 0d move —
+  the explicit `.orbit-runs/` move is the precedent slot for explicit metadata merge).
+- New/edited workflow bodies: `src/core/templates/workflows/` — **the B3 all-registries trap**: a
+  new generated workflow must register in EVERY registry (B3's external review found a sixth in
+  `src/commands/init.ts`); grep for an existing body's name (e.g. `audit-drift`) across `src/` to
+  enumerate the current registry set before adding `/orbit:architect` or `--as architecture`.
+- Tests: parity hash re-pins (`test/core/templates/skill-templates-parity.test.ts` — new bodies
+  join the hash maps), fidelity markers (`orbit-content-fidelity.test.ts` + on-disk
+  `orbit-generated-surface.test.ts`), and a new architecture-module unit suite (genre:
+  `test/core/artifact-graph/gates.test.ts`).
+- The retrofit target: `orbit/architecture/d-arc-arbitered-flow.md` itself (first parseable
+  instance; its `*State:*` lines are deleted by the retrofit per D-d2-1). `fork-and-orbify.md`
+  retrofit is optional/deferred.
