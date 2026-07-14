@@ -132,6 +132,11 @@ how much of the review mode ships in v1.
   dependencies/sequencing, layer-fit, route-level alternatives, economy self-audit.
 - Arc status log 2026-07-13 (D1 completion entry) — cycle lessons queued for D4 but relevant to
   D2's review standing: severity-aware confirm vocabulary; mechanizable contradiction sweep.
+- **Arc ruling R-d-9 (handoff posture, ratified 2026-07-14 during this explore)** — constrains
+  D2's proposal: the new `architect-<TS>.json` and `review-architecture` emits must carry the
+  structured `handoff` section from birth (clause b), and D2's phase seams get hand-run handoff
+  audits until D5 mechanizes them (clause c). Model-per-phase hints (clause a) are D5 machinery —
+  D2 only needs to not contradict them in readout prose.
 
 **Code touchpoints (where the work lands — R-d-8 boot material)**:
 

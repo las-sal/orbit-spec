@@ -67,6 +67,10 @@ is owned by each stage's explore/change per R-d-7 — this index holds only cros
   artifact — chat is never the store of record (Sequencing; encoded into bodies/conventions by
   D5). Found empirically 2026-07-08: a model-handoff audit caught a chat-resident recommendation
   (Q-elc-c) that every captured decision had survived but pending material had not.
+- **R-d-9** — Handoff posture: model-per-phase is a requirement; every phase-ending emit carries
+  a structured `handoff` section (pointers, never duplicated substance); a handoff audit is
+  required at phase seams (Cross-cutting constraint; practiced by hand from 2026-07-14;
+  mechanized by D5).
 
 ## Open questions (arc-level)
 
@@ -227,7 +231,11 @@ Three braided threads, one governing concern (what's in the window and who's rea
   forces re-reading the file, and audit-drift cross-checks counts against the actual file. Same
   enforcement ladder as D1 (structure → instruction → trail); same honest ceiling (nothing
   outside the conversation knows what was discussed). Practiced as authoring discipline from
-  2026-07-09 forward, ahead of the spec.
+  2026-07-09 forward, ahead of the spec. **D5 also mechanizes R-d-9's clauses (b) and (c)**
+  (ratified 2026-07-14, practiced by hand since): the structured `handoff` emit section and the
+  phase-seam handoff audit join the model-per-phase `models:` hints as this stage's spec'd
+  deliverables — the working design above and R-d-9's text are the same program, stated once
+  there and mechanized here.
 
 **Exit criteria**: (1) generated surface size measured before/after against a stated reduction
 target picked at explore time — the criterion is a NUMBER hit, not "smaller"; (2) an inventory
@@ -284,6 +292,30 @@ the two gated seams and only on AI-mediated arrival (interaction at commitment p
 architecture docs, specs, boot material, and trail emits are worth their tokens (durable
 artifacts); narration, re-reading, re-orientation, and AI-composed formatting the engine could
 render are what gets cut (everything else).
+
+**Handoff posture rule (R-d-9, Sal, 2026-07-14)** — three clauses, PRACTICED by hand from
+ratification; D5 mechanizes (b) and (c):
+
+- **(a) Model-per-phase is a REQUIREMENT**, not a hypothesis: each phase names its model
+  (`models:` hints in `orbit/config.yaml`, echoed by eligibility readouts, never enforced by
+  bodies; switch only at phase boundaries, never within one). The 2026-07-08 assignment stands
+  as the working default: strongest reasoner for explore/architect and propose (do NOT economize
+  on normative text); coding model at apply; review models chosen for DIVERSITY from the
+  authoring model (C1/C2/D1 empirics: independent slots out-caught in-context 9–0 in the D1
+  cycle).
+- **(b) Every phase-ending emit carries a structured `handoff` section** — the boot-read
+  sequence (ordered pointers, e.g. CLAUDE.md → owning doc §stage → explore/change artifacts),
+  the next command, and the next phase's model hint. POINTERS, never duplicated substance — a
+  copied instructions blob is one more thing that goes stale; the artifacts hold the substance,
+  the audit (c) proves the chain suffices.
+- **(c) A HANDOFF AUDIT is required at phase seams** (explore→propose, propose→review-cycle,
+  post-apply, pre-archive — wherever a context clear or model swap is plausible; NOT at every
+  emit). Checklist: (1) R-d-8 residency sweep; (2) boot-chain currency — every doc the chain
+  points through says what is currently true (stale state lines in OWNING docs hit 3× in the D1
+  cycle); (3) coverage-vs-charter — the stage's charter items all covered by a decision or an
+  open question with a standing slot; (4) code-touchpoints map present in boot material.
+  Empirical basis: the two hand-run audits (2026-07-08 leak audit; 2026-07-14 D2 handoff audit)
+  both surfaced real findings.
 
 ## Sequencing and rules of engagement
 
@@ -420,6 +452,13 @@ render are what gets cut (everything else).
   1668 tests green vs 1608 baseline; 8/8 fingerprints; local surface regenerated). Deferred to
   archive time by design: CLAUDE.md's execution-disciplines section gains the fourth discipline
   when the change's deltas sync to baseline. Next seam: `/orbit:review --as system` — user-invoked.
+- **2026-07-14** — **R-d-9 ratified (handoff posture)**: model-per-phase upgraded from working
+  hypothesis to requirement; phase-ending emits carry a structured `handoff` section (pointers,
+  never duplicated substance); handoff audits required at phase seams (4-item checklist:
+  residency, boot-chain currency, coverage-vs-charter, touchpoints). Empirical basis: both
+  hand-run audits found real findings (2026-07-08: 3 leaks; 2026-07-14: stale arc state line,
+  uncovered charter item → Q-d2-6/D-d2-6, soft touchpoints). Practiced by hand immediately;
+  D5 mechanizes (b)+(c). Raised during the D2 explore's handoff-readiness discussion.
 - **2026-07-13** — **D1 COMPLETE and ARCHIVED** (user-invoked archive; the full system cadence
   before it: in-context clean → external GPT-5 Codex (1 W + 2 S, resolved — delta era-exemption
   text tightened to require absence of BOTH markers; ordering invariant added to bodies; on-disk
