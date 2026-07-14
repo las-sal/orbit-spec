@@ -141,6 +141,21 @@ stages). All three support `--json`.
 - **WHEN** `orbit architecture show d-arc-arbitered-flow d2-architect` runs
 - **THEN** exactly that stage's section (heading through the line before the next same-or-higher heading) prints — not the whole document
 
+#### Scenario: Validate on a legacy doc passes with a note
+
+- **WHEN** `orbit architecture validate` targets a LEGACY doc (zero stage-prefixed headings outside fences)
+- **THEN** it exits 0 with a legacy/opaque note — being legacy is not an error; only near-miss grammar failures fail validation
+
+#### Scenario: Show on a malformed doc errors toward validate
+
+- **WHEN** `orbit architecture show` targets a MALFORMED doc
+- **THEN** it fails with an error naming the grammar violation(s) and pointing at `orbit architecture validate <doc>` — malformed docs are fixed, not browsed
+
+#### Scenario: Citations resolve against a malformed doc's well-formed stages
+
+- **WHEN** a doc contains both well-formed stage declarations and near-miss lines, and a change cites one of its WELL-FORMED stages
+- **THEN** the citation resolves and the stage participates in state computation (one typo'd heading must not dangle every sibling citation); the malformed lines remain validation errors and the doc lists as malformed
+
 #### Scenario: Validate catches a dangling Depends-on
 
 - **WHEN** a stage declares `Depends-on: d9-nonexistent` and no such stage exists in the doc

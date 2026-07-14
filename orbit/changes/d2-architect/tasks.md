@@ -17,8 +17,9 @@ by hand at the phase seams.
 - [ ] 1.2 `state.ts`: computed stage state — citation scan over `orbit/changes/*/`,
       `orbit/changes/archive/*/`, `orbit/explore/*/` metadata; precedence in-change > exploring >
       quiescent > premised; completion composition (quiescent AND ratified → complete;
-      quiescent + unratified → awaiting-ratification; ratified + live work → inconsistency
-      surfaced, never honored); pure function, no caching
+      quiescent + unratified → awaiting-ratification; ratified + ANY non-quiescent observation —
+      live work OR premised/no-citing-artifacts → inconsistency surfaced, never honored); pure
+      function, no caching
 - [ ] 1.3 `validate.ts` + `src/commands/architecture.ts` + `src/cli/index.ts` registration:
       `orbit architecture status|show|validate` (all `--json`); status = per-stage computed
       state + citing artifacts, eligibility-framed, with legacy docs listed as opaque and
@@ -28,7 +29,8 @@ by hand at the phase seams.
 - [ ] 1.4 Tests (`test/core/architecture/`): parser incl. fenced look-alikes + duplicate ids +
       legacy docs + MALFORMED near-miss fixtures (mistyped stage heading; bad slot syntax) +
       slotless-stage omission defaults; state incl. precedence, re-exploration flip, completion
-      composition, falsified-mark surfacing; CLI status/show/validate against fixture docs
+      composition, falsified-mark surfacing (incl. the ratified+premised fixture — a marked
+      stage with zero citing artifacts); CLI status/show/validate against fixture docs
       (incl. malformed listing + bucketed --json); NO imperative labels in output (grep)
 
 ## 2. Citation + lifecycle plumbing

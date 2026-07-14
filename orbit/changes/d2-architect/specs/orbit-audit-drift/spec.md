@@ -11,7 +11,8 @@ citing artifacts at all (`premised`) → CRITICAL (the completion claim is falsi
 unsupported, by observation); (c) a hand-written state line (`*State:*`
 form) in a parseable doc → WARNING (state is computed, never stored — flag for deletion);
 (d) dangling `architecture:` citations in change/explore metadata (either level) → CRITICAL
-(they also fail validation; the audit catches ones written since the last validate). Check (d)
+(change citations also fail `orbit validate <change>`; explore citations have no validating
+surface and are caught ONLY here). Check (d)
 scans change/explore metadata INDEPENDENTLY of doc presence — a typo'd `doc:` name can itself
 create the no-parseable-docs condition, and must not suppress its own detection. Only the
 doc-side checks (a)–(c) are skipped when no parseable architecture docs exist, with the note

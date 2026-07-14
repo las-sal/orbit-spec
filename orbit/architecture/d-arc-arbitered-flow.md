@@ -133,7 +133,8 @@ this document is retrofitted as the first instance; (2) **linkage** — `.opensp
 `architecture:` citation (precedent: C2's `base_fingerprints` schema extension) so every change
 names its program + stage; (3) **computed program position** — stage state as a pure function of
 disk, extending C1's principle upward: premised (arch doc only) → exploring (`orbit/explore/`
-dir) → in-change (citing change) → archived (archive back-reference); no new state files;
+dir) → in-change (citing change) → quiescent (archived citing change; vocabulary per D-d2-1 —
+completion is a separate user ratification); no new state files;
 (4) **CLI surface** — `orbit architecture show/status` + validation, which D3's orientation
 surface consumes for mechanical program position (a session loads ONE stage section, not the
 whole doc — engine standing IS the economy answer for this layer's read-cost); (5) **trail +
