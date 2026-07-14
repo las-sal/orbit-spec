@@ -50,7 +50,7 @@ The system SHALL expose a single `/orbit:review` command that runs an editorial 
 #### Scenario: Invoke architecture mode with doc name
 
 - **WHEN** the user invokes `/orbit:review --as architecture <doc-name>`
-- **THEN** the command resolves `<doc-name>` against `orbit/architecture/` (prompting via `AskUserQuestion` over parseable docs when omitted or ambiguous) and runs the architecture passes; a `<doc-name>` resolving to a legacy (zero-parseable-stage) doc is an error suggesting retrofit — architecture mode requires a parseable doc
+- **THEN** the command resolves `<doc-name>` against `orbit/architecture/` (prompting via `AskUserQuestion` over parseable docs when omitted or ambiguous) and runs the architecture passes; a `<doc-name>` resolving to a LEGACY doc (zero stage-prefixed headings) is an error suggesting retrofit, and one resolving to a MALFORMED doc (fails `orbit architecture validate`'s near-miss rule) is an error naming the grammar violation — architecture mode requires a parseable doc
 
 #### Scenario: Invoke without change name
 

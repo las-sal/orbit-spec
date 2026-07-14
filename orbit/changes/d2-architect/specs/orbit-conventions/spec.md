@@ -211,3 +211,22 @@ The system SHALL use stock phrasings for the final-assessment line of review and
 
 - **WHEN** `/orbit:review --as architecture` emits its final-assessment line
 - **THEN** the gate-referencing phrasings above do NOT apply (no gate exists over architecture docs); the line uses the gate-less forms specified in `orbit-review`'s `Architecture-mode final assessment has no gate` requirement (`X critical / Y warning(s). Ready when you are: /orbit:address-reviews --from-file <emit>.` with findings; `No findings. The architecture trail records this pass.` when clean)
+
+### Requirement: `orbit/explore/<name>/` staging directory
+
+The system SHALL define `orbit/explore/<name>/` as the staging area for `/orbit:explore` work prior to promotion via `/orbit:propose`.
+
+#### Scenario: Created by explore in named/crystallized modes
+
+- **WHEN** `/orbit:explore` creates a named exploration
+- **THEN** the directory `orbit/explore/<name>/` is created with an `explore.md` file
+
+#### Scenario: Sibling files supported
+
+- **WHEN** additional captures occur during exploration
+- **THEN** sibling files (e.g., `sketches/*.md`, draft conventions) may be written under `orbit/explore/<name>/`
+
+#### Scenario: Promoted via propose
+
+- **WHEN** `/orbit:propose <name>` consumes a staging directory
+- **THEN** the `orbit/explore/<name>/` directory's contents are moved to `orbit/changes/<name>/` — EXCEPT the staged `.openspec.yaml` (D-arc Stage D2), which is MERGED into the change's freshly-written metadata via the helpers and then discarded, never bulk-moved (per `orbit-propose-modifications`' merge requirement)

@@ -1,0 +1,33 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-14T22:11:26Z",
+  "change": "d2-architect",
+  "final_assessment": "All 6 fresh iter-3 findings resolved (2 CRITICAL, 2 WARNING, 2 SUGGESTION); 0 stale/deferred/escalated. C1 (near-miss carriers): tasks 1.1 (malformed-distinct-from-legacy parenthetical + omission semantics), 1.3 (malformed listing + bucketed --json + near-miss detection in validate), 1.4 (malformed + slotless fixtures) and design D1 all now carry the near-miss rule. C2 (un-delta'd staging-dir claim): 4th conventions MODIFIED block — the Promoted-via-propose scenario now excepts the staged .openspec.yaml (merged then discarded, per orbit-propose-modifications); 16th fingerprint stamped. W1: zero-parseable-docs status scenario rescoped to no-docs-at-all + a new bucketed-json scenario (parseable/legacy/malformed; listings never suppressed). W2: review doc-target scenario splits legacy (retrofit suggestion) from malformed (grammar-violation error). S1: arc vocabulary line reconciled to quiescent with a superseded-by-D-d2-1 note (done now, not deferred to retrofit). S2: design D6 gains the explicit verb-taxonomy justification for architect. Validates --strict; fingerprints 16/16; arc state line amended (32 delta requirements, 5 passes, 30 findings resolved).",
+  "next_recommended": "/orbit:review --as proposal --fresh d2-architect — the independent pass yielded new findings (now resolved); the no-new-findings confirm requires an independent pass that yields none",
+  "kind": "editorial",
+  "source": "--from-file orbit/changes/d2-architect/.orbit-runs/review-proposal-2026-07-14T21-18-33Z.json",
+  "source_path": "orbit/changes/d2-architect/.orbit-runs/review-proposal-2026-07-14T21-18-33Z.json",
+  "source_format": "internal-review",
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "resolution_summary": { "resolved": 6, "stale": 0, "deferred": 0, "escalated": 0 },
+  "resolutions": [
+    { "finding": "Near-miss rule did not ripple to its carriers", "severity": "CRITICAL", "classification": "trivial fix", "action": "Tasks 1.1/1.3/1.4 + design D1 now carry malformed-vs-legacy, bucketed status, near-miss validate, and the fixtures." },
+    { "finding": "Un-delta'd staging-directory entire-move claim", "severity": "CRITICAL", "classification": "trivial fix", "action": "4th conventions MODIFIED block (baseline-verbatim + metadata-merge exception); 16th fingerprint." },
+    { "finding": "Zero-parseable-docs scenario collides with malformed/legacy listings", "severity": "WARNING", "classification": "trivial fix", "action": "Rescoped to no-docs-at-all; bucketed-json scenario added (listings never suppressed)." },
+    { "finding": "Doc-target scenario conflates malformed with legacy", "severity": "WARNING", "classification": "trivial fix", "action": "Split remedies: legacy -> retrofit suggestion; malformed -> grammar-violation error." },
+    { "finding": "Arc vocabulary sketch says archived", "severity": "SUGGESTION", "classification": "trivial fix", "action": "Reconciled to quiescent + superseded-by-D-d2-1 note, applied now." },
+    { "finding": "Verb-taxonomy justification letter", "severity": "SUGGESTION", "classification": "trivial fix", "action": "Design D6 sentence: architect is a new authoring-genre verb (D-d2-6, R-d-1)." }
+  ],
+  "ripple_cascade": {
+    "applied": [
+      "orbit/changes/d2-architect/tasks.md",
+      "orbit/changes/d2-architect/design.md",
+      "orbit/changes/d2-architect/specs/orbit-architecture-engine/spec.md",
+      "orbit/changes/d2-architect/specs/orbit-review/spec.md",
+      "orbit/changes/d2-architect/specs/orbit-conventions/spec.md",
+      "orbit/architecture/d-arc-arbitered-flow.md"
+    ],
+    "flagged_not_applied": []
+  }
+}

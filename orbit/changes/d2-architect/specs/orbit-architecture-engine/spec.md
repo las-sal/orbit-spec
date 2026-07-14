@@ -151,10 +151,15 @@ stages). All three support `--json`.
 - **WHEN** `show <doc>` targets a legacy (zero-parseable-stage) doc, or `show <doc> <stage>` names a stage id the doc does not declare
 - **THEN** the legacy case prints an empty stage index with a legacy/opaque note (exit 0 — not an error); the nonexistent-stage case fails with an error listing the doc's declared stage ids
 
-#### Scenario: Status with zero parseable docs
+#### Scenario: Status with no architecture docs at all
 
-- **WHEN** `orbit architecture status` runs in a repo whose `orbit/architecture/` has no parseable docs (or does not exist)
-- **THEN** it reports `no parseable architecture docs` cleanly (exit 0; `--json` yields an empty docs list) — never an error
+- **WHEN** `orbit architecture status` runs in a repo whose `orbit/architecture/` contains no docs (or does not exist)
+- **THEN** it reports `no architecture docs` cleanly (exit 0; `--json` yields empty buckets) — never an error
+
+#### Scenario: Status buckets parseable, legacy, and malformed docs
+
+- **WHEN** `orbit architecture status --json` runs in a repo with any mix of parseable, legacy, and near-miss docs
+- **THEN** the payload buckets them (`parseable` with per-stage computed state; `legacy` listed as opaque; `malformed` listed with their grammar violations) — a legacy-only or malformed-only repo never renders the clean no-docs message, and listings are never suppressed
 
 ### Requirement: Architecture trail location
 

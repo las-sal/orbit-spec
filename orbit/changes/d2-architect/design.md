@@ -34,9 +34,10 @@ mechanization (R-d-9 → D5); `orbit list` or orientation-surface absorption (D3
 ### D1. New engine module `src/core/architecture/`, parallel to `artifact-graph/` (explore D-d2-1/3)
 
 Three files by analogy to the C1 module set: `parser.ts` (fence-aware; stage headings
-`### Stage <id> — <title>`, slot lines `Depends-on:` / `Complete:`, section boundaries — reuse
-the fence-scanning approach `requirement-blocks.ts` landed after its C1 bug, but do NOT couple to
-that module: different grammar), `state.ts` (computed stage state: citation scan over
+`### Stage <id> — <title>`, slot lines `Depends-on:` / `Complete:` with omission defaults,
+section boundaries, and the near-miss rule — stage-like text failing the exact grammar yields a
+MALFORMED result distinct from legacy; reuse the fence-scanning approach `requirement-blocks.ts`
+landed after its C1 bug, but do NOT couple to that module: different grammar), `state.ts` (computed stage state: citation scan over
 `orbit/changes/*/`, `orbit/changes/archive/*/`, `orbit/explore/*/` metadata + precedence +
 completion composition — pure function, no caching, corpus is small), `validate.ts` (doc
 structure: slot syntax + id uniqueness + Depends-on resolution; ALSO hosts the citation-resolution
@@ -95,7 +96,10 @@ current set per the explore's verified grep: `profiles.ts`, `profile-sync-drift.
 pins) are swept 15→16 as part of the change — the D1-cycle contradiction class, handled
 proactively. The completion-ratification flow is the body's one AskUserQuestion (ratify /
 not-yet); the flow-entry rule (never a gatekeeper) is stated in the body and constrains OTHER
-bodies' recommendation prose (no body recommends architect as required entry).
+bodies' recommendation prose (no body recommends architect as required entry). Verb-taxonomy
+justification (per orbit-conventions' verb-prefix requirement): `architect` is a NEW
+authoring-genre verb — it fits none of the check-command prefixes (verify-/review-/audit-)
+because it authors rather than checks; justified by D-d2-6 and arc ruling R-d-1.
 
 ### D7. The retrofit is part of THIS change's apply; subtraction accounting (explore D-d2-1/3, R-d-4)
 

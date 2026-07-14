@@ -6,6 +6,7 @@ base_fingerprints:
     "`.orbit-runs/` per-change persistence": sha256:bdcb9e3a86891ee1fb3f2d40bf2eb22f22427d3e620cc399d171e83165134d53
     Internal-run JSON summary format: sha256:30ee51ddf661fab51a43de04525a9f94391d1a807469f1b5aad535c2eefb42bf
     Final-assessment phrasings: sha256:d91fcd60f90c82f566ad379d0efbdf5bb8a77fb5086e0d98202b84f3247e79da
+    "`orbit/explore/<name>/` staging directory": sha256:1872f43d663c95439e2cc2d0046480b1f23e12c6d22856be151ad1991f56f5ea
   orbit-explore-modifications:
     Three invocation modes supported: sha256:49cc34895e603f9aae936f3b72c511813d473d36e553db696c7962d249d4dc3f
   orbit-onboard:

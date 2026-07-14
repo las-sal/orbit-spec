@@ -10,7 +10,10 @@ by hand at the phase seams.
 - [ ] 1.1 `parser.ts`: fence-aware parse of `orbit/architecture/<name>.md` — stage headings
       (`### Stage <id> — <title>`, kebab id), `Depends-on:` / `Complete:` slot lines
       (`[ ]` | `[x] <YYYY-MM-DD> (<who>)`), section boundaries (heading-to-next-same-or-higher);
-      legacy docs (zero parseable stages) yield an explicit legacy/opaque result, never an error
+      slot omission semantics (absent = no-deps / unratified); the near-miss rule — stage-like
+      headings/slot lines failing the exact grammar yield an explicit MALFORMED result naming the
+      line, distinct from LEGACY (zero `### Stage `-prefixed headings outside fences → explicit
+      legacy/opaque result, never an error)
 - [ ] 1.2 `state.ts`: computed stage state — citation scan over `orbit/changes/*/`,
       `orbit/changes/archive/*/`, `orbit/explore/*/` metadata; precedence in-change > exploring >
       quiescent > premised; completion composition (quiescent AND ratified → complete;
@@ -18,12 +21,15 @@ by hand at the phase seams.
       surfaced, never honored); pure function, no caching
 - [ ] 1.3 `validate.ts` + `src/commands/architecture.ts` + `src/cli/index.ts` registration:
       `orbit architecture status|show|validate` (all `--json`); status = per-stage computed
-      state + citing artifacts, eligibility-framed; show = one stage section (or stage index);
-      validate = structure, slot syntax, id uniqueness, Depends-on resolution
+      state + citing artifacts, eligibility-framed, with legacy docs listed as opaque and
+      near-miss docs listed as MALFORMED (bucketed --json: parseable/legacy/malformed); show =
+      one stage section (or stage index); validate = structure, slot syntax, id uniqueness,
+      Depends-on resolution, near-miss detection (errors name the offending line)
 - [ ] 1.4 Tests (`test/core/architecture/`): parser incl. fenced look-alikes + duplicate ids +
-      legacy docs; state incl. precedence, re-exploration flip, completion composition,
-      falsified-mark surfacing; CLI status/show/validate against fixture docs; NO imperative
-      labels in output (grep)
+      legacy docs + MALFORMED near-miss fixtures (mistyped stage heading; bad slot syntax) +
+      slotless-stage omission defaults; state incl. precedence, re-exploration flip, completion
+      composition, falsified-mark surfacing; CLI status/show/validate against fixture docs
+      (incl. malformed listing + bucketed --json); NO imperative labels in output (grep)
 
 ## 2. Citation + lifecycle plumbing
 

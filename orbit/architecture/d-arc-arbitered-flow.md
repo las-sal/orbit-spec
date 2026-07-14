@@ -82,7 +82,9 @@ belong to a single stage live in that stage's explore, not here.
 
 **Stage state vocabulary** (controlled; hand-maintained *provisionally* until D2 computes it from
 disk — per R-d-1, state is never hand-authored once the engine owns it):
-`premised → exploring → in-change → archived`.
+`premised → exploring → in-change → quiescent (+ ratified `complete`)` — vocabulary
+superseded by D-d2-1 (the d2-architect explore): `archived` was renamed `quiescent` because it
+must not read as "complete"; completion is a user ratification composed with quiescence.
 
 ### Stage D1 — explicit-lifecycle-consent
 
@@ -113,8 +115,9 @@ bodies — greppable.
 ### Stage D2 — architect (the program layer)
 
 *State (manual until D2): **in-change** — `orbit/changes/d2-architect/` (proposed 2026-07-14
-from 7 ratified decisions D-d2-1..7; 2 new + 9 modified capabilities, 31 delta requirements
-after review iters 1-2 + external; fingerprints 15/15; --strict valid). This is the LAST hand-maintained update of any state line —
+from 7 ratified decisions D-d2-1..7; 2 new + 9 modified capabilities, 32 delta requirements
+across 5 review passes (fresh x3, external x2 — 30 findings, all resolved); fingerprints 16/16;
+--strict valid). This is the LAST hand-maintained update of any state line —
 D2's retrofit deletes them all (D-d2-1). First in sequence after D1 (see Sequencing).*
 
 **RULED (R-d-1, Sal, 2026-07-08): architecture is FIRST-CLASS ENGINE, not prose.** "Part of the goal of
