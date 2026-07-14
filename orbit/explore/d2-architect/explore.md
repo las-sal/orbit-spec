@@ -79,6 +79,27 @@ how much of the review mode ships in v1.
   D1: skip the enforcement, ship the evidence — the trail means a future gate (if ever warranted)
   has something to compute over, and the 2026-07-08 review's narrative-only evidence gets a real
   emit home going forward.
+- **D-d2-6 (2026-07-14, Sal) — `/orbit:architect` ships in v1: FULL first-class anatomy,
+  floor-plus-ratification scope; and it is an available stance, NEVER a mandatory flow entry.**
+  Two axes settled. (Integration — not negotiable): the body gets the complete command anatomy
+  every orbit command has — generated SKILL.md + thin launcher (D14), four-disciplines block,
+  `architect-<TS>.json` emit on the universal spine, registration in EVERY registry (B3 lesson),
+  parity/fidelity/on-disk tests, a baseline `orbit-architect` capability spec, claude+codex
+  install (D15). (Scope — the ratified ladder rungs 1–5): create/resume with the parseable format
+  scaffolded by construction; capture rulings/stages/considered-out during architecture sessions;
+  render engine-computed state and NEVER hand-author it (the D-d2-1 contract enforced at the body
+  layer); R-d-8 residency sweep + emit at boundaries; and the completion-RATIFICATION flow — the
+  body renders quiescent stages and, on the user's yes, writes `Complete: [x] <date> (<who>)`
+  (the arbiter's mark as a recorded interaction). Skipped until felt (rungs 6–8): stage-lifecycle
+  helpers, explore-grade stance prose (the most token-expensive, least mechanical body material —
+  architecture thinking already flows through explore naturally), permanent retrofit guidance
+  (the arc-doc retrofit is a one-time act of D2's apply). The audit-drift architecture-staleness
+  hook ships in v1 per the ratified standing recommendation (rides the parser + computed state
+  D2 builds anyway; "a stale architecture doc is the most expensive drift there is").
+  **Flow-entry ruling (Sal): starting with `/orbit:explore` remains fully legitimate** — architect
+  is not a gatekeeper; architecture content born in explore sessions (how this very arc was built)
+  is a first-class path, no body recommends architect as required entry, and no drift check flags
+  architecture material for having originated in explore.
 
 ## Open questions
 
@@ -88,17 +109,6 @@ how much of the review mode ships in v1.
   dangling stage id within a real doc, or both (exit criterion 2 says "fails on a dangling
   citation"). Also: is the citation immutable after propose, or re-pointable?
   Standing recommendation: none yet (proposal-level detail unless discussion surfaces a fork).
-- **Q-d2-6 — `/orbit:architect` authoring-body scope for v1**: the arc's D2 charter names "the
-  `/orbit:architect` workflow body, and the audit-drift hook" alongside the five engine pieces —
-  neither is covered by D-d2-1..5. Does v1 ship a dedicated authoring/maintenance body (a 16th
-  generated skill — R-d-4 subtraction applies), or is architecture authoring served by
-  `/orbit:explore` + hand-editing (the current practice) until the need is felt? And the
-  audit-drift hook (staleness checks over architecture docs) — v1 or follow-up?
-  Standing recommendation: ship a MINIMAL `/orbit:architect` body in v1 (the charter explicitly
-  names it; the 2026-07-08 review ran "by hand" precisely because no body existed; scope it to
-  create/resume + the R-d-8 residency sweep + rendering engine-computed status — no duplicated
-  explore machinery), and include the audit-drift architecture-staleness check (the arc calls a
-  stale architecture doc "the most expensive drift there is"). User's call at or before propose.
 
 ## Considered & out
 
