@@ -14,7 +14,9 @@ read-cost story holds (what a session must load, what the engine renders vs pros
 The target is an architecture DOC, not a change; findings cite `<doc>.md:line` and roll into the
 shared 3-dimension scorecard (passes 1–3 → Correctness, 2 → Completeness, 4–6 → Coherence).
 `--parallel` is accepted but is a no-op in architecture mode (architecture docs are small; the
-six passes run in one context), noted in the report like other wrong-mode flags.
+six passes run in one context), noted in the report like other wrong-mode flags; `--fast` and
+`--focus <lens>` are likewise accepted but no-ops (all six passes run — no per-mode subset or
+lens table is defined for architecture mode), noted in the report the same way.
 
 #### Scenario: Architecture review runs against a doc
 

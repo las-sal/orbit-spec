@@ -219,7 +219,7 @@ The system SHALL define `orbit/explore/<name>/` as the staging area for `/orbit:
 #### Scenario: Created by explore in named/crystallized modes
 
 - **WHEN** `/orbit:explore` creates a named exploration
-- **THEN** the directory `orbit/explore/<name>/` is created with an `explore.md` file
+- **THEN** the directory `orbit/explore/<name>/` is created with an `explore.md` file and the minimal `.openspec.yaml` metadata file (D-arc Stage D2; contents per `orbit-explore-modifications`)
 
 #### Scenario: Sibling files supported
 
