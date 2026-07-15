@@ -39,9 +39,10 @@ by hand at the phase seams.
       round-trip tests alongside `base_fingerprints`/`schema_version`/`consent_era_from`;
       `orbit validate <change>` gains two-level citation resolution (error names the dangling
       level) with a dangling-citation test each way
-- [ ] 2.2 `explore.ts` body: Mode B/C scaffolding writes the minimal `.openspec.yaml` (citation
-      offered when a stage is indicated; omitted otherwise); resume adds it add-only to pre-D2
-      staging dirs
+- [ ] 2.2 `explore.ts` body: Mode B/C scaffolding writes the minimal `.openspec.yaml` (base
+      fields `schema: spec-driven` + `created` via the unchanged helpers — placeholders
+      superseded at promotion; citation offered when a stage is indicated; omitted otherwise);
+      resume adds it add-only to pre-D2 staging dirs
 - [ ] 2.3 `propose.ts` body: explicit staged-metadata MERGE step before the bulk move (citation
       carries forward via helpers; fresh schema/created/schema_version win; staged file
       discarded); no-staged-metadata path unchanged
@@ -73,11 +74,13 @@ by hand at the phase seams.
       not-yet → writes the `Complete:` mark); never-a-gatekeeper statement; emit
       `architect-<TS>.json` to the architecture trail with `doc`, `stages_touched`,
       `rulings_captured`, `completions_ratified`, and the R-d-9(b) `handoff` section. Register
-      in EVERY registry (grep-enumerate by an existing body's name first — B3 lesson)
+      in EVERY registry (grep-enumerate by an existing body's name first — B3 lesson); joins the
+      orbit-authored disposition category (per the orbit-conventions delta)
 - [ ] 4.2 `review.ts` body: `--as architecture` mode — doc-targeted resolution (never inferred),
       the six passes, no-gate final assessment, emit to
       `orbit/architecture/.orbit-runs/review-architecture-<TS>.json` with `doc` + `handoff`;
-      findings ingestible by address-reviews unchanged
+      findings ingestible by address-reviews unchanged (incl. `recommendation_options` on
+      disjunctive findings — the When-to-emit scope now covers architecture-mode passes)
 - [ ] 4.3 `audit-drift.ts` body: architecture staleness check (computed-vs-prose contradiction;
       falsified `Complete:` mark CRITICAL; hand-written state line WARNING; dangling citations
       CRITICAL; clean skip with no parseable docs; flow-entry rule — origin never flagged)

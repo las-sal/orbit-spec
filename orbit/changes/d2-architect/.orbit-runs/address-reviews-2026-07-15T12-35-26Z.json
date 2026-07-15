@@ -1,0 +1,104 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-15T12:35:26Z",
+  "change": "d2-architect",
+  "source": "--from-file",
+  "source_path": "orbit/changes/d2-architect/.orbit-runs/review-proposal-2026-07-14T23-03-09Z.json",
+  "source_format": "internal-review-json",
+  "walk_mode": "per_finding",
+  "kind": "editorial",
+  "resolutions": [
+    {
+      "finding": "Minimal explore .openspec.yaml contents unspecified — conflicts with the required `schema` field the reused helpers enforce",
+      "severity": "WARNING",
+      "file": "orbit/changes/d2-architect/specs/orbit-explore-modifications/spec.md",
+      "pushback": "still applies — the Mode B scenario said only 'same metadata genre as changes'; writeChangeMetadata (src/utils/change-metadata.ts) Zod-requires a registered schema via validateSchemaName; no artifact named the base fields",
+      "classification": "trivial fix",
+      "action": "Specified the minimal file's base fields as `schema: spec-driven` + `created: <ISO-8601>` — placeholders written via the unchanged helpers and superseded at promotion (propose's merge writes fresh schema/created/schema_version). Applied to the Mode B scenario in the orbit-explore-modifications delta, design.md D2, task 2.2, and the proposal.md capability bullet.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d2-architect/specs/orbit-explore-modifications/spec.md",
+          "orbit/changes/d2-architect/design.md",
+          "orbit/changes/d2-architect/tasks.md",
+          "orbit/changes/d2-architect/proposal.md"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "finding": "Un-delta'd pass-surface enumeration: recommendation_options \"When to emit\" covers only 9 proposal + 7 system passes",
+      "severity": "WARNING",
+      "file": "orbit/specs/orbit-review/spec.md",
+      "pushback": "still applies — baseline line 378 scoped the normative emit rule to 9+7 passes; the change's orbit-review delta had no MODIFIED block for the requirement",
+      "classification": "trivial fix",
+      "action": "Composed a MODIFIED block for `Optional recommendation_options field on finding entries` programmatically from the live baseline (verbatim; assert-guarded single-anchor replace) with the When-to-emit scope extended to 'all passes in all modes: 9 proposal-mode + 7 system-mode + 6 architecture-mode passes (D-arc Stage D2...)'. Appended under the delta's MODIFIED section (17th MODIFIED block). Fingerprint stamped (add-missing-only). Task 4.2 gained the recommendation_options carrier parenthetical; proposal.md orbit-review bullet extended.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d2-architect/specs/orbit-review/spec.md",
+          "orbit/changes/d2-architect/tasks.md",
+          "orbit/changes/d2-architect/proposal.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/specs/orbit-review/spec.md",
+            "reason": "baseline spec; the ripple IS the new MODIFIED block in the change's delta — baseline changes land at archive"
+          }
+        ]
+      }
+    },
+    {
+      "finding": "Generated-file disposition's orbit-authored enumeration not extended to orbit-architect",
+      "severity": "WARNING",
+      "file": "orbit/specs/orbit-conventions/spec.md",
+      "pushback": "still applies — baseline line 669 enumerated orbit-onboard + the four editorial workflows; the conventions delta touched only persistence/emit/phrasings/staging requirements",
+      "classification": "trivial fix",
+      "action": "Composed a MODIFIED block for `Generated-file disposition` programmatically from the live baseline (verbatim; assert-guarded replace) adding `orbit-architect` to the orbit-authored enumeration and retiring the B3-era 'when they land' future tense ('which joined at B3'). Appended to the conventions delta (18th MODIFIED block). Fingerprint stamped. Task 4.1 gained the disposition-category note; proposal.md orbit-conventions bullet extended.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d2-architect/specs/orbit-conventions/spec.md",
+          "orbit/changes/d2-architect/tasks.md",
+          "orbit/changes/d2-architect/proposal.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/specs/orbit-conventions/spec.md",
+            "reason": "baseline spec; the ripple IS the new MODIFIED block in the change's delta — baseline changes land at archive"
+          }
+        ]
+      }
+    },
+    {
+      "finding": "D2 state line's cycle counts are stale vs the on-disk trail (5 passes/30 findings vs actual)",
+      "severity": "SUGGESTION",
+      "file": "orbit/architecture/d-arc-arbitered-flow.md",
+      "pushback": "still applies — line 119 said '5 review passes (fresh x3, external x2 — 30 findings)'; the trail counts 7 passes (fresh x5, external x2) and 39 findings (12+6+6+4+5 internal + 3+3 external), verified by script over the .orbit-runs/ files",
+      "classification": "trivial fix",
+      "action": "Replaced the hand-copied cycle numbers with a pointer to the change's .orbit-runs/ trail (the finding's own evidence: the numbers went stale twice in this line). Stable facts (proposed date, 7 ratified decisions, 2 new + 9 modified capabilities, --strict valid) retained; the also-drift-prone '32 delta requirements' and 'fingerprints 16/16' pins removed with the same stroke.",
+      "ripple_cascade": {
+        "applied": ["orbit/architecture/d-arc-arbitered-flow.md"],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "finding": "Status rendering of a malformed doc's well-formed stages is ambiguous between two scenarios",
+      "severity": "SUGGESTION",
+      "file": "orbit/changes/d2-architect/specs/orbit-architecture-engine/spec.md",
+      "pushback": "still applies — line 156 ('participates in state computation') vs line 177 (malformed bucket lists 'grammar violations') left the render question open",
+      "classification": "trivial fix",
+      "action": "Extended the `Status buckets parseable, legacy, and malformed docs` scenario THEN: the malformed bucket lists grammar violations AND per-stage computed state for well-formed stages, cross-referencing the citation-resolution scenario. One sentence; settles codegen.",
+      "ripple_cascade": {
+        "applied": ["orbit/changes/d2-architect/specs/orbit-architecture-engine/spec.md"],
+        "flagged_not_applied": []
+      }
+    }
+  ],
+  "resolution_summary": {
+    "resolved": 5,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "post_state": "orbit validate d2-architect --strict passes; fingerprint --check 18/18 verified (2 newly stamped); change now at 34 delta requirements (16 ADDED + 18 MODIFIED blocks), 20 tasks",
+  "final_assessment": "All 5 iteration-5 findings resolved (3 WARNING as two new verbatim-composed MODIFIED blocks + the explore-metadata field spec; 2 SUGGESTION as the arc state-line trail pointer and the malformed-render disambiguation). No stale suppressions, no deferrals.",
+  "next_recommended": "/orbit:review --as proposal --fresh d2-architect"
+}

@@ -49,7 +49,11 @@ in `src/cli/index.ts`.
 
 `ChangeMetadataSchema` gains the optional object (Zod: `{doc: string, stage: string}`); the same
 schema serves explore metadata — `readChangeMetadata`/`writeChangeMetadata` already take a
-directory, so explore dirs reuse them unchanged. `orbit validate <change>` gains citation
+directory, so explore dirs reuse them unchanged; because `writeChangeMetadata` Zod-requires a
+registered `schema`, the minimal explore file carries `schema: spec-driven` + `created` as
+placeholder base fields (superseded at promotion — the merge writes fresh
+`schema`/`created`/`schema_version`, so the placeholder never leaks into a change).
+`orbit validate <change>` gains citation
 resolution (dangling doc vs dangling stage, error names the level); `orbit architecture validate`
 covers doc structure. Consume-mode propose merges the staged metadata explicitly BEFORE the bulk
 move (read staged → carry `architecture:` forward via helpers → discard staged file), the same

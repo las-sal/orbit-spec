@@ -174,7 +174,7 @@ stages). All three support `--json`.
 #### Scenario: Status buckets parseable, legacy, and malformed docs
 
 - **WHEN** `orbit architecture status --json` runs in a repo with any mix of parseable, legacy, and near-miss docs
-- **THEN** the payload buckets them (`parseable` with per-stage computed state; `legacy` listed as opaque; `malformed` listed with their grammar violations) — a legacy-only or malformed-only repo never renders the clean no-docs message, and listings are never suppressed
+- **THEN** the payload buckets them (`parseable` with per-stage computed state; `legacy` listed as opaque; `malformed` listed with their grammar violations AND per-stage computed state for their well-formed stages — the stages that participate in state computation per the citation-resolution scenario render within the malformed listing) — a legacy-only or malformed-only repo never renders the clean no-docs message, and listings are never suppressed
 
 ### Requirement: Architecture trail location
 

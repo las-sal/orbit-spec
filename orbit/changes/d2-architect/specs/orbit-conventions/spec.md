@@ -230,3 +230,37 @@ The system SHALL define `orbit/explore/<name>/` as the staging area for `/orbit:
 
 - **WHEN** `/orbit:propose <name>` consumes a staging directory
 - **THEN** the `orbit/explore/<name>/` directory's contents are moved to `orbit/changes/<name>/` — EXCEPT the staged `.openspec.yaml` (D-arc Stage D2), which is MERGED into the change's freshly-written metadata via the helpers and then discarded, never bulk-moved (per `orbit-propose-modifications`' merge requirement)
+
+### Requirement: Generated-file disposition
+
+The system SHALL classify every skill and command file orbit generates into one of four disposition categories by template provenance. Each category dictates how the file's source template is maintained in the fork.
+
+#### Scenario: Orbit-authored — full ownership
+
+- **WHEN** a generated file's template body has no upstream-derived content (currently `orbit-onboard`, whose body replaces upstream's guided-tour content entirely; the net-new editorial workflows — review, audit-drift, review-external, address-reviews — which joined at B3; and `orbit-architect`, the fully orbit-authored 16th workflow — D-arc Stage D2)
+- **THEN** the template is fully owned by orbit; orbit's contributors edit it freely; the file uses the `orbit-*` directory naming convention for consistency with siblings even when the body is 100% orbit-authored
+
+#### Scenario: Orbit-modified — upstream body with `# Orbit additions`
+
+- **WHEN** a generated file's template bundles upstream's body with an appended `# Orbit additions` section (`orbit-explore`, `orbit-propose`, `orbit-archive-change`, `orbit-apply-change`, `orbit-verify-change`, `orbit-continue-change`, `orbit-ff-change`, `orbit-new-change`, `orbit-bulk-archive-change`)
+- **THEN** the upstream-authored portion is the vendored-baseline snapshot and is left intact (keeping future upstream cherry-picks tractable); orbit's behavior and constraints land in the additions section
+
+#### Scenario: Upstream-verbatim — kept unchanged
+
+- **WHEN** orbit generates an upstream skill it never modified because its interaction is at the invocation layer, not the skill-body layer (currently `orbit-sync-specs`, which upstream's own archive flow invokes as a callable primitive)
+- **THEN** the template carries the upstream body unchanged; no `# Orbit additions` section is needed
+
+#### Scenario: Not generated — excluded from the install surface
+
+- **WHEN** an upstream skill provides no orbit-mission value (e.g., `feedback`, which sends user feedback to Fission-AI and has no role in orbit's workflow)
+- **THEN** orbit does not register its template for generation; a fresh `orbit init` produces no such skill or command in the project
+
+#### Scenario: Per-skill disposition is documented
+
+- **WHEN** orbit's contributors evaluate a new upstream skill arriving via a future engine upgrade or cherry-pick
+- **THEN** the disposition decision is recorded in the change proposal that performs the upgrade; the new skill is assigned to one of the four categories with rationale
+
+#### Scenario: Commands are thin launchers delegating to skills
+
+- **WHEN** orbit generates (or declines to generate) a `/orbit:*` command file
+- **THEN** the command is a thin launcher that invokes its corresponding skill (the skill is the single source of workflow behavior and carries the disposition above); the command surface mirrors the skill surface 1:1, and a skill that is not generated has no command either

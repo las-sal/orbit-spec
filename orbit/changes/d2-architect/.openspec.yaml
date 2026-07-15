@@ -7,6 +7,7 @@ base_fingerprints:
     Internal-run JSON summary format: sha256:30ee51ddf661fab51a43de04525a9f94391d1a807469f1b5aad535c2eefb42bf
     Final-assessment phrasings: sha256:d91fcd60f90c82f566ad379d0efbdf5bb8a77fb5086e0d98202b84f3247e79da
     "`orbit/explore/<name>/` staging directory": sha256:1872f43d663c95439e2cc2d0046480b1f23e12c6d22856be151ad1991f56f5ea
+    Generated-file disposition: sha256:51f2d02a7c487a5003e2ae423744fea96ccbc638671617b3e98e5555c7f78499
   orbit-explore-modifications:
     Three invocation modes supported: sha256:49cc34895e603f9aae936f3b72c511813d473d36e553db696c7962d249d4dc3f
   orbit-onboard:
@@ -19,6 +20,7 @@ base_fingerprints:
     Final assessment phrasings depend on mode: sha256:1db290f95462d68e8574dc8a31f8a30befee564ea98ba53bd449293daba4f7e0
     "`--fresh` runs pass work in a clean execution context": sha256:570e2828520f8ccec1ffffd096e1f11b8ef188247f6675fddd1000af886d0e2e
     Iteration note when prior runs exist: sha256:d5ecab9a15a71655293b2b8d0cf4c2ed7bad81ae450edc1ecf134ef2c445ffc9
+    Optional `recommendation_options` field on finding entries: sha256:ec8eee4b446c3a60bc5e1e48ed67392ea8845650479d9b96c37c399ef132cf0f
   orbit-run-summary-emit:
     Emit scope: sha256:558ed6e586a6935ed3bc03c4ecfea3b332aea3357fda45b9bcc7993b19492b77
     Emit timing semantics: sha256:52340ff044b9eb51ba29d540aeef4bcfb41b117dbbb8db9c1b8a0c5f153c2d67

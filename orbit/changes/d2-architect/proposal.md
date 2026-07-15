@@ -78,18 +78,21 @@ change's acceptance tests, and D3 (orientation) hard-depends on the machinery bu
 ### Modified Capabilities
 
 - `orbit-review`: the `--as` mode set gains `architecture` (doc-targeted, not change-targeted);
-  per-mode emit persistence gains the architecture-mode path; ADDED requirements for the
+  per-mode emit persistence gains the architecture-mode path; the `recommendation_options`
+  When-to-emit scope extends to the architecture-mode passes; ADDED requirements for the
   six-pass set and the no-gate final assessment.
 - `orbit-audit-drift`: ADDED architecture-staleness check (skips gracefully when no parseable
   architecture docs exist).
 - `orbit-explore-modifications`: named-mode scaffolding writes the minimal `.openspec.yaml`
-  (optional `architecture:` citation).
+  (base fields `schema: spec-driven` + `created` as promotion-superseded placeholders; optional
+  `architecture:` citation).
 - `orbit-propose-modifications`: the staging-directory move gains the explicit metadata MERGE
   step.
 - `orbit-archive-modifications`: ADDED stage-line garnish in the completion readout.
 - `orbit-conventions`: the `.orbit-runs/` persistence requirement gains the fourth location
   (`orbit/architecture/.orbit-runs/`); the Internal-run JSON summary format's workflow-kind
-  emitter list gains `architect`.
+  emitter list gains `architect`; the Generated-file disposition's orbit-authored enumeration
+  gains `orbit-architect`.
 - `orbit-run-summary-emit`: the Emit scope requirement gains `/orbit:architect` (and notes
   review's architecture mode rides review's existing emit).
 - `orbit-onboard`: the identity enumeration gains the program-architecture layer.
