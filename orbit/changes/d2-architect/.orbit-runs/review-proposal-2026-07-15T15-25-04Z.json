@@ -1,0 +1,49 @@
+{
+  "command": "review",
+  "timestamp": "2026-07-15T15:25:04Z",
+  "change": "d2-architect",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "iteration": 6,
+  "depth": "full",
+  "scorecard": {
+    "completeness": { "critical": 0, "warning": 0, "suggestion": 1 },
+    "correctness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "coherence": { "critical": 0, "warning": 0, "suggestion": 1 }
+  },
+  "findings": [
+    {
+      "pass": 5,
+      "severity": "SUGGESTION",
+      "file": "orbit/changes/d2-architect/specs/orbit-review/spec.md",
+      "line": 16,
+      "title": "--fast (and --focus) behavior unspecified for architecture mode",
+      "recommendation": "The ADDED `Architecture mode runs six passes` requirement disposes of `--parallel` explicitly (accepted, no-op, noted like other wrong-mode flags), and `--mark`/`--skip-verify` are self-limiting via their mode-only baseline requirements — but `--fast` and `--focus` have per-mode subsets/scenarios defined only for proposal and system modes, leaving `/orbit:review --as architecture --fast` (or `--focus <lens>`) for the implementer to invent. Add one sentence alongside the `--parallel` disposition, e.g. `--fast` and `--focus` are likewise accepted but no-ops in architecture mode (all six passes run; the docs are small), noted in the report."
+    },
+    {
+      "pass": 3,
+      "severity": "SUGGESTION",
+      "file": "orbit/changes/d2-architect/specs/orbit-conventions/spec.md",
+      "line": 219,
+      "title": "Named/crystallized-explore creation descriptions elsewhere don't mention the new minimal .openspec.yaml",
+      "recommendation": "The delta already rewrites the `orbit/explore/<name>/ staging directory` requirement but leaves its `Created by explore in named/crystallized modes` scenario saying the directory is created \"with an `explore.md` file\" — while the orbit-explore-modifications delta now also creates the minimal `.openspec.yaml`. Same pattern in the un-delta'd `orbit-run-summary-emit` baseline (`Bare-mode explore non-emission and crystallization warning`, consequence 1 at orbit/specs/orbit-run-summary-emit/spec.md:155 and the `Confirmed crystallization writes first emit` scenario at :170). None of these are exclusive claims, so nothing contradicts — but since the conventions block is already MODIFIED in this change, extending that scenario's THEN to mention the metadata file is zero-cost; the run-summary-emit occurrences can be left (accurate, merely non-exhaustive) or picked up at a later touch.",
+      "recommendation_options": [
+        { "label": "A", "body": "Extend only the already-MODIFIED orbit-conventions scenario (add \"and the minimal .openspec.yaml per orbit-explore-modifications\"); leave the run-summary-emit baseline untouched as non-contradictory." },
+        { "label": "B", "body": "Also add a 19th MODIFIED block for orbit-run-summary-emit's crystallization-warning requirement so consequence 1 and the confirmed-crystallization scenario name the metadata file." }
+      ]
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "title": "design.md D6's five-registry enumeration omits the B3 'sixth registry' (src/commands/init.ts) that explore.md warns about",
+      "evidence": "Verified via grep over src/: only profiles.ts, profile-sync-drift.ts, shared/skill-generation.ts, shared/tool-detection.ts, templates/skill-templates.ts (plus workflow bodies) carry workflow-name registries — init.ts no longer does, so design.md's 'current set per the explore's verified grep' is factually correct and task 4.1's grep-enumerate instruction is the standing safety net."
+    },
+    {
+      "title": "Suspected un-delta'd enumerations in untouched baselines (review-external 9/7 pass lists, audit-drift 'all four categories', archive 'all three prompts', conventions 'three review modes')",
+      "evidence": "Each verified in place: review-external's pass enumerations describe its own two --as modes (D2 deliberately does not add an external architecture mode); the architecture-staleness check extends Category 3 rather than adding a fifth category; the archive 'all three prompts' text concerns prompts and D2 adds a non-prompt readout line; conventions' 'three review modes' means reviewer-execution classes (in-context/--fresh/external), orthogonal to --as modes."
+    }
+  ],
+  "iteration_note": "0 of these findings appeared in the last run on 2026-07-14 (iter 5, 5 findings, all resolved). 2 new this run — the first zero-WARNING round. Verification: all five iter-5 resolutions confirmed landed; mechanical diffs of all 18 MODIFIED blocks against live baselines show verbatim base + only intended edits (incl. the two new blocks); the three CRITICAL-class sweeps came up empty; counts reconcile everywhere (11 delta files, 16 ADDED + 18 MODIFIED = 34, 20 tasks, 14→16, 15→16, fingerprints 18/18, --strict valid).",
+  "final_assessment": "Fresh iteration-6 pass: 0 CRITICAL, 0 WARNING, 2 SUGGESTION — the cleanest independent round yet (finding trend 12 → 6 → 6 → 4 → 5 → 2, severity now suggestion-only). Both findings are polish-grade: an unspecified flag disposition and a non-contradictory creation-scenario omission. The no-new-findings confirm is NOT met by this pass.",
+  "next_recommended": "/orbit:address-reviews d2-architect --from-file orbit/changes/d2-architect/.orbit-runs/review-proposal-2026-07-15T15-25-04Z.json"
+}
