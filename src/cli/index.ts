@@ -293,6 +293,56 @@ program
     }
   });
 
+// Architecture tier (D-arc D2): computed program position over orbit/architecture/ docs
+const architecture = program
+  .command('architecture')
+  .description('Architecture-tier declarations: computed program position, stage sections, doc validation');
+architecture
+  .command('status')
+  .description('Computed stage states across all architecture docs (bucketed parseable/legacy/malformed)')
+  .option('--json', 'Output as JSON')
+  .action(async (options?: { json?: boolean }) => {
+    try {
+      const { ArchitectureCommand } = await import('../commands/architecture.js');
+      const exitCode = new ArchitectureCommand().status(options ?? {});
+      if (exitCode !== 0) process.exit(exitCode);
+    } catch (error) {
+      console.log();
+      ora().fail(`Error: ${(error as Error).message}`);
+      process.exit(1);
+    }
+  });
+architecture
+  .command('show <doc> [stage]')
+  .description("Print one stage's section (or the doc's stage index)")
+  .option('--json', 'Output as JSON')
+  .action(async (doc: string, stage?: string, options?: { json?: boolean }) => {
+    try {
+      const { ArchitectureCommand } = await import('../commands/architecture.js');
+      const exitCode = new ArchitectureCommand().show(doc, stage, options ?? {});
+      if (exitCode !== 0) process.exit(exitCode);
+    } catch (error) {
+      console.log();
+      ora().fail(`Error: ${(error as Error).message}`);
+      process.exit(1);
+    }
+  });
+architecture
+  .command('validate <doc>')
+  .description('Validate a doc\'s parseable structure (heading form, slot syntax, id uniqueness, Depends-on resolution)')
+  .option('--json', 'Output as JSON')
+  .action(async (doc: string, options?: { json?: boolean }) => {
+    try {
+      const { ArchitectureCommand } = await import('../commands/architecture.js');
+      const exitCode = new ArchitectureCommand().validate(doc, options ?? {});
+      if (exitCode !== 0) process.exit(exitCode);
+    } catch (error) {
+      console.log();
+      ora().fail(`Error: ${(error as Error).message}`);
+      process.exit(1);
+    }
+  });
+
 // Top-level show command
 program
   .command('show [item-name]')
