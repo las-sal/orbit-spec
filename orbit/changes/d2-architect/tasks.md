@@ -51,7 +51,7 @@ by hand at the phase seams.
 
 ## 3. Retrofit (exit criterion 1, first live instance)
 
-- [ ] 3.1 Retrofit `orbit/architecture/d-arc-arbitered-flow.md`: stage headings normalized with
+- [x] 3.1 Retrofit `orbit/architecture/d-arc-arbitered-flow.md`: stage headings normalized with
       ids (d1-explicit-lifecycle-consent … d6-pr-lifecycle), `Depends-on:` + `Complete:` slots
       added (D1's mark `[x] 2026-07-13 (Sal)` — confirm with the user at apply), ALL
       `*State (manual until D2):*` lines DELETED (the R-d-4 subtraction); status log untouched;
@@ -62,7 +62,7 @@ by hand at the phase seams.
       update CLAUDE.md's position-pointer sentence ("Position lives in the arc doc's stage-state
       lines + status log") to point at `orbit architecture status` — it breaks the moment the
       state lines are deleted (apply-seam fix, not archive-time)
-- [ ] 3.2 Stamp this change's own citation
+- [x] 3.2 Stamp this change's own citation
       (`architecture: {doc: d-arc-arbitered-flow, stage: d2-architect}`) into its
       `.openspec.yaml`; `orbit validate d2-architect` resolves it (exit criterion 2 live)
 

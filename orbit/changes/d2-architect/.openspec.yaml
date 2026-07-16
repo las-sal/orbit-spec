@@ -1,6 +1,9 @@
 schema: spec-driven
 created: 2026-07-14
 schema_version: 3
+architecture:
+  doc: d-arc-arbitered-flow
+  stage: d2-architect
 base_fingerprints:
   orbit-conventions:
     "`.orbit-runs/` per-change persistence": sha256:bdcb9e3a86891ee1fb3f2d40bf2eb22f22427d3e620cc399d171e83165134d53

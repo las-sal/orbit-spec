@@ -96,9 +96,11 @@ disk — per R-d-1, state is never hand-authored once the engine owns it):
 superseded by D-d2-1 (the d2-architect explore): `archived` was renamed `quiescent` because it
 must not read as "complete"; completion is a user ratification composed with quiescence.
 
-### Stage D1 — explicit-lifecycle-consent
+### Stage d1-explicit-lifecycle-consent — explicit-lifecycle-consent
 
-*State (manual until D2): **COMPLETE — ARCHIVED 2026-07-13** (`orbit/changes/archive/2026-07-13-explicit-lifecycle-consent/`). All three exit criteria met: (1) lifecycle emits carry `consent` and the tripwire demonstrably flags absence (on-disk fixture harness incl. the at-stamp straddler boundary; this change is itself the covered straddler specimen); (2) user-typed apply AND archive both ran with zero consent prompts (live-proven in the delivery cycle itself); (3) no imperative `Next:` in engine output or generated bodies (grep-tested at engine, template, and on-disk-surface levels). System cadence converged: in-context → external (GPT-5 Codex, 0 CRITICAL) → fresh (+6 findings incl. the single-voiced fall-through at the archive seam) → in-context confirm. Baseline 13 → 14; 1670 tests green.*
+Depends-on: (none)
+Complete: [x] 2026-07-13 (Sal)
+
 
 `orbit/changes/explicit-lifecycle-consent/` — the consent/arbiter core (explore.md rides inside the change as the decision record).
 AskUserQuestion as the only harness-enforceable primitive (D-elc-1); provenance-conditioned
@@ -122,13 +124,11 @@ and audit-drift DEMONSTRABLY flags an emit missing it (tripwire proven live, not
 prompts can interrupt); (3) no imperative `Next:` phrasing survives in engine output or generated
 bodies — greppable.
 
-### Stage D2 — architect (the program layer)
+### Stage d2-architect — architect (the program layer)
 
-*State (manual until D2): **in-change** — `orbit/changes/d2-architect/` (proposed 2026-07-14
-from 7 ratified decisions D-d2-1..7; 2 new + 9 modified capabilities; cycle counts live in the
-change's `.orbit-runs/` trail, not here — hand-copied numbers went stale twice in this very
-line; --strict valid). This is the LAST hand-maintained update of any state line —
-D2's retrofit deletes them all (D-d2-1). First in sequence after D1 (see Sequencing).*
+Depends-on: d1-explicit-lifecycle-consent
+Complete: [ ]
+
 
 **RULED (R-d-1, Sal, 2026-07-08): architecture is FIRST-CLASS ENGINE, not prose.** "Part of the goal of
 forking orbit was to evolve the engine into what I wanted — not just layer prose on top of the
@@ -168,9 +168,11 @@ dangling citation; (3) `/orbit:review --as architecture` runs from a generated b
 evidence in the architecture's own `.orbit-runs/`; (4) a session can load a single stage section
 via CLI instead of the whole doc.
 
-### Stage D3 — orientation (status absorption)
+### Stage d3-orientation — orientation (status absorption)
 
-*State (manual until D2): **premised**.*
+Depends-on: d2-architect
+Complete: [ ]
+
 
 The positional half of "where am I": a surface answering, across ALL active changes at once —
 what phase is each in, what workflow command ran last, what are the one-or-two sensible next
@@ -187,9 +189,11 @@ eligible commands, with no artifact reading beyond the command's own output; (2)
 `~/code/orbit-status` is retired as a separate project (the `../openspec-orbit`-at-parity
 pattern).
 
-### Stage D4 — review-consistency
+### Stage d4-review-consistency — review-consistency
 
-*State (manual until D2): **premised**.*
+Depends-on: d2-architect
+Complete: [ ]
+
 
 Reviews are effective; their PRESENTATION varies per AI interpretation, and the address-reviews
 walk drifts into batch questioning. Two moves: (1) make report rendering deterministic — the
@@ -207,9 +211,11 @@ N cannot be issued before finding N's discussion concludes, batch prompts are pr
 body, and a dismissed prompt loses nothing (the finding re-presents). (Walk criterion is
 body-text-checkable plus one observed cycle — the honest limit for a UX behavior.)
 
-### Stage D5 — context-economy, native execution, and model strategy
+### Stage d5-context-economy — context-economy, native execution, and model strategy
 
-*State (manual until D2): **premised**.*
+Depends-on: d2-architect
+Complete: [ ]
+
 
 Three braided threads, one governing concern (what's in the window and who's reading it):
 
@@ -259,9 +265,11 @@ post-review, pre-apply, mid-apply-chunk, and pre-archive cold, from file-residen
 alone, and proceeds correctly; (4) `models:` config hints appear in eligibility
 readouts.
 
-### Stage D6 — pr-lifecycle (orbit-native git integration)
+### Stage d6-pr-lifecycle — pr-lifecycle (orbit-native git integration)
 
-*State (manual until D2): **premised**.*
+Depends-on: d1-explicit-lifecycle-consent
+Complete: [ ]
+
 
 Split out of Stage D1 (2026-07-08) once its true size was visible. The ratified direction
 (originally D-elc-6, full rationale in D1's explore.md tombstone): **PRs are a DESIGNED

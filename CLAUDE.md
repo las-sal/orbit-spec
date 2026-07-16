@@ -107,10 +107,11 @@ The full plan and design decisions live in the docs below — **read them before
 
 The fork program is COMPLETE; the live program is the **D-arc** —
 `orbit/architecture/d-arc-arbitered-flow.md` (goals, rulings R-d-1.., six stages with exit
-criteria, status log). Read it before any D-arc work. **Position lives in the arc doc's
-stage-state lines + status log — do NOT trust any position stated here** (a hand-copied position
-in this file went stale within minutes on 2026-07-09; until D2 computes state, the arc doc is
-the single manual copy and `orbit/explore/` shows what's actively being thought about). Every
+criteria, status log). Read it before any D-arc work. **Position is COMPUTED — run
+`orbit architecture status`** (D2 shipped the engine; the arc doc's hand-maintained state lines
+are deleted). Do NOT trust any position stated here (a hand-copied position in this file went
+stale within minutes on 2026-07-09); the status log remains the append-only narrative ledger and
+`orbit/explore/` shows what's actively being thought about. Every
 lifecycle transition in this arc is USER-invoked: recommend, never invoke (arc rules of
 engagement — now also a SHIPPED contract, see D1 below).
 
