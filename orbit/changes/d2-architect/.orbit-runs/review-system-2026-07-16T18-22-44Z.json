@@ -1,0 +1,54 @@
+{
+  "command": "review",
+  "timestamp": "2026-07-16T18:22:44Z",
+  "change": "d2-architect",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "iteration": 1,
+  "depth": "full",
+  "scorecard": {
+    "completeness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "correctness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "coherence": { "critical": 0, "warning": 2, "suggestion": 0 }
+  },
+  "passes": {
+    "0": "verify-change: 20/20 tasks checked; all 16 ADDED requirements map to shipped surfaces (engine module, CLI subcommands, six edited bodies + the 16th on disk with fidelity markers); design D1-D7 adhered (module layout, citation ownership, trail location, mode-never-inferred, rungs 1-5 scope, retrofit-in-apply); 1707 tests green; --strict valid; fingerprints 18/18",
+    "1": "baseline compliance: D1 eligibility phrasing intact in regenerated bodies (17 Ready-when-you-are in review body; 0 imperative labels in the new CLI output); review stock phrasings untouched; emit-scope baselines honored; baseline lag on conventions/onboard enumerations is normal mid-change state (deltas carry the reconciliation for sync)",
+    "2": "cohesion: validateChangeDeltaSpecs callers (validate.ts direct + bulk, change.ts, archive.ts preflight) unaffected on uncited changes; citation branch handles archive-depth roots; scanCitations skips dot-dirs and tolerates unreadable metadata; commander registration does not collide with top-level show",
+    "3": "surface walk: 16 skills + 16 commands on disk (claude + codex, e2e-verified); orbit architecture status/show/validate registered with --json; existing CLI surfaces unchanged",
+    "4": "skipped — no perspectives defined (orbit/lenses/ absent)",
+    "5": "skipped — no critical paths defined (orbit/lenses/ absent)",
+    "6": "audit-drift as library: Cat 1 vocabulary — 15-workflow pins swept except one standing decision bullet (finding W1); architecture staleness (a) one stale forward-tense claim in Sequencing (finding W2), (b) zero falsified marks (engine renders no inconsistent stage), (c) zero hand-written state lines, (d) zero dangling citations (no live explores; d2 citation resolves); Cat 4 archive coherence unchanged since the last clean audit"
+  },
+  "findings": [
+    {
+      "pass": 6,
+      "severity": "WARNING",
+      "file": "CLAUDE.md",
+      "line": 90,
+      "title": "D15 bullet still claims getProfileWorkflows 'always returns all 15 workflows'",
+      "recommendation": "The D15 ratified-decision bullet is a standing present-tense behavior claim, now stale post-D2 (the full surface is 16; profiles.ts ALL_WORKFLOWS gained 'architect'). Update the count to 16 (or drop the number: 'always returns ALL workflows'). The nearby D1-completion line 129 ('echoed in all 15 bodies') is a historical cycle record and stays."
+    },
+    {
+      "pass": 6,
+      "severity": "WARNING",
+      "file": "orbit/architecture/d-arc-arbitered-flow.md",
+      "line": 363,
+      "title": "Sequencing bullet still says 'the maintenance burden D2 will automate'",
+      "recommendation": "The Sequencing rule '**This document updates when a stage's change archives** (status log below) — the maintenance burden D2 will automate' carries a stale forward-tense claim: D2 shipped, and what it automated is state rendering (the status log stays a hand-appended ledger by design). Reword to reflect the landed split — e.g. '...(status log below); stage STATE is engine-computed since D2 — only the narrative ledger is hand-appended.'"
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "title": "Status-log entries at arc lines 399/426 use pre-D2 tense ('until D2 computes them', 'D2–D5 premised')",
+      "evidence": "Append-only historical ledger entries — accurate as of their dates; the ledger is never edited (the retrofit's own task 3.1 kept it untouched)."
+    },
+    {
+      "title": "@review: string in orbit-address-reviews delta spec",
+      "evidence": "Documentation prose inside a scenario describing marker-removal behavior, not an actual marker (fenced/normative-text context)."
+    }
+  ],
+  "iteration_note": "First system-mode run for this change.",
+  "final_assessment": "No critical issues. 2 warning(s) to consider — both single-line stale-prose items in governing docs (the D15 count bullet; the Sequencing forward-tense claim), caught by the change's own new architecture-staleness check running as Pass 6. Implementation verified end-to-end: 20/20 tasks, 1707 tests, 16-workflow surface on disk, retrofitted arc doc rendering computed state that matches reality.",
+  "next_recommended": "/orbit:address-reviews d2-architect --from-file orbit/changes/d2-architect/.orbit-runs/review-system-2026-07-16T18-22-44Z.json"
+}
