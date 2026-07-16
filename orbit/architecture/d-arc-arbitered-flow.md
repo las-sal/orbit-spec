@@ -111,8 +111,8 @@ invokes (D-elc-3); eligibility phrasing replacing imperative readouts (D-elc-4);
 provenance in emits (D-elc-5); flat `consent: "user-invoked" | "prompted"` emit field
 (D-elc-8); no engine prompt for CLI-direct, ever (D-elc-9); consent set declared as SCHEMA gate
 data — a `consent:` attribute on the gated seams (D-elc-10, consistent with R-d-1). All open
-questions resolved 2026-07-09; the user proposed the same day (see the state line + status log
-for position). (The PR-lifecycle
+questions resolved 2026-07-09; the user proposed the same day (position is computed — `orbit
+architecture status`; the status log carries the narrative history). (The PR-lifecycle
 theme originally explored here as D-elc-6 was SPLIT OUT to Stage D6 on 2026-07-08 so it stops
 blocking this stage's propose.) Enforcement ceiling accepted deliberately: the body-prompt layer
 is the ONLY enforcement layer — harness hooks were considered and deferred with a named re-entry
@@ -518,3 +518,16 @@ ratification; D5 mechanizes (b) and (c):
   chat-resident decisions; all ratifications in artifacts), boot chain current (CLAUDE.md →
   `orbit architecture status`; arc doc parseable), coverage-vs-charter: exit criteria 1/2/4
   mechanically test-covered, 3 ships as generated body (its first evidence lands on first use).
+
+- **2026-07-16 — external system review (GPT-5 Codex, iter 1) + resolution; exit criterion 3 NOW EVIDENCED.**
+  2 CRITICAL + 4 WARNING, all resolved: the review body's change-oriented Steps 1/4/5/8/9 now
+  branch by mode (architecture mode resolves a DOC, `Using doc:` header, no change CLI calls, no
+  gate computation, doc-scoped iteration); the launcher surface advertises all three modes; the
+  onboarding emit paragraph names all four trail locations; D1's stage prose no longer points at
+  the deleted state line (and the live-arc test now catches semantic stale pointers, not just the
+  old spelling). CORRECTION of the prior entry's weakened claim: exit criterion 3 was NOT
+  satisfied at apply completion — the first `/orbit:review --as architecture` has now RUN from
+  the generated body (user-sanctioned at the C2 resolution fork) and its evidence exists:
+  `orbit/architecture/.orbit-runs/review-architecture-2026-07-16T19-42-13Z.json` (no findings;
+  `change: null`, `doc`, `handoff` carried). All four D2 exit criteria are now met with on-disk
+  evidence.

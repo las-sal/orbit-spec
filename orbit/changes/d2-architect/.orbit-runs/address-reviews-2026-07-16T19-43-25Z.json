@@ -1,0 +1,109 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-16T19:43:25Z",
+  "change": "d2-architect",
+  "source": "--from-file",
+  "source_path": "orbit/changes/d2-architect/.orbit-runs/external-system-2026-07-16T19-23-58Z.md",
+  "source_format": "external-markdown",
+  "external_reviewer": "GPT-5 Codex",
+  "walk_mode": "per_finding",
+  "kind": "editorial",
+  "resolutions": [
+    {
+      "finding": "Architecture review still executes change-only setup",
+      "severity": "CRITICAL",
+      "file": "src/core/templates/workflows/review.ts",
+      "pushback": "still applies — Steps 1/4/9 were unconditional change-oriented; the architecture additions were appended paragraphs that did not cancel the sequential instructions",
+      "classification": "trivial fix (single correct restructure)",
+      "action": "Body restructured mode-first: Step 1 is now 'Resolve the mode, THEN the target' with explicit per-mode branches (architecture: DOC resolution over orbit architecture status --json, 'Using doc:' header, explicit exclusion of orbit list / change CLI calls / gate computation); Step 2 keeps only the doc-class error rules; Step 4 gains the architecture load branch (doc + status --json + CLAUDE.md, show for single stages); Step 5 gains the architecture branch; Step 9 opens with the change-modes-only scoping. Fidelity markers added for 'Using doc:' and the doc-scoped first-run wording (both explicit-doc and omitted-doc paths are body-specified).",
+      "ripple_cascade": {
+        "applied": ["src/core/templates/workflows/review.ts", "test/core/templates/orbit-generated-surface.test.ts", ".claude/skills/orbit-review/SKILL.md (via update --force)"],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "finding": "D2 is marked apply-complete without satisfying exit criterion 3",
+      "severity": "CRITICAL",
+      "file": "orbit/architecture/d-arc-arbitered-flow.md",
+      "pushback": "still applies — no orbit/architecture/.orbit-runs/ existed; the apply ledger substituted 'ships as generated body' for the run-and-evidence criterion",
+      "classification": "decision required",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          { "label": "A", "body": "Run /orbit:review --as architecture d-arc-arbitered-flow from the generated body now (user-sanctioned), producing the evidence emit; correct the ledger" },
+          { "label": "B", "body": "Unwind the completion claim honestly; the architecture review stays a separate user-invoked step before archive" }
+        ],
+        "chosen": "A",
+        "discuss_invoked": false
+      },
+      "action": "User sanctioned option A: the first architecture-mode review RAN from the regenerated generated body against the retrofitted doc (six passes; no findings). Evidence: orbit/architecture/.orbit-runs/review-architecture-2026-07-16T19-42-13Z.json (change: null, doc, mode, iteration 1, handoff per R-d-9(b)). The append-only ledger gained a correction entry superseding the weakened claim — all four exit criteria now met with on-disk evidence.",
+      "ripple_cascade": {
+        "applied": ["orbit/architecture/d-arc-arbitered-flow.md (append-only ledger entry)"],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/architecture/.orbit-runs/review-architecture-2026-07-16T19-42-13Z.json",
+            "reason": "audit-trail file; cascade skipped by policy (the emit IS the fix's evidence, written by the review run, not edited by cascade)"
+          }
+        ]
+      }
+    },
+    {
+      "finding": "Architecture iteration history is not scoped by doc",
+      "severity": "WARNING",
+      "file": "src/core/templates/workflows/review.ts",
+      "pushback": "still applies — Step 8 said only 'matching this mode'; the change's own shipped delta (orbit-review 'Iteration note when prior runs exist') requires doc-anchored iteration, so this was an implementation gap against the spec",
+      "classification": "trivial fix",
+      "action": "Step 5 architecture branch: iteration anchored to prior review-architecture-*.json whose doc field MATCHES the doc under review, never cross-doc; first-run wording 'First architecture review for this doc.'; Step 8 cross-references the doc scoping.",
+      "ripple_cascade": {
+        "applied": ["src/core/templates/workflows/review.ts", "test/core/templates/orbit-generated-surface.test.ts"],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "finding": "The generated review launcher still advertises only two modes",
+      "severity": "WARNING",
+      "file": "src/core/templates/workflows/review.ts",
+      "pushback": "still applies — skill description + command description/content said proposal|system only",
+      "classification": "trivial fix",
+      "action": "Skill description, command description, and launcher content now advertise all three modes with --as proposal|system|architecture and the doc-or-change positional; generated surface re-verified (the on-disk launcher shows the third mode).",
+      "ripple_cascade": {
+        "applied": ["src/core/templates/workflows/review.ts", ".claude/ generated surface (via update --force)"],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "finding": "The retrofitted arc still points readers to a deleted state line",
+      "severity": "WARNING",
+      "file": "orbit/architecture/d-arc-arbitered-flow.md",
+      "pushback": "still applies — D1 stage prose said 'see the state line + status log for position' (live owning prose, outside the ledger)",
+      "classification": "trivial fix",
+      "action": "Reworded to 'position is computed — orbit architecture status; the status log carries the narrative history'. The live-arc residue test extended beyond the exact old spelling: asserts no italic *State lines and no 'see the state line' / 'state line + status log' pointers in live prose (ledger exempt).",
+      "ripple_cascade": {
+        "applied": ["orbit/architecture/d-arc-arbitered-flow.md", "test/core/architecture/live-arc.test.ts"],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "finding": "Onboarding omits two run-summary persistence locations",
+      "severity": "WARNING",
+      "file": "src/core/templates/workflows/onboard.ts",
+      "pushback": "still applies — the identity paragraph listed per-change + project-wide only",
+      "classification": "trivial fix",
+      "action": "The paragraph now enumerates all FOUR scoped locations (per-change, named-explore, architecture — with the /orbit:architect + review --as architecture emitters and never-moved note — and project-wide). Onboard fidelity marker added for orbit/architecture/.orbit-runs/. Parity hashes re-pinned for the edited onboard template.",
+      "ripple_cascade": {
+        "applied": ["src/core/templates/workflows/onboard.ts", "test/core/templates/orbit-generated-surface.test.ts", "test/core/templates/skill-templates-parity.test.ts"],
+        "flagged_not_applied": []
+      }
+    }
+  ],
+  "resolution_summary": {
+    "resolved": 6,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "post_state": "1707 tests green; generated surface regenerated (16+16; three-mode launcher live); orbit architecture validate passes; the architecture trail now exists with its first evidence emit; all four D2 exit criteria met with on-disk evidence",
+  "final_assessment": "All 6 external findings resolved (2 CRITICAL: the review body restructured mode-first + exit criterion 3 evidenced via the user-sanctioned first architecture review; 4 WARNING: doc-scoped iteration, three-mode launcher surface, arc pointer fix + hardened residue test, four-location onboarding). The external carried CRITICALs, so per the review-system cadence the confirm predicate requires a fresh external yielding none.",
+  "next_recommended": "/orbit:review-external --as system d2-architect"
+}

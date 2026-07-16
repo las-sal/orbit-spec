@@ -44,9 +44,16 @@ describe('retrofitted arc doc (live repo)', () => {
     expect(states.filter((s) => s.rendered === 'inconsistent')).toEqual([]);
   });
 
-  it('hand-maintained state lines are gone (the R-d-4 subtraction)', () => {
+  it('hand-maintained state lines are gone (the R-d-4 subtraction) — incl. semantic pointers', () => {
     const doc = loadArchitectureDoc('.', 'd-arc-arbitered-flow')!;
     expect(doc.lines.some((l) => l.includes('State (manual until D2)'))).toBe(false);
+    expect(doc.lines.some((l) => /^\*State/.test(l))).toBe(false);
+    // No live prose may point readers at the deleted state lines (the status log,
+    // an append-only ledger, is exempt — it starts at the '## Status log' heading).
+    const ledgerStart = doc.lines.findIndex((l) => l.startsWith('## Status log'));
+    const live = doc.lines.slice(0, ledgerStart === -1 ? undefined : ledgerStart);
+    expect(live.some((l) => l.toLowerCase().includes('see the state line'))).toBe(false);
+    expect(live.some((l) => l.toLowerCase().includes('state line + status log'))).toBe(false);
   });
 
   it('show-style slicing returns exactly one stage section of the real doc', () => {

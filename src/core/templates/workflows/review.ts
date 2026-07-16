@@ -99,7 +99,7 @@ The schema below documents per-command extensions ADDED to that spine (\`mode\`,
 export function getReviewSkillTemplate(): SkillTemplate {
   return {
     name: 'orbit-review',
-    description: "Editorial review of an OpenSpec change in either proposal mode (pre-apply, 9 passes over artifacts) or system mode (post-apply, verify-change + 6 system-wide passes). Use when the user wants a second-pair-of-eyes pass before applying or archiving.",
+    description: "Editorial review of an OpenSpec change or an architecture doc: proposal mode (pre-apply, 9 passes over artifacts), system mode (post-apply, verify-change + 6 system-wide passes), or architecture mode (a doc under orbit/architecture/, 6 passes, no gate). Use when the user wants a second-pair-of-eyes pass before applying or archiving, or a graded pass over a program architecture doc.",
     instructions: `Run an editorial review of an OpenSpec change or an architecture doc. Three modes: \`--as proposal\` reviews a change's pre-implementation artifacts (9 passes); \`--as system\` reviews the whole product state after apply (verify-change as Pass 0 + 6 system-wide passes); \`--as architecture\` reviews an architecture DOC under \`orbit/architecture/\` (6 passes, NO gate — D-arc Stage D2). All modes share the 3-dimension scorecard (Completeness / Correctness / Coherence), the severity ladder (CRITICAL / WARNING / SUGGESTION), pushback discipline, and \`.orbit-runs/\` persistence. They differ on which passes run, what the final-assessment references (the \`review-proposal\` / \`review-system\` gates for the change modes; NO gate in architecture mode), and a few mode-specific flags (\`--mark\` for proposal, \`--skip-verify\` for system).
 
 **Generates findings; does not resolve them.** Resolution flows through \`/orbit:address-reviews\` (inline \`@review:\` markers, OR \`--from-file\` ingesting external-review markdown OR internal review JSON OR audit-drift JSON) or by the user replying directly to the report.
@@ -120,14 +120,18 @@ These four disciplines are embedded in every orbit command as a self-contained r
 
 ## Steps
 
-### 1. Resolve the change
+### 1. Resolve the mode, THEN the target
 
-If a change name is provided, use it. Otherwise:
+Resolve the MODE first (from the \`--as\` flag — rules in Step 2); the mode decides what the positional even IS. Then resolve the target by mode:
+
+**Change modes** (\`--as proposal\` / \`--as system\`, or \`--as\` omitted) — the target is a CHANGE:
+- If a change name is provided, use it. Otherwise:
 - Run \`orbit list --json\` to get available changes.
 - Use the **AskUserQuestion tool** to let the user select.
 - Mark changes with incomplete tasks as \`(In Progress)\`.
+- Always announce \`Using change: <name> --as <mode>\` at the start of the report header.
 
-Always announce \`Using change: <name> --as <mode>\` at the start of the report header.
+**Architecture mode** (\`--as architecture\`) — the target is a DOC, never a change: do NOT run \`orbit list\`, do NOT prompt over changes, and NONE of the change-oriented steps below (Step 4's change CLI calls, Step 9's gate computation) apply. The positional resolves against \`orbit/architecture/\` (the filename stem). When omitted or ambiguous, prompt via \`AskUserQuestion\` over the parseable docs from \`orbit architecture status --json\`. Always announce \`Using doc: <doc-name> --as architecture\` at the start of the report header.
 
 ### 2. Resolve the mode
 
@@ -141,7 +145,7 @@ Mode comes from the \`--as proposal|system|architecture\` flag if specified. **A
 
 State the resolved mode and how it was resolved in the report header (\`Mode: proposal (inferred from 12 unchecked tasks)\`).
 
-**Architecture mode — resolve the DOC instead of a change**: the positional resolves against \`orbit/architecture/\` (the filename stem), not \`orbit/changes/\`. When omitted or ambiguous, prompt via \`AskUserQuestion\` over the parseable docs from \`orbit architecture status --json\`. A doc resolving to LEGACY (zero stage-prefixed headings outside fences) is an error suggesting retrofit; one resolving to MALFORMED (fails \`orbit architecture validate\`'s near-miss rule) is an error naming the grammar violation — architecture mode requires a parseable doc.
+**Architecture-mode doc-class rules** (target resolution itself is in Step 1): a doc resolving to LEGACY (zero stage-prefixed headings outside fences) is an error suggesting retrofit; one resolving to MALFORMED (fails \`orbit architecture validate\`'s near-miss rule) is an error naming the grammar violation — architecture mode requires a parseable doc.
 
 ### 3. Resolve flags
 
@@ -159,7 +163,9 @@ If a flag is specified for the wrong mode (e.g., \`--mark\` in system mode or \`
 
 ### 4. Load context
 
-Use the orbit CLI as source of truth:
+**Architecture mode**: the change-oriented CLI calls below do NOT apply — there is no change. Load instead: the doc itself (\`orbit/architecture/<doc>.md\`), \`orbit architecture status --json\` (computed stage states, for cross-checks), and root \`CLAUDE.md\`; then continue at Step 5. \`orbit architecture show <doc> <stage>\` slices single stages when the whole doc is not needed.
+
+**Change modes** — use the orbit CLI as source of truth:
 
 \`\`\`bash
 orbit status --change "<name>" --json
@@ -179,7 +185,9 @@ System mode also reads:
 
 ### 5. Inspect prior runs
 
-Check \`orbit/changes/<name>/.orbit-runs/\` for prior \`review-<mode>-*.json\` summaries:
+**Architecture mode**: inspect \`orbit/architecture/.orbit-runs/\` for prior \`review-architecture-*.json\` emits whose \`doc\` field MATCHES the doc under review — the trail is shared by all docs, so only matching-\`doc\` emits count toward the iteration number and the iteration note (a review of doc B must never treat doc A's run as its previous iteration). First-run wording: \`First architecture review for this doc.\`
+
+**Change modes**: check \`orbit/changes/<name>/.orbit-runs/\` for prior \`review-<mode>-*.json\` summaries:
 
 - Count matching the current mode → iteration number (1 if none).
 - Load the most-recent matching summary to identify open vs resolved findings since last run.
@@ -368,7 +376,7 @@ Roll every pass's findings into the 3-dimension scorecard.
 
 ### 8. Generate the iteration note
 
-If \`.orbit-runs/\` has prior summaries matching this mode:
+If \`.orbit-runs/\` has prior summaries matching this mode (architecture mode: matching mode AND \`doc\`, per Step 5 — never cross-doc):
 
 - Compare current findings to the most-recent matching prior run.
 - Count how many findings repeat (same file:line + same severity + similar title).
@@ -377,6 +385,8 @@ If \`.orbit-runs/\` has prior summaries matching this mode:
 If no prior matching summaries: emit \`First <mode>-mode run for this change.\` or omit the iteration note entirely.
 
 ### 9. Emit the final assessment
+
+(Change modes only — architecture mode has NO gate; its final assessment is specified in the \`Architecture mode — NO gate\` subsection below and never runs the gate computation.)
 
 **Single-voiced + engine-sourced (C1).** The final assessment renders the ENGINE-computed gate state (one of the convergence states below) plus ONE canonical next command — never a bare "Ready to apply" / "Ready to archive" and never an advertised skip path. Compute the gate verdict from \`orbit status --change <name> --json\` (fields \`gates[]\`, \`position\`, \`next_command\`) — the engine reads the \`.orbit-runs/\` trail. **As-of-completion**: evaluate the gate as-of THIS pass's completion — fold in a synthetic pass for the run you are finishing (its mode, reviewer_class, a now-token, the about-to-be-written \`review-<mode>-<TS>.json\`, and this run's findings) so a current \`--fresh\`/\`in-context\` pass counts toward its cadence slot. If this pass has findings, the address-reviews command targets the just-written \`review-<mode>-<TS>.json\`.
 
@@ -610,11 +620,11 @@ Once the external converges — Path A (clean) or Path B (findings resolved, 0 C
 export function getOrbitReviewCommandTemplate(): CommandTemplate {
   return {
     name: 'ORBIT: Review',
-    description: 'Editorial review of a change in proposal mode (pre-apply) or system mode (post-apply)',
+    description: 'Editorial review of a change (proposal/system mode) or an architecture doc (architecture mode)',
     category: 'Workflow',
     tags: ["workflow","review","orbit"],
-    content: `Run an editorial review of a change — proposal mode (pre-apply, 9 passes) or system mode (post-apply, verify-change + 6 system-wide passes).
+    content: `Run an editorial review of a change — proposal mode (pre-apply, 9 passes) or system mode (post-apply, verify-change + 6 system-wide passes) — or of an architecture doc (--as architecture: 6 passes, no gate).
 
-This command is a thin launcher: invoke the \`orbit-review\` skill, passing along any arguments given with the command (e.g., \`/orbit:review [<change-name>] [--as proposal|system] [flags]\`). The skill carries the complete workflow instructions — upstream openspec behavior plus orbit's additions. Do not improvise the workflow from this file; load the skill.`
+This command is a thin launcher: invoke the \`orbit-review\` skill, passing along any arguments given with the command (e.g., \`/orbit:review [<change-name-or-doc-name>] [--as proposal|system|architecture] [flags]\`). The skill carries the complete workflow instructions — upstream openspec behavior plus orbit's additions. Do not improvise the workflow from this file; load the skill.`
   };
 }
