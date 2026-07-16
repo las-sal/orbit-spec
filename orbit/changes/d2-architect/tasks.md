@@ -35,18 +35,18 @@ by hand at the phase seams.
 
 ## 2. Citation + lifecycle plumbing
 
-- [ ] 2.1 `ChangeMetadataSchema` gains optional `architecture: {doc, stage}` (Zod object);
+- [x] 2.1 `ChangeMetadataSchema` gains optional `architecture: {doc, stage}` (Zod object);
       round-trip tests alongside `base_fingerprints`/`schema_version`/`consent_era_from`;
       `orbit validate <change>` gains two-level citation resolution (error names the dangling
       level) with a dangling-citation test each way
-- [ ] 2.2 `explore.ts` body: Mode B/C scaffolding writes the minimal `.openspec.yaml` (base
+- [x] 2.2 `explore.ts` body: Mode B/C scaffolding writes the minimal `.openspec.yaml` (base
       fields `schema: spec-driven` + `created` via the unchanged helpers — placeholders
       superseded at promotion; citation offered when a stage is indicated; omitted otherwise);
       resume adds it add-only to pre-D2 staging dirs
-- [ ] 2.3 `propose.ts` body: explicit staged-metadata MERGE step before the bulk move (citation
+- [x] 2.3 `propose.ts` body: explicit staged-metadata MERGE step before the bulk move (citation
       carries forward via helpers; fresh schema/created/schema_version win; staged file
       discarded); no-staged-metadata path unchanged
-- [ ] 2.4 `archive-change.ts` body: stage-line garnish in the completion readout (computed
+- [x] 2.4 `archive-change.ts` body: stage-line garnish in the completion readout (computed
       post-archive position for the cited stage; uncited changes byte-identical)
 
 ## 3. Retrofit (exit criterion 1, first live instance)

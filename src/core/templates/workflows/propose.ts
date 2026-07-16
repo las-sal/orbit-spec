@@ -182,17 +182,31 @@ When generating artifacts in upstream Step 4, apply this mapping:
 
 When \`design.md\` references background or decisions originally from \`explore.md\`, **cite the source** (\`see explore.md\`) rather than paraphrasing without attribution.
 
-### Step 0d — Move the staging directory
+### Step 0d — Move the staging directory (with the staged-metadata MERGE)
 
-After all upstream steps complete successfully (artifacts generated, validation passes):
+After all upstream steps complete successfully (artifacts generated, validation passes),
+FIRST merge the staged metadata, THEN bulk-move (D-arc Stage D2):
+
+1. **Staged-metadata MERGE** (before the bulk move): if \`orbit/explore/<name>/.openspec.yaml\`
+   exists, read it via the change-metadata helpers and carry its \`architecture: {doc, stage}\`
+   citation (when present) into the change's freshly-written \`orbit/changes/<name>/.openspec.yaml\`.
+   The FRESH metadata's \`schema\`/\`created\`/\`schema_version\` values win (the staged fields were
+   placeholders); on a conflicting pre-existing \`architecture:\` citation in the fresh metadata,
+   the STAGED citation wins (deterministic — the exploration's citation is the captured decision).
+   Then DISCARD the staged file (delete it; it is never bulk-moved — a stale metadata copy inside
+   the change directory would be a second claim on one truth). When no staged \`.openspec.yaml\`
+   exists (pre-D2 staging dir), skip this step entirely — the path is unchanged.
+
+2. **Bulk move**:
 
 \`\`\`bash
 [ -d orbit/explore/<name>/.orbit-runs ] && mv orbit/explore/<name>/.orbit-runs orbit/changes/<name>/.orbit-runs
+rm orbit/explore/<name>/.openspec.yaml  # staged metadata: merged above, then discarded
 mv orbit/explore/<name>/* orbit/changes/<name>/
 rmdir orbit/explore/<name>
 \`\`\`
 
-(Or equivalent — preserve \`explore.md\` AND any sibling files like \`sketches/\` AND any draft convention files AND the \`.orbit-runs/\` iteration history. The \`.orbit-runs/\` directory is dot-prefixed, so a bare \`*\` glob does NOT match it — move it explicitly first (as above) or use a dotfile-aware move; otherwise it is left behind and the \`rmdir\` fails. The staging directory should no longer exist; its contents land alongside the generated artifacts in the change directory.)
+(Or equivalent — preserve \`explore.md\` AND any sibling files like \`sketches/\` AND any draft convention files AND the \`.orbit-runs/\` iteration history. The \`.orbit-runs/\` directory is dot-prefixed, so a bare \`*\` glob does NOT match it — move it explicitly first (as above) or use a dotfile-aware move; otherwise it is left behind and the \`rmdir\` fails. The \`rm\` of the staged \`.openspec.yaml\` is conditional on its existence. The staging directory should no longer exist; its contents land alongside the generated artifacts in the change directory.)
 
 After the move, \`orbit/changes/<name>/\` contains both:
 - The moved exploration files (\`explore.md\`, \`sketches/\`, draft conventions)

@@ -295,6 +295,78 @@ describe('citation resolution (two-level)', () => {
   });
 });
 
+// ---- Metadata round-trip + change-validation ownership -----------------------
+
+describe('architecture citation in metadata', () => {
+  it('round-trips through the metadata helpers alongside existing fields', async () => {
+    const { writeChangeMetadata, readChangeMetadata } = await import('../../../src/utils/change-metadata.js');
+    const changeDir = path.join(tmpDir, 'orbit', 'changes', 'cited');
+    fs.mkdirSync(changeDir, { recursive: true });
+    writeChangeMetadata(changeDir, {
+      schema: 'spec-driven',
+      created: '2026-07-15',
+      schema_version: 3,
+      architecture: { doc: 'd-arc-arbitered-flow', stage: 'd2-architect' },
+      base_fingerprints: { cap: { Req: `sha256:${'a'.repeat(64)}` } },
+    });
+    const read = readChangeMetadata(changeDir);
+    expect(read?.architecture).toEqual({ doc: 'd-arc-arbitered-flow', stage: 'd2-architect' });
+    expect(read?.schema_version).toBe(3);
+    expect(read?.base_fingerprints).toBeDefined();
+  });
+
+  it('helpers serve explore directories unchanged', async () => {
+    const { writeChangeMetadata, readChangeMetadata } = await import('../../../src/utils/change-metadata.js');
+    const exploreDir = path.join(tmpDir, 'orbit', 'explore', 'staged');
+    fs.mkdirSync(exploreDir, { recursive: true });
+    writeChangeMetadata(exploreDir, {
+      schema: 'spec-driven',
+      created: '2026-07-15',
+      architecture: { doc: 'arc', stage: 'd1-first' },
+    });
+    expect(readChangeMetadata(exploreDir)?.architecture).toEqual({ doc: 'arc', stage: 'd1-first' });
+  });
+
+  it('uncited metadata is unaffected (field absent reads back absent)', async () => {
+    const { writeChangeMetadata, readChangeMetadata } = await import('../../../src/utils/change-metadata.js');
+    const changeDir = path.join(tmpDir, 'orbit', 'changes', 'plain');
+    fs.mkdirSync(changeDir, { recursive: true });
+    writeChangeMetadata(changeDir, { schema: 'spec-driven' });
+    expect(readChangeMetadata(changeDir)?.architecture).toBeUndefined();
+  });
+
+  it('change validation fails a dangling citation naming the level (doc and stage each way)', async () => {
+    const { Validator } = await import('../../../src/core/validation/validator.js');
+    writeDoc('arc', PARSEABLE_DOC);
+    const changeDir = path.join(tmpDir, 'orbit', 'changes', 'cited');
+    const specDir = path.join(changeDir, 'specs', 'some-cap');
+    fs.mkdirSync(specDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(specDir, 'spec.md'),
+      '## ADDED Requirements\n\n### Requirement: X\n\nThe system SHALL x.\n\n#### Scenario: s\n\n- **WHEN** a\n- **THEN** b\n'
+    );
+
+    const runWith = async (doc: string, stage: string) => {
+      fs.writeFileSync(
+        path.join(changeDir, '.openspec.yaml'),
+        `schema: spec-driven\narchitecture:\n  doc: ${doc}\n  stage: ${stage}\n`
+      );
+      return new Validator().validateChangeDeltaSpecs(changeDir);
+    };
+
+    const docDangle = await runWith('ghost', 'd1-first');
+    expect(docDangle.valid).toBe(false);
+    expect(docDangle.issues.some((i) => i.message.includes('DOC level'))).toBe(true);
+
+    const stageDangle = await runWith('arc', 'd9-ghost');
+    expect(stageDangle.valid).toBe(false);
+    expect(stageDangle.issues.some((i) => i.message.includes('STAGE level'))).toBe(true);
+
+    const resolves = await runWith('arc', 'd1-first');
+    expect(resolves.valid).toBe(true);
+  });
+});
+
 // ---- CLI --------------------------------------------------------------------
 
 describe('architecture CLI', () => {

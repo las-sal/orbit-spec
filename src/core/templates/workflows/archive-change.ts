@@ -346,6 +346,18 @@ Where \`<YYYY-MM-DD>\` is the date prefix upstream's move step added (per \`mv o
 
 Full schema lives at \`references/archive-summary-schema.md\` — read that file when composing the summary.
 
+## NEW Step 5.6 — Stage-line garnish in the completion readout (D-arc Stage D2)
+
+When the archived change's metadata carries an \`architecture: {doc, stage}\` citation, the
+completion readout (the "Archive Complete" summary) gains ONE stage line: after the move, run
+\`orbit architecture status --json\` and render the cited stage's post-archive computed position —
+e.g. \`stage d2-architect: now quiescent — completion is yours to ratify\`, or
+\`stage d6-pr-lifecycle: still in-change — <other-change> remains active\`, or
+\`stage d1-...: complete (ratified <date> by <who>)\` when the mark already composes. One line
+riding the existing position render — no prompt, no doc edit, no new mechanism (D-d2-4: the
+readout is the reminder; ratification happens in an architect session or by hand, never here).
+Uncited changes see no stage line — their readout is byte-identical to pre-D2 behavior.
+
 ## \`.orbit-runs/\` moves with the change
 
 Upstream Step 5's \`mv orbit/changes/<name> orbit/changes/archive/YYYY-MM-DD-<name>\` already moves the entire change directory, including \`.orbit-runs/\`. No additional handling required — \`.orbit-runs/\` is just a subdirectory of the change.

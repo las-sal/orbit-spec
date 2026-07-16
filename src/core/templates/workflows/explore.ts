@@ -309,8 +309,23 @@ These four disciplines bracket the authoring lifecycle (authoring-time / modific
 | Mode | Trigger | What happens |
 |---|---|---|
 | **A — Bare** | \`/orbit:explore\` with no argument and no crystallization trigger | Upstream behavior. Conversational think-mode, no file created, no staging directory. |
-| **B — Named** | \`/orbit:explore <name>\` | Create or resume \`orbit/explore/<name>/explore.md\`. New: scaffold five sections. Resume: read existing file for context. |
-| **C — Crystallized** | Bare invocation that produces 2+ substantive decisions | Prompt the user: "We have enough material here to capture — what should we call this exploration?" On accept, transition to Mode B and back-fill what's been discussed. On decline, continue Mode A and don't re-prompt this shape. |
+| **B — Named** | \`/orbit:explore <name>\` | Create or resume \`orbit/explore/<name>/explore.md\`. New: scaffold five sections AND the minimal \`.openspec.yaml\` (see below). Resume: read existing file for context; a pre-D2 staging directory lacking \`.openspec.yaml\` gains it on resume (add-only, citation still optional). |
+| **C — Crystallized** | Bare invocation that produces 2+ substantive decisions | Prompt the user: "We have enough material here to capture — what should we call this exploration?" On accept, transition to Mode B and back-fill what's been discussed (the minimal \`.openspec.yaml\` is written as in Mode B). On decline, continue Mode A and don't re-prompt this shape. |
+
+### Minimal explore metadata (\`.openspec.yaml\`, D-arc Stage D2)
+
+Mode B/C explorations carry \`orbit/explore/<name>/.openspec.yaml\` — the same metadata genre as
+changes. Base fields: \`schema: spec-driven\` + \`created: <YYYY-MM-DD>\` (placeholders written via
+the unchanged change-metadata helpers, whose validation requires a registered schema; both are
+superseded at promotion, where \`/orbit:propose\`'s merge writes fresh
+\`schema\`/\`created\`/\`schema_version\` — the placeholder never leaks into a change).
+
+**Optional \`architecture: {doc: <name>, stage: <id>}\` citation**: when the exploration serves a
+declared stage of an architecture doc (the name or the conversation indicates it — e.g. the
+exploration was opened from a program stage's charter), OFFER to record the citation; on accept,
+write it into the metadata. Otherwise omit it — a standalone exploration carries zero citation
+ceremony. The citation makes the stage's computed state render \`exploring\` in
+\`orbit architecture status\`; it carries forward into the change at promotion.
 
 ### What counts as a "substantive decision" for Mode C crystallization
 

@@ -137,6 +137,18 @@ export const ChangeMetadataSchema = z.object({
     })
     .optional(),
 
+  // Optional: architecture citation (D-arc D2). Links a change or explore to the
+  // program stage it serves: `doc` is an architecture doc's filename stem under
+  // orbit/architecture/, `stage` a stage id declared in that doc. Valid in change
+  // AND explore metadata; resolvability is checked by change validation (two-level:
+  // dangling doc vs dangling stage); re-pointable by hand-edit. Absence = unlinked.
+  architecture: z
+    .object({
+      doc: z.string().min(1, { message: 'architecture.doc is required when the field is present' }),
+      stage: z.string().min(1, { message: 'architecture.stage is required when the field is present' }),
+    })
+    .optional(),
+
   // Optional: base fingerprints for parallel-merge divergence detection (C2).
   // capability directory name -> requirement name (as parsed) -> "sha256:<hex>"
   // of the baseline requirement block the delta was authored against.

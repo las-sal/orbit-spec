@@ -270,7 +270,53 @@ export class Validator {
       issues.push({ level: 'ERROR', path: 'file', message: this.enrichTopLevelError('change', VALIDATION_MESSAGES.CHANGE_NO_DELTAS) });
     }
 
+    issues.push(...(await this.validateArchitectureCitation(changeDir)));
+
     return this.createReport(issues);
+  }
+
+  /**
+   * Two-level architecture-citation resolution (D-arc D2). Change validation OWNS
+   * citation resolution: the citation lives in the change's metadata, so it is
+   * validated where metadata is validated (`orbit architecture validate` checks doc
+   * structure only). Absence of the field imposes nothing.
+   */
+  private async validateArchitectureCitation(changeDir: string): Promise<ValidationIssue[]> {
+    const metaPath = path.join(changeDir, '.openspec.yaml');
+    let raw: string;
+    try {
+      raw = await fs.readFile(metaPath, 'utf-8');
+    } catch {
+      return []; // no metadata — nothing to resolve
+    }
+    let parsed: unknown;
+    try {
+      const yaml = await import('yaml');
+      parsed = yaml.parse(raw);
+    } catch {
+      return []; // unreadable metadata is surfaced by the metadata readers, not here
+    }
+    const arch = (parsed as { architecture?: unknown } | null)?.architecture;
+    if (arch === undefined || arch === null) return [];
+    const citation = arch as { doc?: unknown; stage?: unknown };
+    if (typeof citation.doc !== 'string' || typeof citation.stage !== 'string') {
+      return [
+        {
+          level: 'ERROR',
+          path: '.openspec.yaml',
+          message: `architecture citation must be an object of shape {doc: <name>, stage: <id>}`,
+        },
+      ];
+    }
+    const { resolveArchitectureCitation } = await import('../architecture/validate.js');
+    const projectRoot = path.resolve(changeDir, '../../..');
+    // Archived changes live one level deeper (orbit/changes/archive/<name>).
+    const root = path.basename(path.dirname(changeDir)) === 'archive' ? path.resolve(changeDir, '../../../..') : projectRoot;
+    const resolution = resolveArchitectureCitation(root, { doc: citation.doc, stage: citation.stage });
+    if (!resolution.ok) {
+      return [{ level: 'ERROR', path: '.openspec.yaml', message: resolution.message }];
+    }
+    return [];
   }
 
   private convertZodErrors(error: ZodError): ValidationIssue[] {
