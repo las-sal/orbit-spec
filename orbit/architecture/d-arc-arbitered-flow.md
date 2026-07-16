@@ -359,8 +359,9 @@ ratification; D5 mechanizes (b) and (c):
   rulings; a stage's explore/change owns its decision detail. Once a stage's explore exists, the
   arc's stage section POINTS at it rather than duplicating — summary drift between the layers is
   a defect, not a convenience.
-- **This document updates when a stage's change archives** (status log below) — the maintenance
-  burden D2 will automate.
+- **This document updates when a stage's change archives** (status log below). Stage STATE is
+  engine-computed since D2 (`orbit architecture status`); only the narrative status-log ledger
+  is hand-appended.
 - **Arc-level done (R-d-3)**: all six stages archived, plus one closing `/orbit:review --as architecture`
   grading the arc against each stage's exit criteria and the three goals.
 

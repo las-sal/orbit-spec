@@ -87,9 +87,9 @@ decisions were ratified during C1 remediation — **read these before touching t
 - **D14 — thin launcher commands**: each skill `instructions` literal is the single behavioral source
   (pristine upstream body + `# Orbit additions`); each command `content` literal is a ~3-line launcher
   invoking the skill. Do NOT regrow workflow bodies in command literals.
-- **D15 — full surface always**: `getProfileWorkflows` (src/core/profiles.ts) always returns all 15
-  workflows; profile gating is deliberately inert (`delivery` still honored). Do NOT reintroduce
-  profile-filtered installs.
+- **D15 — full surface always**: `getProfileWorkflows` (src/core/profiles.ts) always returns ALL
+  workflows (16 as of D2); profile gating is deliberately inert (`delivery` still honored). Do NOT
+  reintroduce profile-filtered installs.
 - **D11 refinement — Claude primacy**: never trade Claude efficacy for cross-tool neutrality; upstream's
   named-tool idiom (`AskUserQuestion`, `Task tool`) stays in bodies by design.
 Change validates `--strict`; **1567 tests green** (incl. the C1 gate-model unit suite, per-workflow
