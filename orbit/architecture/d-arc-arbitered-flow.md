@@ -71,6 +71,16 @@ is owned by each stage's explore/change per R-d-7 — this index holds only cros
   a structured `handoff` section (pointers, never duplicated substance); a handoff audit is
   required at phase seams (Cross-cutting constraint; practiced by hand from 2026-07-14;
   mechanized by D5).
+- **R-d-10** (Sal, 2026-07-16) — Gate convergence is severity-thresholded: an independent pass
+  converges on 0 CRITICAL and 0 new WARNING-or-above; SUGGESTION-grade findings still resolve
+  (convergence clause (b)) but do not repeat the independent loop. Accepted risk, ratified:
+  severity is a subjective reviewer rating — the user can always run another pass when a
+  suggestion warrants fix-and-re-review. Found empirically 2026-07-15: D2 proposal iter 6
+  (0 C / 0 W / 2 S, both polish-grade) would cost a full extra fresh cycle + confirm under the
+  shipped strict `no-new-findings` predicate. Follow-up tracked as issue #8 (third `confirm`
+  value `no-new-substantive-findings`: gates.ts + orbit-engine-gates delta + spec-driven v4 +
+  conventions prose + tests); until it ships, the recorded `gate_overridden` proceed-anyway is
+  the sanctioned interim path.
 
 ## Open questions (arc-level)
 
