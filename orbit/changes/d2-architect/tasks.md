@@ -100,20 +100,20 @@ by hand at the phase seams.
 
 ## 5. Verification sweep (arc §D2 exit criteria) + surface refresh
 
-- [ ] 5.1 Exit-criteria as tests where mechanical: retrofitted arc doc parses + validate passes +
+- [x] 5.1 Exit-criteria as tests where mechanical: retrofitted arc doc parses + validate passes +
       status matches reality (fixture-level assertion against the real doc); dangling citation
       fails change validation naming the level; single-stage `show` returns only that section;
       review-architecture emit path exercised
-- [ ] 5.2 Full suite green (baseline 1670 + new coverage);
+- [x] 5.2 Full suite green (baseline 1670 + new coverage);
       `node bin/orbit.js validate d2-architect --strict` passes;
       `orbit fingerprint d2-architect --check` all verified
-- [ ] 5.3 `npm run build && node bin/orbit.js update --force` — regenerate the local surface;
+- [x] 5.3 `npm run build && node bin/orbit.js update --force` — regenerate the local surface;
       spot-check the new orbit-architect SKILL.md + review's architecture mode on disk; if 4.4's
       README audit edited install/update sections, run the fresh-sandbox verification the
       install-documentation baseline requires (mktemp -d + orbit init; counts/files match the
       README; the on-disk generated-surface e2e test doubles as the sandbox check for skill/command
       counts)
-- [ ] 5.4 Arc sync (R-d-7): D2 stage section updated THROUGH the retrofit (its own state line is
+- [x] 5.4 Arc sync (R-d-7): D2 stage section updated THROUGH the retrofit (its own state line is
       gone — `orbit architecture status` is the position source from here on); status log entry;
       R-d-9 handoff audit at the post-apply seam. CLAUDE.md archive-time notes: surface 15→16,
       baseline 14→16, the architecture tier paragraph. Archive-time Purpose updates (sync

@@ -1,13 +1,14 @@
 # D-arc — The Arbitered Flow (orbit program architecture)
 
-> **Status**: living program architecture — hand-maintained until Stage D2 gives the genre engine
-> standing. Never consumed by propose; stages spin explores/changes that cite this document.
+> **Status**: living program architecture — PARSEABLE since D2 (2026-07-16): stage state is
+> engine-computed (`orbit architecture status`); the prose stays judgment-dense. Never consumed
+> by propose; stages spin explores/changes that cite this document.
 
 A program-level architecture document spanning multiple explorations and changes. **This is
 design-direction, not an OpenSpec change** — explorations and proposals are staged against it,
 cite it, and it is updated as stages archive. It is the hand-rolled predecessor of the
-`/orbit:architect` capability it itself contains (Stage D2 formalizes this document's genre);
-until then, this document is maintained by hand, dogfooding the shape.
+`/orbit:architect` capability it itself contains — Stage D2 formalized the genre 2026-07-16;
+this document is the first parseable instance (its hand-maintained era dogfooded the shape).
 
 Genre precedents: `../home-env/architect-host-first-strategy.md` +
 `vendor-backends-strategy.md` (the "strategy doc changes are proposed against" pattern, grown
@@ -90,8 +91,8 @@ belong to a single stage live in that stage's explore, not here.
 
 ## Program stages
 
-**Stage state vocabulary** (controlled; hand-maintained *provisionally* until D2 computes it from
-disk — per R-d-1, state is never hand-authored once the engine owns it):
+**Stage state vocabulary** (controlled; COMPUTED from disk since D2 — per R-d-1, state is never
+hand-authored now that the engine owns it):
 `premised → exploring → in-change → quiescent (+ ratified `complete`)` — vocabulary
 superseded by D-d2-1 (the d2-architect explore): `archived` was renamed `quiescent` because it
 must not read as "complete"; completion is a user ratification composed with quiescence.
@@ -157,9 +158,9 @@ audit-drift hook (a stale architecture doc is the most expensive drift there is)
 Sizing acknowledged: a C1-class engine change — the arc's biggest single effort, spent where
 everything downstream leans. **D3 now DEPENDS on D2** (program position is D2 machinery), so
 D2-before-D3 is a dependency, not a preference. Sources: home-env's two strategy docs + chat
-history; `fork-and-orbify/explore.md`; this document as live dogfood. Remaining design territory
-for the explore: the parseable format itself, update triggers, explore/change linkage details,
-and how much of the review mode ships in D2 v1.
+history; `fork-and-orbify/explore.md`; this document as live dogfood. Decision detail lives in
+the stage's change (R-d-7): `orbit/changes/d2-architect/` — explore.md D-d2-1..7 (format,
+computed state, linkage, review-mode scope) + the full proposal/design/specs record.
 
 **Exit criteria**: (1) this document retrofitted to the parseable format and
 `orbit architecture status` renders program position (stage states computed from disk) matching
@@ -496,3 +497,23 @@ ratification; D5 mechanizes (b) and (c):
   Cycle lesson (already ledgered 2026-07-13 above) stands for D4: the external + fresh
   independent slots again out-caught the in-context passes (9 real findings vs 0). **Next stage
   per Sequencing: D2 (architect) — its explore is the user's to invoke.**
+
+- **2026-07-16 — D2 APPLY COMPLETE (all 20 tasks; the engine gains its third tier).** This
+  document is now the FIRST PARSEABLE INSTANCE: six stage headings normalized to kebab ids,
+  `Depends-on:`/`Complete:` slots added (d1 ratified `[x] 2026-07-13 (Sal)`, user-confirmed at
+  apply), every hand-maintained state paragraph DELETED (the R-d-4 subtraction; position is
+  computed — `orbit architecture status`). Shipped: `src/core/architecture/` (fence-aware
+  near-miss parser, computed stage state, structure validation), `orbit architecture
+  status/show/validate` (bucketed --json), `architecture: {doc, stage}` metadata citation with
+  two-level dangling validation owned by `orbit validate <change>` (the archived D1 change
+  backfilled; this change carries the first live citation), the 16th workflow `/orbit:architect`
+  (all six registries), `/orbit:review --as architecture` (six passes, no gate, architecture
+  trail), audit-drift architecture-staleness checks (a)–(d), explore minimal metadata + propose
+  staged-metadata merge + archive stage-line garnish. 1707 tests green (baseline 1670 + 37);
+  surface 15 → 16 regenerated. README install-surface audit: no-edit-needed (no counts, file
+  lists, or invocations affected). Gate proceed-anyway recorded (`gate_overridden`:
+  review-proposal unpassed — in-context slot uncovered; R-d-10's sanctioned interim path,
+  suggestion-only tail resolved). R-d-9 handoff audit at this seam: residency clean (no
+  chat-resident decisions; all ratifications in artifacts), boot chain current (CLAUDE.md →
+  `orbit architecture status`; arc doc parseable), coverage-vs-charter: exit criteria 1/2/4
+  mechanically test-covered, 3 ships as generated body (its first evidence lands on first use).
