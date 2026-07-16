@@ -204,6 +204,15 @@ Empty or absent lens files → skip Category 2 with the note \`lenses empty or a
 - Two docs disagree on the same fact → WARNING (both file:line refs + recommendation to reconcile).
 - A governing doc materially disagrees with a current spec → CRITICAL.
 
+**Architecture staleness check (D-arc Stage D2)** — Category 3 additionally checks parseable architecture docs against engine-computed reality ("a stale architecture doc is the most expensive drift there is"). Load \`orbit architecture status --json\` and, per parseable doc:
+
+- **(a) Contradicting prose** — prose in a stage section that contradicts the stage's computed state (e.g. "awaits the user's propose" while a citing change is active) → WARNING.
+- **(b) Falsified/unsupported completion mark** — a ratified \`Complete: [x]\` mark on a stage whose observed state is not quiescent — live citing work OR no citing artifacts at all (\`premised\`) → CRITICAL (the completion claim is falsified, or unsupported, by observation; the finding names the stage, the mark, and the citing artifact when one exists).
+- **(c) Hand-written state line** — a \`*State:*\`-form line in a parseable doc → WARNING (state is computed, never stored — flag for deletion in favor of the computed readout).
+- **(d) Dangling citations** — \`architecture:\` citations in change/explore metadata that dangle at either level → CRITICAL (change citations also fail \`orbit validate <change>\`; explore citations have no validating surface and are caught ONLY here).
+
+Check (d) scans change/explore metadata INDEPENDENTLY of doc presence — a typo'd \`doc:\` name can itself create the no-parseable-docs condition, and must not suppress its own detection. Only the doc-side checks (a)–(c) are skipped when no parseable architecture docs exist, with the note \`no parseable architecture docs; skip architecture staleness (doc-side)\`. Architecture content is NEVER flagged for having originated outside an architect session (flow-entry ruling: \`/orbit:explore\` plus hand-editing is first-class).
+
 ### 7. Category 4 — Archive coherence
 
 **Walk archived changes within window** (default last 5; \`--since <ref>\` overrides):

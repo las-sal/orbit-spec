@@ -100,11 +100,11 @@ export function getReviewSkillTemplate(): SkillTemplate {
   return {
     name: 'orbit-review',
     description: "Editorial review of an OpenSpec change in either proposal mode (pre-apply, 9 passes over artifacts) or system mode (post-apply, verify-change + 6 system-wide passes). Use when the user wants a second-pair-of-eyes pass before applying or archiving.",
-    instructions: `Run an editorial review of an OpenSpec change. Two modes: \`--as proposal\` reviews pre-implementation artifacts (9 passes); \`--as system\` reviews the whole product state after apply (verify-change as Pass 0 + 6 system-wide passes). Both modes share the 3-dimension scorecard (Completeness / Correctness / Coherence), the severity ladder (CRITICAL / WARNING / SUGGESTION), pushback discipline, and \`.orbit-runs/\` persistence. They differ on which passes run, which gate the final-assessment references (\`/orbit:apply\` vs \`/orbit:archive\`), and a few mode-specific flags (\`--mark\` for proposal, \`--skip-verify\` for system).
+    instructions: `Run an editorial review of an OpenSpec change or an architecture doc. Three modes: \`--as proposal\` reviews a change's pre-implementation artifacts (9 passes); \`--as system\` reviews the whole product state after apply (verify-change as Pass 0 + 6 system-wide passes); \`--as architecture\` reviews an architecture DOC under \`orbit/architecture/\` (6 passes, NO gate — D-arc Stage D2). All modes share the 3-dimension scorecard (Completeness / Correctness / Coherence), the severity ladder (CRITICAL / WARNING / SUGGESTION), pushback discipline, and \`.orbit-runs/\` persistence. They differ on which passes run, what the final-assessment references (the \`review-proposal\` / \`review-system\` gates for the change modes; NO gate in architecture mode), and a few mode-specific flags (\`--mark\` for proposal, \`--skip-verify\` for system).
 
 **Generates findings; does not resolve them.** Resolution flows through \`/orbit:address-reviews\` (inline \`@review:\` markers, OR \`--from-file\` ingesting external-review markdown OR internal review JSON OR audit-drift JSON) or by the user replying directly to the report.
 
-**Input**: Optional change name and optional \`--as proposal|system\` mode flag plus secondary flags. If change name omitted, prompt via \`AskUserQuestion\` over \`orbit list --json\`. If mode omitted, infer from \`tasks.md\` state (see Step 3).
+**Input**: Optional change name (or, with \`--as architecture\`, a doc name) and optional \`--as proposal|system|architecture\` mode flag plus secondary flags. If change name omitted, prompt via \`AskUserQuestion\` over \`orbit list --json\` (architecture mode prompts over \`orbit architecture status --json\`'s parseable docs instead). If mode omitted, infer from \`tasks.md\` state (see Step 3) — architecture mode is NEVER inferred.
 
 ## Four execution disciplines (apply throughout this command)
 
@@ -131,7 +131,7 @@ Always announce \`Using change: <name> --as <mode>\` at the start of the report 
 
 ### 2. Resolve the mode
 
-Mode comes from the \`--as proposal|system\` flag if specified. If omitted, infer:
+Mode comes from the \`--as proposal|system|architecture\` flag if specified. **Architecture mode is NEVER inferred** — it requires the explicit \`--as architecture\` flag; a positional that happens to match a doc name does NOT trigger it (misfiring review modes on change names would be a sharp edge). If \`--as\` omitted, infer between proposal and system:
 
 1. Read \`orbit/changes/<name>/tasks.md\`.
 2. Count \`- [ ]\` (unchecked) vs \`- [x]\` (checked) boxes.
@@ -140,6 +140,8 @@ Mode comes from the \`--as proposal|system\` flag if specified. If omitted, infe
 5. **Mixed or ambiguous** → use \`AskUserQuestion\` to ask the user which mode to run.
 
 State the resolved mode and how it was resolved in the report header (\`Mode: proposal (inferred from 12 unchecked tasks)\`).
+
+**Architecture mode — resolve the DOC instead of a change**: the positional resolves against \`orbit/architecture/\` (the filename stem), not \`orbit/changes/\`. When omitted or ambiguous, prompt via \`AskUserQuestion\` over the parseable docs from \`orbit architecture status --json\`. A doc resolving to LEGACY (zero stage-prefixed headings outside fences) is an error suggesting retrofit; one resolving to MALFORMED (fails \`orbit architecture validate\`'s near-miss rule) is an error naming the grammar violation — architecture mode requires a parseable doc.
 
 ### 3. Resolve flags
 
@@ -153,7 +155,7 @@ State the resolved mode and how it was resolved in the report header (\`Mode: pr
 | \`--mark\` | off, proposal only | After report, write \`@review: <text>\` markers at each finding's file:line. See "Mark writer". |
 | \`--skip-verify\` | off, system only | Skip Pass 0 (verify-change). Use when verify-change was run separately. |
 
-If a flag is specified for the wrong mode (e.g., \`--mark\` in system mode or \`--skip-verify\` in proposal mode), accept it silently and emit a one-line note in the report (\`Note: --mark writes to source files is v2; ignored for v1 system-mode runs.\`).
+If a flag is specified for the wrong mode (e.g., \`--mark\` in system mode or \`--skip-verify\` in proposal mode), accept it silently and emit a one-line note in the report (\`Note: --mark writes to source files is v2; ignored for v1 system-mode runs.\`). In architecture mode, \`--parallel\`, \`--fast\`, and \`--focus <lens>\` are accepted but are no-ops (architecture docs are small; all six passes run in one context — no per-mode subset or lens table is defined), each noted in the report the same way.
 
 ### 4. Load context
 
@@ -310,6 +312,32 @@ PASS                                  WHAT IT CHECKS
 
 When \`--fast\` is set, run Passes 0, 1, 6. Report remaining as \`skipped per --fast\`. Combining \`--fast --skip-verify\` runs only Passes 1 and 6.
 
+#### Architecture-mode passes (6)
+
+The target is an architecture DOC, not a change; findings cite \`<doc>.md:line\`. Read the doc AND \`orbit architecture status --json\` (computed stage states, for cross-checks) before the passes. The pass set (dogfooded by hand on the D-arc, 2026-07-08):
+
+\`\`\`
+PASS                                  WHAT IT CHECKS
+─────────────────────────────────────────────────────────────────────
+1. Cohesion / traceability            rulings, stages, and premise agree;
+                                       stage charters trace to goals
+2. Completeness / exit-criteria       every stage carries falsifiable exit
+                                       criteria; charter items covered by
+                                       stage content
+3. Dependencies / sequencing          Depends-on: declarations match the
+                                       sequencing prose; no cycle exists
+4. Layer-fit                          content sits at the right tier
+                                       (arc-level rulings vs stage-level
+                                       detail, per the doc's ownership rule)
+5. Route-level alternatives           major directions record what was
+                                       considered and rejected
+6. Economy self-audit                 the doc's read-cost story holds (what
+                                       a session must load; what the engine
+                                       renders vs prose re-narrates)
+\`\`\`
+
+No \`--fast\` subset: all six passes always run (the flag is a noted no-op in this mode, as are \`--parallel\` and \`--focus\`).
+
 ### 7. Apply scorecard rollup
 
 Roll every pass's findings into the 3-dimension scorecard.
@@ -329,6 +357,14 @@ Roll every pass's findings into the 3-dimension scorecard.
 | **Completeness** | Pass 0 (verify-change completeness portion: task-completion + spec-coverage), Pass 5 (critical-paths existence) |
 | **Correctness** | Pass 0 (verify-change correctness portion: requirement-implementation-mapping + scenario-coverage), Pass 1 (Baseline), Pass 2 (Cohesion), Pass 5 (critical-paths working) |
 | **Coherence** | Pass 0 (verify-change coherence portion: design-adherence + code-pattern-consistency), Pass 3 (Surface Walk), Pass 4 (Perspective Reviews), Pass 6 (Drift/Residue from audit-drift) |
+
+#### Architecture-mode mapping
+
+| Dimension | Passes contributing |
+|---|---|
+| **Correctness** | 1 (Cohesion / traceability), 2 (Completeness / exit-criteria), 3 (Dependencies / sequencing) |
+| **Completeness** | 2 (Completeness / exit-criteria) |
+| **Coherence** | 4 (Layer-fit), 5 (Route-level alternatives), 6 (Economy self-audit) |
 
 ### 8. Generate the iteration note
 
@@ -400,9 +436,20 @@ To determine which of States 1–5 applies, inspect \`orbit/changes/<name>/.orbi
 
 **Iteration-aware logic does NOT block archive**: the recommendation is advisory, not a gate. The user retains the choice to skip; orbit surfaces the recommendation but does not enforce. (Decision to NOT add a pre-archive external-review-presence check is intentional — orbit's role is to surface, not gate.)
 
+#### Architecture mode — NO gate
+
+No gate exists over architecture docs (review standing without a gate — D-arc D-d2-5), so the architecture-mode final assessment NEVER says PASSED/UNPASSED of a gate and never references a lifecycle command. It renders findings counts plus ONE canonical next command:
+
+| State | Phrasing |
+|---|---|
+| Findings present | \`X critical / Y warning(s). Ready when you are: /orbit:address-reviews --from-file <the just-written review-architecture emit>.\` |
+| All clear | \`No findings. The architecture trail records this pass.\` |
+
+Labels follow D1's eligibility phrasing; the findings are ingestible by \`/orbit:address-reviews\` exactly like other internal review JSON (including \`recommendation_options\` on disjunctive findings). On all-clear, no command is recommended — the trail records the pass and the turn ends at the readout.
+
 ### 10. Persist the run summary
 
-Write JSON to \`orbit/changes/<name>/.orbit-runs/review-<mode>-<TS>.json\` with ISO-8601 timestamp (e.g., \`review-proposal-2026-05-18T14-35-23Z.json\`). The full schema (fields, types, semantics) lives at \`references/run-summary-schema.md\` — read that file when composing the summary. Create \`.orbit-runs/\` if it doesn't exist; commit-worthy (do not gitignore).
+Write JSON per mode: to \`orbit/changes/<name>/.orbit-runs/review-<mode>-<TS>.json\` for \`proposal\` and \`system\` modes, and to \`orbit/architecture/.orbit-runs/review-architecture-<TS>.json\` for \`architecture\` mode (the architecture trail — the fourth persistence location; never moved by change archiving). ISO-8601 timestamp (e.g., \`review-proposal-2026-05-18T14-35-23Z.json\`). The full schema (fields, types, semantics) lives at \`references/run-summary-schema.md\` — read that file when composing the summary. Architecture-mode emits carry \`change: null\`, a \`doc\` field naming the reviewed doc, and — per arc ruling R-d-9(b) — the structured \`handoff\` section (\`boot_sequence\` pointers / \`next_command\` / \`model_hint\` / \`seam\`; shape owned by \`orbit-architect\`). Create the trail directory if it doesn't exist; commit-worthy (do not gitignore).
 
 ### 11. (Optional) \`--mark\` writer (proposal mode only)
 

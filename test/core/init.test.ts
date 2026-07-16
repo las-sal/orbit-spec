@@ -725,7 +725,7 @@ describe('InitCommand - profile and detection features', () => {
     expect(await fileExists(cmdFile)).toBe(true);
   });
 
-  it('should remove ALL 15 skill dirs on re-init when delivery changes to commands', async () => {
+  it('should remove ALL 16 skill dirs on re-init when delivery changes to commands', async () => {
     saveGlobalConfig({
       featureFlags: {},
       profile: 'core',
@@ -737,7 +737,7 @@ describe('InitCommand - profile and detection features', () => {
 
     const skillsDir = path.join(testDir, '.claude', 'skills');
     const installed = await fs.readdir(skillsDir);
-    expect(installed.filter((d) => d.startsWith('orbit-'))).toHaveLength(15);
+    expect(installed.filter((d) => d.startsWith('orbit-'))).toHaveLength(16);
 
     saveGlobalConfig({
       featureFlags: {},

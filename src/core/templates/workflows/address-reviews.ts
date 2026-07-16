@@ -314,6 +314,7 @@ const ADDRESS_REVIEWS_RUN_SUMMARY_SCHEMA_REFERENCE = `# Reference: address-revie
 Each \`/orbit:address-reviews\` invocation persists a JSON summary. Path varies:
 
 - **Change-scoped** (when scope is a single change directory or \`--from-file\` points into a change's \`.orbit-runs/\`): \`orbit/changes/<change-name>/.orbit-runs/address-reviews-<TS>.json\`
+- **Architecture-scoped** (\`--from-file\` into \`orbit/architecture/.orbit-runs/\`): \`orbit/architecture/.orbit-runs/address-reviews-<TS>.json\` (\`change: null\`; \`doc\` carried from the source emit)
 - **Whole-repo / cross-change**: \`orbit/.orbit-runs/address-reviews-<TS>.json\`
 
 ## Universal spine inheritance
@@ -719,7 +720,7 @@ If the resolution edited a normative artifact, compute the ripple-flag set — f
 
 | OUT category | Path prefix | Reason recorded in \`flagged_not_applied\` |
 |---|---|---|
-| Audit trail | \`orbit/changes/<name>/.orbit-runs/*\` AND \`orbit/.orbit-runs/*\` | \`audit-trail file; cascade skipped by policy\` |
+| Audit trail (all four locations) | \`orbit/changes/<name>/.orbit-runs/*\`, \`orbit/.orbit-runs/*\`, \`orbit/explore/<name>/.orbit-runs/*\`, AND \`orbit/architecture/.orbit-runs/*\` (D-arc Stage D2) | \`audit-trail file; cascade skipped by policy\` |
 | Baseline specs | \`orbit/specs/<capability>/spec.md\` | \`baseline spec; add a delta to your current change's specs/<capability>/spec.md to capture this ripple\` |
 | Cross-change (active + archived) | \`orbit/changes/<other-name>/*\` AND \`orbit/changes/archive/*\` | \`cross-change ripple; cascade scope is current change only\` |
 | Safe-exclusions (exact set) | \`.git/\`, \`node_modules/\`, \`dist/\`, \`build/\` | \`safe-exclusion path; never edited\` |
@@ -811,6 +812,7 @@ The final-assessment line summarizes remaining-in-scope markers (0 if clean) plu
 Write JSON to:
 
 - **Change-scoped** (when scope is a single change directory or \`--from-file\` points into a change's \`.orbit-runs/\`): \`orbit/changes/<change-name>/.orbit-runs/address-reviews-<TS>.json\`
+- **Architecture-scoped** (when \`--from-file\` points into \`orbit/architecture/.orbit-runs/\` — a \`review-architecture-*.json\` emit): \`orbit/architecture/.orbit-runs/address-reviews-<TS>.json\` with \`change: null\` and the \`doc\` carried from the source emit (routing the log elsewhere would split the architecture evidence chain the review standing depends on — D-arc Stage D2)
 - **Whole-repo / cross-change**: \`orbit/.orbit-runs/address-reviews-<TS>.json\`
 
 Full schema (fields, types, semantics) lives at \`references/run-summary-schema.md\` — read that file when composing the summary.

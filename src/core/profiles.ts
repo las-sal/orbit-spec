@@ -32,6 +32,7 @@ export const ALL_WORKFLOWS = [
   'review-external',
   'address-reviews',
   'audit-drift',
+  'architect',
 ] as const;
 
 export type WorkflowId = (typeof ALL_WORKFLOWS)[number];

@@ -27,6 +27,7 @@ export const WORKFLOW_TO_SKILL_DIR: Record<WorkflowId, string> = {
   'review-external': 'orbit-review-external',
   'address-reviews': 'orbit-address-reviews',
   'audit-drift': 'orbit-audit-drift',
+  'architect': 'orbit-architect',
 };
 
 function toKnownWorkflows(workflows: readonly string[]): WorkflowId[] {

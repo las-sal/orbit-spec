@@ -53,6 +53,8 @@ What makes orbit distinctive vs running upstream alone:
 
 - **Capture (lenses)** — \`orbit/lenses/perspectives.md\` records named callers worth simulating from during review; \`orbit/lenses/critical-paths.md\` records flows worth walking end-to-end. Lenses grow organically through \`/orbit:explore\` capture triggers; system-mode review Passes 4-5 consult them.
 
+- **Program architecture** — \`/orbit:architect\` and \`orbit architecture status\` (D-arc Stage D2): the cross-change declaration tier above per-change flow. Architecture docs under \`orbit/architecture/\` declare program stages via parseable heading conventions (\`### Stage <id> — <title>\` + optional \`Depends-on:\`/\`Complete:\` slots); stage state is COMPUTED from disk (which changes/explores cite the stage via \`architecture: {doc, stage}\` metadata), never stored. \`/orbit:review --as architecture\` reviews a doc (6 passes, no gate). Never a required entry point — \`/orbit:explore\` plus hand-editing remains first-class.
+
 - **JSON run-summary emission** — every editorial and lifecycle command emits a JSON run-summary at command completion (or per chunk for \`/orbit:apply\`). Summaries persist to \`orbit/changes/<name>/.orbit-runs/\` (per-change) or \`orbit/.orbit-runs/\` (project-wide). The schema follows a universal spine with per-command extensions. (Note: \`/orbit:onboard\` is one of the few commands that does NOT emit — it's a reference read, not a workflow advancement.)
 
 - **Four execution disciplines** codified in \`orbit-conventions\`:
@@ -100,6 +102,7 @@ The \`/orbit:*\` command surface. Every row is generated into your project by \`
 |---------|---------------------|
 | \`/orbit:address-reviews [<scope>] [--from-file <path>] [--batch] [--no-cascade]\` | Walk inline \`@review:\` markers or \`--from-file\` findings (external-review markdown, internal review JSON, or audit-drift JSON — auto-detected by content sniff) through pushback → classify → fix → ripple-cascade → remove. Walk-mode per-finding by default (\`--batch\` opts in); cascade auto-applies to IN-set files by default (\`--no-cascade\` opts out; OUT-set = audit-trail, baseline specs, cross-change/archive, safe-exclusions). Resolves rather than scans. Auto-discovers internal review/audit-drift JSON when invoked with a change name and no markers found. Disjunctive recommendations surface as structured A/B/discuss forks. |
 | \`/orbit:apply <name>\` | Implement tasks from \`tasks.md\` chunk-by-chunk with end-of-chunk run-summary emits. Pauses on premise problems. |
+| \`/orbit:architect [<doc-name>]\` | Author or resume an architecture doc (program layer): parseable stage declarations, ruling capture, engine-rendered state, completion-ratification flow. Never a required entry point. |
 | \`/orbit:archive <name>\` | Move change to \`orbit/changes/archive/\`, run sync-specs to propagate deltas to baseline. Pre-archive \`@review:\` marker check + audit-drift sweep. |
 | \`/orbit:audit-drift [<change-name>]\` | Scan for drift between captured knowledge and reality (4 categories: vocabulary, lens, cross-doc, archive). Standalone or library-call. |
 | \`/orbit:bulk-archive\` | Archive multiple completed changes at once. |
@@ -109,7 +112,7 @@ The \`/orbit:*\` command surface. Every row is generated into your project by \`
 | \`/orbit:new <name>\` | Start a new change using the experimental artifact workflow. |
 | \`/orbit:onboard\` | Run this skill (the reference walkthrough you're reading now). |
 | \`/orbit:propose <name>\` | Generate proposal + design + specs + tasks artifacts in one step. Consume mode reads \`orbit/explore/<name>/explore.md\` if present. |
-| \`/orbit:review <name> [--as proposal\\|system] [--fresh]\` | Editorial review: 9 passes proposal-mode (pre-apply) or 7 passes system-mode (post-apply, wraps \`verify-change\` as Pass 0). |
+| \`/orbit:review <name> [--as proposal\\|system\\|architecture] [--fresh]\` | Editorial review: 9 passes proposal-mode (pre-apply), 7 passes system-mode (post-apply, wraps \`verify-change\` as Pass 0), or 6 passes architecture-mode (a doc, no gate). |
 | \`/orbit:review-external <name> [--as proposal\\|system]\` | Package a self-contained prompt for a different AI to do a second-opinion review. Commits prompt to repo; external AI commits findings back. |
 | \`/orbit:sync <name>\` | Sync delta specs from a change to main specs without archiving. |
 | \`/orbit:verify <name>\` | Run upstream's structural verify-change (tasks done, spec coverage, design adherence). Composed as Pass 0 of system-mode review. |

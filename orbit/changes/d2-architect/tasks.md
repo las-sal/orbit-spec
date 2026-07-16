@@ -68,7 +68,7 @@ by hand at the phase seams.
 
 ## 4. Workflow bodies
 
-- [ ] 4.1 NEW `architect.ts` (skill + thin launcher): create/resume with scaffolded format;
+- [x] 4.1 NEW `architect.ts` (skill + thin launcher): create/resume with scaffolded format;
       rulings/stages/considered-out capture; render-never-author state (flags legacy state lines
       for deletion); R-d-8 residency sweep; completion-ratification AskUserQuestion (ratify /
       not-yet → writes the `Complete:` mark); never-a-gatekeeper statement; emit
@@ -76,26 +76,26 @@ by hand at the phase seams.
       `rulings_captured`, `completions_ratified`, and the R-d-9(b) `handoff` section. Register
       in EVERY registry (grep-enumerate by an existing body's name first — B3 lesson); joins the
       orbit-authored disposition category (per the orbit-conventions delta)
-- [ ] 4.2 `review.ts` body: `--as architecture` mode — doc-targeted resolution (never inferred),
+- [x] 4.2 `review.ts` body: `--as architecture` mode — doc-targeted resolution (never inferred),
       the six passes, no-gate final assessment, emit to
       `orbit/architecture/.orbit-runs/review-architecture-<TS>.json` with `doc` + `handoff`;
       findings ingestible by address-reviews unchanged (incl. `recommendation_options` on
       disjunctive findings — the When-to-emit scope now covers architecture-mode passes)
-- [ ] 4.3 `audit-drift.ts` body: architecture staleness check (computed-vs-prose contradiction;
+- [x] 4.3 `audit-drift.ts` body: architecture staleness check (computed-vs-prose contradiction;
       falsified `Complete:` mark CRITICAL; hand-written state line WARNING; dangling citations
       CRITICAL; clean skip with no parseable docs; flow-entry rule — origin never flagged)
-- [ ] 4.4 `onboard.ts`: identity enumeration gains the program-architecture layer AND the
+- [x] 4.4 `onboard.ts`: identity enumeration gains the program-architecture layer AND the
       quick-reference table gains the `/orbit:architect` row; sweep ALL surface-count mentions
       15→16 (profiles.ts comment, generated-surface expectations, any "15 workflows/skills"
       pins — the D1-cycle contradiction class, swept proactively); AUDIT + SYNC the README's
       install/update sections for the 16th workflow (counts, file lists, CLI invocations — the
       triggered `orbit-conventions` install-documentation baseline; record no-edit-needed only
       if the audit proves no count/list/invocation is affected)
-- [ ] 4.5 `address-reviews.ts` body: cascade OUT table's audit-trail row gains the explore +
+- [x] 4.5 `address-reviews.ts` body: cascade OUT table's audit-trail row gains the explore +
       architecture trails (all four `.orbit-runs/` locations, per the orbit-address-reviews
       delta); resolution-log destination list gains the architecture route (`--from-file` into
       the architecture trail → the log lands there, `change: null` + `doc` carried)
-- [ ] 4.6 Parity hashes re-pinned (+ architect joins the hash maps); fidelity markers for the
+- [x] 4.6 Parity hashes re-pinned (+ architect joins the hash maps); fidelity markers for the
       new body + edited bodies; on-disk generated-surface test expects 16 commands/skills
 
 ## 5. Verification sweep (arc §D2 exit criteria) + surface refresh

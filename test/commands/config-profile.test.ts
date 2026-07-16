@@ -108,6 +108,7 @@ describe('config profile interactive flow', () => {
       'orbit-review-external',
       'orbit-address-reviews',
       'orbit-audit-drift',
+      'orbit-architect',
     ];
     for (const dirName of allSkillDirs) {
       const skillPath = path.join(projectDir, '.claude', 'skills', dirName, 'SKILL.md');
@@ -137,7 +138,7 @@ describe('config profile interactive flow', () => {
       }
     }
 
-    const allCommands = ['propose', 'explore', 'apply', 'archive', 'new', 'continue', 'ff', 'sync', 'bulk-archive', 'verify', 'onboard', 'review', 'review-external', 'address-reviews', 'audit-drift'];
+    const allCommands = ['propose', 'explore', 'apply', 'archive', 'new', 'continue', 'ff', 'sync', 'bulk-archive', 'verify', 'onboard', 'review', 'review-external', 'address-reviews', 'audit-drift', 'architect'];
     for (const commandId of allCommands) {
       const commandPath = path.join(projectDir, '.claude', 'commands', 'orbit', `${commandId}.md`);
       fs.mkdirSync(path.dirname(commandPath), { recursive: true });

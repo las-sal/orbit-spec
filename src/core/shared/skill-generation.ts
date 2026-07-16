@@ -20,6 +20,7 @@ import {
   getReviewExternalSkillTemplate,
   getAddressReviewsSkillTemplate,
   getAuditDriftSkillTemplate,
+  getArchitectSkillTemplate,
   getOrbitExploreCommandTemplate,
   getOrbitNewCommandTemplate,
   getOrbitContinueCommandTemplate,
@@ -35,6 +36,7 @@ import {
   getOrbitReviewExternalCommandTemplate,
   getOrbitAddressReviewsCommandTemplate,
   getOrbitAuditDriftCommandTemplate,
+  getOrbitArchitectCommandTemplate,
   type SkillTemplate,
 } from '../templates/skill-templates.js';
 import type { CommandContent } from '../command-generation/index.js';
@@ -82,6 +84,7 @@ export function getSkillTemplates(workflowFilter?: readonly string[]): SkillTemp
     { template: getReviewExternalSkillTemplate(), dirName: 'orbit-review-external', workflowId: 'review-external' },
     { template: getAddressReviewsSkillTemplate(), dirName: 'orbit-address-reviews', workflowId: 'address-reviews' },
     { template: getAuditDriftSkillTemplate(), dirName: 'orbit-audit-drift', workflowId: 'audit-drift' },
+    { template: getArchitectSkillTemplate(), dirName: 'orbit-architect', workflowId: 'architect' },
   ];
 
   if (!workflowFilter) return all;
@@ -112,6 +115,7 @@ export function getCommandTemplates(workflowFilter?: readonly string[]): Command
     { template: getOrbitReviewExternalCommandTemplate(), id: 'review-external' },
     { template: getOrbitAddressReviewsCommandTemplate(), id: 'address-reviews' },
     { template: getOrbitAuditDriftCommandTemplate(), id: 'audit-drift' },
+    { template: getOrbitArchitectCommandTemplate(), id: 'architect' },
   ];
 
   if (!workflowFilter) return all;

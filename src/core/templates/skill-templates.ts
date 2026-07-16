@@ -21,4 +21,5 @@ export { getReviewSkillTemplate, getOrbitReviewCommandTemplate } from './workflo
 export { getReviewExternalSkillTemplate, getOrbitReviewExternalCommandTemplate } from './workflows/review-external.js';
 export { getAddressReviewsSkillTemplate, getOrbitAddressReviewsCommandTemplate } from './workflows/address-reviews.js';
 export { getAuditDriftSkillTemplate, getOrbitAuditDriftCommandTemplate } from './workflows/audit-drift.js';
+export { getArchitectSkillTemplate, getOrbitArchitectCommandTemplate } from './workflows/architect.js';
 export { getFeedbackSkillTemplate } from './workflows/feedback.js';
