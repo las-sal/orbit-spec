@@ -169,11 +169,27 @@ export function parseArchitectureDoc(content: string, name: string, docPath = ''
 }
 
 /**
+ * A doc's citable identity is its FILENAME STEM — a canonical name, never a path.
+ * Rejects separators, traversal segments, and leading dots so `show ../../README`
+ * (or an alias like `subdir/../real-doc`) can neither escape orbit/architecture/
+ * nor create a second spelling of one identity (validation and the state scan must
+ * agree on exact names).
+ */
+export function isValidDocName(name: string): boolean {
+  return name.length > 0 && !/[\\/]/.test(name) && !name.startsWith('.') && !name.includes('..');
+}
+
+/**
  * Load and parse one architecture doc by name (filename stem). Returns null when the
- * file does not exist.
+ * name is not a canonical stem or the file does not exist. Defense in depth: even a
+ * name passing the stem check must resolve to a file directly under the architecture
+ * directory.
  */
 export function loadArchitectureDoc(projectRoot: string, name: string): ParsedArchitectureDoc | null {
-  const docPath = path.join(projectRoot, ARCHITECTURE_DIR, `${name}.md`);
+  if (!isValidDocName(name)) return null;
+  const dir = path.resolve(projectRoot, ARCHITECTURE_DIR);
+  const docPath = path.resolve(dir, `${name}.md`);
+  if (path.dirname(docPath) !== dir) return null;
   if (!fs.existsSync(docPath)) return null;
   const content = fs.readFileSync(docPath, 'utf-8');
   return parseArchitectureDoc(content, name, path.join(ARCHITECTURE_DIR, `${name}.md`));

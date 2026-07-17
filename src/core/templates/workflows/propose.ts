@@ -188,20 +188,23 @@ After all upstream steps complete successfully (artifacts generated, validation 
 FIRST merge the staged metadata, THEN bulk-move (D-arc Stage D2):
 
 1. **Staged-metadata MERGE** (before the bulk move): if \`orbit/explore/<name>/.openspec.yaml\`
-   exists, read it via the change-metadata helpers and carry its \`architecture: {doc, stage}\`
-   citation (when present) into the change's freshly-written \`orbit/changes/<name>/.openspec.yaml\`.
-   The FRESH metadata's \`schema\`/\`created\`/\`schema_version\` values win (the staged fields were
-   placeholders); on a conflicting pre-existing \`architecture:\` citation in the fresh metadata,
-   the STAGED citation wins (deterministic — the exploration's citation is the captured decision).
-   Then DISCARD the staged file (delete it; it is never bulk-moved — a stale metadata copy inside
-   the change directory would be a second claim on one truth). When no staged \`.openspec.yaml\`
-   exists (pre-D2 staging dir), skip this step entirely — the path is unchanged.
+   exists, read it via the change-metadata helpers and merge FIELD-LEVEL into the change's
+   freshly-written \`orbit/changes/<name>/.openspec.yaml\`. The merge is GENERIC with a
+   fresh-owned DENYLIST: the fresh metadata's \`schema\`/\`created\`/\`schema_version\` values win
+   (the staged copies were placeholders); EVERY OTHER staged field — \`architecture:\` today, and
+   any explore-side field a future capability adds — carries forward with STAGED precedence on
+   conflict (for \`architecture:\` specifically: the exploration's citation is the captured
+   decision; note the override in chat). Do NOT enumerate carried fields — copying only known
+   ones would silently discard future extensions. Then DISCARD the staged file (delete it; it is
+   never bulk-moved — a stale metadata copy inside the change directory would be a second claim
+   on one truth). When no staged \`.openspec.yaml\` exists (pre-D2 staging dir), skip this step
+   entirely — the move proceeds exactly as before, and no removal runs.
 
 2. **Bulk move**:
 
 \`\`\`bash
 [ -d orbit/explore/<name>/.orbit-runs ] && mv orbit/explore/<name>/.orbit-runs orbit/changes/<name>/.orbit-runs
-rm orbit/explore/<name>/.openspec.yaml  # staged metadata: merged above, then discarded
+[ -f orbit/explore/<name>/.openspec.yaml ] && rm orbit/explore/<name>/.openspec.yaml  # staged metadata: merged above, then discarded (guarded — pre-D2 staging dirs have none)
 mv orbit/explore/<name>/* orbit/changes/<name>/
 rmdir orbit/explore/<name>
 \`\`\`

@@ -1,0 +1,70 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-17T15:17:44Z",
+  "change": "d2-architect",
+  "source": "--from-file",
+  "source_path": "orbit/changes/d2-architect/.orbit-runs/external-system-2026-07-17T15-03-13Z.md",
+  "source_format": "external-markdown",
+  "external_reviewer": "GPT-5 Codex",
+  "walk_mode": "per_finding",
+  "kind": "editorial",
+  "resolutions": [
+    {
+      "finding": "Architecture findings ingestion is still documented as change-only and two-mode",
+      "severity": "WARNING",
+      "file": "src/core/templates/workflows/address-reviews.ts",
+      "pushback": "still applies — internal-findings-format declared change-only provenance and mode proposal|system; the resolution-log schema had change:null = whole-repo only with no doc extension",
+      "classification": "trivial fix",
+      "action": "Both reference literals extended: the internal-findings producer contract now names the architecture-trail location and shape (change annotated nullable, doc field, mode enum gains architecture); the resolution-log spine + schema now document architecture scope (change: null AND a doc field carried from the source emit). Generated-reference e2e assertions added so ingest and log examples must carry those fields.",
+      "ripple_cascade": {
+        "applied": ["src/core/templates/workflows/address-reviews.ts", "test/core/templates/orbit-generated-surface.test.ts", ".claude/skills/orbit-address-reviews/references/ (via update --force)"],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "finding": "Onboarding still describes /orbit:review as a two-mode command",
+      "severity": "WARNING",
+      "file": "src/core/templates/workflows/onboard.ts",
+      "pushback": "still applies — the editorial-review identity bullet said 9-pass proposal or 7-pass system only, contradicting the Program-architecture bullet in the same body",
+      "classification": "trivial fix",
+      "action": "The editorial-review bullet now enumerates all three modes (incl. the 6-pass gate-less architecture mode); onboarding fidelity marker added for the new phrase (the launcher assertion covers a different body, as the reviewer noted). Parity hashes re-pinned.",
+      "ripple_cascade": {
+        "applied": ["src/core/templates/workflows/onboard.ts", "test/core/templates/orbit-generated-surface.test.ts", "test/core/templates/skill-templates-parity.test.ts"],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "finding": "The staged-metadata merge is neither generic nor fully conditional",
+      "severity": "WARNING",
+      "file": "src/core/templates/workflows/propose.ts",
+      "pushback": "still applies — and an implementation gap against the change's own delta, which requires 'any other explore-side fields future capabilities add' to carry forward; the example ran rm unconditionally against the prose's conditional",
+      "classification": "trivial fix",
+      "action": "Merge redefined GENERIC with a fresh-owned DENYLIST (schema/created/schema_version fresh-win; every other staged field carries with staged precedence; enumerating carried fields explicitly prohibited); the removal guarded ([ -f ... ] && rm) and the no-metadata path states no removal runs. Fidelity marker pins the denylist phrasing. Note on the reviewer's fixture ask: the merge is BODY-layer agent instruction (no engine code path to fixture); the delta's scenarios (future-field carry, citation conflict, no-metadata) remain the normative contract and the body now restates all three.",
+      "ripple_cascade": {
+        "applied": ["src/core/templates/workflows/propose.ts", "test/core/templates/orbit-generated-surface.test.ts", "test/core/templates/skill-templates-parity.test.ts"],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "finding": "Architecture doc identifiers are not contained to filename stems",
+      "severity": "WARNING",
+      "file": "src/core/architecture/parser.ts",
+      "pushback": "still applies — reproduced live: orbit architecture validate ../../README succeeded against a file outside orbit/architecture/",
+      "classification": "trivial fix",
+      "action": "Canonical stem identity enforced at both layers: isValidDocName (no separators, no leading dot, no '..' — single dots like 'openspec-1.3.1' stay legal) + resolved-path containment (path.dirname must equal the architecture dir) in loadArchitectureDoc, which show/validate/status/citation-resolution all route through — validation and the state scan now agree by construction (aliases reject at the doc level). ChangeMetadataSchema gains matching refinements (doc stem rule; stage kebab-id regex). Traversal/alias rejection tests added for load, show, validate, citation resolution, and the metadata schema; live re-check: ../../README now errors.",
+      "ripple_cascade": {
+        "applied": ["src/core/architecture/parser.ts", "src/core/artifact-graph/types.ts", "test/core/architecture/engine.test.ts"],
+        "flagged_not_applied": []
+      }
+    }
+  ],
+  "resolution_summary": {
+    "resolved": 4,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "post_state": "1712 tests green (1708 + containment/reference assertions); --strict valid; fingerprints 18/18; surface regenerated with the extended references and three-mode onboarding on disk",
+  "final_assessment": "All 4 iteration-2 external WARNINGs resolved (both address-reviews references architecture-aware with e2e guards; onboarding three-mode; the staged-metadata merge generic + guarded per the delta's own contract; doc identity contained to filename stems at CLI, loader, and metadata layers with traversal tests). The external yielded 0 CRITICAL, so the review-system confirm predicate is now met; the cadence's trailing in-context slot remains.",
+  "next_recommended": "/orbit:review --as system d2-architect"
+}

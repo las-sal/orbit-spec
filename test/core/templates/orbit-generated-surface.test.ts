@@ -30,7 +30,7 @@ vi.mock('../../../src/prompts/searchable-multi-select.js', () => ({
 // dirName -> [commandId, required skill markers]
 const SURFACE: Array<[string, string, string[]]> = [
   ['orbit-explore', 'explore', ['execution disciplines', 'Run-summary emit', 'Minimal explore metadata']],
-  ['orbit-propose', 'propose', ['execution disciplines', 'Run-summary emit', 'Completion-prompt override', 'staged-metadata MERGE']],
+  ['orbit-propose', 'propose', ['execution disciplines', 'Run-summary emit', 'Completion-prompt override', 'staged-metadata MERGE', 'fresh-owned DENYLIST']],
   ['orbit-new-change', 'new', ['execution disciplines', 'Run-summary emit']],
   ['orbit-continue-change', 'continue', ['execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
   ['orbit-apply-change', 'apply', ['execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
@@ -39,7 +39,7 @@ const SURFACE: Array<[string, string, string[]]> = [
   ['orbit-archive-change', 'archive', ['execution disciplines', 'run summary', 'Stage-line garnish']],
   ['orbit-bulk-archive-change', 'bulk-archive', ['# Orbit additions']],
   ['orbit-verify-change', 'verify', ['execution disciplines', 'Run-summary emit']],
-  ['orbit-onboard', 'onboard', ['execution disciplines', 'self-contained', 'Program architecture', 'orbit/architecture/.orbit-runs/']],
+  ['orbit-onboard', 'onboard', ['execution disciplines', 'self-contained', 'Program architecture', 'orbit/architecture/.orbit-runs/', 'architecture mode — D-arc Stage D2']],
   ['orbit-review', 'review', ['execution disciplines', 'convergence states', 'Persist the run summary', 'Architecture-mode passes', 'Using doc:', 'First architecture review for this doc']],
   ['orbit-review-external', 'review-external', ['execution disciplines', 'Run-summary emit (T0', 'references/prompt-template.md', 'Handoff preflight']],
   ['orbit-address-reviews', 'address-reviews', ['execution disciplines', 'Ripple cascade', 'resolution log', 'Architecture-scoped']],
@@ -209,6 +209,16 @@ describe('generated surface fidelity (real init, all workflows, claude + codex)'
   it('generates exactly the 16 registered commands', async () => {
     const files = await fs.readdir(path.join(testDir, '.claude', 'commands', 'orbit'));
     expect(files.sort()).toEqual(SURFACE.map(([, id]) => `${id}.md`).sort());
+  });
+
+  it('address-reviews generated references carry the architecture-mode shapes', async () => {
+    const refsDir = path.join(testDir, '.claude', 'skills', 'orbit-address-reviews', 'references');
+    const ingest = await fs.readFile(path.join(refsDir, 'internal-findings-format.md'), 'utf-8');
+    expect(ingest).toContain('review-architecture-<TS>.json');
+    expect(ingest).toContain('"proposal" | "system" | "architecture"');
+    const log = await fs.readFile(path.join(refsDir, 'run-summary-schema.md'), 'utf-8');
+    expect(log).toContain('review-architecture');
+    expect(log).toContain('architecture scope');
   });
 
   it('review LAUNCHER surfaces advertise all three modes (not just the long body)', async () => {

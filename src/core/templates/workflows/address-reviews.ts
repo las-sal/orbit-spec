@@ -127,7 +127,7 @@ This parser contract is consumed by BOTH explicit \`--from-file <path>\` invocat
 
 The \`--from-file <path>\` flag accepts TWO format families: (a) external-review markdown (see \`external-findings-format.md\`), (b) internal findings JSON (this file). The parser auto-detects format via content sniff: leading \`{\` routes to JSON; leading \`# External Review:\` routes to markdown; anything else triggers a format-mismatch error.
 
-This format MUST match what \`/orbit:review\` writes to \`orbit/changes/<name>/.orbit-runs/review-<mode>-<TS>.json\` OR what \`/orbit:audit-drift\` writes to its summary JSON paths (per the audit-drift run-summary-schema). V1 accepts BOTH \`command: "review"\` AND \`command: "audit-drift"\` JSON; other \`command\` values are rejected. The full JSON schemas live in the producer skills' bundled references — the \`orbit-review\` skill's \`references/run-summary-schema.md\` and the \`orbit-audit-drift\` skill's \`references/run-summary-schema.md\` (shipped alongside each generated skill); this file documents the \`--from-file\` parser's subset of those schemas (the fields it reads to construct virtual markers).
+This format MUST match what \`/orbit:review\` writes to \`orbit/changes/<name>/.orbit-runs/review-<mode>-<TS>.json\` for \`proposal\`/\`system\` modes, what it writes to \`orbit/architecture/.orbit-runs/review-architecture-<TS>.json\` for \`architecture\` mode (D-arc Stage D2 — \`change: null\` plus a \`doc\` field naming the reviewed doc), OR what \`/orbit:audit-drift\` writes to its summary JSON paths (per the audit-drift run-summary-schema). V1 accepts BOTH \`command: "review"\` AND \`command: "audit-drift"\` JSON; other \`command\` values are rejected. The full JSON schemas live in the producer skills' bundled references — the \`orbit-review\` skill's \`references/run-summary-schema.md\` and the \`orbit-audit-drift\` skill's \`references/run-summary-schema.md\` (shipped alongside each generated skill); this file documents the \`--from-file\` parser's subset of those schemas (the fields it reads to construct virtual markers).
 
 ## Expected file format
 
@@ -137,8 +137,9 @@ This format MUST match what \`/orbit:review\` writes to \`orbit/changes/<name>/.
 {
   "command": "review",
   "timestamp": "<ISO-8601>",
-  "change": "<change-name>",
-  "mode": "proposal" | "system",
+  "change": "<change-name>",              // null in architecture mode (a doc field names the reviewed doc)
+  "doc": "<doc-name, architecture mode only>",
+  "mode": "proposal" | "system" | "architecture",
   "iteration": <integer>,
   "findings_summary": {
     "critical": <int>,
@@ -323,7 +324,7 @@ This schema inherits the 6-field **universal spine** from \`orbit-conventions\`'
 
 - \`command\` (here: \`"address-reviews"\`)
 - \`timestamp\` (ISO-8601 UTC; JSON field \`YYYY-MM-DDTHH:MM:SSZ\`; filename \`<TS>\` token \`YYYY-MM-DDTHH-MM-SSZ\` with colons replaced by hyphens for filesystem safety)
-- \`change\` (change name string for change-scoped; \`null\` for whole-repo / cross-change scope)
+- \`change\` (change name string for change-scoped; \`null\` for whole-repo / cross-change scope AND for architecture scope — the architecture-scoped log additionally carries a \`doc\` field carried from the source \`review-architecture-*.json\` emit)
 - \`final_assessment\` (narrative)
 - \`next_recommended\` (verbatim recommendation, e.g., \`"re-run /orbit:review --as proposal to confirm convergence"\`)
 - \`kind: "editorial"\` (address-reviews is an editorial command per the kind taxonomy)
@@ -336,7 +337,8 @@ The schema below documents per-command extensions ADDED to that spine (\`source\
 {
   "command": "address-reviews",
   "timestamp": "<ISO-8601>",
-  "change": "<change-name string for change-scoped; null for whole-repo / cross-change>",
+  "change": "<change-name string for change-scoped; null for whole-repo / cross-change AND architecture scope>",
+  "doc": "<architecture scope only: the doc carried from the source review-architecture emit; absent otherwise>",
   "final_assessment": "<short narrative of the resolution outcome>",
   "next_recommended": "<suggested next command, e.g., 're-run /orbit:review --as proposal to confirm convergence'>",
   "kind": "editorial",

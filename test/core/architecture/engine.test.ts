@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as os from 'node:os';
-import { parseArchitectureDoc, listArchitectureDocs, sliceStageSection } from '../../../src/core/architecture/parser.js';
+import { parseArchitectureDoc, listArchitectureDocs, loadArchitectureDoc, sliceStageSection } from '../../../src/core/architecture/parser.js';
 import { computeStageStates, scanCitations } from '../../../src/core/architecture/state.js';
 import { validateArchitectureDoc, resolveArchitectureCitation } from '../../../src/core/architecture/validate.js';
 import { ArchitectureCommand } from '../../../src/commands/architecture.js';
@@ -257,6 +257,42 @@ describe('computed stage state', () => {
     fs.mkdirSync(noCite, { recursive: true });
     fs.writeFileSync(path.join(noCite, '.openspec.yaml'), 'schema: spec-driven\n');
     expect(scanCitations('.', 'arc').size).toBe(0);
+  });
+});
+
+// ---- Doc-identity containment (traversal/alias rejection) --------------------
+
+describe('doc identity is a filename stem', () => {
+  it('rejects traversal and alias names in load/show/validate', () => {
+    writeDoc('arc', PARSEABLE_DOC);
+    // A file outside orbit/architecture/ must be unreachable by any name spelling.
+    fs.writeFileSync(path.join(tmpDir, 'OUTSIDE.md'), '# not an architecture doc\n');
+    for (const name of ['../../OUTSIDE', '../OUTSIDE', 'subdir/../arc', './arc', '..', 'a/b']) {
+      expect(loadArchitectureDoc('.', name)).toBeNull();
+      expect(() => new ArchitectureCommand().show(name, undefined, {})).toThrow(/No architecture doc named/);
+      expect(() => new ArchitectureCommand().validate(name, {})).toThrow(/No architecture doc named/);
+    }
+    // The canonical stem still loads (incl. stems with single dots, e.g. version numbers).
+    expect(loadArchitectureDoc('.', 'arc')).not.toBeNull();
+  });
+
+  it('citation resolution rejects alias spellings at the doc level', () => {
+    writeDoc('arc', PARSEABLE_DOC);
+    const r = resolveArchitectureCitation('.', { doc: 'subdir/../arc', stage: 'd1-first' });
+    expect(r.ok).toBe(false);
+    if (!r.ok) expect(r.level).toBe('doc');
+  });
+
+  it('metadata schema rejects path-shaped doc names and non-kebab stage ids', async () => {
+    const { writeChangeMetadata } = await import('../../../src/utils/change-metadata.js');
+    const dir = path.join(tmpDir, 'orbit', 'changes', 'bad-cite');
+    fs.mkdirSync(dir, { recursive: true });
+    expect(() =>
+      writeChangeMetadata(dir, { schema: 'spec-driven', architecture: { doc: '../escape', stage: 'd1-first' } })
+    ).toThrow(/filename stem/);
+    expect(() =>
+      writeChangeMetadata(dir, { schema: 'spec-driven', architecture: { doc: 'arc', stage: 'Not A Stage' } })
+    ).toThrow(/kebab-case/);
   });
 });
 

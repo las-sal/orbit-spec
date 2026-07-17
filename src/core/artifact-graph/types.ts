@@ -144,8 +144,19 @@ export const ChangeMetadataSchema = z.object({
   // dangling doc vs dangling stage); re-pointable by hand-edit. Absence = unlinked.
   architecture: z
     .object({
-      doc: z.string().min(1, { message: 'architecture.doc is required when the field is present' }),
-      stage: z.string().min(1, { message: 'architecture.stage is required when the field is present' }),
+      // doc is a FILENAME STEM (canonical identity) — never a path. Separators and
+      // traversal would let validation and the state scan disagree on one doc.
+      doc: z
+        .string()
+        .min(1, { message: 'architecture.doc is required when the field is present' })
+        .refine((v) => !/[\\/]/.test(v) && !v.startsWith('.') && !v.includes('..'), {
+          message: 'architecture.doc must be a filename stem (no path separators, no traversal segments)',
+        }),
+      stage: z
+        .string()
+        .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, {
+          message: 'architecture.stage must be a kebab-case stage id',
+        }),
     })
     .optional(),
 
