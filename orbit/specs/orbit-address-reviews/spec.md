@@ -230,7 +230,7 @@ The system SHALL automatically apply ripple-affected edits to in-scope files whe
 
 The cascade IN set is defined by exclusion. The OUT list captures four lifecycle-invariant categories — each entry is OUT for a structural workflow reason, not for a "this might be unsafe" heuristic. Files NOT matching any OUT category are IN, regardless of extension (`.py`, `.swift`, `.c`, `.sh`, `.md`, configs, dotfiles — all eligible if ripple-flagged).
 
-- **OUT — change-dir audit trail**: `orbit/changes/<name>/.orbit-runs/*` and `orbit/.orbit-runs/*`. Audit-trail files; editing would corrupt the workflow's own record. NEVER edited by cascade.
+- **OUT — audit trail (all four `.orbit-runs/` locations)**: `orbit/changes/<name>/.orbit-runs/*`, `orbit/.orbit-runs/*`, `orbit/explore/<name>/.orbit-runs/*`, and `orbit/architecture/.orbit-runs/*` (D-arc Stage D2: the architecture trail is the evidence review standing depends on; the explore trail closes the same pre-existing gap). Audit-trail files; editing would corrupt the workflow's own record. NEVER edited by cascade.
 - **OUT — baseline specs**: `orbit/specs/<capability>/spec.md`. Baseline mutations flow through the proposal cycle (`/orbit:propose` → delta spec → `/orbit:archive` triggers `sync-specs` to propagate). Cascade refuses direct baseline edits; the appropriate action is to add a delta in the current change's `specs/<capability>/spec.md`.
 - **OUT — cross-change directories (active and archived)**: `orbit/changes/<other-name>/*` (other active changes' directories) AND `orbit/changes/archive/*` (any archived change, regardless of date prefix). Change-isolation invariant for active changes; immutable-history invariant for archived changes. Cascade never edits either, even when the current change's ripple-flag set surfaces a path inside one. The corresponding scenario `Cascade respects current-change scope only` documents both cases.
 - **OUT — safe-exclusions**: `.git/`, `node_modules/`, `dist/`, `build/`. Universal "never edit anywhere" set.
@@ -260,7 +260,7 @@ The cascade IN set is defined by exclusion. The OUT list captures four lifecycle
 
 #### Scenario: Cascade skips .orbit-runs/ audit trail
 
-- **WHEN** a finding's ripple-flag set includes any path under `orbit/changes/<name>/.orbit-runs/` or `orbit/.orbit-runs/`
+- **WHEN** a finding's ripple-flag set includes any path under `orbit/changes/<name>/.orbit-runs/`, `orbit/.orbit-runs/`, `orbit/explore/<name>/.orbit-runs/`, or `orbit/architecture/.orbit-runs/`
 - **THEN** the cascade SKIPS that file (it's audit-trail; editing would corrupt the workflow's own record); the resolution log records the path under `ripple_cascade.flagged_not_applied` with reason `audit-trail file; cascade skipped by policy`
 
 #### Scenario: Cascade skips baseline orbit/specs/ — guides user to add a delta
@@ -503,3 +503,17 @@ Repos carrying address-reviews logs emitted before this field split retain the v
 
 - **WHEN** address-reviews walks 5 findings: 1 stale, 2 trivial fix, 1 decision-required-with-fork, 1 decision-required-without-fork
 - **THEN** only the 1 fork-triggered finding's resolution entry contains `recommendation_fork`; the other 4 entries omit the field entirely (consumers MUST treat absence as "no fork")
+
+### Requirement: Architecture-scoped resolution logs
+
+The resolution log SHALL land in the architecture trail when the walked findings are
+architecture-scoped: when `--from-file` points into `orbit/architecture/.orbit-runs/` (a
+`review-architecture-*.json` emit), the resulting `address-reviews-<TS>.json` is written to
+`orbit/architecture/.orbit-runs/` (no change positional exists for architecture scope; routing
+the log to the project-wide location would split the architecture evidence chain the review
+standing depends on — D-arc Stage D2).
+
+#### Scenario: Architecture findings walk emits to the architecture trail
+
+- **WHEN** `/orbit:address-reviews --from-file orbit/architecture/.orbit-runs/review-architecture-<TS>.json` completes its walk
+- **THEN** the resolution log lands at `orbit/architecture/.orbit-runs/address-reviews-<TS>.json` with `change: null` and the `doc` carried from the source emit

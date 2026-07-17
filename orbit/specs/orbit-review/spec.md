@@ -2,26 +2,31 @@
 
 ## Purpose
 
-The unified `/orbit:review` command — editorial review of an OpenSpec change in either proposal mode (pre-apply, 9 passes over artifacts) or system mode (post-apply, `verify-change` as Pass 0 + 6 system-wide passes). Both modes share the 3-dimension scorecard (Completeness / Correctness / Coherence), the severity ladder (CRITICAL / WARNING / SUGGESTION), pushback discipline, and `.orbit-runs/` persistence. Generates findings but does not resolve them; resolution flows through `/orbit:address-reviews`.
+The unified `/orbit:review` command — editorial review of an OpenSpec change in proposal mode (pre-apply, 9 passes over artifacts) or system mode (post-apply, `verify-change` as Pass 0 + 6 system-wide passes), or of an architecture doc in architecture mode (a doc under `orbit/architecture/`, six passes, no gate). All modes share the 3-dimension scorecard (Completeness / Correctness / Coherence), the severity ladder (CRITICAL / WARNING / SUGGESTION), pushback discipline, and `.orbit-runs/` persistence. Generates findings but does not resolve them; resolution flows through `/orbit:address-reviews`.
 ## Requirements
 ### Requirement: Review command available with `--as` mode flag
 
-The system SHALL expose a single `/orbit:review` command that runs an editorial review of an OpenSpec change. The `--as proposal` flag reviews pre-implementation artifacts (proposal/design/specs/tasks); the `--as system` flag reviews the whole product state after a change has been applied.
+The system SHALL expose a single `/orbit:review` command that runs an editorial review. The `--as proposal` flag reviews a change's pre-implementation artifacts (proposal/design/specs/tasks); the `--as system` flag reviews the whole product state after a change has been applied; the `--as architecture` flag reviews an architecture doc (the positional resolves to a doc name under `orbit/architecture/`, not a change name — D-arc Stage D2).
 
 #### Scenario: Invoke with change name and explicit mode
 
 - **WHEN** the user invokes `/orbit:review <change-name> --as proposal` or `/orbit:review <change-name> --as system`
 - **THEN** the command reads the change's artifacts and runs the appropriate set of passes for that mode
 
+#### Scenario: Invoke architecture mode with doc name
+
+- **WHEN** the user invokes `/orbit:review --as architecture <doc-name>`
+- **THEN** the command resolves `<doc-name>` against `orbit/architecture/` (prompting via `AskUserQuestion` over parseable docs when omitted or ambiguous) and runs the architecture passes; a `<doc-name>` resolving to a LEGACY doc (zero stage-prefixed headings) is an error suggesting retrofit, and one resolving to a MALFORMED doc (fails `orbit architecture validate`'s near-miss rule) is an error naming the grammar violation — architecture mode requires a parseable doc
+
 #### Scenario: Invoke without change name
 
-- **WHEN** the user invokes `/orbit:review` with no argument
+- **WHEN** the user invokes `/orbit:review` with no argument (proposal/system context)
 - **THEN** the command runs `orbit list --json`, presents the active changes via `AskUserQuestion`, and uses the user's selection as the change scope
 
 #### Scenario: Mode inference when `--as` omitted
 
 - **WHEN** the user invokes `/orbit:review <change-name>` without `--as`
-- **THEN** the command infers the mode from `tasks.md` state: ALL task boxes unchecked → `proposal`; all tasks checked and code exists → `system`; ambiguous (mixed checked/unchecked, or checked without visible code changes) → prompt the user via `AskUserQuestion` to pick; the inferred mode is shown in the report header
+- **THEN** the command infers the mode from `tasks.md` state: ALL task boxes unchecked → `proposal`; all tasks checked and code exists → `system`; ambiguous (mixed checked/unchecked, or checked without visible code changes) → prompt the user via `AskUserQuestion` to pick; the inferred mode is shown in the report header. Architecture mode is NEVER inferred — it requires the explicit `--as architecture` flag (a positional that happens to match a doc name does not trigger it)
 
 ### Requirement: Proposal mode runs nine passes
 
@@ -127,7 +132,7 @@ The system SHALL roll all passes (mode-specific) into a 3-dimension scorecard (C
 
 ### Requirement: Final assessment phrasings depend on mode
 
-The system SHALL emit a final-assessment line in the report using one of the stock phrasings below, with gate text varying by mode. BOTH modes' "no CRITICAL" cases vary on the engine-computed review gate state for the phase — proposal mode on the `review-proposal` gate (`confirm: no-new-findings`; its cadence is declared in `orbit-engine-gates`' spec-driven schema, not restated here), system mode on the `review-system` gate — so the final assessment always renders the computed gate state plus one canonical next command (never a bare "Ready to apply" / "Ready to archive" without a command). orbit-review evaluates ALL proposal- and system-mode convergence branches below over the on-disk trail PLUS a synthetic pass for the run currently completing (per the `Final assessment counts the current pass (as-of-completion, both modes)` scenario), so each branch's "exists / most recent / latest" test includes the active run even though its emit is not yet on disk. Per `orbit-engine-gates`' v1 freshness rule a `review-proposal` pass never goes stale (no pre-apply artifact-changing event), so proposal mode has no stale state. System-mode "no CRITICAL" cases additionally vary on the external-review state for the change — orbit-review SHALL inspect both the most recent `external-system-*.md` file's content (for findings presence) AND any `address-reviews-*.json` whose `source_path` references that external file (for resolution status), to determine which of five convergence states applies: (1) no prior external, (2) external clean, (3) external resolved via address-reviews, (4) external present with unresolved findings, (5) external stale relative to artifacts. These five states are EXTERNAL-DIMENSION rendering buckets layered on the engine's base `review-system` gate verdict: the Path A / Path B `gate review-system PASSED` phrasings apply ONLY when `orbit-engine-gates` reports the gate PASSED — BOTH full ordered-slot coverage (including the leading `in-context` slot preceding the external) AND the confirm predicate (`findings-resolved`: the external pass yielded 0 CRITICAL and all its findings are resolved). When the external has converged on the external dimension but the engine's verdict is still unpassed, the assessment defers to the engine-computed gate state plus canonical next command, routed by WHY it is unpassed: a missing ordered SLOT → the `System mode — external converged but gate not yet passed on ordered-slot grounds` scenario (an in-context command), while a failed confirm PREDICATE (a resolved-but-CRITICAL external) → the `System mode — external resolved but carried a CRITICAL` scenario (a fresh external). When BOTH hold, the missing slot takes precedence (clause (a) before clause (c)), so the ordered-slot scenario governs. The state determination over the on-disk audit trail is deterministic and matches `orbit-engine-gates`' reviewed-gate state computation; orbit-review's final-assessment rendering additionally folds in the synthetic current-run pass (above) — itself a deterministic computation over the documented inputs, distinct from the engine's on-disk-only computation that backs `orbit status` / `orbit instructions`. The skill never composes a recommendation from SUBJECTIVE judgment: every phrasing is the deterministic rendering of a computed state. All phrasings are SINGLE-VOICED per `orbit-engine-gates`' single-voiced recommendation requirement: one canonical next command (full invocation with flags), no advertised alternatives or skip paths — overrides happen only at the gated command's inflection prompt. Rendered next-command labels follow `orbit-engine-gates`' eligibility-phrasing rule (D-arc Stage D1): the label is `Ready when you are:` — never an imperative `Next:` — with ` — user-invoked` appended when the recommended command enters a consent-marked phase (`/orbit:apply`, `/orbit:archive` in `spec-driven`).
+The system SHALL emit a final-assessment line in the report using one of the stock phrasings below for the two CHANGE-REVIEW modes (`--as proposal`, `--as system`), with gate text varying by mode; the `--as architecture` mode is NOT covered by this requirement — its gate-less final assessment is specified by the `Architecture-mode final assessment has no gate` requirement (D-arc Stage D2). BOTH modes' "no CRITICAL" cases vary on the engine-computed review gate state for the phase — proposal mode on the `review-proposal` gate (`confirm: no-new-findings`; its cadence is declared in `orbit-engine-gates`' spec-driven schema, not restated here), system mode on the `review-system` gate — so the final assessment always renders the computed gate state plus one canonical next command (never a bare "Ready to apply" / "Ready to archive" without a command). orbit-review evaluates ALL proposal- and system-mode convergence branches below over the on-disk trail PLUS a synthetic pass for the run currently completing (per the `Final assessment counts the current pass (as-of-completion, both modes)` scenario), so each branch's "exists / most recent / latest" test includes the active run even though its emit is not yet on disk. Per `orbit-engine-gates`' v1 freshness rule a `review-proposal` pass never goes stale (no pre-apply artifact-changing event), so proposal mode has no stale state. System-mode "no CRITICAL" cases additionally vary on the external-review state for the change — orbit-review SHALL inspect both the most recent `external-system-*.md` file's content (for findings presence) AND any `address-reviews-*.json` whose `source_path` references that external file (for resolution status), to determine which of five convergence states applies: (1) no prior external, (2) external clean, (3) external resolved via address-reviews, (4) external present with unresolved findings, (5) external stale relative to artifacts. These five states are EXTERNAL-DIMENSION rendering buckets layered on the engine's base `review-system` gate verdict: the Path A / Path B `gate review-system PASSED` phrasings apply ONLY when `orbit-engine-gates` reports the gate PASSED — BOTH full ordered-slot coverage (including the leading `in-context` slot preceding the external) AND the confirm predicate (`findings-resolved`: the external pass yielded 0 CRITICAL and all its findings are resolved). When the external has converged on the external dimension but the engine's verdict is still unpassed, the assessment defers to the engine-computed gate state plus canonical next command, routed by WHY it is unpassed: a missing ordered SLOT → the `System mode — external converged but gate not yet passed on ordered-slot grounds` scenario (an in-context command), while a failed confirm PREDICATE (a resolved-but-CRITICAL external) → the `System mode — external resolved but carried a CRITICAL` scenario (a fresh external). When BOTH hold, the missing slot takes precedence (clause (a) before clause (c)), so the ordered-slot scenario governs. The state determination over the on-disk audit trail is deterministic and matches `orbit-engine-gates`' reviewed-gate state computation; orbit-review's final-assessment rendering additionally folds in the synthetic current-run pass (above) — itself a deterministic computation over the documented inputs, distinct from the engine's on-disk-only computation that backs `orbit status` / `orbit instructions`. The skill never composes a recommendation from SUBJECTIVE judgment: every phrasing is the deterministic rendering of a computed state. All phrasings are SINGLE-VOICED per `orbit-engine-gates`' single-voiced recommendation requirement: one canonical next command (full invocation with flags), no advertised alternatives or skip paths — overrides happen only at the gated command's inflection prompt. Rendered next-command labels follow `orbit-engine-gates`' eligibility-phrasing rule (D-arc Stage D1): the label is `Ready when you are:` — never an imperative `Next:` — with ` — user-invoked` appended when the recommended command enters a consent-marked phase (`/orbit:apply`, `/orbit:archive` in `spec-driven`).
 
 #### Scenario: Proposal mode — at least one CRITICAL
 
@@ -285,7 +290,7 @@ The system SHALL support a `--skip-verify` flag in system mode to bypass Pass 0 
 
 ### Requirement: `--fresh` runs pass work in a clean execution context
 
-The system SHALL support a `--fresh` flag (both modes) that runs the main pass work in a fresh execution context (e.g., a clean-context subagent) rather than the invoking conversation — mitigating anchoring when the invoking context authored or extensively discussed the artifacts under review. Findings, scorecard rollup, and run-summary persistence are unchanged; `--fresh` affects only where pass work executes. This is the lighter-weight alternative the system-mode stock phrasings offer alongside `/orbit:review-external` (same model, fresh context, no cross-AI handoff).
+The system SHALL support a `--fresh` flag (all modes — proposal, system, and architecture) that runs the main pass work in a fresh execution context (e.g., a clean-context subagent) rather than the invoking conversation — mitigating anchoring when the invoking context authored or extensively discussed the artifacts under review. Findings, scorecard rollup, and run-summary persistence are unchanged; `--fresh` affects only where pass work executes. This is the lighter-weight alternative the system-mode stock phrasings offer alongside `/orbit:review-external` (same model, fresh context, no cross-AI handoff).
 
 #### Scenario: Fresh pass execution
 
@@ -317,16 +322,21 @@ The system SHALL verify each finding against current state before reporting it, 
 
 ### Requirement: Internal run summary persisted per mode
 
-The system SHALL write a JSON run summary to `orbit/changes/<change-name>/.orbit-runs/review-<mode>-<TS>.json` after each invocation, where `<mode>` is `proposal` or `system`.
+The system SHALL write a JSON run summary after each invocation: to `orbit/changes/<change-name>/.orbit-runs/review-<mode>-<TS>.json` for `proposal` and `system` modes, and to `orbit/architecture/.orbit-runs/review-architecture-<TS>.json` for `architecture` mode (the architecture trail location per `orbit-architecture-engine`; the emit's `change` field is `null` and a `doc` field names the reviewed doc; per arc ruling R-d-9(b) the architecture-mode emit also carries the structured `handoff` section whose shape is owned by `orbit-architect`).
 
 #### Scenario: Summary written after run
 
 - **WHEN** the command completes
-- **THEN** a JSON file is created at `.orbit-runs/review-<mode>-<ISO-timestamp>.json` containing the command name, timestamp, change name, mode, iteration number, findings summary (counts by severity and by pass), and a `findings[]` array of full per-finding entries (severity / title / file / line / recommendation, plus `recommendation_options` when disjunctive) per the skill's `references/run-summary-schema.md` — the shape `/orbit:address-reviews` maps to virtual markers on ingest
+- **THEN** a JSON file is created at the mode's persistence location containing the command name, timestamp, change name (or null + `doc` for architecture mode), mode, iteration number, findings summary (counts by severity and by pass), and a `findings[]` array of full per-finding entries (severity / title / file / line / recommendation, plus `recommendation_options` when disjunctive) per the skill's `references/run-summary-schema.md` — the shape `/orbit:address-reviews` maps to virtual markers on ingest
+
+#### Scenario: Architecture-mode summary in the architecture trail
+
+- **WHEN** `/orbit:review --as architecture d-arc-arbitered-flow` completes
+- **THEN** the summary lands at `orbit/architecture/.orbit-runs/review-architecture-<TS>.json` with `change: null`, `doc: "d-arc-arbitered-flow"`, `mode: "architecture"`, and the `handoff` section
 
 ### Requirement: Iteration note when prior runs exist
 
-The system SHALL include a one-sentence iteration note in the report when prior run summaries exist for the same change and mode.
+The system SHALL include a one-sentence iteration note in the report when prior run summaries exist for the same change and mode; in architecture mode — where summaries share the `orbit/architecture/.orbit-runs/` trail — iteration is anchored to prior `review-architecture-*.json` emits whose `doc` field matches the doc under review.
 
 #### Scenario: Subsequent run on same change in same mode
 
@@ -337,6 +347,11 @@ The system SHALL include a one-sentence iteration note in the report when prior 
 
 - **WHEN** the command runs and `.orbit-runs/` contains no prior `review-<mode>-<TS>.json` matching the current mode
 - **THEN** the report omits the iteration note, or notes "First proposal-mode run for this change." / "First system-mode run for this change."
+
+#### Scenario: Architecture-mode iteration anchored per doc
+
+- **WHEN** an architecture-mode review runs and the architecture trail contains prior `review-architecture-*.json` emits, some with a matching `doc` field and some for other docs
+- **THEN** only the matching-`doc` emits count toward the iteration number and the iteration note
 
 ### Requirement: Graceful degradation on missing inputs
 
@@ -375,7 +390,7 @@ recommendation_options: [
 - `body`: the concrete option text (the action the user would take if they pick this option).
 - Array MUST contain ≥ 2 entries when present (single-option arrays defeat the purpose; the regular `recommendation` field carries single recommendations).
 
-**When to emit** (normative — applies to all 9 proposal-mode passes + 7 system-mode passes; pass-specific behavior is enumerated in scenarios below where helpful):
+**When to emit** (normative — applies to all passes in all modes: 9 proposal-mode + 7 system-mode + 6 architecture-mode passes (D-arc Stage D2; architecture-mode findings are ingestible by `/orbit:address-reviews` exactly like other internal review JSON, so their disjunctive recommendations get the same structured affordance); pass-specific behavior is enumerated in scenarios below where helpful):
 
 - Emit `recommendation_options` when the finding's recommendation genuinely requires a choice — multiple defensible paths, each producing a different outcome (e.g., "file a follow-up issue" vs. "extend the current change's scope").
 - Do NOT emit `recommendation_options` for findings with a single concrete action ("rename X to Y", "remove the duplicate scenario") — those use the prose `recommendation` field alone.
@@ -418,3 +433,40 @@ recommendation_options: [
 - **WHEN** an editorial pass would emit a finding with `recommendation_options` where any entry is missing the required `label` or `body` field, or either field is an empty string
 - **THEN** the producer SHALL EITHER (a) populate the missing/empty field with a meaningful value OR (b) drop the malformed entry (re-check the ≥ 2-entry rule afterward) OR (c) refuse to emit. The structured field's contract is "every entry has non-empty label AND non-empty body"; emitting malformed entries is a producer bug.
 
+### Requirement: Architecture mode runs six passes
+
+The system SHALL run six architecture-mode passes when invoked `--as architecture` (the pass set
+dogfooded by hand on the D-arc, 2026-07-08): (1) **Cohesion / traceability** — rulings, stages,
+and premise agree; stage charters trace to goals; (2) **Completeness / exit-criteria** — every
+stage carries falsifiable exit criteria; charter items are covered by stage content; (3)
+**Dependencies / sequencing** — `Depends-on:` declarations match the sequencing prose and no
+cycle exists; (4) **Layer-fit** — content sits at the right tier (arc-level rulings vs
+stage-level detail, per the arc's ownership rule); (5) **Route-level alternatives** — major
+directions record what was considered and rejected; (6) **Economy self-audit** — the doc's
+read-cost story holds (what a session must load, what the engine renders vs prose re-narrates).
+The target is an architecture DOC, not a change; findings cite `<doc>.md:line` and roll into the
+shared 3-dimension scorecard (passes 1–3 → Correctness, 2 → Completeness, 4–6 → Coherence).
+`--parallel` is accepted but is a no-op in architecture mode (architecture docs are small; the
+six passes run in one context), noted in the report like other wrong-mode flags; `--fast` and
+`--focus <lens>` are likewise accepted but no-ops (all six passes run — no per-mode subset or
+lens table is defined for architecture mode), noted in the report the same way.
+
+#### Scenario: Architecture review runs against a doc
+
+- **WHEN** the user invokes `/orbit:review --as architecture d-arc-arbitered-flow`
+- **THEN** the six passes run against `orbit/architecture/d-arc-arbitered-flow.md` (plus `orbit architecture status` for computed-state cross-checks) and findings carry file:line citations into the doc
+
+### Requirement: Architecture-mode final assessment has no gate
+
+The architecture-mode final assessment SHALL render findings counts and ONE canonical next
+command without referencing any gate: no gate exists over architecture docs (review standing
+without a gate — D-arc D-d2-5), so the assessment never says PASSED/UNPASSED of a gate. With
+findings: `X critical / Y warning(s). Ready when you are: /orbit:address-reviews --from-file
+<the just-written review-architecture emit>.` All clear: `No findings. The architecture trail
+records this pass.` Labels follow D1's eligibility phrasing; findings are ingestible by
+`/orbit:address-reviews` exactly like other internal review JSON.
+
+#### Scenario: No gate vocabulary in architecture mode
+
+- **WHEN** an architecture-mode review completes with zero findings
+- **THEN** the final assessment mentions no gate state and recommends no lifecycle command — the trail records the pass and the turn ends at the readout

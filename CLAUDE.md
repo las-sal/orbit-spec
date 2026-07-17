@@ -135,6 +135,31 @@ resolved, incl. the single-voiced fall-through at the archive seam) → in-conte
 user-typed, zero consent prompts, gate PASSED, fingerprints 8/8, `consent: "user-invoked"`
 recorded.
 
+**Stage D2 (d2-architect) is COMPLETE and ARCHIVED**
+(`orbit/changes/archive/2026-07-17-d2-architect/`): the engine has a **THIRD declaration tier —
+architecture** (cross-change program) above schema (per-change flow). Parseable docs
+(`### Stage <id> — <title>` + optional `Depends-on:`/`Complete:` slots; fence-aware; the
+NEAR-MISS rule — grammar failures are MALFORMED naming the line, never silently legacy; doc
+identity is a contained filename stem, traversal rejected); stage state COMPUTED from disk
+(in-change > exploring > quiescent > premised; `complete` ONLY when quiescent AND user-ratified;
+ratified marks on any other observation render INCONSISTENT); `architecture: {doc, stage}`
+metadata citations with two-level dangling validation owned by `orbit validate <change>`;
+`orbit architecture status|show|validate` (bucketed `--json`; `show` slices ONE stage). The arc
+doc was retrofitted in place as the first parseable instance (hand-maintained state lines
+DELETED — the R-d-4 subtraction; archived D1 backfilled with its citation). The 16th workflow
+`/orbit:architect` (never a gatekeeper; completion-ratification AskUserQuestion); `/orbit:review
+--as architecture` (six passes, NO gate, mode-first body); audit-drift architecture-staleness
+checks (a)–(d); the FOURTH trail `orbit/architecture/.orbit-runs/`; R-d-9(b) `handoff` sections
+on the new emits. Baseline **14 → 16** (`orbit-architecture-engine` + `orbit-architect` ADDED;
+9 capabilities modified); surface **15 → 16**. The cycle: 6-pass proposal cadence (39 findings,
+all resolved; R-d-10 ratified from its suggestion-only tail — issue #8); apply via a recorded
+`gate_overridden` proceed-anyway (R-d-10's sanctioned interim path); system cadence in-context →
+**external (GPT-5 Codex ×2**, iter 1: 2 CRITICAL incl. the mode-first restructure + exit-criterion-3
+evidence; iter 2: 0 CRITICAL incl. the path-traversal catch) → fresh ×2 (schema-reference root
+cause; then CLEAN with a byte-identical fresh-init check) → in-context confirm — 17 system-phase
+findings, all resolved. **1712 tests green.** Position is engine-computed from here on:
+`orbit architecture status` renders d2 quiescent-awaiting-ratification post-archive.
+
 ## Source of truth for the plan
 
 - `orbit/architecture/fork-and-orbify.md` — the COMPLETED fork-program architecture (historical record; relocated from orbit/explore/ 2026-07-08). Decisions **D1–D15**

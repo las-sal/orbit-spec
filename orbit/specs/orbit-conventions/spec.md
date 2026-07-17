@@ -103,7 +103,7 @@ The system SHALL define `orbit/explore/<name>/` as the staging area for `/orbit:
 #### Scenario: Created by explore in named/crystallized modes
 
 - **WHEN** `/orbit:explore` creates a named exploration
-- **THEN** the directory `orbit/explore/<name>/` is created with an `explore.md` file
+- **THEN** the directory `orbit/explore/<name>/` is created with an `explore.md` file and the minimal `.openspec.yaml` metadata file (D-arc Stage D2; contents per `orbit-explore-modifications`)
 
 #### Scenario: Sibling files supported
 
@@ -113,7 +113,7 @@ The system SHALL define `orbit/explore/<name>/` as the staging area for `/orbit:
 #### Scenario: Promoted via propose
 
 - **WHEN** `/orbit:propose <name>` consumes a staging directory
-- **THEN** the entire `orbit/explore/<name>/` directory is moved to `orbit/changes/<name>/`
+- **THEN** the `orbit/explore/<name>/` directory's contents are moved to `orbit/changes/<name>/` — EXCEPT the staged `.openspec.yaml` (D-arc Stage D2), which is MERGED into the change's freshly-written metadata via the helpers and then discarded, never bulk-moved (per `orbit-propose-modifications`' merge requirement)
 
 ### Requirement: `explore.md` five-section format
 
@@ -136,8 +136,9 @@ The system SHALL use one of the following `.orbit-runs/` persistence locations, 
 - **`orbit/changes/<change-name>/.orbit-runs/`** — per-change iteration history for active changes. Used by editorial commands (review, address-reviews, audit-drift inline), workflow commands operating on a named change (propose, new, continue, ff, apply, verify), lifecycle commands (archive), and review-external T0. The primary persistence location.
 - **`orbit/explore/<name>/.orbit-runs/`** — per-exploration iteration history for named-mode `/orbit:explore` sessions BEFORE the exploration is promoted to a formal change via `/orbit:propose`. Moves into `orbit/changes/<name>/.orbit-runs/` when `/orbit:propose <name>` consumes the staging directory (per the orbit-propose consume-mode convention).
 - **`orbit/.orbit-runs/`** — project-scope iteration history for commands that have no change scope (currently: `/orbit:audit-drift` invoked with no `<change-name>` argument, i.e., project-wide standalone). Created if it doesn't exist.
+- **`orbit/architecture/.orbit-runs/`** — architecture-scoped iteration history (D-arc Stage D2): `/orbit:architect` emits and `/orbit:review --as architecture` emits, one directory shared by all architecture docs (each emit names its doc). Created if it doesn't exist; NOT moved by change archiving (architecture docs persist across changes).
 
-In all three locations, files are committed (the directory SHOULD NOT be in `.gitignore`) and follow the same naming pattern (`<command>-<ISO-timestamp>.json` for internal-run JSONs; `external-<as>-<ISO-timestamp>.md` for external-review files).
+In all four locations, files are committed (the directory SHOULD NOT be in `.gitignore`) and follow the same naming pattern (`<command>-<ISO-timestamp>.json` for internal-run JSONs; `external-<as>-<ISO-timestamp>.md` for external-review files).
 
 #### Scenario: Active-change emit goes to changes/<name>/.orbit-runs/
 
@@ -149,6 +150,11 @@ In all three locations, files are committed (the directory SHOULD NOT be in `.gi
 - **WHEN** `/orbit:explore foo` (named mode) writes its run-summary JSON at a conversation boundary
 - **THEN** the file lands at `orbit/explore/foo/.orbit-runs/explore-<TS>.json` (NOT `orbit/changes/foo/.orbit-runs/`, since `foo` is still in the staging area pre-`/orbit:propose`)
 
+#### Scenario: Architecture-scoped emit goes to orbit/architecture/.orbit-runs/
+
+- **WHEN** `/orbit:architect <doc>` or `/orbit:review --as architecture <doc>` writes its run-summary JSON
+- **THEN** the file lands at `orbit/architecture/.orbit-runs/<command or review-architecture>-<TS>.json` with `change: null` and a `doc` field naming the architecture doc
+
 #### Scenario: Project-wide standalone emit goes to orbit/.orbit-runs/
 
 - **WHEN** `/orbit:audit-drift` runs with no change argument and writes its run-summary JSON
@@ -159,10 +165,10 @@ In all three locations, files are committed (the directory SHOULD NOT be in `.gi
 - **WHEN** `/orbit:propose foo` (consume mode) moves the staging directory `orbit/explore/foo/` into `orbit/changes/foo/`
 - **THEN** the contents of `orbit/explore/foo/.orbit-runs/` (including any prior `explore-<TS>.json` emits) are preserved and now live at `orbit/changes/foo/.orbit-runs/`; subsequent emits go to the new location
 
-#### Scenario: Committed, not gitignored (all three locations)
+#### Scenario: Committed, not gitignored (all four locations)
 
-- **WHEN** orbit writes a run summary or external-review file to any of the three `.orbit-runs/` locations
-- **THEN** the file is intended to be committed (none of the three directories should be in `.gitignore`); each represents real iteration history
+- **WHEN** orbit writes a run summary or external-review file to any of the four `.orbit-runs/` locations
+- **THEN** the file is intended to be committed (none of the four directories should be in `.gitignore`); each represents real iteration history
 
 #### Scenario: Internal run summary file name pattern
 
@@ -191,7 +197,7 @@ timestamp        string       ISO-8601 UTC; JSON field uses standard colon forma
                               (e.g., `"2026-05-21T13:34:12Z"`). Filename embeds a colon-replaced `<TS>` token
                               `YYYY-MM-DDTHH-MM-SSZ` (e.g., `propose-2026-05-21T13-34-12Z.json`) because
                               colons aren't filesystem-safe across all platforms.
-change           string|null  the change name (or null for project-scope commands)
+change           string|null  the change name (or null for project-scope and architecture-scoped commands)
 final_assessment string       narrative of what just happened (human-readable)
 next_recommended string       verbatim recommendation, suitable for best-effort parse by downstream status readers
 kind             enum         "workflow" | "editorial" | "lifecycle"
@@ -199,7 +205,7 @@ kind             enum         "workflow" | "editorial" | "lifecycle"
 
 Per-kind extensions:
 
-- **`kind: "workflow"`** — emitted by `explore`, `propose`, `new`, `continue`, `ff`, `apply`, `verify`. Per-command extensions are defined in the `orbit-run-summary-emit` capability (e.g., `apply.chunk_complete`, `verify.verdict`, `explore.decisions_captured`). Consent-era `apply` emits additionally carry `consent: "user-invoked" | "prompted"` (per `orbit-lifecycle-consent`).
+- **`kind: "workflow"`** — emitted by `explore`, `propose`, `new`, `continue`, `ff`, `apply`, `verify`, `architect` (D-arc Stage D2; `architect` emits to the architecture trail with `change: null` plus a `doc` extension — shape owned by `orbit-architect`). Per-command extensions are defined in the `orbit-run-summary-emit` capability (e.g., `apply.chunk_complete`, `verify.verdict`, `explore.decisions_captured`). Consent-era `apply` emits additionally carry `consent: "user-invoked" | "prompted"` (per `orbit-lifecycle-consent`).
 - **`kind: "editorial"`** — emitted by `review`, `address-reviews`, `audit-drift`, `review-external`. Per-command extensions include: `iteration` (when applicable to the command — e.g., review iter-N, address-reviews iter-N), `findings_summary` (counts by severity; included when findings are present — i.e., review/address-reviews/audit-drift completion emits; review-external at T0 emits before external findings return and SHALL omit this field), `finding_titles` (array of brief titles; included with `findings_summary`, omitted in the same cases), plus command-specific fields defined in per-skill schema references (`references/run-summary-schema.md`, shipped alongside the generated skill).
 - **`kind: "lifecycle"`** — emitted by `archive` only. Per-command extensions include: `archive_path`, `audit`, `sync_specs` (reports what the archive flow's spec-sync step did, mirroring upstream's archive summary), `unresolved_markers`, `user_decision`, plus other fields defined in the archive skill. Consent-era emits (per `orbit-lifecycle-consent`) additionally carry the flat `consent: "user-invoked" | "prompted"` field.
 
@@ -380,6 +386,11 @@ The system SHALL use stock phrasings for the final-assessment line of review and
   - `No critical issues. Y warning(s) to consider. Ready <gate> (with noted improvements).`
   - `All checks passed. Ready <gate>.`
   where `<gate>` is `/orbit:apply` for `/orbit:review --as proposal`, `/orbit:archive` for `/orbit:review --as system`, and varies per audit-drift invocation context
+
+#### Scenario: Gate-less architecture-mode phrasings (D-arc Stage D2)
+
+- **WHEN** `/orbit:review --as architecture` emits its final-assessment line
+- **THEN** the gate-referencing phrasings above do NOT apply (no gate exists over architecture docs); the line uses the gate-less forms specified in `orbit-review`'s `Architecture-mode final assessment has no gate` requirement (`X critical / Y warning(s). Ready when you are: /orbit:address-reviews --from-file <emit>.` with findings; `No findings. The architecture trail records this pass.` when clean)
 
 ### Requirement: Pushback discipline
 
@@ -666,7 +677,7 @@ The system SHALL classify every skill and command file orbit generates into one 
 
 #### Scenario: Orbit-authored — full ownership
 
-- **WHEN** a generated file's template body has no upstream-derived content (currently `orbit-onboard`, whose body replaces upstream's guided-tour content entirely; the net-new editorial workflows — review, audit-drift, review-external, address-reviews — join this category when they land)
+- **WHEN** a generated file's template body has no upstream-derived content (currently `orbit-onboard`, whose body replaces upstream's guided-tour content entirely; the net-new editorial workflows — review, audit-drift, review-external, address-reviews — which joined at B3; and `orbit-architect`, the fully orbit-authored 16th workflow — D-arc Stage D2)
 - **THEN** the template is fully owned by orbit; orbit's contributors edit it freely; the file uses the `orbit-*` directory naming convention for consistency with siblings even when the body is 100% orbit-authored
 
 #### Scenario: Orbit-modified — upstream body with `# Orbit additions`

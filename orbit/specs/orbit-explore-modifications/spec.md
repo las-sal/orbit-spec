@@ -29,12 +29,12 @@ The system SHALL support three invocation modes: (A) bare — no file; (B) named
 #### Scenario: Mode B — new named exploration
 
 - **WHEN** `/orbit:explore <name>` is invoked and `orbit/explore/<name>/` does not exist
-- **THEN** the command creates the staging directory and writes a stub `explore.md` with the five sections (Premise / Decisions / Open questions / Considered & out / References); ongoing conversation populates the file
+- **THEN** the command creates the staging directory and writes a stub `explore.md` with the five sections (Premise / Decisions / Open questions / Considered & out / References) AND a minimal `orbit/explore/<name>/.openspec.yaml` metadata file (D-arc Stage D2; same metadata genre as changes — base fields `schema: spec-driven` + `created: <ISO-8601>`, mirroring change metadata so the reused change-metadata helpers' schema validation passes unchanged; both are placeholders superseded at promotion, where propose's merge writes fresh `schema`/`created`/`schema_version` values) — carrying the optional `architecture: {doc, stage}` citation when the exploration serves a declared stage (offered when the name or conversation indicates a stage; omitted otherwise, with zero ceremony for standalone explores); ongoing conversation populates the file
 
 #### Scenario: Mode B — resume
 
 - **WHEN** `/orbit:explore <name>` is invoked and `orbit/explore/<name>/explore.md` already exists
-- **THEN** the command reads the existing file for context and resumes the exploration
+- **THEN** the command reads the existing file for context and resumes the exploration; a pre-D2 staging directory lacking `.openspec.yaml` gains it on resume (add-only, citation still optional)
 
 #### Scenario: Mode C — crystallization prompt
 
@@ -49,7 +49,7 @@ The system SHALL support three invocation modes: (A) bare — no file; (B) named
 #### Scenario: Mode C — user accepts name
 
 - **WHEN** the user provides a name in response to the crystallization prompt
-- **THEN** the command creates `orbit/explore/<name>/explore.md`, back-fills the Premise and Decisions sections with what's been discussed, and continues as Mode B
+- **THEN** the command creates `orbit/explore/<name>/explore.md` (and the minimal `.openspec.yaml`, as in Mode B), back-fills the Premise and Decisions sections with what's been discussed, and continues as Mode B
 
 #### Scenario: Mode C — user declines
 

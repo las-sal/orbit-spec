@@ -2,14 +2,14 @@
 
 ## Purpose
 
-Defines the emit-layer that writes per-command `.orbit-runs/<command>-<TS>.json` run-summary JSONs for orbit workflow commands (`explore`, `propose`, `new`, `continue`, `ff`, `apply`, `verify`) plus `/orbit:review-external` at T0 — alongside the existing editorial and lifecycle emit-producing commands. Specifies emit scope (which commands emit, which don't), the workflow-kind JSON shape (extends the universal spine from `orbit-conventions`), emit timing semantics (one-shot vs. multi-turn-phase-boundary vs. conversation-boundary), the wrapper architecture (upstream skill bodies are NOT modified), per-command recommendation logic (propose-shaped vs. artifact-completion-aware; explore maturity grid; apply per-chunk-end with chunk preamble parsing; verify pass/fail mode classification; review-external T0 multi-step prose; audit-drift standalone change-scoped vs. project-wide), and the no-forward-look discipline that keeps emit text scoped to today's behavior.
+Defines the emit-layer that writes per-command `.orbit-runs/<command>-<TS>.json` run-summary JSONs for orbit workflow commands (`explore`, `propose`, `new`, `continue`, `ff`, `apply`, `verify`, `architect`) plus `/orbit:review-external` at T0 — alongside the existing editorial and lifecycle emit-producing commands. Specifies emit scope (which commands emit, which don't), the workflow-kind JSON shape (extends the universal spine from `orbit-conventions`), emit timing semantics (one-shot vs. multi-turn-phase-boundary vs. conversation-boundary), the wrapper architecture (upstream skill bodies are NOT modified), per-command recommendation logic (propose-shaped vs. artifact-completion-aware; explore maturity grid; apply per-chunk-end with chunk preamble parsing; verify pass/fail mode classification; review-external T0 multi-step prose; audit-drift standalone change-scoped vs. project-wide), and the no-forward-look discipline that keeps emit text scoped to today's behavior.
 ## Requirements
 ### Requirement: Emit scope
 
-The following orbit commands SHALL emit `orbit/changes/<name>/.orbit-runs/<command>-<TS>.json` (or `orbit/explore/<name>/.orbit-runs/<command>-<TS>.json` for explore) when invoked. This requirement covers two categories:
+The following orbit commands SHALL emit `orbit/changes/<name>/.orbit-runs/<command>-<TS>.json` (or `orbit/explore/<name>/.orbit-runs/<command>-<TS>.json` for explore, or `orbit/architecture/.orbit-runs/<command>-<TS>.json` for architecture-scoped commands) when invoked. This requirement covers two categories:
 
 - **New emit behavior** (commands that don't emit any run-summary JSON today):
-  - Workflow commands: `/orbit:explore` (named mode only — bare mode does NOT emit), `/orbit:propose`, `/orbit:new`, `/orbit:continue`, `/orbit:ff`, `/orbit:apply`, `/orbit:verify`
+  - Workflow commands: `/orbit:explore` (named mode only — bare mode does NOT emit), `/orbit:propose`, `/orbit:new`, `/orbit:continue`, `/orbit:ff`, `/orbit:apply`, `/orbit:verify`, `/orbit:architect` (D-arc Stage D2; emits to the architecture trail with `change: null` + a `doc` field, shape owned by `orbit-architect`)
   - `/orbit:review-external` at T0 (when the prompt is packaged, before findings return — today it writes only the `.md` prompt file)
 - **Refined existing emit** (already emits today; this change refines the recommendation logic and aligns with the universal spine from orbit-conventions):
   - Standalone `/orbit:audit-drift` (schema documented in the `orbit-audit-drift` skill's `references/run-summary-schema.md`, shipped alongside the generated skill)
@@ -20,11 +20,15 @@ The following commands SHALL NOT emit additional JSONs as part of this change:
 - `/orbit:onboard` — meta walkthrough; no change-state transition
 - `/orbit:sync` (the `orbit-sync-specs` skill) — upstream primitive, unmodified by orbit; no emit behavior is added to it
 
-Existing emit-producing commands (`/orbit:review`, `/orbit:address-reviews`, `/orbit:archive`, inline `/orbit:audit-drift` during archive) continue emitting as today; this change does not modify their emit behavior.
+Existing emit-producing commands (`/orbit:review`, `/orbit:address-reviews`, `/orbit:archive`, inline `/orbit:audit-drift` during archive) continue emitting as today; `/orbit:review`'s architecture mode persists to the architecture trail per `orbit-review`'s per-mode persistence requirement — a location change for that mode, not a new emitter.
 
 #### Scenario: Named-mode /orbit:explore writes explore JSON
 - **WHEN** the user invokes `/orbit:explore foo` (named mode) and the session ends
 - **THEN** the emit-layer writes `orbit/explore/foo/.orbit-runs/explore-<TS>.json`
+
+#### Scenario: /orbit:architect writes to the architecture trail
+- **WHEN** an `/orbit:architect my-program` session reaches a conversation boundary
+- **THEN** the emit-layer writes `orbit/architecture/.orbit-runs/architect-<TS>.json` with `change: null` and `doc: "my-program"`
 
 #### Scenario: Bare-mode /orbit:explore writes no JSON
 - **WHEN** the user invokes `/orbit:explore` without a name argument
@@ -45,7 +49,7 @@ Every workflow-command run-summary JSON (per `Requirement: Emit scope`) SHALL in
 ```
 command          string       identifies which command emitted (matches filename prefix)
 timestamp        string       ISO-8601 UTC; JSON field uses standard colon format `YYYY-MM-DDTHH:MM:SSZ`. Filename embeds a colon-replaced `<TS>` token `YYYY-MM-DDTHH-MM-SSZ` (colons aren't filesystem-safe across all platforms).
-change           string|null  the change name (or null for project-scope commands)
+change           string|null  the change name (or null for project-scope and architecture-scoped commands)
 final_assessment string       narrative of what just happened (human-readable)
 next_recommended string       verbatim recommendation, suitable for best-effort parse by downstream status readers
 kind             enum         "workflow" | "editorial" | "lifecycle"  (always "workflow" for commands in this capability's scope)
@@ -86,6 +90,7 @@ The emit-layer SHALL fire at well-defined moments per command type. Three catego
 
 **Multi-turn conversational commands** — emit at conversation boundaries:
 - `/orbit:explore` (named mode) — emits per `Requirement: Named-mode explore recommendation by maturity` with the timing defined here
+- `/orbit:architect` (D-arc Stage D2) — emits to the architecture trail with the conversation-boundary timing defined here; the emit's shape and extensions are owned by `orbit-architect`
 
 A **conversation boundary** for multi-turn conversational commands is defined as EITHER of (both rules are operational signals the emit-layer can detect at JSON-write time without requiring future-message inspection):
 

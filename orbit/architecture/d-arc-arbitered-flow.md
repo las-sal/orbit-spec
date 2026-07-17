@@ -531,3 +531,18 @@ ratification; D5 mechanizes (b) and (c):
   `orbit/architecture/.orbit-runs/review-architecture-2026-07-16T19-42-13Z.json` (no findings;
   `change: null`, `doc`, `handoff` carried). All four D2 exit criteria are now met with on-disk
   evidence.
+- **2026-07-17 — D2 ARCHIVED (baseline 14 → 16; the engine's third tier is live).** System
+  cadence converged: in-context (2, resolved) → external GPT-5 Codex iter 1 (2 CRITICAL + 4
+  WARNING — mode-first review-body restructure; exit-criterion-3 evidence; all resolved) →
+  fresh (schema-reference root cause, resolved) → external iter 2 (0 CRITICAL + 4 WARNING —
+  incl. the doc-identity path-traversal catch; all resolved) → fresh CLEAN (byte-identical
+  fresh-init surface check) → in-context confirm; gate review-system PASSED by the engine.
+  Sync: 34 delta requirements (16 ADDED + 18 MODIFIED) across 11 capabilities;
+  `orbit-architecture-engine` + `orbit-architect` join baseline with real Purposes; orbit-review
+  and orbit-run-summary-emit Purposes updated per task 5.4. Archive: user-typed, zero consent
+  prompts, fingerprints 18/18, `consent: "user-invoked"`. 1712 tests green. Post-archive the
+  engine renders d2-architect QUIESCENT — completion awaits the user's ratification (an
+  architect session or hand-edit writes the mark; the readout is the reminder). Cycle lesson,
+  third time running: the external + fresh independent slots out-caught the in-context passes
+  (13 of 17 system findings); the cadence's cross-check structure is earning its cost.
+

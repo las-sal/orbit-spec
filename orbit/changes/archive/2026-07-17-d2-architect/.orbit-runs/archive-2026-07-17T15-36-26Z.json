@@ -1,0 +1,42 @@
+{
+  "command": "archive",
+  "timestamp": "2026-07-17T15:36:26Z",
+  "change": "d2-architect",
+  "final_assessment": "Archived d2-architect to orbit/changes/archive/2026-07-17-d2-architect/ with full spec sync: 34 delta requirements (16 ADDED + 18 MODIFIED) across 11 capabilities; orbit-architecture-engine (5 reqs) and orbit-architect (6 reqs) join baseline with hand-written Purposes — baseline 14 → 16 capabilities; orbit-review and orbit-run-summary-emit Purposes updated per task 5.4 (third mode; architect in the emitter list). All 16 specs validate --strict post-sync. Gate review-system PASSED by the engine before entry (cadence: in-context → external ×2 → fresh ×2 → in-context confirm; 17 system-phase findings, all resolved; final external 0 CRITICAL). Post-archive the engine renders stage d2-architect QUIESCENT — completion awaits the user's ratification. D-arc Stage D2 complete: the engine's third declaration tier is live.",
+  "next_recommended": "orbit architecture status — position is engine-computed; stage d2-architect renders quiescent-awaiting-ratification (ratify in an /orbit:architect session or by hand when ready)",
+  "kind": "lifecycle",
+  "consent": "user-invoked",
+  "archived_to": "orbit/changes/archive/2026-07-17-d2-architect/",
+  "schema": "spec-driven",
+  "specs_synced": true,
+  "sync_summary": {
+    "capabilities_added": ["orbit-architecture-engine", "orbit-architect"],
+    "capabilities_modified": ["orbit-review", "orbit-conventions", "orbit-run-summary-emit", "orbit-address-reviews", "orbit-audit-drift", "orbit-archive-modifications", "orbit-explore-modifications", "orbit-propose-modifications", "orbit-onboard"],
+    "requirements_added": 16,
+    "requirements_modified": 18,
+    "baseline_capabilities": 16,
+    "purpose_updates": ["orbit-review (third mode)", "orbit-run-summary-emit (architect in emitter enumeration)"],
+    "validation": "16 passed, 0 failed (--strict)"
+  },
+  "gate": { "id": "review-system", "state": "passed" },
+  "fingerprints": { "checked": 18, "verified": 18, "diverged": 0, "unverified": 0, "missing": 0 },
+  "audit": {
+    "ran": true,
+    "context": "pre-archive",
+    "findings": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "notes": "Baseline untouched since D1's sync (no archive-coherence window); both architecture citations resolve against canonical stems; no live explores; no vocabulary residue; doc-side staleness checks verified clean by the two review passes against this exact state. The one @review: string in the change is scenario prose describing marker behavior, not a marker."
+  },
+  "marker_scan": { "actual_markers": 0, "documentation_context_hits": 1 },
+  "stage_garnish": "stage d2-architect: now quiescent — completion is yours to ratify [archived-change:2026-07-17-d2-architect]",
+  "handoff": {
+    "boot_sequence": [
+      "CLAUDE.md — orientation incl. the new D2 completion entry (third engine tier; position is engine-computed)",
+      "orbit architecture status — the live program position (d1 complete; d2 quiescent-awaiting-ratification; d3-d6 premised)",
+      "orbit/architecture/d-arc-arbitered-flow.md — the parseable arc (rulings R-d-1..10; status log through the D2 archive entry)",
+      "orbit/changes/archive/2026-07-17-d2-architect/ — the full D2 record (explore D-d2-1..7; 12-pass review trail)"
+    ],
+    "next_command": "orbit architecture status",
+    "model_hint": null,
+    "seam": "D2 archive complete — stage awaiting user ratification; next stage per Sequencing is D3/D4/D5 (flexible order), its explore the user's to invoke"
+  }
+}
