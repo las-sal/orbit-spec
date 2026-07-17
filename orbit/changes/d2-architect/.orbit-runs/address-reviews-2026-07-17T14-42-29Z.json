@@ -1,0 +1,62 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-17T14:42:29Z",
+  "change": "d2-architect",
+  "source": "--from-file",
+  "source_path": "orbit/changes/d2-architect/.orbit-runs/review-system-2026-07-17T14-31-52Z.json",
+  "source_format": "internal-review-json",
+  "walk_mode": "per_finding",
+  "kind": "editorial",
+  "resolutions": [
+    {
+      "finding": "references/run-summary-schema.md was never extended for architecture mode — it contradicts the mode it now serves",
+      "severity": "WARNING",
+      "file": "src/core/templates/workflows/review.ts",
+      "pushback": "still applies — verified: the reference literal declared per-change-only persistence, mode proposal|system, change as a change-name string; zero architecture mentions in the on-disk generated copy",
+      "classification": "trivial fix",
+      "action": "Reference extended: per-mode persistence locations in the opening (incl. the architecture trail); spine `change` annotated nullable-with-doc; mode enum gains \"architecture\"; a new 'Architecture-mode extensions (D-arc Stage D2)' section documents change:null + REQUIRED doc, per-doc iteration, six-pass by_pass keys, absent change-mode flags, the gate-less final_assessment/next_recommended, and the REQUIRED R-d-9(b) handoff shape with a canonical JSON example. Surface regenerated; 1708 tests green (new launcher assertion included).",
+      "ripple_cascade": {
+        "applied": ["src/core/templates/workflows/review.ts", ".claude/skills/orbit-review/references/run-summary-schema.md (via update --force)"],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "finding": "No assertion covers the three-mode advertisement on the launcher/description surfaces",
+      "severity": "SUGGESTION",
+      "file": "test/core/templates/orbit-generated-surface.test.ts",
+      "pushback": "still applies — fidelity markers checked only SKILL body strings; no test touched the command mirror or skill description",
+      "classification": "trivial fix",
+      "action": "Added the e2e assertion 'review LAUNCHER surfaces advertise all three modes': the generated command file must contain '--as proposal|system|architecture' and the skill description must name architecture mode. Runs against the real init; green.",
+      "ripple_cascade": {
+        "applied": ["test/core/templates/orbit-generated-surface.test.ts"],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "finding": "First live architecture emit omits the spec'd findings-summary counts field (exemplar shape drift, materially nil at zero findings)",
+      "severity": "SUGGESTION",
+      "file": "orbit/architecture/.orbit-runs/review-architecture-2026-07-16T19-42-13Z.json",
+      "pushback": "still applies — the emit carries scorecard + narrative passes but no by-severity/by-pass counts field",
+      "classification": "trivial fix (root cause) + deliberate decline (optional retro-edit)",
+      "action": "Root cause resolved: the canonical architecture-emit shape (findings_summary with six-pass by_pass keys) now lives in the extended run-summary-schema reference — future emits pattern-match the reference, not the first emit. The finding's OPTIONAL retro-edit of the existing emit is DECLINED: it is an audit-trail file (cascade OUT category; the trail records what was actually emitted), and the drift is materially nil at zero findings and documented by the source finding itself.",
+      "ripple_cascade": {
+        "applied": ["src/core/templates/workflows/review.ts"],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/architecture/.orbit-runs/review-architecture-2026-07-16T19-42-13Z.json",
+            "reason": "audit-trail file; cascade skipped by policy — retro-editing the trail's record was declined deliberately"
+          }
+        ]
+      }
+    }
+  ],
+  "resolution_summary": {
+    "resolved": 3,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "post_state": "1708 tests green (1707 + the launcher assertion); --strict valid; surface regenerated with the extended reference on disk",
+  "final_assessment": "All 3 iteration-2 findings resolved from the single root cause (the un-extended schema reference) plus the guard assertion; the optional audit-trail retro-edit declined with rationale. No stale suppressions, no deferrals.",
+  "next_recommended": "/orbit:review-external --as system d2-architect"
+}

@@ -9,9 +9,9 @@ import type { SkillTemplate, CommandTemplate } from '../types.js';
 
 const REVIEW_RUN_SUMMARY_SCHEMA_REFERENCE = `# Reference: review run-summary schema
 
-Each \`/orbit:review\` invocation persists a JSON summary to \`orbit/changes/<change-name>/.orbit-runs/review-<mode>-<TS>.json\` where \`<TS>\` is ISO-8601 with hyphens (e.g., \`review-proposal-2026-05-18T14-35-23Z.json\`).
+Each \`/orbit:review\` invocation persists a JSON summary. The location is PER MODE (D-arc Stage D2): \`orbit/changes/<change-name>/.orbit-runs/review-<mode>-<TS>.json\` for \`proposal\` and \`system\` modes, and \`orbit/architecture/.orbit-runs/review-architecture-<TS>.json\` for \`architecture\` mode (the architecture trail — shared by all docs, never moved by change archiving). \`<TS>\` is ISO-8601 with hyphens (e.g., \`review-proposal-2026-05-18T14-35-23Z.json\`).
 
-Create \`.orbit-runs/\` if it doesn't exist. The file is **committed** (not gitignored) so iteration history travels with the change into archive.
+Create the trail directory if it doesn't exist. The file is **committed** (not gitignored) so iteration history travels with the change into archive (change modes) or persists in the architecture trail (architecture mode).
 
 ## Universal spine inheritance
 
@@ -19,8 +19,8 @@ This schema inherits the 6-field **universal spine** from \`orbit-conventions\`'
 
 - \`command\` (matches filename prefix; here: \`"review"\`)
 - \`timestamp\` (ISO-8601 UTC; JSON field \`YYYY-MM-DDTHH:MM:SSZ\`; filename \`<TS>\` token \`YYYY-MM-DDTHH-MM-SSZ\` with colons replaced by hyphens for filesystem safety)
-- \`change\` (change name string)
-- \`final_assessment\` (narrative; the stock final-assessment line)
+- \`change\` (change name string; \`null\` in architecture mode — a \`doc\` extension names the reviewed doc instead)
+- \`final_assessment\` (narrative; the stock final-assessment line — gate-less in architecture mode)
 - \`next_recommended\` (verbatim recommendation, e.g., \`"/orbit:address-reviews <name> --from-file <path>"\`)
 - \`kind: "editorial"\` (review is an editorial command per the kind taxonomy)
 
@@ -32,11 +32,11 @@ The schema below documents per-command extensions ADDED to that spine (\`mode\`,
 {
   "command": "review",
   "timestamp": "<ISO-8601>",
-  "change": "<change-name>",
+  "change": "<change-name>",         // null in architecture mode
   "final_assessment": "<stock phrasing from final-assessment table>",
   "next_recommended": "<e.g., '/orbit:address-reviews <name> --from-file <path>' or 'proceed to /orbit:apply <name>'>",
   "kind": "editorial",
-  "mode": "proposal" | "system",
+  "mode": "proposal" | "system" | "architecture",
   "iteration": <integer, per-mode>,
   "depth": "fast" | "full" | "thorough",
   "reviewer_class": "in-context" | "fresh" | "external",
@@ -94,6 +94,40 @@ The schema below documents per-command extensions ADDED to that spine (\`mode\`,
 - **\`final_assessment\`** is one of the stock phrasings (mode-specific gate text); see the final-assessment table in SKILL.md.
 - **\`iteration_note\`** is the one-line "Note: N of these findings appeared in the last run" comparison; \`null\` when this is the first run for the mode.
 - **\`recommendation_options\`** is OPTIONAL on each finding. Present only when the finding's recommendation is genuinely disjunctive — multiple defensible paths the user must choose between. Producer-side contract (per \`orbit-review\` spec's \`Optional recommendation_options field on finding entries\`): MUST contain ≥ 2 entries; each entry MUST have non-empty \`label\` (typically \`"A"\`, \`"B"\`, \`"C"\`, … or \`"1"\`, \`"2"\`, …) and non-empty \`body\`. The prose \`recommendation\` field still summarizes the disjunction for human readers. Consumer (address-reviews) uses this for the structured decision-fork detection path; absence triggers heuristic fallback. Omit the field for single-recommendation findings.
+
+## Architecture-mode extensions (D-arc Stage D2)
+
+Architecture-mode emits (\`review-architecture-<TS>.json\` in the architecture trail) use the same spine and per-command extensions with these differences:
+
+- \`change: null\` and a REQUIRED \`doc\` field (the reviewed doc's filename stem — iteration counting anchors to matching-\`doc\` emits only).
+- \`mode: "architecture"\`; \`iteration\` is per-doc (not per-change).
+- \`findings_summary\` uses \`by_pass\` keys \`"1"\`–\`"6"\` (the six architecture passes); findings cite \`<doc>.md:line\`.
+- \`flags.mark\` / \`flags.skip_verify\` are absent (change-mode-only flags); \`parallel\`/\`fast\`/\`focus\` record their no-op values.
+- \`final_assessment\` / \`next_recommended\` are GATE-LESS: with findings, address-reviews targeting this emit; all-clear, \`"No findings. The architecture trail records this pass."\` — never a lifecycle command.
+- A REQUIRED \`handoff\` section per arc ruling R-d-9(b) (shape owned by \`orbit-architect\`): \`boot_sequence\` (ordered POINTERS into existing artifacts, never duplicated substance), \`next_command\`, \`model_hint\` (nullable), \`seam\`.
+
+\`\`\`json
+{
+  "command": "review",
+  "timestamp": "<ISO-8601>",
+  "change": null,
+  "doc": "<doc-name>",
+  "mode": "architecture",
+  "reviewer_class": "in-context" | "fresh" | "external",
+  "iteration": <integer, per-doc>,
+  "findings_summary": { "critical": 0, "warning": 0, "suggestion": 0, "by_pass": { "1": { "critical": 0, "warning": 0, "suggestion": 0 } } },
+  "findings": [ ... same finding shape ... ],
+  "final_assessment": "<gate-less phrasing>",
+  "next_recommended": "<address-reviews targeting this emit, or the all-clear sentence>",
+  "kind": "editorial",
+  "handoff": {
+    "boot_sequence": ["<pointer + one-line why>", "..."],
+    "next_command": "<the one command a cold session runs first>",
+    "model_hint": null,
+    "seam": "<which phase seam this boundary is>"
+  }
+}
+\`\`\`
 `;
 
 export function getReviewSkillTemplate(): SkillTemplate {

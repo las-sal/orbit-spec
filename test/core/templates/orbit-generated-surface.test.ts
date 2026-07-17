@@ -210,4 +210,13 @@ describe('generated surface fidelity (real init, all workflows, claude + codex)'
     const files = await fs.readdir(path.join(testDir, '.claude', 'commands', 'orbit'));
     expect(files.sort()).toEqual(SURFACE.map(([, id]) => `${id}.md`).sort());
   });
+
+  it('review LAUNCHER surfaces advertise all three modes (not just the long body)', async () => {
+    // Guards the discoverable layer: a future mode addition must update the
+    // command mirror and the skill description, not only SKILL.md's body.
+    const cmd = await fs.readFile(path.join(testDir, '.claude', 'commands', 'orbit', 'review.md'), 'utf-8');
+    expect(cmd).toContain('--as proposal|system|architecture');
+    const skill = await fs.readFile(path.join(testDir, '.claude', 'skills', 'orbit-review', 'SKILL.md'), 'utf-8');
+    expect(skill).toContain('architecture mode (a doc under orbit/architecture/');
+  });
 });
