@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-07-17T14:44:42Z",
+  "change": "d2-architect",
+  "final_assessment": "External review prompt packaged for d2-architect (iter 2, mode system); awaiting findings. Prompt briefs the reviewer on iter 1's 6 resolved findings (incl. both CRITICALs), the fresh internal pass's schema-reference fix, the declined audit-trail retro-edit, and the confirm predicate (gate converges on a fresh external yielding 0 CRITICAL).",
+  "next_recommended": "Paste orbit/changes/d2-architect/.orbit-runs/external-prompt-system-2026-07-17T14-43-55Z.md into the target AI, save the response as orbit/changes/d2-architect/.orbit-runs/external-system-<TS>.md, then /orbit:address-reviews d2-architect --from-file <path>",
+  "kind": "editorial",
+  "mode": "system",
+  "reviewer_class": "external",
+  "prompt_path": "orbit/changes/d2-architect/.orbit-runs/external-prompt-system-2026-07-17T14-43-55Z.md",
+  "target": null,
+  "awaiting_findings": true
+}
