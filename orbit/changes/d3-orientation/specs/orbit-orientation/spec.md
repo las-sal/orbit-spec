@@ -147,8 +147,10 @@ Both tiers SHALL support `--json`: bare emits `{sprint, last, next, also, waitin
 object embeds the same per-change status payload `--change --json` emits, plus the strip's
 computed chips); `--full` emits `{program, workstreams, last, waiting}` (the program array
 reusing the architecture-status bucket shapes). The JSON carries untruncated `final_assessment`
-strings (truncation is a text-render concern only). No stability contract beyond shape is
-promised in this capability (deferred; see the change's proposal).
+strings (truncation is a text-render concern only). When the degradation ladder makes bare
+render the `--full` view (zero live workstreams), bare `--json` emits the FULL shape — the
+fallback switches the whole tier, not just the text render. No stability contract beyond shape
+is promised in this capability (deferred; see the change's proposal).
 
 #### Scenario: Bare JSON carries untruncated last
 

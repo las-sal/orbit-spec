@@ -1,0 +1,67 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-20T15:48:00Z",
+  "change": "d3-orientation",
+  "source": "--from-file",
+  "source_path": "orbit/changes/d3-orientation/.orbit-runs/review-proposal-2026-07-20T15-44-12Z.json",
+  "source_format": "internal-review-json",
+  "walk_mode": "per_finding",
+  "kind": "editorial",
+  "resolutions": [
+    {
+      "finding": "The MODIFIED Emit-timing block retains the unqualified 'no emit fires for that session' limitation — contradicted by the begin emit for first sessions",
+      "severity": "WARNING",
+      "file": "orbit/changes/d3-orientation/specs/orbit-run-summary-emit/spec.md",
+      "pushback": "still applies — verified at delta lines 69 and 95-97",
+      "classification": "trivial fix",
+      "action": "Both spots qualified: the Known-limitation paragraph now reads 'no BOUNDARY emit fires for that session (a FIRST session's begin emit still recorded the workstream's start — D-arc Stage D3; only the session's closing state goes uncaptured)'; the abandonment scenario's THEN likewise. --strict valid; fingerprints 3/3 (edits inside the already-fingerprinted block).",
+      "ripple_cascade": { "applied": ["orbit/changes/d3-orientation/specs/orbit-run-summary-emit/spec.md"], "flagged_not_applied": [] }
+    },
+    {
+      "finding": "Bare --json shape unspecified when the degradation ladder falls back to the full view",
+      "severity": "SUGGESTION",
+      "file": "orbit/changes/d3-orientation/specs/orbit-orientation/spec.md",
+      "pushback": "still applies — the JSON requirement defined per-tier shapes without the fallback rule",
+      "classification": "trivial fix",
+      "action": "One sentence added to the JSON requirement: in the zero-live fallback, bare --json emits the FULL shape — the fallback switches the whole tier, not just the text render.",
+      "ripple_cascade": { "applied": ["orbit/changes/d3-orientation/specs/orbit-orientation/spec.md"], "flagged_not_applied": [] }
+    },
+    {
+      "finding": "Conventions staging-dir creation scenario becomes non-exhaustive again (begin emit adds .orbit-runs/ at creation)",
+      "severity": "SUGGESTION",
+      "file": "orbit/specs/orbit-conventions/spec.md",
+      "pushback": "still applies — baseline line 106 names explore.md + .openspec.yaml only",
+      "classification": "decision required",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          { "label": "A", "body": "Add an orbit-conventions MODIFIED block extending the creation scenario with the begin emit (delta grows to 12 requirements; fingerprint re-stamp)" },
+          { "label": "B", "body": "Leave the scenario non-exhaustive (accurate, non-exclusive) — consistent with last cycle's option-A scope choice which extended conventions only because it was already modified" }
+        ],
+        "chosen": "B",
+        "discuss_invoked": false
+      },
+      "action": "User chose B: no edit. The scenario stays accurate-but-non-exhaustive; the begin emit's contract lives in the two capabilities that own it (orbit-run-summary-emit, orbit-explore-modifications). Recorded so future reviews can suppress this as a settled scope call.",
+      "ripple_cascade": { "applied": [], "flagged_not_applied": [{ "path": "orbit/specs/orbit-conventions/spec.md", "reason": "baseline spec; user chose option B — deliberately not extended this change" }] }
+    },
+    {
+      "finding": "Propose emit misrecorded '20 tasks in 5 groups' — tasks.md holds 16",
+      "severity": "SUGGESTION",
+      "file": "orbit/changes/d3-orientation/.orbit-runs/propose-2026-07-20T15-30-29Z.json",
+      "pushback": "still applies — the emit still carries the misstatement (artifacts themselves are consistent at 16)",
+      "classification": "trivial fix (record-only)",
+      "action": "No artifact edit: the trail is never edited (audit policy). The correction is on the record in the source review JSON and this resolution log — actual count 16 tasks in 5 groups. Downstream readers of the propose emit should prefer these later records.",
+      "ripple_cascade": { "applied": [], "flagged_not_applied": [{ "path": "orbit/changes/d3-orientation/.orbit-runs/propose-2026-07-20T15-30-29Z.json", "reason": "audit-trail file; cascade skipped by policy — correction recorded, trail unedited" }] }
+    }
+  ],
+  "resolution_summary": {
+    "resolved": 4,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "post_state": "orbit validate d3-orientation --strict passes; fingerprints 3/3 verified; delta counts unchanged (11 requirements, 16 tasks)",
+  "final_assessment": "All 4 iteration-1 findings resolved: the limitation qualification (the real catch), the JSON fallback sentence, the conventions scope call (user fork: B — leave non-exhaustive), and the record-only trail correction.",
+  "next_recommended": "/orbit:review --as proposal --fresh d3-orientation"
+}
