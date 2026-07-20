@@ -1,0 +1,41 @@
+{
+  "command": "review",
+  "timestamp": "2026-07-20T18:51:10Z",
+  "change": "d3-orientation",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "iteration": 5,
+  "depth": "full",
+  "scorecard": {
+    "completeness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "correctness": { "critical": 0, "warning": 1, "suggestion": 0 },
+    "coherence": { "critical": 0, "warning": 0, "suggestion": 0 }
+  },
+  "findings": [
+    {
+      "pass": 5,
+      "severity": "WARNING",
+      "file": "orbit/changes/d3-orientation/specs/orbit-orientation/spec.md",
+      "line": 236,
+      "title": "Entry-level `gates?` is now redundant with `status.gates` and its content is unspecified",
+      "recommendation": "Iter-4 W2's nesting pin exposed the last unpinned key: the shared shape says a CHANGE entry 'carries `gates`' but never defines its content, and the per-change payload now nesting under `status` already carries `gates[]` (verified at orbit-engine-gates:35) — so entry-level `gates` is a duplicate with no stated shape; one implementer mirrors the engine array, another invents a summary. Either drop the key or define it as a verbatim mirror.",
+      "recommendation_options": [
+        { "label": "A", "body": "Drop `gates?` from the shared entry shape — `status.gates` is the single source for changes; ripple the shape literal in the --full citation, tasks 2.3, and the degraded/explore prose (simplest; no duplication)" },
+        { "label": "B", "body": "Keep `gates?` and define it as a VERBATIM mirror of `status.gates` surfaced for consumers that skip the nested payload (convenience at the cost of stated duplication; add the mirror clause to the JSON requirement)" }
+      ]
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "title": "Explore-variant scenario says 'no gates key' without mentioning status",
+      "evidence": "The requirement text explicitly states explore entries carry no gates and no status; the scenario's THEN is illustrative, not contradictory. Folded as a ripple note into the WARNING's fix rather than flagged separately."
+    },
+    {
+      "title": "All 3 iteration-4 resolutions",
+      "evidence": "Re-verified landed: the architect MODIFIED block diffs baseline-verbatim except the intended parenthetical (template grep clean; no other baseline cites the genre phrase); the shape pins (closed keys, status nesting, strip chip array) are in the JSON requirement with the --full citation and tasks 2.3/5.1 consistent; the read-only clause is in the no-live-inference scenario with 5.1 two-sided. Fingerprints 7/7; strict valid; 16 requirements across 5 files; 17 tasks; zero markers; task-carrier map intact (4.3 carries the architect delta)."
+    }
+  ],
+  "iteration_note": "Note: 0 of these findings appeared in prior runs. 1 new this run (trend: 4 → 6 → 6-ext → 4 → 6-ext → 3 → 1). The finding is a second-order remainder of iter-4 W2's own resolution — pinning the payload embedding made the pre-existing `gates?` key (in the shape since external iter 1) redundant-and-undefined. All CRITICAL-class sweeps clean; the iteration-4 resolutions verified fully landed.",
+  "final_assessment": "No critical issues. 1 warning to consider — the last unpinned key in the shared entry shape, a second-order remainder of the nesting pin (fork: drop it, or define it as a verbatim mirror). Everything else verified converged: all 23 prior findings resolved and landed, all sweeps clean.",
+  "next_recommended": "/orbit:address-reviews d3-orientation --from-file orbit/changes/d3-orientation/.orbit-runs/review-proposal-2026-07-20T18-51-10Z.json"
+}
