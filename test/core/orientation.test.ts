@@ -1,0 +1,341 @@
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+import * as os from 'node:os';
+import {
+  collectOrientation,
+  composeWorkstreamEntry,
+  readValidEmits,
+  isSpineValid,
+  listLiveWorkstreams,
+} from '../../src/core/orientation.js';
+
+/**
+ * Orientation module tests (D-arc Stage D3, task 1.4): continuity predicate
+ * (archive-emit edge, emit-less fallback, same-second ties), count-based
+ * WAITING (concurrent handoffs), fault isolation (corrupt + spine-invalid
+ * emits, broken workstream), and the degradation ladder inputs.
+ */
+
+let root: string;
+
+function writeEmit(runsDir: string, name: string, json: Record<string, unknown>): void {
+  fs.mkdirSync(runsDir, { recursive: true });
+  fs.writeFileSync(path.join(runsDir, name), JSON.stringify(json, null, 2));
+}
+
+function spine(command: string, extra: Record<string, unknown> = {}): Record<string, unknown> {
+  return {
+    command,
+    timestamp: '2026-07-20T12:00:00Z',
+    change: null,
+    final_assessment: `${command} ran. Second sentence for trim tests.`,
+    next_recommended: `/orbit:${command} next`,
+    kind: 'workflow',
+    ...extra,
+  };
+}
+
+function makeChange(name: string, opts: { created?: string; schema?: string } = {}): string {
+  const dir = path.join(root, 'orbit', 'changes', name);
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(
+    path.join(dir, '.openspec.yaml'),
+    `schema: ${opts.schema ?? 'spec-driven'}\ncreated: "${opts.created ?? '2026-07-01'}"\n`
+  );
+  fs.writeFileSync(path.join(dir, 'proposal.md'), '# Proposal');
+  return dir;
+}
+
+function makeExplore(name: string, opts: { created?: string } = {}): string {
+  const dir = path.join(root, 'orbit', 'explore', name);
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(
+    path.join(dir, '.openspec.yaml'),
+    `schema: spec-driven\ncreated: "${opts.created ?? '2026-07-01'}"\n`
+  );
+  fs.writeFileSync(path.join(dir, 'explore.md'), '# Exploration');
+  return dir;
+}
+
+function makeArchivedChange(name: string): string {
+  const dir = path.join(root, 'orbit', 'changes', 'archive', name);
+  fs.mkdirSync(dir, { recursive: true });
+  return dir;
+}
+
+/**
+ * A genuinely-degrading fixture: a project-local schema whose YAML is
+ * malformed. Metadata pointing at an UNKNOWN schema is silently defaulted by
+ * resolveSchemaForChange (graceful fallback), but a REGISTERED-but-broken
+ * schema throws SchemaLoadError from status computation — fault-isolation
+ * clause (b)'s trigger.
+ */
+function makeBrokenChange(name: string): string {
+  const schemaDir = path.join(root, 'orbit', 'schemas', 'broken-yaml');
+  fs.mkdirSync(schemaDir, { recursive: true });
+  fs.writeFileSync(path.join(schemaDir, 'schema.yaml'), 'name: [unclosed\n');
+  return makeChange(name, { schema: 'broken-yaml' });
+}
+
+beforeEach(() => {
+  root = fs.mkdtempSync(path.join(os.tmpdir(), 'orbit-orientation-'));
+});
+
+afterEach(() => {
+  fs.rmSync(root, { recursive: true, force: true });
+});
+
+// ---------------------------------------------------------------------------
+// Spine validity + emit reading (fault isolation, clause a)
+// ---------------------------------------------------------------------------
+
+describe('isSpineValid', () => {
+  it('accepts the universal spine and rejects missing/non-string fields', () => {
+    expect(isSpineValid(spine('propose'))).toBe(true);
+    expect(isSpineValid({})).toBe(false);
+    expect(isSpineValid({ command: 'x', final_assessment: 'y' })).toBe(false);
+    expect(isSpineValid({ ...spine('apply'), final_assessment: 42 })).toBe(false);
+  });
+
+  it('requires a string mode on review-external T0 emits (the WAITING discriminator)', () => {
+    expect(isSpineValid(spine('review-external'))).toBe(false);
+    expect(isSpineValid(spine('review-external', { mode: 'proposal' }))).toBe(true);
+  });
+});
+
+describe('readValidEmits (fault isolation)', () => {
+  it('skips invalid-JSON and spine-invalid files; recency falls to next-older valid; deterministic', () => {
+    const dir = makeChange('a');
+    const runs = path.join(dir, '.orbit-runs');
+    writeEmit(runs, 'propose-2026-07-20T10-00-00Z.json', spine('propose'));
+    fs.writeFileSync(path.join(runs, 'review-2026-07-20T11-00-00Z.json'), '{not json');
+    // Spine-invalid newest: parseable JSON but no final_assessment string.
+    fs.writeFileSync(
+      path.join(runs, 'apply-2026-07-20T12-00-00Z.json'),
+      JSON.stringify({ command: 'apply', next_recommended: '/x' })
+    );
+
+    const first = readValidEmits(runs);
+    const second = readValidEmits(runs);
+    expect(first.map((e) => e.command)).toEqual(['propose']);
+    expect(second).toEqual(first); // same inputs, same result
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Continuity predicate
+// ---------------------------------------------------------------------------
+
+describe('continuity predicate', () => {
+  it('anchors the sprint to the live workstream with the most recent emit', () => {
+    const a = makeChange('alpha');
+    const b = makeChange('beta');
+    writeEmit(path.join(a, '.orbit-runs'), 'propose-2026-07-20T10-00-00Z.json', spine('propose'));
+    writeEmit(path.join(b, '.orbit-runs'), 'propose-2026-07-20T11-00-00Z.json', spine('propose'));
+
+    const o = collectOrientation(root);
+    expect(o.sprint?.name).toBe('beta');
+    expect(o.workstreams[0].name).toBe('beta'); // sprint-first ordering
+  });
+
+  it('archive-emit edge: an archived trail never anchors the sprint BUT surfaces in global LAST', () => {
+    const explore = makeExplore('staging-x');
+    writeEmit(
+      path.join(explore, '.orbit-runs'),
+      'explore-2026-07-20T10-00-00Z.json',
+      spine('explore')
+    );
+    const archived = makeArchivedChange('2026-07-20-just-closed');
+    writeEmit(
+      path.join(archived, '.orbit-runs'),
+      'archive-2026-07-20T11-00-00Z.json',
+      spine('archive')
+    );
+
+    const o = collectOrientation(root);
+    // Half 1: the sprint anchors to the live explore, not the newer archive emit.
+    expect(o.sprint?.name).toBe('staging-x');
+    // Half 2: global LAST names the archive emit (LAST-band-only sourcing).
+    expect(o.last?.workstream).toBe('archive/2026-07-20-just-closed');
+    expect(o.last?.emit.command).toBe('archive');
+    // The archived change appears in no workstream entry.
+    expect(o.workstreams.map((w) => w.name)).toEqual(['staging-x']);
+  });
+
+  it('same-second tokens tie-break by workstream name (sprint anchoring)', () => {
+    const a = makeChange('alpha');
+    const b = makeChange('beta');
+    writeEmit(path.join(a, '.orbit-runs'), 'propose-2026-07-20T10-00-00Z.json', spine('propose'));
+    writeEmit(path.join(b, '.orbit-runs'), 'propose-2026-07-20T10-00-00Z.json', spine('propose'));
+
+    const o1 = collectOrientation(root);
+    const o2 = collectOrientation(root);
+    // Lexicographically-earlier workstream name anchors; repeat runs identical.
+    expect(o1.sprint?.name).toBe('alpha');
+    expect(o2.sprint?.name).toBe('alpha');
+  });
+
+  it('same-second tokens tie-break identically in global LAST', () => {
+    const a = makeChange('alpha');
+    const b = makeChange('beta');
+    writeEmit(path.join(a, '.orbit-runs'), 'propose-2026-07-20T10-00-00Z.json', spine('propose'));
+    writeEmit(path.join(b, '.orbit-runs'), 'propose-2026-07-20T10-00-00Z.json', spine('propose'));
+
+    const o = collectOrientation(root);
+    expect(o.last?.workstream).toBe('alpha');
+  });
+
+  it('emit-less fleet falls back to metadata created, ties broken by name', () => {
+    makeChange('older', { created: '2026-07-01' });
+    makeChange('newer', { created: '2026-07-15' });
+
+    const o = collectOrientation(root);
+    expect(o.sprint?.name).toBe('newer');
+  });
+
+  it('sprint is null when nothing is live (ladder rungs 2/3 input)', () => {
+    const o = collectOrientation(root);
+    expect(o.sprint).toBeNull();
+    expect(o.workstreams).toEqual([]);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Explore sourcing (time-shifted, never live)
+// ---------------------------------------------------------------------------
+
+describe('explore next sourcing', () => {
+  it('emit-less explore gets the Early canonical string and anchors via created', () => {
+    makeExplore('fresh-idea');
+    const o = collectOrientation(root);
+    expect(o.sprint?.kind).toBe('explore');
+    expect(o.sprint?.position).toBe('exploring');
+    expect(o.sprint?.next).toBe('/orbit:explore fresh-idea — continue capturing thinking');
+    expect(o.sprint?.status).toBeUndefined(); // no per-change payload on explores
+  });
+
+  it('explore with emits renders the recorded next_recommended verbatim', () => {
+    const dir = makeExplore('deep-dive');
+    writeEmit(
+      path.join(dir, '.orbit-runs'),
+      'explore-2026-07-20T10-00-00Z.json',
+      spine('explore', { next_recommended: '/orbit:propose deep-dive — substantial thinking captured' })
+    );
+    const o = collectOrientation(root);
+    expect(o.sprint?.next).toBe('/orbit:propose deep-dive — substantial thinking captured');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WAITING derivation (count-based externals)
+// ---------------------------------------------------------------------------
+
+describe('count-based WAITING', () => {
+  it('concurrent handoffs never falsely clear: 2 packaged / 1 returned stays outstanding', () => {
+    const dir = makeChange('gamma');
+    const runs = path.join(dir, '.orbit-runs');
+    writeEmit(runs, 'review-external-2026-07-20T10-00-00Z.json', spine('review-external', { mode: 'proposal' }));
+    writeEmit(runs, 'review-external-2026-07-20T10-30-00Z.json', spine('review-external', { mode: 'proposal' }));
+    // ONE returned findings file, later than both T0s.
+    fs.writeFileSync(
+      path.join(runs, 'external-proposal-2026-07-20T11-00-00Z.md'),
+      '# External Review: gamma (iteration 1)\n\n## CRITICAL\n\nNone.\n\n## WARNING\n\nNone.\n\n## SUGGESTION\n\nNone.\n'
+    );
+
+    const o = collectOrientation(root);
+    const item = o.waiting.find((w) => w.includes('external'));
+    expect(item).toBeDefined();
+    expect(item).toContain('2 external proposal review(s) packaged, 1 returned');
+  });
+
+  it('balanced counts clear; spine-invalid T0s are excluded from the arithmetic', () => {
+    const dir = makeChange('delta');
+    const runs = path.join(dir, '.orbit-runs');
+    writeEmit(runs, 'review-external-2026-07-20T10-00-00Z.json', spine('review-external', { mode: 'proposal' }));
+    // Spine-invalid T0 (missing mode): must not count as packaged.
+    writeEmit(runs, 'review-external-2026-07-20T10-30-00Z.json', spine('review-external'));
+    fs.writeFileSync(
+      path.join(runs, 'external-proposal-2026-07-20T11-00-00Z.md'),
+      '# External Review: delta (iteration 1)\n\n## CRITICAL\n\nNone.\n\n## WARNING\n\nNone.\n\n## SUGGESTION\n\nNone.\n'
+    );
+
+    const o = collectOrientation(root);
+    expect(o.waiting.find((w) => w.includes('external'))).toBeUndefined();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Fault isolation (clause b): one broken workstream degrades alone
+// ---------------------------------------------------------------------------
+
+describe('fault isolation', () => {
+  it('a workstream whose schema fails to load renders a degraded entry; healthy rows intact', () => {
+    makeChange('healthy-one');
+    makeChange('healthy-two');
+    makeBrokenChange('broken');
+
+    const o = collectOrientation(root);
+    expect(o.workstreams).toHaveLength(3);
+    const broken = o.workstreams.find((w) => w.name === 'broken');
+    expect(broken?.degraded).toBe(true);
+    expect(typeof broken?.error).toBe('string');
+    expect(broken?.strip).toBeUndefined(); // no fabricated tuple
+    const healthy = o.workstreams.filter((w) => !w.degraded);
+    expect(healthy).toHaveLength(2);
+    for (const h of healthy) expect(h.strip?.length).toBeGreaterThan(0);
+  });
+
+  it('a degraded workstream with a readable trail still carries last (trustworthy fields)', () => {
+    const dir = makeBrokenChange('broken-trail');
+    writeEmit(path.join(dir, '.orbit-runs'), 'propose-2026-07-20T10-00-00Z.json', spine('propose'));
+
+    const o = collectOrientation(root);
+    const broken = o.workstreams.find((w) => w.name === 'broken-trail');
+    expect(broken?.degraded).toBe(true);
+    expect(broken?.last?.command).toBe('propose');
+  });
+
+  it('corrupt newest emit falls back deterministically for the sprint last', () => {
+    const dir = makeChange('epsilon');
+    const runs = path.join(dir, '.orbit-runs');
+    writeEmit(runs, 'propose-2026-07-20T10-00-00Z.json', spine('propose'));
+    fs.writeFileSync(path.join(runs, 'review-2026-07-20T11-00-00Z.json'), '{{{');
+
+    const o1 = collectOrientation(root);
+    const o2 = collectOrientation(root);
+    expect(o1.sprint?.last?.command).toBe('propose');
+    expect(o2.sprint?.last?.command).toBe('propose');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Workstream entry shape (the shared discriminated shape)
+// ---------------------------------------------------------------------------
+
+describe('workstream entry shape', () => {
+  it('change entries nest the per-change payload under status (gate state at status.gates)', () => {
+    const ws = listLiveWorkstreams(root);
+    expect(ws).toEqual([]);
+    makeChange('shape-check');
+    const [only] = listLiveWorkstreams(root);
+    const entry = composeWorkstreamEntry(root, only);
+    expect(entry.kind).toBe('change');
+    expect(entry.status).toBeDefined();
+    expect(Array.isArray(entry.status?.gates)).toBe(true);
+    expect((entry as Record<string, unknown>)['gates']).toBeUndefined(); // no entry-level gates key
+    expect(entry.strip?.some((c) => c.phase === 'propose')).toBe(true);
+    // Absent fields are omitted, never null.
+    expect('stage' in entry).toBe(false);
+  });
+
+  it('carries the stage citation only when metadata cites one', () => {
+    const dir = makeChange('cited');
+    fs.writeFileSync(
+      path.join(dir, '.openspec.yaml'),
+      'schema: spec-driven\ncreated: "2026-07-01"\narchitecture:\n  doc: my-arc\n  stage: s1\n'
+    );
+    const entry = composeWorkstreamEntry(root, listLiveWorkstreams(root)[0]);
+    expect(entry.stage).toEqual({ doc: 'my-arc', stage: 's1' });
+  });
+});

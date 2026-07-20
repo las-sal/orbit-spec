@@ -1,0 +1,21 @@
+{
+  "command": "apply",
+  "timestamp": "2026-07-20T19:34:23Z",
+  "change": "d3-orientation",
+  "final_assessment": "Applied d3-orientation in one session: 17/17 tasks. NEW src/core/orientation.ts (pure composition — continuity predicate with the shared same-second tie-break, count-based WAITING with spine-invalid exclusion, per-workstream fault isolation with degraded entries, archived-trail global-LAST sourcing); bare `orbit status` renders the sprint view (the former 'Missing required option --change' error path claimed; `--change` and no-changes outputs regression-asserted unchanged incl. gate rows); `--full` renders the arc view with per-workstream orientation tuples (the exit-criterion-1 tier, asserted read-only two-sided); `--json` both tiers via the shared discriminated entry shape (change payload nested under status; strip as a typed chip array). The explore BEGIN emit ships mode-aware in the template (Mode B zero-count + Early canonical; Mode C back-fill-then-fire; bump-a-second collision; no retro-fire) with fidelity markers + re-pinned parity hashes. CLAUDE.md cold-start pointer landed; issue #3 closed; arc status log carries the post-apply entry. 1742 tests green (baseline 1712 + 30 new); strict validation + fingerprints 7/7.",
+  "next_recommended": "/orbit:review --as system d3-orientation",
+  "kind": "workflow",
+  "tasks_completed": 17,
+  "tasks_remaining": 0,
+  "user_validation_remaining": 0,
+  "chunk": null,
+  "chunk_name": null,
+  "chunk_complete": true,
+  "tasks_completed_this_session": 17,
+  "consent": "user-invoked",
+  "gate_overridden": {
+    "gate": "review-proposal",
+    "state": "unpassed",
+    "reason": "latest independent pass yielded new findings"
+  }
+}

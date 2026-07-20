@@ -546,3 +546,20 @@ ratification; D5 mechanizes (b) and (c):
   third time running: the external + fresh independent slots out-caught the in-context passes
   (13 of 17 system findings); the cadence's cross-check structure is earning its cost.
 
+
+- **2026-07-20 — D3 applied (orientation shipped; post-apply seam).** The orientation surface
+  is live: `src/core/orientation.ts` (pure composition — continuity predicate with the
+  same-second tie-break, count-based WAITING, spine-invalid skip + degraded-row fault
+  isolation, archived-trail LAST-only sourcing), bare `orbit status` = the sprint view (the
+  "Missing required option --change" error path claimed; `--change` and no-changes outputs
+  unchanged), `orbit status --full` = the arc view satisfying exit criterion 1 (per-workstream
+  orientation tuples, ONE command, zero artifact reads — asserted read-only two-sided by test),
+  shared discriminated JSON entry shape both tiers. The explore BEGIN emit ships mode-aware
+  (Mode B zero-count + Early canonical; Mode C back-filled post-back-fill; bump-a-second
+  collision; no retro-fire); explore parity hashes re-pinned. CLAUDE.md carries the cold-start
+  pointer; issue #3 closed (v0.1 `~/code/orbit-status` retired — the R-d-4 subtraction).
+  Proposal cadence before apply: 8 passes (in-context 1/5/6, fresh 2/3/4, external GPT-5 Codex
+  ×2), 24 findings all resolved, iter 6 CLEAN; apply proceeded via recorded `gate_overridden`
+  (R-d-10's sanctioned interim path — the strict predicate wants the clean pass independent).
+  **1742 tests green** (baseline 1712 + 30). Next: system review cadence, then archive
+  (baseline 16 → 17 at sync).

@@ -32,7 +32,7 @@ import {
 import { generateSkillContent } from '../../../src/core/shared/skill-generation.js';
 
 const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
-  getExploreSkillTemplate: '96107f07f568410ab705c7769740d8d53ece1123c5f08cda2bd21fab996eab9d',
+  getExploreSkillTemplate: '9c7267ee9621af5a07850df38f6afe9fdb1c0aca4df501245ab938d80ccf525a',
   getNewChangeSkillTemplate: '9a42adfda579ac7e7f66547322b28f0f5d33229786607ba29893e4e534da2cc5',
   getContinueChangeSkillTemplate: 'a396420460b0ed7fcf4a06fcfeb354013b5d41175079b8dd3c624d8858bc9181',
   getApplyChangeSkillTemplate: 'd9197c075246a154fc86c273fb99d922428127292c7708ec6b304a077ca367d8',
@@ -60,7 +60,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
 };
 
 const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
-  'orbit-explore': 'e4509ddb04f5866063918c1606f1c8f4b20a428260fffdfe94f0534de3b43316',
+  'orbit-explore': '9e19a9614083652ba9e818c2dac767c5cf12d0ff5ef45ed9e9939176dd372139',
   'orbit-new-change': '8f552229463c98b062a62c59e8a155bb8cb51f80912a355f3df7007a0700ceb4',
   'orbit-continue-change': '6121a242d5bc00e1a1ad034f90483931398ac48b214ae446cd438c813cd2b228',
   'orbit-apply-change': 'e793b7623f4f2b72f3aa47cfe59dc9ff96c9b93868e6cef75e447b19dc16b335',

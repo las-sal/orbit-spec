@@ -465,7 +465,7 @@ This means: durable capture in explore → seamless promotion to formal change. 
 
 (Per \`orbit-run-summary-emit\` capability)
 
-When named-mode \`/orbit:explore <name>\` reaches a conversation boundary, write a run-summary JSON to:
+Named-mode \`/orbit:explore <name>\` emits TWICE per session shape (D-arc Stage D3): once at BEGIN (immediately after scaffold + metadata are written) and once at each conversation boundary. Both write to:
 
 \`\`\`
 orbit/explore/<name>/.orbit-runs/explore-<TS>.json
@@ -474,6 +474,17 @@ orbit/explore/<name>/.orbit-runs/explore-<TS>.json
 Where \`<TS>\` is ISO-8601 UTC with hyphens (e.g., \`explore-2026-05-21T13-34-12Z.json\`). Create \`.orbit-runs/\` if it doesn't exist.
 
 **Bare-mode \`/orbit:explore\` does NOT emit** — see "Crystallization to named change" below for the bare-mode-to-named transition.
+
+### BEGIN emit (D-arc Stage D3 — mode-aware)
+
+Fire the begin emit immediately after the staging scaffold + \`.openspec.yaml\` are written, so the trail records the workstream from minute zero (the \`premised → exploring\` transition; explore was the only workstream-starting command that began silently). Content is MODE-AWARE:
+
+- **Mode B (new named exploration)**: \`decisions_captured: 0\`, \`open_questions_count: 0\`, and \`next_recommended\` = the maturity requirement's Early canonical string (\`"/orbit:explore <name> — continue capturing thinking"\`). \`final_assessment\` records the scaffold + the citation decision (cited or declined).
+- **Mode C (crystallization)**: back-fill \`explore.md\` FIRST, then fire the begin emit carrying the BACK-FILLED counts and a maturity-consistent \`next_recommended\` (per the maturity grid below — a crystallized session with 4 decisions must not understate itself as Early). The crystallization's "first emit" IS this begin emit (\`crystallized_to_name: "<name>"\`).
+
+**Same-second collision**: a boundary emit landing in the same ISO-second as the begin emit bumps its \`<TS>\` token forward one second until the path is free (preserving lexical begin-before-boundary ordering — the review-external T0 precedent).
+
+**No retro-fire**: resuming a pre-D3 staging dir that has no emits does NOT retroactively fire a begin emit (add-only, no backdating) — the next boundary emit covers it.
 
 ### Conversation boundary detection
 
@@ -538,8 +549,8 @@ When the user requests crystallization during a bare-mode explore (e.g., "save t
 **Confirmation gate**: the AI MUST wait for explicit user confirmation before proceeding with file creation. Examples of confirmation: "yes", "go ahead", "create it", "do it". If the user expresses any hesitation or asks a clarifying question, treat as not-yet-confirmed and answer the question rather than proceed.
 
 After confirmation, the AI:
-1. Creates \`orbit/explore/<name>/explore.md\` with decisions captured so far
-2. Writes the first \`explore-<TS>.json\` per the JSON shape above, with \`crystallized_to_name: "<name>"\` (the field is non-null in this case, signaling this emit is the crystallization moment)
+1. Creates \`orbit/explore/<name>/explore.md\` (and the minimal \`.openspec.yaml\`, as in Mode B) and back-fills the Premise and Decisions sections with what's been discussed
+2. THEN fires the BEGIN emit per the mode-aware rules above — Mode C: the BACK-FILLED counts and a maturity-consistent \`next_recommended\`, with \`crystallized_to_name: "<name>"\` (non-null signals this emit is the crystallization moment; it IS the begin emit — never a zero-count record)
 
 Sketch of the warning text (for reference; phrasing may adapt to conversation):
 

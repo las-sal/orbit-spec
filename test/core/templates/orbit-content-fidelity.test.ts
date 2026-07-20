@@ -48,7 +48,7 @@ import {
 // A workflow that silently loses its disciplines block, run-summary section, or
 // completion-prompt override fails its own assertion — no disjunctive escape hatch.
 const RELOCATED: Array<[string, () => SkillTemplate, string[]]> = [
-  ['explore', getExploreSkillTemplate, ['execution disciplines', 'Run-summary emit']],
+  ['explore', getExploreSkillTemplate, ['execution disciplines', 'Run-summary emit', 'BEGIN emit', 'Same-second collision', 'No retro-fire', 'BACK-FILLED counts']],
   ['propose', getOrbitProposeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
   ['new-change', getNewChangeSkillTemplate, ['execution disciplines', 'Run-summary emit']],
   ['continue-change', getContinueChangeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override']],

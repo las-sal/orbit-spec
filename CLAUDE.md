@@ -109,7 +109,8 @@ The fork program is COMPLETE; the live program is the **D-arc** —
 `orbit/architecture/d-arc-arbitered-flow.md` (goals, rulings R-d-1.., six stages with exit
 criteria, status log). Read it before any D-arc work. **Position is COMPUTED — run
 `orbit architecture status`** (D2 shipped the engine; the arc doc's hand-maintained state lines
-are deleted). Do NOT trust any position stated here (a hand-copied position in this file went
+are deleted). Orientation: run `orbit status` — bare for the current sprint, `--full` for the
+whole arc (D3; answers position / last / next per workstream with no artifact reads). Do NOT trust any position stated here (a hand-copied position in this file went
 stale within minutes on 2026-07-09); the status log remains the append-only narrative ledger and
 `orbit/explore/` shows what's actively being thought about. Every
 lifecycle transition in this arc is USER-invoked: recommend, never invoke (arc rules of

@@ -12,6 +12,13 @@ import {
   type ChangeStatus,
 } from '../../core/artifact-graph/index.js';
 import {
+  collectOrientation,
+  type Orientation,
+  type WorkstreamEntry,
+  type OrientationChip,
+  type EmitRecord,
+} from '../../core/orientation.js';
+import {
   validateChangeExists,
   validateSchemaExists,
   getAvailableChanges,
@@ -27,6 +34,7 @@ export interface StatusOptions {
   change?: string;
   schema?: string;
   json?: boolean;
+  full?: boolean;
 }
 
 // -----------------------------------------------------------------------------
@@ -39,24 +47,34 @@ export async function statusCommand(options: StatusOptions): Promise<void> {
   try {
     const projectRoot = process.cwd();
 
-    // Handle no-changes case gracefully — status is informational,
-    // so "no changes" is a valid state, not an error.
+    // Orientation surface (D-arc Stage D3): bare = current sprint; --full = arc
+    // view. `--change` behavior and the no-changes message stay byte-identical.
     if (!options.change) {
-      const available = await getAvailableChanges(projectRoot);
-      if (available.length === 0) {
-        spinner?.stop();
-        if (options.json) {
-          console.log(JSON.stringify({ changes: [], message: 'No active changes.' }, null, 2));
-          return;
-        }
-        console.log('No active changes. Create one with: orbit new change <name>');
+      const orientation = collectOrientation(projectRoot);
+      spinner?.stop();
+
+      if (options.full) {
+        printFullView(orientation, options.json ?? false);
         return;
       }
-      // Changes exist but --change not provided
-      spinner?.stop();
-      throw new Error(
-        `Missing required option --change. Available changes:\n  ${available.join('\n  ')}`
-      );
+
+      // Degradation ladder: (1) ≥1 live workstream → sprint view; (2) zero live
+      // + ≥1 parseable doc → the --full view (JSON switches tier too); (3) zero
+      // live + zero parseable docs → the existing no-changes message, unchanged.
+      if (orientation.sprint) {
+        printSprintView(orientation, options.json ?? false);
+        return;
+      }
+      if (orientation.program.parseable.length > 0) {
+        printFullView(orientation, options.json ?? false);
+        return;
+      }
+      if (options.json) {
+        console.log(JSON.stringify({ changes: [], message: 'No active changes.' }, null, 2));
+        return;
+      }
+      console.log('No active changes. Create one with: orbit new change <name>');
+      return;
     }
 
     const changeName = await validateChangeExists(options.change, projectRoot);
@@ -153,4 +171,186 @@ function gateIndicator(state: string): string {
     default:
       return chalk.yellow('○'); // unpassed
   }
+}
+
+// -----------------------------------------------------------------------------
+// Orientation rendering (D-arc Stage D3)
+// -----------------------------------------------------------------------------
+
+/** Text render of the strip chip array (the JSON carries the array itself). */
+function renderStrip(strip: OrientationChip[] | undefined): string {
+  if (!strip || strip.length === 0) return '';
+  return strip
+    .map((c) => {
+      if (c.phase === 'review') {
+        // `review ⟲6 ✓` — detail before glyph.
+        return ['review', c.detail, c.glyph].filter(Boolean).join(' ');
+      }
+      if (c.phase === 'apply') {
+        // `apply ▶ 12/20` — glyph before detail.
+        return ['apply', c.glyph, c.detail].filter(Boolean).join(' ');
+      }
+      return [c.phase, c.glyph].filter(Boolean).join(' ');
+    })
+    .join(' → ');
+}
+
+/** First sentence, hard-capped ~160 chars with ellipsis (text render only). */
+function trimAssessment(text: string): string {
+  const firstSentence = text.match(/^.*?[.!?](?:\s|$)/s)?.[0]?.trim() ?? text.trim();
+  if (firstSentence.length <= 160) return firstSentence;
+  return `${firstSentence.slice(0, 159)}…`;
+}
+
+function relativeTime(iso: string): string {
+  const then = Date.parse(iso.replace(/(\d{2})-(\d{2})-(\d{2})Z$/, '$1:$2:$3Z'));
+  if (Number.isNaN(then)) return iso;
+  const mins = Math.round((Date.now() - then) / 60000);
+  if (mins < 1) return 'just now';
+  if (mins < 60) return `${mins}m ago`;
+  const hours = Math.round(mins / 60);
+  if (hours < 48) return `${hours}h ago`;
+  return `${Math.round(hours / 24)}d ago`;
+}
+
+function renderLastLine(last: EmitRecord): string {
+  return `${last.command} · ${relativeTime(last.timestamp)} — ${trimAssessment(last.final_assessment)}`;
+}
+
+function renderDegradedRow(entry: WorkstreamEntry): string {
+  return `${entry.name} — DEGRADED: ${entry.error ?? 'unknown failure'}`;
+}
+
+function stageTag(entry: WorkstreamEntry): string {
+  return entry.stage ? `  (stage ${entry.stage.stage} · ${entry.stage.doc})` : '';
+}
+
+function printSprintView(orientation: Orientation, json: boolean): void {
+  const sprint = orientation.sprint;
+  if (!sprint) return;
+
+  if (json) {
+    const others = orientation.workstreams.filter((w) => w.name !== sprint.name);
+    console.log(
+      JSON.stringify(
+        {
+          sprint,
+          last: sprint.last ?? null,
+          next: sprint.next ?? null,
+          also: others.map((w) =>
+            w.degraded ? { name: w.name, kind: w.kind, degraded: true } : { name: w.name, kind: w.kind }
+          ),
+          waiting: orientation.waiting,
+        },
+        null,
+        2
+      )
+    );
+    return;
+  }
+
+  if (sprint.degraded) {
+    // Bare degraded-sprint render: the degraded row in place of the strip,
+    // plus any trustworthy fields; exit 0 (fault-isolation clause b).
+    console.log(renderDegradedRow(sprint));
+    if (sprint.last) console.log(`last: ${renderLastLine(sprint.last)}`);
+  } else {
+    console.log(`${sprint.name}${stageTag(sprint)}`);
+    console.log(`  ${renderStrip(sprint.strip)}`);
+    if (sprint.last) console.log(`last: ${renderLastLine(sprint.last)}`);
+    else console.log('last: no emits yet');
+    if (sprint.next) console.log(`Ready when you are: ${sprint.next}`);
+  }
+
+  const others = orientation.workstreams.filter((w) => w.name !== sprint.name);
+  const alsoParts: string[] = others.map((w) =>
+    w.degraded ? `${w.name} (degraded)` : `${w.name} (${w.kind === 'explore' ? 'exploring' : phaseOf(w)})`
+  );
+  const waitingParts = orientation.waiting;
+  const alsoLine =
+    alsoParts.length === 0 && waitingParts.length === 0
+      ? 'also: nothing else in flight'
+      : `also: ${[...alsoParts, ...waitingParts].join(' · ')}`;
+  console.log(alsoLine);
+}
+
+/** One-word phase for the `also` line, derived from the strip (no new judgment). */
+function phaseOf(entry: WorkstreamEntry): string {
+  const strip = entry.strip ?? [];
+  const current = strip.find((c) => c.glyph === '▶');
+  if (current) return current.phase;
+  const lastDone = [...strip].reverse().find((c) => c.glyph === '✓');
+  return lastDone ? `${lastDone.phase} done` : 'pending';
+}
+
+function printFullView(orientation: Orientation, json: boolean): void {
+  if (json) {
+    console.log(
+      JSON.stringify(
+        {
+          program: orientation.program,
+          workstreams: orientation.workstreams,
+          last: orientation.last,
+          waiting: orientation.waiting,
+        },
+        null,
+        2
+      )
+    );
+    return;
+  }
+
+  const { parseable, legacy, malformed } = orientation.program;
+  const citedNames = new Set<string>();
+
+  if (parseable.length > 0) {
+    console.log('PROGRAM');
+    for (const doc of parseable) {
+      console.log(`  ${doc.doc}`);
+      for (const s of doc.stages) {
+        console.log(`    ${s.id}: ${s.rendered}`);
+        for (const entry of orientation.workstreams) {
+          if (entry.stage && entry.stage.doc === doc.doc && entry.stage.stage === s.id) {
+            citedNames.add(entry.name);
+            printWorkstreamEntry(entry, '      ');
+          }
+        }
+      }
+    }
+    for (const name of legacy) console.log(`  ${name}: legacy (not parseable)`);
+    for (const m of malformed) console.log(`  ${m.doc}: MALFORMED`);
+
+    const standalone = orientation.workstreams.filter((w) => !citedNames.has(w.name));
+    if (standalone.length > 0) {
+      console.log('  standalone');
+      for (const entry of standalone) printWorkstreamEntry(entry, '    ');
+    }
+  } else {
+    // Flat fleet degradation: zero parseable docs — workstreams unnested, no
+    // PROGRAM band, each entry still carrying the full tuple. Never an error.
+    for (const entry of orientation.workstreams) printWorkstreamEntry(entry, '');
+  }
+
+  console.log();
+  if (orientation.last) {
+    console.log(`LAST: ${orientation.last.workstream} — ${renderLastLine(orientation.last.emit)}`);
+  }
+  if (orientation.waiting.length > 0) {
+    console.log('WAITING');
+    for (const w of orientation.waiting) console.log(`  ${w}`);
+  }
+}
+
+/** Full-view entry: the full orientation tuple (degraded entries excepted). */
+function printWorkstreamEntry(entry: WorkstreamEntry, indent: string): void {
+  if (entry.degraded) {
+    console.log(`${indent}${renderDegradedRow(entry)}`);
+    if (entry.last) console.log(`${indent}  last: ${renderLastLine(entry.last)}`);
+    return;
+  }
+  console.log(`${indent}${entry.name} (${entry.kind})${stageTag(entry)}`);
+  console.log(`${indent}  ${renderStrip(entry.strip)}`);
+  if (entry.position && entry.kind === 'change') console.log(`${indent}  position: ${entry.position}`);
+  console.log(`${indent}  last: ${entry.last ? renderLastLine(entry.last) : 'no emits yet'}`);
+  if (entry.next) console.log(`${indent}  Ready when you are: ${entry.next}`);
 }

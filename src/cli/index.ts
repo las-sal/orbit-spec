@@ -456,9 +456,12 @@ program
 // Status command
 program
   .command('status')
-  .description('Display artifact completion status for a change')
+  .description(
+    'Orientation: bare = current sprint; --full = arc view; --change <id> = per-change artifact status'
+  )
   .option('--change <id>', 'Change name to show status for')
   .option('--schema <name>', 'Schema override (auto-detected from config.yaml)')
+  .option('--full', 'Render the arc view (program band + all workstreams + LAST + WAITING)')
   .option('--json', 'Output as JSON')
   .action(async (options: StatusOptions) => {
     try {

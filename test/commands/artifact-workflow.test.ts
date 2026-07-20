@@ -151,14 +151,15 @@ describe('artifact-workflow CLI commands', () => {
       expect(json.message).toBe('No active changes.');
     });
 
-    it('errors when --change is missing and lists available changes', async () => {
+    it('renders the sprint view when --change is missing and changes exist (D3: error path claimed)', async () => {
       await createTestChange('some-change');
 
       const result = await runCLI(['status'], { cwd: tempDir });
-      expect(result.exitCode).toBe(1);
+      expect(result.exitCode).toBe(0);
       const output = getOutput(result);
-      expect(output).toContain('Missing required option --change');
+      expect(output).not.toContain('Missing required option --change');
       expect(output).toContain('some-change');
+      expect(output).toContain('propose'); // the sprint strip renders
     });
 
     it('errors for unknown change name and lists available changes', async () => {
@@ -664,7 +665,7 @@ artifacts:
     it('status command help shows description', async () => {
       const result = await runCLI(['status', '--help']);
       expect(result.exitCode).toBe(0);
-      expect(result.stdout).toContain('Display artifact completion status');
+      expect(result.stdout).toContain('Orientation: bare = current sprint');
     });
 
     it('instructions command help shows description', async () => {
