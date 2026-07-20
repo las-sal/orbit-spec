@@ -50,9 +50,10 @@ runs by hand at the phase seams.
       bands; flat-fleet degradation with zero parseable docs (entries still carry the full
       tuple)
 - [ ] 2.3 `--json` both tiers: the SHARED discriminated workstream-entry shape (healthy
-      `{name, kind, stage?, strip, position, last, next, gates?, status?}`, keys CLOSED;
-      `kind` change|explore — change carries `gates` + the per-change payload NESTED under
-      `status`, explore has no `gates`/`status` and
+      `{name, kind, stage?, strip, position, last, next, status?}`, keys CLOSED;
+      `kind` change|explore — change carries the per-change payload NESTED under
+      `status` (gate state at `status.gates`, the single source — no entry-level gates key),
+      explore has no `status` and
       `position: "exploring"`; degraded `{name, kind, degraded: true, error}` + trustworthy
       fields; absent fields omitted, never null; `strip` = ordered chip array
       `{phase, glyph, detail?}` per the closed glyph mapping — text render derived, never a

@@ -101,8 +101,10 @@ SOLE exception is a degraded workstream, whose entry is the degraded variant
 (`{name, kind, degraded: true, error}` + trustworthy fields — the tuple mandate and fault
 isolation reconciled, external iter 2 CRITICAL); bare
 stays the deliberately-minimal sprint view (D-d3-2/3). `--json` for both tiers shares ONE
-discriminated workstream-entry shape (kind change|explore — explore entries carry no `gates`
-and `position: "exploring"`; degraded as above; absent fields omitted, never null): bare =
+discriminated workstream-entry shape (kind change|explore — change entries nest the per-change
+payload under `status` with gate state at `status.gates`, the single source; explore entries
+carry no `status` and `position: "exploring"`; degraded as above; absent fields omitted, never
+null; iter-5 fork option A dropped the entry-level gates key): bare =
 `{sprint, last, next, also, waiting}` with `sprint` one such entry; full =
 `{program, workstreams, last, waiting}` —
 compositions of existing payload shapes (the change-status JSON and the architecture-status

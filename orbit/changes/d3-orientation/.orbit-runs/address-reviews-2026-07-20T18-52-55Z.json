@@ -1,0 +1,42 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-20T18:52:55Z",
+  "change": "d3-orientation",
+  "source": "--from-file",
+  "source_path": "orbit/changes/d3-orientation/.orbit-runs/review-proposal-2026-07-20T18-51-10Z.json",
+  "source_format": "internal-review",
+  "source_mode": "proposal",
+  "source_iteration": 5,
+  "walk_mode": "per_finding",
+  "kind": "editorial",
+  "resolutions": [
+    {
+      "finding": "Entry-level `gates?` is now redundant with `status.gates` and its content is unspecified",
+      "severity": "WARNING",
+      "file": "orbit/changes/d3-orientation/specs/orbit-orientation/spec.md",
+      "pushback": "still applies — verified the shape still carried `gates?` alongside the `status` nesting whose payload includes `gates[]` (orbit-engine-gates:35)",
+      "classification": "decision required",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          { "label": "A", "body": "Drop `gates?` from the shared entry shape — `status.gates` is the single source for changes; ripple the shape literal in the --full citation, tasks 2.3, and the degraded/explore prose (simplest; no duplication)" },
+          { "label": "B", "body": "Keep `gates?` and define it as a VERBATIM mirror of `status.gates` surfaced for consumers that skip the nested payload (convenience at the cost of stated duplication; add the mirror clause to the JSON requirement)" }
+        ],
+        "chosen": "A",
+        "discuss_invoked": false
+      },
+      "action": "Option A applied: the healthy shape is now {name, kind, stage?, strip, position, last, next, status?} with the requirement stating gate state lives at status.gates (single source, no entry-level gates key); explore entries drop the no-gates clause in favor of no-status; the explore-variant scenario asserts 'no status key exists'; the --full citation, task 2.3, and design D5 carry the dropped-key shape with the fork provenance noted. Residue grep: zero gates? remaining in any artifact.",
+      "ripple_cascade": { "applied": ["orbit/changes/d3-orientation/specs/orbit-orientation/spec.md", "orbit/changes/d3-orientation/tasks.md", "orbit/changes/d3-orientation/design.md"], "flagged_not_applied": [] }
+    }
+  ],
+  "resolution_summary": {
+    "resolved": 1,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "post_state": "orbit validate d3-orientation --strict passes; fingerprints 7/7 verified; 16 delta requirements (9 ADDED + 7 MODIFIED) across 5 files; 17 tasks",
+  "final_assessment": "The iteration-5 WARNING resolved via user fork option A: entry-level gates? dropped from the shared workstream-entry shape — status.gates is the single source of gate truth for change entries. All 24 findings across 7 passes are now resolved. The cadence has served in-context (iters 1, 5), fresh (iters 2, 3, 4), and external (GPT-5 Codex x2) classes with resolution over every pass; the strict confirm predicate wants one more independent pass yielding nothing.",
+  "next_recommended": "/orbit:review --as proposal d3-orientation"
+}

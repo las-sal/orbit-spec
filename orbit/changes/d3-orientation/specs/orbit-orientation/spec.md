@@ -132,9 +132,9 @@ data. The SINGLE exception to the full-tuple mandate is a workstream the fault-i
 policy renders DEGRADED: its entry carries the degraded variant of the shared workstream-entry
 shape (per the JSON-output requirement) plus any tuple fields that remain trustworthy. The
 `--full` JSON workstream entry IS the shared discriminated workstream-entry shape defined in
-the JSON-output requirement (`{name, kind, stage?, strip, position, last, next, gates?,
-status?}` for
-healthy entries — the per-change payload nesting under `status` where applicable). When zero
+the JSON-output requirement (`{name, kind, stage?, strip, position, last, next, status?}` for
+healthy entries — the per-change payload nesting under `status` where applicable, gate state
+at `status.gates`). When zero
 parseable architecture docs exist, `--full` degrades to the flat fleet view — all live
 workstreams unnested (each still carrying the full tuple), no PROGRAM band. `--full` composes
 the SAME per-stage and per-workstream data as the other surfaces — no `--full`-only
@@ -231,12 +231,13 @@ contents.
 
 Both tiers SHALL support `--json`, sharing ONE discriminated workstream-entry shape defined
 here and reused everywhere a workstream is emitted: a healthy entry is
-`{name, kind, stage?, strip, position, last, next, gates?, status?}` — the enumerated keys are
+`{name, kind, stage?, strip, position, last, next, status?}` — the enumerated keys are
 CLOSED (nothing spreads into the entry) — where `kind` is `"change"` or
-`"explore"`; a CHANGE entry carries `gates` and a `status` key NESTING the same per-change
-status payload `--change --json` emits, unmodified (its `position` is the engine position
-readout); an EXPLORE entry
-carries NO `gates`, no `status` (no gate graph or per-change payload exists over explores),
+`"explore"`; a CHANGE entry carries a `status` key NESTING the same per-change
+status payload `--change --json` emits, unmodified — gate state lives at `status.gates`, the
+single source; the entry level carries no separate gates key (its `position` is the engine
+position readout); an EXPLORE entry
+carries NO `status` (no gate graph or per-change payload exists over explores),
 and its
 `position` is the stage-state vocabulary literal `"exploring"`; `stage` is present only when
 the workstream's metadata carries an architecture citation; a workstream the fault-isolation
@@ -263,7 +264,7 @@ is promised in this capability (deferred; see the change's proposal).
 #### Scenario: Explore sprint emits the explore variant
 
 - **WHEN** `orbit status --json` runs with a staging explore as the current sprint
-- **THEN** `sprint.kind` is `"explore"`, `sprint.position` is `"exploring"`, no `gates` key exists, and `last`/`next` come from the explore's trail per the sourcing requirement
+- **THEN** `sprint.kind` is `"explore"`, `sprint.position` is `"exploring"`, no `status` key exists, and `last`/`next` come from the explore's trail per the sourcing requirement
 
 #### Scenario: Degraded entry emits the degraded variant in both tiers
 
