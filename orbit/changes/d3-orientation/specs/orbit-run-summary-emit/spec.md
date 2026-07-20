@@ -23,8 +23,12 @@ Existing emit-producing commands (`/orbit:review`, `/orbit:address-reviews`, `/o
 - **THEN** the emit-layer writes `orbit/explore/foo/.orbit-runs/explore-<TS>.json`
 
 #### Scenario: Named-mode explore BEGIN emit at scaffold (D-arc Stage D3)
-- **WHEN** `/orbit:explore foo` creates the staging directory (Mode B new, or Mode C crystallization)
-- **THEN** the emit-layer writes a begin `explore-<TS>.json` immediately — `decisions_captured: 0`, `next_recommended: "/orbit:explore foo — continue capturing"`, the `final_assessment` recording the scaffold and the citation decision (cited or declined) — so the trail records the workstream's start (and any `premised → exploring` stage transition) and the orientation surface can anchor from minute zero
+- **WHEN** `/orbit:explore foo` creates the staging directory in Mode B (new named exploration)
+- **THEN** the emit-layer writes a begin `explore-<TS>.json` immediately — `decisions_captured: 0`, `next_recommended: "/orbit:explore foo — continue capturing thinking"` (the maturity requirement's Early canonical string), the `final_assessment` recording the scaffold and the citation decision (cited or declined) — so the trail records the workstream's start (and any `premised → exploring` stage transition) and the orientation surface can anchor from minute zero
+
+#### Scenario: Mode C crystallization BEGIN emit carries the back-filled state (D-arc Stage D3)
+- **WHEN** a bare-mode exploration crystallizes to `foo` (Mode C: the user confirmed the crystallization warning; 2+ substantive decisions are back-filled into `explore.md` at creation)
+- **THEN** the begin emit carries the BACK-FILLED counts (`decisions_captured` = the decisions written at creation, `open_questions_count` likewise) and a maturity-consistent `next_recommended` per the `Named-mode explore recommendation by maturity` requirement — the trail's first record states true on-disk state, never a knowingly-false zero; this begin emit IS the crystallization's first emit (see the modified crystallization requirement below)
 
 #### Scenario: /orbit:architect writes to the architecture trail
 - **WHEN** an `/orbit:architect my-program` session reaches a conversation boundary
@@ -56,7 +60,7 @@ The emit-layer SHALL fire at well-defined moments per command type. Three catego
 - `/orbit:apply` — emits per `Requirement: Apply per-chunk-end emission` (chunk completion is the primary trigger; mid-chunk pause is the secondary trigger per the conversation-boundary rules below)
 
 **Multi-turn conversational commands** — emit at conversation boundaries:
-- `/orbit:explore` (named mode) — a BEGIN emit at staging-dir creation (D-arc Stage D3; the begin+boundary genre, like apply's chunk+pause) AND boundary emits per `Requirement: Named-mode explore recommendation by maturity` with the timing defined here; resuming a pre-D3 staging directory that has no emits does NOT retro-fire a begin emit (add-only, no backdating — the next boundary emit covers it)
+- `/orbit:explore` (named mode) — a BEGIN emit at staging-dir creation (D-arc Stage D3; the begin+boundary genre, like apply's chunk+pause; content is MODE-AWARE — Mode B records zero counts, Mode C records the back-filled counts, per the Emit-scope scenarios) AND boundary emits per `Requirement: Named-mode explore recommendation by maturity` with the timing defined here; resuming a pre-D3 staging directory that has no emits does NOT retro-fire a begin emit (add-only, no backdating — the next boundary emit covers it)
 - `/orbit:architect` (D-arc Stage D2) — emits to the architecture trail with the conversation-boundary timing defined here; the emit's shape and extensions are owned by `orbit-architect`
 
 A **conversation boundary** for multi-turn conversational commands is defined as EITHER of (both rules are operational signals the emit-layer can detect at JSON-write time without requiring future-message inspection):
@@ -99,3 +103,28 @@ For `/orbit:apply` mid-chunk pause specifically, the same conversation-boundary 
 #### Scenario: AI-initiated wrap fires emit
 - **WHEN** during `/orbit:explore foo` the AI says "I've captured everything; type `/orbit:propose foo` when ready"
 - **THEN** the emit-layer treats this as a conversation boundary and emits `explore-<TS>.json` with current state
+
+### Requirement: Bare-mode explore non-emission and crystallization warning
+
+When `/orbit:explore` is invoked without a name argument (bare mode), the emit-layer SHALL NOT write a `.orbit-runs/` JSON. Exploration without a name is pre-commitment thinking; no persistent emit occurs until the user crystallizes the exploration to a named change.
+
+When the user requests crystallization during a bare-mode explore (e.g., "give this exploration a name and save it"), the AI SHALL surface an explicit warning describing the persistence consequences before creating `orbit/explore/<name>/explore.md` and emitting the first `explore-<TS>.json`. The warning MUST mention:
+
+1. A new directory `orbit/explore/<name>/` will be created with `explore.md` capturing decisions to date
+2. A `.orbit-runs/explore-<TS>.json` will start the change's audit trail
+3. The change will become visible to any consumer that scans `orbit/explore/` (e.g., a downstream status reader). Note: upstream `orbit list` does NOT scan `orbit/explore/`; the change appears in `orbit list` only after `/orbit:propose` moves the staging directory to `orbit/changes/<name>/`.
+4. Abandonment after this point requires formal archive/discard, not just deleting the directory, once it's been moved to `orbit/changes/<name>/` by `/orbit:propose`
+
+The AI MUST wait for explicit user confirmation before proceeding.
+
+#### Scenario: Bare-mode explore produces no .orbit-runs JSON
+- **WHEN** the user invokes `/orbit:explore` (no name) and converses for 30 minutes without crystallizing
+- **THEN** no `.orbit-runs/` JSON is written; the conversation produces no on-disk persistence
+
+#### Scenario: Crystallization request triggers warning
+- **WHEN** during a bare-mode explore the user says "save this as `<name>`"
+- **THEN** the AI surfaces a warning enumerating the 4 consequences above and waits for user confirmation before creating any file
+
+#### Scenario: Confirmed crystallization writes first emit
+- **WHEN** the user confirms the crystallization warning
+- **THEN** the AI creates `orbit/explore/<name>/explore.md` and writes the first `explore-<TS>.json` capturing decisions to date — this first emit IS the Mode C BEGIN emit (D-arc Stage D3): it carries the back-filled `decisions_captured`/`open_questions_count` and a maturity-consistent recommendation, per the `Emit scope` begin-emit scenarios

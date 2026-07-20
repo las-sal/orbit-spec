@@ -61,10 +61,12 @@ Bare `orbit status` (with ≥1 live workstream) renders:
 
 Current sprint = the workstream owning the most recent emit among LIVE workstreams (active
 change dirs + staging explore dirs; archived changes and the architecture/project trails never
-anchor the sprint). Ladder: ≥1 live workstream → sprint view; zero live workstreams → bare
-renders the `--full` arc view (nothing in flight IS the orientation); `--full` with zero
-parseable architecture docs → flat fleet view (workstreams unnested, no PROGRAM band); zero
-everything → the existing "No active changes" message, unchanged.
+anchor the sprint). Ladder (explicit predicates, precedence
+order): (1) ≥1 live workstream → sprint view; (2) zero live workstreams AND ≥1 parseable
+architecture doc → bare renders the `--full` arc view (nothing in flight IS the orientation);
+(3) zero live workstreams AND zero parseable docs → the existing "No active changes" message,
+unchanged. Orthogonally: `--full` with zero parseable docs → flat fleet view (workstreams
+unnested, no PROGRAM band).
 
 ### D4. WAITING derivation is a closed list (no heuristics)
 
@@ -87,9 +89,13 @@ buckets), not new schemas.
 ### D6. The explore BEGIN emit is body-layer (D-d3-4)
 
 Mode B/C scaffolding writes `explore-<TS>.json` immediately after the staging dir + metadata
-are created: normal named-mode shape, `decisions_captured: 0`, `open_questions_count: 0`,
-`next_recommended: "/orbit:explore <name> — continue capturing"`, `final_assessment` recording
-the scaffold + the citation decision (cited or declined). Timing becomes begin + boundary (the
+are created — content is MODE-AWARE (iter-2 CRITICAL resolution, option A): Mode B records
+`decisions_captured: 0` / `open_questions_count: 0` and the Early canonical
+`next_recommended: "/orbit:explore <name> — continue capturing thinking"`; Mode C
+(crystallization) records the BACK-FILLED counts and a maturity-consistent recommendation —
+the crystallization requirement's "first emit" IS this begin emit, so the trail's first record
+never understates a crystallized session. Both record the scaffold + the citation decision
+(cited or declined) in `final_assessment`. Timing becomes begin + boundary (the
 apply chunk+pause genre); bare mode still never emits; resume of a pre-D3 staging dir that has
 no emits does NOT retro-fire a begin emit (the next boundary emit covers it — add-only, no
 backdating). Spec deltas: `orbit-run-summary-emit` (Emit timing semantics + a begin-emit

@@ -36,12 +36,13 @@ project.
   the `--full` view; no parseable architecture docs → `--full` degrades to the flat fleet view.
   Both tiers support `--json`. Invocation is CLI-only (D-d3-5) — no slash surface.
 - **`orbit-run-summary-emit` (MODIFIED)** — named-mode explore gains a BEGIN emit at
-  scaffold time (D-d3-4): `explore-<TS>.json` with `decisions_captured: 0` and a
-  continue-capturing recommendation, recording the citation decision and the
-  `premised → exploring` transition (explore was the only workstream-starting command that
-  began silently; found live when this stage's own exploration ran >1h with an empty trail).
-  Emit timing for named explore becomes begin + boundary (the apply chunk+pause genre); bare
-  mode still never emits.
+  scaffold time (D-d3-4), MODE-AWARE: Mode B records zero counts + the maturity requirement's
+  Early canonical recommendation; Mode C (crystallization) records the back-filled counts + a
+  maturity-consistent recommendation — the crystallization requirement's "first emit" IS this
+  begin emit. Both record the citation decision and the `premised → exploring` transition
+  (explore was the only workstream-starting command that began silently; found live when this
+  stage's own exploration ran >1h with an empty trail). Emit timing for named explore becomes
+  begin + boundary (the apply chunk+pause genre); bare mode still never emits.
 - **`orbit-explore-modifications` (MODIFIED)** — Mode B/C scaffolding fires the begin emit
   (body edit mirroring the timing delta).
 - **CLAUDE.md** gains the cold-start pointer (exit criterion 1's "only prior read" must name
@@ -55,8 +56,10 @@ elaboration layer.
 
 ## Impact
 
-- Affected specs: `orbit-orientation` (ADDED), `orbit-run-summary-emit` (MODIFIED),
-  `orbit-explore-modifications` (MODIFIED). Baseline capabilities 16 → 17.
+- Affected specs: `orbit-orientation` (ADDED), `orbit-run-summary-emit` (MODIFIED — incl. the
+  mode-aware begin emit and the crystallization first-emit clarification),
+  `orbit-explore-modifications` (MODIFIED), `orbit-engine-gates` (MODIFIED — scoping its
+  `orbit status` references to the `--change` form). Baseline capabilities 16 → 17.
 - Affected code: `src/commands/workflow/status.ts` (bare branch + `--full`),
   `src/cli/index.ts` (flag), a new aggregation module `src/core/orientation.ts` (trail scan
   across the four locations + composition; reuses `loadChangeContext`/`formatChangeStatus`,

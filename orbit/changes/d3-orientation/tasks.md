@@ -39,15 +39,18 @@ runs by hand at the phase seams.
       existing change-status payload; full `{program, workstreams, last, waiting}` reusing the
       architecture bucket shapes; untruncated `final_assessment` in JSON
 - [ ] 2.4 CLI tests (`test/commands/`): bare/mid-sprint render; error-path-claimed regression
-      (bare exit 0 with changes; `--change` and no-changes unchanged); `--full` nesting +
-      flat-fleet; JSON shapes; eligibility framing (no imperative labels — grep, the D1 rule)
+      (bare exit 0 with changes; `--change` and no-changes unchanged — the regression asserts
+      the scoped `orbit-engine-gates` contract: gate rows + gates[] markers remain on the
+      `--change` form); `--full` nesting + flat-fleet; JSON shapes; eligibility framing (no
+      imperative labels — grep, the D1 rule; the `Ready when you are:` literal capitalized)
 
 ## 3. Explore BEGIN emit
 
 - [ ] 3.1 `explore.ts` body: Mode B/C scaffolding fires the begin emit immediately after
-      scaffold + metadata (shape per the delta: `decisions_captured: 0`, continue-capturing
-      recommendation, citation decision recorded); resume of a pre-D3 emit-less staging dir
-      does NOT retro-fire (add-only, next boundary covers it)
+      scaffold + metadata — MODE-AWARE per the delta (Mode B: zero counts + the Early canonical
+      recommendation; Mode C: back-filled counts + maturity-consistent recommendation — the
+      crystallization's first emit IS the begin emit); citation decision recorded; resume of a
+      pre-D3 emit-less staging dir does NOT retro-fire (add-only, next boundary covers it)
 - [ ] 3.2 Generated-surface fidelity markers for the begin-emit instruction (surface e2e test);
       parity hashes re-pinned for the edited explore template
 

@@ -1,0 +1,88 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-20T16:13:31Z",
+  "change": "d3-orientation",
+  "source": "--from-file",
+  "source_path": "orbit/changes/d3-orientation/.orbit-runs/review-proposal-2026-07-20T15-58-03Z.json",
+  "source_format": "internal-review-json",
+  "walk_mode": "per_finding",
+  "kind": "editorial",
+  "resolutions": [
+    {
+      "finding": "Mode C begin emit's decisions_captured: 0 contradicts the un-delta'd crystallization-warning requirement and Mode C's own back-filled decisions",
+      "severity": "CRITICAL",
+      "file": "orbit/changes/d3-orientation/specs/orbit-run-summary-emit/spec.md",
+      "pushback": "still applies — verified: the live 'Confirmed crystallization writes first emit' scenario mandates 'capturing decisions to date' while the delta's begin-emit scenario mandated 0 for Mode C",
+      "classification": "decision required",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          { "label": "A", "body": "Scope decisions_captured: 0 + the continue-capturing recommendation to Mode B only; specify that Mode C's begin emit carries the back-filled decision count (and a maturity-consistent recommendation); add a MODIFIED block for the crystallization-warning requirement clarifying its 'first emit' IS this begin emit" },
+          { "label": "B", "body": "Keep the begin emit a pure scaffold record for both modes; add a MODIFIED block re-wording the crystallization-warning requirement's first-emit scenario" }
+        ],
+        "chosen": "A",
+        "discuss_invoked": false
+      },
+      "action": "Option A applied: the begin-emit scenario split into Mode B (zero counts + Early canonical string) and a new Mode C scenario (back-filled counts + maturity-consistent recommendation; 'this begin emit IS the crystallization's first emit'); the Emit-timing entry notes the mode-aware content; a THIRD MODIFIED block composed verbatim from the live 'Bare-mode explore non-emission and crystallization warning' requirement clarifies the first-emit scenario. Ripples: design D6 and the proposal's What-Changes bullet + Impact list rewritten mode-aware; task 3.1 carries the mode-aware body contract. Fingerprint stamped for the new block.",
+      "ripple_cascade": {
+        "applied": ["orbit/changes/d3-orientation/specs/orbit-run-summary-emit/spec.md", "orbit/changes/d3-orientation/design.md", "orbit/changes/d3-orientation/proposal.md", "orbit/changes/d3-orientation/tasks.md"],
+        "flagged_not_applied": [{ "path": "orbit/specs/orbit-run-summary-emit/spec.md", "reason": "baseline spec; the ripple IS the new MODIFIED block — baseline changes land at archive" }]
+      }
+    },
+    {
+      "finding": "Begin-emit recommendation string diverges from the un-delta'd maturity requirement's Early canonical text",
+      "severity": "WARNING",
+      "file": "orbit/changes/d3-orientation/specs/orbit-run-summary-emit/spec.md",
+      "pushback": "still applies — three spots said 'continue capturing' vs the canonical 'continue capturing thinking'",
+      "classification": "trivial fix",
+      "action": "All three spots aligned to the Early canonical string verbatim: the begin-emit scenario (within the C1-A rewrite), design D6, and the orientation spec's emit-less fallback — each now cites 'the maturity requirement's Early canonical string'.",
+      "ripple_cascade": { "applied": ["orbit/changes/d3-orientation/specs/orbit-run-summary-emit/spec.md", "orbit/changes/d3-orientation/design.md", "orbit/changes/d3-orientation/specs/orbit-orientation/spec.md"], "flagged_not_applied": [] }
+    },
+    {
+      "finding": "Degradation-ladder rungs 'zero live workstreams' and 'zero workstreams at all' are the same predicate as written",
+      "severity": "WARNING",
+      "file": "orbit/changes/d3-orientation/specs/orbit-orientation/spec.md",
+      "pushback": "still applies — the disambiguator lived only in a scenario qualifier",
+      "classification": "trivial fix",
+      "action": "Ladder rewritten with explicit predicates in precedence order: (1) ≥1 live workstream → sprint; (2) zero live AND ≥1 parseable doc → full view; (3) zero live AND zero parseable docs → the existing no-changes message. Mirrored in design D3 (with the orthogonal --full flat-fleet rule kept separate).",
+      "ripple_cascade": { "applied": ["orbit/changes/d3-orientation/specs/orbit-orientation/spec.md", "orbit/changes/d3-orientation/design.md"], "flagged_not_applied": [] }
+    },
+    {
+      "finding": "orbit-engine-gates' un-scoped orbit status references become ambiguous once the bare path is repurposed",
+      "severity": "WARNING",
+      "file": "orbit/specs/orbit-engine-gates/spec.md",
+      "pushback": "still applies — 'orbit status SHALL render gate rows' and the consent scenario's 'orbit status --json' both un-scoped",
+      "classification": "trivial fix",
+      "action": "Fourth delta file added (specs/orbit-engine-gates/spec.md): two MODIFIED blocks composed verbatim from the live baseline, scoping 'orbit status' → 'orbit status --change <name>' in the gate-aware-status requirement (with a pointer to orbit-orientation for the bare form) and the consent scenario. Fingerprints stamped (6/6 total). Task 2.4 carries the contract as a regression assertion; proposal Impact lists the fourth capability.",
+      "ripple_cascade": { "applied": ["orbit/changes/d3-orientation/specs/orbit-engine-gates/spec.md", "orbit/changes/d3-orientation/tasks.md", "orbit/changes/d3-orientation/proposal.md"], "flagged_not_applied": [{ "path": "orbit/specs/orbit-engine-gates/spec.md", "reason": "baseline spec; the ripple IS the new delta file — baseline changes land at archive" }] }
+    },
+    {
+      "finding": "Strip glyph legend does not cover stale/unpassed/superseded gate states",
+      "severity": "SUGGESTION",
+      "file": "orbit/changes/d3-orientation/specs/orbit-orientation/spec.md",
+      "pushback": "still applies",
+      "classification": "trivial fix",
+      "action": "Glyph legend extended to a closed mapping: superseded-(past) renders ✓-equivalent by design; stale/unpassed render unmarked with the WAITING band carrying the reason; 'the renderer makes no judgment calls beyond this closed mapping'.",
+      "ripple_cascade": { "applied": ["orbit/changes/d3-orientation/specs/orbit-orientation/spec.md"], "flagged_not_applied": [] }
+    },
+    {
+      "finding": "Eligibility label quoted lowercase vs the engine's canonical 'Ready when you are:'",
+      "severity": "SUGGESTION",
+      "file": "orbit/changes/d3-orientation/specs/orbit-orientation/spec.md",
+      "pushback": "still applies — canonical capitalized form at orbit-engine-gates line 301",
+      "classification": "trivial fix",
+      "action": "Capitalized in the next-sourcing requirement; task 2.4's framing grep now names the capitalized literal.",
+      "ripple_cascade": { "applied": ["orbit/changes/d3-orientation/specs/orbit-orientation/spec.md", "orbit/changes/d3-orientation/tasks.md"], "flagged_not_applied": [] }
+    }
+  ],
+  "resolution_summary": {
+    "resolved": 6,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "post_state": "orbit validate d3-orientation --strict passes; fingerprints 6/6 verified (3 newly stamped); change now at 14 delta requirements (8 ADDED + 6 MODIFIED blocks) across 4 delta files; 16 tasks",
+  "final_assessment": "All 6 iteration-2 findings resolved: the CRITICAL via the user-forked option A (mode-aware begin emit + crystallization clarification block, rippled through design/proposal/tasks); the engine-gates scoping as a fourth delta file; the maturity-string alignment across three spots; the explicit ladder predicates; both suggestions.",
+  "next_recommended": "/orbit:review --as proposal --fresh d3-orientation"
+}
