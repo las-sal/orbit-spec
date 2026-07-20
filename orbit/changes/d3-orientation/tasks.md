@@ -11,21 +11,28 @@ runs by hand at the phase seams.
       archive; staging explores), per-change status via the existing
       `loadChangeContext`/`formatChangeStatus` path, stage states via
       `listArchitectureDocs`/`computeStageStates`, trail recency via `parseTsToken` merge-sort
-      across the four locations — pure composition, NO artifact-content inference (the spec's
-      no-live-inference scenario)
+      across the four locations PLUS archived changes' relocated trails
+      (`orbit/changes/archive/*/.orbit-runs/` — global-LAST sourcing ONLY, never
+      live-workstream enumeration or sprint anchoring) — pure composition, NO artifact-content
+      inference (the spec's no-live-inference scenario)
 - [ ] 1.2 Continuity predicate + degradation ladder: live-workstream anchor; archived/
-      architecture/project trails never anchor; emit-less workstream fallback (metadata
-      `created`, name tiebreak); zero-live → full view; zero-everything → existing no-changes
-      message
+      architecture/project trails never anchor; equal-`<TS>` tie-break (workstream name, then
+      full filename — shared by sprint anchoring and global LAST); emit-less workstream
+      fallback (metadata `created`, name tiebreak); zero-live → full view; zero-everything →
+      existing no-changes message
 - [ ] 1.3 Waiting derivation (CLOSED set): quiescent-awaiting-ratification stages;
       outstanding externals COUNT-BASED per change+mode (#T0 − #returned; `N packaged, M
-      returned`); unpassed/stale gates on live changes with engine reasons
+      returned`; spine-invalid emits excluded from both counts); unpassed/stale gates on live
+      changes with engine reasons
 - [ ] 1.4 Unit tests (`test/core/orientation.test.ts`): predicate incl. the archive-emit edge
-      (the D-d3-4 motivating case) and the emit-less fallback; waiting set incl. the
+      (the D-d3-4 motivating case — assert BOTH halves: no sprint anchor AND the archive emit
+      surfacing in global LAST) and the emit-less fallback; same-second `<TS>` ties (sprint
+      anchoring and global LAST); waiting set incl. the
       count-based concurrent-handoff case (2 packaged / 1 returned); FAULT ISOLATION fixtures
-      (corrupt newest emit → older-valid fallback, deterministic; one broken workstream →
-      degraded row, healthy rows intact, exit 0); degradation ladder all rungs; fixture
-      workspaces
+      (corrupt newest emit → older-valid fallback, deterministic; SPINE-INVALID newest emit —
+      parseable JSON missing `final_assessment` — skipped like invalid JSON and excluded from
+      WAITING counts; one broken workstream → degraded row, healthy rows intact, exit 0);
+      degradation ladder all rungs; fixture workspaces
 
 ## 2. CLI surfaces
 
@@ -38,17 +45,23 @@ runs by hand at the phase seams.
 - [ ] 2.2 `--full` flag (`src/cli/index.ts` + `status.ts`): PROGRAM band (stage lines incl.
       legacy/malformed listings), workstreams nested by citation (uncited → `standalone`),
       EVERY workstream entry carrying its full orientation tuple (strip/position + own `last` +
-      own `next` — the cold-start criterion tier), LAST + WAITING bands; flat-fleet degradation
-      with zero parseable docs (entries still carry the full tuple)
-- [ ] 2.3 `--json` both tiers: bare `{sprint, last, next, also, waiting}` embedding the
-      existing change-status payload; full `{program, workstreams, last, waiting}` reusing the
-      architecture bucket shapes, each workstream entry shaped
-      `{name, kind, stage?, strip, position, last, next, gates?}`; untruncated
-      `final_assessment` in JSON
+      own `next` — the cold-start criterion tier; SOLE exception: degraded workstreams render
+      the degraded row + trustworthy fields), LAST (incl. archived-trail sourcing) + WAITING
+      bands; flat-fleet degradation with zero parseable docs (entries still carry the full
+      tuple)
+- [ ] 2.3 `--json` both tiers: the SHARED discriminated workstream-entry shape (healthy
+      `{name, kind, stage?, strip, position, last, next, gates?}`; `kind` change|explore —
+      change embeds the per-change payload + `gates`, explore has no `gates` and
+      `position: "exploring"`; degraded `{name, kind, degraded: true, error}` + trustworthy
+      fields; absent fields omitted, never null); bare `{sprint, last, next, also, waiting}`
+      with `sprint` one such entry; full `{program, workstreams, last, waiting}` reusing the
+      architecture bucket shapes; untruncated `final_assessment` in JSON
 - [ ] 2.4 CLI tests (`test/commands/`): bare/mid-sprint render; error-path-claimed regression
       (bare exit 0 with changes; `--change` and no-changes unchanged — the regression asserts
       the scoped `orbit-engine-gates` contract: gate rows + gates[] markers remain on the
-      `--change` form); `--full` nesting + flat-fleet; JSON shapes; eligibility framing (no
+      `--change` form); `--full` nesting + flat-fleet; JSON shapes incl. the explore-sprint
+      variant and the degraded variant in both tiers; degraded-SPRINT bare render (degraded
+      row in place of the strip, trustworthy `last`, exit 0); eligibility framing (no
       imperative labels — grep, the D1 rule; the `Ready when you are:` literal capitalized)
 
 ## 3. Explore BEGIN emit
@@ -77,8 +90,10 @@ runs by hand at the phase seams.
 - [ ] 5.1 Cold-start test as a real test where mechanical: fixture workspace with several
       active changes → ONE `orbit status --full --json` answers position/last/next PER
       WORKSTREAM (multi-change text + JSON assertions on every entry's tuple — the
-      criterion-satisfying tier per the spec) with no artifact reads (assert the module's fs
-      access stays within trail/metadata/engine paths); CLAUDE.md names the command (grep)
+      criterion-satisfying tier per the spec; healthy entries assert the shared shape, a
+      degraded fixture entry asserts the degraded variant carries no fabricated tuple) with no
+      artifact reads (assert the module's fs access stays within trail/metadata/engine paths);
+      CLAUDE.md names the command (grep)
 - [ ] 5.2 Full suite green (baseline 1712 + new coverage); `orbit validate d3-orientation
       --strict` passes; `orbit fingerprint d3-orientation --check` all verified
 - [ ] 5.3 `npm run build && node bin/orbit.js update --force`; spot-check the explore SKILL's

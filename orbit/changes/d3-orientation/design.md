@@ -35,11 +35,19 @@ last, waiting}`. Sources — active changes via the existing change listing +
 explores via `orbit/explore/*/` presence + their `.orbit-runs/`; program layer via
 `listArchitectureDocs` + `computeStageStates`; recency via emit filenames' `<TS>` tokens
 (`parseTsToken`) merge-sorted across the four trail locations (per-change, per-explore,
-architecture, project-wide). NO filesystem archaeology beyond trail/metadata reads — the module
+architecture, project-wide) plus archived changes' relocated trails
+(`orbit/changes/archive/*/.orbit-runs/` — global-LAST sourcing only, never live enumeration or
+sprint anchoring; external iter 2 W2); equal tokens tie-break by workstream name then full
+filename (shared by sprint anchoring and global LAST; external iter 2 W1). NO filesystem
+archaeology beyond trail/metadata reads — the module
 never infers position from artifact contents (D-d3-1; the v0.1 bash approach is the named
-anti-pattern). FAULT ISOLATION per the spec's malformed-input policy: invalid emits are skipped
-with fallback to the next-older valid one; a workstream whose status/metadata load fails
-renders a degraded row without aborting the fleet; all fallbacks deterministic.
+anti-pattern). FAULT ISOLATION per the spec's malformed-input policy: invalid emits —
+unreadable, JSON-invalid, or spine-invalid (missing/non-string spine fields orientation
+renders; T0 `mode` for WAITING) — are skipped
+with fallback to the next-older valid one and excluded from WAITING counts; a workstream whose
+status/metadata load fails
+renders a degraded row without aborting the fleet (a degraded SPRINT renders the row in place
+of the strip + trustworthy fields); all fallbacks deterministic.
 
 ### D2. The bare view: sprint strip + last + next + also (D-d3-3)
 
@@ -85,11 +93,18 @@ waiting classes require a spec change, not an inference tweak.
 PROGRAM band (every stage, computed state, one line each; legacy/malformed docs listed as the
 architecture status surface lists them) with live workstreams nested under their cited stages
 (citation from metadata; uncited workstreams under `standalone`), then LAST (global most recent
-emit, any trail incl. architecture) and WAITING (D4) bands. EVERY workstream entry carries its
+emit, any trail incl. architecture AND archived changes' relocated trails — LAST-band only)
+and WAITING (D4) bands. EVERY workstream entry carries its
 own full orientation tuple (strip/position + last + next, text and JSON) — `--full` is the tier
-satisfying the arc's per-workstream cold-start exit criterion (external iter 1 CRITICAL); bare
-stays the deliberately-minimal sprint view (D-d3-2/3). `--json` for both tiers: bare =
-`{sprint, last, next, also, waiting}`; full = `{program, workstreams, last, waiting}` —
+satisfying the arc's per-workstream cold-start exit criterion (external iter 1 CRITICAL); the
+SOLE exception is a degraded workstream, whose entry is the degraded variant
+(`{name, kind, degraded: true, error}` + trustworthy fields — the tuple mandate and fault
+isolation reconciled, external iter 2 CRITICAL); bare
+stays the deliberately-minimal sprint view (D-d3-2/3). `--json` for both tiers shares ONE
+discriminated workstream-entry shape (kind change|explore — explore entries carry no `gates`
+and `position: "exploring"`; degraded as above; absent fields omitted, never null): bare =
+`{sprint, last, next, also, waiting}` with `sprint` one such entry; full =
+`{program, workstreams, last, waiting}` —
 compositions of existing payload shapes (the change-status JSON and the architecture-status
 buckets), not new schemas.
 
@@ -106,7 +121,8 @@ never understates a crystallized session. Both record the scaffold + the citatio
 apply chunk+pause genre); bare mode still never emits; resume of a pre-D3 staging dir that has
 no emits does NOT retro-fire a begin emit (the next boundary emit covers it — add-only, no
 backdating). Spec deltas: `orbit-run-summary-emit` (Emit timing semantics + a begin-emit
-scenario under Emit scope), `orbit-explore-modifications` (Mode B scenario gains the emit);
+scenario under Emit scope), `orbit-explore-modifications` (Mode B AND Mode C scenarios gain
+the mode-aware emit — Mode C back-fills first, then fires it with back-filled counts);
 body edit in `explore.ts`.
 
 ### D7. CLAUDE.md cold-start pointer at apply-seam

@@ -35,7 +35,10 @@ pre-capability output.
 The current sprint SHALL be the workstream owning the most recent emit (by filename `<TS>`
 token) among LIVE workstreams only — active changes under `orbit/changes/` (excluding
 `archive/`) and staging explores under `orbit/explore/`. Archived changes, the architecture
-trail, and the project-wide trail never anchor the sprint. Degradation ladder (rungs in
+trail, and the project-wide trail never anchor the sprint. Equal `<TS>` tokens (the token is
+second-granular) break deterministically: lexicographic workstream name, then lexicographic
+full emit filename — the SAME tie-break applies wherever emit recency is compared (sprint
+anchoring and the `--full` LAST band alike). Degradation ladder (rungs in
 precedence order, each predicate explicit): (1) ≥1 live workstream → the sprint view; (2) zero
 live workstreams AND ≥1 parseable architecture doc → bare renders the `--full` view (nothing in
 flight IS the orientation); (3) zero live workstreams AND zero parseable architecture docs → the
@@ -43,6 +46,11 @@ existing no-active-changes message. A live workstream with zero emits (pre-begin
 dir) participates via its directory presence but cannot anchor recency — if NO live workstream
 has any emit, the most recently `created` (metadata date) live workstream anchors, ties broken
 by name.
+
+#### Scenario: Same-second emits resolve deterministically
+
+- **WHEN** two live workstreams each own a newest emit carrying the identical `<TS>` token
+- **THEN** the sprint anchors to the lexicographically-earlier workstream name, and repeated invocations render identically
 
 #### Scenario: Archive emit does not orient to a closed sprint
 
@@ -111,15 +119,22 @@ architecture doc: id, computed state with the completion composition, one line e
 malformed docs listed as the architecture status surface lists them), with live workstreams
 nested under their cited stages (citation from workstream metadata; workstreams without a
 citation listed under `standalone`), followed by a LAST band (the globally most recent emit
-across all four trail locations, including architecture) and a WAITING band (per the waiting
-requirement). EVERY rendered workstream entry — nested or standalone, text and JSON alike —
-SHALL carry the workstream's full orientation tuple: its strip/position, its OWN `last` (most
-recent emit, per the bare view's trim rules in text; untruncated in JSON), and its OWN `next`
-(per the recommendation-sourcing requirement) — `--full` is the tier that satisfies the arc's
-cold-start exit criterion (ONE command answers position / last / next PER workstream); the
-global LAST band is a convenience atop, not a substitute for, per-workstream data. The `--full`
-JSON workstream entry shape is `{name, kind, stage?, strip, position, last, next, gates?}` —
-embedding the same per-change payload `--change --json` emits where applicable. When zero
+across all four trail locations, including architecture, PLUS archived changes' relocated
+trails under `orbit/changes/archive/*/.orbit-runs/` — archived trails feed the LAST band ONLY;
+they never make a workstream live and never anchor the sprint) and a WAITING band (per the
+waiting requirement). EVERY rendered workstream entry — nested or standalone, text and JSON
+alike — SHALL carry the workstream's full orientation tuple: its strip/position, its OWN
+`last` (most recent emit, per the bare view's trim rules in text; untruncated in JSON), and
+its OWN `next` (per the recommendation-sourcing requirement) — `--full` is the tier that
+satisfies the arc's cold-start exit criterion (ONE command answers position / last / next PER
+workstream); the global LAST band is a convenience atop, not a substitute for, per-workstream
+data. The SINGLE exception to the full-tuple mandate is a workstream the fault-isolation
+policy renders DEGRADED: its entry carries the degraded variant of the shared workstream-entry
+shape (per the JSON-output requirement) plus any tuple fields that remain trustworthy. The
+`--full` JSON workstream entry IS the shared discriminated workstream-entry shape defined in
+the JSON-output requirement (`{name, kind, stage?, strip, position, last, next, gates?}` for
+healthy entries — embedding the same per-change payload `--change --json` emits where
+applicable). When zero
 parseable architecture docs exist, `--full` degrades to the flat fleet view — all live
 workstreams unnested (each still carrying the full tuple), no PROGRAM band. `--full` composes
 the SAME per-stage and per-workstream data as the other surfaces — no `--full`-only
@@ -134,6 +149,11 @@ computation.
 
 - **WHEN** `--full` runs with three live workstreams
 - **THEN** each of the three entries — text and `--json` — carries its own strip/position, its own `last`, and its own `next`; a reader answers position / last / next for EVERY workstream from this one command with zero artifact reads
+
+#### Scenario: Archived trail surfaces in global LAST without reviving the workstream
+
+- **WHEN** the most recent emit anywhere is the `archive-*.json` of a change archived minutes ago and one staging explore is the only live workstream
+- **THEN** `--full`'s LAST band names the archive emit while the workstream list contains only the explore — the archived change appears in no workstream entry and does not anchor the sprint
 
 #### Scenario: No architecture docs degrades to flat fleet
 
@@ -172,14 +192,23 @@ renders no WAITING band (bare: the `also` line omits the waiting segment).
 ### Requirement: Fault isolation and malformed-input policy
 
 Fleet collection SHALL isolate faults per workstream — a single damaged workstream or emit
-never erases orientation for healthy work: (a) an unreadable or JSON-invalid emit file is
-SKIPPED (consistent with the trail reader's existing skip behavior) and recency falls back to
-the next-older valid emit in that trail; when NO valid emit remains, the workstream follows the
+never erases orientation for healthy work: (a) an unreadable, JSON-invalid, or SPINE-INVALID
+emit file is SKIPPED (consistent with the trail reader's existing skip behavior) and recency
+falls back to the next-older valid emit in that trail — spine-invalid means parseable JSON
+failing the minimum validity checks orientation renders from: a missing or non-string
+`command`, `final_assessment`, or `next_recommended` (the universal-spine fields per
+`orbit-conventions`), or, for a `review-external` T0 emit, a missing or non-string `mode` (the
+WAITING arithmetic's discriminator); a skipped emit never wins recency and never counts in the
+WAITING arithmetic; when NO valid emit remains, the workstream follows the
 emit-less rules (metadata-`created` recency; `last` reports no readable emits; `next` falls
 back per the continuity requirement's emit-less scenario — the maturity requirement's Early
 canonical string for explores, the engine `next_command` for changes); (b) a workstream whose status computation or metadata load
 fails renders a DEGRADED row (name + a one-line error note) while every other workstream
 renders normally — the command exits 0 with the degraded row visible, never aborts the view;
+when the degraded workstream IS the bare view's sprint, bare renders the degraded row in place
+of the strip plus any tuple fields that remain trustworthy (a readable trail still yields
+`last`; `next` is omitted with the error note when its source computation failed), the `also`
+line, and exits 0;
 (c) these fallbacks are deterministic (same inputs, same render) and never consult artifact
 contents.
 
@@ -193,12 +222,27 @@ contents.
 - **WHEN** one of three active changes has metadata that fails to load
 - **THEN** that workstream renders a degraded row with an error note; the other two render fully; exit code 0
 
+#### Scenario: Spine-invalid newest emit is skipped like invalid JSON
+
+- **WHEN** the sprint workstream's newest emit parses as JSON but lacks a `final_assessment` string
+- **THEN** the file is skipped, recency and `last` fall back to the next-older valid emit, and the file counts in no WAITING arithmetic
+
 ### Requirement: JSON output for both tiers
 
-Both tiers SHALL support `--json`: bare emits `{sprint, last, next, also, waiting}` (the sprint
-object embeds the same per-change status payload `--change --json` emits, plus the strip's
-computed chips); `--full` emits `{program, workstreams, last, waiting}` (the program array
-reusing the architecture-status bucket shapes). The JSON carries untruncated `final_assessment`
+Both tiers SHALL support `--json`, sharing ONE discriminated workstream-entry shape defined
+here and reused everywhere a workstream is emitted: a healthy entry is
+`{name, kind, stage?, strip, position, last, next, gates?}` where `kind` is `"change"` or
+`"explore"`; a CHANGE entry carries `gates` and embeds the same per-change status payload
+`--change --json` emits (its `position` is the engine position readout); an EXPLORE entry
+carries NO `gates` and no per-change payload (no gate graph exists over explores) and its
+`position` is the stage-state vocabulary literal `"exploring"`; `stage` is present only when
+the workstream's metadata carries an architecture citation; a workstream the fault-isolation
+policy degrades carries the degraded variant `{name, kind, degraded: true, error}` plus any
+tuple fields that remain trustworthy. Absent fields are OMITTED, never null. Bare emits
+`{sprint, last, next, also, waiting}` — `sprint` IS one such workstream entry (the strip's
+computed chips ride on its `strip` field); `--full` emits `{program, workstreams, last,
+waiting}` with `workstreams` an array of such entries (the program array reusing the
+architecture-status bucket shapes). The JSON carries untruncated `final_assessment`
 strings (truncation is a text-render concern only). When the degradation ladder makes bare
 render the `--full` view (zero live workstreams), bare `--json` emits the FULL shape — the
 fallback switches the whole tier, not just the text render. No stability contract beyond shape
@@ -208,6 +252,16 @@ is promised in this capability (deferred; see the change's proposal).
 
 - **WHEN** `orbit status --json` runs and the last emit's `final_assessment` exceeds the text cap
 - **THEN** the JSON `last` object carries the full string; only the text render truncates
+
+#### Scenario: Explore sprint emits the explore variant
+
+- **WHEN** `orbit status --json` runs with a staging explore as the current sprint
+- **THEN** `sprint.kind` is `"explore"`, `sprint.position` is `"exploring"`, no `gates` key exists, and `last`/`next` come from the explore's trail per the sourcing requirement
+
+#### Scenario: Degraded entry emits the degraded variant in both tiers
+
+- **WHEN** a workstream's metadata load fails and `--json` runs (bare with it as sprint, or `--full`)
+- **THEN** its entry is `{name, kind, degraded: true, error}` plus only trustworthy fields — never a fabricated full tuple, never null-padded
 
 ### Requirement: CLI-only invocation with a cold-start pointer
 
