@@ -50,10 +50,13 @@ runs by hand at the phase seams.
       bands; flat-fleet degradation with zero parseable docs (entries still carry the full
       tuple)
 - [ ] 2.3 `--json` both tiers: the SHARED discriminated workstream-entry shape (healthy
-      `{name, kind, stage?, strip, position, last, next, gates?}`; `kind` change|explore —
-      change embeds the per-change payload + `gates`, explore has no `gates` and
+      `{name, kind, stage?, strip, position, last, next, gates?, status?}`, keys CLOSED;
+      `kind` change|explore — change carries `gates` + the per-change payload NESTED under
+      `status`, explore has no `gates`/`status` and
       `position: "exploring"`; degraded `{name, kind, degraded: true, error}` + trustworthy
-      fields; absent fields omitted, never null); bare `{sprint, last, next, also, waiting}`
+      fields; absent fields omitted, never null; `strip` = ordered chip array
+      `{phase, glyph, detail?}` per the closed glyph mapping — text render derived, never a
+      pre-rendered string in JSON); bare `{sprint, last, next, also, waiting}`
       with `sprint` one such entry; full `{program, workstreams, last, waiting}` reusing the
       architecture bucket shapes; untruncated `final_assessment` in JSON
 - [ ] 2.4 CLI tests (`test/commands/`): bare/mid-sprint render; error-path-claimed regression
@@ -84,6 +87,10 @@ runs by hand at the phase seams.
       the arc status log at archive (the R-d-4 subtraction: bash+jq binary, filesystem position
       inference, `/opsx:status`, `jq` dependency — engine-native now). The external repo's own
       retirement marker is the user's action; record the pointer, don't reach outside the repo
+- [ ] 4.3 `orbit-architect` genre-citation delta rides the archive sync (no code/template
+      change — verified at proposal time no generated body carries the stale phrase); at apply,
+      re-grep `src/core/templates/` for "named-mode-explore emit-timing genre" to confirm it
+      stays spec-only
 
 ## 5. Verification sweep (arc §d3-orientation exit criteria)
 
@@ -92,7 +99,8 @@ runs by hand at the phase seams.
       WORKSTREAM (multi-change text + JSON assertions on every entry's tuple — the
       criterion-satisfying tier per the spec; healthy entries assert the shared shape, a
       degraded fixture entry asserts the degraded variant carries no fabricated tuple) with no
-      artifact reads (assert the module's fs access stays within trail/metadata/engine paths);
+      artifact reads (assert the module's fs access stays within trail/metadata/engine paths
+      AND is read-only — the surface creates and modifies no files);
       CLAUDE.md names the command (grep)
 - [ ] 5.2 Full suite green (baseline 1712 + new coverage); `orbit validate d3-orientation
       --strict` passes; `orbit fingerprint d3-orientation --check` all verified

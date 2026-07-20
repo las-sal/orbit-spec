@@ -28,7 +28,7 @@ pre-capability output.
 #### Scenario: No live inference beyond engine and trail
 
 - **WHEN** the orientation surface composes any view
-- **THEN** its data sources are limited to: the change-status computation (`position`/`next_command`/gates/task counts), architecture stage-state computation, workstream directory presence, metadata citations, and `.orbit-runs/` emit files — never artifact-content parsing
+- **THEN** its data sources are limited to: the change-status computation (`position`/`next_command`/gates/task counts), architecture stage-state computation, workstream directory presence, metadata citations, and `.orbit-runs/` emit files — never artifact-content parsing; and the surface is READ-ONLY — it creates and modifies no files
 
 ### Requirement: Continuity predicate and degradation ladder
 
@@ -132,9 +132,9 @@ data. The SINGLE exception to the full-tuple mandate is a workstream the fault-i
 policy renders DEGRADED: its entry carries the degraded variant of the shared workstream-entry
 shape (per the JSON-output requirement) plus any tuple fields that remain trustworthy. The
 `--full` JSON workstream entry IS the shared discriminated workstream-entry shape defined in
-the JSON-output requirement (`{name, kind, stage?, strip, position, last, next, gates?}` for
-healthy entries — embedding the same per-change payload `--change --json` emits where
-applicable). When zero
+the JSON-output requirement (`{name, kind, stage?, strip, position, last, next, gates?,
+status?}` for
+healthy entries — the per-change payload nesting under `status` where applicable). When zero
 parseable architecture docs exist, `--full` degrades to the flat fleet view — all live
 workstreams unnested (each still carrying the full tuple), no PROGRAM band. `--full` composes
 the SAME per-stage and per-workstream data as the other surfaces — no `--full`-only
@@ -231,16 +231,23 @@ contents.
 
 Both tiers SHALL support `--json`, sharing ONE discriminated workstream-entry shape defined
 here and reused everywhere a workstream is emitted: a healthy entry is
-`{name, kind, stage?, strip, position, last, next, gates?}` where `kind` is `"change"` or
-`"explore"`; a CHANGE entry carries `gates` and embeds the same per-change status payload
-`--change --json` emits (its `position` is the engine position readout); an EXPLORE entry
-carries NO `gates` and no per-change payload (no gate graph exists over explores) and its
+`{name, kind, stage?, strip, position, last, next, gates?, status?}` — the enumerated keys are
+CLOSED (nothing spreads into the entry) — where `kind` is `"change"` or
+`"explore"`; a CHANGE entry carries `gates` and a `status` key NESTING the same per-change
+status payload `--change --json` emits, unmodified (its `position` is the engine position
+readout); an EXPLORE entry
+carries NO `gates`, no `status` (no gate graph or per-change payload exists over explores),
+and its
 `position` is the stage-state vocabulary literal `"exploring"`; `stage` is present only when
 the workstream's metadata carries an architecture citation; a workstream the fault-isolation
 policy degrades carries the degraded variant `{name, kind, degraded: true, error}` plus any
-tuple fields that remain trustworthy. Absent fields are OMITTED, never null. Bare emits
-`{sprint, last, next, also, waiting}` — `sprint` IS one such workstream entry (the strip's
-computed chips ride on its `strip` field); `--full` emits `{program, workstreams, last,
+tuple fields that remain trustworthy. Absent fields are OMITTED, never null. `strip` is an
+ORDERED ARRAY of chip objects `{phase, glyph, detail?}` — `phase` from the strip-composition
+requirement's phase list, `glyph` from its closed glyph mapping, `detail` carrying iteration
+counts (`⟲6`) or progress (`12/20`) when present; the text strip render is DERIVED from this
+array, and JSON never carries a pre-rendered strip string. Bare emits
+`{sprint, last, next, also, waiting}` — `sprint` IS one such workstream entry; `--full` emits
+`{program, workstreams, last,
 waiting}` with `workstreams` an array of such entries (the program array reusing the
 architecture-status bucket shapes). The JSON carries untruncated `final_assessment`
 strings (truncation is a text-render concern only). When the degradation ladder makes bare

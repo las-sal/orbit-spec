@@ -122,7 +122,10 @@ apply chunk+pause genre); bare mode still never emits; resume of a pre-D3 stagin
 no emits does NOT retro-fire a begin emit (the next boundary emit covers it — add-only, no
 backdating). Spec deltas: `orbit-run-summary-emit` (Emit timing semantics + a begin-emit
 scenario under Emit scope), `orbit-explore-modifications` (Mode B AND Mode C scenarios gain
-the mode-aware emit — Mode C back-fills first, then fires it with back-filled counts);
+the mode-aware emit — Mode C back-fills first, then fires it with back-filled counts),
+`orbit-architect` (its emit-timing citation named the named-mode-explore genre, which this
+delta re-genres — reworded to cite conversation-boundary timing directly; architect gains no
+begin emit; iter-4 W1);
 body edit in `explore.ts`.
 
 ### D7. CLAUDE.md cold-start pointer at apply-seam

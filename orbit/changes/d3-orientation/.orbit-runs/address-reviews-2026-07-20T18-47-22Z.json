@@ -1,0 +1,50 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-20T18:47:22Z",
+  "change": "d3-orientation",
+  "source": "--from-file",
+  "source_path": "orbit/changes/d3-orientation/.orbit-runs/review-proposal-2026-07-20T18-43-55Z.json",
+  "source_format": "internal-review",
+  "source_mode": "proposal",
+  "source_iteration": 4,
+  "walk_mode": "per_finding",
+  "kind": "editorial",
+  "resolutions": [
+    {
+      "finding": "Architect's 'named-mode-explore emit-timing genre' citation goes stale under the timing delta",
+      "severity": "WARNING",
+      "file": "orbit/specs/orbit-architect/spec.md",
+      "pushback": "still applies — verified the phrase at orbit-architect/spec.md:103 and confirmed via grep that NO generated template carries it (src/core/templates/ clean), so the fix is spec-only",
+      "classification": "trivial fix",
+      "action": "NEW 5th delta file specs/orbit-architect/spec.md: a MODIFIED block of 'Architect run-summary emit with handoff section' — baseline verbatim except the parenthetical, now '(the conversation-boundary timing per orbit-run-summary-emit's Emit timing semantics; architect fires no BEGIN emit — the begin+boundary genre is named-mode explore's, D-arc Stage D3)'. Counts move 15→16 delta requirements (9 ADDED + 7 MODIFIED) across 4→5 files; fingerprint stamped (6→7, add-missing-only). Carrier: new task 4.3 (rides archive sync; re-grep templates at apply). Proposal body + Impact list and design D6 delta map rippled.",
+      "ripple_cascade": { "applied": ["orbit/changes/d3-orientation/specs/orbit-architect/spec.md", "orbit/changes/d3-orientation/proposal.md", "orbit/changes/d3-orientation/design.md", "orbit/changes/d3-orientation/tasks.md"], "flagged_not_applied": [{ "path": "orbit/specs/orbit-architect/spec.md", "reason": "baseline spec; the delta in the change's specs/orbit-architect/spec.md captures this ripple — applied at archive sync" }] }
+    },
+    {
+      "finding": "Two shape points inside the shared workstream entry are still implementer-divergent",
+      "severity": "WARNING",
+      "file": "orbit/changes/d3-orientation/specs/orbit-orientation/spec.md",
+      "pushback": "still applies — 'embeds' left spread-vs-nest open and `strip` had no declared JSON type",
+      "classification": "trivial fix (both pins follow the design's existing structured-data risk line — nest avoids collision rules entirely; the chip array is what 'layout control for consumers' already implied)",
+      "action": "JSON-output requirement pinned: the healthy shape is {name, kind, stage?, strip, position, last, next, gates?, status?} with keys declared CLOSED (nothing spreads); a CHANGE entry NESTS the unmodified per-change payload under `status`; explore entries carry no gates/status. `strip` is an ORDERED ARRAY of {phase, glyph, detail?} chip objects per the strip-composition requirement's closed glyph mapping (detail = ⟲6 / 12/20); the text strip is DERIVED from it — JSON never carries a pre-rendered strip string. The --full requirement's shape citation updated to match; tasks 2.3 carries the pinned shape.",
+      "ripple_cascade": { "applied": ["orbit/changes/d3-orientation/specs/orbit-orientation/spec.md", "orbit/changes/d3-orientation/tasks.md"], "flagged_not_applied": [] }
+    },
+    {
+      "finding": "No explicit read-only guarantee on the orientation surface",
+      "severity": "SUGGESTION",
+      "file": "orbit/changes/d3-orientation/specs/orbit-orientation/spec.md",
+      "pushback": "still applies — the data-source limits constrained reads only",
+      "classification": "trivial fix",
+      "action": "The no-live-inference scenario's THEN gains 'and the surface is READ-ONLY — it creates and modifies no files'; task 5.1's fs-access assertion is now two-sided (paths AND read-only).",
+      "ripple_cascade": { "applied": ["orbit/changes/d3-orientation/specs/orbit-orientation/spec.md", "orbit/changes/d3-orientation/tasks.md"], "flagged_not_applied": [] }
+    }
+  ],
+  "resolution_summary": {
+    "resolved": 3,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "post_state": "orbit validate d3-orientation --strict passes; fingerprints 7/7 verified (architect stamped); change now at 16 delta requirements (9 ADDED + 7 MODIFIED) across 5 files; 17 tasks in 5 groups",
+  "final_assessment": "All 3 iteration-4 findings resolved: the architect genre citation gets its own one-parenthetical MODIFIED delta (5th delta file, template-clean verified, task 4.3 carrier, fingerprint stamped); the shared JSON entry is fully pinned (closed keys, payload nests under status, strip is a typed chip array with the text render derived); the surface is now explicitly read-only with a two-sided test assertion. Iteration 4 carried no CRITICAL and its WARNINGs are now resolved — the strict confirm predicate wants one more independent pass yielding nothing, while R-d-10's ratified calibration would also accept a recorded proceed-anyway at apply if a suggestion-only tail persists.",
+  "next_recommended": "/orbit:review --as proposal --fresh d3-orientation"
+}

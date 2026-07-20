@@ -49,6 +49,10 @@ project.
   begin + boundary (the apply chunk+pause genre); bare mode still never emits.
 - **`orbit-explore-modifications` (MODIFIED)** — Mode B/C scaffolding fires the begin emit
   (body edit mirroring the timing delta).
+- **`orbit-architect` (MODIFIED)** — one-parenthetical reword: its emit-timing citation read
+  "the named-mode-explore emit-timing genre", which the timing delta re-genres to
+  begin+boundary; the citation now names conversation-boundary timing directly (architect
+  fires no begin emit).
 - **CLAUDE.md** gains the cold-start pointer (exit criterion 1's "only prior read" must name
   the command); issue #3 closes; `~/code/orbit-status` retires (its bash+jq position
   archaeology, `/opsx:status` overlay command, and `jq` dependency are the R-d-4 subtraction,
@@ -63,7 +67,9 @@ elaboration layer.
 - Affected specs: `orbit-orientation` (ADDED), `orbit-run-summary-emit` (MODIFIED — incl. the
   mode-aware begin emit and the crystallization first-emit clarification),
   `orbit-explore-modifications` (MODIFIED), `orbit-engine-gates` (MODIFIED — scoping its
-  `orbit status` references to the `--change` form). Baseline capabilities 16 → 17.
+  `orbit status` references to the `--change` form), `orbit-architect` (MODIFIED — the
+  emit-timing genre citation reworded away from the re-genred named-mode explore). Baseline
+  capabilities 16 → 17.
 - Affected code: `src/commands/workflow/status.ts` (bare branch + `--full`),
   `src/cli/index.ts` (flag), a new aggregation module `src/core/orientation.ts` (trail scan
   across the four locations + composition; reuses `loadChangeContext`/`formatChangeStatus`,

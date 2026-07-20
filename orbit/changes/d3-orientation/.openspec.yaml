@@ -14,3 +14,5 @@ base_fingerprints:
   orbit-engine-gates:
     Gate declaration in schema YAML: sha256:d35cfc90f01e5381414726b552426e1d3534b3c7dc6794f02deb466265368983
     Gate-aware status and instructions with position readout: sha256:baef9d9a1203e98c4da787c1429719ca72133f6f64a9f9ee9648397b524ecab0
+  orbit-architect:
+    Architect run-summary emit with handoff section: sha256:f4af86df25bb3b15323f763b79f07b8f6778a4797533008ca41edfaf9028854d
