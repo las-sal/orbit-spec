@@ -1,0 +1,81 @@
+{
+  "command": "review",
+  "timestamp": "2026-07-20T15:58:03Z",
+  "change": "d3-orientation",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "iteration": 2,
+  "depth": "full",
+  "scorecard": {
+    "completeness": { "critical": 0, "warning": 1, "suggestion": 1 },
+    "correctness": { "critical": 1, "warning": 0, "suggestion": 0 },
+    "coherence": { "critical": 0, "warning": 2, "suggestion": 1 }
+  },
+  "findings": [
+    {
+      "pass": 2,
+      "severity": "CRITICAL",
+      "file": "orbit/changes/d3-orientation/specs/orbit-run-summary-emit/spec.md",
+      "line": 27,
+      "title": "Mode C begin emit's decisions_captured: 0 contradicts the un-delta'd crystallization-warning requirement and Mode C's own back-filled decisions",
+      "recommendation": "The begin-emit scenario mandates decisions_captured: 0 for BOTH 'Mode B new, or Mode C crystallization'. But Mode C fires only after 2+ substantive decisions exist, and the delta's own Mode C accept scenario back-fills the Decisions section at the same moment the begin emit fires — so the emit records 0 while >=2 decisions are on disk. Worse, the LIVE un-delta'd requirement in the same capability ('Confirmed crystallization writes first emit', orbit/specs/orbit-run-summary-emit/spec.md:175-177) mandates the first explore-<TS>.json at crystallization 'capturing decisions to date' — a direct SHALL-level conflict over the same emit. The orientation surface would then render a just-crystallized sprint from a knowingly-false record. Reconcile with a delta: (A) scope decisions_captured: 0 to Mode B only and specify Mode C's begin emit carries the back-filled count (+ a MODIFIED block clarifying the crystallization requirement's 'first emit' IS this begin emit), or (B) keep the begin emit a pure scaffold record for both modes and add a MODIFIED block re-wording the crystallization first-emit scenario.",
+      "recommendation_options": [
+        { "label": "A", "body": "Scope decisions_captured: 0 + the continue-capturing recommendation to Mode B only; specify that Mode C's begin emit carries the back-filled decision count (and a maturity-consistent recommendation); add a MODIFIED block for the crystallization-warning requirement clarifying its 'first emit' IS this begin emit" },
+        { "label": "B", "body": "Keep the begin emit a pure scaffold record for both modes; add a MODIFIED block re-wording the crystallization-warning requirement's first-emit scenario ('capturing decisions to date' becomes: the begin emit records the scaffold + citation decision; decisions land in explore.md and the next boundary emit)" }
+      ]
+    },
+    {
+      "pass": 3,
+      "severity": "WARNING",
+      "file": "orbit/changes/d3-orientation/specs/orbit-run-summary-emit/spec.md",
+      "line": 27,
+      "title": "Begin-emit recommendation string diverges from the un-delta'd maturity requirement's Early canonical text",
+      "recommendation": "The un-delta'd 'Named-mode explore recommendation by maturity' requirement (orbit/specs/orbit-run-summary-emit/spec.md:183) quotes the Early (0-1 decisions) canonical string as '/orbit:explore <name> — continue capturing thinking' and its scenario greps for 'continue capturing thinking'. The begin emit is spec'd as '/orbit:explore foo — continue capturing' — repeated in design.md and hard-coded as the emit-less fallback in the orientation spec. Two SHALL-level texts specify different verbatim strings for the same field of the same emit. Align all three new-artifact spots to the Early canonical string verbatim (the smaller fix), or extend the delta to name a distinct begin-emit string in the maturity requirement."
+    },
+    {
+      "pass": 5,
+      "severity": "WARNING",
+      "file": "orbit/changes/d3-orientation/specs/orbit-orientation/spec.md",
+      "line": 39,
+      "title": "Degradation-ladder rungs 'zero live workstreams' and 'zero workstreams at all' are the same predicate as written, mandating two different renders",
+      "recommendation": "Live workstreams are defined as exactly active changes + staging explores, so 'zero live workstreams → bare renders the --full view' and 'zero workstreams at all → the existing no-active-changes message' trigger on the identical condition; the disambiguator lives only in a scenario qualifier. State the final rung explicitly in the requirement text — 'zero live workstreams AND zero parseable architecture docs → the existing no-active-changes message' — and mirror in design.md D3."
+    },
+    {
+      "pass": 6,
+      "severity": "WARNING",
+      "file": "orbit/specs/orbit-engine-gates/spec.md",
+      "line": 246,
+      "title": "orbit-engine-gates' un-scoped orbit status references become ambiguous once the bare path is repurposed, with no scoping delta",
+      "recommendation": "The gate-aware-status requirement reads 'orbit status SHALL render gate rows ... alongside artifact rows, and a one-line POSITION READOUT', and a consent scenario says 'orbit status --json carries the marker'. Pre-D3 these unambiguously denoted the --change form (bare errored); post-D3 the literal text mandates gate rows on bare invocations that render the sprint view instead. Add a small MODIFIED block to orbit-engine-gates scoping both references to 'orbit status --change <name>' (the imperative-label prohibition correctly stays surface-wide)."
+    },
+    {
+      "pass": 5,
+      "severity": "SUGGESTION",
+      "file": "orbit/changes/d3-orientation/specs/orbit-orientation/spec.md",
+      "line": 69,
+      "title": "Strip glyph legend does not cover stale/unpassed/superseded gate states",
+      "recommendation": "The closed glyph set covers passed/current/review-iterations/pending, while engine gate states include stale, unpassed, and superseded-(past). Add one sentence mapping the remaining states (e.g. superseded renders as passed-equivalent by design; stale/unpassed render unmarked with the WAITING band carrying the reason) so the renderer needs no judgment call."
+    },
+    {
+      "pass": 7,
+      "severity": "SUGGESTION",
+      "file": "orbit/changes/d3-orientation/specs/orbit-orientation/spec.md",
+      "line": 89,
+      "title": "Eligibility label quoted lowercase ('ready when you are:') vs the engine's canonical 'Ready when you are:'",
+      "recommendation": "orbit-engine-gates line 301 defines the canonical capitalized label and existing tests grep for it. Capitalize the quote in the next-sourcing requirement so task 2.4's framing grep asserts the same literal."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "title": "orbit-conventions creation scenario non-exhaustive (no .orbit-runs mention)",
+      "evidence": "Iter-1 finding 3; user ratified option B (leave it) — settled scope call recorded in address-reviews-2026-07-20T15-48-00Z.json. Not re-flagged."
+    },
+    {
+      "title": "Propose emit records '20 tasks' (16 actual)",
+      "evidence": "Iter-1 finding 4, resolved record-only with the trail deliberately unedited. Suppressed per the settled resolution."
+    }
+  ],
+  "iteration_note": "Note: 0 of these findings appeared in the last run on 2026-07-20. 6 new this run. All 4 iter-1 resolutions verified landed (both limitation qualifications mutually consistent; the JSON fallback sentence present). The CRITICAL-class sweeps were NOT empty: the Mode C path surfaces a genuine delta-vs-live-baseline conflict inside the very capability being modified — the un-delta'd-enumeration class, fifth cycle running.",
+  "final_assessment": "1 critical issue found (the Mode C begin-emit conflict, with an A/B reconciliation fork) plus 3 warnings (maturity-string divergence; indistinguishable ladder rungs; un-scoped engine-gates status references) and 2 suggestions (glyph legend; label capitalization).",
+  "next_recommended": "/orbit:address-reviews d3-orientation --from-file orbit/changes/d3-orientation/.orbit-runs/review-proposal-2026-07-20T15-58-03Z.json"
+}
