@@ -32,7 +32,7 @@ The system SHALL support three invocation modes: (A) bare — no file; (B) named
 #### Scenario: Mode C — user accepts name
 
 - **WHEN** the user provides a name in response to the crystallization prompt
-- **THEN** the command creates `orbit/explore/<name>/explore.md` (and the minimal `.openspec.yaml` and the BEGIN emit, as in Mode B), back-fills the Premise and Decisions sections with what's been discussed, and continues as Mode B
+- **THEN** the command creates `orbit/explore/<name>/explore.md` (and the minimal `.openspec.yaml`, as in Mode B), back-fills the Premise and Decisions sections with what's been discussed, THEN fires the BEGIN emit — mode-aware, carrying the back-filled counts and a maturity-consistent recommendation per `orbit-run-summary-emit`'s Mode C begin-emit scenario (NOT Mode B's zero-count shape) — and continues as Mode B
 
 #### Scenario: Mode C — user declines
 

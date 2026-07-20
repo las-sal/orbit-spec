@@ -74,8 +74,8 @@ unnested, no PROGRAM band).
 
 Waiting-on-you items, all trail/engine-derived: (a) a stage rendering
 quiescent-awaiting-ratification; (b) outstanding packaged externals — COUNT-BASED per
-change+mode (#T0 emits − #returned findings files; renders `N packaged, M returned`; iter-2
-external W4, user option C — no pairing token, no concurrency prohibition, deterministic
+change+mode (#T0 emits − #returned findings files; renders `N packaged, M returned`; external
+iter 1 W4, user option C — no pairing token, no concurrency prohibition, deterministic
 arithmetic); (c) a gate `unpassed`/`stale` on a live change (rendered with the engine's
 reason). CLOSED set — new
 waiting classes require a spec change, not an inference tweak.
@@ -87,7 +87,7 @@ architecture status surface lists them) with live workstreams nested under their
 (citation from metadata; uncited workstreams under `standalone`), then LAST (global most recent
 emit, any trail incl. architecture) and WAITING (D4) bands. EVERY workstream entry carries its
 own full orientation tuple (strip/position + last + next, text and JSON) — `--full` is the tier
-satisfying the arc's per-workstream cold-start exit criterion (iter-2 external CRITICAL); bare
+satisfying the arc's per-workstream cold-start exit criterion (external iter 1 CRITICAL); bare
 stays the deliberately-minimal sprint view (D-d3-2/3). `--json` for both tiers: bare =
 `{sprint, last, next, also, waiting}`; full = `{program, workstreams, last, waiting}` —
 compositions of existing payload shapes (the change-status JSON and the architecture-status

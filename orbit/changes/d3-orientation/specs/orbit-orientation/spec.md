@@ -176,7 +176,8 @@ never erases orientation for healthy work: (a) an unreadable or JSON-invalid emi
 SKIPPED (consistent with the trail reader's existing skip behavior) and recency falls back to
 the next-older valid emit in that trail; when NO valid emit remains, the workstream follows the
 emit-less rules (metadata-`created` recency; `last` reports no readable emits; `next` falls
-back per the sourcing requirement); (b) a workstream whose status computation or metadata load
+back per the continuity requirement's emit-less scenario — the maturity requirement's Early
+canonical string for explores, the engine `next_command` for changes); (b) a workstream whose status computation or metadata load
 fails renders a DEGRADED row (name + a one-line error note) while every other workstream
 renders normally — the command exits 0 with the degraded row visible, never aborts the view;
 (c) these fallbacks are deterministic (same inputs, same render) and never consult artifact

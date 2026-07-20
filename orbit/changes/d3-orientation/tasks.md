@@ -37,10 +37,14 @@ runs by hand at the phase seams.
       output byte-identical (regression-asserted)
 - [ ] 2.2 `--full` flag (`src/cli/index.ts` + `status.ts`): PROGRAM band (stage lines incl.
       legacy/malformed listings), workstreams nested by citation (uncited → `standalone`),
-      LAST + WAITING bands; flat-fleet degradation with zero parseable docs
+      EVERY workstream entry carrying its full orientation tuple (strip/position + own `last` +
+      own `next` — the cold-start criterion tier), LAST + WAITING bands; flat-fleet degradation
+      with zero parseable docs (entries still carry the full tuple)
 - [ ] 2.3 `--json` both tiers: bare `{sprint, last, next, also, waiting}` embedding the
       existing change-status payload; full `{program, workstreams, last, waiting}` reusing the
-      architecture bucket shapes; untruncated `final_assessment` in JSON
+      architecture bucket shapes, each workstream entry shaped
+      `{name, kind, stage?, strip, position, last, next, gates?}`; untruncated
+      `final_assessment` in JSON
 - [ ] 2.4 CLI tests (`test/commands/`): bare/mid-sprint render; error-path-claimed regression
       (bare exit 0 with changes; `--change` and no-changes unchanged — the regression asserts
       the scoped `orbit-engine-gates` contract: gate rows + gates[] markers remain on the
