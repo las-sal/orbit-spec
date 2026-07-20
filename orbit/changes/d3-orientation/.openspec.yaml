@@ -1,0 +1,12 @@
+schema: spec-driven
+created: 2026-07-20
+schema_version: 3
+architecture:
+  doc: d-arc-arbitered-flow
+  stage: d3-orientation
+base_fingerprints:
+  orbit-explore-modifications:
+    Three invocation modes supported: sha256:4cf2f9ee5044cd7b17c00691d47d2a9a5c1ba94faf29b958bc64d77ffe80c5b6
+  orbit-run-summary-emit:
+    Emit scope: sha256:fa7141da308f1013d59f4588cc36b9b076a8234ffac7e14c59ec95c17269728b
+    Emit timing semantics: sha256:b4ece347b22a6beea7e3bda7b850c56c893a20001fdece4a6b8d31d271721b62
