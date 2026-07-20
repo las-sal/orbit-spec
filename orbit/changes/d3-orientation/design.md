@@ -37,7 +37,9 @@ explores via `orbit/explore/*/` presence + their `.orbit-runs/`; program layer v
 (`parseTsToken`) merge-sorted across the four trail locations (per-change, per-explore,
 architecture, project-wide). NO filesystem archaeology beyond trail/metadata reads — the module
 never infers position from artifact contents (D-d3-1; the v0.1 bash approach is the named
-anti-pattern).
+anti-pattern). FAULT ISOLATION per the spec's malformed-input policy: invalid emits are skipped
+with fallback to the next-older valid one; a workstream whose status/metadata load fails
+renders a degraded row without aborting the fleet; all fallbacks deterministic.
 
 ### D2. The bare view: sprint strip + last + next + also (D-d3-3)
 
@@ -71,17 +73,22 @@ unnested, no PROGRAM band).
 ### D4. WAITING derivation is a closed list (no heuristics)
 
 Waiting-on-you items, all trail/engine-derived: (a) a stage rendering
-quiescent-awaiting-ratification; (b) a `review-external-<TS>.json` with
-`awaiting_findings: true` and no later `external-<as>-*.md` in that trail; (c) a gate
-`unpassed`/`stale` on a live change (rendered with the engine's reason). CLOSED set — new
+quiescent-awaiting-ratification; (b) outstanding packaged externals — COUNT-BASED per
+change+mode (#T0 emits − #returned findings files; renders `N packaged, M returned`; iter-2
+external W4, user option C — no pairing token, no concurrency prohibition, deterministic
+arithmetic); (c) a gate `unpassed`/`stale` on a live change (rendered with the engine's
+reason). CLOSED set — new
 waiting classes require a spec change, not an inference tweak.
 
-### D5. `--full`: the arc-as-spine view
+### D5. `--full`: the arc-as-spine view — and the cold-start tier
 
 PROGRAM band (every stage, computed state, one line each; legacy/malformed docs listed as the
 architecture status surface lists them) with live workstreams nested under their cited stages
 (citation from metadata; uncited workstreams under `standalone`), then LAST (global most recent
-emit, any trail incl. architecture) and WAITING (D4) bands. `--json` for both tiers: bare =
+emit, any trail incl. architecture) and WAITING (D4) bands. EVERY workstream entry carries its
+own full orientation tuple (strip/position + last + next, text and JSON) — `--full` is the tier
+satisfying the arc's per-workstream cold-start exit criterion (iter-2 external CRITICAL); bare
+stays the deliberately-minimal sprint view (D-d3-2/3). `--json` for both tiers: bare =
 `{sprint, last, next, also, waiting}`; full = `{program, workstreams, last, waiting}` —
 compositions of existing payload shapes (the change-status JSON and the architecture-status
 buckets), not new schemas.
@@ -130,8 +137,9 @@ position-pointer sentence was an apply-seam fix, not archive-time).
   computation).
 - **[Trail scan cost]** — four locations, dozens of small JSONs; pure recompute per invocation,
   no caching (the C2/D2 precedent); revisit only if measured.
-- **[Strip width]** — six phases + chips must fit a terminal line; truncation rules live in the
-  spec's rendering scenarios, and `--json` carries the untruncated data.
+- **[Strip width]** — six phases + chips can exceed a terminal line for long names; v1 accepts
+  UNBOUNDED width (no truncation rule; terminals wrap) — `--json` carries structured data for
+  any consumer needing layout control. Deferred with the other render polish.
 
 ## Migration Plan
 

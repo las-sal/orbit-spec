@@ -30,7 +30,10 @@ project.
   work + waiting-on-you items). Bare invocation with active changes is TODAY an error path
   ("Missing required option --change") — the surface claims it; the no-changes message and
   `--change` behavior are unchanged. `orbit status --full` renders the arc view: all stages
-  with computed states, workstreams nested under their cited stages, LAST + WAITING bands.
+  with computed states, workstreams nested under their cited stages (EVERY entry carrying its
+  own position/last/next tuple — the tier satisfying the arc's per-workstream cold-start exit
+  criterion), LAST + WAITING bands; fleet collection is fault-isolated (a damaged workstream
+  degrades alone, never aborting the view).
   Continuity predicate (D-d3-4): current sprint = workstream of the most recent emit belonging
   to a LIVE workstream (active change or staging explore); nothing live → bare falls back to
   the `--full` view; no parseable architecture docs → `--full` degrades to the flat fleet view.

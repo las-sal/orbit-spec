@@ -41,10 +41,14 @@ cost (goal 3).
   imperatives, no AI narration inside the CLI). One `also` line keeps other active work and
   waiting-on-you items visible so concurrency never hides.
 
-- **D-d3-4 (2026-07-20) — Explore gains a BEGIN emit; the continuity predicate anchors on it**
-  (resolves Q-d3-1, option A). Mode B/C scaffolding fires `explore-<TS>.json` at staging-dir
-  creation — normal emit shape, `decisions_captured: 0`, next = continue-capturing, the citation
-  decision recorded — closing two gaps found live during THIS exploration (d3 ran >1h with no
+- **D-d3-4 (2026-07-20; amended 2026-07-20 per proposal-review iter 2, option A) — Explore
+  gains a MODE-AWARE BEGIN emit; the continuity predicate anchors on it** (resolves Q-d3-1,
+  option A). Mode B/C scaffolding fires `explore-<TS>.json` at staging-dir creation — Mode B:
+  `decisions_captured: 0` + the maturity requirement's Early canonical recommendation; Mode C
+  (crystallization): the BACK-FILLED counts + a maturity-consistent recommendation, and this
+  begin emit IS the crystallization's first emit (amendment: the original zero-count-for-both
+  wording contradicted the live crystallization requirement and Mode C's own back-fill); the
+  citation decision recorded in both modes — closing two gaps found live during THIS exploration (d3 ran >1h with no
   `.orbit-runs/` at all): (a) bare `orbit status` can anchor its sprint strip from the first
   minute; (b) the `premised → exploring` stage transition gets a trail record (explore was the
   only workstream-starting command that began silently; precedent: review-external's T0

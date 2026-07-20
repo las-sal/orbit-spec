@@ -18,11 +18,14 @@ runs by hand at the phase seams.
       `created`, name tiebreak); zero-live → full view; zero-everything → existing no-changes
       message
 - [ ] 1.3 Waiting derivation (CLOSED set): quiescent-awaiting-ratification stages;
-      `awaiting_findings: true` T0 emits with no later `external-<as>-*.md` in the same trail;
-      unpassed/stale gates on live changes with engine reasons
+      outstanding externals COUNT-BASED per change+mode (#T0 − #returned; `N packaged, M
+      returned`); unpassed/stale gates on live changes with engine reasons
 - [ ] 1.4 Unit tests (`test/core/orientation.test.ts`): predicate incl. the archive-emit edge
       (the D-d3-4 motivating case) and the emit-less fallback; waiting set incl. the
-      awaiting-findings match rule; degradation ladder all four rungs; fixture workspaces
+      count-based concurrent-handoff case (2 packaged / 1 returned); FAULT ISOLATION fixtures
+      (corrupt newest emit → older-valid fallback, deterministic; one broken workstream →
+      degraded row, healthy rows intact, exit 0); degradation ladder all rungs; fixture
+      workspaces
 
 ## 2. CLI surfaces
 
@@ -49,8 +52,10 @@ runs by hand at the phase seams.
 - [ ] 3.1 `explore.ts` body: Mode B/C scaffolding fires the begin emit immediately after
       scaffold + metadata — MODE-AWARE per the delta (Mode B: zero counts + the Early canonical
       recommendation; Mode C: back-filled counts + maturity-consistent recommendation — the
-      crystallization's first emit IS the begin emit); citation decision recorded; resume of a
-      pre-D3 emit-less staging dir does NOT retro-fire (add-only, next boundary covers it)
+      crystallization's first emit IS the begin emit); citation decision recorded; same-second
+      boundary emit bumps its token forward one second (lexical begin-before-boundary order);
+      resume of a pre-D3 emit-less staging dir does NOT retro-fire (add-only, next boundary
+      covers it)
 - [ ] 3.2 Generated-surface fidelity markers for the begin-emit instruction (surface e2e test);
       parity hashes re-pinned for the edited explore template
 
@@ -66,9 +71,10 @@ runs by hand at the phase seams.
 ## 5. Verification sweep (arc §d3-orientation exit criteria)
 
 - [ ] 5.1 Cold-start test as a real test where mechanical: fixture workspace with several
-      active changes → ONE `orbit status --json` answers position/last/next per workstream
-      with no artifact reads (assert the module's fs access stays within trail/metadata/
-      engine paths); CLAUDE.md names the command (grep)
+      active changes → ONE `orbit status --full --json` answers position/last/next PER
+      WORKSTREAM (multi-change text + JSON assertions on every entry's tuple — the
+      criterion-satisfying tier per the spec) with no artifact reads (assert the module's fs
+      access stays within trail/metadata/engine paths); CLAUDE.md names the command (grep)
 - [ ] 5.2 Full suite green (baseline 1712 + new coverage); `orbit validate d3-orientation
       --strict` passes; `orbit fingerprint d3-orientation --check` all verified
 - [ ] 5.3 `npm run build && node bin/orbit.js update --force`; spot-check the explore SKILL's

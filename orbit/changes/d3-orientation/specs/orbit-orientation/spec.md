@@ -112,14 +112,28 @@ malformed docs listed as the architecture status surface lists them), with live 
 nested under their cited stages (citation from workstream metadata; workstreams without a
 citation listed under `standalone`), followed by a LAST band (the globally most recent emit
 across all four trail locations, including architecture) and a WAITING band (per the waiting
-requirement). When zero parseable architecture docs exist, `--full` degrades to the flat fleet
-view — all live workstreams unnested, no PROGRAM band. `--full` composes the SAME per-stage and
-per-workstream data as the other surfaces — no `--full`-only computation.
+requirement). EVERY rendered workstream entry — nested or standalone, text and JSON alike —
+SHALL carry the workstream's full orientation tuple: its strip/position, its OWN `last` (most
+recent emit, per the bare view's trim rules in text; untruncated in JSON), and its OWN `next`
+(per the recommendation-sourcing requirement) — `--full` is the tier that satisfies the arc's
+cold-start exit criterion (ONE command answers position / last / next PER workstream); the
+global LAST band is a convenience atop, not a substitute for, per-workstream data. The `--full`
+JSON workstream entry shape is `{name, kind, stage?, strip, position, last, next, gates?}` —
+embedding the same per-change payload `--change --json` emits where applicable. When zero
+parseable architecture docs exist, `--full` degrades to the flat fleet view — all live
+workstreams unnested (each still carrying the full tuple), no PROGRAM band. `--full` composes
+the SAME per-stage and per-workstream data as the other surfaces — no `--full`-only
+computation.
 
 #### Scenario: Workstreams nest under cited stages
 
 - **WHEN** `--full` runs with a staging explore citing stage X and an uncited active change
 - **THEN** the explore renders under stage X's line and the change renders under `standalone`
+
+#### Scenario: Every workstream carries its own orientation tuple (the cold-start criterion)
+
+- **WHEN** `--full` runs with three live workstreams
+- **THEN** each of the three entries — text and `--json` — carries its own strip/position, its own `last`, and its own `next`; a reader answers position / last / next for EVERY workstream from this one command with zero artifact reads
 
 #### Scenario: No architecture docs degrades to flat fleet
 
@@ -129,22 +143,54 @@ per-workstream data as the other surfaces — no `--full`-only computation.
 ### Requirement: Waiting-on-you derivation is a closed set
 
 The WAITING items SHALL derive exclusively from three trail/engine conditions: (a) an
-architecture stage rendering quiescent-awaiting-ratification; (b) a `review-external-<TS>.json`
-with `awaiting_findings: true` and no `external-<as>-*.md` with a later `<TS>` token in the
-same trail (a packaged external whose findings never came back); (c) a gate reporting
+architecture stage rendering quiescent-awaiting-ratification; (b) outstanding packaged
+externals, COUNT-BASED per change+mode: outstanding = (count of `review-external-*.json` T0
+emits whose `mode` is M) − (count of `external-<M>-*.md` findings files) in the same trail;
+when outstanding > 0, WAITING renders `N external review(s) packaged, M returned` for that
+change+mode — v1 cannot name WHICH packaged handoff is outstanding (no pairing token exists);
+the arithmetic is deterministic from the existing trail and never falsely clears on concurrent
+handoffs; (c) a gate reporting
 `unpassed` or `stale` on a live change, rendered with the engine's reason. The set is CLOSED —
 adding a waiting class requires a spec change, never an inference tweak. Zero waiting items
 renders no WAITING band (bare: the `also` line omits the waiting segment).
 
 #### Scenario: Packaged external awaiting findings surfaces
 
-- **WHEN** a live change's trail holds a T0 `review-external` emit with `awaiting_findings: true` and no later external findings file
-- **THEN** WAITING includes `external review packaged — findings not yet returned` for that change
+- **WHEN** a live change's trail holds one system-mode T0 `review-external` emit and zero `external-system-*.md` findings files
+- **THEN** WAITING includes `1 external review packaged, 0 returned` for that change
+
+#### Scenario: Concurrent handoffs never falsely clear (count-based)
+
+- **WHEN** a change's trail holds TWO proposal-mode T0 emits and ONE `external-proposal-*.md` findings file
+- **THEN** WAITING still renders `2 external review(s) packaged, 1 returned` — the single return cannot clear both
 
 #### Scenario: Awaiting ratification surfaces
 
 - **WHEN** a stage renders quiescent-awaiting-ratification
 - **THEN** WAITING includes that stage's line (`<id> completion — yours to ratify`)
+
+### Requirement: Fault isolation and malformed-input policy
+
+Fleet collection SHALL isolate faults per workstream — a single damaged workstream or emit
+never erases orientation for healthy work: (a) an unreadable or JSON-invalid emit file is
+SKIPPED (consistent with the trail reader's existing skip behavior) and recency falls back to
+the next-older valid emit in that trail; when NO valid emit remains, the workstream follows the
+emit-less rules (metadata-`created` recency; `last` reports no readable emits; `next` falls
+back per the sourcing requirement); (b) a workstream whose status computation or metadata load
+fails renders a DEGRADED row (name + a one-line error note) while every other workstream
+renders normally — the command exits 0 with the degraded row visible, never aborts the view;
+(c) these fallbacks are deterministic (same inputs, same render) and never consult artifact
+contents.
+
+#### Scenario: Corrupt newest emit falls back deterministically
+
+- **WHEN** the sprint workstream's newest emit file is invalid JSON but an older valid emit exists
+- **THEN** `last`/`next` render from the older valid emit, the corrupt file is skipped, and repeated invocations render identically
+
+#### Scenario: One broken workstream degrades alone
+
+- **WHEN** one of three active changes has metadata that fails to load
+- **THEN** that workstream renders a degraded row with an error note; the other two render fully; exit code 0
 
 ### Requirement: JSON output for both tiers
 
