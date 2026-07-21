@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-07-21T14:40:45Z",
+  "change": "d3-orientation",
+  "final_assessment": "External review prompt packaged for d3-orientation (iter 1, mode system); awaiting findings. Prompt briefs the reviewer on the applied state (17/17 tasks, 1742 tests), the resolved system iter-1 findings (both render-literal WARNINGs), the two record-only corrections on the audit record, and the five historical CRITICAL classes incl. the system-mode class (e) implementation-vs-scenario-literal divergence — with instructions to render the real views, not trust fixtures.",
+  "next_recommended": "Paste orbit/changes/d3-orientation/.orbit-runs/external-prompt-system-2026-07-21T14-40-44Z.md into the target AI, save the response as orbit/changes/d3-orientation/.orbit-runs/external-system-<TS>.md, then /orbit:address-reviews d3-orientation --from-file <path>",
+  "kind": "editorial",
+  "mode": "system",
+  "reviewer_class": "external",
+  "prompt_path": "orbit/changes/d3-orientation/.orbit-runs/external-prompt-system-2026-07-21T14-40-44Z.md",
+  "target": null,
+  "awaiting_findings": true
+}
