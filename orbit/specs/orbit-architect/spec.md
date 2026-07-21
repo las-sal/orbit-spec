@@ -100,7 +100,9 @@ canonical flow (explore → propose → …) is unchanged by this workflow's exi
 ### Requirement: Architect run-summary emit with handoff section
 
 `/orbit:architect` SHALL emit `orbit/architecture/.orbit-runs/architect-<TS>.json` at
-conversation boundaries (the named-mode-explore emit-timing genre), on the universal spine
+conversation boundaries (the conversation-boundary timing per `orbit-run-summary-emit`'s
+`Emit timing semantics`; architect fires no BEGIN emit — the begin+boundary genre is
+named-mode explore's, D-arc Stage D3), on the universal spine
 (`kind: "workflow"`, `change: null`) with per-command extensions: `doc` (the architecture doc's
 name), `stages_touched`, `rulings_captured`, `completions_ratified` (stage ids, possibly empty),
 and — per arc ruling R-d-9(b), complied with from birth — a structured `handoff` section:

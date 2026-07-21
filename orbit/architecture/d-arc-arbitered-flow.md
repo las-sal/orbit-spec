@@ -563,3 +563,20 @@ ratification; D5 mechanizes (b) and (c):
   (R-d-10's sanctioned interim path — the strict predicate wants the clean pass independent).
   **1742 tests green** (baseline 1712 + 30). Next: system review cadence, then archive
   (baseline 16 → 17 at sync).
+
+- **2026-07-21 — D3 ARCHIVED (orientation complete; exit criteria met).** Archived to
+  `orbit/changes/archive/2026-07-21-d3-orientation/` after the system cadence closed: 6 system
+  passes (in-context → external GPT-5 Codex — 1 CRITICAL, the swallowed-metadata fault-isolation
+  gap → fresh → in-context confirm → fresh adversarial → external confirm), 55 findings across
+  the change's 15 passes, all resolved, none re-opened. Sync landed `orbit-orientation` as the
+  17th baseline capability (9 requirements) + 7 MODIFIED blocks byte-identical across four
+  baselines; fingerprints 7/7; validate --specs 17/17; **1754 tests green**. Exit criterion 1
+  proven by test (ONE `orbit status --full --json` answers position/last/next per workstream,
+  read-only two-sided); criterion 2 delivered (issue #3 closed; `~/code/orbit-status` retired —
+  the R-d-4 subtraction). Archive: user-typed, zero consent prompts, gate PASSED (no
+  inflection), `consent: "user-invoked"`. Post-archive the engine renders d3-orientation
+  QUIESCENT — completion awaits ratification (with d2-architect still pending the same mark).
+  Cycle lessons: the external+fresh independent slots again out-caught in-context (the two
+  layer-residue finds — templates unswept after the spec-level scoping — were both theirs); and
+  the mid-cycle process correction is now standing discipline: gate verdicts/next-lines are
+  READ from the engine, never authored.

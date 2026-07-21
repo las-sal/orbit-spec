@@ -161,6 +161,31 @@ cause; then CLEAN with a byte-identical fresh-init check) → in-context confirm
 findings, all resolved. **1712 tests green.** Position is engine-computed from here on:
 `orbit architecture status` renders d2 quiescent-awaiting-ratification post-archive.
 
+**Stage D3 (d3-orientation) is COMPLETE and ARCHIVED**
+(`orbit/changes/archive/2026-07-21-d3-orientation/`): **`orbit status` is the orientation
+surface** — issue #3 absorbed; the v0.1 `~/code/orbit-status` bash approach retired outright
+(the R-d-4 subtraction). NEW `src/core/orientation.ts` (pure composition, READ-ONLY: continuity
+predicate with a same-second tie-break shared by sprint anchoring and global LAST; count-based
+WAITING per change+mode with spine-invalid emits excluded; fault isolation — invalid emits
+skipped, broken metadata/status renders degraded rows via ONE validated projectRoot-aware read,
+exit 0; archived trails feed global LAST only; kind+name workstream identity). Bare = the
+CURRENT-SPRINT view (the old "Missing required option --change" error path claimed; `--change`
+and no-changes outputs byte-identical); `--full` = the arc view (PROGRAM band via the shared
+`src/core/architecture/buckets.ts` builder — also consumed by `architecture status`, byte-
+identical; per-workstream orientation tuples satisfy the arc's cold-start exit criterion);
+`--json` both tiers via ONE discriminated workstream-entry shape (change payload nests under
+`status`; `strip` is a typed chip array). The explore BEGIN emit ships mode-aware (Mode B
+zero-count + Early canonical; Mode C back-fills first; bump-a-second collision; no retro-fire).
+Baseline capabilities **16 → 17** (`orbit-orientation` ADDED; 7 MODIFIED blocks across
+run-summary-emit / explore-modifications / engine-gates / architect). The cycle: 8-pass
+proposal cadence + apply via recorded `gate_overridden` (R-d-10) + a SIX-pass system cadence
+(in-context → **external GPT-5 Codex ×2** with a fresh ×2 + confirms between — the external
+iter-1 CRITICAL: metadata failures silently swallowed by defensive fallbacks) — **55 findings
+across 15 passes, all resolved, none re-opened**. Process lesson institutionalized mid-cycle:
+gate verdicts and next-lines are READ from `orbit status --change --json`, never hand-authored
+(two emit divergences + one hand-authored verdict were record-only corrected on the trail).
+**1754 tests green.**
+
 ## Source of truth for the plan
 
 - `orbit/architecture/fork-and-orbify.md` — the COMPLETED fork-program architecture (historical record; relocated from orbit/explore/ 2026-07-08). Decisions **D1–D15**

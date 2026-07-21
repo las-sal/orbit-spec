@@ -59,7 +59,7 @@ its phase still awaits the user's invocation). `spec-driven` sets `consent: user
 #### Scenario: Consent attribute parses, surfaces, and rejects unknown values
 
 - **WHEN** a schema YAML declares `consent: user-invoked` on a gate
-- **THEN** `parseSchema` accepts it and `orbit status --json` carries the marker on that gate's
+- **THEN** `parseSchema` accepts it and `orbit status --change <name> --json` carries the marker on that gate's
   `gates[]` entry; a schema declaring any other consent value fails validation naming the gate id
   and the single legal value
 
@@ -243,7 +243,7 @@ the trailing system confirm — it surfaces the gate as still needing its in-con
 
 ### Requirement: Gate-aware status and instructions with position readout
 
-`orbit status` SHALL render gate rows (state: `blocked | ready | passed | stale | unpassed`, with
+`orbit status --change <name>` (the per-change form; bare `orbit status` is the orientation surface per `orbit-orientation` — D-arc Stage D3) SHALL render gate rows (state: `blocked | ready | passed | stale | unpassed`, with
 reasons) alongside artifact rows, and a one-line POSITION READOUT of the canonical flow (e.g.
 `propose ✓ → review(proposal) (past) → apply ✓ → review(system) unpassed → archive blocked-by-gate`).
 Each position-readout step token is a gate id or lifecycle-phase token (`propose`, `review(proposal)`,
