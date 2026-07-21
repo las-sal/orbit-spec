@@ -525,9 +525,14 @@ export function collectOrientation(projectRoot: string): Orientation {
       }
       return { key: keyOf(ws), name: ws.name, created, entry };
     });
-    dated.sort((a, b) =>
-      a.created !== b.created ? (a.created < b.created ? -1 : 1) : a.name < b.name ? 1 : -1
-    );
+    // Total, antisymmetric ordering: created, then name, then the kind:name key
+    // (an emit-less change/explore TWIN with the same created date must sort
+    // deterministically — 'change:x' < 'explore:x', so the change anchors).
+    dated.sort((a, b) => {
+      if (a.created !== b.created) return a.created < b.created ? -1 : 1;
+      if (a.name !== b.name) return a.name < b.name ? 1 : -1;
+      return a.key < b.key ? 1 : a.key > b.key ? -1 : 0;
+    });
     sprintKey = dated[dated.length - 1].key;
   }
 
@@ -552,7 +557,9 @@ export function collectOrientation(projectRoot: string): Orientation {
       const ai = order.get(keyOf(a)) ?? -1;
       const bi = order.get(keyOf(b)) ?? -1;
       if (ai !== bi) return bi - ai;
-      return a.name < b.name ? -1 : 1;
+      if (a.name !== b.name) return a.name < b.name ? -1 : 1;
+      // Total ordering for twins: the kind:name key is the final tie-break.
+      return keyOf(a) < keyOf(b) ? -1 : keyOf(a) > keyOf(b) ? 1 : 0;
     });
 
   return { workstreams, sprint, last, waiting, program };

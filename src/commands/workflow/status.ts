@@ -21,8 +21,9 @@ import {
 import {
   renderStageLine,
   renderLegacyLine,
-  renderMalformedLines,
+  renderMalformedHeaderLines,
 } from '../../core/architecture/buckets.js';
+import type { StageState } from '../../core/architecture/state.js';
 import {
   validateChangeExists,
   validateSchemaExists,
@@ -338,26 +339,35 @@ function printFullView(orientation: Orientation, json: boolean): void {
   // otherwise drop the twin from the text view).
   const citedKeys = new Set<string>();
 
+  // One nesting walk for any doc's stages — parseable AND malformed docs'
+  // well-formed siblings alike (siblings are real citation targets: the
+  // architecture-status listing and WAITING already treat them as stages).
+  const renderDocStages = (docName: string, stages: StageState[]): void => {
+    for (const s of stages) {
+      // The stage line exactly as `orbit architecture status` renders it
+      // (id + computed state with the completion composition + citing).
+      console.log(`  ${renderStageLine(s)}`);
+      for (const entry of orientation.workstreams) {
+        if (entry.stage && entry.stage.doc === docName && entry.stage.stage === s.id) {
+          citedKeys.add(`${entry.kind}:${entry.name}`);
+          printWorkstreamEntry(entry, '      ');
+        }
+      }
+    }
+  };
+
   if (parseable.length > 0) {
     console.log('PROGRAM');
     for (const doc of parseable) {
       console.log(`  ${doc.doc}`);
-      for (const s of doc.stages) {
-        // The stage line exactly as `orbit architecture status` renders it
-        // (id + computed state with the completion composition + citing).
-        console.log(`  ${renderStageLine(s)}`);
-        for (const entry of orientation.workstreams) {
-          if (entry.stage && entry.stage.doc === doc.doc && entry.stage.stage === s.id) {
-            citedKeys.add(`${entry.kind}:${entry.name}`);
-            printWorkstreamEntry(entry, '      ');
-          }
-        }
-      }
+      renderDocStages(doc.doc, doc.stages);
     }
-    // Legacy/malformed docs listed as the architecture-status surface lists them.
+    // Legacy/malformed docs listed as the architecture-status surface lists
+    // them — with workstreams nested under malformed docs' sibling stages.
     for (const name of legacy) console.log(`  ${renderLegacyLine(name)}`);
     for (const m of malformed) {
-      for (const line of renderMalformedLines(m)) console.log(`  ${line}`);
+      for (const line of renderMalformedHeaderLines(m)) console.log(`  ${line}`);
+      renderDocStages(m.doc, m.stages);
     }
 
     const standalone = orientation.workstreams.filter(

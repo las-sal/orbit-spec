@@ -186,6 +186,29 @@ describe('status orientation surface', () => {
     expect(payload.program.legacy).toContain('old-notes');
   });
 
+  it('a workstream citing a well-formed sibling inside a MALFORMED doc nests under that stage', async () => {
+    await makeArcDoc('main-arc', 's1'); // ≥1 parseable doc → PROGRAM band
+    const archDir = path.join(tempDir, 'orbit', 'architecture');
+    await fs.writeFile(
+      path.join(archDir, 'half-broken.md'),
+      '# P\n\n### Stage good-stage — fine\n\nText.\n\n### Stage broken stage\n\nOops.\n'
+    );
+    const cited = await makeChange('sibling-cited', { emit: true });
+    await fs.writeFile(
+      path.join(cited, '.openspec.yaml'),
+      'schema: spec-driven\ncreated: "2026-07-01"\narchitecture:\n  doc: half-broken\n  stage: good-stage\n'
+    );
+
+    const result = await runCLI(['status', '--full'], { cwd: tempDir });
+    expect(result.exitCode).toBe(0);
+    const out = result.stdout + result.stderr;
+    const stageIdx = out.indexOf('good-stage —');
+    const citedIdx = out.indexOf('sibling-cited (change)');
+    expect(stageIdx).toBeGreaterThan(-1);
+    expect(citedIdx).toBeGreaterThan(stageIdx); // nested beneath the sibling stage
+    expect(out).not.toContain('standalone'); // NOT listed as standalone
+  });
+
   it('--full text lists an uncited twin-named workstream under standalone (kind+name identity)', async () => {
     await makeArcDoc('my-arc', 's1');
     const cited = await makeChange('alpha', { emit: true });

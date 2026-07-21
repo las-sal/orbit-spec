@@ -357,13 +357,27 @@ describe('fault isolation', () => {
     expect('next' in (chg ?? {})).toBe(false);
   });
 
-  it('a change and an explore sharing a name stay distinct (kind+name identity)', () => {
-    makeChange('twin');
-    makeExplore('twin');
-    const o = collectOrientation(root);
-    expect(o.workstreams).toHaveLength(2);
-    expect(new Set(o.workstreams.map((w) => w.kind))).toEqual(new Set(['change', 'explore']));
-    expect(o.sprint).not.toBeNull();
+  it('a change and an explore sharing a name stay distinct with a deterministic total order', () => {
+    // Emit-less twins with the SAME created date: the comparators must stay
+    // antisymmetric — the kind:name key is the final tie-break, so the change
+    // ('change:twin' < 'explore:twin') anchors and the order is exact.
+    makeChange('twin', { created: '2026-07-10' });
+    makeExplore('twin'); // makeExplore writes created 2026-07-01... align below
+    fs.writeFileSync(
+      path.join(root, 'orbit', 'explore', 'twin', '.openspec.yaml'),
+      'schema: spec-driven\ncreated: "2026-07-10"\n'
+    );
+    const o1 = collectOrientation(root);
+    const o2 = collectOrientation(root);
+    expect(o1.workstreams).toHaveLength(2);
+    expect(o1.sprint?.kind).toBe('change');
+    expect(o1.workstreams.map((w) => `${w.kind}:${w.name}`)).toEqual([
+      'change:twin',
+      'explore:twin',
+    ]);
+    expect(o2.workstreams.map((w) => `${w.kind}:${w.name}`)).toEqual(
+      o1.workstreams.map((w) => `${w.kind}:${w.name}`)
+    );
   });
 
   it('corrupt newest emit falls back deterministically for the sprint last', () => {

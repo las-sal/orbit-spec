@@ -1,0 +1,42 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-21T16:57:00Z",
+  "change": "d3-orientation",
+  "source": "--from-file",
+  "source_path": "orbit/changes/d3-orientation/.orbit-runs/external-system-2026-07-21T16-48-07Z.md",
+  "source_format": "external-markdown",
+  "external_reviewer": "OpenAI Codex (GPT-5)",
+  "external_iteration": 2,
+  "source_mode": "system",
+  "walk_mode": "per_finding",
+  "kind": "editorial",
+  "resolutions": [
+    {
+      "finding": "Cited workstreams do not nest under well-formed stages in malformed documents",
+      "severity": "WARNING",
+      "file": "src/commands/workflow/status.ts",
+      "pushback": "still applies — the nesting loop walked only program.parseable; malformed stages rendered as opaque listing lines with no workstream pass",
+      "classification": "trivial fix",
+      "action": "buckets.ts split renderMalformedLines into renderMalformedHeaderLines (header + one-based violations) + the composed full render (ArchitectureCommand.status unchanged, byte-identical). printFullView now has ONE renderDocStages walk used by parseable AND malformed docs — sibling stages nest their cited workstreams and record citedKeys, so a sibling-cited change never falls to standalone. New CLI fixture: a change citing half-broken/good-stage renders beneath that stage line with no standalone section.",
+      "ripple_cascade": { "applied": ["src/core/architecture/buckets.ts", "src/commands/workflow/status.ts", "test/commands/status-orientation.test.ts"], "flagged_not_applied": [] }
+    },
+    {
+      "finding": "Twin-name fallback comparators still lack a total kind-aware tie-break",
+      "severity": "SUGGESTION",
+      "file": "src/core/orientation.ts",
+      "pushback": "still applies — the dated and workstream-order comparators returned non-zero constants at full equality",
+      "classification": "trivial fix",
+      "action": "Both comparators are now total and antisymmetric with the kind:name key as the final tie-break (returning 0 only for identical keys): an emit-less change/explore twin with the same created date anchors deterministically to the change ('change:x' < 'explore:x'). The twin fixture now uses same-created emit-less twins and asserts the selected sprint kind and the COMPLETE workstream order across repeated runs.",
+      "ripple_cascade": { "applied": ["src/core/orientation.ts", "test/core/orientation.test.ts"], "flagged_not_applied": [] }
+    }
+  ],
+  "resolution_summary": {
+    "resolved": 2,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "post_state": "Build green; 1754 tests green (1753 + 1 net); strict validation passes; fingerprints 7/7",
+  "final_assessment": "Both external system iter-2 findings resolved: malformed docs' well-formed sibling stages now nest their cited workstreams in --full text (one shared stage-walk for both doc classes; the architecture command's own render byte-unchanged), and the twin-name comparators are total with the kind:name final tie-break. 55 findings across 15 passes for this change, all resolved, none re-opened.",
+  "next_recommended": "/orbit:archive d3-orientation — user-invoked"
+}

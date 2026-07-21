@@ -68,12 +68,16 @@ export function renderLegacyLine(name: string): string {
   return `${chalk.bold(name)} — legacy/opaque (no parseable stages)`;
 }
 
-/** A malformed doc's listing lines (header + one-based violations + well-formed sibling stages). */
-export function renderMalformedLines(p: ArchitectureDocPayload): string[] {
+/** A malformed doc's header + one-based violation lines (no stages — callers may interleave). */
+export function renderMalformedHeaderLines(p: ArchitectureDocPayload): string[] {
   const lines = [
     `${chalk.bold(p.doc)} — ${chalk.red('MALFORMED')} (fix via: orbit architecture validate ${p.doc})`,
   ];
   for (const v of p.violations ?? []) lines.push(chalk.red(`  line ${v.line}: ${v.reason}`));
-  for (const s of p.stages) lines.push(renderStageLine(s));
   return lines;
+}
+
+/** A malformed doc's full listing lines (header + violations + well-formed sibling stages). */
+export function renderMalformedLines(p: ArchitectureDocPayload): string[] {
+  return [...renderMalformedHeaderLines(p), ...p.stages.map(renderStageLine)];
 }
