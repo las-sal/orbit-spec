@@ -135,7 +135,7 @@ Position: <the \`position\` string from \`orbit status --change <name> --json\` 
 Ready when you are: <the \`next_command\` from \`orbit status --change <name> --json\`, rendered verbatim — post-apply the gate graph yields \`/orbit:review --as system <change-name>\`>
 \`\`\`
 
-**Position-readout convention (C1, D-c1-2)**: every handoff — this completion output AND the emit's \`next_recommended\` — renders the GATE GRAPH's computed \`position\` + \`next_command\` from \`orbit status --json\`. The skill does NOT hand-write the next lifecycle command — the graph owns the flow (\`propose → review-proposal → apply → review-system → archive\`), so the "what's next" token is always read from the engine, never authored here. Post-apply the graph yields the \`review-system\` gate's first step (\`/orbit:review --as system\`), which executes verify as its Pass 0.
+**Position-readout convention (C1, D-c1-2)**: every handoff — this completion output AND the emit's \`next_recommended\` — renders the GATE GRAPH's computed \`position\` + \`next_command\` from \`orbit status --change <name> --json\` (the \`--change\` form; bare \`orbit status\` is the D3 orientation surface, whose sprint may be a DIFFERENT change). The skill does NOT hand-write the next lifecycle command — the graph owns the flow (\`propose → review-proposal → apply → review-system → archive\`), so the "what's next" token is always read from the engine, never authored here. Post-apply the graph yields the \`review-system\` gate's first step (\`/orbit:review --as system\`), which executes verify as its Pass 0.
 
 **Output On Pause (Issue Encountered)**
 
@@ -225,7 +225,7 @@ Three cases:
 
 2. **Mid-chunk session pause** (rule 2): when the user pauses or hands off mid-chunk-N (per the conversation-boundary signals in \`Emit timing semantics\` — explicit "stop"/"pause" OR AI-initiated wrap), emit with \`chunk: "N of M"\`, \`chunk_complete: false\`, and \`next_recommended: "/orbit:apply <name>"\` to resume.
 
-3. **No-chunking apply** (rule 3): when tasks.md has no chunk preamble, emit once at session end with \`chunk: null\`, \`chunk_complete: true\`, and \`next_recommended\` = the gate graph's \`next_command\` from \`orbit status --json\` on apply-complete (post-apply: \`/orbit:review --as system <name>\`), or \`/orbit:apply <name>\` if tasks remain.
+3. **No-chunking apply** (rule 3): when tasks.md has no chunk preamble, emit once at session end with \`chunk: null\`, \`chunk_complete: true\`, and \`next_recommended\` = the gate graph's \`next_command\` from \`orbit status --change <name> --json\` on apply-complete (post-apply: \`/orbit:review --as system <name>\`), or \`/orbit:apply <name>\` if tasks remain.
 
 ### JSON shape
 
@@ -263,7 +263,7 @@ Per the universal spine in \`orbit-conventions\`'s \`Internal-run JSON summary f
 
 A downstream status reader parses the leading \`/orbit:<verb> <name>\` token into \`command\`/\`args\`.
 
-**Completion-prompt override (chat)**: on \`all_done\`, do NOT congratulate-and-suggest-archive (upstream) and do NOT hand-write \`/orbit:verify\` — instead render the gate graph's computed \`next_command\` + \`position\` from \`orbit status --json\`. The lifecycle flow lives in the gate graph, not in this body; verify is Pass 0 of the \`review-system\` step the graph points to, not a separate lifecycle node (D5 — a separate verify gate would double-count).
+**Completion-prompt override (chat)**: on \`all_done\`, do NOT congratulate-and-suggest-archive (upstream) and do NOT hand-write \`/orbit:verify\` — instead render the gate graph's computed \`next_command\` + \`position\` from \`orbit status --change <name> --json\`. The lifecycle flow lives in the gate graph, not in this body; verify is Pass 0 of the \`review-system\` step the graph points to, not a separate lifecycle node (D5 — a separate verify gate would double-count).
 
 ### Why chunk-aware (forensic + resumability)
 

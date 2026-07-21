@@ -203,7 +203,8 @@ failing the minimum validity checks orientation renders from: a missing or non-s
 WAITING arithmetic's discriminator); a skipped emit never wins recency, never counts in the
 WAITING arithmetic, and never increments the strip's `⟲N` chip counts; when NO valid emit
 remains, the workstream follows the
-emit-less rules (metadata-`created` recency; `last` reports no readable emits; `next` falls
+emit-less rules (metadata-`created` recency; `last` reports the shared empty-trail line —
+`no emits yet`, the same render as a never-emitted workstream; `next` falls
 back per the continuity requirement's emit-less scenario — the maturity requirement's Early
 canonical string for explores, the engine `next_command` for changes); (b) a workstream whose status computation or metadata load
 fails renders a DEGRADED row (name + a one-line error note) while every other workstream

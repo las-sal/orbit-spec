@@ -186,6 +186,23 @@ describe('status orientation surface', () => {
     expect(payload.program.legacy).toContain('old-notes');
   });
 
+  it('--full text lists an uncited twin-named workstream under standalone (kind+name identity)', async () => {
+    await makeArcDoc('my-arc', 's1');
+    const cited = await makeChange('alpha', { emit: true });
+    await fs.writeFile(
+      path.join(cited, '.openspec.yaml'),
+      'schema: spec-driven\ncreated: "2026-07-01"\narchitecture:\n  doc: my-arc\n  stage: s1\n'
+    );
+    await makeExplore('alpha'); // uncited twin — must NOT be dropped from the text view
+
+    const result = await runCLI(['status', '--full'], { cwd: tempDir });
+    expect(result.exitCode).toBe(0);
+    const out = result.stdout + result.stderr;
+    expect(out).toContain('standalone');
+    const standaloneIdx = out.indexOf('standalone');
+    expect(out.indexOf('alpha (explore)', standaloneIdx)).toBeGreaterThan(standaloneIdx);
+  });
+
   it('--full degrades to the flat fleet with zero parseable docs (never an error)', async () => {
     await makeChange('flat-a', { emit: true });
     await makeChange('flat-b');

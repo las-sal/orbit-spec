@@ -333,7 +333,10 @@ function printFullView(orientation: Orientation, json: boolean): void {
   }
 
   const { parseable, legacy, malformed } = orientation.program;
-  const citedNames = new Set<string>();
+  // Printed-entry tracking is by kind:name identity — a cited change and an
+  // uncited twin-named explore must both render (the standalone filter would
+  // otherwise drop the twin from the text view).
+  const citedKeys = new Set<string>();
 
   if (parseable.length > 0) {
     console.log('PROGRAM');
@@ -345,7 +348,7 @@ function printFullView(orientation: Orientation, json: boolean): void {
         console.log(`  ${renderStageLine(s)}`);
         for (const entry of orientation.workstreams) {
           if (entry.stage && entry.stage.doc === doc.doc && entry.stage.stage === s.id) {
-            citedNames.add(entry.name);
+            citedKeys.add(`${entry.kind}:${entry.name}`);
             printWorkstreamEntry(entry, '      ');
           }
         }
@@ -357,7 +360,9 @@ function printFullView(orientation: Orientation, json: boolean): void {
       for (const line of renderMalformedLines(m)) console.log(`  ${line}`);
     }
 
-    const standalone = orientation.workstreams.filter((w) => !citedNames.has(w.name));
+    const standalone = orientation.workstreams.filter(
+      (w) => !citedKeys.has(`${w.kind}:${w.name}`)
+    );
     if (standalone.length > 0) {
       console.log('  standalone');
       for (const entry of standalone) printWorkstreamEntry(entry, '    ');
