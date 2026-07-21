@@ -246,7 +246,8 @@ describe('count-based WAITING', () => {
     const o = collectOrientation(root);
     const item = o.waiting.find((w) => w.includes('external'));
     expect(item).toBeDefined();
-    expect(item).toContain('2 external proposal review(s) packaged, 1 returned');
+    expect(item).toContain('2 external review(s) packaged, 1 returned'); // the spec literal
+    expect(item).toContain('(proposal)'); // mode outside the quoted phrase
   });
 
   it('balanced counts clear; spine-invalid T0s are excluded from the arithmetic', () => {

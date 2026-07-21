@@ -101,6 +101,7 @@ describe('status orientation surface', () => {
     expect(out).toContain('sprint-change');
     expect(out).toContain('propose'); // strip phase
     expect(out).toContain('→'); // strip arrows
+    expect(out).toContain('review ⟲'); // the pending review chip's ⟲ identity (spec literal)
     expect(out).toContain('last: propose ·');
     expect(out).toContain(`Generated artifacts for sprint-change.`); // first-sentence trim
     expect(out).not.toContain('Extra detail sentence'); // trimmed

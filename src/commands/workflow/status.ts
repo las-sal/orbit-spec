@@ -21,7 +21,6 @@ import {
 import {
   validateChangeExists,
   validateSchemaExists,
-  getAvailableChanges,
   getStatusIndicator,
   getStatusColor,
 } from './shared.js';
@@ -183,8 +182,9 @@ function renderStrip(strip: OrientationChip[] | undefined): string {
   return strip
     .map((c) => {
       if (c.phase === 'review') {
-        // `review ⟲6 ✓` — detail before glyph.
-        return ['review', c.detail, c.glyph].filter(Boolean).join(' ');
+        // `review ⟲` (pending) / `review ⟲6 ✓` — the ⟲ is the chip's identity
+        // in the text grammar (spec's canonical strip); N appends when present.
+        return ['review', c.detail ?? '⟲', c.glyph].filter(Boolean).join(' ');
       }
       if (c.phase === 'apply') {
         // `apply ▶ 12/20` — glyph before detail.

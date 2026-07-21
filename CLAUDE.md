@@ -96,7 +96,7 @@ Change validates `--strict`; **1567 tests green** (incl. the C1 gate-model unit 
 marker fidelity, launcher assertions, and an e2e generated-surface test that runs a real default init
 for claude+codex).
 Per D13, B-arc keeps prose as **inline TS template literals** (markdown-as-source/D6 deferred).
-**Deferred follow-ups:** orbit-status absorption (post-parity, issue #3), broader user-docs
+**Deferred follow-ups:** broader user-docs
 rewrite (issue #1). (B1's archive-reference deferral is DELIVERED by B2: the generator now emits
 multi-file skills — `references/` — with metadata pass-through and convergent reconciliation.) The disciplines-reference consolidation was REVERSED (D-b2-2 in the
 B2 exploration; issue #4 closed) — per-command divergence is the desired trajectory; disciplines

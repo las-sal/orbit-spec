@@ -411,8 +411,9 @@ function deriveWaiting(
       }
       const outstanding = packaged - returned;
       if (outstanding > 0) {
+        // The spec's quoted literal, verbatim; the mode disambiguates OUTSIDE it.
         waiting.push(
-          `${ws.name}: ${packaged} external ${mode} review(s) packaged, ${returned} returned`
+          `${ws.name}: ${packaged} external review(s) packaged, ${returned} returned (${mode})`
         );
       }
     }

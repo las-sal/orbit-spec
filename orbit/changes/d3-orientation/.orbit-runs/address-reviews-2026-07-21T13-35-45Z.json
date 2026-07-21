@@ -1,0 +1,59 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-21T13:35:45Z",
+  "change": "d3-orientation",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/d3-orientation/.orbit-runs/review-system-2026-07-20T19-41-49Z.json",
+  "source_format": "internal-review",
+  "source_mode": "system",
+  "source_iteration": 1,
+  "walk_mode": "per_finding",
+  "kind": "editorial",
+  "resolutions": [
+    {
+      "finding": "Pending review chips render bare 'review' — both normative strip scenarios show 'review ⟲'",
+      "severity": "WARNING",
+      "file": "src/commands/workflow/status.ts",
+      "pushback": "still applies — verified on the live repo render before fixing",
+      "classification": "trivial fix",
+      "action": "renderStrip's review branch now defaults the detail to '⟲' ('review ⟲' pending; 'review ⟲6 ✓' with count+gate); the JSON chip array is unchanged (detail stays absent at 0 — the ⟲ identity is the text grammar). CLI test asserts the 'review ⟲' literal. Live render verified: 'explore ✓ → propose ✓ → review ⟲6 ✓ → apply ✓ 17/17 → review ⟲1 → archive'.",
+      "ripple_cascade": { "applied": ["src/commands/workflow/status.ts", "test/commands/status-orientation.test.ts"], "flagged_not_applied": [] }
+    },
+    {
+      "finding": "WAITING external line inserts the mode word inside the spec's quoted literal",
+      "severity": "WARNING",
+      "file": "src/core/orientation.ts",
+      "pushback": "still applies",
+      "classification": "trivial fix",
+      "action": "deriveWaiting now renders the spec literal verbatim with the mode OUTSIDE the phrase: '<name>: N external review(s) packaged, M returned (<mode>)'. Module test asserts both the literal and the appended mode. Per-change+mode counting unchanged.",
+      "ripple_cascade": { "applied": ["src/core/orientation.ts", "test/core/orientation.test.ts"], "flagged_not_applied": [] }
+    },
+    {
+      "finding": "getAvailableChanges imported but no longer used",
+      "severity": "SUGGESTION",
+      "file": "src/commands/workflow/status.ts",
+      "pushback": "still applies — single occurrence, the import line",
+      "classification": "trivial fix",
+      "action": "Import dropped.",
+      "ripple_cascade": { "applied": ["src/commands/workflow/status.ts"], "flagged_not_applied": [] }
+    },
+    {
+      "finding": "Deferred-follow-ups line still lists orbit-status absorption as pending",
+      "severity": "SUGGESTION",
+      "file": "CLAUDE.md",
+      "pushback": "still applies — line 99 listed issue #3 as deferred after D3 shipped it",
+      "classification": "trivial fix",
+      "action": "The stale item removed from the deferred list now (the archive-time CLAUDE.md D3 completion entry will carry the delivered record; task 5.4's archive-time notes stand).",
+      "ripple_cascade": { "applied": ["CLAUDE.md"], "flagged_not_applied": [] }
+    }
+  ],
+  "resolution_summary": {
+    "resolved": 4,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "post_state": "Build green; 1742 tests green; live bare render spec-conformant",
+  "final_assessment": "All 4 system iter-1 findings resolved: the strip's ⟲ identity restored in the text grammar (JSON chips unchanged), the WAITING phrase now carries the spec literal with the mode outside it, the unused import dropped, and CLAUDE.md's stale deferred line cleaned. The system pass carried WARNINGs, so the cadence continues — per the shipped predicate the next system slot should be independent.",
+  "next_recommended": "/orbit:review --as system d3-orientation --fresh"
+}
