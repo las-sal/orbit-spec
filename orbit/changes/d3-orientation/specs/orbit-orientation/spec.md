@@ -75,7 +75,9 @@ plus an `explore` phase the graph does not model: `explore ✓` when the workstr
 containing `explore.md` (a consumed exploration), `explore ▶` when the workstream IS a staging
 explore (later phases render pending), and the chip absent when the change has no `explore.md`
 (standalone-mode propose). Review phases render as ONE chip each with the iteration count from
-the workstream's trail (`review ⟲6 ✓` = six `review-proposal-*.json` emits, gate passed);
+the workstream's trail (`review ⟲6 ✓` = six SPINE-VALID `review` emits of mode `proposal` in
+the trail, gate passed — the fault-isolation skip applies to chip counts exactly as it does to
+recency and WAITING, so a spine-invalid `review-proposal-*.json` file counts nowhere);
 apply renders the tracked gate's progress (`apply ▶ 12/20`); phase glyphs are `✓` (passed/
 complete — the engine's SUPERSEDED `(past)` state renders `✓`-equivalent by design), `▶`
 (current), `⟲N` (review iterations), and unmarked (pending — the engine's `stale` and `unpassed`
@@ -198,8 +200,9 @@ falls back to the next-older valid emit in that trail — spine-invalid means pa
 failing the minimum validity checks orientation renders from: a missing or non-string
 `command`, `final_assessment`, or `next_recommended` (the universal-spine fields per
 `orbit-conventions`), or, for a `review-external` T0 emit, a missing or non-string `mode` (the
-WAITING arithmetic's discriminator); a skipped emit never wins recency and never counts in the
-WAITING arithmetic; when NO valid emit remains, the workstream follows the
+WAITING arithmetic's discriminator); a skipped emit never wins recency, never counts in the
+WAITING arithmetic, and never increments the strip's `⟲N` chip counts; when NO valid emit
+remains, the workstream follows the
 emit-less rules (metadata-`created` recency; `last` reports no readable emits; `next` falls
 back per the continuity requirement's emit-less scenario — the maturity requirement's Early
 canonical string for explores, the engine `next_command` for changes); (b) a workstream whose status computation or metadata load

@@ -360,6 +360,14 @@ export function composeWorkstreamEntry(
       degraded: true,
       error: err instanceof Error ? err.message : String(err),
       ...(newest ? { last: newest } : {}),
+      // An explore's `next` source (the trail's recorded next_recommended, or
+      // the Early canonical constant) never depends on the failed computation —
+      // it survives degradation exactly like `last` (clause b: trustworthy
+      // fields are kept; `next` is omitted only when ITS source failed — which
+      // is the case for changes, whose next is the failed engine computation).
+      ...(ws.kind === 'explore'
+        ? { next: newest ? newest.next_recommended : EXPLORE_EARLY_CANONICAL(ws.name) }
+        : {}),
     };
     return entry;
   }
@@ -477,14 +485,19 @@ export function collectOrientation(projectRoot: string): Orientation {
 
   const liveEntries = live.map((ws) => ({ ws, entry: composeWorkstreamEntry(projectRoot, ws) }));
 
+  // Workstream identity is kind+name — a live change and a staging explore MAY
+  // share a name (nothing blocks creating the change dir while the explore
+  // still stages), and name-only comparison would collapse the two.
+  const keyOf = (w: { kind: string; name: string }): string => `${w.kind}:${w.name}`;
+
   // Sprint anchoring: most recent valid emit among LIVE workstreams; the
   // emit-less fallback anchors by metadata `created` (date-granular), ties by name.
-  let sprintName: string | null = null;
+  let sprintKey: string | null = null;
   const withEmits = liveEntries
     .map(({ ws, entry }) => {
       const emits = readValidEmits(ws.runsDir);
       return emits.length > 0
-        ? { name: ws.name, token: emits[emits.length - 1].token, file: emits[emits.length - 1].file, entry }
+        ? { key: keyOf(ws), name: ws.name, token: emits[emits.length - 1].token, file: emits[emits.length - 1].file, entry }
         : null;
     })
     .filter((x): x is NonNullable<typeof x> => x !== null);
@@ -496,7 +509,7 @@ export function collectOrientation(projectRoot: string): Orientation {
         { token: b.token, workstream: b.name, file: b.file }
       )
     );
-    sprintName = withEmits[withEmits.length - 1].name;
+    sprintKey = withEmits[withEmits.length - 1].key;
   } else if (liveEntries.length > 0) {
     // No live workstream has any emit: most recently `created` wins, name tiebreak.
     const dated = liveEntries.map(({ ws, entry }) => {
@@ -510,31 +523,34 @@ export function collectOrientation(projectRoot: string): Orientation {
       } catch {
         created = '';
       }
-      return { name: ws.name, created, entry };
+      return { key: keyOf(ws), name: ws.name, created, entry };
     });
     dated.sort((a, b) =>
       a.created !== b.created ? (a.created < b.created ? -1 : 1) : a.name < b.name ? 1 : -1
     );
-    sprintName = dated[dated.length - 1].name;
+    sprintKey = dated[dated.length - 1].key;
   }
 
-  const sprint = liveEntries.find(({ ws }) => ws.name === sprintName)?.entry ?? null;
+  const sprint = liveEntries.find(({ ws }) => keyOf(ws) === sprintKey)?.entry ?? null;
 
   // Program layer — THE architecture-status buckets, built by the shared builder.
   const program = buildArchitectureBuckets(projectRoot);
 
-  const waiting = deriveWaiting(program.parseable, liveEntries);
+  // Clause (a)'s predicate has no doc-class qualifier: well-formed sibling
+  // stages inside MALFORMED docs render in the listing, so their
+  // quiescent-awaiting-ratification state reaches WAITING too.
+  const waiting = deriveWaiting([...program.parseable, ...program.malformed], liveEntries);
   const last = collectGlobalLast(projectRoot, live);
 
   // Workstreams sorted sprint-first, then by own-emit recency (desc), then name.
-  const order = new Map(withEmits.map((w, i) => [w.name, i]));
+  const order = new Map(withEmits.map((w, i) => [w.key, i]));
   const workstreams = liveEntries
     .map(({ entry }) => entry)
     .sort((a, b) => {
-      if (a.name === sprintName) return -1;
-      if (b.name === sprintName) return 1;
-      const ai = order.get(a.name) ?? -1;
-      const bi = order.get(b.name) ?? -1;
+      if (keyOf(a) === sprintKey) return -1;
+      if (keyOf(b) === sprintKey) return 1;
+      const ai = order.get(keyOf(a)) ?? -1;
+      const bi = order.get(keyOf(b)) ?? -1;
       if (ai !== bi) return bi - ai;
       return a.name < b.name ? -1 : 1;
     });

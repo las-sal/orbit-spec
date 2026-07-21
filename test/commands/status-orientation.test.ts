@@ -246,6 +246,10 @@ describe('status orientation surface', () => {
     const out = bare.stdout + bare.stderr;
     expect(out).toContain('DEGRADED');
     expect(out).toContain('Before the breakage.');
+    // ONE-LINE error note: no multi-line code frame leaks into the text row.
+    const degradedLine = out.split('\n').find((l) => l.includes('DEGRADED'));
+    expect(degradedLine).toBeDefined();
+    expect(out).not.toMatch(/\^{2,}/); // YAML code-frame caret lines never render
 
     // Bare JSON: degraded variant, no fabricated tuple.
     const bareJson = await runCLI(['status', '--json'], { cwd: tempDir });

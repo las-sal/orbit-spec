@@ -332,6 +332,40 @@ describe('fault isolation', () => {
     expect(typeof entry?.error).toBe('string');
   });
 
+  it('a degraded EXPLORE keeps its trustworthy next (trail-recorded, or Early canonical when emit-less)', () => {
+    const withTrail = makeExplore('degraded-with-trail');
+    writeEmit(
+      path.join(withTrail, '.orbit-runs'),
+      'explore-2026-07-20T10-00-00Z.json',
+      spine('explore', { next_recommended: '/orbit:propose degraded-with-trail — ready' })
+    );
+    fs.writeFileSync(path.join(withTrail, '.openspec.yaml'), 'schema: [unclosed\n');
+    const emitless = makeExplore('degraded-emitless');
+    fs.writeFileSync(path.join(emitless, '.openspec.yaml'), 'schema: [unclosed\n');
+    // A degraded CHANGE keeps no next — its source IS the failed computation.
+    const change = makeChange('degraded-change');
+    fs.writeFileSync(path.join(change, '.openspec.yaml'), 'schema: [unclosed\n');
+
+    const o = collectOrientation(root);
+    const trailed = o.workstreams.find((w) => w.name === 'degraded-with-trail');
+    const bare = o.workstreams.find((w) => w.name === 'degraded-emitless');
+    const chg = o.workstreams.find((w) => w.name === 'degraded-change');
+    expect(trailed?.degraded).toBe(true);
+    expect(trailed?.next).toBe('/orbit:propose degraded-with-trail — ready');
+    expect(bare?.next).toBe('/orbit:explore degraded-emitless — continue capturing thinking');
+    expect(chg?.degraded).toBe(true);
+    expect('next' in (chg ?? {})).toBe(false);
+  });
+
+  it('a change and an explore sharing a name stay distinct (kind+name identity)', () => {
+    makeChange('twin');
+    makeExplore('twin');
+    const o = collectOrientation(root);
+    expect(o.workstreams).toHaveLength(2);
+    expect(new Set(o.workstreams.map((w) => w.kind))).toEqual(new Set(['change', 'explore']));
+    expect(o.sprint).not.toBeNull();
+  });
+
   it('corrupt newest emit falls back deterministically for the sprint last', () => {
     const dir = makeChange('epsilon');
     const runs = path.join(dir, '.orbit-runs');
@@ -386,6 +420,24 @@ describe('strip and recency fidelity', () => {
     expect(emits[emits.length - 1].command).toBe('apply');
     const entry = composeWorkstreamEntry(root, listLiveWorkstreams(root)[0]);
     expect(entry.last?.command).toBe('apply');
+  });
+
+  it('quiescent sibling stages inside MALFORMED docs reach WAITING (no doc-class qualifier)', () => {
+    const archDir = path.join(root, 'orbit', 'architecture');
+    fs.mkdirSync(archDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(archDir, 'half-broken.md'),
+      '# P\n\n### Stage good-stage — fine\n\nText.\n\n### Stage broken stage\n\nOops.\n'
+    );
+    const archived = makeArchivedChange('2026-07-20-done-work');
+    fs.writeFileSync(
+      path.join(archived, '.openspec.yaml'),
+      'schema: spec-driven\ncreated: "2026-07-01"\narchitecture:\n  doc: half-broken\n  stage: good-stage\n'
+    );
+    makeChange('live-one'); // keep a live workstream so the view has a sprint
+
+    const o = collectOrientation(root);
+    expect(o.waiting).toContain('good-stage completion — yours to ratify');
   });
 
   it('WAITING renders the singular literal at one packaged handoff', () => {

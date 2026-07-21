@@ -223,7 +223,11 @@ function renderLastLine(last: EmitRecord): string {
 }
 
 function renderDegradedRow(entry: WorkstreamEntry): string {
-  return `${entry.name} — DEGRADED: ${entry.error ?? 'unknown failure'}`;
+  // "name + a ONE-LINE error note" (fault-isolation clause b): real YAML/schema
+  // errors embed multi-line code frames — the text row keeps the first line
+  // only; the JSON `error` field carries the full string.
+  const note = (entry.error ?? 'unknown failure').split('\n')[0].trim();
+  return `${entry.name} — DEGRADED: ${note}`;
 }
 
 function stageTag(entry: WorkstreamEntry): string {
@@ -235,7 +239,9 @@ function printSprintView(orientation: Orientation, json: boolean): void {
   if (!sprint) return;
 
   if (json) {
-    const others = orientation.workstreams.filter((w) => w.name !== sprint.name);
+    const others = orientation.workstreams.filter(
+    (w) => !(w.kind === sprint.kind && w.name === sprint.name)
+  );
     console.log(
       JSON.stringify(
         {
@@ -259,6 +265,7 @@ function printSprintView(orientation: Orientation, json: boolean): void {
     // plus any trustworthy fields; exit 0 (fault-isolation clause b).
     console.log(renderDegradedRow(sprint));
     if (sprint.last) console.log(`last: ${renderLastLine(sprint.last)}`);
+    if (sprint.next) console.log(`Ready when you are: ${sprint.next}`);
   } else {
     console.log(`${sprint.name}${stageTag(sprint)}`);
     console.log(`  ${renderStrip(sprint.strip)}`);
@@ -267,7 +274,9 @@ function printSprintView(orientation: Orientation, json: boolean): void {
     if (sprint.next) console.log(`Ready when you are: ${sprint.next}`);
   }
 
-  const others = orientation.workstreams.filter((w) => w.name !== sprint.name);
+  const others = orientation.workstreams.filter(
+    (w) => !(w.kind === sprint.kind && w.name === sprint.name)
+  );
   const alsoParts: string[] = others.map((w) =>
     w.degraded ? `${w.name} (degraded)` : `${w.name} (${w.kind === 'explore' ? 'exploring' : phaseOf(w)})`
   );
@@ -374,6 +383,7 @@ function printWorkstreamEntry(entry: WorkstreamEntry, indent: string): void {
   if (entry.degraded) {
     console.log(`${indent}${renderDegradedRow(entry)}`);
     if (entry.last) console.log(`${indent}  last: ${renderLastLine(entry.last)}`);
+    if (entry.next) console.log(`${indent}  Ready when you are: ${entry.next}`);
     return;
   }
   console.log(`${indent}${entry.name} (${entry.kind})${stageTag(entry)}`);

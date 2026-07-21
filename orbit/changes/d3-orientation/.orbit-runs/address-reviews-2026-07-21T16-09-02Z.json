@@ -1,0 +1,78 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-21T16:09:02Z",
+  "change": "d3-orientation",
+  "source": "--from-file",
+  "source_path": "orbit/changes/d3-orientation/.orbit-runs/review-system-2026-07-21T16-03-38Z.json",
+  "source_format": "internal-review",
+  "source_mode": "system",
+  "source_iteration": 2,
+  "walk_mode": "per_finding",
+  "kind": "editorial",
+  "resolutions": [
+    {
+      "finding": "Degraded EXPLORE omits a trustworthy `next`",
+      "severity": "WARNING",
+      "file": "src/core/orientation.ts",
+      "pushback": "still applies — the catch block carried only `last`",
+      "classification": "decision required",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          { "label": "A", "body": "Align implementation: in the catch block, when ws.kind === 'explore', set next from the newest valid emit's next_recommended (or the Early canonical string when emit-less) — same trust basis as the kept last; render it in the degraded rows of both tiers." },
+          { "label": "B", "body": "Align spec before sync: amend the fault-isolation requirement so the degraded variant names the trail `last` as the sole surviving tuple field, deleting the 'when its source computation failed' conditional that currently promises next for explores." }
+        ],
+        "chosen": "A",
+        "discuss_invoked": false
+      },
+      "action": "Option A: degraded explores keep `next` (trail-recorded, or Early canonical when emit-less) — a degraded CHANGE keeps none (its next IS the failed engine computation, exactly the spec's omit condition); both tiers' degraded renders print the eligibility line when present. Fixtures: degraded explore with trail (recorded next), emit-less (Early canonical), degraded change (no next key).",
+      "ripple_cascade": { "applied": ["src/core/orientation.ts", "src/commands/workflow/status.ts", "test/core/orientation.test.ts"], "flagged_not_applied": [] }
+    },
+    {
+      "finding": "Degraded row is not a 'one-line error note'",
+      "severity": "WARNING",
+      "file": "src/commands/workflow/status.ts",
+      "pushback": "still applies — err.message rendered verbatim incl. YAML code frames",
+      "classification": "trivial fix",
+      "action": "renderDegradedRow collapses the TEXT note to the error's first line; the JSON `error` field keeps the full string. CLI assertion: no code-frame caret lines render.",
+      "ripple_cascade": { "applied": ["src/commands/workflow/status.ts", "test/commands/status-orientation.test.ts"], "flagged_not_applied": [] }
+    },
+    {
+      "finding": "⟲N-count spec text not updated for the adjudicated spine-valid content-based counting",
+      "severity": "WARNING",
+      "file": "orbit/changes/d3-orientation/specs/orbit-orientation/spec.md",
+      "pushback": "still applies — the strip parenthetical counted filenames; the skip-effects list omitted chip counts",
+      "classification": "trivial fix",
+      "action": "Strip requirement now reads '= six SPINE-VALID review emits of mode proposal in the trail ... a spine-invalid review-proposal-*.json file counts nowhere'; fault-isolation clause (a) adds 'never increments the strip's ⟲N chip counts'; task 2.1 carries 'SPINE-VALID review emits'. Aligned BEFORE the archive sync so the baseline letter matches the adjudicated behavior.",
+      "ripple_cascade": { "applied": ["orbit/changes/d3-orientation/specs/orbit-orientation/spec.md", "orbit/changes/d3-orientation/tasks.md"], "flagged_not_applied": [] }
+    },
+    {
+      "finding": "Quiescent stages of MALFORMED docs never reach WAITING",
+      "severity": "SUGGESTION",
+      "file": "src/core/orientation.ts",
+      "pushback": "still applies — deriveWaiting received only program.parseable",
+      "classification": "trivial fix (implementation aligned to the unqualified spec predicate — rendered stages must be waitable)",
+      "action": "Clause (a) now scans parseable + malformed buckets (whose well-formed sibling stages the surfaces already render). Fixture: a quiescent-awaiting-ratification sibling inside a malformed doc reaches WAITING.",
+      "ripple_cascade": { "applied": ["src/core/orientation.ts", "test/core/orientation.test.ts"], "flagged_not_applied": [] }
+    },
+    {
+      "finding": "Workstream identity is name-only",
+      "severity": "SUGGESTION",
+      "file": "src/core/orientation.ts",
+      "pushback": "still applies — sprint selection, ordering, and the also-line filters compared names alone",
+      "classification": "trivial fix",
+      "action": "Identity is kind+name everywhere it is compared: collectOrientation keys sprint/order by `kind:name`; status.ts's also-line filters match kind AND name. Fixture: a change and an explore sharing a name stay distinct (both listed; one sprint).",
+      "ripple_cascade": { "applied": ["src/core/orientation.ts", "src/commands/workflow/status.ts", "test/core/orientation.test.ts"], "flagged_not_applied": [] }
+    }
+  ],
+  "resolution_summary": {
+    "resolved": 5,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "post_state": "Build green; 1752 tests green (1749 + 3 net new); strict validation passes; fingerprints 7/7",
+  "final_assessment": "All 5 fresh system iter-2 findings resolved: degraded explores keep their trustworthy next (user fork A — spec unchanged), the degraded text row is one-line, the ⟲N spec letter now matches the adjudicated spine-valid counting before it syncs to baseline, malformed docs' quiescent sibling stages reach WAITING, and workstream identity is kind+name. The iter-2 pass carried no CRITICAL; with these resolved, the cadence is at the confirm seam.",
+  "next_recommended": "/orbit:review --as system d3-orientation"
+}

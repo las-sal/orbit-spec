@@ -38,7 +38,8 @@ runs by hand at the phase seams.
 
 - [x] 2.1 `status.ts` bare branch: replace the "Missing required option --change" throw with
       the sprint view; sprint strip renderer (explore chip rules; `review ⟲N` iteration counts
-      from trail; `apply ▶ x/y` from the tracked gate; stage tag when cited); `last` (first
+      from the trail's SPINE-VALID review emits; `apply ▶ x/y` from the tracked gate; stage
+      tag when cited); `last` (first
       sentence, ~160-char cap) + `next` (engine `next_command` for changes; recorded
       `next_recommended` for explores) + one `also` line. No-changes message and `--change`
       output byte-identical (regression-asserted)
