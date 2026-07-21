@@ -107,7 +107,9 @@ describe('status orientation surface', () => {
     expect(out).not.toContain('Extra detail sentence'); // trimmed
     expect(out).toContain('Ready when you are:');
     expect(out).toContain('also:');
-    expect(out).toContain('other-change');
+    // The also-line phase is the ENGINE frontier gate (review-proposal for a
+    // complete-artifacts change), never a completed predecessor.
+    expect(out).toContain('other-change (review)');
   });
 
   it('regression: --change output keeps gate rows and gates[] markers; no-changes message unchanged', async () => {
@@ -147,14 +149,41 @@ describe('status orientation surface', () => {
     const out = result.stdout + result.stderr;
     expect(out).toContain('PROGRAM');
     expect(out).toContain('my-arc');
-    expect(out).toContain('s1:');
+    expect(out).toContain('s1 —'); // the architecture-status stage-line form
     expect(out).toContain('standalone');
-    const s1Idx = out.indexOf('s1:');
+    const s1Idx = out.indexOf('s1 —');
     const citedIdx = out.indexOf('cited-change');
     const standaloneIdx = out.indexOf('standalone');
     const uncitedIdx = out.indexOf('uncited-change');
     expect(citedIdx).toBeGreaterThan(s1Idx);
     expect(uncitedIdx).toBeGreaterThan(standaloneIdx);
+  });
+
+  it('--full lists legacy and malformed docs as the architecture-status surface lists them', async () => {
+    await makeArcDoc('main-arc', 's1'); // ≥1 parseable doc → the PROGRAM band renders
+    const archDir = path.join(tempDir, 'orbit', 'architecture');
+    await fs.writeFile(path.join(archDir, 'old-notes.md'), '# Just prose\n\nNo stages here.\n');
+    await fs.writeFile(
+      path.join(archDir, 'half-broken.md'),
+      '# P\n\n### Stage good-stage — fine\n\nText.\n\n### Stage broken stage\n\nOops.\n'
+    );
+    await makeChange('bystander', { emit: true });
+
+    const text = await runCLI(['status', '--full'], { cwd: tempDir });
+    expect(text.exitCode).toBe(0);
+    const out = text.stdout + text.stderr;
+    expect(out).toContain('old-notes — legacy/opaque (no parseable stages)');
+    expect(out).toContain('half-broken — MALFORMED (fix via: orbit architecture validate half-broken)');
+    expect(out).toContain('line 7:'); // one-based violation line
+    expect(out).toContain('good-stage'); // the well-formed sibling stage renders
+
+    const json = await runCLI(['status', '--full', '--json'], { cwd: tempDir });
+    const payload = JSON.parse(json.stdout);
+    const broken = payload.program.malformed.find((m: { doc: string }) => m.doc === 'half-broken');
+    expect(Array.isArray(broken.stages)).toBe(true); // the architecture-status payload shape
+    expect(broken.stages[0].id).toBe('good-stage');
+    expect(broken.violations[0].line).toBe(7);
+    expect(payload.program.legacy).toContain('old-notes');
   });
 
   it('--full degrades to the flat fleet with zero parseable docs (never an error)', async () => {

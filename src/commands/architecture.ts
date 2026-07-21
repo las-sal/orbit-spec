@@ -12,62 +12,30 @@
 
 import chalk from 'chalk';
 import {
-  listArchitectureDocs,
   loadArchitectureDoc,
   sliceStageSection,
   type ParsedArchitectureDoc,
 } from '../core/architecture/parser.js';
-import { computeStageStates, type StageState } from '../core/architecture/state.js';
+import {
+  buildArchitectureBuckets,
+  renderStageLine,
+  renderLegacyLine,
+  renderMalformedLines,
+} from '../core/architecture/buckets.js';
 import { validateArchitectureDoc } from '../core/architecture/validate.js';
-
-interface StatusDocPayload {
-  doc: string;
-  stages: StageState[];
-  violations?: Array<{ line: number; reason: string; text: string }>;
-}
-
-function renderStageLine(s: StageState): string {
-  const mark =
-    s.rendered === 'complete'
-      ? chalk.green(`complete (ratified ${s.ratifiedDate} by ${s.ratifiedWho})`)
-      : s.rendered === 'inconsistent'
-        ? chalk.red(`INCONSISTENT — ${s.inconsistency}`)
-        : s.rendered === 'quiescent-awaiting-ratification'
-          ? chalk.yellow('quiescent — completion awaiting your ratification')
-          : s.rendered;
-  const citing =
-    s.citing.length > 0 ? chalk.gray(` [${s.citing.map((c) => `${c.kind}:${c.name}`).join(', ')}]`) : '';
-  return `  ${s.id} — ${mark}${citing}`;
-}
 
 export class ArchitectureCommand {
   status(options: { json?: boolean } = {}): number {
     const projectRoot = '.';
-    const docs = listArchitectureDocs(projectRoot);
-    const parseable: StatusDocPayload[] = [];
-    const legacy: string[] = [];
-    const malformed: StatusDocPayload[] = [];
-
-    for (const doc of docs) {
-      if (doc.docClass === 'legacy') {
-        legacy.push(doc.name);
-        continue;
-      }
-      const payload: StatusDocPayload = { doc: doc.name, stages: computeStageStates(projectRoot, doc) };
-      if (doc.docClass === 'malformed') {
-        payload.violations = doc.violations.map((v) => ({ line: v.line + 1, reason: v.reason, text: v.text }));
-        malformed.push(payload);
-      } else {
-        parseable.push(payload);
-      }
-    }
+    const buckets = buildArchitectureBuckets(projectRoot);
+    const { parseable, legacy, malformed } = buckets;
 
     if (options.json) {
-      console.log(JSON.stringify({ parseable, legacy, malformed }, null, 2));
+      console.log(JSON.stringify(buckets, null, 2));
       return 0;
     }
 
-    if (docs.length === 0) {
+    if (parseable.length + legacy.length + malformed.length === 0) {
       console.log('no architecture docs (orbit/architecture/ has none)');
       return 0;
     }
@@ -76,12 +44,10 @@ export class ArchitectureCommand {
       for (const s of p.stages) console.log(renderStageLine(s));
     }
     for (const name of legacy) {
-      console.log(`${chalk.bold(name)} — legacy/opaque (no parseable stages)`);
+      console.log(renderLegacyLine(name));
     }
     for (const p of malformed) {
-      console.log(`${chalk.bold(p.doc)} — ${chalk.red('MALFORMED')} (fix via: orbit architecture validate ${p.doc})`);
-      for (const v of p.violations ?? []) console.log(chalk.red(`  line ${v.line}: ${v.reason}`));
-      for (const s of p.stages) console.log(renderStageLine(s));
+      for (const line of renderMalformedLines(p)) console.log(line);
     }
     return 0;
   }

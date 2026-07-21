@@ -3,12 +3,11 @@ import * as path from 'node:path';
 import {
   loadChangeContext,
   formatChangeStatus,
-  readTrail,
   parseTsToken,
   type ChangeStatus,
 } from './artifact-graph/index.js';
-import { listArchitectureDocs } from './architecture/parser.js';
-import { computeStageStates, type StageState } from './architecture/state.js';
+import { buildArchitectureBuckets, type ArchitectureBuckets } from './architecture/buckets.js';
+import type { StageState } from './architecture/state.js';
 import { readChangeMetadata } from '../utils/change-metadata.js';
 
 /**
@@ -83,12 +82,8 @@ export interface Orientation {
   last: GlobalLast | null;
   /** Waiting-on-you items (the closed 3-item set), render-ready strings. */
   waiting: string[];
-  /** Architecture program buckets (the architecture-status shapes, reused). */
-  program: {
-    parseable: Array<{ doc: string; stages: StageState[] }>;
-    legacy: string[];
-    malformed: Array<{ doc: string; violations: unknown }>;
-  };
+  /** Architecture program buckets — THE architecture-status shapes, built by the shared builder. */
+  program: ArchitectureBuckets;
 }
 
 // -----------------------------------------------------------------------------
@@ -150,8 +145,12 @@ export function readValidEmits(runsDir: string): EmitRecord[] {
       ...(typeof j.mode === 'string' ? { mode: j.mode as string } : {}),
     });
   }
+  // Ascending recency: token first; on equal tokens the lexicographically-
+  // EARLIER filename is MORE recent (the shared tie-break direction of
+  // compareRecency), so it sorts LAST and `.at(-1)` selects it — one direction
+  // for per-trail newest, sprint anchoring, and global LAST alike.
   emits.sort((a, b) =>
-    a.token < b.token ? -1 : a.token > b.token ? 1 : a.file < b.file ? -1 : a.file > b.file ? 1 : 0
+    a.token < b.token ? -1 : a.token > b.token ? 1 : a.file < b.file ? 1 : a.file > b.file ? -1 : 0
   );
   return emits;
 }
@@ -233,16 +232,16 @@ function reviewChip(phase: string, iterations: number, gateState: string | undef
   return chip;
 }
 
-function composeChangeStrip(status: ChangeStatus, changeDir: string): OrientationChip[] {
-  const trail = readTrail(changeDir);
+function composeChangeStrip(
+  status: ChangeStatus,
+  changeDir: string,
+  emits: EmitRecord[]
+): OrientationChip[] {
   // ⟲N counts `review-<mode>-*.json` emits (the spec's strip grammar) —
-  // internal passes only; external findings files are not review emits.
-  const proposalIters = trail.passes.filter(
-    (p) => p.mode === 'proposal' && p.source === 'internal-review'
-  ).length;
-  const systemIters = trail.passes.filter(
-    (p) => p.mode === 'system' && p.source === 'internal-review'
-  ).length;
+  // internal passes only, and only SPINE-VALID ones (the fault-isolation skip
+  // applies uniformly: a skipped emit moves neither `last` nor the chip count).
+  const proposalIters = emits.filter((e) => e.command === 'review' && e.mode === 'proposal').length;
+  const systemIters = emits.filter((e) => e.command === 'review' && e.mode === 'system').length;
 
   const gate = (id: string) => status.gates?.find((g) => g.id === id);
   const gateState = (id: string): string | undefined => {
@@ -270,7 +269,9 @@ function composeChangeStrip(status: ChangeStatus, changeDir: string): Orientatio
     const checked = applyGate.checked ?? 0;
     applyChip.detail = `${checked}/${applyGate.total}`;
     if (applyGate.superseded || applyGate.state === 'passed') applyChip.glyph = '✓';
-    else if (checked > 0) applyChip.glyph = '▶';
+    // A READY tracked gate is the current phase even at 0 checked tasks (the
+    // engine's position says `apply ready`; `apply ▶ 0/N` is the entry form).
+    else if (applyGate.state === 'ready' || checked > 0) applyChip.glyph = '▶';
   } else if (applyGate?.superseded || applyGate?.state === 'passed') {
     applyChip.glyph = '✓';
   }
@@ -296,22 +297,6 @@ function composeExploreStrip(): OrientationChip[] {
 // Per-workstream entry composition (fault-isolated)
 // -----------------------------------------------------------------------------
 
-function readCitation(dir: string): StageCitation | undefined {
-  try {
-    const meta = readChangeMetadata(dir) as unknown as {
-      architecture?: { doc?: unknown; stage?: unknown };
-    } | null;
-    const arch = meta?.architecture;
-    if (arch && typeof arch.doc === 'string' && typeof arch.stage === 'string') {
-      return { doc: arch.doc, stage: arch.stage };
-    }
-  } catch {
-    // A metadata failure here degrades the whole workstream elsewhere; the
-    // citation itself is best-effort and simply absent on any failure.
-  }
-  return undefined;
-}
-
 /**
  * Composes one workstream's entry. Fault isolation (clause b): a failure in
  * status computation or metadata load yields a DEGRADED entry — {name, kind,
@@ -326,7 +311,18 @@ export function composeWorkstreamEntry(
   const newest = emits.length > 0 ? emits[emits.length - 1] : undefined;
 
   try {
-    const stage = readCitation(ws.dir);
+    // ONE validated metadata read, INSIDE the fault boundary and WITH
+    // projectRoot (project-local schemas resolve; invalid metadata throws and
+    // degrades the entry — the normative clause-(b) trigger, never swallowed).
+    // Absent metadata (pre-D2 staging dirs) is null, not a failure.
+    const meta = readChangeMetadata(ws.dir, projectRoot) as unknown as {
+      architecture?: { doc?: unknown; stage?: unknown };
+    } | null;
+    const arch = meta?.architecture;
+    const stage: StageCitation | undefined =
+      arch && typeof arch.doc === 'string' && typeof arch.stage === 'string'
+        ? { doc: arch.doc, stage: arch.stage }
+        : undefined;
     if (ws.kind === 'change') {
       const context = loadChangeContext(projectRoot, ws.name);
       const status = formatChangeStatus(context);
@@ -334,7 +330,7 @@ export function composeWorkstreamEntry(
         name: ws.name,
         kind: 'change',
         ...(stage ? { stage } : {}),
-        strip: composeChangeStrip(status, ws.dir),
+        strip: composeChangeStrip(status, ws.dir, emits),
         // Change position/next are ENGINE-computed (current, engine-vetted) —
         // emit-independent, per the recommendation-sourcing requirement.
         ...(status.position ? { position: status.position } : {}),
@@ -411,9 +407,12 @@ function deriveWaiting(
       }
       const outstanding = packaged - returned;
       if (outstanding > 0) {
-        // The spec's quoted literal, verbatim; the mode disambiguates OUTSIDE it.
+        // The spec's quoted literals, verbatim — singular `1 external review
+        // packaged`, plural `N external review(s) packaged`; the mode
+        // disambiguates OUTSIDE the phrase.
+        const noun = packaged === 1 ? 'review' : 'review(s)';
         waiting.push(
-          `${ws.name}: ${packaged} external review(s) packaged, ${returned} returned (${mode})`
+          `${ws.name}: ${packaged} external ${noun} packaged, ${returned} returned (${mode})`
         );
       }
     }
@@ -503,7 +502,10 @@ export function collectOrientation(projectRoot: string): Orientation {
     const dated = liveEntries.map(({ ws, entry }) => {
       let created = '';
       try {
-        const meta = readChangeMetadata(ws.dir) as unknown as { created?: unknown } | null;
+        // projectRoot resolves project-local schemas so their valid metadata
+        // keeps its `created` date; a genuinely-invalid read anchors last by
+        // name (the entry itself is already degraded via composeWorkstreamEntry).
+        const meta = readChangeMetadata(ws.dir, projectRoot) as unknown as { created?: unknown } | null;
         if (meta && typeof meta.created === 'string') created = meta.created;
       } catch {
         created = '';
@@ -518,22 +520,10 @@ export function collectOrientation(projectRoot: string): Orientation {
 
   const sprint = liveEntries.find(({ ws }) => ws.name === sprintName)?.entry ?? null;
 
-  // Program layer (architecture buckets — the architecture-status shapes, reused).
-  const docs = listArchitectureDocs(projectRoot);
-  const parseable: Array<{ doc: string; stages: StageState[] }> = [];
-  const legacy: string[] = [];
-  const malformed: Array<{ doc: string; violations: unknown }> = [];
-  for (const doc of docs) {
-    if (doc.docClass === 'parseable') {
-      parseable.push({ doc: doc.name, stages: computeStageStates(projectRoot, doc) });
-    } else if (doc.docClass === 'legacy') {
-      legacy.push(doc.name);
-    } else {
-      malformed.push({ doc: doc.name, violations: doc.violations });
-    }
-  }
+  // Program layer — THE architecture-status buckets, built by the shared builder.
+  const program = buildArchitectureBuckets(projectRoot);
 
-  const waiting = deriveWaiting(parseable, liveEntries);
+  const waiting = deriveWaiting(program.parseable, liveEntries);
   const last = collectGlobalLast(projectRoot, live);
 
   // Workstreams sorted sprint-first, then by own-emit recency (desc), then name.
@@ -549,5 +539,5 @@ export function collectOrientation(projectRoot: string): Orientation {
       return a.name < b.name ? -1 : 1;
     });
 
-  return { workstreams, sprint, last, waiting, program: { parseable, legacy, malformed } };
+  return { workstreams, sprint, last, waiting, program };
 }

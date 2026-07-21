@@ -19,6 +19,11 @@ import {
   type EmitRecord,
 } from '../../core/orientation.js';
 import {
+  renderStageLine,
+  renderLegacyLine,
+  renderMalformedLines,
+} from '../../core/architecture/buckets.js';
+import {
   validateChangeExists,
   validateSchemaExists,
   getStatusIndicator,
@@ -274,8 +279,26 @@ function printSprintView(orientation: Orientation, json: boolean): void {
   console.log(alsoLine);
 }
 
-/** One-word phase for the `also` line, derived from the strip (no new judgment). */
+/**
+ * One-word phase for the `also` line — the ENGINE's frontier gate (first
+ * non-superseded, non-passed gate in graph order), so an unpassed/stale review
+ * frontier reads `(review)` rather than the completed predecessor. The strip is
+ * presentation; the gate graph owns where a change actually stands.
+ */
 function phaseOf(entry: WorkstreamEntry): string {
+  const gates = entry.status?.gates as
+    | Array<{ id: string; state?: string; superseded?: boolean }>
+    | undefined;
+  if (gates && gates.length > 0) {
+    const frontier = gates.find((g) => !g.superseded && g.state !== 'passed');
+    if (frontier) {
+      return frontier.id === 'review-proposal' || frontier.id === 'review-system'
+        ? 'review'
+        : frontier.id;
+    }
+    return 'archive-ready';
+  }
+  // Ungated schemas: fall back to strip presentation.
   const strip = entry.strip ?? [];
   const current = strip.find((c) => c.glyph === '▶');
   if (current) return current.phase;
@@ -308,7 +331,9 @@ function printFullView(orientation: Orientation, json: boolean): void {
     for (const doc of parseable) {
       console.log(`  ${doc.doc}`);
       for (const s of doc.stages) {
-        console.log(`    ${s.id}: ${s.rendered}`);
+        // The stage line exactly as `orbit architecture status` renders it
+        // (id + computed state with the completion composition + citing).
+        console.log(`  ${renderStageLine(s)}`);
         for (const entry of orientation.workstreams) {
           if (entry.stage && entry.stage.doc === doc.doc && entry.stage.stage === s.id) {
             citedNames.add(entry.name);
@@ -317,8 +342,11 @@ function printFullView(orientation: Orientation, json: boolean): void {
         }
       }
     }
-    for (const name of legacy) console.log(`  ${name}: legacy (not parseable)`);
-    for (const m of malformed) console.log(`  ${m.doc}: MALFORMED`);
+    // Legacy/malformed docs listed as the architecture-status surface lists them.
+    for (const name of legacy) console.log(`  ${renderLegacyLine(name)}`);
+    for (const m of malformed) {
+      for (const line of renderMalformedLines(m)) console.log(`  ${line}`);
+    }
 
     const standalone = orientation.workstreams.filter((w) => !citedNames.has(w.name));
     if (standalone.length > 0) {

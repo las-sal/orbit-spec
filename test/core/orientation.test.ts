@@ -36,7 +36,10 @@ function spine(command: string, extra: Record<string, unknown> = {}): Record<str
   };
 }
 
-function makeChange(name: string, opts: { created?: string; schema?: string } = {}): string {
+function makeChange(
+  name: string,
+  opts: { created?: string; schema?: string; full?: boolean } = {}
+): string {
   const dir = path.join(root, 'orbit', 'changes', name);
   fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(
@@ -44,6 +47,15 @@ function makeChange(name: string, opts: { created?: string; schema?: string } = 
     `schema: ${opts.schema ?? 'spec-driven'}\ncreated: "${opts.created ?? '2026-07-01'}"\n`
   );
   fs.writeFileSync(path.join(dir, 'proposal.md'), '# Proposal');
+  if (opts.full) {
+    fs.writeFileSync(path.join(dir, 'design.md'), '# Design');
+    fs.writeFileSync(path.join(dir, 'tasks.md'), '## 1. Work\n\n- [ ] 1.1 Do the thing\n');
+    fs.mkdirSync(path.join(dir, 'specs', 'cap'), { recursive: true });
+    fs.writeFileSync(
+      path.join(dir, 'specs', 'cap', 'spec.md'),
+      '## ADDED Requirements\n\n### Requirement: X\n\nX SHALL Y.\n\n#### Scenario: S\n\n- **WHEN** a\n- **THEN** b\n'
+    );
+  }
   return dir;
 }
 
@@ -297,6 +309,29 @@ describe('fault isolation', () => {
     expect(broken?.last?.command).toBe('propose');
   });
 
+  it('invalid-YAML metadata degrades the entry — the normative clause-(b) trigger (change AND explore)', () => {
+    const c = makeChange('bad-meta-change');
+    fs.writeFileSync(path.join(c, '.openspec.yaml'), 'schema: [unclosed\n');
+    const e = makeExplore('bad-meta-explore');
+    fs.writeFileSync(path.join(e, '.openspec.yaml'), 'created: :::\nschema: [nope\n');
+
+    const o = collectOrientation(root);
+    const change = o.workstreams.find((w) => w.name === 'bad-meta-change');
+    const explore = o.workstreams.find((w) => w.name === 'bad-meta-explore');
+    expect(change?.degraded).toBe(true);
+    expect(explore?.degraded).toBe(true);
+    expect('strip' in (change ?? {})).toBe(false); // no fabricated healthy entry
+    expect('status' in (change ?? {})).toBe(false);
+  });
+
+  it('metadata naming an unknown schema degrades instead of silently defaulting', () => {
+    makeChange('ghost-schema', { schema: 'no-such-schema' });
+    const o = collectOrientation(root);
+    const entry = o.workstreams.find((w) => w.name === 'ghost-schema');
+    expect(entry?.degraded).toBe(true);
+    expect(typeof entry?.error).toBe('string');
+  });
+
   it('corrupt newest emit falls back deterministically for the sprint last', () => {
     const dir = makeChange('epsilon');
     const runs = path.join(dir, '.orbit-runs');
@@ -307,6 +342,63 @@ describe('fault isolation', () => {
     const o2 = collectOrientation(root);
     expect(o1.sprint?.last?.command).toBe('propose');
     expect(o2.sprint?.last?.command).toBe('propose');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Strip + per-trail recency fidelity (external system iter 1)
+// ---------------------------------------------------------------------------
+
+describe('strip and recency fidelity', () => {
+  it('a READY apply gate at 0/N carries the current glyph (entry-boundary form)', () => {
+    makeChange('at-the-gate', { full: true });
+    const entry = composeWorkstreamEntry(root, listLiveWorkstreams(root)[0]);
+    const apply = entry.strip?.find((c) => c.phase === 'apply');
+    expect(apply?.detail).toBe('0/1');
+    expect(apply?.glyph).toBe('▶');
+  });
+
+  it('a spine-invalid review emit moves neither last nor the review chip count', () => {
+    const dir = makeChange('quiet-review', { full: true });
+    const runs = path.join(dir, '.orbit-runs');
+    writeEmit(runs, 'propose-2026-07-20T10-00-00Z.json', spine('propose'));
+    // Parseable JSON, but no final_assessment/next_recommended → spine-invalid.
+    fs.writeFileSync(
+      path.join(runs, 'review-proposal-2026-07-20T11-00-00Z.json'),
+      JSON.stringify({ command: 'review', mode: 'proposal' })
+    );
+
+    const entry = composeWorkstreamEntry(root, listLiveWorkstreams(root)[0]);
+    expect(entry.last?.command).toBe('propose');
+    const review = entry.strip?.find((c) => c.phase === 'review');
+    expect(review?.detail).toBeUndefined(); // 0 counted iterations
+  });
+
+  it('same-trail equal tokens select by the SHARED tie-break direction (earlier filename wins)', () => {
+    const dir = makeChange('same-second');
+    const runs = path.join(dir, '.orbit-runs');
+    writeEmit(runs, 'propose-2026-07-20T10-00-00Z.json', spine('propose'));
+    writeEmit(runs, 'apply-2026-07-20T10-00-00Z.json', spine('apply'));
+
+    const emits = readValidEmits(runs);
+    // `apply-...` < `propose-...` lexicographically → apply is MORE recent
+    // under the shared comparator and must be the selected newest.
+    expect(emits[emits.length - 1].command).toBe('apply');
+    const entry = composeWorkstreamEntry(root, listLiveWorkstreams(root)[0]);
+    expect(entry.last?.command).toBe('apply');
+  });
+
+  it('WAITING renders the singular literal at one packaged handoff', () => {
+    const dir = makeChange('single-handoff');
+    writeEmit(
+      path.join(dir, '.orbit-runs'),
+      'review-external-2026-07-20T10-00-00Z.json',
+      spine('review-external', { mode: 'proposal' })
+    );
+    const o = collectOrientation(root);
+    const item = o.waiting.find((w) => w.includes('external'));
+    expect(item).toContain('1 external review packaged, 0 returned'); // singular, the spec literal
+    expect(item).not.toContain('review(s)');
   });
 });
 
