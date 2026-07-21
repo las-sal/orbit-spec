@@ -83,5 +83,5 @@
   },
   "post_state": "Build green; 1749 tests green (1742 + 7 new); strict validation + fingerprints 7/7; both live surfaces (orbit status, orbit architecture status) render coherently from the shared bucket builder",
   "final_assessment": "All 7 external system iter-1 findings resolved. The CRITICAL closed the real fault-isolation gap: metadata is now read once, validated, with projectRoot, inside the degradation boundary — the normative invalid-metadata trigger degrades both workstream kinds instead of being swallowed by defensive fallbacks. The six WARNINGs aligned the implementation to the spec's grammar and sharing contracts (ready-gate glyph, uniform spine-valid counting, one tie-break direction, the extracted architecture-status bucket builder consumed by both surfaces, count-based pluralization, engine-frontier also-phases). The external carried a CRITICAL, so the confirm predicate requires an independent pass yielding none.",
-  "next_recommended": "/orbit:review --as system d3-orientation --fresh"
+  "next_recommended": "/orbit:review --as system d3-orientation"
 }
