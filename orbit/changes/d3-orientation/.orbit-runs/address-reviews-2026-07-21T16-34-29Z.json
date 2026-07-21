@@ -45,6 +45,6 @@
     "escalated": 0
   },
   "post_state": "Build green; 1753 tests green (1752 + 1); strict validation passes; fingerprints 7/7; surface refreshed (16 skills; scoped references on disk)",
-  "final_assessment": "All 3 fresh system iter-4 findings resolved: the fourth kind+name comparison site closed (citedKeys), the four generated-body bare `orbit status --json` references scoped to the --change form with parity re-pins and a refreshed surface, and the empty-last spec letter unified on the implemented phrase before sync. System cadence now: in-context → external → fresh → in-context confirm → fresh (adversarial) → resolutions landed; the cadence is at the confirm seam again.",
-  "next_recommended": "/orbit:review --as system d3-orientation"
+  "final_assessment": "All 3 fresh system iter-4 findings resolved: the fourth kind+name comparison site closed (citedKeys), the four generated-body bare `orbit status --json` references scoped to the --change form with parity re-pins and a refreshed surface, and the empty-last spec letter unified on the implemented phrase before sync. With these resolutions on disk the ENGINE computes gate review-system PASSED (position: ... review(system) ✓ → archive ready) — verdict read from orbit status --change --json, not authored.",
+  "next_recommended": "/orbit:archive d3-orientation — user-invoked"
 }
