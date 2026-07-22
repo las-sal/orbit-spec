@@ -1,0 +1,12 @@
+{
+  "command": "explore",
+  "timestamp": "2026-07-22T17:47:07Z",
+  "change": "d4-review-consistency",
+  "final_assessment": "Boundary (handoff-hardening pass at the user's request): explore.md is now clean-AI-complete. Fixed in this pass: the References hedge verified and expanded (orbit-review / orbit-address-reviews / orbit-review-external all confirmed present, plus the D3 gateway code paths and the trail/gates sources the renderer joins); the three propose-time threads moved from emit-only narrative into a 'Deferred to propose' subsection with stated leans (--report strictness strict/loud, not yet user-ratified; external passes render from the parsed form; the economy dividend's body deletions ride this change); and the five-section structure repaired — the D-d4-5 edit had accidentally consumed the empty Open questions heading, restored with the deferred subsection under it. 5 decisions stand (D-d4-1..5), zero blocking open questions.",
+  "next_recommended": "/orbit:propose d4-review-consistency — substantial thinking captured; ready to formalize the design (or /orbit:explore d4-review-consistency to keep refining)",
+  "kind": "workflow",
+  "mode": "named",
+  "decisions_captured": 5,
+  "open_questions_count": 0,
+  "crystallized_to_name": null
+}

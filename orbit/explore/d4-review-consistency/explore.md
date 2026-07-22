@@ -88,6 +88,23 @@ dismissed prompt loses nothing (the finding re-presents).
   invariant holds). Supersedes the sketched standalone `orbit render <emit>` verb — see
   Considered & out.
 
+## Open questions
+
+(None blocking — the five decisions cover both charter moves.)
+
+### Deferred to propose (small design points with stated leans, not open unknowns)
+
+- **`--report` schema strictness** — lean: strict/loud (a malformed emit fails the render with
+  a clean error naming the missing field; it's the AI's own tool, unlike the orientation
+  surface's graceful degradation). Not yet user-ratified.
+- **External-report unification** — external passes render from their PARSED form (the trail
+  reader's external-markdown parse), so Codex and subagent reports read identically once
+  ingested; the external prompt template keeps its markdown contract unchanged.
+- **The economy dividend** — once the engine owns rendering, the report-format prose comes OUT
+  of the review/address bodies (replaced by "run `orbit status --change <name> --report` and
+  paste verbatim" + the hand-rendering prohibition, greppable). Scope: body deletions ride
+  this change; broader body-slimming stays D5's.
+
 ## Considered & out
 
 - **Standalone `orbit render <emit>` verb (self-identifying genre from the spine)** — rejected
@@ -99,5 +116,14 @@ dismissed prompt loses nothing (the finding re-presents).
 ## References
 
 - `orbit/architecture/d-arc-arbitered-flow.md` — stage d4-review-consistency charter + exit criteria; rulings R-d-1..10
-- `orbit/specs/orbit-review/spec.md`, `orbit/specs/orbit-address-reviews/spec.md` (if present — verify capability names) — the live review/resolution baselines this stage would modify
+- `orbit/specs/orbit-review/spec.md`, `orbit/specs/orbit-address-reviews/spec.md`,
+  `orbit/specs/orbit-review-external/spec.md` (all verified present 2026-07-22) — the live
+  review/resolution/external baselines this stage would modify (the third carries the
+  external-report side of D-d4-1's "internal and external identically")
+- `orbit/specs/orbit-orientation/spec.md` + `src/commands/workflow/status.ts` — the D3 status
+  gateway D-d4-5 extends (`--change <name> --report` rides the `--change` form; the read-only
+  invariant and the trimmed `last:` line both live here)
+- `src/core/artifact-graph/trail.ts` (parseTsToken, the external-markdown parser — the parsed
+  form external reports would render from) + `src/core/artifact-graph/gates.ts`
+  (computeGateStates — the render-time tail's source)
 - The just-archived D3 cycle's `.orbit-runs/` (orbit/changes/archive/2026-07-21-d3-orientation/) — 15 passes of real report renders and walk transcripts, the freshest clunk corpus
