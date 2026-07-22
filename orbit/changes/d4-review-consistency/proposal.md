@@ -60,9 +60,12 @@ emit IS the JSON); watch/refresh modes.
 ## Impact
 
 - Affected specs: `orbit-report-rendering` (ADDED — 7 requirements),
-  `orbit-review` (MODIFIED ×3 + ADDED ×1 — the final-assessment machinery collapsed into the
-  engine-rendered tail with the synthetic pass retired, commentary field, renderer-computed
-  iteration note, the run-and-paste report contract), `orbit-address-reviews` (MODIFIED ×5 —
+  `orbit-review` (MODIFIED ×5 + ADDED ×1 — the final-assessment machinery collapsed into the
+  engine-rendered tail with the synthetic pass retired and deterministic spine facts under
+  persist-first, commentary field, renderer-computed iteration note, the pushback-suppression
+  letter aligned to the first-class suppressed section, the `--fresh` requirement's
+  stock-phrasing sentence replaced by the gate/cadence relationship, the run-and-paste report
+  contract), `orbit-address-reviews` (MODIFIED ×5 —
   lifecycle lane preview with provisional classification, classification-as-lanes, the
   fork-to-closure-device rewrite, the walk-mode UX de-prompted, the resolution-log shape
   gaining `ratified_via`/`delegation_directive`/off-menu `chosen` and shedding

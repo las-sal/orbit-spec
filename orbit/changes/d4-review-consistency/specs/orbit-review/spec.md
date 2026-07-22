@@ -43,7 +43,7 @@ The final-assessment, gate, position, and eligibility lines of proposal- and sys
 
 ### Requirement: Internal run summary persisted per mode
 
-The system SHALL write a JSON run summary after each invocation: to `orbit/changes/<change-name>/.orbit-runs/review-<mode>-<TS>.json` for `proposal` and `system` modes, and to `orbit/architecture/.orbit-runs/review-architecture-<TS>.json` for `architecture` mode (the architecture trail location per `orbit-architecture-engine`; the emit's `change` field is `null` and a `doc` field names the reviewed doc; per arc ruling R-d-9(b) the architecture-mode emit also carries the structured `handoff` section whose shape is owned by `orbit-architect`). The summary MAY carry an optional `commentary` string — the reviewer's color commentary (the pattern behind the findings, what was probed, risk texture), rendered verbatim into the report's delimited Commentary slot per `orbit-report-rendering`; commentary SHALL NOT state finding counts, gate verdicts, or next commands (those exist only in the report's engine-computed sections).
+The system SHALL write a JSON run summary after each invocation: to `orbit/changes/<change-name>/.orbit-runs/review-<mode>-<TS>.json` for `proposal` and `system` modes, and to `orbit/architecture/.orbit-runs/review-architecture-<TS>.json` for `architecture` mode (the architecture trail location per `orbit-architecture-engine`; the emit's `change` field is `null` and a `doc` field names the reviewed doc; per arc ruling R-d-9(b) the architecture-mode emit also carries the structured `handoff` section whose shape is owned by `orbit-architect`). The summary MAY carry an optional `commentary` string — the reviewer's color commentary (the pattern behind the findings, what was probed, risk texture), rendered verbatim into the report's delimited Commentary slot per `orbit-report-rendering`; commentary SHALL NOT state finding counts, gate verdicts, or next commands (those exist only in the report's engine-computed sections). Under persist-first ordering the required universal-spine fields carry DETERMINISTIC FACTS, never verdicts: `final_assessment` is the severity-counts sentence computed from the emit's own scorecard (`"X critical, Y warning, Z suggestion."`; `"No findings."` when clean), and `next_recommended` is the deterministic pointer — the `/orbit:address-reviews <change> --from-file <this emit's own path>` invocation when the pass has findings, the `orbit status --change <change> --report` render pointer when clean (the engine-computed canonical next rides the rendered tail, never the emit). This keeps the orientation surface's `last:` line factual and leaves the gate verdict with the engine alone; the emit stores NO `iteration_note` (the renderer computes it — a stored copy would be the second stale voice this change removes).
 
 #### Scenario: Summary written after run
 
@@ -59,6 +59,11 @@ The system SHALL write a JSON run summary after each invocation: to `orbit/chang
 
 - **WHEN** a proposal- or system-mode summary is written with reviewer insight worth carrying
 - **THEN** it rides the optional `commentary` field — and never asserts counts, verdicts, or next commands
+
+#### Scenario: Spine fields carry deterministic facts under persist-first
+
+- **WHEN** a proposal-mode pass with 1 warning and 3 suggestions persists its emit
+- **THEN** `final_assessment` reads `0 critical, 1 warning, 3 suggestion.` and `next_recommended` is the `/orbit:address-reviews <change> --from-file <own path>` pointer — no gate verdict, no eligibility judgment; a clean pass instead points `next_recommended` at the `orbit status --change <change> --report` render
 
 ### Requirement: Iteration note when prior runs exist
 
@@ -78,3 +83,21 @@ The system SHALL include a one-sentence iteration note in the report when prior 
 
 - **WHEN** an architecture-mode review runs and the architecture trail contains prior `review-architecture-*.json` emits, some with a matching `doc` field and some for other docs
 - **THEN** only the matching-`doc` emits count toward the iteration number and the iteration note
+
+### Requirement: Pushback discipline on stale findings
+
+The system SHALL verify each finding against current state before reporting it, regardless of mode.
+
+#### Scenario: Stale finding suppressed
+
+- **WHEN** an internal pass would produce a finding for an issue already resolved in current state (verified via `grep`, `git log`, or file inspection)
+- **THEN** the finding is suppressed with an explanatory note ("stale finding suppressed: <evidence>") and excluded from the report's ACTIVE findings and severity counts — it appears ONLY in the rendered report's dedicated suppressed-with-evidence section (per `orbit-report-rendering`'s report grammar; suppression removes a finding from the scorecard, not from the audit record)
+
+### Requirement: `--fresh` runs pass work in a clean execution context
+
+The system SHALL support a `--fresh` flag (all modes — proposal, system, and architecture) that runs the main pass work in a fresh execution context (e.g., a clean-context subagent) rather than the invoking conversation — mitigating anchoring when the invoking context authored or extensively discussed the artifacts under review. Findings, scorecard rollup, and run-summary persistence are unchanged; `--fresh` affects only where pass work executes. A fresh-context pass fills the review cadence's independent slot (per `orbit-engine-gates`' reviewed-gate model) as the lighter-weight alternative to `/orbit:review-external` (same model, fresh context, no cross-AI handoff) — the relationship the engine's computed canonical next command reflects when the cadence needs an independent pass.
+
+#### Scenario: Fresh pass execution
+
+- **WHEN** the command runs with `--fresh`
+- **THEN** the passes execute in a clean context that did not author the artifacts under review; the report and run summary are produced identically to a non-fresh run, with `fresh: true` recorded in the run summary's `flags` object

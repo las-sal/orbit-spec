@@ -79,7 +79,7 @@ When a finding enters the DECISION lane, the system SHALL resolve it through the
 
 **Source recording**: the resolution-log entry's `recommendation_fork.source` field SHALL be `"structured"` when the structured path fired, `"heuristic"` when the heuristic path fired.
 
-**Ratification recording**: each decision-lane resolution SHALL record the chosen resolution AND how it was expressed — `recommendation_fork.ratified_via: "chat" | "prompt"` — in its resolution-log entry (per `Resolution-log JSON shape extensions`); the `[discuss]` escape-hatch option is RETIRED (discussion is the medium, not an escape), so `discuss_invoked` is no longer emitted.
+**Ratification recording**: each decision-lane resolution SHALL record the ratified resolution AND how it was expressed as PER-RESOLUTION fields — `ratified_via: "chat" | "prompt"` and (when the direction is not one of the briefed options, or no fork was detected) a verbatim `resolution` string — on the resolution-log ENTRY itself (per `Resolution-log JSON shape extensions`), so non-disjunctive decision-lane findings record their channel without a `recommendation_fork` object; the fork object, when present, carries only the DETECTION data (source, options, chosen). The `[discuss]` escape-hatch option is RETIRED (discussion is the medium, not an escape), so `discuss_invoked` is no longer emitted.
 
 **No global opt-out**: there is no flag to suppress the decision-lane protocol; delegation is the user's per-walk lever.
 
@@ -199,12 +199,13 @@ The system SHALL extend the `address-reviews-<TS>.json` resolution-log shape wit
 - **`walk_mode_source`** (top-level, required when `walk_mode == "batch"`): `"flag"` (via `--batch`), `"verbal"` (via verbal trigger in invocation message), or `"command-shape-interruption"` (via mid-walk command-shaped message). Omitted when `walk_mode == "per_finding"`.
 - **`walk_mode_shifted_at_finding`** (top-level, present only when `walk_mode_source == "command-shape-interruption"`): the 1-indexed finding number at which the mode shifted.
 - **`delegation_directive`** (top-level, optional): the user's verbatim mid-walk delegation ("handle the rest, only brief me on real decisions"), present when one was issued (per the decision-lane protocol's batch-delegation rule).
-- **`recommendation_fork`** (per-resolution, optional): present only when a fork was detected and the finding entered the decision lane. Object shape:
+- **`ratified_via`** (per-resolution, required for EVERY decision-lane resolution — forked or not): `"chat"` (a user-typed directive ratified the resolution) or `"prompt"` (the optional closure `AskUserQuestion` did). Absent on non-decision-lane resolutions (stale, trivial fix, unresolvable).
+- **`resolution`** (per-resolution, conditionally required): the ratified direction verbatim — required when no fork was detected (the briefing's options were AI-derived prose) OR when the ratified direction is off-menu; optional when `recommendation_fork.chosen` names a presented option (the label suffices).
+- **`recommendation_fork`** (per-resolution, optional): present only when a fork was detected and the finding entered the decision lane; carries the DETECTION data (the ratification channel lives at the entry level, above). Object shape:
   - `detected: true` — always true when present
   - `source: "structured" | "heuristic"` — which detection path fired
   - `options_presented: [{label, body}, …]` — structured options as briefed to the user; shape is identical to the producer-side `recommendation_options` field on the input finding, so downstream consumers parse one shape across producer JSON and resolution-log JSON
-  - `chosen: "A" | "B" | … | "off-menu"` — the ratified option's label when the resolution matches one of `options_presented`; the literal `"off-menu"` when a chat directive resolved outside the presented options, in which case a sibling `resolution: string` carries the ratified direction verbatim
-  - `ratified_via: "chat" | "prompt"` — how the ratification was expressed: a user-typed chat directive, or the optional closure `AskUserQuestion` (per the decision-lane protocol; the retired `discuss_invoked` field is no longer emitted)
+  - `chosen: "A" | "B" | … | "off-menu"` — the ratified option's label when the resolution matches one of `options_presented`; the literal `"off-menu"` when the ratified direction was outside the presented options (the entry-level `resolution` string then carries it verbatim)
   - `structured_path_skipped_reason: string` — present only when the structured detection path was attempted but skipped due to malformed input (per the `Malformed recommendation_options array falls back to heuristic detection` scenario). Examples: `"only 1 entry in array"`, `"missing label on entry index 2"`, `"empty body on entry index 0"`. Omitted when the structured path either succeeded OR was simply absent (no `recommendation_options` field on the input).
 - **`ripple_cascade`** (per-resolution, required): replaces the v1 `ripple_flagged_files_aggregate` array. Object shape:
   - `applied: [path, …]` — files cascade-edited consistent with the primary fix
@@ -225,15 +226,20 @@ The system SHALL extend the `address-reviews-<TS>.json` resolution-log shape wit
 - **WHEN** address-reviews completes a batch-mode run (triggered by `--batch`)
 - **THEN** the emitted JSON contains `walk_mode: "batch"` and `walk_mode_source: "flag"`; per-resolution `ripple_cascade` fields are populated only at the end of the batch (each resolution's `applied`/`flagged_not_applied` reflects the final aggregated cascade pass)
 
-#### Scenario: Recommendation_fork captured with its ratification channel
+#### Scenario: Forked decision records its ratification channel at the entry level
 
 - **WHEN** address-reviews briefs a decision-lane finding with a disjunctive recommendation and the user types "go with A" in chat
-- **THEN** the resolution-log entry contains `recommendation_fork: {detected: true, source: "heuristic", options_presented: [{label: "A", body: "..."}, {label: "B", body: "..."}], chosen: "A", ratified_via: "chat"}`
+- **THEN** the resolution-log entry contains `ratified_via: "chat"` (entry level) and `recommendation_fork: {detected: true, source: "heuristic", options_presented: [{label: "A", body: "..."}, {label: "B", body: "..."}], chosen: "A"}`
+
+#### Scenario: Non-fork decision still records its channel
+
+- **WHEN** a decision-lane finding with a non-disjunctive recommendation is briefed (AI-derived options in prose) and ratified by the closure prompt
+- **THEN** the entry carries `ratified_via: "prompt"` and `resolution: "<the ratified direction verbatim>"` with NO `recommendation_fork` object — the channel recording never depends on fork detection
 
 #### Scenario: Off-menu chat ratification recorded
 
 - **WHEN** the discussion produces a direction that is none of the briefed options ("actually, do neither — split the requirement instead") and the user's directive ratifies it
-- **THEN** the entry records `chosen: "off-menu"`, `resolution: "<the ratified direction verbatim>"`, `ratified_via: "chat"`
+- **THEN** the entry records `ratified_via: "chat"` and `resolution: "<the ratified direction verbatim>"` at the entry level, with `recommendation_fork.chosen: "off-menu"` when a fork had been detected
 
 #### Scenario: --no-cascade resolution log records all ripples as flagged_not_applied
 

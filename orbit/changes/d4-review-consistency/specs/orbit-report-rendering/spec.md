@@ -30,7 +30,16 @@ the recommendation VERBATIM (structured `recommendation_options` rendered as lab
 alternatives), (5) suppressed findings with their evidence, (6) the ONE delimited
 `### Commentary` section, (7) the ENGINE tail — gate line, position readout, and the
 `Ready when you are:` eligibility line — ALWAYS last: the report's final word is the computed
-truth, never the reviewer's framing of it.
+truth, never the reviewer's framing of it. Grammar elements inapplicable to a genre are
+OMITTED WHOLE — the conditionality lives IN the grammar: for an EXTERNAL pass the header's
+fields are change = the `--change` argument, mode = the `<as>` token from the filename,
+iteration = the pass's same-mode trail ordinal (as-of semantics, shared with internal passes),
+reviewer class = `external` with the parsed reviewer name and date, and depth is OMITTED (the
+external contract has no such field); the scorecard table renders for INTERNAL passes only (an
+external pass has no scorecard — the section is omitted whole, never fabricated). The
+CANONICAL RENDERED EXAMPLE in the change's design (line-level forms for every section,
+including the genre-conditional variants) is the source the golden fixtures derive from — the
+goldens are transcriptions of the specified grammar, never implementer-authored layouts.
 
 #### Scenario: Section order is invariant
 
@@ -70,13 +79,20 @@ in engine-computed sections.
 
 ### Requirement: Commentary is a first-class quarantined slot
 
-The review record's optional `commentary` field SHALL render VERBATIM into the single
+The review record's commentary SHALL render VERBATIM into the single
 delimited `### Commentary` section — the reviewer's voice, quarantined: model-to-model
-variance lives inside this field, never leaking into the structured sections. Content
-contract: commentary carries what the structure cannot say (the pattern behind the findings,
+variance lives inside this field, never leaking into the structured sections. The slot's
+source is genre-symmetric: an internal emit's optional `commentary` field, or an external
+pass's `## Notes` body. Content
+contract (BOTH genres, stated at the SOURCE — the internal authoring instruction and the
+external prompt template's Notes instruction alike): commentary carries what the structure
+cannot say (the pattern behind the findings,
 what was probed and how hard, risk texture) and is PROHIBITED from stating finding counts,
-gate verdicts, or next commands — those exist only in engine sections, so the two voices can
-never disagree. An absent field omits the section.
+gate verdicts, or next commands — those exist only in engine sections. The separation is
+CONTRACT-ENFORCED at the source in both genres (the renderer places the slot verbatim and
+does not police its content); the engine tail rendering last means a contract violation can
+mislead but never be the report's final word. An absent field (or absent Notes section) omits
+the section.
 
 #### Scenario: Commentary renders verbatim in its slot
 
@@ -130,7 +146,7 @@ determinism applies from ingest onward). An external file the parser rejects (ma
 #### Scenario: External pass renders through the shared grammar
 
 - **WHEN** `--report <TS>` resolves to an external findings file
-- **THEN** the report renders with the same section order and engine tail as an internal pass — reviewer and date from the parsed header, findings from the parsed severity sections
+- **THEN** the report renders with the same section order and engine tail as an internal pass — the genre-conditional header (change from the argument, mode from the filename, trail-ordinal iteration, `external` + parsed reviewer and date, no depth), NO scorecard table, findings from the parsed severity sections, and the `## Notes` body (when present) in the Commentary slot
 
 #### Scenario: Parse-rejected external file fails loud
 

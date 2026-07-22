@@ -48,6 +48,58 @@ PROHIBITED from counts/verdicts/next-commands (those exist only in engine sectio
 voices can never disagree; golden fixtures include a commentary carrying near-miss phrasing to
 pin the delimiter).
 
+### D2b. The canonical rendered example (iter-1-external W1 — goldens derive, never author)
+
+The line-level grammar, from which ALL golden fixtures are transcribed (an implementer-authored
+layout can never self-certify):
+
+```
+## Review: <change> --as <mode>
+
+Mode: <mode> · Iteration: <N> · Reviewer: <class>[ (<name>, <date>)] · Depth: <depth>
+Trend: <c1>C/<w1>W/<s1>S → <c2>C/<w2>W/<s2>S → … (<r> repeat, <n> new)
+```
+(first-run form replaces the Trend line: `First <mode>-mode review of this change.`; the
+repeat/new match is `orbit-engine-gates`' trimmed-title + line-stripped-path rule over the
+immediately-prior same-mode pass)
+```
+| Dimension    | Critical | Warning | Suggestion |
+|--------------|----------|---------|------------|
+| Completeness | <n>      | <n>     | <n>        |
+| Correctness  | <n>      | <n>     | <n>        |
+| Coherence    | <n>      | <n>     | <n>        |
+
+### Findings
+
+#### CRITICAL
+- **<file>:<line>** — <title>
+  <recommendation, verbatim, indented two spaces>
+  - (<label>) <body>          ← one line per recommendation_option, in array order
+```
+(severity subsections in fixed order CRITICAL/WARNING/SUGGESTION; empty severity → subsection
+omitted; findings in emit array order; the external genre renders the same entry form with the
+Description body as the recommendation)
+```
+### Suppressed
+- <title> — <evidence>
+
+### Commentary
+
+<commentary / external Notes body, verbatim>
+
+---
+Gate <id>: <state>[ — <reason>]
+Position: <position>
+Ready when you are: <next_command>
+```
+Header rules: internal = all five fields from the emit; external = change from the argument,
+mode from the filename `<as>`, iteration = same-mode trail ordinal, `external (<reviewer>,
+<date>)`, depth omitted (the ` · Depth:` cell disappears whole); scorecard table internal-only.
+The `---` rule fences the engine tail; the gate line renders the phase gate the mode maps to
+(`review-proposal` for proposal, `review-system` for system). One newline discipline: sections
+separated by exactly one blank line; the report ends after the eligibility line with a single
+trailing newline.
+
 ### D3. Strict/loud validation (D-d4-6a — deliberately unlike orientation)
 
 The renderer validates its input before rendering: required spine fields plus the review
@@ -75,7 +127,13 @@ parse. `--report <TS>` resolves the token against BOTH genres on the shared rece
 is untouched; determinism applies from ingest onward. A parse-rejected external file is
 non-renderable → the clean error names it. The gate model's OWN trail consumption
 (`gates.ts`) keeps the lean parse — the normalized shape is the renderer's input, not a gate
-contract change.
+contract change; `--report`'s artifact RESOLUTION is likewise its own raw step (enumerate the
+trail's pass artifacts, apply the shared tie-break, dispatch genre, THEN parse/normalize —
+never overloading the gate reader; iter-1-external S1). The `## Notes` → Commentary mapping
+carries the SAME content contract as internal commentary, stated at the source: the external
+prompt template's Notes instruction gains the no-counts/verdicts/next-commands prohibition
+(its FORMAT contract otherwise unchanged; user fork C3-A — the never-disagree separation is
+contract-enforced in both genres, with the engine tail last as the structural backstop).
 
 ### D5. The surface is the status gateway (D-d4-5 — supersedes a standalone verb)
 

@@ -22,7 +22,8 @@ R-d-9 handoff audit runs by hand at the phase seams.
       naming field + file, no partial render; `commentary`/`recommendation_options`
       absent-safe; parse-rejected external files fail naming the file
 - [ ] 1.4 Golden tests (`test/core/report-render.test.ts` + `test/fixtures/report-golden/`):
-      byte-identity per golden fixture (proposal pass, system pass, external pass, legacy
+      goldens TRANSCRIBED from design D2b's canonical rendered example (never
+      implementer-authored layouts); byte-identity per golden fixture (proposal pass, system pass, external pass, legacy
       no-commentary emit, commentary-with-near-miss-phrasing pinning the delimiter); strict-
       validation error cases (per-genre field sets); historical-pass case (as-of iteration/
       trend + CURRENT tail); trend as-of semantics (later passes excluded); the deterministic
@@ -39,7 +40,9 @@ R-d-9 handoff audit runs by hand at the phase seams.
 - [ ] 2.1 `src/cli/index.ts` + `src/commands/workflow/status.ts`: `--report [<TS>]` rides
       `--change <name>` (bare/`--full` unchanged); no argument = newest review pass (internal
       emits + external findings files on the shared recency axis + tie-break); explicit `<TS>`
-      selects; non-renderable genre (spine `command` dispatch) → clean error naming the
+      selects; artifact RESOLUTION is a raw step (enumerate pass artifacts, shared tie-break,
+      genre dispatch) BEFORE parse/normalize — the gate reader is not reused;
+      non-renderable genre (spine `command` dispatch) → clean error naming the
       renderable set, exit non-zero; READ-ONLY (no file created or modified)
 - [ ] 2.2 CLI tests (`test/commands/`): newest-default + explicit-TS render; external-pass
       render through the shared grammar; non-renderable genre error; ZERO-renderable-passes
@@ -77,8 +80,20 @@ R-d-9 handoff audit runs by hand at the phase seams.
 - [ ] 3.4 Reference docs riding the templates (`references/run-summary-schema.md` gains
       `commentary` AND its stale_suppressed note corrected — suppressions ARE a first-class
       report section now; address' `references/internal-findings-format.md` unchanged shape
-      note + `ratified_via`/`delegation_directive`/off-menu `chosen` in the resolution-log
-      schema reference)
+      note + entry-level `ratified_via`/`resolution` + `delegation_directive` + off-menu
+      `chosen` in the resolution-log schema reference; the stored `iteration_note` contract
+      REMOVED — renderer-computed — and the deterministic spine-value contract documented)
+
+- [ ] 3.5 `src/core/templates/workflows/review-external.ts` (+ its `references/prompt-template.md`):
+      the prompt template's `## Notes` instruction gains the commentary content contract (no
+      finding counts, no gate verdicts, no next commands — the Notes body renders in the
+      report's Commentary slot); FORMAT contract otherwise unchanged; parity hash re-pinned
+- [ ] 3.6 `src/core/templates/workflows/onboard.ts`: the generated onboarding body's Phase 3
+      prose drops the hand-authored final-assessment branch examples (engine-rendered report +
+      tail described instead), Phase 4 prose and the quick-reference row teach the THREE-LANE
+      present → discuss → ratify protocol (chat ratification; optional closure prompt; batch
+      prompts dead / delegation alive) instead of the A/B/[discuss] fork model; fidelity
+      markers + parity hash re-pinned
 
 ## 4. Docs
 
@@ -99,9 +114,13 @@ R-d-9 handoff audit runs by hand at the phase seams.
       one-observed-cycle half is post-apply, by hand, recorded at the seam)
 - [ ] 5.3 Full suite green (baseline 1754 + new coverage); `orbit validate
       d4-review-consistency --strict` passes; `orbit fingerprint d4-review-consistency
-      --check` all verified
-- [ ] 5.4 Arc sync (R-d-7): status-log entry at the post-apply seam; R-d-9 handoff audit by
-      hand. Archive-time notes: CLAUDE.md D4 completion entry; baseline 17 → 18; the new
+      --check` all verified; if the suite runs in a spaced workspace path, record the
+      environmental failure class distinctly (the ~24 unquoted-interpolation command tests)
+      so it is never mistaken for a D4 regression
+- [ ] 5.4 Arc sync (R-d-7): status-log entry at the post-apply seam; the R-d-9 handoff audits
+      record DATED EVIDENCE NOTES in the corresponding emits' final_assessment (the pre-D5
+      interim representation — change-scoped emits carry no structured handoff field yet).
+      Archive-time notes: CLAUDE.md D4 completion entry; baseline 17 → 18; the new
       `orbit-report-rendering` baseline gets a real Purpose section at sync;
       `orbit-address-reviews`' baseline Purpose refreshed to lane vocabulary (the
       "pushback → classify → fix" phrase) — the D2 archive-time-Purpose precedent
