@@ -88,22 +88,21 @@ dismissed prompt loses nothing (the finding re-presents).
   invariant holds). Supersedes the sketched standalone `orbit render <emit>` verb — see
   Considered & out.
 
+- **D-d4-6 (2026-07-22) — The three deferred points ratified at promotion (propose Step 0b).**
+  (a) `--report` is STRICT/LOUD: a malformed or incomplete findings emit fails the render with
+  a clean error naming the missing/mistyped field — no partial render (the renderer is the
+  AI's own tool; failing loud catches bad emits at the source, deliberately unlike the
+  orientation surface's graceful degradation). (b) External passes render from their PARSED
+  form (the trail reader's external-markdown parse): ONE report grammar covers internal emits
+  and external findings files; the external prompt template's markdown contract is unchanged.
+  (c) The economy dividend RIDES D4: the review/address bodies' report-format prose is deleted
+  in this change, replaced by run-`orbit status --change <name> --report`-and-paste plus a
+  greppable hand-rendering prohibition — the deletion IS criterion 1's enforcement mechanism;
+  broader body-slimming stays D5's.
+
 ## Open questions
 
-(None blocking — the five decisions cover both charter moves.)
-
-### Deferred to propose (small design points with stated leans, not open unknowns)
-
-- **`--report` schema strictness** — lean: strict/loud (a malformed emit fails the render with
-  a clean error naming the missing field; it's the AI's own tool, unlike the orientation
-  surface's graceful degradation). Not yet user-ratified.
-- **External-report unification** — external passes render from their PARSED form (the trail
-  reader's external-markdown parse), so Codex and subagent reports read identically once
-  ingested; the external prompt template keeps its markdown contract unchanged.
-- **The economy dividend** — once the engine owns rendering, the report-format prose comes OUT
-  of the review/address bodies (replaced by "run `orbit status --change <name> --report` and
-  paste verbatim" + the hand-rendering prohibition, greppable). Scope: body deletions ride
-  this change; broader body-slimming stays D5's.
+(None — all resolved into Decisions.)
 
 ## Considered & out
 

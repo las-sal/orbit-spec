@@ -1,0 +1,14 @@
+schema: spec-driven
+created: 2026-07-22
+schema_version: 3
+base_fingerprints:
+  orbit-address-reviews:
+    Discover → triage → walk → ripple flag → report lifecycle: sha256:3c485ed79292b7fe563c2871a3a1560fa3d8a5a09f73d8621c3983d5181b413a
+    Classification of each marker: sha256:1f8c783fb5ac0850a62441106dba4b0e923a4e69a2254f2a24900ce51bc57a4f
+    Disjunctive recommendation fields surface as decision forks: sha256:c91de2881ea0a826ac8433152b33ecb42c8de8eedf18654aec0b5fe308c5f17f
+  orbit-review:
+    Internal run summary persisted per mode: sha256:1f396a22b1cffcbb453f5ca0cf2bf0ae375eb139f434f000fdad3e3967c7782f
+    Iteration note when prior runs exist: sha256:0559e277771dc5b95a394d70f6c0be7c515bdd698834dc6f0a31aafdebc6582c
+architecture:
+  doc: d-arc-arbitered-flow
+  stage: d4-review-consistency
