@@ -60,10 +60,15 @@ emit IS the JSON); watch/refresh modes.
 ## Impact
 
 - Affected specs: `orbit-report-rendering` (ADDED — 7 requirements),
-  `orbit-review` (MODIFIED ×2 + ADDED ×1 — commentary field, renderer-computed iteration note,
-  the run-and-paste report contract), `orbit-address-reviews` (MODIFIED ×3 — lifecycle lane
-  preview, classification briefing protocol, the fork-to-closure-device rewrite). Baseline
-  capabilities 17 → 18.
+  `orbit-review` (MODIFIED ×3 + ADDED ×1 — the final-assessment machinery collapsed into the
+  engine-rendered tail with the synthetic pass retired, commentary field, renderer-computed
+  iteration note, the run-and-paste report contract), `orbit-address-reviews` (MODIFIED ×5 —
+  lifecycle lane preview with provisional classification, classification-as-lanes, the
+  fork-to-closure-device rewrite, the walk-mode UX de-prompted, the resolution-log shape
+  gaining `ratified_via`/`delegation_directive`/off-menu `chosen` and shedding
+  `discuss_invoked`), `orbit-conventions` (MODIFIED ×1 — the stock-phrasings standard scoped
+  to audit + architecture reports), `orbit-orientation` (MODIFIED ×1 — the byte-identical
+  clause scoped to the pre-existing `--change` surface). Baseline capabilities 17 → 18.
 - Affected code: NEW `src/core/report-render.ts` (the pure render + strict validation;
   consumes the trail reader's parsed passes and `computeGateStates`),
   `src/commands/workflow/status.ts` + `src/cli/index.ts` (`--report` on the `--change` form),

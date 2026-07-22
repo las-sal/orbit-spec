@@ -24,7 +24,15 @@ R-d-9 handoff audit runs by hand at the phase seams.
 - [ ] 1.4 Golden tests (`test/core/report-render.test.ts` + `test/fixtures/report-golden/`):
       byte-identity per golden fixture (proposal pass, system pass, external pass, legacy
       no-commentary emit, commentary-with-near-miss-phrasing pinning the delimiter); strict-
-      validation error cases; historical-pass-current-tail case; trend computation
+      validation error cases (per-genre field sets); historical-pass case (as-of iteration/
+      trend + CURRENT tail); trend as-of semantics (later passes excluded); the deterministic
+      first-run note literal
+- [ ] 1.5 Extend the external-markdown parse into the NORMALIZED render shape (per design D4):
+      per-finding Description body as verbatim recommendation with the File line reference
+      retained; header reviewer + date; `## Notes` → the Commentary slot; FENCE-AWARE
+      (headings/field lines inside code fences never count) — without changing the gate
+      model's lean `TrailPass` contract (`gates.ts` consumption untouched); unit tests incl.
+      a fenced-`## CRITICAL` fixture and a parse-reject case
 
 ## 2. CLI surface (`--report` on the `--change` form)
 
@@ -34,31 +42,43 @@ R-d-9 handoff audit runs by hand at the phase seams.
       selects; non-renderable genre (spine `command` dispatch) → clean error naming the
       renderable set, exit non-zero; READ-ONLY (no file created or modified)
 - [ ] 2.2 CLI tests (`test/commands/`): newest-default + explicit-TS render; external-pass
-      render through the shared grammar; non-renderable genre error; read-only assertion
+      render through the shared grammar; non-renderable genre error; ZERO-renderable-passes
+      error (empty trail, exit non-zero); `--report --json` clean error; equal-token
+      resolution via the shared tie-break; read-only assertion
       (two-sided snapshot, the D3 pattern); `--report` without `--change` errors cleanly;
       bare/`--full`/`--change` outputs unchanged (regression)
 
 ## 3. Body rewrites (the economy dividend + the walk protocol)
 
-- [ ] 3.1 `src/core/templates/workflows/review.ts`: the report-format sections DELETED,
-      replaced by run-`orbit status --change <name> --report`-and-paste-verbatim + the
-      greppable hand-rendering prohibition + the `commentary` field authoring instruction
+- [ ] 3.1 `src/core/templates/workflows/review.ts`: the report-format sections DELETED —
+      including the final-assessment branch machinery and the as-of-completion synthetic-pass
+      instructions (retired by persist-first ordering, per the MODIFIED final-assessment
+      requirement) — replaced by persist-the-emit-FIRST, then run
+      `orbit status --change <name> --report` and paste verbatim + the
+      greppable hand-rendering prohibition (worded to visibly exempt architecture mode) + the
+      `commentary` field authoring instruction
       (content contract: pattern/probing/risk; never counts/verdicts/next-commands) + the
       loose-form note (report grounds, conversation follows); architecture mode keeps its
-      no-gate shape unchanged
+      no-gate hand-rendered shape unchanged (interim path)
 - [ ] 3.2 `src/core/templates/workflows/address-reviews.ts`: the three-lane walk — triage-time
-      obvious-fix lane preview (before any fix; user pulls items into the decision lane);
+      obvious-fix lane preview (provisional classification; before any fix; user pulls items
+      into the decision lane; walk-time reclassification announced);
       decision-lane present → discuss → ratify (full-prose briefing; chat directive IS
-      ratification recorded `ratified_via: "chat"`; AskUserQuestion demoted to optional
-      closure with the discussed conclusion as default; dismissed/inconclusive → re-present);
-      batch prompts prohibited (greppable) while batch delegation stays recorded; `[discuss]`
-      escape retired; resolution-log `ratified_via` field documented
+      ratification recorded `ratified_via: "chat"`; AskUserQuestion fires only AFTER the
+      discussion concludes without a crisp directive, discussed conclusion as default;
+      dismissed/inconclusive → re-present);
+      batch prompts prohibited (greppable) while batch delegation stays recorded
+      (`delegation_directive`); `[discuss]`
+      escape retired; resolution-log `ratified_via`/off-menu `chosen` semantics documented;
+      the skill `description` literal refreshed to lane vocabulary
 - [ ] 3.3 Generated-surface fidelity markers for both rewritten bodies (review: run-and-paste
       + prohibition; address: lane preview + re-present + batch-prompt prohibition); parity
       hashes re-pinned for both templates; `update --force` + on-disk spot-check
 - [ ] 3.4 Reference docs riding the templates (`references/run-summary-schema.md` gains
-      `commentary`; address' `references/internal-findings-format.md` unchanged shape note +
-      `ratified_via` in the resolution-log schema reference)
+      `commentary` AND its stale_suppressed note corrected — suppressions ARE a first-class
+      report section now; address' `references/internal-findings-format.md` unchanged shape
+      note + `ratified_via`/`delegation_directive`/off-menu `chosen` in the resolution-log
+      schema reference)
 
 ## 4. Docs
 
@@ -72,12 +92,16 @@ R-d-9 handoff audit runs by hand at the phase seams.
       criterion — plus a cross-source case proving an internal emit and an external file with
       equivalent findings render through one grammar (identical section order and tail)
 - [ ] 5.2 Exit criterion 2 body-text checks as real tests: grep the generated address body for
-      the prompt-never-precedes-briefing ordering rule, the batch-prompt prohibition, and the
+      the prompt-fires-only-after-the-discussion-CONCLUDES rule (the arc's phrasing, stronger
+      than briefing-precedence), the batch-prompt prohibition, and the
       dismissed-re-presents rule; grep the generated review body for the hand-rendering
-      prohibition + run-and-paste instruction (the one-observed-cycle half is post-apply, by
-      hand, recorded at the seam)
+      prohibition (with its architecture-mode exemption) + run-and-paste instruction (the
+      one-observed-cycle half is post-apply, by hand, recorded at the seam)
 - [ ] 5.3 Full suite green (baseline 1754 + new coverage); `orbit validate
       d4-review-consistency --strict` passes; `orbit fingerprint d4-review-consistency
       --check` all verified
 - [ ] 5.4 Arc sync (R-d-7): status-log entry at the post-apply seam; R-d-9 handoff audit by
-      hand. Archive-time notes: CLAUDE.md D4 completion entry; baseline 17 → 18
+      hand. Archive-time notes: CLAUDE.md D4 completion entry; baseline 17 → 18; the new
+      `orbit-report-rendering` baseline gets a real Purpose section at sync;
+      `orbit-address-reviews`' baseline Purpose refreshed to lane vocabulary (the
+      "pushback → classify → fix" phrase) — the D2 archive-time-Purpose precedent

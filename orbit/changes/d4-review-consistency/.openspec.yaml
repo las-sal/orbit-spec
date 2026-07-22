@@ -1,14 +1,21 @@
 schema: spec-driven
 created: 2026-07-22
 schema_version: 3
+architecture:
+  doc: d-arc-arbitered-flow
+  stage: d4-review-consistency
 base_fingerprints:
   orbit-address-reviews:
     Discover → triage → walk → ripple flag → report lifecycle: sha256:3c485ed79292b7fe563c2871a3a1560fa3d8a5a09f73d8621c3983d5181b413a
     Classification of each marker: sha256:1f8c783fb5ac0850a62441106dba4b0e923a4e69a2254f2a24900ce51bc57a4f
     Disjunctive recommendation fields surface as decision forks: sha256:c91de2881ea0a826ac8433152b33ecb42c8de8eedf18654aec0b5fe308c5f17f
+    Walk-mode by default with --batch opt-in: sha256:6284fe6fdb4d5d251cade4be856c8ded175652d572d42b73ecc0f8f94f1164b5
+    Resolution-log JSON shape extensions for walk-mode / decision-forks / cascade: sha256:cdd59321b1ab79c96610d60564ef7cd02c90f90928f51ef56434b78fa41fa8ba
   orbit-review:
     Internal run summary persisted per mode: sha256:1f396a22b1cffcbb453f5ca0cf2bf0ae375eb139f434f000fdad3e3967c7782f
     Iteration note when prior runs exist: sha256:0559e277771dc5b95a394d70f6c0be7c515bdd698834dc6f0a31aafdebc6582c
-architecture:
-  doc: d-arc-arbitered-flow
-  stage: d4-review-consistency
+    Final assessment phrasings depend on mode: sha256:cfa41fd2a79e12fa626bc1f34e1d383d5308663141a1fdbe6043b4355bd05d10
+  orbit-conventions:
+    Final-assessment phrasings: sha256:b33dc2466fe58eff7be1c321b74f827ba412b5d6fd61c4cb7f0e39d993ad7710
+  orbit-orientation:
+    Bare `orbit status` renders the current sprint: sha256:de44ef03d3874fbdde95e6b9707cc1e257a604749a1e81d31e8e807ba00285c1

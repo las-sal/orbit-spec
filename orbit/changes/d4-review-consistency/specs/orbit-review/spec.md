@@ -27,6 +27,20 @@ unchanged).
 
 ## MODIFIED Requirements
 
+### Requirement: Final assessment phrasings depend on mode
+
+The final-assessment, gate, position, and eligibility lines of proposal- and system-mode review reports SHALL be the ENGINE-RENDERED TAIL of the pasted report (per `orbit-report-rendering`): the renderer computes them from the on-disk trail and gate graph — which includes the just-completed pass, because the run summary is PERSISTED BEFORE the report renders — and the reviewing AI authors none of them. The convergence branch routing formerly enumerated in this requirement (ordered-slot coverage, unresolved-pass precedence, confirm predicates, the five external-dimension states) lives where it always computed: `orbit-engine-gates`' reviewed-gate model, whose computed state, reason, and single-voiced canonical next command the renderer prints verbatim; the exact rendered phrasings are the renderer's fixed grammar, pinned by golden tests, following the eligibility-phrasing rule (`Ready when you are:`, ` — user-invoked` markers preserved, never an imperative label). The as-of-completion synthetic-pass computation is RETIRED: persist-first ordering makes the on-disk computation complete, so `orbit status`, `orbit instructions`, and the report tail all read the same pure function of the trail with no interval where surfaces disagree. The `--as architecture` mode is NOT covered by this requirement — its gate-less final assessment is specified by the `Architecture-mode final assessment has no gate` requirement (D-arc Stage D2).
+
+#### Scenario: Persist-first ordering replaces the synthetic pass
+
+- **WHEN** a proposal- or system-mode review completes
+- **THEN** the `review-<mode>-<TS>.json` emit is written BEFORE the report renders, and the rendered tail's gate computation naturally includes the just-persisted pass — no synthetic-pass machinery, and no window where status and the report disagree
+
+#### Scenario: The tail is the engine's verdict verbatim
+
+- **WHEN** the pasted report's final lines render
+- **THEN** the gate line, position readout, and canonical next command come from the engine's computed state (single-voiced, eligibility-phrased, ` — user-invoked` markers preserved) — the reviewing AI cannot author a verdict, and a hand-authored assessment line never appears in a change-mode report
+
 ### Requirement: Internal run summary persisted per mode
 
 The system SHALL write a JSON run summary after each invocation: to `orbit/changes/<change-name>/.orbit-runs/review-<mode>-<TS>.json` for `proposal` and `system` modes, and to `orbit/architecture/.orbit-runs/review-architecture-<TS>.json` for `architecture` mode (the architecture trail location per `orbit-architecture-engine`; the emit's `change` field is `null` and a `doc` field names the reviewed doc; per arc ruling R-d-9(b) the architecture-mode emit also carries the structured `handoff` section whose shape is owned by `orbit-architect`). The summary MAY carry an optional `commentary` string — the reviewer's color commentary (the pattern behind the findings, what was probed, risk texture), rendered verbatim into the report's delimited Commentary slot per `orbit-report-rendering`; commentary SHALL NOT state finding counts, gate verdicts, or next commands (those exist only in the report's engine-computed sections).
@@ -48,7 +62,7 @@ The system SHALL write a JSON run summary after each invocation: to `orbit/chang
 
 ### Requirement: Iteration note when prior runs exist
 
-The system SHALL include a one-sentence iteration note in the report when prior run summaries exist for the same change and mode — COMPUTED BY THE RENDERER from the trail (per `orbit-report-rendering`'s render-time-context requirement), never authored by the reviewing AI; in architecture mode — where summaries share the `orbit/architecture/.orbit-runs/` trail — iteration is anchored to prior `review-architecture-*.json` emits whose `doc` field matches the doc under review.
+The system SHALL include a one-sentence iteration note in the report when prior run summaries exist for the same change and mode — for proposal and system modes, COMPUTED BY THE RENDERER from the trail (per `orbit-report-rendering`'s render-time-context requirement), never authored by the reviewing AI; architecture mode — which has no render surface yet — stays on the interim hand-computed path (per the engine-rendered-report requirement's architecture carve-out), its iteration anchored to prior `review-architecture-*.json` emits in the shared `orbit/architecture/.orbit-runs/` trail whose `doc` field matches the doc under review.
 
 #### Scenario: Subsequent run on same change in same mode
 
@@ -58,7 +72,7 @@ The system SHALL include a one-sentence iteration note in the report when prior 
 #### Scenario: First run for a mode on a change
 
 - **WHEN** the command runs and `.orbit-runs/` contains no prior `review-<mode>-<TS>.json` matching the current mode
-- **THEN** the report omits the iteration note, or notes "First proposal-mode run for this change." / "First system-mode run for this change."
+- **THEN** the rendered report notes exactly `First <mode>-mode review of this change.` — one deterministic form (the baseline's omit-or-note disjunction is retired; a byte-identical renderer picks one)
 
 #### Scenario: Architecture-mode iteration anchored per doc
 

@@ -58,15 +58,24 @@ source pass, where it can be fixed. The D3 orientation surface keeps its gracefu
 (different consumer, different contract); the two policies are both deliberate and documented
 side by side.
 
-### D4. One grammar for internal and external passes (D-d4-6b)
+### D4. One grammar for internal and external passes (D-d4-6b) — via a NORMALIZED parse
 
 External findings files (`external-<as>-<TS>.md`) render through the SAME grammar from their
-PARSED form — the fence-aware external-markdown parser the trail reader already owns
-(`trail.ts`). `--report <TS>` resolves the token against BOTH genres in the change's trail
-(internal emits and external findings files compete on the same recency axis; newest = the
-default). The external prompt template is untouched — external AIs keep writing the markdown
-contract; determinism applies from ingest onward. A parse-rejected external file (the trail
-reader's null) is non-renderable → the clean error names it.
+PARSED form. The trail reader's existing parse is NOT sufficient (`TrailPass` carries only
+`{title, file}` with `:line` stripped — iter-1 CRITICAL): task 1.5 EXTENDS the external parse
+into the normalized render shape — per finding, the full `**Description**` body as the
+verbatim recommendation with the `**File**` line reference retained; the header's reviewer and
+date; the `## Notes` section mapped to the report's Commentary slot (it IS the external
+reviewer's color commentary — the D-d4-1 quarantine applied symmetrically). The extension is
+made FENCE-AWARE (headings/field lines inside code fences never count — the existing parser is
+not, despite rendering Description bodies that plausibly contain fences; user fork A).
+Validation splits per genre (D3): internal = spine + review extensions; external = confident
+parse. `--report <TS>` resolves the token against BOTH genres on the shared recency axis
+(equal tokens: `orbit-orientation`'s earlier-filename-wins rule). The external prompt template
+is untouched; determinism applies from ingest onward. A parse-rejected external file is
+non-renderable → the clean error names it. The gate model's OWN trail consumption
+(`gates.ts`) keeps the lean parse — the normalized shape is the renderer's input, not a gate
+contract change.
 
 ### D5. The surface is the status gateway (D-d4-5 — supersedes a standalone verb)
 
@@ -108,6 +117,26 @@ assessment phrasings) are DELETED, replaced by: persist the emit → run
 makes criterion 1 hold in practice — same pattern as D1's imperative-label prohibition. The
 address body sheds its resolution-report scaffold similarly only where the walk rewrite
 touches it; broader slimming is D5-the-stage's.
+
+### D8. The final-assessment machinery collapses into the engine (iter-1 CRITICALs 1–4)
+
+The baseline's `Final assessment phrasings depend on mode` requirement (orbit-review) and the
+conventions stock-phrasings standard are MODIFIED, not merely orphaned: the convergence branch
+routing they enumerated (ordered slots, unresolved-pass precedence, confirm predicates, the
+five external-dimension buckets) already computes in `orbit-engine-gates`' reviewed-gate model
+— the requirement's own text said so — and the exact phrasings become the renderer's fixed
+grammar, pinned by goldens. The as-of-completion SYNTHETIC-PASS computation is retired
+outright: persist-first ordering makes the on-disk trail complete before render, so the report
+tail, `orbit status`, and `orbit instructions` all read one pure function with no disagreement
+window. This is a deliberate large-block collapse (the branch scenarios' stock phrasings move
+to golden fixtures; the predicates stay specced in orbit-engine-gates; nothing is silently
+dropped — this note is the record). Likewise the walk-mode requirement's mandatory per-finding
+prompt and the resolution-log's `discuss_invoked` are replaced by the lane protocol and
+`ratified_via`/`delegation_directive` (off-menu chat ratifications record
+`chosen: "off-menu"` + a verbatim `resolution` string). One naming note: the rewritten
+decision-lane requirement KEEPS the title `Disjunctive recommendation fields surface as
+decision forks` (avoiding a RENAMED op mid-cadence; the content is the lane protocol) — a
+future rename is fine, just not re-litigated here.
 
 ## Alternatives considered
 
