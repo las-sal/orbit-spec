@@ -31,5 +31,5 @@
   },
   "post_state": "orbit validate d4-review-consistency --strict passes; fingerprints 12/12 verified (2 new stamped: pushback-suppression, --fresh); change now at 20 delta requirements (8 ADDED + 12 MODIFIED) across 5 files; 18 tasks in 5 groups; zero markers. Note: a tasks.md batch-edit script aborted mid-walk (assert-guarded, atomic write — no partial state) and its appended tasks initially landed after section 5; both repaired with individual edits and verified in place.",
   "final_assessment": "All 12 external iter-1 findings resolved. The two resolution-contradiction CRITICALs closed by promoting ratified_via/resolution to entry level and by making the Notes contract genre-symmetric at the source (fork A); the persist-first spine gap closed with the deterministic-facts contract (fork A); the unswept text claimed (pushback-suppression, --fresh, and the onboarding template — the residue layer for the third cycle running); the grammar pinned by design D2b's canonical example with goldens transcribed, never authored. The external carried CRITICALs, so the confirm predicate requires an independent pass yielding none.",
-  "next_recommended": "/orbit:review --as proposal --fresh d4-review-consistency"
+  "next_recommended": "/orbit:review --as proposal d4-review-consistency"
 }
