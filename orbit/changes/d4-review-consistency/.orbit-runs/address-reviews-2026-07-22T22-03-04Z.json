@@ -36,5 +36,5 @@
   },
   "post_state": "orbit validate d4-review-consistency --strict passes; fingerprints 10/10 verified (5 new stamped: review final-assessment, conventions phrasings, address walk-mode + resolution-log, orientation bare-status); change now at 18 delta requirements (8 ADDED + 10 MODIFIED) across 6 files; 16 tasks",
   "final_assessment": "All 16 iteration-1 findings resolved. The four unswept-adjacent-text CRITICALs closed by claiming the baseline blocks that describe the replaced machinery (the final-assessment collapse recorded in design D8 with where each piece went; the walk-mode and resolution-log blocks rewritten to the lane protocol with ratified_via/delegation_directive/off-menu semantics; the conventions standard scoped); the fifth by specifying the NORMALIZED external parse (fence-aware, task 1.5) and per-genre validation. Three user forks all chose A (orientation delta; fence-awareness; scenario re-add). The pass carried CRITICALs, so the confirm predicate requires an independent pass yielding none.",
-  "next_recommended": "/orbit:review --as proposal --fresh d4-review-consistency"
+  "next_recommended": "/orbit:review --as proposal d4-review-consistency"
 }
