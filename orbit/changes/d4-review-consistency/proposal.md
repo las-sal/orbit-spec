@@ -68,10 +68,14 @@ emit IS the JSON); watch/refresh modes.
   contract), `orbit-address-reviews` (MODIFIED ×5 —
   lifecycle lane preview with provisional classification, classification-as-lanes, the
   fork-to-closure-device rewrite, the walk-mode UX de-prompted, the resolution-log shape
-  gaining `ratified_via`/`delegation_directive`/off-menu `chosen` and shedding
-  `discuss_invoked`), `orbit-conventions` (MODIFIED ×1 — the stock-phrasings standard scoped
-  to audit + architecture reports), `orbit-orientation` (MODIFIED ×1 — the byte-identical
-  clause scoped to the pre-existing `--change` surface). Baseline capabilities 17 → 18.
+  gaining entry-level `ratified_via`/`resolution` + `delegation_directive`/off-menu `chosen`
+  and shedding `discuss_invoked`), `orbit-conventions` (MODIFIED ×2 — the stock-phrasings
+  standard scoped to audit + architecture reports; the emit-format requirement's editorial
+  extensions and canonical example moved to the `scorecard` shape with `findings_summary`
+  retired for review emits), `orbit-orientation` (MODIFIED ×1 — the byte-identical
+  clause scoped to the pre-existing `--change` surface), `orbit-engine-gates` (MODIFIED ×1 —
+  the freshness rule's parenthetical made self-contained after the final-assessment collapse).
+  Baseline capabilities 17 → 18.
 - Affected code: NEW `src/core/report-render.ts` (the pure render + strict validation;
   consumes the trail reader's parsed passes and `computeGateStates`),
   `src/commands/workflow/status.ts` + `src/cli/index.ts` (`--report` on the `--change` form),

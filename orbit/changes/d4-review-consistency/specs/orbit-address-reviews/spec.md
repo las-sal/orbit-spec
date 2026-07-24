@@ -116,7 +116,7 @@ When a finding enters the DECISION lane, the system SHALL resolve it through the
 #### Scenario: Non-disjunctive decision-lane finding briefs without a fork record
 
 - **WHEN** address-reviews walks a decision-lane finding whose recommendation is a single concrete action (no disjunctive structure) — or one that falls through to trivial fix if it qualifies
-- **THEN** no detection fires; when it stays in the decision lane, the briefing surfaces 2–4 AI-derived options in prose and resolution proceeds per the protocol; the resolution-log entry omits `recommendation_fork` entirely (or sets `detected: false`) — consumers MUST treat absence as "no fork"
+- **THEN** no detection fires; when it stays in the decision lane, the briefing surfaces 2–4 AI-derived options in prose and resolution proceeds per the protocol; the resolution-log entry omits `recommendation_fork` entirely — absence IS the no-fork representation (consumers MUST treat absence as "no fork"; a `detected: false` variant is never emitted)
 
 #### Scenario: Stale classification short-circuits before the decision lane
 

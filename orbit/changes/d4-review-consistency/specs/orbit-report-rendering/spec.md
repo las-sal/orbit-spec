@@ -39,7 +39,11 @@ external contract has no such field); the scorecard table renders for INTERNAL p
 external pass has no scorecard — the section is omitted whole, never fabricated). The
 CANONICAL RENDERED EXAMPLE in the change's design (line-level forms for every section,
 including the genre-conditional variants) is the source the golden fixtures derive from — the
-goldens are transcriptions of the specified grammar, never implementer-authored layouts.
+goldens are transcriptions of the specified grammar, never implementer-authored layouts. When
+the change's schema declares no gate for the mode (`computeGateStates` yields no matching
+entry — e.g. a pre-C1 ungated schema), the tail's gate line is OMITTED WHOLE; the position and
+eligibility lines render from whatever the engine computes for that change (a golden fixture
+pins the ungated form).
 
 #### Scenario: Section order is invariant
 

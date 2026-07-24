@@ -11,7 +11,10 @@ travels as the emit's `commentary` field, rendered inside the report's delimited
 as freestanding structured claims. The chat turn is LOOSE FORM: the pasted report grounds,
 and unconstrained conversational engagement follows it (the report is the anchor, not the
 whole voice); the conversation may not contradict the tail's engine-computed gate/position
-lines. Architecture mode pastes its own trail's render when the surface supports it;
+lines. Skipped-pass notes (the emit's `passes_run`/`passes_skipped` record) surface in the
+LOOSE-FORM conversation after the pasted report when worth mentioning — never as
+hand-rendered structured sections. Architecture mode pastes its own trail's render when the
+surface supports it;
 until then it keeps the shared scorecard shape with NO gate line (its no-gate contract is
 unchanged).
 
@@ -48,7 +51,7 @@ The system SHALL write a JSON run summary after each invocation: to `orbit/chang
 #### Scenario: Summary written after run
 
 - **WHEN** the command completes
-- **THEN** a JSON file is created at the mode's persistence location containing the command name, timestamp, change name (or null + `doc` for architecture mode), mode, iteration number, findings summary (counts by severity and by pass), and a `findings[]` array of full per-finding entries (severity / title / file / line / recommendation, plus `recommendation_options` when disjunctive) per the skill's `references/run-summary-schema.md` — the shape `/orbit:address-reviews` maps to virtual markers on ingest and `orbit status --change <name> --report` renders
+- **THEN** a JSON file is created at the mode's persistence location containing the command name, timestamp, change name (or null + `doc` for architecture mode), mode, iteration number, the `scorecard` (the 3-dimension × severity counts shape — Completeness/Correctness/Coherence each with critical/warning/suggestion counts; the renderer's REQUIRED counts source, per `orbit-report-rendering`'s strict validation; it supersedes the retired `findings_summary` field, which readers tolerate per `orbit-conventions`), and a `findings[]` array of full per-finding entries (severity / title / file / line / recommendation, plus `recommendation_options` when disjunctive) per the skill's `references/run-summary-schema.md` — the shape `/orbit:address-reviews` maps to virtual markers on ingest and `orbit status --change <name> --report` renders
 
 #### Scenario: Architecture-mode summary in the architecture trail
 

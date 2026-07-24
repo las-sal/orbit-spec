@@ -44,9 +44,10 @@ section omitted) → the engine tail (gate line · position · `Ready when you a
 ALWAYS last. Byte-identity binds the whole render; commentary is INPUT variance (two models
 write different commentary), never render variance. The commentary contract: everything the
 structure can't say — pattern behind the findings, what was probed, risk texture — and
-PROHIBITED from counts/verdicts/next-commands (those exist only in engine sections, so the two
-voices can never disagree; golden fixtures include a commentary carrying near-miss phrasing to
-pin the delimiter).
+PROHIBITED from counts/verdicts/next-commands — a CONTRACT-enforced separation (stated at the
+source in both genres; the renderer places the slot verbatim), with the engine tail rendering
+last as the structural backstop (golden fixtures include a commentary carrying near-miss
+phrasing to pin the delimiter).
 
 ### D2b. The canonical rendered example (iter-1-external W1 — goldens derive, never author)
 

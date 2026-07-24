@@ -82,7 +82,9 @@ R-d-9 handoff audit runs by hand at the phase seams.
       report section now; address' `references/internal-findings-format.md` unchanged shape
       note + entry-level `ratified_via`/`resolution` + `delegation_directive` + off-menu
       `chosen` in the resolution-log schema reference; the stored `iteration_note` contract
-      REMOVED — renderer-computed — and the deterministic spine-value contract documented)
+      REMOVED — renderer-computed — and the deterministic spine-value contract documented;
+      the `scorecard` field DECLARED as the required counts shape and `findings_summary`
+      RETIRED from the review schema reference with the two-generation reader-tolerance note)
 
 - [ ] 3.5 `src/core/templates/workflows/review-external.ts` (+ its `references/prompt-template.md`):
       the prompt template's `## Notes` instruction gains the commentary content contract (no
