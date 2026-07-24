@@ -18,5 +18,5 @@
   "iteration_note": "Note: 0 findings this run (trend: 16 → 12-ext → 7 → 0). Record-only correction carried on the trail: the iteration-3 address emit and its commit message stated '22 requirements across 7 files' — the true file count is SIX (the artifacts themselves carry no file-count claims, so nothing to fix on disk; this note is the correction, per the no-retroactive-edit discipline).",
   "commentary": "The confirming in-context pass over the iteration-3 batch: every resolution verified at its site rather than trusted, including a full re-count of the per-file requirement totals — which surfaced my own file-count misstatement in the prior emit (trail-only, corrected by note). The spiral that started at 5 CRITICALs has closed: baseline text claimed, layer residue tasked, contract seams pinned, and the final pass's sweeps came back empty without manufacturing anything.",
   "final_assessment": "No findings.",
-  "next_recommended": "orbit status --change d4-review-consistency --report"
+  "next_recommended": "/orbit:review --as proposal --fresh d4-review-consistency"
 }
