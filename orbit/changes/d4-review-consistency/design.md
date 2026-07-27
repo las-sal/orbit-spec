@@ -74,7 +74,8 @@ immediately-prior same-mode pass)
 
 #### CRITICAL
 - **<file>:<line>** — <title>
-  <recommendation, verbatim, indented two spaces>
+  > <recommendation, verbatim, BLOCKQUOTE-contained — every line prefixed "> " so no
+  > source line sits at column 0 (forged headings/fences/rules impossible)>
   - (<label>) <body>          ← one line per recommendation_option, in array order
 ```
 (severity subsections in fixed order CRITICAL/WARNING/SUGGESTION; empty severity → subsection
@@ -86,13 +87,15 @@ Description body as the recommendation)
 
 ### Commentary
 
-<commentary / external Notes body, verbatim>
+> <commentary / external Notes body, verbatim, blockquote-contained>
 
 ---
 Gate <id>: <state>[ — <reason>]
 Position: <position>
 Ready when you are: <next_command>
 ```
+(EACH tail line renders only when the engine computes its value — an ungated schema's tail is
+the `---` rule alone; the ungated golden pins that minimal form)
 Header rules: internal = all five fields from the emit; external = change from the argument,
 mode from the filename `<as>`, iteration = same-mode trail ordinal, `external (<reviewer>,
 <date>)`, depth omitted (the ` · Depth:` cell disappears whole); scorecard table internal-only.

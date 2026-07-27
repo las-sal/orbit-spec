@@ -44,7 +44,7 @@ kind             enum         "workflow" | "editorial" | "lifecycle"
 Per-kind extensions:
 
 - **`kind: "workflow"`** — emitted by `explore`, `propose`, `new`, `continue`, `ff`, `apply`, `verify`, `architect` (D-arc Stage D2; `architect` emits to the architecture trail with `change: null` plus a `doc` extension — shape owned by `orbit-architect`). Per-command extensions are defined in the `orbit-run-summary-emit` capability (e.g., `apply.chunk_complete`, `verify.verdict`, `explore.decisions_captured`). Consent-era `apply` emits additionally carry `consent: "user-invoked" | "prompted"` (per `orbit-lifecycle-consent`).
-- **`kind: "editorial"`** — emitted by `review`, `address-reviews`, `audit-drift`, `review-external`. Per-command extensions include: `iteration` (when applicable to the command — e.g., review iter-N, address-reviews iter-N), `scorecard` (the 3-dimension × severity counts shape — Completeness/Correctness/Coherence, each with critical/warning/suggestion — on review completion emits; the renderer's required counts source per `orbit-report-rendering`; D-arc Stage D4), `finding_titles` (array of brief titles; included when findings are present; review-external at T0 emits before external findings return and SHALL omit it). The former `findings_summary` field is RETIRED for review emits (superseded by `scorecard`; live practice had already migrated) — readers SHALL tolerate both generations (a severity count is recoverable by counting `findings[]`, the existing trail-reader fallback); audit-drift and archive-audit emits keep their own `findings_summary` shapes unchanged. Command-specific fields beyond these are defined in per-skill schema references (`references/run-summary-schema.md`, shipped alongside the generated skill).
+- **`kind: "editorial"`** — emitted by `review`, `address-reviews`, `audit-drift`, `review-external`. Per-command extensions include: `iteration` (when applicable to the command — e.g., review iter-N, address-reviews iter-N), `scorecard` (the 3-dimension × severity counts shape — Completeness/Correctness/Coherence, each with critical/warning/suggestion — on review completion emits; the renderer's required counts source per `orbit-report-rendering`; D-arc Stage D4), and full `findings[]` entries (each carrying its own `title` — no separate title array). The former `findings_summary` AND `finding_titles` fields are RETIRED for review emits (superseded by `scorecard`; live practice had already migrated) — readers SHALL tolerate both generations (a severity count is recoverable by counting `findings[]`, the existing trail-reader fallback); audit-drift and archive-audit emits keep their own `findings_summary` shapes unchanged. Command-specific fields beyond these are defined in per-skill schema references (`references/run-summary-schema.md`, shipped alongside the generated skill).
 - **`kind: "lifecycle"`** — emitted by `archive` only. Per-command extensions include: `archive_path`, `audit`, `sync_specs` (reports what the archive flow's spec-sync step did, mirroring upstream's archive summary), `unresolved_markers`, `user_decision`, plus other fields defined in the archive skill. Consent-era emits (per `orbit-lifecycle-consent`) additionally carry the flat `consent: "user-invoked" | "prompted"` field.
 
 **Canonical examples** (one per kind, illustrating spine + per-kind extensions):
@@ -77,8 +77,8 @@ Editorial-kind example — `review-proposal-2026-05-21T00-18-14Z.json` written b
   "command": "review",
   "timestamp": "2026-05-21T00:18:14Z",
   "change": "emit-run-summary-jsons-from-workflow-commands",
-  "final_assessment": "1 critical, 2 warning, 0 suggestion.",
-  "next_recommended": "/orbit:address-reviews emit-run-summary-jsons-from-workflow-commands --from-file <findings-bridge>",
+  "final_assessment": "1 critical, 1 warning, 0 suggestion.",
+  "next_recommended": "/orbit:address-reviews emit-run-summary-jsons-from-workflow-commands --from-file <this emit's own path>",
   "kind": "editorial",
   "mode": "proposal",
   "iteration": 1,
@@ -86,13 +86,12 @@ Editorial-kind example — `review-proposal-2026-05-21T00-18-14Z.json` written b
   "passes_run": ["1","2","3","4","5","6","7","8","9"],
   "scorecard": {
     "completeness": { "critical": 1, "warning": 0, "suggestion": 0 },
-    "correctness": { "critical": 0, "warning": 2, "suggestion": 0 },
+    "correctness": { "critical": 0, "warning": 1, "suggestion": 0 },
     "coherence": { "critical": 0, "warning": 0, "suggestion": 0 }
   },
-  "finding_titles": [
-    "Emit timing undefined for bare-mode explore",
-    "Apply chunk-preamble format unspecified",
-    "Verify fail-mode precedence missing"
+  "findings": [
+    { "severity": "CRITICAL", "dimension": "completeness", "title": "Emit timing undefined for bare-mode explore", "file": "specs/emit/spec.md", "line": 12, "recommendation": "…" },
+    { "severity": "WARNING", "dimension": "correctness", "title": "Apply chunk-preamble format unspecified", "file": "specs/apply/spec.md", "line": 40, "recommendation": "…" }
   ]
 }
 ```
@@ -139,12 +138,12 @@ Lifecycle-kind example — `archive-2026-05-20T16-31-59Z.json` written after `/o
 #### Scenario: Editorial command emit shape (with findings)
 
 - **WHEN** an editorial command that has produced findings (`/orbit:review`, `/orbit:address-reviews`, `/orbit:audit-drift`) writes its JSON
-- **THEN** `kind` equals `"editorial"`; per-command extensions include `iteration` (when the command tracks iterations), the counts shape the command owns (`scorecard` for review emits — D-arc Stage D4; audit-drift keeps its `findings_summary`), `finding_titles` (array of brief titles), plus command-specific fields documented in the emitting skill's `references/run-summary-schema.md`
+- **THEN** `kind` equals `"editorial"`; per-command extensions include `iteration` (when the command tracks iterations), the counts shape the command owns (`scorecard` for review emits — D-arc Stage D4; audit-drift keeps its `findings_summary` and `finding_titles`), plus command-specific fields documented in the emitting skill's `references/run-summary-schema.md`
 
 #### Scenario: Editorial command emit shape (pre-findings T0 case)
 
 - **WHEN** `/orbit:review-external` writes its T0 JSON (prompt packaged, external findings not yet returned)
-- **THEN** `kind` equals `"editorial"`; per-command extensions include `mode`, `prompt_path`, `target`, `awaiting_findings: true` — and OMIT the counts shape and `finding_titles` because no findings exist yet
+- **THEN** `kind` equals `"editorial"`; per-command extensions include `mode`, `prompt_path`, `target`, `awaiting_findings: true` — and OMIT the counts shape because no findings exist yet
 
 #### Scenario: Lifecycle command emit shape
 

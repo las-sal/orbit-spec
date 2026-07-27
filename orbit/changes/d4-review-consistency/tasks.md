@@ -26,11 +26,18 @@ R-d-9 handoff audit runs by hand at the phase seams.
       implementer-authored layouts); byte-identity per golden fixture (proposal pass, system pass, external pass, legacy
       no-commentary emit, commentary-with-near-miss-phrasing pinning the delimiter); strict-
       validation error cases (per-genre field sets); historical-pass case (as-of iteration/
-      trend + CURRENT tail); trend as-of semantics (later passes excluded); the deterministic
+      trend + CURRENT tail); trend as-of semantics (later passes excluded); an equal-token pair asserting distinct
+      ordinals + the unique final trend point (the total pass order); scorecard/findings
+      MISMATCH fixtures (fail whole, naming the cell); pre-scorecard legacy-generation error
+      fixtures pinned from the REAL archived emits (B2-era findings_summary/empty-findings;
+      pre-D3 no-kind); blockquote-containment goldens (multiline bodies carrying ## CRITICAL,
+      ---, and fences); the ungated minimal-tail golden; the deterministic
       first-run note literal
 - [ ] 1.5 Extend the external-markdown parse into the NORMALIZED render shape (per design D4):
       per-finding Description body as verbatim recommendation with the File line reference
-      retained; header reviewer + date; `## Notes` → the Commentary slot; FENCE-AWARE
+      retained; header `**Reviewer**:` + `**Date**:` MANDATORY and uniquely parsed (missing/duplicate/
+      malformed → parse rejection naming field + file); `## Notes` → the Commentary slot;
+      FENCE-AWARE
       (headings/field lines inside code fences never count) — without changing the gate
       model's lean `TrailPass` contract (`gates.ts` consumption untouched); unit tests incl.
       a fenced-`## CRITICAL` fixture and a parse-reject case
@@ -83,13 +90,17 @@ R-d-9 handoff audit runs by hand at the phase seams.
       note + entry-level `ratified_via`/`resolution` + `delegation_directive` + off-menu
       `chosen` in the resolution-log schema reference; the stored `iteration_note` contract
       REMOVED — renderer-computed — and the deterministic spine-value contract documented;
-      the `scorecard` field DECLARED as the required counts shape and `findings_summary`
-      RETIRED from the review schema reference with the two-generation reader-tolerance note)
+      the `scorecard` field DECLARED as the required counts shape with per-finding `dimension`
+      (the owning scorecard cell) and the cell-rollup equality rule; `findings_summary` AND
+      `finding_titles` RETIRED from the review schema reference with the two-generation
+      reader-tolerance note)
 
 - [ ] 3.5 `src/core/templates/workflows/review-external.ts` (+ its `references/prompt-template.md`):
       the prompt template's `## Notes` instruction gains the commentary content contract (no
       finding counts, no gate verdicts, no next commands — the Notes body renders in the
-      report's Commentary slot); FORMAT contract otherwise unchanged; parity hash re-pinned
+      report's Commentary slot — per the change's `orbit-review-external` MODIFIED delta, which
+      carries the updated template verbatim); FORMAT contract otherwise unchanged; parity
+      hash re-pinned
 - [ ] 3.6 `src/core/templates/workflows/onboard.ts`: the generated onboarding body's Phase 3
       prose drops the hand-authored final-assessment branch examples (engine-rendered report +
       tail described instead), Phase 4 prose and the quick-reference row teach the THREE-LANE
@@ -120,7 +131,9 @@ R-d-9 handoff audit runs by hand at the phase seams.
       environmental failure class distinctly (the ~24 unquoted-interpolation command tests)
       so it is never mistaken for a D4 regression
 - [ ] 5.4 Arc sync (R-d-7): status-log entry at the post-apply seam; the R-d-9 handoff audits
-      record DATED EVIDENCE NOTES in the corresponding emits' final_assessment (the pre-D5
+      record DATED EVIDENCE NOTES in NON-REVIEW emits at each seam (address-reviews / apply /
+      archive emits, whose final_assessment stays narrative — REVIEW emits' final_assessment
+      is the deterministic counts sentence and never carries evidence prose; the pre-D5
       interim representation — change-scoped emits carry no structured handoff field yet).
       Archive-time notes: CLAUDE.md D4 completion entry; baseline 17 → 18; the new
       `orbit-report-rendering` baseline gets a real Purpose section at sync;

@@ -24,3 +24,5 @@ base_fingerprints:
     Bare `orbit status` renders the current sprint: sha256:de44ef03d3874fbdde95e6b9707cc1e257a604749a1e81d31e8e807ba00285c1
   orbit-engine-gates:
     v1 freshness rule — timestamp-token ordering: sha256:c522a135e963eb5926633ec75e5a01cc8a1569ad78c78af7839866565de42751
+  orbit-review-external:
+    Prompt written to versioned file with chat invocation snippet: sha256:375265356c5a777034fe39101f84fcdd5caa98d54549cadde28564054756d0d8

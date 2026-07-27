@@ -39,11 +39,17 @@ external contract has no such field); the scorecard table renders for INTERNAL p
 external pass has no scorecard — the section is omitted whole, never fabricated). The
 CANONICAL RENDERED EXAMPLE in the change's design (line-level forms for every section,
 including the genre-conditional variants) is the source the golden fixtures derive from — the
-goldens are transcriptions of the specified grammar, never implementer-authored layouts. When
-the change's schema declares no gate for the mode (`computeGateStates` yields no matching
-entry — e.g. a pre-C1 ungated schema), the tail's gate line is OMITTED WHOLE; the position and
-eligibility lines render from whatever the engine computes for that change (a golden fixture
-pins the ungated form).
+goldens are transcriptions of the specified grammar, never implementer-authored layouts. EACH
+tail line renders ONLY when the engine computes its value: the gate line when
+`computeGateStates` yields a matching-phase gate, the position line when the status
+computation yields `position`, the eligibility line when it yields `next_command` — for an
+ungated schema (all three absent) the tail is the `---` rule alone; no line is ever invented
+(a golden fixture pins the ungated minimal form). VERBATIM-SOURCED multi-line bodies —
+finding recommendations, option bodies, and the Commentary slot's content — render under
+BLOCKQUOTE CONTAINMENT: every line prefixed `> `, so no source line sits at column 0 and none
+can forge a section heading, thematic break, or fence in the report's own grammar (the source
+text is preserved byte-for-byte inside the containment; goldens include multiline bodies
+carrying `## CRITICAL`, `---`, and fence lines).
 
 #### Scenario: Section order is invariant
 
@@ -60,9 +66,14 @@ pins the ungated form).
 The iteration number, trend line, and the tail's gate/position/eligibility SHALL be COMPUTED
 at render time — iteration and trend from the trail's same-mode review passes (internal emits
 and parsed external findings files alike), the tail from the live gate computation (the same
-engine sources the orientation surface composes from). Iteration and trend are AS-OF the
-rendered pass and INCLUDE it: iteration = the count of same-mode passes with tokens ≤ the
-rendered pass's token; the trend's points are those passes' severity counts in token order,
+engine sources the orientation surface composes from). ONE TOTAL PASS ORDER governs
+everything recency-shaped: passes order by `<TS>` token, equal tokens by the shared tie-break
+(lexicographically-earlier full filename is more recent) — the SAME order for newest
+selection, explicit-token resolution, the trail ordinal, prior-pass matching, and the trend
+prefix, so two same-second passes have distinct ordinals and a unique final trend point.
+Iteration and trend are AS-OF the rendered pass and INCLUDE it: iteration = the rendered
+pass's ordinal in the total order; the trend's points are the severity counts of the passes
+preceding-or-equal in that order,
 its last point being the rendered pass itself (post-persist the record IS a trail member — the
 record/trail boundary is the persist, not the render) — stable values, golden-testable, never
 read from bespoke fields inside the record. The TAIL alone is always CURRENT: a rendered
@@ -113,25 +124,48 @@ the section.
 The renderer SHALL validate its input BEFORE rendering, PER GENRE: an INTERNAL emit is checked
 for the universal spine plus the review extensions (`mode`, the scorecard shape, the
 `findings[]` entry shape); an EXTERNAL pass is valid iff the trail parser confidently parsed
-it (the header + all three severity sections — the parser's existing shape gate; no spine and
-no scorecard exist to demand). A missing or mistyped
+it: the header + all three severity sections (the parser's existing shape gate) PLUS
+uniquely-parsed `**Reviewer**:` and `**Date**:` fields (fence-aware — the rendered header
+requires both; a missing, duplicate, or malformed value is a parse REJECTION with the clean
+error naming the field and file; no spine and no scorecard exist to demand). A missing or mistyped
 field fails the render with a clean error NAMING the field and the offending file; NO partial
 render is produced. This is deliberately the opposite policy from the orientation surface's
 graceful degradation: `--report` is the reviewing AI's own tool in the run-and-paste loop, so
 failing loud catches a malformed emit at the source pass where it can be fixed. Optional
 fields (`commentary`, `recommendation_options`) are absent-safe, never validation failures;
 genre-inapplicable sections are a GRAMMAR concern, not a validation failure (an external pass
-renders no scorecard table — the section is omitted whole).
+renders no scorecard table — the section is omitted whole). Validation additionally enforces
+CONSISTENCY, not just shape: every finding carries an owning `dimension`
+(`completeness | correctness | coherence`), scorecard cells are non-negative integers, and
+each dimension × severity cell SHALL equal the rollup of the emit's ACTIVE findings
+(suppressed findings excluded) — a type-correct emit whose scorecard disagrees with its
+findings fails the render naming the mismatched cell (the multi-voice contradiction the
+change exists to remove, closed one field deeper). The compatibility BOUNDARY is `scorecard`
+presence: internal emits carrying it (the generation live practice adopted in the D3 cycle)
+render; older pre-scorecard generations (`findings_summary`-only emits, emits without `kind`)
+fail with a clean `pre-capability emit` error NAMING the boundary — never a partial or
+synthetic render (trail COUNTING elsewhere still tolerates all generations; rendering does
+not).
 
 #### Scenario: Malformed record fails naming the field
 
 - **WHEN** a review emit lacks a `scorecard` or a finding entry lacks `severity`
 - **THEN** the render fails with an error naming the missing field and the emit path; nothing renders
 
-#### Scenario: Legacy emits without commentary render fine
+#### Scenario: Pre-scorecard legacy emits fail at the named boundary
 
-- **WHEN** a pre-capability review emit (no `commentary` field) is rendered
+- **WHEN** `--report <TS>` resolves to an archived-generation emit carrying `findings_summary` with no `scorecard` (e.g. the B2-era shape, whose `findings[]` is empty)
+- **THEN** the render fails with the clean `pre-capability emit` error naming the scorecard boundary — no partial render, no synthetic scorecard; the error fixtures are pinned from the REAL archived generations, not synthetic approximations
+
+#### Scenario: Scorecard-generation emits without commentary render fine
+
+- **WHEN** a scorecard-carrying review emit with no `commentary` field is rendered
 - **THEN** the render succeeds with the Commentary section omitted
+
+#### Scenario: Scorecard/findings mismatch fails whole
+
+- **WHEN** an emit's scorecard shows zero criticals while its active `findings[]` contains a CRITICAL entry (or any cell disagrees with the dimension × severity rollup)
+- **THEN** the render fails naming the mismatched cell; no partial report is produced
 
 ### Requirement: One grammar for internal and external passes
 

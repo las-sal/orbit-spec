@@ -74,8 +74,10 @@ emit IS the JSON); watch/refresh modes.
   extensions and canonical example moved to the `scorecard` shape with `findings_summary`
   retired for review emits), `orbit-orientation` (MODIFIED ×1 — the byte-identical
   clause scoped to the pre-existing `--change` surface), `orbit-engine-gates` (MODIFIED ×1 —
-  the freshness rule's parenthetical made self-contained after the final-assessment collapse).
-  Baseline capabilities 17 → 18.
+  the freshness rule's parenthetical made self-contained after the final-assessment collapse),
+  `orbit-review-external` (MODIFIED ×1 — the reference prompt template's `## Notes`
+  instruction gains the Commentary content contract; the template's output-format freeze is
+  honored by carrying the updated template in the delta). Baseline capabilities 17 → 18.
 - Affected code: NEW `src/core/report-render.ts` (the pure render + strict validation;
   consumes the trail reader's parsed passes and `computeGateStates`),
   `src/commands/workflow/status.ts` + `src/cli/index.ts` (`--report` on the `--change` form),
