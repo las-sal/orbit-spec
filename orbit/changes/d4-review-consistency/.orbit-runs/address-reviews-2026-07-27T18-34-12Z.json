@@ -28,5 +28,5 @@
   },
   "post_state": "orbit validate d4-review-consistency --strict passes; fingerprints 15/15 verified (review-external stamped); change now at 23 delta requirements (8 ADDED + 15 MODIFIED) across SEVEN files (report-rendering 7, review 6, address-reviews 5, conventions 2, orientation 1, engine-gates 1, review-external 1); 18 tasks; zero markers",
   "final_assessment": "All 9 external iter-2 findings resolved. The frozen-template CRITICAL closed by the real orbit-review-external delta (the template carried verbatim with only the Notes contract changed); the legacy boundary chosen over normalization (fork A — scorecard presence, real-generation error fixtures); one total pass order declared; the ungated tail renders only computed lines (fork A); findings gain owning dimensions with cell-rollup validation (the conventions example made self-consistent); finding_titles retired (fork A); blockquote containment for all verbatim bodies; external Reviewer/Date mandatory; the R-d-9/deterministic-assessment collision resolved by naming non-review emits as seam carriers. The external carried CRITICALs, so the confirm predicate requires an independent pass yielding none.",
-  "next_recommended": "/orbit:review --as proposal d4-review-consistency"
+  "next_recommended": "/orbit:review --as proposal --fresh d4-review-consistency"
 }
