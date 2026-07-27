@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-07-27T13:19:31Z",
+  "change": "d4-review-consistency",
+  "final_assessment": "External review prompt packaged for d4-review-consistency (iter 2, mode proposal) — the independent pass the confirm predicate needs (the last independent pass carried 1 CRITICAL, since resolved; the in-context confirm was clean); awaiting findings. Prompt briefs the reviewer on all four prior passes (42 findings resolved), flags the two least-reviewed batches (its own iter-1 resolutions + internal iter 3's scorecard declaration with the second conventions block and the engine-gates delta), names classes (a)/(d) over the seven new MODIFIED blocks as the live risks, and extends the residue sweep to all four rewritten templates.",
+  "next_recommended": "Paste orbit/changes/d4-review-consistency/.orbit-runs/external-prompt-proposal-2026-07-27T13-19-30Z.md into the target AI, save the response as orbit/changes/d4-review-consistency/.orbit-runs/external-proposal-<TS>.md, then /orbit:address-reviews d4-review-consistency --from-file <path>",
+  "kind": "editorial",
+  "mode": "proposal",
+  "reviewer_class": "external",
+  "prompt_path": "orbit/changes/d4-review-consistency/.orbit-runs/external-prompt-proposal-2026-07-27T13-19-30Z.md",
+  "target": null,
+  "awaiting_findings": true
+}
