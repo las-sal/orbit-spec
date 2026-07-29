@@ -70,16 +70,16 @@ The system SHALL write a JSON run summary after each invocation: to `orbit/chang
 
 ### Requirement: Iteration note when prior runs exist
 
-The system SHALL include a one-sentence iteration note in the report when prior run summaries exist for the same change and mode — for proposal and system modes, COMPUTED BY THE RENDERER from the trail (per `orbit-report-rendering`'s render-time-context requirement), never authored by the reviewing AI; architecture mode — which has no render surface yet — stays on the interim hand-computed path (per the engine-rendered-report requirement's architecture carve-out), its iteration anchored to prior `review-architecture-*.json` emits in the shared `orbit/architecture/.orbit-runs/` trail whose `doc` field matches the doc under review.
+The system SHALL include a one-sentence iteration note in the report when prior same-mode passes exist for the change (internal review emits OR external findings files — the shared pass axis, per `orbit-report-rendering`'s total pass order) — for proposal and system modes, COMPUTED BY THE RENDERER from the trail (per `orbit-report-rendering`'s render-time-context requirement), never authored by the reviewing AI; architecture mode — which has no render surface yet — stays on the interim hand-computed path (per the engine-rendered-report requirement's architecture carve-out), its iteration anchored to prior `review-architecture-*.json` emits in the shared `orbit/architecture/.orbit-runs/` trail whose `doc` field matches the doc under review.
 
 #### Scenario: Subsequent run on same change in same mode
 
-- **WHEN** the command runs and `.orbit-runs/` contains at least one prior `review-<mode>-<TS>.json` matching the current mode
+- **WHEN** the command runs and `.orbit-runs/` contains at least one prior same-mode review pass (an internal `review-<mode>-<TS>.json` emit OR an external `external-<as>-<TS>.md` findings file)
 - **THEN** the rendered report includes the trail-computed note (repeat/new finding counts and the severity trend) — sourced from the prior emits, not from anything the reviewing AI wrote
 
 #### Scenario: First run for a mode on a change
 
-- **WHEN** the command runs and `.orbit-runs/` contains no prior `review-<mode>-<TS>.json` matching the current mode
+- **WHEN** the command runs and `.orbit-runs/` contains no prior same-mode review pass of EITHER genre (no internal emit and no external findings file)
 - **THEN** the rendered report notes exactly `First <mode>-mode review of this change.` — one deterministic form (the baseline's omit-or-note disjunction is retired; a byte-identical renderer picks one)
 
 #### Scenario: Architecture-mode iteration anchored per doc

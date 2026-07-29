@@ -173,6 +173,14 @@ export function normalizeInternalPass(filePath: string, json: unknown): Normaliz
   if (typeof j.depth !== 'string' || j.depth.length === 0) {
     fail(`missing or mistyped field 'depth'`, filePath);
   }
+  // Single-line grammar slots reject embedded newlines — record-sourced text
+  // must not be able to forge column-0 report grammar (headings/rules/fences);
+  // the blockquote containment covers only the multi-line bodies.
+  for (const field of ['reviewer_class', 'depth'] as const) {
+    if ((j[field] as string).includes('\n')) {
+      fail(`field '${field}' must be single-line (embedded newline)`, filePath);
+    }
+  }
 
   // Scorecard shape: 3 dimensions × 3 severity cells, non-negative integers.
   if (!isPlainObject(j.scorecard)) fail(`missing or mistyped field 'scorecard'`, filePath);
@@ -205,6 +213,9 @@ export function normalizeInternalPass(filePath: string, json: unknown): Normaliz
     }
     if (typeof f.title !== 'string' || f.title.trim().length === 0) {
       fail(`missing or mistyped field '${at}.title'`, filePath);
+    }
+    if (f.title.includes('\n')) {
+      fail(`field '${at}.title' must be single-line (embedded newline)`, filePath);
     }
     if (typeof f.file !== 'string' || f.file.length === 0) {
       fail(`missing or mistyped field '${at}.file'`, filePath);
@@ -248,6 +259,9 @@ export function normalizeInternalPass(filePath: string, json: unknown): Normaliz
     for (const [i, raw] of j.stale_suppressed.entries()) {
       if (!isPlainObject(raw) || typeof raw.title !== 'string' || typeof raw.evidence !== 'string') {
         fail(`missing or mistyped field 'stale_suppressed[${i}]'`, filePath);
+      }
+      if ((raw.title as string).includes('\n') || (raw.evidence as string).includes('\n')) {
+        fail(`field 'stale_suppressed[${i}]' must be single-line (embedded newline)`, filePath);
       }
       suppressed.push({ title: raw.title as string, evidence: raw.evidence as string });
     }

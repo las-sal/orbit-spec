@@ -135,7 +135,11 @@ error naming the field and file; no spine and no scorecard exist to demand). A m
 field fails the render with a clean error NAMING the field and the offending file; NO partial
 render is produced. This is deliberately the opposite policy from the orientation surface's
 graceful degradation: `--report` is the reviewing AI's own tool in the run-and-paste loop, so
-failing loud catches a malformed emit at the source pass where it can be fixed. Optional
+failing loud catches a malformed emit at the source pass where it can be fixed. Single-line
+grammar slots — finding `title`, `stale_suppressed[].title`/`evidence`, `reviewer_class`,
+`depth` — REJECT embedded newlines (fail loud naming the field): record-sourced text must not
+be able to forge column-0 report grammar, and the blockquote containment covers only the
+multi-line bodies. Optional
 fields (`commentary`, `recommendation_options`) are absent-safe, never validation failures;
 genre-inapplicable sections are a GRAMMAR concern, not a validation failure (an external pass
 renders no scorecard table — the section is omitted whole). Validation additionally enforces

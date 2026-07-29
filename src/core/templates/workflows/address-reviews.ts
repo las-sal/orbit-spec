@@ -465,7 +465,7 @@ The v2 shape is a **structural change** from v1, not a rename. Readers handling 
 }
 \`\`\`
 
-### (c) Decision-fork with [discuss] invoked
+### (c) Decision-fork ratified by chat directive
 
 \`\`\`json
 {
