@@ -1,0 +1,23 @@
+{
+  "command": "review",
+  "timestamp": "2026-07-29T16:18:50Z",
+  "change": "d4-review-consistency",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "iteration": 7,
+  "depth": "full",
+  "scorecard": {
+    "completeness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "correctness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "coherence": { "critical": 0, "warning": 0, "suggestion": 0 }
+  },
+  "findings": [],
+  "stale_suppressed": [
+    { "title": "All 8 iteration-6 resolutions", "evidence": "Verified landed on disk: the D4-generation boundary text with both real earlier shapes named (spec :146 region) and the rewritten design risk note; the third conventions block's review-table/Status-column split (:175 region); the sixth address block's decision-lane vocabulary (:283); single-line option bodies (:53); D2b's computed-ordinal header rule (:100). Per-file counts 7+6+6+3+1+1+1 = 25 (8 ADDED + 17 MODIFIED) across seven files, matching the proposal's Impact; 18 tasks; strict valid; fingerprints 17/17." },
+    { "title": "One @review: grep hit in the cascade block", "evidence": "Documentation appearance, not residue: the sixth MODIFIED block carries the baseline cascade scenario verbatim, whose THEN text DESCRIBES marker-removal mechanics ('the @review: marker on the original finding is removed...'). Prose describing marker behavior is excluded by the marker-residue pass rules; prior passes showed 0 only because this block was not yet in the delta." }
+  ],
+  "iteration_note": "Note: 0 findings this run (trend: 16 → 12-ext → 7 → 0 → 9-ext → 8 → 0). In-context verification pass over the iteration-6 batch — all eight resolutions confirmed at their sites; the single new grep hit dispositioned as a documentation appearance. This pass does not fill the cadence's independent slot (the latest independent pass, iteration 6, carried CRITICALs — now resolved); the confirm predicate still requires an independent pass yielding none.",
+  "commentary": "Nothing new to find in-context: the iteration-6 batch landed exactly as recorded, including the boundary rewrite whose empirical grounding (the generation survey) makes it the most defensible text in the change. The cadence's shape at this point is the familiar late-stage pattern — in-context passes verifying clean while the independent slot awaits its confirming run.",
+  "final_assessment": "No findings.",
+  "next_recommended": "/orbit:review --as proposal --fresh d4-review-consistency"
+}
