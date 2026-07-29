@@ -18,7 +18,7 @@ R-d-9 handoff audit runs by hand at the phase seams.
       `formatChangeStatus`/`computeGateStates` — never read from the rendered record, never
       stored
 - [ ] 1.3 Strict validation: spine + review extensions checked BEFORE rendering (mode,
-      scorecard shape, findings[] entry shape); first missing/mistyped field → clean error
+      reviewer_class, depth, scorecard shape, findings[] entry shape); first missing/mistyped field → clean error
       naming field + file, no partial render; `commentary`/`recommendation_options`
       absent-safe; parse-rejected external files fail naming the file
 - [ ] 1.4 Golden tests (`test/core/report-render.test.ts` + `test/fixtures/report-golden/`):
@@ -28,9 +28,10 @@ R-d-9 handoff audit runs by hand at the phase seams.
       validation error cases (per-genre field sets); historical-pass case (as-of iteration/
       trend + CURRENT tail); trend as-of semantics (later passes excluded); an equal-token pair asserting distinct
       ordinals + the unique final trend point (the total pass order); scorecard/findings
-      MISMATCH fixtures (fail whole, naming the cell); pre-scorecard legacy-generation error
-      fixtures pinned from the REAL archived emits (B2-era findings_summary/empty-findings;
-      pre-D3 no-kind); blockquote-containment goldens (multiline bodies carrying ## CRITICAL,
+      MISMATCH fixtures (fail whole, naming the cell); pre-boundary error
+      fixtures pinned from the REAL archived emits (the kind+findings_summary generation —
+      findings ABSENT in B2-era, populated dimension-less in B3-era, empty in C1-era; the
+      D3-cycle scorecard/no-kind shape); blockquote-containment goldens (multiline bodies carrying ## CRITICAL,
       ---, and fences); the ungated minimal-tail golden; the deterministic
       first-run note literal
 - [ ] 1.5 Extend the external-markdown parse into the NORMALIZED render shape (per design D4):
@@ -90,6 +91,9 @@ R-d-9 handoff audit runs by hand at the phase seams.
       note + entry-level `ratified_via`/`resolution` + `delegation_directive` + off-menu
       `chosen` in the resolution-log schema reference; the stored `iteration_note` contract
       REMOVED — renderer-computed — and the deterministic spine-value contract documented;
+      address' `references/external-findings-format.md` Notes line updated to the
+      Commentary-contract text (or a one-line pointer to the prompt template as the format's
+      source of truth) so both shipped copies agree;
       the `scorecard` field DECLARED as the required counts shape with per-finding `dimension`
       (the owning scorecard cell) and the cell-rollup equality rule; `findings_summary` AND
       `finding_titles` RETIRED from the review schema reference with the two-generation

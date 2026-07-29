@@ -229,8 +229,9 @@ future rename is fine, just not re-litigated here.
   content keeps the trail honest without forcing prompts; the one-observed-cycle criterion
   covers the UX claim the body text can't prove.
 - **Strict render vs legacy emits**: an EMPIRICAL survey (iter 6) inverted the earlier
-  assumption — NO pre-D4 emit conforms: the B2-era generation carries `kind` +
-  `findings_summary` (no scorecard, empty findings); the D3-cycle generation carries
+  assumption — NO pre-D4 emit conforms: the kind+findings_summary generation (no
+  scorecard; findings absent in the B2 archives, populated dimension-less in B3-era,
+  empty in C1-era clean passes); the D3-cycle generation carries
   `scorecard` but no spine `kind` and no per-finding `dimension`. The render boundary is
   therefore the D4 GENERATION itself (user fork, iter 6): only emits produced under this
   change's contract render; both real earlier shapes fail with the clean `pre-capability

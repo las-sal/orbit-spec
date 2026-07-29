@@ -22,6 +22,7 @@ base_fingerprints:
     Final-assessment phrasings: sha256:b33dc2466fe58eff7be1c321b74f827ba412b5d6fd61c4cb7f0e39d993ad7710
     Internal-run JSON summary format: sha256:8039e6b10bc70fd37670804642fe6550881ec9bf4a8870e7d907ffd46a7f7719
     3-dimension scorecard reporting convention: sha256:fdcba62e794a6f0e1f3dd58a686d29f868405c691c3f035a0f301561c9cfff6b
+    Review mode decision framework: sha256:c711c593905dc977bdefa36dd5bff193209dea335e77364f2505d1d0837fd609
   orbit-orientation:
     Bare `orbit status` renders the current sprint: sha256:de44ef03d3874fbdde95e6b9707cc1e257a604749a1e81d31e8e807ba00285c1
   orbit-engine-gates:
