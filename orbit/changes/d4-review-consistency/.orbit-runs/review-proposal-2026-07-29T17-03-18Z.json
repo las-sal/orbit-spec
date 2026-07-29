@@ -1,0 +1,26 @@
+{
+  "command": "review",
+  "timestamp": "2026-07-29T17:03:18Z",
+  "change": "d4-review-consistency",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "iteration": 9,
+  "depth": "full",
+  "scorecard": {
+    "completeness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "correctness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "coherence": { "critical": 0, "warning": 1, "suggestion": 1 }
+  },
+  "findings": [
+    { "pass": 2, "severity": "WARNING", "file": "orbit/changes/d4-review-consistency/proposal.md", "line": 73, "title": "Impact still enumerates conventions as MODIFIED ×3 — the iter-8 batch added a fourth block without rippling the proposal", "recommendation": "Update the Impact bullet to ×4 and add the one-clause description (the Review-mode-decision-framework attribution re-pointed at the cadence's external slot + report tail); the implied 17-MODIFIED total contradicts the actual 18." },
+    { "pass": 5, "severity": "SUGGESTION", "file": "orbit/changes/d4-review-consistency/design.md", "line": 113, "title": "D3's checked-set echo lags the spec and misnames iteration as a validated field", "recommendation": "Align D3's parenthetical with the spec's checked set (mode, reviewer_class, depth, scorecard shape, findings[] entry shape) and drop 'iteration-ables' — iteration is renderer-computed, never validated." }
+  ],
+  "stale_suppressed": [
+    { "title": "The full iter-8 verification set + all 18 MODIFIED diffs + the sweeps", "evidence": "All four iter-8 resolutions confirmed (the per-era descriptor empirically re-surveyed across all 8 archives; the task 3.4 extension; the checked-set additions; the fourth conventions block diffing baseline-verbatim except the attribution sentence). Class (a): every vocabulary hit falls inside the 7 delta files; onboard needs no delta; audit-drift keeps its shapes. Class (d): the external iter-2 CRITICAL resolutions all structurally present; iter-8 reverted nothing. Counts 26/7/18; carriers complete; fingerprints 18/18; strict valid." },
+    { "title": "D3-cycle label vs mid-D2 onset; absent-findings recurrence in the 07-13 archive; un-delta'd skipped-pass scenarios; the stale_suppressed field's grammar source; the example's stored iteration", "evidence": "All verified fine: detection is field-keyed (era tags are fixture-pinning mnemonics); the generation clause covers absent/empty/dimension-less; skipped-pass notes route to loose form per the ADDED requirement; empty sections omit whole and the schema reference defines the field; the emit legitimately stores iteration — only the renderer never reads it." }
+  ],
+  "iteration_note": "Note: 0 of these findings appeared in prior runs. 2 new this run (trend: 16 → 12-ext → 7 → 0 → 9-ext → 8 → 0 → 4 → 2; the independent slot's CRITICALs 5 → 7 → 2 → 0 → 0). Both findings are enumeration residue of the iteration-8 walk itself — the proposal's Impact bullet missed the fourth conventions block's ripple, and D3's rationale echo lags the spec — nothing touches the renderer contract, the walk protocol, the boundary, or any baseline text.",
+  "commentary": "The convergence signature is unambiguous now: two consecutive independent passes with zero CRITICALs, and this pass's findings are bookkeeping about the previous resolution batch rather than about the change. The reviewer re-ran the archive survey a third time and the boundary text held; every load-bearing contract has now survived at least two independent examinations unchanged.",
+  "final_assessment": "0 critical, 1 warning, 1 suggestion.",
+  "next_recommended": "/orbit:address-reviews d4-review-consistency --from-file orbit/changes/d4-review-consistency/.orbit-runs/review-proposal-2026-07-29T17-03-18Z.json"
+}
