@@ -27,5 +27,5 @@
   },
   "post_state": "orbit validate d4-review-consistency --strict passes; fingerprints 17/17 verified (2 new stamped: conventions scorecard-convention, address cascade); change now at 25 delta requirements (8 ADDED + 17 MODIFIED) across 7 files (report-rendering 7, review 6, address-reviews 6, conventions 3, orientation 1, engine-gates 1, review-external 1); 18 tasks; zero markers",
   "final_assessment": "All 8 iteration-6 findings resolved. The empirical-survey CRITICAL closed via fork A: the render boundary is the D4 emit generation itself, with both real earlier shapes named as clean boundary failures and fixtures pinned from the actual archives (the design risk note rewritten around the survey); the Status-column SHALL scoped by a third conventions block; option bodies pinned single-line; D2b's iteration source corrected; the cascade vocabulary moved to the decision-lane protocol by a sixth address block; the three polish items aligned. Iteration 6 carried CRITICALs, so the confirm predicate requires an independent pass yielding none.",
-  "next_recommended": "/orbit:review --as proposal d4-review-consistency"
+  "next_recommended": "/orbit:review --as proposal --fresh d4-review-consistency"
 }
