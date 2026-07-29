@@ -145,7 +145,7 @@ Use this exact markdown structure:
 
 ## Notes
 
-<Optional: overall impression, broader concerns. Omit the whole \`## Notes\` section if you have nothing to add.>
+<Optional — rendered VERBATIM into the report's delimited Commentary slot: carry the pattern behind the findings, what you probed, and risk texture; do NOT state finding counts, gate verdicts, or next commands — those exist only in the report's engine-computed sections. Omit the whole \`## Notes\` section if you have nothing to add.>
 \`\`\`
 
 If your environment doesn't support file writes (chat-only interface), output
@@ -296,6 +296,12 @@ Print to chat, in this exact order:
 No other items. Required items always appear in the specified order. (The T0 emit's \`next_recommended\` mirrors the gate: when the preflight failed, it leads with the commit+push action before the paste step.)
 
 ## Reference prompt template
+
+The template's \`## Notes\` instruction carries the Commentary content contract (D-arc Stage
+D4): the Notes body renders VERBATIM into the report's delimited Commentary slot, so the
+external reviewer must carry pattern/probing/risk texture and
+do NOT state finding counts, gate verdicts, or next commands — those exist only in the
+report's engine-computed sections.
 
 The full template for the file written in Step 7 lives at \`references/prompt-template.md\`. Read that file when composing the prompt. The template is verbatim — preserve named sections and especially the "Output format" block (the \`## CRITICAL\` / \`## WARNING\` / \`## SUGGESTION\` headers + \`**File**:\` / \`**Description**:\` field labels) so \`/orbit:address-reviews --from-file\` parses cleanly.
 

@@ -20,11 +20,11 @@ This schema inherits the 6-field **universal spine** from \`orbit-conventions\`'
 - \`command\` (matches filename prefix; here: \`"review"\`)
 - \`timestamp\` (ISO-8601 UTC; JSON field \`YYYY-MM-DDTHH:MM:SSZ\`; filename \`<TS>\` token \`YYYY-MM-DDTHH-MM-SSZ\` with colons replaced by hyphens for filesystem safety)
 - \`change\` (change name string; \`null\` in architecture mode — a \`doc\` extension names the reviewed doc instead)
-- \`final_assessment\` (narrative; the stock final-assessment line — gate-less in architecture mode)
-- \`next_recommended\` (verbatim recommendation, e.g., \`"/orbit:address-reviews <name> --from-file <path>"\`)
+- \`final_assessment\` (DETERMINISTIC facts for change modes — the severity-counts sentence \`"X critical, Y warning, Z suggestion."\` / \`"No findings."\` computed from the emit's own scorecard, never a verdict; narrative gate-less line in architecture mode)
+- \`next_recommended\` (the DETERMINISTIC pointer for change modes: the \`/orbit:address-reviews <name> --from-file <this emit's own path>\` invocation when the pass has findings, the \`orbit status --change <name> --report\` render pointer when clean — the engine-computed canonical next rides the rendered tail, never the emit)
 - \`kind: "editorial"\` (review is an editorial command per the kind taxonomy)
 
-The schema below documents per-command extensions ADDED to that spine (\`mode\`, \`iteration\`, \`depth\`, \`reviewer_class\`, \`flags\`, \`passes_run\`, \`passes_skipped\`, \`findings_summary\`, \`findings\`, \`stale_suppressed\`, \`iteration_note\`). Per-command extensions are review-specific state; they supplement, not replace, the spine.
+The schema below documents per-command extensions ADDED to that spine (\`mode\`, \`iteration\`, \`depth\`, \`reviewer_class\`, \`flags\`, \`passes_run\`, \`passes_skipped\`, \`scorecard\`, \`findings\`, \`stale_suppressed\`, \`commentary\`). The former \`findings_summary\` and \`iteration_note\` fields are RETIRED (D-arc Stage D4): \`scorecard\` supersedes the counts (readers tolerate both generations), and the iteration note is RENDERER-computed from the trail — a stored copy would be a second stale voice.. Per-command extensions are review-specific state; they supplement, not replace, the spine.
 
 ## Schema
 
@@ -33,8 +33,8 @@ The schema below documents per-command extensions ADDED to that spine (\`mode\`,
   "command": "review",
   "timestamp": "<ISO-8601>",
   "change": "<change-name>",         // null in architecture mode
-  "final_assessment": "<stock phrasing from final-assessment table>",
-  "next_recommended": "<e.g., '/orbit:address-reviews <name> --from-file <path>' or 'proceed to /orbit:apply <name>'>",
+  "final_assessment": "<counts sentence, e.g. \"0 critical, 1 warning, 3 suggestion.\">",
+  "next_recommended": "<findings → '/orbit:address-reviews <name> --from-file <own path>'; clean → 'orbit status --change <name> --report'>",
   "kind": "editorial",
   "mode": "proposal" | "system" | "architecture",
   "iteration": <integer, per-mode>,
@@ -50,19 +50,16 @@ The schema below documents per-command extensions ADDED to that spine (\`mode\`,
   },
   "passes_run": ["1", "2", ...],
   "passes_skipped": [],
-  "findings_summary": {
-    "critical": 0,
-    "warning": 0,
-    "suggestion": 0,
-    "by_pass": {
-      "1": { "critical": 0, "warning": 0, "suggestion": 0 },
-      "2": { "critical": 0, "warning": 0, "suggestion": 0 }
-    }
+  "scorecard": {
+    "completeness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "correctness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "coherence": { "critical": 0, "warning": 0, "suggestion": 0 }
   },
   "findings": [
     {
       "pass": "1",
       "severity": "CRITICAL" | "WARNING" | "SUGGESTION",
+      "dimension": "completeness" | "correctness" | "coherence",
       "file": "design.md",
       "line": 159,
       "title": "<finding title>",
@@ -80,7 +77,7 @@ The schema below documents per-command extensions ADDED to that spine (\`mode\`,
       "evidence": "<grep output or commit hash showing why it's stale>"
     }
   ],
-  "iteration_note": "<one-sentence note or null>"
+  "commentary": "<optional — the reviewer's color commentary, rendered verbatim into the report's delimited Commentary slot>"
 }
 \`\`\`
 
@@ -89,10 +86,11 @@ The schema below documents per-command extensions ADDED to that spine (\`mode\`,
 - **\`reviewer_class\`** (C1) is the first-class execution-context field the engine's reviewed-gate convergence reads for cadence class coverage: \`"fresh"\` when the pass ran in a clean context (\`--fresh\`), else \`"in-context"\` (externally-sourced findings in \`external-<as>-<TS>.md\` are structurally \`"external"\`). For emits predating this field the engine infers (\`flags.fresh: true\` → \`fresh\`; \`external-*.md\` provenance → \`external\`; otherwise \`in-context\`), so absence never breaks gate computation.
 - **\`iteration\`** is per-mode: proposal-mode and system-mode iterations count separately on the same change.
 - **\`passes_run\` / \`passes_skipped\`** are strings (pass IDs); skip reasons go in the report body but not the summary array.
-- **\`findings_summary.by_pass\`** mirrors the report's per-pass grouping for quick downstream parsing.
-- **\`stale_suppressed\`** captures findings that pushback removed; they don't appear in the user-facing report but do persist here for audit.
-- **\`final_assessment\`** is one of the stock phrasings (mode-specific gate text); see the final-assessment table in SKILL.md.
-- **\`iteration_note\`** is the one-line "Note: N of these findings appeared in the last run" comparison; \`null\` when this is the first run for the mode.
+- **\`scorecard\`** is the REQUIRED counts shape (3 dimensions × 3 severities, non-negative integers): each cell SHALL equal the count of ACTIVE findings with that \`dimension\` + severity (suppressed excluded) — the renderer validates the equality and fails the render on mismatch.
+- **\`dimension\`** on each finding names the owning scorecard cell (\`completeness\` | \`correctness\` | \`coherence\`).
+- **\`stale_suppressed\`** captures findings that pushback removed; they are excluded from the scorecard and active findings, and render in the report's dedicated Suppressed section (first-class, with evidence).
+- **\`final_assessment\` / \`next_recommended\`** carry the deterministic facts contract above — no verdicts, no eligibility judgments (the engine-rendered tail owns those).
+- **\`commentary\`** is OPTIONAL: the reviewer's voice for the report's delimited Commentary slot — the pattern behind the findings, what was probed, risk texture; NEVER finding counts, gate verdicts, or next commands (those exist only in the report's engine-computed sections).
 - **\`recommendation_options\`** is OPTIONAL on each finding. Present only when the finding's recommendation is genuinely disjunctive — multiple defensible paths the user must choose between. Producer-side contract (per \`orbit-review\` spec's \`Optional recommendation_options field on finding entries\`): MUST contain ≥ 2 entries; each entry MUST have non-empty \`label\` (typically \`"A"\`, \`"B"\`, \`"C"\`, … or \`"1"\`, \`"2"\`, …) and non-empty \`body\`. The prose \`recommendation\` field still summarizes the disjunction for human readers. Consumer (address-reviews) uses this for the structured decision-fork detection path; absence triggers heuristic fallback. Omit the field for single-recommendation findings.
 
 ## Architecture-mode extensions (D-arc Stage D2)
@@ -408,92 +406,71 @@ Roll every pass's findings into the 3-dimension scorecard.
 | **Completeness** | 2 (Completeness / exit-criteria) |
 | **Coherence** | 4 (Layer-fit), 5 (Route-level alternatives), 6 (Economy self-audit) |
 
-### 8. Generate the iteration note
+### 8. (Change modes) Author the commentary
 
-If \`.orbit-runs/\` has prior summaries matching this mode (architecture mode: matching mode AND \`doc\`, per Step 5 — never cross-doc):
+The reviewer's insight travels as the emit's OPTIONAL \`commentary\` field — the pattern behind
+the findings, what was probed and how hard, risk texture: everything the structured sections
+can't say. Commentary NEVER states finding counts, gate verdicts, or next commands (those
+exist only in the report's engine-computed sections; the contract is enforced at this source).
+The iteration note is NOT authored — the renderer computes it from the trail (D-arc Stage D4).
+Architecture mode keeps its hand-computed iteration note (matching mode AND \`doc\`, per Step 5
+— never cross-doc): \`Note: N of these findings appeared in the last run on <date>. M new this
+run.\` / \`First architecture review for this doc.\`
 
-- Compare current findings to the most-recent matching prior run.
-- Count how many findings repeat (same file:line + same severity + similar title).
-- Emit a one-sentence note in the report: \`Note: N of these findings appeared in the last run on <date>. M new this run.\`
+### 9. Persist the run summary FIRST
 
-If no prior matching summaries: emit \`First <mode>-mode run for this change.\` or omit the iteration note entirely.
+(Persist-first ordering — D-arc Stage D4: the emit lands on disk BEFORE the report renders, so
+the engine's gate computation naturally includes this pass; no synthetic-pass machinery, and
+no window where \`orbit status\` and the report disagree.)
 
-### 9. Emit the final assessment
+Write JSON per mode: to \`orbit/changes/<name>/.orbit-runs/review-<mode>-<TS>.json\` for
+\`proposal\` and \`system\` modes, and to \`orbit/architecture/.orbit-runs/review-architecture-<TS>.json\`
+for \`architecture\` mode (the architecture trail — the fourth persistence location; never moved
+by change archiving). ISO-8601 timestamp (e.g., \`review-proposal-2026-05-18T14-35-23Z.json\`).
+The full schema lives at \`references/run-summary-schema.md\` — read it when composing (including
+\`reviewer_class\`: \`"fresh"\` when the pass ran in a clean context under \`--fresh\`, else
+\`"in-context"\` — the field the engine's cadence coverage reads). Change-mode
+spine fields carry DETERMINISTIC FACTS, never verdicts: \`final_assessment\` is the severity-counts
+sentence from the emit's own scorecard (\`"X critical, Y warning, Z suggestion."\` / \`"No findings."\`),
+and \`next_recommended\` is the deterministic pointer (findings → the \`/orbit:address-reviews <name>
+--from-file <this emit's own path>\` invocation; clean → the \`orbit status --change <name> --report\`
+render pointer). Every finding carries its owning \`dimension\`; the \`scorecard\` cells MUST equal the
+active findings' dimension × severity rollup (suppressed excluded) — the renderer validates this and
+fails the render on mismatch. Architecture-mode emits carry \`change: null\`, a \`doc\` field, and — per
+arc ruling R-d-9(b) — the structured \`handoff\` section (shape owned by \`orbit-architect\`). Create the
+trail directory if needed; commit-worthy (do not gitignore).
 
-(Change modes only — architecture mode has NO gate; its final assessment is specified in the \`Architecture mode — NO gate\` subsection below and never runs the gate computation.)
+### 10. Render and paste the report (change modes)
 
-**Single-voiced + engine-sourced (C1).** The final assessment renders the ENGINE-computed gate state (one of the convergence states below) plus ONE canonical next command — never a bare "Ready to apply" / "Ready to archive" and never an advertised skip path. Compute the gate verdict from \`orbit status --change <name> --json\` (fields \`gates[]\`, \`position\`, \`next_command\`) — the engine reads the \`.orbit-runs/\` trail. **As-of-completion**: evaluate the gate as-of THIS pass's completion — fold in a synthetic pass for the run you are finishing (its mode, reviewer_class, a now-token, the about-to-be-written \`review-<mode>-<TS>.json\`, and this run's findings) so a current \`--fresh\`/\`in-context\` pass counts toward its cadence slot. If this pass has findings, the address-reviews command targets the just-written \`review-<mode>-<TS>.json\`.
+Run \`orbit status --change <name> --report\` and paste its output VERBATIM as the report. The
+body NEVER hand-renders the structured report sections — header, trend, scorecard table,
+findings, Suppressed, or the gate/position/eligibility tail; hand-rendering them is PROHIBITED
+in change modes (architecture mode is EXEMPT — it has no render surface yet and keeps its
+hand-rendered gate-less shape below). The engine-rendered tail IS the assessment: the gate
+verdict, position, and canonical next command come from the gate graph at render time — the
+reviewing AI authors none of them. The chat turn is LOOSE FORM: the pasted report grounds it,
+and free conversational engagement follows (the report is the anchor, not the whole voice);
+the conversation may not contradict the tail's engine-computed lines. Skipped-pass notes (the
+emit's \`passes_run\`/\`passes_skipped\` record) surface in this loose-form conversation when
+worth mentioning — never as hand-rendered structured sections.
 
-#### Proposal mode
+#### Architecture mode — NO gate (interim hand-rendered shape)
 
-| Gate state | Phrasing |
-|---|---|
-| ≥1 CRITICAL | \`X critical issue(s) found. Fix before /orbit:apply.\` |
-| A gate-relevant pass has unresolved findings | \`No critical issues. Y warning(s) to consider. A prior gate-relevant pass has unresolved findings; gate review-proposal UNPASSED. Ready when you are: /orbit:address-reviews <change> --from-file <unresolved-path>.\` |
-| No fresh independent pass (leading slot uncovered) | \`... gate review-proposal UNPASSED — the cadence's independent slot is uncovered. Ready when you are: /orbit:review --as proposal --fresh <change> — independent cross-check required by the review cadence before apply (per orbit-conventions Review mode decision framework).\` |
-| Independent pass yielded new findings (no-new-findings not met) | \`... gate review-proposal UNPASSED until an independent pass yields none. Ready when you are: /orbit:review --as proposal --fresh <change>.\` |
-| Independent converged, trailing in-context slot uncovered | \`... Independent review converged; gate review-proposal needs its closing in-context confirm. Ready when you are: /orbit:review --as proposal <change>.\` |
-| Gate passed | \`All checks passed. gate review-proposal PASSED. Ready when you are: /orbit:apply <change> — user-invoked.\` (Only-W/S opener: \`No critical issues. Y warning(s) to consider.\` + \`... Ready when you are: /orbit:apply <change> (with noted improvements) — user-invoked.\`) |
-
-(Openers: \`All checks passed.\` when this pass is clean, else \`No critical issues. Y warning(s) to consider.\` The unresolved-pass branch takes precedence over all other no-CRITICAL branches. v1: a proposal pass never goes stale — no stale state. Labels are eligibility-framed per \`orbit-engine-gates\` (D1): \`Ready when you are:\` — never an imperative next-step label — with \` — user-invoked\` appended when the recommended command enters a consent-marked phase (\`/orbit:apply\`, \`/orbit:archive\`).)
-
-#### System mode
-
-| Gate state | Phrasing |
-|---|---|
-| ≥1 CRITICAL | \`X critical issue(s) found. Fix before /orbit:archive.\` |
-| No prior external (leading in-context covered) | \`All checks passed (in-context pass). Ready when you are: /orbit:review-external --as system <change> — external cross-check required by the review cadence before archive (per orbit-conventions Review mode decision framework; in an early dogfooding cycle, in-context system review missed 3 of 3 real implementation bugs — all caught by external review).\` |
-| Path A — external clean, gate PASSED | \`All checks passed. External system review (clean) converged; gate review-system PASSED. Ready when you are: /orbit:archive <change> — user-invoked.\` |
-| Path B — external resolved, 0 CRITICAL, gate PASSED | \`All checks passed. External system review findings resolved via /orbit:address-reviews; gate review-system PASSED. Ready when you are: /orbit:archive <change> — user-invoked.\` |
-| External converged but an ordered slot uncovered | \`... gate review-system is UNPASSED — the cadence's leading in-context slot is uncovered. Ready when you are: /orbit:review --as system <change>.\` |
-| External resolved but carried a CRITICAL (confirm unmet) | \`... the prior /orbit:review-external found and resolved a CRITICAL, so gate review-system is UNPASSED until a fresh external yields none. Ready when you are: /orbit:review-external --as system <change>.\` |
-| External present with unresolved findings | \`... the prior /orbit:review-external has unresolved findings. Ready when you are: /orbit:address-reviews <change> --from-file <external-path>.\` |
-| External stale (apply landed after it) | \`... the prior /orbit:review-external is older than the most recent apply step; gate review-system STALE. Ready when you are: /orbit:review-external --as system <change> — re-validate against current product state.\` |
-
-(Precedence when a gate is unpassed for more than one reason: stale > unresolved > a missing ordered slot (→ in-context) > a failed confirm predicate (→ fresh external). Path A/B render \`PASSED\` ONLY when the engine reports full ordered-slot coverage AND the confirm predicate; otherwise defer to the engine-computed state above. A \`--fresh\` system run does NOT satisfy an \`in-context\` slot.)
-
-#### Iteration-aware logic (system mode, no CRITICAL)
-
-To determine which of States 1–5 applies, inspect \`orbit/changes/<name>/.orbit-runs/\` and resolve in this order:
-
-1. **Presence check** — does any \`external-system-*.md\` exist? If not, return **State 1**.
-
-2. **Stale check (highest precedence)** — for the most recent \`external-system-*.md\`, compare its filename \`<TS>\` token against the most recent \`apply-*.json\` filename \`<TS>\` token (per orbit-conventions \`Internal-run JSON summary format\`; tokens are \`YYYY-MM-DDTHH-MM-SSZ\` — ISO-8601 with colons replaced — and sort lexically). If an \`apply-*.json\` token is later than the external's token, return **State 5** regardless of external content. Per-external scoping: only \`apply-*.json\` triggers stale — unrelated \`address-reviews-*.json\` files (for other inputs) do NOT.
-
-3. **Path A content-clean check** — read the most recent \`external-system-*.md\`. Parse it for findings under \`## CRITICAL\`, \`## WARNING\`, \`## SUGGESTION\` headings. Path A clean = each section contains only the empty-severity sentinel (\`None.\` or one of the accepted equivalents — \`None\`, \`none.\`, \`(none)\` — per \`orbit-address-reviews/references/external-findings-format.md\`) with zero \`### <title>\` entries beneath. If clean and not stale, return **State 2**.
-
-4. **Path B resolution check** — find the most recent \`address-reviews-*.json\` whose \`source_path\` field (canonicalized to repo-relative form before comparison; absolute paths are accepted only after the same normalization) references the external markdown file. If such a JSON exists AND \`resolution_summary.deferred == 0\` AND \`resolution_summary.escalated == 0\`, the external's findings were walked to completion — return **State 3**. Per-external scoping: address-reviews-*.json files for OTHER inputs do NOT affect this external's convergence.
-
-5. **Unresolved findings** — external is present with \`### <title>\` entries beneath at least one severity AND no Path B resolution applies (no matching address-reviews OR most recent matching one has \`deferred > 0\` or \`escalated > 0\`). Return **State 4**.
-
-**Edge-case assumptions for v1** (per the spec's \`Edge-case assumptions for the iteration-aware logic\` scenario):
-- Multiple matching files of same type → most-recent filename \`<TS>\` token wins (lexical sort).
-- Unparseable filename token → treated as absent for comparison purposes.
-- External markdown parse failure → treated as NOT-clean (defaults to State 4 or 5).
-- \`address-reviews-*.json\` parse failure → treated as if no address-reviews ran for that external (defaults to State 4).
-- Dangling \`source_path\` (references non-existent file) → ignored for convergence detection.
-
-**Precedence rules** (when multiple states could match):
-1. State 5 (stale) > all others — artifacts changed; external's evaluation no longer trusted.
-2. State 4 (unresolved) > State 2/3 — unresolved findings beat a stale-but-resolved external.
-3. States 2 and 3 are mutually exclusive (Path A clean and Path B resolved cannot both apply to the same external).
-
-**Iteration-aware logic does NOT block archive**: the recommendation is advisory, not a gate. The user retains the choice to skip; orbit surfaces the recommendation but does not enforce. (Decision to NOT add a pre-archive external-review-presence check is intentional — orbit's role is to surface, not gate.)
-
-#### Architecture mode — NO gate
-
-No gate exists over architecture docs (review standing without a gate — D-arc D-d2-5), so the architecture-mode final assessment NEVER says PASSED/UNPASSED of a gate and never references a lifecycle command. It renders findings counts plus ONE canonical next command:
+No gate exists over architecture docs (review standing without a gate — D-arc D-d2-5), so the
+architecture-mode final assessment NEVER says PASSED/UNPASSED of a gate and never references a
+lifecycle command. Until the render surface covers the architecture trail, this mode keeps the
+shared hand-rendered scorecard shape, ending:
 
 | State | Phrasing |
 |---|---|
 | Findings present | \`X critical / Y warning(s). Ready when you are: /orbit:address-reviews --from-file <the just-written review-architecture emit>.\` |
 | All clear | \`No findings. The architecture trail records this pass.\` |
 
-Labels follow D1's eligibility phrasing; the findings are ingestible by \`/orbit:address-reviews\` exactly like other internal review JSON (including \`recommendation_options\` on disjunctive findings). On all-clear, no command is recommended — the trail records the pass and the turn ends at the readout.
+Labels follow D1's eligibility phrasing; the findings are ingestible by \`/orbit:address-reviews\`
+exactly like other internal review JSON (including \`recommendation_options\` on disjunctive
+findings). On all-clear, no command is recommended — the trail records the pass and the turn
+ends at the readout.
 
-### 10. Persist the run summary
-
-Write JSON per mode: to \`orbit/changes/<name>/.orbit-runs/review-<mode>-<TS>.json\` for \`proposal\` and \`system\` modes, and to \`orbit/architecture/.orbit-runs/review-architecture-<TS>.json\` for \`architecture\` mode (the architecture trail — the fourth persistence location; never moved by change archiving). ISO-8601 timestamp (e.g., \`review-proposal-2026-05-18T14-35-23Z.json\`). The full schema (fields, types, semantics) lives at \`references/run-summary-schema.md\` — read that file when composing the summary. Architecture-mode emits carry \`change: null\`, a \`doc\` field naming the reviewed doc, and — per arc ruling R-d-9(b) — the structured \`handoff\` section (\`boot_sequence\` pointers / \`next_command\` / \`model_hint\` / \`seam\`; shape owned by \`orbit-architect\`). Create the trail directory if it doesn't exist; commit-worthy (do not gitignore).
 
 ### 11. (Optional) \`--mark\` writer (proposal mode only)
 
@@ -549,94 +526,31 @@ When uncertain, prefer the lower severity. SUGGESTION beats WARNING beats CRITIC
 
 Every finding that cites a specific file:line must be backed by an actual read of that line. If the citation is inferred (e.g., "I think this is around line 50 of design.md"), either read first or downgrade to a less specific finding ("design.md mentions <topic> but does not specify <X>" — searchable, but no false-precision line number).
 
-## Output format
+## Output format (change modes)
 
-Header (\`## Review: <name> --as <mode>\` + mode/iteration/depth lines + optional iteration note) → \`### Summary\` scorecard table → \`### Findings\` grouped by severity (CRITICAL/WARNING/SUGGESTION; each finding \`**[Pass N] file:line** — title\` then \`Recommendation: ...\`) → \`### Stale findings suppressed\` (when applicable) → \`### Final assessment\` (stock phrasing) → \`Run summary: <path>\` line. See the worked example below for the canonical shape.
+The report IS the engine render: run \`orbit status --change <name> --report\` after persisting
+the emit and paste the output verbatim — header, trend, scorecard table, findings (blockquote-
+contained recommendations, labeled options), Suppressed, the delimited Commentary slot, and
+the engine tail (gate / position / eligibility) last. Never hand-render those sections in
+change modes; free conversational engagement follows the pasted report (loose form).
+Architecture mode keeps its hand-rendered gate-less shape (Step 10) until the render surface
+covers the architecture trail.
 
-## Worked example (proposal mode, partial)
+## Worked example (the change-mode turn shape)
 
-\`\`\`markdown
-## Review: add-review-workflows --as proposal
+\`\`\`
+[persist orbit/changes/example-change/.orbit-runs/review-system-2026-05-26T15-12-08Z.json]
+[run: orbit status --change example-change --report]
+[paste the rendered report verbatim — it ends with the engine tail, e.g.:
+---
+Gate review-system: unpassed — cadence class 'external' has no pass
+Position: propose ✓ → review(proposal) (past) → apply ✓ → review(system) unpassed → archive blocked-by-gate
+Ready when you are: /orbit:review-external --as system example-change]
 
-Mode: proposal (inferred from 102 unchecked tasks)
-Iteration: 6 (continuing proposal-mode run)
-Depth: full
-Note: 3 of these findings appeared in the last run on 2026-05-18. 6 new this run.
-
-### Summary
-
-| Dimension    | Critical | Warning | Suggestion |
-|--------------|----------|---------|------------|
-| Completeness | 0        | 1       | 2          |
-| Correctness  | 0        | 1       | 1          |
-| Coherence    | 0        | 2       | 2          |
-
-### Findings
-
-#### CRITICAL
-None.
-
-#### WARNING
-- **[Pass 2] proposal.md:41** — "five new SKILL.md + command body pairs" — count should be four after iter-4 merge.
-  Recommendation: change "five" to "four" and list the four pairs explicitly.
-
-- **[Pass 7] sketches/review.md:3** — corrupted filenames "proposal-mode review.md" + "system-mode review.md" (sed residue).
-  Recommendation: restore \`sketches/review-proposal.md\` + \`sketches/review-system.md\`.
-
-- **[Pass 4] design.md:159** — "9 capability specs" — should be 8 after merge.
-  Recommendation: change "9" to "8" and add the merge context parenthetically.
-
-- **[Pass 3] proposal.md:33** — orbit-conventions capability bullet omits the three disciplines.
-  Recommendation: extend the bullet to mention pushback / change-completeness / read-before-reference.
-
-#### SUGGESTION
-- **[Pass 9] explore.md:189** — scenario count "5" should be "6" for change-completeness discipline.
-- **[Pass 9] explore.md:204** — scenario count "8" should be "9" for read-before-reference discipline.
-- **[Pass 5] orbit-review-external/spec.md** — "Recommended-session note" requirement is filed under the wrong parent requirement.
-  Recommendation: move it past the prompt-content scenarios.
-- (4 more) …
-
-### Stale findings suppressed
-None.
-
-### Final assessment
-
-No critical issues. 4 warning(s) to consider. A prior gate-relevant pass has unresolved findings; gate review-proposal UNPASSED. Ready when you are: /orbit:address-reviews add-review-workflows --from-file orbit/changes/add-review-workflows/.orbit-runs/review-proposal-2026-05-18T14-43-41Z.json.
-
-Run summary: orbit/changes/add-review-workflows/.orbit-runs/review-proposal-2026-05-18T14-43-41Z.json
+[then loose-form conversation: what the pattern behind the findings means, what to probe
+next, anything the structure can't say — never contradicting the tail's engine lines]
 \`\`\`
 
-## Worked example (system mode, all clear, no prior external)
-
-Short illustration showing the State 1 "all clear" phrasing — the system-mode default that nudges toward external review before archive:
-
-\`\`\`markdown
-## Review: example-change --as system
-
-Mode: system (inferred from all tasks checked + git diff non-empty)
-Iteration: 1 (first system-mode run for this change)
-Depth: full
-
-### Summary
-
-| Dimension    | Critical | Warning | Suggestion |
-|--------------|----------|---------|------------|
-| Completeness | 0        | 0       | 0          |
-| Correctness  | 0        | 0       | 0          |
-| Coherence    | 0        | 0       | 0          |
-
-### Findings
-
-None.
-
-### Final assessment
-
-All checks passed (in-context pass). Ready when you are: /orbit:review-external --as system example-change — external cross-check required by the review cadence before archive (per orbit-conventions Review mode decision framework; in an early dogfooding cycle, in-context system review missed 3 of 3 real implementation bugs — all caught by external review).
-
-Run summary: orbit/changes/example-change/.orbit-runs/review-system-2026-05-26T15-12-08Z.json
-\`\`\`
-
-Once the external converges — Path A (clean) or Path B (findings resolved, 0 CRITICAL) with full ordered-slot coverage — the engine reports \`gate review-system PASSED\` and the phrasing becomes \`Ready when you are: /orbit:archive <change> — user-invoked\`. Single-voiced throughout: one canonical command, no advertised skip path; entry into the archive phase is the user's call.
 
 `,
     references: [

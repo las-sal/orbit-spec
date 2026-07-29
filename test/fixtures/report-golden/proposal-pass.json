@@ -1,0 +1,54 @@
+{
+  "command": "review",
+  "timestamp": "2026-07-25T11:00:00Z",
+  "change": "golden-change",
+  "final_assessment": "1 critical, 1 warning, 1 suggestion.",
+  "next_recommended": "/orbit:address-reviews golden-change --from-file orbit/changes/golden-change/.orbit-runs/review-proposal-2026-07-25T11-00-00Z.json",
+  "kind": "editorial",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "scorecard": {
+    "completeness": { "critical": 0, "warning": 1, "suggestion": 0 },
+    "correctness": { "critical": 1, "warning": 0, "suggestion": 0 },
+    "coherence": { "critical": 0, "warning": 0, "suggestion": 1 }
+  },
+  "findings": [
+    {
+      "severity": "CRITICAL",
+      "dimension": "correctness",
+      "title": "Delta drops three baseline scenarios",
+      "file": "orbit/changes/golden-change/specs/some-cap/spec.md",
+      "line": 12,
+      "recommendation": "The MODIFIED block must carry the full requirement.\n\n## CRITICAL\n---\n```\nfenced content\n```\nRe-copy the baseline block before editing.",
+      "recommendation_options": [
+        { "label": "A", "body": "Re-copy the baseline requirement block and re-apply the edit" },
+        { "label": "B", "body": "Convert the delta to ADDED\nand leave the baseline untouched" }
+      ]
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "Task 3.2 has no owning requirement",
+      "file": "orbit/changes/golden-change/tasks.md",
+      "line": 40,
+      "recommendation": "Add a spec requirement or drop the task."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "Vocabulary drift: 'gateway' vs 'surface'",
+      "file": "orbit/changes/golden-change/design.md",
+      "line": 8,
+      "recommendation": "Pick one term."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "pass": "4",
+      "title": "CLAUDE.md still lists the old count",
+      "evidence": "grep shows the count already updated"
+    }
+  ],
+  "commentary": "The pattern behind the findings is delta hygiene: both non-trivial items trace to hand-edited MODIFIED blocks.\nProbed the spec deltas hardest; code-level risk feels low."
+}

@@ -40,7 +40,7 @@ const SURFACE: Array<[string, string, string[]]> = [
   ['orbit-bulk-archive-change', 'bulk-archive', ['# Orbit additions']],
   ['orbit-verify-change', 'verify', ['execution disciplines', 'Run-summary emit']],
   ['orbit-onboard', 'onboard', ['execution disciplines', 'self-contained', 'Program architecture', 'orbit/architecture/.orbit-runs/', 'architecture mode — D-arc Stage D2']],
-  ['orbit-review', 'review', ['execution disciplines', 'convergence states', 'Persist the run summary', 'Architecture-mode passes', 'Using doc:', 'First architecture review for this doc']],
+  ['orbit-review', 'review', ['execution disciplines', 'Persist the run summary FIRST', 'paste its output VERBATIM', 'hand-rendering them is PROHIBITED', 'Architecture-mode passes', 'Using doc:', 'First architecture review for this doc']],
   ['orbit-review-external', 'review-external', ['execution disciplines', 'Run-summary emit (T0', 'references/prompt-template.md', 'Handoff preflight']],
   ['orbit-address-reviews', 'address-reviews', ['execution disciplines', 'Ripple cascade', 'resolution log', 'Architecture-scoped']],
   ['orbit-audit-drift', 'audit-drift', ['execution disciplines', 'Vocabulary residue', 'Persist the run summary', 'Architecture staleness check']],

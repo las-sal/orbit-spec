@@ -580,3 +580,26 @@ ratification; D5 mechanizes (b) and (c):
   layer-residue finds — templates unswept after the spec-level scoping — were both theirs); and
   the mid-cycle process correction is now standing discipline: gate verdicts/next-lines are
   READ from the engine, never authored.
+
+- **2026-07-29 — D4 applied (review-consistency shipped; post-apply seam).** The engine owns
+  the review report: NEW `src/core/report-render.ts` (pure render over the findings record —
+  D2b's line-level grammar, blockquote containment, per-genre strict validation with the
+  D4-generation boundary, as-of iteration/trend under one total pass order, the engine tail
+  computed at render time) surfaced as `orbit status --change <name> --report [<TS>]`; goldens
+  transcribed from the canonical example with the pre-boundary error fixtures copied
+  byte-for-byte from the real B2/D3 archives. The walk protocol rewrote to three lanes in the
+  generated body (triage preview from provisional classification; decision lane = prose
+  briefing → discussion → chat-directive ratification with the AskUserQuestion demoted to
+  optional closure; dismissed re-presents; batch prompts dead, delegation recorded); the
+  review body sheds its final-assessment machinery for persist-first + run-and-paste with the
+  greppable hand-rendering prohibition (exit criterion 2's checkable half IS the fidelity
+  suite); review-external's Notes contract and onboard's re-teach landed with it. Apply
+  proceeded via the recorded `gate_overridden` (review-proposal unpassed — the user's explicit
+  pre-authorized sign-off after 9 passes / 69 findings all resolved and two consecutive
+  independent zero-CRITICAL passes; R-d-10's sanctioned path). **1783 tests green** (1754 +
+  29). R-d-9 seam audit (2026-07-29, dated evidence note carried in the apply emit): residency
+  verified (all D4 artifacts in-change; deltas across 7 capabilities), boot chain current
+  (CLAUDE.md orientation pointer + arc doc accurate), charter coverage complete (both exit
+  criteria carried by real tests + the one-observed-cycle half pending post-apply), code
+  touchpoints as declared (report-render.ts; status.ts/cli; four templates; three test
+  suites). Next: system review cadence, then archive (baseline 17 → 18 at sync).

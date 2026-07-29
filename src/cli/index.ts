@@ -462,6 +462,10 @@ program
   .option('--change <id>', 'Change name to show status for')
   .option('--schema <name>', 'Schema override (auto-detected from config.yaml)')
   .option('--full', 'Render the arc view (program band + all workstreams + LAST + WAITING)')
+  .option(
+    '--report [ts]',
+    'Render a review pass as the engine-computed report (rides --change; no <TS> = newest pass)'
+  )
   .option('--json', 'Output as JSON')
   .action(async (options: StatusOptions) => {
     try {

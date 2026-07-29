@@ -1,0 +1,17 @@
+{
+  "command": "review",
+  "timestamp": "2026-07-25T15:00:00Z",
+  "change": "ungated-change",
+  "final_assessment": "No findings.",
+  "next_recommended": "orbit status --change ungated-change --report",
+  "kind": "editorial",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "quick",
+  "scorecard": {
+    "completeness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "correctness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "coherence": { "critical": 0, "warning": 0, "suggestion": 0 }
+  },
+  "findings": []
+}

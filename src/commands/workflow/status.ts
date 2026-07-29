@@ -24,6 +24,7 @@ import {
   renderMalformedHeaderLines,
 } from '../../core/architecture/buckets.js';
 import type { StageState } from '../../core/architecture/state.js';
+import { renderReport } from '../../core/report-render.js';
 import {
   validateChangeExists,
   validateSchemaExists,
@@ -40,6 +41,8 @@ export interface StatusOptions {
   schema?: string;
   json?: boolean;
   full?: boolean;
+  /** D4 `--report [<TS>]`: true when the flag is bare, the token string when given. */
+  report?: string | boolean;
 }
 
 // -----------------------------------------------------------------------------
@@ -51,6 +54,32 @@ export async function statusCommand(options: StatusOptions): Promise<void> {
 
   try {
     const projectRoot = process.cwd();
+
+    // D4 report render — the trail gateway's deepest zoom (rides --change only).
+    // READ-ONLY: raw artifact resolution + normalize + pure render; no file is
+    // created or modified. Errors are clean and exit non-zero via the CLI wrapper.
+    if (options.report !== undefined && options.report !== false) {
+      if (options.json) {
+        throw new Error(
+          '--report cannot be combined with --json: the emit IS the JSON (no JSON render variant is defined)'
+        );
+      }
+      if (!options.change) {
+        throw new Error(
+          '--report requires --change <name>: the report rides the per-change form (bare status stays the sprint view)'
+        );
+      }
+      const reportChange = await validateChangeExists(options.change, projectRoot);
+      const rendered = renderReport(
+        projectRoot,
+        reportChange,
+        typeof options.report === 'string' ? options.report : undefined
+      );
+      spinner?.stop();
+      // Verbatim: the render already ends with its single trailing newline.
+      process.stdout.write(rendered);
+      return;
+    }
 
     // Orientation surface (D-arc Stage D3): bare = current sprint; --full = arc
     // view. `--change` behavior and the no-changes message stay byte-identical.

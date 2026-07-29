@@ -1,0 +1,26 @@
+{
+  "command": "review",
+  "timestamp": "2026-07-25T16:00:00Z",
+  "change": "mismatch-change",
+  "final_assessment": "1 critical, 0 warning, 0 suggestion.",
+  "next_recommended": "/orbit:address-reviews mismatch-change",
+  "kind": "editorial",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "scorecard": {
+    "completeness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "correctness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "coherence": { "critical": 0, "warning": 0, "suggestion": 0 }
+  },
+  "findings": [
+    {
+      "severity": "CRITICAL",
+      "dimension": "completeness",
+      "title": "A critical the scorecard denies",
+      "file": "orbit/changes/mismatch-change/proposal.md",
+      "line": 3,
+      "recommendation": "The zero-critical scorecard contradicts this entry."
+    }
+  ]
+}
