@@ -23,5 +23,5 @@
   },
   "post_state": "orbit validate d4-review-consistency --strict passes; fingerprints 18/18 verified (conventions framework stamped); change now at 26 delta requirements (8 ADDED + 18 MODIFIED) across 7 files (conventions now ×4); 18 tasks",
   "final_assessment": "All 4 iteration-8 findings resolved: the first-generation descriptor now keyed on detection fields with the real per-era archive variants named (and the D3-cycle label corrected); the address-side format copy's update tasked; reviewer_class/depth in the checked set; the framework citation re-pointed by a fourth conventions block (fork A). The iteration-8 pass carried no CRITICAL — with these resolutions landed, the cadence sits one clean independent confirmation from the strict predicate, and R-d-10's ratified calibration (0 CRITICAL + 0 new WARNING-or-above) is available at the apply inflection.",
-  "next_recommended": "/orbit:review --as proposal d4-review-consistency"
+  "next_recommended": "/orbit:review --as proposal --fresh d4-review-consistency"
 }
