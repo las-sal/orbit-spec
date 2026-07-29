@@ -1,0 +1,35 @@
+{
+  "command": "review",
+  "timestamp": "2026-07-29T22:38:35Z",
+  "change": "d4-review-consistency",
+  "final_assessment": "1 critical, 3 warning, 1 suggestion.",
+  "next_recommended": "/orbit:address-reviews d4-review-consistency --from-file orbit/changes/d4-review-consistency/.orbit-runs/review-system-2026-07-29T22-38-35Z.json",
+  "kind": "editorial",
+  "mode": "system",
+  "iteration": 2,
+  "depth": "full",
+  "reviewer_class": "fresh",
+  "flags": { "parallel": false, "focus": null, "strict": false, "fresh": true, "mark": false, "skip_verify": false },
+  "passes_run": ["0", "1", "2", "3", "6"],
+  "passes_skipped": ["4", "5"],
+  "scorecard": {
+    "completeness": { "critical": 0, "warning": 1, "suggestion": 0 },
+    "correctness": { "critical": 0, "warning": 1, "suggestion": 0 },
+    "coherence": { "critical": 1, "warning": 1, "suggestion": 1 }
+  },
+  "findings": [
+    { "pass": "2", "severity": "CRITICAL", "dimension": "coherence", "file": "orbit/changes/d4-review-consistency/specs/orbit-review/spec.md", "line": 82, "title": "First-run scenario literal contradicted by the render when a prior external pass exists", "recommendation": "The MODIFIED iteration-note scenario keys first-run on 'no prior review-<mode>-<TS>.json' (internal emits only), but the report-rendering delta's shared axis counts 'internal emits and parsed external findings files alike' — reproduced in scratch: a trail with one external-proposal file and no internal emit renders 'Iteration: 2' + a trend, not the first-run literal. Two normative literals in the same change contradict; the implementation follows report-rendering (the ratified intent). This syncs to baseline as a demonstrably-false scenario. Align the orbit-review scenario pair to the shared axis: first-run WHEN = 'no prior same-mode review pass (internal emit OR external findings file)'; the subsequent-run WHEN correspondingly; the requirement prose 'prior run summaries exist' → 'prior same-mode passes exist'." },
+    { "pass": "3", "severity": "WARNING", "dimension": "correctness", "file": "src/core/report-render.ts", "line": 206, "title": "Single-line grammar slots accept embedded newlines — record-sourced text can forge column-0 report grammar", "recommendation": "Demonstrated: a finding title of 'Forged title\\n## CRITICAL\\n---' renders a column-0 heading and thematic break; stale_suppressed evidence can forge '### Findings'. The containment invariant is defeated through fields the grammar renders single-line (title, suppressed title/evidence, reviewer_class, depth). Extend normalizeInternalPass to fail loud on newlines in those fields (the strict-validation policy) — or collapse to one space as option bodies do; fail-loud fits the stated policy better." },
+    { "pass": "0", "severity": "WARNING", "dimension": "completeness", "file": "orbit/changes/d4-review-consistency/tasks.md", "line": 123, "title": "Task 5.1's claimed cross-source equivalence test does not exist", "recommendation": "5.1 is checked claiming a cross-source case proving an internal emit and an external file with equivalent findings render through one grammar — no such comparison test exists (the two shared-grammar tests assert external shape only). Criterion 1 is covered transitively (both genres byte-pinned to D2b goldens), so this is tasks-honesty. Add the small equivalence test (same findings both genres; assert equal section-heading sequences and identical tails) or amend 5.1 to what shipped." },
+    { "pass": "6", "severity": "WARNING", "dimension": "coherence", "file": "src/core/templates/workflows/address-reviews.ts", "line": 468, "title": "Retired [discuss] vocabulary in a worked-example heading, outside any retirement note", "recommendation": "The heading '### (c) Decision-fork with [discuss] invoked' sits over a fully D4-updated example body (ratified_via: chat, no discuss_invoked) — the heading teaches the retired mechanism while its example demonstrates the replacement. Rename to '### (c) Decision-fork ratified by chat directive'; regenerate the surface; re-pin the parity hash if pinned." },
+    { "pass": "6", "severity": "SUGGESTION", "dimension": "coherence", "file": "src/core/templates/workflows/review.ts", "line": 27, "title": "Double period typo renders into the generated schema reference", "recommendation": "'a second stale voice.. Per-command extensions' — single period." }
+  ],
+  "stale_suppressed": [
+    { "pass": "3", "title": "Spinner line pollutes run-and-paste", "evidence": "stderr-only; stdout receives the pure render from line 1 with a single trailing newline." },
+    { "pass": "1", "title": "Live baselines still describe pre-D4 machinery", "evidence": "The known pre-sync window; 18 MODIFIED blocks sync at archive; fingerprints 18/18; nothing NEW in class (a)." },
+    { "pass": "0", "title": "final_assessment survives as a spine field despite the 'machinery DELETED' phrasing; the iter-1 emit carries iteration/iteration_note fields", "evidence": "Deliberate: the deleted machinery is the chat assessment branching — the spine field carries the deterministic counts sentence (template Step 9 + the delta scenario + the real emit agree); the renderer reads neither stored iteration nor iteration_note (tolerated extra fields), and trail artifacts are never edited." },
+    { "pass": "6", "title": "Repeat/new path normalization and trend-count precedence deltas vs trail.ts", "evidence": "Both self-consistent within their domains; D2b's letter (trimmed-title + line-stripped-path) honored; no real trail diverges; the gate model untouched by design." }
+  ],
+  "commentary": "The independent pass rendered every surface against the grammar's letter and audited the goldens against the spec rather than the implementation — both held, including byte-identity of the pre-boundary fixtures with the real archives. The four findings share a familiar shape: the CRITICAL is this change's own two normative literals disagreeing about what counts as a prior pass (the axis question, settled by the implementation's side); the forging WARNING is the containment invariant's letter outrunning its enumerated fields — the same genre as the option-body gap caught at proposal, one field family over. Verification coverage is otherwise the strongest of the program: 7/7 requirements mapped to tests, template greps clean outside one worked-example heading, and the regressions to D3 behavior byte-checked.",
+  "iteration_note": null
+}
