@@ -1,0 +1,27 @@
+{
+  "command": "review",
+  "timestamp": "2026-07-29T22:23:44Z",
+  "change": "d4-review-consistency",
+  "final_assessment": "No findings.",
+  "next_recommended": "orbit status --change d4-review-consistency --report",
+  "kind": "editorial",
+  "mode": "system",
+  "iteration": 1,
+  "depth": "full",
+  "reviewer_class": "in-context",
+  "flags": { "parallel": false, "focus": null, "strict": false, "fresh": false, "mark": false, "skip_verify": false },
+  "passes_run": ["0", "1", "2", "3", "6"],
+  "passes_skipped": ["4", "5"],
+  "scorecard": {
+    "completeness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "correctness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "coherence": { "critical": 0, "warning": 0, "suggestion": 0 }
+  },
+  "findings": [],
+  "stale_suppressed": [
+    { "pass": "1", "title": "Pre-archive baseline window: live orbit-review/conventions text still describes the pre-D4 machinery", "evidence": "The 18 MODIFIED blocks sync at archive by design; the generated bodies implement the deltas; nothing regressed (the same suppression pattern as the D3 cycle's pre-sync window)." },
+    { "pass": "6", "title": "One [discuss] grep hit in the generated address body", "evidence": "The intentional retirement note ('the [discuss] escape-hatch option is RETIRED... Pre-D4 logs carry it; readers tolerate both generations') — documentation, not residue." }
+  ],
+  "commentary": "The pass that reviews the machinery is the machinery's first real run: this emit is the first D4-generation record in any trail (spine kind, scorecard, dimension-ready findings, the deterministic counts sentence and render pointer), and the report below is the first run-and-paste through the shipped surface. Verification was implementation-forward: the generated bodies on disk carry the run-and-paste instruction and the three-lane walk with zero retired vocabulary outside the marked retirement notes; the gate computation reads the new emit shape through the trail reader's tolerant counting; all 29 renderer/CLI tests plus the 1783 full suite passed at apply time. Passes 4-5 skipped (no lenses defined). The one-observed-cycle half of exit criterion 2 remains open for the first post-apply address-reviews walk.",
+  "iteration_note": null
+}
