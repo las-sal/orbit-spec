@@ -47,8 +47,8 @@ R-d-9 handoff audit runs by hand at the phase seams.
 - [ ] 2.1 `src/cli/index.ts` + `src/commands/workflow/status.ts`: `--report [<TS>]` rides
       `--change <name>` (bare/`--full` unchanged); no argument = newest review pass (internal
       emits + external findings files on the shared recency axis + tie-break); explicit `<TS>`
-      selects; artifact RESOLUTION is a raw step (enumerate pass artifacts, shared tie-break,
-      genre dispatch) BEFORE parse/normalize — the gate reader is not reused;
+      selects; artifact RESOLUTION is a raw step (enumerate ALL trail artifacts/emits, shared
+      tie-break, genre dispatch) BEFORE parse/normalize — the gate reader is not reused;
       non-renderable genre (spine `command` dispatch) → clean error naming the
       renderable set, exit non-zero; READ-ONLY (no file created or modified)
 - [ ] 2.2 CLI tests (`test/commands/`): newest-default + explicit-TS render; external-pass

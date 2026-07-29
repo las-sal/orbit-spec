@@ -45,11 +45,14 @@ tail line renders ONLY when the engine computes its value: the gate line when
 computation yields `position`, the eligibility line when it yields `next_command` — for an
 ungated schema (all three absent) the tail is the `---` rule alone; no line is ever invented
 (a golden fixture pins the ungated minimal form). VERBATIM-SOURCED multi-line bodies —
-finding recommendations, option bodies, and the Commentary slot's content — render under
+finding recommendations and the Commentary slot's content — render under
 BLOCKQUOTE CONTAINMENT: every line prefixed `> `, so no source line sits at column 0 and none
 can forge a section heading, thematic break, or fence in the report's own grammar (the source
 text is preserved byte-for-byte inside the containment; goldens include multiline bodies
-carrying `## CRITICAL`, `---`, and fence lines).
+carrying `## CRITICAL`, `---`, and fence lines). `recommendation_options` bodies render
+SINGLE-LINE (`- (<label>) <body>` per the canonical example) with any embedded newlines
+replaced by a single space — option bodies are labels for choices, not documents; multi-line
+option content belongs in the recommendation.
 
 #### Scenario: Section order is invariant
 
@@ -84,7 +87,7 @@ in engine-computed sections.
 
 #### Scenario: Historical pass renders with the current tail
 
-- **WHEN** `--report <TS>` renders a pass from last week and the gate state has since changed
+- **WHEN** `--report <TS>` renders a boundary-conformant pass from last week and the gate state has since changed
 - **THEN** the findings body is that pass verbatim while the gate/position/eligibility tail reflects the engine's CURRENT computation
 
 #### Scenario: The trend is trail-computed, as-of the rendered pass
@@ -140,26 +143,28 @@ CONSISTENCY, not just shape: every finding carries an owning `dimension`
 each dimension × severity cell SHALL equal the rollup of the emit's ACTIVE findings
 (suppressed findings excluded) — a type-correct emit whose scorecard disagrees with its
 findings fails the render naming the mismatched cell (the multi-voice contradiction the
-change exists to remove, closed one field deeper). The compatibility BOUNDARY is `scorecard`
-presence: internal emits carrying it (the generation live practice adopted in the D3 cycle)
-render; older pre-scorecard generations (`findings_summary`-only emits, emits without `kind`)
-fail with a clean `pre-capability emit` error NAMING the boundary — never a partial or
-synthetic render (trail COUNTING elsewhere still tolerates all generations; rendering does
-not).
+change exists to remove, closed one field deeper). The render BOUNDARY is the D4 EMIT
+GENERATION — the shape THIS capability defines: the full universal spine (including `kind`) +
+`scorecard` + dimension-carrying `findings[]`. Every earlier real generation fails with the
+clean `pre-capability emit` error NAMING the boundary — the B2-era shape (`kind` +
+`findings_summary`, no scorecard) and the D3-cycle shape (`scorecard`, no `kind`, no
+dimensions) alike; no inference, no relaxation, never a partial or synthetic render (trail
+COUNTING elsewhere still tolerates all generations; rendering does not — history stays
+readable as the raw JSON, which is the record).
 
 #### Scenario: Malformed record fails naming the field
 
 - **WHEN** a review emit lacks a `scorecard` or a finding entry lacks `severity`
 - **THEN** the render fails with an error naming the missing field and the emit path; nothing renders
 
-#### Scenario: Pre-scorecard legacy emits fail at the named boundary
+#### Scenario: Pre-D4 generations fail at the named boundary
 
-- **WHEN** `--report <TS>` resolves to an archived-generation emit carrying `findings_summary` with no `scorecard` (e.g. the B2-era shape, whose `findings[]` is empty)
-- **THEN** the render fails with the clean `pre-capability emit` error naming the scorecard boundary — no partial render, no synthetic scorecard; the error fixtures are pinned from the REAL archived generations, not synthetic approximations
+- **WHEN** `--report <TS>` resolves to a pre-boundary emit — the B2-era shape (`kind` + `findings_summary`, empty `findings[]`, no `scorecard`) OR the D3-cycle shape (`scorecard` but no spine `kind` and no per-finding `dimension`)
+- **THEN** the render fails with the clean `pre-capability emit` error naming the D4-generation boundary — no partial render, no inference; the error fixtures are pinned from the REAL archived generations of BOTH shapes, not synthetic approximations
 
-#### Scenario: Scorecard-generation emits without commentary render fine
+#### Scenario: D4-generation emits without commentary render fine
 
-- **WHEN** a scorecard-carrying review emit with no `commentary` field is rendered
+- **WHEN** a boundary-conformant review emit with no `commentary` field is rendered
 - **THEN** the render succeeds with the Commentary section omitted
 
 #### Scenario: Scorecard/findings mismatch fails whole

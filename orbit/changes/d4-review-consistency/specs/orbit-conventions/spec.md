@@ -44,7 +44,7 @@ kind             enum         "workflow" | "editorial" | "lifecycle"
 Per-kind extensions:
 
 - **`kind: "workflow"`** — emitted by `explore`, `propose`, `new`, `continue`, `ff`, `apply`, `verify`, `architect` (D-arc Stage D2; `architect` emits to the architecture trail with `change: null` plus a `doc` extension — shape owned by `orbit-architect`). Per-command extensions are defined in the `orbit-run-summary-emit` capability (e.g., `apply.chunk_complete`, `verify.verdict`, `explore.decisions_captured`). Consent-era `apply` emits additionally carry `consent: "user-invoked" | "prompted"` (per `orbit-lifecycle-consent`).
-- **`kind: "editorial"`** — emitted by `review`, `address-reviews`, `audit-drift`, `review-external`. Per-command extensions include: `iteration` (when applicable to the command — e.g., review iter-N, address-reviews iter-N), `scorecard` (the 3-dimension × severity counts shape — Completeness/Correctness/Coherence, each with critical/warning/suggestion — on review completion emits; the renderer's required counts source per `orbit-report-rendering`; D-arc Stage D4), and full `findings[]` entries (each carrying its own `title` — no separate title array). The former `findings_summary` AND `finding_titles` fields are RETIRED for review emits (superseded by `scorecard`; live practice had already migrated) — readers SHALL tolerate both generations (a severity count is recoverable by counting `findings[]`, the existing trail-reader fallback); audit-drift and archive-audit emits keep their own `findings_summary` shapes unchanged. Command-specific fields beyond these are defined in per-skill schema references (`references/run-summary-schema.md`, shipped alongside the generated skill).
+- **`kind: "editorial"`** — emitted by `review`, `address-reviews`, `audit-drift`, `review-external`. Per-command extensions include: `iteration` (when applicable to the command — e.g., review iter-N, address-reviews iter-N), `scorecard` (the 3-dimension × severity counts shape — Completeness/Correctness/Coherence, each with critical/warning/suggestion — on review completion emits; the renderer's required counts source per `orbit-report-rendering`; D-arc Stage D4), and full `findings[]` entries (each carrying its own `title` — no separate title array). The former `findings_summary` AND `finding_titles` fields are RETIRED for review emits (superseded by `scorecard`; live practice had already migrated) — readers SHALL tolerate both generations (a severity count is recoverable by counting `findings[]`, the existing trail-reader fallback; the report RENDERER's strict generation boundary is the named exception, per `orbit-report-rendering`); audit-drift and archive-audit emits keep their own `findings_summary` shapes unchanged. Command-specific fields beyond these are defined in per-skill schema references (`references/run-summary-schema.md`, shipped alongside the generated skill).
 - **`kind: "lifecycle"`** — emitted by `archive` only. Per-command extensions include: `archive_path`, `audit`, `sync_specs` (reports what the archive flow's spec-sync step did, mirroring upstream's archive summary), `unresolved_markers`, `user_decision`, plus other fields defined in the archive skill. Consent-era emits (per `orbit-lifecycle-consent`) additionally carry the flat `consent: "user-invoked" | "prompted"` field.
 
 **Canonical examples** (one per kind, illustrating spine + per-kind extensions):
@@ -159,3 +159,22 @@ Lifecycle-kind example — `archive-2026-05-20T16-31-59Z.json` written after `/o
 
 - **WHEN** a downstream consumer (dashboard, CI bot, IDE plugin) reads `.orbit-runs/*.json` files
 - **THEN** the consumer MAY route by reading the `kind` field directly rather than pattern-matching filename prefixes (e.g., `review-*`, `address-reviews-*`); filename prefix routing remains valid as a fallback
+
+### Requirement: 3-dimension scorecard reporting convention
+
+The system SHALL use a consistent 3-dimension scorecard for review and audit reports.
+
+#### Scenario: Standard dimensions
+
+- **WHEN** a review or audit command emits a scorecard
+- **THEN** the dimensions are Completeness / Correctness / Coherence (matching upstream `verify-change`)
+
+#### Scenario: Review-report scorecard table is the engine grammar (D-arc Stage D4)
+
+- **WHEN** a proposal- or system-mode review report renders its scorecard table
+- **THEN** the table is `orbit-report-rendering`'s pinned Dimension × severity-counts form (the cells ARE the validated findings rollup) — the Status-column convention below does not apply to engine-rendered review reports
+
+#### Scenario: Status column carries metrics (hand-rendered scorecards)
+
+- **WHEN** a verify- or audit-style scorecard is hand-rendered as a table (outside the engine-rendered review report)
+- **THEN** the Status column contains brief metrics (e.g., "X/Y tasks, N reqs", "2 baseline regressions, 1 cohesion drift"), not just issue counts

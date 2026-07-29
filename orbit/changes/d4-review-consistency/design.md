@@ -96,9 +96,12 @@ Ready when you are: <next_command>
 ```
 (EACH tail line renders only when the engine computes its value — an ungated schema's tail is
 the `---` rule alone; the ungated golden pins that minimal form)
-Header rules: internal = all five fields from the emit; external = change from the argument,
-mode from the filename `<as>`, iteration = same-mode trail ordinal, `external (<reviewer>,
+Header rules: internal = change/mode/reviewer class/depth from the emit, iteration = the
+same-mode trail ordinal (COMPUTED, both genres — never the emit's stored field, per the
+render-time-context requirement); external = change from the argument, mode from the filename
+`<as>`, iteration = the same ordinal, `external (<reviewer>,
 <date>)`, depth omitted (the ` · Depth:` cell disappears whole); scorecard table internal-only.
+Option bodies render single-line (embedded newlines → one space).
 The `---` rule fences the engine tail; the gate line renders the phase gate the mode maps to
 (`review-proposal` for proposal, `review-system` for system). One newline discipline: sections
 separated by exactly one blank line; the report ends after the eligibility line with a single
@@ -132,7 +135,8 @@ is untouched; determinism applies from ingest onward. A parse-rejected external 
 non-renderable → the clean error names it. The gate model's OWN trail consumption
 (`gates.ts`) keeps the lean parse — the normalized shape is the renderer's input, not a gate
 contract change; `--report`'s artifact RESOLUTION is likewise its own raw step (enumerate the
-trail's pass artifacts, apply the shared tie-break, dispatch genre, THEN parse/normalize —
+trail's artifacts/emits — ALL genres, so the dispatch error can name a propose/apply emit
+cleanly — apply the shared tie-break, dispatch genre, THEN parse/normalize —
 never overloading the gate reader; iter-1-external S1). The `## Notes` → Commentary mapping
 carries the SAME content contract as internal commentary, stated at the source: the external
 prompt template's Notes instruction gains the no-counts/verdicts/next-commands prohibition
@@ -224,7 +228,12 @@ future rename is fine, just not re-litigated here.
 - **Chat-ratification auditability**: recording `ratified_via: "chat"` with the resolved
   content keeps the trail honest without forcing prompts; the one-observed-cycle criterion
   covers the UX claim the body text can't prove.
-- **Strict render vs legacy emits**: pre-D4 review emits lack `commentary` (fine — optional
-  field, section omitted) but carry the required shapes; genuinely malformed historical emits
-  fail loud with the named field — correct behavior, and `--report <TS>` of a healthy pass is
-  unaffected.
+- **Strict render vs legacy emits**: an EMPIRICAL survey (iter 6) inverted the earlier
+  assumption — NO pre-D4 emit conforms: the B2-era generation carries `kind` +
+  `findings_summary` (no scorecard, empty findings); the D3-cycle generation carries
+  `scorecard` but no spine `kind` and no per-finding `dimension`. The render boundary is
+  therefore the D4 GENERATION itself (user fork, iter 6): only emits produced under this
+  change's contract render; both real earlier shapes fail with the clean `pre-capability
+  emit` error (fixtures pinned from the real archives). History stays readable as raw JSON —
+  the emit is the record; the renderer is a convenience the new generation earns.
+  `--report <TS>` of historical passes becomes meaningful as post-D4 passes accumulate.
