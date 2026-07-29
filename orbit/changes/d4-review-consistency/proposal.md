@@ -70,12 +70,13 @@ emit IS the JSON); watch/refresh modes.
   fork-to-closure-device rewrite, the walk-mode UX de-prompted, the resolution-log shape
   gaining entry-level `ratified_via`/`resolution` + `delegation_directive`/off-menu `chosen`
   and shedding `discuss_invoked`, the cascade requirement's fork-prompt vocabulary moved to
-  the decision-lane protocol), `orbit-conventions` (MODIFIED ×3 — the stock-phrasings
+  the decision-lane protocol), `orbit-conventions` (MODIFIED ×4 — the stock-phrasings
   standard scoped to audit + architecture reports; the emit-format requirement's editorial
   extensions and canonical example moved to the `scorecard` shape with `findings_summary`
   AND `finding_titles` retired for review emits; the scorecard-convention's Status-column
   scenario scoped to hand-rendered verify/audit tables — the engine-rendered review table is
-  the counts grammar), `orbit-orientation` (MODIFIED ×1 — the byte-identical
+  the counts grammar; the Review-mode-decision-framework's attribution sentence re-pointed at
+  the review-system cadence's external slot as rendered by the report tail), `orbit-orientation` (MODIFIED ×1 — the byte-identical
   clause scoped to the pre-existing `--change` surface), `orbit-engine-gates` (MODIFIED ×1 —
   the freshness rule's parenthetical made self-contained after the final-assessment collapse),
   `orbit-review-external` (MODIFIED ×1 — the reference prompt template's `## Notes`

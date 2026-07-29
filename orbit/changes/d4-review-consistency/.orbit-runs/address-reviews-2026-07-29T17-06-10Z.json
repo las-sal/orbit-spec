@@ -1,0 +1,25 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-29T17:06:10Z",
+  "change": "d4-review-consistency",
+  "source": "--from-file",
+  "source_path": "orbit/changes/d4-review-consistency/.orbit-runs/review-proposal-2026-07-29T17-03-18Z.json",
+  "source_format": "internal-review",
+  "source_mode": "proposal",
+  "source_iteration": 9,
+  "walk_mode": "per_finding",
+  "kind": "editorial",
+  "resolutions": [
+    { "finding": "Impact still enumerates conventions as MODIFIED ×3", "severity": "WARNING", "file": "orbit/changes/d4-review-consistency/proposal.md", "pushback": "still applies — verified at :73", "classification": "trivial fix", "action": "Impact bullet updated to ×4 with the one-clause description of the framework attribution re-point; the implied totals now match the actual 18 MODIFIED.", "ripple_cascade": { "applied": ["orbit/changes/d4-review-consistency/proposal.md"], "flagged_not_applied": [] } },
+    { "finding": "D3's checked-set echo lags the spec and misnames iteration as a validated field", "severity": "SUGGESTION", "file": "orbit/changes/d4-review-consistency/design.md", "pushback": "still applies — verified at :113", "classification": "trivial fix", "action": "D3's parenthetical aligned with the spec's checked set (mode, reviewer_class, depth, scorecard, findings entry shape) with iteration explicitly named renderer-computed and never validated.", "ripple_cascade": { "applied": ["orbit/changes/d4-review-consistency/design.md"], "flagged_not_applied": [] } }
+  ],
+  "resolution_summary": {
+    "resolved": 2,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "post_state": "orbit validate d4-review-consistency --strict passes; fingerprints 18/18 verified; 26 delta requirements (8 ADDED + 18 MODIFIED) across 7 files; 18 tasks",
+  "final_assessment": "Both iteration-9 findings resolved — two-line enumeration ripples, nothing structural. The cadence's substance: 69 findings across nine passes, all resolved, none re-opened; two consecutive independent passes with zero CRITICALs; every load-bearing contract survived two independent examinations unchanged.",
+  "next_recommended": "/orbit:review --as proposal --fresh d4-review-consistency"
+}

@@ -110,7 +110,8 @@ trailing newline.
 ### D3. Strict/loud validation (D-d4-6a — deliberately unlike orientation)
 
 The renderer validates its input before rendering: required spine fields plus the review
-extensions (`mode`, `iteration`-ables, `scorecard` shape, `findings[]` entry shape). First
+extensions (`mode`, `reviewer_class`, `depth`, the `scorecard` shape, the `findings[]` entry
+shape — iteration is renderer-computed and never validated). First
 missing/mistyped field → clean error naming it; NO partial render. Rationale: `--report` is
 the AI's own tool in the run-and-paste loop — failing loud catches a malformed emit at the
 source pass, where it can be fixed. The D3 orientation surface keeps its graceful degradation
