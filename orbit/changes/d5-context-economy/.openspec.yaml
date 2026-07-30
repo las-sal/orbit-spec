@@ -1,0 +1,27 @@
+schema: spec-driven
+created: 2026-07-30
+schema_version: 3
+architecture:
+  doc: d-arc-arbitered-flow
+  stage: d5-context-economy
+base_fingerprints:
+  orbit-architect:
+    Architect run-summary emit with handoff section: sha256:223b21e1eb76504f060f86ac7b3852b455852ab99fbfca09eb6d1c0193f3ae47
+  orbit-conventions:
+    Internal-run JSON summary format: sha256:befac5df104f2701a2f99d0c61cc76c451c129488117867ad5a9b7d7aff1cb10
+    "`explore.md` five-section format": sha256:bcbc069aba4893bda3bb3be3438634d12ee49359c1571c07d640d5349325c59d
+  orbit-engine-gates:
+    Single-voiced canonical-next computation: sha256:21e0864c09aaa77f3cbbde5ad6a3defea18a843318d2dd0ff6ef2ed25c725392
+  orbit-explore-modifications:
+    explore.md five-section convention: sha256:ffcb7bc69533c15ae2bd21885fd97d3f05c5b36aa4605bba8069e12d68006249
+  orbit-propose-modifications:
+    Section-to-artifact mapping: sha256:66e7cbd304634e2309f5d31bd0ac4df98bcbd030b5665d7f6f65be5a9bebf4dd
+  orbit-review:
+    Review command available with `--as` mode flag: sha256:dee9f4d5d649f74ed2087a434990ce4726b40d5adb2f7f3aa37ee0308d7e880e
+    "`--fresh` runs pass work in a clean execution context": sha256:6ab0aeda2067ee8bcd48e086c4d6d3a248312ffc36370ad558f697961bedd5cd
+    Internal run summary persisted per mode: sha256:713eb2a412804e619995fc1dce49fd0a72be8f9c3cad694c82a08ce6be3198cc
+  orbit-review-external:
+    Review-external command available: sha256:bafdaba0134803d223f28afff348f1d0e33028a694daac2126894dea26d72442
+  orbit-run-summary-emit:
+    Emit scope: sha256:511bae5855a7f3492d78d6b09906eaedfa9b26fb00bab0c69b547f52cdc74aca
+    Apply per-chunk-end emission: sha256:5cc5b9e73cf7983686e5158662b56a884069866e50f3fafe1b802624cc813d74

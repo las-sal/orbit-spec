@@ -1,0 +1,11 @@
+{
+  "command": "propose",
+  "timestamp": "2026-07-30T17:29:27Z",
+  "change": "d5-context-economy",
+  "final_assessment": "Generated proposal/design/specs/tasks for d5-context-economy in consume mode: the exploration's 9 decisions (0 open questions — nothing to walk at promotion) seeded 11 delta files carrying 23 requirement blocks (11 ADDED incl. the new orbit-emit-composition capability's 7; 12 MODIFIED, all base-fingerprinted 12/12). Design maps the decisions to implementation shape (D1–D8 + alternatives from Considered & out) and carries the first authored ## Touchpoints instance per its own D6. Tasks are 4 chunks / 9 groups / 30 tasks. The staging directory was consumed (explore.md + sketches/body-inventory.md + both explore emits moved into the change); the staged architecture citation survived a failed yaml-module merge via a direct metadata edit — stage d5-context-economy computes in-change.",
+  "next_recommended": "/orbit:review d5-context-economy — proposal artifacts ready; review before apply",
+  "kind": "workflow",
+  "artifacts_created": ["proposal", "design", "tasks", "specs/orbit-emit-composition", "specs/orbit-review", "specs/orbit-review-external", "specs/orbit-orientation", "specs/orbit-run-summary-emit", "specs/orbit-conventions", "specs/orbit-explore-modifications", "specs/orbit-architect", "specs/orbit-propose-modifications", "specs/orbit-engine-gates", "specs/orbit-audit-drift"],
+  "delta_count": 23,
+  "from": "explore"
+}
