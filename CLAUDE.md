@@ -186,6 +186,41 @@ gate verdicts and next-lines are READ from `orbit status --change --json`, never
 (two emit divergences + one hand-authored verdict were record-only corrected on the trail).
 **1754 tests green.**
 
+**Stage D4 (d4-review-consistency) is COMPLETE and ARCHIVED**
+(`orbit/changes/archive/2026-07-30-d4-review-consistency/`): **the engine owns the review
+report**. NEW `src/core/report-render.ts` — one pure, deterministic, byte-stable render of any
+review pass (internal emit OR external findings file) through ONE shared grammar, surfaced at
+**`orbit status --change <name> --report [<TS>]`** (goldens transcribed from design D2b's
+canonical example): genre-conditional header, as-of iteration/trend under ONE total pass order
+(the SHARED internal+external axis), internal-only scorecard table, blockquote-contained
+recommendations, `### Suppressed`, the quarantined `### Commentary` slot, and the
+`---`-fenced ENGINE tail (gate/position/eligibility computed at render time — the reviewing AI
+authors none of them). Strict per-genre validation, all fail-loud: the D4-GENERATION boundary
+(both real earlier emit generations fail with a clean `pre-capability emit` error; fixtures
+byte-copied from real archives), the COMPLETE single-line slot set behind one checked helper
+(title/file/option label/suppressed/reviewer_class/depth; CR+LF), spine SEMANTICS
+(command/kind/reviewer_class + the DETERMINISTIC facts: `final_assessment` = the counts
+sentence, `next_recommended` = the findings-dependent pointer, `change` = the rendered change),
+scorecard-cell rollup equality, thrown tail computation ≠ ungated, CommonMark fence tracking,
+the header-region latch, real calendar dates. Review bodies rewrote to **persist-first +
+run-and-paste** (hand-rendering the structured sections is PROHIBITED in change modes,
+grep-tested; architecture mode exempt/interim; `findings_summary`/`iteration_note` RETIRED in
+change modes — the renderer computes the iteration note from the trail). The address walk is
+**three lanes**: obvious-fix (previewed at triage before any fix), decision lane (prose
+briefing → discussion → **chat-directive ratification**; AskUserQuestion = optional
+post-discussion closure only; entry-level `ratified_via`/`resolution`; `[discuss]`/
+`discuss_invoked` retired), stale re-suppression. The orientation strip's `⟲N` counts the
+SHARED pass axis (one iteration semantics — strip and report ordinals agree by construction).
+Baseline capabilities **17 → 18** (`orbit-report-rendering` ADDED; 6 capabilities modified,
+27 delta blocks synced byte-verified). The cycle: 9-pass proposal cadence (69 findings),
+apply via the user's explicit pre-authorized gate sign-off, then a FIVE-pass system cadence —
+in-context CLEAN → fresh (5, incl. the observed three-lane cycle: the "fail loud" chat
+directive) → **external GPT-5 Codex** (10, incl. 4 CRITICAL) → fresh confirm (3; the
+ordinal-divergence fork user-ratified "A") → in-context confirm CLEAN — 23 system findings
+resolved, none re-opened; ~100 findings across 24 passes total. **The review-system gate
+computed PASSED — the first D-arc archive through a passed gate, no override.** The archive:
+user-typed, zero consent prompts, fingerprints 19/19, **1819 tests green.**
+
 ## Source of truth for the plan
 
 - `orbit/architecture/fork-and-orbify.md` — the COMPLETED fork-program architecture (historical record; relocated from orbit/explore/ 2026-07-08). Decisions **D1–D15**

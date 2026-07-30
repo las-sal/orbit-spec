@@ -603,3 +603,21 @@ ratification; D5 mechanizes (b) and (c):
   criteria carried by real tests + the one-observed-cycle half pending post-apply), code
   touchpoints as declared (report-render.ts; status.ts/cli; four templates; three test
   suites). Next: system review cadence, then archive (baseline 17 → 18 at sync).
+
+- **2026-07-30 — D4 ARCHIVED (baseline 17 → 18).** The system cadence converged over five
+  shared-axis passes — in-context CLEAN → fresh (5 findings; the observed three-lane cycle
+  satisfying exit criterion 2's UX half: obvious-fix preview at triage, prose briefing, the
+  "fail loud" chat directive as ratification) → **external GPT-5 Codex** (10 findings, 4
+  CRITICAL: the pre-3b.5 AskUserQuestion imperative, the incomplete single-line slot set, the
+  ignored emit `change`, the non-verbatim delta prompt block) → fresh confirm (3 suggestions;
+  the ordinal-divergence decision-lane fork resolved by the user's "A": the strip's ⟲N now
+  counts the SHARED pass axis via the exported confidence-gated counter — one iteration
+  semantics across surfaces, verified live ⟲9/⟲4 = the report ordinals) → in-context confirm
+  CLEAN. 23 system-phase findings, all resolved, none re-opened; whole-change total 100
+  findings across 24 passes. **The review-system gate computed PASSED — the first D-arc
+  archive to enter through a passed gate with no override.** Archive: user-typed, zero consent
+  prompts, fingerprints 19/19 verified, sync of 27 delta blocks (8 ADDED + 19 MODIFIED)
+  byte-verified against baseline, `orbit-report-rendering` created as the 18th capability.
+  **1819 tests green.** Both exit criteria hold shipped: the byte-stable engine render
+  golden-tested; the observed cycle recorded with entry-level `ratified_via`/`resolution`.
+  Stage d4 renders quiescent — completion awaiting ratification.

@@ -127,28 +127,33 @@ The system SHALL accept a `--from-file <path>` flag and parse the file's content
 
 ### Requirement: Discover → triage → walk → ripple flag → report lifecycle
 
-The system SHALL execute five lifecycle stages: (1) discover markers (or load from file), (2) triage with user (numbered list, optional scoping), (3) walk each marker per-finding (walk-mode default; `--batch` opts INTO legacy batch-mode), (4) ripple cascade (auto-apply ripples to in-scope files by default; `--no-cascade` opts out), (5) report a resolution log.
+The system SHALL execute five lifecycle stages: (1) discover markers (or load from file), (2) triage with user (numbered list, optional scoping) — the triage OPENS with a compact preview of every finding headed for the OBVIOUS-FIX lane (its one-line resolution named) BEFORE any fix lands, so the user can pull any item into the decision lane with a word (the over-classification guard: presentation-ordering, not a prompt); the preview derives from a PROVISIONAL classification (per-finding pushback has not yet run) — walk-time pushback may reclassify a finding, and a reclassified item is announced before its fix lands, (3) walk each marker per-finding (walk-mode default; `--batch` opts INTO legacy batch-mode), (4) ripple cascade (auto-apply ripples to in-scope files by default; `--no-cascade` opts out), (5) report a resolution log.
 
-**Walk-mode is the default**: each finding receives its own pushback → classify → fix → ripple-cascade → remove-marker cycle. Batch-mode (all findings resolved together before any ripple) is opt-in via the `--batch` flag or by verbal batch-intent in the user's invocation message (per `Walk-mode by default with --batch opt-in`).
+**Walk-mode is the default**: each finding receives its own pushback → classify → resolve → ripple-cascade → remove-marker cycle, where "resolve" follows the finding's lane — obvious-fix findings apply directly; decision-lane findings follow the present → discuss → ratify protocol (per `Disjunctive recommendation fields surface as decision forks`: a full-prose briefing in chat, genuine back-and-forth, ratification by user chat directive or by the optional closure prompt). Batch-mode (all findings resolved together before any ripple) is opt-in via the `--batch` flag or by verbal batch-intent in the user's invocation message (per `Walk-mode by default with --batch opt-in`).
 
 **Cascade is the default**: when a finding resolves, ripple-flagged files are automatically updated unless they fall into one of four lifecycle-invariant OUT categories (audit trail, baseline specs, cross-change directories, safe-exclusions) — see `Ripple cascade by default`. `--no-cascade` reverts to v1 list-only behavior; the resolution log records ripple-flagged files in `flagged_not_applied` regardless of mode.
 
-**Decision-fork detection** fires within Step 3's walk, after classify, before fix, and only when classify == "decision required" (per `Disjunctive recommendation fields surface as decision forks`).
+**Decision-lane protocol** fires within Step 3's walk, after classify, and only when classify == "decision required" (per `Disjunctive recommendation fields surface as decision forks`).
 
 #### Scenario: Triage scoping
 
 - **WHEN** markers are discovered and presented as a numbered list
 - **THEN** the user can specify subset scoping (e.g., "just 1-3") and only those markers are walked
 
+#### Scenario: Lane preview before any fix
+
+- **WHEN** the walk begins with findings classified into lanes
+- **THEN** the obvious-fix lane's items are listed compactly (finding + its one-line resolution) BEFORE the first fix is applied, and a user word ("discuss the import one") moves that item to the decision lane
+
 #### Scenario: Walk-mode lifecycle order per finding
 
 - **WHEN** the lifecycle runs in walk-mode (default) with multiple findings in scope
-- **THEN** each finding completes its full inner cycle (pushback → classify → fix → ripple-cascade → remove-marker) before the next finding's pushback begins; the user can interrupt between findings, and the resolution log captures partial completion if interrupted
+- **THEN** each finding completes its full inner cycle (pushback → classify → resolve per lane → ripple-cascade → remove-marker) before the next finding's pushback begins; the user can interrupt between findings, and the resolution log captures partial completion if interrupted
 
 #### Scenario: Batch-mode lifecycle order
 
 - **WHEN** the lifecycle runs in batch-mode (`--batch` flag or verbal trigger)
-- **THEN** all findings complete pushback + classify + fix in one pass before any ripple-cascade fires; ripples are applied once at the end as a single aggregated step. The resolution log records `walk_mode: "batch"`.
+- **THEN** all findings complete pushback + classify + resolve in one pass before any ripple-cascade fires; ripples are applied once at the end as a single aggregated step; decision-lane findings STILL get their per-finding briefing and ratification (batch never merges decisions into one prompt). The resolution log records `walk_mode: "batch"`.
 
 ### Requirement: Pushback discipline applied per marker
 
@@ -176,7 +181,7 @@ The system SHALL verify each marker against current state before fixing — rega
 
 ### Requirement: Classification of each marker
 
-The system SHALL classify each marker as one of: trivial fix, decision required, stale, or unresolvable.
+The system SHALL classify each marker as one of: trivial fix, decision required, stale, or unresolvable — the classification IS the lane assignment: trivial fix = the obvious-fix lane (auto-resolved, previewed at triage); decision required = the decision lane (present → discuss → ratify); stale and unresolvable follow their own paths unchanged.
 
 #### Scenario: Classification heuristics
 
@@ -186,12 +191,12 @@ The system SHALL classify each marker as one of: trivial fix, decision required,
 #### Scenario: Trivial fix
 
 - **WHEN** a marker is classified as trivial fix
-- **THEN** the command proposes the edit, applies it, and removes the marker (no `AskUserQuestion` needed)
+- **THEN** the command proposes the edit in the triage-time lane preview, applies it, and removes the marker (no `AskUserQuestion`, no discussion — unless the user pulled it into the decision lane at the preview)
 
 #### Scenario: Decision required
 
 - **WHEN** a marker is classified as decision required
-- **THEN** the command surfaces 2-4 concrete options via `AskUserQuestion` (rather than asking open-ended); applies the user's choice; removes the marker
+- **THEN** the command presents a FULL-PROSE briefing in chat — what the finding means, why it matters, terminology level-set where concepts are novel, the options with real tradeoffs — and engages the discussion; ratification follows per the decision-lane protocol (a user chat directive suffices; the closure prompt is optional); the marker is removed on resolution
 
 #### Scenario: Unresolvable — default file as task
 
@@ -251,7 +256,7 @@ The cascade IN set is defined by exclusion. The OUT list captures four lifecycle
 #### Scenario: Cascade applies to non-markdown project files
 
 - **WHEN** a finding resolves and its ripple-flag set includes a non-markdown project file (e.g., `src/handlers.py`, `bin/deploy.sh`, `Dockerfile`, `package.json`, a Swift / Go / C source file, or any dotfile in the project root)
-- **THEN** the cascade edits the file consistent with the primary fix; the resolution log records the path under `ripple_cascade.applied`. File extension is NOT a discriminator — cascade applies the same pushback + classify + fix lifecycle to any file in the IN set. Pushback discipline + decision-fork prompts handle ambiguous edits regardless of file type.
+- **THEN** the cascade edits the file consistent with the primary fix; the resolution log records the path under `ripple_cascade.applied`. File extension is NOT a discriminator — cascade applies the same pushback + classify + fix lifecycle to any file in the IN set. Pushback discipline + the decision-lane protocol (per `Disjunctive recommendation fields surface as decision forks`) handle ambiguous edits regardless of file type.
 
 #### Scenario: Cascade applies to orbit framework files when developing orbit itself
 
@@ -332,7 +337,7 @@ The system SHALL NOT create new `@review:` markers as part of its own operation.
 
 ### Requirement: Walk-mode by default with --batch opt-in
 
-The system SHALL execute Step 3's lifecycle in walk-mode by default — each finding completes its full inner cycle (pushback → classify → fix → ripple-cascade → remove-marker) before the next finding begins. Batch-mode (all findings resolved together before any ripple-cascade fires) is opt-in.
+The system SHALL execute Step 3's lifecycle in walk-mode by default — each finding completes its full inner cycle (pushback → classify → resolve per lane → ripple-cascade → remove-marker) before the next finding begins. Batch-mode (all findings resolved together before any ripple-cascade fires) is opt-in.
 
 **Opt-in triggers** (mutually-exclusive):
 
@@ -340,21 +345,21 @@ The system SHALL execute Step 3's lifecycle in walk-mode by default — each fin
 2. **Verbal `--batch` in the invocation message only**: if the user's invocation message (the message that triggered the command) contains a clearly batch-intent phrase ("fix them all", "batch them", "go ahead with all", "address all at once", or similar phrases conveying batch-resolution intent), the AI SHALL treat this as a verbal `--batch` and proceed in batch-mode. The verbal phrase MUST be in the invocation message; phrases inside subsequent walk-step responses do NOT shift mode unless they are clearly command-shaped (e.g., a bare "go batch" or "switch to batch" message).
 3. **Command-shaped mid-walk interruption**: during a walk, if the user sends a bare message that is unambiguously a mode-switch command ("go batch", "switch to batch", "batch the rest"), the AI SHALL treat this as a verbal `--batch` for the remainder of the walk. Ambiguous mid-walk phrases ("just fix them all" said in passing, "let's keep going") do NOT shift mode.
 
-**Walk-mode UX**: at each per-finding boundary, the AI surfaces the finding's title + classification + proposed fix to the user via `AskUserQuestion`, applies the resolution, then proceeds to the next finding. The user can interrupt between findings.
+**Walk-mode UX**: at each per-finding boundary, the AI resolves per the finding's LANE — an obvious-fix finding (previewed at triage) applies its resolution with no prompt and no discussion; a decision-lane finding follows the present → discuss → ratify protocol (per `Disjunctive recommendation fields surface as decision forks`). No mandatory per-finding `AskUserQuestion` exists; the user can interrupt between findings.
 
-**Batch-mode UX**: the AI completes pushback + classify + fix for all findings without per-finding `AskUserQuestion` prompts, then applies all ripple-cascades together as a final step. Decision-fork prompts (per `Disjunctive recommendation fields surface as decision forks`) still fire for findings classified as "decision required" — batch-mode does NOT suppress user decisions on disjunctive recommendations; it only suppresses per-finding-completion checkpoints for unambiguous fixes.
+**Batch-mode UX**: the AI completes pushback + classify + resolve for all findings, then applies all ripple-cascades together as a final step. Decision-lane findings STILL receive their per-finding briefing and ratification (chat directive or closure prompt) — batch-mode does NOT suppress user decisions; it only suppresses per-finding-completion pacing for obvious-fix and stale findings, and one prompt NEVER spans multiple findings.
 
 **Resolution log capture**: the top-level `walk_mode` field in `address-reviews-<TS>.json` SHALL be set to `"per_finding"` in walk-mode and `"batch"` in batch-mode.
 
 #### Scenario: Default invocation runs in walk-mode
 
 - **WHEN** the user invokes `/orbit:address-reviews <change-name>` (no `--batch` flag, no batch-intent verbal phrase in the invocation message) and three findings are discovered
-- **THEN** the lifecycle walks each finding individually: pushback finding 1 → classify → fix → cascade → remove-marker → pushback finding 2 → classify → fix → cascade → remove-marker → pushback finding 3 → … The resolution log records `walk_mode: "per_finding"`.
+- **THEN** the lifecycle walks each finding individually: pushback finding 1 → classify → resolve per lane → cascade → remove-marker → pushback finding 2 → … The resolution log records `walk_mode: "per_finding"`.
 
 #### Scenario: --batch flag triggers batch-mode
 
 - **WHEN** the user invokes `/orbit:address-reviews <change-name> --batch`
-- **THEN** the lifecycle completes all findings' pushback + classify + fix without per-finding checkpoints, then applies all ripple-cascades together. The resolution log records `walk_mode: "batch"`.
+- **THEN** the lifecycle completes all findings' pushback + classify + resolve without per-finding pacing checkpoints, then applies all ripple-cascades together. The resolution log records `walk_mode: "batch"`.
 
 #### Scenario: Verbal batch-intent in invocation message triggers batch-mode
 
@@ -371,76 +376,84 @@ The system SHALL execute Step 3's lifecycle in walk-mode by default — each fin
 - **WHEN** during a walk, between finding 2 and finding 3, the user sends a response like "yeah let's just keep going" or "fine, fix them all" in the context of a back-and-forth conversation
 - **THEN** the AI does NOT shift to batch-mode; the walk continues. The threshold for command-shape recognition is a bare, unambiguous mode-switch message; conversational continuations are not triggers.
 
-#### Scenario: Batch-mode preserves decision-fork prompts
+#### Scenario: Batch-mode preserves per-finding decisions
 
-- **WHEN** batch-mode is active AND one of the findings is classified as "decision required" AND its `recommendation` field is disjunctive (triggering `Disjunctive recommendation fields surface as decision forks`)
-- **THEN** the decision-fork prompt STILL fires for that finding even in batch-mode; only unambiguous "trivial fix" and "stale" findings short-circuit user interaction in batch-mode
+- **WHEN** batch-mode is active AND one of the findings is classified as "decision required"
+- **THEN** that finding STILL receives its full-prose briefing and per-finding ratification (chat directive, or a closure prompt covering exactly that one finding) even in batch-mode; only obvious-fix and stale findings short-circuit user interaction in batch-mode
 
 ### Requirement: Disjunctive recommendation fields surface as decision forks
 
-When a finding's recommendation contains a disjunctive structure (multiple options the user must choose between, NOT just a single recommended action), the system SHALL surface the options as a decision fork via `AskUserQuestion` rather than collapsing to a passive line. The fork prompt fires within Step 3's walk, **after classify, before fix**, and **only when classify == "decision required"** — replacing the generic 2–4 option prompt in that path. Other classifications (`stale`, `trivial fix`, `unresolvable`) do not surface forks.
+When a finding enters the DECISION lane, the system SHALL resolve it through the present → discuss → ratify protocol: (1) PRESENT — a full-prose briefing in chat carrying what the finding means, why it matters, terminology level-setting where concepts are novel, and the concrete options with real tradeoffs; the briefing's option set comes from the detection machinery below; the briefing is the presentation — option content is never confined to prompt labels; (2) DISCUSS — genuine back-and-forth for as many exchanges as the finding needs (zero exchanges is legitimate for crisp cases); (3) RATIFY — a direction the user types in chat IS ratification (user-typed provenance, the consent model's strongest signal); the `AskUserQuestion` is an OPTIONAL CLOSURE DEVICE, fired only AFTER the finding's discussion CONCLUDES without a crisp user directive (never before the briefing, never mid-discussion), carrying the discussed conclusion as its default option. A dismissed or inconclusive prompt RE-PRESENTS the finding — the walk position and briefing context are never lost. The prompt NEVER precedes the briefing, and one prompt NEVER spans multiple findings (batch prompts prohibited; batch DELEGATION — an explicit user directive compressing the decision lane, e.g. "handle the rest, brief me only on real decisions" — remains the user's prerogative and is recorded in the resolution log).
 
-**Detection** (hybrid — structured path preferred, heuristic fallback):
+**Detection** (hybrid — structured path preferred, heuristic fallback) supplies the briefing's option set:
 
-1. **Structured path** (orbit-emit pipelines): when `--from-file` ingests an internal review JSON or audit-drift JSON whose finding entries include the optional `recommendation_options: [{label, body}, …]` field (per `orbit-review` and `orbit-audit-drift` finding-emit specs), the parser SHALL use this array directly as the fork options.
+1. **Structured path** (orbit-emit pipelines): when `--from-file` ingests an internal review JSON or audit-drift JSON whose finding entries include the optional `recommendation_options: [{label, body}, …]` field (per `orbit-review` and `orbit-audit-drift` finding-emit specs), the parser SHALL use this array directly as the briefing's options.
 2. **Heuristic path** (external markdown findings, JSON findings without `recommendation_options`): the parser SHALL scan the finding's `**Description**:` (markdown) or `recommendation` (JSON) field for STRICT disjunctive signals:
    - Numbered alternatives: `(A) … (B)`, `1. … 2.`, `[A] … [B]`
    - "Either … or …" with clause-level branches (each clause is a recognizable recommendation)
    - "Options:" prefix followed by a list or numbered enumeration, including both bold variants (`**Options**:` with the colon outside the bold span, AND `**Options:**` with the colon inside the bold span) — both are accepted equivalently after markdown normalization. Implementers SHOULD normalize the input's markdown emphasis before pattern-matching this trigger so the detector behaves consistently across the two conventions.
-3. **NOT** triggers: loose "or" in prose like "fix it now or later", "X or Y could happen", "the issue is A or B and we should address one of them." These prose patterns do NOT trigger fork detection.
+3. **NOT** triggers: loose "or" in prose like "fix it now or later", "X or Y could happen", "the issue is A or B and we should address one of them." These prose patterns do NOT trigger fork detection. A non-disjunctive decision-lane finding still gets the full briefing — with the AI surfacing 2–4 concrete options in prose.
 
 **Source recording**: the resolution-log entry's `recommendation_fork.source` field SHALL be `"structured"` when the structured path fired, `"heuristic"` when the heuristic path fired.
 
-**Fork prompt UX**: the system surfaces the options via `AskUserQuestion` with the finding title as the question and each option as a button. The system SHALL include a `[discuss]` option in every fork prompt as the escape hatch — selecting `[discuss]` causes the AI to surface tradeoff analysis on the options and re-prompt with the same fork (or a refined fork if the discussion clarifies a different option set).
+**Ratification recording**: each decision-lane resolution SHALL record the ratified resolution AND how it was expressed as PER-RESOLUTION fields — `ratified_via: "chat" | "prompt"` and (when the direction is not one of the briefed options, or no fork was detected) a verbatim `resolution` string — on the resolution-log ENTRY itself (per `Resolution-log JSON shape extensions`), so non-disjunctive decision-lane findings record their channel without a `recommendation_fork` object; the fork object, when present, carries only the DETECTION data (source, options, chosen). The `[discuss]` escape-hatch option is RETIRED (discussion is the medium, not an escape), so `discuss_invoked` is no longer emitted.
 
-**No global opt-out**: there is no flag to suppress fork prompts. `[discuss]` is the per-prompt escape; the user retains decision control without needing a flag.
+**No global opt-out**: there is no flag to suppress the decision-lane protocol; delegation is the user's per-walk lever.
 
-**Capture in resolution log**: each resolved finding with a triggered fork SHALL emit a `recommendation_fork` object in its resolution-log entry (per `Resolution-log JSON shape extensions`). Findings without a triggered fork omit the field (or set `"detected": false`).
-
-#### Scenario: Numbered-alternative finding surfaces fork
+#### Scenario: Numbered-alternative finding briefs with parsed options
 
 - **WHEN** address-reviews walks a finding (classified as "decision required") whose `recommendation` field reads `"Either (A) file a follow-up issue tracking the v2 polish work, or (B) add Group 19 to tasks.md extending this change's scope"`
-- **THEN** the heuristic detector recognizes the `(A) … (B)` pattern; the system surfaces `AskUserQuestion` with two option buttons labeled `(A) file a follow-up issue tracking the v2 polish work` and `(B) add Group 19 to tasks.md extending this change's scope`, plus a `[discuss]` option
+- **THEN** the heuristic detector recognizes the `(A) … (B)` pattern and the BRIEFING presents both options with tradeoffs in prose; no prompt fires before the briefing
 
-#### Scenario: Structured recommendation_options drives fork
+#### Scenario: Structured recommendation_options drive the briefing
 
 - **WHEN** address-reviews ingests an internal review JSON via `--from-file` and one finding's entry includes `recommendation_options: [{label: "A", body: "file a follow-up issue"}, {label: "B", body: "extend scope to tasks.md"}]`
-- **THEN** the parser uses `recommendation_options` directly (skipping heuristic scan of the `recommendation` string); the fork prompt surfaces buttons labeled `(A) file a follow-up issue` and `(B) extend scope to tasks.md` plus `[discuss]`; the resolution log records `recommendation_fork.source: "structured"`
+- **THEN** the parser uses `recommendation_options` directly (skipping heuristic scan) as the briefing's option set; the resolution log records `recommendation_fork.source: "structured"`
 
-#### Scenario: Single-recommendation finding does NOT surface fork
+#### Scenario: Chat directive ratifies without a prompt
 
-- **WHEN** address-reviews walks a finding whose `recommendation` field is a single concrete action (e.g., `"Replace the import path to match the renamed module"`) — no disjunctive structure
-- **THEN** no fork is detected; the finding proceeds through the regular "decision required" path (generic 2–4 option prompt if needed) OR falls through to "trivial fix" if it qualifies. The resolution log omits `recommendation_fork` for this entry (or sets `recommendation_fork.detected: false`).
+- **WHEN** the briefing and discussion conclude and the user types a direction in chat (e.g., "drop the key — option A")
+- **THEN** that directive IS the ratification; no `AskUserQuestion` fires; the resolution log records the chosen resolution with `ratified_via: "chat"`
+
+#### Scenario: Closure prompt when the discussion trails off
+
+- **WHEN** a decision-lane discussion ends without a crisp user directive
+- **THEN** an `AskUserQuestion` fires carrying the discussed conclusion as its default option (plus the live alternatives); the resolution log records `ratified_via: "prompt"`
+
+#### Scenario: Dismissed prompt re-presents, losing nothing
+
+- **WHEN** the user dismisses a closure prompt (or the discussion remains inconclusive)
+- **THEN** the finding RE-PRESENTS — the briefing context and walk position are retained; nothing is auto-resolved and no context is lost
 
 #### Scenario: Loose "or" in prose does NOT trigger fork
 
 - **WHEN** address-reviews walks a finding whose `recommendation` field reads `"This will break if X or Y change; consider tightening the type signature"`
-- **THEN** the heuristic detector does NOT trigger (no numbered alternatives, no clause-level "either…or", no "Options:" prefix); the finding proceeds through the regular "decision required" path
+- **THEN** the heuristic detector does NOT trigger (no numbered alternatives, no clause-level "either…or", no "Options:" prefix); the finding still receives its decision-lane briefing with AI-surfaced options in prose
 
-#### Scenario: Stale classification short-circuits before fork detection
+#### Scenario: Non-disjunctive decision-lane finding briefs without a fork record
+
+- **WHEN** address-reviews walks a decision-lane finding whose recommendation is a single concrete action (no disjunctive structure) — or one that falls through to trivial fix if it qualifies
+- **THEN** no detection fires; when it stays in the decision lane, the briefing surfaces 2–4 AI-derived options in prose and resolution proceeds per the protocol; the resolution-log entry omits `recommendation_fork` entirely — absence IS the no-fork representation (consumers MUST treat absence as "no fork"; a `detected: false` variant is never emitted)
+
+#### Scenario: Stale classification short-circuits before the decision lane
 
 - **WHEN** a finding's pushback classifies it as "stale" (already fixed at HEAD)
-- **THEN** the lifecycle short-circuits to stale-suppression; fork detection does NOT run; the resolution log records the stale suppression without a `recommendation_fork` field
+- **THEN** the lifecycle short-circuits to stale-suppression; no briefing, no prompt; the resolution log records the stale suppression without a `recommendation_fork` field
 
-#### Scenario: Trivial fix classification short-circuits before fork detection
+#### Scenario: Trivial fix classification short-circuits before the decision lane
 
 - **WHEN** a finding's pushback + classify yields "trivial fix" (single-line edit, one obvious correct answer)
-- **THEN** the lifecycle applies the trivial fix without surfacing a fork prompt; fork detection does NOT run; the resolution log omits `recommendation_fork`
+- **THEN** the lifecycle applies the fix per the obvious-fix lane (previewed at triage); no briefing, no prompt; the resolution log omits `recommendation_fork`
 
-#### Scenario: Unresolvable classification short-circuits before fork detection
+#### Scenario: Unresolvable classification short-circuits before the decision lane
 
 - **WHEN** a finding's pushback + classify yields "unresolvable" (needs information not currently available; will be filed as task / converted to TODO / escalated)
-- **THEN** the lifecycle proceeds to the unresolvable-path UX; fork detection does NOT run; the resolution log omits `recommendation_fork`
+- **THEN** the lifecycle proceeds to the unresolvable-path UX; no briefing-protocol prompt; the resolution log omits `recommendation_fork`
 
-#### Scenario: [discuss] surfaces tradeoff analysis and re-prompts
+#### Scenario: Batch delegation compresses the lane; batch prompts never fire
 
-- **WHEN** the user selects `[discuss]` from a fork prompt
-- **THEN** the AI surfaces a tradeoff analysis (pros/cons of each option, relevant context from the finding's pushback evidence, any related findings); after the discussion, the AI re-presents the fork (possibly with refined options if the discussion surfaced a third path) for the user to make a final choice. The `recommendation_fork.discuss_invoked` flag is set to `true` in the resolution log.
-
-#### Scenario: Fork prompt fires in both walk-mode and batch-mode
-
-- **WHEN** batch-mode is active AND a finding's classification is "decision required" AND the recommendation is disjunctive
-- **THEN** the fork prompt still fires within the batch run (batch-mode does not suppress user decisions); only the per-finding completion checkpoints for unambiguous fixes are suppressed in batch-mode
+- **WHEN** the user issues an explicit mid-walk delegation ("handle the rest, only brief me on real decisions") OR batch-mode is active with decision-lane findings in scope
+- **THEN** the AI resolves per the delegation's scope, briefing only what the directive reserves; every prompt that does fire covers exactly ONE finding — a single `AskUserQuestion` spanning multiple findings never fires; the resolution log records the delegation directive
 
 #### Scenario: Malformed `recommendation_options` array falls back to heuristic detection
 
@@ -456,12 +469,14 @@ The system SHALL extend the `address-reviews-<TS>.json` resolution-log shape wit
 - **`walk_mode`** (top-level, required): `"per_finding"` (walk-mode, the default) or `"batch"`.
 - **`walk_mode_source`** (top-level, required when `walk_mode == "batch"`): `"flag"` (via `--batch`), `"verbal"` (via verbal trigger in invocation message), or `"command-shape-interruption"` (via mid-walk command-shaped message). Omitted when `walk_mode == "per_finding"`.
 - **`walk_mode_shifted_at_finding`** (top-level, present only when `walk_mode_source == "command-shape-interruption"`): the 1-indexed finding number at which the mode shifted.
-- **`recommendation_fork`** (per-resolution, optional): present only when a fork was detected and triggered. Object shape:
+- **`delegation_directive`** (top-level, optional): the user's verbatim mid-walk delegation ("handle the rest, only brief me on real decisions"), present when one was issued (per the decision-lane protocol's batch-delegation rule).
+- **`ratified_via`** (per-resolution, required for EVERY decision-lane resolution — forked or not): `"chat"` (a user-typed directive ratified the resolution) or `"prompt"` (the optional closure `AskUserQuestion` did). Absent on non-decision-lane resolutions (stale, trivial fix, unresolvable).
+- **`resolution`** (per-resolution, conditionally required): the ratified direction verbatim — required when no fork was detected (the briefing's options were AI-derived prose) OR when the ratified direction is off-menu; optional when `recommendation_fork.chosen` names a presented option (the label suffices).
+- **`recommendation_fork`** (per-resolution, optional): present only when a fork was detected and the finding entered the decision lane; carries the DETECTION data (the ratification channel lives at the entry level, above). Object shape:
   - `detected: true` — always true when present
   - `source: "structured" | "heuristic"` — which detection path fired
-  - `options_presented: [{label, body}, …]` — structured options as shown to the user; shape is identical to the producer-side `recommendation_options` field on the input finding, so downstream consumers parse one shape across producer JSON and resolution-log JSON
-  - `chosen: "A" | "B" | …` — the option label the user picked (matches one of the `options_presented[].label` values)
-  - `discuss_invoked: bool` — whether `[discuss]` was invoked before the final choice
+  - `options_presented: [{label, body}, …]` — structured options as briefed to the user; shape is identical to the producer-side `recommendation_options` field on the input finding, so downstream consumers parse one shape across producer JSON and resolution-log JSON
+  - `chosen: "A" | "B" | … | "off-menu"` — the ratified option's label when the resolution matches one of `options_presented`; the literal `"off-menu"` when the ratified direction was outside the presented options (the entry-level `resolution` string then carries it verbatim)
   - `structured_path_skipped_reason: string` — present only when the structured detection path was attempted but skipped due to malformed input (per the `Malformed recommendation_options array falls back to heuristic detection` scenario). Examples: `"only 1 entry in array"`, `"missing label on entry index 2"`, `"empty body on entry index 0"`. Omitted when the structured path either succeeded OR was simply absent (no `recommendation_options` field on the input).
 - **`ripple_cascade`** (per-resolution, required): replaces the v1 `ripple_flagged_files_aggregate` array. Object shape:
   - `applied: [path, …]` — files cascade-edited consistent with the primary fix
@@ -470,9 +485,7 @@ The system SHALL extend the `address-reviews-<TS>.json` resolution-log shape wit
 **Backward compatibility — structural change, not just rename**: the v1 `ripple_flagged_files_aggregate` field is a top-level flat array of strings (aggregating ripple-flagged paths across ALL resolutions, with no per-resolution attribution). The v2 `ripple_cascade.applied / flagged_not_applied` fields are per-resolution (each entry in `resolutions[]` carries its own `ripple_cascade` object). The shapes are NOT bijective — v1 archived JSONs cannot be losslessly upconverted to v2 (per-resolution attribution is lost in v1). Reader guidance:
 
 - **Reading v1**: presence of top-level `ripple_flagged_files_aggregate` (and absence of per-resolution `ripple_cascade`) signals v1 format. Treat the aggregate as the union of all per-resolution ripple sets across the run; attribution to specific findings is not available.
-- **Reading v2**: presence of per-resolution `ripple_cascade` is the canonical format going forward. The top-level `ripple_flagged_files_aggregate` field is NOT emitted in v2 (removed, not renamed).
-
-Repos carrying address-reviews logs emitted before this field split retain the v1 shape in their archived `.orbit-runs/` JSONs; readers handling both formats must check for which field is present.
+- **Reading v2**: presence of per-resolution `ripple_cascade` is the canonical format going forward. The top-level `ripple_flagged_files_aggregate` field is NOT emitted in v2 (removed, not renamed). Pre-D4 v2 logs carry `discuss_invoked` inside `recommendation_fork` and no `ratified_via`; readers MUST tolerate both generations.
 
 #### Scenario: Walk-mode resolution log structure
 
@@ -484,15 +497,20 @@ Repos carrying address-reviews logs emitted before this field split retain the v
 - **WHEN** address-reviews completes a batch-mode run (triggered by `--batch`)
 - **THEN** the emitted JSON contains `walk_mode: "batch"` and `walk_mode_source: "flag"`; per-resolution `ripple_cascade` fields are populated only at the end of the batch (each resolution's `applied`/`flagged_not_applied` reflects the final aggregated cascade pass)
 
-#### Scenario: Recommendation_fork captured when disjunctive triggered
+#### Scenario: Forked decision records its ratification channel at the entry level
 
-- **WHEN** address-reviews walks a finding with a disjunctive recommendation; user chooses option A without invoking `[discuss]`
-- **THEN** the resolution-log entry for that finding contains `recommendation_fork: {detected: true, source: "heuristic", options_presented: [{label: "A", body: "..."}, {label: "B", body: "..."}], chosen: "A", discuss_invoked: false}`
+- **WHEN** address-reviews briefs a decision-lane finding with a disjunctive recommendation and the user types "go with A" in chat
+- **THEN** the resolution-log entry contains `ratified_via: "chat"` (entry level) and `recommendation_fork: {detected: true, source: "heuristic", options_presented: [{label: "A", body: "..."}, {label: "B", body: "..."}], chosen: "A"}`
 
-#### Scenario: Recommendation_fork captures discuss invocation
+#### Scenario: Non-fork decision still records its channel
 
-- **WHEN** the user invokes `[discuss]`, the AI presents tradeoffs, the user then chooses option B
-- **THEN** the resolution-log entry contains `recommendation_fork: {…, chosen: "B", discuss_invoked: true}`
+- **WHEN** a decision-lane finding with a non-disjunctive recommendation is briefed (AI-derived options in prose) and ratified by the closure prompt
+- **THEN** the entry carries `ratified_via: "prompt"` and `resolution: "<the ratified direction verbatim>"` with NO `recommendation_fork` object — the channel recording never depends on fork detection
+
+#### Scenario: Off-menu chat ratification recorded
+
+- **WHEN** the discussion produces a direction that is none of the briefed options ("actually, do neither — split the requirement instead") and the user's directive ratifies it
+- **THEN** the entry records `ratified_via: "chat"` and `resolution: "<the ratified direction verbatim>"` at the entry level, with `recommendation_fork.chosen: "off-menu"` when a fork had been detected
 
 #### Scenario: --no-cascade resolution log records all ripples as flagged_not_applied
 

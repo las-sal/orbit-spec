@@ -206,7 +206,7 @@ kind             enum         "workflow" | "editorial" | "lifecycle"
 Per-kind extensions:
 
 - **`kind: "workflow"`** — emitted by `explore`, `propose`, `new`, `continue`, `ff`, `apply`, `verify`, `architect` (D-arc Stage D2; `architect` emits to the architecture trail with `change: null` plus a `doc` extension — shape owned by `orbit-architect`). Per-command extensions are defined in the `orbit-run-summary-emit` capability (e.g., `apply.chunk_complete`, `verify.verdict`, `explore.decisions_captured`). Consent-era `apply` emits additionally carry `consent: "user-invoked" | "prompted"` (per `orbit-lifecycle-consent`).
-- **`kind: "editorial"`** — emitted by `review`, `address-reviews`, `audit-drift`, `review-external`. Per-command extensions include: `iteration` (when applicable to the command — e.g., review iter-N, address-reviews iter-N), `findings_summary` (counts by severity; included when findings are present — i.e., review/address-reviews/audit-drift completion emits; review-external at T0 emits before external findings return and SHALL omit this field), `finding_titles` (array of brief titles; included with `findings_summary`, omitted in the same cases), plus command-specific fields defined in per-skill schema references (`references/run-summary-schema.md`, shipped alongside the generated skill).
+- **`kind: "editorial"`** — emitted by `review`, `address-reviews`, `audit-drift`, `review-external`. Per-command extensions include: `iteration` (when applicable to the command — e.g., review iter-N, address-reviews iter-N), `scorecard` (the 3-dimension × severity counts shape — Completeness/Correctness/Coherence, each with critical/warning/suggestion — on review completion emits; the renderer's required counts source per `orbit-report-rendering`; D-arc Stage D4), and full `findings[]` entries (each carrying its own `title` — no separate title array). The former `findings_summary` AND `finding_titles` fields are RETIRED for review emits (superseded by `scorecard`; live practice had already migrated) — readers SHALL tolerate both generations (a severity count is recoverable by counting `findings[]`, the existing trail-reader fallback; the report RENDERER's strict generation boundary is the named exception, per `orbit-report-rendering`); audit-drift and archive-audit emits keep their own `findings_summary` shapes unchanged. Command-specific fields beyond these are defined in per-skill schema references (`references/run-summary-schema.md`, shipped alongside the generated skill).
 - **`kind: "lifecycle"`** — emitted by `archive` only. Per-command extensions include: `archive_path`, `audit`, `sync_specs` (reports what the archive flow's spec-sync step did, mirroring upstream's archive summary), `unresolved_markers`, `user_decision`, plus other fields defined in the archive skill. Consent-era emits (per `orbit-lifecycle-consent`) additionally carry the flat `consent: "user-invoked" | "prompted"` field.
 
 **Canonical examples** (one per kind, illustrating spine + per-kind extensions):
@@ -239,22 +239,21 @@ Editorial-kind example — `review-proposal-2026-05-21T00-18-14Z.json` written b
   "command": "review",
   "timestamp": "2026-05-21T00:18:14Z",
   "change": "emit-run-summary-jsons-from-workflow-commands",
-  "final_assessment": "1 CRITICAL finding + 2 WARNING. Ready for /orbit:address-reviews.",
-  "next_recommended": "/orbit:address-reviews emit-run-summary-jsons-from-workflow-commands --from-file <findings-bridge>",
+  "final_assessment": "1 critical, 1 warning, 0 suggestion.",
+  "next_recommended": "/orbit:address-reviews emit-run-summary-jsons-from-workflow-commands --from-file <this emit's own path>",
   "kind": "editorial",
   "mode": "proposal",
   "iteration": 1,
   "depth": "full",
   "passes_run": ["1","2","3","4","5","6","7","8","9"],
-  "findings_summary": {
-    "critical": 1,
-    "warning": 2,
-    "suggestion": 0
+  "scorecard": {
+    "completeness": { "critical": 1, "warning": 0, "suggestion": 0 },
+    "correctness": { "critical": 0, "warning": 1, "suggestion": 0 },
+    "coherence": { "critical": 0, "warning": 0, "suggestion": 0 }
   },
-  "finding_titles": [
-    "Emit timing undefined for bare-mode explore",
-    "Apply chunk-preamble format unspecified",
-    "Verify fail-mode precedence missing"
+  "findings": [
+    { "severity": "CRITICAL", "dimension": "completeness", "title": "Emit timing undefined for bare-mode explore", "file": "specs/emit/spec.md", "line": 12, "recommendation": "…" },
+    { "severity": "WARNING", "dimension": "correctness", "title": "Apply chunk-preamble format unspecified", "file": "specs/apply/spec.md", "line": 40, "recommendation": "…" }
   ]
 }
 ```
@@ -301,12 +300,12 @@ Lifecycle-kind example — `archive-2026-05-20T16-31-59Z.json` written after `/o
 #### Scenario: Editorial command emit shape (with findings)
 
 - **WHEN** an editorial command that has produced findings (`/orbit:review`, `/orbit:address-reviews`, `/orbit:audit-drift`) writes its JSON
-- **THEN** `kind` equals `"editorial"`; per-command extensions include `iteration` (when the command tracks iterations), `findings_summary` (counts by severity), `finding_titles` (array of brief titles), plus command-specific fields documented in the emitting skill's `references/run-summary-schema.md`
+- **THEN** `kind` equals `"editorial"`; per-command extensions include `iteration` (when the command tracks iterations), the counts shape the command owns (`scorecard` for review emits — D-arc Stage D4; audit-drift keeps its `findings_summary` and `finding_titles`), plus command-specific fields documented in the emitting skill's `references/run-summary-schema.md`
 
 #### Scenario: Editorial command emit shape (pre-findings T0 case)
 
 - **WHEN** `/orbit:review-external` writes its T0 JSON (prompt packaged, external findings not yet returned)
-- **THEN** `kind` equals `"editorial"`; per-command extensions include `mode`, `prompt_path`, `target`, `awaiting_findings: true` — and OMIT `findings_summary` and `finding_titles` because no findings exist yet
+- **THEN** `kind` equals `"editorial"`; per-command extensions include `mode`, `prompt_path`, `target`, `awaiting_findings: true` — and OMIT the counts shape because no findings exist yet
 
 #### Scenario: Lifecycle command emit shape
 
@@ -346,9 +345,14 @@ The system SHALL use a consistent 3-dimension scorecard for review and audit rep
 - **WHEN** a review or audit command emits a scorecard
 - **THEN** the dimensions are Completeness / Correctness / Coherence (matching upstream `verify-change`)
 
-#### Scenario: Status column carries metrics
+#### Scenario: Review-report scorecard table is the engine grammar (D-arc Stage D4)
 
-- **WHEN** the scorecard is rendered as a table
+- **WHEN** a proposal- or system-mode review report renders its scorecard table
+- **THEN** the table is `orbit-report-rendering`'s pinned Dimension × severity-counts form (the cells ARE the validated findings rollup) — the Status-column convention below does not apply to engine-rendered review reports
+
+#### Scenario: Status column carries metrics (hand-rendered scorecards)
+
+- **WHEN** a verify- or audit-style scorecard is hand-rendered as a table (outside the engine-rendered review report)
 - **THEN** the Status column contains brief metrics (e.g., "X/Y tasks, N reqs", "2 baseline regressions, 1 cohesion drift"), not just issue counts
 
 ### Requirement: Severity ladder
@@ -376,16 +380,21 @@ The system SHALL include actionable detail in every finding.
 
 ### Requirement: Final-assessment phrasings
 
-The system SHALL use stock phrasings for the final-assessment line of review and audit reports.
+The system SHALL use stock phrasings for the final-assessment line of AUDIT reports and gate-less architecture-mode review reports; proposal- and system-mode REVIEW reports carry no skill-authored final-assessment line — their assessment, gate, and eligibility lines are the engine-rendered tail of the pasted report per `orbit-report-rendering` (D-arc Stage D4).
 
-#### Scenario: Stock phrasings
+#### Scenario: Stock phrasings (audit reports)
 
-- **WHEN** a scorecard report is emitted
+- **WHEN** an audit-drift scorecard report is emitted
 - **THEN** the final-assessment line uses one of:
   - `X critical issue(s) found. Fix before <gate>.`
   - `No critical issues. Y warning(s) to consider. Ready <gate> (with noted improvements).`
   - `All checks passed. Ready <gate>.`
-  where `<gate>` is `/orbit:apply` for `/orbit:review --as proposal`, `/orbit:archive` for `/orbit:review --as system`, and varies per audit-drift invocation context
+  where `<gate>` varies per audit-drift invocation context
+
+#### Scenario: Review reports end in the engine tail (D-arc Stage D4)
+
+- **WHEN** a proposal- or system-mode review report is produced
+- **THEN** it is the pasted `orbit status --change <name> --report` render whose final lines are the engine-computed gate/position/eligibility tail — no stock skill-authored assessment line exists
 
 #### Scenario: Gate-less architecture-mode phrasings (D-arc Stage D2)
 
@@ -771,7 +780,7 @@ The three modes:
 #### Scenario: External for system-mode + substantive cross-AI verification
 
 - **WHEN** running system-mode review (verifying code-vs-spec coherence where the AI may have authored the code in a recent session — high anchoring risk per `bootstrap-orbit-status-cli` evidence) OR the change is substantive enough that cross-AI cross-check pays for itself (e.g., breaking changes, security-sensitive code, multi-capability changes)
-- **THEN** `/orbit:review-external` is the appropriate mode. The cross-AI round-trip cost is justified by the independence — a different model + different session has no anchoring to the code the original AI wrote. Per orbit-review's `Final assessment phrasings depend on mode` requirement, system-mode review's "no CRITICAL" final-assessment recommends external by default for this reason. In C1+ this recommendation is realized as the `review-system` gate (per `orbit-engine-gates`), whose `external` cadence slot must be covered for convergence; the gate surfaces the canonical next command but NEVER hard-blocks — the user may proceed past it at the archive inflection prompt, and the override is recorded. The recommendation is gate-surfaced, not gate-enforced.
+- **THEN** `/orbit:review-external` is the appropriate mode. The cross-AI round-trip cost is justified by the independence — a different model + different session has no anchoring to the code the original AI wrote. The `review-system` cadence's external slot encodes this default (per `orbit-engine-gates`), and the engine-rendered report tail surfaces the resulting canonical next command (per `orbit-report-rendering` — D-arc Stage D4). In C1+ this recommendation is realized as the `review-system` gate (per `orbit-engine-gates`), whose `external` cadence slot must be covered for convergence; the gate surfaces the canonical next command but NEVER hard-blocks — the user may proceed past it at the archive inflection prompt, and the override is recorded. The recommendation is gate-surfaced, not gate-enforced.
 
 #### Scenario: Framework is documented in README + spec; drift between the two is caught
 

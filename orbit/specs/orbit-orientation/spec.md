@@ -25,8 +25,9 @@ The view is a COMPOSITION of engine-computed and trail-recorded data only — it
 state from artifact contents (no task-file parsing beyond what the gate graph already computes,
 no marker scans, no mtime heuristics). Bare invocation with active changes is, before this
 capability, an error path ("Missing required option --change") — claiming it repurposes
-nothing; the no-active-changes message and all `--change` behavior are byte-identical to
-pre-capability output.
+nothing; the no-active-changes message and the PRE-EXISTING `--change` surface are
+byte-identical to pre-capability output (later capabilities may EXTEND the `--change` form
+with new flags — e.g. `--report`, D-arc Stage D4 — without touching its pre-existing outputs).
 
 #### Scenario: Bare invocation mid-sprint
 
@@ -88,9 +89,14 @@ plus an `explore` phase the graph does not model: `explore ✓` when the workstr
 containing `explore.md` (a consumed exploration), `explore ▶` when the workstream IS a staging
 explore (later phases render pending), and the chip absent when the change has no `explore.md`
 (standalone-mode propose). Review phases render as ONE chip each with the iteration count from
-the workstream's trail (`review ⟲6 ✓` = six SPINE-VALID `review` emits of mode `proposal` in
-the trail, gate passed — the fault-isolation skip applies to chip counts exactly as it does to
-recency and WAITING, so a spine-invalid `review-proposal-*.json` file counts nowhere);
+the workstream's trail on the SHARED PASS AXIS (D-arc Stage D4 — the same axis the report
+ordinal counts, so "iteration" means ONE thing across surfaces): `review ⟲7 ✓` = six
+SPINE-VALID `review` emits of mode `proposal` PLUS one confident
+`external-proposal-<TS>.md` findings file in the trail, gate passed. The fault-isolation skip
+applies to the internal count exactly as it does to recency and WAITING (a spine-invalid
+`review-proposal-*.json` file counts nowhere); external findings files count under the
+report-rendering capability's lenient confidence gate (header plus all three severity
+sections — an unreadable or unconfident file contributes nothing);
 apply renders the tracked gate's progress (`apply ▶ 12/20`); phase glyphs are `✓` (passed/
 complete — the engine's SUPERSEDED `(past)` state renders `✓`-equivalent by design), `▶`
 (current), `⟲N` (review iterations), and unmarked (pending — the engine's `stale` and `unpassed`
@@ -107,6 +113,11 @@ the workstream name and, when its metadata cites a stage, `stage <id> · <doc>`.
 
 - **WHEN** the current sprint is a change whose trail holds six proposal-review emits, whose review-proposal gate is past, and whose apply gate reports 12/20 tasks
 - **THEN** the strip reads `explore ✓ → propose ✓ → review ⟲6 ✓ → apply ▶ 12/20 → review ⟲ → archive` (explore chip present because explore.md was consumed into the change)
+
+#### Scenario: External passes count in the chip
+
+- **WHEN** a change's trail holds two spine-valid system-review emits and one confident `external-system-<TS>.md` findings file
+- **THEN** the system review chip renders `review ⟲3` — the same count the report ordinal would assign the newest pass — while a directory with an unreadable or section-incomplete external file adds nothing
 
 ### Requirement: Next-recommendation sourcing is time-shifted, never live
 
