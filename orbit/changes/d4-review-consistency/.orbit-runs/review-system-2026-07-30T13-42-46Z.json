@@ -1,0 +1,64 @@
+{
+  "command": "review",
+  "timestamp": "2026-07-30T13:42:46Z",
+  "change": "d4-review-consistency",
+  "final_assessment": "0 critical, 0 warning, 3 suggestion.",
+  "next_recommended": "/orbit:address-reviews d4-review-consistency --from-file orbit/changes/d4-review-consistency/.orbit-runs/review-system-2026-07-30T13-42-46Z.json",
+  "kind": "editorial",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "scorecard": {
+    "completeness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "correctness": { "critical": 0, "warning": 0, "suggestion": 1 },
+    "coherence": { "critical": 0, "warning": 0, "suggestion": 2 }
+  },
+  "findings": [
+    {
+      "pass": "Pass 2 (Cohesion)",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/orientation.ts",
+      "line": 243,
+      "title": "Adjacent surfaces show two different iteration numbers for the same mode: the strip's ⟲N counts internal emits only while the report ordinal counts the shared internal+external axis",
+      "recommendation": "On this change today, `orbit status --change d4-review-consistency` renders `review ⟲2` (D3 strip grammar: spine-valid internal `review-<mode>-*.json` emits only) while `--report` renders `Mode: system · Iteration: 3` for the newest pass (D4's shared pass axis including external findings files); proposal mode diverges further (⟲7 vs ordinal 9). Both are individually spec'd (orbit-orientation strip grammar vs orbit-report-rendering total pass order), but D4's one-voice thesis leaves this the only place two engine surfaces present differently-computed 'iteration' values side by side with no marker. Either extend the strip's ⟲N to the shared axis via an orbit-orientation delta, or annotate both spec letters (and the orientation strip comment) that the chip is an internal-emit count while the report ordinal is the shared-axis ordinal — a deliberate, named divergence rather than a silent one.",
+      "recommendation_options": [
+        { "label": "A", "body": "Extend the strip's ⟲N to the shared pass axis via an orbit-orientation delta in this change (one ordinal everywhere)" },
+        { "label": "B", "body": "Annotate both spec letters and the orientation strip comment that the chip counts internal emits while the report ordinal counts the shared axis — a deliberate, named divergence" }
+      ]
+    },
+    {
+      "pass": "Pass 3 (Surface Walk)",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "src/core/report-render.ts",
+      "line": 476,
+      "title": "A mid-document `# External Review` line re-opens the header region and silently truncates an open Description/Notes body",
+      "recommendation": "The W4 fix scopes Reviewer/Date recognition to `section === null`, but any unfenced column-0 `# External Review` line (e.g. an external reviewer quoting the file's own header inside a Description or Notes body) is structural anywhere: it closes the current finding/Notes and resets `section = null`, so the remainder of that body is silently dropped from the verbatim recommendation/Commentary (and any Reviewer/Date-shaped line after it is again parsed as header metadata, turning valid body prose into a duplicate-field rejection). Latch the header region CLOSED after the first `## ` heading (a boolean, not `section === null`), treating later header-shaped lines inside an open body as verbatim content; add a fixture with `# External Review:` inside a Description outside a fence."
+    },
+    {
+      "pass": "Pass 6 (Drift/Residue)",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 27,
+      "title": "The schema reference declares findings_summary RETIRED unscoped, then documents it as the live architecture-mode shape 75 lines later",
+      "recommendation": "Line 27 says 'The former findings_summary and iteration_note fields are RETIRED (D-arc Stage D4)' with no mode scoping, while the Architecture-mode extensions section (lines 102, 116) presents `findings_summary` with `by_pass` keys as the CURRENT architecture emit shape (the deliberate interim path). Scope the retirement sentence to change modes — e.g. '(change modes; architecture-mode emits keep findings_summary on the interim hand-rendered path below)' — so the same reference doc doesn't declare a field both retired and in use without connecting the two statements."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "pass": "Pass 0 (verify-change)",
+      "title": "Unresolvable-class 'Alternatives via AskUserQuestion' looks like a surviving pre-3b.5 prompt imperative",
+      "evidence": "address-reviews.ts:641 is the UNRESOLVABLE lane, not the decision lane — the delta keeps stale/unresolvable paths unchanged and its convert/escalate scenarios require a user choice; the closure-only rule is scoped to the decision lane, and the class-3 clause now hands off cleanly with 'no prompt fires here'."
+    },
+    {
+      "pass": "Pass 6 (Drift/Residue)",
+      "title": "Post-apply trail emits still carry the retired iteration_note field",
+      "evidence": "review-system-2026-07-29T22-*.json carry iteration_note: null — written mid-cycle before the 47deb9c sweep; the trail is append-only historical record and the renderer tolerates unknown extras by design."
+    }
+  ],
+  "passes_run": ["Pass 0 (verify-change)", "Pass 1 (Baseline Compliance)", "Pass 2 (Cohesion)", "Pass 3 (Surface Walk)", "Pass 6 (Drift/Residue)"],
+  "passes_skipped": ["Pass 4: no perspectives defined (orbit/lenses/ absent)", "Pass 5: no critical paths defined (orbit/lenses/ absent)"],
+  "commentary": "I treated the ten-resolution batch as the least-trusted surface and probed it by execution rather than reading: every single-line slot (title/file/label/suppressed/reviewer_class/depth, CR and LF), the change-mismatch fail-loud, spine-semantic drift (command/kind/reviewer_class/counts-sentence/pointer), banana and impossible dates, blank Descriptions, Reviewer-shaped prose in bodies, 4-backtick-containing-3-backtick and tilde-vs-backtick and indented fences — all held through the public normalizer, and all four CLI error paths left stdout at zero bytes. The delta-to-template byte-equality assertion for the external prompt block is real and extracts the inner fence correctly. What remains is edge texture, not regression: the batch's header-region fix latches on 'no open section' rather than 'past the first heading', leaving one silent-truncation path, and the shared-pass-axis ordinal the fresh pass forced into the spec now quietly disagrees with the D3 strip's internal-only ⟲N one screen away. Baselines, gate reader, and orientation all consume the new emit shape tolerantly; goldens match the D2b grammar line for line. Test suite: 1817 passed (81 files), 0 failed."
+}
