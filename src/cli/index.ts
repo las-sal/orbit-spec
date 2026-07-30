@@ -471,7 +471,9 @@ program
     try {
       await statusCommand(options);
     } catch (error) {
-      console.log();
+      // Diagnostics stay off stdout — --report promises no partial output on
+      // its error paths (stdout is the report channel; ora writes to stderr).
+      console.error();
       ora().fail(`Error: ${(error as Error).message}`);
       process.exit(1);
     }

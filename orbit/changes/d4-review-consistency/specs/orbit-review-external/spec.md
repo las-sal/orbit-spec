@@ -96,18 +96,27 @@ Use this exact markdown structure:
 **File**: <path>:<line>
 **Description**: <what's wrong + specific recommendation>
 
+(For each additional CRITICAL finding, repeat the `### <Title>` + `**File**:` + `**Description**:` triple. Use `None.` as a single-word body if there are no findings at this severity.)
+
 ## WARNING
-...
+
+### <Finding title>
+**File**: <path>:<line>
+**Description**: <what's wrong + specific recommendation>
+
+(Same shape as CRITICAL. Use `None.` if no findings.)
 
 ## SUGGESTION
-...
+
+### <Finding title>
+**File**: <path>:<line>
+**Description**: <what's wrong + specific recommendation>
+
+(Same shape. Use `None.` if no findings.)
 
 ## Notes
 
-<Optional — rendered VERBATIM into the report's delimited Commentary slot (D-arc Stage
-D4): carry the pattern behind the findings, what you probed, and risk texture; do NOT state
-finding counts, gate verdicts, or next commands — those exist only in the report's
-engine-computed sections. Omit the whole ## Notes section if you have nothing to add.>
+<Optional — rendered VERBATIM into the report's delimited Commentary slot: carry the pattern behind the findings, what you probed, and risk texture; do NOT state finding counts, gate verdicts, or next commands — those exist only in the report's engine-computed sections. Omit the whole `## Notes` section if you have nothing to add.>
 ```
 
 If your environment doesn't support file writes (chat-only interface), output

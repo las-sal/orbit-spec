@@ -116,6 +116,40 @@ const LAUNCHERS: Array<[string, () => { content: string }, string]> = [
   ['audit-drift', getOrbitAuditDriftCommandTemplate, 'orbit-audit-drift'],
 ];
 
+describe('D4 external prompt output-format block: delta <-> shipped template byte-equality', () => {
+  it('the orbit-review-external delta carries the SHIPPED inner block verbatim', () => {
+    const fs = require('node:fs');
+    const path = require('node:path');
+    const root = path.resolve(__dirname, '..', '..', '..');
+    const deltaPath = path.join(root, 'orbit', 'changes', 'd4-review-consistency', 'specs', 'orbit-review-external', 'spec.md');
+    if (!fs.existsSync(deltaPath)) return; // post-archive: the block lives in the baseline; parity holds transitively
+    const delta = fs.readFileSync(deltaPath, 'utf-8');
+    const extract = (text) => {
+      const i = text.indexOf('Use this exact markdown structure:');
+      const a = text.indexOf('```markdown', i);
+      const b = text.indexOf('\n```\n', a) + 4;
+      return text.slice(a, b);
+    };
+    const template = getReviewExternalSkillTemplate().references.find((r) => r.name === 'prompt-template.md').content;
+    expect(extract(delta)).toBe(extract(template));
+  });
+});
+
+describe('D4 decision-lane protocol integrity (address-reviews body)', () => {
+  const body = getAddressReviewsSkillTemplate().instructions;
+
+  it('no instruction surfaces decision options via AskUserQuestion outside the closure role', () => {
+    // The prompt is an OPTIONAL CLOSURE DEVICE (3b.5); no earlier step may
+    // instruct firing it to present options (the pre-D4 imperative class).
+    expect(body).not.toMatch(/options via \*\*AskUserQuestion\*\*/);
+    expect(body).not.toMatch(/surface .{0,40}options .{0,20}AskUserQuestion/);
+  });
+
+  it('the closure-only rule is stated', () => {
+    expect(body).toContain('post-discussion closure');
+  });
+});
+
 describe('orbit content fidelity (B1 relocation)', () => {
   describe.each(RELOCATED)('%s', (_name, getTemplate, requiredMarkers) => {
     const skill = getTemplate().instructions;

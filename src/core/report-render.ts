@@ -73,6 +73,12 @@ export interface NormalizedReviewPass {
   genre: 'internal' | 'external';
   filePath: string;
   mode: ReviewMode;
+  /**
+   * Internal only: the emit's own `change` field, PRESERVED verbatim (C3). The
+   * render validates it equals the change being rendered — never a silent
+   * relabel — and the internal header then renders this emit-sourced value.
+   */
+  change?: string;
   /** Internal genre fields. */
   reviewerClass?: string;
   depth?: string;
@@ -115,12 +121,28 @@ const SPINE_FIELDS = [
   'kind',
 ] as const;
 
+const REVIEWER_CLASSES = ['in-context', 'fresh', 'external'] as const;
+
 function fail(detail: string, file: string): never {
   throw new Error(`invalid review emit: ${detail} in ${file}`);
 }
 
 function isPlainObject(v: unknown): v is Record<string, unknown> {
   return typeof v === 'object' && v !== null && !Array.isArray(v);
+}
+
+/**
+ * The single-line grammar-slot boundary (ONE checked helper — every slot that
+ * renders into the report's own line grammar goes through here): record-sourced
+ * text must not be able to forge column-0 report grammar (headings/rules/
+ * fences), so embedded newlines — BOTH \r and \n — fail loud naming the slot.
+ * The blockquote containment covers only the multi-line bodies; option BODIES
+ * are collapsed to a space at render instead (they are labels, not documents).
+ */
+function requireSingleLine(value: string, field: string, file: string): void {
+  if (value.includes('\n') || value.includes('\r')) {
+    fail(`field '${field}' must be single-line (embedded newline)`, file);
+  }
 }
 
 /**
@@ -163,6 +185,14 @@ export function normalizeInternalPass(filePath: string, json: unknown): Normaliz
     if (typeof j[field] !== 'string') fail(`missing or mistyped field '${field}'`, filePath);
   }
 
+  // Spine semantics (W2): a renderable review emit IS a review emit.
+  if (j.command !== 'review') {
+    fail(`field 'command' must be 'review' (got '${j.command}')`, filePath);
+  }
+  if (j.kind !== 'editorial') {
+    fail(`field 'kind' must be 'editorial' (got '${j.kind}')`, filePath);
+  }
+
   // Review extensions.
   if (j.mode !== 'proposal' && j.mode !== 'system') {
     fail(`missing or mistyped field 'mode' (expected 'proposal' | 'system')`, filePath);
@@ -173,13 +203,13 @@ export function normalizeInternalPass(filePath: string, json: unknown): Normaliz
   if (typeof j.depth !== 'string' || j.depth.length === 0) {
     fail(`missing or mistyped field 'depth'`, filePath);
   }
-  // Single-line grammar slots reject embedded newlines — record-sourced text
-  // must not be able to forge column-0 report grammar (headings/rules/fences);
-  // the blockquote containment covers only the multi-line bodies.
-  for (const field of ['reviewer_class', 'depth'] as const) {
-    if ((j[field] as string).includes('\n')) {
-      fail(`field '${field}' must be single-line (embedded newline)`, filePath);
-    }
+  requireSingleLine(j.reviewer_class, 'reviewer_class', filePath);
+  requireSingleLine(j.depth, 'depth', filePath);
+  if (!REVIEWER_CLASSES.includes(j.reviewer_class as (typeof REVIEWER_CLASSES)[number])) {
+    fail(
+      `field 'reviewer_class' must be one of 'in-context' | 'fresh' | 'external' (got '${j.reviewer_class}')`,
+      filePath
+    );
   }
 
   // Scorecard shape: 3 dimensions × 3 severity cells, non-negative integers.
@@ -214,12 +244,11 @@ export function normalizeInternalPass(filePath: string, json: unknown): Normaliz
     if (typeof f.title !== 'string' || f.title.trim().length === 0) {
       fail(`missing or mistyped field '${at}.title'`, filePath);
     }
-    if (f.title.includes('\n')) {
-      fail(`field '${at}.title' must be single-line (embedded newline)`, filePath);
-    }
+    requireSingleLine(f.title, `${at}.title`, filePath);
     if (typeof f.file !== 'string' || f.file.length === 0) {
       fail(`missing or mistyped field '${at}.file'`, filePath);
     }
+    requireSingleLine(f.file, `${at}.file`, filePath);
     if (typeof f.line !== 'number' || !Number.isFinite(f.line)) {
       fail(`missing or mistyped field '${at}.line'`, filePath);
     }
@@ -235,6 +264,9 @@ export function normalizeInternalPass(filePath: string, json: unknown): Normaliz
         if (!isPlainObject(o) || typeof o.label !== 'string' || typeof o.body !== 'string') {
           fail(`missing or mistyped field '${at}.recommendation_options[${oi}]'`, filePath);
         }
+        // Labels are single-line grammar slots; the BODIES keep their
+        // collapse-to-space treatment at render.
+        requireSingleLine(o.label as string, `${at}.recommendation_options[${oi}].label`, filePath);
         return { label: o.label as string, body: o.body as string };
       });
     }
@@ -260,9 +292,8 @@ export function normalizeInternalPass(filePath: string, json: unknown): Normaliz
       if (!isPlainObject(raw) || typeof raw.title !== 'string' || typeof raw.evidence !== 'string') {
         fail(`missing or mistyped field 'stale_suppressed[${i}]'`, filePath);
       }
-      if ((raw.title as string).includes('\n') || (raw.evidence as string).includes('\n')) {
-        fail(`field 'stale_suppressed[${i}]' must be single-line (embedded newline)`, filePath);
-      }
+      requireSingleLine(raw.title as string, `stale_suppressed[${i}].title`, filePath);
+      requireSingleLine(raw.evidence as string, `stale_suppressed[${i}].evidence`, filePath);
       suppressed.push({ title: raw.title as string, evidence: raw.evidence as string });
     }
   }
@@ -283,9 +314,40 @@ export function normalizeInternalPass(filePath: string, json: unknown): Normaliz
     }
   }
 
+  // SPINE SEMANTICS (W2): final_assessment and next_recommended are DERIVED
+  // values, never authored prose — the counts sentence from the scorecard
+  // totals, the pointer from the findings state + THIS emit's repo-relative
+  // path. Checked AFTER consistency so a mismatched cell names the cell first.
+  const totals: ScorecardCells = { critical: 0, warning: 0, suggestion: 0 };
+  for (const dim of DIMENSIONS) {
+    for (const sev of SEVERITY_CELLS) totals[sev] += scorecard[dim][sev];
+  }
+  const expectedAssessment =
+    totals.critical + totals.warning + totals.suggestion === 0
+      ? 'No findings.'
+      : `${totals.critical} critical, ${totals.warning} warning, ${totals.suggestion} suggestion.`;
+  if (j.final_assessment !== expectedAssessment) {
+    fail(
+      `field 'final_assessment' is '${j.final_assessment}' but the scorecard-derived sentence is '${expectedAssessment}'`,
+      filePath
+    );
+  }
+  const emitRepoPath = `orbit/changes/${j.change}/.orbit-runs/${path.basename(filePath)}`;
+  const expectedNext =
+    findings.length > 0
+      ? `/orbit:address-reviews ${j.change} --from-file ${emitRepoPath}`
+      : `orbit status --change ${j.change} --report`;
+  if (j.next_recommended !== expectedNext) {
+    fail(
+      `field 'next_recommended' is '${j.next_recommended}' but the deterministic pointer is '${expectedNext}'`,
+      filePath
+    );
+  }
+
   return {
     genre: 'internal',
     filePath,
+    change: j.change as string,
     mode: j.mode as ReviewMode,
     reviewerClass: j.reviewer_class as string,
     depth: j.depth as string,
@@ -309,6 +371,49 @@ function stripLineSuffix(file: string): string {
   return file.replace(/:\d+(:\d+)?$/, '').trim();
 }
 
+/**
+ * Real CommonMark fence tracking (S1) — the ONE helper shared by the strict
+ * external parser and the lenient trail counter, so the two can never disagree
+ * on what is fenced. A fence OPENS on a run of \`\`\` or ~~~ (length ≥ 3,
+ * indented up to three spaces; a backtick fence's info string may not itself
+ * contain a backtick) and CLOSES only on a run of the SAME character with AT
+ * LEAST the opening length and nothing but whitespace after (also up to three
+ * spaces of indent). A three-backtick line inside a four-backtick fence is
+ * body content — the fence stays open.
+ */
+function createFenceTracker(): { readonly inFence: boolean; handle(line: string): boolean } {
+  let open: { char: string; len: number } | null = null;
+  return {
+    get inFence(): boolean {
+      return open !== null;
+    },
+    /** Feeds one line; returns true iff the line is a fence delimiter (opening or closing). */
+    handle(line: string): boolean {
+      const m = line.match(/^ {0,3}(`{3,}|~{3,})(.*)$/);
+      if (!m) return false;
+      const char = m[1][0];
+      const len = m[1].length;
+      if (open === null) {
+        if (char === '`' && m[2].includes('`')) return false; // not a valid backtick opener
+        open = { char, len };
+        return true;
+      }
+      if (char === open.char && len >= open.len && m[2].trim() === '') {
+        open = null;
+        return true;
+      }
+      return false; // inside the fence: a non-closing delimiter-shaped line is body
+    },
+  };
+}
+
+/** Syntactic YYYY-MM-DD that round-trips as a real UTC calendar date (W3). */
+function isRealCalendarDate(value: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const d = new Date(`${value}T00:00:00Z`);
+  return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === value;
+}
+
 function trimBlankEdges(lines: string[]): string[] {
   let start = 0;
   let end = lines.length;
@@ -323,8 +428,10 @@ function trimBlankEdges(lines: string[]): string[] {
  * model's lean `TrailPass` parse in trail.ts is untouched. Fence-aware: heading
  * and field lines inside ``` fences never count as structure (they stay verbatim
  * body content). Requirements: the `# External Review:` header; UNIQUELY-parsed
- * `**Reviewer**:` and `**Date**:` fields; all three severity sections; per
- * finding a `### <title>`, a `**File**:` reference (line RETAINED), and a
+ * `**Reviewer**:` and `**Date**:` fields — recognized ONLY in the pre-severity
+ * HEADER REGION (before the first `## ` heading; W4), the date a REAL
+ * YYYY-MM-DD calendar date (W3); all three severity sections; per finding a
+ * `### <title>`, a `**File**:` reference (line RETAINED), and a non-blank
  * `**Description**:` body (the verbatim recommendation). `## Notes` (when
  * present) supplies the Commentary slot. A shape the parser cannot confidently
  * parse is a REJECTION naming the field and file — non-renderable, no partial.
@@ -344,7 +451,7 @@ export function normalizeExternalPass(filePath: string, content: string): Normal
   }
 
   const lines = content.split(/\r?\n/);
-  let inFence = false;
+  const fence = createFenceTracker();
   let hasHeader = false;
   const reviewerValues: string[] = [];
   const dateValues: string[] = [];
@@ -360,10 +467,11 @@ export function normalizeExternalPass(filePath: string, content: string): Normal
   };
 
   for (const line of lines) {
-    const fenceDelim = /^(`{3,}|~{3,})/.test(line);
+    const wasInFence = fence.inFence;
+    const fenceDelim = fence.handle(line);
     let structural = false;
 
-    if (!inFence && !fenceDelim) {
+    if (!wasInFence && !fenceDelim) {
       const sec = line.match(/^##\s+(CRITICAL|WARNING|SUGGESTION)\s*$/);
       if (/^#\s+External Review\b/i.test(line)) {
         hasHeader = true;
@@ -384,10 +492,13 @@ export function normalizeExternalPass(filePath: string, content: string): Normal
         closeCurrent();
         section = 'other';
         structural = true;
-      } else if (/^\*\*Reviewer\*\*:/.test(line)) {
+      } else if (section === null && /^\*\*Reviewer\*\*:/.test(line)) {
+        // Reviewer/Date recognition is scoped to the pre-severity HEADER
+        // REGION (W4): once any `## ` heading opens a section, Reviewer/Date-
+        // shaped prose is verbatim body text, never duplicate metadata.
         reviewerValues.push(line.replace(/^\*\*Reviewer\*\*:/, '').trim());
         structural = true;
-      } else if (/^\*\*Date\*\*:/.test(line)) {
+      } else if (section === null && /^\*\*Date\*\*:/.test(line)) {
         dateValues.push(line.replace(/^\*\*Date\*\*:/, '').trim());
         structural = true;
       } else if (section && section !== 'notes' && section !== 'other') {
@@ -414,7 +525,6 @@ export function normalizeExternalPass(filePath: string, content: string): Normal
       if (current && current.descLines !== null) current.descLines.push(line);
       else if (section === 'notes' && notesLines) notesLines.push(line);
     }
-    if (fenceDelim) inFence = !inFence;
   }
   closeCurrent();
 
@@ -428,6 +538,15 @@ export function normalizeExternalPass(filePath: string, content: string): Normal
     if (values.length > 1) reject(`duplicate '${field}' field`, filePath);
     if (values[0] === '') reject(`malformed (empty) '${field}' field`, filePath);
   }
+  // W3: the date must be a REAL calendar date — syntactic YYYY-MM-DD alone
+  // admits 2026-02-30; the round-trip check rejects it with the same clarity
+  // as 'banana'.
+  if (!isRealCalendarDate(dateValues[0])) {
+    reject(
+      `malformed '**Date**:' field (expected a real YYYY-MM-DD calendar date, got '${dateValues[0]}')`,
+      filePath
+    );
+  }
   for (const sev of SEVERITIES) {
     if (!sawSections.has(sev)) reject(`missing '## ${sev}' section`, filePath);
   }
@@ -439,12 +558,18 @@ export function normalizeExternalPass(filePath: string, content: string): Normal
     if (d.descLines === null) {
       reject(`finding '${d.title}' missing '**Description**:' body`, filePath);
     }
+    const recommendation = trimBlankEdges(d.descLines!).join('\n');
+    // W3: a Description with no body after trimming is a rejection, not an
+    // empty verbatim recommendation.
+    if (recommendation === '') {
+      reject(`finding '${d.title}' has a blank '**Description**:' body`, filePath);
+    }
     return {
       severity: d.severity,
       title: d.title,
       fileRef: d.fileRef!,
       matchFile: stripLineSuffix(d.fileRef!),
-      recommendation: trimBlankEdges(d.descLines!).join('\n'),
+      recommendation,
     };
   });
 
@@ -490,7 +615,18 @@ function renderScorecard(sc: Scorecard): string {
 export function renderReviewReport(pass: NormalizedReviewPass, ctx: ReportContext): string {
   const blocks: string[] = [];
 
-  blocks.push(`## Review: ${ctx.change} --as ${pass.mode}`);
+  // C3: an internal emit's own `change` must EQUAL the change being rendered
+  // (the CLI/trail selection) — a mismatch is a fail-loud error, never a silent
+  // relabel. The header then renders the VALIDATED emit value (identical bytes,
+  // but the source is the emit per design D2b).
+  if (pass.genre === 'internal' && pass.change !== ctx.change) {
+    fail(
+      `emit 'change' is '${pass.change}' but the rendered change is '${ctx.change}'`,
+      pass.filePath
+    );
+  }
+  const change = pass.genre === 'internal' ? pass.change! : ctx.change;
+  blocks.push(`## Review: ${change} --as ${pass.mode}`);
 
   const modeLine =
     pass.genre === 'internal'
@@ -649,13 +785,10 @@ function lenientExternalCounts(content: string): TrailOrderPass['counts'] & { fi
   let section: Severity | null = null;
   const counts: ScorecardCells = { critical: 0, warning: 0, suggestion: 0 };
   const findings: { title: string; matchFile: string }[] = [];
-  let inFence = false;
+  const fence = createFenceTracker(); // the SAME tracker as the strict parser (S1)
   for (const line of lines) {
-    if (/^(`{3,}|~{3,})/.test(line)) {
-      inFence = !inFence;
-      continue;
-    }
-    if (inFence) continue;
+    const wasInFence = fence.inFence;
+    if (fence.handle(line) || wasInFence) continue;
     if (/^#\s+External Review\b/i.test(line)) hasHeader = true;
     const sec = line.match(/^##\s+(CRITICAL|WARNING|SUGGESTION)\s*$/);
     if (sec) {
@@ -748,9 +881,12 @@ export function collectSameModePasses(changeDir: string, mode: ReviewMode): Trai
  * trend from the trail's same-mode passes (INCLUDING the rendered pass — the
  * record/trail boundary is the persist, not the render), repeat/new vs the
  * immediately-prior same-mode pass, and the CURRENT engine tail from the same
- * per-change status computation the orientation surface composes from. The tail
- * is wrapped: if the status computation throws, the tail lines are simply not
- * computed — the report renders what exists.
+ * per-change status computation the orientation surface composes from. The
+ * legitimately-UNGATED case does not throw — the status computation returns no
+ * gates/position/next_command values and the tail renders what exists (the
+ * `---` rule alone). A THROWN status computation is a real failure (broken
+ * schema, unreadable metadata) and propagates as a clean report failure naming
+ * the change and cause (W1) — gate failures are never rendered as "ungated".
  */
 export function buildReportContext(
   projectRoot: string,
@@ -792,8 +928,11 @@ export function buildReportContext(
     if (row) gateLine = `Gate ${row.id}: ${row.state}${row.reason ? ` — ${row.reason}` : ''}`;
     position = status.position;
     nextCommand = status.next_command;
-  } catch {
-    // Tail not computed — render what exists (the `---` rule still fences).
+  } catch (err) {
+    // NOT the ungated case (that path returns absent values without throwing):
+    // a throw here is a broken schema/metadata — a clean report failure (W1).
+    const cause = err instanceof Error ? err.message : String(err);
+    throw new Error(`report tail computation failed for '${change}': ${cause}`);
   }
 
   return {

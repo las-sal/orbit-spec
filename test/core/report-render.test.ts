@@ -205,6 +205,10 @@ describe('render-time computed context (as-of iteration/trend, current tail, tot
           coherence: { critical: 0, warning: 0, suggestion: 0 },
         },
         findings: [oneFinding],
+        // W2 spine semantics: the counts sentence + the deterministic pointer.
+        final_assessment: '0 critical, 1 warning, 0 suggestion.',
+        next_recommended:
+          '/orbit:address-reviews hist-change --from-file orbit/changes/hist-change/.orbit-runs/review-proposal-2026-07-25T11-00-00Z.json',
       })
     );
     writeTrail(dir, 'review-proposal-2026-07-25T12-00-00Z.json', d4Emit('hist-change', 'proposal'));
@@ -245,6 +249,9 @@ describe('render-time computed context (as-of iteration/trend, current tail, tot
             recommendation: 'Fix.',
           },
         ],
+        // W2 spine semantics: the counts sentence + the deterministic pointer.
+        final_assessment: '1 critical, 0 warning, 0 suggestion.',
+        next_recommended: `/orbit:address-reviews tie-change --from-file orbit/changes/tie-change/.orbit-runs/review-proposal-${token}.json`,
       })
     );
     writeTrail(
@@ -301,15 +308,28 @@ describe('render-time computed context (as-of iteration/trend, current tail, tot
       correctness: { critical: 0, warning: 1, suggestion: 0 },
       coherence: { critical: 0, warning: 0, suggestion: 0 },
     };
+    // W2 spine semantics per emit: the counts sentence + each pass's own pointer.
+    const spine = (ts: string) => ({
+      final_assessment: '0 critical, 1 warning, 0 suggestion.',
+      next_recommended: `/orbit:address-reviews repeat-change --from-file orbit/changes/repeat-change/.orbit-runs/review-proposal-${ts}.json`,
+    });
     writeTrail(
       dir,
       'review-proposal-2026-07-25T10-00-00Z.json',
-      d4Emit('repeat-change', 'proposal', { scorecard: card, findings: [finding(5)] })
+      d4Emit('repeat-change', 'proposal', {
+        scorecard: card,
+        findings: [finding(5)],
+        ...spine('2026-07-25T10-00-00Z'),
+      })
     );
     writeTrail(
       dir,
       'review-proposal-2026-07-25T11-00-00Z.json',
-      d4Emit('repeat-change', 'proposal', { scorecard: card, findings: [finding(9)] })
+      d4Emit('repeat-change', 'proposal', {
+        scorecard: card,
+        findings: [finding(9)],
+        ...spine('2026-07-25T11-00-00Z'),
+      })
     );
 
     // Line differs; the line-stripped path + trimmed title still match → repeat.

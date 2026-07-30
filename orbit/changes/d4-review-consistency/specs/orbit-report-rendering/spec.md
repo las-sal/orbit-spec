@@ -44,7 +44,10 @@ tail line renders ONLY when the engine computes its value: the gate line when
 `computeGateStates` yields a matching-phase gate, the position line when the status
 computation yields `position`, the eligibility line when it yields `next_command` — for an
 ungated schema (all three absent) the tail is the `---` rule alone; no line is ever invented
-(a golden fixture pins the ungated minimal form). VERBATIM-SOURCED multi-line bodies —
+(a golden fixture pins the ungated minimal form). The ungated tail is a COMPUTED absence,
+never an error mask: a tail-computation FAILURE (malformed schema, unreadable metadata, a
+status-engine error) propagates as a clean render failure naming the change and cause —
+it is NOT rendered as the minimal tail. VERBATIM-SOURCED multi-line bodies —
 finding recommendations and the Commentary slot's content — render under
 BLOCKQUOTE CONTAINMENT: every line prefixed `> `, so no source line sits at column 0 and none
 can forge a section heading, thematic break, or fence in the report's own grammar (the source
@@ -129,15 +132,20 @@ for the universal spine plus the review extensions (`mode`, `reviewer_class`, `d
 scorecard shape, the
 `findings[]` entry shape); an EXTERNAL pass is valid iff the trail parser confidently parsed
 it: the header + all three severity sections (the parser's existing shape gate) PLUS
-uniquely-parsed `**Reviewer**:` and `**Date**:` fields (fence-aware — the rendered header
-requires both; a missing, duplicate, or malformed value is a parse REJECTION with the clean
-error naming the field and file; no spine and no scorecard exist to demand). A missing or mistyped
+uniquely-parsed `**Reviewer**:` and `**Date**:` fields (fence-aware per CommonMark —
+delimiter character and length tracked, up to three leading spaces — and recognized ONLY in
+the pre-severity header region: field-shaped prose inside a Description body is body text,
+never header metadata. The rendered header requires both; a missing, duplicate, or malformed
+value is a parse REJECTION with the clean error naming the field and file — malformed
+includes a `**Date**:` that is not a real `YYYY-MM-DD` calendar date and a blank
+`**Description**:` body; no spine and no scorecard exist to demand). A missing or mistyped
 field fails the render with a clean error NAMING the field and the offending file; NO partial
 render is produced. This is deliberately the opposite policy from the orientation surface's
 graceful degradation: `--report` is the reviewing AI's own tool in the run-and-paste loop, so
 failing loud catches a malformed emit at the source pass where it can be fixed. Single-line
-grammar slots — finding `title`, `stale_suppressed[].title`/`evidence`, `reviewer_class`,
-`depth` — REJECT embedded newlines (fail loud naming the field): record-sourced text must not
+grammar slots — finding `title` and `file`, `recommendation_options[].label`,
+`stale_suppressed[].title`/`evidence`, `reviewer_class`, `depth` — REJECT embedded newlines
+(CR or LF; fail loud naming the exact slot): record-sourced text must not
 be able to forge column-0 report grammar, and the blockquote containment covers only the
 multi-line bodies. Optional
 fields (`commentary`, `recommendation_options`) are absent-safe, never validation failures;
@@ -148,7 +156,15 @@ CONSISTENCY, not just shape: every finding carries an owning `dimension`
 each dimension × severity cell SHALL equal the rollup of the emit's ACTIVE findings
 (suppressed findings excluded) — a type-correct emit whose scorecard disagrees with its
 findings fails the render naming the mismatched cell (the multi-voice contradiction the
-change exists to remove, closed one field deeper). The render BOUNDARY is the D4 EMIT
+change exists to remove, closed one field deeper). Spine SEMANTICS are validated, not just
+presence: `command` SHALL be `review`, `kind` SHALL be `editorial`, `reviewer_class` SHALL
+be one of the three named classes, the emit's `change` SHALL equal the change being rendered
+(it is the internal header's change source — a mismatch fails naming both values, never a
+silent relabel), and the DETERMINISTIC spine facts SHALL equal their computed values —
+`final_assessment` the scorecard-derived counts sentence and `next_recommended` the
+findings-dependent self/report pointer (drift fails naming the field: the orientation
+surface reads these fields verbatim, so a wrong stored value would recreate the stale second
+voice this change removes). The render BOUNDARY is the D4 EMIT
 GENERATION — the shape THIS capability defines: the full universal spine (including `kind`) +
 `scorecard` + dimension-carrying `findings[]`. Every earlier real generation fails with the
 clean `pre-capability emit` error NAMING the boundary — the kind+findings_summary generation (no scorecard;
@@ -176,6 +192,11 @@ readable as the raw JSON, which is the record).
 
 - **WHEN** an emit's scorecard shows zero criticals while its active `findings[]` contains a CRITICAL entry (or any cell disagrees with the dimension × severity rollup)
 - **THEN** the render fails naming the mismatched cell; no partial report is produced
+
+#### Scenario: Deterministic spine drift fails the render
+
+- **WHEN** a boundary-conformant emit's `final_assessment` disagrees with the scorecard-derived counts sentence, or its `next_recommended` disagrees with the findings-dependent pointer, or its `change` disagrees with the change being rendered
+- **THEN** the render fails with a clean error naming the drifted field (and for `change`, both values); nothing renders
 
 ### Requirement: One grammar for internal and external passes
 

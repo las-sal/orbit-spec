@@ -44,14 +44,23 @@ describe('status --report surface', () => {
     return dir;
   }
 
-  function d4Emit(change: string, mode: string, findingTitle?: string): string {
+  // W2 spine semantics: next_recommended is the deterministic pointer — with
+  // findings it names THIS emit's own repo-relative path (token = the filename's).
+  function d4Emit(
+    change: string,
+    mode: string,
+    findingTitle?: string,
+    token = '2026-07-25T10-00-00Z'
+  ): string {
     const zero = { critical: 0, warning: 0, suggestion: 0 };
     return JSON.stringify({
       command: 'review',
       timestamp: '2026-07-25T10:00:00Z',
       change,
       final_assessment: findingTitle ? '0 critical, 1 warning, 0 suggestion.' : 'No findings.',
-      next_recommended: `orbit status --change ${change} --report`,
+      next_recommended: findingTitle
+        ? `/orbit:address-reviews ${change} --from-file orbit/changes/${change}/.orbit-runs/review-${mode}-${token}.json`
+        : `orbit status --change ${change} --report`,
       kind: 'editorial',
       mode,
       reviewer_class: 'in-context',
@@ -100,7 +109,7 @@ describe('status --report surface', () => {
     );
     await fs.writeFile(
       path.join(runs, 'review-proposal-2026-07-25T11-00-00Z.json'),
-      d4Emit('newest-change', 'proposal', 'Newest finding')
+      d4Emit('newest-change', 'proposal', 'Newest finding', '2026-07-25T11-00-00Z')
     );
 
     const first = await runCLI(['status', '--change', 'newest-change', '--report'], { cwd: tempDir });
@@ -123,7 +132,7 @@ describe('status --report surface', () => {
     );
     await fs.writeFile(
       path.join(runs, 'review-proposal-2026-07-25T11-00-00Z.json'),
-      d4Emit('explicit-change', 'proposal', 'Newest finding')
+      d4Emit('explicit-change', 'proposal', 'Newest finding', '2026-07-25T11-00-00Z')
     );
 
     const result = await runCLI(
@@ -165,6 +174,7 @@ describe('status --report surface', () => {
       { cwd: tempDir }
     );
     expect(result.exitCode).not.toBe(0);
+    expect(result.stdout).toBe('');
     const out = result.stdout + result.stderr;
     expect(out).toContain("emit genre 'propose' is not renderable");
     expect(out).toContain('renderable: review passes');
@@ -181,6 +191,7 @@ describe('status --report surface', () => {
 
     const result = await runCLI(['status', '--change', 'empty-change', '--report'], { cwd: tempDir });
     expect(result.exitCode).not.toBe(0);
+    expect(result.stdout).toBe('');
     const out = result.stdout + result.stderr;
     expect(out).toContain("no renderable review pass in 'empty-change'");
     expect(out).toContain('renderable set is empty');
@@ -198,7 +209,8 @@ describe('status --report surface', () => {
       { cwd: tempDir }
     );
     expect(result.exitCode).not.toBe(0);
-    expect(result.stdout + result.stderr).toContain('the emit IS the JSON');
+    expect(result.stdout).toBe('');
+    expect(result.stderr).toContain('the emit IS the JSON');
   });
 
   it('--report without --change is a clean error (the report rides the per-change form)', async () => {
@@ -206,7 +218,42 @@ describe('status --report surface', () => {
 
     const result = await runCLI(['status', '--report'], { cwd: tempDir });
     expect(result.exitCode).not.toBe(0);
-    expect(result.stdout + result.stderr).toContain('--report requires --change');
+    expect(result.stdout).toBe('');
+    expect(result.stderr).toContain('--report requires --change');
+  });
+
+  it('pre-boundary and malformed-external failures write nothing to stdout', async () => {
+    const dir = await makeChange('err-stdout-change');
+    const runs = path.join(dir, '.orbit-runs');
+    // Pre-boundary: the kind+findings_summary generation (no scorecard).
+    await fs.writeFile(
+      path.join(runs, 'review-proposal-2026-07-20T10-00-00Z.json'),
+      JSON.stringify({
+        command: 'review', timestamp: '2026-07-20T10:00:00Z', change: 'err-stdout-change',
+        final_assessment: 'ok', next_recommended: 'x', kind: 'editorial', mode: 'proposal',
+        findings_summary: { critical: 0, warning: 0, suggestion: 0 },
+      })
+    );
+    const pre = await runCLI(
+      ['status', '--change', 'err-stdout-change', '--report', '2026-07-20T10-00-00Z'],
+      { cwd: tempDir }
+    );
+    expect(pre.exitCode).not.toBe(0);
+    expect(pre.stdout).toBe('');
+    expect(pre.stderr).toContain('pre-capability emit');
+
+    // Malformed external: missing the Reviewer header field.
+    await fs.writeFile(
+      path.join(runs, 'external-proposal-2026-07-21T10-00-00Z.md'),
+      '# External Review: err-stdout-change (iteration 1)\n\n**Date**: 2026-07-21\n\n' +
+        '## CRITICAL\n\nNone.\n\n## WARNING\n\nNone.\n\n## SUGGESTION\n\nNone.\n'
+    );
+    const ext = await runCLI(
+      ['status', '--change', 'err-stdout-change', '--report', '2026-07-21T10-00-00Z'],
+      { cwd: tempDir }
+    );
+    expect(ext.exitCode).not.toBe(0);
+    expect(ext.stdout).toBe('');
   });
 
   it('equal tokens resolve by the shared tie-break: the lexicographically-earlier filename is more recent', async () => {
