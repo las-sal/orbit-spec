@@ -130,6 +130,31 @@ describe('cross-source equivalence (one grammar for both genres)', () => {
   });
 });
 
+describe('header region latches closed at the first section heading', () => {
+  it('a quoted `# External Review:` line inside a Description stays verbatim body', () => {
+    const dir = makeChange('latch-change');
+    writeTrail(dir, 'external-proposal-2026-07-30T10-00-00Z.md', [
+      '# External Review: latch-change (iteration 1)', '',
+      '**Reviewer**: Test Model', '**Date**: 2026-07-30', '',
+      '## CRITICAL', '', 'None.', '',
+      '## WARNING', '', '### Quoting finding',
+      '**File**: a.md:1',
+      '**Description**: The file begins with',
+      '# External Review: latch-change (iteration 1)',
+      '**Reviewer**: someone else',
+      'and that is the problem.', '',
+      '## SUGGESTION', '', 'None.', '',
+    ].join('\n'));
+    const report = renderReport(root, 'latch-change', '2026-07-30T10-00-00Z');
+    // The quoted header and Reviewer-shaped line survive INSIDE the blockquote-
+    // contained recommendation; neither truncates the body nor rejects the file.
+    expect(report).toContain('> # External Review: latch-change (iteration 1)');
+    expect(report).toContain('> **Reviewer**: someone else');
+    expect(report).toContain('> and that is the problem.');
+    expect(report).toContain('Reviewer: external (Test Model, 2026-07-30)');
+  });
+});
+
 // ---------------------------------------------------------------------------
 // C2 — the COMPLETE single-line slot set, table-driven
 // ---------------------------------------------------------------------------

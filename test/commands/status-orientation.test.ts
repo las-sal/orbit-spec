@@ -64,6 +64,26 @@ describe('status orientation surface', () => {
     return dir;
   }
 
+  async function writeReviewEmit(dir: string, mode: string, ts: string) {
+    const zero = { critical: 0, warning: 0, suggestion: 0 };
+    await fs.writeFile(
+      path.join(dir, '.orbit-runs', `review-${mode}-${ts}.json`),
+      JSON.stringify({
+        command: 'review',
+        timestamp: ts.replace(/-(\d{2})-(\d{2})Z$/, ':$1:$2Z'),
+        change: path.basename(dir),
+        final_assessment: 'No findings.',
+        next_recommended: `orbit status --change ${path.basename(dir)} --report`,
+        kind: 'editorial',
+        mode,
+        reviewer_class: 'in-context',
+        depth: 'full',
+        scorecard: { completeness: { ...zero }, correctness: { ...zero }, coherence: { ...zero } },
+        findings: [],
+      })
+    );
+  }
+
   async function makeExplore(name: string) {
     const dir = path.join(tempDir, 'orbit', 'explore', name);
     await fs.mkdir(dir, { recursive: true });
@@ -110,6 +130,32 @@ describe('status orientation surface', () => {
     // The also-line phase is the ENGINE frontier gate (review-proposal for a
     // complete-artifacts change), never a completed predecessor.
     expect(out).toContain('other-change (review)');
+  });
+
+  it('the review chip counts the SHARED pass axis: internal emits plus confident external findings files', async () => {
+    const dir = await makeChange('axis-change', { emit: true });
+    await writeReviewEmit(dir, 'proposal', '2026-07-21T10-00-00Z');
+    await writeReviewEmit(dir, 'proposal', '2026-07-22T10-00-00Z');
+    await fs.writeFile(
+      path.join(dir, '.orbit-runs', 'external-proposal-2026-07-23T10-00-00Z.md'),
+      [
+        '# External Review: axis-change (iteration 3)', '',
+        '**Reviewer**: Test Model', '**Date**: 2026-07-23', '',
+        '## CRITICAL', '', 'None.', '',
+        '## WARNING', '', 'None.', '',
+        '## SUGGESTION', '', 'None.', '',
+      ].join('\n')
+    );
+    // An unconfident external (missing sections) contributes nothing.
+    await fs.writeFile(
+      path.join(dir, '.orbit-runs', 'external-proposal-2026-07-24T10-00-00Z.md'),
+      '# External Review: axis-change\n\n## CRITICAL\n\nNone.\n'
+    );
+
+    const result = await runCLI(['status'], { cwd: tempDir });
+    expect(result.exitCode).toBe(0);
+    const out = result.stdout + result.stderr;
+    expect(out).toContain('review ⟲3'); // 2 internal + 1 confident external; the unconfident file adds nothing
   });
 
   it('regression: --change output keeps gate rows and gates[] markers; no-changes message unchanged', async () => {

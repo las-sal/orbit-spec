@@ -456,6 +456,10 @@ export function normalizeExternalPass(filePath: string, content: string): Normal
   const reviewerValues: string[] = [];
   const dateValues: string[] = [];
   const sawSections = new Set<Severity>();
+  // The header region is LATCHED closed at the first `## ` heading: later
+  // header-shaped lines (`# External Review`, `**Reviewer**:`) inside an open
+  // body are verbatim content, never structure or duplicate metadata.
+  let headerRegion = true;
   let section: Severity | 'notes' | 'other' | null = null;
   let current: DraftFinding | null = null;
   const drafts: DraftFinding[] = [];
@@ -473,32 +477,36 @@ export function normalizeExternalPass(filePath: string, content: string): Normal
 
     if (!wasInFence && !fenceDelim) {
       const sec = line.match(/^##\s+(CRITICAL|WARNING|SUGGESTION)\s*$/);
-      if (/^#\s+External Review\b/i.test(line)) {
+      if (headerRegion && /^#\s+External Review\b/i.test(line)) {
         hasHeader = true;
         closeCurrent();
         section = null;
         structural = true;
       } else if (sec) {
+        headerRegion = false;
         closeCurrent();
         section = sec[1] as Severity;
         sawSections.add(section);
         structural = true;
       } else if (/^##\s+Notes\s*$/i.test(line)) {
+        headerRegion = false;
         closeCurrent();
         section = 'notes';
         notesLines = [];
         structural = true;
       } else if (/^##\s+/.test(line)) {
+        headerRegion = false;
         closeCurrent();
         section = 'other';
         structural = true;
-      } else if (section === null && /^\*\*Reviewer\*\*:/.test(line)) {
+      } else if (headerRegion && /^\*\*Reviewer\*\*:/.test(line)) {
         // Reviewer/Date recognition is scoped to the pre-severity HEADER
-        // REGION (W4): once any `## ` heading opens a section, Reviewer/Date-
-        // shaped prose is verbatim body text, never duplicate metadata.
+        // REGION (W4): the region latches CLOSED at the first `## ` heading,
+        // so header-shaped prose in a later body — including a quoted
+        // `# External Review` line — is verbatim content, never structure.
         reviewerValues.push(line.replace(/^\*\*Reviewer\*\*:/, '').trim());
         structural = true;
-      } else if (section === null && /^\*\*Date\*\*:/.test(line)) {
+      } else if (headerRegion && /^\*\*Date\*\*:/.test(line)) {
         dateValues.push(line.replace(/^\*\*Date\*\*:/, '').trim());
         structural = true;
       } else if (section && section !== 'notes' && section !== 'other') {
@@ -710,6 +718,40 @@ export interface TrailArtifact {
 
 const INTERNAL_PASS_RE = /^review-(proposal|system)-\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}Z\.json$/;
 const EXTERNAL_PASS_RE = /^external-(proposal|system)-\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}Z\.md$/;
+
+/**
+ * Counts the confident external findings files for one mode in a change's
+ * trail — the orientation strip's shared-pass-axis contribution (D4: ONE
+ * iteration semantics across surfaces — the ⟲N chip and the report ordinal
+ * count the same axis). The same confidence gate lenient trail counting
+ * applies (header + all three severity sections); an unreadable or
+ * unconfident file contributes nothing.
+ */
+export function countConfidentExternalPasses(
+  changeDir: string,
+  mode: 'proposal' | 'system'
+): number {
+  const runsDir = path.join(changeDir, '.orbit-runs');
+  let names: string[];
+  try {
+    names = fs.readdirSync(runsDir);
+  } catch {
+    return 0;
+  }
+  let count = 0;
+  for (const name of names) {
+    const m = name.match(EXTERNAL_PASS_RE);
+    if (!m || m[1] !== mode) continue;
+    let content: string;
+    try {
+      content = fs.readFileSync(path.join(runsDir, name), 'utf-8');
+    } catch {
+      continue;
+    }
+    if (lenientExternalCounts(content)) count++;
+  }
+  return count;
+}
 
 /**
  * The shared total-order comparator (orbit-orientation's tie-break): token

@@ -134,8 +134,9 @@ scorecard shape, the
 it: the header + all three severity sections (the parser's existing shape gate) PLUS
 uniquely-parsed `**Reviewer**:` and `**Date**:` fields (fence-aware per CommonMark —
 delimiter character and length tracked, up to three leading spaces — and recognized ONLY in
-the pre-severity header region: field-shaped prose inside a Description body is body text,
-never header metadata. The rendered header requires both; a missing, duplicate, or malformed
+the pre-severity header region, which LATCHES closed at the first `## ` heading: field- or
+header-shaped prose inside a Description or Notes body — including a quoted
+`# External Review` line — is verbatim body text, never header metadata or structure. The rendered header requires both; a missing, duplicate, or malformed
 value is a parse REJECTION with the clean error naming the field and file — malformed
 includes a `**Date**:` that is not a real `YYYY-MM-DD` calendar date and a blank
 `**Description**:` body; no spine and no scorecard exist to demand). A missing or mistyped

@@ -9,6 +9,7 @@ import {
 import { buildArchitectureBuckets, type ArchitectureBuckets } from './architecture/buckets.js';
 import type { StageState } from './architecture/state.js';
 import { readChangeMetadata } from '../utils/change-metadata.js';
+import { countConfidentExternalPasses } from './report-render.js';
 
 /**
  * Orientation module (D-arc Stage D3). Pure composition layer behind
@@ -237,11 +238,18 @@ function composeChangeStrip(
   changeDir: string,
   emits: EmitRecord[]
 ): OrientationChip[] {
-  // ⟲N counts `review-<mode>-*.json` emits (the spec's strip grammar) —
-  // internal passes only, and only SPINE-VALID ones (the fault-isolation skip
-  // applies uniformly: a skipped emit moves neither `last` nor the chip count).
-  const proposalIters = emits.filter((e) => e.command === 'review' && e.mode === 'proposal').length;
-  const systemIters = emits.filter((e) => e.command === 'review' && e.mode === 'system').length;
+  // ⟲N counts same-mode passes on the SHARED PASS AXIS (D4 — the report
+  // ordinal's axis; one iteration semantics across surfaces): SPINE-VALID
+  // internal `review-<mode>-*.json` emits (the fault-isolation skip applies
+  // uniformly: a skipped emit moves neither `last` nor the chip count) PLUS
+  // confident `external-<mode>-*.md` findings files (the report capability's
+  // lenient confidence gate; unreadable/unconfident files contribute nothing).
+  const proposalIters =
+    emits.filter((e) => e.command === 'review' && e.mode === 'proposal').length +
+    countConfidentExternalPasses(changeDir, 'proposal');
+  const systemIters =
+    emits.filter((e) => e.command === 'review' && e.mode === 'system').length +
+    countConfidentExternalPasses(changeDir, 'system');
 
   const gate = (id: string) => status.gates?.find((g) => g.id === id);
   const gateState = (id: string): string | undefined => {
