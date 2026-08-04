@@ -65,13 +65,14 @@ Implementation chunks:
 
 **Format constraints**:
 - The `(groups X[-Y])` portion supports a single group (`X`) or a contiguous range (`X-Y`). Non-contiguous group sets (e.g., `(groups 6,8,9)`) are NOT supported in v1 — restructure tasks.md groups to be contiguous, or split into multiple chunks.
-- **Malformed preamble handling** (graceful degradation): if the preamble comment block exists but cannot be parsed (missing parens, typo in `Chunk N`, malformed group range, etc.), the emit-layer SHALL log a single warning to stderr (`"warning: tasks.md preamble at <path> could not be parsed as chunk declarations; falling back to no-chunking mode"`) and proceed under no-chunking-apply rules (single emit at session end with `chunk: null`). The implementation is "tolerant on read, strict on write" — don't block the user's work; surface the parse issue so they can fix the preamble.
+- **Cross-declaration coverage rules**: across the declaration set, chunk numbers SHALL be in ascending order and group ranges SHALL be non-overlapping with no gap (a declared-range group covered by no chunk). Overlap, gap, and out-of-order chunk numbers are all malformed-preamble cases handled per the next bullet — a tolerated gap would let rule 1 recommend verify at final-chunk completion while uncovered tasks remain unchecked, the wrong-but-plausible record class this capability exists to prevent.
+- **Malformed preamble handling** (graceful degradation): if the preamble comment block exists but cannot be parsed (missing parens, typo in `Chunk N`, malformed group range, overlapping/gapped/out-of-order declarations, etc.), the emit-layer SHALL log a single warning to stderr (`"warning: tasks.md preamble at <path> could not be parsed as chunk declarations; falling back to no-chunking mode"`) and proceed under no-chunking-apply rules (single emit at session end with `chunk: null`). The implementation is "tolerant on read, strict on write" — don't block the user's work; surface the parse issue so they can fix the preamble.
 
 The emit follows these rules:
 
 1. **Chunk completion**: when the last task in chunk N is checked, emit with `chunk: "N of M"`, `chunk_complete: true`, and `next_recommended` advancing to the next chunk (`/orbit:apply <name>`) or to `/orbit:verify <name>` on apply-complete (chunk N == M).
 2. **Mid-chunk session pause**: when the user pauses or hands off mid-chunk-N (e.g., "stopping here for now"), emit with `chunk: "N of M"`, `chunk_complete: false`, and `next_recommended: "/orbit:apply <name>"` to resume.
-3. **No-chunking apply**: when tasks.md has no explicit chunk preamble, emit once at session end with `chunk: null`, `chunk_complete: true`, and `next_recommended` advancing to `/orbit:verify <name>` on apply-complete or `/orbit:apply <name>` if tasks remain.
+3. **No-chunking apply**: when tasks.md has no explicit chunk preamble, emit once at session end with `chunk: null`; `chunk_complete` is COMPUTED by the same engine formula with the whole task set as the "current chunk" (all unchecked tasks minus the full user-validation set == 0 — never a constant), and `next_recommended` advances to `/orbit:verify <name>` when that computation is true or `/orbit:apply <name>` if AI-doable tasks remain.
 
 The apply emit per-command extensions SHALL include the following fields beyond the spine:
 
@@ -81,19 +82,30 @@ tasks_remaining              int   running total of unchecked tasks (includes us
 user_validation_remaining    int   subset of tasks_remaining that are acknowledged user-validation tasks
                                    (acknowledged-convention work intentionally left unchecked at apply-time for runtime
                                    testing or user confirmation; surfaces as warnings at archive time, not blockers).
-                                   Default: 0. Set to a positive count when the AI recognizes specific unchecked tasks
-                                   as user-validation per their text (e.g., "Live-test ...", "(User-validation handoff)").
-                                   The ONE checkbox field the payload supplies (a judgment call, not arithmetic).
+                                   Default: 0. ENGINE-computed (D-arc Stage D5) as the length of the payload's
+                                   `user_validation_tasks` identifier list — the ONE checkbox judgment the payload
+                                   supplies: the task ids it recognizes as user-validation per their text (e.g.,
+                                   ["9.6", "9.7"] for "Live-test ...", "(User-validation handoff)"). Each named task
+                                   is validated to exist in tasks.md and be unchecked — a bad entry is rejected
+                                   naming it; payload supply of the count itself is rejected as engine-owned.
 chunk                        string | null   e.g., "3 of 5" or null — ENGINE-computed from the preamble
 chunk_name                   string | null   e.g., "phase+attention engine" — ENGINE-computed
-chunk_complete               bool             true when AI-doable work in this chunk is done (i.e.,
-                                              tasks_remaining - user_validation_remaining == 0 for this chunk's tasks);
+chunk_complete               bool             true when AI-doable work in this chunk is done — ENGINE-computed
+                                              (D-arc Stage D5): the current chunk's unchecked tasks minus its
+                                              user-validation subset == 0, where the per-chunk subset derives from
+                                              task → group → chunk membership via the preamble grammar and the
+                                              payload's `user_validation_tasks` list; when `chunk` is null
+                                              (no-chunking), the "current chunk" is the WHOLE task set and the
+                                              subset is the full list; payload supply rejected;
                                               user_validation_remaining > 0 does NOT block chunk_complete: true
 tasks_completed_this_session int             delta since prior apply JSON — ENGINE-computed from the trail
 files_touched                string[] | null  file paths changed since the previous apply emit — ENGINE-computed
-                                              from the git diff (D-arc Stage D5; the per-chunk half of the
-                                              predicted/actual touchpoints split); null outside a git repo or when
-                                              no prior reference resolves; NEVER hand-listed
+                                              from the git diff against the WORKING TREE (committed + uncommitted
+                                              tracked changes; the first apply emit references the change's first
+                                              commit; timestamp→commit resolution per orbit-emit-composition —
+                                              D-arc Stage D5; the per-chunk half of the predicted/actual
+                                              touchpoints split); null outside a git repo or when no reference
+                                              resolves; NEVER hand-listed
 gate_overridden              object | absent  present ONLY when the user proceeds past an unpassed or stale gate
                                               at the apply phase (the `review-proposal` gate gates `apply`, per
                                               orbit-engine-gates) via the inflection prompt; shape
@@ -116,11 +128,15 @@ gate_overridden              object | absent  present ONLY when the user proceed
 - **THEN** `apply-<TS>.json` is written with `chunk_complete: true` and `next_recommended` beginning with `"/orbit:verify foo"`
 
 #### Scenario: No-chunking apply emits once at session end
-- **WHEN** `/orbit:apply foo` runs on a change with no explicit chunk preamble in tasks.md
-- **THEN** exactly one `apply-<TS>.json` is written at session end with `chunk: null` and `chunk_complete: true`
+- **WHEN** `/orbit:apply foo` runs on a change with no explicit chunk preamble in tasks.md and completes all AI-doable tasks
+- **THEN** exactly one `apply-<TS>.json` is written at session end with `chunk: null` and `chunk_complete: true` — the whole-task-set computation, not a constant
+
+#### Scenario: Overlapping chunk declarations fall back to no-chunking
+- **WHEN** tasks.md declares `Chunk 1 (groups 1-3)` and `Chunk 2 (groups 3-4)`
+- **THEN** the emit-layer logs the single malformed-preamble stderr warning and proceeds under no-chunking rules (`chunk: null`); no chunk arithmetic is attempted against overlapping declarations
 
 #### Scenario: Final chunk completes with user-validation tasks remaining
-- **WHEN** `/orbit:apply foo` completes the last AI-doable task in the final chunk, but 6 user-validation tasks (e.g., "9.1 Live-test ...", "9.9 (User-validation handoff)") remain explicitly unchecked per the user-validation convention
+- **WHEN** `/orbit:apply foo` completes the last AI-doable task in the final chunk, but 6 user-validation tasks (e.g., "9.1 Live-test ...", "9.9 (User-validation handoff)") remain explicitly unchecked per the user-validation convention (the payload's `user_validation_tasks` list names them; the engine verifies each and derives the counts)
 - **THEN** `apply-<TS>.json` is written with `chunk_complete: true`, `tasks_remaining: 6`, `user_validation_remaining: 6` (matching `tasks_remaining`), and `next_recommended` begins with `"/orbit:verify foo"` — the AI is done; user-validation happens at verify time
 
 #### Scenario: Apply past an unpassed proposal gate records the override
@@ -128,5 +144,129 @@ gate_overridden              object | absent  present ONLY when the user proceed
 - **THEN** the `apply-<TS>.json` emit includes `gate_overridden: {gate: "review-proposal", state: "<unpassed|stale>", reason: "<gate reason at decision time>"}`; emits for applies with no gate override omit the field entirely
 
 #### Scenario: Per-chunk touched files computed from the diff
-- **WHEN** a chunk-completion emit fires in a git repository with commits since the previous apply emit
-- **THEN** `files_touched` lists the changed paths engine-computed from the diff; in a non-git workspace, or when no prior reference resolves, the field is `null` — never an AI-authored list
+- **WHEN** a chunk-completion emit fires in a git repository with commits and/or uncommitted tracked edits since the previous apply emit
+- **THEN** `files_touched` lists the changed paths engine-computed from the diff against the working tree; in a non-git workspace, or when no reference resolves, the field is `null` — never an AI-authored list
+
+### Requirement: Emit timing semantics
+
+The emit-layer SHALL fire at well-defined moments per command type. Three categories cover the full command surface:
+
+**One-shot commands** — emit ONCE on natural command completion (when the AI completes the command's intended work and is about to return control to the user):
+- `/orbit:propose`, `/orbit:new`, `/orbit:ff`, `/orbit:continue`
+- `/orbit:verify`
+- `/orbit:audit-drift` standalone (excluding the inline-during-archive case captured in `archive-<TS>.json`)
+- The external-review packaging branch at T0 (`/orbit:review --reviewer external`, D-arc Stage D5's merge — when the prompt is packaged, before findings return; record vocabulary frozen per `orbit-review-external`)
+
+**Multi-turn commands with explicit phases** — emit at phase boundaries per the command-specific requirement:
+- `/orbit:apply` — emits per `Requirement: Apply per-chunk-end emission` (chunk completion is the primary trigger; mid-chunk pause is the secondary trigger per the conversation-boundary rules below)
+
+**Multi-turn conversational commands** — emit at conversation boundaries:
+- `/orbit:explore` (named mode) — a BEGIN emit at staging-dir creation (D-arc Stage D3; the begin+boundary genre, like apply's chunk+pause; content is MODE-AWARE — Mode B records zero counts, Mode C records the back-filled counts, per the Emit-scope scenarios) AND boundary emits per `Requirement: Named-mode explore recommendation by maturity` with the timing defined here; on a filename collision (a boundary emit within the same ISO second as the begin emit — the `<TS>` token is second-granular), the emit-layer bumps the later emit's token forward by one second until the path is free, preserving lexical begin-before-boundary ordering (the review-external T0 precedent); resuming a pre-D3 staging directory that has no emits does NOT retro-fire a begin emit (add-only, no backdating — the next boundary emit covers it)
+- `/orbit:architect` (D-arc Stage D2) — emits to the architecture trail with the conversation-boundary timing defined here; the emit's shape and extensions are owned by `orbit-architect`
+
+A **conversation boundary** for multi-turn conversational commands is defined as EITHER of (both rules are operational signals the emit-layer can detect at JSON-write time without requiring future-message inspection):
+
+1. **User explicitly signals stop or pause** — "stop", "pause", "that's it for now", "we'll come back to this later", or equivalent intent
+2. **AI-initiated wrap** — AI says "I've captured everything; type `/orbit:propose <name>` when ready" or equivalent intent (an explicit suggestion of the next workflow step, signalling the conversation is at a natural pause point)
+
+**Canonical orbit UX convention**: to make most natural handoffs become explicit boundaries, when the AI hands control back to the user after a multi-turn conversational command session (such as `/orbit:explore` named-mode), the AI SHOULD include an explicit wrap phrase suggesting the next step (e.g., "type `/orbit:propose <name>` when ready" or "type `/orbit:explore <name>` to continue capturing"). This turns the handoff itself into a rule-2 signal and triggers the emit naturally without requiring the AI to predict future user behavior.
+
+**Known limitation** (accepted tradeoff): if the user closes the conversation without either an explicit stop signal or an AI-initiated wrap (e.g., user simply walks away mid-session), no BOUNDARY emit fires for that session (a FIRST session's begin emit still recorded the workstream's start — D-arc Stage D3; only the session's closing state goes uncaptured). The change's state persists in on-disk artifacts (e.g., `explore.md`), but the `.orbit-runs/` JSON timeline misses the implicit boundary. Capturing the implicit case would require future-message inspection unavailable to the emit-layer at JSON-write time; explicit-signal-only is the operationally simpler tradeoff.
+
+For `/orbit:apply` mid-chunk pause specifically, the same conversation-boundary rules apply — in addition to the explicit chunk-completion trigger.
+
+**What is NOT a session boundary**: AI returning control mid-thought to ask a clarifying question; user asking a tangential question and returning to the same workflow; AI mid-turn pauses to read files or run commands; AI tool-use sequences within a single response. These are continuations, not boundaries — no emit fires.
+
+#### Scenario: One-shot command emits exactly once
+- **WHEN** `/orbit:propose foo` runs and completes generating all artifacts
+- **THEN** exactly one `propose-<TS>.json` is written at completion; no additional emits
+
+#### Scenario: Apply chunk completion is an explicit phase boundary
+- **WHEN** `/orbit:apply foo` checks the last task in chunk N
+- **THEN** the emit fires per `Requirement: Apply per-chunk-end emission` with `chunk_complete: true`
+
+#### Scenario: Apply mid-chunk pause on explicit user signal
+- **WHEN** during `/orbit:apply foo` the user says "stopping here for now"
+- **THEN** the emit-layer treats this as a conversation boundary and emits `apply-<TS>.json` with `chunk_complete: false` per the per-chunk-end requirement's rule 2
+
+#### Scenario: Named-mode explore emits when AI includes wrap phrase on handoff
+- **WHEN** `/orbit:explore foo` has captured N decisions; AI returns control to user with an explicit wrap phrase such as `"type /orbit:propose foo when ready"`
+- **THEN** the emit-layer treats this as a rule-2 (AI-initiated wrap) boundary and emits `explore-<TS>.json` with current decision and question counts and recommendation per maturity rules
+
+#### Scenario: Continuation within a conversation is NOT a boundary
+- **WHEN** during `/orbit:explore foo` the user asks a tangential question, the AI answers, and the user returns to the exploration topic in the same conversation
+- **THEN** the emit-layer does NOT emit during the tangent or upon return; emit only fires when an actual conversation boundary (rule 1 explicit signal, or rule 2 AI-wrap) is reached
+
+#### Scenario: User abandons conversation without explicit signal (known limitation)
+- **WHEN** `/orbit:explore foo` has captured N decisions; AI returns control to user without an explicit wrap phrase; the user does not respond and the conversation effectively ends
+- **THEN** no boundary emit fires for that session (if this was the scaffolding session, the begin emit already recorded the start). The `orbit/explore/foo/explore.md` artifact retains captured state. The next `/orbit:explore foo` invocation picks up from disk and will emit at its own boundary; the prior session's implicit boundary is not captured in the `.orbit-runs/` timeline
+
+#### Scenario: AI-initiated wrap fires emit
+- **WHEN** during `/orbit:explore foo` the AI says "I've captured everything; type `/orbit:propose foo` when ready"
+- **THEN** the emit-layer treats this as a conversation boundary and emits `explore-<TS>.json` with current state
+
+### Requirement: Review-external T0 multi-step recommendation
+
+The external-review packaging branch (`/orbit:review --as <mode> --reviewer external`, D-arc Stage D5's merge — record vocabulary frozen per `orbit-review-external`) SHALL emit `review-external-<TS>.json` at T0 (when the prompt is packaged, before findings return from the external AI). The emit includes per-command extensions:
+
+```
+mode                  "proposal" | "system"
+prompt_path           string   path to the just-written external-prompt-<mode>-<TS>.md
+target                string|null   the named external AI (e.g., "codex", "gpt-5"), or null
+awaiting_findings     bool     always true at T0
+```
+
+`next_recommended` SHALL be multi-step prose describing the user action plus the follow-up command:
+
+```
+"Paste orbit/changes/<name>/.orbit-runs/external-prompt-<mode>-<TS>.md
+ into the target AI, save the response as
+ orbit/changes/<name>/.orbit-runs/external-<mode>-<TS>.md,
+ then /orbit:address-reviews <name> --from-file <path>"
+```
+
+A downstream status reader's best-effort parse will find no leading `/orbit:<verb>` (because the string leads with "Paste"); `command` and `args` are left null, and the full verbatim string is surfaced in `reason`. This is the expected behavior — multi-step user actions are accurately represented as prose, not collapsed into a single command.
+
+T1 (findings returned, `/orbit:address-reviews --from-file` invoked) is the existing `/orbit:address-reviews` emit and is unaffected by this requirement.
+
+#### Scenario: Review-external T0 emit has awaiting_findings=true
+- **WHEN** `/orbit:review foo --as proposal --reviewer external` runs and packages the prompt
+- **THEN** `review-external-<TS>.json` is written with `mode: "proposal"`, `awaiting_findings: true`, `prompt_path` pointing at the just-written `external-prompt-proposal-<TS>.md`
+
+#### Scenario: Review-external T0 recommendation is prose-only
+- **WHEN** a downstream status reader reads the review-external T0 JSON and best-effort parses `next_recommended`
+- **THEN** no leading slash command is found; `command` and `args` are null; the full multi-step instruction is preserved verbatim in `reason`
+
+### Requirement: Workflow-kind emit shape (extends the universal spine)
+
+Every workflow-command run-summary JSON (per `Requirement: Emit scope`) SHALL include the universal spine defined in the `orbit-conventions` capability's `Internal-run JSON summary format` requirement — 7 required top-level fields (D-arc Stage D5 adds `model`):
+
+```
+command          string       identifies which command emitted (matches filename prefix)
+timestamp        string       ISO-8601 UTC; JSON field uses standard colon format `YYYY-MM-DDTHH:MM:SSZ`. Filename embeds a colon-replaced `<TS>` token `YYYY-MM-DDTHH-MM-SSZ` (colons aren't filesystem-safe across all platforms).
+change           string|null  the change name (or null for project-scope and architecture-scoped commands)
+final_assessment string       narrative of what just happened (human-readable)
+next_recommended string       verbatim recommendation, suitable for best-effort parse by downstream status readers
+kind             enum         "workflow" | "editorial" | "lifecycle"  (always "workflow" for commands in this capability's scope)
+model            string|null  the emitting AI's model identity (provenance — D-arc Stage D5); null when unknown. REQUIRED in every post-capability payload (explicit null allowed); pre-capability emits lack the field and readers SHALL tolerate absence (both generations valid on the trail), per `orbit-conventions`.
+```
+
+For workflow-kind emits specifically, `kind` SHALL equal `"workflow"`. Per-command extensions (defined in subsequent requirements in this capability) add command-specific state beyond the spine.
+
+Filenames SHALL use the per-command prefix (preserving entry-point provenance): `<command>-<TS>.json`. Propose-family variants (`new`, `continue`, `ff`) each use their own command-name prefix, NOT `propose-<TS>.json`. ("Propose-family" here is the entry-point grouping for the per-variant-filename rule; "propose-shaped" is the recommendation-class term defined in `Requirement: Propose-shaped and artifact-completion-aware recommendation logic` and applies only to `/orbit:propose` + `/orbit:ff`.)
+
+#### Scenario: explore emit includes all 7 spine fields
+- **WHEN** the emit-layer writes `explore-<TS>.json` for a named-mode explore
+- **THEN** the JSON contains `command`, `timestamp`, `change`, `final_assessment`, `next_recommended`, `kind`, and `model` fields with valid values (`model` nullable; absent only on pre-capability emits, which readers tolerate)
+
+#### Scenario: apply emits with kind=workflow
+- **WHEN** the emit-layer writes `apply-<TS>.json`
+- **THEN** the `kind` field equals `"workflow"`
+
+#### Scenario: /orbit:new uses its own filename prefix
+- **WHEN** the user invokes `/orbit:new foo` and the emit-layer writes a JSON
+- **THEN** the filename is `new-<TS>.json`, NOT `propose-<TS>.json`
+
+#### Scenario: Downstream status reader parses next_recommended verbatim
+- **WHEN** a downstream status reader reads any run-summary JSON and best-effort parses `next_recommended`
+- **THEN** the leading `/orbit:<verb> [args]` token (if present) is extracted into `command` and `args`; on parse failure (e.g., prose recommendation), the full string is preserved in `reason`

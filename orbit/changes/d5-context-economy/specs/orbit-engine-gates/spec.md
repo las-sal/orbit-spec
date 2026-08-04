@@ -28,8 +28,13 @@ names (`next_recommended`) are unchanged — display wording only.
 
 **Model-hint garnish (D-arc Stage D5, D-d5-9)**: when `orbit/config.yaml` carries an OPTIONAL
 `models:` map and the canonical-next command's phase or cadence slot has an entry, the rendered
-eligibility line SHALL append ` — hint: <value>` (after any ` — user-invoked` marker). Pure
-garnish: the hint value is not validated, nothing is enforced, and an absent map (or absent
+eligibility line SHALL append ` — hint: <value>` (after any ` — user-invoked` marker). Valid
+keys are the two vocabularies the engine already computes against: the active schema's phase
+ids (for `spec-driven` v3: `review-proposal`, `apply`, `review-system`, plus any other declared
+phase) and the cadence slot names (`in-context`, `fresh`, `independent`, `external`). When both
+the resolved command's phase AND its cadence slot carry entries, the SLOT entry wins (the more
+specific hook); keys outside both vocabularies are inert (never an error — the map is garnish).
+Pure garnish: the hint value is not validated, nothing is enforced, and an absent map (or absent
 entry) yields byte-identical pre-capability output. The phase-mapping content itself is
 user-owned config, never spec.
 

@@ -34,16 +34,21 @@ Implementation chunks:
 - [ ] 2.4 Atomic next_recommended: pre-computable class (single write) vs post-write class
       (write → recompute status → stamp); test that a post-write emit's `next_recommended`
       equals the engine's `next_command` computed after the emit landed.
-- [ ] 2.5 Write gate: universal-spine checks for all kinds + `orbit-report-rendering`'s strict
-      internal normalizer for review emits (export/reuse from `report-render.ts`); failure = no
+- [ ] 2.5 Write gate: universal-spine checks for all kinds (accepting `change: null` + `doc`
+      for architecture-scoped emits) + `orbit-report-rendering`'s strict internal normalizer
+      for proposal/system review emits (export/reuse from `report-render.ts`); architecture-mode
+      review emits get spine + rollup + handoff-shape checks instead; failure = no
       file, non-zero exit, field-naming stderr, empty stdout; tests for cell-mismatch and forged
-      single-line slots refused at write.
+      single-line slots refused at write, plus an architecture-mode emit passing the scoped gate.
 
 ## 3. CLI surface
 
-- [ ] 3.1 `orbit emit <command>` registration in `src/cli/index.ts` + command module: `--change`,
-      `--payload`, `--json` (echo composed emit), `--render` (review emits: path + report render
-      in one breath); stdout = written path; error paths keep stdout empty.
+- [ ] 3.1 `orbit emit <command>` registration in `src/cli/index.ts` + command module: `--change`
+      (workstream) / `--doc` (architecture-scoped — with the wrong-flag and both-flags
+      mutual-exclusion usage errors per the target-resolution contract), `--payload`, `--json`
+      (echo composed emit), `--render` (proposal/system review emits: path
+      + report render in one breath; architecture mode: no-op + stderr note); stdout = written
+      path; error paths keep stdout empty.
 - [ ] 3.2 Exactly-one-file guarantee test (two-sided snapshot around a successful emit) + the
       per-command computed-extension tests (explore counts, apply chunk fields, T0 composition)
       at the CLI level.
@@ -95,7 +100,9 @@ Implementation chunks:
       schema reference docs shrink to payload-field lists.
 - [ ] 7.3 Reference moves: worked examples + rarely-used flag detail (review `--mark`/
       `--parallel`/`--focus`; address-reviews examples) to `references/`; resident-size
-      measurement recorded (before/after per body — the inventory's ~40.6k baseline).
+      measurement recorded (before/after per body — the inventory's ~40.6k baseline) against
+      the stated target: six-body resident total ≤ 20k tokens, same bytes/4 method
+      (proposal, arc exit criterion 1).
 - [ ] 7.4 Onboard re-teach: emit surface, merged review invocation, boot render, touchpoints;
       quick-reference table to 15 commands.
 
@@ -122,3 +129,23 @@ Implementation chunks:
 - [ ] 9.3 Live smoke: `orbit emit review --render` on a scratch change; `orbit status --change
       --boot` both lifecycle positions; eligibility line with and without `models:` config;
       merged external invocation end-to-end (prompt file + T0).
+- [ ] 9.6 (User-validation handoff) Exercise exit criterion 3's every-seam boot test at stage
+      ratification: a different model picks up cold at mid-explore (bare `orbit status` +
+      explore.md + explore trail — the ratified seam answer, design.md D5), post-review,
+      pre-apply, mid-apply-chunk, and pre-archive (`orbit status --change <name> --boot` for
+      the change-scoped seams), and proceeds correctly from file-resident material alone.
+
+### At-archive notes (NOT apply tasks — the archive flow executes these; deliberately not
+### checkboxes so the apply gate's arithmetic covers only apply-completable work)
+
+- 9.4 Update the Purpose paragraphs of the `orbit-run-summary-emit` and
+  `orbit-review-external` baseline specs during the archive sync — both still describe the
+  retired standalone invocation, and requirement-level spec sync never touches Purpose
+  headers.
+- 9.5 Amend R-d-9's text in the arc doc (and append the status-log entry)
+  to record the ratified delivery map — (b) delivered as the engine boot render (per-emit
+  `handoff` stays architect-only, D-d5-6); (c) items 1+4 mechanized, items 2–3 manual
+  seam-audit practice with the cold-pickup-failure re-entry trigger (design.md D5).
+- 9.7 The CLAUDE.md D5 entry sweeps present-tense surface counts to 15
+  (the D15 bullet's "16 as of D2", the self-hosting note's skill/launcher counts) —
+  current-state claims only; historical narrative stays as record.

@@ -1,0 +1,103 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-08-04T12:46:00Z",
+  "change": "d5-context-economy",
+  "final_assessment": "All 4 findings from the iter-3 in-context review walked and resolved (3 obvious-fix, 1 decision-lane chat-ratified); 0 stale, 0 deferred, 0 escalated. Strict validation green; apply-gate arithmetic corrected to 0/30.",
+  "next_recommended": "/orbit:review --as proposal --fresh d5-context-economy",
+  "kind": "editorial",
+  "model": "claude-fable-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/d5-context-economy/.orbit-runs/review-proposal-2026-08-04T01-33-42Z.json",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 2
+  },
+  "pushback_verification": "All 4 verified against current state (the source pass was minutes old); 0 stale suppressions.",
+  "resolution_summary": {
+    "resolved": 4,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "At-archive note tasks 9.4/9.5/9.7 enter apply-gate arithmetic they can never satisfy",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/tasks.md",
+      "line": 130,
+      "classification": "decision_required",
+      "action": "Applied ratified option A: 9.4/9.5/9.7 converted to a non-checkbox 'At-archive notes' block (labels preserved so design.md's 9.5/9.6 references stay valid; block header states why they are not checkboxes); apply gate arithmetic now 0/30 — engine-confirmed.",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Convert 9.4/9.5/9.7 to a non-checkbox 'At-archive notes' block at the end of tasks.md (plain list, no `- [ ]`), leaving the checkbox set apply-completable."
+          },
+          {
+            "label": "B",
+            "body": "Keep them as checkboxes but tag each with the acknowledged-unchecked convention (the user-validation pattern, e.g. '(At-archive handoff)'), accepting they surface as warnings rather than blockers through verify."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "chunk_complete formula is undefined for the no-chunking case (chunk: null)",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-run-summary-emit/spec.md",
+      "line": 75,
+      "classification": "trivial_fix",
+      "action": "Defined the chunk-null branch everywhere the formula lives: rule 3's chunk_complete is now the same engine computation with the whole task set as the 'current chunk' (never a constant); the field-table row and emit-composition's parenthetical state the whole-set stand-in; the no-chunking scenario's WHEN/THEN adjusted to completion semantics.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Design D1/D2 payload narrative lags the two newest payload elements",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/design.md",
+      "line": 16,
+      "classification": "trivial_fix",
+      "action": "Design D1's payload-channel bullet gains the apply row (user_validation_tasks judgment list + optional assessment_suffix + model); D2's apply bullet names the judgment list and the chunk-null stand-in.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Degraded-note representation in --json output is unspecified",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-orientation/spec.md",
+      "line": 53,
+      "classification": "trivial_fix",
+      "action": "The MODIFIED fault-isolation block now assigns the typed home: --json carries the exclusion as a skipped_emits: [\"<filename>\"] array on the affected workstream entry, absent when empty.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": []
+}

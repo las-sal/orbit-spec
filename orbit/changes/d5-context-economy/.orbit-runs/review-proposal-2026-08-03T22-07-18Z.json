@@ -1,0 +1,188 @@
+{
+  "command": "review",
+  "timestamp": "2026-08-03T22:07:18Z",
+  "change": "d5-context-economy",
+  "final_assessment": "3 critical, 9 warning, 3 suggestion.",
+  "next_recommended": "/orbit:address-reviews d5-context-economy --from-file orbit/changes/d5-context-economy/.orbit-runs/review-proposal-2026-08-03T22-07-18Z.json",
+  "kind": "editorial",
+  "mode": "proposal",
+  "iteration": 2,
+  "depth": "full",
+  "reviewer_class": "fresh",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "passes_run": [
+    "1. Structure & Delta Integrity",
+    "2. Internal Coherence",
+    "3. Cross-Doc Coherence",
+    "4. Archive Consistency",
+    "5. Codegen Readiness",
+    "6. Gap Hunt",
+    "7. Drift Hunt",
+    "8. Inline Review Marker Residue",
+    "9. Pre-Handoff Sweep"
+  ],
+  "passes_skipped": [],
+  "scorecard": {
+    "completeness": { "critical": 2, "warning": 5, "suggestion": 0 },
+    "correctness": { "critical": 1, "warning": 2, "suggestion": 0 },
+    "coherence": { "critical": 0, "warning": 2, "suggestion": 3 }
+  },
+  "findings": [
+    {
+      "pass": "2. Internal Coherence",
+      "severity": "CRITICAL",
+      "dimension": "correctness",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+      "line": 108,
+      "title": "Architecture-mode review emits cannot pass the specified write gate",
+      "recommendation": "The write-gate requirement says review emits pass `orbit-report-rendering`'s strict internal normalizer, with no mode carve-out — but the actual normalizer (`normalizeInternalPass`, src/core/report-render.ts:159) rejects `mode` other than `proposal|system` and requires spine `change` to be a string, while the orbit-review delta simultaneously mandates that architecture-mode summaries (`change: null`, `mode: \"architecture\"`, `handoff` section) be written VIA `orbit emit review`. As specified, no architecture-mode review emit can ever be written. Scope the write-gate requirement explicitly: the strict internal normalizer applies to proposal/system review emits; architecture-mode review emits pass the universal-spine checks (which must accept `change: null` + `doc`) plus their own handoff/shape validation — mirroring D4's architecture-mode render exemption."
+    },
+    {
+      "pass": "4. Archive Consistency",
+      "severity": "CRITICAL",
+      "dimension": "completeness",
+      "file": "orbit/specs/orbit-conventions/spec.md",
+      "line": 760,
+      "title": "Untouched 'Review mode decision framework' still prescribes /orbit:review-external",
+      "recommendation": "orbit-conventions IS in the delta set, but its `Review mode decision framework` requirement (mode 3: \"External (`/orbit:review-external`)\"; the system-mode scenario's THEN: \"`/orbit:review-external` is the appropriate mode\") is not modified. Post-archive a live normative requirement prescribes the retired launcher while the change's own orbit-engine-gates delta declares that invocation renders on no surface. Add a MODIFIED block updating mode 2/3 phrasing to the `--reviewer fresh|external` axis on `/orbit:review`."
+    },
+    {
+      "pass": "4. Archive Consistency",
+      "severity": "CRITICAL",
+      "dimension": "completeness",
+      "file": "orbit/specs/orbit-run-summary-emit/spec.md",
+      "line": 55,
+      "title": "Untouched 'Workflow-kind emit shape' still defines a 6-field spine",
+      "recommendation": "The conventions delta grows the universal spine to 7 required fields (adding nullable `model`, REQUIRED in every payload), but orbit-run-summary-emit's `Workflow-kind emit shape` requirement — outside the delta set — restates the spine as \"6 required top-level fields\" with a field table lacking `model`, and its scenario is titled \"explore emit includes all 6 spine fields\". Post-archive two live specs directly contradict on the spine definition (the exact two-voices-on-one-fact class this change targets). Add a MODIFIED block syncing the count, table, and scenario to the 7-field spine with the pre-capability tolerance note."
+    },
+    {
+      "pass": "2. Internal Coherence",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/d5-context-economy/design.md",
+      "line": 32,
+      "title": "Design classes explore's next_recommended POST-WRITE; the spec classes it PRE-COMPUTABLE",
+      "recommendation": "design.md D1's post-write list reads \"(address-reviews, apply completion, explore boundary)\" while the orbit-emit-composition atomic requirement puts \"explore's maturity grid\" in the pre-computable class and lists post-write as \"(address-reviews, apply, archive)\". Two implementers diverge on whether explore emits get the transient-finalize path. The maturity grid is computable from explore.md before the write, so fix design.md to match the spec — and while there, adjust the spec's parenthetical \"derives from the payload alone\": explore's recommendation derives from the parsed file, not the payload."
+    },
+    {
+      "pass": "5. Codegen Readiness",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-review/spec.md",
+      "line": 53,
+      "title": "Ownership of the review emit's `iteration` field is unassigned",
+      "recommendation": "The Summary-written-after-run scenario requires the emit to contain an \"iteration number\", but `iteration` appears in neither the emit surface's payload field list (design D1 and the payload-contract requirement omit it) nor the engine-owned set (spine, deterministic facts, computed extensions). One implementer will demand it in the payload (reintroducing the ordinal-divergence seam D4 closed), another will compute it from the trail. Assign it explicitly: engine-computed from the shared pass axis (consistent with the report ordinal), rejected when payload-supplied."
+    },
+    {
+      "pass": "6. Gap Hunt",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+      "line": 91,
+      "title": "Archive's POST-WRITE semantics and trail location are undefined",
+      "recommendation": "The atomic requirement puts `archive` in the post-write class (next_recommended = the engine's `next_command` AFTER the emit joins the trail), but at archive time the change directory has moved to `orbit/changes/archive/…` — there is no change status to recompute, and the baseline archive `next_recommended` is fixed stock prose (\"Change archived. Run /orbit:new or …\"). The `Trail location per command` scenario also names only the change/explore/architecture trails, so where `orbit emit archive` writes (pre-move active trail vs post-move archive dir) is unstated.",
+      "recommendation_options": [
+        { "label": "A", "body": "Reclassify archive as pre-computable: the engine composes the existing stock post-archive prose as a deterministic fact, and the spec names the archive emit's write location and its ordering relative to the directory move." },
+        { "label": "B", "body": "Keep archive post-write and define the recompute against archived state: which status computation runs for an archived change, what next_command means then, and which trail (active pre-move vs archived) receives the emit." }
+      ]
+    },
+    {
+      "pass": "5. Codegen Readiness",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-run-summary-emit/spec.md",
+      "line": 89,
+      "title": "chunk_complete ownership is inconsistent between the two delta specs",
+      "recommendation": "orbit-emit-composition says the engine computes \"`chunk`/`chunk_name`/`chunk_complete` from the tasks.md chunk-preamble grammar\", but the run-summary field table annotates only `chunk`/`chunk_name` as ENGINE-computed — `chunk_complete`'s row is unannotated, and its formula (chunk's tasks_remaining minus user-validation == 0) depends on `user_validation_remaining`, a change-total payload judgment field with no per-chunk attribution defined. State explicitly: engine computes `chunk_complete` from the current chunk's checkbox state combined with the payload's user-validation call (defining how the per-chunk user-validation subset is attributed), and mark the table row ENGINE-computed; payload supply rejected."
+    },
+    {
+      "pass": "6. Gap Hunt",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-review/spec.md",
+      "line": 5,
+      "title": "`--as architecture --reviewer external` combination is unspecified",
+      "recommendation": "The merged command accepts three modes and three reviewer classes, but the external branch is only ever specified for proposal/system (orbit-review-external's requirements, `external-<as>-*.md` vocabulary, the T0 emit's `mode: \"proposal\" | \"system\"` extension). Nothing states what `--as architecture --reviewer external` does — one implementer errors, another packages `external-architecture-*` files no downstream parser or ordinal supports.",
+      "recommendation_options": [
+        { "label": "A", "body": "Declare the combination an error in the orbit-review delta: `--reviewer external` requires `--as proposal|system`; architecture mode supports in-context and fresh only." },
+        { "label": "B", "body": "Define architecture external packaging end-to-end: prompt/findings filename vocabulary, T0 `mode` value, architecture-trail location, and how (or whether) the gate-less architecture review consumes the returned findings." }
+      ]
+    },
+    {
+      "pass": "3. Cross-Doc Coherence",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-orientation/spec.md",
+      "line": 3,
+      "title": "Boot render covers only changes; the charter's mid-explore seam has no boot surface",
+      "recommendation": "Arc exit criterion 3 requires the cold-start boot test to pass \"AT EVERY SEAM\" including mid-explore, but `--boot` is specified only for `orbit status --change <name>` on changes; staging explorations (and the architecture seam) get no boot render from this change. Either extend the boot requirement to explore workstreams (the orientation surface already models them) or record in design.md how the mid-explore seam is satisfied without it (e.g. the explore emit's engine-computed counts + attestation), so the stage's own exit criterion is evaluable.",
+      "recommendation_options": [
+        { "label": "A", "body": "Extend `--boot` to explore workstreams in the orbit-orientation delta (pointers: explore.md, latest explore emits, maturity counts), keeping the same degradation policy." },
+        { "label": "B", "body": "Add a design.md note stating the mid-explore seam is served by the explore emit trail + standing-recommendation slots alone, and that criterion 3's mid-explore leg is tested against those artifacts." }
+      ]
+    },
+    {
+      "pass": "4. Archive Consistency",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/specs/orbit-run-summary-emit/spec.md",
+      "line": 386,
+      "title": "Retired invocation survives as the actor in unmodified baseline blocks",
+      "recommendation": "The invocation sweep covered gates.ts and the modified requirements but missed three baseline sites that will name the retired standalone command post-archive: (1) orbit-run-summary-emit's `Review-external T0 multi-step recommendation` opens \"`/orbit:review-external` SHALL emit …\" (line 386); (2) orbit-conventions' `.orbit-runs/` persistence scenario \"External review file name pattern\" (line 178) has WHEN \"`/orbit:review-external` produces a prompt file\"; (3) orbit-review-external's Purpose paragraph still describes \"The `/orbit:review-external` command\". Add MODIFIED blocks (and a Purpose touch-up at sync) re-anchoring the actor to `/orbit:review --reviewer external` while keeping the frozen record vocabulary."
+    },
+    {
+      "pass": "3. Cross-Doc Coherence",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/d5-context-economy/tasks.md",
+      "line": 97,
+      "title": "No stated numeric reduction target — exit criterion 1 demands a NUMBER picked at explore time",
+      "recommendation": "The arc charter's exit criterion 1 is explicit: \"generated surface size measured before/after against a stated reduction target picked at explore time — the criterion is a NUMBER hit, not 'smaller'\". The exploration and sketch give a baseline (~40.6k) and directional estimates (\"≈ halves\", disciplines ≈7.5k → ~2.5–3k) but no artifact states the target number. Pin it (e.g. six-body resident total ≤ N tokens, or ≥X% reduction) in proposal.md or task 7.3 so stage completion is mechanically evaluable."
+    },
+    {
+      "pass": "2. Internal Coherence",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/d5-context-economy/proposal.md",
+      "line": 81,
+      "title": "Proposal promises a conventions no-chaining/epitome delta that does not exist",
+      "recommendation": "The orbit-conventions capability bullet claims \"the No-chaining and discipline-embedding conventions acknowledge the epitome form\", but the conventions delta file contains only the Internal-run JSON format and explore.md five-section blocks — no MODIFIED block touches the `No-chaining contract` (whose baseline text \"echoed in every generated workflow body\" should absorb the ~2-line epitome form) or the discipline requirements. Either add the MODIFIED block(s) or drop the clause from the proposal."
+    },
+    {
+      "pass": "9. Pre-Handoff Sweep",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/specs/orbit-review-external/spec.md",
+      "line": 21,
+      "title": "Post-merge, mode inference is specified twice for one command surface",
+      "recommendation": "After the merge, orbit-review's `Mode inference when --as omitted` and orbit-review-external's `Mode flag with state-based inference default` both normatively define inference for the same `/orbit:review` surface (orbit-review's version additionally covers architecture-never-inferred; review-external's does not). Consider a follow-up MODIFIED block having the review-external requirement defer to orbit-review's inference — one voice on one behavior, per the change's own governing rule."
+    },
+    {
+      "pass": "3. Cross-Doc Coherence",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "CLAUDE.md",
+      "line": 91,
+      "title": "CLAUDE.md current-state surface counts go stale at apply (16 → 15)",
+      "recommendation": "The planned \"CLAUDE.md D5 entry at archive\" should also sweep the present-tense counts: the D15 bullet's \"ALL workflows (16 as of D2)\" and the self-hosting note's surface counts read as current facts and will be wrong once review-external retires. Historical narrative sections stay as records; only the current-state claims need the touch."
+    },
+    {
+      "pass": "9. Pre-Handoff Sweep",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+      "line": 57,
+      "title": "`--change` names an exploration in `orbit emit explore --change foo`",
+      "recommendation": "The trail-location scenario routes `orbit emit explore --change foo` to `orbit/explore/foo/.orbit-runs/` — the flag named `--change` addresses a workstream that is explicitly not yet a change. Add one clarifying sentence to the surface requirement (\"`--change` names the workstream — staging exploration or change — resolved per the command's trail\") so implementers don't reject exploration names or invent a second flag."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Validation is clean and the new emit-composition capability is unusually well-specified — payload rejection, collision, atomicity, and write-gate fail-loud all have concrete scenarios, and the retained text of every MODIFIED block byte-preserves its baseline scenarios (I diffed each; no C2-class silent drops). The risk texture sits in two places. First, the seams where the new surface meets machinery the change does NOT touch: the D4 normalizer it conscripts as a write gate hard-rejects the architecture-mode emits the change simultaneously routes through it, and the archive command is assigned a post-write recompute that has nothing to recompute against. I probed the engine source directly for these rather than trusting the prose — the gates.ts line citations check out; the normalizer's mode/change strictness does not. Second, the change's own governing rule applied to its sweep radius: the merge freezes record vocabulary carefully but the invocation-vocabulary sweep stopped at the delta boundary, leaving live baseline requirements (the conventions review-mode framework, the 6-field spine restatement, the T0 actor) asserting the pre-D5 world. Ownership ambiguities (iteration, chunk_complete) are exactly the two-voices class this stage exists to close, which is why I weighted them up rather than down."
+}

@@ -1,0 +1,100 @@
+{
+  "command": "review",
+  "timestamp": "2026-08-04T01:33:42Z",
+  "change": "d5-context-economy",
+  "final_assessment": "0 critical, 2 warning, 2 suggestion.",
+  "next_recommended": "/orbit:address-reviews d5-context-economy --from-file orbit/changes/d5-context-economy/.orbit-runs/review-proposal-2026-08-04T01-33-42Z.json",
+  "kind": "editorial",
+  "model": "claude-fable-5",
+  "mode": "proposal",
+  "iteration": 3,
+  "depth": "full",
+  "reviewer_class": "in-context",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "passes_run": [
+    "1. Structure & Delta Integrity",
+    "2. Internal Coherence",
+    "3. Cross-Doc Coherence",
+    "4. Archive Consistency",
+    "5. Codegen Readiness",
+    "6. Gap Hunt",
+    "7. Drift Hunt",
+    "8. Inline Review Marker Residue",
+    "9. Pre-Handoff Sweep"
+  ],
+  "passes_skipped": [],
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "pass": "2. Internal Coherence",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/d5-context-economy/tasks.md",
+      "line": 130,
+      "title": "At-archive note tasks 9.4/9.5/9.7 enter apply-gate arithmetic they can never satisfy",
+      "recommendation": "Tasks 9.4, 9.5, and 9.7 are at-archive actions (Purpose-header touch-ups, the R-d-9 ruling amendment, the CLAUDE.md count sweep) expressed as unchecked checkboxes. They count in the tracked apply gate's arithmetic (now 0/33) and in verify's completeness check, but structurally cannot be checked at apply or verify time — the apply gate can never compute complete before archive, and verify will flag them every run. Only 9.6 carries the acknowledged-unchecked user-validation convention.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Convert 9.4/9.5/9.7 to a non-checkbox 'At-archive notes' block at the end of tasks.md (plain list, no `- [ ]`), leaving the checkbox set apply-completable."
+        },
+        {
+          "label": "B",
+          "body": "Keep them as checkboxes but tag each with the acknowledged-unchecked convention (the user-validation pattern, e.g. '(At-archive handoff)'), accepting they surface as warnings rather than blockers through verify."
+        }
+      ]
+    },
+    {
+      "pass": "6. Gap Hunt",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-run-summary-emit/spec.md",
+      "line": 75,
+      "title": "chunk_complete formula is undefined for the no-chunking case (chunk: null)",
+      "recommendation": "Rule 3 hardcodes `chunk_complete: true` for no-chunking applies (pre-D5 text now carried in the delta), while the delta's field table defines chunk_complete as ENGINE-computed per-chunk ('the current chunk's unchecked tasks minus its user-validation subset'). With `chunk: null` there is no current chunk: the formula is undefined, and rule 3's constant can produce the exact contradiction the semantic rule prohibits (chunk_complete: true with tasks_remaining > 0 and user_validation_remaining < tasks_remaining). Define the chunk-null case: the 'current chunk' is the whole task set (chunk_complete = all unchecked tasks minus the full user-validation set == 0), and rephrase rule 3 so its chunk_complete comes from that computation, not a constant."
+    },
+    {
+      "pass": "2. Internal Coherence",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/changes/d5-context-economy/design.md",
+      "line": 16,
+      "title": "Design D1/D2 payload narrative lags the two newest payload elements",
+      "recommendation": "The spec now defines `assessment_suffix` (apply's optional judgment suffix) and `user_validation_tasks` (the identifier-list judgment), but design D1's payload-channel bullet and D2's apply bullet don't mention either. The spec is authoritative and design's list is 'e.g.', so no divergence — but a one-line touch to each bullet keeps design current for readers who stop there."
+    },
+    {
+      "pass": "6. Gap Hunt",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-orientation/spec.md",
+      "line": 53,
+      "title": "Degraded-note representation in --json output is unspecified",
+      "recommendation": "The new `⚠ invalid emit skipped: <filename>` note is specified for the rendered views (bare, --full, boot), but orbit-orientation's JSON contract is a typed shape — whether/how the note appears in `--json` output (a field on the workstream entry? a top-level degraded array? absent?) is unstated. One sentence assigning it a typed home (e.g. a `skipped_emits: [<filename>]` array on the affected workstream entry) closes it."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "An in-context pass by the session that just walked 35 findings across the two address runs, so I probed hardest exactly where anchoring is most dangerous: the seams this session's own fixes introduced. Both warnings are that class — the at-archive task notes (added as findings-resolutions) collide with the tracked apply gate's checkbox arithmetic, and the newly engine-owned chunk_complete formula never got a chunk-null branch when it met the pre-D5 no-chunking rule that hardcodes true. The mechanical sweeps came back clean and I re-verified them fresh rather than trusting the walks: strict validation, 23/23 fingerprints, zero marker residue, and a project-wide grep for the retired invocation whose every baseline hit is now covered by a delta MODIFIED block, the review-external delta itself, or the 9.4 at-archive Purpose plan — the blast-radius class that dominated iterations 1 and 2 is closed. The emit-composition delta reads coherently end-to-end after its many single-finding edits; residual roughness is line-wrap cosmetics only. What this pass cannot supply is genuine independence — the cadence's remaining value here was the in-context slot's familiarity with intent, and the two warnings are exactly the kind only the author-session would know to check."
+}

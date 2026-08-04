@@ -1,0 +1,290 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-08-04T01:21:58Z",
+  "change": "d5-context-economy",
+  "final_assessment": "All 15 findings from the iter-2 fresh proposal review walked: 7 resolved (4 obvious-fix, 3 decision-lane with chat-ratified directions), 8 stale-suppressed citing this session's iter-1 walk fixes; 0 deferred, 0 escalated. Strict validation green; fingerprints 23/23 verified.",
+  "next_recommended": "/orbit:review --as proposal d5-context-economy",
+  "kind": "editorial",
+  "model": "claude-fable-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/d5-context-economy/.orbit-runs/review-proposal-2026-08-03T22-07-18Z.json",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 3,
+    "warning": 9,
+    "suggestion": 3
+  },
+  "pushback_verification": "All 15 verified against the current tree. 8 stale-suppressed — every suppression cites the specific iter-1-walk resolution (this session) or the prior partial walk that already fixed it; the 7 live findings were resolved. Iter-2 was reviewed against the pre-walk tree, which is why over half its findings arrived pre-resolved.",
+  "resolution_summary": {
+    "resolved": 7,
+    "stale_suppressed": 8,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "Architecture-mode review emits cannot pass the specified write gate",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+      "line": 108,
+      "classification": "stale",
+      "action": "Resolved this session by the iter-1 walk (finding #3, ratified carve-out): the write-gate requirement is mode-scoped — strict internal normalizer for proposal/system; architecture emits pass spine (change:null + doc) + rollup + handoff-shape checks; --render no-op + stderr note for architecture mode.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "stale"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "Untouched 'Review mode decision framework' still prescribes /orbit:review-external",
+      "marker_source": "internal-review",
+      "file": "orbit/specs/orbit-conventions/spec.md",
+      "line": 760,
+      "classification": "stale",
+      "action": "Resolved this session by the iter-1 walk (finding #13): the conventions delta's MODIFIED 'Review mode decision framework' block re-anchors modes 2/3 to the --reviewer axis and the system-mode scenario THEN to /orbit:review --reviewer external.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "stale"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "Untouched 'Workflow-kind emit shape' still defines a 6-field spine",
+      "marker_source": "internal-review",
+      "file": "orbit/specs/orbit-run-summary-emit/spec.md",
+      "line": 55,
+      "classification": "trivial_fix",
+      "action": "Appended a MODIFIED 'Workflow-kind emit shape (extends the universal spine)' block to the run-summary-emit delta: 7 required fields, model row added to the table with the pre-capability tolerance note, scenario retitled/extended to all 7 fields (byte-diffed: 7 changed lines, all intended); fingerprint stamped.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/specs/orbit-run-summary-emit/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Design classes explore's next_recommended POST-WRITE; the spec classes it PRE-COMPUTABLE",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/design.md",
+      "line": 32,
+      "classification": "stale",
+      "action": "Resolved this session by the iter-1 walk (finding #6): design D1's class lists synced to the spec (explore pre-computable from the parsed file; post-write = address-reviews, apply) and the spec's 'derives from the payload alone' parenthetical corrected to payload-or-parsed-source.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Ownership of the review emit's `iteration` field is unassigned",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-review/spec.md",
+      "line": 53,
+      "classification": "trivial_fix",
+      "action": "Assigned engine-computed: the deterministic-facts requirement now states review `iteration` is the next ordinal on the SHARED internal+external pass axis (the report-ordinal counting rule), payload supply rejected; scenario added; orbit-review's Summary-written scenario annotated ENGINE-COMPUTED.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+          "orbit/changes/d5-context-economy/specs/orbit-review/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Archive's POST-WRITE semantics and trail location are undefined",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+      "line": 91,
+      "classification": "stale",
+      "action": "Resolved this session by the iter-1 walk (finding #6, ratified A — matching this finding's own option A): archive reclassified PRE-COMPUTABLE (stock prose as engine constant), writes to the archived change's trail after the directory move; trail-location scenario extended + archive scenario added.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "chunk_complete ownership is inconsistent between the two delta specs",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-run-summary-emit/spec.md",
+      "line": 89,
+      "classification": "decision_required",
+      "action": "Applied ratified direction A: the payload's judgment becomes the user_validation_tasks identifier list (each entry validated to exist and be unchecked, bad entry rejected naming it); the engine computes user_validation_remaining (list length), the per-chunk subset (task→group→chunk via the preamble grammar), and chunk_complete; both table rows marked ENGINE-computed; verification scenario added in emit-composition.",
+      "ratified_via": "chat",
+      "resolution": "A — payload supplies the user-validation task list; all counts and per-chunk attribution engine-computed",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/specs/orbit-run-summary-emit/spec.md",
+          "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "`--as architecture --reviewer external` combination is unspecified",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-review/spec.md",
+      "line": 5,
+      "classification": "decision_required",
+      "action": "Applied ratified option A: the orbit-review delta declares --reviewer external requires --as proposal|system; architecture mode supports in-context and fresh only; the combination exits with a clean usage error (no prompt file, no T0 emit); rejection scenario added.",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Declare the combination an error in the orbit-review delta: `--reviewer external` requires `--as proposal|system`; architecture mode supports in-context and fresh only."
+          },
+          {
+            "label": "B",
+            "body": "Define architecture external packaging end-to-end: prompt/findings filename vocabulary, T0 `mode` value, architecture-trail location, and how (or whether) the gate-less architecture review consumes the returned findings."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/specs/orbit-review/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Boot render covers only changes; the charter's mid-explore seam has no boot surface",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-orientation/spec.md",
+      "line": 3,
+      "classification": "stale",
+      "action": "Resolved this session by the iter-1 walk (finding #17, ratified B — matching this finding's option B): design.md D5 declares the mid-explore seam served by bare orbit status + explore.md + the explore emit trail; tasks.md 9.6 pins the every-seam boot test at ratification.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Retired invocation survives as the actor in unmodified baseline blocks",
+      "marker_source": "internal-review",
+      "file": "orbit/specs/orbit-run-summary-emit/spec.md",
+      "line": 386,
+      "classification": "stale",
+      "action": "Resolved this session by the iter-1 walk: site (1) re-anchored by the run-summary-emit delta's MODIFIED T0 block (finding #2), site (2) by the conventions delta's MODIFIED persistence block (finding #13), site (3) — the review-external Purpose paragraph — planned at archive per tasks.md 9.4 (Purpose headers are not requirement-synced, matching this finding's own note).",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "No stated numeric reduction target — exit criterion 1 demands a NUMBER picked at explore time",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/tasks.md",
+      "line": 97,
+      "classification": "stale",
+      "action": "Resolved this session by the iter-1 walk (finding #5, ratified A): proposal pins six-body resident total <= 20k tokens by the same bytes/4 method; task 7.3 references the target.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Proposal promises a conventions no-chaining/epitome delta that does not exist",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/proposal.md",
+      "line": 81,
+      "classification": "decision_required",
+      "action": "Applied ratified option 1: the conventions delta gains a MODIFIED 'No-chaining contract' block sanctioning the epitome echo (~2 structural-leaning no-chaining lines; four-bullet disciplines epitome with detail-to-situ; full normative text keeps one home; fidelity checks pin the epitome form) + compliance scenario; fingerprint stamped.",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "1",
+            "body": "Add the MODIFIED block(s): the No-chaining contract (and the discipline-embedding pattern) absorb the epitome form."
+          },
+          {
+            "label": "2",
+            "body": "Drop the clause from the proposal."
+          }
+        ],
+        "chosen": "1"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/specs/orbit-conventions/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Post-merge, mode inference is specified twice for one command surface",
+      "marker_source": "internal-review",
+      "file": "orbit/specs/orbit-review-external/spec.md",
+      "line": 21,
+      "classification": "trivial_fix",
+      "action": "Appended a MODIFIED 'Mode flag with state-based inference default' block to the review-external delta: inference OWNED by orbit-review's 'Mode inference when --as omitted' requirement (one voice; covers architecture-never-inferred); the scenarios record observable packaging-branch behavior, not a second definition; fingerprint stamped.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/specs/orbit-review-external/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "CLAUDE.md current-state surface counts go stale at apply (16 → 15)",
+      "marker_source": "internal-review",
+      "file": "CLAUDE.md",
+      "line": 91,
+      "classification": "trivial_fix",
+      "action": "Extended the proposal's Docs impact line and added tasks.md 9.7: the at-archive CLAUDE.md D5 entry sweeps present-tense surface counts to 15 (D15 bullet, self-hosting note); historical narrative stays as record.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/proposal.md",
+          "orbit/changes/d5-context-economy/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "`--change` names an exploration in `orbit emit explore --change foo`",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+      "line": 57,
+      "classification": "stale",
+      "action": "Resolved by the prior session's partial iter-1 walk: the surface requirement's target-resolution contract states --change names the WORKSTREAM (a change, or the staging exploration for explore-trail emits), resolved per the command's trail.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "stale"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": []
+}

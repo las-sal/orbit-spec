@@ -123,7 +123,8 @@ format slot → boundary residency sweep → attestation count).
 - **D-d5-8 (2026-07-30) — The three-layer leak hardening ratified as charter-designed, with
   layer 3 UPGRADED by the emit surface (thread 3c).** Layers per the 2026-07-09 design:
   (1) FORMAT — open-question entries carry a required `Standing recommendation: … | none yet`
-  slot (orbit-conventions explore-format requirement; this exploration practiced it);
+  slot (orbit-conventions explore-format requirement; slot practice dates to the 2026-07-09
+  charter design — this exploration itself closed with zero open questions);
   (2) PROTOCOL — the boundary residency sweep in explore/architect bodies, tied to the
   existing emit trigger (no emit without sweep); (3) ATTESTATION —
   `open_questions_with_recommendation: "n of m"` on explore emits, now ENGINE-COMPUTED:
@@ -141,6 +142,12 @@ format slot → boundary residency sweep → attestation count).
   NEVER enforced by bodies. The phase-mapping hypothesis itself (strong reasoner for
   explore/propose, furnace at apply, diversity at review) is recorded config content,
   user-owned — not spec.
+
+## Open questions
+
+(None open at close — all nine decisions ratified; the empty section is retained for the
+five-section format the conventions delta hardens, and is the live zero-entry case for the
+emit surface's counter.)
 
 ## Considered & out
 

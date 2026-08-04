@@ -1,0 +1,440 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-08-04T00:41:33Z",
+  "change": "d5-context-economy",
+  "final_assessment": "All 20 findings from the iter-1 proposal review walked: 14 resolved (6 obvious-fix, 8 decision-lane with chat-ratified directions), 6 stale-suppressed with working-tree evidence from a prior interrupted walk; 0 deferred, 0 escalated. Strict validation green; fingerprints 20/20 verified.",
+  "next_recommended": "/orbit:address-reviews d5-context-economy --from-file orbit/changes/d5-context-economy/.orbit-runs/review-proposal-2026-08-03T22-07-18Z.json",
+  "kind": "editorial",
+  "model": "claude-fable-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/d5-context-economy/.orbit-runs/review-proposal-2026-07-30T18-22-07Z.json",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 3,
+    "warning": 10,
+    "suggestion": 7
+  },
+  "pushback_verification": "All 20 findings verified against the current working tree. 6 stale-suppressed with working-tree evidence (the prior interrupted walk had already applied their fixes; each verified against the finding's recommendation, not rubber-stamped); the remaining 14 verified live and resolved. The newer iter-2 fresh pass (review-proposal-2026-08-03T22-07-18Z.json, run before any fixes landed) overlaps heavily; its C1/C2/W4/W6/W9 are resolved by this walk's fixes.",
+  "resolution_summary": {
+    "resolved": 14,
+    "stale_suppressed": 6,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "Task 7.4 rewrites the onboard body but there is no orbit-onboard delta, so the rewrite violates live baseline scenarios",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/tasks.md",
+      "line": 99,
+      "classification": "trivial_fix",
+      "action": "Created specs/orbit-onboard/spec.md with MODIFIED Identity-statement + Canonical-flow blocks (baseline byte-copied; invocation re-anchored to /orbit:review --reviewer external and the review skill's references/external-handoff.md); fingerprints stamped.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/specs/orbit-onboard/spec.md",
+          "orbit/changes/d5-context-economy/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "orbit-run-summary-emit still normatively commands the retired standalone command to emit (T0 requirement + timing semantics untouched)",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-run-summary-emit/spec.md",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "Appended MODIFIED 'Emit timing semantics' + 'Review-external T0 multi-step recommendation' blocks to the run-summary-emit delta (byte-diffed vs baseline: only the invocation subjects changed); tasks.md 9.4 records the at-archive Purpose-header touch-up for both capabilities.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/specs/orbit-run-summary-emit/spec.md",
+          "orbit/changes/d5-context-economy/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "Write gate as spec'd rejects architecture-mode review emits, which the review delta routes through the same surface",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+      "line": 110,
+      "classification": "decision_required",
+      "action": "Applied the ratified carve-out: write-gate requirement mode-scoped (strict internal normalizer = proposal/system only; architecture-mode review emits pass universal-spine checks accepting change:null + required doc, scorecard rollup, and the architect-owned handoff shape); --render defined as no-op + stderr note for architecture mode; new scenario. Also resolves iter-2's C1.",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "Carve out architecture mode",
+            "body": "Architecture-mode review emits pass universal-spine + scorecard/rollup checks with change:null + required doc and the orbit-architect-owned handoff shape; --render unavailable (no-op with stderr note) for that mode."
+          },
+          {
+            "label": "Extend the normalizer contract",
+            "body": "MODIFIED block on orbit-report-rendering widening the strict internal normalizer to mode: architecture; --render renders nothing until an architecture report surface exists."
+          }
+        ],
+        "chosen": "Carve out architecture mode"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/design.md",
+          "orbit/changes/d5-context-economy/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "R-d-9(b)/(c) mechanization is partial and the reframing is nowhere recorded",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/proposal.md",
+      "line": 44,
+      "classification": "decision_required",
+      "action": "Applied ratified option 1: design.md D5 gains the R-d-9 delivery map ((b) delivered AS the boot render, per-emit handoff stays architect-only; (c) items 1+4 mechanized, items 2-3 manual seam-audit practice with the cold-pickup-failure re-entry trigger); tasks.md 9.5 plans the arc-ruling amendment + status-log entry at archive. Arc doc deliberately untouched until archive per the ratified deferral.",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "1",
+            "body": "Record the reframing + named deferral in design.md; amend the arc ruling / append the status log at archive."
+          },
+          {
+            "label": "2",
+            "body": "Extend the audit-drift delta to mechanize checklist items 2 (boot-chain currency) and 3 (coverage-vs-charter) in this change."
+          }
+        ],
+        "chosen": "1"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/design.md",
+          "orbit/changes/d5-context-economy/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Exit criterion 1 requires a stated numeric reduction target; the artifacts carry only the \"halves\" estimate",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/tasks.md",
+      "line": 97,
+      "classification": "decision_required",
+      "action": "Pinned the target in proposal.md's body-economy bullet: six-body resident total <= 20k tokens (from ~40.6k), same bytes/4 estimate over the same six bodies as sketches/body-inventory.md; task 7.3 references it.",
+      "ratified_via": "chat",
+      "resolution": "A — six-body resident total <= 20k tokens, measured by the same bytes/4 method over the same six bodies (the inventory's halving claim made falsifiable; 18k judgment floor + 2k connective headroom)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/proposal.md",
+          "orbit/changes/d5-context-economy/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Design D1's next_recommended class lists contradict the spec, and archive's post-write recompute is undefined",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/design.md",
+      "line": 31,
+      "classification": "decision_required",
+      "action": "Applied ratified direction A: archive reclassified PRE-COMPUTABLE (stock post-archive prose as an engine-owned constant); spec names the write location (archived change's trail) and ordering (after the directory move); trail-location scenario + new archive scenario added; design D1 lists synced to the spec (explore pre-computable) and the derives-from parenthetical corrected to payload-or-parsed-source. Also resolves iter-2's W4 + W6.",
+      "ratified_via": "chat",
+      "resolution": "A — reclassify archive as pre-computable; emit writes to the archived trail after the move; design D1 synced to the spec's class lists",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+          "orbit/changes/d5-context-economy/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Authoritative per-command payload list and unknown-field handling unspecified",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+      "line": 8,
+      "classification": "stale",
+      "action": "Already fixed in the working tree by the prior interrupted walk: authoritative engine-owned per-command payload table, unknown-key rejection naming the key, the pases_run scenario, and the references-MIRROR-never-define sentence are all present in the delta.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "files_touched underspecified: first-emit reference, timestamp-to-commit resolution, and uncommitted work",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+      "line": 139,
+      "classification": "decision_required",
+      "action": "Applied ratified direction A: files_touched = git diff --name-only <ref> against the WORKING TREE (committed + uncommitted tracked; untracked-file limitation stated); <ref> = previous apply emit's timestamp resolved best-effort via git rev-list -1 --before, first emit falls back to the change's first commit; boot's ACTUAL map stays committed-only and the spec says the two diffs differ deliberately; scenarios updated + first-emit scenario added in both deltas.",
+      "ratified_via": "chat",
+      "resolution": "A — diff against the working tree; first-commit fallback for the first emit; rev-list --before timestamp resolution",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/specs/orbit-run-summary-emit/spec.md",
+          "orbit/changes/d5-context-economy/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "\"Strict readers reject loudly\" contradicts orientation's documented silent-skip fault isolation",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+      "line": 95,
+      "classification": "decision_required",
+      "action": "Applied ratified option A: MODIFIED 'Fault isolation and malformed-input policy' block added to the orientation delta — spine-invalid emits stay excluded from arithmetic but the exclusion is SURFACED as a one-line degraded note on every rendered view (detection without failure, exit 0); crashed-atomic-write scenario added; emit-composition's crash sentence and design D1 synced to the real detection path; fingerprint stamped.",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Specify that status/boot surface spine-incomplete trail files as a degraded line (detection without failure)."
+          },
+          {
+            "label": "B",
+            "body": "Soften the spec's claim and name the actual detection path."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/specs/orbit-orientation/spec.md",
+          "orbit/changes/d5-context-economy/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "models: map key vocabulary undefined and the design's own example matches neither phase nor slot names",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/design.md",
+      "line": 132,
+      "classification": "stale",
+      "action": "Already fixed in the working tree by the prior interrupted walk: engine-gates delta defines the two key vocabularies (schema phase ids + cadence slot names), slot-entry-wins precedence, inert unknown keys; design D8's example key corrected to 'external'.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "CLI channel for doc-scoped emits and scope-resolution errors unspecified",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+      "line": 44,
+      "classification": "stale",
+      "action": "Already fixed in the working tree by the prior interrupted walk: the target-resolution contract defines --doc for architecture-scoped commands, the mutual-exclusion usage error, --change-names-the-workstream semantics (staging exploration or change), and the nonexistent-target error naming the path checked.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Apply final_assessment stays payload-authored while restating engine-computed facts — the two-voices seam survives in the canonical example",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-conventions/spec.md",
+      "line": 40,
+      "classification": "decision_required",
+      "action": "Applied ratified option 1: apply's final_assessment core joins the deterministic-facts requirement (engine composes the chunk/counts sentence with paused/no-chunking variants; optional payload assessment_suffix appended; payload-supplied final_assessment rejected as engine-owned); scenario added; conventions canonical example annotated as engine-composed; design D1 synced.",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "Engine-compose the apply sentence",
+            "body": "Add apply's final_assessment to the deterministic-facts requirement (engine composes the chunk/counts sentence; payload may supply an optional narrative suffix)."
+          },
+          {
+            "label": "Write-gate consistency check",
+            "body": "Keep it payload-authored but reject a final_assessment whose stated chunk/count tokens disagree with the computed extensions."
+          },
+          {
+            "label": "Prose rule only",
+            "body": "Specify that narrative fields must not restate computed extensions and change the canonical example to a judgment-only sentence."
+          }
+        ],
+        "chosen": "Engine-compose the apply sentence"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+          "orbit/changes/d5-context-economy/specs/orbit-conventions/spec.md",
+          "orbit/changes/d5-context-economy/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "orbit-conventions baselines still steer to the retired standalone invocation outside the delta set",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-conventions/spec.md",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "Appended three MODIFIED blocks to the conventions delta (.orbit-runs persistence scenario; change-completeness scenarios at :554/:564; review-mode framework modes 2/3 + the system-mode scenario THEN) re-anchoring every live invocation to the /orbit:review --reviewer axis (byte-diffed vs baseline); fingerprints stamped. Substantially covers iter-2's C2.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/specs/orbit-conventions/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Explore counter entry grammar undefined",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+      "line": 132,
+      "classification": "trivial_fix",
+      "action": "Counter grammar defined in the computed-extensions requirement: top-level list items directly under the two headings (nested bullets/paragraphs/fenced content never entries); absent heading = count 0 (\"0 of 0\" attestation) + single stderr note naming the missing section, never an emit blocker; missing-heading scenario added.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Chunk grammar cross-chunk coverage rules unstated",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-run-summary-emit/spec.md",
+      "line": 67,
+      "classification": "trivial_fix",
+      "action": "Cross-declaration coverage rules added to the Format constraints: overlap, gap, and out-of-order chunk numbers are all malformed-preamble cases (single stderr warning + no-chunking fallback); overlapping-declaration scenario added. Refined from the triage preview (gaps had been previewed as tolerated) with the refinement announced before the fix: a tolerated gap would let rule 1 recommend verify while uncovered tasks remain.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/specs/orbit-run-summary-emit/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Boot's \"latest emit per mode\" vocabulary undefined",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-orientation/spec.md",
+      "line": 9,
+      "classification": "trivial_fix",
+      "action": "Pointer set defined: one latest-emit pointer per command family present on the trail, review emits further split per mode (proposal/system/architecture), each path + final_assessment first sentence; boot scenario, proposal bullet, and design D5 synced to the per-family phrasing.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/specs/orbit-orientation/spec.md",
+          "orbit/changes/d5-context-economy/proposal.md",
+          "orbit/changes/d5-context-economy/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Exit criterion 3's mid-explore seam has no boot surface and no task exercises the cross-model boot test",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-orientation/spec.md",
+      "line": 5,
+      "classification": "decision_required",
+      "action": "Applied ratified option B: design.md D5 declares the mid-explore seam served by bare orbit status + explore.md (standing slots) + the explore emit trail — --boot stays change-scoped by design (R-d-4: a dedicated explore boot render would restate a one-file artifact set); tasks.md 9.6 (user-validation handoff) pins the every-seam boot test at ratification. Also resolves iter-2's W9.",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Extend --boot to explore workstreams in the orientation delta (explore.md pointers, latest explore emits, maturity counts), same degradation policy."
+          },
+          {
+            "label": "B",
+            "body": "Declare the mid-explore seam served by bare orbit status + explore.md + the explore emit trail; test criterion 3's mid-explore leg against those; add the 9.x boot-test task."
+          }
+        ],
+        "chosen": "B"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/design.md",
+          "orbit/changes/d5-context-economy/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Proposal's per-body token figures disagree with the cited inventory",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/proposal.md",
+      "line": 7,
+      "classification": "stale",
+      "action": "Already fixed in the working tree by the prior interrupted walk: proposal reads 9.8k / 8.3k / 7.1k, matching sketches/body-inventory.md.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "stale"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Stray trailing space inside the Standing-recommendation literal",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-conventions/spec.md",
+      "line": 155,
+      "classification": "stale",
+      "action": "Already fixed in the working tree by the prior interrupted walk: the trailing space before the closing backtick is gone from the conventions delta literal.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "stale"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The change's own explore.md omits the Open questions section the change makes mandatory",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/explore.md",
+      "line": 145,
+      "classification": "stale",
+      "action": "Already fixed in the working tree by the prior interrupted walk: the empty '## Open questions' section is restored (noted as the live zero-entry counter case) and the practiced-it claim now cites the 2026-07-09 charter-era practice.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "stale"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": []
+}

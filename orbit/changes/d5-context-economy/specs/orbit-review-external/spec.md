@@ -18,3 +18,22 @@ The system SHALL provide the external-review packaging capability — preparing 
 
 - **WHEN** the external-handoff branch packages a prompt and emits T0
 - **THEN** the emit carries `command: "review-external"` in a `review-external-<TS>.json` file — byte-compatible with pre-merge records — and every downstream consumer (gates, orientation, report ordinal, ingest parser) behaves identically to pre-merge behavior
+
+### Requirement: Mode flag with state-based inference default
+
+The external-review packaging branch SHALL accept a `--as proposal|system` flag; when omitted, mode inference is OWNED by `orbit-review`'s `Mode inference when --as omitted` requirement (one voice on one behavior — D-arc Stage D5's merge onto the single `/orbit:review` surface; that requirement additionally covers architecture-never-inferred). The scenarios below record the packaging branch's observable behavior under that shared inference, not a second inference definition.
+
+#### Scenario: All tasks unchecked → infer proposal mode
+
+- **WHEN** `--as` is omitted and ALL task boxes in the change's `tasks.md` are unchecked
+- **THEN** the command proceeds as `--as proposal` and the chat output includes "Generating external-review prompt as `proposal` (inferred from tasks state)."
+
+#### Scenario: All tasks checked + code exists → infer system mode
+
+- **WHEN** `--as` is omitted, all tasks in `tasks.md` are checked, and the codebase shows changes consistent with apply having run
+- **THEN** the command proceeds as `--as system` with an analogous inference note
+
+#### Scenario: Ambiguous state → prompt user
+
+- **WHEN** the inference cannot determine mode unambiguously — mixed checked/unchecked task boxes (partial implementation), or all boxes checked without visible code changes
+- **THEN** the command prompts the user via `AskUserQuestion` to choose proposal or system (mixed state never silently infers either mode)

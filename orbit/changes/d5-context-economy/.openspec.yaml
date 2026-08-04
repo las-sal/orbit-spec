@@ -7,9 +7,15 @@ architecture:
 base_fingerprints:
   orbit-architect:
     Architect run-summary emit with handoff section: sha256:223b21e1eb76504f060f86ac7b3852b455852ab99fbfca09eb6d1c0193f3ae47
+    Architect workflow available: sha256:ede6f29302623f26b26734256349a3f5fb6dfc88e0899cd83184935881073156
   orbit-conventions:
     Internal-run JSON summary format: sha256:befac5df104f2701a2f99d0c61cc76c451c129488117867ad5a9b7d7aff1cb10
     "`explore.md` five-section format": sha256:bcbc069aba4893bda3bb3be3438634d12ee49359c1571c07d640d5349325c59d
+    "`.orbit-runs/` per-change persistence": sha256:5a50daf8df052766d97a2b14a03754a3e3469b2e67a2660bb70737c66f35245e
+    Change completeness discipline: sha256:3210dabb41a4be0c1e45c5ef6d0c74c8826aa15eba4a730010deca75bd05c443
+    Review mode decision framework: sha256:adfd0334748f7ff8711aad66478300740763eac2891c0da4bba067b1c567c442
+    No-chaining contract: sha256:b7ad2f8b042756099c51daca0622567437039d9fb9cee0c1c28f6b03e31dffbc
+    Generated-file disposition: sha256:6c9c2eec914857912f452d82a2a0f09083a1d08817a4dd864a5ca0611aca23af
   orbit-engine-gates:
     Single-voiced canonical-next computation: sha256:21e0864c09aaa77f3cbbde5ad6a3defea18a843318d2dd0ff6ef2ed25c725392
   orbit-explore-modifications:
@@ -22,6 +28,15 @@ base_fingerprints:
     Internal run summary persisted per mode: sha256:713eb2a412804e619995fc1dce49fd0a72be8f9c3cad694c82a08ce6be3198cc
   orbit-review-external:
     Review-external command available: sha256:bafdaba0134803d223f28afff348f1d0e33028a694daac2126894dea26d72442
+    Mode flag with state-based inference default: sha256:365a3819ec3c179ee72e3d25a4eabb6fc093216c1893ca6c476a0a80389298a4
   orbit-run-summary-emit:
     Emit scope: sha256:511bae5855a7f3492d78d6b09906eaedfa9b26fb00bab0c69b547f52cdc74aca
     Apply per-chunk-end emission: sha256:5cc5b9e73cf7983686e5158662b56a884069866e50f3fafe1b802624cc813d74
+    Emit timing semantics: sha256:6aac47abd1d15ebf32455f5c32d6166946a0de431f79e8f302cc1699afd9f779
+    Review-external T0 multi-step recommendation: sha256:6e52d7be09a3cfaf3e6a0fc04292f7313d639925491ab78c05d32855cab11bc5
+    Workflow-kind emit shape (extends the universal spine): sha256:73eaa4e555ff9545e1003ffd45443a28d67bc2613882d583ae0f55db02fb8c21
+  orbit-onboard:
+    Identity statement section: sha256:ecb00f0b9fc073dc9b64d2da63acfa465dc91e074f3a166f9f538d07a67235e0
+    Canonical-flow walkthrough section: sha256:9413f4851cb862d906f8f573a550003e9ef8c88e181d2e2765db35747cd54335
+  orbit-orientation:
+    Fault isolation and malformed-input policy: sha256:d9c8a86a7a46fe1fd9badf34861c6c3c359f0c88a0c2f643b5543c2de835b24f

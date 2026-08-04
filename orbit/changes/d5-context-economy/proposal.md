@@ -4,7 +4,7 @@
 
 Every orbit command loads its full generated body into the context window, and the D-arc has
 been growing exactly the bodies it most invokes: the six heaviest total ≈40.6k tokens, with the
-three heaviest (address-reviews 9.9k, review 8.5k, explore 7.5k) being the most-run editorial
+three heaviest (address-reviews 9.8k, review 8.3k, explore 7.1k) being the most-run editorial
 commands. The exploration's inventory pass (`explore.md` D-d5-1; `sketches/body-inventory.md`)
 tagged every section of those six bodies and found only ~44% is resident judgment — the rest is
 mechanical procedure the engine should own (~27%), reference material that should load lazily
@@ -40,10 +40,15 @@ as nine decisions in the consumed exploration.
   (epitome + detail-to-situ + structural leaning; no shared reference per prior ruling
   D-b2-2); review's per-mode pass definitions move to per-mode references loaded for the
   resolved mode only; emit sections across bodies shrink to surface invocations; worked
-  examples and rarely-needed flag detail move to references.
+  examples and rarely-needed flag detail move to references. Stated reduction target (arc
+  exit criterion 1's NUMBER): the six heaviest bodies' resident total drops from ≈40.6k to
+  **≤ 20k tokens**, measured by the same bytes/4 estimate over the same six bodies as
+  `sketches/body-inventory.md` (the inventory's halving claim made falsifiable; ≈18k is the
+  judgment floor, ~2k the connective-prose headroom).
 - **Boot render**: `orbit status --change <name> --boot` (orientation surface) composes the
-  cold-start sequence as ordered pointers — position/eligibility, artifact set, latest emits
-  per mode, and the touchpoints view; no hand-maintained handoff file exists.
+  cold-start sequence as ordered pointers — position/eligibility, artifact set, latest-emit
+  pointers per command family (review split per mode), and the touchpoints view; no
+  hand-maintained handoff file exists.
 - **Touchpoints**: design.md gains an authored `## Touchpoints` section (predicted map,
   written at propose, frozen once apply starts); the ACTUAL map is engine-computed from the
   diff (never prose); predicted-vs-actual divergence becomes a mechanical audit/system-review
@@ -87,6 +92,9 @@ as nine decisions in the consumed exploration.
 - `orbit-engine-gates`: eligibility-line model-hint garnish from `models:` config.
 - `orbit-audit-drift`: predicted-vs-actual touchpoints divergence check; attestation
   cross-check (emit count vs actual explore.md count).
+- `orbit-onboard`: the Identity layer list and the canonical-flow external-review pointer
+  re-anchor to the merged invocation (`/orbit:review --reviewer external`; the review skill's
+  `references/external-handoff.md`) so task 7.4's re-teach stays baseline-consistent.
 
 ## Impact
 
@@ -103,4 +111,7 @@ as nine decisions in the consumed exploration.
 - **Tests**: emit-surface suite (composition, atomic loop, write-gate rejection, collision),
   boot render, chunk grammar, maturity counting, touchpoints divergence check, generated-body
   fidelity re-pins (epitome markers, reference loading, retired launcher), gates vocabulary.
-- **Docs**: CLAUDE.md D5 entry at archive; the arc doc status log.
+- **Docs**: CLAUDE.md D5 entry at archive, including a sweep of the present-tense
+  current-state surface counts (the D15 bullet's "ALL workflows (16 as of D2)", the
+  self-hosting note's skill/launcher counts) to the post-merge 15 — historical narrative
+  sections stay as records; the arc doc status log.

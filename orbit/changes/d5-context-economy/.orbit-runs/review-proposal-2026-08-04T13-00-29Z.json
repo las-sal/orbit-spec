@@ -1,0 +1,184 @@
+{
+  "command": "review",
+  "timestamp": "2026-08-04T13:00:29Z",
+  "change": "d5-context-economy",
+  "final_assessment": "0 critical, 3 warning, 4 suggestion.",
+  "next_recommended": "/orbit:address-reviews d5-context-economy --from-file orbit/changes/d5-context-economy/.orbit-runs/review-proposal-2026-08-04T13-00-29Z.json",
+  "kind": "editorial",
+  "model": "claude-fable-5",
+  "mode": "proposal",
+  "iteration": 4,
+  "depth": "full",
+  "reviewer_class": "fresh",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "passes_run": [
+    "1. Structure & Delta Integrity",
+    "2. Internal Coherence",
+    "3. Cross-Doc Coherence",
+    "4. Archive Consistency",
+    "5. Codegen Readiness",
+    "6. Gap Hunt",
+    "7. Drift Hunt",
+    "8. Inline Review Marker Residue",
+    "9. Pre-Handoff Sweep"
+  ],
+  "passes_skipped": [],
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 2
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "4. Archive Consistency",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/specs/orbit-conventions/spec.md",
+      "line": 689,
+      "title": "Live disposition scenario still enumerates review-external as currently generated and architect as the 16th workflow",
+      "recommendation": "The 'Generated-file disposition' requirement's 'Orbit-authored — full ownership' scenario says 'currently ... the net-new editorial workflows — review, audit-drift, review-external, address-reviews ... and orbit-architect, the fully orbit-authored 16th workflow'. Post-archive the review-external template retires (16 → 15), so this live current-state enumeration contradicts the merged surface. The delta already touches orbit-conventions but not this requirement, and at-archive note 9.4 covers only the two Purpose paragraphs. Add a MODIFIED block for this requirement (drop review-external from the 'currently' list, re-anchor the workflow count) or extend note 9.4's sweep to name it."
+    },
+    {
+      "pass": "4. Archive Consistency",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/specs/orbit-architect/spec.md",
+      "line": 18,
+      "title": "Baseline 'Architect workflow available' still states 'the generated surface grows to 16 workflows'",
+      "recommendation": "The parenthetical '(D15 full surface — the generated surface grows to 16 workflows)' is part of a live requirement statement and will contradict the post-archive 15-workflow surface. The architect delta modifies only the emit requirement, and no at-archive note covers this spot. Add a MODIFIED block (or fold into a baseline-sweep at-archive note) rephrasing the count as historical ('grew the surface to 16 at D2; 15 post-D5's merge') or dropping the number."
+    },
+    {
+      "pass": "5. Codegen Readiness",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+      "line": 196,
+      "title": "Membership criterion for open_questions_with_recommendation is undefined",
+      "recommendation": "The counter grammar defines how ENTRIES are counted (top-level list items, fence-aware) but never states what makes an entry count as 'with recommendation': whether the literal `Standing recommendation: none yet` counts, and whether the slot line must appear within the entry's nested content. The scenario ('2 open questions, 1 carrying a standing recommendation → \"1 of 2\"') doesn't disambiguate, and the conventions delta's 'the slot is what the emit surface's attestation counts' (orbit-conventions delta line 155) reads as slot-presence counting — two implementers would fork. State the criterion in the computed-extensions requirement.",
+      "recommendation_options": [
+        {
+          "label": "Count real leanings only",
+          "body": "An entry counts toward n when its content carries a `Standing recommendation:` line whose value is NOT the literal `none yet` — the attestation measures recorded leanings (the leak-hardening intent); slot-less entries and `none yet` entries both fall outside n, and audit-drift separately flags slot-less entries as format violations."
+        },
+        {
+          "label": "Count slot presence",
+          "body": "An entry counts toward n when a `Standing recommendation:` line is present regardless of value — the attestation measures format compliance (matching the conventions delta's 'the slot is what the attestation counts' phrasing); adjust the audit-drift cross-check prose to match."
+        }
+      ]
+    },
+    {
+      "pass": "2. Internal Coherence",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/changes/d5-context-economy/tasks.md",
+      "line": 46,
+      "title": "Task 3.1 and design D1's usage line omit the --doc flag the spec requires",
+      "recommendation": "The emit-composition spine requirement defines a target-resolution contract where architecture-scoped commands take `--doc <doc-name>` INSTEAD of `--change` (with mutual-exclusion usage errors), and the write-gate scenario invokes `orbit emit review --doc my-program` — but task 3.1's CLI flag list names only `--change`, `--payload`, `--json`, `--render`, and design.md line 13's usage synopsis likewise shows no `--doc`. Add `--doc` (and the exclusion errors) to task 3.1 and the design D1 synopsis so the CLI registration task covers the architecture-scoped channel."
+    },
+    {
+      "pass": "6. Gap Hunt",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+      "line": 139,
+      "title": "Archived-trail resolution for orbit emit archive is unstated",
+      "recommendation": "`orbit emit archive --change foo` must write to `orbit/changes/archive/<YYYY-MM-DD>-foo/.orbit-runs/` after the move, but how the surface resolves the date prefix from `--change foo` is unspecified (today's UTC date vs. scanning for the matching archive directory — these diverge when the emit fires across a UTC midnight from the move, or when multiple archives share the name stem). State the rule, e.g. the lexically greatest `orbit/changes/archive/*-<name>/` directory, with the existing clean not-found error when none matches."
+    },
+    {
+      "pass": "6. Gap Hunt",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+      "line": 7,
+      "title": "Payload-channel error paths (no payload; both channels) unspecified",
+      "recommendation": "The payload contract specifies stdin-or-`--payload` and rejects bad keys, but not the behavior when no payload is supplied at all (empty stdin, no flag) or when both `--payload` and stdin are provided. One sentence closes it: absent payload = clean non-zero error naming the channel; both supplied = `--payload` wins (or a usage error) — keeping the no-file/empty-stdout guarantee."
+    },
+    {
+      "pass": "7. Drift Hunt",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-conventions/spec.md",
+      "line": 264,
+      "title": "'Review mode decision framework' still calls reviewer classes 'modes' post-merge",
+      "recommendation": "The delta-modified requirement keeps 'choosing among orbit's three review modes (in-context, `--fresh`, external)' while the same change installs 'the same three-class vocabulary' (`--reviewer`, `reviewer_class`, cadence slots) and reserves 'mode' for `--as proposal|system|architecture` on the merged surface. Rewording the requirement's frame to 'three reviewer classes' (keeping the requirement title stable if renaming is unwanted) would remove the last vocabulary overload the merge otherwise resolves."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "title": "Architecture-mode review emits cannot pass the specified write gate",
+      "evidence": "Delta write-gate requirement now defines the mode-scoped gate accepting change:null + doc + handoff-shape checks (orbit-emit-composition delta lines 160-189) with a dedicated scenario."
+    },
+    {
+      "title": "Untouched 'Workflow-kind emit shape' still defines a 6-field spine",
+      "evidence": "The block is now a MODIFIED delta declaring 7 fields with the model row and updated scenarios (orbit-run-summary-emit delta lines 240-260)."
+    },
+    {
+      "title": "Untouched 'Review mode decision framework' still prescribes /orbit:review-external",
+      "evidence": "Block now in the conventions delta with all three items re-anchored to the merged invocation (delta lines 262-295)."
+    },
+    {
+      "title": "No stated numeric reduction target for exit criterion 1",
+      "evidence": "Proposal states the ≤ 20k-token six-body target with the bytes/4 method (proposal.md lines 43-47); task 7.3 records the measurement."
+    },
+    {
+      "title": "chunk_complete formula undefined for the no-chunking case",
+      "evidence": "Rule 3 now states the whole-task-set computation ('never a constant') and the field table carries the null-chunk formula (orbit-run-summary-emit delta lines 75, 93-100)."
+    },
+    {
+      "title": "At-archive note tasks 9.4/9.5/9.7 enter apply-gate arithmetic",
+      "evidence": "They are non-checkbox notes under an explicit header; the apply gate reads 0/30 (status JSON)."
+    },
+    {
+      "title": "Degraded-note representation in --json output unspecified",
+      "evidence": "orientation delta specifies the skipped_emits array on the workstream entry plus the rendered one-line note (delta lines 52-55)."
+    },
+    {
+      "title": "--as architecture --reviewer external combination unspecified",
+      "evidence": "orbit-review delta requires --as proposal|system for external, with a clean-usage-error scenario (delta lines 5, 32-35)."
+    },
+    {
+      "title": "Archive's POST-WRITE semantics and trail location undefined",
+      "evidence": "Archive is reclassified pre-computable, writing once to the archived trail after the move, with a scenario (orbit-emit-composition delta lines 128-143, 155-158)."
+    },
+    {
+      "title": "Ownership of the review emit's iteration field unassigned",
+      "evidence": "Engine-computed from the shared pass axis with payload supply rejected, stated in both orbit-emit-composition (lines 87-91) and orbit-review (line 58) deltas."
+    },
+    {
+      "title": "files_touched underspecified (first emit, timestamp resolution, uncommitted work)",
+      "evidence": "Working-tree diff semantics, rev-list --before resolution, first-commit fallback, and null degradation all specified (orbit-emit-composition delta lines 213-224)."
+    },
+    {
+      "title": "Post-merge mode inference specified twice",
+      "evidence": "review-external delta's inference requirement now defers ownership to orbit-review's requirement, scenarios framed as observable behavior (delta line 24)."
+    },
+    {
+      "title": "CLAUDE.md current-state surface counts go stale at apply",
+      "evidence": "At-archive note 9.7 sweeps the D15 bullet and self-hosting counts to 15."
+    },
+    {
+      "title": "Exit criterion 3's mid-explore seam has no boot surface / no cross-model boot task",
+      "evidence": "design.md D5 ratifies the change-scoped-by-design answer with the mid-explore artifact set; task 9.6 exercises the every-seam test at ratification."
+    }
+  ],
+  "commentary": "Three iterations of resolution have pushed the residue to the outermost ring: everything inside the delta set now holds together under fairly aggressive probing. I diffed all 23 MODIFIED blocks mechanically against their baseline requirements (no dropped scenarios, no silent content loss — every diff is the intended edit plus additive scenarios), verified the gates.ts :77/:397 line claims and the two render sites against source, checked the inventory's 40.6k/9.8k/8.3k figures against sketches/body-inventory.md, confirmed strict validation, 23/23 fingerprints, and the 0/30 gate arithmetic, and swept baseline specs, README, CLAUDE.md, and src/ for the retired invocation. What remains splits into two textures: (1) live baseline blocks OUTSIDE the delta set that carry current-state surface enumerations — the conventions disposition table and architect's 16-workflow parenthetical — the exact class the at-archive notes exist for but don't yet cover; and (2) small determinism gaps in the new grammars where two implementers could fork (the attestation's membership criterion being the one with real behavioral consequence, since audit-drift cross-checks the recorded value against a fresh parse — a criterion mismatch between the two implementations would manufacture false WARNING drift). The frozen-record vocabulary discipline is applied consistently throughout; I found no place where the merge leaks into record shapes, and no marker residue anywhere in the change directory."
+}

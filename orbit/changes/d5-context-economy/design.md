@@ -10,36 +10,49 @@ only judgment.
 One generic verb-first command (naming precedent: `orbit fingerprint`):
 
 ```
-orbit emit <command> --change <name> [--payload <file> | stdin] [--render] [--json]
+orbit emit <command> (--change <name> | --doc <doc>) [--payload <file> | stdin] [--render] [--json]
 ```
 
 - **Payload channel**: JSON on stdin (heredoc-friendly) or `--payload <file>`. The payload
   carries ONLY the narrative/authored fields for that command (e.g. review: `mode`,
   `reviewer_class`, `depth`, `scorecard`, `findings`, `stale_suppressed`, `commentary`,
   `passes_run/skipped`, `model`; address-reviews: `source*`, `resolutions`, `walk_mode`,
-  narrative `final_assessment`, `model`; …). The engine owns everything computable.
+  narrative `final_assessment`, `model`; apply: `user_validation_tasks` — the checkbox-judgment
+  identifier list — plus the optional `assessment_suffix`, `model`; …). The engine owns
+  everything computable.
 - **Engine-owned spine**: `command` (from argv), `timestamp` (now, UTC), `change` (from
   `--change`), `kind` (from the command taxonomy in `orbit-conventions` — the taxonomy moves
   into an engine table), filename token (timestamp with hyphens, collision-bumped forward one
   second until free — the same rule bodies teach today), and the DETERMINISTIC facts where a
   capability defines them (review: the counts sentence + findings-dependent pointer, per
   `orbit-report-rendering`'s strict contract; review-external T0: the multi-step
-  paste/save/ingest recommendation composed from the prompt path template).
+  paste/save/ingest recommendation composed from the prompt path template; apply: the
+  chunk/counts core of `final_assessment` — payload contributes only an optional
+  `assessment_suffix`, never the counts).
 - **Two next_recommended classes** (a distinction the exploration's "atomic loop" resolves
   into): (a) PRE-COMPUTABLE — review emits (self-pointer/report pointer from the payload's own
-  scorecard) and T0 (path template): composed before any write. (b) POST-WRITE — commands whose
+  scorecard), T0 (path template), explore boundaries (the maturity grid from the parsed
+  `explore.md` — the emit landing changes nothing it depends on), and archive (the stock
+  post-archive prose, an engine constant; written to the ARCHIVED trail after the move):
+  composed before any write. (b) POST-WRITE — commands whose
   recommendation is the engine's `next_command` AFTER the emit lands (address-reviews, apply
-  completion, explore boundary): the engine writes the emit complete except `next_recommended`,
+  completion): the engine writes the emit complete except `next_recommended`,
   recomputes the change status (the just-written file now part of the trail), stamps the field,
   and finalizes. One command, one visible file state at return; the transient
   missing-field window is engine-internal (documented; a crash mid-loop leaves a
-  spine-incomplete emit that downstream strict readers reject loudly — fail-loud, never silent).
+  spine-incomplete emit that orientation excludes from arithmetic AND surfaces as a degraded
+  note on the next status/boot render — detection without failure, never silent vanishing).
 - **Write gate**: before ANY write, the composed candidate passes the SAME normalizers the D4
-  renderer uses (`normalizeInternalPass` for review emits; spine checks for all kinds).
-  Validation failure = no file, non-zero exit, the field-naming error on stderr, empty stdout.
-  One validator, two gates (write-time here, read-time at render).
-- **`--render`**: for review emits, after the write, print the engine report (the
-  `status --report` render) — persist-first and run-and-paste collapse into one invocation.
+  renderer uses (`normalizeInternalPass` for proposal/system review emits; architecture-mode
+  review emits pass the universal-spine checks — accepting `change: null` + required `doc` —
+  plus scorecard rollup and the architect-owned `handoff` shape, mirroring D4's architecture
+  render exemption; spine checks for all kinds). Validation failure = no file, non-zero exit,
+  the field-naming error on stderr, empty stdout. One validator, two gates (write-time here,
+  read-time at render).
+- **`--render`**: for proposal/system review emits, after the write, print the engine report
+  (the `status --report` render) — persist-first and run-and-paste collapse into one
+  invocation; for architecture mode, a no-op with a stderr note (no architecture report
+  surface exists).
 - **Stdout**: the written path (+ the render under `--render`); `--json` echoes the complete
   composed emit.
 
@@ -53,8 +66,12 @@ orbit emit <command> --change <name> [--payload <file> | stdin] [--render] [--js
 - **`orbit emit apply`**: the engine parses the tasks.md chunk preamble (the grammar moves from
   body prose to engine; malformed preamble → the documented stderr warning + no-chunking
   fallback) and computes `tasks_completed/remaining` from checkboxes, `chunk`/`chunk_name`/
-  `chunk_complete`, and `files_touched` — the per-chunk diff (`git diff --name-only` since the
-  previous apply emit's timestamp-resolved commit; graceful `null` outside a git repo).
+  `chunk_complete` (per-chunk arithmetic over the payload's `user_validation_tasks` judgment
+  list — the whole task set standing in when `chunk` is null), and `files_touched` — the
+  per-chunk diff (`git diff --name-only <ref>`
+  against the working tree, committed + uncommitted tracked; `<ref>` = the previous apply
+  emit's timestamp-resolved commit via `git rev-list -1 --before`, or the change's first
+  commit for the first emit; graceful `null` outside a git repo).
 - **`orbit emit review-external`**: T0 spine composed from the prompt path (payload supplies
   `prompt_path`, `target`); `awaiting_findings: true` engine-set.
 - **`model`**: REQUIRED nullable payload field on every command (D-d5-9) — the surface rejects
@@ -98,9 +115,35 @@ orbit emit <command> --change <name> [--payload <file> | stdin] [--render] [--js
 
 Rides the status gateway (precedent: `--report`). Composes ORDERED POINTERS, never substance:
 position + eligibility (existing computation), the artifact list (existing contextFiles),
-latest emit per mode (trail), the touchpoints view (D6), and explore.md/sketches presence.
+latest-emit pointers per command family on the trail (review split per mode), the touchpoints
+view (D6), and explore.md/sketches presence.
 READ-ONLY; degrades per orientation's fault-isolation policy. No hand-maintained handoff file
 exists anywhere (R-d-4).
+
+**R-d-9 delivery map — (b)/(c), stated once**: the charter's "D5 mechanizes R-d-9's clauses
+(b) and (c)" is delivered as follows. **(b) is delivered AS THIS BOOT RENDER** (D-d5-6's
+reframing): the boot-sequence need is served by an engine render computed fresh per
+invocation; the structured per-emit `handoff` section stays ARCHITECT-ONLY by design —
+generalizing a hand-authored handoff section to every workflow emit would recreate the
+staleness class R-d-4 subtracts. **(c) lands half-mechanized on purpose**: item 1 (residency
+sweep — the explore/architect boundary sweep) and item 4 (code-touchpoints map — the boot
+render's touchpoints view + the audit-drift divergence check) ship here; items 2 (boot-chain
+currency) and 3 (coverage-vs-charter) REMAIN manual seam-audit practice — they are judgment
+checks, not set arithmetic, and mechanizing them today would produce vibes-checks dressed as
+engine checks. Named re-entry trigger (the R-d-2 tripwire pattern): a cold-pickup failure at
+any phase seam attributable to a stale pointed-at doc or an uncovered charter item re-opens
+mechanizing items 2–3. The arc ruling's text is amended (status log appended) at archive so
+R-d-9's stated program and D5's delivery converge — tasks.md 9.5.
+
+**The mid-explore seam (exit criterion 3, ratified)**: `--boot` is change-scoped BY DESIGN
+and is NOT extended to explorations. An exploration's file-resident boot material is
+deliberately minimal — bare `orbit status` (the orientation surface models explore
+workstreams: position, LAST, next per D3's own cold-start criterion), `explore.md` itself
+(five sections with standing-recommendation slots — the material this change's leak
+hardening strengthens), and the explore emit trail (engine-computed counts + maturity
+recommendation). Criterion 3's mid-explore leg is TESTED AGAINST those artifacts; a
+dedicated explore boot render would restate a one-file artifact set (R-d-4 ceremony,
+subtracted). The every-seam boot test itself is exercised at ratification per tasks.md 9.6.
 
 ## D6 — Touchpoints: predicted authored, actual computed (from D-d5-7, ratified as-is)
 
@@ -129,8 +172,10 @@ audit-drift cross-checks recorded counts against the file.
 ## D8 — Model hints (from D-d5-9)
 
 `orbit/config.yaml` gains an OPTIONAL `models:` map (`<phase-or-slot>: <hint string>`, e.g.
-`review-external: "GPT-5 Codex"`). The engine's eligibility lines append ` — hint: <value>`
-when the resolved next command's phase/slot has a hint. Pure garnish: no enforcement, no
+`external: "GPT-5 Codex"` — keys are schema phase ids like `review-proposal`/`apply`/
+`review-system` or cadence slot names `in-context`/`fresh`/`independent`/`external`; slot
+entry wins when both match, per the gates delta). The engine's eligibility lines append
+` — hint: <value>` when the resolved next command's phase/slot has a hint. Pure garnish: no enforcement, no
 validation of the hint value, absent map = zero output change. The phase-mapping hypothesis
 itself lives in config (user-owned), not spec.
 
