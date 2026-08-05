@@ -85,6 +85,13 @@ Implementation chunks:
 
 ## 6. Review merge (surface 16 → 15)
 
+(Session note for the cold start: before editing any template, read the orbit-review and
+orbit-review-external DELTA specs plus both current template files
+(`src/core/templates/workflows/{review,review-external}.ts`) — the record-vocabulary freeze
+(`command: "review-external"`, `review-external-<TS>.json`, `external-<as>-<TS>.md`) is the
+easiest thing to break in the merge, and group 6 is ATOMIC: a half-merged template surface
+breaks init/update, so 6.1–6.4 land together before any commit.)
+
 - [ ] 6.1 Review template: `--reviewer in-context|fresh|external` axis (`--fresh` shorthand);
       external branch as ~5-line dispatch loading `references/external-handoff.md`; the
       reference authored from review-external's body (packaging steps, preflight, session note,
