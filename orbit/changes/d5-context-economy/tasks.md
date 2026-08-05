@@ -62,24 +62,24 @@ Implementation chunks:
 
 ## 4. Boot render
 
-- [ ] 4.1 `orbit status --change <name> --boot` (orientation family): position/eligibility,
+- [x] 4.1 `orbit status --change <name> --boot` (orientation family): position/eligibility,
       artifact pointers, latest emit per mode, explore.md/sketches presence; READ-ONLY;
       degradation per orientation fault-isolation; `--json` form.
-- [ ] 4.2 Touchpoints view: design.md `## Touchpoints` parse (predicted); actual map from the
+- [x] 4.2 Touchpoints view: design.md `## Touchpoints` parse (predicted); actual map from the
       change's first commit (engine diff); lifecycle-aware selection (predicted pre-apply,
       actual + predicted reference after); absent-section/non-git degradation; tests for both
       lifecycle positions.
-- [ ] 4.3 Orientation surfaced-skip note (the modified fault-isolation requirement): the
+- [x] 4.3 Orientation surfaced-skip note (the modified fault-isolation requirement): the
       `⚠ invalid emit skipped: <filename>` line on bare, `--full`, and boot renders + the
       `skipped_emits` array on the affected workstream entry in both JSON tiers; tests with a
       spine-invalid-emit fixture across all three renders and the JSON shapes.
 
 ## 5. Gates vocabulary and model hints
 
-- [ ] 5.1 `gates.ts` canonical next-command strings → `/orbit:review --as <mode> --reviewer
+- [x] 5.1 `gates.ts` canonical next-command strings → `/orbit:review --as <mode> --reviewer
       external <change>` (`:77`, `:397`); sweep every engine surface rendering the retired
       invocation; grep-test that `/orbit:review-external` renders on no recommendation surface.
-- [ ] 5.2 `orbit/config.yaml` optional `models:` map reader + eligibility-line ` — hint: <value>`
+- [x] 5.2 `orbit/config.yaml` optional `models:` map reader + eligibility-line ` — hint: <value>`
       garnish (after any ` — user-invoked` marker); byte-identical output when unconfigured;
       tests both ways.
 

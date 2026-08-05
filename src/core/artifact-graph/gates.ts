@@ -19,6 +19,8 @@ export interface GateStatus {
   reason?: string;
   /** Full canonical next command (single-voiced) when the gate is not passed. */
   nextCommand?: string;
+  /** D5 hint garnish: the cadence slot the nextCommand covers, when it covers one. */
+  nextSlot?: CadenceEntry;
   /** tracked kind: checkbox arithmetic surfaced as N/M. */
   checked?: number;
   total?: number;
@@ -74,7 +76,7 @@ function commandForClass(slot: CadenceEntry, mode: ReviewMode, change: string): 
   // `independent` renders the fresh-context review (proposal-phase default), never
   // co-offered with external, per orbit-engine-gates single-voiced canonical-next.
   if (slot === 'independent' || slot === 'fresh') return `/orbit:review --as ${mode} --fresh ${change}`;
-  if (slot === 'external') return `/orbit:review-external --as ${mode} ${change}`;
+  if (slot === 'external') return `/orbit:review --as ${mode} --reviewer external ${change}`;
   return `/orbit:review --as ${mode} ${change}`; // in-context
 }
 
@@ -371,13 +373,14 @@ function computeReviewedStatus(gate: NormalizedGate, changeName: string, trail: 
     kind: gate.kind,
     state: stale ? 'stale' : 'unpassed',
     reason: stale ? `a review pass is stale (an apply landed after it)` : freshEval.reason,
-    nextCommand: next,
+    nextCommand: next.cmd,
+    nextSlot: next.slot,
     before: gate.before,
     consent: gate.consent,
   };
 }
 
-/** Single-voiced canonical next command for an unpassed/stale reviewed gate. */
+/** Single-voiced canonical next command (+ covered slot) for an unpassed/stale reviewed gate. */
 function canonicalNextForReviewed(
   gate: NormalizedGate,
   mode: ReviewMode | null,
@@ -385,21 +388,23 @@ function canonicalNextForReviewed(
   ev: ConvergenceResult,
   trail: Trail,
   freshPasses: TrailPass[]
-): string {
+): { cmd: string; slot?: CadenceEntry } {
   const m: ReviewMode = mode ?? 'proposal';
   if (ev.unresolvedPass) {
     const p = ev.unresolvedPass;
-    return `/orbit:address-reviews ${change} --from-file ${toRepoRelPath(p.file, trail.changeDir)}`;
+    return { cmd: `/orbit:address-reviews ${change} --from-file ${toRepoRelPath(p.file, trail.changeDir)}` };
   }
   if (ev.neededSlot) {
-    return commandForClass(ev.neededSlot, m, change);
+    return { cmd: commandForClass(ev.neededSlot, m, change), slot: ev.neededSlot };
   }
   if (ev.confirmFailed) {
-    if (ev.confirmNeedsExternal) return `/orbit:review-external --as ${m} ${change}`;
-    return `/orbit:review --as ${m} --fresh ${change}`;
+    if (ev.confirmNeedsExternal) {
+      return { cmd: `/orbit:review --as ${m} --reviewer external ${change}`, slot: 'external' };
+    }
+    return { cmd: `/orbit:review --as ${m} --fresh ${change}`, slot: 'fresh' };
   }
   // stale — re-validate against current state via a fresh independent pass.
-  return commandForClass('independent', m, change);
+  return { cmd: commandForClass('independent', m, change), slot: 'independent' };
 }
 
 function toRepoRelPath(absFile: string, changeDir: string): string {

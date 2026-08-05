@@ -271,7 +271,7 @@ describe('eligibility phrasing (D1) — no imperative Next: label in engine outp
       path.join(SRC, 'commands', 'workflow', 'status.ts'),
       'utf-8'
     );
-    expect(statusSrc).toContain('Ready when you are: ${status.next_command}');
+    expect(statusSrc).toContain('Ready when you are: ${withModelHint(status.next_command, hint)}');
   });
 
   it('the instructions blocked-by-gate rendering uses the eligibility label', () => {

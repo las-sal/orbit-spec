@@ -123,6 +123,8 @@ export interface ChangeStatus {
   gates: GateStatusRow[];
   /** C1: one-line position readout of the canonical flow (undefined for ungated schemas). */
   position?: string;
+  /** D5 hint garnish: the keys (phase id + covered slot) driving next_command. */
+  next_hint_keys?: { phase?: string; slot?: string };
   /** C1: the single canonical next command for the current state, if any. */
   next_command?: string;
 }
@@ -393,6 +395,7 @@ export function formatChangeStatus(context: ChangeContext, overlay?: TrailOverla
   let gateRows: GateStatusRow[] = [];
   let position: string | undefined;
   let nextCommand: string | undefined;
+  let nextHintKeys: { phase?: string; slot?: string } | undefined;
   if (hasGates) {
     const computation = computeGateStates(
       context.schema,
@@ -425,11 +428,13 @@ export function formatChangeStatus(context: ChangeContext, overlay?: TrailOverla
       if (g.superseded) continue;
       if (g.nextCommand) {
         nextCommand = g.nextCommand;
+        nextHintKeys = { phase: g.id, slot: g.nextSlot };
         break;
       }
       if (g.kind === 'tracked' && g.state === 'ready') {
         nextCommand =
           `/orbit:apply ${context.changeName}` + (applyConsentMarked ? ' — user-invoked' : '');
+        nextHintKeys = { phase: g.id };
         break;
       }
     }
@@ -442,6 +447,7 @@ export function formatChangeStatus(context: ChangeContext, overlay?: TrailOverla
       for (const g of [...computation.gates].reverse()) {
         if (g.state === 'passed' && g.nextCommand) {
           nextCommand = g.nextCommand;
+          nextHintKeys = g.before ? { phase: g.before } : { phase: g.id };
           break;
         }
       }
@@ -457,5 +463,6 @@ export function formatChangeStatus(context: ChangeContext, overlay?: TrailOverla
     gates: gateRows,
     position,
     next_command: nextCommand,
+    next_hint_keys: nextHintKeys,
   };
 }

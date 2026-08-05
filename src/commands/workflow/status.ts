@@ -25,6 +25,7 @@ import {
 } from '../../core/architecture/buckets.js';
 import type { StageState } from '../../core/architecture/state.js';
 import { renderReport } from '../../core/report-render.js';
+import { modelHintFor, withModelHint } from '../../core/model-hints.js';
 import {
   validateChangeExists,
   validateSchemaExists,
@@ -43,6 +44,8 @@ export interface StatusOptions {
   full?: boolean;
   /** D4 `--report [<TS>]`: true when the flag is bare, the token string when given. */
   report?: string | boolean;
+  /** D5 `--boot`: the cold-start boot render (rides --change; composes with --json). */
+  boot?: boolean;
 }
 
 // -----------------------------------------------------------------------------
@@ -77,6 +80,26 @@ export async function statusCommand(options: StatusOptions): Promise<void> {
       );
       spinner?.stop();
       // Verbatim: the render already ends with its single trailing newline.
+      process.stdout.write(rendered);
+      return;
+    }
+
+    // D5 boot render — the cold-start sequence as ordered pointers (rides --change).
+    if (options.boot) {
+      if (!options.change) {
+        throw new Error('--boot requires --change <name>: the boot render is change-scoped (mid-explore boots from bare orbit status + explore.md + the explore trail)');
+      }
+      const bootChange = await validateChangeExists(options.change, projectRoot);
+      if (options.json) {
+        const { collectBoot } = await import('../../core/boot-render.js');
+        const { status, boot } = collectBoot(projectRoot, bootChange);
+        spinner?.stop();
+        console.log(JSON.stringify({ ...status, boot }, null, 2));
+        return;
+      }
+      const { renderBoot } = await import('../../core/boot-render.js');
+      const rendered = renderBoot(projectRoot, bootChange);
+      spinner?.stop();
       process.stdout.write(rendered);
       return;
     }
@@ -185,8 +208,10 @@ export function printStatusText(status: ChangeStatus): void {
     }
     if (status.next_command) {
       // D1 eligibility phrasing: never an imperative label — the user is the arbiter
-      // of lifecycle transitions; the engine reports eligibility only.
-      console.log(`Ready when you are: ${status.next_command}`);
+      // of lifecycle transitions; the engine reports eligibility only. D5: the model-hint
+      // garnish appends after any ` — user-invoked` marker; absent map = byte-identical.
+      const hint = modelHintFor('.', status.next_hint_keys);
+      console.log(`Ready when you are: ${withModelHint(status.next_command, hint)}`);
     }
   }
 }
@@ -295,12 +320,14 @@ function printSprintView(orientation: Orientation, json: boolean): void {
     // plus any trustworthy fields; exit 0 (fault-isolation clause b).
     console.log(renderDegradedRow(sprint));
     if (sprint.last) console.log(`last: ${renderLastLine(sprint.last)}`);
+    printSkippedEmits(sprint);
     if (sprint.next) console.log(`Ready when you are: ${sprint.next}`);
   } else {
     console.log(`${sprint.name}${stageTag(sprint)}`);
     console.log(`  ${renderStrip(sprint.strip)}`);
     if (sprint.last) console.log(`last: ${renderLastLine(sprint.last)}`);
     else console.log('last: no emits yet');
+    printSkippedEmits(sprint);
     if (sprint.next) console.log(`Ready when you are: ${sprint.next}`);
   }
 
@@ -316,6 +343,16 @@ function printSprintView(orientation: Orientation, json: boolean): void {
       ? 'also: nothing else in flight'
       : `also: ${[...alsoParts, ...waitingParts].join(' · ')}`;
   console.log(alsoLine);
+}
+
+/**
+ * D5 fail-loud surfacing: one degraded note per excluded emit-shaped file —
+ * detection without failure (exit 0), per orbit-orientation's fault isolation.
+ */
+function printSkippedEmits(entry: WorkstreamEntry): void {
+  for (const f of entry.skipped_emits ?? []) {
+    console.log(`\u26a0 invalid emit skipped: ${f}`);
+  }
 }
 
 /**
@@ -427,6 +464,7 @@ function printWorkstreamEntry(entry: WorkstreamEntry, indent: string): void {
   if (entry.degraded) {
     console.log(`${indent}${renderDegradedRow(entry)}`);
     if (entry.last) console.log(`${indent}  last: ${renderLastLine(entry.last)}`);
+    for (const f of entry.skipped_emits ?? []) console.log(`${indent}  \u26a0 invalid emit skipped: ${f}`);
     if (entry.next) console.log(`${indent}  Ready when you are: ${entry.next}`);
     return;
   }
@@ -434,5 +472,6 @@ function printWorkstreamEntry(entry: WorkstreamEntry, indent: string): void {
   console.log(`${indent}  ${renderStrip(entry.strip)}`);
   if (entry.position && entry.kind === 'change') console.log(`${indent}  position: ${entry.position}`);
   console.log(`${indent}  last: ${entry.last ? renderLastLine(entry.last) : 'no emits yet'}`);
+  for (const f of entry.skipped_emits ?? []) console.log(`${indent}  \u26a0 invalid emit skipped: ${f}`);
   if (entry.next) console.log(`${indent}  Ready when you are: ${entry.next}`);
 }

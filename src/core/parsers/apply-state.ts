@@ -152,6 +152,21 @@ export function filesTouchedSince(projectRoot: string, base: string): string[] |
     .filter(l => l !== '');
 }
 
+/**
+ * COMMITTED-ONLY paths changed in `<fromRef>..HEAD` — the boot render's ACTUAL
+ * touchpoints map (a durable-truth view; deliberately different from the per-chunk
+ * working-tree diff). Returns null outside git or on failure.
+ */
+export function filesTouchedCommitted(projectRoot: string, fromRef: string): string[] | null {
+  if (!isGitRepo(projectRoot)) return null;
+  const out = git(projectRoot, ['diff', '--name-only', `${fromRef}..HEAD`]);
+  if (out === null) return null;
+  return out
+    .split('\n')
+    .map(l => l.trim())
+    .filter(l => l !== '');
+}
+
 /** The earliest commit touching `relPath` (the change directory) — the change's first commit. */
 export function firstCommitTouching(projectRoot: string, relPath: string): string | null {
   if (!isGitRepo(projectRoot)) return null;

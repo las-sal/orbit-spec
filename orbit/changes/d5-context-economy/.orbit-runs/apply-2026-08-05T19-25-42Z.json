@@ -1,0 +1,36 @@
+{
+  "command": "apply",
+  "timestamp": "2026-08-05T19:25:42Z",
+  "change": "d5-context-economy",
+  "kind": "workflow",
+  "model": "claude-fable-5",
+  "gate_overridden": {
+    "gate": "review-proposal",
+    "state": "unpassed",
+    "reason": "latest independent pass yielded new findings"
+  },
+  "consent": "user-invoked",
+  "tasks_completed": 15,
+  "tasks_remaining": 16,
+  "user_validation_remaining": 0,
+  "chunk": "2 of 4",
+  "chunk_name": "Engine surfaces (boot render, gates vocabulary, model hints)",
+  "chunk_complete": true,
+  "tasks_completed_this_session": 5,
+  "files_touched": [
+    "orbit/changes/d5-context-economy/.orbit-runs/apply-2026-08-05T19-10-09Z.json",
+    "orbit/changes/d5-context-economy/tasks.md",
+    "src/cli/index.ts",
+    "src/commands/workflow/status.ts",
+    "src/core/artifact-graph/gates.ts",
+    "src/core/artifact-graph/instruction-loader.ts",
+    "src/core/orientation.ts",
+    "src/core/parsers/apply-state.ts",
+    "src/core/project-config.ts",
+    "test/core/artifact-graph/consent.test.ts",
+    "test/fixtures/report-golden/system-clean.golden.md"
+  ],
+  "diff_base": "ed5d04ecae84348556a02c46c9cd542c84c6790c",
+  "final_assessment": "Completed chunk 2 of 4 (Engine surfaces (boot render, gates vocabulary, model hints)); 15 of 31 tasks done. Engine surfaces landed: the boot render with the committed-only actual touchpoints map and typed --json object, the touchpoints entry-grammar parser, the surfaced skip-note across all renders and JSON tiers, the merged external invocation in gates.ts with a grep-test, and the models: hint garnish with its rendering-boundary check. Two pinned tests updated deliberately (the golden's retired invocation; the consent source assertion).",
+  "next_recommended": "/orbit:apply d5-context-economy — next chunk: Review merge + body-economy pass"
+}

@@ -487,6 +487,10 @@ program
     '--report [ts]',
     'Render a review pass as the engine-computed report (rides --change; no <TS> = newest pass)'
   )
+  .option(
+    '--boot',
+    'Render the cold-start boot sequence — ordered pointers into existing artifacts (rides --change; composes with --json)'
+  )
   .option('--json', 'Output as JSON')
   .action(async (options: StatusOptions) => {
     try {

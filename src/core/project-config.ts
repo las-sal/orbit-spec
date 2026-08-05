@@ -38,6 +38,13 @@ export const ProjectConfigSchema = z.object({
     )
     .optional()
     .describe('Per-artifact rules, keyed by artifact ID'),
+
+  // Optional: model-per-phase hints (D-arc Stage D5, R-d-9(a)) — pure garnish echoed on
+  // eligibility readouts, never enforced. Keys: schema phase ids or cadence slot names.
+  models: z
+    .record(z.string(), z.string())
+    .optional()
+    .describe('Model hints keyed by schema phase id or cadence slot name'),
 });
 
 export type ProjectConfig = z.infer<typeof ProjectConfigSchema>;
@@ -150,6 +157,16 @@ export function readProjectConfig(projectRoot: string): ProjectConfig | null {
       } else {
         console.warn(`Invalid 'rules' field in config (must be object)`);
       }
+    }
+
+    // Parse models field (D5 hint garnish): string values only; anything else is
+    // silently inert — the map is garnish, never an error source.
+    if (raw.models !== undefined && typeof raw.models === 'object' && raw.models !== null && !Array.isArray(raw.models)) {
+      const models: Record<string, string> = {};
+      for (const [key, value] of Object.entries(raw.models)) {
+        if (typeof value === 'string') models[key] = value;
+      }
+      if (Object.keys(models).length > 0) config.models = models;
     }
 
     // Return partial config even if some fields failed

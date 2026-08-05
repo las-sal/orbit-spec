@@ -65,6 +65,12 @@ export interface WorkstreamEntry {
   next?: string;
   /** CHANGE entries only: the per-change status payload, nested unmodified. */
   status?: ChangeStatus;
+  /**
+   * D5 fail-loud surfacing: emit-shaped files (token + .json) excluded from arithmetic
+   * as unreadable/JSON-invalid/spine-invalid. Absent when none — detection without
+   * failure; the emit surface's atomic single-write cannot produce one.
+   */
+  skipped_emits?: string[];
   degraded?: true;
   error?: string;
 }
@@ -154,6 +160,36 @@ export function readValidEmits(runsDir: string): EmitRecord[] {
     a.token < b.token ? -1 : a.token > b.token ? 1 : a.file < b.file ? 1 : a.file > b.file ? -1 : 0
   );
   return emits;
+}
+
+/**
+ * Emit-shaped files (token + .json) the fault-isolation policy excluded — unreadable,
+ * JSON-invalid, or spine-invalid. Surfaced, never silent (D-arc Stage D5): renders carry
+ * a one-line degraded note per file and both JSON tiers carry `skipped_emits`.
+ */
+export function listSkippedEmits(runsDir: string): string[] {
+  if (!fs.existsSync(runsDir)) return [];
+  let entries: string[];
+  try {
+    entries = fs.readdirSync(runsDir);
+  } catch {
+    return [];
+  }
+  const skipped: string[] = [];
+  for (const name of entries) {
+    if (!name.endsWith('.json')) continue;
+    if (!parseTsToken(name)) continue;
+    const full = path.join(runsDir, name);
+    let json: unknown;
+    try {
+      json = JSON.parse(fs.readFileSync(full, 'utf-8'));
+    } catch {
+      skipped.push(name);
+      continue;
+    }
+    if (!isSpineValid(json)) skipped.push(name);
+  }
+  return skipped.sort();
 }
 
 // -----------------------------------------------------------------------------
@@ -317,6 +353,8 @@ export function composeWorkstreamEntry(
 ): WorkstreamEntry {
   const emits = readValidEmits(ws.runsDir);
   const newest = emits.length > 0 ? emits[emits.length - 1] : undefined;
+  const skippedEmits = listSkippedEmits(ws.runsDir);
+  const skipped = skippedEmits.length > 0 ? { skipped_emits: skippedEmits } : {};
 
   try {
     // ONE validated metadata read, INSIDE the fault boundary and WITH
@@ -345,6 +383,7 @@ export function composeWorkstreamEntry(
         ...(newest ? { last: newest } : {}),
         ...(status.next_command ? { next: status.next_command } : {}),
         status,
+        ...skipped,
       };
       return entry;
     }
@@ -359,6 +398,7 @@ export function composeWorkstreamEntry(
       position: 'exploring',
       ...(newest ? { last: newest } : {}),
       next: newest ? newest.next_recommended : EXPLORE_EARLY_CANONICAL(ws.name),
+      ...skipped,
     };
     return entry;
   } catch (err) {
@@ -368,6 +408,7 @@ export function composeWorkstreamEntry(
       degraded: true,
       error: err instanceof Error ? err.message : String(err),
       ...(newest ? { last: newest } : {}),
+      ...skipped,
       // An explore's `next` source (the trail's recorded next_recommended, or
       // the Early canonical constant) never depends on the failed computation —
       // it survives degradation exactly like `last` (clause b: trustworthy
