@@ -29,7 +29,6 @@ export const ALL_WORKFLOWS = [
   'verify',
   'onboard',
   'review',
-  'review-external',
   'address-reviews',
   'audit-drift',
   'architect',

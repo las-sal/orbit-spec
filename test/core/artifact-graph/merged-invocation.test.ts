@@ -63,3 +63,29 @@ describe('merged external invocation (D5)', () => {
     }
   });
 });
+
+describe('record vocabulary frozen across the merge (6.4)', () => {
+  it("review's merged references keep every frozen record name byte-intact", async () => {
+    const { getReviewSkillTemplate } = await import('../../../src/core/templates/workflows/review.js');
+    const t = getReviewSkillTemplate();
+    const handoff = t.references!.find(r => r.name === 'external-handoff.md')!.content;
+    const prompt = t.references!.find(r => r.name === 'prompt-template.md')!.content;
+    // The gate reader, WAITING arithmetic, report ordinal, and ingest parser all key on these.
+    expect(handoff).toContain('"command": "review-external"');
+    expect(handoff).toContain('review-external-<TS>.json');
+    expect(handoff).toContain('external-prompt-<as>-<TS>.md');
+    expect(prompt).toContain('external-<as>-<TS>.md');
+    expect(prompt).toContain('## CRITICAL');
+    expect(prompt).toContain('**File**:');
+    // The T0 emit routes through the surface with the frozen command value.
+    expect(handoff).toContain('orbit emit review-external');
+  });
+
+  it('the WAITING discriminator and trail parser vocabulary are untouched by the merge', async () => {
+    const orientation = (await import('node:fs')).readFileSync('src/core/orientation.ts', 'utf-8');
+    const trail = (await import('node:fs')).readFileSync('src/core/artifact-graph/trail.ts', 'utf-8');
+    expect(orientation).toContain("'review-external'"); // T0 emit mode discriminator
+    expect(trail).toContain('review-external-*.json'); // packaging-record exclusion comment survives
+    expect(trail).toContain('external-(proposal|system)-'); // findings-file pattern
+  });
+});

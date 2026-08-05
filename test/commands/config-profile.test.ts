@@ -105,7 +105,6 @@ describe('config profile interactive flow', () => {
       'orbit-verify-change',
       'orbit-onboard',
       'orbit-review',
-      'orbit-review-external',
       'orbit-address-reviews',
       'orbit-audit-drift',
       'orbit-architect',
@@ -125,8 +124,7 @@ describe('config profile interactive flow', () => {
 
     // B3 editorial skills declare references too; a synced surface carries them
     const editorialRefs: Record<string, string[]> = {
-      'orbit-review': ['run-summary-schema.md'],
-      'orbit-review-external': ['mode-sections.md', 'prompt-template.md'],
+      'orbit-review': ['run-summary-schema.md', 'passes-proposal.md', 'passes-system.md', 'passes-architecture.md', 'external-handoff.md', 'mode-sections.md', 'prompt-template.md'],
       'orbit-address-reviews': ['external-findings-format.md', 'internal-findings-format.md', 'run-summary-schema.md'],
       'orbit-audit-drift': ['run-summary-schema.md'],
     };
@@ -138,7 +136,7 @@ describe('config profile interactive flow', () => {
       }
     }
 
-    const allCommands = ['propose', 'explore', 'apply', 'archive', 'new', 'continue', 'ff', 'sync', 'bulk-archive', 'verify', 'onboard', 'review', 'review-external', 'address-reviews', 'audit-drift', 'architect'];
+    const allCommands = ['propose', 'explore', 'apply', 'archive', 'new', 'continue', 'ff', 'sync', 'bulk-archive', 'verify', 'onboard', 'review', 'address-reviews', 'audit-drift', 'architect'];
     for (const commandId of allCommands) {
       const commandPath = path.join(projectDir, '.claude', 'commands', 'orbit', `${commandId}.md`);
       fs.mkdirSync(path.dirname(commandPath), { recursive: true });

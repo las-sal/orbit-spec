@@ -1,0 +1,42 @@
+{
+  "command": "apply",
+  "timestamp": "2026-08-05T19:53:02Z",
+  "change": "d5-context-economy",
+  "kind": "workflow",
+  "model": "claude-fable-5",
+  "gate_overridden": {
+    "gate": "review-proposal",
+    "state": "unpassed",
+    "reason": "latest independent pass yielded new findings"
+  },
+  "consent": "user-invoked",
+  "tasks_completed": 19,
+  "tasks_remaining": 12,
+  "user_validation_remaining": 0,
+  "chunk": "3 of 4",
+  "chunk_name": "Review merge + body-economy pass",
+  "chunk_complete": false,
+  "tasks_completed_this_session": 4,
+  "files_touched": [
+    "orbit/changes/d5-context-economy/.orbit-runs/apply-2026-08-05T19-25-42Z.json",
+    "orbit/changes/d5-context-economy/tasks.md",
+    "src/core/profile-sync-drift.ts",
+    "src/core/profiles.ts",
+    "src/core/shared/skill-generation.ts",
+    "src/core/shared/tool-detection.ts",
+    "src/core/templates/skill-templates.ts",
+    "src/core/templates/workflows/review-external.ts",
+    "src/core/templates/workflows/review.ts",
+    "test/commands/config-profile.test.ts",
+    "test/core/artifact-graph/merged-invocation.test.ts",
+    "test/core/init.test.ts",
+    "test/core/profiles.test.ts",
+    "test/core/shared/skill-generation.test.ts",
+    "test/core/shared/tool-detection.test.ts",
+    "test/core/templates/orbit-content-fidelity.test.ts",
+    "test/core/templates/orbit-generated-surface.test.ts"
+  ],
+  "diff_base": "05af414456d92e72be753fb0e8e43aa52ca9f400",
+  "final_assessment": "Paused mid-chunk 3 of 4 (Review merge + body-economy pass); 19 of 31 tasks done. Group 6 (the review merge) landed as one atomic unit: the reviewer-class axis + external-handoff dispatch in the review body, per-mode pass references, review-external retired across all six registries (profile-sync-drift.ts was the sixth — the B3 lesson held), the module deleted with its content living on as review references, the e2e surface re-pinned to 15, and the frozen-record-vocabulary regression pins added. Group 7 (body economy) remains — pausing mid-chunk at the atomic seam.",
+  "next_recommended": "/orbit:apply d5-context-economy"
+}

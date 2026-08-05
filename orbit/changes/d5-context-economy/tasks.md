@@ -92,18 +92,18 @@ orbit-review-external DELTA specs plus both current template files
 easiest thing to break in the merge, and group 6 is ATOMIC: a half-merged template surface
 breaks init/update, so 6.1–6.4 land together before any commit.)
 
-- [ ] 6.1 Review template: `--reviewer in-context|fresh|external` axis (`--fresh` shorthand);
+- [x] 6.1 Review template: `--reviewer in-context|fresh|external` axis (`--fresh` shorthand);
       external branch as ~5-line dispatch loading `references/external-handoff.md`; the
       reference authored from review-external's body (packaging steps, preflight, session note,
       prompt template + mode sections as nested references); record vocabulary FROZEN
       (`command: "review-external"`, `review-external-<TS>.json`, `external-<as>-<TS>.md`).
-- [ ] 6.2 Mode-split pass references: `references/passes-{proposal,system,architecture}.md`
+- [x] 6.2 Mode-split pass references: `references/passes-{proposal,system,architecture}.md`
       (content verbatim from the body); Step 6 loads the resolved mode only.
-- [ ] 6.3 Retire the standalone `orbit-review-external` skill + `orbit:review-external` launcher
+- [x] 6.3 Retire the standalone `orbit-review-external` skill + `orbit:review-external` launcher
       across ALL SIX registries (the B3 lesson: templates index, launcher index, init.ts, update
       paths, profiles, any manifest); fresh `init` in scratch yields 15 skills; e2e generated-
       surface test re-pinned.
-- [ ] 6.4 T0 emit + WAITING arithmetic regression tests: the merged invocation still produces
+- [x] 6.4 T0 emit + WAITING arithmetic regression tests: the merged invocation still produces
       byte-compatible T0 records; orientation WAITING and the report ordinal unchanged.
 
 ## 7. Body-economy pass (the six heaviest bodies per sketches/body-inventory.md)

@@ -20,15 +20,15 @@ describe('profiles', () => {
   });
 
   describe('ALL_WORKFLOWS', () => {
-    it('should contain all 16 workflows', () => {
-      expect(ALL_WORKFLOWS).toHaveLength(16);
+    it('should contain all 15 workflows (review-external merged into review at D5)', () => {
+      expect(ALL_WORKFLOWS).toHaveLength(15);
     });
 
     it('should contain expected workflow IDs', () => {
       const expected = [
         'propose', 'explore', 'new', 'continue', 'apply',
         'ff', 'sync', 'archive', 'bulk-archive', 'verify', 'onboard',
-        'review', 'review-external', 'address-reviews', 'audit-drift', 'architect',
+        'review', 'address-reviews', 'audit-drift', 'architect',
       ];
       expect([...ALL_WORKFLOWS]).toEqual(expected);
     });

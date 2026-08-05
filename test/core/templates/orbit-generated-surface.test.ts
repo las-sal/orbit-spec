@@ -40,8 +40,7 @@ const SURFACE: Array<[string, string, string[]]> = [
   ['orbit-bulk-archive-change', 'bulk-archive', ['# Orbit additions']],
   ['orbit-verify-change', 'verify', ['execution disciplines', 'Run-summary emit']],
   ['orbit-onboard', 'onboard', ['execution disciplines', 'self-contained', 'Program architecture', 'orbit/architecture/.orbit-runs/', 'architecture mode — D-arc Stage D2']],
-  ['orbit-review', 'review', ['execution disciplines', 'Persist the run summary FIRST', 'paste its output VERBATIM', 'hand-rendering them is PROHIBITED', 'Architecture-mode passes', 'Using doc:', 'First architecture review for this doc']],
-  ['orbit-review-external', 'review-external', ['execution disciplines', 'Run-summary emit (T0', 'references/prompt-template.md', 'Handoff preflight']],
+  ['orbit-review', 'review', ['execution disciplines', 'Paste the output VERBATIM', 'hand-rendering them is PROHIBITED', 'REVIEWER-CLASS axis', 'references/external-handoff.md', 'references/passes-<mode>.md', 'orbit emit review', 'Using doc:', 'First architecture review for this doc']],
   ['orbit-address-reviews', 'address-reviews', ['execution disciplines', 'Ripple cascade', 'resolution log', 'Architecture-scoped']],
   ['orbit-audit-drift', 'audit-drift', ['execution disciplines', 'Vocabulary residue', 'Persist the run summary', 'Architecture staleness check']],
   ['orbit-architect', 'architect', ['execution disciplines', 'Run-summary emit', 'Completion-ratification flow', 'a gatekeeper']],
@@ -49,8 +48,7 @@ const SURFACE: Array<[string, string, string[]]> = [
 
 // B3 editorial skills bundle reference files (multi-file skills)
 const REFERENCE_SKILLS: Record<string, string[]> = {
-  'orbit-review': ['run-summary-schema.md'],
-  'orbit-review-external': ['mode-sections.md', 'prompt-template.md'],
+  'orbit-review': ['run-summary-schema.md', 'passes-proposal.md', 'passes-system.md', 'passes-architecture.md', 'external-handoff.md', 'mode-sections.md', 'prompt-template.md'],
   'orbit-address-reviews': ['external-findings-format.md', 'internal-findings-format.md', 'run-summary-schema.md'],
   'orbit-audit-drift': ['run-summary-schema.md'],
 };
