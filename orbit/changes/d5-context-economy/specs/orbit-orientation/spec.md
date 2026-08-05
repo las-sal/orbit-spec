@@ -8,8 +8,9 @@ ORDERED POINTERS into existing artifacts, never duplicated substance (arc ruling
 the engine position and eligibility line (the existing status computation), the artifact set
 (the existing contextFiles resolution), the latest-emit pointers from the trail — one per
 command family present on the trail (`apply`, `address-reviews`, `explore`, `verify`,
-`review-external` T0, …), with review emits further split per mode (`proposal` / `system` /
-`architecture`), each rendered as path + `final_assessment` first sentence — the presence of
+`review-external` T0, …), with review emits further split per mode (`proposal` / `system` —
+architecture-mode review emits persist to the architecture trail and never appear on a
+change trail), each rendered as path + `final_assessment` first sentence — the presence of
 `explore.md`/`sketches/` as historical context, and the TOUCHPOINTS view — lifecycle-aware: before apply has commits, the predicted
 map (design.md's `## Touchpoints` section, when present); once apply commits exist, the ACTUAL
 map (engine-computed `git diff --name-only` from the change's first commit, per the
@@ -17,7 +18,15 @@ propose-owned predicted/actual split) with the predicted map alongside as refere
 hand-maintained handoff file exists anywhere in the flow — a boot render is computed fresh per
 invocation (the R-d-4 subtraction). The render is READ-ONLY, degrades per this capability's
 fault-isolation policy (a missing design.md section or non-git workspace yields an absent
-touchpoints line, never an error), and composes with `--json`.
+touchpoints line, never an error), and composes with `--json`. The `--json` SHAPE: the
+per-change status payload gains ONE typed `boot` object — `artifacts` (the ordered pointer
+array, in read order), `emits` (array of `{family, mode?, path, headline}` entries — `mode`
+present only for review-family entries; `headline` is the `final_assessment` first sentence),
+`history` (`{explore_md: boolean, sketches: boolean}`), `touchpoints`
+(`{predicted: string[] | null, actual: string[] | null}` — `actual` null before apply
+commits, `predicted` null when the section is absent), and `skipped_emits` (the
+fault-isolation array; absent when empty). Degradation renders as null or field omission per
+the same policy, never an error — no implementer invents a second shape.
 
 #### Scenario: Pre-apply boot shows the predicted map
 
@@ -34,6 +43,11 @@ touchpoints line, never an error), and composes with `--json`.
 - **WHEN** design.md has no Touchpoints section and the workspace is not a git repository
 - **THEN** the boot render succeeds with the touchpoints line absent; exit 0
 
+#### Scenario: Boot --json is one typed object
+
+- **WHEN** `orbit status --change foo --boot --json` runs before any apply commits exist
+- **THEN** the payload's `boot` object carries ordered `artifacts`, per-family `emits`, `history`, and `touchpoints` with `actual: null`; absent material is omitted or null per the degradation policy, never an error
+
 ## MODIFIED Requirements
 
 ### Requirement: Fault isolation and malformed-input policy
@@ -47,8 +61,9 @@ failing the minimum validity checks orientation renders from: a missing or non-s
 `orbit-conventions`), or, for a `review-external` T0 emit, a missing or non-string `mode` (the
 WAITING arithmetic's discriminator); a skipped emit never wins recency, never counts in the
 WAITING arithmetic, and never increments the strip's `⟲N` chip counts — but the exclusion is
-SURFACED, never silent (D-arc Stage D5's fail-loud seam: a half-written record — e.g. a
-post-write emit whose atomic loop crashed before stamping `next_recommended` — must be
+SURFACED, never silent (D-arc Stage D5's fail-loud seam: a spine-invalid record — from
+hand-tampering, a partial copy, or pre-capability tooling; the emit surface's atomic
+single-write cannot produce one — must be
 detectable, not invisible): the rendered view (bare, `--full`, and the boot render) carries a
 one-line degraded note naming the skipped file (`⚠ invalid emit skipped: <filename>`), and
 `--json` output carries the same exclusion as a `skipped_emits: ["<filename>", …]` array on
@@ -83,7 +98,7 @@ contents.
 - **WHEN** the sprint workstream's newest emit parses as JSON but lacks a `final_assessment` string
 - **THEN** the file is excluded, recency and `last` fall back to the next-older valid emit, the file counts in no WAITING arithmetic, and the render carries the one-line degraded note naming the file
 
-#### Scenario: Crashed atomic write is detected at the next status render
+#### Scenario: Spine-invalid trail file is detected at the next status render
 
-- **WHEN** a post-write-class emit sits on the trail spine-incomplete (its atomic loop crashed before `next_recommended` was stamped)
+- **WHEN** a spine-incomplete emit sits on the trail (hand-tampering, a partial copy, or pre-capability tooling — the emit surface's atomic single-write cannot produce one)
 - **THEN** the next `orbit status` (any tier, and the boot render) surfaces the `⚠ invalid emit skipped: <filename>` note while excluding the file from arithmetic; exit 0

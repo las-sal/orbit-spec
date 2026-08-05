@@ -70,9 +70,9 @@ Implementation chunks:
 
 The emit follows these rules:
 
-1. **Chunk completion**: when the last task in chunk N is checked, emit with `chunk: "N of M"`, `chunk_complete: true`, and `next_recommended` advancing to the next chunk (`/orbit:apply <name>`) or to `/orbit:verify <name>` on apply-complete (chunk N == M).
+1. **Chunk completion**: when the last task in chunk N is checked, emit with `chunk: "N of M"`, `chunk_complete: true`, and `next_recommended` = the engine's post-landing canonical `next_command` per `orbit-emit-composition`'s post-write-semantics class — `/orbit:apply <name>` while chunks remain (the engine MAY extend it with the engine-composed ` — next chunk: <chunk-name>` suffix; the next chunk's name is preamble data), or the schema's next phase command on apply-complete (chunk N == M; under `spec-driven` v3, `/orbit:review --as system <name>`). Never a hand-authored or fixed alternative — the pre-gates verify-first vocabulary is retired from this surface.
 2. **Mid-chunk session pause**: when the user pauses or hands off mid-chunk-N (e.g., "stopping here for now"), emit with `chunk: "N of M"`, `chunk_complete: false`, and `next_recommended: "/orbit:apply <name>"` to resume.
-3. **No-chunking apply**: when tasks.md has no explicit chunk preamble, emit once at session end with `chunk: null`; `chunk_complete` is COMPUTED by the same engine formula with the whole task set as the "current chunk" (all unchecked tasks minus the full user-validation set == 0 — never a constant), and `next_recommended` advances to `/orbit:verify <name>` when that computation is true or `/orbit:apply <name>` if AI-doable tasks remain.
+3. **No-chunking apply**: when tasks.md has no explicit chunk preamble, emit once at session end with `chunk: null`; `chunk_complete` is COMPUTED by the same engine formula with the whole task set as the "current chunk" (all unchecked tasks minus the full user-validation set == 0 — never a constant), and `next_recommended` is the engine's post-landing canonical `next_command` — the schema's next phase command when that computation is true, `/orbit:apply <name>` while AI-doable tasks remain.
 
 The apply emit per-command extensions SHALL include the following fields beyond the spine:
 
@@ -99,13 +99,19 @@ chunk_complete               bool             true when AI-doable work in this c
                                               subset is the full list; payload supply rejected;
                                               user_validation_remaining > 0 does NOT block chunk_complete: true
 tasks_completed_this_session int             delta since prior apply JSON — ENGINE-computed from the trail
-files_touched                string[] | null  file paths changed since the previous apply emit — ENGINE-computed
-                                              from the git diff against the WORKING TREE (committed + uncommitted
-                                              tracked changes; the first apply emit references the change's first
-                                              commit; timestamp→commit resolution per orbit-emit-composition —
-                                              D-arc Stage D5; the per-chunk half of the predicted/actual
-                                              touchpoints split); null outside a git repo or when no reference
-                                              resolves; NEVER hand-listed
+files_touched                string[] | null  file paths changed since the previous apply emit's recorded
+                                              `diff_base` boundary — ENGINE-computed from the git diff against
+                                              the WORKING TREE (committed + uncommitted tracked changes; the
+                                              first apply emit — or one whose predecessor lacks `diff_base` —
+                                              references the change's first commit; boundary semantics per
+                                              orbit-emit-composition — D-arc Stage D5; the per-chunk half of the
+                                              predicted/actual touchpoints split); null outside a git repo or
+                                              when no base resolves; NEVER hand-listed
+diff_base                    string | null    the git TREE OID of the tracked working state at THIS emit's
+                                              boundary — ENGINE-captured (`git write-tree` on a temporary index,
+                                              per orbit-emit-composition; D-arc Stage D5); the next apply emit
+                                              diffs from it, making per-chunk lists exact under every commit
+                                              ordering; null outside a git repo; payload supply rejected
 gate_overridden              object | absent  present ONLY when the user proceeds past an unpassed or stale gate
                                               at the apply phase (the `review-proposal` gate gates `apply`, per
                                               orbit-engine-gates) via the inflection prompt; shape
@@ -123,9 +129,9 @@ gate_overridden              object | absent  present ONLY when the user proceed
 - **WHEN** the user pauses mid-chunk-3 with 5 of 12 tasks in the chunk checked
 - **THEN** `apply-<TS>.json` is written with `chunk: "3 of 5"`, `chunk_complete: false`, `tasks_completed_this_session: 5`, and `next_recommended: "/orbit:apply foo"`
 
-#### Scenario: Apply-complete recommends verify
+#### Scenario: Apply-complete recommends the engine's canonical next
 - **WHEN** `/orbit:apply foo` completes the last task in the final chunk
-- **THEN** `apply-<TS>.json` is written with `chunk_complete: true` and `next_recommended` beginning with `"/orbit:verify foo"`
+- **THEN** `apply-<TS>.json` is written with `chunk_complete: true` and `next_recommended` equal to the engine's post-landing canonical `next_command` (under `spec-driven` v3, `/orbit:review --as system foo`) — never a hand-authored alternative
 
 #### Scenario: No-chunking apply emits once at session end
 - **WHEN** `/orbit:apply foo` runs on a change with no explicit chunk preamble in tasks.md and completes all AI-doable tasks
@@ -137,7 +143,7 @@ gate_overridden              object | absent  present ONLY when the user proceed
 
 #### Scenario: Final chunk completes with user-validation tasks remaining
 - **WHEN** `/orbit:apply foo` completes the last AI-doable task in the final chunk, but 6 user-validation tasks (e.g., "9.1 Live-test ...", "9.9 (User-validation handoff)") remain explicitly unchecked per the user-validation convention (the payload's `user_validation_tasks` list names them; the engine verifies each and derives the counts)
-- **THEN** `apply-<TS>.json` is written with `chunk_complete: true`, `tasks_remaining: 6`, `user_validation_remaining: 6` (matching `tasks_remaining`), and `next_recommended` begins with `"/orbit:verify foo"` — the AI is done; user-validation happens at verify time
+- **THEN** `apply-<TS>.json` is written with `chunk_complete: true`, `tasks_remaining: 6`, `user_validation_remaining: 6` (matching `tasks_remaining`), and `next_recommended` equal to the engine's canonical `next_command` — the AI is done; user-validation happens through the review-system phase's verify pass
 
 #### Scenario: Apply past an unpassed proposal gate records the override
 - **WHEN** the user invokes `/orbit:apply foo` while the `review-proposal` gate is unpassed or stale and chooses proceed-anyway at the inflection prompt

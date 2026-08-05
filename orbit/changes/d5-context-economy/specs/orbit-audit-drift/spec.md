@@ -10,7 +10,12 @@ pattern). Files in actual-but-not-predicted are surfaced as scope-drift findings
 substantive source paths, SUGGESTION for tests/docs riding along); files
 predicted-but-never-touched surface at pre-archive context as SUGGESTION (the plan overshot —
 informational). The check is mechanical set arithmetic on engine-computed inputs; no prose is
-consulted beyond the section's file list, and changes without the section or without commits
+consulted beyond the section's entries, which are parsed and matched per
+`orbit-propose-modifications`' Touchpoints ENTRY GRAMMAR (exact path / directory prefix /
+glob, `+`-grouped alternatives — defined THERE, one voice; a file under a predicted directory
+or matching a predicted glob is never false actual-not-predicted drift, and a malformed entry
+is a SUGGESTION naming the line, excluded from the arithmetic). Changes without the section
+or without commits
 are skipped silently (pre-capability changes are not findings).
 
 #### Scenario: Actual exceeds predicted

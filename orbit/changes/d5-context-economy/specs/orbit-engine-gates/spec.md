@@ -34,7 +34,13 @@ ids (for `spec-driven` v3: `review-proposal`, `apply`, `review-system`, plus any
 phase) and the cadence slot names (`in-context`, `fresh`, `independent`, `external`). When both
 the resolved command's phase AND its cadence slot carry entries, the SLOT entry wins (the more
 specific hook); keys outside both vocabularies are inert (never an error — the map is garnish).
-Pure garnish: the hint value is not validated, nothing is enforced, and an absent map (or absent
+The VALUE is checked only at the rendering boundary: a renderable hint is a non-empty
+single-line string of at most 80 characters containing no control characters — the
+eligibility line is a model-facing protocol, and an embedded newline could forge additional
+readout lines; a value failing the check is INERT exactly like an unknown key (the line
+renders without the suffix, byte-identical to an absent entry, never an error). Beyond that
+boundary check the hint is pure garnish: the content is not validated, nothing is enforced,
+and an absent map (or absent
 entry) yields byte-identical pre-capability output. The phase-mapping content itself is
 user-owned config, never spec.
 
@@ -59,3 +65,8 @@ user-owned config, never spec.
 
 - **WHEN** `orbit/config.yaml` maps the external slot to `"GPT-5 Codex"` and the canonical next command is the external review
 - **THEN** the eligibility line ends ` — hint: GPT-5 Codex`; with no `models:` map the line is byte-identical to pre-capability output
+
+#### Scenario: Malformed hint value is inert at the rendering boundary
+
+- **WHEN** a `models:` entry's value contains an embedded newline (or control characters, or exceeds 80 characters)
+- **THEN** the eligibility line renders WITHOUT the hint suffix — byte-identical to an absent entry; no error, no partial injection into the readout

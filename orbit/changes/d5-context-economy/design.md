@@ -10,7 +10,7 @@ only judgment.
 One generic verb-first command (naming precedent: `orbit fingerprint`):
 
 ```
-orbit emit <command> (--change <name> | --doc <doc>) [--payload <file> | stdin] [--render] [--json]
+orbit emit <command> (--change <name> | --doc <doc> | bare: project-scoped audit-drift) [--payload <file> | stdin] [--render] [--json]
 ```
 
 - **Payload channel**: JSON on stdin (heredoc-friendly) or `--payload <file>`. The payload
@@ -34,14 +34,14 @@ orbit emit <command> (--change <name> | --doc <doc>) [--payload <file> | stdin] 
   scorecard), T0 (path template), explore boundaries (the maturity grid from the parsed
   `explore.md` — the emit landing changes nothing it depends on), and archive (the stock
   post-archive prose, an engine constant; written to the ARCHIVED trail after the move):
-  composed before any write. (b) POST-WRITE — commands whose
+  composed before any write. (b) POST-WRITE SEMANTICS — commands whose
   recommendation is the engine's `next_command` AFTER the emit lands (address-reviews, apply
-  completion): the engine writes the emit complete except `next_recommended`,
-  recomputes the change status (the just-written file now part of the trail), stamps the field,
-  and finalizes. One command, one visible file state at return; the transient
-  missing-field window is engine-internal (documented; a crash mid-loop leaves a
-  spine-incomplete emit that orientation excludes from arithmetic AND surfaces as a degraded
-  note on the next status/boot render — detection without failure, never silent vanishing).
+  completion): the engine composes the candidate complete except `next_recommended`, computes
+  status against a SYNTHETIC TRAIL (disk + the in-memory candidate as-landed), stamps the
+  field, runs the full write gate, and writes EXACTLY ONCE, atomically. No provisional file
+  ever exists; a crash leaves NO file; the stamped recommendation equals the post-landing
+  `next_command` by construction. (Orientation's spine-invalid surfacing stays as
+  defense-in-depth for corruption from other sources.)
 - **Write gate**: before ANY write, the composed candidate passes the SAME normalizers the D4
   renderer uses (`normalizeInternalPass` for proposal/system review emits; architecture-mode
   review emits pass the universal-spine checks — accepting `change: null` + required `doc` —
@@ -53,8 +53,8 @@ orbit emit <command> (--change <name> | --doc <doc>) [--payload <file> | stdin] 
   (the `status --report` render) — persist-first and run-and-paste collapse into one
   invocation; for architecture mode, a no-op with a stderr note (no architecture report
   surface exists).
-- **Stdout**: the written path (+ the render under `--render`); `--json` echoes the complete
-  composed emit.
+- **Stdout**: the written path (+ the render under `--render`); with `--json`, exactly one
+  `{path, emit, render?}` object instead — no plain-text framing around it.
 
 ## D2 — Per-command computed extensions (the absorbed sub-requirements)
 
@@ -68,10 +68,11 @@ orbit emit <command> (--change <name> | --doc <doc>) [--payload <file> | stdin] 
   fallback) and computes `tasks_completed/remaining` from checkboxes, `chunk`/`chunk_name`/
   `chunk_complete` (per-chunk arithmetic over the payload's `user_validation_tasks` judgment
   list — the whole task set standing in when `chunk` is null), and `files_touched` — the
-  per-chunk diff (`git diff --name-only <ref>`
-  against the working tree, committed + uncommitted tracked; `<ref>` = the previous apply
-  emit's timestamp-resolved commit via `git rev-list -1 --before`, or the change's first
-  commit for the first emit; graceful `null` outside a git repo).
+  per-chunk diff (`git diff --name-only <base>` against the working tree, committed +
+  uncommitted tracked; `<base>` = the previous emit's recorded `diff_base` TREE SNAPSHOT,
+  write-tree-captured at each boundary so per-chunk lists stay exact under any commit
+  ordering; the change's first commit for the first emit or pre-capability predecessors;
+  graceful `null` outside a git repo).
 - **`orbit emit review-external`**: T0 spine composed from the prompt path (payload supplies
   `prompt_path`, `target`); `awaiting_findings: true` engine-set.
 - **`model`**: REQUIRED nullable payload field on every command (D-d5-9) — the surface rejects
@@ -176,7 +177,9 @@ audit-drift cross-checks recorded counts against the file.
 `review-system` or cadence slot names `in-context`/`fresh`/`independent`/`external`; slot
 entry wins when both match, per the gates delta). The engine's eligibility lines append
 ` — hint: <value>` when the resolved next command's phase/slot has a hint. Pure garnish: no enforcement, no
-validation of the hint value, absent map = zero output change. The phase-mapping hypothesis
+validation of the hint value beyond the rendering-boundary well-formedness check (single
+line, ≤ 80 chars, no control characters — malformed entries are inert, per the gates delta),
+absent map = zero output change. The phase-mapping hypothesis
 itself lives in config (user-owned), not spec.
 
 ## Alternatives considered
@@ -204,7 +207,9 @@ itself lives in config (user-owned), not spec.
   next-command vocabulary; hint garnish.
 - `src/core/parsers/` — chunk-preamble grammar; explore.md counter (fence-aware).
 - `src/core/templates/workflows/*.ts` — the body-economy pass (all 16; review-external
-  retires); `src/core/templates/registry` sites (six registries — the B3 lesson).
+  retires).
+- `src/core/templates/index.ts` + `src/core/profiles.ts` + `src/core/init.ts` +
+  `src/core/update.ts` — the six-registry retirement sweep (task 6.3, the B3 lesson).
 - `src/core/config.ts` (or the existing config loader) — `models:` map.
 - `test/` — emit-surface suite, boot suite, fidelity re-pins, gates vocabulary, chunk/counter
   grammars, touchpoints divergence.

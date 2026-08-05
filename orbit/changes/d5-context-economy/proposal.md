@@ -24,7 +24,8 @@ as nine decisions in the consumed exploration.
 - **NEW engine surface `orbit emit <command>`** (capability `orbit-emit-composition`): the AI
   composes only the narrative payload (stdin JSON); the engine stamps timestamp + collision-
   bumped filename, fills the spine (`kind` from the command taxonomy, deterministic facts where
-  defined), performs the ATOMIC write → recompute status → stamp `next_recommended` loop, and
+  defined), composes post-write-semantics recommendations against a synthetic trail and writes
+  ONCE, atomically (no provisional file ever exists), and
   validates through the same normalizers the D4 renderer uses (the fail-loud boundary moves
   from read time to write time). Sub-requirements absorbed: engine-computed explore maturity
   counts, the apply chunk-preamble grammar, review-external's T0 path-template

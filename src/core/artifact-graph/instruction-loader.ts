@@ -5,6 +5,7 @@ import { ArtifactGraph } from './graph.js';
 import { detectCompleted } from './state.js';
 import { normalizeGates } from './schema.js';
 import { computeGateStates } from './gates.js';
+import type { TrailOverlay } from './trail.js';
 import { resolveSchemaForChange } from '../../utils/change-metadata.js';
 import { FileSystemUtils } from '../../utils/file-system.js';
 import { readProjectConfig, validateConfigRules } from '../project-config.js';
@@ -345,7 +346,7 @@ function getUnlockedArtifacts(graph: ArtifactGraph, artifactId: string): string[
  * @param context - Change context
  * @returns Formatted change status
  */
-export function formatChangeStatus(context: ChangeContext): ChangeStatus {
+export function formatChangeStatus(context: ChangeContext, overlay?: TrailOverlay): ChangeStatus {
   // Derive apply-phase requires from the normalized `apply` gate (folds the
   // upstream `apply:` block or a declared tracked gate; C1).
   const schema = context.schema;
@@ -397,7 +398,8 @@ export function formatChangeStatus(context: ChangeContext): ChangeStatus {
       context.schema,
       context.changeName,
       context.changeDir,
-      context.completed
+      context.completed,
+      overlay
     );
     gateRows = computation.gates.map(g => ({
       id: g.id,

@@ -2,7 +2,7 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import type { SchemaYaml, NormalizedGate, GateKind, CadenceEntry, ConsentValue } from './types.js';
 import { normalizeGates } from './schema.js';
-import { readTrail, type Trail, type TrailPass, type ReviewMode, type ReviewerClass } from './trail.js';
+import { readTrail, type Trail, type TrailOverlay, type TrailPass, type ReviewMode, type ReviewerClass } from './trail.js';
 
 /**
  * Gate-state computation (C1 engine gates). PURE: reads the change dir + `.orbit-runs/`
@@ -260,10 +260,11 @@ export function computeGateStates(
   schema: SchemaYaml,
   changeName: string,
   changeDir: string,
-  completedArtifacts: Set<string>
+  completedArtifacts: Set<string>,
+  overlay?: TrailOverlay
 ): GateComputation {
   const gates = normalizeGates(schema);
-  const trail = readTrail(changeDir);
+  const trail = readTrail(changeDir, overlay);
   const byId = new Map(gates.map(g => [g.id, g]));
   const statusById = new Map<string, GateStatus>();
 

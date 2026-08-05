@@ -1,0 +1,115 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-08-05T17:03:18Z",
+  "change": "d5-context-economy",
+  "final_assessment": "All 6 findings from the iter-7 fresh confirm walked and resolved (all obvious-fix — the architecture-seam family closed at family scope, the orientation task-coverage hole filled); 0 stale, 0 deferred, 0 escalated. Strict validation green; fingerprints 25/25 verified.",
+  "next_recommended": "/orbit:review --as proposal --fresh d5-context-economy",
+  "kind": "editorial",
+  "model": "claude-fable-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/d5-context-economy/.orbit-runs/review-proposal-2026-08-05T16-45-20Z.json",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 3
+  },
+  "pushback_verification": "All 6 verified against current state (source pass fresh); 0 stale suppressions.",
+  "resolution_summary": {
+    "resolved": 6,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Architecture-scoped address-reviews emits have no legal path through the surface",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+      "line": 64,
+      "classification": "trivial_fix",
+      "action": "Target-resolution contract rewritten as per-command scope capability: architect architecture-only; review + address-reviews DUAL-SCOPE per invocation (--change = change trail, --doc = architecture trail, serving the baseline architecture-scoped emits); audit-drift dual on the change/project axis; all other commands change-only; both-flags and missing-target errors restated. Doc-scoped address-reviews joined the pre-computable class with the gate-less confirm pointer naming the doc; the post-write class is now explicitly CHANGE-SCOPED invocations only.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Clean architecture-mode review emit composes an invalid change-report pointer",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+      "line": 105,
+      "classification": "trivial_fix",
+      "action": "Deterministic-facts review clause mode-scoped: the findings-dependent address pointer stays universal; the CLEAN pointer is the --report render for proposal/system and the mirrored handoff.next_command for architecture mode; iteration = shared-axis ordinal for proposal/system, per-doc ordinal (matching-doc emits + 1) for architecture — orbit-review's iteration annotation synced.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/specs/orbit-review/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "No task implements the orientation surfaced-skip-note behavior",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/tasks.md",
+      "line": 63,
+      "classification": "trivial_fix",
+      "action": "Added task 4.3: the skip note across bare/--full/boot renders + the skipped_emits array in both JSON tiers, with the spine-invalid-fixture tests across all three renders.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Boot mode-split enumerates architecture, which a change trail never holds",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-orientation/spec.md",
+      "line": 11,
+      "classification": "trivial_fix",
+      "action": "Mode split now reads (proposal / system) with the note that architecture-mode review emits persist to the architecture trail and never appear on a change trail.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Design D8's 'no validation of the hint value' lags the gates delta's boundary check",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/design.md",
+      "line": 180,
+      "classification": "trivial_fix",
+      "action": "D8 now reads 'no validation of the hint value beyond the rendering-boundary well-formedness check (single line, ≤ 80 chars, no control characters — malformed entries are inert, per the gates delta)'.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Post-sync the architect sweep is stated normatively in two requirements",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-architect/spec.md",
+      "line": 16,
+      "classification": "trivial_fix",
+      "action": "The architect delta's emit requirement now CITES the baseline 'Architect authoring stance and capture' requirement as the sweep's one normative home; the delta's duplicate restatement and its duplicate scenario removed.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": []
+}

@@ -14,6 +14,25 @@ the ACTUAL map is engine-computed from the diff (per `orbit-orientation`'s boot 
 predicted-vs-actual divergence is a computed check (per `orbit-audit-drift`), not a
 maintenance chore.
 
+**Touchpoints ENTRY GRAMMAR** (the closed form the computed checks parse — authored here, one
+voice; `orbit-audit-drift`'s matching semantics reference this grammar, never redefine it):
+each entry is a markdown list item whose LEADING inline-code span(s) name the predicted
+targets — one span, or several `+`-joined spans recording grouped alternatives; everything
+after the spans (the ` — annotation` tail, parentheticals like "(or the existing config
+loader)") is prose the checks never parse. Each target is one of exactly three forms: (a) an
+exact repo-relative file path; (b) a DIRECTORY PREFIX, written with a trailing `/`; (c) a
+GLOB containing `*` (single-segment wildcard, fnmatch semantics). An actual path MATCHES a
+target when it equals the exact path, sits under the directory prefix, or fnmatch-matches
+the glob; a grouped entry is satisfied when ANY of its targets matched. A list item whose
+leading spans parse as none of the three forms is a malformed entry — surfaced by the
+divergence check as a SUGGESTION naming the line, and excluded from set arithmetic (never a
+false drift source).
+
+#### Scenario: Grammar covers the canonical map's forms
+
+- **WHEN** the divergence check parses a Touchpoints section containing `src/cli/index.ts` (exact), `src/commands/` (prefix), `src/core/templates/workflows/*.ts` (glob), and `src/core/orientation.ts` + `src/core/artifact-graph/gates.ts` (grouped alternatives)
+- **THEN** every entry parses; an actual path under `src/commands/` or matching the glob counts as predicted, and the grouped entry is satisfied by either of its two paths
+
 #### Scenario: Premise → proposal motivation
 
 - **WHEN** `explore.md` has a Premise section

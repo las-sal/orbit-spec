@@ -1,0 +1,158 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-08-05T16:30:24Z",
+  "change": "d5-context-economy",
+  "final_assessment": "All 7 findings from the iter-6 fresh confirm walked and resolved (6 obvious-fix, 1 decision-lane chat-ratified: the engine's canonical next_command wins over the pre-gates verify-first vocabulary); 0 stale, 0 deferred, 0 escalated. Strict validation green; fingerprints 25/25 verified.",
+  "next_recommended": "/orbit:review --as proposal --fresh d5-context-economy",
+  "kind": "editorial",
+  "model": "claude-fable-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/d5-context-economy/.orbit-runs/review-proposal-2026-08-05T16-19-50Z.json",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 3,
+    "suggestion": 3
+  },
+  "pushback_verification": "All 7 verified against current state (source pass fresh); 0 stale suppressions.",
+  "resolution_summary": {
+    "resolved": 7,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "Apply's verify-first recommendation contradicts the post-write by-construction contract",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-run-summary-emit/spec.md",
+      "line": 73,
+      "classification": "decision_required",
+      "action": "Applied ratified option A: rules 1/3 and both scenarios rewritten so the apply-complete recommendation IS the engine's post-landing canonical next_command (spec-driven v3: /orbit:review --as system <name>; /orbit:apply while work remains); the verify-first vocabulary is explicitly retired from the surface; the ' — next chunk: <name>' suffix becomes ENGINE-composed from the preamble, with the by-construction clause amended to own it (every character engine-owned) and the conventions canonical example annotated accordingly. Residual /orbit:verify mentions are emit registrations, not recommendations.",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A — engine next_command wins",
+            "body": "Rewrite rules 1/3 and the two scenarios so the completion recommendation IS the engine's post-landing canonical next_command (live practice already does this: '/orbit:review --as system <name>'); verify survives as the reason-text alternative or drops. Reconcile the conventions apply example's chunk-suffix with the byte-equality claim (either the engine composes the suffix or the example loses it)."
+          },
+          {
+            "label": "B — verify becomes an engine constant",
+            "body": "Keep verify-first as deliberate flow: define '/orbit:verify <name>' as the engine-owned apply-complete recommendation constant (a deterministic fact, like archive's stock prose), move apply out of the 'equals next_command by construction' claim (scope that to address-reviews), and state that apply-complete deliberately recommends verify ahead of the gate cadence."
+          }
+        ],
+        "chosen": "A — engine next_command wins"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+          "orbit/changes/d5-context-economy/specs/orbit-conventions/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Enumerated payload rows omit fields other deltas require on the emit",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+      "line": 13,
+      "classification": "trivial_fix",
+      "action": "Review row gains `flags`; address-reviews' `iteration` assigned ENGINE-computed (prior address-reviews emits on the trail + 1, payload supply rejected); the inline lists declared EXCERPTS of the derived table with the owning capability's definition governing on divergence.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Predicted Touchpoints map omits the six registry files tasks 6.3 mandates touching",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/design.md",
+      "line": 207,
+      "classification": "trivial_fix",
+      "action": "The non-parseable registry prose replaced with a grammar-valid grouped entry: src/core/templates/index.ts + src/core/profiles.ts + src/core/init.ts + src/core/update.ts (the six-registry retirement sweep, task 6.3).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "next_recommended authorship undefined for architect emits",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+      "line": 138,
+      "classification": "trivial_fix",
+      "action": "Deterministic-facts requirement now states: architect's spine next_recommended is engine-COPIED verbatim from the architect-owned handoff.next_command (mirrored, never re-authored; direct payload supply stays rejected), with the coverage clause assigning propose-family/verify/audit-drift their derivations from orbit-run-summary-emit — no emitting command lacks a composition rule; mirror scenario added.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Pre-computable self-pointer vs collision bump ordering unpinned",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+      "line": 143,
+      "classification": "trivial_fix",
+      "action": "Ordering clause added: filename-token resolution INCLUDING any collision bump precedes deterministic-fact composition — a self-pointer always names the final written path; task 2.2's collision test asserts the equality.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "'Defined in per-skill schema references' survives against the mirror-never-define rule",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-conventions/spec.md",
+      "line": 28,
+      "classification": "trivial_fix",
+      "action": "Reworded to 'documented in per-skill schema references (... MIRRORING the engine's authoritative table per orbit-emit-composition, never defining it ...)' — the last second voice on definitional authority removed.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/specs/orbit-conventions/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "At-archive note wrapped across two H3 heading lines",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/tasks.md",
+      "line": 142,
+      "classification": "trivial_fix",
+      "action": "Folded to a single short '### At-archive notes' heading with the rationale as a plain parenthetical paragraph beneath; apply-gate arithmetic re-confirmed at 0/30.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": []
+}

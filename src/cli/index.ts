@@ -274,6 +274,27 @@ program
     }
   });
 
+// Generic emit surface (D5 context economy): engine-owned run-summary composition
+program
+  .command('emit <emit-command>')
+  .description('Compose and write a run-summary emit — the AI supplies the narrative payload; the engine owns the spine, deterministic facts, and computed extensions')
+  .option('--change <name>', 'Target workstream (a change, or the staging exploration for explore-trail emits)')
+  .option('--doc <doc-name>', 'Target architecture doc (architecture-scoped commands)')
+  .option('--payload <file>', 'Payload JSON file (when present, stdin is not consulted)')
+  .option('--json', 'Stdout becomes exactly one {path, emit, render?} object')
+  .option('--render', 'Proposal/system review emits: print the engine report render after the write')
+  .action(async (emitCommand: string, options?: { change?: string; doc?: string; payload?: string; json?: boolean; render?: boolean }) => {
+    try {
+      const { EmitCommand } = await import('../commands/emit.js');
+      const exitCode = await new EmitCommand().execute(emitCommand, options ?? {});
+      if (exitCode !== 0) process.exit(exitCode);
+    } catch (error) {
+      // Error paths keep stdout empty: message on stderr, non-zero exit.
+      console.error(`Error: ${(error as Error).message}`);
+      process.exit(1);
+    }
+  });
+
 // Top-level fingerprint command (C2 parallel-merge guardrail)
 program
   .command('fingerprint <change-name>')

@@ -10,10 +10,13 @@ empty or terminal stdin) is a clean non-zero error naming both channels with no 
 written — and carries ONLY the
 narrative/authored fields for that command per an AUTHORITATIVE engine-owned per-command
 payload-field table (the fields the emitting AI genuinely authors — review: `mode`,
-`reviewer_class`, `depth`, `scorecard`, `findings`, `stale_suppressed`, `commentary`,
+`reviewer_class`, `depth`, `flags`, `scorecard`, `findings`, `stale_suppressed`, `commentary`,
 `passes_run`, `passes_skipped`; address-reviews: the `source*` fields, `walk_mode`,
-`resolutions`, the narrative `final_assessment`; the table's per-command rows derive from the
-owning capability's emit definitions). Fields the engine owns (`command`, `timestamp`,
+`resolutions`, the narrative `final_assessment` — its `iteration` is ENGINE-computed, the
+count of prior address-reviews emits on the change's trail plus one, rejected when
+payload-supplied; the table's per-command rows derive from the
+owning capability's emit definitions, and these inline lists are EXCERPTS of that derivation —
+the owning capability's definition governs when they diverge). Fields the engine owns (`command`, `timestamp`,
 `change`, `kind`, the filename token, every deterministic fact per the deterministic-facts
 requirement, and every computed extension) SHALL be REJECTED when present in the payload with
 a clean error naming the field — a second voice on a computable fact is refused at the seam,
@@ -59,15 +62,27 @@ engine-internal command→kind taxonomy table (workflow / editorial / lifecycle 
 `orbit-conventions` becomes engine data, not prose bodies re-state), and the emit path from the
 command's persistence location (change trail, explore trail, or architecture trail). The
 target-resolution contract: `--change <name>` names the WORKSTREAM — a change, or the staging
-exploration for explore-trail emits — resolved per the command's trail; architecture-scoped
-commands take `--doc <doc-name>` INSTEAD (supplying `--change` to an architecture-scoped
-command, `--doc` to a change-scoped one, or both flags at once is a clean usage error). A
+exploration for explore-trail emits — resolved per the command's trail. Scope capability is
+PER COMMAND: `architect` is architecture-ONLY, taking `--doc <doc-name>` (supplying `--change`
+to it is a clean usage error); `review` and `address-reviews` are DUAL-SCOPE on the
+change/architecture axis, resolved PER INVOCATION — `--change` routes them to the change
+trail, `--doc` to the architecture trail (serving `orbit-review`'s architecture mode and
+`orbit-address-reviews`' architecture-scoped resolution logs: `change: null` + `doc` on those
+emits); `audit-drift` is dual-scope on the change/PROJECT axis — with `--change` it is
+change-scoped, bare it is project-scoped, resolving `orbit/.orbit-runs/` (created if absent)
+with `change: null`, and `--doc` on it is a usage error; every other command is
+change-scoped-only (`--doc` to it is a clean usage error). Both flags at once is always a
+clean usage error, and a bare invocation of any command without a bare scope (everything
+except project-scoped `audit-drift`) is a missing-target usage error. A
 `--change`/`--doc` value that resolves to no on-disk workstream (no change directory, no
 staging directory, no architecture doc) fails with a clean error naming the path checked; no
 file is written. The
 filename `<TS>` token is the timestamp with colons replaced by hyphens; when the target path
 already exists, the token is bumped forward one second until free (the collision rule bodies
 previously taught as prose — engine-owned here, preserving lexical ordering guarantees).
+Filename-token resolution — INCLUDING any collision bump — precedes deterministic-fact
+composition: a recommendation that names this emit's own path always names the FINAL written
+path, never a pre-bump token.
 
 #### Scenario: Collision bumps forward
 
@@ -77,19 +92,30 @@ previously taught as prose — engine-owned here, preserving lexical ordering gu
 #### Scenario: Trail location per command
 
 - **WHEN** `orbit emit explore --change foo` runs for a staging exploration
-- **THEN** the file lands in `orbit/explore/foo/.orbit-runs/` (the explore trail); change-scoped commands land in `orbit/changes/<name>/.orbit-runs/`; architecture-scoped commands land in `orbit/architecture/.orbit-runs/`; `orbit emit archive` lands in the ARCHIVED change's trail `orbit/changes/archive/<YYYY-MM-DD>-<name>/.orbit-runs/` (per the atomic-recommendation requirement's archive rule)
+- **THEN** the file lands in `orbit/explore/foo/.orbit-runs/` (the explore trail); change-scoped commands land in `orbit/changes/<name>/.orbit-runs/`; architecture-scoped commands land in `orbit/architecture/.orbit-runs/`; bare project-scoped `orbit emit audit-drift` lands in `orbit/.orbit-runs/`; `orbit emit archive` lands in the ARCHIVED change's trail `orbit/changes/archive/<YYYY-MM-DD>-<name>/.orbit-runs/` (per the atomic-recommendation requirement's archive rule)
+
+#### Scenario: Project-scope emit takes no target flag
+
+- **WHEN** `orbit emit audit-drift` runs with neither `--change` nor `--doc`
+- **THEN** the file lands at `orbit/.orbit-runs/audit-drift-<TS>.json` with `change: null`; the same invocation with `--change foo` is change-scoped to foo's trail, and supplying `--doc` is a clean usage error
 
 ### Requirement: Deterministic facts are engine-composed per command
 
 Where a capability defines an emit field as a deterministic fact, the surface SHALL compute it
 — never accept it from the payload: for review emits, `final_assessment` is the severity-counts
 sentence derived from the payload's scorecard (`"X critical, Y warning, Z suggestion."` /
-`"No findings."`) and `next_recommended` is the findings-dependent pointer (the
-address-reviews `--from-file` invocation naming this emit's own path when findings exist; the
-`orbit status --change <name> --report` render pointer when clean) — per
-`orbit-report-rendering`'s strict contract, which the write gate enforces — and review emits'
-`iteration` is likewise engine-computed: the next ordinal on the SHARED internal+external
-pass axis (the report ordinal's counting rule per `orbit-report-rendering`), never
+`"No findings."`) and `next_recommended` is the findings-dependent pointer — the
+address-reviews `--from-file` invocation naming this emit's own path when findings exist (all
+modes; the architecture-scoped walk ingests exactly like the change-scoped one); when CLEAN,
+the `orbit status --change <name> --report` render pointer for proposal/system, and for
+architecture mode — where `change` is null and no report surface exists — the payload's
+architect-owned `handoff.next_command`, MIRRORED per the architect rule below — per
+`orbit-report-rendering`'s strict contract, which the write gate enforces on proposal/system —
+and review emits'
+`iteration` is likewise engine-computed: for proposal/system the next ordinal on the SHARED
+internal+external pass axis (the report ordinal's counting rule per `orbit-report-rendering`);
+for architecture mode the per-DOC ordinal (prior `review-architecture-*.json` emits with
+matching `doc` + 1 — the `orbit-review` baseline's own per-doc anchoring), never
 payload-supplied — the ordinal-divergence seam D4 closed at render time stays closed at write
 time; for review-external
 T0 emits, `next_recommended` is the multi-step paste/save/ingest recommendation composed from
@@ -101,7 +127,13 @@ done."`, with paused and no-chunking variants from `chunk_complete`/`chunk`), an
 MAY supply an optional `assessment_suffix` string (the judgment sentence) that the engine
 appends after the core — a payload-supplied `final_assessment` on an apply emit is rejected
 as engine-owned (the two-voices seam the D-d5-1 governing rule closes; review's counts
-sentence is the precedent).
+sentence is the precedent); for architect emits, the spine's `next_recommended` is
+engine-COPIED verbatim from the payload's architect-owned `handoff.next_command` (the
+`handoff` section remains the single authored home — the spine field mirrors it, never a
+second author; direct payload supply of spine `next_recommended` stays rejected). The
+remaining emitting commands (the propose family, verify, audit-drift) derive their
+recommendations as deterministic facts from their owning capability's recommendation
+requirements in `orbit-run-summary-emit` — no emitting command lacks a composition rule.
 
 #### Scenario: Review counts sentence composed from the payload scorecard
 
@@ -123,6 +155,11 @@ sentence is the precedent).
 - **WHEN** `orbit emit apply --change foo` fires at chunk-2 completion with payload `assessment_suffix: "Parser edge cases ran deeper than planned."`
 - **THEN** the written `final_assessment` is the engine-composed chunk/counts core followed by the suffix; a payload supplying `final_assessment` itself is rejected naming the field
 
+#### Scenario: Architect recommendation mirrors the handoff
+
+- **WHEN** `orbit emit architect --doc my-program` receives a payload whose `handoff.next_command` names the resume invocation
+- **THEN** the emit's spine `next_recommended` equals that handoff value verbatim — mirrored, not re-authored; a payload supplying spine `next_recommended` directly is still rejected naming the field
+
 ### Requirement: Atomic next_recommended — pre-computable and post-write classes
 
 `next_recommended` SHALL be composed in one of two engine-owned ways, resolved per command:
@@ -130,16 +167,27 @@ sentence is the precedent).
 already-parsed on-disk source, with no dependence on the emit having landed (review's
 findings-dependent pointer from the payload's scorecard, T0's path template, explore's
 maturity grid from the parsed staging `explore.md`, archive's stock post-archive prose — an
-engine-owned constant): composed before the write; (b) POST-WRITE — commands whose
+engine-owned constant, the ARCHITECTURE-SCOPED emits — review `--as architecture`'s
+handoff mirror and the doc-scoped address-reviews walk, whose recommendation is the gate-less
+confirm pointer naming the doc (`/orbit:review --as architecture <doc>` to confirm the
+resolutions) since no change status exists to synthesize): composed before the write;
+(b) POST-WRITE SEMANTICS — CHANGE-SCOPED invocations of commands whose
 recommendation is the engine's canonical `next_command` AFTER this emit joins the trail
-(address-reviews, apply): the engine writes the emit
-complete except `next_recommended`, recomputes the change status with the just-written file on
-disk, stamps the field, and finalizes — one invocation, one consistent file at return. The
-emitting AI never performs the write-then-check-then-correct dance; a crash between write and
-stamp leaves a spine-incomplete emit that is EXCLUDED from orientation arithmetic and
-SURFACED as a degraded note on the next `orbit status`/boot render (per `orbit-orientation`'s
-fault-isolation requirement — detection without failure), and that the strict report renderer
-refuses outright (fail-loud, never a silently plausible record). `orbit emit archive` writes to the ARCHIVED change's
+(address-reviews, apply; the class keeps the POST-WRITE name for its SEMANTICS — the
+recommendation reflects the landed state — though no provisional file is ever written): the
+engine composes the candidate complete except `next_recommended`, computes the change status
+against a SYNTHETIC TRAIL — the on-disk trail plus the in-memory candidate treated as already
+landed — stamps the field, passes the now-complete record through the full write gate, and
+writes EXACTLY ONCE, atomically (temp-file + rename or equivalent). No provisional record
+ever exists on the trail: the write gate's before-any-write claim holds for every kind with
+ZERO exceptions, a crash at any point leaves NO file (nothing to detect or repair), and the
+written emit's `next_recommended` equals the engine's post-landing `next_command` BY
+CONSTRUCTION — extended, for apply chunk emits only, by the engine-composed
+` — next chunk: <chunk-name>` suffix from the preamble (still one voice: every character is
+engine-owned). The emitting AI never performs the write-then-check-then-correct dance.
+(`orbit-orientation`'s spine-invalid surfacing remains as defense-in-depth against corruption
+from OTHER sources — hand-tampering, partial copies, pre-capability tooling; nothing on this
+path can produce a half-written record.) `orbit emit archive` writes to the ARCHIVED change's
 trail (`orbit/changes/archive/<YYYY-MM-DD>-<name>/.orbit-runs/`) AFTER the directory move
 completes — the archive directory is resolved by scanning `orbit/changes/archive/` for
 `*-<name>/` matches and taking the lexically greatest (never composed from today's date,
@@ -154,10 +202,15 @@ recompute runs against an archived change.
 - **WHEN** `orbit emit address-reviews --change foo` completes with all findings resolved
 - **THEN** the written emit's `next_recommended` equals `orbit status --change foo --json`'s `next_command` computed AFTER the emit landed — byte-identical, by construction
 
-#### Scenario: Pre-computable class writes once
+#### Scenario: Every class writes once, complete
 
-- **WHEN** `orbit emit review --change foo` runs
-- **THEN** the file is written exactly once, complete — no transient missing-field state exists for the pre-computable class
+- **WHEN** `orbit emit review --change foo` (pre-computable) or `orbit emit apply --change foo` (post-write semantics) runs
+- **THEN** the file is written exactly once, complete — no transient missing-field state exists for ANY class
+
+#### Scenario: Crash during synthetic-trail composition leaves no file
+
+- **WHEN** the surface crashes after computing the synthetic-trail status but before the atomic write completes
+- **THEN** the trail is unchanged — no file, no partial record; the invocation simply failed
 
 #### Scenario: Archive emit is pre-computable and lands on the archived trail
 
@@ -222,16 +275,22 @@ engine-owned and rejected when payload-supplied), `chunk`/`chunk_name`/
 whole task set standing in as the "current chunk" when `chunk` is null, per
 `orbit-run-summary-emit`'s field semantics; a malformed
 preamble degrades per `orbit-run-summary-emit`'s tolerant-on-read rule with the documented
-stderr warning), and `files_touched` — the file paths changed since the previous apply emit,
-engine-computed as `git diff --name-only <ref>` against the WORKING TREE: committed and
-uncommitted tracked changes both count (the emit is a boundary snapshot, and sessions
-routinely reach the boundary before the chunk's commit lands — a committed-only list would
-under-report at exactly the moment the field fires; brand-new untracked files stay invisible
-until staged, a stated git-visibility limitation). `<ref>` is the commit resolved best-effort
-from the previous apply emit's timestamp (`git rev-list -1 --before=<timestamp> HEAD`); the
-FIRST apply emit, having no previous emit, falls back to the change's first commit as its
-reference; `null` only outside a git repository or when no reference resolves at all, never a
-hand-listed approximation. (The boot render's ACTUAL touchpoints map remains committed-only
+stderr warning), and `files_touched` — the file paths changed since the previous apply
+emit's BOUNDARY, engine-computed as `git diff --name-only <base>` against the WORKING TREE:
+committed and uncommitted tracked changes both count (the emit is a boundary snapshot, and
+sessions routinely reach the boundary before the chunk's commit lands — a committed-only
+list would under-report at exactly the moment the field fires; brand-new untracked files
+stay invisible until staged, a stated git-visibility limitation). The BOUNDARY is exact,
+never timestamp-inferred: at every apply emit the engine captures the tracked working state
+as a git TREE OBJECT (`git write-tree` against a temporary index — the `git stash create`
+mechanism) and records its OID as the emit's engine-computed `diff_base` field; the next
+emit's `<base>` IS the previous emit's recorded `diff_base` tree, so the list is per-chunk
+exact under EVERY commit ordering — late-committed prior-chunk work cannot reappear in the
+next chunk's list. The FIRST apply emit — and any emit whose predecessor carries no
+`diff_base` (pre-capability) or whose recorded tree object is no longer present (gc pruned;
+the snapshot is content-addressed and deliberately unreferenced) — falls back to the
+change's first commit as its base; `null` only outside a git repository or when no base
+resolves at all, never a hand-listed approximation. (The boot render's ACTUAL touchpoints map remains committed-only
 `<change-start>..HEAD` per `orbit-orientation` — a durable-truth view computed fresh per
 invocation; the two diffs are deliberately different.) Payload attempts to supply any computed
 extension are rejected as engine-owned fields.
@@ -249,12 +308,17 @@ extension are rejected as engine-owned fields.
 #### Scenario: Apply chunk fields computed from tasks.md
 
 - **WHEN** `orbit emit apply --change foo` runs mid-chunk-2 of a 3-chunk tasks.md, with some chunk work committed and some still uncommitted in the working tree
-- **THEN** the chunk fields and checkbox totals are engine-parsed; `files_touched` lists the paths changed since the prior apply emit's reference commit — committed and uncommitted tracked changes both included — or `null` when no diff reference resolves
+- **THEN** the chunk fields and checkbox totals are engine-parsed; `files_touched` lists the paths changed since the prior apply emit's recorded `diff_base` boundary — committed and uncommitted tracked changes both included — and this emit records its own fresh `diff_base`; `null` when no base resolves
 
 #### Scenario: First apply emit references the change's first commit
 
-- **WHEN** the first apply emit for a change fires (no previous apply emit on the trail) inside a git repository
-- **THEN** `files_touched` is computed against the change's first commit as the reference — not `null`
+- **WHEN** the first apply emit for a change fires (no previous apply emit carrying `diff_base`) inside a git repository
+- **THEN** `files_touched` is computed against the change's first commit as the base — not `null` — and the emit records its own `diff_base` tree for the next boundary
+
+#### Scenario: Late-committed chunk work does not reappear
+
+- **WHEN** chunk 1's emit fires with its work uncommitted (the boundary tree recorded as `diff_base`) and that work is committed only afterward
+- **THEN** chunk 2's `files_touched`, diffed from chunk 1's recorded `diff_base` tree, excludes chunk 1's files unless the session touched them again — per-chunk exactness holds under every commit ordering
 
 #### Scenario: User-validation judgment supplied as a verified task list
 
@@ -263,19 +327,28 @@ extension are rejected as engine-owned fields.
 
 ### Requirement: Output contract and read-only guarantee beyond the emit
 
-On success the surface SHALL print the written path to stdout; `--json` additionally echoes
-the complete composed emit; for proposal/system review emits `--render` additionally prints
+On success the surface SHALL print the written path to stdout. With `--json`, stdout is
+instead EXACTLY ONE structured JSON object — `{path, emit, render?}`: `path` the written
+file, `emit` the complete composed emit, `render` present only when `--render` applies —
+never a plain-text line preceding or following the object (automation consumers parse one
+document, no split heuristics). Without `--json`, for proposal/system review emits `--render`
+additionally prints
 the engine report render (the `orbit status --change <name> --report` output) after the
-write — persist-first and run-and-paste collapse into one invocation. For architecture-mode
+path — persist-first and run-and-paste collapse into one invocation. For architecture-mode
 review emits `--render` is a no-op with a one-line stderr note (the report render is a
-change-scoped surface; no architecture report surface exists — D4's architecture exemption). The surface writes EXACTLY one file (the emit;
-plus the internal finalize of the post-write class) and modifies nothing else — no artifact,
+change-scoped surface; no architecture report surface exists — D4's architecture exemption). The surface writes EXACTLY one file (the emit,
+atomically, for every class) and modifies nothing else — no artifact,
 no metadata, no baseline.
 
 #### Scenario: Render in the same breath
 
 - **WHEN** `orbit emit review --change foo --render` succeeds
 - **THEN** stdout carries the written path followed by the engine-rendered report for the just-written pass
+
+#### Scenario: --json is one machine-readable object
+
+- **WHEN** `orbit emit review --change foo --json --render` succeeds
+- **THEN** stdout is exactly one JSON object with `path`, `emit`, and `render` keys — no plain-text framing precedes or follows it
 
 #### Scenario: Exactly one file
 

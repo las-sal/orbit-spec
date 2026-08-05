@@ -74,44 +74,26 @@ function toRepoRelative(p: string): string {
 }
 
 /**
+ * A synthetic trail entry (D-arc Stage D5): an in-memory emit candidate treated as if it
+ * were already on the trail — the emit surface's post-write-semantics composition computes
+ * the change status against `disk + candidate` WITHOUT any provisional file existing.
+ */
+export interface TrailOverlay {
+  /** The candidate's would-be filename (routes it through the same parse branches). */
+  name: string;
+  json: unknown;
+}
+
+/**
  * Reads the change's `.orbit-runs/` trail. Files with unparseable tokens or
  * unreadable/invalid content are skipped (treated as absent) — never throws on
- * a single bad file.
+ * a single bad file. An optional `overlay` candidate is folded in as if on disk.
  */
-export function readTrail(changeDir: string): Trail {
+export function readTrail(changeDir: string, overlay?: TrailOverlay): Trail {
   const runsDir = path.join(changeDir, '.orbit-runs');
   const trail: Trail = { changeDir, runsDir, passes: [], resolutions: [], applyTokens: [] };
 
-  if (!fs.existsSync(runsDir)) return trail;
-
-  let entries: string[];
-  try {
-    entries = fs.readdirSync(runsDir);
-  } catch {
-    return trail;
-  }
-
-  for (const name of entries) {
-    const token = parseTsToken(name);
-    const full = path.join(runsDir, name);
-
-    // External findings file: external-(proposal|system)-<TS>.md — NOT external-prompt-*.
-    const extMatch = name.match(/^external-(proposal|system)-\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}Z\.md$/);
-    if (extMatch && token) {
-      const pass = parseExternalMarkdown(full, token, extMatch[1] as ReviewMode);
-      if (pass) trail.passes.push(pass);
-      continue;
-    }
-
-    if (!name.endsWith('.json') || !token) continue;
-
-    let json: any;
-    try {
-      json = JSON.parse(fs.readFileSync(full, 'utf-8'));
-    } catch {
-      continue; // unreadable / invalid JSON → absent
-    }
-
+  const ingestJson = (name: string, token: string, full: string, json: any): void => {
     if (/^review-(proposal|system)-/.test(name)) {
       trail.passes.push(parseInternalReview(full, token, json));
     } else if (/^address-reviews-/.test(name)) {
@@ -121,6 +103,45 @@ export function readTrail(changeDir: string): Trail {
     }
     // review-external-*.json (T0 packaging emit) is intentionally NOT a pass:
     // a packaged-but-unreturned external never counts as class coverage.
+  };
+
+  if (fs.existsSync(runsDir)) {
+    let entries: string[];
+    try {
+      entries = fs.readdirSync(runsDir);
+    } catch {
+      entries = [];
+    }
+
+    for (const name of entries) {
+      const token = parseTsToken(name);
+      const full = path.join(runsDir, name);
+
+      // External findings file: external-(proposal|system)-<TS>.md — NOT external-prompt-*.
+      const extMatch = name.match(/^external-(proposal|system)-\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}Z\.md$/);
+      if (extMatch && token) {
+        const pass = parseExternalMarkdown(full, token, extMatch[1] as ReviewMode);
+        if (pass) trail.passes.push(pass);
+        continue;
+      }
+
+      if (!name.endsWith('.json') || !token) continue;
+
+      let json: any;
+      try {
+        json = JSON.parse(fs.readFileSync(full, 'utf-8'));
+      } catch {
+        continue; // unreadable / invalid JSON → absent
+      }
+      ingestJson(name, token, full, json);
+    }
+  }
+
+  if (overlay) {
+    const token = parseTsToken(overlay.name);
+    if (token && overlay.name.endsWith('.json')) {
+      ingestJson(overlay.name, token, path.join(runsDir, overlay.name), overlay.json);
+    }
   }
 
   trail.passes.sort((a, b) => (a.token < b.token ? -1 : a.token > b.token ? 1 : 0));

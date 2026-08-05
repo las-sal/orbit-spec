@@ -10,31 +10,37 @@ Implementation chunks:
 
 ## 1. Grammars and counters (engine parsers)
 
-- [ ] 1.1 Chunk-preamble parser (`src/core/parsers/` per Touchpoints): the tasks.md HTML-comment
+- [x] 1.1 Chunk-preamble parser (`src/core/parsers/` per Touchpoints): the tasks.md HTML-comment
       grammar (`Chunk N (groups X[-Y]): <name>`), contiguous-range constraint, the documented
       malformed-preamble stderr warning + no-chunking fallback; unit tests incl. malformed forms.
-- [ ] 1.2 Explore counter: fence-aware parse of `explore.md` — decisions count, open-questions
+- [x] 1.2 Explore counter: fence-aware parse of `explore.md` — decisions count, open-questions
       count, standing-recommendation attestation ("n of m"); unit tests incl. fenced decoys and
       slot-less entries.
-- [ ] 1.3 Checkbox arithmetic + apply-diff helper: task totals from tasks.md; `files_touched`
-      from `git diff --name-only` since the previous apply emit (null degradation outside git /
-      no reference); unit tests.
+- [x] 1.3 Checkbox arithmetic + apply-diff helper: task totals from tasks.md; `files_touched`
+      from `git diff --name-only` against the previous emit's `diff_base` tree snapshot
+      (write-tree boundary capture; first-commit fallback; null degradation outside git / no
+      base); the late-committed-chunk regression case; unit tests.
 
 ## 2. Emit composition module
 
-- [ ] 2.1 `src/core/emit-composition.ts`: payload ingestion (stdin/`--payload`), engine-owned
+- [x] 2.1 `src/core/emit-composition.ts`: payload ingestion (stdin/`--payload`), engine-owned
       field rejection (named error), required nullable `model` key, unknown-command error naming
       the supported set.
-- [ ] 2.2 Spine composition: command→kind taxonomy table, timestamp, trail-location resolution
-      (change/explore/architecture), filename token + collision bump-forward (token and JSON
-      timestamp agree).
-- [ ] 2.3 Deterministic facts: review counts sentence + findings-dependent pointer; T0
+- [x] 2.2 Spine composition: command→kind taxonomy table, timestamp, trail-location resolution
+      (change/explore/architecture/archived/project — incl. the archive emit's post-move
+      landing: lexically-greatest `orbit/changes/archive/*-<name>/` scan with the clean
+      not-found error, tested), filename token + collision bump-forward (token and JSON
+      timestamp agree; token resolves BEFORE deterministic-fact composition — the collision
+      test asserts the review self-pointer equals the final post-bump path).
+- [x] 2.3 Deterministic facts: review counts sentence + findings-dependent pointer; T0
       paste/save/ingest template from `prompt_path`; explore maturity-grid recommendation
       (Early/Mid/Mature/Stalled as engine data).
-- [ ] 2.4 Atomic next_recommended: pre-computable class (single write) vs post-write class
-      (write → recompute status → stamp); test that a post-write emit's `next_recommended`
-      equals the engine's `next_command` computed after the emit landed.
-- [ ] 2.5 Write gate: universal-spine checks for all kinds (accepting `change: null` + `doc`
+- [x] 2.4 Atomic next_recommended: pre-computable class vs post-write-semantics class
+      (synthetic-trail status → stamp → full write gate → one atomic write; the status
+      computation gains a candidate-overlay input); test byte-equality with the engine's
+      `next_command` computed after the emit landed, and that a mid-composition crash
+      leaves no file on the trail.
+- [x] 2.5 Write gate: universal-spine checks for all kinds (accepting `change: null` + `doc`
       for architecture-scoped emits) + `orbit-report-rendering`'s strict internal normalizer
       for proposal/system review emits (export/reuse from `report-render.ts`); architecture-mode
       review emits get spine + rollup + handoff-shape checks instead; failure = no
@@ -43,13 +49,14 @@ Implementation chunks:
 
 ## 3. CLI surface
 
-- [ ] 3.1 `orbit emit <command>` registration in `src/cli/index.ts` + command module: `--change`
-      (workstream) / `--doc` (architecture-scoped — with the wrong-flag and both-flags
-      mutual-exclusion usage errors per the target-resolution contract), `--payload`, `--json`
-      (echo composed emit), `--render` (proposal/system review emits: path
-      + report render in one breath; architecture mode: no-op + stderr note); stdout = written
-      path; error paths keep stdout empty.
-- [ ] 3.2 Exactly-one-file guarantee test (two-sided snapshot around a successful emit) + the
+- [x] 3.1 `orbit emit <command>` registration in `src/cli/index.ts` + command module: `--change`
+      (workstream) / `--doc` (architecture-scoped) / bare for project-scoped `audit-drift` —
+      with the wrong-flag, both-flags, and missing-target usage errors per the
+      target-resolution contract; `--payload`; `--json`
+      (stdout = exactly one `{path, emit, render?}` object); `--render` (proposal/system
+      review emits: path + report render in one breath; architecture mode: no-op + stderr
+      note); stdout = written path otherwise; error paths keep stdout empty.
+- [x] 3.2 Exactly-one-file guarantee test (two-sided snapshot around a successful emit) + the
       per-command computed-extension tests (explore counts, apply chunk fields, T0 composition)
       at the CLI level.
 
@@ -62,6 +69,10 @@ Implementation chunks:
       change's first commit (engine diff); lifecycle-aware selection (predicted pre-apply,
       actual + predicted reference after); absent-section/non-git degradation; tests for both
       lifecycle positions.
+- [ ] 4.3 Orientation surfaced-skip note (the modified fault-isolation requirement): the
+      `⚠ invalid emit skipped: <filename>` line on bare, `--full`, and boot renders + the
+      `skipped_emits` array on the affected workstream entry in both JSON tiers; tests with a
+      spine-invalid-emit fixture across all three renders and the JSON shapes.
 
 ## 5. Gates vocabulary and model hints
 
@@ -135,8 +146,10 @@ Implementation chunks:
       pre-apply, mid-apply-chunk, and pre-archive (`orbit status --change <name> --boot` for
       the change-scoped seams), and proceeds correctly from file-resident material alone.
 
-### At-archive notes (NOT apply tasks — the archive flow executes these; deliberately not
-### checkboxes so the apply gate's arithmetic covers only apply-completable work)
+### At-archive notes
+
+(NOT apply tasks — the archive flow executes these; deliberately not checkboxes, so the
+apply gate's arithmetic covers only apply-completable work.)
 
 - 9.4 Update the Purpose paragraphs of the `orbit-run-summary-emit` and
   `orbit-review-external` baseline specs during the archive sync — both still describe the

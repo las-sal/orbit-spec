@@ -1,0 +1,176 @@
+{
+  "command": "review",
+  "timestamp": "2026-08-05T16:19:50Z",
+  "change": "d5-context-economy",
+  "final_assessment": "1 critical, 3 warning, 3 suggestion.",
+  "next_recommended": "/orbit:address-reviews d5-context-economy --from-file orbit/changes/d5-context-economy/.orbit-runs/review-proposal-2026-08-05T16-19-50Z.json",
+  "kind": "editorial",
+  "model": "claude-fable-5",
+  "mode": "proposal",
+  "iteration": 6,
+  "depth": "full",
+  "reviewer_class": "fresh",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "passes_run": [
+    "1. Structure & Delta Integrity",
+    "2. Internal Coherence",
+    "3. Cross-Doc Coherence",
+    "4. Archive Consistency",
+    "5. Codegen Readiness",
+    "6. Gap Hunt",
+    "7. Drift Hunt",
+    "8. Inline Review Marker Residue",
+    "9. Pre-Handoff Sweep"
+  ],
+  "passes_skipped": [],
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 1,
+      "warning": 2,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "2. Internal Coherence",
+      "severity": "CRITICAL",
+      "dimension": "correctness",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-run-summary-emit/spec.md",
+      "line": 73,
+      "title": "Apply's verify-first recommendation contradicts the post-write by-construction contract",
+      "recommendation": "orbit-emit-composition assigns apply to the POST-WRITE SEMANTICS class whose stamped `next_recommended` 'equals the engine's post-landing next_command BY CONSTRUCTION' (specs/orbit-emit-composition/spec.md:144-154). But this delta's own MODIFIED apply requirement re-asserts the pre-gates vocabulary: rule 1 advances 'to /orbit:verify <name> on apply-complete', rule 3 likewise, and two scenarios ('Apply-complete recommends verify' :132-134; 'Final chunk completes with user-validation tasks remaining' :144-146) require `next_recommended` beginning '/orbit:verify foo'. The engine's canonical next_command never renders verify — `nextAfterPass` in src/core/artifact-graph/gates.ts knows only apply/archive, and both real archived apply-completion emits (D3, D4) carry '/orbit:review --as system <name>'. No engine can satisfy both deltas; this is the exact two-voices seam D5 exists to close, left open in its own spec. The conventions canonical example's '— next chunk: …' suffix (specs/orbit-conventions/spec.md:41) has the same friction mid-chunk.",
+      "recommendation_options": [
+        {
+          "label": "A — engine next_command wins",
+          "body": "Rewrite rules 1/3 and the two scenarios so the completion recommendation IS the engine's post-landing canonical next_command (live practice already does this: '/orbit:review --as system <name>'); verify survives as the reason-text alternative or drops. Reconcile the conventions apply example's chunk-suffix with the byte-equality claim (either the engine composes the suffix or the example loses it)."
+        },
+        {
+          "label": "B — verify becomes an engine constant",
+          "body": "Keep verify-first as deliberate flow: define '/orbit:verify <name>' as the engine-owned apply-complete recommendation constant (a deterministic fact, like archive's stock prose), move apply out of the 'equals next_command by construction' claim (scope that to address-reviews), and state that apply-complete deliberately recommends verify ahead of the gate cadence."
+        }
+      ]
+    },
+    {
+      "pass": "2. Internal Coherence",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+      "line": 13,
+      "title": "Enumerated payload rows omit fields other deltas require on the emit",
+      "recommendation": "The review row enumerates mode/reviewer_class/depth/scorecard/findings/stale_suppressed/commentary/passes_run/passes_skipped, and unknown keys are REJECTED at the seam — but orbit-review's `--fresh` scenario (specs/orbit-review/spec.md:54) requires `fresh: true` in the run summary's `flags` object, which only the body knows and the enumerated row forbids. Likewise the address-reviews row (source*/walk_mode/resolutions/final_assessment) omits `iteration`, which orbit-conventions' editorial-kind extension still names for address-reviews emits (specs/orbit-conventions/spec.md:28) and no deterministic-facts rule computes. Either add `flags` to the review row and assign address-reviews' iteration a voice (engine-computed from the trail is the D5-consistent choice), or state explicitly that the inline enumerations are illustrative and the derived-from-owning-capability table governs — under strict unknown-key rejection the difference is a hard runtime failure."
+    },
+    {
+      "pass": "2. Internal Coherence",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/d5-context-economy/design.md",
+      "line": 207,
+      "title": "Predicted Touchpoints map omits the six registry files tasks 6.3 mandates touching",
+      "recommendation": "Task 6.3 retires review-external 'across ALL SIX registries (templates index, launcher index, init.ts, update paths, profiles, any manifest)', but the predicted map's only nod is non-leading prose ('`src/core/templates/registry` sites' — not a real path, and ignored by the entry grammar's leading-span rule). src/core/templates/index.ts, src/core/profiles.ts, src/core/init.ts, and src/core/update.ts match no predicted entry, guaranteeing actual-not-predicted WARNING findings at the change's own system pass — known-in-advance divergence the change-completeness discipline says must not be left for review. Add the registry files as parseable entries (grouped or individual) to the map this change itself introduces as the first authored instance."
+    },
+    {
+      "pass": "6. Gap Hunt",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+      "line": 138,
+      "title": "next_recommended authorship undefined for architect emits",
+      "recommendation": "The atomic requirement makes next_recommended universally engine-owned ('SHALL be composed in one of two engine-owned ways, resolved per command') and the rejection scenario (:35-36) names `next_recommended` as rejected without command qualification — yet no requirement defines how the engine composes it for `orbit emit architect`: architecture docs have no gate/next_command machinery, the deterministic-facts requirement covers only review/T0/explore/apply, and the payload-authored `handoff` section (orbit-architect-owned) carries its own `next_command`. Two implementers diverge: reject-and-fail, copy handoff.next_command, or accept payload supply. State architect's composition rule (copying the architect-owned handoff.next_command into the spine would be one voice) or scope the rejection to commands with a defined deterministic rule. Propose-family, verify, and audit-drift derive acceptably from their baseline recommendation requirements, but a clause saying so would close the same inference gap cheaply."
+    },
+    {
+      "pass": "6. Gap Hunt",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+      "line": 143,
+      "title": "Pre-computable self-pointer vs collision bump ordering unpinned",
+      "recommendation": "Class (a) recommendations are 'composed before the write', and review's pointer names 'this emit's own path' — but the filename token can bump forward at write time when the target path exists. Nothing states that filename resolution (including the collision bump) precedes self-pointer composition, so an implementer composing the pointer against the pre-bump token writes an emit whose next_recommended names a file that isn't it. Add one clause (token resolved before deterministic-fact composition) and extend task 2.2's collision test to assert the self-pointer equals the final written path."
+    },
+    {
+      "pass": "7. Drift Hunt",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-conventions/spec.md",
+      "line": 28,
+      "title": "'Defined in per-skill schema references' survives against the mirror-never-define rule",
+      "recommendation": "The editorial-kind bullet still says command-specific fields 'are defined in per-skill schema references' while the same delta set's authority model says those references 'MIRROR the engine table, never define it' (specs/orbit-emit-composition/spec.md:22-23). The appended parenthetical ('payload-field lists; the spine is engine-owned and documented HERE') fixes the spine half but leaves 'defined in' asserting the retired authority for extension fields. Reword to 'documented in' or 'mirrored in' — the residual second voice on where definition lives."
+    },
+    {
+      "pass": "9. Pre-Handoff Sweep",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/d5-context-economy/tasks.md",
+      "line": 142,
+      "title": "At-archive note wrapped across two H3 heading lines",
+      "recommendation": "Lines 142-143 wrap one sentence across two `###` headings ('### At-archive notes (NOT apply tasks — … deliberately not' / '### checkboxes so the apply gate's arithmetic…'), which renders as two broken headings in any markdown view. Fold the parenthetical into a single heading line or drop it to a plain paragraph under a short heading."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "title": "Project-wide audit-drift has no legal emit invocation (external CRITICAL)",
+      "evidence": "Target-resolution contract now defines bare project-scoped audit-drift resolving orbit/.orbit-runs/ with change: null, plus wrong-flag/missing-target errors and a dedicated scenario (specs/orbit-emit-composition/spec.md:63-71, 87-90)."
+    },
+    {
+      "title": "Post-write emits cannot pass the mandatory pre-write spine gate (external CRITICAL)",
+      "evidence": "Rewritten as synthetic-trail composition + exactly-one atomic write, zero gate exceptions, crash-leaves-no-file scenario (specs/orbit-emit-composition/spec.md:145-154, 177-180)."
+    },
+    {
+      "title": "Timestamp-derived apply references repeat prior chunks (external CRITICAL)",
+      "evidence": "diff_base tree-OID boundary via git write-tree, first-commit/gc-pruned fallbacks, late-committed-chunk scenario (specs/orbit-emit-composition/spec.md:250-259, 285-288); diff_base field added to the apply extension table."
+    },
+    {
+      "title": "Touchpoint set arithmetic has no compatible predicted-path grammar (external CRITICAL)",
+      "evidence": "Closed ENTRY GRAMMAR (exact/prefix/glob, +-grouped, malformed-entry SUGGESTION) authored in orbit-propose-modifications:17-34; audit-drift references it, never redefines (specs/orbit-audit-drift/spec.md:13-17)."
+    },
+    {
+      "title": "Boot --json has no specified output shape (external WARNING)",
+      "evidence": "One typed boot object (artifacts/emits/history/touchpoints/skipped_emits) with degradation semantics and a scenario (specs/orbit-orientation/spec.md:20-28, 45-48)."
+    },
+    {
+      "title": "Archive persistence scenarios disagree about pre- vs post-move location (external WARNING)",
+      "evidence": "Conventions per-change bullet drops archive from the active-trail list, names the deliberate exception, and adds the archived-trail scenario (specs/orbit-conventions/spec.md:176, 188-191)."
+    },
+    {
+      "title": "Unvalidated model hints can break the one-line recommendation protocol (external WARNING)",
+      "evidence": "Rendering-boundary check: non-empty single-line ≤80 chars, no control characters, failing values inert; malformed-hint scenario added (specs/orbit-engine-gates/spec.md:37-43, 69-72)."
+    },
+    {
+      "title": "--fresh conflicts with an explicit reviewer class (external WARNING)",
+      "evidence": "Both-flags invocation is a clean usage error naming the shorthand equivalence, with a dedicated scenario (specs/orbit-review/spec.md:5, 37-40)."
+    },
+    {
+      "title": "Emit output flags need a machine-readable composition contract (external SUGGESTION)",
+      "evidence": "--json switches stdout to exactly one {path, emit, render?} object, no plain-text framing; scenario added (specs/orbit-emit-composition/spec.md:297-301, 315-318)."
+    },
+    {
+      "title": "Disposition scenario still enumerated review-external as generated / architect as 16th (iter-4 WARNINGs)",
+      "evidence": "Disposition scenario now records 'RETIRED at D5 … surface standing at 15 post-D5' (specs/orbit-conventions/spec.md:355); architect delta reads '16 workflows at D2; 15 post-D5's review-external merge' (specs/orbit-architect/spec.md:37-38)."
+    },
+    {
+      "title": "Attestation membership criterion undefined (iter-4 WARNING)",
+      "evidence": "Membership criterion defined: Standing recommendation line with value ≠ 'none yet'; slot-less entries are audit-drift's concern (specs/orbit-emit-composition/spec.md:227-232, scenario 265-268)."
+    },
+    {
+      "title": "--doc missing from task 3.1 / design D1; archived-trail resolution; payload-channel errors; 'modes' vocabulary (iter-4 SUGGESTIONs)",
+      "evidence": "design.md:13 and tasks.md:49-55 carry --doc and the target errors; lexically-greatest archive-dir scan rule at specs/orbit-emit-composition/spec.md:158-161; both-channels/absent-payload errors at :7-10; review-mode framework now says 'three reviewer classes' (specs/orbit-conventions/spec.md:269)."
+    }
+  ],
+  "commentary": "The external-walk rewrites are internally strong — the synthetic-trail atomic write, the diff_base snapshot, the touchpoints grammar, and the boot object all held up under fresh scrutiny, and every one of the 55 prior findings checks out as genuinely resolved on disk. What remains is a consistent residue class: seams between the NEW ownership claims and PRESERVED baseline prose. The apply requirement kept its pre-gates verify-first vocabulary while the new capability swears the same field equals the engine's canonical next by construction — and the archived D3/D4 trails prove live practice already sided with the engine, so the delta re-asserts a recommendation the shipped engine has never once emitted. The payload-row enumerations show the same shape at smaller scale: explicit rows drift from the owning capabilities' field sets while the unknown-key rejection makes any drift a hard failure. I probed by diffing all 24 MODIFIED blocks against their baselines, reading gates.ts and report-render.ts against the deltas' engine claims, and using the archived emit trail as ground truth. Risk texture: the strictness this change introduces (reject-at-seam, byte-equality-by-construction) converts every enumeration gap from tolerable prose fuzz into a runtime contradiction — the remaining fixes are small but they are now load-bearing."
+}
