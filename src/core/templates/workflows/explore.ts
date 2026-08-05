@@ -406,7 +406,7 @@ When a named exploration exists (Mode B/C), \`orbit/explore/<name>/explore.md\` 
 <dated entries; each captures what was decided and a brief rationale>
 
 ## Open questions
-<things we don't know yet; resolved later by moving to Decisions, deferred as @review: markers via /orbit:propose, or abandoned to Considered & out>
+<things we don't know yet; resolved later by moving to Decisions, deferred as @review: markers via /orbit:propose, or abandoned to Considered & out. EVERY entry carries the slot line \`Standing recommendation: <the current leaning verbatim>\` — or the literal \`Standing recommendation: none yet\` when no leaning exists; never an entry with the slot absent (D-arc Stage D5, leak-hardening layer 1)>
 
 ## Considered & out
 <options that came up and got rejected, with brief rationale + date>
@@ -422,6 +422,7 @@ When creating a new file, all five sections are scaffolded (empty content under 
 - **Resolving an Open question** → move the entry to Decisions with a dated rationale; acknowledge in chat ("captured").
 - **Rejecting a considered option** → move it to Considered & out with brief rationale + date.
 - **New decision emerges** → append to Decisions proactively (with brief chat acknowledgment).
+- **A leaning emerges on an open question** (discussed but not yet a decision) → write it into that entry's \`Standing recommendation:\` slot verbatim — a pending leaning always has a file-resident home; \`none yet\` is only for questions with no leaning at all.
 - **Reference cited** → append to References (offer first when in doubt).
 
 ## Five capture types and where each lands
@@ -471,7 +472,11 @@ This means: durable capture in explore → seamless promotion to formal change. 
 
 (Per \`orbit-run-summary-emit\`; composed and written via the engine emit surface, \`orbit-emit-composition\`.)
 
-Named-mode \`/orbit:explore <name>\` emits TWICE per session shape (D-arc Stage D3): once at BEGIN and once at each conversation boundary. Both fire the same invocation — compose the narrative payload (\`final_assessment\` + the required nullable \`model\`) into a temp file, then:
+Named-mode \`/orbit:explore <name>\` emits TWICE per session shape (D-arc Stage D3): once at BEGIN and once at each conversation boundary.
+
+**Boundary residency sweep — "no emit without sweep"** (D-arc Stage D5, leak-hardening layer 2; begin emits excepted — nothing has been discussed yet): before EVERY boundary emit, sweep the conversation since the last emit for decisions, leanings, rejections, and citations that are not yet file-resident, and write each into its slot (Decisions / an open question's \`Standing recommendation:\` / Considered & out / References) BEFORE invoking the emit. The sweep rides this existing boundary trigger — no new prompt, no user-facing step — so the engine-computed attestation counts describe the SWEPT file, and \`orbit-audit-drift\`'s cross-check closes the loop.
+
+Both emits fire the same invocation — compose the narrative payload (\`final_assessment\` + the required nullable \`model\`) into a temp file, then:
 
 \`\`\`bash
 orbit emit explore --change <name> --payload <payload-file>

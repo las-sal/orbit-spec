@@ -178,8 +178,26 @@ When generating artifacts in upstream Step 4, apply this mapping:
 | **Open questions** (deferred at Step 0b) | \`@review:\` markers in \`design.md\` or the relevant spec |
 | **Considered & out** | \`design.md\`'s "Alternatives considered" section (prevents future rediscovery) |
 | **References** | Read during artifact generation as context; cited in \`design.md\` where relevant; not copied verbatim |
+| **Decisions + References (codebase leanings)** | Seed \`design.md\`'s \`## Touchpoints\` section (authored below) |
 
 When \`design.md\` references background or decisions originally from \`explore.md\`, **cite the source** (\`see explore.md\`) rather than paraphrasing without attribution.
+
+### Step 0c.5 — Author \`## Touchpoints\` in design.md (BOTH modes — D-arc Stage D5)
+
+The generated \`design.md\` carries a \`## Touchpoints\` section: the PREDICTED map of where the work lands in the codebase (files/modules to be created or modified) — seeded from the exploration's leanings and references in consume mode, authored fresh from the description + codebase reads in standalone mode.
+
+**Entry grammar** (CLOSED form — the engine's boot render and \`orbit-audit-drift\`'s divergence check parse it): each entry is a markdown list item whose LEADING inline-code span(s) name the targets — one span, or several \`+\`-joined spans for grouped alternatives; everything after the spans (the \` — annotation\` tail, parentheticals) is prose the checks never parse. Each target is exactly one of: (a) an exact repo-relative file path; (b) a directory prefix with a trailing \`/\`; (c) a glob containing \`*\` (single-segment, fnmatch semantics). Example:
+
+\`\`\`markdown
+## Touchpoints
+
+- \`src/cli/index.ts\` — registration; flags.
+- \`src/commands/\` — new command module.
+- \`src/core/templates/workflows/*.ts\` — the body pass.
+- \`src/core/orientation.ts\` + \`src/core/artifact-graph/gates.ts\` — either home works.
+\`\`\`
+
+**Frozen at apply**: the predicted map is revised only through normal artifact revision (the proposal review cadence bounds its staleness) and is FROZEN once apply begins — from the first apply commit onward it reads as "the plan", while the ACTUAL map is engine-computed from the diff (the boot render's Touchpoints view). Never hand-update the section after apply's first commit; predicted-vs-actual divergence is a computed check (\`orbit-audit-drift\`), not a maintenance chore.
 
 ### Step 0d — Move the staging directory (with the staged-metadata MERGE)
 
@@ -218,7 +236,7 @@ After the move, \`orbit/changes/<name>/\` contains both:
 
 ## Standalone mode (unchanged from upstream)
 
-When no \`orbit/explore/<name>/\` exists, fall through to upstream Step 1: prompt for description, generate artifacts from the description. This mode is fully unchanged from upstream behavior.
+When no \`orbit/explore/<name>/\` exists, fall through to upstream Step 1: prompt for description, generate artifacts from the description. Upstream behavior is otherwise unchanged, with ONE addition: the generated \`design.md\` still carries the \`## Touchpoints\` section (Step 0c.5 — authored fresh from the description and codebase reads; the entry grammar and frozen-at-apply rule apply identically).
 
 ## Graceful degradation
 

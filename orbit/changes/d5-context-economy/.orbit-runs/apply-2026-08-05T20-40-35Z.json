@@ -1,0 +1,32 @@
+{
+  "command": "apply",
+  "timestamp": "2026-08-05T20:40:35Z",
+  "change": "d5-context-economy",
+  "kind": "workflow",
+  "model": "claude-fable-5",
+  "gate_overridden": {
+    "gate": "review-proposal",
+    "state": "unpassed",
+    "reason": "latest independent pass yielded new findings"
+  },
+  "consent": "user-invoked",
+  "tasks_completed": 30,
+  "tasks_remaining": 1,
+  "user_validation_remaining": 1,
+  "chunk": "4 of 4",
+  "chunk_name": "Workflow-layer hardening, audit checks, verification sweep",
+  "chunk_complete": true,
+  "tasks_completed_this_session": 7,
+  "files_touched": [
+    "orbit/changes/d5-context-economy/.orbit-runs/apply-2026-08-05T20-30-56Z.json",
+    "orbit/changes/d5-context-economy/tasks.md",
+    "src/core/templates/workflows/architect.ts",
+    "src/core/templates/workflows/audit-drift.ts",
+    "src/core/templates/workflows/explore.ts",
+    "src/core/templates/workflows/propose.ts",
+    "test/core/templates/skill-templates-parity.test.ts"
+  ],
+  "diff_base": "b2f85bbabd9a48ea72bfdeee31069a09cb877e9f",
+  "final_assessment": "Completed chunk 4 of 4 (Workflow-layer hardening, audit checks, verification sweep); 30 of 31 tasks done. chunk 4 (groups 8-9): standing-recommendation slot + residency sweep in explore, sweep-before-emit tie in architect, Touchpoints authoring (entry grammar + frozen-at-apply) in propose, audit-drift categories 5 (Touchpoints divergence, via boot --json; change-own-dir excluded) and 6 (emit attestation cross-check); verification sweep green (1887 tests, strict validate, fingerprints 25/25, live smoke: emit --render, boot both positions, slot-over-phase model hint, frozen T0). Observations for system review: (a) update --force does not garbage-collect the retired orbit-review-external dir on PRE-EXISTING surfaces (removed by hand locally; fresh init is clean); (b) 9.6 every-seam boot test is the user-validation handoff at stage ratification",
+  "next_recommended": "/orbit:review --as proposal --fresh d5-context-economy"
+}

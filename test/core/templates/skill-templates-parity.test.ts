@@ -32,7 +32,7 @@ import {
 import { generateSkillContent } from '../../../src/core/shared/skill-generation.js';
 
 const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
-  getExploreSkillTemplate: '9c760834a803b84878c8eb9fe04b244902fcb2e915c688a6f116734040e96974',
+  getExploreSkillTemplate: '1dfd25f63ce539fc14a418bd6f9c22efa9b54720a7cd5f2548653c6731fb0d87',
   getNewChangeSkillTemplate: '8f68be94db91a147b93d492f6f32ab3c02725a20a001c87602ac8d9741587614',
   getContinueChangeSkillTemplate: '98c49b247140ba301964c1e5a825686485b74a525f65f31a365d19e0aa84923e',
   getApplyChangeSkillTemplate: '5e847a2383a76b80295b47b7177ff7adf2ca419a9344d1cdb32b594e50321a89',
@@ -52,15 +52,15 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   getOrbitOnboardCommandTemplate: '3a3e98c6a01517896dfdccaba4fa4477edea62fd69dc4189df1dd105bbedcc5b',
   getOrbitBulkArchiveCommandTemplate: '6bc94ce2a406ceb934f461665bdd1e96f5a7149c798172c04f50d83c3630819a',
   getOrbitVerifyCommandTemplate: 'b98377960f7416452e77f6042ffbb037df4c6461619aebe9b595a6883a752a9a',
-  getOrbitProposeSkillTemplate: 'c0dd55c8f22537d2297450cf591775b866ee5425ddde426c4af212f784dec6bb',
+  getOrbitProposeSkillTemplate: 'edef55c6875d201b23e8b5581c185b1ff3a5b6a800cfaa40a8a5414b4721a328',
   getOrbitProposeCommandTemplate: 'b91222654d5050d7ae7f2f49b5d6c4b34e65638bd8c5ae3e622550eb1329c168',
   getFeedbackSkillTemplate: 'ded61ad85c5050f7bf241870b14bfcdd929f0be68a028c1130fd30a66efbda3b',
-  getArchitectSkillTemplate: 'd110cdbbf74b406321b171b69565cab70cdcfc580ba72b0d9c911a3ea1670fb0',
+  getArchitectSkillTemplate: 'a8cfa1b2290e32ff8146278957bf979e5407f5cb692e7e8916520d4f1c368d2a',
   getOrbitArchitectCommandTemplate: 'b65b8cca6431bb45aa8587d3bfc1e9458981e2e1bc925ae45cd57414143cb3db',
 };
 
 const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
-  'orbit-explore': '6eb69de29f1436cfa0814d307d3615aebc180a5fa0e1a97bd75b285c0d3fc816',
+  'orbit-explore': 'ee4acd730d76d5f6ee9b0f08f439f6b0be39d87886bf1a5dafdb430f262ceb62',
   'orbit-new-change': '94c9d6377c6de0484f3a51923eba08214ca45cab5d87a55e46e032de2640b925',
   'orbit-continue-change': 'f61634ab5e96436b33fd30c210f84a57f55baf1716d6ef4679c1ed2a518cc3d3',
   'orbit-apply-change': 'ece702fe9e211eb1d2f2aff499222679b9ebbe12ffa88e7f6610d3531d1ab089',
@@ -70,8 +70,8 @@ const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
   'orbit-bulk-archive-change': '15ee066ce386ce90ffb28291e9881426980b91af9489ec8a1d75003988f0c7e3',
   'orbit-verify-change': '3cc50ab297e344b6a4fa8922751940e95b42c8d2ee84e3e21a96924e24ccba1f',
   'orbit-onboard': '8e2f8fad7288a3c2878166de4b102f3535fb45801afd2bcaa4d38a42d1e74af3',
-  'orbit-propose': '5d3f57f114755baa78a5e7023de38fe342292f48d66b02404df928b7ce628e43',
-  'orbit-architect': '27ab076cb0792c613fdb9809d9c17f600920073a2b5c133350b0b4b26486fe56',
+  'orbit-propose': '38df39708ed7d00b72f6071642629f4eb5d829779b65ea96ca65937ff8c431a8',
+  'orbit-architect': '34231addb69370a54d035654ea4aa929201cbb9dcdbba98822241900ee16885e',
 };
 
 function stableStringify(value: unknown): string {

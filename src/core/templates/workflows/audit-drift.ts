@@ -47,7 +47,7 @@ The schema below documents per-command extensions ADDED to that spine (\`context
     "since": null,
     "strict": false
   },
-  "categories_run": ["1", "2", "3", "4"],
+  "categories_run": ["1", "2", "3", "4", "5", "6"],
   "categories_skipped": [],
   "findings_summary": {
     "critical": 0,
@@ -57,7 +57,9 @@ The schema below documents per-command extensions ADDED to that spine (\`context
       "1": { "critical": 0, "warning": 0, "suggestion": 0 },
       "2": { "critical": 0, "warning": 0, "suggestion": 0 },
       "3": { "critical": 0, "warning": 0, "suggestion": 0 },
-      "4": { "critical": 0, "warning": 0, "suggestion": 0 }
+      "4": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "5": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "6": { "critical": 0, "warning": 0, "suggestion": 0 }
     }
   },
   "findings": [
@@ -85,7 +87,7 @@ The schema below documents per-command extensions ADDED to that spine (\`context
 - **\`context\`** is \`"standalone"\` in every audit-drift-<TS>.json — library and pre-archive contexts write no separate file (their findings travel in the caller's emit), so the \`"library"\` / \`"pre-archive"\` values appear only when a caller chooses to embed this shape inside its own emit. Project-wide vs change-scoped standalone is distinguished by the \`change\` field (\`null\` = project-wide; \`<name>\` = change-scoped).
 - **\`caller\`** is \`null\` for standalone emits (the only contexts that write this file).
 - **\`categories_run\` / \`categories_skipped\`** are strings (category IDs); skip reasons in the report body, not the array.
-- **\`findings_summary.by_category\`** keys are category IDs \`"1"\` through \`"4"\`.
+- **\`findings_summary.by_category\`** keys are category IDs \`"1"\` through \`"6"\` (5 = Touchpoints divergence, 6 = Emit attestation cross-check — D-arc Stage D5; include keys only for categories that ran).
 - **\`recommendation_options\`** is OPTIONAL on each finding. Present only when the finding's recommendation is genuinely disjunctive — multiple defensible remediation paths the user must choose between. Producer-side contract (per \`orbit-audit-drift\` spec's \`Optional recommendation_options field on audit-drift finding entries\`): MUST contain ≥ 2 entries; each entry MUST have non-empty \`label\` (typically \`"A"\`, \`"B"\`, \`"C"\`, …) and non-empty \`body\`. Per-category emit guidance: Category 1 (vocabulary residue) typically single-recommendation; Category 2 (lens staleness) often disjunctive (rename-vs-remove); Category 3 (cross-doc consistency) often disjunctive (which side is canonical); Category 4 (archive coherence) typically single. The prose \`recommendation\` field still summarizes the disjunction for human readers. Field shape is identical to \`orbit-review\`'s \`recommendation_options\`; consumer (address-reviews) parses both producers uniformly. Omit for single-recommendation findings.
 `;
 
@@ -279,13 +281,37 @@ For each change in scope, scan its \`.orbit-runs/\` for consent-scoped lifecycle
 
 A checked emit **missing the \`consent\` field** → WARNING: \`lifecycle emit lacks consent record — an unconsented or contract-violating transition may have occurred\`, naming the emit path (e.g. \`orbit/changes/<name>/.orbit-runs/apply-<TS>.json\`) and the missing field (\`consent\`). This is the empirical tripwire behind the D-arc's harness-hooks deferral (R-d-2): its firing is the named re-entry trigger for hard enforcement.
 
+### 7.5 Category 5 — Touchpoints divergence (D-arc Stage D5)
+
+For each ACTIVE change whose \`design.md\` carries a \`## Touchpoints\` section AND whose apply has commits: compare the PREDICTED map against the ACTUAL map — both engine-computed. Read them from ONE call:
+
+\`\`\`bash
+orbit status --change <name> --boot --json   # touchpoints.predicted + touchpoints.actual
+\`\`\`
+
+Set arithmetic only — no prose consulted beyond the section's entries, which parse and match per \`orbit-propose-modifications\`' Touchpoints ENTRY GRAMMAR (exact path / directory prefix / glob, \`+\`-grouped alternatives — defined THERE, one voice; a file under a predicted prefix or matching a predicted glob is never false drift; a grouped entry is satisfied by ANY of its targets):
+
+- **Actual-but-not-predicted** → scope-drift finding naming the file and both maps' sources: WARNING for substantive source paths, SUGGESTION for tests/docs riding along.
+- **Predicted-but-never-touched** → SUGGESTION at pre-archive context only (the plan overshot — informational).
+- **Malformed entry** (leading spans parse as none of the three forms) → SUGGESTION naming the line; excluded from the arithmetic, never a false drift source.
+- **The change's own directory** (\`orbit/changes/<name>/**\` — artifacts, trail, metadata) is lifecycle bookkeeping, never scope drift; exclude it from the arithmetic.
+- **No section, or no commits yet** → skip that change SILENTLY (pre-capability changes are not findings).
+
+### 7.6 Category 6 — Explore emit attestation cross-check (D-arc Stage D5)
+
+For each staging exploration (\`orbit/explore/<name>/\`) with explore emits: cross-check the NEWEST emit's engine-computed counts (\`decisions_captured\`, \`open_questions_count\`, \`open_questions_with_recommendation\`) against a FRESH parse of the current \`explore.md\` (count per the five-section convention: Decisions entries; Open-question entries; those whose \`Standing recommendation:\` value is present and not the literal \`none yet\`). This closes leak-hardening layer 3's loop:
+
+- **Any count mismatch** → WARNING naming both values and the file, with the staleness interpretation: either the file changed after the last boundary emit (a session ended without its sweep/emit) or an emit was produced outside the engine surface.
+- **Open-question entry missing the \`Standing recommendation:\` slot** → SUGGESTION naming the entry (the explore body corrects it on next touch).
+- **No emits on the staging trail** → skip silently.
+
 ### 8. Apply scorecard rollup
 
 | Dimension | Categories contributing |
 |---|---|
 | **Completeness** | Category 4 (Archive coherence) |
-| **Correctness** | Category 1 (Vocabulary residue), Category 2 (Lens staleness) |
-| **Coherence** | Category 3 (Cross-doc consistency) |
+| **Correctness** | Category 1 (Vocabulary residue), Category 2 (Lens staleness), Category 6 (Emit attestation) |
+| **Coherence** | Category 3 (Cross-doc consistency), Category 5 (Touchpoints divergence) |
 
 ### 9. Emit the final assessment
 

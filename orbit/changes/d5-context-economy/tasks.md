@@ -126,25 +126,25 @@ breaks init/update, so 6.1–6.4 land together before any commit.)
 
 ## 8. Workflow-layer hardening
 
-- [ ] 8.1 Explore body: standing-recommendation slot in the capture convention + the boundary
+- [x] 8.1 Explore body: standing-recommendation slot in the capture convention + the boundary
       residency sweep tied to the existing emit trigger; begin emits excepted; emit via
       `orbit emit explore`.
-- [ ] 8.2 Architect body: the same sweep before `orbit emit architect`; handoff section
+- [x] 8.2 Architect body: the same sweep before `orbit emit architect`; handoff section
       unchanged.
-- [ ] 8.3 Propose body: design.md `## Touchpoints` authored at propose (consume mode seeds from
+- [x] 8.3 Propose body: design.md `## Touchpoints` authored at propose (consume mode seeds from
       explore.md leanings/references; standalone authors fresh); frozen-at-apply rule stated;
       section-to-artifact mapping reference updated.
-- [ ] 8.4 Audit-drift body + checks: touchpoints divergence (set arithmetic on engine inputs;
+- [x] 8.4 Audit-drift body + checks: touchpoints divergence (set arithmetic on engine inputs;
       severity ladder per the delta; silent skip for pre-capability changes) and emit
       attestation cross-check (counts vs fresh parse; slot-less entry SUGGESTION).
 
 ## 9. Verification sweep
 
-- [ ] 9.1 `npm run build && node bin/orbit.js update --force`; generated surface on disk matches
+- [x] 9.1 `npm run build && node bin/orbit.js update --force`; generated surface on disk matches
       templates (15 skills; epitomes; references present); fidelity + parity suites green.
-- [ ] 9.2 Full `npm test` green; strict validation; `orbit fingerprint d5-context-economy
+- [x] 9.2 Full `npm test` green; strict validation; `orbit fingerprint d5-context-economy
       --check` all verified.
-- [ ] 9.3 Live smoke: `orbit emit review --render` on a scratch change; `orbit status --change
+- [x] 9.3 Live smoke: `orbit emit review --render` on a scratch change; `orbit status --change
       --boot` both lifecycle positions; eligibility line with and without `models:` config;
       merged external invocation end-to-end (prompt file + T0).
 - [ ] 9.6 (User-validation handoff) Exercise exit criterion 3's every-seam boot test at stage

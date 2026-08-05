@@ -112,6 +112,8 @@ The body does NOT carry explore-grade thinking-partner stance prose, stage-lifec
 
 (Per \`orbit-run-summary-emit\` — \`/orbit:architect\` is a multi-turn conversational command; emit at conversation boundaries: user stop/pause signal, or AI-initiated wrap. Composed and written via \`orbit emit architect\` — \`orbit-emit-composition\`.)
 
+**No emit without sweep** (D-arc Stage D5, leak-hardening layer 2 — shared with named-mode explore): the Step 4 R-d-8 residency sweep precedes EVERY boundary emit, riding this existing trigger with no new prompt — the emit describes the swept doc. Architect fires no BEGIN emit (the begin+boundary genre is named-mode explore's).
+
 Compose the payload — \`final_assessment\`, \`stages_touched\`, \`rulings_captured\`, \`completions_ratified\` (may be empty), \`handoff\`, + the required nullable \`model\` — into a temp file and invoke:
 
 \`\`\`bash
