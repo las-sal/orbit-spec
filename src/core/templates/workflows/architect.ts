@@ -22,15 +22,14 @@ export function getArchitectSkillTemplate(): SkillTemplate {
 
 **Never a gatekeeper**: architecture authoring via \`/orbit:explore\` plus hand-editing remains a first-class path. This command is a stance, not a checkpoint — no orbit surface requires an architect session, no validation or drift check flags architecture content for having originated outside one, and the canonical flow (explore → propose → …) is unchanged by this workflow's existence.
 
-## Four execution disciplines (apply throughout this command)
+## Four execution disciplines (epitome)
 
-**Read-before-reference (authoring-time)**. Before writing a ruling, stage declaration, or considered-and-out entry that names a specific construct (a capability, a command, a file path, a prior ruling ID), read the actual definition. A program doc's rulings constrain future stages; false-precision references corrupt the constraint. If you can't verify, ask the user rather than guessing.
+The four disciplines from \`orbit-conventions\`, embedded per body; detail lives where each fires.
 
-**Change completeness (modification-time)**. When a session edit touches structure the engine reads (stage headings, \`Depends-on:\` / \`Complete:\` slots), run \`orbit architecture validate <doc>\` before the session ends — a typo'd heading is a VALIDATION ERROR (malformed), never a silent downgrade to legacy. When a ruling supersedes an earlier one, update both entries (the superseded ruling gains a supersession note; never silently deleted).
-
-**Pushback (review-time)**. When the user asserts something is already ruled or already captured, verify against the doc's current content before re-writing it. Don't re-litigate ratified rulings; don't duplicate an existing entry under a new ID.
-
-**No-chaining (turn boundary)**. Invoke at most the orbit workflow commands the user's message explicitly requests — one command per explicit user request; recommend, never invoke. Completing a command ENDS the turn at the position readout and the engine's eligibility line; blanket delegation covers work WITHIN the requested command, never the next command — gate \`passed\` means *eligible*, not *commanded*.
+- **Read-before-reference (authoring-time)**: read a construct's actual definition before naming it in the doc or a ruling; unverifiable → ask or leave a \`@review:\` marker, never guess.
+- **Change completeness (modification-time)**: doc edits land whole — a stage added to the grammar, its Depends-on slots, and the status-log entry move together; re-read after to confirm.
+- **Pushback (review-time)**: verify a claimed stage state against \`orbit architecture status\` before restating it; computed state wins over remembered state.
+- **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — gate \`passed\` means *eligible*, not *commanded*.
 
 ## Steps
 
@@ -109,34 +108,17 @@ The body NEVER checks the box on its own judgment, and never nags: the offer fir
 
 The body does NOT carry explore-grade thinking-partner stance prose, stage-lifecycle helpers (spin-up/close-out choreography), or retrofit guidance for converting legacy docs. Those are later rungs; v1 is create/resume + capture + render + ratification.
 
-## Run-summary emit (conversation-boundary timing, architecture trail)
+## Run-summary emit (conversation-boundary timing, architecture trail — via the engine emit surface)
 
-(Per \`orbit-run-summary-emit\` — \`/orbit:architect\` is a multi-turn conversational command; emit at conversation boundaries: user stop/pause signal, or AI-initiated wrap.)
+(Per \`orbit-run-summary-emit\` — \`/orbit:architect\` is a multi-turn conversational command; emit at conversation boundaries: user stop/pause signal, or AI-initiated wrap. Composed and written via \`orbit emit architect\` — \`orbit-emit-composition\`.)
 
-Write \`orbit/architecture/.orbit-runs/architect-<TS>.json\` (\`<TS>\` ISO-8601 UTC with hyphens; create the directory if absent — it is the FOURTH trail location, shared by all docs, never moved by change archiving):
+Compose the payload — \`final_assessment\`, \`stages_touched\`, \`rulings_captured\`, \`completions_ratified\` (may be empty), \`handoff\`, + the required nullable \`model\` — into a temp file and invoke:
 
-\`\`\`json
-{
-  "command": "architect",
-  "timestamp": "<ISO-8601 UTC>",
-  "change": null,
-  "final_assessment": "<narrative of the session>",
-  "next_recommended": "<verbatim eligibility-framed recommendation>",
-  "kind": "workflow",
-  "doc": "<doc-name>",
-  "stages_touched": ["<stage-id>", "..."],
-  "rulings_captured": ["<ruling-id>", "..."],
-  "completions_ratified": ["<stage-id>", "..."],
-  "handoff": {
-    "boot_sequence": ["<ordered pointers into existing artifacts — never duplicated substance>"],
-    "next_command": "<the one command a cold session would run first>",
-    "model_hint": "<model class suited to the next phase, or null>",
-    "seam": "<which phase seam this boundary is>"
-  }
-}
+\`\`\`bash
+orbit emit architect --doc <doc-name> --payload <payload-file>
 \`\`\`
 
-The \`handoff\` section is arc ruling R-d-9(b), complied with from birth: \`boot_sequence\` entries are POINTERS (paths + one-line why), never content copies; \`completions_ratified\` may be empty. \`/orbit:review --as architecture\` emits carry the same \`handoff\` shape (owned here).
+The ENGINE owns the spine (\`change: null\` + \`doc\`), the FOURTH trail location (\`orbit/architecture/.orbit-runs/\`, shared by all docs, never moved by change archiving), timestamp + collision handling, and mirrors the handoff's \`next_command\` into \`next_recommended\`. The \`handoff\` section is arc ruling R-d-9(b), complied with from birth: \`boot_sequence\` entries are POINTERS (paths + one-line why), never content copies; \`next_command\` is the one command a cold session would run first; \`model_hint\` and \`seam\` complete the shape. \`/orbit:review --as architecture\` emits carry the same \`handoff\` shape (owned here).
 
 ## Output at session end
 

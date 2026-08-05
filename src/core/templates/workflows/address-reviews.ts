@@ -310,6 +310,205 @@ This example has 0 CRITICAL, 0 WARNING, 1 SUGGESTION. Ingesting it via \`--from-
 The lifecycle walks this marker: pushback verifies the gap still applies → classify as \`decision required\` (out-of-scope/defer or include-in-current-change) → user makes the call → log entry written. Marker removal is no-op (no source file to delete from).
 `;
 
+const ADDRESS_REVIEWS_RESOLUTION_DETAIL_REFERENCE = `# Reference: resolution detail — discovery, batch triggers, fork detection, worked examples, degradation
+
+Moved from the body verbatim (D5 body-economy pass). The body carries the compact protocol; this file carries the full rules, tables, examples, and error shapes.
+
+## Scope resolution and auto-discovery (Step 1 detail)
+
+**Positional \`<scope>\` argument** — resolve in this order:
+
+1. **Active change**: \`orbit/changes/<scope>/\` exists → treat \`<scope>\` as a change name; grep restricted to that directory; auto-discovery available (Step (c) below).
+2. **Archived change**: no active match, but \`orbit/changes/archive/\` contains one or more entries matching the regex \`^\\d{4}-\\d{2}-\\d{2}-<scope>$\` → treat as a change name resolving to the archive directory. If multiple archive entries match the same \`<scope>\` suffix (rare; same change name archived on different dates), the lexicographically-latest date wins (most-recent archive).
+3. **Path/pattern fallback**: no active or archive match → treat as a path/pattern scope; grep restricted to that path; auto-discovery does NOT apply (no \`.orbit-runs/\` anchor).
+
+**Auto-discovery fallback** (change-name positional, no markers, no \`--from-file\`):
+
+(a) Run grep for \`@review:\` markers in the resolved change directory. If any found → walk them (current behavior; auto-discovery does NOT fire because markers already provide work).
+
+(b) If grep returns zero markers AND no \`--from-file\` flag was specified: look in the change's \`.orbit-runs/\` directory for files matching \`review-<mode>-*.json\` OR \`audit-drift-*.json\`. Pick the single most-recent file by filename \`<TS>\` token across all candidate types — review and audit-drift JSON compete on the same recency axis with NO class preference (per \`D-recency-1\`; audit-drift CAN win over review if its \`<TS>\` token is later). If two candidate files share an identical \`<TS>\` token (rare; possible only within the same ISO-second), tie-break by stable lexicographic sort of the full filename (ASCII order: \`a\` < \`r\`; within \`review-\`, \`proposal\` < \`system\` → so \`audit-drift-<TS>.json\` sorts before \`review-proposal-<TS>.json\` sorts before \`review-system-<TS>.json\`); alphabetically-earliest wins.
+
+(c) If a candidate JSON is found: feed it to the \`--from-file\` ingest path described below (content-sniff routes to JSON parser per \`references/internal-findings-format.md\`; identical lifecycle and virtual-marker construction to explicit \`--from-file\` invocation; the only difference is the resolution log's \`source\` field — see Step 5).
+
+(d) If neither markers nor JSON candidates exist: emit \`No @review: markers in scope and no internal review/audit-drift JSON in .orbit-runs/. Nothing to walk.\` and exit cleanly.
+
+**\`--mark\` is optional, not prerequisite**: historically, \`/orbit:review --as proposal --mark\` was the way to produce markers that address-reviews would later walk. Auto-discovery makes \`--mark\` purely a stylistic choice (do you want findings annotated in source for diff-readability?), NOT a structural requirement. The canonical \`/orbit:review <name>\` → \`/orbit:address-reviews <name>\` workflow works without \`--mark\` because address-reviews discovers the just-written \`review-<mode>-*.json\`.
+
+## Batch-mode trigger table (Step 3)
+
+| Trigger | Detection | \`walk_mode_source\` |
+|---|---|---|
+| **\`--batch\` flag** | Present in the invocation argv. Canonical signal. | \`"flag"\` |
+| **Verbal \`--batch\` in invocation message** | The user's invocation message (the message that triggered the command) contains one of these batch-intent phrases: \`"fix them all"\`, \`"batch them"\`, \`"go ahead with all"\`, \`"address all at once"\`, or another clearly equivalent phrase conveying batch-resolution intent. The phrase MUST be in the invocation message — phrases inside subsequent walk-step responses do NOT shift mode (see next row). | \`"verbal"\` |
+| **Mid-walk command-shape interruption** | During an active walk, the user sends a bare, unambiguous mode-switch message: \`"go batch"\`, \`"switch to batch"\`, \`"batch the rest"\`. The message must be command-shaped (typically 2-4 words, no conversational filler) — ambiguous phrases like \`"yeah let's just keep going"\` or \`"fine, fix them all"\` mid-walk do NOT shift mode. Record the 1-indexed finding number at which the shift occurred in the resolution log's \`walk_mode_shifted_at_finding\` field. | \`"command-shape-interruption"\` |
+
+## Fork detection machinery, recording shape, and trace (Step 3b.5)
+
+**Hybrid detection** (supplies the BRIEFING's option set; structured first, heuristic fallback):
+
+1. **Structured path** — if the finding came from a JSON-virtual marker (internal-review or audit-drift JSON via \`--from-file\` or auto-discovery) AND the source JSON's finding entry includes a \`recommendation_options: [{label, body}]\` array with ≥ 2 entries AND every entry has non-empty \`label\` AND non-empty \`body\`: use that array DIRECTLY as the briefing's options. Skip heuristic. Record \`recommendation_fork.source: "structured"\` in the resolution log.
+
+2. **Heuristic fallback** — if structured path was unavailable (missing field, malformed entry — see malformed-handling below) OR the marker is markdown-sourced (external markdown, inline markers): scan the finding's recommendation text for STRICT disjunctive signals. Triggers (all are non-fuzzy):
+   - **Numbered alternatives**: \`(A) … (B)\`, \`1. … 2.\`, \`[A] … [B]\`
+   - **"Either … or …"** with clause-level branches (each clause is a recognizable recommendation)
+   - **"Options:" prefix** (accepting both bold variants: \`**Options**:\` colon-outside-bold, \`**Options:**\` colon-inside-bold; normalize markdown emphasis before pattern-matching) followed by a list or numbered enumeration
+
+   **NOT triggers** — do NOT fire on loose "or" in prose: \`"fix it now or later"\`, \`"X or Y could happen"\`, \`"the issue is A or B and we should address one of them"\`. False-negative bias intentional.
+
+   On heuristic match, parse the recommendation text into options (each option becomes \`{label, body}\`; labels typically \`"A"\`, \`"B"\`, …). Record \`recommendation_fork.source: "heuristic"\` in the resolution log.
+
+3. **No detection** — neither structured nor heuristic triggered: the finding STILL gets its full-prose briefing, with 2–4 concrete options the AI derives from context surfaced IN PROSE; resolution proceeds per the same protocol. No \`recommendation_fork\` object is recorded (absence IS the no-fork representation).
+
+**Malformed structured input** (zero entries, single entry, missing \`label\` or empty \`label\`, missing \`body\` or empty \`body\`): emit a stderr warning naming the finding + reason (\`"only 1 entry in array"\`, \`"missing label on entry index 2"\`, \`"empty body on entry index 0"\`); FALL BACK to heuristic detection over the prose \`recommendation\`. Record \`recommendation_fork.source: "heuristic"\` AND \`recommendation_fork.structured_path_skipped_reason: "<reason>"\` in the resolution log. Malformed input never aborts the walk.
+
+**Ratification recording** — EVERY decision-lane resolution records, at the ENTRY level (forked or not): \`ratified_via: "chat" | "prompt"\` and — when no fork was detected, or the ratified direction is off-menu — a verbatim \`resolution\` string. The \`recommendation_fork\` object (present only when detection fired) carries the DETECTION data:
+
+\`\`\`json
+"ratified_via": "chat",
+"resolution": "<the ratified direction verbatim — required for non-fork and off-menu cases>",
+"recommendation_fork": {
+  "detected": true,
+  "source": "structured" | "heuristic",
+  "options_presented": [{ "label": "A", "body": "..." }, { "label": "B", "body": "..." }],
+  "chosen": "A" | "off-menu",
+  "structured_path_skipped_reason": "<optional; only when structured was attempted then skipped>"
+}
+\`\`\`
+
+(The \`[discuss]\` escape-hatch option is RETIRED — discussion is the medium, not an escape; \`discuss_invoked\` is no longer emitted. Pre-D4 logs carry it; readers tolerate both generations.)
+
+**Decision-lane behavior in batch-mode**: decision-lane findings STILL receive their per-finding briefing and ratification in batch-mode — batch never merges decisions into one prompt; it only suppresses per-finding pacing for obvious-fix and stale findings.
+
+**Mini decision-lane trace**:
+
+\`\`\`
+Walking finding W1 (WARNING, decision lane):
+  Title: Test suite covers ~30 of ~45 spec scenarios
+  Recommendation: "Either (A) file a follow-up issue tracking the v2 polish, or
+                  (B) add Group 19 to tasks.md extending this change's scope."
+
+Detection fired via heuristic → the BRIEFING presents both paths in prose:
+  what the coverage gap means, what each option costs, which the reviewer leaned toward.
+
+User types: "file the issue — A". That chat directive IS the ratification.
+Resolution-log entry records:
+  ratified_via: "chat",
+  recommendation_fork: {
+    detected: true, source: "heuristic",
+    options_presented: [{label: "A", body: "..."}, {label: "B", body: "..."}],
+    chosen: "A"
+  }
+
+(Had the discussion trailed off without a directive, an AskUserQuestion would fire
+carrying the discussed conclusion as its default — and a dismissed prompt would
+simply re-present the finding, losing nothing.)
+\`\`\`
+
+## Worked example (\`--from-file\` markdown ingest, iter 5 of add-review-workflows)
+
+\`\`\`
+## Address-reviews report
+
+Source: --from-file orbit/changes/add-review-workflows/.orbit-runs/external-proposal-2026-05-18T14-35-23Z.md
+External reviewer: Claude Opus 4.7 (fresh-context in-session subagent — iter 5)
+Input findings: 0 CRITICAL / 4 WARNING / 5 SUGGESTION
+Markers walked: 9 (all)
+Walk mode: per_finding (default)
+Pushback verification: all 9 verified against current state; 0 stale suppressions.
+Cascade summary: 14 IN files cascaded across 9 resolutions; 3 OUT files flagged_not_applied (2 baseline specs, 1 cross-change archive ref).
+
+### Summary
+
+| Status        | Count |
+|---------------|-------|
+| ✓ Resolved    | 9     |
+| ⚠ Stale       | 0     |
+| ⏸ Deferred    | 0     |
+| ✗ Escalated   | 0     |
+
+### ✓ Resolved
+- **proposal.md:41** — [WARNING] "five new SKILL.md + command body pairs" should be four.
+  Action: trivial fix — changed "five" to "four" + added explicit list.
+  Ripple: design.md, README.md flagged.
+
+- **design.md:159** — [WARNING] "9 capability specs" should be 8 after merge.
+  Action: trivial fix — changed 9 to 8 with parenthetical merge context.
+
+- **sketches/review.md:3** — [WARNING] corrupted filenames (sed residue from rename).
+  Action: trivial fix — restored proper filenames.
+
+- (6 more, all trivial fix or applied decision)
+
+### Final assessment
+
+0 unresolved external findings.
+Suggested next: re-run /orbit:review --as proposal to confirm convergence.
+
+Run summary: orbit/changes/add-review-workflows/.orbit-runs/address-reviews-2026-05-18T14-43-41Z.json
+\`\`\`
+
+## Worked example (\`--from-file\` JSON ingest, single SUGGESTION from a system-mode review)
+
+\`\`\`
+## Address-reviews report
+
+Source: --from-file orbit/changes/harden-export-validation/.orbit-runs/review-system-2026-05-26T20-01-08Z.json
+Source format: internal review JSON (command: "review", mode: system, iteration: 2)
+Input findings: 0 CRITICAL / 0 WARNING / 1 SUGGESTION
+Markers walked: 1 (all)
+Pushback verification: 1 verified against current state; 0 stale suppressions.
+
+### Summary
+
+| Status        | Count |
+|---------------|-------|
+| ✓ Resolved    | 1     |
+| ⚠ Stale       | 0     |
+| ⏸ Deferred    | 0     |
+| ✗ Escalated   | 0     |
+
+### ✓ Resolved
+- **<skills-dir>/orbit-review/references/run-summary-schema.md:22** — [SUGGESTION] Schema reference does not document new convergence fields emitted by iteration-aware logic.
+  Source: internal-review
+  Action: classified as \`decision required\` (out-of-scope deferral vs include-in-current-change). User chose to defer to a future change; filed as task in \`tasks.md\` referencing the schema-doc gap; original JSON unchanged (marker-removal no-op for virtual markers).
+  Ripple: orbit-review/SKILL.md flagged (consumer of the schema doc).
+
+### Final assessment
+
+0 unresolved findings.
+Suggested next: continue with current change's archive flow; the schema-doc gap is filed as a follow-up task and will be addressed in a future change.
+
+Run summary: orbit/changes/harden-export-validation/.orbit-runs/address-reviews-2026-05-26T20-XX-XXZ.json
+\`\`\`
+
+This example demonstrates the JSON path: the input is an internal \`review-system-*.json\` produced by \`/orbit:review --as system\`; auto-detect routes to the JSON parser (leading \`{\`); the single \`findings[]\` entry becomes a virtual marker; the lifecycle walks it (pushback verifies the schema gap still exists → classify as \`decision required\` → user defers → file as task → marker-removal no-op since virtual). Identical lifecycle to the markdown example above, different parser routing.
+
+## Graceful degradation
+
+- **No markers found in bare or path/pattern scope** → emit \`No @review: markers in scope. Nothing to do.\` and exit clean.
+- **No markers found in change-name scope, no candidate JSON in \`.orbit-runs/\`** → emit \`No @review: markers in scope and no internal review/audit-drift JSON in .orbit-runs/. Nothing to walk.\` and exit clean. Note: this case ONLY applies after Step 1's auto-discovery fallback has been checked; bare/path scope never reaches auto-discovery (no \`.orbit-runs/\` anchor).
+- **No markers found in change-name scope, candidate JSON in \`.orbit-runs/\` (auto-discovery fires)** → NOT a graceful-degradation case; proceed with the discovered JSON as if it had been passed via \`--from-file\` per Step 1's auto-discovery fallback.
+- **\`--from-file\` path missing** → fail clearly with usage; don't fall back to repo scan.
+- **\`--from-file\` neither-format-detected** → emit a clean format-mismatch error naming both supported formats (referencing \`references/external-findings-format.md\` and \`references/internal-findings-format.md\`) plus the observed leading-content snippet; refuse to act on partial parse. Concrete error shape:
+
+  \`\`\`
+  \`--from-file <path>\`: unrecognized format.
+
+  Supported formats:
+  - External-review markdown — see references/external-findings-format.md
+  - Internal review JSON (review-<mode>-*.json) — see references/internal-findings-format.md
+
+  Detected: <observed first-line snippet>
+  \`\`\`
+- **\`--from-file\` JSON parse failure** (leading \`{\` but invalid JSON) → emit a clean parse-error message naming the file and the JSON parse-error position (best-effort); exit without acting. User fixes the file and re-runs.
+- **\`--from-file\` unsupported JSON \`command\` field** (valid JSON but \`command\` is neither \`"review"\` nor \`"audit-drift"\`) → emit a clean error naming the supported values (\`"review"\`, \`"audit-drift"\`) and the unsupported value detected; reference both format docs for self-diagnosis; exit without acting. V1 supports \`review-<mode>-*.json\` and \`audit-drift-*.json\` only. \`command: "address-reviews"\` is rejected on purpose (cycle prevention).
+- **\`--from-file\` markdown malformed** (leading \`# External Review:\` but missing required sections / broken field labels) → emit a markdown-parse-error message with format guidance from \`references/external-findings-format.md\`; exit without acting.
+- **\`--from-file\` JSON missing \`findings[]\`** → treat as malformed input; emit a clean error naming the missing/malformed field; reference \`internal-findings-format.md\`; exit.
+- **\`--from-file\` JSON with empty \`findings: []\`** → NOT an error. Succeed with zero virtual markers; resolution log reports a clean empty walk with note \`Source JSON had no findings to walk; resolution log is informational.\` A clean review with \`findings: []\` is the expected state for an all-clear pass.
+- **No \`tasks.md\` in change context** → unresolvable-default-file-as-task falls back to creating a root-level \`TODO.md\` entry with a note.
+- **Marker found in a baseline spec** (\`orbit/specs/<capability>/\`) → warn that this is unusual; baseline specs should not carry markers; still walk it per user choice but flag in the log.
+`;
+
 const ADDRESS_REVIEWS_RUN_SUMMARY_SCHEMA_REFERENCE = `# Reference: address-reviews run-summary schema
 
 Each \`/orbit:address-reviews\` invocation persists a JSON summary. Path varies:
@@ -522,78 +721,30 @@ export function getAddressReviewsSkillTemplate(): SkillTemplate {
 
 **Input**: Optional scope (path or pattern) and optional flags. Default: whole-repo scan with safe exclusions.
 
-## Four execution disciplines (apply throughout this command)
+## Four execution disciplines (epitome)
 
-**Pushback (review-time). Primary discipline for this command.** Before fixing any marker, verify the claim against current state. Procedure:
+The four disciplines from \`orbit-conventions\`, embedded per body; detail lives in the step where each fires.
 
-1. Identify the marker's referenced symbol, name, or concept.
-2. \`grep -rn\` for current presence in expected locations (the file the marker is in, related files, baseline specs).
-3. If the symbol is absent where the marker expects it, run \`git log -S "<symbol>" --since=<window>\` (default: since the marker file's last modification) to confirm intentional removal.
-4. Read the relevant file's current content.
-5. Compare to the marker's claim and decide: **still applies** / **already fixed** / **partially applies**.
-6. On already-fixed, report the commit hash or current-content evidence as part of suppression.
-
-Do NOT re-edit already-fixed state. Stale markers get removed without further edit, with an evidence note in the resolution log.
-
-**Read-before-reference (authoring-time)**. When a marker resolution edits a file (trivial fix or applied decision), reference the actual current content of the file — read first. Don't assume the structure based on what the marker text describes; the file may have evolved since the marker was placed. Re-read after any edit cycle to confirm the change landed correctly.
-
-**Change completeness (modification-time)**. When a marker's resolution touches related artifacts (e.g., resolving a spec marker has downstream design.md / proposal.md implications), derive the **ripple-flag set** and apply parallel edits via the Step 3d ripple cascade. Cascade-by-default auto-applies edits to IN-set files (everything outside the four lifecycle-invariant OUT categories: audit trail, baseline specs, cross-change/archive, safe-exclusions); OUT-set files are recorded in \`ripple_cascade.flagged_not_applied[]\` with a structural reason. \`--no-cascade\` opts out — ALL ripple-flagged files land in \`flagged_not_applied[]\` with reason \`--no-cascade suppressed\` regardless of IN/OUT classification. After mechanical replacement as part of a trivial fix, sweep the just-touched files for residue (doubled words, broken references, content overwrites). Known residue must not be left for a downstream review to catch.
-
-**No-chaining (turn boundary)**. Invoke at most the orbit workflow commands the user's message explicitly requests — one command per explicit user request; recommend, never invoke. Completing a command ENDS the turn at the position readout and the engine's eligibility line; blanket delegation ("take it through review") covers work WITHIN the requested command, never the next command — gate \`passed\` means *eligible*, not *commanded*.
+- **Pushback (review-time) — primary here**: verify every claim against current state before acting (procedure in Step 3a); stale findings are suppressed with evidence, never re-fixed.
+- **Read-before-reference (authoring-time)**: read a file's actual current content before editing or citing it; re-read after edits to confirm they landed.
+- **Change completeness (modification-time)**: apply resolutions across ALL affected artifacts — the Step 3d ripple cascade is this discipline mechanized; sweep just-touched files for residue after mechanical edits.
+- **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — gate \`passed\` means *eligible*, not *commanded*.
 
 ## Steps
 
 ### 1. Discover (or ingest)
 
-**Discovery priority order**:
+**Discovery priority order**: (1) \`@review:\` markers in scope — always tried first; (2) if the positional resolves to a change name AND no markers found AND no \`--from-file\`: auto-discover the most-recent internal review/audit-drift JSON in the change's \`.orbit-runs/\` by filename \`<TS>\` token — review and audit-drift compete on ONE recency axis, no class preference (tie-breaks + full scope-resolution rules in \`references/resolution-detail.md\`); (3) neither → clean "no findings" exit.
 
-1. \`@review:\` markers in scope (always tried first when markers might exist — preserves current behavior)
-2. If positional resolves to a change name AND no markers found AND no \`--from-file\`: auto-discover most-recent internal review JSON or audit-drift JSON in the change's \`.orbit-runs/\`
-3. If neither markers nor JSON: clean "no findings" exit
+**Explicit \`--from-file <path>\` is always exclusive**: marker grep and auto-discovery do NOT run — the file is the ONLY input source; the positional (if any) only resolves where the emit lands.
 
-**Explicit \`--from-file <path>\` is always exclusive**: when specified, marker grep does NOT run and auto-discovery does NOT run — the parser ingests the file as the ONLY input source. The positional (if any) is used only for emit-path resolution (where the resulting \`address-reviews-<TS>.json\` is written).
+**Default — whole-repo scan** (no positional, no \`--from-file\`): \`grep -rn "@review:"\` with the safe exclusions \`.git/\`, \`node_modules/\`, \`dist/\`, \`build/\`. Auto-discovery never fires for bare invocation (no \`.orbit-runs/\` anchor).
 
-**Default — whole-repo scan** (no positional, no \`--from-file\`):
+**Positional \`<scope>\`** resolves active change → archived change (lexicographically-latest date on collision) → path/pattern fallback; \`--mark\` on the producing review is a stylistic choice, never a prerequisite — auto-discovery finds the just-written review JSON without it. (Details: \`references/resolution-detail.md\`.)
 
-\`\`\`bash
-grep -rn --include='*' "@review:" . \\
-  | grep -v '/.git/' \\
-  | grep -v '/node_modules/' \\
-  | grep -v '/dist/' \\
-  | grep -v '/build/'
-\`\`\`
+**\`--from-file\` ingest** auto-detects format by content sniff (content only — never extension): leading \`{\` → internal JSON, accepting \`command: "review"\` or \`"audit-drift"\` only (\`"address-reviews"\` rejected on purpose — cycle prevention; contract at \`references/internal-findings-format.md\`); leading \`# External Review:\` → external markdown (\`references/external-findings-format.md\`); neither → clean format-mismatch error naming both. Each finding becomes a virtual marker (\`severity\` / \`title\` / \`file:line\` / \`description\` / \`source\` tagged \`external\` / \`internal-review\` / \`audit-drift\`) walking the same lifecycle as inline markers, except Step 3e marker-removal is a no-op — the source file is an audit artifact that travels with the change into archive.
 
-Safe exclusions: \`.git/\`, \`node_modules/\`, \`dist/\`, \`build/\`. Other common build dirs may be added per project (\`.next/\`, \`target/\`, etc.). Auto-discovery does NOT apply for bare invocation — no change-directory anchor for \`.orbit-runs/\` lookup.
-
-**Positional \`<scope>\` argument** — resolve in this order:
-
-1. **Active change**: \`orbit/changes/<scope>/\` exists → treat \`<scope>\` as a change name; grep restricted to that directory; auto-discovery available (Step (c) below).
-2. **Archived change**: no active match, but \`orbit/changes/archive/\` contains one or more entries matching the regex \`^\\d{4}-\\d{2}-\\d{2}-<scope>$\` → treat as a change name resolving to the archive directory. If multiple archive entries match the same \`<scope>\` suffix (rare; same change name archived on different dates), the lexicographically-latest date wins (most-recent archive).
-3. **Path/pattern fallback**: no active or archive match → treat as a path/pattern scope; grep restricted to that path; auto-discovery does NOT apply (no \`.orbit-runs/\` anchor).
-
-**Auto-discovery fallback** (change-name positional, no markers, no \`--from-file\`):
-
-(a) Run grep for \`@review:\` markers in the resolved change directory. If any found → walk them (current behavior; auto-discovery does NOT fire because markers already provide work).
-
-(b) If grep returns zero markers AND no \`--from-file\` flag was specified: look in the change's \`.orbit-runs/\` directory for files matching \`review-<mode>-*.json\` OR \`audit-drift-*.json\`. Pick the single most-recent file by filename \`<TS>\` token across all candidate types — review and audit-drift JSON compete on the same recency axis with NO class preference (per \`D-recency-1\`; audit-drift CAN win over review if its \`<TS>\` token is later). If two candidate files share an identical \`<TS>\` token (rare; possible only within the same ISO-second), tie-break by stable lexicographic sort of the full filename (ASCII order: \`a\` < \`r\`; within \`review-\`, \`proposal\` < \`system\` → so \`audit-drift-<TS>.json\` sorts before \`review-proposal-<TS>.json\` sorts before \`review-system-<TS>.json\`); alphabetically-earliest wins.
-
-(c) If a candidate JSON is found: feed it to the \`--from-file\` ingest path described below (content-sniff routes to JSON parser per \`references/internal-findings-format.md\`; identical lifecycle and virtual-marker construction to explicit \`--from-file\` invocation; the only difference is the resolution log's \`source\` field — see Step 5).
-
-(d) If neither markers nor JSON candidates exist: emit \`No @review: markers in scope and no internal review/audit-drift JSON in .orbit-runs/. Nothing to walk.\` and exit cleanly.
-
-**\`--mark\` is optional, not prerequisite**: historically, \`/orbit:review --as proposal --mark\` was the way to produce markers that address-reviews would later walk. Auto-discovery makes \`--mark\` purely a stylistic choice (do you want findings annotated in source for diff-readability?), NOT a structural requirement. The canonical \`/orbit:review <name>\` → \`/orbit:address-reviews <name>\` workflow works without \`--mark\` because address-reviews discovers the just-written \`review-<mode>-*.json\`.
-
-**\`--from-file <path>\` ingest** (review findings file — external markdown OR internal JSON):
-
-The \`--from-file\` flag accepts TWO format families: (a) **external-review markdown** (produced by external AIs per \`/orbit:review-external\`'s prompt template), (b) **internal findings JSON** (produced by \`/orbit:review\` to \`.orbit-runs/review-<mode>-*.json\` OR by \`/orbit:audit-drift\` to its summary JSON paths). The parser auto-detects format via content sniff and routes to the appropriate parser:
-
-- **Leading \`{\`** (first non-whitespace character) → JSON parser, per the contract at \`references/internal-findings-format.md\`. V1 accepts \`command: "review"\` OR \`command: "audit-drift"\` JSON; other internal JSON commands (\`address-reviews\`, \`apply\`, \`archive\`, \`propose\`, etc.) are rejected with a clean unsupported-command error. \`command: "address-reviews"\` is rejected on purpose to prevent recursive ingest cycles.
-- **Leading \`# External Review:\`** → markdown parser, per the contract at \`references/external-findings-format.md\`. This is the only markdown format orbit produces — written by external AIs after pulling the repo + reading the \`/orbit:review-external\` prompt.
-- **Neither leading pattern matches** → emit a clean format-mismatch error naming both supported formats; refuse to act on partial parse.
-
-The sniff inspects content only — it does NOT depend on file extension or pathname. Each finding (from either format) becomes a virtual marker with the same shape: \`severity\` / \`title\` / \`file:line\` / \`description\` / \`source\` (tagged \`external\` for markdown, \`internal-review\` for \`command: "review"\` JSON, \`audit-drift\` for \`command: "audit-drift"\` JSON). Virtual markers walk the same lifecycle as inline markers, with one exception: **the marker-removal step (Step 3e below) is a no-op for virtual markers regardless of provenance** — there's no source-file marker text to delete (the JSON file or markdown file is an audit artifact that travels with the change into archive; removing it on resolution would be wrong).
-
-**Fresh pushback applies to JSON virtual markers** (both review and audit-drift): the source JSON's own \`stale_suppressed[]\` array already filtered stale findings at source-run time, but state may have changed between the source run and the resolve. The Step 3a pushback verification (per the primary discipline above) runs for every virtual marker — JSON-sourced or markdown-sourced — to catch staleness introduced since the source pass.
+**Fresh pushback applies to every virtual marker**: the source's own \`stale_suppressed[]\` filtered at source-run time, but state may have changed since; Step 3a runs regardless of provenance.
 
 ### 2. Triage
 
@@ -615,21 +766,20 @@ Mark external-sourced entries explicitly (\`(external)\` prefix). The triage OPE
 
 **Walk-mode is the default**: each marker receives its own complete inner cycle — pushback → classify → resolve per LANE → ripple-cascade → remove-marker — before the next marker's pushback begins. Obvious-fix findings (previewed at triage) apply with no prompt and no discussion; decision-lane findings follow the present → discuss → ratify protocol (3b.5). There is NO mandatory per-finding \`AskUserQuestion\`. The user can interrupt between markers; the resolution log captures partial completion if interrupted.
 
-**Batch-mode is opt-in** via one of three triggers (mutually-exclusive — first match wins; resolution log records which fired in \`walk_mode_source\`):
-
-| Trigger | Detection | \`walk_mode_source\` |
-|---|---|---|
-| **\`--batch\` flag** | Present in the invocation argv. Canonical signal. | \`"flag"\` |
-| **Verbal \`--batch\` in invocation message** | The user's invocation message (the message that triggered the command) contains one of these batch-intent phrases: \`"fix them all"\`, \`"batch them"\`, \`"go ahead with all"\`, \`"address all at once"\`, or another clearly equivalent phrase conveying batch-resolution intent. The phrase MUST be in the invocation message — phrases inside subsequent walk-step responses do NOT shift mode (see next row). | \`"verbal"\` |
-| **Mid-walk command-shape interruption** | During an active walk, the user sends a bare, unambiguous mode-switch message: \`"go batch"\`, \`"switch to batch"\`, \`"batch the rest"\`. The message must be command-shaped (typically 2-4 words, no conversational filler) — ambiguous phrases like \`"yeah let's just keep going"\` or \`"fine, fix them all"\` mid-walk do NOT shift mode. Record the 1-indexed finding number at which the shift occurred in the resolution log's \`walk_mode_shifted_at_finding\` field. | \`"command-shape-interruption"\` |
-
-In batch-mode, all markers complete \`pushback + classify + resolve\` in one pass before any ripple-cascade fires; ripples are applied once at the end as a single aggregated step. **Decision-lane findings STILL get their per-finding briefing and ratification** even in batch-mode — batch never merges decisions into one prompt; it only suppresses per-finding pacing for obvious-fix and stale findings.
+**Batch-mode is opt-in** via one of three mutually-exclusive triggers (first match wins; recorded in \`walk_mode_source\`): the \`--batch\` flag (\`"flag"\`), a batch-intent phrase in the INVOCATION message itself — never in a later walk response (\`"fix them all"\`, \`"batch them"\`, … → \`"verbal"\`), or a bare command-shaped mid-walk switch (\`"go batch"\` → \`"command-shape-interruption"\`, recording the 1-indexed \`walk_mode_shifted_at_finding\`). Ambiguous mid-walk phrases (\`"fine, fix them all"\`) never shift mode; the full trigger table lives in \`references/resolution-detail.md\`. In batch-mode, all markers complete pushback + classify + resolve before ripples apply once as a single aggregated step — and decision-lane findings STILL get their per-finding briefing and ratification; batch never merges decisions into one prompt, it only suppresses per-finding pacing for obvious-fix and stale findings.
 
 For every marker in the chosen scope, execute the lifecycle below sequentially.
 
-#### 3a. Apply pushback (primary discipline above)
+#### 3a. Apply pushback (primary discipline)
 
-Run the verification procedure. Determine: still applies / already fixed / partially applies.
+Run the verification procedure:
+
+1. Identify the marker's referenced symbol, name, or concept.
+2. \`grep -rn\` for current presence in expected locations (the marker's file, related files, baseline specs).
+3. If the symbol is absent where the marker expects it, \`git log -S "<symbol>" --since=<window>\` (default: since the marker file's last modification) to confirm intentional removal.
+4. Read the relevant file's current content and compare to the marker's claim.
+5. Decide: **still applies** / **already fixed** / **partially applies**.
+6. On already-fixed, record the commit hash or current-content evidence as part of suppression — the marker is removed without further edit; never re-edit already-fixed state.
 
 #### 3b. Classify
 
@@ -646,66 +796,9 @@ Apply heuristics in order:
 
 The lane's protocol (D-arc Stage D4): (1) **PRESENT** — a FULL-PROSE briefing in chat: what the finding means, why it matters, terminology level-setting where concepts are novel, and the concrete options with real tradeoffs. The briefing is the presentation — option content is never confined to prompt labels. (2) **DISCUSS** — genuine back-and-forth for as many exchanges as the finding needs (zero exchanges is legitimate for crisp cases). (3) **RATIFY** — a direction the user types in chat IS ratification (user-typed provenance, the consent model's strongest signal); the \`AskUserQuestion\` is an OPTIONAL CLOSURE DEVICE, fired only AFTER the finding's discussion concludes without a crisp user directive (never before the briefing, never mid-discussion), carrying the discussed conclusion as its default option. A dismissed or inconclusive prompt RE-PRESENTS the finding — the walk position and briefing context are never lost. The prompt NEVER precedes the briefing, and one prompt NEVER spans multiple findings (batch prompts are prohibited). **Batch DELEGATION** — an explicit user directive compressing the lane ("handle the rest, only brief me on real decisions") — remains the user's prerogative and is recorded verbatim in the resolution log's top-level \`delegation_directive\`.
 
-**Hybrid detection** (supplies the BRIEFING's option set; structured first, heuristic fallback):
+**Hybrid detection** supplies the briefing's option set — structured first: a well-formed \`recommendation_options: [{label, body}]\` array with ≥ 2 complete entries is used DIRECTLY (\`recommendation_fork.source: "structured"\`); otherwise a STRICT-disjunctive heuristic over the prose recommendation (numbered alternatives / clause-level "Either … or …" / an "Options:" prefix — never loose "or"; \`source: "heuristic"\`). Malformed structured input warns on stderr and falls back to heuristic with \`structured_path_skipped_reason\` recorded; it never aborts the walk. No detection at all: the finding STILL gets its full-prose briefing with 2–4 AI-derived options, and NO \`recommendation_fork\` object is recorded (absence IS the no-fork representation).
 
-1. **Structured path** — if the finding came from a JSON-virtual marker (internal-review or audit-drift JSON via \`--from-file\` or auto-discovery) AND the source JSON's finding entry includes a \`recommendation_options: [{label, body}]\` array with ≥ 2 entries AND every entry has non-empty \`label\` AND non-empty \`body\`: use that array DIRECTLY as the briefing's options. Skip heuristic. Record \`recommendation_fork.source: "structured"\` in the resolution log.
-
-2. **Heuristic fallback** — if structured path was unavailable (missing field, malformed entry — see malformed-handling below) OR the marker is markdown-sourced (external markdown, inline markers): scan the finding's recommendation text for STRICT disjunctive signals. Triggers (all are non-fuzzy):
-   - **Numbered alternatives**: \`(A) … (B)\`, \`1. … 2.\`, \`[A] … [B]\`
-   - **"Either … or …"** with clause-level branches (each clause is a recognizable recommendation)
-   - **"Options:" prefix** (accepting both bold variants: \`**Options**:\` colon-outside-bold, \`**Options:**\` colon-inside-bold; normalize markdown emphasis before pattern-matching) followed by a list or numbered enumeration
-
-   **NOT triggers** — do NOT fire on loose "or" in prose: \`"fix it now or later"\`, \`"X or Y could happen"\`, \`"the issue is A or B and we should address one of them"\`. False-negative bias intentional.
-
-   On heuristic match, parse the recommendation text into options (each option becomes \`{label, body}\`; labels typically \`"A"\`, \`"B"\`, …). Record \`recommendation_fork.source: "heuristic"\` in the resolution log.
-
-3. **No detection** — neither structured nor heuristic triggered: the finding STILL gets its full-prose briefing, with 2–4 concrete options the AI derives from context surfaced IN PROSE; resolution proceeds per the same protocol. No \`recommendation_fork\` object is recorded (absence IS the no-fork representation).
-
-**Malformed structured input** (zero entries, single entry, missing \`label\` or empty \`label\`, missing \`body\` or empty \`body\`): emit a stderr warning naming the finding + reason (\`"only 1 entry in array"\`, \`"missing label on entry index 2"\`, \`"empty body on entry index 0"\`); FALL BACK to heuristic detection over the prose \`recommendation\`. Record \`recommendation_fork.source: "heuristic"\` AND \`recommendation_fork.structured_path_skipped_reason: "<reason>"\` in the resolution log. Malformed input never aborts the walk.
-
-**Ratification recording** — EVERY decision-lane resolution records, at the ENTRY level (forked or not): \`ratified_via: "chat" | "prompt"\` and — when no fork was detected, or the ratified direction is off-menu — a verbatim \`resolution\` string. The \`recommendation_fork\` object (present only when detection fired) carries the DETECTION data:
-
-\`\`\`json
-"ratified_via": "chat",
-"resolution": "<the ratified direction verbatim — required for non-fork and off-menu cases>",
-"recommendation_fork": {
-  "detected": true,
-  "source": "structured" | "heuristic",
-  "options_presented": [{ "label": "A", "body": "..." }, { "label": "B", "body": "..." }],
-  "chosen": "A" | "off-menu",
-  "structured_path_skipped_reason": "<optional; only when structured was attempted then skipped>"
-}
-\`\`\`
-
-(The \`[discuss]\` escape-hatch option is RETIRED — discussion is the medium, not an escape; \`discuss_invoked\` is no longer emitted. Pre-D4 logs carry it; readers tolerate both generations.)
-
-**Decision-lane behavior in batch-mode**: decision-lane findings STILL receive their per-finding briefing and ratification in batch-mode — batch never merges decisions into one prompt; it only suppresses per-finding pacing for obvious-fix and stale findings.
-
-**Mini decision-lane trace**:
-
-\`\`\`
-Walking finding W1 (WARNING, decision lane):
-  Title: Test suite covers ~30 of ~45 spec scenarios
-  Recommendation: "Either (A) file a follow-up issue tracking the v2 polish, or
-                  (B) add Group 19 to tasks.md extending this change's scope."
-
-Detection fired via heuristic → the BRIEFING presents both paths in prose:
-  what the coverage gap means, what each option costs, which the reviewer leaned toward.
-
-User types: "file the issue — A". That chat directive IS the ratification.
-Resolution-log entry records:
-  ratified_via: "chat",
-  recommendation_fork: {
-    detected: true, source: "heuristic",
-    options_presented: [{label: "A", body: "..."}, {label: "B", body: "..."}],
-    chosen: "A"
-  }
-
-(Had the discussion trailed off without a directive, an AskUserQuestion would fire
-carrying the discussed conclusion as its default — and a dismissed prompt would
-simply re-present the finding, losing nothing.)
-\`\`\`
-
+**Ratification recording** — every decision-lane resolution records \`ratified_via: "chat" | "prompt"\` at the ENTRY level, plus a verbatim \`resolution\` string when no fork was detected or the ratified direction is off-menu; the \`recommendation_fork\` object (when detection fired) carries the detection data. Exact trigger rules, malformed-input handling, the recording shape, and a mini decision-lane trace: \`references/resolution-detail.md\`. (The \`[discuss]\` escape hatch is RETIRED — discussion is the medium; pre-D4 logs carry it, readers tolerate both generations.)
 
 #### 3c. Apply the fix
 
@@ -733,14 +826,7 @@ If the resolution edited a normative artifact, compute the ripple-flag set — f
 
 **\`--no-cascade\` flag** (opt-out): when set, NO ripples are edited regardless of IN/OUT classification. ALL ripple-flagged files are recorded under \`ripple_cascade.flagged_not_applied[]\` with reason \`--no-cascade suppressed\`. Use case: user wants to inspect the ripple set before allowing edits.
 
-**Cascade trusts the ripple-flag analysis**: cascade does NOT make independent "should this file be touched?" judgments beyond the four-category OUT check. The contextual scope judgment ("is this file relevant to my finding?") lives in the earlier ripple-flag-derivation step — if ripple-flag analysis didn't surface a file, cascade doesn't touch it.
-
-**Reason-code source distinction** (per spec's mode invariants):
-
-- **Structural OUT-category reasons** (the four codes in the table above): fire when cascade was ON but the file matched an OUT prefix.
-- **Mode-suppression reason** (\`--no-cascade suppressed\`): fires uniformly for ALL ripple-flagged files when \`--no-cascade\` is set, regardless of IN/OUT classification.
-
-The two source categories are structurally distinct — \`--no-cascade suppressed\` is NOT a fifth OUT category.
+**Cascade trusts the ripple-flag analysis** — no independent "should this file be touched?" judgments beyond the four-category OUT check; if analysis didn't surface a file, cascade doesn't touch it. \`--no-cascade suppressed\` is a mode-suppression reason that fires uniformly when the flag is set — NOT a fifth OUT category (structural OUT reasons fire only when cascade was ON).
 
 #### 3e. Remove the marker (invariant)
 
@@ -811,13 +897,13 @@ The final-assessment line summarizes remaining-in-scope markers (0 if clean) plu
 
 ### 6. Persist the run summary
 
-Write JSON to:
+Compose the payload — narrative + per-command extension fields ONLY; \`references/run-summary-schema.md\` lists what the AI supplies. The ENGINE owns the spine, the iteration ordinal, \`next_recommended\` composition, filename + collision handling, and the write gate. Write the payload to a temp file and invoke:
 
-- **Change-scoped** (when scope is a single change directory or \`--from-file\` points into a change's \`.orbit-runs/\`): \`orbit/changes/<change-name>/.orbit-runs/address-reviews-<TS>.json\`
-- **Architecture-scoped** (when \`--from-file\` points into \`orbit/architecture/.orbit-runs/\` — a \`review-architecture-*.json\` emit): \`orbit/architecture/.orbit-runs/address-reviews-<TS>.json\` with \`change: null\` and the \`doc\` carried from the source emit (routing the log elsewhere would split the architecture evidence chain the review standing depends on — D-arc Stage D2)
-- **Whole-repo / cross-change**: \`orbit/.orbit-runs/address-reviews-<TS>.json\`
+\`\`\`bash
+orbit emit address-reviews --change <name> --payload <payload-file>
+\`\`\`
 
-Full schema (fields, types, semantics) lives at \`references/run-summary-schema.md\` — read that file when composing the summary.
+Architecture-scoped ingest (the source was a \`review-architecture-*.json\` emit): \`--doc <doc-name>\` instead of \`--change\` — the log lands on \`orbit/architecture/.orbit-runs/\` with \`change: null\`, keeping the architecture evidence chain whole. Whole-repo / cross-change walks with no change anchor: write \`orbit/.orbit-runs/address-reviews-<TS>.json\` by hand per the schema reference (the emit surface targets change and doc scopes).
 
 ## Marker syntax across file types
 
@@ -843,109 +929,13 @@ Adjacent forms (same discovery grep, different semantics):
 - **Cascade by default; \`--no-cascade\` opts out.** Ripple-flagged files in the IN set (everything outside the four lifecycle-invariant OUT categories — audit trail, baseline specs, cross-change/archive dirs, safe-exclusions) are auto-edited per Step 3d. File extension is NOT a discriminator.
 - **Walk-mode by default; \`--batch\` opts in.** Each marker gets its own complete pushback → classify → fix → cascade → remove cycle. Batch-mode triggers via \`--batch\` flag, verbal phrase in the invocation message, or a bare command-shape interruption mid-walk (per Step 3 trigger table).
 
-## Worked example (\`--from-file\` markdown ingest, iter 5 of add-review-workflows)
+## Worked examples
 
-\`\`\`
-## Address-reviews report
-
-Source: --from-file orbit/changes/add-review-workflows/.orbit-runs/external-proposal-2026-05-18T14-35-23Z.md
-External reviewer: Claude Opus 4.7 (fresh-context in-session subagent — iter 5)
-Input findings: 0 CRITICAL / 4 WARNING / 5 SUGGESTION
-Markers walked: 9 (all)
-Walk mode: per_finding (default)
-Pushback verification: all 9 verified against current state; 0 stale suppressions.
-Cascade summary: 14 IN files cascaded across 9 resolutions; 3 OUT files flagged_not_applied (2 baseline specs, 1 cross-change archive ref).
-
-### Summary
-
-| Status        | Count |
-|---------------|-------|
-| ✓ Resolved    | 9     |
-| ⚠ Stale       | 0     |
-| ⏸ Deferred    | 0     |
-| ✗ Escalated   | 0     |
-
-### ✓ Resolved
-- **proposal.md:41** — [WARNING] "five new SKILL.md + command body pairs" should be four.
-  Action: trivial fix — changed "five" to "four" + added explicit list.
-  Ripple: design.md, README.md flagged.
-
-- **design.md:159** — [WARNING] "9 capability specs" should be 8 after merge.
-  Action: trivial fix — changed 9 to 8 with parenthetical merge context.
-
-- **sketches/review.md:3** — [WARNING] corrupted filenames (sed residue from rename).
-  Action: trivial fix — restored proper filenames.
-
-- (6 more, all trivial fix or applied decision)
-
-### Final assessment
-
-0 unresolved external findings.
-Suggested next: re-run /orbit:review --as proposal to confirm convergence.
-
-Run summary: orbit/changes/add-review-workflows/.orbit-runs/address-reviews-2026-05-18T14-43-41Z.json
-\`\`\`
-
-## Worked example (\`--from-file\` JSON ingest, single SUGGESTION from a system-mode review)
-
-\`\`\`
-## Address-reviews report
-
-Source: --from-file orbit/changes/harden-export-validation/.orbit-runs/review-system-2026-05-26T20-01-08Z.json
-Source format: internal review JSON (command: "review", mode: system, iteration: 2)
-Input findings: 0 CRITICAL / 0 WARNING / 1 SUGGESTION
-Markers walked: 1 (all)
-Pushback verification: 1 verified against current state; 0 stale suppressions.
-
-### Summary
-
-| Status        | Count |
-|---------------|-------|
-| ✓ Resolved    | 1     |
-| ⚠ Stale       | 0     |
-| ⏸ Deferred    | 0     |
-| ✗ Escalated   | 0     |
-
-### ✓ Resolved
-- **<skills-dir>/orbit-review/references/run-summary-schema.md:22** — [SUGGESTION] Schema reference does not document new convergence fields emitted by iteration-aware logic.
-  Source: internal-review
-  Action: classified as \`decision required\` (out-of-scope deferral vs include-in-current-change). User chose to defer to a future change; filed as task in \`tasks.md\` referencing the schema-doc gap; original JSON unchanged (marker-removal no-op for virtual markers).
-  Ripple: orbit-review/SKILL.md flagged (consumer of the schema doc).
-
-### Final assessment
-
-0 unresolved findings.
-Suggested next: continue with current change's archive flow; the schema-doc gap is filed as a follow-up task and will be addressed in a future change.
-
-Run summary: orbit/changes/harden-export-validation/.orbit-runs/address-reviews-2026-05-26T20-XX-XXZ.json
-\`\`\`
-
-This example demonstrates the JSON path: the input is an internal \`review-system-*.json\` produced by \`/orbit:review --as system\`; auto-detect routes to the JSON parser (leading \`{\`); the single \`findings[]\` entry becomes a virtual marker; the lifecycle walks it (pushback verifies the schema gap still exists → classify as \`decision required\` → user defers → file as task → marker-removal no-op since virtual). Identical lifecycle to the markdown example above, different parser routing.
+Two full ingest walkthroughs — a \`--from-file\` external-markdown nine-finding walk and a single-SUGGESTION internal-JSON walk — live in \`references/resolution-detail.md\`.
 
 ## Graceful degradation
 
-- **No markers found in bare or path/pattern scope** → emit \`No @review: markers in scope. Nothing to do.\` and exit clean.
-- **No markers found in change-name scope, no candidate JSON in \`.orbit-runs/\`** → emit \`No @review: markers in scope and no internal review/audit-drift JSON in .orbit-runs/. Nothing to walk.\` and exit clean. Note: this case ONLY applies after Step 1's auto-discovery fallback has been checked; bare/path scope never reaches auto-discovery (no \`.orbit-runs/\` anchor).
-- **No markers found in change-name scope, candidate JSON in \`.orbit-runs/\` (auto-discovery fires)** → NOT a graceful-degradation case; proceed with the discovered JSON as if it had been passed via \`--from-file\` per Step 1's auto-discovery fallback.
-- **\`--from-file\` path missing** → fail clearly with usage; don't fall back to repo scan.
-- **\`--from-file\` neither-format-detected** → emit a clean format-mismatch error naming both supported formats (referencing \`references/external-findings-format.md\` and \`references/internal-findings-format.md\`) plus the observed leading-content snippet; refuse to act on partial parse. Concrete error shape:
-
-  \`\`\`
-  \`--from-file <path>\`: unrecognized format.
-
-  Supported formats:
-  - External-review markdown — see references/external-findings-format.md
-  - Internal review JSON (review-<mode>-*.json) — see references/internal-findings-format.md
-
-  Detected: <observed first-line snippet>
-  \`\`\`
-- **\`--from-file\` JSON parse failure** (leading \`{\` but invalid JSON) → emit a clean parse-error message naming the file and the JSON parse-error position (best-effort); exit without acting. User fixes the file and re-runs.
-- **\`--from-file\` unsupported JSON \`command\` field** (valid JSON but \`command\` is neither \`"review"\` nor \`"audit-drift"\`) → emit a clean error naming the supported values (\`"review"\`, \`"audit-drift"\`) and the unsupported value detected; reference both format docs for self-diagnosis; exit without acting. V1 supports \`review-<mode>-*.json\` and \`audit-drift-*.json\` only. \`command: "address-reviews"\` is rejected on purpose (cycle prevention).
-- **\`--from-file\` markdown malformed** (leading \`# External Review:\` but missing required sections / broken field labels) → emit a markdown-parse-error message with format guidance from \`references/external-findings-format.md\`; exit without acting.
-- **\`--from-file\` JSON missing \`findings[]\`** → treat as malformed input; emit a clean error naming the missing/malformed field; reference \`internal-findings-format.md\`; exit.
-- **\`--from-file\` JSON with empty \`findings: []\`** → NOT an error. Succeed with zero virtual markers; resolution log reports a clean empty walk with note \`Source JSON had no findings to walk; resolution log is informational.\` A clean review with \`findings: []\` is the expected state for an all-clear pass.
-- **No \`tasks.md\` in change context** → unresolvable-default-file-as-task falls back to creating a root-level \`TODO.md\` entry with a note.
-- **Marker found in a baseline spec** (\`orbit/specs/<capability>/\`) → warn that this is unusual; baseline specs should not carry markers; still walk it per user choice but flag in the log.
+Every no-input, malformed-input, and unsupported-format case exits clean with a named error; the exact messages and error shapes live in \`references/resolution-detail.md\`. Two worth knowing at triage: an empty \`findings: []\` JSON is NOT an error (a clean informational walk report), and a marker found in a baseline spec (\`orbit/specs/<capability>/\`) is flagged as unusual but walked per user choice.
 `,
     references: [
       {
@@ -955,6 +945,10 @@ This example demonstrates the JSON path: the input is an internal \`review-syste
       {
         name: 'internal-findings-format.md',
         content: ADDRESS_REVIEWS_INTERNAL_FINDINGS_FORMAT_REFERENCE,
+      },
+      {
+        name: 'resolution-detail.md',
+        content: ADDRESS_REVIEWS_RESOLUTION_DETAIL_REFERENCE,
       },
       {
         name: 'run-summary-schema.md',

@@ -106,8 +106,9 @@ describe('profile sync drift detection', () => {
   it('detects reference drift: undesired references/ root on a reference-less skill', () => {
     setupCoreSkills(tempDir);
     setupCoreCommands(tempDir);
+    // orbit-propose declares no references (explore gained capture-formats.md in D5)
     fs.mkdirSync(
-      path.join(tempDir, '.claude', 'skills', 'orbit-explore', 'references'),
+      path.join(tempDir, '.claude', 'skills', 'orbit-propose', 'references'),
       { recursive: true }
     );
 

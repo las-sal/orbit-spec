@@ -116,15 +116,14 @@ After completing all artifacts, summarize:
 
 The sections below describe orbit-specific additions on top of upstream's standalone propose flow. The upstream content above is unchanged. Orbit adds a **consume mode** that activates when \`orbit/explore/<name>/explore.md\` exists from a prior \`/orbit:explore\` session — the exploration becomes the authoritative seed for artifact generation rather than asking the user for a description.
 
-## Four execution disciplines (apply throughout this command)
+## Four execution disciplines (epitome)
 
-**Read-before-reference (authoring-time)**. When generating artifacts (proposal/design/specs/tasks) that reference specific constructs in the codebase, read the actual definitions first. Don't infer function signatures, file paths, or capability names from training-data patterns. The artifacts you generate become the normative contract; false-precision references corrupt that contract.
+The four disciplines from \`orbit-conventions\`, embedded per body; detail lives where each fires.
 
-**Change completeness (modification-time)**. In consume mode, the section-mapping from \`explore.md\` → generated artifacts is a substantive modification. Apply it fully: if a Decision informs both a spec requirement AND a design entry AND a task, write all three. If an Open question becomes a \`@review:\` marker, insert it in the relevant artifact (don't just note it in explore.md and forget the marker). After artifact generation but before the staging-directory move, sweep for incomplete propagation.
-
-**Pushback (review-time)**. When mid-generation the user pushes back on something (e.g., "that decision actually changed in the last conversation"), verify against current state of \`explore.md\` and the conversation before re-editing. If the explore.md content is current, ask the user whether to update it or to override for this generation. Don't silently diverge from the captured exploration.
-
-**No-chaining (turn boundary)**. Invoke at most the orbit workflow commands the user's message explicitly requests — one command per explicit user request; recommend, never invoke. Completing a command ENDS the turn at the position readout and the engine's eligibility line; blanket delegation ("take it through review") covers work WITHIN the requested command, never the next command — gate \`passed\` means *eligible*, not *commanded*.
+- **Read-before-reference (authoring-time)**: read a construct's actual definition before naming it; unverifiable → ask or leave a \`@review:\` marker, never guess.
+- **Change completeness (modification-time)**: apply substantive modifications fully across ALL affected artifacts; after mechanical edits, sweep for residue AND new bugs the replacement introduced.
+- **Pushback (review-time)**: verify each flagged issue against current state before acting; suppress stale findings with evidence rather than re-fixing already-fixed state.
+- **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — gate \`passed\` means *eligible*, not *commanded*.
 
 ## Mode detection (NEW Step 0 — runs before upstream Step 1)
 
@@ -251,48 +250,20 @@ detect a parallel change landing on the same requirements (no silent spec data-l
 - If delta specs are edited again later in the session, re-run the stamp so newly touched
   requirements gain fingerprints too (still add-missing-only; safe to repeat).
 
-## Run-summary emit (one-shot at command completion)
+## Run-summary emit (one-shot at command completion — via the engine emit surface)
 
-(Per \`orbit-run-summary-emit\` capability)
+(Per \`orbit-run-summary-emit\`; composed and written via \`orbit emit propose\` — \`orbit-emit-composition\`.)
 
-\`/orbit:propose\` is a one-shot command per \`orbit-run-summary-emit\`'s \`Emit timing semantics\` requirement (emit ONCE on natural command completion). After all artifacts are generated and any staging-directory move has completed, write:
+At command completion, compose the narrative payload (\`final_assessment\` + the required nullable \`model\`) into a temp file and invoke:
 
-\`\`\`
-orbit/changes/<name>/.orbit-runs/propose-<TS>.json
-\`\`\`
-
-Where \`<TS>\` is ISO-8601 UTC with hyphens (e.g., \`propose-2026-05-21T13-34-12Z.json\`). Create \`.orbit-runs/\` if it doesn't exist.
-
-### JSON shape
-
-Per the universal spine in \`orbit-conventions\`'s \`Internal-run JSON summary format\` + per-command extensions:
-
-\`\`\`json
-{
-  "command": "propose",
-  "timestamp": "<ISO-8601 UTC>",
-  "change": "<name>",
-  "final_assessment": "<narrative, e.g., 'Generated proposal/design/tasks/specs for <name>; consumed prior explore.md (X decisions seeded).'>",
-  "next_recommended": "/orbit:review <name> — proposal artifacts ready; review before apply",
-  "kind": "workflow",
-  "artifacts_created": ["proposal", "design", "tasks", "specs/<capability>"],
-  "delta_count": <int — sum of ADDED/MODIFIED/REMOVED/RENAMED requirements across all spec deltas>,
-  "from": "explore" | "scratch"
-}
+\`\`\`bash
+orbit emit propose --change <name> --payload <payload-file>
 \`\`\`
 
-Field notes:
-- \`artifacts_created\` lists artifact IDs actually written (proposal, design, tasks, specs/\`<capability>\`). Use the capability-specific paths under \`specs/\`.
-- \`delta_count\` totals normative requirements across spec delta files; helps downstream tools answer "is this change small or large?"
-- \`from\`: \`"explore"\` for consume-mode (explore.md existed and was promoted), \`"scratch"\` for standalone-mode (no prior explore).
-
-### \`next_recommended\` — always recommend review next
-
-Per \`orbit-run-summary-emit\`'s \`Propose-shaped and artifact-completion-aware recommendation logic\` requirement, propose ALWAYS recommends \`/orbit:review\` next, never \`/orbit:apply\` directly. Even if the user is confident the artifacts are ready, the canonical orbit flow is propose → review → apply, with review acting as the pre-apply checkpoint.
+The ENGINE owns the spine, the trail path, timestamp + collision handling, and \`next_recommended\` composition (propose-shaped: the review-gate pointer). Never hand-compose the JSON.
 
 **Completion-prompt override (chat)**: where the upstream steps above prompt "Run \`/orbit:apply\` or ask me to implement", instead prompt: "Run \`/orbit:review <name>\` — review the artifacts before implementation." The upstream text above is kept verbatim; this override is the operative instruction.
-
-A downstream status reader parses the leading \`/orbit:review <name>\` token into \`command\`/\`args\`.`,
+`,
     license: 'MIT',
     compatibility: 'Requires orbit CLI.',
     metadata: { author: 'openspec', version: '1.0' },

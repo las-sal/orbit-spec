@@ -122,14 +122,14 @@ For other schemas, follow the \`instruction\` field from the CLI output.
 
 # Orbit additions
 
-## Four execution disciplines (apply throughout this command)
+## Four execution disciplines (epitome)
 
-The four execution disciplines from \`orbit-conventions\` bracket the authoring lifecycle; they're embedded in every orbit command for self-contained reliability.
+The four disciplines from \`orbit-conventions\`, embedded per body; detail lives where each fires.
 
-- **Read-before-reference (authoring-time)**: before naming a specific construct (function, type, file path, capability, spec requirement, command flag), read its actual definition — never infer a plausible reference. If you can't verify, ask the user or leave a \`@review:\` marker instead of guessing.
-- **Change completeness (modification-time)**: apply substantive modifications fully across ALL affected artifacts before calling them done; after mechanical edits, sweep for residue the pattern missed AND new bugs the replacement introduced.
+- **Read-before-reference (authoring-time)**: read a construct's actual definition before naming it; unverifiable → ask or leave a \`@review:\` marker, never guess.
+- **Change completeness (modification-time)**: apply substantive modifications fully across ALL affected artifacts; after mechanical edits, sweep for residue AND new bugs the replacement introduced.
 - **Pushback (review-time)**: verify each flagged issue against current state before acting; suppress stale findings with evidence rather than re-fixing already-fixed state.
-- **No-chaining (turn boundary)**: invoke at most the orbit workflow commands the user's message explicitly requests — one command per explicit request; recommend, never invoke. Completing a command ENDS the turn at the position readout and the engine's eligibility line; blanket delegation ("take it through review") covers work WITHIN the requested command, never the next one — gate \`passed\` means *eligible*, not *commanded*.
+- **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — gate \`passed\` means *eligible*, not *commanded*.
 
 ## Base-fingerprint capture (NEW step — fires when the created artifact is \`specs\`)
 
@@ -150,46 +150,20 @@ ADDED-only changes stamp nothing; a "skipped — requirement not found in live b
 means the delta references a nonexistent requirement (fix the delta; validation also catches it).
 For artifacts other than \`specs\`, skip this step.
 
-## Run-summary emit (one-shot at command completion)
+## Run-summary emit (one-shot at command completion — via the engine emit surface)
 
-(Per \`orbit-run-summary-emit\` capability)
+(Per \`orbit-run-summary-emit\`; composed and written via \`orbit emit continue\` — \`orbit-emit-composition\`.)
 
-\`/orbit:continue\` is a one-shot command per \`orbit-run-summary-emit\`'s \`Emit timing semantics\` requirement (emit ONCE on natural command completion). After the next missing artifact is generated (or all artifacts are now present), write:
+At command completion, compose the narrative payload (\`final_assessment\` + the required nullable \`model\`) into a temp file and invoke:
 
-\`\`\`
-orbit/changes/<name>/.orbit-runs/continue-<TS>.json
-\`\`\`
-
-Where \`<TS>\` is ISO-8601 UTC with hyphens. Create \`.orbit-runs/\` if it doesn't exist. The filename prefix is \`continue-\` (NOT \`propose-\`) to preserve entry-point provenance.
-
-### JSON shape
-
-Per the universal spine in \`orbit-conventions\`'s \`Internal-run JSON summary format\` + per-command extensions:
-
-\`\`\`json
-{
-  "command": "continue",
-  "timestamp": "<ISO-8601 UTC>",
-  "change": "<name>",
-  "final_assessment": "<narrative, e.g., 'Generated design.md; tasks.md still pending.'>",
-  "next_recommended": "<per artifact-completeness rule below>",
-  "kind": "workflow",
-  "artifacts_created": ["<artifact added this session, e.g., 'design'>"],
-  "delta_count": <int — running total across all spec deltas if specs are present>,
-  "from": "continued"
-}
+\`\`\`bash
+orbit emit continue --change <name> --payload <payload-file>
 \`\`\`
 
-### \`next_recommended\` — artifact-completeness-aware
+The ENGINE owns the spine, the trail path, timestamp + collision handling, and \`next_recommended\` composition (completion-aware: continue-vs-review from artifact state). Never hand-compose the JSON.
 
-Per \`orbit-run-summary-emit\`'s \`Propose-shaped and artifact-completion-aware recommendation logic\` requirement, defer to upstream \`orbit status --change <name> --json\`'s \`isComplete\` field (the same field upstream \`orbit-continue-change\` uses to gate completion). This keeps the recommendation schema-agnostic:
-
-- **\`isComplete: true\`** (all required artifacts present): \`next_recommended: "/orbit:review <name> — all proposal artifacts now present"\`
-- **\`isComplete: false\`** (more artifacts pending): \`next_recommended: "/orbit:continue <name> — <next missing artifact> still pending"\` (where \`<next missing artifact>\` is the first entry in upstream's \`artifacts\` array with \`status: "ready"\` — the array is sorted by build order; \`applyRequires\` is the terminal pre-apply requirement set, not the next-artifact queue)
-
-A downstream status reader parses the leading \`/orbit:<verb> <name>\` token into \`command\`/\`args\`.
-
-**Completion-prompt override (chat)**: where the upstream steps above suggest "implement this change or archive it" once all artifacts exist, instead suggest: "All artifacts created — run \`/orbit:review <name>\` before implementation."`,
+**Completion-prompt override (chat)**: where the upstream steps above suggest "implement this change or archive it" once all artifacts exist, instead suggest: "All artifacts created — run \`/orbit:review <name>\` before implementation."
+`,
     license: 'MIT',
     compatibility: 'Requires orbit CLI.',
     metadata: { author: 'openspec', version: '1.0' },

@@ -6,6 +6,62 @@
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
 
+const EXPLORE_CAPTURE_FORMATS_REFERENCE = `# Reference: capture entry formats
+
+Loaded when writing an accepted convention / perspective / critical-path capture (D5 body-economy pass; content moved from the body verbatim).
+
+### Convention capture format
+
+When a convention capture is accepted and writing to \`<topic>_convention.md\`, the file follows a four-section structured format (created on first write, appended on subsequent):
+
+\`\`\`markdown
+# <Topic> Convention
+
+## Purpose
+<why this convention exists>
+
+## Rules
+- <rule 1>
+- <rule 2>
+
+## Examples
+<concrete examples showing the rule in practice>
+
+## Exceptions
+<known cases where the rule doesn't apply, with rationale>
+\`\`\`
+
+Heuristic for new file vs append: if user mentions a topic and \`<topic>_convention.md\` already exists, **target the existing file**. Only when no matching topic file exists is a new file proposed.
+
+**Convention update on contradiction**: when the user's statement contradicts an existing rule, surface the contradiction (don't silently overwrite) and offer to update, supersede, or leave the existing rule. The user decides.
+
+### Perspective / critical-path entry shapes
+
+\`orbit/lenses/perspectives.md\` entries:
+
+\`\`\`markdown
+## <Perspective name>
+
+**Surfaces**: <capability names this perspective interacts with>
+
+**Description**: <who this caller is, what they want>
+
+**Typical call patterns**: <how they exercise the surface>
+\`\`\`
+
+\`orbit/lenses/critical-paths.md\` entries:
+
+\`\`\`markdown
+## <Flow name>
+
+**Description**: <what the user is trying to do>
+
+**Touchpoints**: <capabilities / tools / surfaces involved, in order>
+
+**Expected behavior**: <what should happen end-to-end>
+\`\`\`
+`;
+
 export function getExploreSkillTemplate(): SkillTemplate {
   return {
     name: 'orbit-explore',
@@ -292,17 +348,14 @@ But this summary is optional. Sometimes the thinking IS the value.
 
 The sections below describe orbit-specific additions on top of upstream's "stance, not workflow" character. The upstream content above is unchanged; orbit layers capture affordances, an \`explore.md\` authoring convention, and three invocation modes that activate when the conversation produces material worth keeping.
 
-## Four execution disciplines (apply throughout this command)
+## Four execution disciplines (epitome)
 
-These four disciplines bracket the authoring lifecycle (authoring-time / modification-time / review-time / turn boundary). They're embedded in every orbit command for self-contained reliability.
+The four disciplines from \`orbit-conventions\`, embedded per body; detail lives where each fires.
 
-**Read-before-reference (authoring-time)**. When you write into \`explore.md\`, perspectives, critical-paths, conventions, or any captured artifact and reference a specific named construct (function, type, file path, capability, command flag), read the actual definition first. Inferred references degrade the durability of the captured material. If you can't verify, ask the user or leave a \`@review:\` marker instead of guessing.
-
-**Change completeness (modification-time)**. When updating \`explore.md\` (moving an Open question to Decisions, rejecting an option into Considered & out, adding to References), apply the changes fully. Don't leave partial edits — e.g., adding a Decision without removing it from Open questions, or rejecting an option without dating the move. After updates, re-read the relevant section to confirm the move landed cleanly.
-
-**Pushback (review-time)**. When the conversation flags something as already-known or already-decided, verify against current state before treating it as new. If the user says "we already decided X" but \`explore.md\` doesn't reflect that, ask whether to add it OR whether the prior claim was speculative. Don't re-litigate decisions that are already captured.
-
-**No-chaining (turn boundary)**. Invoke at most the orbit workflow commands the user's message explicitly requests — one command per explicit user request; recommend, never invoke. Completing a command ENDS the turn at the position readout and the engine's eligibility line; blanket delegation ("take it through review") covers work WITHIN the requested command, never the next command — gate \`passed\` means *eligible*, not *commanded*.
+- **Read-before-reference (authoring-time)**: before a captured artifact names a specific construct, read its actual definition; unverifiable → ask the user or leave a \`@review:\` marker instead of guessing.
+- **Change completeness (modification-time)**: section moves in \`explore.md\` land whole (a resolved Open question MOVES to Decisions — never left in both); re-read the section after to confirm.
+- **Pushback (review-time)**: when the conversation flags something as already-decided, verify against \`explore.md\` before treating it as new; don't re-litigate captured decisions.
+- **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — gate \`passed\` means *eligible*, not *commanded*.
 
 ## Three invocation modes
 
@@ -381,56 +434,9 @@ When creating a new file, all five sections are scaffolded (empty content under 
 | **Critical path** | User describes a critical user flow ("the typical user flow is…", "users typically…") | \`orbit/lenses/critical-paths.md\` | **Offer** |
 | **Reference** | URL, file, prior change, prior conversation worth reading later | \`explore.md\` References section | **Offer** when in doubt; quick add when the relevance is obvious |
 
-### Convention capture format
+### Capture entry formats
 
-When a convention capture is accepted and writing to \`<topic>_convention.md\`, the file follows a four-section structured format (created on first write, appended on subsequent):
-
-\`\`\`markdown
-# <Topic> Convention
-
-## Purpose
-<why this convention exists>
-
-## Rules
-- <rule 1>
-- <rule 2>
-
-## Examples
-<concrete examples showing the rule in practice>
-
-## Exceptions
-<known cases where the rule doesn't apply, with rationale>
-\`\`\`
-
-Heuristic for new file vs append: if user mentions a topic and \`<topic>_convention.md\` already exists, **target the existing file**. Only when no matching topic file exists is a new file proposed.
-
-**Convention update on contradiction**: when the user's statement contradicts an existing rule, surface the contradiction (don't silently overwrite) and offer to update, supersede, or leave the existing rule. The user decides.
-
-### Perspective / critical-path entry shapes
-
-\`orbit/lenses/perspectives.md\` entries:
-
-\`\`\`markdown
-## <Perspective name>
-
-**Surfaces**: <capability names this perspective interacts with>
-
-**Description**: <who this caller is, what they want>
-
-**Typical call patterns**: <how they exercise the surface>
-\`\`\`
-
-\`orbit/lenses/critical-paths.md\` entries:
-
-\`\`\`markdown
-## <Flow name>
-
-**Description**: <what the user is trying to do>
-
-**Touchpoints**: <capabilities / tools / surfaces involved, in order>
-
-**Expected behavior**: <what should happen end-to-end>
-\`\`\`
+The exact file formats — the four-section \`<topic>_convention.md\` shape (create-vs-append heuristic, contradiction handling) and the \`orbit/lenses/perspectives.md\` / \`critical-paths.md\` entry shapes — live in \`references/capture-formats.md\`; load it when writing an accepted capture.
 
 ## Offer-don't-auto rule
 
@@ -463,26 +469,19 @@ This means: durable capture in explore → seamless promotion to formal change. 
 
 ## Run-summary emit (named-mode only)
 
-(Per \`orbit-run-summary-emit\` capability)
+(Per \`orbit-run-summary-emit\`; composed and written via the engine emit surface, \`orbit-emit-composition\`.)
 
-Named-mode \`/orbit:explore <name>\` emits TWICE per session shape (D-arc Stage D3): once at BEGIN (immediately after scaffold + metadata are written) and once at each conversation boundary. Both write to:
+Named-mode \`/orbit:explore <name>\` emits TWICE per session shape (D-arc Stage D3): once at BEGIN and once at each conversation boundary. Both fire the same invocation — compose the narrative payload (\`final_assessment\` + the required nullable \`model\`) into a temp file, then:
 
+\`\`\`bash
+orbit emit explore --change <name> --payload <payload-file>
 \`\`\`
-orbit/explore/<name>/.orbit-runs/explore-<TS>.json
-\`\`\`
 
-Where \`<TS>\` is ISO-8601 UTC with hyphens (e.g., \`explore-2026-05-21T13-34-12Z.json\`). Create \`.orbit-runs/\` if it doesn't exist.
-
-**Bare-mode \`/orbit:explore\` does NOT emit** — see "Crystallization to named change" below for the bare-mode-to-named transition.
+The ENGINE owns everything else: the spine, the trail path (\`orbit/explore/<name>/.orbit-runs/explore-<TS>.json\`), timestamp + collision handling, the decisions/open-questions counts read fresh from \`explore.md\`, and the maturity-graded \`next_recommended\` (Early / Mid / Mature / Stalled from the counts). Never hand-compose the JSON. Bare-mode \`/orbit:explore\` does NOT emit — see "Crystallization to named change" below.
 
 ### BEGIN emit (D-arc Stage D3 — mode-aware)
 
-Fire the begin emit immediately after the staging scaffold + \`.openspec.yaml\` are written, so the trail records the workstream from minute zero (the \`premised → exploring\` transition; explore was the only workstream-starting command that began silently). Content is MODE-AWARE:
-
-- **Mode B (new named exploration)**: \`decisions_captured: 0\`, \`open_questions_count: 0\`, and \`next_recommended\` = the maturity requirement's Early canonical string (\`"/orbit:explore <name> — continue capturing thinking"\`). \`final_assessment\` records the scaffold + the citation decision (cited or declined).
-- **Mode C (crystallization)**: back-fill \`explore.md\` FIRST, then fire the begin emit carrying the BACK-FILLED counts and a maturity-consistent \`next_recommended\` (per the maturity grid below — a crystallized session with 4 decisions must not understate itself as Early). The crystallization's "first emit" IS this begin emit (\`crystallized_to_name: "<name>"\`).
-
-**Same-second collision**: a boundary emit landing in the same ISO-second as the begin emit bumps its \`<TS>\` token forward one second until the path is free (preserving lexical begin-before-boundary ordering — the review-external T0 precedent).
+Fire the begin emit immediately after the staging scaffold + \`.openspec.yaml\` are written, so the trail records the workstream from minute zero (the \`premised → exploring\` transition). Mode B (new named exploration): the scaffold is empty, so the engine's counts render 0 and the recommendation renders Early; \`final_assessment\` records the scaffold + the citation decision (cited or declined). Mode C (crystallization): back-fill \`explore.md\` FIRST, then fire — the engine computes the BACK-FILLED counts, so the trail's first record states true on-disk state, never a knowingly-false zero; this begin emit IS the crystallization's first emit.
 
 **No retro-fire**: resuming a pre-D3 staging dir that has no emits does NOT retroactively fire a begin emit (add-only, no backdating) — the next boundary emit covers it.
 
@@ -497,43 +496,9 @@ Per \`orbit-run-summary-emit\`'s \`Emit timing semantics\` requirement, a conver
 
 **NOT a boundary** (no emit): AI returning control mid-thought to ask a clarifying question; user tangent and return; AI tool-use sequences within a single turn.
 
-### JSON shape
-
-Per the universal spine in \`orbit-conventions\`'s \`Internal-run JSON summary format\` + per-command extensions:
-
-\`\`\`json
-{
-  "command": "explore",
-  "timestamp": "<ISO-8601 UTC>",
-  "change": "<name>",
-  "final_assessment": "<narrative of what was captured this session>",
-  "next_recommended": "<per maturity rules below>",
-  "kind": "workflow",
-  "mode": "named",
-  "decisions_captured": <int — count of Decisions in explore.md after this session>,
-  "open_questions_count": <int — count of Open questions in explore.md after this session>,
-  "crystallized_to_name": null
-}
-\`\`\`
-
-(\`crystallized_to_name\` is \`null\` for named-mode emits since the name already exists; the field is meaningful for the bare-mode crystallization case below.)
-
-### \`next_recommended\` per maturity (4 mutually-exclusive states)
-
-Per \`orbit-run-summary-emit\`'s \`Named-mode explore recommendation by maturity\` requirement, four maturity states cover the full decisions × open-questions grid:
-
-- **Early (0–1 decisions captured)**: \`"/orbit:explore <name> — continue capturing thinking"\`
-- **Mid (2–3 decisions captured)**: \`"/orbit:explore <name> — continue thinking, or /orbit:propose <name> if ready to formalize"\`
-- **Mature (4+ decisions captured AND ≤1 open question)**: \`"/orbit:propose <name> — substantial thinking captured; ready to formalize the design (or /orbit:explore <name> to keep refining)"\`
-- **Stalled (4+ decisions captured AND >1 open question)**: \`"/orbit:explore <name> — N decisions captured but M open questions remain; resolve open questions before formalizing"\` (N = \`decisions_captured\`, M = \`open_questions_count\`). Does NOT surface \`/orbit:propose\` as alternative — high open-question count signals NOT-ready regardless of decision count.
-
-A downstream status reader parses the leading \`/orbit:<verb> <name>\` token into \`command\`/\`args\`; the alternative path (Mid and Mature only) lives in the reason text.
-
 ### Bare-mode non-emission
 
-**Bare-mode \`/orbit:explore\` (no name argument) does NOT write any \`.orbit-runs/\` JSON.** Exploration without a name is pre-commitment, ephemeral thinking — no persistent emit occurs until the user crystallizes the exploration to a named change.
-
-Concretely: if the user invokes \`/orbit:explore\` (no args), converses for any length of time, and ends the conversation without crystallizing, ZERO files are written to disk. The conversation produces no on-disk persistence. Rationale: emitting JSONs before a name exists would pollute project scope and accidentally seed partial changes the user didn't intend to start.
+Bare-mode \`/orbit:explore\` (no name) writes ZERO files — exploration without a name is pre-commitment, ephemeral thinking. Emitting before a name exists would pollute project scope and accidentally seed partial changes the user didn't intend to start.
 
 ### Crystallization to named change (bare-mode → named-mode transition)
 
@@ -548,33 +513,16 @@ When the user requests crystallization during a bare-mode explore (e.g., "save t
 
 **Confirmation gate**: the AI MUST wait for explicit user confirmation before proceeding with file creation. Examples of confirmation: "yes", "go ahead", "create it", "do it". If the user expresses any hesitation or asks a clarifying question, treat as not-yet-confirmed and answer the question rather than proceed.
 
-After confirmation, the AI:
-1. Creates \`orbit/explore/<name>/explore.md\` (and the minimal \`.openspec.yaml\`, as in Mode B) and back-fills the Premise and Decisions sections with what's been discussed
-2. THEN fires the BEGIN emit per the mode-aware rules above — Mode C: the BACK-FILLED counts and a maturity-consistent \`next_recommended\`, with \`crystallized_to_name: "<name>"\` (non-null signals this emit is the crystallization moment; it IS the begin emit — never a zero-count record)
-
-Sketch of the warning text (for reference; phrasing may adapt to conversation):
-
-\`\`\`
-⚠ Crystallizing exploration into a named change: <name>
-
-This will:
-  • Create orbit/explore/<name>/explore.md (decisions captured so far)
-  • Emit orbit/explore/<name>/.orbit-runs/explore-<TS>.json
-  • Make <name> visible to consumers scanning orbit/explore/ (e.g., a status reader)
-  • Start the change's audit trail — every subsequent orbit command emits a JSON here
-
-Note: upstream \`orbit list\` does NOT scan orbit/explore/; the change
-appears in \`orbit list\` only after /orbit:propose moves the staging directory.
-
-Before crystallization: ephemeral in-conversation thinking.
-After crystallization: persistent on-disk presence; abandonment requires
-formal archive/discard once /orbit:propose has moved the staging directory.
-
-Confirm? [Y/n]
-\`\`\`
+After confirmation: (1) create \`orbit/explore/<name>/explore.md\` (and the minimal \`.openspec.yaml\`, as in Mode B), back-filling Premise and Decisions with what's been discussed; (2) THEN fire the BEGIN emit per the mode-aware rules above — the engine computes the back-filled counts and a maturity-consistent recommendation.
 
 This warning convention aligns with orbit's don't-auto-invoke-commands and inflection-points-surface-consequences conventions.
 `,
+    references: [
+      {
+        name: 'capture-formats.md',
+        content: EXPLORE_CAPTURE_FORMATS_REFERENCE,
+      },
+    ],
     license: 'MIT',
     compatibility: 'Requires orbit CLI.',
     metadata: { author: 'openspec', version: '1.0' },

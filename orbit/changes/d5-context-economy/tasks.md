@@ -108,20 +108,20 @@ breaks init/update, so 6.1–6.4 land together before any commit.)
 
 ## 7. Body-economy pass (the six heaviest bodies per sketches/body-inventory.md)
 
-- [ ] 7.1 Disciplines blocks shrink IN PLACE across all bodies: four-bullet epitome +
+- [x] 7.1 Disciplines blocks shrink IN PLACE across all bodies: four-bullet epitome +
       detail-to-situ (delete the block's copy where the step already carries it; move block-only
       procedure to its step) + no-chaining to ~2 structural-leaning lines; NO shared reference,
       NO generator constant (D-b2-2); fidelity markers re-pinned per body.
-- [ ] 7.2 Emit sections across bodies (review, address-reviews, explore, audit-drift, apply,
+- [x] 7.2 Emit sections across bodies (review, address-reviews, explore, audit-drift, apply,
       archive, propose, architect, verify…) shrink to payload-compose + `orbit emit <command>`
       invocations; maturity grids, chunk rules, collision/timestamp prose DELETED from bodies;
       schema reference docs shrink to payload-field lists.
-- [ ] 7.3 Reference moves: worked examples + rarely-used flag detail (review `--mark`/
+- [x] 7.3 Reference moves: worked examples + rarely-used flag detail (review `--mark`/
       `--parallel`/`--focus`; address-reviews examples) to `references/`; resident-size
       measurement recorded (before/after per body — the inventory's ~40.6k baseline) against
       the stated target: six-body resident total ≤ 20k tokens, same bytes/4 method
       (proposal, arc exit criterion 1).
-- [ ] 7.4 Onboard re-teach: emit surface, merged review invocation, boot render, touchpoints;
+- [x] 7.4 Onboard re-teach: emit surface, merged review invocation, boot render, touchpoints;
       quick-reference table to 15 commands.
 
 ## 8. Workflow-layer hardening

@@ -46,11 +46,11 @@ import {
 // A workflow that silently loses its disciplines block, run-summary section, or
 // completion-prompt override fails its own assertion — no disjunctive escape hatch.
 const RELOCATED: Array<[string, () => SkillTemplate, string[]]> = [
-  ['explore', getExploreSkillTemplate, ['execution disciplines', 'Run-summary emit', 'BEGIN emit', 'Same-second collision', 'No retro-fire', 'BACK-FILLED counts']],
+  ['explore', getExploreSkillTemplate, ['execution disciplines', 'Run-summary emit', 'BEGIN emit', 'orbit emit explore', 'No retro-fire', 'BACK-FILLED counts']],
   ['propose', getOrbitProposeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
   ['new-change', getNewChangeSkillTemplate, ['execution disciplines', 'Run-summary emit']],
   ['continue-change', getContinueChangeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
-  ['apply-change', getApplyChangeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override', 'blocked-by-gate', 'gate_overridden', 'Consent at entry', 'consent_era_from', '"consent": "user-invoked" | "prompted"']],
+  ['apply-change', getApplyChangeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override', 'blocked-by-gate', 'gate_overridden', 'Consent at entry', 'consent_era_from', '"user-invoked" | "prompted"', 'orbit emit apply']],
   ['ff-change', getFfChangeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
   ['bulk-archive-change', getBulkArchiveChangeSkillTemplate, ['# Orbit additions', 'execution disciplines', 'Per-change consent', 'consent_era_from']],
   ['verify-change', getVerifyChangeSkillTemplate, ['execution disciplines', 'Run-summary emit']],
@@ -86,9 +86,9 @@ const ALL_SURFACE_SKILLS: Array<[string, () => SkillTemplate]> = [
 
 // dirName -> exact reference declarations for the B3 multi-file editorial skills
 const B3_REFERENCES: Array<[string, () => SkillTemplate, string[]]> = [
-  ['review', getReviewSkillTemplate, ['run-summary-schema.md', 'passes-proposal.md', 'passes-system.md', 'passes-architecture.md', 'external-handoff.md', 'mode-sections.md', 'prompt-template.md']],
-  ['address-reviews', getAddressReviewsSkillTemplate, ['external-findings-format.md', 'internal-findings-format.md', 'run-summary-schema.md']],
-  ['audit-drift', getAuditDriftSkillTemplate, ['run-summary-schema.md']],
+  ['review', getReviewSkillTemplate, ['run-summary-schema.md', 'passes-proposal.md', 'passes-system.md', 'passes-architecture.md', 'external-handoff.md', 'mode-sections.md', 'prompt-template.md', 'flags-detail.md']],
+  ['address-reviews', getAddressReviewsSkillTemplate, ['external-findings-format.md', 'internal-findings-format.md', 'resolution-detail.md', 'run-summary-schema.md']],
+  ['audit-drift', getAuditDriftSkillTemplate, ['run-summary-schema.md', 'worked-example.md']],
 ];
 
 // Every generated /orbit:* command is a thin launcher delegating to its skill —
@@ -208,8 +208,13 @@ describe('orbit content fidelity (B1 relocation)', () => {
       expect(refs.map((r) => r.name)).toEqual(['archive-summary-schema.md']);
     });
 
+    it('explore declares exactly capture-formats.md (D5 body-economy move)', () => {
+      const refs = getExploreSkillTemplate().references ?? [];
+      expect(refs.map((r) => r.name)).toEqual(['capture-formats.md']);
+    });
+
     it('no other workflow declares references', () => {
-      const withReferences = new Set(['archive-change', ...B3_REFERENCES.map(([n]) => n)]);
+      const withReferences = new Set(['archive-change', 'explore', ...B3_REFERENCES.map(([n]) => n)]);
       for (const [name, getTemplate] of RELOCATED) {
         if (withReferences.has(name)) continue;
         expect(getTemplate().references ?? [], `${name} must not declare references`).toEqual([]);

@@ -124,9 +124,10 @@ describe('config profile interactive flow', () => {
 
     // B3 editorial skills declare references too; a synced surface carries them
     const editorialRefs: Record<string, string[]> = {
-      'orbit-review': ['run-summary-schema.md', 'passes-proposal.md', 'passes-system.md', 'passes-architecture.md', 'external-handoff.md', 'mode-sections.md', 'prompt-template.md'],
-      'orbit-address-reviews': ['external-findings-format.md', 'internal-findings-format.md', 'run-summary-schema.md'],
-      'orbit-audit-drift': ['run-summary-schema.md'],
+      'orbit-explore': ['capture-formats.md'],
+      'orbit-review': ['run-summary-schema.md', 'passes-proposal.md', 'passes-system.md', 'passes-architecture.md', 'external-handoff.md', 'mode-sections.md', 'prompt-template.md', 'flags-detail.md'],
+      'orbit-address-reviews': ['external-findings-format.md', 'internal-findings-format.md', 'resolution-detail.md', 'run-summary-schema.md'],
+      'orbit-audit-drift': ['run-summary-schema.md', 'worked-example.md'],
     };
     for (const [dirName, refNames] of Object.entries(editorialRefs)) {
       for (const refName of refNames) {

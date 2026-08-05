@@ -669,6 +669,47 @@ commit/push, and the user will commit it manually.
 \`\`\`\`
 `;
 
+const REVIEW_FLAGS_DETAIL_REFERENCE = `# Reference: rarely-used review flags — \`--mark\` / \`--parallel\` / \`--focus\`
+
+Loaded only when one of these flags is set (D5 body-economy pass; content moved from the body verbatim).
+
+### 11. (Optional) \`--mark\` writer (proposal mode only)
+
+If \`--mark\` is set and the mode is \`proposal\`:
+
+For each finding with severity CRITICAL or WARNING (skip SUGGESTION by default):
+- Locate the finding's \`file:line\`.
+- Insert a \`@review: <finding title — recommendation>\` marker at that line.
+  - In markdown: append after existing content on the line, or as a sibling line if structure prevents inline insertion.
+  - In code: wrap in the file's comment syntax (e.g., \`// @review: …\`, \`# @review: …\`).
+- After insertion, sweep the modified artifacts for double-insertion or content overwrites; the change-completeness discipline applies.
+
+In system mode, \`--mark\` is accepted but ignored with the note \`--mark writes to source files is v2; ignored for v1 system-mode runs.\`
+
+### 12. \`--parallel\` execution
+
+If \`--parallel\` is set:
+
+- Proposal mode: spawn subagents for Passes 2 (Internal Coherence), 4 (Archive Consistency), 6 (Gap Hunt). Run Passes 1, 3, 5, 7, 8, 9 in the main context.
+- System mode: spawn subagents for Passes 2 (Cohesion), 3 (Surface Walk), 4 (Perspectives), 5 (Critical Paths). Run Passes 0, 1, 6 in the main context.
+
+Each subagent gets a focused brief (the pass description + the relevant context files). Merge findings into the unified report. Subagents inherit the four execution disciplines.
+
+### 13. \`--focus\` lens
+
+Lens-specific emphasis (additive — does NOT skip other passes):
+
+| Lens | Mode | Passes emphasized | Why |
+|---|---|---|---|
+| \`rename\` | proposal | 7 (Drift), 3 (Cross-Doc), 4 (Archive) | renames leak old names |
+| \`flip\` | proposal | 2 (Internal Coherence on direction), 5 (Codegen Readiness) | direction must be unambiguous |
+| \`refactor\` | both | proposal: 4, 7, 3; system: 2, 6 | old shape ripples into callers/docs |
+| \`extension\` | proposal | 6 (Gap Hunt) | coverage must match existing depth |
+| \`hotpath\` | system | 5 (Critical-Path Scan) | landed work touched perf/race-sensitive paths |
+
+When \`--focus <lens>\` is set, run all passes but apply elevated rigor (more probes, longer cite chains) to the listed ones.
+`;
+
 export function getReviewSkillTemplate(): SkillTemplate {
   return {
     name: 'orbit-review',
@@ -679,46 +720,26 @@ export function getReviewSkillTemplate(): SkillTemplate {
 
 **Input**: Optional change name (or, with \`--as architecture\`, a doc name) and optional \`--as proposal|system|architecture\` mode flag plus secondary flags. If change name omitted, prompt via \`AskUserQuestion\` over \`orbit list --json\` (architecture mode prompts over \`orbit architecture status --json\`'s parseable docs instead). If mode omitted, infer from \`tasks.md\` state (see Step 3) — architecture mode is NEVER inferred.
 
-## Four execution disciplines (apply throughout this command)
+## Four execution disciplines (epitome)
 
-These four disciplines are embedded in every orbit command as a self-contained reminder. They bracket the authoring lifecycle (authoring-time / modification-time / review-time / turn boundary) and combine with the per-command behavior below. Intentional text duplication across SKILL.md files is the price for self-contained reliability.
+The four disciplines from \`orbit-conventions\`, embedded per body; detail lives in the step where each fires.
 
-**Read-before-reference (authoring-time)**. When you author a finding that names a specific construct — a function, type, interface, field, file path, spec requirement name, CLI flag, capability name — read the actual definition first. Use \`Read\`, \`grep\`, or \`orbit instructions\` as appropriate. Do NOT assume the shape based on common patterns or training-data conventions. A finding that says \`"foo.ts:42 declares getUser() returning Promise<User>"\` must be backed by an actual file read; otherwise the recommendation is unverifiable and the user has no way to trust the report. If you can't verify the reference, downgrade the severity or omit the finding.
-
-**Change completeness (modification-time)**. The \`--mark\` flag (proposal mode) modifies artifacts by writing \`@review:\` markers based on findings. When \`--mark\` runs, apply the markers fully across all affected artifacts in one pass. After mechanical insertion, sweep for residue (markers landed in the wrong place; markers that overwrite existing content; doubled markers). Do NOT leave the user to clean up partial marker placement. For the non-\`--mark\` path this discipline rarely applies (review is read-only), but if a stale \`.orbit-runs/\` file or partial prior run is discovered, clean it before persisting the new summary.
-
-**Pushback (review-time)**. **Primary discipline for this command.** Before reporting a finding, verify it against current state. Use \`grep\`, file inspection, or \`git log\` to confirm the issue still applies. Stale findings (issue already fixed) get suppressed with an explanatory note (\`stale finding suppressed: <evidence>\`) and not surfaced in the user-facing report. Do NOT re-flag already-fixed state. When prior \`.orbit-runs/review-<mode>-*.json\` summaries exist, compare to surface only what's new or unresolved.
-
-**No-chaining (turn boundary)**. Invoke at most the orbit workflow commands the user's message explicitly requests — one command per explicit user request; recommend, never invoke. Completing a command ENDS the turn at the position readout and the engine's eligibility line; blanket delegation ("run the review cadence") covers work WITHIN the requested command (the passes of one review), never the next command — review-cycle COUNT is the user's call. Gate \`passed\` means *eligible*, not *commanded*.
+- **Pushback (review-time) — primary here**: verify every finding against current state before reporting; suppress stale findings with an evidence note (\`stale finding suppressed: <evidence>\`), comparing against prior \`.orbit-runs/review-<mode>-*.json\` to surface only what's new or unresolved.
+- **Read-before-reference (authoring-time)**: every construct a finding names is backed by an actual read (enforcement rule under Special cases); unverifiable → downgrade or omit.
+- **Change completeness (modification-time)**: \`--mark\` insertions land fully in one pass, then sweep for residue (Step 11); stale or partial prior \`.orbit-runs/\` files are cleaned before persisting.
+- **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — review-cycle COUNT is the user's call; gate \`passed\` means *eligible*, not *commanded*.
 
 ## Steps
 
-### 1. Resolve the mode, THEN the target
+### 1. Resolve the mode
 
-Resolve the MODE first (from the \`--as\` flag — rules in Step 2); the mode decides what the positional even IS. Then resolve the target by mode:
+Resolve the MODE first — it decides what the positional even IS. Mode comes from \`--as proposal|system|architecture\`. **Architecture mode is NEVER inferred** — it requires the explicit flag; a positional that happens to match a doc name does NOT trigger it. If \`--as\` is omitted, infer between the change modes from \`orbit/changes/<name>/tasks.md\` checkbox arithmetic: all unchecked → \`proposal\`; all checked + code changes since the change was proposed (\`git log --oneline -- orbit/changes/<name>/\`) → \`system\`; mixed or ambiguous → \`AskUserQuestion\`. State the resolution in the report header (\`Mode: proposal (inferred from 12 unchecked tasks)\`).
 
-**Change modes** (\`--as proposal\` / \`--as system\`, or \`--as\` omitted) — the target is a CHANGE:
-- If a change name is provided, use it. Otherwise:
-- Run \`orbit list --json\` to get available changes.
-- Use the **AskUserQuestion tool** to let the user select.
-- Mark changes with incomplete tasks as \`(In Progress)\`.
-- Always announce \`Using change: <name> --as <mode>\` at the start of the report header.
+### 2. Resolve the target
 
-**Architecture mode** (\`--as architecture\`) — the target is a DOC, never a change: do NOT run \`orbit list\`, do NOT prompt over changes, and NONE of the change-oriented steps below (Step 4's change CLI calls, Step 9's gate computation) apply. The positional resolves against \`orbit/architecture/\` (the filename stem). When omitted or ambiguous, prompt via \`AskUserQuestion\` over the parseable docs from \`orbit architecture status --json\`. Always announce \`Using doc: <doc-name> --as architecture\` at the start of the report header.
+**Change modes** — the target is a CHANGE: use the provided name; otherwise prompt via \`AskUserQuestion\` over \`orbit list --json\` (mark changes with incomplete tasks \`(In Progress)\`). Announce \`Using change: <name> --as <mode>\` at the start of the report header.
 
-### 2. Resolve the mode
-
-Mode comes from the \`--as proposal|system|architecture\` flag if specified. **Architecture mode is NEVER inferred** — it requires the explicit \`--as architecture\` flag; a positional that happens to match a doc name does NOT trigger it (misfiring review modes on change names would be a sharp edge). If \`--as\` omitted, infer between proposal and system:
-
-1. Read \`orbit/changes/<name>/tasks.md\`.
-2. Count \`- [ ]\` (unchecked) vs \`- [x]\` (checked) boxes.
-3. **All unchecked** → infer \`proposal\`.
-4. **All checked + repo has code changes since the change was proposed** (use \`git log --oneline -- orbit/changes/<name>/\` and \`git diff\` heuristics) → infer \`system\`.
-5. **Mixed or ambiguous** → use \`AskUserQuestion\` to ask the user which mode to run.
-
-State the resolved mode and how it was resolved in the report header (\`Mode: proposal (inferred from 12 unchecked tasks)\`).
-
-**Architecture-mode doc-class rules** (target resolution itself is in Step 1): a doc resolving to LEGACY (zero stage-prefixed headings outside fences) is an error suggesting retrofit; one resolving to MALFORMED (fails \`orbit architecture validate\`'s near-miss rule) is an error naming the grammar violation — architecture mode requires a parseable doc.
+**Architecture mode** — the target is a DOC, never a change: do NOT run \`orbit list\` or prompt over changes, and NONE of the change-oriented steps below apply (Step 4's change CLI calls, Step 9's gate tail). The positional resolves against \`orbit/architecture/\` (the filename stem); when omitted or ambiguous, prompt over \`orbit architecture status --json\`'s parseable docs. A doc resolving LEGACY (zero stage-prefixed headings outside fences) is an error suggesting retrofit; MALFORMED (fails the near-miss rule) is an error naming the grammar violation. Announce \`Using doc: <doc-name> --as architecture\`.
 
 ### 3. Resolve flags
 
@@ -726,11 +747,11 @@ State the resolved mode and how it was resolved in the report header (\`Mode: pr
 |---|---|---|
 | \`--fast\` / \`--full\` / \`--thorough\` | \`--full\` | Depth. Mutually exclusive. \`--thorough\` is partially specified; fall back to \`--full\` if unclear. |
 | \`--parallel\` | off | Spawn subagents for heavy passes. Proposal: parallelize Passes 2, 4, 6. System: parallelize Passes 2, 3, 4, 5. |
-| \`--focus <lens>\` | none | Emphasize specific passes (additive — does not skip others). See "Special-case lenses" below. |
+| \`--focus <lens>\` | none | Emphasize specific passes (additive — does not skip others). See \`references/flags-detail.md\`. |
 | \`--strict\` | off | Fail-fast on first CRITICAL. Useful for CI-like runs. |
 | \`--reviewer <class>\` | \`in-context\` | Reviewer class: \`in-context\` / \`fresh\` (clean-context subagent) / \`external\` (the handoff branch — \`references/external-handoff.md\`). |
 | \`--fresh\` | off | Shorthand for \`--reviewer fresh\`. Never combined with an explicit \`--reviewer\` value (clean usage error). |
-| \`--mark\` | off, proposal only | After report, write \`@review: <text>\` markers at each finding's file:line. See "Mark writer". |
+| \`--mark\` | off, proposal only | After report, write \`@review: <text>\` markers at each finding's file:line. See \`references/flags-detail.md\`. |
 | \`--skip-verify\` | off, system only | Skip Pass 0 (verify-change). Use when verify-change was run separately. |
 
 If a flag is specified for the wrong mode (e.g., \`--mark\` in system mode or \`--skip-verify\` in proposal mode), accept it silently and emit a one-line note in the report (\`Note: --mark writes to source files is v2; ignored for v1 system-mode runs.\`). In architecture mode, \`--parallel\`, \`--fast\`, and \`--focus <lens>\` are accepted but are no-ops (architecture docs are small; all six passes run in one context — no per-mode subset or lens table is defined), each noted in the report the same way.
@@ -759,13 +780,7 @@ System mode also reads:
 
 ### 5. Inspect prior runs
 
-**Architecture mode**: inspect \`orbit/architecture/.orbit-runs/\` for prior \`review-architecture-*.json\` emits whose \`doc\` field MATCHES the doc under review — the trail is shared by all docs, so only matching-\`doc\` emits count toward the iteration number and the iteration note (a review of doc B must never treat doc A's run as its previous iteration). First-run wording: \`First architecture review for this doc.\`
-
-**Change modes**: check \`orbit/changes/<name>/.orbit-runs/\` for prior \`review-<mode>-*.json\` summaries:
-
-- Count matching the current mode → iteration number (1 if none).
-- Load the most-recent matching summary to identify open vs resolved findings since last run.
-- This data fuels the iteration note (Step 8) AND the pushback discipline (suppress findings already resolved).
+The iteration ordinal and iteration note are ENGINE-computed at render time from the trail — never authored here. Read the most-recent matching prior summary anyway to fuel the pushback discipline (suppress findings already resolved): change modes match \`review-<mode>-*.json\` in the change's \`.orbit-runs/\`; architecture mode matches \`review-architecture-*.json\` emits in \`orbit/architecture/.orbit-runs/\` whose \`doc\` field equals the doc under review — the trail is shared across docs, and a review of doc B must never treat doc A's run as its previous iteration.
 
 ### 6. Run passes (load the resolved mode's reference ONLY)
 
@@ -777,37 +792,7 @@ Load \`references/passes-<mode>.md\` for the RESOLVED mode — proposal (9 passe
 
 ### Disjunctive recommendations: emit structured \`recommendation_options\`
 
-When a finding's recommendation is genuinely disjunctive — offering the user a choice between two or more concrete alternatives (e.g., "Either file a follow-up issue, or extend scope to tasks.md" / numbered alternatives \`(A) … (B)\` / "Options: X / Y") — emit an optional structured field alongside the prose \`recommendation\`:
-
-\`\`\`json
-{
-  "pass": "...",
-  "severity": "WARNING",
-  "file": "...",
-  "line": ...,
-  "title": "...",
-  "recommendation": "Either (A) file a follow-up issue tracking the v2 polish, or (B) add Group 19 to tasks.md extending this change's scope.",
-  "recommendation_options": [
-    { "label": "A", "body": "file a follow-up issue tracking the v2 polish" },
-    { "label": "B", "body": "add Group 19 to tasks.md extending this change's scope" }
-  ]
-}
-\`\`\`
-
-**When to emit** \`recommendation_options\`:
-
-- The finding genuinely requires a USER choice between defensible paths (different outcomes; not just rewordings).
-- ≥ 2 options. (Single-option arrays defeat the purpose; the prose \`recommendation\` field carries single recommendations.)
-- Each entry has non-empty \`label\` (use \`"A"\`, \`"B"\`, \`"C"\`, … or \`"1"\`, \`"2"\`, …) and non-empty \`body\` (the concrete action the user would take).
-
-**When NOT to emit**:
-
-- Single concrete action with no alternative (rename X → Y; remove duplicate; tighten a type signature). The prose \`recommendation\` field alone is sufficient.
-- Prose containing "or" that is NOT a real choice ("fix it now or later", "X or Y could happen"). Loose "or" is conversational, not disjunctive — do NOT trigger the structured field.
-
-**Prose summary still required**: when emitting \`recommendation_options\`, the prose \`recommendation\` field still summarizes the disjunction for human readers of the markdown report. The structured field is a producer-side affordance for the consumer (address-reviews) to surface as a structured fork prompt; it complements the prose, does not replace it.
-
-**Backward compatibility**: the field is OPTIONAL on every finding. Findings without disjunctive recommendations omit it. Downstream parsers SHALL ignore the field if unknown (forward-compat). See \`references/run-summary-schema.md\` for the canonical JSON shape.
+When a finding's recommendation genuinely offers the user a choice between two or more defensible concrete paths (different outcomes, not rewordings), emit \`recommendation_options: [{label, body}]\` alongside the prose \`recommendation\` — each entry a non-empty \`label\` (\`"A"\`, \`"B"\`, …) plus the concrete action the user would take. Do NOT emit it for single-action recommendations or loose conversational "or" ("fix it now or later") — false-negative bias is intentional. The prose field still summarizes the disjunction for human readers; the structured field is the producer-side fork affordance address-reviews consumes, OPTIONAL on every finding and ignorable by downstream parsers (canonical JSON shape: \`references/run-summary-schema.md\`).
 
 ### 7. Apply scorecard rollup
 
@@ -867,41 +852,9 @@ findings). On all-clear, no command is recommended — the trail records the pas
 ends at the readout.
 
 
-### 11. (Optional) \`--mark\` writer (proposal mode only)
+### 11. Rarely-used flags: \`--mark\`, \`--parallel\`, \`--focus\`
 
-If \`--mark\` is set and the mode is \`proposal\`:
-
-For each finding with severity CRITICAL or WARNING (skip SUGGESTION by default):
-- Locate the finding's \`file:line\`.
-- Insert a \`@review: <finding title — recommendation>\` marker at that line.
-  - In markdown: append after existing content on the line, or as a sibling line if structure prevents inline insertion.
-  - In code: wrap in the file's comment syntax (e.g., \`// @review: …\`, \`# @review: …\`).
-- After insertion, sweep the modified artifacts for double-insertion or content overwrites; the change-completeness discipline applies.
-
-In system mode, \`--mark\` is accepted but ignored with the note \`--mark writes to source files is v2; ignored for v1 system-mode runs.\`
-
-### 12. \`--parallel\` execution
-
-If \`--parallel\` is set:
-
-- Proposal mode: spawn subagents for Passes 2 (Internal Coherence), 4 (Archive Consistency), 6 (Gap Hunt). Run Passes 1, 3, 5, 7, 8, 9 in the main context.
-- System mode: spawn subagents for Passes 2 (Cohesion), 3 (Surface Walk), 4 (Perspectives), 5 (Critical Paths). Run Passes 0, 1, 6 in the main context.
-
-Each subagent gets a focused brief (the pass description + the relevant context files). Merge findings into the unified report. Subagents inherit the four execution disciplines.
-
-### 13. \`--focus\` lens
-
-Lens-specific emphasis (additive — does NOT skip other passes):
-
-| Lens | Mode | Passes emphasized | Why |
-|---|---|---|---|
-| \`rename\` | proposal | 7 (Drift), 3 (Cross-Doc), 4 (Archive) | renames leak old names |
-| \`flip\` | proposal | 2 (Internal Coherence on direction), 5 (Codegen Readiness) | direction must be unambiguous |
-| \`refactor\` | both | proposal: 4, 7, 3; system: 2, 6 | old shape ripples into callers/docs |
-| \`extension\` | proposal | 6 (Gap Hunt) | coverage must match existing depth |
-| \`hotpath\` | system | 5 (Critical-Path Scan) | landed work touched perf/race-sensitive paths |
-
-When \`--focus <lens>\` is set, run all passes but apply elevated rigor (more probes, longer cite chains) to the listed ones.
+Full procedures live in \`references/flags-detail.md\` — load it ONLY when one of these flags is set. Gist: \`--mark\` (proposal mode only) writes \`@review:\` markers at CRITICAL/WARNING finding sites then sweeps for residue per change completeness (system mode: accepted but ignored with a note); \`--parallel\` spawns subagents for the heavy passes and merges their findings (subagents inherit the four disciplines); \`--focus <lens>\` applies elevated rigor to the lens's pass set without skipping any pass.
 
 ## Special cases
 
@@ -976,6 +929,10 @@ next, anything the structure can't say — never contradicting the tail's engine
       {
         name: 'prompt-template.md',
         content: REVIEW_EXTERNAL_PROMPT_TEMPLATE_REFERENCE,
+      },
+      {
+        name: 'flags-detail.md',
+        content: REVIEW_FLAGS_DETAIL_REFERENCE,
       },
     ],
     license: 'MIT',

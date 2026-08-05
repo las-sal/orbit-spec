@@ -48,9 +48,10 @@ const SURFACE: Array<[string, string, string[]]> = [
 
 // B3 editorial skills bundle reference files (multi-file skills)
 const REFERENCE_SKILLS: Record<string, string[]> = {
-  'orbit-review': ['run-summary-schema.md', 'passes-proposal.md', 'passes-system.md', 'passes-architecture.md', 'external-handoff.md', 'mode-sections.md', 'prompt-template.md'],
-  'orbit-address-reviews': ['external-findings-format.md', 'internal-findings-format.md', 'run-summary-schema.md'],
-  'orbit-audit-drift': ['run-summary-schema.md'],
+  'orbit-explore': ['capture-formats.md'],
+  'orbit-review': ['run-summary-schema.md', 'passes-proposal.md', 'passes-system.md', 'passes-architecture.md', 'external-handoff.md', 'mode-sections.md', 'prompt-template.md', 'flags-detail.md'],
+  'orbit-address-reviews': ['external-findings-format.md', 'internal-findings-format.md', 'resolution-detail.md', 'run-summary-schema.md'],
+  'orbit-audit-drift': ['run-summary-schema.md', 'worked-example.md'],
 };
 
 describe('generated surface fidelity (real init, all workflows, claude + codex)', () => {
@@ -176,7 +177,9 @@ describe('generated surface fidelity (real init, all workflows, claude + codex)'
   });
 
   it('editorial skills carry their capability metadata in frontmatter (B2 pass-through)', async () => {
-    for (const dirName of Object.keys(REFERENCE_SKILLS)) {
+    // orbit-explore joined REFERENCE_SKILLS in D5 but is not a B3 editorial skill
+    // (its capability spec is orbit-explore-modifications; no metadata pass-through).
+    for (const dirName of Object.keys(REFERENCE_SKILLS).filter((d) => d !== 'orbit-explore')) {
       const skill = await fs.readFile(
         path.join(testDir, '.claude', 'skills', dirName, 'SKILL.md'),
         'utf-8'

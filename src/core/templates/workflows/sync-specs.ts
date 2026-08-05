@@ -142,14 +142,14 @@ Main specs are now updated. The change remains active - archive when implementat
 
 # Orbit additions
 
-## Four execution disciplines (apply throughout this command)
+## Four execution disciplines (epitome)
 
-The four execution disciplines from \`orbit-conventions\` bracket the authoring lifecycle; they're embedded in every orbit command for self-contained reliability.
+The four disciplines from \`orbit-conventions\`, embedded per body; detail lives where each fires.
 
-- **Read-before-reference (authoring-time)**: before naming a specific construct (capability, requirement, file path), read its actual definition — never infer a plausible reference. Read both delta and main specs before editing.
-- **Change completeness (modification-time)**: apply each delta fully across its capability's baseline spec before calling it done; after mechanical merges, sweep for residue (dropped scenarios, doubled headers).
+- **Read-before-reference (authoring-time)**: read a construct's actual definition before naming it; unverifiable → ask or leave a \`@review:\` marker, never guess.
+- **Change completeness (modification-time)**: apply substantive modifications fully across ALL affected artifacts; after mechanical edits, sweep for residue AND new bugs the replacement introduced.
 - **Pushback (review-time)**: verify each flagged issue against current state before acting; suppress stale findings with evidence rather than re-fixing already-fixed state.
-- **No-chaining (turn boundary)**: invoke at most the orbit workflow commands the user's message explicitly requests — one command per explicit request; recommend, never invoke. Completing a command ENDS the turn at the position readout and the engine's eligibility line; blanket delegation covers work WITHIN the requested command, never the next one — gate \`passed\` means *eligible*, not *commanded*.
+- **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — gate \`passed\` means *eligible*, not *commanded*.
 
 ## Consent inheritance (D1, per \`orbit-lifecycle-consent\`)
 

@@ -203,15 +203,14 @@ All artifacts complete. All tasks complete.
 
 The sections below describe orbit-specific additions on top of upstream's archive flow. The upstream content above is unchanged. Orbit adds a **consent check at entry** (D1), a **pre-archive \`audit-drift\` sweep**, a \`--skip-audit\` opt-out, an **unresolved \`@review:\` marker warning**, a **base-fingerprint divergence check** (C2), an **archive run summary** written to \`.orbit-runs/\`, and a small set of edge-case behaviors.
 
-## Four execution disciplines (apply throughout this command)
+## Four execution disciplines (epitome)
 
-**Read-before-reference (authoring-time)**. The archive run summary cites the pre-archive audit findings, user decision, and sync-specs results. Read the audit-drift output and the sync-specs assessment before writing the summary — don't infer counts from intent. The summary becomes the audit trail for the archived change; false claims corrupt later inspection.
+The four disciplines from \`orbit-conventions\`, embedded per body; detail lives in the step where each fires.
 
-**Change completeness (modification-time)**. The archive flow modifies multiple artifacts: it moves the change directory, runs \`sync-specs\` (which writes to baseline), and writes the archive run summary. Apply these fully: a moved change should not leave dangling references in baseline; a sync-specs run should not leave delta-only requirements unreflected in baseline. Sweep after each step to confirm completion before proceeding to the next.
-
-**Pushback (review-time)**. The pre-archive audit produces findings. Before presenting them to the user, verify each against current state (audit-drift's own pushback discipline applies, but apply a second-pass check at the archive layer): is the finding still applicable given any commits since the audit ran in the current session? Stale findings get a note in the summary, not a re-prompt.
-
-**No-chaining (turn boundary)**. Invoke at most the orbit workflow commands the user's message explicitly requests — one command per explicit request; recommend, never invoke. Completing a command ENDS the turn at the position readout and the engine's eligibility line; blanket delegation ("take it through review") covers work WITHIN the requested command, never the next one — gate \`passed\` means *eligible*, not *commanded*.
+- **Read-before-reference (authoring-time)**: the run summary cites audit findings, the user decision, and sync-specs results — read the actual outputs before composing it; false claims corrupt the archived trail.
+- **Change completeness (modification-time)**: the flow moves the change dir, writes baseline via sync-specs, and emits the summary — sweep after each step so no dangling baseline references or unreflected deltas survive.
+- **Pushback (review-time)**: second-pass-verify each pre-archive audit finding against current session state; stale findings get a note in the summary, not a re-prompt.
+- **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — gate \`passed\` means *eligible*, not *commanded*.
 
 ## NEW Step 0 — Consent at entry (provenance rule, per \`orbit-lifecycle-consent\`)
 
@@ -336,27 +335,17 @@ When \`/orbit:archive --skip-audit <name>\` is invoked, the entire Step 3.5 audi
 
 ## NEW Step 5.5 — Archive run summary
 
-After upstream Step 5 (move-to-archive) completes successfully, write a JSON summary to:
+After upstream Step 5 (move-to-archive) completes, compose the payload — narrative + the extension fields \`references/archive-summary-schema.md\` lists (\`archive_path\`, \`audit\`, \`sync_specs\`, \`unresolved_markers\`, \`user_decision\`, \`consent\`, \`warnings\`) — write it to a temp file, and invoke:
 
+\`\`\`bash
+orbit emit archive --change <name> --payload <payload-file>
 \`\`\`
-orbit/changes/archive/<YYYY-MM-DD>-<change-name>/.orbit-runs/archive-<TS>.json
-\`\`\`
 
-Where \`<YYYY-MM-DD>\` is the date prefix upstream's move step added (per \`mv orbit/changes/<name> orbit/changes/archive/YYYY-MM-DD-<name>\` at Step 5). The \`.orbit-runs/\` directory should be present already — it moved with the change content. If somehow absent, create it.
-
-Full schema lives at \`references/archive-summary-schema.md\` — read that file when composing the summary.
+The ENGINE resolves the post-move landing itself (the lexically-greatest \`orbit/changes/archive/*-<name>/\` scan) and owns the spine, filename, and collision handling — never hand-compose the JSON or the path.
 
 ## NEW Step 5.6 — Stage-line garnish in the completion readout (D-arc Stage D2)
 
-When the archived change's metadata carries an \`architecture: {doc, stage}\` citation, the
-completion readout (the "Archive Complete" summary) gains ONE stage line: after the move, run
-\`orbit architecture status --json\` and render the cited stage's post-archive computed position —
-e.g. \`stage d2-architect: now quiescent — completion is yours to ratify\`, or
-\`stage d6-pr-lifecycle: still in-change — <other-change> remains active\`, or
-\`stage d1-...: complete (ratified <date> by <who>)\` when the mark already composes. One line
-riding the existing position render — no prompt, no doc edit, no new mechanism (D-d2-4: the
-readout is the reminder; ratification happens in an architect session or by hand, never here).
-Uncited changes see no stage line — their readout is byte-identical to pre-D2 behavior.
+When the archived change's metadata carries an \`architecture: {doc, stage}\` citation, the "Archive Complete" readout gains ONE stage line: after the move, run \`orbit architecture status --json\` and render the cited stage's post-archive computed position (e.g. \`stage d2-architect: now quiescent — completion is yours to ratify\`). One line riding the existing position render — no prompt, no doc edit; ratification never happens here (D-d2-4). Uncited changes see no stage line.
 
 ## \`.orbit-runs/\` moves with the change
 

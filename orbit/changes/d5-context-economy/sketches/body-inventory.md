@@ -115,3 +115,28 @@ prose survives verbatim.
 single shared reference loaded by all bodies vs. a much shorter per-body epitome (2–3 lines)
 pointing at one canonical home vs. keep as-is where duplication is load-bearing (D1's
 "self-contained reliability" rationale). Interacts with how skills load references.
+
+## After — D5 apply measurement (2026-08-05, task 7.3; bytes/4 on the template instructions literals)
+
+| Body | before | after | what moved |
+|---|---|---|---|
+| orbit-address-reviews | 9.8k | 5.4k | epitome; Step-1 discovery compacted; batch table + fork machinery + recording shape + worked examples ×2 + degradation → `references/resolution-detail.md`; Step 6 → `orbit emit address-reviews`; pushback procedure moved in-situ to Step 3a |
+| orbit-review | 8.3k | 4.4k | (6.2 mode-split already −2.5k) epitome; Steps 1–2/5 compacted; disjunctive compacted; `--mark`/`--parallel`/`--focus` → `references/flags-detail.md` |
+| orbit-explore | 7.1k | 5.7k | epitome; emit section (grid/JSON/collision) → `orbit emit explore`; capture formats → `references/capture-formats.md`; crystallization sketch trimmed. Upstream stance (~2.4k) untouched per D14 |
+| orbit-audit-drift | 5.9k | 3.9k | epitome; emit + all four `next_recommended` combos → `orbit emit audit-drift`; worked example → `references/worked-example.md`; disjunctive compacted |
+| orbit-onboard | 4.8k | 4.7k | 7.4 re-teach ADDED (emit surface, merged `--reviewer external`, boot render, touchpoints; table 16→15); Phases 3–4 deduplicated against the owning skills |
+| orbit-archive-change | 4.7k | 4.5k | epitome; Step 5.5 → `orbit emit archive`; Step 5.6 trimmed. Consent + gate + fingerprint protocol stays (archive preflight = deferred engine work-list #3) |
+| **Six-body total** | **40.6k** | **28.5k** | **−30%; target ≤20k NOT met** |
+
+Other bodies (7.1/7.2 sweep): apply 4.1→3.2, propose 4.5→3.9, verify 3.0→2.0, architect 2.2→2.1,
+continue 2.4→1.9, ff 2.1→1.7, new 1.6→1.0, sync-specs 1.5→1.4, bulk-archive 3.1→3.1.
+Full-surface total ≈ 49.4k (was ~63k).
+
+**Why the ≤20k target is missed**: the inventory's ≈18k-judgment projection priced in engine
+work-list items #2 (findings resolver — would delete ~2.4k of address-reviews discovery/degradation
+prose) and #3 (archive preflight — ~1.4k of archive check prose), which D5 scoped OUT (only #1 emit
+composition and #5 maturity grid shipped). What remains resident is protocol/judgment prose:
+consent + gate inflection protocols, the decision-lane protocol, discovery priority order, upstream
+explore stance (D14-protected), and onboard's walkthrough lesson. Reaching ≤20k requires the
+deferred engine items, not further prose compression — flagged for the review-system pass and the
+arc exit-criterion-1 reading.

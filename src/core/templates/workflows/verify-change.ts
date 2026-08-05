@@ -172,92 +172,27 @@ Use clear markdown with:
 
 # Orbit additions
 
-## Four execution disciplines (apply throughout this command)
+## Four execution disciplines (epitome)
 
-The four execution disciplines from \`orbit-conventions\` bracket the authoring lifecycle; they're embedded in every orbit command for self-contained reliability.
+The four disciplines from \`orbit-conventions\`, embedded per body; detail lives where each fires.
 
-- **Read-before-reference (authoring-time)**: before naming a specific construct (function, type, file path, capability, spec requirement, command flag), read its actual definition — never infer a plausible reference. If you can't verify, ask the user or leave a \`@review:\` marker instead of guessing.
-- **Change completeness (modification-time)**: apply substantive modifications fully across ALL affected artifacts before calling them done; after mechanical edits, sweep for residue the pattern missed AND new bugs the replacement introduced.
+- **Read-before-reference (authoring-time)**: read a construct's actual definition before naming it; unverifiable → ask or leave a \`@review:\` marker, never guess.
+- **Change completeness (modification-time)**: apply substantive modifications fully across ALL affected artifacts; after mechanical edits, sweep for residue AND new bugs the replacement introduced.
 - **Pushback (review-time)**: verify each flagged issue against current state before acting; suppress stale findings with evidence rather than re-fixing already-fixed state.
-- **No-chaining (turn boundary)**: invoke at most the orbit workflow commands the user's message explicitly requests — one command per explicit request; recommend, never invoke. Completing a command ENDS the turn at the position readout and the engine's eligibility line; blanket delegation ("take it through review") covers work WITHIN the requested command, never the next one — gate \`passed\` means *eligible*, not *commanded*.
+- **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — gate \`passed\` means *eligible*, not *commanded*.
 
-## Run-summary emit (one-shot at command completion)
+## Run-summary emit (one-shot at command completion — via the engine emit surface)
 
-(Per \`orbit-run-summary-emit\` capability)
+(Per \`orbit-run-summary-emit\`; composed and written via \`orbit emit verify\` — \`orbit-emit-composition\`.)
 
-\`/orbit:verify\` is a one-shot command per \`orbit-run-summary-emit\`'s \`Emit timing semantics\` requirement (emit ONCE on natural command completion). After verify-change reports its outcome, write:
+At command completion, compose the narrative payload (\`final_assessment\`, \`verdict\`, \`fail_mode\`, \`validator_message\`, + the required nullable \`model\`) into a temp file and invoke:
 
-\`\`\`
-orbit/changes/<name>/.orbit-runs/verify-<TS>.json
-\`\`\`
-
-Where \`<TS>\` is ISO-8601 UTC with hyphens. Create \`.orbit-runs/\` if it doesn't exist.
-
-### What verify does (unchanged from upstream)
-
-\`/orbit:verify\` runs upstream \`verify-change\` and reports pass/fail/warn with findings. This emit-layer is a thin observability wrapper — it does NOT add marker-dropping, spec-edit shortcuts, or any other behavior that changes what verify itself does. The recommendation-classification logic below lives in the emit-layer, NOT in verify.
-
-### JSON shape
-
-Per the universal spine in \`orbit-conventions\`'s \`Internal-run JSON summary format\` + per-command extensions:
-
-\`\`\`json
-{
-  "command": "verify",
-  "timestamp": "<ISO-8601 UTC>",
-  "change": "<name>",
-  "final_assessment": "<narrative of verify outcome, e.g., 'Verification clean: 79/79 tasks done; 0 spec gaps.'>",
-  "next_recommended": "<per classification rules below>",
-  "kind": "workflow",
-  "verdict": "pass" | "fail" | "warn",
-  "findings_count": <int — 0 on clean pass>,
-  "findings_summary": { "critical": 0, "warning": 0, "suggestion": 0 }
-}
+\`\`\`bash
+orbit emit verify --change <name> --payload <payload-file>
 \`\`\`
 
-### Verdict classification → \`next_recommended\`
-
-Inspect verify-change's output and classify into one of these states, then compose \`next_recommended\` accordingly. **Precedence when multiple fail signals fire simultaneously** (highest first): mode ③ > mode ① > mode ② > warn. This directs the user to the root cause first (fix spec → complete impl → resolve gaps).
-
-**Verdict: pass** — verify-change reports no failures.
-
-\`\`\`
-next_recommended: "/orbit:review --as system <name> — verification clean; formal pre-archive review recommended (or /orbit:archive <name> if you're skipping the editorial pass)"
-\`\`\`
-
-A downstream status reader parses the leading \`/orbit:review --as system <name>\` token into \`command\`/\`args\`. The \`/orbit:archive <name>\` alternative lives in the reason text for users who want to skip the formal review.
-
-**Verdict: fail — Mode ① (tasks-incomplete)** — tasks.md has unchecked items.
-
-\`\`\`
-next_recommended: "/orbit:apply <name> — N tasks remain unchecked; complete implementation before re-verifying"
-\`\`\`
-
-**Verdict: fail — Mode ② (impl-vs-spec gap)** — tasks all checked but spec scenarios fail against the implementation.
-
-\`\`\`
-next_recommended: "/orbit:review --as system <name> — N spec scenarios fail against implementation; system review will surface findings in its scorecard for you to walk each as code fix or spec revision"
-\`\`\`
-
-The recommendation does NOT use \`/orbit:review --as system --mark\` because \`--mark\` is proposal-mode only and silently ignored in system mode (the rule lands formally with the \`orbit-review\` capability in a later phase; it is the operative rule now). Until system-mode marker writing exists, the user manually walks each system-review finding to decide whether it's a code bug (fix via \`/orbit:apply\` or direct edit) or a spec revision (edit specs directly).
-
-**Verdict: fail — Mode ③ (orbit-validate failure)** — \`orbit validate\` itself errors (e.g., malformed spec frontmatter).
-
-\`\`\`
-next_recommended: "Fix artifact validation errors: <validator message verbatim>"
-\`\`\`
-
-No leading orbit command in this case; the reason field carries the validator output. a downstream status reader's parse finds no leading slash command and preserves the full text in \`reason\`.
-
-**Verdict: warn** — verify passes but with non-blocking findings.
-
-\`\`\`
-next_recommended: "/orbit:review --as system <name> — verification passed with N warnings; system review recommended"
-\`\`\`
-
-### Partial / aborted verify runs (out of scope)
-
-If verify-change reports incomplete output (timed out, transient validator failure), the emit-layer SHALL emit \`next_recommended: "Re-run /orbit:verify <name> — prior verify run incomplete (see verify-change output for details)"\`. Otherwise these are upstream verify-change concerns; the emit-layer emits whatever verify-change reports.`,
+The ENGINE owns the spine, the trail path, timestamp + collision handling, and \`next_recommended\` composition (the fail-mode-conditional recommendation — validator-error / tasks-incomplete / scenarios-fail / clean — is composed from the payload's \`verdict\`/\`fail_mode\`). Never hand-compose the JSON.
+`,
     license: 'MIT',
     compatibility: 'Requires orbit CLI.',
     metadata: { author: 'openspec', version: '1.0' },
