@@ -178,9 +178,11 @@ recommendation reflects the landed state — though no provisional file is ever 
 engine composes the candidate complete except `next_recommended`, computes the change status
 against a SYNTHETIC TRAIL — the on-disk trail plus the in-memory candidate treated as already
 landed — stamps the field, passes the now-complete record through the full write gate, and
-writes EXACTLY ONCE, atomically (temp-file + rename or equivalent). No provisional record
+writes EXACTLY ONCE, atomically (temp-file + rename or equivalent). No provisional RECORD
 ever exists on the trail: the write gate's before-any-write claim holds for every kind with
-ZERO exceptions, a crash at any point leaves NO file (nothing to detect or repair), and the
+ZERO exceptions — the temp file's name never parses as an emit, so no trail reader can see a
+half-written record; any failure the process survives cleans the temp file up (a hard kill MAY
+strand an inert temp file — noise the trail never reads, never a record) — and the
 written emit's `next_recommended` equals the engine's post-landing `next_command` BY
 CONSTRUCTION — extended, for apply chunk emits only, by the engine-composed
 ` — next chunk: <chunk-name>` suffix from the preamble (still one voice: every character is

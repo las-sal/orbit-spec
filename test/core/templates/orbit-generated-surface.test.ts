@@ -154,7 +154,7 @@ describe('generated surface fidelity (real init, all workflows, claude + codex)'
     }
   });
 
-  it('generates exactly the 16 registered skills, no extras (e.g., no feedback)', async () => {
+  it('generates exactly the registered skills, no extras (e.g., no feedback)', async () => {
     const dirs = await fs.readdir(path.join(testDir, '.claude', 'skills'));
     expect(dirs.sort()).toEqual(SURFACE.map(([d]) => d).sort());
   });
@@ -207,7 +207,22 @@ describe('generated surface fidelity (real init, all workflows, claude + codex)'
     await expect(fs.access(strayPath)).rejects.toThrow();
   });
 
-  it('generates exactly the 16 registered commands', async () => {
+  it('PLAIN update removes RETIRED artifacts from a pre-existing surface (D5)', async () => {
+    // Simulate a pre-D5 surface: the retired skill dir + launcher linger after upgrade.
+    const retiredSkill = path.join(testDir, '.claude', 'skills', 'orbit-review-external', 'SKILL.md');
+    const retiredCmd = path.join(testDir, '.claude', 'commands', 'orbit', 'review-external.md');
+    await fs.mkdir(path.dirname(retiredSkill), { recursive: true });
+    await fs.writeFile(retiredSkill, 'name: orbit-review-external\n');
+    await fs.writeFile(retiredCmd, '# retired launcher\n');
+
+    await new UpdateCommand({}).execute(testDir);
+
+    // Retired-artifact drift defeated the short-circuit; reconciliation removed both.
+    await expect(fs.access(path.dirname(retiredSkill))).rejects.toThrow();
+    await expect(fs.access(retiredCmd)).rejects.toThrow();
+  });
+
+  it('generates exactly the registered commands', async () => {
     const files = await fs.readdir(path.join(testDir, '.claude', 'commands', 'orbit'));
     expect(files.sort()).toEqual(SURFACE.map(([, id]) => `${id}.md`).sort());
   });

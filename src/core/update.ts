@@ -41,6 +41,8 @@ import { getGlobalConfig, type Delivery } from './global-config.js';
 import { getProfileWorkflows, ALL_WORKFLOWS } from './profiles.js';
 import { getAvailableTools } from './available-tools.js';
 import {
+  RETIRED_COMMAND_IDS,
+  RETIRED_SKILL_DIRS,
   WORKFLOW_TO_SKILL_DIR,
   getCommandConfiguredTools,
   getConfiguredToolsForProfileSync,
@@ -445,6 +447,20 @@ export class UpdateCommand {
       }
     }
 
+    // Retired artifacts (D5): dirs whose workflow id no longer exists — invisible to the
+    // deselection loop above, so pre-existing surfaces need this explicit convergence.
+    for (const dirName of RETIRED_SKILL_DIRS) {
+      const skillDir = path.join(skillsDir, dirName);
+      try {
+        if (fs.existsSync(skillDir)) {
+          await fs.promises.rm(skillDir, { recursive: true, force: true });
+          removed++;
+        }
+      } catch {
+        // Ignore errors
+      }
+    }
+
     return removed;
   }
 
@@ -499,6 +515,20 @@ export class UpdateCommand {
       const cmdPath = adapter.getFilePath(workflow);
       const fullPath = path.isAbsolute(cmdPath) ? cmdPath : path.join(projectPath, cmdPath);
 
+      try {
+        if (fs.existsSync(fullPath)) {
+          await fs.promises.unlink(fullPath);
+          removed++;
+        }
+      } catch {
+        // Ignore errors
+      }
+    }
+
+    // Retired launchers (D5): ids the deselection loop can no longer see.
+    for (const commandId of RETIRED_COMMAND_IDS) {
+      const cmdPath = adapter.getFilePath(commandId);
+      const fullPath = path.isAbsolute(cmdPath) ? cmdPath : path.join(projectPath, cmdPath);
       try {
         if (fs.existsSync(fullPath)) {
           await fs.promises.unlink(fullPath);

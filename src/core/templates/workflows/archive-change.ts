@@ -258,7 +258,7 @@ After upstream Step 3 (task-completion check) but before the audit sweep (Step 3
 
 Query the gate: \`orbit status --change "<change-name>" --json\` and read the \`gates[]\` entry with \`id: "review-system"\` (there is NO \`orbit instructions archive\` phase — the archive workflow sources gate state from \`status\`). If that gate's \`state\` is \`unpassed\` or \`stale\`, fire the inflection prompt via **AskUserQuestion** with the gate's \`reason\` and the top-level \`next_command\` shown:
 
-- **Address the gate** — halt; run the canonical \`next_command\` (e.g. \`/orbit:review-external --as system <change>\`).
+- **Address the gate** — halt; run the canonical \`next_command\` (e.g. \`/orbit:review --as system --reviewer external <change>\`).
 - **Proceed anyway** — continue the archive; record \`gate_overridden: {gate: "review-system", state, reason}\` in the archive run summary (captured at decision time).
 - **Abort** — cancel the archive; no move, no sync-specs, no summary.
 

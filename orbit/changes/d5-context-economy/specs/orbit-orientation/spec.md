@@ -14,7 +14,10 @@ change trail), each rendered as path + `final_assessment` first sentence — the
 `explore.md`/`sketches/` as historical context, and the TOUCHPOINTS view — lifecycle-aware: before apply has commits, the predicted
 map (design.md's `## Touchpoints` section, when present); once apply commits exist, the ACTUAL
 map (engine-computed `git diff --name-only` from the change's first commit, per the
-propose-owned predicted/actual split) with the predicted map alongside as reference. NO
+propose-owned predicted/actual split) with the predicted map alongside as reference — the
+ACTUAL map is the CODE map: the change's own files (`orbit/changes/<name>/**` — the same
+exclusion audit-drift's divergence arithmetic applies as lifecycle bookkeeping) collapse out
+of the list into one summary line carrying their count, never itemized. NO
 hand-maintained handoff file exists anywhere in the flow — a boot render is computed fresh per
 invocation (the R-d-4 subtraction). The render is READ-ONLY, degrades per this capability's
 fault-isolation policy (a missing design.md section or non-git workspace yields an absent
@@ -23,9 +26,10 @@ per-change status payload gains ONE typed `boot` object — `artifacts` (the ord
 array, in read order), `emits` (array of `{family, mode?, path, headline}` entries — `mode`
 present only for review-family entries; `headline` is the `final_assessment` first sentence),
 `history` (`{explore_md: boolean, sketches: boolean}`), `touchpoints`
-(`{predicted: string[] | null, actual: string[] | null}` — `actual` null before apply
-commits, `predicted` null when the section is absent), and `skipped_emits` (the
-fault-isolation array; absent when empty). Degradation renders as null or field omission per
+(`{predicted: string[] | null, actual: string[] | null, actual_change_own_count?: number}` —
+`actual` null before apply commits and change-own-free otherwise, `actual_change_own_count`
+the collapsed change-own file count (absent when zero), `predicted` null when the section is
+absent), and `skipped_emits` (the fault-isolation array; absent when empty). Degradation renders as null or field omission per
 the same policy, never an error — no implementer invents a second shape.
 
 #### Scenario: Pre-apply boot shows the predicted map
@@ -36,7 +40,7 @@ the same policy, never an error — no implementer invents a second shape.
 #### Scenario: Post-apply boot shows the actual map
 
 - **WHEN** apply commits exist for the change
-- **THEN** the touchpoints view shows the diff-computed actual file list with the predicted map alongside as reference; the actual list is never sourced from prose
+- **THEN** the touchpoints view shows the diff-computed actual file list with the predicted map alongside as reference; the actual list is never sourced from prose, and the change's own `orbit/changes/<name>/**` files render only as the collapsed count line
 
 #### Scenario: Degradation without error
 

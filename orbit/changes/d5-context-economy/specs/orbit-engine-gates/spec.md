@@ -70,3 +70,49 @@ user-owned config, never spec.
 
 - **WHEN** a `models:` entry's value contains an embedded newline (or control characters, or exceeds 80 characters)
 - **THEN** the eligibility line renders WITHOUT the hint suffix — byte-identical to an absent entry; no error, no partial injection into the readout
+
+### Requirement: Tracked-gate pass condition
+
+A `tracked` gate SHALL be: `blocked` while any `requires` entry is incomplete; `ready` when
+runnable with unchecked boxes remaining in `tracks`; `passed` (today's `all_done`) when every
+checkbox in `tracks` is checked. This is upstream apply's state machine, renamed into the gate
+vocabulary — with ONE addition (D-arc Stage D5, the user-validation subset rule): when unchecked
+boxes remain but EVERY one of them (a) is named in the engine-verified `user_validation_tasks`
+declaration of the MOST RECENT apply emit CARRYING one (per `orbit-run-summary-emit` — the list
+persists on the emit; the declaration is STICKY: a durable fact about the tasks, so a later
+apply emit without the field leaves the standing declaration governing — retraction happens
+where the task lives, via the tasks.md edit that checks the box or removes its marker) AND
+(b) self-describes as a handoff (its checkbox line carries the `(User-validation`
+marker), the gate SHALL compute `passed` FOR FLOW PURPOSES, carrying the pending task ids as an
+annotation — the position readout renders `apply ✓ (awaiting user validation: <ids>)`, the
+status row's reason names them, supersession and downstream `requires` treat the gate as passed,
+and the canonical next command points forward. The condition is recomputed from disk on every
+render (a pure function — no stored state): a new unchecked box outside the declared-and-marked
+set breaks the subset and the gate honestly drops back to `ready`. A declaration alone never
+suffices (the marker requirement makes mislabeling visible in the tasks.md diff review reads),
+and the pending obligation is always surfaced, never hidden.
+
+#### Scenario: Checkbox arithmetic decides
+
+- **WHEN** the tracked file has N checked of M boxes and no user-validation subset condition holds
+- **THEN** the gate is `passed` iff N == M, with `N/M` surfaced in the gate's status row
+
+#### Scenario: Only declared user-validation handoffs remain
+
+- **WHEN** tasks.md has one unchecked box `- [ ] 9.6 (User-validation handoff) ...`, and the latest apply emit declares `user_validation_tasks: ["9.6"]`
+- **THEN** the apply gate computes `passed` with `userValidationPending: ["9.6"]`; the position renders `apply ✓ (awaiting user validation: 9.6)`; `review-proposal` becomes superseded and the canonical next command is the `review-system` gate's next step — never a backward pointer at a moot gate
+
+#### Scenario: A new ordinary task breaks the subset
+
+- **WHEN** the subset condition held, and a review walk adds `- [ ] 10.1 fix the regression` to tasks.md
+- **THEN** the next render computes the apply gate back to `ready` (10.1 is neither declared nor marked) — self-healing, no state file involved
+
+#### Scenario: Declaration without the self-describing marker is insufficient
+
+- **WHEN** the latest apply emit declares `user_validation_tasks: ["9.6"]` but the 9.6 checkbox line lacks the `(User-validation` marker
+- **THEN** the subset condition fails and plain arithmetic governs
+
+#### Scenario: The declaration is sticky across later field-less emits
+
+- **WHEN** the subset condition held via an apply emit declaring `user_validation_tasks: ["9.6"]`, and a LATER apply emit carries no `user_validation_tasks` field
+- **THEN** the standing declaration still governs and the gate remains `passed (awaiting user validation: 9.6)` — a field omission never silently regresses the readout; retraction is the tasks.md edit

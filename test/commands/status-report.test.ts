@@ -312,6 +312,31 @@ describe('status --report surface', () => {
     expect(await snapshot()).toEqual(before);
   });
 
+  it('D5 model-hint garnish: the report tail eligibility line appends the hint when a models map resolves, byte-identical without', async () => {
+    const dir = await makeChange('hint-tail-change');
+    await fs.writeFile(
+      path.join(dir, '.orbit-runs', 'review-proposal-2026-07-25T10-00-00Z.json'),
+      d4Emit('hint-tail-change', 'proposal', 'A finding')
+    );
+
+    const bare = await runCLI(['status', '--change', 'hint-tail-change', '--report'], { cwd: tempDir });
+    expect(bare.exitCode).toBe(0);
+    expect(bare.stdout).not.toContain('— hint:');
+
+    // Cover phase + every cadence slot so the resolved key is irrelevant to the assertion.
+    const entries = ['review-proposal', 'in-context', 'fresh', 'independent', 'external']
+      .map((k) => `  ${k}: TailModel`)
+      .join('\n');
+    await fs.writeFile(path.join(tempDir, 'orbit', 'config.yaml'), `models:\n${entries}\n`);
+
+    const hinted = await runCLI(['status', '--change', 'hint-tail-change', '--report'], { cwd: tempDir });
+    expect(hinted.exitCode).toBe(0);
+    const tailLine = hinted.stdout.split('\n').find((l) => l.startsWith('Ready when you are:'));
+    expect(tailLine).toContain(' — hint: TailModel');
+    // The hint suffix is the ONLY difference.
+    expect(hinted.stdout.replace(' — hint: TailModel', '')).toBe(bare.stdout);
+  });
+
   it('regression: bare, --full, and --change outputs are unchanged by the --report addition', async () => {
     const dir = await makeChange('regress-change');
     await fs.writeFile(

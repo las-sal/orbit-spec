@@ -33,6 +33,8 @@ export interface BootView {
   touchpoints: {
     predicted: string[] | null;
     actual: string[] | null;
+    /** Change-own files (orbit/changes/<name>/**) collapsed out of `actual` — lifecycle bookkeeping, never scope drift. */
+    actual_change_own_count?: number;
   };
   /** Fault-isolation exclusions (absent in JSON when empty; typed here as optional). */
   skipped_emits?: string[];
@@ -87,6 +89,7 @@ export function collectBoot(projectRoot: string, changeName: string): { status: 
   const parse = parseTouchpointsFile(path.join(changeDir, 'design.md'));
   const predicted = parse.present ? parse.entries.map(e => e.targets.join(' + ')) : null;
   let actual: string[] | null = null;
+  let actualChangeOwnCount: number | undefined;
   const applyStarted = emits.some(e => e.command === 'apply');
   if (applyStarted && isGitRepo(projectRoot)) {
     // Repo-relative by construction (canonicalized absolute paths can cross symlink
@@ -95,7 +98,18 @@ export function collectBoot(projectRoot: string, changeName: string): { status: 
     const first = firstCommitTouching(projectRoot, rel);
     // Committed-only <change-start>..HEAD — the durable-truth view, deliberately
     // different from the per-chunk working-tree diff (per orbit-emit-composition).
-    if (first) actual = filesTouchedCommitted(projectRoot, first);
+    if (first) {
+      const touched = filesTouchedCommitted(projectRoot, first);
+      if (touched) {
+        // Change-own files (the same `orbit/changes/<name>/**` exclusion audit-drift's
+        // divergence arithmetic applies) collapse to a count: the ACTUAL map is the
+        // CODE map — trail/bookkeeping noise would bury it for a cold-start reader.
+        const ownPrefix = rel + path.sep;
+        const changeOwn = touched.filter(f => f.startsWith(ownPrefix));
+        actual = touched.filter(f => !f.startsWith(ownPrefix));
+        if (changeOwn.length > 0) actualChangeOwnCount = changeOwn.length;
+      }
+    }
   }
 
   const skipped = listSkippedEmits(runsDir);
@@ -106,7 +120,11 @@ export function collectBoot(projectRoot: string, changeName: string): { status: 
       artifacts,
       emits: [...latest.values()],
       history,
-      touchpoints: { predicted, actual },
+      touchpoints: {
+        predicted,
+        actual,
+        ...(actualChangeOwnCount !== undefined ? { actual_change_own_count: actualChangeOwnCount } : {}),
+      },
       ...(skipped.length > 0 ? { skipped_emits: skipped } : {}),
     },
   };
@@ -139,6 +157,11 @@ export function renderBoot(projectRoot: string, changeName: string): string {
     lines.push('');
     lines.push('Touchpoints (ACTUAL — diff-computed):');
     for (const f of boot.touchpoints.actual) lines.push(`  ${f}`);
+    if (boot.touchpoints.actual_change_own_count !== undefined) {
+      lines.push(
+        `  orbit/changes/${changeName}/ — ${boot.touchpoints.actual_change_own_count} change-own files (bookkeeping, collapsed)`
+      );
+    }
     if (boot.touchpoints.predicted !== null) {
       lines.push('Predicted (reference — the plan, frozen at apply):');
       for (const t of boot.touchpoints.predicted) lines.push(`  ${t}`);

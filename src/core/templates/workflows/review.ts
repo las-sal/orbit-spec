@@ -544,7 +544,7 @@ Substitute these into the \`## What to read for THIS review\` and \`## What to l
 
 const REVIEW_EXTERNAL_PROMPT_TEMPLATE_REFERENCE = `# Reference: external-review prompt template
 
-This is the canonical template for the file written to \`orbit/changes/<change-name>/.orbit-runs/external-prompt-<as>-<TS>.md\` by \`/orbit:review-external\`.
+This is the canonical template for the file written to \`orbit/changes/<change-name>/.orbit-runs/external-prompt-<as>-<TS>.md\` by the external-handoff branch of \`/orbit:review --as <mode> --reviewer external\`.
 
 **The implementer may adjust phrasing for clarity but MUST preserve the named sections and the "Output format" block verbatim** — the section headers (\`## CRITICAL\` / \`## WARNING\` / \`## SUGGESTION\`) and the field labels (\`**File**:\`, \`**Description**:\`) are what \`/orbit:address-reviews --from-file\` parses. Deviating breaks ingestion.
 

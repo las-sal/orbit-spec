@@ -24,6 +24,12 @@ export interface GateStatus {
   /** tracked kind: checkbox arithmetic surfaced as N/M. */
   checked?: number;
   total?: number;
+  /**
+   * D5 user-validation subset rule: set when a tracked gate is passed-for-flow-purposes
+   * with ONLY declared user-validation handoff tasks unchecked — the pending task ids,
+   * surfaced in the position readout (`apply ✓ (awaiting user validation: 9.6)`).
+   */
+  userValidationPending?: string[];
   before?: string;
   /**
    * D1: consent marker from the gate declaration — entry into the gate's `before:`
@@ -105,6 +111,27 @@ function countCheckboxes(changeDir: string, tracks: string): { checked: number; 
   const checked = (content.match(/^\s*- \[x\]/gim) ?? []).length;
   const unchecked = (content.match(/^\s*- \[ \]/gim) ?? []).length;
   return { checked, total: checked + unchecked };
+}
+
+/**
+ * Unchecked checkbox lines from a tracks file as `{id, text}` — id is the first
+ * whitespace-delimited token after the box (e.g. `9.6`). Used by the D5 user-validation
+ * subset rule; recomputed from disk on every render (self-healing, no stored state).
+ */
+function uncheckedTaskLines(changeDir: string, tracks: string): Array<{ id: string; text: string }> {
+  const p = path.join(changeDir, tracks);
+  let content: string;
+  try {
+    content = fs.readFileSync(p, 'utf-8');
+  } catch {
+    return [];
+  }
+  const out: Array<{ id: string; text: string }> = [];
+  for (const line of content.split('\n')) {
+    const m = line.match(/^\s*- \[ \]\s+(\S+)\s*(.*)$/i);
+    if (m) out.push({ id: m[1], text: line });
+  }
+  return out;
 }
 
 /** Does an address-reviews run fully resolve the given pass's findings artifact? */
@@ -306,14 +333,38 @@ export function computeGateStates(
       const { checked, total } = gate.tracks
         ? countCheckboxes(changeDir, gate.tracks)
         : { checked: 0, total: 0 };
-      const passed = total === 0 ? false : checked === total;
+      let passed = total === 0 ? false : checked === total;
+      let userValidationPending: string[] | undefined;
+      let reason = total === 0 ? undefined : `${checked}/${total} tasks complete`;
+      // D5 user-validation subset rule: when EVERY remaining unchecked box (a) is named
+      // by the latest apply emit's engine-verified `user_validation_tasks` declaration
+      // AND (b) self-describes as a handoff (its line carries the `(User-validation`
+      // marker), the gate is passed FOR FLOW PURPOSES — apply's AI-doable work is done;
+      // the pending human obligation is surfaced, never hidden. Recomputed from disk
+      // each render: a new ordinary unchecked task breaks the subset and the gate
+      // honestly drops back to `ready`.
+      if (!passed && total > 0 && gate.tracks) {
+        const declared = trail.latestApplyUserValidation;
+        if (declared && declared.length > 0) {
+          const unchecked = uncheckedTaskLines(changeDir, gate.tracks);
+          const allDeclaredHandoffs =
+            unchecked.length > 0 &&
+            unchecked.every(u => declared.includes(u.id) && u.text.includes('(User-validation'));
+          if (allDeclaredHandoffs) {
+            passed = true;
+            userValidationPending = unchecked.map(u => u.id);
+            reason = `${checked}/${total} tasks complete — awaiting user validation: ${userValidationPending.join(', ')}`;
+          }
+        }
+      }
       status = {
         id: gate.id,
         kind: gate.kind,
         state: passed ? 'passed' : 'ready',
-        reason: total === 0 ? undefined : `${checked}/${total} tasks complete`,
+        reason,
         checked,
         total,
+        ...(userValidationPending ? { userValidationPending } : {}),
         before: gate.before,
         consent: gate.consent,
         nextCommand: passed ? nextAfterPass(gate, changeName) : undefined,
@@ -438,7 +489,9 @@ function buildPositionReadout(
     if (s.superseded) return `${label} (past)`;
     switch (s.state) {
       case 'passed':
-        return `${label} ✓`;
+        return s.userValidationPending?.length
+          ? `${label} ✓ (awaiting user validation: ${s.userValidationPending.join(', ')})`
+          : `${label} ✓`;
       case 'stale':
         return `${label} STALE`;
       case 'blocked':

@@ -11,9 +11,9 @@ const ADDRESS_REVIEWS_EXTERNAL_FINDINGS_FORMAT_REFERENCE = `# Reference: externa
 
 This is ONE of two supported \`--from-file\` formats; the other is internal findings JSON (covers both \`command: "review"\` AND \`command: "audit-drift"\` shapes) — see \`internal-findings-format.md\`. The parser auto-detects format via content sniff (leading \`# External Review:\` → this format; leading \`{\` → JSON).
 
-The \`--from-file <path>\` markdown path ingests an external-AI's findings file. The file is produced by \`/orbit:review-external\` workflows — typically the external AI writes it after pulling the repo and reading the prompt.
+The \`--from-file <path>\` markdown path ingests an external-AI's findings file. The file is produced by the external-handoff branch of \`/orbit:review --as <mode> --reviewer external\` — typically the external AI writes it after pulling the repo and reading the prompt.
 
-This format MUST match what \`/orbit:review-external\` instructs the external AI to write. Deviations on either side break the cross-AI loop.
+This format MUST match what \`/orbit:review --as <mode> --reviewer external\` instructs the external AI to write. Deviations on either side break the cross-AI loop.
 
 ## Expected file format
 
@@ -43,7 +43,7 @@ This format MUST match what \`/orbit:review-external\` instructs the external AI
 
 ## Notes
 
-<Optional — the Notes body renders VERBATIM into the report's Commentary slot; it carries pattern/probing/risk texture and never finding counts, gate verdicts, or next commands. The prompt template in the \`orbit-review-external\` skill is this format's source of truth.>
+<Optional — the Notes body renders VERBATIM into the report's Commentary slot; it carries pattern/probing/risk texture and never finding counts, gate verdicts, or next commands. The prompt template in the \`orbit-review\` skill (\`references/prompt-template.md\`) is this format's source of truth.>
 \`\`\`
 
 ## Parser contract
@@ -714,7 +714,7 @@ The v2 shape is a **structural change** from v1, not a rename. Readers handling 
 export function getAddressReviewsSkillTemplate(): SkillTemplate {
   return {
     name: 'orbit-address-reviews',
-    description: "Resolve `@review:` markers anywhere in the repo (or review findings via `--from-file` markdown / JSON, or auto-discovered internal review/audit-drift JSON when invoked with a change name and no markers) by walking each through pushback → classify → resolve-per-lane → ripple-cascade → remove-marker (obvious-fix findings previewed at triage and applied without prompts; decision-lane findings briefed in prose and ratified by chat directive or an optional closure prompt). Walk-mode (per-finding) is the default; `--batch` opts in. Cascade-by-default auto-applies ripple edits to IN-set files (everything outside the four lifecycle-invariant OUT categories: audit trail, baseline specs, cross-change/archive dirs, safe-exclusions); `--no-cascade` opts out. Use after `/orbit:review` writes findings to `.orbit-runs/` (auto-discovered; no `--mark` pre-step needed), after `/orbit:review-external` returns external findings, after `/orbit:audit-drift` writes drift findings, or any time the repo has accumulated `@review:` annotations.",
+    description: "Resolve `@review:` markers anywhere in the repo (or review findings via `--from-file` markdown / JSON, or auto-discovered internal review/audit-drift JSON when invoked with a change name and no markers) by walking each through pushback → classify → resolve-per-lane → ripple-cascade → remove-marker (obvious-fix findings previewed at triage and applied without prompts; decision-lane findings briefed in prose and ratified by chat directive or an optional closure prompt). Walk-mode (per-finding) is the default; `--batch` opts in. Cascade-by-default auto-applies ripple edits to IN-set files (everything outside the four lifecycle-invariant OUT categories: audit trail, baseline specs, cross-change/archive dirs, safe-exclusions); `--no-cascade` opts out. Use after `/orbit:review` writes findings to `.orbit-runs/` (auto-discovered; no `--mark` pre-step needed), after `/orbit:review --as <mode> --reviewer external` returns external findings, after `/orbit:audit-drift` writes drift findings, or any time the repo has accumulated `@review:` annotations.",
     instructions: `Resolve \`@review:\` markers across the repo (or external-review findings from a file) with pushback discipline. The lifecycle: **discover → triage → walk → report**, where each walked finding completes its inner cycle (pushback → classify → fix → ripple-cascade → remove-marker) in walk-mode by default. Cascade-by-default auto-applies parallel edits to ripple-flagged IN-set files. Markers are removed from their source files on resolution (the marker-removal invariant) so they don't leak into canonical artifacts.
 
 **Generates resolutions; does not generate findings.** This is the counterpart to \`/orbit:review\`. Primary use case: close the cross-AI review cycle by ingesting external-AI findings via \`--from-file\`. Secondary use case: walk repo-scanned inline \`@review:\` markers with structured pushback.

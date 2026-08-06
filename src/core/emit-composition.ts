@@ -54,7 +54,14 @@ const COMMANDS: Record<string, CommandSpec> = {
   verify: {
     kind: 'workflow',
     scopes: { change: true },
-    payloadFields: ['final_assessment', 'verdict', 'fail_mode', 'validator_message'],
+    payloadFields: [
+      'final_assessment',
+      'verdict',
+      'fail_mode',
+      'validator_message',
+      'warnings_count',
+      'scenarios_failed',
+    ],
   },
   architect: {
     kind: 'workflow',
@@ -754,7 +761,11 @@ export function composeAndWriteEmit(
         : '';
       emit.final_assessment = `${computed.assessmentCore}${suffix}`;
       delete (emit as any).assessment_suffix;
-      delete (emit as any).user_validation_tasks;
+      // The verified identifier list PERSISTS on the emit (D5 walk): the tracked-gate
+      // user-validation subset rule reads it from the trail; an empty list is elided.
+      if (!Array.isArray((emit as any).user_validation_tasks) || (emit as any).user_validation_tasks.length === 0) {
+        delete (emit as any).user_validation_tasks;
+      }
       postWrite = true;
       break;
     }
@@ -791,12 +802,29 @@ export function composeAndWriteEmit(
         );
         emit.next_recommended = `/orbit:apply ${name} — ${boxes.tasksRemaining} tasks remaining`;
       } else if (failMode === 'scenarios-fail') {
-        emit.next_recommended = `/orbit:review --as system ${name} — spec scenarios do not pass against the implementation; walk each finding as a code fix or spec revision`;
+        // Baseline mode-② template carries the scenario count when the payload supplies it.
+        const n = (payload as any).scenarios_failed;
+        const countPrefix =
+          typeof n === 'number' && Number.isInteger(n) && n > 0 ? `${n} spec scenarios` : 'spec scenarios';
+        emit.next_recommended = `/orbit:review --as system ${name} — ${countPrefix} fail against implementation; system review will surface findings in its scorecard for you to walk each as code fix or spec revision`;
+      } else if (failMode === 'warnings') {
+        // Warn state (pass with non-blocking findings): a truthful record, never 'clean'.
+        const n = (payload as any).warnings_count;
+        if (typeof n !== 'number' || !Number.isInteger(n) || n < 1) {
+          throw new EmitError(
+            `verify fail_mode 'warnings' requires a positive integer warnings_count — a warn-state record without its count is the wrong-but-plausible class this surface exists to prevent.`
+          );
+        }
+        emit.next_recommended = `/orbit:review --as system ${name} — verification passed with ${n} warnings; system review recommended`;
+      } else if (failMode === 'incomplete') {
+        emit.next_recommended = `Re-run /orbit:verify ${name} — prior verify run incomplete (see verify-change output for details)`;
       } else {
         emit.next_recommended = `/orbit:review --as system ${name} — verification clean; formal pre-archive review recommended (or /orbit:archive ${name} if you're skipping the editorial pass)`;
       }
       delete (emit as any).fail_mode;
       delete (emit as any).validator_message;
+      delete (emit as any).warnings_count;
+      delete (emit as any).scenarios_failed;
       break;
     }
     case 'audit-drift': {
@@ -886,10 +914,22 @@ export function composeAndWriteEmit(
   }
 
   // Full write gate on the now-complete record, then EXACTLY ONE atomic write.
+  // The dot-tmp never parses as an emit-shaped name, so no trail reader ever sees
+  // a provisional record; the unlink covers every failure the process survives
+  // (a hard kill can still strand the inert dot-tmp — noise, never a record).
   writeGate(emit, resolved, filePath);
   const tmp = path.join(resolved.runsDir, `.${filename}.tmp`);
-  fs.writeFileSync(tmp, JSON.stringify(emit, null, 2) + '\n', 'utf-8');
-  fs.renameSync(tmp, filePath);
+  try {
+    fs.writeFileSync(tmp, JSON.stringify(emit, null, 2) + '\n', 'utf-8');
+    fs.renameSync(tmp, filePath);
+  } catch (err) {
+    try {
+      fs.unlinkSync(tmp);
+    } catch {
+      // best-effort cleanup; the original failure is the story
+    }
+    throw err;
+  }
 
   return { path: filePath, emit, warnings };
 }

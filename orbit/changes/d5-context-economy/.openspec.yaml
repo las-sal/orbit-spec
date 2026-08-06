@@ -18,6 +18,7 @@ base_fingerprints:
     Generated-file disposition: sha256:6c9c2eec914857912f452d82a2a0f09083a1d08817a4dd864a5ca0611aca23af
   orbit-engine-gates:
     Single-voiced canonical-next computation: sha256:21e0864c09aaa77f3cbbde5ad6a3defea18a843318d2dd0ff6ef2ed25c725392
+    Tracked-gate pass condition: sha256:24d8ea2307e0b16ce9d0dffe26cc5c54ed9fa85fee955c748e33cc28df46f223
   orbit-explore-modifications:
     explore.md five-section convention: sha256:ffcb7bc69533c15ae2bd21885fd97d3f05c5b36aa4605bba8069e12d68006249
   orbit-propose-modifications:

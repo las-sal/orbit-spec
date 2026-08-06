@@ -1,0 +1,108 @@
+{
+  "command": "review",
+  "timestamp": "2026-08-06T19:28:04Z",
+  "change": "d5-context-economy",
+  "kind": "editorial",
+  "model": "claude-fable-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [],
+  "stale_suppressed": [
+    {
+      "pass": "0",
+      "title": "Stated ≤20k reduction target missed at 28.5k, never surfaced or ratified (prior pass W, proposal.md:47)",
+      "evidence": "RESOLVED option A (walk 2026-08-06T19-08-12Z, chat-ratified): proposal.md carries the bracketed Outcome note (28.5k / −30%, residual attributed to deferred engine work-list #2/#3); the arc doc's d5 exit-criterion 1 carries the RATIFIED READING (Sal, 2026-08-06); architecture status renders all stages — the doc still parses"
+    },
+    {
+      "pass": "1",
+      "title": "Verify composer cannot express warn-state/incomplete recommendations (prior pass W, emit-composition.ts:787)",
+      "evidence": "RESOLVED option A: fail_mode 'warnings' (+ required warnings_count, fail-loud absent) and 'incomplete' branches emit the baseline's strings; mode-② carries the scenarios_failed count; verify body payload docs updated and verified live on the regenerated SKILL.md:187; 4 new emit tests green"
+    },
+    {
+      "pass": "3",
+      "title": "Model-hint garnish missing from report tail + orientation eligibility lines (prior pass W, report-render.ts:698)",
+      "evidence": "RESOLVED at ALL five unhinted sites (report tail via withModelHint in the tail computation; sprint view both branches + both --full entry lines via renderNextLine): both-ways tests at both surfaces green; live d5 report tail renders byte-identical with the dogfood map commented"
+    },
+    {
+      "pass": "6",
+      "title": "Retired /orbit:review-external taught as live at five generated-surface sites (prior pass W, onboard.ts:133)",
+      "evidence": "RESOLVED: all 5 sites + a same-class 6th (address-reviews.ts:46 skill-name reference) swept to the merged invocation; frozen record vocabulary untouched; surface regenerated — grep over .claude/skills/ + .claude/commands/orbit/ shows zero live-command mentions; parity hashes re-pinned"
+    },
+    {
+      "pass": "2",
+      "title": "Latest-DECLARING vs latest apply emit wording divergence (prior pass S, trail.ts:163)",
+      "evidence": "RESOLVED option B: delta reworded to 'the MOST RECENT apply emit CARRYING one' with stickiness + tasks.md retraction path explicit; new sticky scenario in the delta; new gate test proves a later field-less emit keeps the gate passed"
+    },
+    {
+      "pass": "2",
+      "title": "Crash window strands .tmp; spec claims 'leaves NO file' (prior pass S, emit-composition.ts:894)",
+      "evidence": "RESOLVED A+B (chat-ratified off-menu): write+rename wrapped with best-effort unlink on surviving failures; delta rewritten to the guaranteed claim (no RECORD ever; inert dot-tmp possible only under hard kill); read-only-dir test proves zero residue on the throw path"
+    },
+    {
+      "pass": "3",
+      "title": "status --json gate rows drop typed userValidationPending (prior pass S, instruction-loader.ts:407)",
+      "evidence": "RESOLVED: GateStatusRow gains the typed field; live status --change d5-context-economy --json carries userValidationPending: [\"9.6\"]; test asserts the typed field"
+    },
+    {
+      "pass": "3",
+      "title": "Boot ACTUAL touchpoints drowns in change-own bookkeeping (prior pass S, boot-render.ts)",
+      "evidence": "RESOLVED: change-own files collapse to the one-line count (typed actual_change_own_count); delta requirement/shape/scenario updated in cascade; boot test extended proves the exclusion and the collapsed render line"
+    },
+    {
+      "pass": "6",
+      "title": "Stale '16 registered' test titles vs SURFACE pinning 15 (prior pass S)",
+      "evidence": "RESOLVED: both it() titles renamed count-free ('exactly the registered skills/commands')"
+    },
+    {
+      "pass": "1",
+      "title": "Retired /orbit:review-external invocation in baseline specs",
+      "evidence": "carried forward: every baseline hit sits inside a requirement block this change's deltas MODIFY (fingerprints 26/26 re-verified this pass) — archive sync rewrites them; Purpose-paragraph mentions are at-archive note 9.4 (tasks.md:161, verified present)"
+    },
+    {
+      "pass": "6",
+      "title": "CLAUDE.md current-state surface counts still say 16",
+      "evidence": "carried forward: deliberate deferral — at-archive note 9.7 (tasks.md:169, verified present) sweeps present-tense counts to 15 during the archive flow"
+    }
+  ],
+  "commentary": "A confirm pass over the resolution walk, probed as an adversary of the fixes rather than a fresh sweep: every one of the nine resolutions was re-read at its landing site (the regenerated SKILL.md text, the five hint render sites in the working diff, the sticky-declaration scenario and its test, the tmp cleanup branch, the typed gate-row field live in --json) rather than trusted from the walk's log. The fixes hold together as a set — notably, the two spec-side resolutions (sticky wording, honest atomicity claim) now say exactly what the code does, which is the direction of travel this whole stage exists to enforce. Nothing the fixes touched leaks sideways: the report goldens stayed byte-stable with the hint map unconfigured, the boot JSON shape change is additive, and the verify payload extension is invisible to every existing caller. The fresh pass's unfiled minor texture (the unused uvByGroup computation, the dead findingsPattern local, the C1-era 'fresh' wording collision in gate reasons) remains real, minor, and pre-existing — left for a future economy pass rather than padded into this one.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4",
+    "5"
+  ],
+  "final_assessment": "No findings.",
+  "iteration": 3,
+  "next_recommended": "orbit status --change d5-context-economy --report"
+}

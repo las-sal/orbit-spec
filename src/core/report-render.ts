@@ -6,6 +6,7 @@ import {
   parseTsToken,
   type ReviewMode,
 } from './artifact-graph/index.js';
+import { modelHintFor, withModelHint } from './model-hints.js';
 
 /**
  * Review-report renderer (D-arc Stage D4, per orbit-report-rendering). The
@@ -969,7 +970,10 @@ export function buildReportContext(
     const row = status.gates.find(g => g.id === gateId);
     if (row) gateLine = `Gate ${row.id}: ${row.state}${row.reason ? ` — ${row.reason}` : ''}`;
     position = status.position;
-    nextCommand = status.next_command;
+    nextCommand =
+      status.next_command !== undefined
+        ? withModelHint(status.next_command, modelHintFor(projectRoot, status.next_hint_keys))
+        : undefined;
   } catch (err) {
     // NOT the ungated case (that path returns absent values without throwing):
     // a throw here is a broken schema/metadata — a clean report failure (W1).

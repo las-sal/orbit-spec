@@ -132,6 +132,30 @@ describe('status orientation surface', () => {
     expect(out).toContain('other-change (review)');
   });
 
+  it('D5 model-hint garnish: bare and --full eligibility lines append the hint for change sprints when a models map resolves', async () => {
+    await makeChange('hint-sprint-change', { emit: true });
+
+    const bare = await runCLI(['status'], { cwd: tempDir });
+    expect(bare.exitCode).toBe(0);
+    expect(bare.stdout).not.toContain('— hint:');
+
+    const entries = ['review-proposal', 'in-context', 'fresh', 'independent', 'external']
+      .map((k) => `  ${k}: SprintModel`)
+      .join('\n');
+    await fs.writeFile(path.join(tempDir, 'orbit', 'config.yaml'), `models:\n${entries}\n`);
+
+    const hinted = await runCLI(['status'], { cwd: tempDir });
+    expect(hinted.exitCode).toBe(0);
+    const nextLine = hinted.stdout.split('\n').find((l) => l.startsWith('Ready when you are:'));
+    expect(nextLine).toContain(' — hint: SprintModel');
+    expect(hinted.stdout.replace(' — hint: SprintModel', '')).toBe(bare.stdout);
+
+    const full = await runCLI(['status', '--full'], { cwd: tempDir });
+    expect(full.exitCode).toBe(0);
+    const fullNext = full.stdout.split('\n').find((l) => l.includes('Ready when you are:'));
+    expect(fullNext).toContain(' — hint: SprintModel');
+  });
+
   it('the review chip counts the SHARED pass axis: internal emits plus confident external findings files', async () => {
     const dir = await makeChange('axis-change', { emit: true });
     await writeReviewEmit(dir, 'proposal', '2026-07-21T10-00-00Z');

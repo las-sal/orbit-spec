@@ -277,6 +277,17 @@ function renderLastLine(last: EmitRecord): string {
   return `${last.command} · ${relativeTime(last.timestamp)} — ${trimAssessment(last.final_assessment)}`;
 }
 
+/**
+ * Eligibility line for a workstream entry, with the D5 model-hint garnish.
+ * Change entries carry hint keys via the nested per-change status; explore
+ * entries (and degraded rows without status) have none — hint resolves null
+ * and the line renders unchanged.
+ */
+function renderNextLine(entry: WorkstreamEntry): string {
+  const hint = modelHintFor('.', entry.status?.next_hint_keys);
+  return `Ready when you are: ${withModelHint(entry.next!, hint)}`;
+}
+
 function renderDegradedRow(entry: WorkstreamEntry): string {
   // "name + a ONE-LINE error note" (fault-isolation clause b): real YAML/schema
   // errors embed multi-line code frames — the text row keeps the first line
@@ -321,14 +332,14 @@ function printSprintView(orientation: Orientation, json: boolean): void {
     console.log(renderDegradedRow(sprint));
     if (sprint.last) console.log(`last: ${renderLastLine(sprint.last)}`);
     printSkippedEmits(sprint);
-    if (sprint.next) console.log(`Ready when you are: ${sprint.next}`);
+    if (sprint.next) console.log(renderNextLine(sprint));
   } else {
     console.log(`${sprint.name}${stageTag(sprint)}`);
     console.log(`  ${renderStrip(sprint.strip)}`);
     if (sprint.last) console.log(`last: ${renderLastLine(sprint.last)}`);
     else console.log('last: no emits yet');
     printSkippedEmits(sprint);
-    if (sprint.next) console.log(`Ready when you are: ${sprint.next}`);
+    if (sprint.next) console.log(renderNextLine(sprint));
   }
 
   const others = orientation.workstreams.filter(
@@ -465,7 +476,7 @@ function printWorkstreamEntry(entry: WorkstreamEntry, indent: string): void {
     console.log(`${indent}${renderDegradedRow(entry)}`);
     if (entry.last) console.log(`${indent}  last: ${renderLastLine(entry.last)}`);
     for (const f of entry.skipped_emits ?? []) console.log(`${indent}  \u26a0 invalid emit skipped: ${f}`);
-    if (entry.next) console.log(`${indent}  Ready when you are: ${entry.next}`);
+    if (entry.next) console.log(`${indent}  ${renderNextLine(entry)}`);
     return;
   }
   console.log(`${indent}${entry.name} (${entry.kind})${stageTag(entry)}`);
@@ -473,5 +484,5 @@ function printWorkstreamEntry(entry: WorkstreamEntry, indent: string): void {
   if (entry.position && entry.kind === 'change') console.log(`${indent}  position: ${entry.position}`);
   console.log(`${indent}  last: ${entry.last ? renderLastLine(entry.last) : 'no emits yet'}`);
   for (const f of entry.skipped_emits ?? []) console.log(`${indent}  \u26a0 invalid emit skipped: ${f}`);
-  if (entry.next) console.log(`${indent}  Ready when you are: ${entry.next}`);
+  if (entry.next) console.log(`${indent}  ${renderNextLine(entry)}`);
 }

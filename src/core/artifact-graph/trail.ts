@@ -52,6 +52,13 @@ export interface Trail {
   resolutions: TrailResolution[];
   /** `apply-*.json` filename tokens (artifact-changing events for freshness). */
   applyTokens: string[];
+  /**
+   * The LATEST apply emit's declared `user_validation_tasks` identifier list (D5): the
+   * engine-verified record of which unchecked boxes are user-validation handoffs. Absent
+   * when no apply emit declares the field. Consumed by the tracked-gate user-validation
+   * subset rule (orbit-engine-gates).
+   */
+  latestApplyUserValidation?: string[];
 }
 
 const TS_TOKEN = /(\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}Z)/;
@@ -92,6 +99,8 @@ export interface TrailOverlay {
 export function readTrail(changeDir: string, overlay?: TrailOverlay): Trail {
   const runsDir = path.join(changeDir, '.orbit-runs');
   const trail: Trail = { changeDir, runsDir, passes: [], resolutions: [], applyTokens: [] };
+  // (token, declared user-validation ids) per apply emit; the latest token wins below.
+  const applyUserValidation: Array<[string, string[]]> = [];
 
   const ingestJson = (name: string, token: string, full: string, json: any): void => {
     if (/^review-(proposal|system)-/.test(name)) {
@@ -100,6 +109,10 @@ export function readTrail(changeDir: string, overlay?: TrailOverlay): Trail {
       trail.resolutions.push(parseAddressReviews(token, json));
     } else if (/^apply-/.test(name)) {
       trail.applyTokens.push(token);
+      const uv = (json as any)?.user_validation_tasks;
+      if (Array.isArray(uv) && uv.every((t: unknown) => typeof t === 'string')) {
+        applyUserValidation.push([token, uv as string[]]);
+      }
     }
     // review-external-*.json (T0 packaging emit) is intentionally NOT a pass:
     // a packaged-but-unreturned external never counts as class coverage.
@@ -147,6 +160,10 @@ export function readTrail(changeDir: string, overlay?: TrailOverlay): Trail {
   trail.passes.sort((a, b) => (a.token < b.token ? -1 : a.token > b.token ? 1 : 0));
   trail.resolutions.sort((a, b) => (a.token < b.token ? -1 : a.token > b.token ? 1 : 0));
   trail.applyTokens.sort();
+  if (applyUserValidation.length > 0) {
+    applyUserValidation.sort((a, b) => (a[0] < b[0] ? -1 : 1));
+    trail.latestApplyUserValidation = applyUserValidation[applyUserValidation.length - 1][1];
+  }
   return trail;
 }
 

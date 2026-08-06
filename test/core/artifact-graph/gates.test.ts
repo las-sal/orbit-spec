@@ -184,6 +184,65 @@ describe('artifact-graph/gates — computation', () => {
     expect(passed.nextCommand).toBeUndefined(); // apply has no `before`
   });
 
+  describe('D5 user-validation subset rule (tracked gate)', () => {
+    const UV_TASKS = '- [x] 1.1 build it\n- [ ] 9.6 (User-validation handoff) every-seam boot test\n';
+    const applyEmit = (uv?: string[]) =>
+      writeJson('apply-2026-07-01T10-00-00Z.json', {
+        command: 'apply', final_assessment: 'done.', next_recommended: 'x',
+        ...(uv ? { user_validation_tasks: uv } : {}),
+      });
+
+    it('passes-for-flow when every unchecked box is a declared, self-described handoff', () => {
+      writeFile('tasks.md', UV_TASKS);
+      applyEmit(['9.6']);
+      const { gates, position } = computeGateStates(schema, 'c', dir, allArtifacts);
+      const apply = gates.find(g => g.id === 'apply')!;
+      expect(apply.state).toBe('passed');
+      expect(apply.userValidationPending).toEqual(['9.6']);
+      expect(apply.reason).toContain('awaiting user validation: 9.6');
+      expect(position).toContain('apply ✓ (awaiting user validation: 9.6)');
+      // supersession fires: review-proposal is (past); the frontier moves forward
+      const rp = gates.find(g => g.id === 'review-proposal')!;
+      expect(rp.superseded).toBe(true);
+      const rs = gates.find(g => g.id === 'review-system')!;
+      expect(rs.state).not.toBe('blocked');
+    });
+
+    it('a NEW ordinary unchecked task breaks the subset — the gate drops back to ready', () => {
+      writeFile('tasks.md', UV_TASKS + '- [ ] 10.1 fix the regression\n');
+      applyEmit(['9.6']);
+      const apply = computeGateStates(schema, 'c', dir, allArtifacts).gates.find(g => g.id === 'apply')!;
+      expect(apply.state).toBe('ready');
+      expect(apply.userValidationPending).toBeUndefined();
+    });
+
+    it('declared but not self-described (no (User-validation marker) does not count', () => {
+      writeFile('tasks.md', '- [x] 1.1 build it\n- [ ] 9.6 ordinary-looking task\n');
+      applyEmit(['9.6']);
+      const apply = computeGateStates(schema, 'c', dir, allArtifacts).gates.find(g => g.id === 'apply')!;
+      expect(apply.state).toBe('ready');
+    });
+
+    it('no declaration on the trail → plain arithmetic (unchanged behavior)', () => {
+      writeFile('tasks.md', UV_TASKS);
+      applyEmit(); // apply emit without the field
+      const apply = computeGateStates(schema, 'c', dir, allArtifacts).gates.find(g => g.id === 'apply')!;
+      expect(apply.state).toBe('ready');
+    });
+
+    it('the declaration is STICKY: a later field-less apply emit never silently regresses the readout', () => {
+      writeFile('tasks.md', UV_TASKS);
+      applyEmit(['9.6']);
+      // A later apply emit without the field — the standing declaration governs.
+      writeJson('apply-2026-07-02T10-00-00Z.json', {
+        command: 'apply', final_assessment: 'follow-up chunk.', next_recommended: 'x',
+      });
+      const apply = computeGateStates(schema, 'c', dir, allArtifacts).gates.find(g => g.id === 'apply')!;
+      expect(apply.state).toBe('passed');
+      expect(apply.userValidationPending).toEqual(['9.6']);
+    });
+  });
+
   it('review-proposal unpassed with no independent pass → recommends --fresh', () => {
     // only an in-context pass exists
     writeJson('review-proposal-2026-06-30T10-00-00Z.json', {

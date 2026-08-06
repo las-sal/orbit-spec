@@ -45,7 +45,11 @@ as nine decisions in the consumed exploration.
   exit criterion 1's NUMBER): the six heaviest bodies' resident total drops from ≈40.6k to
   **≤ 20k tokens**, measured by the same bytes/4 estimate over the same six bodies as
   `sketches/body-inventory.md` (the inventory's halving claim made falsifiable; ≈18k is the
-  judgment floor, ~2k the connective-prose headroom).
+  judgment floor, ~2k the connective-prose headroom). **[Outcome, ratified 2026-08-06 (Sal,
+  via the system-review walk): achieved 28.5k (−30%), target NOT hit; the residual is
+  attributed to deferred engine work-list items #2 (findings resolver) and #3 (archive
+  preflight) scoped out of D5 — accepted as the exit-criterion-1 reading rather than expanding
+  D5's scope; see `sketches/body-inventory.md` and the arc doc's criterion-1 note.]**
 - **Boot render**: `orbit status --change <name> --boot` (orientation surface) composes the
   cold-start sequence as ordered pointers — position/eligibility, artifact set, latest-emit
   pointers per command family (review split per mode), and the touchpoints view; no

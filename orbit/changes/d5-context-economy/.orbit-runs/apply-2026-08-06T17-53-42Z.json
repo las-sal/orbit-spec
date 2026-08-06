@@ -1,0 +1,36 @@
+{
+  "command": "apply",
+  "timestamp": "2026-08-06T17:53:42Z",
+  "change": "d5-context-economy",
+  "kind": "workflow",
+  "model": "claude-fable-5",
+  "user_validation_tasks": [
+    "9.6"
+  ],
+  "consent": "user-invoked",
+  "tasks_completed": 30,
+  "tasks_remaining": 1,
+  "user_validation_remaining": 1,
+  "chunk": "4 of 4",
+  "chunk_name": "Workflow-layer hardening, audit checks, verification sweep",
+  "chunk_complete": true,
+  "tasks_completed_this_session": 0,
+  "files_touched": [
+    "orbit/changes/d5-context-economy/.openspec.yaml",
+    "orbit/changes/d5-context-economy/.orbit-runs/apply-2026-08-05T20-40-35Z.json",
+    "orbit/changes/d5-context-economy/specs/orbit-engine-gates/spec.md",
+    "orbit/changes/d5-context-economy/specs/orbit-run-summary-emit/spec.md",
+    "orbit/config.yaml",
+    "src/core/artifact-graph/gates.ts",
+    "src/core/artifact-graph/trail.ts",
+    "src/core/emit-composition.ts",
+    "src/core/profile-sync-drift.ts",
+    "src/core/update.ts",
+    "test/core/artifact-graph/gates.test.ts",
+    "test/core/profile-sync-drift.test.ts",
+    "test/core/templates/orbit-generated-surface.test.ts"
+  ],
+  "diff_base": "70de71db400e9ef5e7a977404dec87d5aafed30d",
+  "final_assessment": "Completed chunk 4 of 4 (Workflow-layer hardening, audit checks, verification sweep); 30 of 31 tasks done. no code changes this session — re-verified apply state post gate-layer fix and persisted the user-validation declaration so the tracked gate computes the subset rule",
+  "next_recommended": "/orbit:review --as system d5-context-economy"
+}

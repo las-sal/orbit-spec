@@ -1,0 +1,195 @@
+{
+  "command": "review",
+  "timestamp": "2026-08-06T18:15:14Z",
+  "change": "d5-context-economy",
+  "kind": "editorial",
+  "model": "claude-fable-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 2
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 3
+    }
+  },
+  "findings": [
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/d5-context-economy/proposal.md",
+      "line": 47,
+      "title": "Stated reduction target (arc exit criterion 1's NUMBER) missed: six-body resident total is 28.5k, not ≤ 20k — recorded on the trail but never surfaced as a finding or ratified",
+      "recommendation": "proposal.md commits to the falsifiable number ('drops from ≈40.6k to ≤ 20k tokens'); the recorded after-measurement (sketches/body-inventory.md:129, apply chunk-3 emit) is 28.5k — −30%, target NOT met — with the miss attributed to deferred engine work-list items #2 (findings resolver) and #3 (archive preflight) that D5 scoped out. An independent re-measurement of the six generated SKILL.md bodies lands at ≈29.1k tokens (bytes/4), corroborating the miss. The sketch says this was 'flagged for the review-system pass', but the prior system pass recorded no finding, the proposal was never amended, and no user ratification of the revised number exists on the trail — the arc's exit-criterion-1 reading at stage ratification will fail against the stated number as-is. This needs an explicit user decision before archive.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "accept 28.5k: amend the arc exit-criterion-1 reading (and the at-archive narrative) to record the achieved number plus the deferred-work rationale, with explicit user ratification on the trail"
+        },
+        {
+          "label": "B",
+          "body": "hold the ≤20k target: scope a follow-up change delivering engine work-list items #2/#3 before D5 stage completion is ratified"
+        }
+      ]
+    },
+    {
+      "pass": "1",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "src/core/emit-composition.ts",
+      "line": 787,
+      "title": "Verify recommendation composer cannot express the baseline's warn-state and incomplete-run recommendations — a warnings-bearing verify emits 'verification clean'",
+      "recommendation": "The un-delta'd baseline requirement 'Verify fail-mode recommendations' (orbit/specs/orbit-run-summary-emit/spec.md:353) says a pass-with-warnings SHALL write '…verification passed with N warnings; system review recommended' and an incomplete run SHALL write the 'Re-run /orbit:verify…' recommendation. The engine's verify branch (emit-composition.ts:787-804) recognizes only validator-error/tasks-incomplete/scenarios-fail and routes everything else to the clean-pass string ('verification clean; formal pre-archive review recommended'), and the payload vocabulary (verdict/fail_mode/validator_message per the verify skill) cannot even request the warn or incomplete states — so a verify that passed WITH warnings produces a wrong-but-plausible 'clean' record, the exact class the emit surface exists to prevent. The mode-② string also drops the baseline's scenario count. The emit-composition delta claims 'no emitting command lacks a composition rule … derived from the owning capability's recommendation requirements', which this gap contradicts.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "extend the verify payload contract (e.g. fail_mode 'warnings' + a warnings count, and an 'incomplete' mode) and add the two missing engine branches matching the baseline strings"
+        },
+        {
+          "label": "B",
+          "body": "delta the baseline 'Verify fail-mode recommendations' requirement down to the four-mode vocabulary the surface actually owns, so spec and engine speak one voice"
+        }
+      ]
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "src/core/report-render.ts",
+      "line": 698,
+      "title": "Model-hint garnish missing from the report tail and orientation eligibility lines — the same canonical-next renders with and without the hint across engine surfaces",
+      "recommendation": "The orbit-engine-gates delta says the rendered eligibility line SHALL append ' — hint: <value>' when a models: entry resolves. Implementation applies it on the per-change status view (src/commands/workflow/status.ts:214) and the boot render (src/core/boot-render.ts:157), but NOT on the report tail (report-render.ts:698 pushes ctx.nextCommand raw; composed at :972 from status.next_command without withModelHint) nor the bare/--full orientation views (status.ts:324/331). With a configured map, `orbit status --change X` shows the hint while `orbit status --change X --report` — the surface the review bodies paste verbatim, exactly where the next reviewer-slot hint matters most — silently drops it. Currently latent only because the dogfood map is commented out. Thread next_hint_keys through the report-tail context and orientation tuples and apply withModelHint at those render points (tests both ways, per task 5.2's pattern)."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/onboard.ts",
+      "line": 133,
+      "title": "Retired /orbit:review-external still taught as a live command at five current-state sites in generated bodies/references",
+      "recommendation": "Current-state residue of the retired invocation (Category-1 vocabulary residue on the generated surface, distinct from the properly-historical 'formerly invoked as' mentions in external-handoff.md): (1) onboard.ts:133 (→ .claude/skills/orbit-onboard/SKILL.md:124) — the try-it nudge says 'When you want a cross-AI second opinion, see /orbit:review-external', teaching new users a command that no longer exists, directly against the orbit-onboard delta's re-anchor; (2) archive-change.ts:261 (→ orbit-archive-change/SKILL.md:177) — the gate-inflection example renders the canonical next_command as '/orbit:review-external --as system <change>', a string the engine can no longer produce; (3) address-reviews.ts:14 and :16 (→ references/external-findings-format.md:5,7) — 'produced by /orbit:review-external workflows'; (4) address-reviews.ts:717 — the SKILL description ('Use after /orbit:review-external returns external findings'), the very text surfaced in the model's skill listing; (5) review.ts:547 (→ orbit-review/references/prompt-template.md:3) — 'written … by /orbit:review-external'. Sweep all five to the merged '/orbit:review --as <mode> --reviewer external' form, regenerate the surface, and re-pin any fidelity markers."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "src/core/artifact-graph/trail.ts",
+      "line": 163,
+      "title": "User-validation declaration semantics: latest DECLARING apply emit wins, so a later apply emit cannot retract a declaration — diverging from the delta's 'LATEST apply emit' wording",
+      "recommendation": "trail.ts:163-166 keeps the most recent apply emit that CARRIES user_validation_tasks; an apply emit without the field (and an empty list is elided at emit time, emit-composition.ts:759-761) leaves an older declaration governing. The orbit-engine-gates delta says 'named in the LATEST apply emit's engine-verified user_validation_tasks declaration' — under that reading a field-less newest emit should drop the subset rule. Practical impact is narrow (the '(User-validation' marker requirement self-heals mislabels via tasks.md edits), but the two voices should agree.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "implement latest-emit semantics: a newest apply emit lacking the field clears the standing declaration (and stop eliding the empty list so retraction is expressible)"
+        },
+        {
+          "label": "B",
+          "body": "amend the delta wording to 'the most recent apply emit carrying the declaration', documenting the tasks.md marker edit as the retraction path"
+        }
+      ]
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "src/core/emit-composition.ts",
+      "line": 894,
+      "title": "A crash between temp-file write and rename leaves .<filename>.tmp in the trail directory — the 'a crash at any point leaves NO file' claim is overstated",
+      "recommendation": "The atomic requirement sanctions temp-file+rename, but also asserts 'a crash at any point leaves NO file (nothing to detect or repair)'. emit-composition.ts:894-896 writes `.{filename}.tmp` inside .orbit-runs/ then renames; a crash in that window strands a dot-tmp file (invisible to trail readers, but a committed-directory artifact to detect and clean). Wrap the write+rename in try/catch with an unlink of the tmp on failure, or soften the spec sentence to 'no RECORD ever exists on the trail'."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/artifact-graph/instruction-loader.ts",
+      "line": 407,
+      "title": "status --json gate rows drop the typed userValidationPending field — pending ids reach machine consumers only via the prose reason",
+      "recommendation": "computeGateStates carries userValidationPending (gates.ts:355) and the delta scenario names it ('the apply gate computes passed with userValidationPending: [\"9.6\"]'), but the GateStatusRow mapping (instruction-loader.ts:407-417) omits it, so `orbit status --change --json` exposes the ids only inside the reason string — prose a machine consumer must parse, the pattern D5 exists to retire. Add userValidationPending to the row shape."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/boot-render.ts",
+      "line": 1,
+      "title": "Boot render's ACTUAL touchpoints view includes the change's own .orbit-runs/ bookkeeping — the code map drowns in trail noise, and the two 'actual map' surfaces disagree",
+      "recommendation": "The live boot render for d5 lists ~18 orbit/changes/d5-context-economy/.orbit-runs/*.json entries (plus .openspec.yaml and delta specs) ahead of the real code paths, while the audit-drift delta explicitly excludes `orbit/changes/<name>/**` from the divergence arithmetic as 'lifecycle bookkeeping, never scope drift'. Two engine views of the same concept disagree, and the cold-start Touchpoints view — pointers a fresh model reads first — buries the code map. Apply the same change-own-directory exclusion (or a collapsed one-line summary) in the boot actual list."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "test/core/templates/orbit-generated-surface.test.ts",
+      "line": 157,
+      "title": "Stale test titles still say 'generates exactly the 16 registered skills/commands' while SURFACE pins 15",
+      "recommendation": "Lines 157 and 225 name '16 registered' in the it() titles; the SURFACE array they assert against holds 15 entries post-merge. Assertions are correct (they derive from SURFACE), but the titles are 16→15 residue from task 6.3's re-pin — rename both to '15' or to a count-free phrasing ('exactly the registered skills')."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "pass": "2",
+      "title": "update leaves the retired orbit-review-external skill + launcher on pre-existing surfaces (prior pass W1)",
+      "evidence": "RESOLVED via option A: RETIRED_SKILL_DIRS/RETIRED_COMMAND_IDS registry at src/core/profile-sync-drift.ts:36-37, drift detection at :139-144/:183-190, both update removal loops extended at src/core/update.ts:450-462 and :528-540; 2 drift tests + a plain-update e2e (seed retired pair → update → both removed) green in the 1894 suite; ADDED delta orbit/changes/d5-context-economy/specs/orbit-skill-generation/spec.md on disk and strict-valid"
+    },
+    {
+      "pass": "6",
+      "title": "Touchpoints divergence: 9 substantive source files actual-but-not-predicted (prior pass W2)",
+      "evidence": "RESOLVED accept-and-record (walk 2026-08-06T13-42-29Z, option A) — the trail entry lists all 9 files as the divergence record; frozen predicted map untouched per D6. Re-verified today: every working-tree-touched file is either in the recorded set, matches a predicted entry (gates.ts via the grouped entry, emit-composition.ts, update.ts, config.yaml, test/), or is change-own bookkeeping — no NEW divergence"
+    },
+    {
+      "pass": "6",
+      "title": "Touchpoints overshoot: commented models: example never landed in orbit/config.yaml (prior pass S1)",
+      "evidence": "RESOLVED: orbit/config.yaml:22-31 now carries the commented models: example documenting key vocabulary, slot-wins rule, and the 80-char constraint; eligibility line verified byte-identical with the example commented (models map inactive)"
+    },
+    {
+      "pass": "2",
+      "title": "Post-apply position readout points backward when only user-validation tasks remain (user-logged, walk 2026-08-06T14-05-03Z)",
+      "evidence": "RESOLVED end-to-end: subset rule at src/core/artifact-graph/gates.ts:339-359, declaration persistence at src/core/emit-composition.ts:757-761, trail read at trail.ts:102-115/163-166 (overlay-aware via ingestJson), 4 new gate tests green; live readout renders 'apply ✓ (awaiting user validation: 9.6)' with review-proposal (past) and canonical next pointing forward at review-system"
+    },
+    {
+      "pass": "1",
+      "title": "Retired /orbit:review-external invocation in baseline specs (conventions/engine-gates/review/run-summary-emit et al.)",
+      "evidence": "carried forward: every baseline hit sits inside a requirement block this change's deltas MODIFY (fingerprints now 26/26 verified) — archive sync rewrites them; remaining Purpose-paragraph mentions are the acknowledged at-archive note 9.4. The GENERATED-surface residue is distinct and NOT covered by archive sync — filed as an active finding this pass"
+    },
+    {
+      "pass": "6",
+      "title": "CLAUDE.md current-state surface counts still say 16",
+      "evidence": "carried forward: deliberate deferral — at-archive note 9.7 sweeps present-tense counts to 15 during the archive flow; historical narrative stays as record"
+    }
+  ],
+  "commentary": "The engine core held up under adversarial probing: emit error paths exit non-zero with empty stdout and no file, the collision/atomic machinery and the chunk-preamble malformed cases match their specs, the six-registry retirement is genuinely clean (zero hits in profiles/templates/init/skill-generation), and the fresh gate-layer fix is self-healing exactly as claimed — the subset rule traced from emit persistence through trail read to position render, including the overlay path. What leaks is the EDGES of ownership, a consistent pattern: the hint garnish stops one render surface short of the spec's 'every eligibility line' (and the missing surface is the pasted review report, where a reviewer-slot hint matters most); the verify recommendation enum is narrower than the baseline states it must compose, so a warnings-bearing verify writes 'verification clean'; and the retired command survives as live prose in the very bodies the change shrank, including the onboarding nudge and a skill description the model reads when choosing tools. The heaviest single item is reflexive governance rather than code: the change's own falsifiable size target is missed by 8.5k tokens, honestly recorded in a sketch and an apply emit, then never surfaced where decisions get made — the measurement was re-derived independently (≈29.1k over the generated bodies) to confirm the miss is real before filing. Minor texture noted but not filed: the unused uvByGroup computation in computeApply, the dead findingsPattern local in the T0 branch, and the C1-era gate reason 'cadence class X has no fresh pass', whose 'fresh' collides confusingly with the reviewer-class vocabulary.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4",
+    "5"
+  ],
+  "final_assessment": "0 critical, 4 warning, 5 suggestion.",
+  "iteration": 2,
+  "next_recommended": "/orbit:address-reviews d5-context-economy --from-file orbit/changes/d5-context-economy/.orbit-runs/review-system-2026-08-06T18-15-14Z.json"
+}

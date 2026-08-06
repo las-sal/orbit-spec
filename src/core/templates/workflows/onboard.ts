@@ -130,7 +130,7 @@ Two paths from here, depending on what you have:
 
 - **If you're orienting and don't have a concrete idea yet** — run \`/orbit:explore\` (no name). Bare-mode explore stays in thinking-mode without committing to a change. Orbit acts as thinking partner; if 2+ substantive decisions emerge during the conversation, orbit prompts you to crystallize a name. Useful for investigating a vague concern, comparing approaches, or just orienting yourself to the codebase.
 
-When you've gathered findings worth acting on, see \`/orbit:address-reviews\` to walk them. When you want a project-wide drift check, see \`/orbit:audit-drift\`. When you want a cross-AI second opinion, see \`/orbit:review-external\`.`;
+When you've gathered findings worth acting on, see \`/orbit:address-reviews\` to walk them. When you want a project-wide drift check, see \`/orbit:audit-drift\`. When you want a cross-AI second opinion, see \`/orbit:review --as <mode> --reviewer external\`.`;
 }
 
 export function getOrbitOnboardCommandTemplate(): CommandTemplate {

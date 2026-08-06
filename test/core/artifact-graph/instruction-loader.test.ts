@@ -644,5 +644,31 @@ rules:
       expect(status.gates.every(g => g.state === 'passed')).toBe(true);
       expect(status.next_command).toBe('/orbit:archive my-change — user-invoked');
     });
+
+    it('surfaces userValidationPending as a typed gate-row field (D5 subset rule, machine consumers)', () => {
+      const changeDir = path.join(tempDir, 'orbit', 'changes', 'my-change');
+      const runs = path.join(changeDir, '.orbit-runs');
+      fs.mkdirSync(path.join(changeDir, 'specs'), { recursive: true });
+      fs.mkdirSync(runs, { recursive: true });
+      fs.writeFileSync(path.join(changeDir, 'proposal.md'), '# Proposal');
+      fs.writeFileSync(path.join(changeDir, 'specs', 'test.md'), '# Spec');
+      fs.writeFileSync(path.join(changeDir, 'design.md'), '# Design');
+      fs.writeFileSync(
+        path.join(changeDir, 'tasks.md'),
+        '- [x] 1.1 done work\n- [ ] 9.6 (User-validation handoff) exercise the boot test\n'
+      );
+      fs.writeFileSync(
+        path.join(runs, 'apply-2026-07-03T10-00-00Z.json'),
+        JSON.stringify({ command: 'apply', user_validation_tasks: ['9.6'] })
+      );
+
+      const context = loadChangeContext(tempDir, 'my-change');
+      const status = formatChangeStatus(context);
+
+      const apply = status.gates.find(g => g.id === 'apply')!;
+      expect(apply.state).toBe('passed');
+      // The ids ride a TYPED field, not only the prose reason.
+      expect(apply.userValidationPending).toEqual(['9.6']);
+    });
   });
 });

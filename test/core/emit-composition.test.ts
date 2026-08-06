@@ -263,6 +263,31 @@ describe('deterministic facts', () => {
 
     const failValidator = composeAndWriteEmit('verify', { change: 'foo' }, { final_assessment: 'broken', verdict: 'fail', fail_mode: 'validator-error', validator_message: 'bad frontmatter', model: null }, { projectRoot: root });
     expect(String(failValidator.emit.next_recommended)).toBe('Fix artifact validation errors: bad frontmatter');
+
+    const failScenarios = composeAndWriteEmit('verify', { change: 'foo' }, { final_assessment: 'gaps', verdict: 'fail', fail_mode: 'scenarios-fail', scenarios_failed: 3, model: null }, { projectRoot: root });
+    expect(String(failScenarios.emit.next_recommended)).toBe(
+      '/orbit:review --as system foo — 3 spec scenarios fail against implementation; system review will surface findings in its scorecard for you to walk each as code fix or spec revision'
+    );
+    expect(failScenarios.emit.scenarios_failed).toBeUndefined();
+  });
+
+  it('verify: warn state and incomplete run are truthful records, never clean (baseline warn/out-of-scope rules)', () => {
+    makeChange('foo');
+    const warn = composeAndWriteEmit('verify', { change: 'foo' }, { final_assessment: 'passed with warnings', verdict: 'pass', fail_mode: 'warnings', warnings_count: 2, model: null }, { projectRoot: root });
+    expect(String(warn.emit.next_recommended)).toBe(
+      '/orbit:review --as system foo — verification passed with 2 warnings; system review recommended'
+    );
+    expect(warn.emit.warnings_count).toBeUndefined();
+
+    // A warn-state record without its count fails loud — never a plausible 'clean'.
+    expect(() =>
+      composeAndWriteEmit('verify', { change: 'foo' }, { final_assessment: 'passed with warnings', verdict: 'pass', fail_mode: 'warnings', model: null }, { projectRoot: root })
+    ).toThrow(/warnings_count/);
+
+    const incomplete = composeAndWriteEmit('verify', { change: 'foo' }, { final_assessment: 'aborted', verdict: 'fail', fail_mode: 'incomplete', model: null }, { projectRoot: root });
+    expect(String(incomplete.emit.next_recommended)).toBe(
+      'Re-run /orbit:verify foo — prior verify run incomplete (see verify-change output for details)'
+    );
   });
 
   it('audit-drift change-scoped: findings → address pointer; clean → defer to prior emit verbatim', () => {
@@ -338,6 +363,28 @@ describe('post-write semantics (synthetic trail, single atomic write)', () => {
       )
     ).toThrow(/final_assessment/);
     expect(listRuns('orbit/changes/foo/.orbit-runs')).toEqual(before);
+  });
+
+  it('a write failure past the gate leaves NO file — not even the dot-tmp (cleanup on the throw path)', () => {
+    makeChange('foo');
+    const runsDir = path.join(root, 'orbit/changes/foo/.orbit-runs');
+    fs.mkdirSync(runsDir, { recursive: true });
+    const before = listRuns('orbit/changes/foo/.orbit-runs');
+    fs.chmodSync(runsDir, 0o555); // write refused past the gate, at the tmp write
+    try {
+      expect(() =>
+        composeAndWriteEmit(
+          'verify',
+          { change: 'foo' },
+          { final_assessment: 'clean', verdict: 'pass', model: null },
+          { projectRoot: root }
+        )
+      ).toThrow();
+    } finally {
+      fs.chmodSync(runsDir, 0o755);
+    }
+    expect(listRuns('orbit/changes/foo/.orbit-runs')).toEqual(before);
+    expect(fs.readdirSync(runsDir).filter((f) => f.endsWith('.tmp'))).toEqual([]);
   });
 
   it('apply boundary: chunk N complete with the engine-composed next-chunk suffix (rule 1)', () => {

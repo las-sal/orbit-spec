@@ -71,8 +71,14 @@ describe('boot render (D5)', () => {
     g('config user.name t');
     g('add -A');
     g('commit -q -m start');
-    // Committed apply work + an uncommitted edit (must NOT appear in the actual map).
+    // Committed apply work + a change-own commit (collapses to the count line)
+    // + an uncommitted edit (must NOT appear in the actual map).
     write('src/a.ts', 'code\n');
+    write('orbit/changes/foo/tasks.md', '# Tasks\n\n## 1. G\n\n- [x] 1.1 x\n');
+    write(
+      'orbit/changes/foo/.orbit-runs/apply-2026-08-01T09-00-00Z.json',
+      JSON.stringify({ command: 'apply', final_assessment: 'Committed chunk.', next_recommended: 'x' })
+    );
     g('add -A');
     g('commit -q -m work');
     write('src/uncommitted.ts', 'wip\n');
@@ -84,10 +90,16 @@ describe('boot render (D5)', () => {
     const { boot } = collectBoot(root, 'foo');
     expect(boot.touchpoints.actual).toContain('src/a.ts');
     expect(boot.touchpoints.actual).not.toContain('src/uncommitted.ts');
+    // Change-own files (tasks.md + the committed emit) collapse out of the code
+    // map into the count — the same orbit/changes/<name>/** exclusion audit-drift
+    // applies to its divergence arithmetic.
+    expect(boot.touchpoints.actual!.some(f => f.startsWith('orbit/changes/foo/'))).toBe(false);
+    expect(boot.touchpoints.actual_change_own_count).toBe(2);
     // Predicted rides alongside as reference.
     expect(boot.touchpoints.predicted).toEqual(['src/a.ts', 'src/lib/']);
     const text = renderBoot(root, 'foo');
     expect(text).toContain('Touchpoints (ACTUAL — diff-computed):');
+    expect(text).toContain('orbit/changes/foo/ — 2 change-own files (bookkeeping, collapsed)');
     expect(text).toContain('Predicted (reference');
   });
 

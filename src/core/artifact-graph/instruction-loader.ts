@@ -142,6 +142,8 @@ export interface GateStatusRow {
   consent?: string;
   /** C1: the gate's `before` phase already ran — moot / no longer the frontier. */
   superseded?: boolean;
+  /** D5 subset rule: unchecked user-validation handoff ids when the tracked gate passed-for-flow. */
+  userValidationPending?: string[];
 }
 
 /**
@@ -414,6 +416,7 @@ export function formatChangeStatus(context: ChangeContext, overlay?: TrailOverla
       nextCommand: g.nextCommand,
       consent: g.consent,
       superseded: g.superseded,
+      userValidationPending: g.userValidationPending,
     }));
     position = computation.position;
     // D1: entry into the apply phase carries the ` — user-invoked` marker when the

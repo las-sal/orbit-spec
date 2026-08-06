@@ -88,6 +88,10 @@ user_validation_remaining    int   subset of tasks_remaining that are acknowledg
                                    ["9.6", "9.7"] for "Live-test ...", "(User-validation handoff)"). Each named task
                                    is validated to exist in tasks.md and be unchecked — a bad entry is rejected
                                    naming it; payload supply of the count itself is rejected as engine-owned.
+                                   The VERIFIED identifier list PERSISTS on the emit as
+                                   `user_validation_tasks` (an empty list is elided) — it is the trail record
+                                   the tracked-gate user-validation subset rule consumes (per
+                                   `orbit-engine-gates`' Tracked-gate pass condition).
 chunk                        string | null   e.g., "3 of 5" or null — ENGINE-computed from the preamble
 chunk_name                   string | null   e.g., "phase+attention engine" — ENGINE-computed
 chunk_complete               bool             true when AI-doable work in this chunk is done — ENGINE-computed

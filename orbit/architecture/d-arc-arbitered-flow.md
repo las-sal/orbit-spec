@@ -259,7 +259,11 @@ Three braided threads, one governing concern (what's in the window and who's rea
   there and mechanized here.
 
 **Exit criteria**: (1) generated surface size measured before/after against a stated reduction
-target picked at explore time — the criterion is a NUMBER hit, not "smaller"; (2) an inventory
+target picked at explore time — the criterion is a NUMBER hit, not "smaller" — RATIFIED READING
+(Sal, 2026-08-06, via the d5 system-review walk): the stated ≤20k target was missed at 28.5k
+(−30% from ≈40.6k); accepted as met-in-intent with the residual attributed to deferred engine
+work-list items #2 (findings resolver) and #3 (archive preflight), which remain named follow-up
+work outside D5's scope; (2) an inventory
 pass finds no body instructing the AI to hand-compose output the engine can render; (3) the
 model-handoff boot test passes AT EVERY SEAM — a different model picks up mid-explore,
 post-review, pre-apply, mid-apply-chunk, and pre-archive cold, from file-resident material

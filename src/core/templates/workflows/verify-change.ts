@@ -185,13 +185,13 @@ The four disciplines from \`orbit-conventions\`, embedded per body; detail lives
 
 (Per \`orbit-run-summary-emit\`; composed and written via \`orbit emit verify\` — \`orbit-emit-composition\`.)
 
-At command completion, compose the narrative payload (\`final_assessment\`, \`verdict\`, \`fail_mode\`, \`validator_message\`, + the required nullable \`model\`) into a temp file and invoke:
+At command completion, compose the narrative payload (\`final_assessment\`, \`verdict\`, \`fail_mode\`, \`validator_message\`, \`warnings_count\` (required when \`fail_mode: "warnings"\`), \`scenarios_failed\` (optional count with \`fail_mode: "scenarios-fail"\`), + the required nullable \`model\`) into a temp file and invoke:
 
 \`\`\`bash
 orbit emit verify --change <name> --payload <payload-file>
 \`\`\`
 
-The ENGINE owns the spine, the trail path, timestamp + collision handling, and \`next_recommended\` composition (the fail-mode-conditional recommendation — validator-error / tasks-incomplete / scenarios-fail / clean — is composed from the payload's \`verdict\`/\`fail_mode\`). Never hand-compose the JSON.
+The ENGINE owns the spine, the trail path, timestamp + collision handling, and \`next_recommended\` composition (the fail-mode-conditional recommendation — validator-error / tasks-incomplete / scenarios-fail / warnings (pass WITH non-blocking findings — never recorded as clean) / incomplete (aborted or partial verify run) / clean — is composed from the payload's \`verdict\`/\`fail_mode\` per the baseline's precedence: validator-error > tasks-incomplete > scenarios-fail; warn state only when no failure mode fires). Never hand-compose the JSON.
 `,
     license: 'MIT',
     compatibility: 'Requires orbit CLI.',
