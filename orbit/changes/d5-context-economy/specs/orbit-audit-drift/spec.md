@@ -17,8 +17,10 @@ reviewer. Paths in `actual_unpredicted` are surfaced as scope-drift findings (WA
 substantive source paths, SUGGESTION for tests/docs riding along); `predicted_unsatisfied`
 entries surface at pre-archive context as SUGGESTION (the plan overshot — informational);
 each `malformed` entry is a SUGGESTION naming the line (the engine already excluded it from
-the arithmetic). Changes without the section or without committed apply work are skipped
-silently (pre-capability changes are not findings).
+the arithmetic). The category gate is `touchpoints.actual !== null`: changes without the
+section or without committed apply work are skipped silently INCLUDING their `malformed`
+entries — boot surfaces those pre-apply as parse diagnostics for the authoring flow, but
+pre-capability changes are never category-5 findings.
 
 #### Scenario: Actual exceeds predicted
 

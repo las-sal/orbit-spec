@@ -289,12 +289,13 @@ For each ACTIVE change whose \`design.md\` carries a \`## Touchpoints\` section 
 orbit status --change <name> --boot --json   # touchpoints.actual_unpredicted / .predicted_unsatisfied / .malformed
 \`\`\`
 
-The engine owns parse + matching per \`orbit-propose-modifications\`' Touchpoints ENTRY GRAMMAR (exact path / directory prefix / glob, \`+\`-grouped alternatives — defined THERE, one voice) and has already excluded the change's own \`orbit/changes/<name>/**\` bookkeeping:
+The engine owns parse + matching per \`orbit-propose-modifications\`' Touchpoints ENTRY GRAMMAR (exact path / directory prefix / glob, \`+\`-grouped alternatives — defined THERE, one voice) and has already excluded the change's own \`orbit/changes/<name>/**\` bookkeeping.
+
+**The category GATE is \`touchpoints.actual !== null\`** — when \`actual\` is null (no committed apply work yet, or no section), skip the change SILENTLY, INCLUDING any \`malformed\` entries (boot surfaces those pre-apply as parse diagnostics for the authoring flow, but pre-capability changes are never category-5 findings). When the gate is open:
 
 - **Each \`actual_unpredicted\` path** → scope-drift finding naming the file and both maps' sources: WARNING for substantive source paths, SUGGESTION for tests/docs riding along.
 - **Each \`predicted_unsatisfied\` entry** → SUGGESTION at pre-archive context only (the plan overshot — informational).
 - **Each \`malformed\` entry** (\`{line, text}\`) → SUGGESTION naming the line; the engine already excluded it from the arithmetic, never a false drift source.
-- **Divergence fields absent** (no section, or no committed apply work yet) → skip that change SILENTLY (pre-capability changes are not findings).
 
 ### 7.6 Category 6 — Explore emit attestation cross-check (D-arc Stage D5)
 

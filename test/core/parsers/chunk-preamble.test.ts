@@ -123,4 +123,16 @@ describe('parseChunkPreamble', () => {
     const bad = '<!--\nImplementation chunks:\n  Chunk 1 (groups 1): X\n-->\n\n# Tasks\n\n## Unnumbered\n- [ ] a\n';
     expect(parseChunkPreamble(bad, P).kind).toBe('malformed');
   });
+
+  it('flags an UNNUMBERED group carrying checkboxes as malformed (undeclarable work — content-coverage rule)', () => {
+    // Unchecked task under an unnumbered header: counted by arithmetic, coverable by no chunk.
+    const unchecked = ok + '\n## Extra work\n- [ ] stray task\n';
+    expect(parseChunkPreamble(unchecked, P).kind).toBe('malformed');
+    // CHECKED tasks under an unnumbered header are the same hazard (they distort arithmetic).
+    const checked = ok + '\n## Extra work\n- [x] stray done task\n';
+    expect(parseChunkPreamble(checked, P).kind).toBe('malformed');
+    // An unnumbered group with NO checkboxes (prose notes) stays fine.
+    const notes = ok + '\n## Notes\nprose only, no tasks\n';
+    expect(parseChunkPreamble(notes, P).kind).toBe('ok');
+  });
 });

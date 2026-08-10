@@ -96,8 +96,12 @@ export function collectBoot(projectRoot: string, changeName: string): { status: 
   const predicted = parse.present ? parse.entries.map(e => e.targets.join(' + ')) : null;
   let actual: string[] | null = null;
   let actualChangeOwnCount: number | undefined;
-  const applyStarted = emits.some(e => e.command === 'apply');
-  if (applyStarted && isGitRepo(projectRoot)) {
+  // The predicted→ACTUAL transition keys on COMMITTED non-bookkeeping work ALONE —
+  // never trail presence (external iter-2 closed the second half of this rule: an
+  // emit-less committed chunk must show its ACTUAL map, just as an emit-before-commit
+  // must not fabricate one). The committed diff is computed whenever the change has a
+  // first commit; the non-empty non-bookkeeping portion IS the lifecycle discriminator.
+  if (isGitRepo(projectRoot)) {
     // Repo-relative by construction (canonicalized absolute paths can cross symlink
     // boundaries — e.g. macOS /var vs /private/var — breaking path.relative).
     const rel = path.join('orbit', 'changes', changeName);
@@ -114,10 +118,7 @@ export function collectBoot(projectRoot: string, changeName: string): { status: 
         const changeOwn = touched.filter(f => f.startsWith(ownPrefix));
         actual = touched.filter(f => !f.startsWith(ownPrefix));
         if (changeOwn.length > 0) actualChangeOwnCount = changeOwn.length;
-        // The predicted→ACTUAL transition keys on COMMITTED apply work, not trail
-        // presence: an apply emit written at a boundary before the chunk commit lands
-        // would otherwise hand a cold pickup an empty/incomplete actual map. No
-        // committed non-bookkeeping files yet → stay on the predicted-only view.
+        // No committed non-bookkeeping files yet → stay on the predicted-only view.
         if (actual.length === 0) {
           actual = null;
           actualChangeOwnCount = undefined;

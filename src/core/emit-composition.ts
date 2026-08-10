@@ -268,7 +268,7 @@ function resolveTarget(projectRoot: string, command: string, target: EmitTarget)
   }
   if (change === undefined && doc === undefined) {
     if (spec.scopes.project) {
-      // Bare project-scoped invocation (audit-drift).
+      // Bare project-scoped invocation (audit-drift, address-reviews).
       const runsDir = path.join(projectRoot, 'orbit', '.orbit-runs');
       return { scope: 'project', runsDir, change: null, doc: null, changeDir: null };
     }
@@ -738,6 +738,11 @@ export function composeAndWriteEmit(
   // Filename-token resolution — INCLUDING the collision bump — precedes deterministic-fact
   // composition, so a self-pointer always names the FINAL written path.
   fs.mkdirSync(resolved.runsDir, { recursive: true });
+  // The trail dir ITSELF must physically reside in its container (external iter-2): the
+  // scope checks realpath the PARENT, but a symlinked `.orbit-runs` child would carry
+  // the mkdir/write outside every orbit trail. Checked after creation, before any write;
+  // dirname-uniform, so every scope (change/explore/archived/doc/project) is covered.
+  assertContained(resolved.runsDir, path.dirname(resolved.runsDir), 'trail directory');
   let { token } = utcNow();
   while (fs.existsSync(path.join(resolved.runsDir, `${filePrefix}-${token}.json`))) {
     token = bumpToken(token);
@@ -853,8 +858,15 @@ export function composeAndWriteEmit(
         emit.next_recommended = `/orbit:review --as architecture ${resolved.doc} — confirm the resolutions`;
       } else if (resolved.scope === 'project') {
         // Anchor-less whole-repo walk: findings-dependent, computed from the payload's
-        // own remaining-markers count — no change status exists to synthesize.
-        const remaining = Number((payload as any).remaining_markers_in_scope ?? 0);
+        // own remaining-markers count — no change status exists to synthesize. The count
+        // DRIVES a deterministic engine fact, so it fails loud when missing or invalid
+        // (a fabricated 'no markers remain' is the wrong-but-plausible record class).
+        const remaining = (payload as any).remaining_markers_in_scope;
+        if (typeof remaining !== 'number' || !Number.isInteger(remaining) || remaining < 0) {
+          throw new EmitError(
+            `project-scoped address-reviews requires a non-negative integer remaining_markers_in_scope — the count drives the engine's recommendation and is never defaulted.`
+          );
+        }
         emit.next_recommended =
           remaining > 0
             ? `/orbit:address-reviews — ${remaining} marker(s) remain in scope`

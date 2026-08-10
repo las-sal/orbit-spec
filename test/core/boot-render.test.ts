@@ -146,6 +146,24 @@ describe('boot render (D5)', () => {
     expect(boot.touchpoints.malformed![0].text).toContain('plain prose entry');
   });
 
+  it('committed apply work WITHOUT any apply emit shows the ACTUAL map (trail presence is never a condition)', () => {
+    makeChange('foo');
+    const g = (cmd: string) => execSync(`git ${cmd}`, { cwd: root, stdio: 'pipe' });
+    g('init -q');
+    g('config user.email t@t.t');
+    g('config user.name t');
+    g('add -A');
+    g('commit -q -m start');
+    // Committed implementation work, NO apply emit on the trail (commit landed
+    // before the first boundary emit, or the emit was lost/malformed).
+    write('src/a.ts', 'code\n');
+    g('add -A');
+    g('commit -q -m work');
+
+    const { boot } = collectBoot(root, 'foo');
+    expect(boot.touchpoints.actual).toContain('src/a.ts');
+  });
+
   it('an apply emit WITHOUT committed apply work stays on the predicted view (transition keys on commits)', () => {
     makeChange('foo');
     const g = (cmd: string) => execSync(`git ${cmd}`, { cwd: root, stdio: 'pipe' });

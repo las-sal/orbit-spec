@@ -101,8 +101,15 @@ export function parseChunkPreamble(content: string, tasksPath: string): ChunkPre
   // rejected above; an omitted leading or trailing group would let the final declared
   // chunk record `chunk_complete: true` while uncovered AI-doable work remains — the
   // wrong-but-plausible record class this parser exists to prevent.
-  const numbered = parseCheckboxes(content)
-    .groups.map(g => g.group)
+  const contentGroups = parseCheckboxes(content).groups;
+  // An UNNUMBERED group carrying checkboxes is undeclarable — its tasks count in the
+  // arithmetic but no chunk can ever cover them (external iter-2): incompatible with
+  // chunking, so the preamble degrades to no-chunking like every other coverage hole.
+  if (contentGroups.some(g => g.group === null && g.checked + g.unchecked > 0)) {
+    return { kind: 'malformed', warning: MALFORMED_WARNING(tasksPath) };
+  }
+  const numbered = contentGroups
+    .map(g => g.group)
     .filter((g): g is number => g !== null);
   if (numbered.length === 0) {
     return { kind: 'malformed', warning: MALFORMED_WARNING(tasksPath) }; // declarations over no numbered groups

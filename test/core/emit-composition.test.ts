@@ -383,6 +383,20 @@ describe('post-write semantics (synthetic trail, single atomic write)', () => {
     );
     expect(String(clean.emit.next_recommended)).toBe('No markers remain in scope; the project trail records this walk.');
 
+    // The count DRIVES an engine fact — missing/NaN/fractional/negative all fail loud, no file.
+    const runsBefore = fs.existsSync(path.join(root, 'orbit/.orbit-runs'))
+      ? fs.readdirSync(path.join(root, 'orbit/.orbit-runs')).length
+      : 0;
+    for (const bad of [undefined, 'three' as any, NaN, 1.5, -1]) {
+      const p: any = { ...walkPayload };
+      if (bad === undefined) delete p.remaining_markers_in_scope;
+      else p.remaining_markers_in_scope = bad;
+      expect(() => composeAndWriteEmit('address-reviews', {}, p, { projectRoot: root })).toThrow(
+        /remaining_markers_in_scope/
+      );
+    }
+    expect(fs.readdirSync(path.join(root, 'orbit/.orbit-runs')).length).toBe(runsBefore);
+
     // Archived fallback: a name existing only under archive/ resolves to the archived trail.
     fs.mkdirSync(path.join(root, 'orbit/changes/archive/2026-07-01-old-change'), { recursive: true });
     const archived = composeAndWriteEmit(
@@ -425,6 +439,43 @@ describe('post-write semantics (synthetic trail, single atomic write)', () => {
     expect(fs.readdirSync(outside)).toEqual([]);
   });
 
+  it('a symlinked .orbit-runs CHILD never carries a write outside the trail (every scope)', () => {
+    const outside = path.join(root, 'outside-runs');
+    fs.mkdirSync(outside, { recursive: true });
+    const payload = { final_assessment: 'x.', model: null };
+
+    // Change scope: contained change dir, symlinked trail child.
+    makeChange('sly');
+    fs.symlinkSync(outside, path.join(root, 'orbit/changes/sly/.orbit-runs'), 'dir');
+    expect(() =>
+      composeAndWriteEmit('explore', { change: 'sly' }, payload, { projectRoot: root })
+    ).toThrow(/trail directory resolves outside/);
+    expect(fs.readdirSync(outside)).toEqual([]);
+
+    // Project scope (bare address-reviews): symlinked orbit/.orbit-runs.
+    fs.symlinkSync(outside, path.join(root, 'orbit', '.orbit-runs'), 'dir');
+    expect(() =>
+      composeAndWriteEmit(
+        'address-reviews', {},
+        { source: 'whole-repo', walk_mode: 'per_finding', resolutions: [], final_assessment: 'w.', remaining_markers_in_scope: 0, model: null },
+        { projectRoot: root }
+      )
+    ).toThrow(/trail directory resolves outside/);
+    expect(fs.readdirSync(outside)).toEqual([]);
+
+    // Doc scope: symlinked architecture trail.
+    write('orbit/architecture/prog2.md', '# prog2\n');
+    fs.symlinkSync(outside, path.join(root, 'orbit/architecture/.orbit-runs'), 'dir');
+    expect(() =>
+      composeAndWriteEmit(
+        'architect', { doc: 'prog2' },
+        { final_assessment: 's', handoff: { boot_sequence: ['a'], next_command: '/orbit:architect prog2', model_hint: null, seam: 's' }, model: null },
+        { projectRoot: root }
+      )
+    ).toThrow(/trail directory resolves outside/);
+    expect(fs.readdirSync(outside)).toEqual([]);
+  });
+
   it('a write failure past the gate leaves NO file — not even the dot-tmp (cleanup on the throw path)', () => {
     makeChange('foo');
     const runsDir = path.join(root, 'orbit/changes/foo/.orbit-runs');
@@ -445,6 +496,22 @@ describe('post-write semantics (synthetic trail, single atomic write)', () => {
     }
     expect(listRuns('orbit/changes/foo/.orbit-runs')).toEqual(before);
     expect(fs.readdirSync(runsDir).filter((f) => f.endsWith('.tmp'))).toEqual([]);
+  });
+
+  it('an unnumbered checkbox group degrades a chunked apply to no-chunking (undeclarable work never yields a complete record)', () => {
+    const tasks = `<!--\nImplementation chunks:\n  Chunk 1 (groups 1):  First\n  Chunk 2 (groups 2):  Second\n-->\n\n# Tasks\n\n## 1. A\n\n- [x] 1.1 done\n\n## 2. B\n\n- [x] 2.1 done\n\n## Extra work\n\n- [ ] stray task\n`;
+    makeChange('foo', { tasks });
+    const r = composeAndWriteEmit(
+      'apply',
+      { change: 'foo' },
+      { consent: 'user-invoked', model: null },
+      { projectRoot: root }
+    );
+    // Both declared chunks are checked, but the stray unnumbered task blocks any
+    // chunked/complete record: no-chunking fallback, honest remaining count.
+    expect(r.emit.chunk).toBeNull();
+    expect(r.emit.tasks_remaining).toBe(1);
+    expect(r.emit.chunk_complete).toBe(false);
   });
 
   it('apply boundary: chunk N complete with the engine-composed next-chunk suffix (rule 1)', () => {
