@@ -243,6 +243,29 @@ function assertContained(dir: string, root: string, what: string): void {
   }
 }
 
+/**
+ * The trail dir must BE its container's physical `.orbit-runs` child — canonical
+ * IDENTITY, not ancestry (external iter-3): containment alone accepts in-container
+ * aliases (`.orbit-runs -> .` resolves to the container root and would land records
+ * beside the artifacts; a sibling alias redirects them into another directory) —
+ * lexically-correct paths whose physical record no trail reader would ever find.
+ */
+function assertCanonicalTrailDir(runsDir: string): void {
+  let realRuns: string;
+  let realParent: string;
+  try {
+    realRuns = fs.realpathSync(runsDir);
+    realParent = fs.realpathSync(path.dirname(runsDir));
+  } catch {
+    return; // unresolvable paths fail at the write itself
+  }
+  if (realRuns !== path.join(realParent, '.orbit-runs')) {
+    throw new EmitError(
+      `trail directory ${runsDir} does not physically resolve to its container's canonical .orbit-runs child — aliased trail entries are never writable emit trails.`
+    );
+  }
+}
+
 function resolveTarget(projectRoot: string, command: string, target: EmitTarget): ResolvedTarget {
   const spec = COMMANDS[command];
   const { change, doc } = target;
@@ -738,11 +761,11 @@ export function composeAndWriteEmit(
   // Filename-token resolution — INCLUDING the collision bump — precedes deterministic-fact
   // composition, so a self-pointer always names the FINAL written path.
   fs.mkdirSync(resolved.runsDir, { recursive: true });
-  // The trail dir ITSELF must physically reside in its container (external iter-2): the
-  // scope checks realpath the PARENT, but a symlinked `.orbit-runs` child would carry
-  // the mkdir/write outside every orbit trail. Checked after creation, before any write;
-  // dirname-uniform, so every scope (change/explore/archived/doc/project) is covered.
-  assertContained(resolved.runsDir, path.dirname(resolved.runsDir), 'trail directory');
+  // The trail dir ITSELF must be its container's canonical `.orbit-runs` child
+  // (external iter-2 caught the outside-container symlink; iter-3 the in-container
+  // alias). Checked after creation, before any write; dirname-uniform, so every
+  // scope (change/explore/archived/doc/project) is covered.
+  assertCanonicalTrailDir(resolved.runsDir);
   let { token } = utcNow();
   while (fs.existsSync(path.join(resolved.runsDir, `${filePrefix}-${token}.json`))) {
     token = bumpToken(token);

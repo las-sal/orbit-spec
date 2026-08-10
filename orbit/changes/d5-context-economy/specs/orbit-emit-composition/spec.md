@@ -86,10 +86,13 @@ missing-target usage error. A
 `--change`/`--doc` value SHALL be a single canonical identifier — a workstream name or doc
 filename stem, never a path: separators, traversal segments, and leading dots are a clean
 usage error before any resolution (the same contained-identity rule as architecture doc
-names), and an existing target directory — OR its `.orbit-runs` trail child, checked at the
-write boundary after creation — that physically resolves outside its container (a symlinked
-escape at either level) is refused — the surface writes orbit trails ONLY, and no failure
-path writes any file. A
+names); an existing target directory that physically resolves outside its orbit root (a
+symlinked container escape) is refused; and the `.orbit-runs` trail child — checked at the
+write boundary after creation — must physically BE its container's canonical `.orbit-runs`
+child (IDENTITY, not ancestry: an in-container alias like `.orbit-runs -> .` or a sibling
+redirect is refused exactly like an outside escape — a lexically-correct path whose physical
+record no trail reader would find is not a trail). The surface writes orbit trails ONLY, and
+no failure path writes any file. A
 `--change`/`--doc` value that resolves to no on-disk workstream (no change directory, no
 staging directory, no architecture doc) fails with a clean error naming the path checked; no
 file is written. The

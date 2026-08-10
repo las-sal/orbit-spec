@@ -449,7 +449,7 @@ describe('post-write semantics (synthetic trail, single atomic write)', () => {
     fs.symlinkSync(outside, path.join(root, 'orbit/changes/sly/.orbit-runs'), 'dir');
     expect(() =>
       composeAndWriteEmit('explore', { change: 'sly' }, payload, { projectRoot: root })
-    ).toThrow(/trail directory resolves outside/);
+    ).toThrow(/canonical \.orbit-runs child/);
     expect(fs.readdirSync(outside)).toEqual([]);
 
     // Project scope (bare address-reviews): symlinked orbit/.orbit-runs.
@@ -460,7 +460,7 @@ describe('post-write semantics (synthetic trail, single atomic write)', () => {
         { source: 'whole-repo', walk_mode: 'per_finding', resolutions: [], final_assessment: 'w.', remaining_markers_in_scope: 0, model: null },
         { projectRoot: root }
       )
-    ).toThrow(/trail directory resolves outside/);
+    ).toThrow(/canonical \.orbit-runs child/);
     expect(fs.readdirSync(outside)).toEqual([]);
 
     // Doc scope: symlinked architecture trail.
@@ -472,8 +472,42 @@ describe('post-write semantics (synthetic trail, single atomic write)', () => {
         { final_assessment: 's', handoff: { boot_sequence: ['a'], next_command: '/orbit:architect prog2', model_hint: null, seam: 's' }, model: null },
         { projectRoot: root }
       )
-    ).toThrow(/trail directory resolves outside/);
+    ).toThrow(/canonical \.orbit-runs child/);
     expect(fs.readdirSync(outside)).toEqual([]);
+  });
+
+  it('IN-container trail aliases are refused: canonical identity, not ancestry (.orbit-runs -> . and sibling)', () => {
+    const payload = { final_assessment: 'x.', model: null };
+
+    // Change scope: .orbit-runs -> . resolves to the container root itself — the
+    // iter-3 reproduction (record would land physically beside tasks.md).
+    makeChange('alias-dot');
+    fs.symlinkSync('.', path.join(root, 'orbit/changes/alias-dot/.orbit-runs'), 'dir');
+    expect(() =>
+      composeAndWriteEmit('explore', { change: 'alias-dot' }, payload, { projectRoot: root })
+    ).toThrow(/canonical \.orbit-runs child/);
+    expect(fs.readdirSync(path.join(root, 'orbit/changes/alias-dot')).filter(f => f.endsWith('.json'))).toEqual([]);
+
+    // Change scope: sibling alias inside the same container.
+    makeChange('alias-sib');
+    fs.mkdirSync(path.join(root, 'orbit/changes/alias-sib/sibling'), { recursive: true });
+    fs.symlinkSync('sibling', path.join(root, 'orbit/changes/alias-sib/.orbit-runs'), 'dir');
+    expect(() =>
+      composeAndWriteEmit('explore', { change: 'alias-sib' }, payload, { projectRoot: root })
+    ).toThrow(/canonical \.orbit-runs child/);
+    expect(fs.readdirSync(path.join(root, 'orbit/changes/alias-sib/sibling'))).toEqual([]);
+
+    // Project scope: orbit/.orbit-runs aliased to a descendant of another scope.
+    fs.mkdirSync(path.join(root, 'orbit/architecture'), { recursive: true });
+    fs.symlinkSync('architecture', path.join(root, 'orbit', '.orbit-runs'), 'dir');
+    expect(() =>
+      composeAndWriteEmit(
+        'address-reviews', {},
+        { source: 'whole-repo', walk_mode: 'per_finding', resolutions: [], final_assessment: 'w.', remaining_markers_in_scope: 0, model: null },
+        { projectRoot: root }
+      )
+    ).toThrow(/canonical \.orbit-runs child/);
+    expect(fs.readdirSync(path.join(root, 'orbit/architecture')).filter(f => f.endsWith('.json'))).toEqual([]);
   });
 
   it('a write failure past the gate leaves NO file — not even the dot-tmp (cleanup on the throw path)', () => {
