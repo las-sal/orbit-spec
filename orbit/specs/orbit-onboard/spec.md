@@ -53,7 +53,7 @@ Section 2 of the body SHALL state what orbit IS and enumerate its distinctive la
 #### Scenario: Enumerates orbit-distinctive layers
 
 - **WHEN** the Identity section is read
-- **THEN** the prose names the distinctive layers concretely: editorial review (`/orbit:review`, `/orbit:review-external`, `/orbit:address-reviews`), drift audit (`/orbit:audit-drift`), capture (lenses — `orbit/lenses/perspectives.md`, `orbit/lenses/critical-paths.md`), program architecture (`/orbit:architect`, `orbit architecture status` — the cross-change declaration tier, D-arc Stage D2), JSON run-summary emission, four execution disciplines (read-before-reference / change completeness / pushback / no-chaining)
+- **THEN** the prose names the distinctive layers concretely: editorial review (`/orbit:review` with the `--reviewer in-context|fresh|external` axis — D-arc Stage D5's merge, `/orbit:address-reviews`), drift audit (`/orbit:audit-drift`), capture (lenses — `orbit/lenses/perspectives.md`, `orbit/lenses/critical-paths.md`), program architecture (`/orbit:architect`, `orbit architecture status` — the cross-change declaration tier, D-arc Stage D2), JSON run-summary emission, four execution disciplines (read-before-reference / change completeness / pushback / no-chaining)
 
 #### Scenario: No augmentation / overlay language
 
@@ -82,7 +82,7 @@ Section 3 of the body SHALL present orbit's canonical workflow as a diagram foll
 #### Scenario: External-review named, not demoed
 
 - **WHEN** the review / address-reviews phase paragraphs are read
-- **THEN** the external-review loop is named (`/orbit:review-external`) with a one-paragraph description and a pointer to the `orbit-review-external` skill for details; no bundled sample prompt and no simulated cross-AI exchange is rendered in the body
+- **THEN** the external-review loop is named (`/orbit:review --reviewer external`) with a one-paragraph description and a pointer to the review skill's `references/external-handoff.md` for details; no bundled sample prompt and no simulated cross-AI exchange is rendered in the body
 
 ### Requirement: Quick-reference command table section
 
@@ -143,4 +143,3 @@ The orbit-authored skill SHALL preserve the `/orbit:onboard` slash-command surfa
 
 - **WHEN** a user types `/orbit:onboard`
 - **THEN** the command resolves (via the launcher) to the orbit-authored onboarding body; the skill dir is `orbit-onboard`, the command id is `onboard`
-

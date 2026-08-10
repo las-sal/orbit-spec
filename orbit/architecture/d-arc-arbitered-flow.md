@@ -344,6 +344,21 @@ ratification; D5 mechanizes (b) and (c):
   Empirical basis: the two hand-run audits (2026-07-08 leak audit; 2026-07-14 D2 handoff audit)
   both surfaced real findings.
 
+**R-d-9 delivery map (ratified at D5 archive, 2026-08-10)** — how the clauses actually shipped:
+(a) delivered as the `models:` hint map + eligibility-line garnish on every render surface
+(status, boot, report tail, orientation views). (b) delivered as the ENGINE BOOT RENDER
+(`orbit status --change <name> --boot` — ordered pointers, latest-emit-per-family, the
+touchpoints view), NOT as a per-emit section: the structured `handoff` emit section stays
+ARCHITECT-ONLY (D-d5-6) — a per-emit copy would be one more thing to go stale where the
+computed render cannot. (c) checklist items 1 and 4 are MECHANIZED (the explore/architect
+boundary residency sweep + emit attestation cross-check; the code-touchpoints map is the
+engine's predicted/actual split with computed divergence); items 2–3 (boot-chain currency,
+coverage-vs-charter) remain MANUAL seam-audit practice, with a COLD-PICKUP FAILURE as the
+named re-entry trigger for mechanizing them (design.md D5). First full-seam exercise: the D5
+pre-archive cold boot test (different model, file-resident only) passed with two recorded
+paper-cuts (stale mid-flight T0 snapshot readable out of order; 9.6's user-reserved nature
+invisible in tasks.md typography).
+
 ## Sequencing and rules of engagement
 
 - **Order**: D1 finishes first (near propose-ready) → D2 (top of list; retrofits this document) →
@@ -625,3 +640,27 @@ ratification; D5 mechanizes (b) and (c):
   **1819 tests green.** Both exit criteria hold shipped: the byte-stable engine render
   golden-tested; the observed cycle recorded with entry-level `ratified_via`/`resolution`.
   Stage d4 renders quiescent — completion awaiting ratification.
+
+- **2026-08-10 — D5 ARCHIVED (baseline 18 → 19).** The emit surface, the merged review
+  invocation (surface 16 → 15), the body-economy pass (≈40.6k → 28.5k over the six heaviest
+  bodies; the ≤20k target miss surfaced by the fresh pass and RATIFIED as the
+  exit-criterion-1 reading — residual attributed to deferred engine work-list #2/#3), the
+  boot render, touchpoints with ENGINE-computed divergence, model hints on every eligibility
+  surface, and the user-validation subset rule (born mid-cycle from a user-logged gate
+  finding: apply emits persist the verified handoff list; the tracked gate computes
+  passed-for-flow with pending ids annotated, STICKY across field-less emits). The system
+  cadence converged over NINE internal/external passes plus ten resolution walks:
+  in-context (0C/2W/1S) → fresh (0C/4W/5S incl. the target-miss governance find) →
+  in-context confirm CLEAN → **external GPT-5 Codex ×4** (8 → 6 → 1 → 1 findings — the
+  path-traversal write primitive, the triple-scope address-reviews emit + engine
+  set-difference wiring, then canonical trail identity, then the check/use race) →
+  in-context confirm CLEAN → fresh (0C/1W/2S — the content half of the same seam,
+  materialize-first) → walk → **gate computed PASSED** (the second D-arc archive through a
+  passed gate, no override). Exit criterion 3's pre-archive seam exercised LIVE at archive
+  eligibility: a different model (Sonnet), cold, file-resident material only, oriented
+  correctly, named the right next action, and knew not to auto-chain — user judged PASS and
+  checked 9.6 (31/31). Archive: user-typed, zero consent prompts, fingerprints 26/26
+  verified, sync of 33 delta blocks byte-verified, `orbit-emit-composition` created as the
+  19th capability with a real Purpose; at-archive notes 9.4/9.5/9.7 executed in-flow.
+  **1918 tests green.** Stage d5 renders quiescent — completion awaiting ratification (the
+  remaining seams of exit criterion 3 gather evidence there).

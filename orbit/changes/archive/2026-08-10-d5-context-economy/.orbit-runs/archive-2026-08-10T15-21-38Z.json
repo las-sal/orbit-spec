@@ -1,0 +1,34 @@
+{
+  "command": "archive",
+  "timestamp": "2026-08-10T15:21:38Z",
+  "change": "d5-context-economy",
+  "kind": "lifecycle",
+  "model": "claude-fable-5",
+  "final_assessment": "d5-context-economy archived to orbit/changes/archive/2026-08-10-d5-context-economy/ through a PASSED review-system gate (second D-arc archive with no override). 31/31 tasks (9.6 user-checked after the live pre-archive cold-boot seam test, different model, user-judged PASS). Sync: 33 delta blocks byte-verified across 13 capabilities; orbit-emit-composition created as the 19th baseline capability with a real Purpose. At-archive notes executed in-flow: 9.4 (Purpose paragraphs of orbit-run-summary-emit + orbit-review-external re-anchored to the merged invocation), 9.5 (R-d-9 delivery map + D5 status-log entry in the arc doc), 9.7 (CLAUDE.md present-tense surface counts swept to 15 + the D5 stage entry). 1918 tests green; fingerprints were 26/26 verified pre-sync.",
+  "archive_path": "orbit/changes/archive/2026-08-10-d5-context-economy",
+  "audit": {
+    "ran": true,
+    "context": "pre-archive",
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 0,
+    "notes": "Category 5 reproduced the accepted-and-recorded divergence set (11 actual_unpredicted / 1 predicted_unsatisfied / 0 malformed — accept-and-record resolutions on the trail, not new drift; logged as the single informational warning). Category 1's only residue was the two DECLARED at-archive items (9.4, 9.7), executed by this flow. Categories 2/6 skipped (no lenses dir, no staging explorations); categories 3/4 clean."
+  },
+  "sync_specs": {
+    "ran": true,
+    "capabilities": 13,
+    "blocks_synced": 33,
+    "byte_verified": true,
+    "new_capabilities": [
+      "orbit-emit-composition"
+    ],
+    "baseline_count": "18 -> 19"
+  },
+  "unresolved_markers": 0,
+  "user_decision": "sync_now",
+  "consent": "user-invoked",
+  "warnings": [
+    "audit category 5 informational: the change's own accepted-and-recorded touchpoints divergence (11 unpredicted incl. review-cycle fix files; predicted overshoot src/core/config.ts) travels into archive as the recorded outcome"
+  ],
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."
+}

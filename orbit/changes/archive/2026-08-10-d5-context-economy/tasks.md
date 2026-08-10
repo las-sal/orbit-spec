@@ -147,7 +147,7 @@ breaks init/update, so 6.1–6.4 land together before any commit.)
 - [x] 9.3 Live smoke: `orbit emit review --render` on a scratch change; `orbit status --change
       --boot` both lifecycle positions; eligibility line with and without `models:` config;
       merged external invocation end-to-end (prompt file + T0).
-- [ ] 9.6 (User-validation handoff) Exercise exit criterion 3's every-seam boot test at stage
+- [x] 9.6 (User-validation handoff) Exercise exit criterion 3's every-seam boot test at stage
       ratification: a different model picks up cold at mid-explore (bare `orbit status` +
       explore.md + explore trail — the ratified seam answer, design.md D5), post-review,
       pre-apply, mid-apply-chunk, and pre-archive (`orbit status --change <name> --boot` for

@@ -117,7 +117,7 @@ The system SHALL define `orbit/explore/<name>/` as the staging area for `/orbit:
 
 ### Requirement: `explore.md` five-section format
 
-The system SHALL use a fixed five-section format for `explore.md`.
+The system SHALL use a fixed five-section format for `explore.md`. Open-question entries SHALL carry a `Standing recommendation:` slot — `Standing recommendation: <the current leaning>` or `Standing recommendation: none yet` — so a pending leaning discussed in conversation has a named, file-resident home (D-arc Stage D5, leak-hardening layer 1: AIs fill template slots far more reliably than they obey prose rules; the slot's RECORDED LEANING is what the emit surface's attestation counts — a `none yet` value attests an honestly empty slot, not a leaning, per `orbit-emit-composition`'s membership criterion).
 
 #### Scenario: Section order
 
@@ -129,11 +129,16 @@ The system SHALL use a fixed five-section format for `explore.md`.
 - **WHEN** an `explore.md` file is created
 - **THEN** it includes a `> **Status**: exploring...` header indicating the file is a pre-propose record
 
+#### Scenario: Open questions carry the standing-recommendation slot
+
+- **WHEN** an open question is captured in `explore.md`
+- **THEN** its entry includes a `Standing recommendation:` line — the current leaning, or the literal `none yet`; an entry lacking the slot is a format violation the explore body corrects on next touch
+
 ### Requirement: `.orbit-runs/` per-change persistence
 
 The system SHALL use one of the following `.orbit-runs/` persistence locations, scoped by the type of work being persisted:
 
-- **`orbit/changes/<change-name>/.orbit-runs/`** — per-change iteration history for active changes. Used by editorial commands (review, address-reviews, audit-drift inline), workflow commands operating on a named change (propose, new, continue, ff, apply, verify), lifecycle commands (archive), and review-external T0. The primary persistence location.
+- **`orbit/changes/<change-name>/.orbit-runs/`** — per-change iteration history for active changes. Used by editorial commands (review, address-reviews, audit-drift inline), workflow commands operating on a named change (propose, new, continue, ff, apply, verify), and review-external T0. The primary persistence location. The `archive` emit is the deliberate EXCEPTION: it is written AFTER the directory move, directly to the archived change's trail (per `orbit-emit-composition`'s pre-computable archive rule — see the archived-trail scenario below).
 - **`orbit/explore/<name>/.orbit-runs/`** — per-exploration iteration history for named-mode `/orbit:explore` sessions BEFORE the exploration is promoted to a formal change via `/orbit:propose`. Moves into `orbit/changes/<name>/.orbit-runs/` when `/orbit:propose <name>` consumes the staging directory (per the orbit-propose consume-mode convention).
 - **`orbit/.orbit-runs/`** — project-scope iteration history for commands that have no change scope (currently: `/orbit:audit-drift` invoked with no `<change-name>` argument, i.e., project-wide standalone). Created if it doesn't exist.
 - **`orbit/architecture/.orbit-runs/`** — architecture-scoped iteration history (D-arc Stage D2): `/orbit:architect` emits and `/orbit:review --as architecture` emits, one directory shared by all architecture docs (each emit names its doc). Created if it doesn't exist; NOT moved by change archiving (architecture docs persist across changes).
@@ -142,8 +147,13 @@ In all four locations, files are committed (the directory SHOULD NOT be in `.git
 
 #### Scenario: Active-change emit goes to changes/<name>/.orbit-runs/
 
-- **WHEN** orbit writes a run summary for a named, active change (e.g., `/orbit:review foo`, `/orbit:apply foo`, `/orbit:archive foo`)
+- **WHEN** orbit writes a run summary for a named, active change (e.g., `/orbit:review foo`, `/orbit:apply foo`)
 - **THEN** the file lands at `orbit/changes/foo/.orbit-runs/<command>-<TS>.json`
+
+#### Scenario: Archive emit lands on the archived trail
+
+- **WHEN** `/orbit:archive foo` completes the move to `orbit/changes/archive/<YYYY-MM-DD>-foo/`
+- **THEN** the `archive-<TS>.json` emit is written to `orbit/changes/archive/<YYYY-MM-DD>-foo/.orbit-runs/` (per `orbit-emit-composition`'s archive rule), joining the trail that moved with the change
 
 #### Scenario: Named-mode exploration emit goes to explore/<name>/.orbit-runs/
 
@@ -177,7 +187,7 @@ In all four locations, files are committed (the directory SHOULD NOT be in `.git
 
 #### Scenario: External review file name pattern
 
-- **WHEN** `/orbit:review-external` produces a prompt file (or external AI produces a findings file following the prompt)
+- **WHEN** the external-review packaging branch (`/orbit:review --reviewer external`) produces a prompt file (or external AI produces a findings file following the prompt)
 - **THEN** the file is named `external-prompt-<as>-<ISO-timestamp>.md` for prompts and `external-<as>-<ISO-timestamp>.md` for findings (e.g., `external-prompt-proposal-2026-05-21T01-32-52Z.md`, `external-proposal-2026-05-21T01-39-56Z.md`)
 
 #### Scenario: Travels with archive
@@ -187,9 +197,9 @@ In all four locations, files are committed (the directory SHOULD NOT be in `.git
 
 ### Requirement: Internal-run JSON summary format
 
-The system SHALL use a consistent JSON shape for run-summary emissions across **all orbit commands that mutate artifacts** — workflow, editorial, and lifecycle alike. Every run-summary JSON SHALL include a universal spine; commands extend the spine with per-kind and per-command extensions.
+The system SHALL use a consistent JSON shape for run-summary emissions across **all orbit commands that mutate artifacts** — workflow, editorial, and lifecycle alike. Every run-summary JSON SHALL include a universal spine; commands extend the spine with per-kind and per-command extensions. Emits are COMPOSED via the engine emit surface (`orbit emit <command>` per `orbit-emit-composition`, D-arc Stage D5) — the spine's computable fields are engine-owned; the emitting AI supplies only narrative payload fields.
 
-The universal spine (6 required fields):
+The universal spine (7 required fields):
 
 ```
 command          string       identifies which command emitted (matches filename prefix)
@@ -201,17 +211,21 @@ change           string|null  the change name (or null for project-scope and arc
 final_assessment string       narrative of what just happened (human-readable)
 next_recommended string       verbatim recommendation, suitable for best-effort parse by downstream status readers
 kind             enum         "workflow" | "editorial" | "lifecycle"
+model            string|null  the emitting AI's model identity (provenance — D-arc Stage D5); null when unknown.
+                              The emit surface REQUIRES the key in every payload (explicit null allowed) so
+                              provenance is always a conscious act. Pre-capability emits lack the field —
+                              readers SHALL tolerate absence (both generations valid on the trail).
 ```
 
 Per-kind extensions:
 
 - **`kind: "workflow"`** — emitted by `explore`, `propose`, `new`, `continue`, `ff`, `apply`, `verify`, `architect` (D-arc Stage D2; `architect` emits to the architecture trail with `change: null` plus a `doc` extension — shape owned by `orbit-architect`). Per-command extensions are defined in the `orbit-run-summary-emit` capability (e.g., `apply.chunk_complete`, `verify.verdict`, `explore.decisions_captured`). Consent-era `apply` emits additionally carry `consent: "user-invoked" | "prompted"` (per `orbit-lifecycle-consent`).
-- **`kind: "editorial"`** — emitted by `review`, `address-reviews`, `audit-drift`, `review-external`. Per-command extensions include: `iteration` (when applicable to the command — e.g., review iter-N, address-reviews iter-N), `scorecard` (the 3-dimension × severity counts shape — Completeness/Correctness/Coherence, each with critical/warning/suggestion — on review completion emits; the renderer's required counts source per `orbit-report-rendering`; D-arc Stage D4), and full `findings[]` entries (each carrying its own `title` — no separate title array). The former `findings_summary` AND `finding_titles` fields are RETIRED for review emits (superseded by `scorecard`; live practice had already migrated) — readers SHALL tolerate both generations (a severity count is recoverable by counting `findings[]`, the existing trail-reader fallback; the report RENDERER's strict generation boundary is the named exception, per `orbit-report-rendering`); audit-drift and archive-audit emits keep their own `findings_summary` shapes unchanged. Command-specific fields beyond these are defined in per-skill schema references (`references/run-summary-schema.md`, shipped alongside the generated skill).
+- **`kind: "editorial"`** — emitted by `review`, `address-reviews`, `audit-drift`, `review-external`. Per-command extensions include: `iteration` (when applicable to the command — e.g., review iter-N, address-reviews iter-N), `scorecard` (the 3-dimension × severity counts shape — Completeness/Correctness/Coherence, each with critical/warning/suggestion — on review completion emits; the renderer's required counts source per `orbit-report-rendering`; D-arc Stage D4), and full `findings[]` entries (each carrying its own `title` — no separate title array). The former `findings_summary` AND `finding_titles` fields are RETIRED for review emits (superseded by `scorecard`; live practice had already migrated) — readers SHALL tolerate both generations (a severity count is recoverable by counting `findings[]`, the existing trail-reader fallback; the report RENDERER's strict generation boundary is the named exception, per `orbit-report-rendering`); audit-drift and archive-audit emits keep their own `findings_summary` shapes unchanged. Command-specific fields beyond these are documented in per-skill schema references (`references/run-summary-schema.md`, shipped alongside the generated skill — payload-field lists MIRRORING the engine's authoritative table per `orbit-emit-composition`, never defining it; the spine is engine-owned and documented HERE, not per skill).
 - **`kind: "lifecycle"`** — emitted by `archive` only. Per-command extensions include: `archive_path`, `audit`, `sync_specs` (reports what the archive flow's spec-sync step did, mirroring upstream's archive summary), `unresolved_markers`, `user_decision`, plus other fields defined in the archive skill. Consent-era emits (per `orbit-lifecycle-consent`) additionally carry the flat `consent: "user-invoked" | "prompted"` field.
 
 **Canonical examples** (one per kind, illustrating spine + per-kind extensions):
 
-Workflow-kind example — `apply-2026-05-21T13-34-12Z.json` written at chunk 2 completion of a chunked apply:
+Workflow-kind example — `apply-2026-05-21T13-34-12Z.json` written at chunk 2 completion of a chunked apply (the `final_assessment` shown is the ENGINE-composed chunk/counts core per `orbit-emit-composition`'s deterministic-facts requirement — the payload may only append an optional `assessment_suffix`, never author the counts; the `next_recommended` shown is the engine's canonical next_command extended by the ENGINE-composed next-chunk suffix from the preamble — every character engine-owned):
 
 ```json
 {
@@ -221,6 +235,7 @@ Workflow-kind example — `apply-2026-05-21T13-34-12Z.json` written at chunk 2 c
   "final_assessment": "Completed chunk 2 of 5 (inventory+parsing); 28 of 76 tasks done.",
   "next_recommended": "/orbit:apply add-detail-flag — next chunk: phase+attention+recommendation engine",
   "kind": "workflow",
+  "model": "claude-fable-5",
   "tasks_completed": 28,
   "tasks_remaining": 48,
   "user_validation_remaining": 0,
@@ -228,6 +243,7 @@ Workflow-kind example — `apply-2026-05-21T13-34-12Z.json` written at chunk 2 c
   "chunk_name": "inventory+parsing",
   "chunk_complete": true,
   "tasks_completed_this_session": 16,
+  "files_touched": ["src/core/parsers/preamble.ts", "test/core/preamble.test.ts"],
   "consent": "user-invoked"
 }
 ```
@@ -242,6 +258,7 @@ Editorial-kind example — `review-proposal-2026-05-21T00-18-14Z.json` written b
   "final_assessment": "1 critical, 1 warning, 0 suggestion.",
   "next_recommended": "/orbit:address-reviews emit-run-summary-jsons-from-workflow-commands --from-file <this emit's own path>",
   "kind": "editorial",
+  "model": "claude-fable-5",
   "mode": "proposal",
   "iteration": 1,
   "depth": "full",
@@ -268,6 +285,7 @@ Lifecycle-kind example — `archive-2026-05-20T16-31-59Z.json` written after `/o
   "final_assessment": "Archived bootstrap-orbit-status-cli to orbit/changes/archive/2026-05-20-bootstrap-orbit-status-cli/.",
   "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check.",
   "kind": "lifecycle",
+  "model": "claude-fable-5",
   "archive_path": "orbit/changes/archive/2026-05-20-bootstrap-orbit-status-cli/",
   "audit": {
     "ran": true,
@@ -290,7 +308,7 @@ Lifecycle-kind example — `archive-2026-05-20T16-31-59Z.json` written after `/o
 #### Scenario: Universal spine present on every emit
 
 - **WHEN** any orbit command (workflow, editorial, or lifecycle) writes a run-summary JSON
-- **THEN** the JSON contains the 6 spine fields with valid values: `command`, `timestamp`, `change` (or null), `final_assessment`, `next_recommended`, and `kind`
+- **THEN** the JSON contains the 7 spine fields with valid values: `command`, `timestamp`, `change` (or null), `final_assessment`, `next_recommended`, `kind`, and `model` (nullable; absent only on pre-capability emits, which readers tolerate)
 
 #### Scenario: Workflow command emit shape
 
@@ -304,7 +322,7 @@ Lifecycle-kind example — `archive-2026-05-20T16-31-59Z.json` written after `/o
 
 #### Scenario: Editorial command emit shape (pre-findings T0 case)
 
-- **WHEN** `/orbit:review-external` writes its T0 JSON (prompt packaged, external findings not yet returned)
+- **WHEN** the external-review packaging branch writes its T0 JSON (prompt packaged, external findings not yet returned)
 - **THEN** `kind` equals `"editorial"`; per-command extensions include `mode`, `prompt_path`, `target`, `awaiting_findings: true` — and OMIT the counts shape because no findings exist yet
 
 #### Scenario: Lifecycle command emit shape
@@ -321,6 +339,11 @@ Lifecycle-kind example — `archive-2026-05-20T16-31-59Z.json` written after `/o
 
 - **WHEN** a downstream consumer (dashboard, CI bot, IDE plugin) reads `.orbit-runs/*.json` files
 - **THEN** the consumer MAY route by reading the `kind` field directly rather than pattern-matching filename prefixes (e.g., `review-*`, `address-reviews-*`); filename prefix routing remains valid as a fallback
+
+#### Scenario: Model provenance recorded, absence tolerated
+
+- **WHEN** a post-capability emit is written via the surface and a pre-capability emit sits beside it on the trail
+- **THEN** the new emit carries `model` (a string or explicit null); every reader treats the old emit's missing key as valid (no degradation, no warning)
 
 ### Requirement: External-review findings markdown format
 
@@ -551,7 +574,7 @@ The system SHALL apply substantive modifications to a change-in-flight fully acr
 
 #### Scenario: Known residue MUST NOT be left for review
 
-- **WHEN** the AI is about to invoke `/orbit:review`, `/orbit:review-external`, or any other review-cycle command after a substantive modification
+- **WHEN** the AI is about to invoke `/orbit:review` (any reviewer class) or any other review-cycle command after a substantive modification
 - **THEN** it MUST first verify completeness per the previous scenarios; known residue (residue the AI is aware of) MUST NOT be deferred to the review cycle to catch — leaving known issues for a reviewer corrupts the review signal (the reviewer wastes effort on things the AI knew about) and violates the cost-up-front guiding principle (small cost now to surface known issues, save the larger cost of having the reviewer rediscover them)
 
 #### Scenario: Modification scope distinguishes substantive from cosmetic
@@ -561,7 +584,7 @@ The system SHALL apply substantive modifications to a change-in-flight fully acr
 
 #### Scenario: Cleanup-before-prompt-push timing for external review
 
-- **WHEN** the AI plans to follow up a substantive modification with `/orbit:review-external` (writing a prompt file and pushing it for an external AI to pull)
+- **WHEN** the AI plans to follow up a substantive modification with an external review (`/orbit:review --reviewer external` — writing a prompt file and pushing it for an external AI to pull)
 - **THEN** the completeness sweep MUST complete BEFORE the prompt file is pushed; doing the cleanup concurrent with an in-progress external review means the external AI is analyzing stale state and produces mixed-state findings the authoring AI then has to pushback-suppress at ingest time — friction that is avoidable by ordering cleanup first
 
 #### Scenario: Lesson origin in `explore.md`
@@ -686,7 +709,7 @@ The system SHALL classify every skill and command file orbit generates into one 
 
 #### Scenario: Orbit-authored — full ownership
 
-- **WHEN** a generated file's template body has no upstream-derived content (currently `orbit-onboard`, whose body replaces upstream's guided-tour content entirely; the net-new editorial workflows — review, audit-drift, review-external, address-reviews — which joined at B3; and `orbit-architect`, the fully orbit-authored 16th workflow — D-arc Stage D2)
+- **WHEN** a generated file's template body has no upstream-derived content (currently `orbit-onboard`, whose body replaces upstream's guided-tour content entirely; the net-new editorial workflows — review (whose `--reviewer external` branch absorbed the external packaging at D-arc Stage D5's merge; the standalone review-external template joined at B3 and RETIRED at D5), audit-drift, address-reviews; and `orbit-architect`, fully orbit-authored — joined as the 16th workflow at D-arc Stage D2, the surface standing at 15 post-D5)
 - **THEN** the template is fully owned by orbit; orbit's contributors edit it freely; the file uses the `orbit-*` directory naming convention for consistency with siblings even when the body is 100% orbit-authored
 
 #### Scenario: Orbit-modified — upstream body with `# Orbit additions`
@@ -759,13 +782,13 @@ The README's installation, update, and uninstall sections SHALL describe the act
 
 ### Requirement: Review mode decision framework
 
-The system SHALL codify the decision criteria for choosing among orbit's three review modes (in-context, `--fresh`, external). This is the normative-force complement to README's "Choosing a review mode" section, which documents the same framework as user-facing guidance. The framework exists because empirical evidence (notably `bootstrap-orbit-status-cli`'s 3-of-3 finding — in-context system review missed all 3 real implementation bugs that external review caught) demonstrates that mode choice materially affects review-finding completeness. As of C1 the framework's recommendations are BACKED BY the engine's `reviewed` gates (per `orbit-engine-gates`): the gate computes convergence and surfaces the canonical next mode, but enforcement is apply-parity — the gate surfaces and records, never hard-blocks. The framework remains advisory in the sense that the user can always proceed past an unpassed gate at the inflection prompt (the override is recorded); it is no longer purely advisory in the sense that the recommendation is now an engine-computed gate state rather than free-form prose.
+The system SHALL codify the decision criteria for choosing among orbit's three reviewer classes (in-context, fresh, external — the `--reviewer` axis on the merged `/orbit:review` surface, D-arc Stage D5; "mode" belongs to `--as proposal|system|architecture`). This is the normative-force complement to README's "Choosing a review mode" section, which documents the same framework as user-facing guidance. The framework exists because empirical evidence (notably `bootstrap-orbit-status-cli`'s 3-of-3 finding — in-context system review missed all 3 real implementation bugs that external review caught) demonstrates that mode choice materially affects review-finding completeness. As of C1 the framework's recommendations are BACKED BY the engine's `reviewed` gates (per `orbit-engine-gates`): the gate computes convergence and surfaces the canonical next mode, but enforcement is apply-parity — the gate surfaces and records, never hard-blocks. The framework remains advisory in the sense that the user can always proceed past an unpassed gate at the inflection prompt (the override is recorded); it is no longer purely advisory in the sense that the recommendation is now an engine-computed gate state rather than free-form prose.
 
-The three modes:
+The three classes:
 
 1. **In-context** (default `/orbit:review`) — the current AI session does the review against its accumulated context. Fast iteration; low cross-AI cost. Anchoring risk: AI may be biased toward confirming work it has visibility into.
-2. **`--fresh` internal subagent** (`/orbit:review --fresh`) — spawns a fresh subagent within the same Claude process. Loses session-level anchoring; same model architecture so model-level biases remain. Middle-ground between in-context and external.
-3. **External** (`/orbit:review-external`) — packages a self-contained prompt for a different AI session (different model + different chat + completely separate context). Maximum independence; cross-AI round-trip cost. Best for substantive changes + code-vs-spec verification.
+2. **Fresh internal subagent** (`/orbit:review --reviewer fresh`; `--fresh` remains as shorthand — D-arc Stage D5) — spawns a fresh subagent within the same Claude process. Loses session-level anchoring; same model architecture so model-level biases remain. Middle-ground between in-context and external.
+3. **External** (`/orbit:review --reviewer external` — D-arc Stage D5's merge; the standalone launcher is retired, record vocabulary frozen per `orbit-review-external`) — packages a self-contained prompt for a different AI session (different model + different chat + completely separate context). Maximum independence; cross-AI round-trip cost. Best for substantive changes + code-vs-spec verification.
 
 #### Scenario: In-context default for first-pass review with low anchoring risk
 
@@ -780,7 +803,7 @@ The three modes:
 #### Scenario: External for system-mode + substantive cross-AI verification
 
 - **WHEN** running system-mode review (verifying code-vs-spec coherence where the AI may have authored the code in a recent session — high anchoring risk per `bootstrap-orbit-status-cli` evidence) OR the change is substantive enough that cross-AI cross-check pays for itself (e.g., breaking changes, security-sensitive code, multi-capability changes)
-- **THEN** `/orbit:review-external` is the appropriate mode. The cross-AI round-trip cost is justified by the independence — a different model + different session has no anchoring to the code the original AI wrote. The `review-system` cadence's external slot encodes this default (per `orbit-engine-gates`), and the engine-rendered report tail surfaces the resulting canonical next command (per `orbit-report-rendering` — D-arc Stage D4). In C1+ this recommendation is realized as the `review-system` gate (per `orbit-engine-gates`), whose `external` cadence slot must be covered for convergence; the gate surfaces the canonical next command but NEVER hard-blocks — the user may proceed past it at the archive inflection prompt, and the override is recorded. The recommendation is gate-surfaced, not gate-enforced.
+- **THEN** `/orbit:review --reviewer external` is the appropriate mode. The cross-AI round-trip cost is justified by the independence — a different model + different session has no anchoring to the code the original AI wrote. The `review-system` cadence's external slot encodes this default (per `orbit-engine-gates`), and the engine-rendered report tail surfaces the resulting canonical next command (per `orbit-report-rendering` — D-arc Stage D4). In C1+ this recommendation is realized as the `review-system` gate (per `orbit-engine-gates`), whose `external` cadence slot must be covered for convergence; the gate surfaces the canonical next command but NEVER hard-blocks — the user may proceed past it at the archive inflection prompt, and the override is recorded. The recommendation is gate-surfaced, not gate-enforced.
 
 #### Scenario: Framework is documented in README + spec; drift between the two is caught
 
@@ -803,7 +826,13 @@ workflow, review iterations included — unless the user's message requests it. 
 command (the passes of one review, the tasks of one apply), never the next command; gate `passed`
 means *eligible*, not *commanded*. This contract is echoed in every generated workflow body
 (the self-contained-disciplines pattern) and is the behavior layer the consent prompts
-(`orbit-lifecycle-consent`) backstop at the consent-marked seams.
+(`orbit-lifecycle-consent`) backstop at the consent-marked seams. The per-body echo MAY take
+the EPITOME form (D-arc Stage D5's body economy): for no-chaining, ~2 structural-leaning lines
+leaning on the turn-ending structure (position readout + eligibility line); for the
+four-discipline block generally, a four-bullet epitome with procedural detail moved to the
+step that uses it (detail-to-situ) — the full normative text keeps ONE home (this capability's
+discipline requirements), an epitome echo is COMPLIANT, and body-fidelity checks pin the
+epitome form, not the pre-D5 full block.
 
 #### Scenario: Command completion ends the turn
 
@@ -824,3 +853,11 @@ means *eligible*, not *commanded*. This contract is echoed in every generated wo
   address its findings")
 - **THEN** exactly those named commands are run — the request defines the scope; nothing beyond
   it is invoked
+
+#### Scenario: Epitome echo is a compliant echo
+
+- **WHEN** a generated body carries the ~2-line no-chaining epitome and the four-bullet
+  disciplines epitome instead of the full blocks
+- **THEN** the body satisfies this contract's echo expectation — the full text's single
+  normative home is this capability; fidelity and drift checks compare bodies against the
+  epitome form, not the pre-D5 full block

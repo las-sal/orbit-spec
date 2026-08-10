@@ -14,8 +14,8 @@ emit `architect-<TS>.json` to the architecture trail with the structured `handof
 The system SHALL expose `/orbit:architect [<doc-name>]` as a first-class generated workflow with
 the complete command anatomy: a generated skill (`orbit-architect`) plus a thin launcher command
 (per the D14 pattern), the four execution disciplines block, a run-summary emit, registration in
-every generator registry, and installation for all tools (D15 full surface — the generated
-surface grows to 16 workflows). Invoked with a `<doc-name>`: create `orbit/architecture/
+every generator registry, and installation for all tools (D15 full surface — the addition
+grew the generated surface to 16 workflows at D2; 15 post-D5's review-external merge). Invoked with a `<doc-name>`: create `orbit/architecture/
 <doc-name>.md` scaffolded in the parseable format (per `orbit-architecture-engine`) if absent, or
 resume the existing doc. Invoked bare: list parseable docs via `orbit architecture status` and
 prompt selection (offering create-new).
@@ -108,7 +108,12 @@ name), `stages_touched`, `rulings_captured`, `completions_ratified` (stage ids, 
 and — per arc ruling R-d-9(b), complied with from birth — a structured `handoff` section:
 `boot_sequence` (ordered pointers, never duplicated substance), `next_command`, `model_hint`,
 and `seam`. `/orbit:review --as architecture` emits carry the same `handoff` section (its shape
-is owned here; the review emit itself is specified in `orbit-review`).
+is owned here; the review emit itself is specified in `orbit-review`). The emit is composed via
+the engine surface (`orbit emit architect` per `orbit-emit-composition` — D-arc Stage D5), and
+the BOUNDARY RESIDENCY SWEEP precedes it — per the `Architect authoring stance and capture`
+requirement's R-d-8 sweep, which is the sweep's ONE normative home (leak-hardening layer 2,
+shared with named-mode explore per `orbit-explore-modifications`): "no emit without sweep",
+riding the existing boundary trigger with no new prompt.
 
 #### Scenario: Emit lands in the architecture trail with handoff
 
