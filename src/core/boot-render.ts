@@ -2,7 +2,7 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { loadChangeContext, formatChangeStatus, type ChangeStatus } from './artifact-graph/instruction-loader.js';
 import { readValidEmits, listSkippedEmits, type EmitRecord } from './orientation.js';
-import { parseTouchpointsFile } from './parsers/touchpoints.js';
+import { parseTouchpointsFile, isPredicted, entrySatisfied } from './parsers/touchpoints.js';
 import { firstCommitTouching, isGitRepo, filesTouchedCommitted } from './parsers/apply-state.js';
 import { modelHintFor, withModelHint } from './model-hints.js';
 
@@ -35,6 +35,12 @@ export interface BootView {
     actual: string[] | null;
     /** Change-own files (orbit/changes/<name>/**) collapsed out of `actual` — lifecycle bookkeeping, never scope drift. */
     actual_change_own_count?: number;
+    /** ENGINE set-difference (present only when both maps are live): actual paths no predicted entry matches. */
+    actual_unpredicted?: string[];
+    /** ENGINE set-difference (present only when both maps are live): predicted entries (targets joined ` + `) no actual path satisfied. */
+    predicted_unsatisfied?: string[];
+    /** Malformed section entries (line-cited), surfaced whenever the section is present; already excluded from the arithmetic. */
+    malformed?: Array<{ line: number; text: string }>;
   };
   /** Fault-isolation exclusions (absent in JSON when empty; typed here as optional). */
   skipped_emits?: string[];
@@ -108,9 +114,30 @@ export function collectBoot(projectRoot: string, changeName: string): { status: 
         const changeOwn = touched.filter(f => f.startsWith(ownPrefix));
         actual = touched.filter(f => !f.startsWith(ownPrefix));
         if (changeOwn.length > 0) actualChangeOwnCount = changeOwn.length;
+        // The predicted→ACTUAL transition keys on COMMITTED apply work, not trail
+        // presence: an apply emit written at a boundary before the chunk commit lands
+        // would otherwise hand a cold pickup an empty/incomplete actual map. No
+        // committed non-bookkeeping files yet → stay on the predicted-only view.
+        if (actual.length === 0) {
+          actual = null;
+          actualChangeOwnCount = undefined;
+        }
       }
     }
   }
+
+  // The ENGINE set-difference (D5 category-5 arithmetic — the AI judges severity,
+  // never recomputes matching): both maps live → the two divergence lists via the
+  // grammar's own matchers; malformed entries surface whenever the section parses.
+  let actualUnpredicted: string[] | undefined;
+  let predictedUnsatisfied: string[] | undefined;
+  if (actual !== null && parse.present) {
+    actualUnpredicted = actual.filter(p => !isPredicted(parse.entries, p));
+    predictedUnsatisfied = parse.entries
+      .filter(e => !entrySatisfied(e, actual as string[]))
+      .map(e => e.targets.join(' + '));
+  }
+  const malformed = parse.present && parse.malformed.length > 0 ? parse.malformed : undefined;
 
   const skipped = listSkippedEmits(runsDir);
 
@@ -124,6 +151,9 @@ export function collectBoot(projectRoot: string, changeName: string): { status: 
         predicted,
         actual,
         ...(actualChangeOwnCount !== undefined ? { actual_change_own_count: actualChangeOwnCount } : {}),
+        ...(actualUnpredicted !== undefined ? { actual_unpredicted: actualUnpredicted } : {}),
+        ...(predictedUnsatisfied !== undefined ? { predicted_unsatisfied: predictedUnsatisfied } : {}),
+        ...(malformed !== undefined ? { malformed } : {}),
       },
       ...(skipped.length > 0 ? { skipped_emits: skipped } : {}),
     },

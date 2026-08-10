@@ -1,4 +1,5 @@
 import * as fs from 'node:fs';
+import { parseCheckboxes } from './apply-state.js';
 
 /**
  * Chunk-preamble parser (D-arc Stage D5, orbit-run-summary-emit `Apply per-chunk-end
@@ -18,6 +19,9 @@ import * as fs from 'node:fs';
  *  - Cross-declaration coverage: chunk numbers ascending, group ranges non-overlapping,
  *    and no gap (a group within the declared span covered by no chunk) — a tolerated gap
  *    would let chunk arithmetic declare apply-complete while uncovered tasks remain.
+ *  - Content coverage: the declared span's ENDS must match the numbered groups actually
+ *    present in tasks.md — an omitted leading or trailing group is the same
+ *    apply-complete-with-uncovered-work hazard as an internal gap.
  */
 
 export interface ChunkDeclaration {
@@ -90,6 +94,26 @@ export function parseChunkPreamble(content: string, tasksPath: string): ChunkPre
         return { kind: 'malformed', warning: MALFORMED_WARNING(tasksPath) }; // gap
       }
     }
+  }
+
+  // Content coverage: the declared span must reach exactly the numbered groups present
+  // in the file (same fence-aware grammar as checkbox arithmetic). Internal gaps are
+  // rejected above; an omitted leading or trailing group would let the final declared
+  // chunk record `chunk_complete: true` while uncovered AI-doable work remains — the
+  // wrong-but-plausible record class this parser exists to prevent.
+  const numbered = parseCheckboxes(content)
+    .groups.map(g => g.group)
+    .filter((g): g is number => g !== null);
+  if (numbered.length === 0) {
+    return { kind: 'malformed', warning: MALFORMED_WARNING(tasksPath) }; // declarations over no numbered groups
+  }
+  const minGroup = Math.min(...numbered);
+  const maxGroup = Math.max(...numbered);
+  if (
+    declarations[0].groupStart !== minGroup ||
+    declarations[declarations.length - 1].groupEnd !== maxGroup
+  ) {
+    return { kind: 'malformed', warning: MALFORMED_WARNING(tasksPath) }; // omitted leading/trailing group
   }
 
   return { kind: 'ok', declarations };

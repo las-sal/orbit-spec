@@ -1,0 +1,195 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-08-09T22:50:28Z",
+  "change": "d5-context-economy",
+  "kind": "editorial",
+  "model": "claude-fable-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/d5-context-economy/.orbit-runs/external-system-2026-08-06T20-09-20Z.md",
+  "source_command": null,
+  "external_reviewer": "OpenAI Codex (GPT-5)",
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 4,
+    "warning": 3,
+    "suggestion": 1
+  },
+  "pushback_verification": "All 8 verified live before acting: the unvalidated join traced through resolveTarget (both flags); the hand-write instruction read at the template source and the archived-resolution gap traced through COMMANDS scopes + the archive-only fallback; the uncalled matchers confirmed via grep (zero production callers) and parse.malformed confirmed discarded in collectBoot; the between-ranges-only gap check read in the parser; applyStarted's trail-presence keying re-read post-yesterday's collapse fix; git add -A confirmed in captureDiffBase's temp index; the model-presence-only check and two-field handoffShapeCheck read at the gate; isValidTarget's return-true body read. 0 stale suppressions.",
+  "resolution_summary": {
+    "resolved": 8,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "marker": "src/core/emit-composition.ts:255 — emit target resolution permits writes outside orbit trails (path traversal)",
+      "severity": "CRITICAL",
+      "source": "external",
+      "classification": "trivial fix",
+      "status": "resolved",
+      "action": "Contained-identifier rule (D2's doc-identity pattern): --change/--doc values rejecting separators, traversal segments, and leading dots before any resolution; realpath containment behind it (B2's physical-symlink precedent) for change/explore/archived dirs. No-write regressions: traversal, separator, absolute, dot, and symlink-escape forms all throw with nothing written. Delta's target-resolution contract + a traversal scenario added.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/emit-composition.ts",
+          "test/core/emit-composition.test.ts",
+          "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "src/core/templates/workflows/address-reviews.ts:906 — hand-composed project logs + no archived-change emit scope",
+      "severity": "CRITICAL",
+      "source": "external",
+      "classification": "decision required",
+      "status": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": false,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "extend the emit surface now: project scope + archived-change fallback resolution for address-reviews; delete the hand-write branch; per-scope persistence tests"
+          },
+          {
+            "label": "B",
+            "body": "defer the scope extension as a follow-up task, keeping the hand-write instruction as the documented interim"
+          }
+        ],
+        "chosen": "A"
+      },
+      "action": "Option A ratified by chat: address-reviews is now TRIPLE-scope — bare project invocation lands orbit/.orbit-runs with change null (audit-drift's pattern) and a findings-dependent recommendation computed from remaining_markers_in_scope; --change falls back to the archived trail via the archive emit's lexically-greatest rule (extracted findArchivedDir shared by both) with a no-lifecycle recommendation. The body's hand-write branch replaced with the bare invocation; the schema reference gains the archived location and the no-scope-hand-writes sentence; the delta's scope table rewritten (dual→triple) with two new scenarios; CLI doc comment updated. Tests: bare project (both recommendation branches), archived fallback.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/emit-composition.ts",
+          "src/commands/emit.ts",
+          "src/core/templates/workflows/address-reviews.ts",
+          "test/core/emit-composition.test.ts",
+          "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "src/core/boot-render.ts:90 — touchpoints divergence AI-computed; engine matchers uncalled; malformed discarded",
+      "severity": "CRITICAL",
+      "source": "external",
+      "classification": "decision required",
+      "status": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": false,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "wire the engine set-difference now: typed actual_unpredicted/predicted_unsatisfied/malformed on the boot JSON via the existing matchers; audit-drift consumes the computed lists; integrated grammar test"
+          },
+          {
+            "label": "B",
+            "body": "align the body/delta down to the AI-computed interim and file the engine set-difference as follow-up work"
+          }
+        ],
+        "chosen": "A"
+      },
+      "action": "Option A ratified by chat: boot touchpoints gains the three ENGINE-computed fields — actual_unpredicted (isPredicted over the change-own-excluded actual), predicted_unsatisfied (entrySatisfied per entry, targets joined), malformed (parse.malformed no longer discarded; surfaced whenever the section parses) — the previously-uncalled grammar matchers are now the production path. Audit-drift's category 5 rewritten to consume the computed lists (severity judgment only; NO AI matching). Integrated test covers exact/prefix/glob/grouped-alternative satisfaction, an unpredicted path, an unsatisfied entry, and a malformed line. Deltas: audit-drift's divergence requirement + orientation's boot JSON shape.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/boot-render.ts",
+          "src/core/templates/workflows/audit-drift.ts",
+          "test/core/boot-render.test.ts",
+          "orbit/changes/d5-context-economy/specs/orbit-audit-drift/spec.md",
+          "orbit/changes/d5-context-economy/specs/orbit-orientation/spec.md"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "src/core/parsers/chunk-preamble.ts:76 — declared chunks can omit leading/trailing task groups",
+      "severity": "CRITICAL",
+      "source": "external",
+      "classification": "trivial fix",
+      "status": "resolved",
+      "action": "Content-coverage rule: the declared span's ends must match the numbered groups actually parsed from tasks.md (same fence-aware grammar as checkbox arithmetic, via parseCheckboxes); omitted leading group, omitted trailing group, and declarations over a file with no numbered groups all degrade to the documented malformed/no-chunking fallback. Existing fixtures upgraded to carry full group sets; three new malformed cases; the delta's cross-declaration bullet extended with the ends rule. Real d5 preamble verified covering (groups 1-9 declared, 9 numbered groups present).",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/parsers/chunk-preamble.ts",
+          "test/core/parsers/chunk-preamble.test.ts",
+          "orbit/changes/d5-context-economy/specs/orbit-run-summary-emit/spec.md"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "src/core/boot-render.ts:93 — boot switches to ACTUAL on any apply emit, before apply commits exist",
+      "severity": "WARNING",
+      "source": "external",
+      "classification": "trivial fix",
+      "status": "resolved",
+      "action": "The predicted→ACTUAL transition now keys on COMMITTED apply work: an empty post-exclusion actual (only bookkeeping commits exist) falls back to the predicted-only view. Test: apply emit + change-own commit + uncommitted implementation → predicted view. Orientation delta's lifecycle sentence names the committed-non-bookkeeping condition.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/boot-render.ts",
+          "test/core/boot-render.test.ts",
+          "orbit/changes/d5-context-economy/specs/orbit-orientation/spec.md"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "src/core/parsers/apply-state.ts:128 — diff-boundary snapshot stages untracked files via git add -A",
+      "severity": "WARNING",
+      "source": "external",
+      "classification": "trivial fix",
+      "status": "resolved",
+      "action": "captureDiffBase now seeds HEAD + tracked changes only (git add -u) plus additions already staged in the REAL index (NUL-safe listing; the staging act admits a file to tracked state) — brand-new unstaged untracked files stay invisible per the spec's tracked-state rule. Regression: unstaged untracked file out of the tree (and never a phantom deletion after removal), staged addition in.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/parsers/apply-state.ts",
+          "test/core/parsers/apply-state.test.ts"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "src/core/emit-composition.ts:538 — write gate accepts non-string model and incomplete handoff shapes",
+      "severity": "WARNING",
+      "source": "external",
+      "classification": "trivial fix",
+      "status": "resolved",
+      "action": "Universal spine check enforces model as string|null; handoffShapeCheck enforces the FULL R-d-9(b) shape (model_hint nullable-never-absent, seam non-empty) in addition to boot_sequence/next_command. Malformed-payload tests per field; existing fixtures already carried the full shape. The shapes were already normatively documented — gate now enforces them, no spec edit.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/emit-composition.ts",
+          "test/core/emit-composition.test.ts"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "src/core/parsers/touchpoints.ts:34 — target validation accepts absolute and parent-resolving forms",
+      "severity": "SUGGESTION",
+      "source": "external",
+      "classification": "trivial fix",
+      "status": "resolved",
+      "action": "isValidTarget now rejects absolute paths, backslash separators, drive-letter forms, ./-prefixed spellings, parent-resolving .. segments, and embedded whitespace — all MALFORMED (line-cited, excluded from arithmetic) so the required malformed-entry surfacing fires for them. Rejection test over all five forms; the propose delta's entry grammar gains the repo-relative clause.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/parsers/touchpoints.ts",
+          "test/core/parsers/touchpoints.test.ts",
+          "orbit/changes/d5-context-economy/specs/orbit-propose-modifications/spec.md"
+        ],
+        "flagged_not_applied": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": null,
+  "final_assessment": "All 8 external findings (4 CRITICAL / 3 WARNING / 1 SUGGESTION, OpenAI Codex GPT-5, system iter 1) walked and resolved: the emit path-traversal primitive closed with contained identifiers + symlink containment; address-reviews emit made triple-scope (bare project / archived fallback / doc) and its hand-write branch deleted; the touchpoints divergence arithmetic moved into the engine (typed boot fields via the previously-uncalled matchers, audit-drift consuming); chunk-preamble content-coverage ends rule; boot's predicted→ACTUAL transition keyed on committed work; tracked-only diff boundaries; full write-gate shape enforcement; repo-relative touchpoint targets. 1910 tests green (1908 → 1910 net, with 13 new/upgraded cases along the walk); strict validation; fingerprints 26/26; surface regenerated.",
+  "iteration": 12,
+  "next_recommended": "/orbit:review --as system d5-context-economy"
+}

@@ -514,8 +514,11 @@ const ADDRESS_REVIEWS_RUN_SUMMARY_SCHEMA_REFERENCE = `# Reference: address-revie
 Each \`/orbit:address-reviews\` invocation persists a JSON summary. Path varies:
 
 - **Change-scoped** (when scope is a single change directory or \`--from-file\` points into a change's \`.orbit-runs/\`): \`orbit/changes/<change-name>/.orbit-runs/address-reviews-<TS>.json\`
+- **Archived-change** (the positional resolved an archived change — the engine's \`--change\` fallback): \`orbit/changes/archive/<YYYY-MM-DD>-<name>/.orbit-runs/address-reviews-<TS>.json\`
 - **Architecture-scoped** (\`--from-file\` into \`orbit/architecture/.orbit-runs/\`): \`orbit/architecture/.orbit-runs/address-reviews-<TS>.json\` (\`change: null\`; \`doc\` carried from the source emit)
-- **Whole-repo / cross-change**: \`orbit/.orbit-runs/address-reviews-<TS>.json\`
+- **Whole-repo / cross-change** (bare \`orbit emit address-reviews\`): \`orbit/.orbit-runs/address-reviews-<TS>.json\`
+
+Every location is written by the emit surface — no scope hand-writes its log.
 
 ## Universal spine inheritance
 
@@ -903,7 +906,7 @@ Compose the payload — narrative + per-command extension fields ONLY; \`referen
 orbit emit address-reviews --change <name> --payload <payload-file>
 \`\`\`
 
-Architecture-scoped ingest (the source was a \`review-architecture-*.json\` emit): \`--doc <doc-name>\` instead of \`--change\` — the log lands on \`orbit/architecture/.orbit-runs/\` with \`change: null\`, keeping the architecture evidence chain whole. Whole-repo / cross-change walks with no change anchor: write \`orbit/.orbit-runs/address-reviews-<TS>.json\` by hand per the schema reference (the emit surface targets change and doc scopes).
+Architecture-scoped ingest (the source was a \`review-architecture-*.json\` emit): \`--doc <doc-name>\` instead of \`--change\` — the log lands on \`orbit/architecture/.orbit-runs/\` with \`change: null\`, keeping the architecture evidence chain whole. Whole-repo / cross-change walks with no change anchor: invoke BARE — \`orbit emit address-reviews --payload <payload-file>\` — and the engine writes \`orbit/.orbit-runs/address-reviews-<TS>.json\` with \`change: null\`. An ARCHIVED change name resolves through the same \`--change <name>\` invocation (the engine falls back to the archived trail). Every walk persists through the emit surface — never hand-compose the JSON.
 
 ## Marker syntax across file types
 

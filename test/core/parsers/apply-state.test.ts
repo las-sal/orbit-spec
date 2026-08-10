@@ -127,4 +127,29 @@ describe('git diff-base helpers', () => {
   it('a pruned/unknown base yields null (caller falls back to the first commit)', () => {
     expect(filesTouchedSince(repo, '0'.repeat(40))).toBeNull();
   });
+
+  it('UNSTAGED untracked files stay out of the boundary tree; STAGED additions are in (tracked-state rule)', () => {
+    // An unstaged untracked file at the boundary...
+    fs.writeFileSync(path.join(repo, 'scratch-note.txt'), 'never staged\n');
+    // ...and a staged addition (the staging act admits it to the tracked state).
+    fs.writeFileSync(path.join(repo, 'staged-add.txt'), 'staged\n');
+    execSync('git add staged-add.txt', { cwd: repo });
+
+    const boundary = captureDiffBase(repo);
+    expect(boundary).toMatch(/^[0-9a-f]{40}$/);
+    const inTree = execSync(`git ls-tree -r --name-only ${boundary}`, { cwd: repo })
+      .toString()
+      .split('\n');
+    expect(inTree).toContain('staged-add.txt');
+    expect(inTree).not.toContain('scratch-note.txt');
+
+    // The regression the finding names: remove the never-staged file before the next
+    // boundary — it must NOT surface as a touched-file deletion against the tree.
+    fs.rmSync(path.join(repo, 'scratch-note.txt'));
+    const touched = filesTouchedSince(repo, boundary!);
+    expect(touched).not.toContain('scratch-note.txt');
+    // Cleanup the staged addition for any later cases.
+    execSync('git reset -q staged-add.txt', { cwd: repo });
+    fs.rmSync(path.join(repo, 'staged-add.txt'));
+  });
 });

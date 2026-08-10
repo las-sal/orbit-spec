@@ -54,6 +54,20 @@ describe('parseTouchpoints (the entry grammar)', () => {
     expect(p.entries.some(e => e.targets.includes('not/an/entry.ts'))).toBe(false);
     expect(parseTouchpoints('# D\n\n- `a.ts`\n').present).toBe(false);
   });
+
+  it('non-repo-relative targets are malformed: absolute, parent-resolving, backslash, and ./ forms', () => {
+    const bad = [
+      '`/abs/path.ts`',
+      '`../up.ts`',
+      '`src/../sneaky.ts`',
+      '`C:\\win\\path.ts`',
+      '`./dotted.ts`',
+    ];
+    const content = '## Touchpoints\n\n' + bad.map(b => `- ${b} — x.`).join('\n') + '\n- `src/ok.ts` — fine.\n';
+    const p = parseTouchpoints(content);
+    expect(p.entries.map(e => e.targets)).toEqual([['src/ok.ts']]);
+    expect(p.malformed).toHaveLength(bad.length);
+  });
 });
 
 describe('matching semantics', () => {

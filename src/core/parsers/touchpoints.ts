@@ -31,9 +31,18 @@ export interface TouchpointsParse {
 const LIST_ITEM = /^\s*[-*+]\s+(.*)$/;
 const LEADING_SPANS = /^(`[^`]+`(?:\s*\+\s*`[^`]+`)*)/;
 
+/**
+ * Targets are REPO-RELATIVE path shapes (exact / prefix / glob). Absolute forms,
+ * parent-resolving segments, backslash separators, and `./`-prefixed spellings are
+ * MALFORMED — they could never match a repo-relative actual path, so accepting them
+ * would create predictions the set arithmetic silently never satisfies.
+ */
 function isValidTarget(t: string): boolean {
-  if (t.trim() === '') return false;
-  return true; // exact path, dir prefix (trailing /), or glob (*) — all are strings; shape checks below
+  if (t.trim() === '' || /\s/.test(t)) return false;
+  if (t.startsWith('/') || t.includes('\\') || /^[A-Za-z]:/.test(t)) return false;
+  if (t.startsWith('./')) return false;
+  if (t.split('/').some(seg => seg === '..')) return false;
+  return true;
 }
 
 function targetForm(t: string): 'exact' | 'prefix' | 'glob' | null {

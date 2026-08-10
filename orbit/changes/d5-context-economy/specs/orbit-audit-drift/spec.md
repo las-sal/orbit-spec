@@ -3,20 +3,22 @@
 ### Requirement: Touchpoints divergence check
 
 Audit-drift SHALL check, for each active change whose design.md carries a `## Touchpoints`
-section and whose apply has commits, the set difference between the PREDICTED map (the section)
-and the ACTUAL map (the engine-computed diff from the change's first commit) — the two
+section and whose apply has committed work, the set difference between the PREDICTED map (the
+section) and the ACTUAL map (the engine-computed diff from the change's first commit) — the two
 representations of one fact the D5 split makes cross-validatable (the D4 scorecard-rollup
-pattern). Files in actual-but-not-predicted are surfaced as scope-drift findings (WARNING when
-substantive source paths, SUGGESTION for tests/docs riding along); files
-predicted-but-never-touched surface at pre-archive context as SUGGESTION (the plan overshot —
-informational). The check is mechanical set arithmetic on engine-computed inputs; no prose is
-consulted beyond the section's entries, which are parsed and matched per
+pattern). The set difference itself is ENGINE-COMPUTED: the boot surface's typed
+`touchpoints.actual_unpredicted` / `touchpoints.predicted_unsatisfied` /
+`touchpoints.malformed` fields carry the arithmetic, parsed and matched per
 `orbit-propose-modifications`' Touchpoints ENTRY GRAMMAR (exact path / directory prefix /
 glob, `+`-grouped alternatives — defined THERE, one voice; a file under a predicted directory
-or matching a predicted glob is never false actual-not-predicted drift, and a malformed entry
-is a SUGGESTION naming the line, excluded from the arithmetic). Changes without the section
-or without commits
-are skipped silently (pre-capability changes are not findings).
+or matching a predicted glob is never false actual-not-predicted drift) — the check consumes
+the computed lists and performs NO matching of its own; only severity judgment stays with the
+reviewer. Paths in `actual_unpredicted` are surfaced as scope-drift findings (WARNING when
+substantive source paths, SUGGESTION for tests/docs riding along); `predicted_unsatisfied`
+entries surface at pre-archive context as SUGGESTION (the plan overshot — informational);
+each `malformed` entry is a SUGGESTION naming the line (the engine already excluded it from
+the arithmetic). Changes without the section or without committed apply work are skipped
+silently (pre-capability changes are not findings).
 
 #### Scenario: Actual exceeds predicted
 

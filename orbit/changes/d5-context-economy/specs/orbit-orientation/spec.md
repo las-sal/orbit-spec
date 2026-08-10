@@ -11,8 +11,10 @@ command family present on the trail (`apply`, `address-reviews`, `explore`, `ver
 `review-external` T0, …), with review emits further split per mode (`proposal` / `system` —
 architecture-mode review emits persist to the architecture trail and never appear on a
 change trail), each rendered as path + `final_assessment` first sentence — the presence of
-`explore.md`/`sketches/` as historical context, and the TOUCHPOINTS view — lifecycle-aware: before apply has commits, the predicted
-map (design.md's `## Touchpoints` section, when present); once apply commits exist, the ACTUAL
+`explore.md`/`sketches/` as historical context, and the TOUCHPOINTS view — lifecycle-aware: before COMMITTED apply work exists, the predicted
+map (design.md's `## Touchpoints` section, when present) — the transition keys on committed
+non-bookkeeping files, never on trail presence (an apply emit written at a boundary before its
+chunk commit lands stays on the predicted view); once committed apply work exists, the ACTUAL
 map (engine-computed `git diff --name-only` from the change's first commit, per the
 propose-owned predicted/actual split) with the predicted map alongside as reference — the
 ACTUAL map is the CODE map: the change's own files (`orbit/changes/<name>/**` — the same
@@ -26,10 +28,15 @@ per-change status payload gains ONE typed `boot` object — `artifacts` (the ord
 array, in read order), `emits` (array of `{family, mode?, path, headline}` entries — `mode`
 present only for review-family entries; `headline` is the `final_assessment` first sentence),
 `history` (`{explore_md: boolean, sketches: boolean}`), `touchpoints`
-(`{predicted: string[] | null, actual: string[] | null, actual_change_own_count?: number}` —
-`actual` null before apply commits and change-own-free otherwise, `actual_change_own_count`
-the collapsed change-own file count (absent when zero), `predicted` null when the section is
-absent), and `skipped_emits` (the fault-isolation array; absent when empty). Degradation renders as null or field omission per
+(`{predicted: string[] | null, actual: string[] | null, actual_change_own_count?: number,
+actual_unpredicted?: string[], predicted_unsatisfied?: string[],
+malformed?: Array<{line, text}>}` — `actual` null before committed apply work exists and
+change-own-free otherwise, `actual_change_own_count` the collapsed change-own file count
+(absent when zero), `predicted` null when the section is absent; the three divergence fields
+are the ENGINE set-difference serving audit-drift's touchpoints check — `actual_unpredicted`
+and `predicted_unsatisfied` present only when both maps are live, `malformed` the line-cited
+unparseable entries whenever the section is present), and `skipped_emits` (the
+fault-isolation array; absent when empty). Degradation renders as null or field omission per
 the same policy, never an error — no implementer invents a second shape.
 
 #### Scenario: Pre-apply boot shows the predicted map

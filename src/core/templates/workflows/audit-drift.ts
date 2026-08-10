@@ -283,19 +283,18 @@ A checked emit **missing the \`consent\` field** → WARNING: \`lifecycle emit l
 
 ### 7.5 Category 5 — Touchpoints divergence (D-arc Stage D5)
 
-For each ACTIVE change whose \`design.md\` carries a \`## Touchpoints\` section AND whose apply has commits: compare the PREDICTED map against the ACTUAL map — both engine-computed. Read them from ONE call:
+For each ACTIVE change whose \`design.md\` carries a \`## Touchpoints\` section AND whose apply has committed work: the divergence arithmetic is ENGINE-COMPUTED — the AI performs NO set arithmetic and NO matching, only severity judgment over the computed lists. Read them from ONE call:
 
 \`\`\`bash
-orbit status --change <name> --boot --json   # touchpoints.predicted + touchpoints.actual
+orbit status --change <name> --boot --json   # touchpoints.actual_unpredicted / .predicted_unsatisfied / .malformed
 \`\`\`
 
-Set arithmetic only — no prose consulted beyond the section's entries, which parse and match per \`orbit-propose-modifications\`' Touchpoints ENTRY GRAMMAR (exact path / directory prefix / glob, \`+\`-grouped alternatives — defined THERE, one voice; a file under a predicted prefix or matching a predicted glob is never false drift; a grouped entry is satisfied by ANY of its targets):
+The engine owns parse + matching per \`orbit-propose-modifications\`' Touchpoints ENTRY GRAMMAR (exact path / directory prefix / glob, \`+\`-grouped alternatives — defined THERE, one voice) and has already excluded the change's own \`orbit/changes/<name>/**\` bookkeeping:
 
-- **Actual-but-not-predicted** → scope-drift finding naming the file and both maps' sources: WARNING for substantive source paths, SUGGESTION for tests/docs riding along.
-- **Predicted-but-never-touched** → SUGGESTION at pre-archive context only (the plan overshot — informational).
-- **Malformed entry** (leading spans parse as none of the three forms) → SUGGESTION naming the line; excluded from the arithmetic, never a false drift source.
-- **The change's own directory** (\`orbit/changes/<name>/**\` — artifacts, trail, metadata) is lifecycle bookkeeping, never scope drift; exclude it from the arithmetic.
-- **No section, or no commits yet** → skip that change SILENTLY (pre-capability changes are not findings).
+- **Each \`actual_unpredicted\` path** → scope-drift finding naming the file and both maps' sources: WARNING for substantive source paths, SUGGESTION for tests/docs riding along.
+- **Each \`predicted_unsatisfied\` entry** → SUGGESTION at pre-archive context only (the plan overshot — informational).
+- **Each \`malformed\` entry** (\`{line, text}\`) → SUGGESTION naming the line; the engine already excluded it from the arithmetic, never a false drift source.
+- **Divergence fields absent** (no section, or no committed apply work yet) → skip that change SILENTLY (pre-capability changes are not findings).
 
 ### 7.6 Category 6 — Explore emit attestation cross-check (D-arc Stage D5)
 

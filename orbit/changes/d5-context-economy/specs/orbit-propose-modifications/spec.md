@@ -23,8 +23,12 @@ loader)") is prose the checks never parse. Each target is one of exactly three f
 exact repo-relative file path; (b) a DIRECTORY PREFIX, written with a trailing `/`; (c) a
 GLOB containing `*` (single-segment wildcard, fnmatch semantics). An actual path MATCHES a
 target when it equals the exact path, sits under the directory prefix, or fnmatch-matches
-the glob; a grouped entry is satisfied when ANY of its targets matched. A list item whose
-leading spans parse as none of the three forms is a malformed entry — surfaced by the
+the glob; a grouped entry is satisfied when ANY of its targets matched. Every form is
+REPO-RELATIVE: an absolute path, a parent-resolving `..` segment, a backslash separator, or a
+`./`-prefixed spelling is malformed — such a target could never match a repo-relative actual
+path, so accepting it would create a prediction the arithmetic silently never satisfies. A
+list item whose leading spans parse as none of the three forms (or carry a non-repo-relative
+target) is a malformed entry — surfaced by the
 divergence check as a SUGGESTION naming the line, and excluded from set arithmetic (never a
 false drift source).
 

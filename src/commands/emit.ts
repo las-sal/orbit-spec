@@ -5,8 +5,9 @@ import { composeAndWriteEmit, EmitError, type EmitTarget } from '../core/emit-co
  * `orbit emit <command>` — the generic emit surface's CLI channel (D-arc Stage D5).
  *
  * Targets per the target-resolution contract: `--change <name>` (workstream — change or
- * staging exploration), `--doc <doc-name>` (architecture trail), or bare for project-scoped
- * `audit-drift`. Payload arrives as JSON on stdin or via `--payload <file>`; when
+ * staging exploration; archived fallback for address-reviews), `--doc <doc-name>`
+ * (architecture trail), or bare for project-scoped `audit-drift` and `address-reviews`
+ * (anchor-less whole-repo walks). Payload arrives as JSON on stdin or via `--payload <file>`; when
  * `--payload` is present stdin is not consulted.
  *
  * Stdout contract: the written path; with `--json`, EXACTLY ONE structured object

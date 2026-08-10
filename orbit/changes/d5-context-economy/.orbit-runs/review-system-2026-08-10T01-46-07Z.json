@@ -1,0 +1,103 @@
+{
+  "command": "review",
+  "timestamp": "2026-08-10T01:46:07Z",
+  "change": "d5-context-economy",
+  "kind": "editorial",
+  "model": "claude-fable-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [],
+  "stale_suppressed": [
+    {
+      "pass": "2",
+      "title": "Emit target resolution permits writes outside orbit trails (external C, emit-composition.ts:255)",
+      "evidence": "RESOLVED (walk 2026-08-09T22-50-28Z): contained-identifier rule + realpath containment live; six no-write regressions green; this pass's own emits (address-reviews + this review) traverse the new resolution path"
+    },
+    {
+      "pass": "2",
+      "title": "Address-reviews hand-composes project logs and cannot emit for archived changes (external C, address-reviews.ts:906)",
+      "evidence": "RESOLVED option A: triple-scope live in COMMANDS + resolveTarget archived fallback (shared findArchivedDir); hand-write branch deleted from the regenerated body (grep confirms 'never hand-compose the JSON' at the Step 6 seam); bare-project and archived-fallback tests green; delta scope table + two scenarios"
+    },
+    {
+      "pass": "3",
+      "title": "Touchpoints divergence AI-computed; engine matchers uncalled; malformed discarded (external C, boot-render.ts:90)",
+      "evidence": "RESOLVED option A: the three typed fields live — LIVE PROBE on d5 itself: actual_unpredicted (11) reproduces the trail's accept-and-recorded divergence set plus the review-cycle fixes, predicted_unsatisfied names the recorded src/core/config.ts overshoot, malformed empty — the engine arithmetic reproduces what prior passes concluded by hand; integrated grammar test (exact/prefix/glob/grouped/malformed) green; audit-drift category 5 consumes, judgment-only"
+    },
+    {
+      "pass": "2",
+      "title": "Chunk declarations can omit task groups → prohibited complete record (external C, chunk-preamble.ts:76)",
+      "evidence": "RESOLVED: content-coverage ends rule against parseCheckboxes' numbered groups; omitted-leading/omitted-trailing/no-numbered-groups all malformed→no-chunking; fixtures upgraded; the LIVE d5 preamble verified covering (1-9 declared, 9 groups present); delta bullet extended"
+    },
+    {
+      "pass": "3",
+      "title": "Boot switches to ACTUAL before apply commits exist (external W, boot-render.ts:93)",
+      "evidence": "RESOLVED: empty post-exclusion actual → predicted-only view; test with apply emit + bookkeeping-only commits green; orientation delta names the committed-non-bookkeeping condition"
+    },
+    {
+      "pass": "2",
+      "title": "Diff boundary snapshots include unstaged untracked files (external W, apply-state.ts:128)",
+      "evidence": "RESOLVED: temp index = HEAD + add -u + real-index staged additions (NUL-safe); regression proves unstaged untracked out of tree and no phantom deletion; spec's tracked-state rule now holds"
+    },
+    {
+      "pass": "3",
+      "title": "Write gate accepts non-string model and incomplete handoff shapes (external W, emit-composition.ts:538)",
+      "evidence": "RESOLVED: model string|null enforced; full R-d-9(b) handoff shape (model_hint nullable-never-absent, seam) enforced; per-field malformed tests green"
+    },
+    {
+      "pass": "6",
+      "title": "Touchpoint target validation accepts absolute/../ forms (external S, touchpoints.ts:34)",
+      "evidence": "RESOLVED: repo-relative validation (absolute/backslash/drive/./-prefix/..-segment/whitespace all malformed, line-cited); rejection tests green; propose delta's grammar gains the repo-relative clause"
+    },
+    {
+      "pass": "1",
+      "title": "Retired /orbit:review-external invocation in baseline specs",
+      "evidence": "carried forward: baseline hits sit inside delta-MODIFIED blocks (fingerprints 26/26 re-verified) — archive sync rewrites them; Purpose-paragraph mentions are at-archive note 9.4 (tasks.md, verified present)"
+    },
+    {
+      "pass": "6",
+      "title": "CLAUDE.md current-state surface counts still say 16",
+      "evidence": "carried forward: deliberate deferral — at-archive note 9.7 sweeps present-tense counts to 15 during the archive flow"
+    }
+  ],
+  "commentary": "Confirm pass over the external walk, adversarial toward the eight fixes rather than a fresh sweep. The strongest evidence this round is reflexive: the new surfaces were exercised on the live change itself — this session's two emits traversed the hardened target resolution, and the boot probe's engine-computed divergence lists reproduce, file for file, what earlier passes had concluded by hand and recorded on the trail (the 11 unpredicted paths are the 9 accept-and-recorded divergence files plus this cycle's fixes; the one unsatisfied entry is the recorded config.ts overshoot). The one behavioral edge worth naming for the record: a change whose committed work is genuinely bookkeeping-only now renders the predicted view rather than an empty ACTUAL map — accepted at ratification as the honest reading of 'apply commits exist'. The externally-flagged pattern — engine ownership stopping one seam short of its spec — is now closed at every seam the two reviews between them named; what remains open is only the deliberately-deferred pair riding the at-archive notes.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4",
+    "5"
+  ],
+  "final_assessment": "No findings.",
+  "iteration": 5,
+  "next_recommended": "orbit status --change d5-context-economy --report"
+}

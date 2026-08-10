@@ -64,16 +64,27 @@ command's persistence location (change trail, explore trail, or architecture tra
 target-resolution contract: `--change <name>` names the WORKSTREAM — a change, or the staging
 exploration for explore-trail emits — resolved per the command's trail. Scope capability is
 PER COMMAND: `architect` is architecture-ONLY, taking `--doc <doc-name>` (supplying `--change`
-to it is a clean usage error); `review` and `address-reviews` are DUAL-SCOPE on the
-change/architecture axis, resolved PER INVOCATION — `--change` routes them to the change
-trail, `--doc` to the architecture trail (serving `orbit-review`'s architecture mode and
-`orbit-address-reviews`' architecture-scoped resolution logs: `change: null` + `doc` on those
-emits); `audit-drift` is dual-scope on the change/PROJECT axis — with `--change` it is
+to it is a clean usage error); `review` is DUAL-SCOPE on the
+change/architecture axis, resolved PER INVOCATION — `--change` routes it to the change
+trail, `--doc` to the architecture trail (serving `orbit-review`'s architecture mode);
+`address-reviews` is TRIPLE-SCOPE — `--change` (with an ARCHIVED-change fallback: an
+active/staging miss resolves against `orbit/changes/archive/*-<name>/` by the archive emit's
+lexically-greatest rule, landing the log on the archived trail), `--doc` (the
+architecture-scoped resolution logs: `change: null` + `doc`), and BARE for the anchor-less
+whole-repo walk, resolving `orbit/.orbit-runs/` (created if absent) with `change: null` —
+every walk persists through the surface, no scope hand-writes its log;
+`audit-drift` is dual-scope on the change/PROJECT axis — with `--change` it is
 change-scoped, bare it is project-scoped, resolving `orbit/.orbit-runs/` (created if absent)
 with `change: null`, and `--doc` on it is a usage error; every other command is
 change-scoped-only (`--doc` to it is a clean usage error). Both flags at once is always a
 clean usage error, and a bare invocation of any command without a bare scope (everything
 except project-scoped `audit-drift`) is a missing-target usage error. A
+`--change`/`--doc` value SHALL be a single canonical identifier — a workstream name or doc
+filename stem, never a path: separators, traversal segments, and leading dots are a clean
+usage error before any resolution (the same contained-identity rule as architecture doc
+names), and an existing target directory that physically resolves outside its orbit root
+(a symlinked escape) is refused — the surface writes orbit trails ONLY, and no failure path
+writes any file. A
 `--change`/`--doc` value that resolves to no on-disk workstream (no change directory, no
 staging directory, no architecture doc) fails with a clean error naming the path checked; no
 file is written. The
@@ -83,6 +94,21 @@ previously taught as prose — engine-owned here, preserving lexical ordering gu
 Filename-token resolution — INCLUDING any collision bump — precedes deterministic-fact
 composition: a recommendation that names this emit's own path always names the FINAL written
 path, never a pre-bump token.
+
+#### Scenario: Anchor-less walk persists through the bare project scope
+
+- **WHEN** `orbit emit address-reviews --payload <file>` runs bare after a whole-repo marker walk
+- **THEN** the log lands at `orbit/.orbit-runs/address-reviews-<TS>.json` with `change: null`, composed and gated by the engine — never hand-written
+
+#### Scenario: Archived-change walk persists to the archived trail
+
+- **WHEN** `orbit emit address-reviews --change <name>` runs and `<name>` exists only under `orbit/changes/archive/`
+- **THEN** the resolution falls back to the lexically-greatest `archive/<YYYY-MM-DD>-<name>/` match and the log lands on that archived trail
+
+#### Scenario: Traversal-shaped targets never write
+
+- **WHEN** `orbit emit explore --change ../elsewhere` (or any target value carrying separators, `..`, or a leading dot) runs
+- **THEN** the invocation fails with the clean canonical-identifier usage error before resolution; no directory is created and no file is written anywhere
 
 #### Scenario: Collision bumps forward
 

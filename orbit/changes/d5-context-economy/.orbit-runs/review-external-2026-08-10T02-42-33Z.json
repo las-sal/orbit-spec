@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-08-10T02:42:33Z",
+  "change": "d5-context-economy",
+  "kind": "editorial",
+  "model": "claude-fable-5",
+  "mode": "system",
+  "prompt_path": "orbit/changes/d5-context-economy/.orbit-runs/external-prompt-system-2026-08-10T02-41-35Z.md",
+  "target": null,
+  "final_assessment": "External review prompt packaged for d5-context-economy (iter 2, mode system — verification round over the eight iter-1 resolutions); awaiting findings. Handoff preflight: working tree dirty (20 entries, the external-walk fix set) — commit and push required before the pull-based handoff is usable.",
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/d5-context-economy/.orbit-runs/external-prompt-system-2026-08-10T02-41-35Z.md into the target AI, save the response as orbit/changes/d5-context-economy/.orbit-runs/external-system-<TS>.md, then /orbit:address-reviews d5-context-economy --from-file <path>"
+}

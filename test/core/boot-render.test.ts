@@ -103,6 +103,76 @@ describe('boot render (D5)', () => {
     expect(text).toContain('Predicted (reference');
   });
 
+  it('ENGINE set-difference: actual_unpredicted / predicted_unsatisfied / malformed computed via the grammar matchers', () => {
+    makeChange('foo');
+    write(
+      'orbit/changes/foo/design.md',
+      [
+        '# Design',
+        '',
+        '## Touchpoints',
+        '',
+        '- `src/a.ts` — exact.',
+        '- `src/lib/` — prefix.',
+        '- `src/gen/*.ts` — glob.',
+        '- `src/x.ts` + `src/y.ts` — grouped alternatives.',
+        '- `src/never.ts` — planned, never touched.',
+        '- plain prose entry without a code span.',
+        '',
+      ].join('\n')
+    );
+    const g = (cmd: string) => execSync(`git ${cmd}`, { cwd: root, stdio: 'pipe' });
+    g('init -q');
+    g('config user.email t@t.t');
+    g('config user.name t');
+    g('add -A');
+    g('commit -q -m start');
+    // Committed apply work: exact + prefix + glob + the grouped entry's SECOND
+    // alternative, plus one path nothing predicted.
+    for (const f of ['src/a.ts', 'src/lib/deep.ts', 'src/gen/out.ts', 'src/y.ts', 'src/rogue.ts']) {
+      write(f, 'code\n');
+    }
+    g('add -A');
+    g('commit -q -m work');
+    write(
+      'orbit/changes/foo/.orbit-runs/apply-2026-08-02T10-00-00Z.json',
+      JSON.stringify({ command: 'apply', final_assessment: 'Chunk done.', next_recommended: 'x' })
+    );
+
+    const { boot } = collectBoot(root, 'foo');
+    expect(boot.touchpoints.actual_unpredicted).toEqual(['src/rogue.ts']);
+    expect(boot.touchpoints.predicted_unsatisfied).toEqual(['src/never.ts']);
+    expect(boot.touchpoints.malformed).toHaveLength(1);
+    expect(boot.touchpoints.malformed![0].text).toContain('plain prose entry');
+  });
+
+  it('an apply emit WITHOUT committed apply work stays on the predicted view (transition keys on commits)', () => {
+    makeChange('foo');
+    const g = (cmd: string) => execSync(`git ${cmd}`, { cwd: root, stdio: 'pipe' });
+    g('init -q');
+    g('config user.email t@t.t');
+    g('config user.name t');
+    g('add -A');
+    g('commit -q -m start');
+    // A change-own commit (artifact edit) + an apply emit, but NO committed
+    // implementation work — the cold pickup must get the predicted-only view.
+    write('orbit/changes/foo/tasks.md', '# Tasks\n\n## 1. G\n\n- [x] 1.1 x\n');
+    g('add -A');
+    g('commit -q -m artifacts');
+    write('src/uncommitted.ts', 'wip\n');
+    write(
+      'orbit/changes/foo/.orbit-runs/apply-2026-08-02T10-00-00Z.json',
+      JSON.stringify({ command: 'apply', final_assessment: 'Boundary emit.', next_recommended: 'x' })
+    );
+
+    const { boot } = collectBoot(root, 'foo');
+    expect(boot.touchpoints.actual).toBeNull();
+    expect(boot.touchpoints.actual_change_own_count).toBeUndefined();
+    const text = renderBoot(root, 'foo');
+    expect(text).toContain('Touchpoints (predicted — design.md):');
+    expect(text).not.toContain('ACTUAL');
+  });
+
   it('degradation: no Touchpoints section and non-git → nulls, exit-clean render', () => {
     makeChange('foo');
     write('orbit/changes/foo/design.md', '# Design without the section\n');

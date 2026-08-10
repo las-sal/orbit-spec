@@ -14,6 +14,15 @@ Implementation chunks:
 
 ## 1. First
 - [ ] 1.1 a
+
+## 2. Second
+- [ ] 2.1 b
+
+## 3. Third
+- [ ] 3.1 c
+
+## 4. Fourth
+- [ ] 4.1 d
 `;
 
 describe('parseChunkPreamble', () => {
@@ -83,7 +92,8 @@ describe('parseChunkPreamble', () => {
   });
 
   it('parses the real d5 preamble shape', () => {
-    const d5 = `<!--\nImplementation chunks:\n  Chunk 1 (groups 1-3):  Emit surface engine (parsers, composition, CLI, write gate)\n  Chunk 2 (groups 4-5):  Engine surfaces (boot render, gates vocabulary, model hints)\n  Chunk 3 (groups 6-7):  Review merge + body-economy pass\n  Chunk 4 (groups 8-9):  Workflow-layer hardening, audit checks, verification sweep\n-->\n\n# Tasks\n\n## 1. x\n`;
+    const groups = Array.from({ length: 9 }, (_, i) => `## ${i + 1}. g${i + 1}\n- [ ] ${i + 1}.1 t\n`).join('\n');
+    const d5 = `<!--\nImplementation chunks:\n  Chunk 1 (groups 1-3):  Emit surface engine (parsers, composition, CLI, write gate)\n  Chunk 2 (groups 4-5):  Engine surfaces (boot render, gates vocabulary, model hints)\n  Chunk 3 (groups 6-7):  Review merge + body-economy pass\n  Chunk 4 (groups 8-9):  Workflow-layer hardening, audit checks, verification sweep\n-->\n\n# Tasks\n\n${groups}`;
     const r = parseChunkPreamble(d5, P);
     expect(r.kind).toBe('ok');
     if (r.kind !== 'ok') return;
@@ -91,5 +101,26 @@ describe('parseChunkPreamble', () => {
     expect(chunkForGroup(r.declarations, 5)?.chunk).toBe(2);
     expect(chunkForGroup(r.declarations, 9)?.chunk).toBe(4);
     expect(chunkForGroup(r.declarations, 10)).toBeNull();
+  });
+
+  it('flags an omitted TRAILING group as malformed (content-coverage rule)', () => {
+    // Declarations cover 1-4 internally, but tasks.md carries a fifth numbered group
+    // with real work — the final declared chunk must not be able to record complete.
+    const bad = ok.replace('## 4. Fourth\n- [ ] 4.1 d\n', '## 4. Fourth\n- [ ] 4.1 d\n\n## 5. Fifth\n- [ ] 5.1 e\n');
+    expect(parseChunkPreamble(bad, P).kind).toBe('malformed');
+  });
+
+  it('flags an omitted LEADING group as malformed (content-coverage rule)', () => {
+    // Declared span starts at group 2 while group 1 exists in the file.
+    const bad = ok
+      .replace('Chunk 1 (groups 1):    Foundation\n  ', '')
+      .replace('Chunk 2 (groups 2-3)', 'Chunk 1 (groups 2-3)')
+      .replace('Chunk 3 (groups 4)', 'Chunk 2 (groups 4)');
+    expect(parseChunkPreamble(bad, P).kind).toBe('malformed');
+  });
+
+  it('flags declarations over a file with NO numbered groups as malformed', () => {
+    const bad = '<!--\nImplementation chunks:\n  Chunk 1 (groups 1): X\n-->\n\n# Tasks\n\n## Unnumbered\n- [ ] a\n';
+    expect(parseChunkPreamble(bad, P).kind).toBe('malformed');
   });
 });

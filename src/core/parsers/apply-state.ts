@@ -113,11 +113,13 @@ export function gitObjectExists(projectRoot: string, ref: string): boolean {
 }
 
 /**
- * Captures the tracked working state as a tree object and returns its OID — the
- * `git stash create` mechanism: a temporary index seeded from HEAD, `git add -A`, then
- * `git write-tree`. The tree is content-addressed and deliberately unreferenced (safe to
- * lose to gc once superseded; readers fall back to the change's first commit).
- * Returns null outside a git repo or on any git failure.
+ * Captures the TRACKED working state as a tree object and returns its OID: a temporary
+ * index seeded from HEAD, tracked modifications/deletions via `git add -u`, plus
+ * additions already staged in the REAL index (the staging act is what admits a new file
+ * to the tracked state) — brand-new UNSTAGED untracked files stay invisible, per the
+ * governing spec's tracked-state rule. The tree is content-addressed and deliberately
+ * unreferenced (safe to lose to gc once superseded; readers fall back to the change's
+ * first commit). Returns null outside a git repo or on any git failure.
  */
 export function captureDiffBase(projectRoot: string): string | null {
   if (!isGitRepo(projectRoot)) return null;
@@ -125,7 +127,13 @@ export function captureDiffBase(projectRoot: string): string | null {
   const env = { GIT_INDEX_FILE: tmpIndex };
   try {
     if (git(projectRoot, ['read-tree', 'HEAD'], env) === null) return null;
-    if (git(projectRoot, ['add', '-A'], env) === null) return null;
+    if (git(projectRoot, ['add', '-u'], env) === null) return null;
+    const staged = git(projectRoot, ['diff', '--name-only', '--cached', '--diff-filter=A', '-z']);
+    if (staged === null) return null;
+    const additions = staged.split('\0').filter(l => l !== '');
+    if (additions.length > 0) {
+      if (git(projectRoot, ['add', '--', ...additions], env) === null) return null;
+    }
     const tree = git(projectRoot, ['write-tree'], env);
     return tree ? tree.trim() : null;
   } finally {

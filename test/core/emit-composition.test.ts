@@ -365,6 +365,66 @@ describe('post-write semantics (synthetic trail, single atomic write)', () => {
     expect(listRuns('orbit/changes/foo/.orbit-runs')).toEqual(before);
   });
 
+  it('address-reviews bare = project scope; archived names fall back to the archived trail (triple-scope)', () => {
+    // Bare: the anchor-less whole-repo walk lands on orbit/.orbit-runs with change null.
+    const walkPayload = {
+      source: 'whole-repo', walk_mode: 'per_finding', resolutions: [],
+      final_assessment: 'Walked 2, resolved 2.', remaining_markers_in_scope: 3, model: null,
+    };
+    const bare = composeAndWriteEmit('address-reviews', {}, walkPayload, { projectRoot: root });
+    expect(bare.path).toContain(path.join('orbit', '.orbit-runs'));
+    expect(bare.emit.change).toBeNull();
+    expect(String(bare.emit.next_recommended)).toBe('/orbit:address-reviews — 3 marker(s) remain in scope');
+
+    const clean = composeAndWriteEmit(
+      'address-reviews', {},
+      { ...walkPayload, remaining_markers_in_scope: 0 },
+      { projectRoot: root }
+    );
+    expect(String(clean.emit.next_recommended)).toBe('No markers remain in scope; the project trail records this walk.');
+
+    // Archived fallback: a name existing only under archive/ resolves to the archived trail.
+    fs.mkdirSync(path.join(root, 'orbit/changes/archive/2026-07-01-old-change'), { recursive: true });
+    const archived = composeAndWriteEmit(
+      'address-reviews',
+      { change: 'old-change' },
+      { ...walkPayload, source: 'from-file', remaining_markers_in_scope: 0 },
+      { projectRoot: root }
+    );
+    expect(archived.path).toContain(path.join('archive', '2026-07-01-old-change', '.orbit-runs'));
+    expect(archived.emit.change).toBe('old-change');
+    expect(String(archived.emit.next_recommended)).toContain('archived trail records the resolution log');
+  });
+
+  it('target names are contained identifiers: traversal, separators, absolute forms, and symlink escapes never write (no-write regressions)', () => {
+    makeChange('foo');
+    const outside = path.join(root, 'outside-target');
+    fs.mkdirSync(outside, { recursive: true });
+    const payload = { final_assessment: 'x.', model: null };
+
+    // Traversal / separator / absolute / dot forms — rejected at the name rule,
+    // regardless of whether the joined path would exist.
+    for (const bad of ['../outside-target', 'a/b', '..', '.hidden', `${path.sep}abs`, '../../etc']) {
+      expect(() =>
+        composeAndWriteEmit('explore', { change: bad }, payload, { projectRoot: root })
+      ).toThrow(/canonical workstream name/);
+    }
+    expect(() =>
+      composeAndWriteEmit('review', { doc: '../outside-target' }, { mode: 'architecture', reviewer_class: 'in-context', model: null }, { projectRoot: root })
+    ).toThrow(/canonical doc name/);
+    // Nothing was written outside the orbit roots.
+    expect(fs.readdirSync(outside)).toEqual([]);
+    expect(fs.existsSync(path.join(root, '.orbit-runs'))).toBe(false);
+
+    // Symlink escape: a workstream dir pointing outside orbit/changes is refused.
+    const evil = path.join(root, 'orbit', 'changes', 'evil');
+    fs.symlinkSync(outside, evil, 'dir');
+    expect(() =>
+      composeAndWriteEmit('explore', { change: 'evil' }, payload, { projectRoot: root })
+    ).toThrow(/resolves outside/);
+    expect(fs.readdirSync(outside)).toEqual([]);
+  });
+
   it('a write failure past the gate leaves NO file — not even the dot-tmp (cleanup on the throw path)', () => {
     makeChange('foo');
     const runsDir = path.join(root, 'orbit/changes/foo/.orbit-runs');
@@ -505,6 +565,25 @@ describe('write gate', () => {
     expect(r.emit.iteration).toBe(1);
     // Findings exist → the address pointer, doc-scoped.
     expect(String(r.emit.next_recommended)).toMatch(/^\/orbit:address-reviews --from-file /);
+  });
+
+  it('a non-string model and an incomplete handoff shape are refused (declared-shape enforcement)', () => {
+    makeChange('foo');
+    // model must be string|null — a number is refused, not written.
+    expect(() =>
+      composeAndWriteEmit('explore', { change: 'foo' }, { final_assessment: 'x.', model: 5 as any }, { projectRoot: root })
+    ).toThrow(/'model' must be a string or null/);
+
+    // handoff without model_hint / without seam — the FULL architect-owned shape is enforced.
+    write('orbit/architecture/prog.md', '# prog\n');
+    const base = { final_assessment: 's', model: null };
+    const h = (handoff: any) => ({ ...base, handoff });
+    expect(() =>
+      composeAndWriteEmit('architect', { doc: 'prog' }, h({ boot_sequence: ['a'], next_command: '/orbit:architect prog', seam: 's' }), { projectRoot: root })
+    ).toThrow(/model_hint/);
+    expect(() =>
+      composeAndWriteEmit('architect', { doc: 'prog' }, h({ boot_sequence: ['a'], next_command: '/orbit:architect prog', model_hint: null }), { projectRoot: root })
+    ).toThrow(/seam/);
   });
 
   it('architecture-mode review emit missing the handoff section is refused naming it', () => {

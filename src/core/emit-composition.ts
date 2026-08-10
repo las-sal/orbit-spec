@@ -93,7 +93,9 @@ const COMMANDS: Record<string, CommandSpec> = {
   },
   'address-reviews': {
     kind: 'editorial',
-    scopes: { change: true, doc: true },
+    // TRIPLE-scope (D5 walk, external C2): change (with archived fallback), doc, and
+    // bare project scope for anchor-less whole-repo walks — no walk hand-writes its log.
+    scopes: { change: true, doc: true, project: true },
     payloadFields: [
       'source',
       'source_path',
@@ -212,12 +214,51 @@ function tokenToTimestamp(token: string): string {
 // Target resolution (the per-command scope-capability contract)
 // ---------------------------------------------------------------------------
 
+/**
+ * Emit targets are single canonical identifiers — a workstream name or a doc filename
+ * stem, never a path (the same contained-identity rule as architecture doc names, D2).
+ * Rejecting separators, traversal segments, and leading dots closes the path-traversal
+ * write primitive on a surface whose whole contract is writing only orbit trails.
+ */
+function isValidTargetName(name: string): boolean {
+  return name.length > 0 && !/[\\/]/.test(name) && !name.startsWith('.') && !name.includes('..');
+}
+
+/**
+ * Defense in depth behind the name rule: an existing target directory must physically
+ * resolve inside its orbit root — a symlinked workstream dir pointing elsewhere is not
+ * a writable emit trail (the B2 generator's physical-containment precedent).
+ */
+function assertContained(dir: string, root: string, what: string): void {
+  let real: string;
+  let realRoot: string;
+  try {
+    real = fs.realpathSync(dir);
+    realRoot = fs.realpathSync(root);
+  } catch {
+    return; // existence is the caller's check; unresolvable paths fail there
+  }
+  if (real !== realRoot && !real.startsWith(realRoot + path.sep)) {
+    throw new EmitError(`${what} resolves outside ${root} — symlinked targets are not writable emit trails.`);
+  }
+}
+
 function resolveTarget(projectRoot: string, command: string, target: EmitTarget): ResolvedTarget {
   const spec = COMMANDS[command];
   const { change, doc } = target;
 
   if (change !== undefined && doc !== undefined) {
     throw new EmitError('supply --change or --doc, never both — one target per invocation.');
+  }
+  if (change !== undefined && !isValidTargetName(change)) {
+    throw new EmitError(
+      `--change '${change}' is not a canonical workstream name (single name, no separators, no traversal).`
+    );
+  }
+  if (doc !== undefined && !isValidTargetName(doc)) {
+    throw new EmitError(
+      `--doc '${doc}' is not a canonical doc name (single filename stem, no separators, no traversal).`
+    );
   }
   if (doc !== undefined && !spec.scopes.doc) {
     throw new EmitError(`--doc is not a valid target for '${command}' (change-scoped command).`);
@@ -258,22 +299,14 @@ function resolveTarget(projectRoot: string, command: string, target: EmitTarget)
   if (command === 'archive') {
     // The ARCHIVED change's trail, post-move: lexically greatest archive/*-<name>/ match
     // (never composed from today's date, which diverges across a UTC midnight).
-    const archiveRoot = path.join(projectRoot, 'orbit', 'changes', 'archive');
-    let candidates: string[] = [];
-    try {
-      candidates = fs
-        .readdirSync(archiveRoot)
-        .filter(e => new RegExp(`^\\d{4}-\\d{2}-\\d{2}-${escapeRegExp(name)}$`).test(e))
-        .sort();
-    } catch {
-      candidates = [];
-    }
-    if (candidates.length === 0) {
+    const archived = findArchivedDir(projectRoot, name);
+    if (!archived) {
+      const archiveRoot = path.join(projectRoot, 'orbit', 'changes', 'archive');
       throw new EmitError(
         `no archived directory matching ${path.join(archiveRoot, `*-${name}`)} — the archive emit writes AFTER the move completes.`
       );
     }
-    const archived = path.join(archiveRoot, candidates[candidates.length - 1]);
+    assertContained(archived, path.join(projectRoot, 'orbit', 'changes', 'archive'), `archived change '${name}'`);
     return {
       scope: 'archived',
       runsDir: path.join(archived, '.orbit-runs'),
@@ -284,6 +317,7 @@ function resolveTarget(projectRoot: string, command: string, target: EmitTarget)
   }
 
   if (fs.existsSync(changeDir)) {
+    assertContained(changeDir, path.join(projectRoot, 'orbit', 'changes'), `change '${name}'`);
     return {
       scope: 'change',
       runsDir: path.join(changeDir, '.orbit-runs'),
@@ -293,6 +327,7 @@ function resolveTarget(projectRoot: string, command: string, target: EmitTarget)
     };
   }
   if (fs.existsSync(exploreDir)) {
+    assertContained(exploreDir, path.join(projectRoot, 'orbit', 'explore'), `exploration '${name}'`);
     return {
       scope: 'explore',
       runsDir: path.join(exploreDir, '.orbit-runs'),
@@ -301,9 +336,40 @@ function resolveTarget(projectRoot: string, command: string, target: EmitTarget)
       changeDir: null,
     };
   }
+  if (command === 'address-reviews') {
+    // Archived-change FALLBACK (after active/staging miss — the archive emit stays
+    // archived-first-and-only): discovery resolves archived changes, so their walks
+    // must persist to the archived trail, never hand-write or fail.
+    const archived = findArchivedDir(projectRoot, name);
+    if (archived) {
+      assertContained(archived, path.join(projectRoot, 'orbit', 'changes', 'archive'), `archived change '${name}'`);
+      return {
+        scope: 'archived',
+        runsDir: path.join(archived, '.orbit-runs'),
+        change: name,
+        doc: null,
+        changeDir: archived,
+      };
+    }
+  }
   throw new EmitError(
-    `workstream '${name}' not found — checked ${changeDir} and ${exploreDir}.`
+    `workstream '${name}' not found — checked ${changeDir} and ${exploreDir}${command === 'address-reviews' ? ' and orbit/changes/archive/*-' + name : ''}.`
   );
+}
+
+/** Lexically greatest `orbit/changes/archive/<YYYY-MM-DD>-<name>/` match, or null. */
+function findArchivedDir(projectRoot: string, name: string): string | null {
+  const archiveRoot = path.join(projectRoot, 'orbit', 'changes', 'archive');
+  let candidates: string[] = [];
+  try {
+    candidates = fs
+      .readdirSync(archiveRoot)
+      .filter(e => new RegExp(`^\\d{4}-\\d{2}-\\d{2}-${escapeRegExp(name)}$`).test(e))
+      .sort();
+  } catch {
+    candidates = [];
+  }
+  return candidates.length > 0 ? path.join(archiveRoot, candidates[candidates.length - 1]) : null;
 }
 
 function escapeRegExp(s: string): string {
@@ -538,6 +604,9 @@ function universalSpineCheck(emit: Record<string, unknown>, target: ResolvedTarg
   if (!('model' in emit)) {
     throw new EmitError(`write gate: spine field 'model' missing (nullable, never absent).`);
   }
+  if (emit.model !== null && typeof emit.model !== 'string') {
+    throw new EmitError(`write gate: spine field 'model' must be a string or null.`);
+  }
   if (target.scope === 'doc' || target.scope === 'project') {
     if (emit.change !== null) throw new EmitError(`write gate: 'change' must be null for ${target.scope}-scoped emits.`);
     if (target.scope === 'doc' && typeof emit.doc !== 'string') {
@@ -582,6 +651,13 @@ function handoffShapeCheck(handoff: any): void {
   }
   if (typeof handoff.next_command !== 'string' || handoff.next_command.trim() === '') {
     throw new EmitError(`write gate: handoff.next_command missing.`);
+  }
+  // The FULL architect-owned shape (R-d-9(b)): model_hint nullable-never-absent, seam named.
+  if (!('model_hint' in handoff) || (handoff.model_hint !== null && typeof handoff.model_hint !== 'string')) {
+    throw new EmitError(`write gate: handoff.model_hint must be a string or null (nullable, never absent).`);
+  }
+  if (typeof handoff.seam !== 'string' || handoff.seam.trim() === '') {
+    throw new EmitError(`write gate: handoff.seam missing.`);
   }
 }
 
@@ -770,14 +846,24 @@ export function composeAndWriteEmit(
       break;
     }
     case 'address-reviews': {
+      const runs = fs.existsSync(resolved.runsDir) ? fs.readdirSync(resolved.runsDir) : [];
+      emit.iteration = runs.filter(f => /^address-reviews-.*\.json$/.test(f)).length + 1;
       if (resolved.scope === 'doc') {
         // Doc-scoped walk: pre-computable, the gate-less confirm pointer naming the doc.
-        const runs = fs.existsSync(resolved.runsDir) ? fs.readdirSync(resolved.runsDir) : [];
-        emit.iteration = runs.filter(f => /^address-reviews-.*\.json$/.test(f)).length + 1;
         emit.next_recommended = `/orbit:review --as architecture ${resolved.doc} — confirm the resolutions`;
+      } else if (resolved.scope === 'project') {
+        // Anchor-less whole-repo walk: findings-dependent, computed from the payload's
+        // own remaining-markers count — no change status exists to synthesize.
+        const remaining = Number((payload as any).remaining_markers_in_scope ?? 0);
+        emit.next_recommended =
+          remaining > 0
+            ? `/orbit:address-reviews — ${remaining} marker(s) remain in scope`
+            : 'No markers remain in scope; the project trail records this walk.';
+      } else if (resolved.scope === 'archived') {
+        // Archived-change walk: no live gate graph exists to point at.
+        emit.next_recommended =
+          'No lifecycle follows an archived-change walk; the archived trail records the resolution log.';
       } else {
-        const runs = fs.existsSync(resolved.runsDir) ? fs.readdirSync(resolved.runsDir) : [];
-        emit.iteration = runs.filter(f => /^address-reviews-.*\.json$/.test(f)).length + 1;
         postWrite = true;
       }
       break;
