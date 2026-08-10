@@ -476,6 +476,78 @@ describe('post-write semantics (synthetic trail, single atomic write)', () => {
     expect(fs.readdirSync(outside)).toEqual([]);
   });
 
+  it('a toJSON hook forging a gate-checked slot is refused: the gate validates the FROZEN bytes (content check/use regression)', () => {
+    // The gate and the written bytes must be ONE read of caller state: a finding
+    // whose toJSON emits an embedded newline in a single-line slot must be refused
+    // by the gate itself — there is no live-object pre-check for it to satisfy.
+    makeChange('forge');
+    const zero = { critical: 0, warning: 0, suggestion: 0 };
+    const payload: any = {
+      mode: 'system',
+      reviewer_class: 'in-context',
+      depth: 'full',
+      scorecard: { completeness: { ...zero, warning: 1 }, correctness: { ...zero }, coherence: { ...zero } },
+      findings: [
+        {
+          toJSON() {
+            return {
+              severity: 'WARNING',
+              dimension: 'completeness',
+              title: 'clean at first glance\nforged second line',
+              file: 'design.md',
+              line: 3,
+              recommendation: 'x',
+            };
+          },
+        },
+      ],
+      stale_suppressed: [],
+      passes_run: ['0'],
+      passes_skipped: [],
+      model: null,
+    };
+    const runsDir = path.join(root, 'orbit/changes/forge/.orbit-runs');
+    expect(() =>
+      composeAndWriteEmit('review', { change: 'forge' }, payload, { projectRoot: root })
+    ).toThrow();
+    expect(fs.existsSync(runsDir) ? fs.readdirSync(runsDir).filter(f => /^review-/.test(f)) : []).toEqual([]);
+  });
+
+  it('a trail swap DURING serialization is caught at the write boundary (check/use regression)', () => {
+    // The last point caller code can run is the final JSON.stringify (toJSON hooks):
+    // swap the already-validated .orbit-runs for an outside symlink there — the
+    // re-check after materialization must refuse, and nothing lands at the redirect.
+    makeChange('toctou');
+    const runsDir = path.join(root, 'orbit/changes/toctou/.orbit-runs');
+    const outside = path.join(root, 'outside-toctou');
+    fs.mkdirSync(outside, { recursive: true });
+    let swapped = false;
+    const payload: any = {
+      source: 'from-file',
+      source_path: 'x.md',
+      walk_mode: 'per_finding',
+      final_assessment: 'Walked 1, resolved 1.',
+      resolutions: [
+        {
+          toJSON() {
+            if (!swapped) {
+              swapped = true;
+              fs.rmSync(runsDir, { recursive: true, force: true });
+              fs.symlinkSync(outside, runsDir, 'dir');
+            }
+            return { marker: 'm', severity: 'SUGGESTION', status: 'resolved' };
+          },
+        },
+      ],
+      model: null,
+    };
+    expect(() =>
+      composeAndWriteEmit('address-reviews', { change: 'toctou' }, payload, { projectRoot: root })
+    ).toThrow(/canonical \.orbit-runs child/);
+    expect(swapped).toBe(true); // the hook DID fire — the swap really happened
+    expect(fs.readdirSync(outside)).toEqual([]);
+  });
+
   it('IN-container trail aliases are refused: canonical identity, not ancestry (.orbit-runs -> . and sibling)', () => {
     const payload = { final_assessment: 'x.', model: null };
 
@@ -666,6 +738,29 @@ describe('write gate', () => {
     expect(r.emit.iteration).toBe(1);
     // Findings exist → the address pointer, doc-scoped.
     expect(String(r.emit.next_recommended)).toMatch(/^\/orbit:address-reviews --from-file /);
+  });
+
+  it('doc-scoped walk ordinal anchors PER DOC on the shared architecture trail', () => {
+    write('orbit/architecture/doc-a.md', '# a\n');
+    write('orbit/architecture/doc-b.md', '# b\n');
+    // A prior walk log for doc-a sits on the SHARED trail.
+    write(
+      'orbit/architecture/.orbit-runs/address-reviews-2026-08-01T10-00-00Z.json',
+      JSON.stringify({
+        command: 'address-reviews', timestamp: '2026-08-01T10:00:00Z', change: null, doc: 'doc-a',
+        final_assessment: 'walked.', next_recommended: 'x', kind: 'editorial',
+      })
+    );
+    const walkPayload = {
+      source: 'from-file', source_path: 'orbit/architecture/.orbit-runs/review-architecture-x.json',
+      walk_mode: 'per_finding', resolutions: [], final_assessment: 'Walked 1, resolved 1.', model: null,
+    };
+    // doc-b's FIRST walk: iteration 1, never counting doc-a's log.
+    const b = composeAndWriteEmit('address-reviews', { doc: 'doc-b' }, walkPayload, { projectRoot: root });
+    expect(b.emit.iteration).toBe(1);
+    // doc-a's next walk: iteration 2 (its own prior log counts).
+    const a = composeAndWriteEmit('address-reviews', { doc: 'doc-a' }, walkPayload, { projectRoot: root });
+    expect(a.emit.iteration).toBe(2);
   });
 
   it('a non-string model and an incomplete handoff shape are refused (declared-shape enforcement)', () => {

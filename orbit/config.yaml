@@ -22,8 +22,8 @@ schema: spec-driven
 # Model hints (optional — D-arc Stage D5)
 # When set, the eligibility line ("Ready when you are: ...") appends " — hint: <value>".
 # Keys are schema phase ids (review-proposal, review-system, apply, archive) or review
-# cadence slot names (in-context, independent, external); a slot entry wins over a phase
-# entry. Values must be single-line, <= 80 chars. Unknown keys are inert.
+# cadence slot names (in-context, fresh, independent, external); a slot entry wins over a
+# phase entry. Values must be single-line, <= 80 chars. Unknown keys are inert.
 # Example:
 #   models:
 #     independent: "any frontier model, clean context"

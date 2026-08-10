@@ -875,7 +875,22 @@ export function composeAndWriteEmit(
     }
     case 'address-reviews': {
       const runs = fs.existsSync(resolved.runsDir) ? fs.readdirSync(resolved.runsDir) : [];
-      emit.iteration = runs.filter(f => /^address-reviews-.*\.json$/.test(f)).length + 1;
+      const walkLogs = runs.filter(f => /^address-reviews-.*\.json$/.test(f));
+      // Doc-scoped walks anchor per doc: the architecture trail is SHARED across
+      // docs, so doc B's ordinal must not count doc A's logs (the same per-doc
+      // rule as the review-architecture ordinal above).
+      const prior =
+        resolved.scope === 'doc'
+          ? walkLogs.filter(f => {
+              try {
+                const j = JSON.parse(fs.readFileSync(path.join(resolved.runsDir, f), 'utf-8'));
+                return j.doc === resolved.doc;
+              } catch {
+                return false;
+              }
+            })
+          : walkLogs;
+      emit.iteration = prior.length + 1;
       if (resolved.scope === 'doc') {
         // Doc-scoped walk: pre-computable, the gate-less confirm pointer naming the doc.
         emit.next_recommended = `/orbit:review --as architecture ${resolved.doc} — confirm the resolutions`;
@@ -1034,14 +1049,25 @@ export function composeAndWriteEmit(
     emit.next_recommended = next;
   }
 
-  // Full write gate on the now-complete record, then EXACTLY ONE atomic write.
-  // The dot-tmp never parses as an emit-shaped name, so no trail reader ever sees
-  // a provisional record; the unlink covers every failure the process survives
-  // (a hard kill can still strand the inert dot-tmp — noise, never a record).
-  writeGate(emit, resolved, filePath);
+  // MATERIALIZE first: this stringify is the LAST point caller-supplied code
+  // (property getters, nested toJSON hooks) can run; the parse yields an INERT
+  // plain-data record. The write gate then validates the frozen data, the bytes
+  // are serialized from that same frozen data (hook-free by construction — the
+  // gate-validated candidate and the written bytes are ONE read), and the
+  // canonical trail check re-runs immediately before the write. External iter-4
+  // closed the directory half of this check/use seam; the fresh pass closed the
+  // content half the same way, one call earlier.
+  const materialized = JSON.parse(JSON.stringify(emit)) as Record<string, unknown>;
+  // Full write gate on the now-complete FROZEN record, then EXACTLY ONE atomic
+  // write. The dot-tmp never parses as an emit-shaped name, so no trail reader
+  // ever sees a provisional record; the unlink covers every failure the process
+  // survives (a hard kill can still strand the inert dot-tmp — noise, never a record).
+  writeGate(materialized, resolved, filePath);
+  const serialized = JSON.stringify(materialized, null, 2) + '\n';
+  assertCanonicalTrailDir(resolved.runsDir);
   const tmp = path.join(resolved.runsDir, `.${filename}.tmp`);
   try {
-    fs.writeFileSync(tmp, JSON.stringify(emit, null, 2) + '\n', 'utf-8');
+    fs.writeFileSync(tmp, serialized, 'utf-8');
     fs.renameSync(tmp, filePath);
   } catch (err) {
     try {
@@ -1052,5 +1078,6 @@ export function composeAndWriteEmit(
     throw err;
   }
 
-  return { path: filePath, emit, warnings };
+  // The returned record IS the written one — the frozen data the gate validated.
+  return { path: filePath, emit: materialized, warnings };
 }

@@ -13,8 +13,10 @@ payload-field table (the fields the emitting AI genuinely authors — review: `m
 `reviewer_class`, `depth`, `flags`, `scorecard`, `findings`, `stale_suppressed`, `commentary`,
 `passes_run`, `passes_skipped`; address-reviews: the `source*` fields, `walk_mode`,
 `resolutions`, the narrative `final_assessment` — its `iteration` is ENGINE-computed, the
-count of prior address-reviews emits on the change's trail plus one, rejected when
-payload-supplied; the table's per-command rows derive from the
+count of prior address-reviews emits on the resolved trail plus one, ANCHORED PER DOC on the
+shared architecture trail (a doc-scoped walk counts only logs whose `doc` matches — the same
+per-doc rule as the review-architecture ordinal; doc B's walk never counts doc A's logs),
+rejected when payload-supplied; the table's per-command rows derive from the
 owning capability's emit definitions, and these inline lists are EXCERPTS of that derivation —
 the owning capability's definition governs when they diverge). Fields the engine owns (`command`, `timestamp`,
 `change`, `kind`, the filename token, every deterministic fact per the deterministic-facts
@@ -87,11 +89,17 @@ missing-target usage error. A
 filename stem, never a path: separators, traversal segments, and leading dots are a clean
 usage error before any resolution (the same contained-identity rule as architecture doc
 names); an existing target directory that physically resolves outside its orbit root (a
-symlinked container escape) is refused; and the `.orbit-runs` trail child — checked at the
-write boundary after creation — must physically BE its container's canonical `.orbit-runs`
+symlinked container escape) is refused; and the `.orbit-runs` trail child must physically BE its container's canonical `.orbit-runs`
 child (IDENTITY, not ancestry: an in-container alias like `.orbit-runs -> .` or a sibling
 redirect is refused exactly like an outside escape — a lexically-correct path whose physical
-record no trail reader would find is not a trail). The surface writes orbit trails ONLY, and
+record no trail reader would find is not a trail), checked TWICE — after creation, and again
+AFTER every caller-supplied value is materialized into the final bytes, immediately before
+the write (no caller-controlled code runs between the final check and the write, closing the
+check/use window across composition). The CONTENT is frozen the same way: the record is
+materialized to inert plain data BEFORE the write gate runs, the gate validates that frozen
+record, and the written bytes are serialized from the same frozen record — the gate-validated
+candidate and the written bytes are ONE read of caller state, so no getter or toJSON hook can
+present gate-clean values and serialize different ones. The surface writes orbit trails ONLY, and
 no failure path writes any file. A
 `--change`/`--doc` value that resolves to no on-disk workstream (no change directory, no
 staging directory, no architecture doc) fails with a clean error naming the path checked; no

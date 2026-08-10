@@ -1,0 +1,126 @@
+{
+  "command": "review",
+  "timestamp": "2026-08-10T03:56:02Z",
+  "change": "d5-context-economy",
+  "kind": "editorial",
+  "model": "claude-fable-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "Write gate validates the pre-serialization object; caller code at the final stringify can diverge the written bytes from the gate-validated candidate",
+      "file": "src/core/emit-composition.ts",
+      "line": 1041,
+      "recommendation": "The iter-4 fix closed the trail-DIRECTORY half of the check/use seam (serialize, then re-run assertCanonicalTrailDir before the write) but not the content half: writeGate runs at :1041 against the live emit object, and the final JSON.stringify at :1047 then re-reads caller-supplied nested values (property getters, toJSON hooks on findings/scorecard/resolutions/handoff entries — the exact in-process vector the accepted iter-4 reproduction and the new regression test both use). A nested object can present gate-clean values to normalizeInternalPass/scorecardRollupCheck and serialize different ones — e.g. a finding title that is single-line at gate time and carries an embedded newline in the written bytes — defeating the 'a malformed emit is refused before it becomes a record' write-time guarantee (read-side render validation and orientation's spine-invalid skip remain as defense-in-depth, which is why this is WARNING, not CRITICAL). Fix by the same pattern already applied for the trail dir: serialize first, then run writeGate against JSON.parse(serialized) (the frozen bytes ARE the validated candidate), then the canonical-trail re-check, then write; extend the toctou regression with a toJSON hook that forges a gate-checked slot and prove the write refuses."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "title": "Doc-scoped address-reviews iteration counts every doc's walk logs on the shared architecture trail — no per-doc anchoring",
+      "file": "src/core/emit-composition.ts",
+      "line": 878,
+      "recommendation": "The address-reviews iteration is computed as the count of ALL prior address-reviews-*.json in resolved.runsDir + 1. For --doc walks the runsDir is the SHARED orbit/architecture/.orbit-runs/, so a walk on doc B counts doc A's logs in its ordinal — the exact cross-doc anchoring the review-architecture ordinal deliberately avoids (prior emits filtered by matching doc, per the same file's :818-:827 and orbit-review's per-doc rule). The delta's wording ('the count of prior address-reviews emits on the change's trail plus one') doesn't resolve the shared-trail case. Filter doc-scoped walk logs by matching doc field (mirroring the review-architecture ordinal) and state the per-doc rule in the delta's address-reviews iteration sentence."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "config.yaml models-hint comment omits `fresh` from the cadence-slot key list the gates delta defines",
+      "file": "orbit/config.yaml",
+      "line": 25,
+      "recommendation": "The commented guidance reads 'cadence slot names (in-context, independent, external)' while the orbit-engine-gates delta (and model-hints.ts's own doc comment) define FOUR slot keys: in-context, fresh, independent, external. A user configuring a `fresh:` hint from the config comment alone wouldn't know the key exists (the engine honors it). Align the comment with the delta's two vocabularies; while there, confirm `archive` genuinely resolves as a phase key for next_hint_keys or drop it from the phase-id example list."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "pass": "2",
+      "title": "External iter-4 CRITICAL: canonical trail check precedes caller-controlled composition (check/use race, emit-composition.ts:768)",
+      "evidence": "RESOLVED in the working tree (uncommitted): serialize-then-recheck at emit-composition.ts:1047-1048 — final JSON.stringify materializes the bytes, assertCanonicalTrailDir re-runs immediately before the write; the toJSON trail-swap regression fires the hook and proves nothing lands at the redirect; delta upgraded to the checked-TWICE wording; independently re-verified: 1916 tests green"
+    },
+    {
+      "pass": "0",
+      "title": "Fresh-pass W (08-06): six-body reduction target ≤20k missed (28.5k) — unratified",
+      "evidence": "Ratified outcome now recorded in proposal.md's What-Changes bullet ('[Outcome, ratified 2026-08-06 (Sal…): achieved 28.5k (−30%), target NOT hit… accepted as the exit-criterion-1 reading]') and sketches/body-inventory.md's After table with the deferred-work attribution"
+    },
+    {
+      "pass": "2",
+      "title": "Fresh-pass W (08-06): verify composer cannot express warn-state/incomplete recommendations",
+      "evidence": "Implemented at emit-composition.ts:931-941 — fail_mode 'warnings' (requires positive warnings_count, fail-loud) and 'incomplete' branches both compose distinct recommendations"
+    },
+    {
+      "pass": "3",
+      "title": "Fresh-pass W (08-06): retired /orbit:review-external taught as live at five sites",
+      "evidence": "Grep of .claude/skills, .claude/commands, and src/core/templates finds only frozen record-vocabulary mentions (command: \"review-external\", filenames) and explicitly-historical 'formerly invoked / RETIRED at D5' phrasing; baseline-spec residue sites are each covered by a d5 delta or the declared 9.4 Purpose-paragraph at-archive deferral"
+    },
+    {
+      "pass": "2",
+      "title": "Fresh-pass S (08-06): '.tmp crash leaves no file' claim overstated; latest-declaring-wins user-validation semantics; status --json drops userValidationPending; boot actual drowns in bookkeeping; stale 16-count test titles",
+      "evidence": "All five verified fixed on disk: delta now says 'a hard kill MAY strand an inert temp file'; gates delta + trail.ts implement the STICKY most-recent-CARRYING declaration; status --change --json renders userValidationPending: [\"9.6\"]; live boot JSON collapses change-own files to actual_change_own_count; grep finds no 16-count test titles"
+    },
+    {
+      "pass": "3",
+      "title": "Fresh-pass W (08-06): model-hint garnish missing from report tail and orientation eligibility lines",
+      "evidence": "withModelHint/modelHintFor now consumed at report-render.ts, status.ts (sprint + full views), and boot-render.ts — every eligibility surface garnishes; tests green"
+    },
+    {
+      "pass": "6",
+      "title": "In-context 08-05 W: update --force leaves the retired review-external skill+launcher on pre-existing surfaces",
+      "evidence": "orbit-skill-generation delta ADDED (retired-artifacts registry); implemented across update.ts/profile-sync-drift.ts; local surface verified 15 skills + 15 launchers with no orbit-review-external directory"
+    },
+    {
+      "pass": "6",
+      "title": "Category-5 touchpoints divergence on d5 itself (unpredicted source files; predicted overshoot)",
+      "evidence": "Accepted-and-recorded via the 08-06 walks; the live engine arithmetic (boot --json) reproduces the accepted set — actual_unpredicted: 11 incl. the review-cycle fix files, predicted_unsatisfied: [src/core/config.ts], malformed: none; no new divergence since"
+    },
+    {
+      "pass": "6",
+      "title": "CLAUDE.md current-state surface counts still read 16; baseline run-summary-emit/review-external Purpose paragraphs still describe the standalone invocation",
+      "evidence": "Both are the DECLARED at-archive deferrals riding tasks.md 9.7 and 9.4 (deliberately non-checkbox at-archive notes, executed by the archive flow) — not apply-phase defects"
+    }
+  ],
+  "commentary": "A later fresh pass over a heavily-converged state: four external iterations plus three internal confirms have already sanded most of this change, so I aimed the depth at the one surface that moved since the last clean confirm — the uncommitted serialize-then-recheck fix — and re-derived the verification facts independently rather than trusting the trail (build, full suite, strict validation, fingerprints, the 15+15 generated surface, live boot/touchpoints arithmetic, apply-emit consent fields, architecture stage states). The pattern in what remains is instructive: the iter-4 fix is correct for exactly the vector its regression names, but the same vector has a second half — the write gate's validated candidate and the written bytes are still two different reads of caller-influenced state, and the fix itself demonstrates the closing pattern one call earlier. The other residues are edge-vocabulary nits (a shared-trail ordinal, a config comment lagging the delta's key list) of the kind that only surface when reading the current bytes with no memory of how they got there. The disciplines held: every prior-cycle finding I checked was genuinely closed on disk, several with wording upgrades beyond the minimum, which is what a trail this long should buy.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4",
+    "5"
+  ],
+  "final_assessment": "0 critical, 1 warning, 2 suggestion.",
+  "iteration": 9,
+  "next_recommended": "/orbit:address-reviews d5-context-economy --from-file orbit/changes/d5-context-economy/.orbit-runs/review-system-2026-08-10T03-56-02Z.json"
+}
