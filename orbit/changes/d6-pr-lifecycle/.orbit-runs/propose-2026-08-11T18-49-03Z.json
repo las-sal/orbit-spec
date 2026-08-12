@@ -1,0 +1,9 @@
+{
+  "command": "propose",
+  "timestamp": "2026-08-11T18:49:03Z",
+  "change": "d6-pr-lifecycle",
+  "kind": "workflow",
+  "model": "claude-fable-5",
+  "final_assessment": "Consume-mode promotion of the d6-pr-lifecycle exploration: proposal/design/specs/tasks generated from thirteen captured decisions (both open questions resolved per their standing recommendations at the promotion prompt); one NEW capability delta (orbit-pr-lifecycle, 6 requirements) plus five sibling deltas (propose/archive/consent/conventions additive, emit-composition MODIFIED with the pr_url/pr_state payload fields, fingerprint stamped); design carries D-d6-1..8 and the predicted Touchpoints map; staging directory merged (architecture citation carried) and moved with its trail; strict validation passes.",
+  "next_recommended": "/orbit:review d6-pr-lifecycle — proposal artifacts ready; review before apply"
+}

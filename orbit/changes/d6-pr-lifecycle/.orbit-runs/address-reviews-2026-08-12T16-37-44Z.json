@@ -1,0 +1,414 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-08-12T16:37:44Z",
+  "change": "d6-pr-lifecycle",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/d6-pr-lifecycle/.orbit-runs/review-proposal-2026-08-11T19-02-06Z.json",
+  "source_command": "review",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 3,
+    "warning": 10,
+    "suggestion": 4
+  },
+  "pushback_verification": "Every finding verified against current artifacts before acting: the propose delta's unspecified branch line and absence-only degradation read at source; the archive tail's discovery gap and unbounded commit scope read in the requirement text; D1's closed-set sentences read VERBATIM twice ('those whose schema gate carries consent: user-invoked' and 'the consent-scoped set stays exactly the schema-declared consent gates'); schema.yaml's gate block read to confirm the CLOSED two-kind set (reviewed/tracked) cannot express a stateless propose-entry gate; the no-chaining contract read verbatim to confirm propose is user-invoked by construction; the emit-composition precedence sentence ('the owning capability's definition governs') read in the modified block; the arc doc's stale config sketch and (f) leaning read at lines 286/293. 0 stale suppressions.",
+  "resolution_summary": {
+    "resolved": 17,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "marker": "specs/orbit-lifecycle-consent/spec.md:7 — ADDED consent scope for propose contradicts the baseline's schema-gate-only rule",
+      "severity": "CRITICAL",
+      "source": "internal-review",
+      "classification": "decision required",
+      "status": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "MODIFIED block widening the baseline consent-set rule, with a base fingerprint"
+          },
+          {
+            "label": "B",
+            "body": "give propose a schema gate carrying consent: user-invoked (spec-driven v3 -> v4)"
+          }
+        ],
+        "chosen": "off-menu"
+      },
+      "resolution": "Neither A nor B: the DELTA IS DELETED. The user first chose B for determinism, which surfaced that C1's gate-kind set is CLOSED at two state-computing kinds (reviewed/tracked) and a propose-entry consent marker computes no state — so B required a third gate kind (B1) or a non-gate construct that reintroduced A's cost (B2). The user then reframed: propose does not need gating; moving explore -> propose is a pure user decision, and in practice the AI drives the exploration to readiness and the USER says go. That is chat ratification = user-invoked provenance, and the no-chaining contract already bars the AI from invoking propose unbidden — so the unratified AI-mediated propose the delta protected against cannot exist by construction (and if it occurs it is a no-chaining violation, not a missing gate). The outward write is a reversible DRAFT PR, unlike the irreversible seams D1 marks.",
+      "action": "Deleted specs/orbit-lifecycle-consent/ entirely (5 capabilities -> then 6 with run-summary-emit). D1's closed set stays closed and UNTOUCHED: no schema gate, no third gate kind, no spec-driven version bump, no consent-era ripple. The propose delta now states plainly that the choreography rides the user's own invocation with no prompt and no scope change. D-d6-6 rewritten with the reasoning and a NAMED RE-ENTRY TRIGGER (Sal: 'if it gives me problems, we will add some machinery then') — an unrequested PR from an unbidden propose is the empirical signal, the same deferral-with-tripwire shape as R-d-2. The provenance-INVARIANCE half survives (the PR step never silently skips by provenance).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-propose-modifications/spec.md",
+          "orbit/changes/d6-pr-lifecycle/design.md",
+          "orbit/changes/d6-pr-lifecycle/proposal.md",
+          "orbit/changes/d6-pr-lifecycle/tasks.md"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "specs/orbit-archive-modifications/spec.md:8 — archive emit written BEFORE the tail, yet required to record post-flip pr_state",
+      "severity": "CRITICAL",
+      "source": "internal-review",
+      "classification": "decision required",
+      "status": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "record only what is true at emit time (pr_state draft or elided); rewrite the scenario"
+          },
+          {
+            "label": "B",
+            "body": "restructure to commit -> push -> rewrite -> flip -> emit-and-amend so the emit carries the true post-flip state"
+          }
+        ],
+        "chosen": "A"
+      },
+      "action": "Option A: the emit records EMIT-TIME truth — pr_state 'draft' (or elided), never a forward-looking claim; the READY transition is evidenced by the PR itself and the completion readout. The emit-composition requirement gains the explicit before-the-tail reasoning and its scenario now shows 'draft' with an express prohibition on composing 'ready' on an archive emit. Avoids the two-push commit-amend dance inside a lifecycle flow for one field's value.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-emit-composition/spec.md",
+          "orbit/changes/d6-pr-lifecycle/tasks.md"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "specs/orbit-pr-lifecycle/spec.md:58 — no surface can perform the program PR's arc-done rewrite + READY flip",
+      "severity": "CRITICAL",
+      "source": "internal-review",
+      "classification": "decision required",
+      "status": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "give the flip to the architect body's completion-ratification seam"
+          },
+          {
+            "label": "B",
+            "body": "declare the arc-done flip a HUMAN act like the merge; architect recommends only"
+          }
+        ],
+        "chosen": "B"
+      },
+      "action": "Option B: the program PR's READY flip is the HUMAN's act. Rationale recorded: arc-done is once-per-program and ceremonial (the merge's profile, already human), no body is present when it becomes true (the archive tail runs strictly before the closing architecture review R-d-3 requires), and architect is the most restrained body in the surface ('never a gatekeeper'). MECHANICS settled in the same exchange: the appended per-stage entries ARE the landmark (written incrementally), so the whole-program rewrite is downgraded to optional polish; at arc-done the architect readout SURFACES the PR URL (from the trail record at its birth), its DRAFT state, and the exact commands (gh pr ready / gh pr merge) — recommend, never invoke. The generalized READY rule is restated as CONDITION uniform / PERFORMER deliberately not: per-change flips performed by the tail (constant, body present), program flips surfaced (once, no body).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-pr-lifecycle/spec.md",
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-archive-modifications/spec.md",
+          "orbit/changes/d6-pr-lifecycle/design.md",
+          "orbit/changes/d6-pr-lifecycle/proposal.md",
+          "orbit/changes/d6-pr-lifecycle/tasks.md"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "specs/orbit-pr-lifecycle/spec.md:13 — open: never + program-branches: true is undefined",
+      "severity": "WARNING",
+      "source": "internal-review",
+      "classification": "decision required",
+      "status": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "independent switches: open gates uncited changes; program-branches activates the program path regardless"
+          },
+          {
+            "label": "B",
+            "body": "open: never is the master off-switch subordinating program-branches"
+          }
+        ],
+        "chosen": "off-menu"
+      },
+      "resolution": "Neither: the user restated the requirement as THREE MUTUALLY EXCLUSIVE MODES — 'no PR at all, per proposal PRs, per architecture PRs' — dissolving the finding rather than answering it. One scalar key, so no combination can be undefined by construction.",
+      "action": "`pr: never | per-proposal | per-architecture` replaces the two-key block across all six artifacts. Two residuals settled in the same exchange: (1) under per-architecture an UNCITED change FALLS BACK to per-proposal behavior (own branch, own PR) — a standalone change never loses its outward window (Sal: 'agree fallback'), reached after level-setting what 'cited' means (an architecture: {doc, stage} block in .openspec.yaml, shown live against d6's own metadata vs an archived uncited change); (2) the TIMING axis is retired — the at-archive born-READY mode is gone, PRs always open as drafts at propose (read from the user's 'three options' being the complete key, flagged as correctable). D-d6-1 rewritten: config selects the REGIME, citation selects the TARGET.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-pr-lifecycle/spec.md",
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-propose-modifications/spec.md",
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-archive-modifications/spec.md",
+          "orbit/changes/d6-pr-lifecycle/design.md",
+          "orbit/changes/d6-pr-lifecycle/proposal.md",
+          "orbit/changes/d6-pr-lifecycle/tasks.md"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "specs/orbit-propose-modifications/spec.md:7 — non-propose entry points (ff, new+continue) get no branch or PR",
+      "severity": "WARNING",
+      "source": "internal-review",
+      "classification": "decision required",
+      "status": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "extend the choreography to ff at minimum; specify new/continue explicitly"
+          },
+          {
+            "label": "B",
+            "body": "declare propose the ONLY PR entry point, with the archive-side consequence stated"
+          }
+        ],
+        "chosen": "A"
+      },
+      "action": "Option A, narrow, ratified on principle (Sal: 'a on principle - but you're right, i don't use it at all. its more if someone besides me used it and wanted ff'). NEW requirement 'PR entry points' in orbit-pr-lifecycle: propose AND ff carry the IDENTICAL choreography, preconditions, degradation, and emit fields (ff is propose-in-one-breath — a change is never treated differently for how it was started); new/continue explicitly DO NOT (incremental artifacts have no natural branch moment; a stepping user is in an exploratory posture where a premature PR is noise), with the archive-side consequence STATED — such a change reaches archive unattached, the tail notes and skips. run-summary-emit's owning definition retitled to cover both emits; the emit-composition table row names ff.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-pr-lifecycle/spec.md",
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-run-summary-emit/spec.md",
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-emit-composition/spec.md",
+          "orbit/changes/d6-pr-lifecycle/design.md",
+          "orbit/changes/d6-pr-lifecycle/proposal.md",
+          "orbit/changes/d6-pr-lifecycle/tasks.md"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "specs/orbit-emit-composition/spec.md:22 — pr_url/pr_state in the engine table with no owning-capability definition",
+      "severity": "WARNING",
+      "source": "internal-review",
+      "classification": "decision required",
+      "status": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "add both owning definitions: a run-summary-emit requirement + an archive-modifications scenario (six deltas)"
+          },
+          {
+            "label": "B",
+            "body": "archive-side scenario only; leave the propose field in the mirror"
+          }
+        ],
+        "chosen": "A"
+      },
+      "action": "Option A: honors the precedence rule the modified requirement itself carries ('the owning capability's definition governs'). NEW sixth delta orbit-run-summary-emit with 'PR fields on the propose and ff emits' (elision semantics, the cited-vs-uncited pr_url meaning, and the attachment-record role the archive tail reads back); the archive delta gains its first MODIFIED block — 'Archive run summary written' copied in full with a new emit-time PR-fields scenario — base fingerprint stamped (2/2 verified).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-run-summary-emit/spec.md",
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-archive-modifications/spec.md",
+          "orbit/changes/d6-pr-lifecycle/proposal.md",
+          "orbit/changes/d6-pr-lifecycle/.openspec.yaml"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "specs/orbit-lifecycle-consent/spec.md:7 — a prompted propose has nowhere to record its consent; the audit tripwire won't see it",
+      "severity": "WARNING",
+      "source": "internal-review",
+      "classification": "decision required",
+      "status": "resolved",
+      "ratified_via": "chat",
+      "resolution": "Dissolved by the same decision that resolved the consent-scope CRITICAL: with propose outside the consent-scoped set there is no prompted propose, so there is nothing to record and no tripwire scope to widen. No payload field, no audit-drift change.",
+      "action": "Resolved by deletion of the lifecycle-consent delta (see the CRITICAL above). Verified no residual expectation survives in the propose delta, emit tables, or tasks.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "arc doc d-arc-arbitered-flow.md:286 — D6 charter carries superseded config vocabulary and the rejected (f) leaning",
+      "severity": "WARNING",
+      "source": "internal-review",
+      "classification": "decision required",
+      "status": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": false,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "vocabulary only — replace the stale config sketch, leave the leanings as historical notes"
+          },
+          {
+            "label": "B",
+            "body": "vocabulary + mark the resolved (e)/(f)/(g) leanings with one-line outcomes; exit criteria untouched"
+          },
+          {
+            "label": "C",
+            "body": "full rewrite of the stage section from the ratified design"
+          }
+        ],
+        "chosen": "B"
+      },
+      "action": "Depth B, as at-archive notes 5.5 + 5.6 (the arc doc is outside the delta system — the edit rides the archive flow, matching D5's 9.4/9.5/9.7 precedent). 5.5 retires the stale `pr: draft-at-propose|at-archive|never` sketch to the ratified three-mode key and marks (e)/(f)/(g) RESOLVED with one-line outcomes pointing at this change, exit criteria UNTOUCHED, resolved questions marked rather than deleted (the section stays a charter, per the doc's genre and D1's precedent). 5.6 appends the status-log entry.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/tasks.md",
+          "orbit/changes/d6-pr-lifecycle/proposal.md"
+        ],
+        "flagged_not_applied": [
+          "orbit/architecture/d-arc-arbitered-flow.md — deferred to the archive flow by design (at-archive note 5.5); editing the charter mid-change would desynchronize it from the change that supersedes it"
+        ]
+      }
+    },
+    {
+      "marker": "specs/orbit-propose-modifications/spec.md:11 — branch preconditions unspecified (default-branch resolution, dirty tree, existing branch)",
+      "severity": "WARNING",
+      "source": "internal-review",
+      "classification": "trivial fix",
+      "status": "resolved",
+      "action": "NEW requirement 'Branch preconditions at propose' with a scenario per precondition: default branch RESOLVED (`gh repo view --json defaultBranchRef` -> `git symbolic-ref refs/remotes/origin/HEAD` -> skip with a note, never guessed); DIRTY tree skips the branch/PR steps rather than sweeping unrelated edits (artifacts already succeeded, never rolled back); EXISTING branch reused when compatible, skipped with a collision note when unrelated — orbit never force-moves or renames a user's branch. Task 3.1b added.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-propose-modifications/spec.md",
+          "orbit/changes/d6-pr-lifecycle/tasks.md"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "specs/orbit-propose-modifications/spec.md:17 — propose specifies no push/gh FAILURE path, only the absence path",
+      "severity": "WARNING",
+      "source": "internal-review",
+      "classification": "trivial fix",
+      "status": "resolved",
+      "action": "Mirrored the archive tail's apply-parity degradation into the propose requirement: a mid-flight failure (push rejected for auth/branch protection/divergence, gh pr create erroring) skips the remaining choreography with a one-line completed-vs-skipped note, elides pr_url/pr_state from the emit, and never blocks or rolls back artifact generation. New scenario.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-propose-modifications/spec.md"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "specs/orbit-archive-modifications/spec.md:7 — how the tail DISCOVERS the PR is unspecified",
+      "severity": "WARNING",
+      "source": "internal-review",
+      "classification": "trivial fix",
+      "status": "resolved",
+      "action": "Discovery procedure specified: read pr_url from the change's own propose (or ff) emit — the authoritative attachment record — falling back to `gh pr list --head <branch> --json url,isDraft`; when neither resolves under an active pr: config the tail SKIPS with a one-line note naming the miss and never opens a replacement (the archive seam flips and records, it does not create). New scenario.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-archive-modifications/spec.md",
+          "orbit/changes/d6-pr-lifecycle/tasks.md"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "specs/orbit-pr-lifecycle/spec.md:34 — citation added/removed after propose flips granularity mid-flight",
+      "severity": "WARNING",
+      "source": "internal-review",
+      "classification": "trivial fix",
+      "status": "resolved",
+      "action": "FREEZE at propose (option A as previewed at triage — an application of the already-ratified frozen-Touchpoints precedent, not an open question): granularity resolves ONCE and the propose emit's recorded attachment governs the change's life; a later citation edit is a documented NO-OP surfaced as a one-line note, and re-pointing is manual. Rationale recorded: a mid-flight flip would leave the tail hunting a program PR that never existed while the real per-change PR sat forever draft. New scenario.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-pr-lifecycle/spec.md"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "specs/orbit-archive-modifications/spec.md:8 — tail's commit scope unbounded ('working-tree changes')",
+      "severity": "WARNING",
+      "source": "internal-review",
+      "classification": "trivial fix",
+      "status": "resolved",
+      "action": "Commit scope ENUMERATED: the synced baseline orbit/specs/, the moved orbit/changes/archive/<YYYY-MM-DD>-<name>/, the change's .openspec.yaml, and any at-archive-note edits the flow itself made — never `git add -A`; unrelated dirty paths stay unstaged and are named in a one-line note, so a session's stray edits can never ride into a PR about to be flipped READY. New scenario.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-archive-modifications/spec.md",
+          "orbit/changes/d6-pr-lifecycle/tasks.md"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "specs/orbit-conventions/spec.md:13 — the rule asks projects for a CLAUDE.md line this repo has no task to add",
+      "severity": "SUGGESTION",
+      "source": "internal-review",
+      "classification": "trivial fix",
+      "status": "resolved",
+      "action": "Task 5.4 added: root CLAUDE.md gains the one-line outward-actions note for non-orbit sessions, so the shipping repo instantiates its own SHOULD rather than only asking adopters to.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/tasks.md"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "specs/orbit-emit-composition/spec.md:65 — pr_state's value set never enumerated",
+      "severity": "SUGGESTION",
+      "source": "internal-review",
+      "classification": "trivial fix",
+      "status": "resolved",
+      "action": "Enumerated exactly two lowercase strings, 'draft' | 'ready'; a closed or merged PR is explicitly NOT representable (the field records the draft/ready axis only) and a body that cannot observe the state elides the field. Folded into the same edit that resolved the emit-ordering CRITICAL.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-emit-composition/spec.md"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "specs/orbit-lifecycle-consent/spec.md:13 — consent preview names a draft PR that doesn't open under at-archive",
+      "severity": "SUGGESTION",
+      "source": "internal-review",
+      "classification": "trivial fix",
+      "status": "resolved",
+      "action": "Fixed in place first (preview conditioned on the resolved mode), then rendered moot twice over — the at-archive mode was retired with the config rewrite, and the consent delta was deleted entirely. No preview exists to condition.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "proposal.md:92 — dogfood candidate line assumes this repo has no CI workflow file",
+      "severity": "SUGGESTION",
+      "source": "internal-review",
+      "classification": "trivial fix",
+      "status": "resolved",
+      "action": "Corrected: .github/workflows/ carries ci.yml and release-prepare.yml (verified), so this repo already satisfies exit criterion 1's CI-from-day-one half and the natural dogfood candidate is its next standalone (uncited) change. Consequence named: D-d6-8's no-CI note cannot be exercised here — task 6.2's scratch-repo smoke covers that path. (The original error was the authoring session's own false claim during exploration; the fresh reviewer caught it independently.)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/proposal.md"
+        ],
+        "flagged_not_applied": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": null,
+  "final_assessment": "All 17 findings from the fresh proposal pass (3C/10W/4S) walked and resolved — 9 obvious-fix, 8 decision-lane, every decision ratified by chat directive. Two decisions landed OFF-MENU and improved the design rather than patching it: the consent CRITICAL dissolved when the user reframed propose as needing no gate at all (delta deleted; D1's closed set untouched; named re-entry trigger recorded), and the config WARNING dissolved into a three-mode scalar key (`pr: never|per-proposal|per-architecture`) that makes undefined combinations unrepresentable. The arc-done flip became a human act with its mechanics settled (appended stage entries ARE the landmark; architect surfaces PR URL + commands). Capability count 5 -> 6 (orbit-run-summary-emit added as the owning definition of the PR emit fields; orbit-lifecycle-consent removed). 1918 tests green; strict validation; fingerprints 2/2.",
+  "iteration": 1,
+  "next_recommended": "/orbit:review --as proposal d6-pr-lifecycle"
+}
