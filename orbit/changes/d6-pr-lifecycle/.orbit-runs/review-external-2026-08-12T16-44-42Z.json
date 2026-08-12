@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-08-12T16:44:42Z",
+  "change": "d6-pr-lifecycle",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "mode": "proposal",
+  "prompt_path": "orbit/changes/d6-pr-lifecycle/.orbit-runs/external-prompt-proposal-2026-08-12T16-43-40Z.md",
+  "target": null,
+  "final_assessment": "External review prompt packaged for d6-pr-lifecycle (iter 1, mode proposal — the first external pass on this change, following one fresh internal pass whose 17 findings were all resolved, two of them by reshaping the design: the three-mode config key and the deleted consent delta); awaiting findings. Handoff preflight SATISFIED: tree clean, nothing unpushed, artifacts live at 9dfb587 on origin/d-arc.",
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/d6-pr-lifecycle/.orbit-runs/external-prompt-proposal-2026-08-12T16-43-40Z.md into the target AI, save the response as orbit/changes/d6-pr-lifecycle/.orbit-runs/external-proposal-<TS>.md, then /orbit:address-reviews d6-pr-lifecycle --from-file <path>"
+}
