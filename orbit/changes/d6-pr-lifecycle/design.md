@@ -30,11 +30,28 @@ needs, citing explore.md rather than re-deriving.
 
 - Merging. READY is the terminus; merging stays a human act (charter line, confirmed).
 - Auto-merge-on-green (`gh pr merge --auto`) — Considered & out; named return condition.
-- Stacked per-change PRs in per-architect mode (Shape B) — Considered & out.
+- Stacked per-change PRs in `per-architecture` mode (Shape B) — Considered & out.
 - Engine git. The engine never shells to git/gh (explore.md (g)).
 - CI bootstrap — the dogfood project owns its workflow file; orbit only surfaces absence.
 - Multi-repo changes — explicitly deferred (carried from D1).
+- CONCURRENCY. orbit is single-user, single-session by design (Sal, 2026-08-20: "this is
+  designed for single user, single session … no concurrency support needed") — every
+  lifecycle command is user-invoked, one at a time. Two changes archiving onto one program
+  branch at once, racing PR-body appends, and multi-session branch contention are UNDEFINED
+  in v1: no locking, no serialization, no optimistic retry. What ships instead is DETECTION
+  (remote-tip comparison before branch reuse; push-rejection degradation) that surfaces a
+  diverged state to the user who is present by construction.
 - Engine-rendered PR bodies — rejected; the description is narrative (landmark genre).
+- CONTINUOUS PR CURRENCY. The charter's "the PR is the window onto the change for its whole
+  life" is NARROWED (Sal, 2026-08-20): D6 guarantees pushes at exactly two seams — the
+  propose choreography and the archive tail. Adding pushes at review/apply/resolution seams
+  would contradict D-d6-5's seams-only refresh and grow the change substantially; what the
+  PR shows in between is whatever the user pushes. The aspiration predates the seams-only
+  decision.
+- AUTOMATED RECOVERY from a mid-flight choreography failure. No retry entry point, no
+  idempotent re-run surface (Sal, 2026-08-20): the failure note names the exact completing
+  commands and states the unattached consequence. Single-session means the user is present
+  when it fails, so a precise message beats a new command surface.
 
 ## Decisions
 
@@ -81,7 +98,7 @@ needs, citing explore.md rather than re-deriving.
   Tail failures (push/`gh`) skip the remainder gracefully with a note; the archive itself
   never blocks (apply-parity flavor).
 - **D-d6-5 — Landmark descriptions, agent-written.** Intent at propose (adapted from
-  proposal.md's Why/What), achievement at archive; per-architect stage entries appended per
+  proposal.md's Why/What), achievement at archive; `per-architecture` stage entries appended per
   D-d6-2. Deterministic claims inside the narrative are READ from the engine at authoring
   time (standing discipline), never hand-invented. Seams-only refresh — no per-emit or
   per-gate-transition PR edits.
@@ -104,12 +121,34 @@ needs, citing explore.md rather than re-deriving.
   — divergent behavior by provenance confuses; see explore.md (f)).
 - **D-d6-7 — Zero engine git.** All git/gh actions are workflow-body steps (the existing
   review-handoff choreography class). Engine surface: the `pr:` config reader
-  (`project-config.ts`) + optional `pr_url`/`pr_state` narrative pass-through fields on the
-  propose/archive emit payload tables. Branch naming: `<change-name>` standalone; the doc's
-  filename stem for program branches (per-doc override waits for a real need).
+  (`project-config.ts`) + the structured `pr_attachment` object on the propose/ff payload
+  tables and flat `pr_url`/`pr_state` on archive's (archive reports observed state; it
+  resolves no attachment). Branch naming: `<change-name>` standalone;
+  the doc's filename stem for program branches (per-doc override waits for a real need); a
+  mechanical name colliding with the resolved default branch skips with a note.
 - **D-d6-8 — No-CI surfacing.** When opening a change's first PR on a repo with no
   `.github/workflows/`, the propose body notes "no CI configured; the PR's checks section
   will be empty" — one line, reporting, never scaffolding or prompting.
+
+### R-d-4 subtraction: a user-ratified EXCEPTION
+
+The arc's subtraction rule (R-d-4) requires that additions to the generated surface NAME what
+they remove. D6 names nothing, and that is DELIBERATE rather than an oversight. D6 adds an
+outward-facing capability the surface has never had; it supersedes no existing body step,
+retires no command, and collapses no duplicated instruction. Every prior stage's subtraction
+was available because that stage RESHAPED something already present — D2 deleted the arc doc's
+hand-maintained state lines because it computed them, D3 retired the v0.1 `orbit-status`
+script because `orbit status` replaced it, D5 shrank fifteen bodies because it re-homed their
+prose. D6 has no such predecessor to reclaim from.
+
+Manufacturing a subtraction to satisfy the rule would be worse than declaring the exception:
+it would mean cutting instruction text for bookkeeping reasons rather than because the text
+stopped earning its place. The exception is RECORDED (user-ratified 2026-08-20, at the
+external proposal review) rather than silent — the rule stays intact and the departure is
+visible and dated, so a future reader sees a decision instead of a violation. The stage's
+economy obligation is met the other way: the PR-lifecycle teaching is TAUGHT AT THE SEAMS
+where it acts (a paragraph each in the propose and archive phases of onboard, plus the
+choreography steps themselves) rather than as a separate feature section.
 
 ## Risks / Trade-offs
 
@@ -138,7 +177,7 @@ needs, citing explore.md rather than re-deriving.
 - `src/core/templates/workflows/onboard.ts` — teach the PR lifecycle + config vocabulary.
 - `src/core/templates/workflows/architect.ts` — arc-done human-acts readout (PR URL, draft
   state, `gh pr ready`/`gh pr merge`) at the completion-ratification seam; no outward write.
-- `src/core/project-config.ts` — the `pr:` block reader.
+- `src/core/project-config.ts` — the `pr:` SCALAR reader (three-valued; not a block).
 - `src/core/emit-composition.ts` — `pr_url`/`pr_state` payload-field rows for propose, ff,
   and archive.
 - `orbit/config.yaml` — commented `pr:` example.

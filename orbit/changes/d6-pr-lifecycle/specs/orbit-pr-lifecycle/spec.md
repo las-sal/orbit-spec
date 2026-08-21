@@ -51,9 +51,14 @@ doc's single program PR; a change with no citation takes the `per-proposal` path
 branch and PR regardless of what it cites. Branch naming: `<change-name>` for per-proposal
 branches; the architecture doc's filename stem for program branches.
 
-Granularity is resolved ONCE, at propose, and FROZEN for the change's life: the propose emit
-records the resolved ATTACHMENT (branch name, granularity, `pr_url` when a PR opened), and
-that record — not a re-read of the citation — governs every later seam. A citation added or
+Granularity is resolved ONCE, at the artifact-creating invocation (propose or ff), and FROZEN
+for the change's life: that emit records the resolved ATTACHMENT as the structured
+`pr_attachment` object — `{branch, granularity, url?, state?, doc?}`, whose owning definition
+is `orbit-run-summary-emit`'s attachment-record requirement — and that record, not a re-read
+of the citation, governs every later seam. The object exists precisely so the freeze is
+REPRESENTABLE: a later seam that needed the branch or the granularity but could only read a
+URL would have to re-derive them from the mutable citation, which is the flip hazard this
+rule forbids. A citation added or
 removed after propose is a documented NO-OP for the PR layer, surfaced as a one-line note at
 the next seam; re-pointing an already-attached change is a manual act. (The same
 freeze-at-commitment discipline the predicted Touchpoints map carries, and for the same
@@ -71,7 +76,7 @@ existed while the real per-change PR sat forever draft.)
 #### Scenario: Citation edited after propose is a no-op
 
 - **WHEN** an uncited change (own branch, per-change PR) gains an `architecture:` citation after propose
-- **THEN** the frozen attachment from the propose emit still governs — the archive tail acts on the existing per-change PR and notes the ignored citation in one line; no program PR is sought or opened
+- **THEN** the frozen attachment from the propose (or ff) emit still governs — the archive tail acts on the existing per-change PR and notes the ignored citation in one line; no program PR is sought or opened
 
 #### Scenario: Uncited change gets its own branch
 
@@ -85,7 +90,7 @@ The PR choreography SHALL be carried by the ARTIFACT-SET-CREATING commands that 
 change's canonical artifacts in ONE invocation: `/orbit:propose` and `/orbit:ff` (the
 fast-forward path is propose-in-one-breath — same artifacts, same single invocation, same
 user intent, and it already shares propose's emit shape). Both carry the identical
-choreography, preconditions, degradation, and `pr_url`/`pr_state` emit fields; a change is
+choreography, preconditions, degradation, and `pr_attachment` emit record; a change is
 never treated differently for having been started one way rather than the other.
 
 `/orbit:new` and `/orbit:continue` — the step-by-step path — explicitly DO NOT carry the
@@ -100,7 +105,7 @@ starts the next change with `propose`/`ff`.
 #### Scenario: ff behaves exactly like propose
 
 - **WHEN** a change is created with `/orbit:ff` under `pr: per-proposal`
-- **THEN** the branch is created, artifacts committed and pushed, a draft PR opened, and the ff emit carries `pr_url`/`pr_state` — indistinguishable from the propose path
+- **THEN** the branch is created, artifacts committed and pushed, a draft PR opened, and the ff emit carries the `pr_attachment` object — indistinguishable from the propose path
 
 #### Scenario: new/continue reaches archive unattached
 
@@ -121,9 +126,22 @@ The program PR's READY flip is a HUMAN ACT — orbit never performs it. ARC-DONE
 declared stage archived AND the closing architecture review recorded, per R-d-3) is by
 construction later than the last stage's archive, so no orbit body is present at the moment
 it becomes true: the archive tail runs too early, and the closing review and completion
-ratification are read-only over the PR. Instead, when the architect flow observes arc-done
-at a completion ratification, its readout SHALL surface the remaining human acts — naming
-the program PR's URL (read from the trail record written at its birth), its current DRAFT
+ratification are read-only over the PR. Instead the readout is OBSERVATION-DRIVEN and
+IDEMPOTENT: ANY architect invocation that observes arc-done SHALL surface the remaining
+human acts — not only a completion ratification. This matters because arc-done can become
+true when no ratifiable stage remains: the natural order final-stage archive → final-stage
+ratification → closing architecture review makes the condition true at the LAST step, after
+the ratification interaction the baseline architect flow offers for a quiescent unratified
+stage has already passed. Tying the readout to that interaction would mean the required
+surfacing never appears. Because the readout is idempotent and derived from observed state
+(never from a stored "already surfaced" flag), it appears at whichever invocation first
+observes arc-done and re-appears on every later one until the PR is no longer draft — which
+also makes it safe under either ordering. The readout names
+the program PR's URL — located by scanning the change trails (active AND archived) for
+`pr_attachment` objects whose `granularity` is `per-architecture` and whose `doc` MATCHES
+this architecture doc, taking the most recent; the `doc` key is what makes this lookup
+possible after the birth change has been archived, and what keeps two programs in one repo
+distinguishable — its current DRAFT
 state, and the exact commands (`gh pr ready <n>`, and `gh pr merge <n>` when satisfied) —
 recommending, never invoking, per the residual outward-actions rule. A whole-program body
 rewrite is OPTIONAL polish available on request, never a required transition step.
@@ -181,9 +199,12 @@ The PR description SHALL be agent-written narrative — a LANDMARK recording wha
 achieved, never an engine render and never live telemetry. Refresh points are SEAMS ONLY:
 per-change PRs — INTENT at propose (adapted from proposal.md's Why/What), rewritten as
 ACHIEVEMENT at the archive tail (outcomes, the review-cycle story, decisions ratified along
-the way); program PRs — program intent at birth, appended stage entries at stage archives,
-the whole-program landmark rewrite at arc-done. No per-emit or per-gate-transition PR
-edits. Deterministic claims inside the narrative (gate verdicts, counts, positions) SHALL
+the way); program PRs — program intent at birth, then appended stage entries at stage
+archives, and NOTHING FURTHER: the accumulated entries ARE the landmark, so there is no
+mandatory terminal rewrite. (A whole-program rewrite is OPTIONAL polish an agent performs
+only when the user explicitly asks — it is deliberately absent from this SHALL sequence,
+because arc-done has no authorized body to perform an outward write.) No per-emit or
+per-gate-transition PR edits. Deterministic claims inside the narrative (gate verdicts, counts, positions) SHALL
 be read from the engine's surfaces at authoring time, never hand-invented — the same
 standing discipline as every narrative surface.
 
@@ -192,6 +213,29 @@ standing discipline as every narrative surface.
 - **WHEN** a per-change PR opens at propose and the change later archives
 - **THEN** the body at open states the change's intent; after the tail it states the
   achievement — and no PR body edit occurred at any intermediate emit or review pass
+
+### Requirement: Single-session operating assumption and v1 limits
+
+The PR layer SHALL be specified for orbit's actual operating model — SINGLE USER, SINGLE
+SESSION, one user-invoked lifecycle command at a time (every lifecycle command is
+user-invoked per `orbit-lifecycle-consent`, and the no-chaining contract forbids the AI from
+running a second one unbidden). CONCURRENT operation is therefore an explicit NON-GOAL of
+this capability: two changes archiving onto one program branch simultaneously, racing
+PR-body appends, and multi-session branch contention are UNDEFINED and unsupported in v1.
+The layer SHALL NOT carry serialization, locking, optimistic-retry, or conflict-merge
+machinery for them.
+
+What the layer DOES carry instead is honest DETECTION at the one point where a stale view
+becomes visible: the remote-tip comparison before reusing a branch (per
+`orbit-propose-modifications`' branch preconditions) and the push-rejection degradation on
+both the propose choreography and the archive tail. A diverged or rejected state SKIPS with
+a one-line note naming it — the user, who is present by construction, resolves it. This is
+detection without a protocol: the failure is surfaced, never silently merged or retried.
+
+#### Scenario: Concurrency is out of scope, divergence is still detected
+
+- **WHEN** a program branch's remote tip has moved for any reason (another session, a manual push, a teammate)
+- **THEN** the choreography detects the divergence at its remote-tip check and skips with a one-line note; no lock is taken, no retry loop runs, and no automatic merge or rebase is attempted
 
 ### Requirement: PR actions are workflow-body choreography (zero engine git)
 

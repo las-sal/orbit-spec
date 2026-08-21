@@ -1,0 +1,307 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-08-21T00:20:50Z",
+  "change": "d6-pr-lifecycle",
+  "kind": "editorial",
+  "model": "claude-fable-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/d6-pr-lifecycle/.orbit-runs/external-proposal-2026-08-12T18-17-55Z.md",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-5 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 5,
+    "warning": 9,
+    "suggestion": 3
+  },
+  "pushback_verification": "All 17 verified against the change's current artifacts before disposition; none suppressed as stale. The review ran against the artifacts as they stood after the fresh-review walk, and every claim reproduced. Where the reviewer's framing assumed multi-session operation (concurrent archives onto one program branch, racing PR-body appends), the claim itself was accurate but the remedy was scoped out by the user's single-session principle and answered with a named limit plus detection rather than a protocol.",
+  "resolution_summary": {
+    "resolved": 17,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "ff is promised identical PR behavior but the engine task rejects its fields and archive ignores its record",
+      "marker_source": "external",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-run-summary-emit/spec.md",
+      "classification": "decision_required",
+      "action": "Emit task 2.1 now adds the pr_attachment object to the FF payload row alongside propose, and the archive tail reads the latest attachment-bearing propose OR ff emit; task 3.5 makes ff's choreography identical by requirement, not by intent.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-pr-lifecycle/spec.md",
+          "orbit/changes/d6-pr-lifecycle/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "The frozen attachment cannot be represented by the allowed emit schema",
+      "marker_source": "external",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-run-summary-emit/spec.md",
+      "classification": "decision_required",
+      "action": "Replaced the flat pr_url/pr_state pair on propose/ff with a structured pr_attachment: {branch, granularity, url?, state?, doc?} object in orbit-run-summary-emit; archive keeps the flat pair because it reports observed state rather than resolving an attachment.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-pr-lifecycle/spec.md",
+          "orbit/changes/d6-pr-lifecycle/tasks.md",
+          "orbit/changes/d6-pr-lifecycle/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "Arc-done can occur after the only readout seam has passed",
+      "marker_source": "external",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-pr-lifecycle/spec.md",
+      "classification": "decision_required",
+      "action": "The readout is now OBSERVATION-DRIVEN and IDEMPOTENT: any architect invocation observing arc-done surfaces the human acts, derived from observed state with no already-surfaced flag, so it is correct under either ordering and repeats until the PR leaves draft. Harness case 6.2f tests both orderings.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/design.md",
+          "orbit/changes/d6-pr-lifecycle/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "The same requirement makes the terminal program-body rewrite both optional and mandatory",
+      "marker_source": "external",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-pr-lifecycle/spec.md",
+      "classification": "decision_required",
+      "action": "Resolved toward optional: the appended stage entries ARE the landmark, written incrementally, so no terminal rewrite is required; a whole-program rewrite is polish available on request.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "The existing-branch rule rejects the commits a shared program branch is supposed to contain",
+      "marker_source": "external",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-propose-modifications/spec.md",
+      "classification": "decision_required",
+      "action": "Branch compatibility is now defined PER PATH: a per-proposal branch is compatible when it carries no commits beyond the base other than this change's own; a program branch is compatible when it descends from the base, with other citing changes' commits EXPECTED. Harness case 6.2c covers reuse across two successive citing changes.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The decision record still asserts the retired config and consent behavior",
+      "marker_source": "external",
+      "file": "orbit/changes/d6-pr-lifecycle/explore.md",
+      "classification": "decision_required",
+      "action": "Added a dated 'Post-promotion revisions' subsection to explore.md's Decisions: six entries recording the two-key to three-mode supersession, the arc-done flip becoming the human's, the retired conditional-consent-scope reading, the narrowed live-window claim, the manual-recovery limit, and the single-session stance. The exploration stays a historical record but an honest one.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The enumerated archive commit scope can still sweep unrelated baseline edits",
+      "marker_source": "external",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-archive-modifications/spec.md",
+      "classification": "decision_required",
+      "action": "The commit scope is an enumerated FILE LIST — the exact capability spec files this archive's sync reported changed, never the orbit/specs/ prefix — with a harness case (6.2e) using an unrelated dirty file INSIDE orbit/specs/.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Fallback PR discovery does not establish a unique PR identity",
+      "marker_source": "external",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-archive-modifications/spec.md",
+      "classification": "decision_required",
+      "action": "The fallback query is constrained on all four axes (resolved remote's repo, head branch, --state open, resolved base) and must yield EXACTLY ONE survivor. Three distinct outcomes: one proceeds, zero skips with a miss note, more than one skips with an ambiguity note listing candidates — never a recency or PR-number tie-break. A gh error is degradation, not a zero result.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Mid-flight propose failures leave no defined recovery path",
+      "marker_source": "external",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-propose-modifications/spec.md",
+      "classification": "decision_required",
+      "action": "Recorded as a deliberate v1 limit rather than a new surface: no retry entry point, no idempotent re-run. The failure note names the exact completing commands (git push -u, gh pr create --draft --base --head) and states the consequence of leaving it — the change proceeds unattached and its archive tail notes and skips. Justified by single-session: the user is present when it fails.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/design.md",
+          "orbit/changes/d6-pr-lifecycle/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Program stage appends assume an arc status-log entry that archive does not guarantee",
+      "marker_source": "external",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-archive-modifications/spec.md",
+      "classification": "decision_required",
+      "action": "Defined an ordered source: the status-log entry written at this archive when present, else composed from the archive emit's final_assessment plus change name and date. A status log is a convention of this repo's arc doc, not a requirement of the architecture grammar, so the fallback is a real path, not an edge case. The tail never blocks, prompts, or invents.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Verification does not exercise several normative modes or the literal second exit criterion",
+      "marker_source": "external",
+      "file": "orbit/changes/d6-pr-lifecycle/tasks.md",
+      "classification": "decision_required",
+      "action": "Built out a real integration harness (tasks 6.2 + 6.2a-f): a disposable git repo per case with a bare remote, plus a gh stub on PATH recording invocations and returning scripted JSON. Six case groups — config (including pr: never asserted against the stub's log, not output text), degradation, preconditions, entry points and attachment shape, archive tail, and the arc-done readout. No concurrency cases, per the single-session non-goal.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "D6 adds substantial generated instructions without its required subtraction accounting",
+      "marker_source": "external",
+      "file": "orbit/changes/d6-pr-lifecycle/design.md",
+      "classification": "decision_required",
+      "action": "Recorded a user-ratified R-d-4 EXCEPTION in design.md rather than manufacturing a removal: every prior stage's subtraction was available because it reshaped something already present, and D6 adds an outward capability with no predecessor to reclaim from. Manufacturing one would mean cutting text for bookkeeping. At-archive note 5.8 carries the one-line record into the arc doc, so the departure is dated and visible.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/tasks.md",
+          "orbit/changes/d6-pr-lifecycle/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The draft PR is not designed to stay current during most of the lifecycle",
+      "marker_source": "external",
+      "file": "orbit/changes/d6-pr-lifecycle/design.md",
+      "classification": "decision_required",
+      "action": "Narrowed the claim to what ships: D6 guarantees pushes at exactly two seams, the propose choreography and the archive tail. Recorded as a Non-Goal (continuous PR currency) and as an explore.md revision noting the premise's aspiration predates the seams-only decision.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The onboarding teach-in has a task but no normative capability delta",
+      "marker_source": "external",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-onboard/spec.md",
+      "classification": "decision_required",
+      "action": "Added a seventh delta — a MODIFIED orbit-onboard 'Canonical-flow walkthrough section' with two new scenarios: the PR lifecycle taught at the two seams where it acts, unconditional on the reading project's config, and the config vocabulary plus the merging-stays-human boundary stated once. Fingerprint stamped.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Remote selection is implicit and origin-specific",
+      "marker_source": "external",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-propose-modifications/spec.md",
+      "classification": "decision_required",
+      "action": "Remote resolution is now the FIRST precondition and explicit: exactly one remote wins whatever its name, multiple prefer origin else skip with an ambiguity note naming candidates, zero takes the degraded path. Push target, default base, and gh repo all use that one resolved remote.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Branch-name collisions with the default branch are not defined",
+      "marker_source": "external",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-propose-modifications/spec.md",
+      "classification": "decision_required",
+      "action": "A mechanical branch name equal to the resolved default branch now SKIPS with a note naming the collision, rather than attempting an unmergeable head-into-itself PR or misclassifying the default branch as an unrelated existing branch.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Superseded terminology remains outside the intentionally stale charter",
+      "marker_source": "external",
+      "file": "orbit/changes/d6-pr-lifecycle/tasks.md",
+      "classification": "decision_required",
+      "action": "At-archive note 5.5 (depth B, ratified) replaces the stale pr: draft-at-propose|at-archive|never sketch in the arc doc's stage section with the ratified three-mode key and marks the carried D1 leanings resolved with one-line outcomes; exit criteria stay untouched and the section stays a charter.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "17 of 17 external findings resolved; 0 unresolved markers in scope. The change gained one delta (orbit-onboard, seventh, fingerprinted), a structured pr_attachment emit shape replacing the flat pair on propose/ff, per-path branch compatibility, a four-axis PR-discovery identity with three distinct outcomes, an ordered stage-entry source, and a real git + gh-stub integration harness. Four findings were closed by naming a limit rather than building machinery — concurrency, recovery, PR currency, and the R-d-4 subtraction exception.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal d6-pr-lifecycle"
+}

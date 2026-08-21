@@ -9,7 +9,11 @@ iterations) with no outward surface showing it. D6 makes the PR a DESIGNED lifec
 (the ratified D-elc-6 direction, staged as d6-pr-lifecycle of `d-arc-arbitered-flow`): the
 change's PR exists from propose as the human-facing window onto the work, flips to READY
 when the effort completes, and becomes the durable landmark of what was achieved — while
-merging stays a human act. See `explore.md` (11 decisions + 2 promotion-resolved questions,
+merging stays a human act. SCOPE OF "window", narrowed from the charter's aspiration: the PR
+shows whatever has been PUSHED, and D6 guarantees pushes at exactly two seams (the propose
+choreography and the archive tail). It does NOT add pushes at review, apply, or resolution
+seams — that would contradict the seams-only refresh decision and grow the change
+substantially. Intermediate visibility is whatever the user pushes in between. See `explore.md` (11 decisions + 2 promotion-resolved questions,
 one session, 2026-08-10/11).
 
 ## What Changes
@@ -54,7 +58,7 @@ one session, 2026-08-10/11).
   silently skips or degrades by provenance (the D1-carried skip leaning stays superseded).
 - **Zero engine git**: branch/commit/push/`gh pr` live as workflow-body steps (the existing
   review-handoff choreography class); the engine gains only the `pr:` config reader and
-  optional `pr_url`/`pr_state` pass-through fields on the propose/archive emit payloads.
+  optional `pr_url`/`pr_state` pass-through fields on the propose/ff/archive emit payloads.
 - **Residual outward-actions rule**: the off-script outward-action conventions requirement
   (merges, releases, issue-filing) shrinks to a short `orbit-conventions` requirement echoed
   into lifecycle-completion outputs.
@@ -87,7 +91,7 @@ one session, 2026-08-10/11).
   reads back.
 - `orbit-conventions`: the residual outward-actions rule (off-script merges/releases/
   issue-filing) as a short requirement echoed into lifecycle-completion outputs.
-- `orbit-emit-composition`: the propose and archive emit payload tables gain optional
+- `orbit-emit-composition`: the propose, ff, and archive emit payload tables gain optional
   `pr_url` / `pr_state` narrative pass-through fields (trail records the outward artifact).
 
 ## Impact
@@ -97,7 +101,8 @@ one session, 2026-08-10/11).
   `archive-change.ts` (the absorbed tail), `onboard.ts` (teach the PR lifecycle),
   conventions echo sites in lifecycle-completion outputs.
 - **Engine (minimal per the zero-engine-git decision)**: `src/core/project-config.ts`
-  (`pr:` block reader), `src/core/emit-composition.ts` (two payload-field table rows).
+  (`pr:` scalar reader), `src/core/emit-composition.ts` (three payload-field table rows:
+  propose, ff, archive).
 - **Docs (at archive)**: CLAUDE.md D6 entry + the outward-actions note; the arc doc's D6
   stage section retired to the ratified vocabulary with its carried (e)/(f)/(g) leanings
   marked resolved (charter prose, exit criteria untouched); the arc doc status-log entry.

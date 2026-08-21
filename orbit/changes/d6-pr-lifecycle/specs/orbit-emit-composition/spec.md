@@ -18,8 +18,12 @@ payload-field table (the fields the emitting AI genuinely authors — review: `m
 count of prior address-reviews emits on the resolved trail plus one, ANCHORED PER DOC on the
 shared architecture trail (a doc-scoped walk counts only logs whose `doc` matches — the same
 per-doc rule as the review-architecture ordinal; doc B's walk never counts doc A's logs),
-rejected when payload-supplied; propose, ff, and archive additionally accept OPTIONAL `pr_url`
-and `pr_state` narrative pass-through fields (per `orbit-pr-lifecycle` — the trail records
+rejected when payload-supplied; propose and ff additionally accept an OPTIONAL structured
+`pr_attachment` object (`{branch, granularity, url?, state?, doc?}` — the composite ATTACHMENT
+record whose owning definition and key semantics live in `orbit-run-summary-emit`), and
+archive additionally accepts OPTIONAL `pr_url` and `pr_state` narrative pass-through fields
+(archive RESOLVES no attachment — it reads the one propose/ff recorded and reports the PR
+state it observed) (per `orbit-pr-lifecycle` — the trail records
 the outward PR artifact's URL and state AS OBSERVED AT EMIT TIME, never a forward-looking
 claim: `pr_state` is exactly one of the two lowercase strings `"draft"` or `"ready"` (a
 closed or merged PR is NOT representable — the field records the draft/ready axis only, and

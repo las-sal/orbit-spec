@@ -20,10 +20,16 @@ Implementation chunks:
 
 ## 2. Emit payload fields (engine)
 
-- [ ] 2.1 `src/core/emit-composition.ts`: `pr_url` + `pr_state` added to the propose AND
-      archive payload-field rows (optional narrative pass-through; elided when absent —
-      the existing empty-elision pattern). Tests: accepted on propose/archive, carried
-      verbatim, rejected as unknown on every other command.
+- [ ] 2.1 `src/core/emit-composition.ts`: the structured `pr_attachment` object added to
+      the propose AND FF payload-field rows; flat `pr_url` + `pr_state` added to the ARCHIVE
+      row (archive resolves no attachment — it reports observed state). Optional narrative
+      pass-through, elided when absent (the existing empty-elision pattern). Tests:
+      `pr_attachment` accepted on propose/ff and carried verbatim; `pr_url`/`pr_state`
+      accepted on archive; each rejected as unknown on the commands outside its set
+      (`pr_attachment` on archive, `pr_url` on propose, both on review/address-reviews/…).
+      The ff row is not optional — `orbit-pr-lifecycle`'s entry-points requirement gives ff
+      the IDENTICAL choreography, so omitting it makes the promised ff path fail at the
+      write gate.
 
 ## 3. Propose choreography (workflow body)
 
@@ -35,8 +41,11 @@ Implementation chunks:
       branch (create off default if absent), open the program PR on first configured touch
       (draft, program-intent body). Degradation: no remote/no `gh`/`never` → skip with one
       note.
-- [ ] 3.1b Propose body: branch preconditions — default-branch resolution (`gh repo view`
-      → `git symbolic-ref` fallback → skip with note), dirty-tree skip, existing-branch
+- [ ] 3.1b Propose body: branch preconditions — REMOTE resolution first (one remote wins
+      whatever its name; multiple → prefer `origin` else skip with an ambiguity note; the
+      resolved remote drives push target, default base, and `gh` repo), default-branch
+      resolution (`gh repo view` → `git symbolic-ref refs/remotes/<remote>/HEAD` → skip with
+      note), default-branch NAME COLLISION skip, dirty-tree skip, existing-branch
       reuse-or-report (never force-move/rename); mid-flight push/`gh` failure skips the
       remainder with a completed-vs-skipped note and elides the emit's PR fields.
 - [ ] 3.2 Propose body: NO consent prompt and NO consent-scope change (D-d6-6) — the
@@ -46,7 +55,9 @@ Implementation chunks:
 - [ ] 3.3 Propose body: the no-CI surfacing note — first PR on a repo with no
       `.github/workflows/` gets the one-line "no CI configured" note in the completion
       output (reporting only).
-- [ ] 3.4 Propose emit: record `pr_url`/`pr_state` in the payload when a PR was opened.
+- [ ] 3.4 Propose emit: record the `pr_attachment` object in the payload — `branch` +
+      `granularity` always when the choreography ran, `url`/`state` when a PR opened, `doc`
+      when granularity is per-architecture; whole object elided when nothing ran.
 - [ ] 3.5 `src/core/templates/workflows/ff-change.ts`: the IDENTICAL choreography +
       preconditions + degradation + emit fields as propose (ff is propose-in-one-breath —
       a change is never treated differently for how it was started). `new`/`continue` are
@@ -60,13 +71,20 @@ Implementation chunks:
       entry for program PRs) → `gh pr ready` per the generalized READY rule (per-change:
       flip now, incl. on `gate_overridden` archives; program: append only, flip at
       arc-done — checked from `orbit architecture status --json` + the architecture
-      trail). Ordering invariant: flip only after the push succeeds.
-- [ ] 4.2 Archive tail: PR DISCOVERY — read `pr_url` from the change's propose emit, fall
+      trail). Ordering invariant: flip only after the push succeeds. Stage-entry SOURCE
+      ORDER: the arc status-log entry written at this archive when present, else composed
+      from the archive emit's `final_assessment` + change name + date (a status log is a
+      convention, not an architecture-grammar requirement) — never blocking, never
+      inventing; the source used is named in one line.
+- [ ] 4.2 Archive tail: PR DISCOVERY — read the `pr_attachment` object from the latest
+      attachment-bearing propose OR ff emit on the change's trail (its `granularity` decides
+      flip-vs-append, its `branch` names the commit target — neither re-derived), fall
       back to `gh pr list --head <branch>`, and when neither resolves skip with a one-line
-      note (the seam flips and records, it never creates). Commit scope is the archive's
-      ENUMERATED own-writes (synced baseline, the moved archive dir, `.openspec.yaml`,
-      at-archive-note edits) — never `git add -A`; unrelated dirty paths stay unstaged and
-      are named.
+      note (the seam flips and records, it never creates). Commit scope is an ENUMERATED
+      FILE LIST — the exact capability spec files the sync reported changed (never the
+      `orbit/specs/` prefix), the moved archive dir, `.openspec.yaml`, and the explicit
+      at-archive-note edits — never `git add -A`; unrelated dirty paths stay unstaged and
+      are named. Test with an unrelated dirty file INSIDE `orbit/specs/`.
 - [ ] 4.3 Archive tail degradation: push/`gh` failure skips the remaining tail with a
       one-line note naming completed vs skipped steps; the archive itself never rolls
       back or blocks; `pr: never`/no-remote leaves the flow byte-identical to today.
@@ -78,12 +96,18 @@ Implementation chunks:
 
 ## 5. Surface teach-in
 
-- [ ] 5.1 `src/core/templates/workflows/onboard.ts`: teach the PR lifecycle — config
-      vocabulary, citation-selected granularity, draft/READY semantics, merging-stays-
-      human.
+- [ ] 5.1 `src/core/templates/workflows/onboard.ts`: teach the PR lifecycle AT THE TWO
+      SEAMS (per the `orbit-onboard` delta) — the propose-phase paragraph names the draft
+      PR + the three `pr:` values + citation-selected granularity + the uncited fallback +
+      the no-remote/no-`gh` degradation; the archive-phase paragraph names the tail and
+      that MERGING IS THE USER'S ACT. Unconditional on the reading project's config (the
+      body is a generated constant). Also update the Quick-reference table if any command's
+      one-line description changes.
 - [ ] 5.2 `src/core/templates/workflows/architect.ts`: at completion ratification, when
       `orbit architecture status --json` + the architecture trail show ARC-DONE, the readout
-      surfaces the program PR's URL (from the trail record at its birth), its DRAFT state,
+      surfaces the program PR's URL — found by scanning change trails (active AND archived)
+      for `pr_attachment` objects with `granularity: per-architecture` and a matching `doc`,
+      most recent wins — its DRAFT state,
       and `gh pr ready <n>` / `gh pr merge <n>` as the user's acts — recommend, never
       invoke; no outward write from this body.
 - [ ] 5.3 Conventions echo sites: the residual outward-actions line in the
@@ -106,6 +130,18 @@ apply gate's arithmetic covers only apply-completable work.)
   provenance-invariant; (g) confirmed, zero engine git. Exit criteria stay UNTOUCHED, and
   the section stays a charter (what the stage is chartered to do) — resolved questions are
   marked, never deleted, per the arc doc's genre and D1's precedent.
+- 5.7 Record the single-session stance as an ARC-LEVEL RULING in the arc doc's rulings
+  index (Sal, 2026-08-20): orbit is single-user, single-session — one user-invoked lifecycle
+  command at a time; concurrency support (locking, serialization, optimistic retry,
+  conflict-merge) is an explicit NON-GOAL across the arc, and findings asking for it are
+  answered with a named limit plus detection. It is cross-stage (it governs every future
+  capability touching shared or remote state), so it belongs in the rulings index rather
+  than only in D6's design.
+- 5.8 Record the R-d-4 SUBTRACTION EXCEPTION in the arc doc alongside D6's status-log entry
+  (user-ratified 2026-08-20): D6 adds an outward-facing capability with no predecessor to
+  reclaim from, so it names no removal; the rule stands and the departure is dated and
+  visible rather than silent. Rationale lives in design.md — the arc doc carries the
+  one-line record, not a restatement.
 - 5.6 Append the D6 status-log entry to the arc doc (the outcome narrative; the stage
   section holds the charter, the log holds what happened).
 
@@ -114,8 +150,35 @@ apply gate's arithmetic covers only apply-completable work.)
 - [ ] 6.1 `npm run build && node bin/orbit.js update --force`; generated surface matches
       source (parity hashes re-pinned as needed); full `npm test` green; strict
       validation; `orbit fingerprint d6-pr-lifecycle --check` verified.
-- [ ] 6.2 Live smoke in a scratch repo: `pr:` unset → byte-identical behavior; no-remote
-      degradation note; config reader values.
+- [ ] 6.2 INTEGRATION HARNESS (`test/integration/pr-lifecycle/`): a disposable git repo per
+      case (real `git init`, real commits, a bare repo as the remote) plus a `gh` STUB on
+      PATH that records invocations and returns scripted JSON. Template-string assertions
+      cannot validate a git/GitHub state machine — this harness is what makes exit criterion
+      2's "tested, not assumed" honest. No concurrency cases (single-session non-goal).
+- [ ] 6.2a Harness cases — CONFIG: explicit `pr: never` runs the full propose→archive
+      lifecycle with ZERO git/`gh` invocations recorded (asserted against the stub's log,
+      not just output text); unset `pr:` byte-identical to `never`; each of the three values
+      resolves; unrecognized value inert with a warning.
+- [ ] 6.2b Harness cases — DEGRADATION: no remote; `gh` absent from PATH; multiple remotes
+      with no `origin` (ambiguity skip); default-branch resolution failure. Each degrades
+      with one note, exit 0, artifacts intact.
+- [ ] 6.2c Harness cases — PRECONDITIONS: non-`main` default branch; dirty tree skip;
+      branch-name collision with the default branch; per-proposal collision with unrelated
+      work; PROGRAM branch reuse across two successive citing changes (the case the old
+      rule wrongly rejected); remote-ahead fast-forward and remote-diverged skip.
+- [ ] 6.2d Harness cases — ENTRY POINTS + ATTACHMENT: `ff` end-to-end producing the same
+      branch/PR/`pr_attachment` as propose; `new`+`continue` reaching archive unattached;
+      the attachment object's shape per path (per-proposal without `doc`, per-architecture
+      with it); branch-without-PR after a `gh pr create` failure.
+- [ ] 6.2e Harness cases — ARCHIVE TAIL: discovery from the propose emit; discovery
+      fallback via the `gh` stub; zero/multiple/closed-match outcomes each distinct;
+      enumerated commit scope with an unrelated dirty file inside `orbit/specs/`; ordering
+      invariant (`gh pr ready` recorded only after a successful push); push-failure skip
+      with the archive still complete; program-mode append-without-flip.
+- [ ] 6.2f Harness cases — ARC-DONE READOUT: both valid orderings (final archive →
+      ratification → closing review, and closing review → ratification) surface the human
+      acts; the readout is idempotent across repeated architect invocations; the program PR
+      is located by matching `doc` with two programs present in one repo.
 - [ ] 6.3 (User-validation handoff) Dogfood exit criterion 1 on a real change: draft PR
       at propose, CI visible from day one, READY at archive, merged by the user — and
       exit criterion 3's no-off-script check across the dogfood (no PR/merge/release

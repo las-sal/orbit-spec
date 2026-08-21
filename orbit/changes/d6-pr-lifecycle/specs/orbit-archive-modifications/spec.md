@@ -5,20 +5,54 @@
 ### Requirement: PR-attached archive tail
 
 The archive flow SHALL, for a PR-ATTACHED change, continue past the archive emit as one
-designed tail. ATTACHMENT AND PR IDENTITY are DISCOVERED, never assumed: read `pr_url` from
-the change's own propose emit on its trail (the authoritative record per
-`orbit-pr-lifecycle`'s frozen-attachment rule); when absent, fall back to
-`gh pr list --head <branch> --json url,isDraft`; when neither yields a PR under an active
-`pr:` config (closed manually, branch renamed, change created without propose), the
-tail SKIPS with a one-line note naming the miss and NEVER opens a replacement — the archive
-seam flips and records, it does not create. The tail then: commits the archive's OWN WRITES —
-an ENUMERATED path set (the synced baseline `orbit/specs/`, the moved
-`orbit/changes/archive/<YYYY-MM-DD>-<name>/`, the change's `.openspec.yaml`, and any
-at-archive-note edits the flow itself made), never `git add -A`; unrelated dirty paths are
+designed tail. ATTACHMENT AND PR IDENTITY are DISCOVERED, never assumed: read the
+`pr_attachment` object from the change's own trail — the LATEST attachment-bearing PROPOSE
+**or FF** emit (both are equally authoritative; `/orbit:ff` carries the identical
+choreography per `orbit-pr-lifecycle`'s entry-points requirement, so a tail that reads only
+propose emits loses every ff-started change's attachment). That object supplies BOTH facts
+the tail needs: `granularity` decides whether this seam flips READY (per-proposal) or
+appends only (per-architecture), and `branch` names what to commit to — neither is
+re-derived from config or the citation. When the object is absent, or present without a
+`url`, fall back to `gh pr list` — but the fallback SHALL identify EXACTLY ONE PR before
+acting, because a head branch does not uniquely identify a pull request. The query is
+CONSTRAINED on all four axes and every one is required: the RESOLVED REMOTE's repository
+(`--repo`, so a fork's PRs are never mistaken for this repo's), the `--head <branch>` from
+the attachment or the mechanical name, `--state open` (a closed or merged PR is not a
+flip target), and the RESOLVED BASE — candidates whose base is not the resolved default
+branch are DISCARDED, since a PR from this branch into some other branch is a different
+effort. THREE outcomes, each a DISTINCT one-line note, none of them silent:
+
+- **Exactly one survivor** — the tail proceeds against it.
+- **Zero survivors** (closed manually, branch renamed, change created without propose, or
+  every candidate filtered out) — SKIP with a note naming the miss.
+- **More than one survivor** — SKIP with a note naming the AMBIGUITY and listing the
+  candidate URLs. orbit never picks by recency or number: rewriting the wrong PR's
+  description and flipping it READY is worse than doing nothing, and the user is present
+  by construction (per `orbit-pr-lifecycle`'s operating-assumption requirement) to say
+  which one is meant.
+
+A `gh` invocation that ERRORS (auth, rate limit, network) is degradation, not a zero
+result: skip with the failure note rather than reporting a missing PR. The tail NEVER opens
+a replacement in any outcome — the archive seam flips and records, it does not create. The tail then: commits the archive's OWN WRITES —
+an ENUMERATED FILE LIST, never a directory prefix and never `git add -A`: the exact
+capability spec files this archive's sync REPORTED as changed (not the `orbit/specs/`
+directory — staging the directory would sweep dirty edits to capabilities this archive never
+synced, contradicting the unrelated-paths guarantee one step before READY), the exact moved
+`orbit/changes/archive/<YYYY-MM-DD>-<name>/`, the change's `.openspec.yaml`, and the
+explicit list of at-archive-note edits the flow itself made; unrelated dirty paths are
 left unstaged and named in a one-line note, so a session's stray edits can never ride into
 a PR about to be flipped READY → push → rewrite the PR description to the ACHIEVEMENT landmark
-(per-change PRs) or APPEND the stage entry (program PRs; adapted from the arc status-log
-entry written at this seam) → flip READY for PER-CHANGE PRs only. Program PRs are APPENDED
+(per-change PRs) or APPEND the stage entry (program PRs) → flip READY for PER-CHANGE PRs only.
+
+The program stage entry's SOURCE is ORDERED, never assumed: (1) the arc STATUS-LOG entry
+written at this same archive, when one was written — the write-once-publish-twice case the
+per-architecture design intends; (2) otherwise the archive EMIT's `final_assessment` plus
+the change name and date, composed into the same entry shape. The fallback is not an edge
+case: a status log is a CONVENTION of this repo's arc doc, not a requirement of the
+architecture grammar (which mandates only `### Stage <id>` headings), so an adopter's
+program doc may legitimately have none — and even here the log entry is an at-archive note
+the flow may not have reached. The tail SHALL NOT block, prompt, or invent narrative when
+source (1) is absent; it composes from (2) and notes which source it used in one line. Program PRs are APPENDED
 and never flipped by the tail: arc-done is later than any archive, and its flip is the
 human's act surfaced at the architect ratification (per `orbit-pr-lifecycle`). ORDERING INVARIANT: the
 flip fires only AFTER the archive commit is pushed — the PR must contain its own archive
@@ -39,13 +73,28 @@ inside the tail.
 
 #### Scenario: PR discovery finds nothing
 
-- **WHEN** the tail runs on a change whose PR was closed manually (no `pr_url` on the propose emit resolves, and `gh pr list --head` returns none)
+- **WHEN** the tail runs on a change whose PR was closed manually (no attachment on any propose/ff emit resolves, and the constrained `gh pr list` query returns no open PR into the resolved base)
 - **THEN** the tail skips with a one-line note naming the miss; no replacement PR is opened
+
+#### Scenario: Discovery fallback constrains on all four axes
+
+- **WHEN** the fallback query runs for a branch that has an open PR into the resolved default branch, a closed PR from an earlier attempt, and an open PR into a different base
+- **THEN** repo + head + `--state open` + resolved-base filtering leaves exactly one candidate and the tail proceeds against it; the closed and wrong-base PRs are never touched
+
+#### Scenario: Ambiguous discovery skips rather than guesses
+
+- **WHEN** the constrained query still yields more than one open PR from this branch into the resolved base
+- **THEN** the tail SKIPS with a one-line note naming the ambiguity and listing the candidate URLs; no PR is rewritten and none is flipped — recency and PR number are never used as tie-breaks
+
+#### Scenario: A failing gh query is degradation, not a miss
+
+- **WHEN** the fallback `gh pr list` invocation errors (auth, rate limit, network)
+- **THEN** the tail skips with the FAILURE note rather than reporting a missing PR, and the archive itself remains complete
 
 #### Scenario: Unrelated dirty paths never ride the commit
 
-- **WHEN** the session left unrelated tracked edits dirty at the archive tail
-- **THEN** only the archive's enumerated own-writes are staged and committed; the unrelated paths remain unstaged and are named in a one-line note
+- **WHEN** the session left unrelated tracked edits dirty at the archive tail — INCLUDING a dirty file inside `orbit/specs/` belonging to a capability this archive's sync did not touch
+- **THEN** only the archive's enumerated own-write FILES are staged and committed; the unrelated paths (inside `orbit/specs/` or anywhere else) remain unstaged and are named in a one-line note
 
 #### Scenario: Ordering invariant
 
@@ -64,6 +113,11 @@ inside the tail.
 - **WHEN** a citing change archives mid-arc
 - **THEN** the tail commits, pushes, and appends the stage entry to the program PR body —
   and does NOT flip READY
+
+#### Scenario: Stage entry falls back when no status log exists
+
+- **WHEN** a citing change archives against a program doc whose architecture doc carries no status log (or where no log entry was written at this archive)
+- **THEN** the stage entry is composed from the archive emit's `final_assessment` plus the change name and date, in the same entry shape; one line names the source used, and the tail neither blocks nor prompts
 
 ## MODIFIED Requirements
 

@@ -9,3 +9,5 @@ base_fingerprints:
     Generic emit surface with a narrative-only payload contract: sha256:1bc046f761cae1842222ff6da42f34dedd6435360186976c6f142f6bedb8038a
   orbit-archive-modifications:
     Archive run summary written: sha256:88e5e3cc0bfee2d35c45d864fac33c05bfa202186f5c349b7d65c2158b5101cb
+  orbit-onboard:
+    Canonical-flow walkthrough section: sha256:9728d4cbdf14298f563b1d7abd1b52c0a3f50d1c36aee6285c3ad8e7cc446300

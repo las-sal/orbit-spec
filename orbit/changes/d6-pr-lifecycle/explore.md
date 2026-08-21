@@ -123,6 +123,54 @@ PR/merge/release action occurs outside the config+provenance rules across the do
   narrative once, publish twice); the arc-done rewrite composes the whole-program
   landmark. (Sal, ratified at propose)
 
+### Post-promotion revisions (the review cadence)
+
+(The exploration is the historical record; these entries keep it HONEST rather than frozen
+at promotion. Each names what the earlier entry above got wrong and where the ratified
+decision now lives.)
+
+- **2026-08-12 — SUPERSEDES the two-key config sketch: ONE scalar, three modes.** The
+  2026-08-10 branch-granularity entry and its 2026-08-11 refinement described `pr:` as a
+  block with separate `open:` and `program-branches:` keys. Ratified instead: a single
+  scalar `pr: never | per-proposal | per-architecture` — the two-key form had a
+  combination (`open: never` + `program-branches: true`) with two defensible readings.
+  Uncited changes under `per-architecture` FALL BACK to the per-proposal path. Lives in
+  design.md D-d6-1 and `orbit-pr-lifecycle`'s config-vocabulary requirement. (Sal)
+- **2026-08-12 — SUPERSEDES "(e-residual)" on the arc-done flip: the program flip is the
+  HUMAN's act.** The promotion-era entries assumed some body would flip READY at arc-done.
+  The first review pass showed no body OBSERVES that moment — the archive tail runs before
+  the closing architecture review, so no task could ever trigger it. Ratified: the
+  architect flow SURFACES the program PR's URL, its draft state, and the `gh pr ready` /
+  `gh pr merge` commands; orbit flips nothing. Per-change flips remain the tail's. Lives in
+  design.md D-d6-2/D-d6-3. (Sal)
+- **2026-08-12 — SUPERSEDES the conditional-consent-scope reading of "(f)".** The
+  2026-08-10 (f) entry resolved provenance-INVARIANCE, but the promoted artifacts also read
+  as adding propose to D1's consent-scoped set on AI-mediated paths — which contradicts
+  D1's CLOSED set. Ratified: propose is NOT consent-scoped, NO new gate, NO schema bump.
+  Moving explore → propose is a pure user decision, the no-chaining contract already bars
+  an unbidden AI propose, and the outward write is a reversible draft PR. What survives is
+  the invariance half. Named re-entry trigger: an unrequested PR from an unbidden propose.
+  Lives in design.md D-d6-6. (Sal: "i'd want an AI mediated propose to act just like i
+  typed it")
+- **2026-08-20 — NARROWS the premise's "window onto the change for its whole life".** D6
+  guarantees pushes at exactly TWO seams — the propose choreography and the archive tail
+  (the seams-only refresh decision above). Between them the PR shows whatever the user
+  pushes. The aspiration in the Premise predates the seams-only decision; adding
+  review/apply/resolution-seam pushes would contradict it and grow the change
+  substantially. Recorded as a Non-Goal in design.md. (Sal)
+- **2026-08-20 — ADDS: recovery from a mid-flight choreography failure is MANUAL.** No
+  retry entry point, no idempotent re-run surface. The failure note names the exact
+  completing commands and states the unattached consequence. Single-session means the user
+  is present when it fails. Lives in `orbit-propose-modifications`' choreography
+  requirement. (Sal)
+- **2026-08-20 — ADDS an ARC-LEVEL stance: orbit is single-user, single-session.**
+  Concurrency support (locking, serialization, optimistic retry, conflict-merge) is an
+  explicit NON-GOAL; findings asking for it are answered with a named limit plus
+  DETECTION. Recorded as a Non-Goal in design.md, as a limits requirement in
+  `orbit-pr-lifecycle`, and promoted to the arc doc's rulings index at archive (task 5.7).
+  (Sal: "this is designed for single user, single session … no concurrency support
+  needed")
+
 ## Open questions
 
 (none — all resolved to Decisions)

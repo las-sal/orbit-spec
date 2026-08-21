@@ -16,8 +16,17 @@ it off the default branch if absent) and open the program PR if it does not yet 
 `gh`) the choreography is skipped with a one-line note. A step that FAILS mid-flight (push
 rejected for auth, branch protection, or divergence; `gh pr create` erroring) SHALL skip the
 remaining choreography with a one-line note naming completed vs skipped steps, elide
-`pr_url`/`pr_state` from the propose emit, and never block or roll back artifact generation
-— the same apply-parity degradation the archive tail carries. The invocation NEVER carries a "pr"
+`pr_attachment`'s `url`/`state` from the emit (the object persists with `branch` and
+`granularity` when the branch work succeeded), and never block or roll back artifact
+generation — the same apply-parity degradation the archive tail carries. RECOVERY IS MANUAL
+BY DESIGN (v1): there is no retry entry point and no idempotent re-run surface. The failure
+note SHALL name the exact commands that complete the interrupted work — the push
+(`git push -u <resolved-remote> <branch>`) and, when PR creation was what failed, the
+creation (`gh pr create --draft --base <resolved-base> --head <branch>`) — and SHALL state
+the consequence of leaving it: the change proceeds UNATTACHED, and its archive tail will
+find no PR, note it, and skip. This is deliberate: orbit is single-user and single-session
+(see `orbit-pr-lifecycle`'s operating-assumption requirement), so the user is present at the
+moment of failure and a precise message serves better than a retry surface. The invocation NEVER carries a "pr"
 word — the config is the standing declaration; behavior after entry is identical on every
 provenance path. The choreography's outward writes ride the user's OWN invocation of propose
 — propose is NOT promoted to the consent-scoped set and fires NO consent prompt: the
@@ -47,6 +56,11 @@ scaffolding, never prompting.
 - **WHEN** the push is rejected mid-choreography (auth, branch protection, or divergence)
 - **THEN** the PR step is skipped, one note names completed vs skipped steps, `pr_url`/`pr_state` are elided from the propose emit, and the generated artifacts remain intact
 
+#### Scenario: Failure note carries manual recovery
+
+- **WHEN** the push succeeds but `gh pr create` fails
+- **THEN** the note names the completed and skipped steps, gives the exact `gh pr create --draft --base <base> --head <branch>` command that completes the work, and states that leaving it unattached means the archive tail will find no PR and skip; no retry surface is offered and nothing is rolled back
+
 #### Scenario: No-CI note on first PR
 
 - **WHEN** the first PR for a change opens on a repo lacking `.github/workflows/`
@@ -56,28 +70,74 @@ scaffolding, never prompting.
 ### Requirement: Branch preconditions at propose
 
 Branch creation SHALL resolve its preconditions explicitly, never by implementer choice.
+
+The REMOTE is resolved before anything else, since branch identity, default base, and the
+GitHub repository must all agree: exactly one remote → use it (whatever its name — `origin`
+is a convention, not a requirement); multiple remotes → prefer `origin` when present,
+otherwise the choreography is SKIPPED with a one-line note naming the ambiguity and the
+candidates (orbit never guesses which remote owns the PR); zero remotes → the degraded path
+(`never`). All subsequent steps — push target, default-branch resolution, and `gh`
+repository selection — use that ONE resolved remote.
+
 The DEFAULT BRANCH is resolved as `gh repo view --json defaultBranchRef` when `gh` is
-available, falling back to `git symbolic-ref refs/remotes/origin/HEAD`; when neither
-resolves, the choreography is skipped with a one-line note naming the failure (the PR layer
-degrades, the lifecycle never blocks). A DIRTY working tree at the choreography step (any
+available, falling back to `git symbolic-ref refs/remotes/<resolved-remote>/HEAD`; when
+neither resolves, the choreography is skipped with a one-line note naming the failure (the
+PR layer degrades, the lifecycle never blocks). A mechanical branch name that COLLIDES with
+the resolved default branch (a change literally named `main`, or an architecture doc whose
+stem is the default branch) makes `<head> → <base>` impossible: the choreography SKIPS with
+a one-line note naming the collision rather than creating an unmergeable PR or misclassifying
+the default branch as an unrelated existing branch. A DIRTY working tree at the choreography step (any
 tracked modification outside the change's own generated artifacts and moved staging
 material) SHALL skip the branch/PR steps with a one-line note rather than sweep unrelated
 edits onto the branch — artifact generation has already succeeded and is never rolled back.
-An EXISTING branch of the target name is REUSED when its checked-out state is compatible
-(the change's artifacts commit onto it); when a same-named branch exists but is unrelated
-(diverged from the resolved default branch by commits the change did not author), the
-choreography is skipped with a one-line note naming the collision — orbit never force-moves
-or renames a user's branch.
+An EXISTING branch of the target name is REUSED when it is COMPATIBLE, and compatibility is
+defined PER PATH because the two paths mean opposite things by "expected history":
+
+- **Per-proposal branch** — compatible when it is either absent, or present and containing
+  no commits beyond the resolved default branch other than this change's own artifact
+  commits. A same-named branch carrying unrelated work is a COLLISION: skip with a one-line
+  note naming it.
+- **Program branch** — compatible when it exists and descends from the resolved default
+  branch. Commits authored by OTHER citing changes are EXPECTED, not disqualifying — a
+  program branch accumulates every stage's work by design, so a rule that rejected
+  "commits this change did not author" would reject every program branch after its first
+  stage. Only a branch that has diverged from the default branch's history entirely
+  (unrelated root) is a collision.
+
+Before reusing any existing branch the choreography SHALL fetch and compare against the
+resolved remote's tip; when the remote is AHEAD, it fast-forwards if possible and otherwise
+SKIPS with a one-line note naming the divergence rather than committing onto a stale local
+branch. orbit never force-moves, renames, rebases, or force-pushes a user's branch.
 
 #### Scenario: Default branch resolved, not assumed
 
 - **WHEN** the choreography runs in a repo whose default branch is not `main`
 - **THEN** the branch is created off the resolved default branch, and a repo where neither resolution method succeeds skips the choreography with a note instead of guessing
 
+#### Scenario: Remote resolved, never assumed
+
+- **WHEN** the repository has exactly one remote not named `origin`, or has several remotes with no `origin`
+- **THEN** the single remote is used in the first case; the second SKIPS the choreography with a one-line note naming the ambiguity and the candidate remotes — push target, default base, and `gh` repository never disagree
+
+#### Scenario: Branch name colliding with the default branch skips
+
+- **WHEN** the mechanical branch name equals the resolved default branch (a change named `main`, or a program doc whose stem is the default branch)
+- **THEN** the choreography skips with a one-line note naming the collision; no unmergeable `<head> → <base>` PR is attempted and the default branch is never treated as an unrelated existing branch
+
 #### Scenario: Dirty tree skips rather than sweeps
 
 - **WHEN** unrelated tracked modifications exist at the choreography step
 - **THEN** no branch is created and no commit is made; the artifacts remain generated and validated, and one note names the skipped steps
+
+#### Scenario: Program branch reused across stages
+
+- **WHEN** a second (and third, and tenth) citing change is proposed onto an existing program branch already carrying earlier stages' commits
+- **THEN** the branch is REUSED — commits by other citing changes are expected history, never a collision — and only a branch unrelated to the default branch's history is reported and skipped
+
+#### Scenario: Remote-ahead branch is not committed onto blindly
+
+- **WHEN** the resolved remote's tip is ahead of the local branch at the choreography step
+- **THEN** the choreography fast-forwards when possible, and otherwise SKIPS with a one-line note naming the divergence — never committing onto a stale local branch, never rebasing or force-pushing
 
 #### Scenario: Existing branch reused or reported
 
