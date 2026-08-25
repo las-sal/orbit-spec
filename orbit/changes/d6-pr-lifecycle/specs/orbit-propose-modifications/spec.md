@@ -94,6 +94,14 @@ degrades exactly as that requirement states: the choreography SKIPS with the one
 it prescribes, and the lifecycle never blocks. The preconditions below are propose's OWN —
 they govern creating a branch, which the archive seam never does.
 
+Wherever this capability says a branch is created "off the default branch", the BASE REF is
+the RESOLVED REMOTE's default-branch ref (`<resolved-remote>/<default>`), never the local ref
+of the same name. The existence check below already fetches, so that ref is current, while
+the local ref may be arbitrarily stale in a checkout the user has not pulled — and two
+implementers would otherwise reasonably write `git switch -c <name> <default>` and
+`git switch -c <name> <resolved-remote>/<default>` and cut the branch from different commits.
+Naming it once here binds every creation site, per-proposal and program alike.
+
 A mechanical branch name that COLLIDES with
 the resolved default branch (a change literally named `main`, or an architecture doc whose
 stem is the default branch) makes `<head> → <base>` impossible: the choreography SKIPS with
@@ -157,6 +165,11 @@ Before reusing any existing branch the choreography SHALL fetch and compare agai
 resolved remote's tip; when the remote is AHEAD, it fast-forwards if possible and otherwise
 SKIPS with a one-line note naming the divergence rather than committing onto a stale local
 branch. orbit never force-moves, renames, rebases, or force-pushes a user's branch.
+
+#### Scenario: New branches are cut from the remote ref, not a stale local one
+
+- **WHEN** a branch is created in a checkout whose local default-branch ref is behind the resolved remote's
+- **THEN** it is cut from `<resolved-remote>/<default>` — the ref the existence check already fetched — so the base commit does not depend on when the user last pulled
 
 #### Scenario: Default branch resolved, not assumed
 

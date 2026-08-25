@@ -17,7 +17,10 @@ the tail per the availability rule; it never blocks the archive.
 
 Because the preflight observes real state rather than restating the record, a PR may be
 found ALREADY READY — the user may have flipped it by hand, and an ADOPTED program PR may
-have been flipped by an earlier stage. That is a NORMAL observation, not an anomaly: the
+have been flipped by the user at an earlier point — including at a prior program's arc-done,
+for a program PR adopted afterward. No STAGE ever performs a program flip (every program flip
+is the human's act per `orbit-pr-lifecycle`); the PR simply arrives already READY. That is a
+NORMAL observation, not an anomaly: the
 emit records `"ready"` truthfully, and the tail's flip step is IDEMPOTENT — it does not
 re-flip, does not error, and reports the PR was already READY in one line. The tail's other
 steps (commit, push, description rewrite or stage-entry append) proceed unchanged. ATTACHMENT AND PR IDENTITY are DISCOVERED, never assumed: read the
@@ -126,10 +129,21 @@ a replacement in any outcome — the archive seam flips and records, it does not
 an ENUMERATED FILE LIST, never `git add -A` and never a SHARED directory prefix: the exact
 capability spec files this archive's sync REPORTED as changed (not the `orbit/specs/`
 directory — staging the directory would sweep dirty edits to capabilities this archive never
-synced, contradicting the unrelated-paths guarantee one step before READY), the change's
-`.openspec.yaml`, and the explicit list of at-archive-note edits the flow itself made;
+synced, contradicting the unrelated-paths guarantee one step before READY), the DELETION the
+move produced at the pre-move path `orbit/changes/<change-name>/`, and the explicit list of
+at-archive-note edits the flow itself made;
 unrelated dirty paths are left unstaged and named in a one-line note, so a session's stray
 edits can never ride into a PR about to be flipped READY.
+
+Staging the DELETION is not optional bookkeeping: the archive move is a FILESYSTEM move (the
+engine performs no git operation — see `orbit-pr-lifecycle`'s zero-engine-git requirement), so
+git observes a deletion at the old path and an addition at the new one as two independent
+facts. Staging only the addition produces a pushed commit containing the change tree TWICE,
+with the deletion left dirty in the very tree the flip is about to announce as READY. Propose
+carries the symmetric clause for `orbit/explore/<change-name>/`; archive needs its own. The
+change's `.openspec.yaml` requires no separate entry — post-move it lives INSIDE the archived
+tree and is covered by the whole-tree staging below, while its pre-move path is covered by the
+deletion.
 
 The MOVED ARCHIVE DIRECTORY `orbit/changes/archive/<YYYY-MM-DD>-<name>/` is the ONE path
 staged as a whole, and this is a BOUNDED, PRINCIPLED EXCEPTION rather than a lapse in the
@@ -153,9 +167,21 @@ program doc may legitimately have none — and even here the log entry is an at-
 the flow may not have reached. The tail SHALL NOT block, prompt, or invent narrative when
 source (1) is absent; it composes from (2) and notes which source it used in one line. Program PRs are APPENDED
 and never flipped by the tail: arc-done is later than any archive, and its flip is the
-human's act surfaced at the architect ratification (per `orbit-pr-lifecycle`). ORDERING INVARIANT: the
+human's act, surfaced by ANY architect invocation that observes arc-done — never tied to the
+completion-ratification interaction (per `orbit-pr-lifecycle`). ORDERING INVARIANT: the
 flip fires only AFTER the archive commit is pushed — the PR must contain its own archive
-commit before READY is honest. SCOPE: THE ATTACHMENT DECIDES, NOT THE LIVE CONFIG. The tail runs whenever a
+commit before READY is honest. BULK-ARCHIVE IS OUT OF THIS TAIL'S SCOPE. `/orbit:bulk-archive` archives SEVERAL changes in
+one invocation, and the tail is inherently single-branch: HEAD can be on only one branch, so
+under `per-proposal` — where every attached change has its own — the HEAD precondition would
+skip all but at most one change, and which one would depend on the incidental fact of where
+the user was standing. Rather than let outward behavior fall out of that accident, bulk-archive
+performs NO tail: each change is synced, moved, and emitted exactly as pre-capability, and its
+PR is left DRAFT for the user to flip when they choose. The bulk-archive completion readout
+SHALL NAME the attached changes it left unflipped, with their PR URLs — reporting, never
+acting, per `orbit-conventions`' residual outward-actions rule — so a batch never silently
+strands a PR. Single-change `/orbit:archive` is the seam that flips.
+
+SCOPE: THE ATTACHMENT DECIDES, NOT THE LIVE CONFIG. The tail runs whenever a
 `pr_attachment` resolves for this change, whatever `pr:` reads at archive time; UNATTACHED
 changes — including every change proposed under `pr: never`, and every change whose propose
 degraded for want of a remote or `gh` — end exactly as pre-capability (readout; commits stay
@@ -178,6 +204,11 @@ inside the tail.
 - **THEN** the flow continues commit → push → achievement rewrite → `gh pr ready` with no
   further prompts, and the completion readout names the READY PR
 
+#### Scenario: Bulk-archive runs no tail and names what it left draft
+
+- **WHEN** `/orbit:bulk-archive` archives a batch that includes PR-attached changes
+- **THEN** each change is synced, moved, and emitted exactly as pre-capability with NO commit, push, description rewrite, or flip; the completion readout NAMES the attached changes left unflipped with their PR URLs; and the per-change consent preview omits the outward-writes line because none will occur
+
 #### Scenario: Config flipped to never after propose does not abandon the PR
 
 - **WHEN** a change proposed under `pr: per-proposal` is archived after `pr:` has been set to `never`
@@ -185,7 +216,7 @@ inside the tail.
 
 #### Scenario: Already-READY PR is reported, not re-flipped
 
-- **WHEN** the preflight observes the PR is already READY (flipped by the user, or by an earlier stage of an adopted program PR)
+- **WHEN** the preflight observes the PR is already READY (flipped by the USER at an earlier point — including at a prior program's arc-done, for a program PR adopted afterward; never by a stage)
 - **THEN** the emit records `pr_state: "ready"` truthfully; the tail commits, pushes, and rewrites the description as usual, and the flip step is a no-op reported in one line — never an error and never a second `gh pr ready`
 
 #### Scenario: gh absent at archive skips before staging
@@ -222,6 +253,11 @@ inside the tail.
 
 - **WHEN** the fallback `gh pr list` invocation errors (auth, rate limit, network)
 - **THEN** the tail skips with the FAILURE note rather than reporting a missing PR, and the archive itself remains complete
+
+#### Scenario: The move's deletion is staged with its addition
+
+- **WHEN** the tail commits after the archive move relocated `orbit/changes/<name>/` to the dated archive path
+- **THEN** BOTH the deletion at the pre-move path and the addition at the archive path are staged, so the pushed commit records a move rather than a duplicated tree with a dirty deletion left behind
 
 #### Scenario: The moved archive tree stages whole; strays are named
 
@@ -274,7 +310,10 @@ program PR, the APPENDED stage entry. This is required precisely because the tai
 same entry consent and fires no second prompt of its own: a preview enumerating only in-repo
 writes would obtain consent for a spec sync and a directory move, then push to a remote and
 flip a pull request public. The outward line is OMITTED for unattached changes, so the
-pre-capability prompt is unchanged wherever no PR exists. The preview REPORTS what the tail
+pre-capability prompt is unchanged wherever no PR exists — and it is likewise OMITTED under
+`/orbit:bulk-archive`, which performs no tail (see this capability's tail requirement), so its
+per-change prompts have no outward writes to preview and keep the pre-capability content
+whatever each change's attachment state. The preview REPORTS what the tail
 will attempt; a tail that later degrades (no remote, `gh` failure, HEAD mismatch) still
 skips with its own note — the preview is not a promise that every step succeeds. A
 user-typed `/orbit:archive` runs with no consent prompt. Proceeding records
@@ -337,4 +376,4 @@ The system SHALL write a JSON summary to `orbit/changes/archive/<YYYY-MM-DD>-<ch
 #### Scenario: PR fields recorded at emit-time state
 
 - **WHEN** the archive completes for a PR-ATTACHED change (per `orbit-pr-lifecycle`)
-- **THEN** the archive run summary additionally includes `pr_url` and `pr_state` — the PR's URL and its state AS OBSERVED by the read-only preflight that precedes the emit — normally `"draft"`, but truthfully `"ready"` when the PR was already flipped (by the user, or by an earlier stage of an adopted program PR), and ELIDED when the state could not be observed. The field records what was seen, never a forward-looking claim about the flip this tail is about to perform. Both fields are absent for UNATTACHED changes — including changes originally proposed under `pr: never` — and present whenever an attachment resolves, EVEN IF `pr:` now reads `never`, per this capability's attachment-authority scope rule (the same invocation that runs the tail records its PR). The READY transition is evidenced by the PR itself and the completion readout, not by this record.
+- **THEN** the archive run summary additionally includes `pr_url` and `pr_state` — the PR's URL and its state AS OBSERVED by the read-only preflight that precedes the emit — normally `"draft"`, but truthfully `"ready"` when the PR was already flipped by the USER at an earlier point (including at a prior program's arc-done, for a program PR adopted afterward — never by a stage), and ELIDED when the state could not be observed. The field records what was seen, never a forward-looking claim about the flip this tail is about to perform. Both fields are absent for UNATTACHED changes — including changes originally proposed under `pr: never` — and present whenever an attachment resolves, EVEN IF `pr:` now reads `never`, per this capability's attachment-authority scope rule (the same invocation that runs the tail records its PR). The READY transition is evidenced by the PR itself and the completion readout, not by this record.

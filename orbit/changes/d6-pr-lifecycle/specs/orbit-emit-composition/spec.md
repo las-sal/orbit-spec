@@ -30,7 +30,8 @@ closed or merged PR is NOT representable — the field records the draft/ready a
 a body that cannot observe the state elides the field). The archive emit is written after the
 tail's READ-ONLY PREFLIGHT and before its mutations, so it records what the preflight
 OBSERVED — normally `"draft"`, and truthfully `"ready"` when the PR was already flipped (by
-the user, or by an earlier stage of an adopted program PR);
+the USER at an earlier point, including at a prior program's arc-done for a program PR
+adopted afterward — never by a stage);
 the READY transition that the tail performs afterward is evidenced by the PR itself and the
 completion readout, NOT by a field asserting a state that has not happened. Both fields are
 elided when absent, never computed by the engine); the table's per-command rows derive from the

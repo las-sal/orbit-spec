@@ -45,7 +45,8 @@ Implementation chunks:
       fallback for an uncited change): create `<change-name>` off the default branch,
       commit artifacts + moved staging material, push, open a DRAFT PR with the
       agent-written INTENT description; per-architecture cited path: land on the program
-      branch (create off default if absent), open the program PR on first configured touch
+      branch (create off the RESOLVED REMOTE's default-branch ref if absent — never the
+      possibly-stale local ref), open the program PR on first configured touch
       (draft, program-intent body) — but ONLY after resolving existence with the SAME
       four-axis constrained query the archive tail uses: one survivor = ADOPT (record it in
       `pr_attachment`, create nothing), zero = create, several = ambiguity skip, query error
@@ -66,7 +67,8 @@ Implementation chunks:
       `git check-ref-format --branch` validation of the mechanical name (skip with a note;
       never silently transform), default-branch NAME COLLISION skip, dirty-tree skip,
       REMOTE-OR-LOCAL existence check before concluding absence (create a local tracking
-      branch when only the remote ref exists), existing-branch
+      branch when only the remote ref exists), creation based on `<resolved-remote>/<default>`
+      rather than the local default ref, existing-branch
       reuse-or-report (never force-move/rename), ENUMERATED commit scope (artifacts + moved
       staging material + the `orbit/explore/<name>/` deletions — never `git add -A`, never a
       bare directory prefix; unrelated untracked paths left alone and named in the note);
@@ -130,7 +132,10 @@ Implementation chunks:
       query-error each a distinct one-line note (the seam flips and records, it never
       creates). Commit scope is an ENUMERATED
       FILE LIST — the exact capability spec files the sync reported changed (never the
-      `orbit/specs/` prefix), `.openspec.yaml`, and the explicit at-archive-note edits —
+      `orbit/specs/` prefix), the DELETION the move produced at the pre-move
+      `orbit/changes/<name>/` path (the move is a filesystem move, so git sees delete+add as
+      two facts; staging only the add commits the tree twice and leaves the deletion dirty),
+      and the explicit at-archive-note edits —
       never `git add -A`. The moved archive dir is the ONE whole-path exception (orbit-created
       this invocation, one change's material by construction); untracked content it carried
       along is staged WITH it and NAMED in the note. Unrelated dirty paths stay unstaged and
@@ -147,7 +152,8 @@ Implementation chunks:
       ordinarily, `"ready"` truthfully when the PR was already flipped (user, or an earlier
       stage of an adopted program PR), elided when unobservable; never a forward-looking
       claim about the flip this tail is about to perform. The flip step is IDEMPOTENT: an
-      already-READY PR is reported in one line, not re-flipped and not an error. Test both
+      already-READY PR (flipped by the USER at an earlier point — never by a stage) is
+      reported in one line, not re-flipped and not an error. Test both
       draft and already-ready inputs. A HEAD mismatch skips the tail but LEAVES the emit's PR
       fields intact (the observation preceded the branch check) — unlike the no-`gh` path,
       where they are elided because no observation exists.
@@ -158,6 +164,13 @@ Implementation chunks:
       (program) — the tail fires no second prompt, so this preview is where the outward
       writes are disclosed. Unattached changes keep the byte-identical pre-capability
       preview. Grep-test both shapes in the generated body.
+
+- [ ] 4.6 `src/core/templates/workflows/bulk-archive-change.ts`: bulk-archive performs NO
+      tail (the tail is single-branch; HEAD cannot be on every attached change's branch).
+      Each change syncs/moves/emits as pre-capability; the completion readout NAMES attached
+      changes left unflipped with their PR URLs (report, never act); the per-change consent
+      preview omits the outward-writes line. Grep-test that the body adds no commit/push/
+      `gh` step.
 
 ## 5. Surface teach-in
 
@@ -261,7 +274,8 @@ apply gate's arithmetic covers only apply-completable work.)
       reason while commit+push still land; discovery fallback via the `gh` stub; zero/multiple/closed-match outcomes each distinct;
       enumerated commit scope with an unrelated dirty file inside `orbit/specs/` (unstaged)
       AND an untracked scratch file inside the moved change tree (staged with the tree and
-      named in the note); ordering
+      named in the note); the move's DELETION staged alongside its addition (assert the
+      commit records a move, not a duplicated tree with a dirty deletion); ordering
       invariant (`gh pr ready` recorded only after a successful push); HEAD-MISMATCH skip
       (archive invoked from the default branch — no commit on `main`, no flip); push-failure skip
       with the archive still complete; program-mode append-without-flip; CITATION DIVERGENCE

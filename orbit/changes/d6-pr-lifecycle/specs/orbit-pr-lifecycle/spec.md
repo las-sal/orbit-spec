@@ -232,6 +232,11 @@ state, and the exact commands (`gh pr ready <n>`, and `gh pr merge <n>` when sat
 recommending, never invoking, per the residual outward-actions rule. A whole-program body
 rewrite is OPTIONAL polish available on request, never a required transition step.
 
+#### Scenario: Arc-done observed with no ratifiable stage remaining
+
+- **WHEN** an architect invocation runs in the ordering final-stage archive → final-stage ratification → closing architecture review, so arc-done becomes true at the LAST step and no stage awaits ratification at the moment it is observed
+- **THEN** the readout STILL surfaces the program PR's URL, its live draft state, and the `gh pr ready` / `gh pr merge` commands — this is the ordering a ratification-gated readout would miss entirely, and it is surfaced because the check is unconditional on every invocation
+
 #### Scenario: Arc-done surfaces the human acts, orbit flips nothing
 
 - **WHEN** the architect flow ratifies the final stage complete and `orbit architecture status` plus the architecture trail show every stage archived and the closing review recorded

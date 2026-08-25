@@ -1,0 +1,138 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-08-25T23:09:37Z",
+  "change": "d6-pr-lifecycle",
+  "kind": "editorial",
+  "model": "claude-opus-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/d6-pr-lifecycle/.orbit-runs/review-proposal-2026-08-25T23-03-13Z.json",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 4
+  },
+  "pushback_verification": "All 6 verified against current artifact content before disposition; none suppressed as stale. Two were checked especially closely because they contradicted expectations: `bulk-archive` was confirmed to appear nowhere in tasks, Touchpoints, or `orbit-pr-lifecycle` while the MODIFIED consent block does carry baseline's per-change sentence, and propose's commit scope was confirmed to name its staging-directory deletions where archive's named none. One recommendation's cited anchor did not exist at the named file (the base-ref rule was placed in the branch-preconditions requirement where the preconditions actually live, not at the propose line the finding cited).",
+  "resolution_summary": {
+    "resolved": 6,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Bulk-archive's behavior for PR-attached changes is undefined, yet the consent preview requirement reaches it",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-archive-modifications/spec.md",
+      "classification": "decision_required",
+      "action": "Ratified option A. Declared `/orbit:bulk-archive` OUT of the tail's scope with the reason stated: the tail is inherently single-branch, HEAD can be on only one branch, so under per-proposal the HEAD precondition would skip all but at most one change and WHICH one would depend on where the user happened to be standing. Rather than let outward behavior fall out of that accident, bulk-archive performs no tail — each change syncs/moves/emits as pre-capability and its PR is left DRAFT. The cost is closed by requiring the completion readout to NAME the attached changes left unflipped with their PR URLs (report, never act), so a batch never silently strands a PR. Matching clause added to the consent preview (no outward writes to preview, so no outward line), plus task 4.6 and the bulk-archive Touchpoint the map was missing.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/tasks.md",
+          "orbit/changes/d6-pr-lifecycle/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "A — bulk-archive out of tail scope, with the readout naming what it left draft",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Declare bulk-archive OUT of the tail's scope, with a matching consent-preview clause."
+          },
+          {
+            "label": "B",
+            "body": "Run the tail per change with the HEAD precondition governing which succeed."
+          }
+        ],
+        "chosen": "A"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Archive tail's enumerated commit scope never stages the pre-move `orbit/changes/<name>/` deletion",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-archive-modifications/spec.md",
+      "classification": "trivial_fix",
+      "action": "Added the deletion to the enumerated scope and stated why it is not optional: the archive move is a FILESYSTEM move (zero engine git), so git observes the deletion and the addition as two independent facts — staging only the addition produces a pushed commit containing the change tree TWICE with the deletion left dirty in the very tree the flip announces as READY. Propose already carries the symmetric clause for `orbit/explore/<name>/`; archive now has its own. Also disambiguated `.openspec.yaml` as the reviewer asked: it needs no separate entry, since post-move it sits inside the archived tree covered by the whole-tree staging while its pre-move path is covered by the deletion. Scenario + harness assertion that the commit records a move.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Archive delta still says the program flip is \"surfaced at the architect ratification\" — the tie the arc-done fix removed elsewhere",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-archive-modifications/spec.md",
+      "classification": "trivial_fix",
+      "action": "Reworded the cross-reference to \"the human's act, surfaced by ANY architect invocation that observes arc-done — never tied to the completion-ratification interaction\", matching what design.md and task 5.2 now say, so no reader of the archive capability reconstructs the ratification-gated readout from a stale pointer.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The only arc-done scenario encodes the ratification-coincident ordering the requirement exists to stop relying on",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-pr-lifecycle/spec.md",
+      "classification": "trivial_fix",
+      "action": "Added a SECOND scenario rather than reframing the first, so both orderings are archived contracts: an architect invocation in the final-archive -> ratification -> closing-review ordering, where arc-done becomes true at the last step and NO stage awaits ratification, still surfaces the PR URL, live draft state, and the two commands. That is precisely the ordering a ratification-gated readout would miss, and it is now the case the spec tests rather than only the case task 6.2f promises to test.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "\"off the default branch\" does not say whether the new branch is cut from the local ref or the remote-tracking ref",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-propose-modifications/spec.md",
+      "classification": "trivial_fix",
+      "action": "Bound every creation site once in the branch-preconditions requirement: \"off the default branch\" means the RESOLVED REMOTE's default-branch ref, never the local ref of the same name. The existence check already fetches so that ref is current, while a local ref may be arbitrarily stale in an unpulled checkout — two implementers would otherwise cut the branch from different commits. Scenario + task 3.1/3.1b.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "\"an adopted program PR may have been flipped by an earlier stage\" contradicts \"stage archives NEVER flip the program PR\"",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-archive-modifications/spec.md",
+      "classification": "trivial_fix",
+      "action": "Reworded all four sites (the preflight rationale, the already-READY scenario, the pr_url/pr_state scenario, and the emit-composition mirror) plus task 4.4 to attribute the flip to the USER at an earlier point — including at a prior program's arc-done for a PR adopted afterward — and added the explicit negation that no STAGE ever performs a program flip. The rationale can no longer be read as sanctioning a stage-performed flip against Shape A and the Generalized READY rule.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-emit-composition/spec.md",
+          "orbit/changes/d6-pr-lifecycle/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "6 of 6 resolved; 0 unresolved markers in scope. One decision-lane finding ratified in chat toward stating a boundary rather than extending machinery — bulk-archive performs no tail, because the tail is single-branch and letting outward behavior depend on which branch HEAD happened to be on is the implicitness the last three rounds have been removing; the readout naming what it left draft closes the cost. The other five were confirmations that fixes needed completing at their edges: the move's deletion staged alongside its addition, the arc-done ordering promoted from a task promise to an archived scenario, the branch base ref bound once, and two wording residues that could have been read as contradicting ratified rules. Capabilities 7; tasks 30 to 31; fingerprints 4/4 verified; strict validation passes; 1918 tests green.",
+  "iteration": 6,
+  "next_recommended": "/orbit:review --as proposal --fresh d6-pr-lifecycle"
+}

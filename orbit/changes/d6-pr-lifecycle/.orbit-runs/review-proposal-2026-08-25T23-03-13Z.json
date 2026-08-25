@@ -1,0 +1,97 @@
+{
+  "command": "review",
+  "timestamp": "2026-08-25T23:03:13Z",
+  "change": "d6-pr-lifecycle",
+  "kind": "editorial",
+  "model": "claude-opus-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": [
+    "--fresh"
+  ],
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 2
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "Bulk-archive's behavior for PR-attached changes is undefined, yet the consent preview requirement reaches it",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-archive-modifications/spec.md",
+      "line": 281,
+      "recommendation": "The MODIFIED consent requirement retains \"The bulk-archive workflow applies the same rule per change\", so the newly added outward-writes preview obligation now applies to `/orbit:bulk-archive` — but no requirement, task, or Touchpoint (`src/core/templates/workflows/bulk-archive-change.ts` is absent from design.md's Touchpoints and from tasks 4.0-4.5) says whether bulk-archive runs the tail. State the consequence explicitly, the way the entry-points requirement states it for `new`/`continue`: either add one sentence to the `PR-attached archive tail` requirement declaring bulk-archive OUT of the tail's scope (attached changes bulk-archived reach the seam unflipped; HEAD can only be one branch per batch) plus a matching clause suppressing the outward preview line there, or add a task extending the tail per change with the HEAD precondition governing."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "Archive tail's enumerated commit scope never stages the pre-move `orbit/changes/<name>/` deletion",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-archive-modifications/spec.md",
+      "line": 126,
+      "recommendation": "The scope enumerates synced capability spec files, `.openspec.yaml`, at-archive-note edits, and the moved archive directory staged whole — but the engine's move is a filesystem move (zero engine git), so git sees a deletion at `orbit/changes/<name>/` plus an addition under `orbit/changes/archive/<YYYY-MM-DD>-<name>/`. Staging only the new path produces a pushed commit that contains the change tree twice and leaves the deletion dirty in the tree the flip announces as READY. Add the deletion to the enumerated list explicitly — the symmetric clause propose already carries for `orbit/explore/<change-name>/` (\"the staging-directory DELETIONS the move produced\") — and while there, disambiguate `.openspec.yaml`: post-move it lives inside the archived tree, so say whether the entry means the deleted pre-move path or is subsumed by the whole-tree exception."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "Archive delta still says the program flip is \"surfaced at the architect ratification\" — the tie the arc-done fix removed elsewhere",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-archive-modifications/spec.md",
+      "line": 156,
+      "recommendation": "design.md D-d6-2/Touchpoints and tasks.md 5.2 now read \"EVERY architect invocation that OBSERVES arc-done ... deliberately NOT tied to the completion-ratification interaction\", but this cross-reference retains the old framing. Reword to \"its flip is the human's act surfaced by any architect invocation that observes arc-done (per `orbit-pr-lifecycle`)\" so no reader of the archive capability reconstructs the ratification-gated readout."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "title": "The only arc-done scenario encodes the ratification-coincident ordering the requirement exists to stop relying on",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-pr-lifecycle/spec.md",
+      "line": 237,
+      "recommendation": "`Scenario: Arc-done surfaces the human acts, orbit flips nothing` opens \"WHEN the architect flow ratifies the final stage complete and ...\", so the archived contract tests only the ordering where surfacing coincides with a ratification — while the requirement prose and task 6.2f single out the closing-review-last ordering as the case a ratification-gated readout misses. Either reframe this scenario's WHEN to \"WHEN any architect invocation runs while `orbit architecture status` plus the architecture trail show every stage archived and the closing review recorded\", or add a second scenario for the final-archive -> ratification -> closing-review ordering (invocation with no ratifiable stage remaining)."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "title": "\"off the default branch\" does not say whether the new branch is cut from the local ref or the remote-tracking ref",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-propose-modifications/spec.md",
+      "line": 11,
+      "recommendation": "The preconditions are exhaustive about fetching before concluding a branch is absent and about comparing an existing branch to the resolved remote's tip, but branch CREATION is specified only as \"create `<change-name>` off the default branch\" (and \"creating it off the default branch if absent\" for a program branch) — two implementers will reasonably write `git switch -c <name> <default>` and `git switch -c <name> <remote>/<default>`, which differ on a stale local checkout. Name the base ref once (the resolved remote's default-branch ref, after the fetch the existence check already performs) in the `Branch preconditions at propose` requirement."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "\"an adopted program PR may have been flipped by an earlier stage\" contradicts \"stage archives NEVER flip the program PR\"",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-archive-modifications/spec.md",
+      "line": 20,
+      "recommendation": "The phrase recurs in four places (this line, the already-READY scenario at line 188, the `pr_url`/`pr_state` scenario at line 340, and tasks.md 4.4) and attributes the flip to a stage, while `orbit-pr-lifecycle`'s Shape A and Generalized READY requirements make every program flip the human's act. Reword to \"flipped by the user at an earlier point (including at a prior program's arc-done, for a program PR adopted afterward)\" so the rationale cannot be read as sanctioning a stage-performed program flip."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "This pass carried a bounded verification job alongside the nine: the four CRITICALs raised by the previous independent reviewer were re-read against current text and all four are genuinely resolved, not cosmetically patched — the arc-done readout is unconditional and idempotent in both task and design, stored URLs are validated live against the same four predicates that guard the fallback with the failure scoped to PR-writing steps, a read-only preflight precedes the emit so `pr_state` is an observation rather than a prediction, and program-branch compatibility is merge-base shared ancestry with an explicit continue-with-detection base-ahead policy. Archive consistency held completely: all four MODIFIED blocks are purely additive against their live baselines with no scenario dropped or renamed and prose preserved verbatim, fingerprints verify, strict validation passes, and no marker residue exists outside the run history. Delta-to-task coverage also held — every requirement has an implementing task or a labelled at-archive note, and the harness cases map onto the degradation and precondition rules rather than restating the happy path. Residual risk sits in two places the artifacts genuinely do not reach, and both are boundary questions rather than defects in the machinery that was rebuilt. The first is the edge of \"the archive flow\": bulk-archive inherits the consent-preview obligation through a sentence the MODIFIED block preserved from baseline, with nothing anywhere saying whether it runs the tail — and HEAD can only be one branch per batch, so the answer is not obvious. The second is the git mechanics of the tail's own commit, where the enumerated scope is scrupulous about what must not be swept in but silent about the deletion a filesystem move creates — the one file-set the propose seam does spell out. The rest is wording residue trailing the arc-done fix and one codegen ambiguity about which ref a new branch is cut from.",
+  "passes_run": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "passes_skipped": [],
+  "final_assessment": "0 critical, 2 warning, 4 suggestion.",
+  "iteration": 6,
+  "next_recommended": "/orbit:address-reviews d6-pr-lifecycle --from-file orbit/changes/d6-pr-lifecycle/.orbit-runs/review-proposal-2026-08-25T23-03-13Z.json"
+}

@@ -179,6 +179,8 @@ choreography steps themselves) rather than as a separate feature section.
   authoring, no-CI note (`ff` is propose-in-one-breath; `new`/`continue` explicitly out).
 - `src/core/templates/workflows/archive-change.ts` — the PR-attached tail (commit → push →
   landmark → flip), program-mode stage-entry append.
+- `src/core/templates/workflows/bulk-archive-change.ts` — NO tail (single-branch by nature);
+  readout naming attached changes left unflipped; consent preview without the outward line.
 - `src/core/templates/workflows/onboard.ts` — teach the PR lifecycle + config vocabulary.
 - `src/core/templates/workflows/architect.ts` — arc-done human-acts readout (PR URL, live
   draft state, `gh pr ready`/`gh pr merge`) on EVERY invocation observing arc-done —
