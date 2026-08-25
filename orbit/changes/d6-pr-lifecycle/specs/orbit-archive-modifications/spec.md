@@ -5,7 +5,22 @@
 ### Requirement: PR-attached archive tail
 
 The archive flow SHALL, for a PR-ATTACHED change, continue past the archive emit as one
-designed tail. ATTACHMENT AND PR IDENTITY are DISCOVERED, never assumed: read the
+designed tail — preceded by a READ-ONLY PR PREFLIGHT that runs BEFORE the archive emit is
+written. The preflight performs every OBSERVATION the tail depends on and no mutation:
+resolve the attachment, validate a stored `url` live, and observe the PR's CURRENT
+draft/ready state. It sits before the emit because the emit is required to record the PR's
+state AS OBSERVED, and the frozen propose record cannot supply it — that record says `draft`
+by construction for the life of the change. One observation therefore feeds BOTH the emit
+and the post-emit tail, so the two can never disagree about the PR they are describing. A
+preflight that cannot observe (no `gh`, failed query) elides the emit's PR fields and skips
+the tail per the availability rule; it never blocks the archive.
+
+Because the preflight observes real state rather than restating the record, a PR may be
+found ALREADY READY — the user may have flipped it by hand, and an ADOPTED program PR may
+have been flipped by an earlier stage. That is a NORMAL observation, not an anomaly: the
+emit records `"ready"` truthfully, and the tail's flip step is IDEMPOTENT — it does not
+re-flip, does not error, and reports the PR was already READY in one line. The tail's other
+steps (commit, push, description rewrite or stage-entry append) proceed unchanged. ATTACHMENT AND PR IDENTITY are DISCOVERED, never assumed: read the
 `pr_attachment` object from the change's own trail — the LATEST attachment-bearing PROPOSE
 **or FF** emit (both are equally authoritative; `/orbit:ff` carries the identical
 choreography per `orbit-pr-lifecycle`'s entry-points requirement, so a tail that reads only
@@ -14,12 +29,32 @@ the tail needs: `granularity` decides whether this seam flips READY (per-proposa
 appends only (per-architecture), and `branch` names what to commit to — neither is
 re-derived from config or the citation.
 
+TOOL AVAILABILITY IS CHECKED BEFORE ANY STAGING, not discovered mid-tail. `gh` may have
+been present at propose (so an attachment exists) and be absent at archive; the config
+contract's promise that a missing `gh` degrades to "today's behavior" is only honored if the
+whole tail is skipped BEFORE it commits and pushes. The tail SHALL therefore verify `gh`
+availability as a precondition alongside the HEAD check and SKIP entirely with a one-line
+note when it is missing — leaving the archive exactly as pre-capability. A `gh` failure
+encountered AFTER staging began is the different, already-specified case: mid-tail
+degradation that names completed vs skipped steps. The distinction is what keeps "no `gh` =
+today's behavior" true rather than "no `gh` = committed and pushed, then failed".
+
 Because `git commit` writes to whatever HEAD points at and takes no branch argument,
 "`branch` names what to commit to" is a PRECONDITION the tail SHALL VERIFY, not an
 assumption: before staging anything, compare HEAD's current branch to
-`pr_attachment.branch`. When they differ — or the named branch does not exist locally — the
-tail SKIPS with a one-line note naming BOTH branches and the literal recovery
-(`git switch <branch>`, then commit the archive's writes). It NEVER checks out, stashes, or
+`pr_attachment.branch`. When they differ the tail SKIPS with a one-line note naming BOTH
+branches — and the recovery text is SPECIFIC TO THE CASE, because one command cannot serve
+all three and a note prescribing an impossible command is worse than none:
+
+- **Local branch exists, HEAD is elsewhere** — recover with `git switch <branch>`, noting
+  that the archive's uncommitted writes must survive the switch (they do when they do not
+  collide; when they would, the note says to commit or stash them first).
+- **Branch exists only on the resolved remote** — `git switch <branch>` cannot work; the
+  note gives the fetch-and-track form
+  (`git fetch <resolved-remote> && git switch -c <branch> --track <resolved-remote>/<branch>`).
+- **Branch absent both locally and on the remote** — no switch recovers it; the note says so
+  PLAINLY and points at the attachment record as the evidence of what was expected, rather
+  than printing a command that will fail. It NEVER checks out, stashes, or
 otherwise moves the working tree: the same restraint as "orbit never force-moves, renames,
 rebases, or force-pushes a user's branch", and for the same reason — a working-tree mutation
 here would fire AFTER the user consented to a sync-and-move, not before. This case is
@@ -28,7 +63,31 @@ uncommon, SILENT, and lands on the default branch: without the check the archive
 commit and push to `main`, every step reports success, the ordering invariant reads as
 satisfied, and a PR is flipped READY announcing work it does not contain. The archive itself
 (sync, move, emit) has already completed and is never rolled back — the skip strands nothing
-but the commit, which the note's recovery line addresses directly. When the object is absent, or present without a
+but the commit, which the note's recovery line addresses directly. A STORED `url` IS A CLAIM, NOT A FACT, AND IS VALIDATED LIVE. GitHub stays mutable between
+the two seams: a PR recorded at propose may since have been CLOSED by the user, MERGED,
+RETARGETED to a different base, or (in a fork checkout) belong to a different repository
+than the resolved one. Before ANY PR operation the tail SHALL resolve the stored URL
+read-only and check it against the SAME four predicates the fallback query uses — resolved
+repository, head branch, resolved base, and open state. Without this the primary path is the
+UNVALIDATED one: every normally-opened PR carries a URL, so the fallback never runs for it,
+and this capability's own "PR closed manually → discovery finds nothing → skip" scenario
+becomes unreachable for exactly the changes it was written for — the tail would instead
+REWRITE the description of a PR the user deliberately closed and discover the problem only
+when `gh pr ready` failed.
+
+The validation runs EARLY (read-only, before staging, so the note is accurate and nothing is
+discovered mid-flight), but its outcome scopes ONLY THE PR HALF of the tail. A stored record
+that fails validation SKIPS the description rewrite and the READY flip with a one-line note
+naming the SPECIFIC reason — `closed`, `merged`, `retargeted to <base>`, `repository
+mismatch`, or `not found` — each distinct, never collapsed into a generic miss. The COMMIT
+and PUSH still proceed: those writes are the archive's own, they land on the change's branch
+via the resolved remote, and they are correct whatever became of the pull request. The PR
+layer degrades without taking the lifecycle's own bookkeeping down with it — the same
+principle as `pr: never`, applied one level finer. (A failed validation never triggers the
+fallback query as a second chance: a record that resolves to a closed PR is ANSWERED, not
+missing.)
+
+When the object is absent, or present without a
 `url`, fall back to `gh pr list` — but the fallback SHALL identify EXACTLY ONE PR before
 acting, because a head branch does not uniquely identify a pull request. The query is
 CONSTRAINED on all four axes and every one is required — with the remote and the base
@@ -54,14 +113,24 @@ effort. THREE outcomes, each a DISTINCT one-line note, none of them silent:
 A `gh` invocation that ERRORS (auth, rate limit, network) is degradation, not a zero
 result: skip with the failure note rather than reporting a missing PR. The tail NEVER opens
 a replacement in any outcome — the archive seam flips and records, it does not create. The tail then: commits the archive's OWN WRITES —
-an ENUMERATED FILE LIST, never a directory prefix and never `git add -A`: the exact
+an ENUMERATED FILE LIST, never `git add -A` and never a SHARED directory prefix: the exact
 capability spec files this archive's sync REPORTED as changed (not the `orbit/specs/`
 directory — staging the directory would sweep dirty edits to capabilities this archive never
-synced, contradicting the unrelated-paths guarantee one step before READY), the exact moved
-`orbit/changes/archive/<YYYY-MM-DD>-<name>/`, the change's `.openspec.yaml`, and the
-explicit list of at-archive-note edits the flow itself made; unrelated dirty paths are
-left unstaged and named in a one-line note, so a session's stray edits can never ride into
-a PR about to be flipped READY → push → rewrite the PR description to the ACHIEVEMENT landmark
+synced, contradicting the unrelated-paths guarantee one step before READY), the change's
+`.openspec.yaml`, and the explicit list of at-archive-note edits the flow itself made;
+unrelated dirty paths are left unstaged and named in a one-line note, so a session's stray
+edits can never ride into a PR about to be flipped READY.
+
+The MOVED ARCHIVE DIRECTORY `orbit/changes/archive/<YYYY-MM-DD>-<name>/` is the ONE path
+staged as a whole, and this is a BOUNDED, PRINCIPLED EXCEPTION rather than a lapse in the
+rule: unlike `orbit/specs/`, that directory is NAMED AND CREATED BY THIS ARCHIVE in this same
+invocation (the `<YYYY-MM-DD>-` prefix is applied by the move step) and its contents are, by
+construction, exactly ONE change's material — the tree that was `orbit/changes/<name>/` a
+moment earlier. There is no other change's work it could sweep, which is the hazard the
+enumerated-list rule exists to prevent. UNTRACKED content the move carried along (a scratch
+file left in the change directory during the work) IS staged, because it is that change's own
+material being archived alongside it, and it is NAMED in the same one-line note so a stray
+file is visible in the record rather than silent → push → rewrite the PR description to the ACHIEVEMENT landmark
 (per-change PRs) or APPEND the stage entry (program PRs) → flip READY for PER-CHANGE PRs only.
 
 The program stage entry's SOURCE is ORDERED, never assumed: (1) the arc STATUS-LOG entry
@@ -104,10 +173,25 @@ inside the tail.
 - **WHEN** a change proposed under `pr: per-proposal` is archived after `pr:` has been set to `never`
 - **THEN** the tail RUNS on the frozen `pr_attachment` — the live config is not consulted at this seam — and a change proposed under `pr: never` (no attachment) ends exactly as pre-capability
 
+#### Scenario: Already-READY PR is reported, not re-flipped
+
+- **WHEN** the preflight observes the PR is already READY (flipped by the user, or by an earlier stage of an adopted program PR)
+- **THEN** the emit records `pr_state: "ready"` truthfully; the tail commits, pushes, and rewrites the description as usual, and the flip step is a no-op reported in one line — never an error and never a second `gh pr ready`
+
+#### Scenario: gh absent at archive skips before staging
+
+- **WHEN** the change was attached at propose (when `gh` was available) but `gh` is absent at archive
+- **THEN** the tail skips ENTIRELY before any staging, commit, or push, with a one-line note — the archive ends exactly as pre-capability, never committed-and-pushed-then-failed
+
 #### Scenario: HEAD on the wrong branch skips before staging
 
-- **WHEN** the tail runs while HEAD is on the default branch (or any branch other than `pr_attachment.branch`), or the named branch does not exist locally
-- **THEN** nothing is staged, committed, pushed, or flipped; one note names both branches and the `git switch <branch>` recovery; the working tree is never checked out or stashed, and the completed archive is not rolled back
+- **WHEN** the tail runs while HEAD is on the default branch (or any branch other than `pr_attachment.branch`)
+- **THEN** nothing is staged, committed, pushed, or flipped; one note names both branches and the recovery text for THAT case — `git switch` for a local branch, fetch-and-track for a remote-only one, and a plain statement that no switch recovers a branch absent everywhere; the working tree is never checked out or stashed, and the completed archive is not rolled back
+
+#### Scenario: Stored URL pointing at a closed PR is caught before it is edited
+
+- **WHEN** the tail runs on a change whose recorded PR was closed (or merged, or retargeted to a different base) after propose
+- **THEN** live validation of the stored URL fails with that SPECIFIC reason; the description rewrite and the READY flip are skipped and named, while the archive commit and push still land on the change's branch — the closed PR is never rewritten and the fallback query is not run as a second chance
 
 #### Scenario: PR discovery finds nothing
 
@@ -128,6 +212,11 @@ inside the tail.
 
 - **WHEN** the fallback `gh pr list` invocation errors (auth, rate limit, network)
 - **THEN** the tail skips with the FAILURE note rather than reporting a missing PR, and the archive itself remains complete
+
+#### Scenario: The moved archive tree stages whole; strays are named
+
+- **WHEN** the change directory being archived contained an untracked scratch file the change's work left there
+- **THEN** the moved `orbit/changes/archive/<YYYY-MM-DD>-<name>/` is staged as a unit (it is orbit-created in this invocation and holds one change's material by construction), the carried-along file is staged with it, and the one-line note NAMES it — while `orbit/specs/` is still never staged as a prefix
 
 #### Scenario: Unrelated dirty paths never ride the commit
 
@@ -238,4 +327,4 @@ The system SHALL write a JSON summary to `orbit/changes/archive/<YYYY-MM-DD>-<ch
 #### Scenario: PR fields recorded at emit-time state
 
 - **WHEN** the archive completes for a PR-ATTACHED change (per `orbit-pr-lifecycle`)
-- **THEN** the archive run summary additionally includes `pr_url` and `pr_state` — the PR's URL and its state AS OBSERVED AT EMIT TIME, which precedes the PR-attached tail, so `pr_state` is `"draft"` (or elided); it is NEVER `"ready"`, because the tail's flip has not happened when the emit is written. Both fields are absent for unattached changes and when `pr: never`. The READY transition is evidenced by the PR itself and the completion readout, not by this record.
+- **THEN** the archive run summary additionally includes `pr_url` and `pr_state` — the PR's URL and its state AS OBSERVED by the read-only preflight that precedes the emit — normally `"draft"`, but truthfully `"ready"` when the PR was already flipped (by the user, or by an earlier stage of an adopted program PR), and ELIDED when the state could not be observed. The field records what was seen, never a forward-looking claim about the flip this tail is about to perform. Both fields are absent for UNATTACHED changes — including changes originally proposed under `pr: never` — and present whenever an attachment resolves, EVEN IF `pr:` now reads `never`, per this capability's attachment-authority scope rule (the same invocation that runs the tail records its PR). The READY transition is evidenced by the PR itself and the completion readout, not by this record.

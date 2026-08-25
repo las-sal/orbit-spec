@@ -20,6 +20,11 @@ A repo with no git remote or no `gh` CLI SHALL degrade to `never` regardless of
 configuration, reported once per invocation as a one-line note, never an error (the
 lifecycle itself never blocks on the PR layer). An unrecognized value is inert — treated as
 `never` with a one-line warning naming the value — config garnish, never an error source.
+A NON-SCALAR shape (a YAML map or list where a scalar is expected — including the two-key
+`{open, program-branches}` block this key superseded, which an early adopter may have
+written) takes the SAME inert path: treated as `never` with a one-line warning naming the
+INVALID SHAPE rather than a value. Garnish never escalates by malformation; a config typo
+must not be the thing that stops a lifecycle command from running.
 
 #### Scenario: Unset config is today's behavior
 
@@ -40,6 +45,11 @@ lifecycle itself never blocks on the PR layer). An unrecognized value is inert �
 - **THEN** propose proceeds without branch/PR steps, emitting one note naming the
   degradation; nothing errors
 
+#### Scenario: Non-scalar config shape is inert
+
+- **WHEN** `pr:` is written as a YAML map or list (for example the superseded `{open, program-branches}` block)
+- **THEN** it is treated as `never` with a one-line warning naming the invalid SHAPE; no lifecycle command errors or blocks
+
 ### Requirement: Config selects the regime; citation selects the target
 
 The `pr:` value SHALL select the REGIME for the repository, and within `per-architecture`
@@ -49,7 +59,15 @@ directly on the program branch, it gets no branch of its own, and its PR presenc
 doc's single program PR; a change with no citation takes the `per-proposal` path. Under
 `pr: per-proposal` the citation is irrelevant to the PR layer — every change gets its own
 branch and PR regardless of what it cites. Branch naming: `<change-name>` for per-proposal
-branches; the architecture doc's filename stem for program branches.
+branches; the architecture doc's filename stem for program branches. NEITHER SOURCE
+GUARANTEES A VALID GIT REF: change names and architecture doc stems are constrained to be
+contained and citable, not to satisfy Git's ref grammar, so a name valid on disk can still be
+rejected by Git (a stem ending in `.lock`, a name containing `..`, a trailing dot). The
+mechanical name SHALL therefore be validated with `git check-ref-format --branch <name>`
+before use, in addition to the default-branch collision check; a name Git rejects is a
+DEGRADATION SKIP with a one-line note naming the name and the reason, never a silent
+transformation — orbit does not invent a different branch name than the one its own rule
+derives.
 
 Granularity is resolved ONCE, at the artifact-creating invocation (propose or ff), and FROZEN
 for the change's life: that emit records the resolved ATTACHMENT as the structured
@@ -103,12 +121,30 @@ guesses which remote owns the PR); zero remotes → the degraded path (`never`).
 subsequent step at either seam — push target, default-branch resolution, `gh` repository
 selection — uses that ONE resolved remote.
 
-The DEFAULT BRANCH is resolved as `gh repo view --json defaultBranchRef` when `gh` is
-available, falling back to `git symbolic-ref refs/remotes/<resolved-remote>/HEAD`. When
+Resolving the remote is not enough on its own: `gh` selects a repository by its OWN
+heuristics unless told otherwise, so the resolved remote SHALL be converted into a CANONICAL
+GITHUB REPOSITORY IDENTIFIER (`<owner>/<repo>`, derived from that remote's URL in either the
+HTTPS or SSH form) and that identifier passed EXPLICITLY — `--repo <owner>/<repo>` — on
+EVERY `gh` invocation at either seam: `repo view`, `pr list`, `pr create`, `pr view`,
+`pr edit`, `pr ready`, and any `pr merge` text. A bare PR NUMBER is likewise
+repository-relative and SHALL NOT be used alone; commands surfaced in readouts and recovery
+notes carry the full PR URL or the `--repo` flag, so text the user copies resolves the same
+repository the algorithm chose. A remote URL that does not parse as a GitHub repository is a
+degradation skip with a one-line note, never a guess. Without this the rule defeats itself:
+the whole point of resolving a remote is defeated if the commands then ask `gh` to pick.
+
+The DEFAULT BRANCH is resolved as `gh repo view --repo <owner>/<repo> --json
+defaultBranchRef` when `gh` is available, falling back to `git symbolic-ref
+refs/remotes/<resolved-remote>/HEAD`. When
 neither resolves, the PR work at that seam SKIPS with a one-line note naming the failure —
 the PR layer degrades, the lifecycle never blocks. At the ARCHIVE seam specifically, an
 unresolvable remote or base is a DEGRADATION SKIP, never a zero-result: the tail reports
 that it could not resolve, and never reports a missing PR on that basis.
+
+#### Scenario: Every gh command carries the resolved repository
+
+- **WHEN** any seam invokes `gh` in a fork checkout, or in a checkout whose single remote is not named `origin`
+- **THEN** the invocation carries `--repo <owner>/<repo>` derived from the RESOLVED remote (or addresses the PR by full URL) — `gh`'s implicit repository selection is never relied on, and recovery/readout text the user copies carries the same qualification; an unparseable remote URL is a degradation skip
 
 #### Scenario: One algorithm, both seams
 
@@ -183,7 +219,13 @@ that query fails or `gh` is unavailable, the readout still SURFACES, carrying a 
 the program relies on. The readout names
 the program PR's URL — located by scanning the change trails (active AND archived) for
 `pr_attachment` objects whose `granularity` is `per-architecture` and whose `doc` MATCHES
-this architecture doc, taking the most recent; the `doc` key is what makes this lookup
+this architecture doc, taking the most recent URL-BEARING record (never merely the most
+recent match: `url` is deliberately optional after a failed query or failed PR creation, so
+a later citing change can emit a `{branch, granularity, doc}` record with no URL, and
+most-recent-wins would let that record permanently MASK the still-valid program PR the
+program depends on surfacing), then validating it live; when no URL-bearing record exists,
+fall back to the constrained query of `Remote and default-branch resolution`'s repository
+with `--head <program-branch>`; the `doc` key is what makes this lookup
 possible after the birth change has been archived, and what keeps two programs in one repo
 distinguishable — its current DRAFT
 state, and the exact commands (`gh pr ready <n>`, and `gh pr merge <n>` when satisfied) —

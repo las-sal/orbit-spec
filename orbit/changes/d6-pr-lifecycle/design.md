@@ -79,12 +79,16 @@ citing explore.md rather than re-deriving.
   twice). The accumulated stage entries ARE the program's landmark — written incrementally,
   so no terminal rewrite is required (a whole-program rewrite is optional polish on
   request). At ARC-DONE (all stages archived + closing architecture review, checked from
-  `orbit architecture status --json` + the architecture trail) the architect flow's
-  completion-ratification readout SURFACES the human acts — the program PR's URL, its DRAFT
-  state, and `gh pr ready <n>` / `gh pr merge <n>` — recommending, never invoking. Rationale
-  for human ownership: arc-done is a once-per-program ceremonial moment with the user
-  already present at the ratification, and teaching the most restrained body in the surface
-  (architect, "never a gatekeeper") to make outward writes buys little.
+  `orbit architecture status --json` + the architecture trail) EVERY architect invocation
+  that OBSERVES arc-done SURFACES the human acts — the program PR's URL, its live DRAFT
+  state, and `gh pr ready <n>` / `gh pr merge <n>` — recommending, never invoking. The check
+  is UNCONDITIONAL and IDEMPOTENT, deliberately NOT tied to the completion-ratification
+  interaction: the valid ordering final archive → final-stage ratification → closing review
+  makes arc-done true at the LAST step, after that interaction has already passed, so a
+  ratification-gated readout would never fire in the natural sequence. Rationale for human
+  ownership of the flip itself: arc-done is a once-per-program ceremonial moment, and
+  teaching the most restrained body in the surface (architect, "never a gatekeeper") to make
+  outward writes buys little.
 - **D-d6-3 — Generalized READY.** The CONDITION is uniform — the branch's governing unit is
   merge-eligible: change → archive; program → arc-done. WHO flips is deliberately not:
   per-change flips are PERFORMED by the archive tail (constant; a body is present when the
@@ -176,8 +180,10 @@ choreography steps themselves) rather than as a separate feature section.
 - `src/core/templates/workflows/archive-change.ts` — the PR-attached tail (commit → push →
   landmark → flip), program-mode stage-entry append.
 - `src/core/templates/workflows/onboard.ts` — teach the PR lifecycle + config vocabulary.
-- `src/core/templates/workflows/architect.ts` — arc-done human-acts readout (PR URL, draft
-  state, `gh pr ready`/`gh pr merge`) at the completion-ratification seam; no outward write.
+- `src/core/templates/workflows/architect.ts` — arc-done human-acts readout (PR URL, live
+  draft state, `gh pr ready`/`gh pr merge`) on EVERY invocation observing arc-done —
+  unconditional and idempotent, never gated on the ratification interaction; no outward
+  write.
 - `src/core/project-config.ts` — the `pr:` SCALAR reader (three-valued; not a block).
 - `src/core/emit-composition.ts` — the `pr_attachment` payload-field row for propose and
   ff; the flat `pr_url`/`pr_state` rows for archive.

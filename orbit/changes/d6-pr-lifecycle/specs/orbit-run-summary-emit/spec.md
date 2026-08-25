@@ -25,13 +25,32 @@ empty shell. When the choreography ran but PR creation failed, the object IS pre
 `branch` and `granularity` and no `url`/`state`, because the branch attachment is real even
 when the PR is not.
 
-The object is NARRATIVE pass-through: the emitting body observes and supplies it; the engine
-neither computes nor verifies it (it cannot — the branch state and the PR live outside the
-records the engine reads). It is the AUTHORITATIVE ATTACHMENT RECORD: the archive tail reads
+The object is NARRATIVE pass-through in its VALUES: the emitting body observes and supplies
+them, and the engine neither computes nor verifies them (it cannot — the branch state and the
+PR live outside the records the engine reads). Its STRUCTURE is a different matter and IS
+engine-validated at the write gate, because this object is the AUTHORITATIVE record later
+bodies dereference: an emit carrying `{granularty: ...}`, a missing `branch`, a `state`
+outside the two-value enum, or `granularity: "per-architecture"` with no `doc` would sail
+through a seam advertised as FAIL-LOUD and then be read back at archive as truth. The gate
+SHALL therefore reject, by the same unknown-key/mistyped-field mechanism it already applies
+to the payload's top level: an unrecognized nested key; a missing required `branch` or
+`granularity`; a non-string value for any of `branch`/`url`/`state`/`doc`; a `granularity`
+outside `{"per-proposal", "per-architecture"}`; a `state` outside `{"draft", "ready"}`; and
+`doc` absent when `granularity` is `"per-architecture"` or present when it is
+`"per-proposal"`. Structure only — whether the branch exists, whether the URL resolves, and
+whether the PR is open remain BODY-owned observations the engine never second-guesses.
+The archive emit's flat `pr_url`/`pr_state` fields are type- and enum-checked on the same
+basis. It is the AUTHORITATIVE ATTACHMENT RECORD: the archive tail reads
 it back to discover which PR to act on and which granularity governs (per
 `orbit-archive-modifications`), and it is what FREEZES the change's granularity for its life
 (per `orbit-pr-lifecycle`) — later seams consult this record, never a fresh read of the
 mutable `architecture:` citation.
+
+
+#### Scenario: Malformed attachment structure is rejected at the gate
+
+- **WHEN** a propose payload carries `pr_attachment` with a misspelled key (`granularty`), a missing `branch`, a non-string `url`, a `state` outside `draft`/`ready`, or `granularity: "per-architecture"` without `doc`
+- **THEN** the write gate REJECTS the emit naming the offending nested field — the object never reaches the trail as an authoritative record — while a structurally valid object whose branch or PR later proves stale is written unchallenged (existence is body-owned, structure is not)
 
 #### Scenario: Propose or ff emit records the PR it opened
 

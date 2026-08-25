@@ -114,6 +114,17 @@ change's own generated artifacts, the moved staging material now under
 staging a bare directory prefix: the obvious reach for `-A` (the artifacts are newly created
 and therefore untracked) is exactly what would sweep an unrelated untracked file into a PR
 the user is about to publish.
+"EXISTING" means EXISTING ANYWHERE — locally OR on the resolved remote. The choreography
+SHALL fetch the resolved remote and check `<resolved-remote>/<branch>` BEFORE concluding a
+branch is absent, because the common fresh-checkout case (a program branch that exists on the
+remote from an earlier stage, with no local ref) would otherwise be read as "absent",
+creating a divergent local history off the default branch that can only reach a REJECTED
+push. When only the remote ref exists, create a LOCAL TRACKING BRANCH from it
+(`git switch -c <branch> --track <resolved-remote>/<branch>`) and proceed on the reuse path —
+resuming a program branch from a clean checkout is ordinary, not exceptional. "Absent" means
+absent both locally and on the resolved remote; only then is a branch created off the default
+branch.
+
 An EXISTING branch of the target name is REUSED when it is COMPATIBLE, and compatibility is
 defined PER PATH because the two paths mean opposite things by "expected history":
 
@@ -121,12 +132,26 @@ defined PER PATH because the two paths mean opposite things by "expected history
   no commits beyond the resolved default branch other than this change's own artifact
   commits. A same-named branch carrying unrelated work is a COLLISION: skip with a one-line
   note naming it.
-- **Program branch** — compatible when it exists and descends from the resolved default
-  branch. Commits authored by OTHER citing changes are EXPECTED, not disqualifying — a
-  program branch accumulates every stage's work by design, so a rule that rejected
-  "commits this change did not author" would reject every program branch after its first
-  stage. Only a branch that has diverged from the default branch's history entirely
-  (unrelated root) is a collision.
+- **Program branch** — compatible when it exists and SHARES ANCESTRY with the resolved
+  default branch. The test is EXACTLY `git merge-base <program-branch> <resolved-default>`
+  SUCCEEDING (a common ancestor exists) — NOT "the default branch's tip is an ancestor of
+  the program branch". The stricter reading holds only at the instant the branch is created:
+  a program branch is DESIGNED to be long-lived, so the default branch advancing underneath
+  it is the EXPECTED condition at every stage after the first, and a tip-ancestry test would
+  reject healthy program work in any active repository. Commits authored by OTHER citing
+  changes are likewise EXPECTED, not disqualifying — a program branch accumulates every
+  stage's work by design. Only a branch with NO common ancestor (an unrelated root) is a
+  collision.
+
+  **Base-ahead policy — CONTINUE WITH DETECTION.** When the resolved default branch has
+  advanced beyond the merge-base, the choreography PROCEEDS on the branch and emits a
+  one-line note stating that the default branch is ahead by N commits and that the program
+  PR's diff will carry that gap until the user integrates. It NEVER merges, rebases, or
+  fast-forwards the program branch to catch it up — the same restraint the remote-ahead rule
+  carries — and it never SKIPS on this basis: blocking propose because the default branch
+  moved would make `per-architecture` unusable in an active repository, and a stale diff-base
+  is visible in the PR itself, which is what the PR is for. Integration is the user's act,
+  reported and never performed.
 
 Before reusing any existing branch the choreography SHALL fetch and compare against the
 resolved remote's tip; when the remote is AHEAD, it fast-forwards if possible and otherwise
@@ -143,6 +168,11 @@ branch. orbit never force-moves, renames, rebases, or force-pushes a user's bran
 - **WHEN** the repository has exactly one remote not named `origin`, or has several remotes with no `origin`
 - **THEN** the single remote is used in the first case; the second SKIPS the choreography with a one-line note naming the ambiguity and the candidate remotes — push target, default base, and `gh` repository never disagree
 
+#### Scenario: Mechanically derived name that Git rejects skips
+
+- **WHEN** the derived branch name is valid on disk but rejected by `git check-ref-format --branch` (an architecture stem ending in `.lock`, a name containing `..`)
+- **THEN** the choreography SKIPS with a one-line note naming the name and the reason; no branch is created under a silently transformed name
+
 #### Scenario: Branch name colliding with the default branch skips
 
 - **WHEN** the mechanical branch name equals the resolved default branch (a change named `main`, or a program doc whose stem is the default branch)
@@ -157,6 +187,16 @@ branch. orbit never force-moves, renames, rebases, or force-pushes a user's bran
 
 - **WHEN** unrelated tracked modifications exist at the choreography step
 - **THEN** no branch is created and no commit is made; the artifacts remain generated and validated, and one note names the skipped steps
+
+#### Scenario: Remote-only branch is tracked, not recreated
+
+- **WHEN** a citing change is proposed in a fresh checkout where the program branch exists on the resolved remote but has no local ref
+- **THEN** the fetch/remote-ref check finds it, a local TRACKING branch is created from the remote ref, and the reuse path proceeds — no divergent branch is created off the default branch and no push is left to be rejected
+
+#### Scenario: Default branch advancing does not reject the program branch
+
+- **WHEN** a second citing change is proposed after the resolved default branch has advanced beyond the program branch's merge-base
+- **THEN** `git merge-base` still succeeds, the branch is REUSED, and one note states the default branch is ahead by N commits and that integration is the user's act — nothing is merged, rebased, or skipped; only a branch with NO common ancestor is reported as a collision
 
 #### Scenario: Program branch reused across stages
 

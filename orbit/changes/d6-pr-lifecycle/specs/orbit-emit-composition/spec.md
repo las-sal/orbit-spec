@@ -27,8 +27,10 @@ state it observed) (per `orbit-pr-lifecycle` — the trail records
 the outward PR artifact's URL and state AS OBSERVED AT EMIT TIME, never a forward-looking
 claim: `pr_state` is exactly one of the two lowercase strings `"draft"` or `"ready"` (a
 closed or merged PR is NOT representable — the field records the draft/ready axis only, and
-a body that cannot observe the state elides the field). Because the archive emit is written
-BEFORE the PR-attached tail runs, an archive emit records `"draft"` (or elides the field);
+a body that cannot observe the state elides the field). The archive emit is written after the
+tail's READ-ONLY PREFLIGHT and before its mutations, so it records what the preflight
+OBSERVED — normally `"draft"`, and truthfully `"ready"` when the PR was already flipped (by
+the user, or by an earlier stage of an adopted program PR);
 the READY transition that the tail performs afterward is evidenced by the PR itself and the
 completion readout, NOT by a field asserting a state that has not happened. Both fields are
 elided when absent, never computed by the engine); the table's per-command rows derive from the
@@ -72,5 +74,5 @@ so provenance is always a conscious act.
 
 #### Scenario: PR pass-through fields record emit-time truth
 
-- **WHEN** an archive payload includes `pr_url` and `pr_state: "draft"` — the state observed at emit time, before the PR-attached tail flips it
-- **THEN** the written emit carries both fields verbatim, and a payload asserting `pr_state: "ready"` on an archive emit is a false record the body must not compose; the same fields on a review payload are rejected as unknown keys
+- **WHEN** an archive payload includes `pr_url` and `pr_state` carrying the value the read-only preflight observed — `"draft"` ordinarily, or `"ready"` for a PR already flipped before this archive
+- **THEN** the written emit carries both fields verbatim; the engine enforces the enum and the observed-not-predicted contract, not a particular value (a body composing a state it did NOT observe is the false record — including asserting `"ready"` on the strength of a flip the tail has yet to perform); the same fields on a review payload are rejected as unknown keys
