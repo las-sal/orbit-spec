@@ -39,14 +39,24 @@ Implementation chunks:
       commit artifacts + moved staging material, push, open a DRAFT PR with the
       agent-written INTENT description; per-architecture cited path: land on the program
       branch (create off default if absent), open the program PR on first configured touch
-      (draft, program-intent body). Degradation: no remote/no `gh`/`never` → skip with one
-      note.
-- [ ] 3.1b Propose body: branch preconditions — REMOTE resolution first (one remote wins
-      whatever its name; multiple → prefer `origin` else skip with an ambiguity note; the
-      resolved remote drives push target, default base, and `gh` repo), default-branch
-      resolution (`gh repo view` → `git symbolic-ref refs/remotes/<remote>/HEAD` → skip with
-      note), default-branch NAME COLLISION skip, dirty-tree skip, existing-branch
-      reuse-or-report (never force-move/rename); mid-flight push/`gh` failure skips the
+      (draft, program-intent body) — but ONLY after resolving existence with the SAME
+      four-axis constrained query the archive tail uses: one survivor = ADOPT (record it in
+      `pr_attachment`, create nothing), zero = create, several = ambiguity skip, query error
+      = degradation skip (never create on error — a duplicate program PR is unrepresentable
+      in Shape A). Degradation: no remote/no `gh`/`never` → skip with one note.
+- [ ] 3.1a SHARED resolution helper (body-level, both seams): implement
+      `orbit-pr-lifecycle`'s `Remote and default-branch resolution` ONCE as a reusable body
+      step and have propose, ff, AND the archive tail invoke it — one remote wins whatever
+      its name; multiple → prefer `origin` else skip with an ambiguity note; default branch
+      via `gh repo view` → `git symbolic-ref refs/remotes/<remote>/HEAD` → skip with note.
+      The resolved remote drives push target, default base, and `gh` repo at EVERY seam.
+      Grep-test that no seam resolves a remote or base independently.
+- [ ] 3.1b Propose body: propose's OWN preconditions (after invoking 3.1a) —
+      default-branch NAME COLLISION skip, dirty-tree skip, existing-branch
+      reuse-or-report (never force-move/rename), ENUMERATED commit scope (artifacts + moved
+      staging material + the `orbit/explore/<name>/` deletions — never `git add -A`, never a
+      bare directory prefix; unrelated untracked paths left alone and named in the note);
+      mid-flight push/`gh` failure skips the
       remainder with a completed-vs-skipped note and elides the emit's PR fields.
 - [ ] 3.2 Propose body: NO consent prompt and NO consent-scope change (D-d6-6) — the
       choreography rides the user's own invocation; the PR step never silently skips or
@@ -76,23 +86,44 @@ Implementation chunks:
       from the archive emit's `final_assessment` + change name + date (a status log is a
       convention, not an architecture-grammar requirement) — never blocking, never
       inventing; the source used is named in one line.
+- [ ] 4.1b Archive tail: the HEAD PRECONDITION — verify HEAD's branch equals
+      `pr_attachment.branch` BEFORE staging; on mismatch (or a locally-absent branch) skip
+      with a one-line note naming both branches and the `git switch <branch>` recovery.
+      Never checkout, never stash. Test the archive-from-`main` case explicitly: assert
+      ZERO commits land on the default branch and the PR is not flipped.
 - [ ] 4.2 Archive tail: PR DISCOVERY — read the `pr_attachment` object from the latest
       attachment-bearing propose OR ff emit on the change's trail (its `granularity` decides
-      flip-vs-append, its `branch` names the commit target — neither re-derived), fall
-      back to `gh pr list --head <branch>`, and when neither resolves skip with a one-line
-      note (the seam flips and records, it never creates). Commit scope is an ENUMERATED
+      flip-vs-append, its `branch` names the commit target — neither re-derived); COMPARE the
+      frozen record against the change's CURRENT `.openspec.yaml` `architecture:` block and
+      emit the one-line divergence note when a citation was added, removed, or re-pointed
+      after propose (the frozen record still governs — the note is what keeps the no-op
+      visible); fall back to the FOUR-AXIS constrained query (`gh pr list --repo <resolved
+      remote's repo> --head <branch> --state open`, discarding candidates whose base is not
+      the resolved default branch) requiring EXACTLY ONE survivor, with zero / several /
+      query-error each a distinct one-line note (the seam flips and records, it never
+      creates). Commit scope is an ENUMERATED
       FILE LIST — the exact capability spec files the sync reported changed (never the
       `orbit/specs/` prefix), the moved archive dir, `.openspec.yaml`, and the explicit
       at-archive-note edits — never `git add -A`; unrelated dirty paths stay unstaged and
       are named. Test with an unrelated dirty file INSIDE `orbit/specs/`.
 - [ ] 4.3 Archive tail degradation: push/`gh` failure skips the remaining tail with a
       one-line note naming completed vs skipped steps; the archive itself never rolls
-      back or blocks; `pr: never`/no-remote leaves the flow byte-identical to today.
+      back or blocks. SCOPE is attachment-driven: an UNATTACHED change (proposed under
+      `pr: never`, or degraded at propose) leaves the flow byte-identical to today, while an
+      ATTACHED change runs the tail even if `pr:` now reads `never` — the live key is not
+      consulted at this seam.
 - [ ] 4.4 Archive tail: the merge-seam echo — the completion readout names merging as
       the human's act in one line (per the `orbit-conventions` residual rule). The archive
       emit records `pr_url` + the EMIT-TIME `pr_state` (`"draft"`, or elided) — never the
       post-flip state, since the emit precedes the tail; the READY transition is evidenced
       by the PR and the readout.
+
+- [ ] 4.5 Archive body, CONSENT PREVIEW (entry, not tail): when the change is PR-ATTACHED,
+      the AI-mediated consent prompt's write preview additionally names the branch, the push
+      to the resolved remote, and the READY flip (per-proposal) or appended stage entry
+      (program) — the tail fires no second prompt, so this preview is where the outward
+      writes are disclosed. Unattached changes keep the byte-identical pre-capability
+      preview. Grep-test both shapes in the generated body.
 
 ## 5. Surface teach-in
 
@@ -107,7 +138,9 @@ Implementation chunks:
       `orbit architecture status --json` + the architecture trail show ARC-DONE, the readout
       surfaces the program PR's URL — found by scanning change trails (active AND archived)
       for `pr_attachment` objects with `granularity: per-architecture` and a matching `doc`,
-      most recent wins — its DRAFT state,
+      most recent wins — its CURRENT draft state read live via `gh pr view --json isDraft`
+      (never the frozen `pr_attachment.state`; a failed query surfaces the readout anyway
+      with a `state unverified` note),
       and `gh pr ready <n>` / `gh pr merge <n>` as the user's acts — recommend, never
       invoke; no outward write from this body.
 - [ ] 5.3 Conventions echo sites: the residual outward-actions line in the
@@ -120,7 +153,6 @@ Implementation chunks:
 
 (NOT apply tasks — the archive flow executes these; deliberately not checkboxes, so the
 apply gate's arithmetic covers only apply-completable work.)
-
 - 5.5 Retire superseded prose in the arc doc's `### Stage d6-pr-lifecycle` section
   (depth B, ratified 2026-08-12): replace the stale `pr: draft-at-propose | at-archive |
   never` config sketch with the ratified three-mode `pr: never | per-proposal |
@@ -130,6 +162,8 @@ apply gate's arithmetic covers only apply-completable work.)
   provenance-invariant; (g) confirmed, zero engine git. Exit criteria stay UNTOUCHED, and
   the section stays a charter (what the stage is chartered to do) — resolved questions are
   marked, never deleted, per the arc doc's genre and D1's precedent.
+- 5.6 Append the D6 status-log entry to the arc doc (the outcome narrative; the stage
+  section holds the charter, the log holds what happened).
 - 5.7 Record the single-session stance as an ARC-LEVEL RULING in the arc doc's rulings
   index (Sal, 2026-08-20): orbit is single-user, single-session — one user-invoked lifecycle
   command at a time; concurrency support (locking, serialization, optimistic retry,
@@ -142,8 +176,10 @@ apply gate's arithmetic covers only apply-completable work.)
   reclaim from, so it names no removal; the rule stands and the departure is dated and
   visible rather than silent. Rationale lives in design.md — the arc doc carries the
   one-line record, not a restatement.
-- 5.6 Append the D6 status-log entry to the arc doc (the outcome narrative; the stage
-  section holds the charter, the log holds what happened).
+- 5.9 Add the D6 entry to root `CLAUDE.md` in the D1–D5 house style (what shipped, the
+  cadence it went through, the test count) — every prior stage carries one, and it is what
+  keeps `CLAUDE.md` accurate for the next cold start. The Impact section's Docs bullet
+  promises it; this note is where it lands.
 
 ## 6. Verification
 
@@ -158,23 +194,35 @@ apply gate's arithmetic covers only apply-completable work.)
 - [ ] 6.2a Harness cases — CONFIG: explicit `pr: never` runs the full propose→archive
       lifecycle with ZERO git/`gh` invocations recorded (asserted against the stub's log,
       not just output text); unset `pr:` byte-identical to `never`; each of the three values
-      resolves; unrecognized value inert with a warning.
+      resolves; unrecognized value inert with a warning; CONFIG-FLIPPED-MID-FLIGHT — a
+      change proposed under `per-proposal` and archived after `pr: never` still runs its
+      tail (attachment authority), while a change proposed under `never` runs none.
 - [ ] 6.2b Harness cases — DEGRADATION: no remote; `gh` absent from PATH; multiple remotes
       with no `origin` (ambiguity skip); default-branch resolution failure. Each degrades
-      with one note, exit 0, artifacts intact.
+      with one note, exit 0, artifacts intact. Assert the SHARED algorithm at BOTH seams:
+      the same multi-remote checkout skips identically at propose and at the archive tail,
+      and an unresolvable base at archive reports a RESOLUTION failure — never a missing PR.
 - [ ] 6.2c Harness cases — PRECONDITIONS: non-`main` default branch; dirty tree skip;
       branch-name collision with the default branch; per-proposal collision with unrelated
       work; PROGRAM branch reuse across two successive citing changes (the case the old
-      rule wrongly rejected); remote-ahead fast-forward and remote-diverged skip.
+      rule wrongly rejected); remote-ahead fast-forward and remote-diverged skip; propose's
+      enumerated commit scope with an unrelated UNTRACKED file present (it stays unstaged
+      and is named).
 - [ ] 6.2d Harness cases — ENTRY POINTS + ATTACHMENT: `ff` end-to-end producing the same
       branch/PR/`pr_attachment` as propose; `new`+`continue` reaching archive unattached;
       the attachment object's shape per path (per-proposal without `doc`, per-architecture
-      with it); branch-without-PR after a `gh pr create` failure.
+      with it); branch-without-PR after a `gh pr create` failure; PROGRAM-PR ADOPTION — a
+      second citing change proposed when the program PR already exists records the existing
+      PR and issues no `gh pr create` (asserted against the stub's log), with the several-
+      candidates and query-error cases each skipping distinctly.
 - [ ] 6.2e Harness cases — ARCHIVE TAIL: discovery from the propose emit; discovery
       fallback via the `gh` stub; zero/multiple/closed-match outcomes each distinct;
       enumerated commit scope with an unrelated dirty file inside `orbit/specs/`; ordering
-      invariant (`gh pr ready` recorded only after a successful push); push-failure skip
-      with the archive still complete; program-mode append-without-flip.
+      invariant (`gh pr ready` recorded only after a successful push); HEAD-MISMATCH skip
+      (archive invoked from the default branch — no commit on `main`, no flip); push-failure skip
+      with the archive still complete; program-mode append-without-flip; CITATION DIVERGENCE
+      — a citation added, removed, or re-pointed after propose produces the one-line note
+      and the frozen record still governs.
 - [ ] 6.2f Harness cases — ARC-DONE READOUT: both valid orderings (final archive →
       ratification → closing review, and closing review → ratification) surface the human
       acts; the readout is idempotent across repeated architect invocations; the program PR

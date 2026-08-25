@@ -12,7 +12,17 @@ validation succeed, whenever `pr:` config activates the PR layer (`per-proposal`
 material), push, and open a DRAFT PR with the agent-written INTENT description. Under
 `per-architecture` for a CITED change — land the work on the doc's program branch (creating
 it off the default branch if absent) and open the program PR if it does not yet exist
-(first-configured-touch birth). With `pr: never` or degraded (no remote/no
+(first-configured-touch birth). EXISTENCE IS RESOLVED BY QUERY, never assumed from the
+branch's newness or from a `gh pr create` duplicate error: run the SAME four-axis
+constrained query the archive tail uses (per `orbit-archive-modifications`' discovery rule —
+the resolved remote's repository, `--head <program-branch>`, `--state open`, and candidates
+DISCARDED unless their base is the resolved default branch). Exactly one survivor: ADOPT it
+— record its identity in this propose's `pr_attachment` and create nothing (Shape A's
+one-PR-per-program rule is what makes adoption correct, not a fallback). Zero survivors:
+create the draft program PR. More than one: SKIP the PR step with a one-line ambiguity note
+listing the candidates, exactly as the tail does. A query that ERRORS is degradation, not a
+zero result — skip with the failure note rather than creating a PR that may duplicate an
+existing one, since a duplicate program PR is the one outcome Shape A cannot represent. With `pr: never` or degraded (no remote/no
 `gh`) the choreography is skipped with a one-line note. A step that FAILS mid-flight (push
 rejected for auth, branch protection, or divergence; `gh pr create` erroring) SHALL skip the
 remaining choreography with a one-line note naming completed vs skipped steps, elide
@@ -45,6 +55,11 @@ scaffolding, never prompting.
 - **THEN** artifacts generate, the `my-feature` branch is created/committed/pushed, a draft
   PR opens with an intent description, and no PR-related prompt fires
 
+#### Scenario: Program PR is adopted, not duplicated
+
+- **WHEN** a second citing change is proposed under `per-architecture` and the constrained query finds exactly one open PR from the program branch into the resolved base
+- **THEN** that PR is ADOPTED — its identity is recorded in this propose's `pr_attachment` and no PR is created; a query returning several candidates skips with an ambiguity note, and a query that errors skips with the failure note rather than creating a possible duplicate
+
 #### Scenario: Uncited change under per-architecture takes the fallback
 
 - **WHEN** `pr: per-architecture` and a change with no `architecture:` citation is proposed
@@ -54,7 +69,7 @@ scaffolding, never prompting.
 #### Scenario: Push failure degrades, artifacts stand
 
 - **WHEN** the push is rejected mid-choreography (auth, branch protection, or divergence)
-- **THEN** the PR step is skipped, one note names completed vs skipped steps, `pr_url`/`pr_state` are elided from the propose emit, and the generated artifacts remain intact
+- **THEN** the PR step is skipped, one note names completed vs skipped steps, `pr_attachment`'s `url`/`state` keys are elided from the propose emit (the object persists carrying `branch` and `granularity`), and the generated artifacts remain intact
 
 #### Scenario: Failure note carries manual recovery
 
@@ -71,18 +86,15 @@ scaffolding, never prompting.
 
 Branch creation SHALL resolve its preconditions explicitly, never by implementer choice.
 
-The REMOTE is resolved before anything else, since branch identity, default base, and the
-GitHub repository must all agree: exactly one remote → use it (whatever its name — `origin`
-is a convention, not a requirement); multiple remotes → prefer `origin` when present,
-otherwise the choreography is SKIPPED with a one-line note naming the ambiguity and the
-candidates (orbit never guesses which remote owns the PR); zero remotes → the degraded path
-(`never`). All subsequent steps — push target, default-branch resolution, and `gh`
-repository selection — use that ONE resolved remote.
+The REMOTE and the DEFAULT BRANCH are resolved FIRST, by the shared algorithm defined in
+`orbit-pr-lifecycle`'s `Remote and default-branch resolution` requirement — the single
+definition both PR seams consume, so propose and archive can never disagree about which
+repository owns the PR or which branch it targets. An unresolvable remote or default branch
+degrades exactly as that requirement states: the choreography SKIPS with the one-line note
+it prescribes, and the lifecycle never blocks. The preconditions below are propose's OWN —
+they govern creating a branch, which the archive seam never does.
 
-The DEFAULT BRANCH is resolved as `gh repo view --json defaultBranchRef` when `gh` is
-available, falling back to `git symbolic-ref refs/remotes/<resolved-remote>/HEAD`; when
-neither resolves, the choreography is skipped with a one-line note naming the failure (the
-PR layer degrades, the lifecycle never blocks). A mechanical branch name that COLLIDES with
+A mechanical branch name that COLLIDES with
 the resolved default branch (a change literally named `main`, or an architecture doc whose
 stem is the default branch) makes `<head> → <base>` impossible: the choreography SKIPS with
 a one-line note naming the collision rather than creating an unmergeable PR or misclassifying
@@ -90,6 +102,18 @@ the default branch as an unrelated existing branch. A DIRTY working tree at the 
 tracked modification outside the change's own generated artifacts and moved staging
 material) SHALL skip the branch/PR steps with a one-line note rather than sweep unrelated
 edits onto the branch — artifact generation has already succeeded and is never rolled back.
+Unrelated UNTRACKED paths do not trigger the skip (a fresh working tree routinely carries
+them), but they are NAMED in that same note when the choreography proceeds, so nothing the
+commit deliberately leaves behind is silent.
+
+The propose COMMIT SCOPE is an ENUMERATED FILE LIST on the same discipline the archive tail
+carries, and for the same reason — this commit becomes the first commit of a PR: stage the
+change's own generated artifacts, the moved staging material now under
+`orbit/changes/<change-name>/`, and the staging-directory DELETIONS the move produced
+(`orbit/explore/<change-name>/`), and nothing else. `git add -A` is PROHIBITED, as is
+staging a bare directory prefix: the obvious reach for `-A` (the artifacts are newly created
+and therefore untracked) is exactly what would sweep an unrelated untracked file into a PR
+the user is about to publish.
 An EXISTING branch of the target name is REUSED when it is COMPATIBLE, and compatibility is
 defined PER PATH because the two paths mean opposite things by "expected history":
 
@@ -123,6 +147,11 @@ branch. orbit never force-moves, renames, rebases, or force-pushes a user's bran
 
 - **WHEN** the mechanical branch name equals the resolved default branch (a change named `main`, or a program doc whose stem is the default branch)
 - **THEN** the choreography skips with a one-line note naming the collision; no unmergeable `<head> → <base>` PR is attempted and the default branch is never treated as an unrelated existing branch
+
+#### Scenario: Propose stages an enumerated list, never `-A`
+
+- **WHEN** the choreography commits with unrelated UNTRACKED files present in the working tree
+- **THEN** only the change's generated artifacts, the moved staging material, and the staging-directory deletions are staged; the unrelated untracked paths are left alone and named in the note; `git add -A` and bare directory-prefix staging are never used
 
 #### Scenario: Dirty tree skips rather than sweeps
 

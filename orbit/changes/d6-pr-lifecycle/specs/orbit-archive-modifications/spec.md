@@ -12,10 +12,30 @@ choreography per `orbit-pr-lifecycle`'s entry-points requirement, so a tail that
 propose emits loses every ff-started change's attachment). That object supplies BOTH facts
 the tail needs: `granularity` decides whether this seam flips READY (per-proposal) or
 appends only (per-architecture), and `branch` names what to commit to — neither is
-re-derived from config or the citation. When the object is absent, or present without a
+re-derived from config or the citation.
+
+Because `git commit` writes to whatever HEAD points at and takes no branch argument,
+"`branch` names what to commit to" is a PRECONDITION the tail SHALL VERIFY, not an
+assumption: before staging anything, compare HEAD's current branch to
+`pr_attachment.branch`. When they differ — or the named branch does not exist locally — the
+tail SKIPS with a one-line note naming BOTH branches and the literal recovery
+(`git switch <branch>`, then commit the archive's writes). It NEVER checks out, stashes, or
+otherwise moves the working tree: the same restraint as "orbit never force-moves, renames,
+rebases, or force-pushes a user's branch", and for the same reason — a working-tree mutation
+here would fire AFTER the user consented to a sync-and-move, not before. This case is
+uncommon (propose leaves the user on the branch and apply keeps them there), but it is
+uncommon, SILENT, and lands on the default branch: without the check the archive writes
+commit and push to `main`, every step reports success, the ordering invariant reads as
+satisfied, and a PR is flipped READY announcing work it does not contain. The archive itself
+(sync, move, emit) has already completed and is never rolled back — the skip strands nothing
+but the commit, which the note's recovery line addresses directly. When the object is absent, or present without a
 `url`, fall back to `gh pr list` — but the fallback SHALL identify EXACTLY ONE PR before
 acting, because a head branch does not uniquely identify a pull request. The query is
-CONSTRAINED on all four axes and every one is required: the RESOLVED REMOTE's repository
+CONSTRAINED on all four axes and every one is required — with the remote and the base
+resolved by `orbit-pr-lifecycle`'s `Remote and default-branch resolution` requirement, the
+SHARED algorithm propose uses, so the two seams can never disagree about the repository or
+the base; an unresolvable remote or base is a DEGRADATION SKIP naming the resolution
+failure, never a zero result: the RESOLVED REMOTE's repository
 (`--repo`, so a fork's PRs are never mistaken for this repo's), the `--head <branch>` from
 the attachment or the mechanical name, `--state open` (a closed or merged PR is not a
 flip target), and the RESOLVED BASE — candidates whose base is not the resolved default
@@ -56,9 +76,17 @@ source (1) is absent; it composes from (2) and notes which source it used in one
 and never flipped by the tail: arc-done is later than any archive, and its flip is the
 human's act surfaced at the architect ratification (per `orbit-pr-lifecycle`). ORDERING INVARIANT: the
 flip fires only AFTER the archive commit is pushed — the PR must contain its own archive
-commit before READY is honest. SCOPE: this tail exists ONLY for
-PR-attached changes — with `pr: never`, no remote, or no `gh`, the archive flow ends
-exactly as pre-capability (readout; commits stay the user's affair). Tail-step failures
+commit before READY is honest. SCOPE: THE ATTACHMENT DECIDES, NOT THE LIVE CONFIG. The tail runs whenever a
+`pr_attachment` resolves for this change, whatever `pr:` reads at archive time; UNATTACHED
+changes — including every change proposed under `pr: never`, and every change whose propose
+degraded for want of a remote or `gh` — end exactly as pre-capability (readout; commits stay
+the user's affair). This is the SAME freeze-at-commitment rule the citation carries one
+requirement earlier: config selects the regime at the ATTACHING invocation, and every later
+seam follows the frozen record rather than re-reading the key. Setting `pr: never` therefore
+stops NEW attachments; it does not abandon a PR already open, because a draft PR that never
+closes is a worse artifact than outward writes continuing under a key changed mid-flight —
+the first is invisible, the second is legible in the PR itself. A user who means to abandon
+an open PR closes it, and the tail's discovery then finds nothing and skips with its note. Tail-step failures
 (push rejected, `gh` errors) SKIP the remaining tail steps with a one-line note naming the
 completed and skipped steps — the archive itself (sync, move, emit) has already succeeded
 and never rolls back or blocks (apply-parity flavor). The tail's outward writes ride the
@@ -70,6 +98,16 @@ inside the tail.
 - **WHEN** a user-typed archive of a PR-attached uncited change completes its emit
 - **THEN** the flow continues commit → push → achievement rewrite → `gh pr ready` with no
   further prompts, and the completion readout names the READY PR
+
+#### Scenario: Config flipped to never after propose does not abandon the PR
+
+- **WHEN** a change proposed under `pr: per-proposal` is archived after `pr:` has been set to `never`
+- **THEN** the tail RUNS on the frozen `pr_attachment` — the live config is not consulted at this seam — and a change proposed under `pr: never` (no attachment) ends exactly as pre-capability
+
+#### Scenario: HEAD on the wrong branch skips before staging
+
+- **WHEN** the tail runs while HEAD is on the default branch (or any branch other than `pr_attachment.branch`), or the named branch does not exist locally
+- **THEN** nothing is staged, committed, pushed, or flipped; one note names both branches and the `git switch <branch>` recovery; the working tree is never checked out or stashed, and the completed archive is not rolled back
 
 #### Scenario: PR discovery finds nothing
 
@@ -120,6 +158,53 @@ inside the tail.
 - **THEN** the stage entry is composed from the archive emit's `final_assessment` plus the change name and date, in the same entry shape; one line names the source used, and the tail neither blocks nor prompts
 
 ## MODIFIED Requirements
+
+### Requirement: Consent prompt on AI-mediated archive entry
+
+The archive workflow SHALL apply `orbit-lifecycle-consent`'s provenance rule at command entry:
+provenance is CLASSIFIED at entry (a fact about the triggering turn), and on AI-mediated arrival
+the consent AskUserQuestion fires AFTER read-only discovery (change selection; the read-only look
+at the change's `specs/` that supplies the write preview) and BEFORE any of the command's writes
+or anomaly prompts (before the Step 3.4 gate prompt — consent asks "should we be here at all";
+the anomaly prompts ask "is the state sound"). The prompt content: position readout + what the
+archive will write (N deltas across M capabilities synced to baseline, change moved to archive —
+Proceed / Abort). When the change is PR-ATTACHED (per `orbit-pr-lifecycle`), the preview
+SHALL ADDITIONALLY name the tail's OUTWARD writes: the branch the archive commit lands on,
+the PUSH to the resolved remote, and — for a per-proposal PR — the READY FLIP, or, for a
+program PR, the APPENDED stage entry. This is required precisely because the tail rides this
+same entry consent and fires no second prompt of its own: a preview enumerating only in-repo
+writes would obtain consent for a spec sync and a directory move, then push to a remote and
+flip a pull request public. The outward line is OMITTED for unattached changes, so the
+pre-capability prompt is unchanged wherever no PR exists. The preview REPORTS what the tail
+will attempt; a tail that later degrades (no remote, `gh` failure, HEAD mismatch) still
+skips with its own note — the preview is not a promise that every step succeeds. A
+user-typed `/orbit:archive` runs with no consent prompt. Proceeding records
+`consent: "prompted"` in the archive run summary; an abort writes no summary. The bulk-archive
+workflow applies the same rule per change (a user-typed `/orbit:bulk-archive` whose flow confirms
+the batch is user-invoked for the confirmed set).
+
+#### Scenario: AI-mediated entry prompts first
+
+- **WHEN** the archive workflow is reached via delegation/inference (no same-turn user
+  invocation)
+- **THEN** the consent prompt fires before the gate, fingerprint, and audit steps; Abort leaves
+  no writes and no summary
+
+#### Scenario: User-typed entry skips the consent prompt
+
+- **WHEN** the user types `/orbit:archive <name>`
+- **THEN** no consent prompt fires; the flow proceeds directly to Step 1.5 onward, and the run
+  summary records `consent: "user-invoked"`
+
+#### Scenario: Preview names the outward writes for an attached change
+
+- **WHEN** the consent prompt fires for a PR-ATTACHED change
+- **THEN** the preview names the branch, the push to the resolved remote, and the READY flip (or the appended stage entry for a program PR) alongside the sync and move — so no push or public flip follows a consent that never mentioned it
+
+#### Scenario: Unattached change keeps the pre-capability preview
+
+- **WHEN** the consent prompt fires for a change with no PR attachment
+- **THEN** the preview is byte-identical to the pre-capability content (deltas synced, change moved) — no outward line appears
 
 ### Requirement: Archive run summary written
 

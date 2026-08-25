@@ -1,0 +1,254 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-08-25T02:23:35Z",
+  "change": "d6-pr-lifecycle",
+  "kind": "editorial",
+  "model": "claude-opus-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/d6-pr-lifecycle/.orbit-runs/review-proposal-2026-08-24T23-36-30Z.json",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 9,
+    "suggestion": 2
+  },
+  "pushback_verification": "All 12 verified against current artifact content before disposition; none suppressed as stale. Two verifications widened their finding: the CRITICAL's single cited site was one of six carrying the retired propose-side field names, and the citation-divergence finding's task also still held the pre-walk unconstrained discovery fallback the external round had already replaced in the spec. Both were swept as part of the same resolution rather than left for a later pass.",
+  "resolution_summary": {
+    "resolved": 12,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "Zero-engine-git requirement still names pr_url/pr_state on the propose emit — retired by the pr_attachment record",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-pr-lifecycle/spec.md",
+      "classification": "trivial_fix",
+      "action": "Rewrote the engine-surface clause to name the structured `pr_attachment` object on propose/ff and the flat `pr_url`/`pr_state` pair on archive only, with the asymmetry justified (propose/ff RESOLVE an attachment; archive reports observed state) and the fail-loud consequence stated: `pr_url` on a propose payload is a REJECTED key, not a tolerated alias. The sweep found FIVE more residue sites the finding did not name — proposal.md's zero-engine-git bullet, its run-summary-emit capability line, its emit-composition capability line, design.md's Touchpoints row, and a propose scenario still eliding the retired fields — all corrected; every surviving `pr_url` reference is now archive-scoped.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/proposal.md",
+          "orbit/changes/d6-pr-lifecycle/design.md",
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-propose-modifications/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Archive tail never states it must be ON the attachment's branch — a HEAD mismatch pushes the archive commit elsewhere",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-archive-modifications/spec.md",
+      "classification": "decision_required",
+      "action": "Ratified option A (skip-only). Added a HEAD PRECONDITION to the tail: compare HEAD's branch to `pr_attachment.branch` before staging; on mismatch or a locally-absent branch, SKIP with a one-line note naming both branches and the literal `git switch <branch>` recovery. Never checkout, never stash — a working-tree mutation here would fire after the user consented to a sync-and-move. The requirement names the failure it prevents: without the check the archive writes commit and push to `main`, every step reports success, the ordering invariant reads as satisfied, and a PR is flipped READY announcing work it does not contain. Task 4.1b + a harness case asserting zero commits on the default branch.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "A — skip-only; verify HEAD, never checkout, and make the note carry the exact recovery command"
+    },
+    {
+      "severity": "WARNING",
+      "title": "\"Open the program PR if it does not yet exist\" specifies no existence check — Shape A's one-PR rule is unenforced at propose",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-propose-modifications/spec.md",
+      "classification": "trivial_fix",
+      "action": "Required the SAME four-axis constrained query the archive tail uses before opening a program PR: exactly one survivor = ADOPT it into this propose's `pr_attachment` and create nothing; zero = create; several = ambiguity skip; query ERROR = degradation skip, never create-on-error, since a duplicate program PR is the one outcome Shape A cannot represent. New scenario + task 3.1 + harness case 6.2d asserting no `gh pr create` fires against the stub's log when a program PR already exists.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Tail scope is attachment-driven and config-driven at once; an attached change under a later `pr: never` is undefined",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-archive-modifications/spec.md",
+      "classification": "decision_required",
+      "action": "Ratified option A (attachment authority). The SCOPE sentence now reads: the tail runs whenever a `pr_attachment` resolves, whatever `pr:` reads at archive time; UNATTACHED changes end exactly as pre-capability. Justified as the SAME freeze-at-commitment rule the citation carries one requirement earlier — config selects the regime at the attaching invocation and every later seam follows the frozen record. Setting `pr: never` stops new attachments without abandoning an open PR, because a draft PR that never closes is invisible while writes under a changed key are legible in the PR itself; a user who means to abandon one closes it and discovery then finds nothing.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "A — attachment wins; config is read only at the attaching invocation",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Attachment wins: the tail runs whenever a pr_attachment resolves, regardless of the current pr: value."
+          },
+          {
+            "label": "B",
+            "body": "Config wins: pr: never at archive suppresses the tail even for an attached change, with a note naming the PR left DRAFT."
+          }
+        ],
+        "chosen": "A"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Arc-done readout's stop condition (\"until the PR is no longer draft\") names no source for the PR's current state",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-pr-lifecycle/spec.md",
+      "classification": "trivial_fix",
+      "action": "The readout now reads the CURRENT state live via a READ-ONLY `gh pr view --json isDraft` against the located URL, never the frozen `pr_attachment.state` (permanently `\"draft\"` by construction, so a readout gated on it would nag forever after the human flips READY). The read is permitted because it is an observation, not an outward write — the zero-engine-git rule constrains the ENGINE, not a body's reads. A failed or unavailable query still SURFACES the readout with a `state unverified` note: an unverifiable state must never suppress the one surfacing the program relies on.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Archive tail consumes \"the RESOLVED REMOTE\" and \"the RESOLVED BASE\" with no resolution rule in its own scope",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-archive-modifications/spec.md",
+      "classification": "decision_required",
+      "action": "Ratified option A (hoist). Added a SHARED requirement `Remote and default-branch resolution` to `orbit-pr-lifecycle`, consumed by BOTH seams; propose's block shrank to a citation keeping only its own preconditions (name collision, dirty tree, branch compatibility), and the tail's four-axis query now cites the shared algorithm with an explicit rule that an unresolvable remote or base is a DEGRADATION SKIP, never a zero result. Chosen over the cheaper one-sentence cite because the reviewer's cross-cutting thesis was seam asymmetry: leaving the algorithm inside a requirement titled 'at propose' would have the next seam borrow it again. Task 3.1a implements it once as a reusable body step with a grep-test that no seam resolves independently.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-pr-lifecycle/spec.md",
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-propose-modifications/spec.md",
+          "orbit/changes/d6-pr-lifecycle/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "A — hoist into a shared orbit-pr-lifecycle requirement; both seams cite it",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Hoist the resolution algorithm into a shared requirement in orbit-pr-lifecycle; both seams cite it."
+          },
+          {
+            "label": "B",
+            "body": "Leave it in propose and add one citing sentence to the archive tail."
+          }
+        ],
+        "chosen": "A"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Propose's commit scope is unenumerated and its dirty-tree guard covers only TRACKED modifications",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-propose-modifications/spec.md",
+      "classification": "trivial_fix",
+      "action": "Gave propose the archive tail's discipline and said why it is the same reason — this commit becomes the first commit of a PR: an ENUMERATED file list (generated artifacts, moved staging material, and the `orbit/explore/<name>/` deletions), with `git add -A` and bare directory-prefix staging PROHIBITED. Named the trap explicitly: the artifacts are newly created and therefore untracked, so `-A` is the obvious reach and exactly what sweeps an unrelated untracked file into a PR about to be published. Unrelated untracked paths do not trigger the dirty skip but ARE named in the note. New scenario + task 3.1b + harness case.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The citation-edited-after-propose no-op note has a scenario but no task instructing any body to detect or emit it",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-pr-lifecycle/spec.md",
+      "classification": "trivial_fix",
+      "action": "Task 4.2 now requires the tail to COMPARE the frozen record against the change's current `.openspec.yaml` `architecture:` block and emit the one-line divergence note before acting (the frozen record still governs — the note keeps the no-op visible), plus a 6.2e harness case. The same read surfaced unrelated residue: task 4.2 still carried the pre-walk unconstrained `gh pr list --head <branch>` fallback that the external walk had already replaced with the four-axis query in the spec — corrected so task and requirement agree.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Archive's AI-mediated consent preview is unmodified, so it under-describes the outward writes the tail now rides on",
+      "marker_source": "internal-review",
+      "file": "orbit/specs/orbit-archive-modifications/spec.md",
+      "classification": "decision_required",
+      "action": "Ratified option A. Added an EIGHTH delta block — MODIFIED `Consent prompt on AI-mediated archive entry` in `orbit-archive-modifications`, reproducing the baseline requirement and extending the preview: for a PR-ATTACHED change it additionally names the branch, the push to the resolved remote, and the READY flip (or the appended stage entry for a program PR). Justified at the point of the rule: the tail rides this same entry consent and fires no second prompt, so a preview enumerating only in-repo writes would obtain consent for a sync-and-move and then push to a remote and flip a PR public. Unattached changes keep the byte-identical pre-capability preview. Two new scenarios, task 4.5, fingerprint stamped (4/4 verified).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/tasks.md",
+          "orbit/changes/d6-pr-lifecycle/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "A — add the eighth delta block so the consent preview names the outward writes"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Impact promises a CLAUDE.md D6 entry at archive; no task or at-archive note carries it",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d6-pr-lifecycle/proposal.md",
+      "classification": "trivial_fix",
+      "action": "Added at-archive note 5.9: add the D6 entry to root CLAUDE.md in the D1-D5 house style (what shipped, the cadence, the test count). Resolved toward the Impact bullet rather than against it — every prior stage carries such an entry, and it is what keeps CLAUDE.md accurate for the next cold start.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "\"11 decisions\" in proposal.md and design.md no longer matches explore.md's decision record",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d6-pr-lifecycle/proposal.md",
+      "classification": "trivial_fix",
+      "action": "Counted the record directly (12 Decisions bullets of which 2 are promotion-resolved; 6 post-promotion revisions; 5 rejections) and restated both summaries as '10 decisions + 2 promotion-resolved questions + 6 post-promotion revisions' (design.md also carries the 5 rejections), so the cadence's own revisions are visible from the summary docs rather than hidden behind a promotion-era number.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "At-archive notes are listed 5.5, 5.7, 5.8, 5.6 — the status-log entry reads as an afterthought",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d6-pr-lifecycle/tasks.md",
+      "classification": "trivial_fix",
+      "action": "Renumbered the at-archive notes monotonically in reading order: 5.5 stage-section retirement, 5.6 status-log entry, 5.7 single-session ruling, 5.8 subtraction exception, 5.9 CLAUDE.md entry. Ordering carries meaning here — the tail's program stage entry is specified to adapt the status-log entry written at the same archive, so the log note's position is the reader's cue about sequence.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "12 of 12 resolved; 0 unresolved markers in scope. Four decision-lane findings ratified in chat, all toward the structural rather than the cheaper option: skip-only HEAD verification, attachment authority over live config at the archive seam, a hoisted shared remote/default-branch resolution requirement consumed by both seams, and an eighth delta block extending the AI-mediated consent preview to name the tail's outward writes. Eight obvious-fix findings applied, two of which uncovered residue their finding did not name. Capabilities remain 7; delta blocks 8; tasks 26 to 29; fingerprints 4/4 verified; 1918 tests green.",
+  "iteration": 3,
+  "next_recommended": "/orbit:review --as proposal d6-pr-lifecycle"
+}

@@ -84,6 +84,42 @@ existed while the real per-change PR sat forever draft.)
 - **THEN** propose creates `<change-name>` off the default branch, commits the artifacts,
   pushes, and opens a draft PR `<change-name> → <default-branch>`
 
+### Requirement: Remote and default-branch resolution
+
+Both PR seams SHALL resolve the remote and the default branch by ONE shared algorithm
+defined here, never by implementer choice and never per-seam. The propose choreography needs
+them to create a branch and open a PR; the archive tail needs them to CONSTRAIN its
+discovery query (`--repo` and the base filter) and to push. A seam that resolved them
+differently would defeat the very constraint the other seam relies on — `gh`'s own implicit
+default can select a different repository in a fork or multi-remote checkout, which is
+exactly the case `--repo` exists to defend against, and a differently-resolved base makes
+discovery find ZERO survivors for a PR that plainly exists.
+
+The REMOTE is resolved before anything else, since branch identity, default base, and the
+GitHub repository must all agree: exactly one remote → use it (whatever its name — `origin`
+is a convention, not a requirement); multiple remotes → prefer `origin` when present,
+otherwise SKIP with a one-line note naming the ambiguity and the candidates (orbit never
+guesses which remote owns the PR); zero remotes → the degraded path (`never`). Every
+subsequent step at either seam — push target, default-branch resolution, `gh` repository
+selection — uses that ONE resolved remote.
+
+The DEFAULT BRANCH is resolved as `gh repo view --json defaultBranchRef` when `gh` is
+available, falling back to `git symbolic-ref refs/remotes/<resolved-remote>/HEAD`. When
+neither resolves, the PR work at that seam SKIPS with a one-line note naming the failure —
+the PR layer degrades, the lifecycle never blocks. At the ARCHIVE seam specifically, an
+unresolvable remote or base is a DEGRADATION SKIP, never a zero-result: the tail reports
+that it could not resolve, and never reports a missing PR on that basis.
+
+#### Scenario: One algorithm, both seams
+
+- **WHEN** propose opens a PR and, later, the archive tail discovers it in a checkout with several remotes and no `origin`
+- **THEN** both seams apply the same resolution and both SKIP with the same ambiguity note — the tail never falls back to `gh`'s implicit default, so the repository and base it queries can never disagree with the ones propose used
+
+#### Scenario: Unresolvable base at archive is degradation, not a miss
+
+- **WHEN** the archive tail cannot resolve the default branch (neither `gh repo view` nor `git symbolic-ref` succeeds)
+- **THEN** the tail skips with a one-line note naming the resolution failure, and does NOT report that the change's PR is missing
+
 ### Requirement: PR entry points
 
 The PR choreography SHALL be carried by the ARTIFACT-SET-CREATING commands that complete a
@@ -136,7 +172,15 @@ stage has already passed. Tying the readout to that interaction would mean the r
 surfacing never appears. Because the readout is idempotent and derived from observed state
 (never from a stored "already surfaced" flag), it appears at whichever invocation first
 observes arc-done and re-appears on every later one until the PR is no longer draft — which
-also makes it safe under either ordering. The readout names
+also makes it safe under either ordering. The DRAFT STATE IS READ LIVE, not from the located
+record: `pr_attachment.state` is frozen at propose and is therefore permanently `"draft"` by
+construction, so a readout gated on it would keep nagging forever after the human flips
+READY. The architect flow resolves the CURRENT state with a READ-ONLY `gh pr view --json
+isDraft` query against the located URL — permitted here because it is an observation, not an
+outward write, and the zero-engine-git rule constrains the ENGINE, not a body's reads. When
+that query fails or `gh` is unavailable, the readout still SURFACES, carrying a one-line
+`state unverified` note: an unverifiable state must never silently suppress the one surfacing
+the program relies on. The readout names
 the program PR's URL — located by scanning the change trails (active AND archived) for
 `pr_attachment` objects whose `granularity` is `per-architecture` and whose `doc` MATCHES
 this architecture doc, taking the most recent; the `doc` key is what makes this lookup
@@ -243,8 +287,14 @@ Every git and GitHub action of this capability SHALL live as workflow-body steps
 generated skill bodies — branch creation, commit, push, `gh pr create/edit/ready` — the
 same choreography class as the existing review-handoff commit+push; the orbit
 engine SHALL NOT shell to git or `gh` for any PR-lifecycle purpose. The engine's total
-surface for this capability is the `pr:` config reader and the optional `pr_url`/`pr_state`
-narrative payload fields on the propose/archive emits (per `orbit-emit-composition`).
+surface for this capability is the `pr:` config reader, the optional structured
+`pr_attachment` object on the PROPOSE and FF emit payloads, and the optional flat
+`pr_url`/`pr_state` pass-through fields on the ARCHIVE emit payload (per
+`orbit-emit-composition`). The asymmetry is deliberate and is not a naming inconsistency:
+propose and ff RESOLVE an attachment and must record its identity as one correlated unit,
+while archive resolves nothing — it reports the state it observed at emit time. Because the
+engine's write gate is fail-loud on unknown payload keys, this enumeration is normative:
+`pr_url` on a propose payload is a REJECTED key, not a tolerated alias.
 
 #### Scenario: Engine untouched by PR flows
 

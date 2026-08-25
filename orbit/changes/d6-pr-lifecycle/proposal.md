@@ -13,8 +13,9 @@ merging stays a human act. SCOPE OF "window", narrowed from the charter's aspira
 shows whatever has been PUSHED, and D6 guarantees pushes at exactly two seams (the propose
 choreography and the archive tail). It does NOT add pushes at review, apply, or resolution
 seams — that would contradict the seams-only refresh decision and grow the change
-substantially. Intermediate visibility is whatever the user pushes in between. See `explore.md` (11 decisions + 2 promotion-resolved questions,
-one session, 2026-08-10/11).
+substantially. Intermediate visibility is whatever the user pushes in between. See `explore.md` (10 decisions + 2
+promotion-resolved questions from one session, 2026-08-10/11, plus 6 post-promotion
+revisions dated 2026-08-12/2026-08-20 recording what the review cadence overturned).
 
 ## What Changes
 
@@ -57,8 +58,9 @@ one session, 2026-08-10/11).
   prompt, no schema gate, no version bump; D1's closed set is untouched. The PR step never
   silently skips or degrades by provenance (the D1-carried skip leaning stays superseded).
 - **Zero engine git**: branch/commit/push/`gh pr` live as workflow-body steps (the existing
-  review-handoff choreography class); the engine gains only the `pr:` config reader and
-  optional `pr_url`/`pr_state` pass-through fields on the propose/ff/archive emit payloads.
+  review-handoff choreography class); the engine gains only the `pr:` config reader, the
+  optional structured `pr_attachment` object on the propose/ff emit payloads, and the
+  optional flat `pr_url`/`pr_state` pass-through fields on the archive emit payload.
 - **Residual outward-actions rule**: the off-script outward-action conventions requirement
   (merges, releases, issue-filing) shrinks to a short `orbit-conventions` requirement echoed
   into lifecycle-completion outputs.
@@ -84,15 +86,19 @@ one session, 2026-08-10/11).
   promoted to the consent-scoped set — `orbit-lifecycle-consent` is untouched by this change.
 - `orbit-archive-modifications`: the PR-attached archive tail (commit → push → landmark
   rewrite → READY flip) with PR discovery, commit scope, ordering, and degradation rules;
-  plus a MODIFIED `Archive run summary written` recording the emit-time PR fields.
-- `orbit-run-summary-emit`: `PR fields on the propose and ff emits` — the OWNING definition of
-  `pr_url`/`pr_state` on the propose side (the emit-composition table mirrors it, per that
-  capability's own precedence rule), including the attachment-record role the archive tail
-  reads back.
+  plus a MODIFIED `Archive run summary written` recording the emit-time PR fields, and a
+  MODIFIED `Consent prompt on AI-mediated archive entry` extending the write preview to name
+  the tail's outward writes (branch, push, READY flip) for attached changes — the tail rides
+  that same entry consent and fires no prompt of its own.
+- `orbit-run-summary-emit`: `PR attachment record on the propose and ff emits` — the OWNING
+  definition of the structured `pr_attachment` object (the emit-composition table mirrors it,
+  per that capability's own precedence rule), including the attachment-record role the
+  archive tail reads back.
 - `orbit-conventions`: the residual outward-actions rule (off-script merges/releases/
   issue-filing) as a short requirement echoed into lifecycle-completion outputs.
-- `orbit-emit-composition`: the propose, ff, and archive emit payload tables gain optional
-  `pr_url` / `pr_state` narrative pass-through fields (trail records the outward artifact).
+- `orbit-emit-composition`: the propose and ff emit payload tables gain the optional
+  structured `pr_attachment` object; the archive table gains the optional flat `pr_url` /
+  `pr_state` pass-through fields (the trail records the outward artifact).
 
 ## Impact
 

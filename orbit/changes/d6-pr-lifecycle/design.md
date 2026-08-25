@@ -6,9 +6,10 @@ Stage D6 of `orbit/architecture/d-arc-arbitered-flow.md` (Depends-on: d1, SHIPPE
 consent vocabulary (D1), the engine emit surface + gates (C1/D5), and the archive flow's
 prompt architecture (consent → gate → fingerprints → audit) all exist; every git/GitHub
 action in current practice (review-handoff commit+push, the external preflight) is already
-workflow-body choreography. The full decision record is `explore.md` (11 decisions, 5
-rejections, 2 promotion-resolved questions); this design restates only what generation
-needs, citing explore.md rather than re-deriving.
+workflow-body choreography. The full decision record is `explore.md` (10 decisions, 2
+promotion-resolved questions, 5 rejections, and 6 post-promotion revisions recording the
+decisions the review cadence overturned); this design restates only what generation needs,
+citing explore.md rather than re-deriving.
 
 ## Goals / Non-Goals
 
@@ -178,8 +179,8 @@ choreography steps themselves) rather than as a separate feature section.
 - `src/core/templates/workflows/architect.ts` — arc-done human-acts readout (PR URL, draft
   state, `gh pr ready`/`gh pr merge`) at the completion-ratification seam; no outward write.
 - `src/core/project-config.ts` — the `pr:` SCALAR reader (three-valued; not a block).
-- `src/core/emit-composition.ts` — `pr_url`/`pr_state` payload-field rows for propose, ff,
-  and archive.
+- `src/core/emit-composition.ts` — the `pr_attachment` payload-field row for propose and
+  ff; the flat `pr_url`/`pr_state` rows for archive.
 - `orbit/config.yaml` — commented `pr:` example.
 - `test/core/` — config reader + payload-field + template fidelity tests.
 - `test/core/templates/` — generated-surface assertions for the new body steps.
