@@ -54,7 +54,14 @@ all three and a note prescribing an impossible command is worse than none:
   (`git fetch <resolved-remote> && git switch -c <branch> --track <resolved-remote>/<branch>`).
 - **Branch absent both locally and on the remote** — no switch recovers it; the note says so
   PLAINLY and points at the attachment record as the evidence of what was expected, rather
-  than printing a command that will fail. It NEVER checks out, stashes, or
+  than printing a command that will fail.
+
+A HEAD mismatch skips the TAIL but does NOT suppress the emit's PR fields: the preflight's
+observation ran before the branch check and is independent of it, so the trail records the
+PR facts that were actually seen. This is the deliberate counterpart to the tool-availability
+rule, where the fields ARE elided — there the preflight could not observe at all, here it
+could and did. The distinction is exactly whether an observation exists, never whether the
+tail went on to act on it. It NEVER checks out, stashes, or
 otherwise moves the working tree: the same restraint as "orbit never force-moves, renames,
 rebases, or force-pushes a user's branch", and for the same reason — a working-tree mutation
 here would fire AFTER the user consented to a sync-and-move, not before. This case is
@@ -77,7 +84,10 @@ when `gh pr ready` failed.
 
 The validation runs EARLY (read-only, before staging, so the note is accurate and nothing is
 discovered mid-flight), but its outcome scopes ONLY THE PR HALF of the tail. A stored record
-that fails validation SKIPS the description rewrite and the READY flip with a one-line note
+that fails validation SKIPS the tail's PR-WRITING STEPS — stated path-neutrally because both
+granularities are affected: the description rewrite (per-change) OR the stage-entry append
+(program), and the flip. Appending a stage entry to a PR the user closed is the same harm as
+rewriting its description, so neither path is exempt. The skip carries a one-line note
 naming the SPECIFIC reason — `closed`, `merged`, `retargeted to <base>`, `repository
 mismatch`, or `not found` — each distinct, never collapsed into a generic miss. The COMMIT
 and PUSH still proceed: those writes are the archive's own, they land on the change's branch

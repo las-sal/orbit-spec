@@ -190,3 +190,6 @@ choreography steps themselves) rather than as a separate feature section.
 - `orbit/config.yaml` — commented `pr:` example.
 - `test/core/` — config reader + payload-field + template fidelity tests.
 - `test/core/templates/` — generated-surface assertions for the new body steps.
+- `test/integration/pr-lifecycle/` — the git + `gh`-stub integration harness (tasks 6.2 and
+  6.2a–f): a disposable repo per case with a bare remote, and a stub recording invocations.
+- `CLAUDE.md` — the one-line outward-actions note for non-orbit sessions (apply task 5.4).

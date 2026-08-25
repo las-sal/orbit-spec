@@ -1,0 +1,87 @@
+{
+  "command": "review",
+  "timestamp": "2026-08-25T22:50:57Z",
+  "change": "d6-pr-lifecycle",
+  "kind": "editorial",
+  "model": "claude-opus-5",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": [],
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "The proposal's Modified Capabilities list omits orbit-onboard — six named, seven deltas ship",
+      "file": "orbit/changes/d6-pr-lifecycle/proposal.md",
+      "line": 82,
+      "recommendation": "`specs/` carries seven capability directories and the change fingerprints four MODIFIED requirements, one of which is `orbit-onboard`'s `Canonical-flow walkthrough section`. The Impact section names only six (`orbit-pr-lifecycle`, `orbit-propose-modifications`, `orbit-archive-modifications`, `orbit-run-summary-emit`, `orbit-conventions`, `orbit-emit-composition`). The onboard delta was added late (external iteration 1, finding 14) and its bullet was never written, so the proposal under-reports its own surface — the document a reviewer or adopter reads to learn what this change touches. Add a `- \\`orbit-onboard\\`:` bullet naming the two added scenarios (PR lifecycle taught at the propose and archive seams; config vocabulary + the merging-stays-human boundary stated once)."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "The stored-URL validation-failure skip names only the per-change PR operations, leaving the program stage-entry append undefined",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-archive-modifications/spec.md",
+      "line": 80,
+      "recommendation": "The new rule says a record failing live validation 'SKIPS the description rewrite and the READY flip'. Those are the PER-CHANGE operations; on the program path the tail APPENDS a stage entry and never flips at all, so the sentence does not say whether the append is skipped when the program PR turns out closed, merged, or retargeted. An implementer can read it either way, and appending a stage entry to a closed program PR is the same harm the rule was written to prevent. State the skip in path-neutral terms — the tail's PR-WRITING steps (description rewrite or stage-entry append, and the flip) are skipped — so both granularities are covered by one clause."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "The HEAD precondition's effect on the emit's PR fields is unspecified, while the gh precondition's is stated",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-archive-modifications/spec.md",
+      "line": 13,
+      "recommendation": "Two preconditions now sit in adjacent paragraphs with asymmetric treatment. The tool-availability rule says explicitly that a preflight which cannot observe 'elides the emit's PR fields and skips the tail'. The HEAD-branch rule says only that the tail SKIPS — silent on the emit, which the preflight has already populated by then (task 4.0 runs before the emit; task 4.1b runs after). So an archive from the wrong branch writes an emit recording a PR URL and state for a PR the tail never touches. That is defensible (the observation was real and the trail should say what was seen), but it must be STATED, not left to the implementer: add one sentence saying the HEAD mismatch skips the tail while the emit still records the observed PR facts, since the observation preceded and is independent of the branch check."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "Touchpoints omits the integration-harness tree and root CLAUDE.md, which apply tasks require",
+      "file": "orbit/changes/d6-pr-lifecycle/design.md",
+      "line": 170,
+      "recommendation": "The predicted map lists `test/core/` and `test/core/templates/` but not `test/integration/pr-lifecycle/`, which tasks 6.2 and 6.2a-f create as a new directory (disposable git repos plus a `gh` stub) — seven tasks' worth of files with no predicted entry. Root `CLAUDE.md` is likewise absent though apply task 5.4 edits it. Because the section is FROZEN at apply and divergence is engine-computed from the diff (`orbit-audit-drift` category 5), every harness file would surface as `actual_unpredicted` at the first post-apply audit. Add both entries now — pre-apply revision is the intended moment, and the harness was added after this section was last authored."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "The Docs (at archive) bullet still files the outward-actions note as at-archive work; it is apply task 5.4",
+      "file": "orbit/changes/d6-pr-lifecycle/proposal.md",
+      "line": 108,
+      "recommendation": "The bullet promises 'CLAUDE.md D6 entry + the outward-actions note' as at-archive work. The D6 entry is now correctly at-archive note 5.9, but the outward-actions note is apply task 5.4 (`Root CLAUDE.md: add the one-line outward-actions note for non-orbit sessions`). External iteration 1's finding on this bullet offered both remedies — add the missing note, or correct the bullet — and only the first half landed. Move the outward-actions clause out of the at-archive list so the bullet describes the two phases accurately."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "This pass verified convergence rather than hunting a new layer, and the core of the change held under direct reading. The four MODIFIED blocks were diffed scenario-by-scenario against their live baselines: all four are pure additions with zero baseline scenarios lost or renamed (2->4, 5->6, 5->6, 4->6), which is the failure mode the fingerprint guard exists for and the one a late-added MODIFIED block is most likely to hit. Strict validation passes, no inline marker residue, and the only old-vocabulary hits are the two deliberate historical citations (design.md documenting the superseded two-key sketch, and at-archive note 5.5 quoting the stale prose it will retire). The state machine that absorbed the last two rounds — attachment authority, the read-only preflight feeding both emit and tail, live stored-URL validation, merge-base ancestry with continue-on-base-ahead — reads coherently end to end, and nothing found here reopens a ratified decision. What did surface is bookkeeping DEBT from the pace of the last two walks: three of the five findings are artifacts of fixes landing without their summary documents following (the Impact list never gained its onboard bullet, the Touchpoints map never gained the harness tree, half of an earlier remedy went unapplied). The two substantive ones are edges in text written in the last forty-eight hours — a skip clause phrased in per-change vocabulary that leaves the program path unstated, and two adjacent preconditions given asymmetric treatment of the same question. Both are one sentence each. The residual risk is unchanged and sits where it has sat since the harness was specified: everything about the non-happy paths is now written down carefully, and none of it has executed.",
+  "passes_run": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "passes_skipped": [],
+  "final_assessment": "0 critical, 4 warning, 1 suggestion.",
+  "iteration": 5,
+  "next_recommended": "/orbit:address-reviews d6-pr-lifecycle --from-file orbit/changes/d6-pr-lifecycle/.orbit-runs/review-proposal-2026-08-25T22-50-57Z.json"
+}

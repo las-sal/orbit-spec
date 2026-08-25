@@ -148,7 +148,9 @@ Implementation chunks:
       stage of an adopted program PR), elided when unobservable; never a forward-looking
       claim about the flip this tail is about to perform. The flip step is IDEMPOTENT: an
       already-READY PR is reported in one line, not re-flipped and not an error. Test both
-      draft and already-ready inputs.
+      draft and already-ready inputs. A HEAD mismatch skips the tail but LEAVES the emit's PR
+      fields intact (the observation preceded the branch check) — unlike the no-`gh` path,
+      where they are elided because no observation exists.
 
 - [ ] 4.5 Archive body, CONSENT PREVIEW (entry, not tail): when the change is PR-ATTACHED,
       the AI-mediated consent prompt's write preview additionally names the branch, the push

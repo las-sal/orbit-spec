@@ -94,6 +94,12 @@ revisions dated 2026-08-12/2026-08-20 recording what the review cadence overturn
   definition of the structured `pr_attachment` object (the emit-composition table mirrors it,
   per that capability's own precedence rule), including the attachment-record role the
   archive tail reads back.
+- `orbit-onboard`: the canonical-flow walkthrough teaches the PR lifecycle AT THE TWO SEAMS
+  where it acts — the propose-phase paragraph names the draft PR that opens there, the
+  archive-phase paragraph names the tail — plus the `pr:` config vocabulary, the
+  citation-selected granularity with its uncited fallback, the no-remote/no-`gh` degradation,
+  and the boundary that MERGING IS THE USER'S ACT. Unconditional on the reading project's own
+  config, since the body is a generated constant.
 - `orbit-conventions`: the residual outward-actions rule (off-script merges/releases/
   issue-filing) as a short requirement echoed into lifecycle-completion outputs.
 - `orbit-emit-composition`: the propose and ff emit payload tables gain the optional
@@ -109,7 +115,8 @@ revisions dated 2026-08-12/2026-08-20 recording what the review cadence overturn
 - **Engine (minimal per the zero-engine-git decision)**: `src/core/project-config.ts`
   (`pr:` scalar reader), `src/core/emit-composition.ts` (three payload-field table rows:
   propose, ff, archive).
-- **Docs (at archive)**: CLAUDE.md D6 entry + the outward-actions note; the arc doc's D6
+- **Docs (at archive)**: the CLAUDE.md D6 entry (at-archive note 5.9; the outward-actions
+  note is apply task 5.4, not at-archive work); the arc doc's D6
   stage section retired to the ratified vocabulary with its carried (e)/(f)/(g) leanings
   marked resolved (charter prose, exit criteria untouched); the arc doc status-log entry.
 - **Dogfood**: exit criterion 1 requires one change running the full arc (draft at propose,
