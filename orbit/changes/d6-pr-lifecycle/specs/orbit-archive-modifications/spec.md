@@ -100,8 +100,22 @@ principle as `pr: never`, applied one level finer. (A failed validation never tr
 fallback query as a second chance: a record that resolves to a closed PR is ANSWERED, not
 missing.)
 
-When the object is absent, or present without a
-`url`, fall back to `gh pr list` — but the fallback SHALL identify EXACTLY ONE PR before
+A WHOLLY ABSENT `pr_attachment` TERMINATES THE PR PATH — it never triggers discovery. The
+change is UNATTACHED, and unattached means pre-capability: no remote work, no `gh`
+invocation, no commit, push, edit, or flip. This is the same fact the scope rule states
+below, and the two must agree, because a fallback keyed on ABSENCE would contradict it
+exactly where the contradiction is most expensive: `/orbit:new` and `/orbit:continue` never
+produce an attachment (per `orbit-pr-lifecycle`'s entry-points requirement), so a change
+started that way whose branch name happens to match an open PR someone opened by hand would
+be committed, pushed, rewritten, and flipped — after a consent preview that OMITTED the
+outward-writes line precisely because the change is unattached. An unpreviewed push on an
+explicitly out-of-scope path is the worst outcome this capability can produce.
+
+The fallback therefore serves ONE narrow case: an attachment that EXISTS but lacks `url` —
+the recorded state after the branch work succeeded and PR creation failed or degraded. There
+the change IS attached (the branch is real, the granularity is frozen, the consent preview
+named the outward writes), and only the PR's identity is missing. In that case fall back to
+`gh pr list` — and the fallback SHALL identify EXACTLY ONE PR before
 acting, because a head branch does not uniquely identify a pull request. The query is
 CONSTRAINED on all four axes and every one is required — with the remote and the base
 resolved by `orbit-pr-lifecycle`'s `Remote and default-branch resolution` requirement, the
@@ -191,10 +205,33 @@ seam follows the frozen record rather than re-reading the key. Setting `pr: neve
 stops NEW attachments; it does not abandon a PR already open, because a draft PR that never
 closes is a worse artifact than outward writes continuing under a key changed mid-flight —
 the first is invisible, the second is legible in the PR itself. A user who means to abandon
-an open PR closes it, and the tail's discovery then finds nothing and skips with its note. Tail-step failures
-(push rejected, `gh` errors) SKIP the remaining tail steps with a one-line note naming the
+an open PR closes it, and the tail's discovery then finds nothing and skips with its note. Tail-step failures SKIP the remaining tail steps with a note naming the
 completed and skipped steps — the archive itself (sync, move, emit) has already succeeded
-and never rolls back or blocks (apply-parity flavor). The tail's outward writes ride the
+and never rolls back or blocks (apply-parity flavor). Every step is inside this contract,
+INCLUDING staging and commit failures; none is left to generic error handling.
+
+Because the change has already MOVED and the emit is written, `/orbit:archive` is NOT a
+retry path — re-invoking it finds no active change. Recovery is manual by design (the same
+v1 stance propose takes), so the note SHALL name the exact repository-qualified commands
+that finish the interrupted work, keyed to WHICH step failed, and state the consequence of
+stopping there:
+
+- **Staging or commit failed** — nothing is committed. The note names the enumerated paths
+  and the `git add <paths> && git commit` form; consequence: the archive's writes are
+  present but uncommitted, and the PR is untouched.
+- **Push failed** — a local archive commit exists. The note names
+  `git push <resolved-remote> <branch>`; consequence: the PR does not yet contain its own
+  archive commit, and READY would be dishonest, which is why the ordering invariant already
+  forbids the flip here.
+- **Description rewrite failed** — commit and push landed. The note names
+  `gh pr edit <url> --body-file <path>` with the composed body written to a temp file;
+  consequence: the PR is current in CODE but its description is the stale intent narrative.
+- **READY flip failed** — everything but the flip landed. The note names
+  `gh pr ready --repo <owner>/<repo> <number>`; consequence: the PR is complete and
+  accurate but still DRAFT, which is a safe resting state and never a correctness problem.
+
+Each command is repository-qualified per `orbit-pr-lifecycle`'s resolution requirement, so
+text the user copies resolves the same repository the algorithm chose. The tail's outward writes ride the
 archive's OWN entry consent (user-typed or prompted-and-proceeded) — no second prompt
 inside the tail.
 
@@ -233,6 +270,11 @@ inside the tail.
 
 - **WHEN** the tail runs on a change whose recorded PR was closed (or merged, or retargeted to a different base) after propose
 - **THEN** live validation of the stored URL fails with that SPECIFIC reason; the description rewrite and the READY flip are skipped and named, while the archive commit and push still land on the change's branch — the closed PR is never rewritten and the fallback query is not run as a second chance
+
+#### Scenario: An unattached change never reaches discovery
+
+- **WHEN** a change created via `/orbit:new` + `/orbit:continue` (which produce no `pr_attachment`) is archived while an open PR happens to exist for a branch of the same name
+- **THEN** the PR path TERMINATES before any remote or `gh` work — no discovery query runs, nothing is committed, pushed, rewritten, or flipped — matching the consent preview that omitted the outward-writes line for this unattached change
 
 #### Scenario: PR discovery finds nothing
 
@@ -274,6 +316,11 @@ inside the tail.
 - **WHEN** the tail runs
 - **THEN** `gh pr ready` is invoked only after the push of the archive commit succeeds —
   never before
+
+#### Scenario: Each partial state names its own completion command
+
+- **WHEN** the tail fails at staging/commit, at push, at the description rewrite, or at the flip
+- **THEN** the note names the completing command for THAT step — `git add`+`commit`, `git push <resolved-remote> <branch>`, `gh pr edit <url> --body-file <path>`, or `gh pr ready --repo <owner>/<repo> <number>` — and states that step's consequence; `/orbit:archive` is never offered as a retry, since the change has already moved
 
 #### Scenario: Push failure degrades, archive stands
 

@@ -4,12 +4,35 @@
 
 ### Requirement: PR choreography at propose (config-gated)
 
-The propose flow SHALL append the branch/PR choreography AFTER artifact generation and
-validation succeed, whenever `pr:` config activates the PR layer (`per-proposal` or
-`per-architecture`, per `orbit-pr-lifecycle`). Under `per-proposal` — and under
-`per-architecture` for a change with NO citation (the fallback path) — create
-`<change-name>` off the default branch, commit the generated artifacts (and moved staging
-material), push, and open a DRAFT PR with the agent-written INTENT description. Under
+The propose flow's PR choreography SHALL run in THREE ORDERED PHASES whenever `pr:` config
+activates the PR layer (`per-proposal` or `per-architecture`, per `orbit-pr-lifecycle`),
+and the order is normative because a simpler one cannot execute:
+
+1. **BRANCH SELECTION (local only, BEFORE artifact generation).** Resolve remote and default
+   branch, derive and validate the branch name, run the collision, ref-format, and
+   dirty-tree preconditions, resolve reuse-vs-create against local AND remote refs, and
+   SWITCH to (or create) the target branch. No network writes occur in this phase — it
+   moves a local HEAD and nothing else.
+2. **ARTIFACT GENERATION + VALIDATION**, performed ON that branch exactly as it is
+   performed without the PR layer.
+3. **OUTWARD WRITES, only after (2) SUCCEEDS.** Commit the generated artifacts (and moved
+   staging material), push, and open the DRAFT PR with the agent-written INTENT description
+   — or, on the cited program path, land on the program branch and adopt-or-open the
+   program PR.
+
+Selection MUST precede generation because the reuse path is otherwise IMPOSSIBLE: a
+compatible per-proposal branch is DEFINED as one carrying this change's artifact commits, so
+it already tracks the very paths that generation has just written as untracked files in the
+worktree, and `git switch` REFUSES rather than overwrite them. Generating first and
+switching after mandates a step that stops on a git error — reachable by an ordinary
+sequence (propose, degrade for want of `gh`, fix the setup, propose again). Selecting first
+means nothing untracked exists at switch time and the collision cannot arise.
+
+The guarantee this reordering must NOT weaken is preserved exactly: NOTHING LEAVES THE
+MACHINE until generation and validation succeed. Phase 1 is local-only, so a validation
+failure at phase 2 leaves the user on the target branch with no commit, no push, and no PR
+— and the failure note SHALL NAME THE BRANCH they are now on, since the flow moved them
+there. Recovery is `git switch <default>`; the branch is discardable. Under
 `per-architecture` for a CITED change — land the work on the doc's program branch (creating
 it off the default branch if absent) and open the program PR if it does not yet exist
 (first-configured-touch birth). EXISTENCE IS RESOLVED BY QUERY, never assumed from the
@@ -45,8 +68,23 @@ so every propose is user-typed or chat-ratified (both user-invoked provenance), 
 outward write it performs — a DRAFT PR on a NEW branch — is reversible in two commands,
 unlike the consent-marked `→ apply` and `→ archive` seams D1 backstops. When opening a
 change's FIRST PR on a repository with no `.github/workflows/`, the body SHALL note in one
-line that no CI is configured (the PR's checks section will be empty) — reporting, never
+line that no CI is configured (the PR's checks section will be empty). The check is BOUND TO
+ONE REF — the RESOLVED REMOTE's default-branch ref, the same ref branch creation uses and one
+the existence check has already fetched — never the pre-switch worktree and never the target
+branch. Those three can disagree (a long-lived program branch may carry workflows the base
+lacks, or the reverse), and the note describes the CI context the NEW PR INHERITS, which is
+the base's — reporting, never
 scaffolding, never prompting.
+
+#### Scenario: Reusing an existing branch is possible because selection precedes generation
+
+- **WHEN** propose runs from the default branch while a compatible `<change-name>` branch already exists carrying this change's earlier artifact commits (the re-propose-after-degradation case)
+- **THEN** the branch is selected and switched to BEFORE any artifact is written, so no untracked file blocks the switch; artifacts are then generated on that branch and the outward writes follow validation
+
+#### Scenario: Validation failure leaves the user on a named branch, nothing pushed
+
+- **WHEN** artifact generation or validation fails after phase 1 has switched to the target branch
+- **THEN** no commit, push, or PR occurs, and the failure note NAMES the branch the flow moved the user to, with `git switch <default>` as the recovery — the branch is local-only and discardable
 
 #### Scenario: Typed propose opens the draft silently
 
@@ -85,6 +123,10 @@ scaffolding, never prompting.
 ### Requirement: Branch preconditions at propose
 
 Branch creation SHALL resolve its preconditions explicitly, never by implementer choice.
+Every precondition in this requirement belongs to PHASE 1 of the choreography — before any
+artifact is generated — so each one that SKIPS does so having written nothing at all: the
+flow then proceeds without the PR layer, generating artifacts on the current branch exactly
+as it would with `pr: never`. A precondition skip is therefore never a partial state.
 
 The REMOTE and the DEFAULT BRANCH are resolved FIRST, by the shared algorithm defined in
 `orbit-pr-lifecycle`'s `Remote and default-branch resolution` requirement — the single
@@ -106,10 +148,11 @@ A mechanical branch name that COLLIDES with
 the resolved default branch (a change literally named `main`, or an architecture doc whose
 stem is the default branch) makes `<head> → <base>` impossible: the choreography SKIPS with
 a one-line note naming the collision rather than creating an unmergeable PR or misclassifying
-the default branch as an unrelated existing branch. A DIRTY working tree at the choreography step (any
+the default branch as an unrelated existing branch. A DIRTY working tree at phase 1 (any
 tracked modification outside the change's own generated artifacts and moved staging
-material) SHALL skip the branch/PR steps with a one-line note rather than sweep unrelated
-edits onto the branch — artifact generation has already succeeded and is never rolled back.
+material) SHALL skip the branch/PR steps with a one-line note rather than carry unrelated
+edits onto a new branch — and because phase 1 precedes generation, the skip costs nothing:
+artifacts are generated on the current branch and the change proceeds unattached.
 Unrelated UNTRACKED paths do not trigger the skip (a fresh working tree routinely carries
 them), but they are NAMED in that same note when the choreography proceeds, so nothing the
 commit deliberately leaves behind is silent.

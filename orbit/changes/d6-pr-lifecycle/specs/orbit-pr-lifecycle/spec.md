@@ -16,9 +16,18 @@ inexpressible by construction, so no combination can be undefined):
   `per-proposal` behavior (its own branch, its own PR). A standalone change never loses its
   outward window merely because the repo organizes its program work by architecture.
 
-A repo with no git remote or no `gh` CLI SHALL degrade to `never` regardless of
-configuration, reported once per invocation as a one-line note, never an error (the
-lifecycle itself never blocks on the PR layer). An unrecognized value is inert — treated as
+RESOLUTION ORDER IS CONFIG FIRST, AVAILABILITY SECOND, and the two must not be conflated.
+When `pr:` is absent, `never`, or an inert unrecognized value/shape, the PR layer returns
+IMMEDIATELY: it probes NOTHING (no remote enumeration, no `gh` invocation) and emits NO
+availability note, so behavior is BYTE-IDENTICAL to pre-capability — the promise `never`
+makes is silence, and a degradation note about tooling the user disabled would break it.
+ONLY when a recognized ACTIVE mode (`per-proposal` or `per-architecture`) is selected does
+availability resolution run; a repo with no git remote or no `gh` CLI then degrades to
+`never` behavior for that invocation, reported once as a one-line note, never an error (the
+lifecycle itself never blocks on the PR layer). The inert-value and invalid-shape warnings
+are independent of availability and fire on their own: they name a config problem, are
+emitted without probing anything, and are never suppressed or duplicated by a degradation
+note that will not run. An unrecognized value is inert — treated as
 `never` with a one-line warning naming the value — config garnish, never an error source.
 A NON-SCALAR shape (a YAML map or list where a scalar is expected — including the two-key
 `{open, program-branches}` block this key superseded, which an early adopter may have
@@ -44,6 +53,11 @@ must not be the thing that stops a lifecycle command from running.
 - **WHEN** `pr: per-proposal` is set but the repository has no git remote
 - **THEN** propose proceeds without branch/PR steps, emitting one note naming the
   degradation; nothing errors
+
+#### Scenario: Disabled mode probes nothing and says nothing
+
+- **WHEN** `pr:` is absent or `never` in a repository that also has no remote and no `gh`
+- **THEN** the PR layer returns without enumerating remotes or invoking `gh`, and emits NO availability note — byte-identical to pre-capability; the availability note exists only for an ACTIVE mode that could not proceed
 
 #### Scenario: Non-scalar config shape is inert
 
@@ -209,14 +223,31 @@ surfacing never appears. Because the readout is idempotent and derived from obse
 (never from a stored "already surfaced" flag), it appears at whichever invocation first
 observes arc-done and re-appears on every later one until the PR is no longer draft — which
 also makes it safe under either ordering. The DRAFT STATE IS READ LIVE, not from the located
-record: `pr_attachment.state` is frozen at propose and is therefore permanently `"draft"` by
-construction, so a readout gated on it would keep nagging forever after the human flips
-READY. The architect flow resolves the CURRENT state with a READ-ONLY `gh pr view --json
+record: `pr_attachment.state` is a POINT-IN-TIME OBSERVATION recorded at the attaching invocation
+and never updated afterward, so it goes stale the moment anything touches the PR — whatever
+its initial value was. (It is USUALLY `"draft"`, but not necessarily: an ADOPTED program PR
+can be recorded already `"ready"`, which is why the schema admits both.) A readout gated on
+the recorded value would therefore either nag forever after the human flips READY, or fall
+silent against a PR that has since been reopened as a draft. The architect flow resolves the CURRENT state with a READ-ONLY `gh pr view --json
 isDraft` query against the located URL — permitted here because it is an observation, not an
-outward write, and the zero-engine-git rule constrains the ENGINE, not a body's reads. When
-that query fails or `gh` is unavailable, the readout still SURFACES, carrying a one-line
-`state unverified` note: an unverifiable state must never silently suppress the one surfacing
-the program relies on. The readout names
+outward write, and the zero-engine-git rule constrains the ENGINE, not a body's reads. Validation has THREE outcomes here, and the readout is NEVER SUPPRESSED by any of them —
+that invariant matters more than which one obtains, because arc-done is surfaced once per
+program and a silent readout is indistinguishable from a program that is not finished:
+
+- **Valid** — surface the PR, its live draft state, and the commands.
+- **Query FAILED** (auth, network, `gh` unavailable) — surface anyway with a one-line
+  `state unverified` note. Nothing is known, so nothing is claimed.
+- **Positively INVALID** (the query succeeded and reports the recorded PR closed, merged,
+  retargeted to another base, or belonging to a different repository) — FALL THROUGH to the
+  constrained query of the resolved repository with `--head <program-branch>`, and surface
+  whatever it finds; when it finds nothing, surface the readout stating that the recorded PR
+  is closed or merged and NO open replacement exists, so the human learns the program has no
+  open PR rather than being handed a dead link.
+
+The fall-through is deliberately the OPPOSITE of the archive tail's rule, where a positively
+invalid record is ANSWERED rather than retried. The seams differ in risk, not in vocabulary:
+the tail WRITES, so a second chance there could rewrite and flip the wrong pull request,
+while this readout only REPORTS — the worst a fall-through can do is name a better URL. The readout names
 the program PR's URL — located by scanning the change trails (active AND archived) for
 `pr_attachment` objects whose `granularity` is `per-architecture` and whose `doc` MATCHES
 this architecture doc, taking the most recent URL-BEARING record (never merely the most
@@ -231,6 +262,11 @@ distinguishable — its current DRAFT
 state, and the exact commands (`gh pr ready <n>`, and `gh pr merge <n>` when satisfied) —
 recommending, never invoking, per the residual outward-actions rule. A whole-program body
 rewrite is OPTIONAL polish available on request, never a required transition step.
+
+#### Scenario: A closed recorded PR falls through to the query, never suppressing the readout
+
+- **WHEN** the arc-done readout validates the most recent URL-bearing record and finds that PR closed, merged, retargeted, or in another repository
+- **THEN** it falls through to the constrained `--head <program-branch>` query and surfaces whatever that finds; if nothing is open, it still surfaces — stating the recorded PR is closed or merged and no open replacement exists — because the readout is never suppressed by a validation outcome
 
 #### Scenario: Arc-done observed with no ratifiable stage remaining
 

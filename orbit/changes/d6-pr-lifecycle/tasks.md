@@ -126,7 +126,11 @@ Implementation chunks:
       resolved base / open) read-only BEFORE staging — a failure skips ONLY the description
       rewrite and flip with the specific reason (`closed`/`merged`/`retargeted`/`repository
       mismatch`/`not found`), while commit and push still proceed, and never falls through to
-      the query as a second chance; fall back to the FOUR-AXIS constrained query (`gh pr list --repo <resolved
+      the query as a second chance; TERMINATE the PR path when `pr_attachment` is WHOLLY ABSENT (unattached = pre-capability;
+      no discovery, no remote/`gh` work — `new`/`continue` changes must never reach a PR that
+      merely shares a branch name, since their consent preview disclosed no outward writes);
+      fall back ONLY for an attachment that EXISTS but lacks `url`, using the FOUR-AXIS
+      constrained query (`gh pr list --repo <resolved
       remote's repo> --head <branch> --state open`, discarding candidates whose base is not
       the resolved default branch) requiring EXACTLY ONE survivor, with zero / several /
       query-error each a distinct one-line note (the seam flips and records, it never
@@ -140,8 +144,11 @@ Implementation chunks:
       this invocation, one change's material by construction); untracked content it carried
       along is staged WITH it and NAMED in the note. Unrelated dirty paths stay unstaged and
       are named. Test with an unrelated dirty file INSIDE `orbit/specs/`.
-- [ ] 4.3 Archive tail degradation: push/`gh` failure skips the remaining tail with a
-      one-line note naming completed vs skipped steps; the archive itself never rolls
+- [ ] 4.3 Archive tail degradation: ANY step's failure — staging/commit included, not just
+      push/`gh` — skips the remaining tail with a note naming completed vs skipped steps AND
+      the repository-qualified completing command for the step that failed, plus that step's
+      consequence (per the four cases in `orbit-archive-modifications`); `/orbit:archive` is
+      never offered as a retry (the change has already moved). The archive itself never rolls
       back or blocks. SCOPE is attachment-driven: an UNATTACHED change (proposed under
       `pr: never`, or degraded at propose) leaves the flow byte-identical to today, while an
       ATTACHED change runs the tail even if `pr:` now reads `never` — the live key is not
@@ -188,8 +195,13 @@ Implementation chunks:
       surfaces the program PR's URL — found by scanning change trails (active AND archived)
       for `pr_attachment` objects with `granularity: per-architecture` and a matching `doc`,
       most recent wins — its CURRENT draft state read live via `gh pr view --json isDraft`
-      (never the frozen `pr_attachment.state`; a failed query surfaces the readout anyway
-      with a `state unverified` note),
+      (never the recorded `pr_attachment.state`, a point-in-time observation that goes stale
+      after emit whatever its initial value). THREE validation outcomes, readout NEVER
+      suppressed by any: valid → surface; query FAILED → surface with `state unverified`;
+      positively INVALID (closed/merged/retargeted/foreign repo) → fall through to the
+      constrained `--head <program-branch>` query and surface what it finds, or state that
+      no open replacement exists. The fall-through is the OPPOSITE of the tail's rule
+      because this seam reports and the tail writes,
       and `gh pr ready <n>` / `gh pr merge <n>` as the user's acts — recommend, never
       invoke; no outward write from this body.
 - [ ] 5.3 Conventions echo sites: the residual outward-actions line in the
@@ -254,7 +266,11 @@ apply gate's arithmetic covers only apply-completable work.)
 - [ ] 6.2c Harness cases — PRECONDITIONS: non-`main` default branch; dirty tree skip;
       branch-name collision with the default branch; per-proposal collision with unrelated
       work; PROGRAM branch reuse across two successive citing changes (the case the old
-      rule wrongly rejected); DEFAULT BRANCH ADVANCED between two citing stages — `merge-base`
+      rule wrongly rejected); RE-PROPOSE onto an existing compatible per-proposal branch from
+      the default branch (the switch must succeed because selection precedes generation — the
+      case that was mechanically impossible under the old ordering); VALIDATION FAILURE after
+      the phase-1 switch (branch named in the note, nothing committed or pushed); DEFAULT
+      BRANCH ADVANCED between two citing stages — `merge-base`
       still succeeds, branch reused, ahead-by-N note emitted, nothing merged/rebased/skipped;
       an unrelated-root branch IS reported as a collision; REMOTE-ONLY program branch resumed
       in a fresh checkout (tracking branch created, no divergent history); a doc stem valid on disk but invalid as a Git
@@ -278,7 +294,9 @@ apply gate's arithmetic covers only apply-completable work.)
       commit records a move, not a duplicated tree with a dirty deletion); ordering
       invariant (`gh pr ready` recorded only after a successful push); HEAD-MISMATCH skip
       (archive invoked from the default branch — no commit on `main`, no flip); push-failure skip
-      with the archive still complete; program-mode append-without-flip; CITATION DIVERGENCE
+      with the archive still complete; each of the four PARTIAL STATES (staging/commit,
+      push, description rewrite, flip) asserting its own printed completion command and
+      consequence; program-mode append-without-flip; CITATION DIVERGENCE
       — a citation added, removed, or re-pointed after propose produces the one-line note
       and the frozen record still governs.
 - [ ] 6.2f Harness cases — ARC-DONE READOUT: both valid orderings surface the human acts —
@@ -287,7 +305,9 @@ apply gate's arithmetic covers only apply-completable work.)
       readout would silently miss; the readout is idempotent across repeated architect
       invocations and stops once the PR is no longer draft; the program PR is located by
       matching `doc` with two programs present in one repo; a TWO-STAGE case where the second
-      citing change's attachment is URL-LESS still surfaces the first stage's valid PR.
+      citing change's attachment is URL-LESS still surfaces the first stage's valid PR; a
+      recorded PR that is CLOSED falls through to the query (and, with no open replacement,
+      still surfaces with the no-replacement statement).
 - [ ] 6.3 (User-validation handoff) Dogfood exit criterion 1 on a real change: draft PR
       at propose, CI visible from day one, READY at archive, merged by the user — and
       exit criterion 3's no-off-script check across the dogfood (no PR/merge/release
