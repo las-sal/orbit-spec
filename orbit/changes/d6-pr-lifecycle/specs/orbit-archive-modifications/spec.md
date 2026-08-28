@@ -129,8 +129,9 @@ branch are DISCARDED, since a PR from this branch into some other branch is a di
 effort. THREE outcomes, each a DISTINCT one-line note, none of them silent:
 
 - **Exactly one survivor** — the tail proceeds against it.
-- **Zero survivors** (closed manually, branch renamed, change created without propose, or
-  every candidate filtered out) — SKIP with a note naming the miss.
+- **Zero survivors** (the PR was never successfully created, was closed, or the branch was
+  renamed — never "created without propose", since such a change has no attachment and so
+  never reaches this query) — SKIP with a note naming the miss.
 - **More than one survivor** — SKIP with a note naming the AMBIGUITY and listing the
   candidate URLs. orbit never picks by recency or number: rewriting the wrong PR's
   description and flipping it READY is worse than doing nothing, and the user is present
@@ -223,10 +224,13 @@ stopping there:
   `git push <resolved-remote> <branch>`; consequence: the PR does not yet contain its own
   archive commit, and READY would be dishonest, which is why the ordering invariant already
   forbids the flip here.
-- **Description rewrite failed** — commit and push landed. The note names
-  `gh pr edit <url> --body-file <path>` with the composed body written to a temp file;
-  consequence: the PR is current in CODE but its description is the stale intent narrative.
-- **READY flip failed** — everything but the flip landed. The note names
+- **Description rewrite (per-change) OR stage-entry append (program) failed** — commit and
+  push landed. The note names `gh pr edit <url> --body-file <path>` with the composed body
+  written to a temp file, the same recovery on both paths; consequence differs by path — a
+  per-change PR is current in CODE but its description is the stale intent narrative, while
+  a program PR is current in code but its body LACKS THIS STAGE'S ENTRY.
+- **READY flip failed** (per-change only — the program path never flips at this seam, so
+  this state cannot arise there) — everything but the flip landed. The note names
   `gh pr ready --repo <owner>/<repo> <number>`; consequence: the PR is complete and
   accurate but still DRAFT, which is a safe resting state and never a correctness problem.
 
@@ -278,8 +282,8 @@ inside the tail.
 
 #### Scenario: PR discovery finds nothing
 
-- **WHEN** the tail runs on a change whose PR was closed manually (no attachment on any propose/ff emit resolves, and the constrained `gh pr list` query returns no open PR into the resolved base)
-- **THEN** the tail skips with a one-line note naming the miss; no replacement PR is opened
+- **WHEN** the tail runs on a change whose attachment EXISTS but carries no `url` (branch work succeeded, PR creation failed), and the constrained query returns no open PR into the resolved base
+- **THEN** the tail skips with a one-line note naming the miss; no replacement PR is opened. (A change with NO attachment never reaches this point — absence terminates the PR path — and a record carrying a `url` whose PR was closed is answered by live validation, not by this query.)
 
 #### Scenario: Discovery fallback constrains on all four axes
 
@@ -423,4 +427,4 @@ The system SHALL write a JSON summary to `orbit/changes/archive/<YYYY-MM-DD>-<ch
 #### Scenario: PR fields recorded at emit-time state
 
 - **WHEN** the archive completes for a PR-ATTACHED change (per `orbit-pr-lifecycle`)
-- **THEN** the archive run summary additionally includes `pr_url` and `pr_state` — the PR's URL and its state AS OBSERVED by the read-only preflight that precedes the emit — normally `"draft"`, but truthfully `"ready"` when the PR was already flipped by the USER at an earlier point (including at a prior program's arc-done, for a program PR adopted afterward — never by a stage), and ELIDED when the state could not be observed. The field records what was seen, never a forward-looking claim about the flip this tail is about to perform. Both fields are absent for UNATTACHED changes — including changes originally proposed under `pr: never` — and present whenever an attachment resolves, EVEN IF `pr:` now reads `never`, per this capability's attachment-authority scope rule (the same invocation that runs the tail records its PR). The READY transition is evidenced by the PR itself and the completion readout, not by this record.
+- **THEN** the archive run summary additionally includes `pr_url` and `pr_state` — the PR's URL and its state AS OBSERVED by the read-only preflight that precedes the emit — normally `"draft"`, but truthfully `"ready"` when the PR was already flipped by the USER at an earlier point (including at a prior program's arc-done, for a program PR adopted afterward — never by a stage), and ELIDED when the state could not be observed. The field records what was seen, never a forward-looking claim about the flip this tail is about to perform. When the preflight POSITIVELY INVALIDATES the stored URL (the PR is closed, merged, retargeted, or in another repository), `pr_state` is ELIDED — the draft/ready axis does not apply to a PR in that condition, and recording `"draft"` would be a false observation — while `pr_url` IS still recorded, since it is the identity that was validated and rejected and the trail should show which PR the tail declined to write to. Both fields are absent for UNATTACHED changes — including changes originally proposed under `pr: never` — and present whenever an attachment resolves, EVEN IF `pr:` now reads `never`, per this capability's attachment-authority scope rule (the same invocation that runs the tail records its PR). The READY transition is evidenced by the PR itself and the completion readout, not by this record.

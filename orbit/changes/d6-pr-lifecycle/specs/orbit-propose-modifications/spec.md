@@ -11,8 +11,10 @@ and the order is normative because a simpler one cannot execute:
 1. **BRANCH SELECTION (local only, BEFORE artifact generation).** Resolve remote and default
    branch, derive and validate the branch name, run the collision, ref-format, and
    dirty-tree preconditions, resolve reuse-vs-create against local AND remote refs, and
-   SWITCH to (or create) the target branch. No network writes occur in this phase — it
-   moves a local HEAD and nothing else.
+   SWITCH to (or create) the target branch. No NETWORK writes occur in this phase, but the
+   switch is not merely a HEAD move: `git switch` also rewrites every TRACKED path that
+   differs between HEAD and the target commit, so phase 1 changes worktree CONTENT and must
+   be guarded accordingly (see the generation-input precondition below).
 2. **ARTIFACT GENERATION + VALIDATION**, performed ON that branch exactly as it is
    performed without the PR layer.
 3. **OUTWARD WRITES, only after (2) SUCCEEDS.** Commit the generated artifacts (and moved
@@ -20,12 +22,30 @@ and the order is normative because a simpler one cannot execute:
    — or, on the cited program path, land on the program branch and adopt-or-open the
    program PR.
 
+GENERATION-INPUT PRECONDITION (phase 1, checked BEFORE the switch). Because the switch
+rewrites tracked content and phase 2 now runs after it, the flow SHALL verify that every
+input generation will need survives the target ref — specifically, when a consume-mode
+staging directory `orbit/explore/<change-name>/` is present in the worktree, that the same
+path exists on the TARGET REF. When it does not, the choreography SKIPS the PR layer
+ENTIRELY — the switch never happens — and artifacts are generated on the current branch,
+with the change proceeding unattached and one note naming the reason. Checking BEFORE rather
+than recovering after is deliberate: it preserves the property phase 1 is supposed to have,
+that it destroys nothing. The dirty-tree precondition does NOT cover this case, since it
+detects uncommitted modifications while the hazard is COMMITTED content that exists on the
+current branch and not on the base — reachable whenever propose runs from a branch other
+than the resolved default, or from a local default carrying unpushed commits, and the flow
+makes no assumption about where the user is standing.
+
 Selection MUST precede generation because the reuse path is otherwise IMPOSSIBLE: a
 compatible per-proposal branch is DEFINED as one carrying this change's artifact commits, so
 it already tracks the very paths that generation has just written as untracked files in the
 worktree, and `git switch` REFUSES rather than overwrite them. Generating first and
-switching after mandates a step that stops on a git error — reachable by an ordinary
-sequence (propose, degrade for want of `gh`, fix the setup, propose again). Selecting first
+switching after mandates a step that stops on a git error — reachable by the MID-FLIGHT
+FAILURE this same requirement specifies: propose creates the branch and commits the
+artifacts, then the push or `gh pr create` fails, and the user re-proposes. (The branch now
+exists carrying this change's artifact commits, which is exactly the compatible-reuse case.
+A `gh`-absent first run is NOT that route — availability resolution degrades the layer to
+`never` before any branch work, so no branch is created to reuse.) Selecting first
 means nothing untracked exists at switch time and the collision cannot arise.
 
 The guarantee this reordering must NOT weaken is preserved exactly: NOTHING LEAVES THE
@@ -46,11 +66,16 @@ create the draft program PR. More than one: SKIP the PR step with a one-line amb
 listing the candidates, exactly as the tail does. A query that ERRORS is degradation, not a
 zero result — skip with the failure note rather than creating a PR that may duplicate an
 existing one, since a duplicate program PR is the one outcome Shape A cannot represent. With `pr: never` or degraded (no remote/no
-`gh`) the choreography is skipped with a one-line note. A step that FAILS mid-flight (push
+`gh`) the choreography is skipped with a one-line note — but ONLY on the DEGRADED-BUT-ACTIVE
+path. Under `pr: never`, an absent key, or an inert unrecognized value/shape, the PR layer
+produces NO output at all and probes nothing, per `orbit-pr-lifecycle`'s config-first
+resolution order: `never`'s promise is silence, and a note would break byte-identity with
+pre-capability behavior. A step that FAILS mid-flight (push
 rejected for auth, branch protection, or divergence; `gh pr create` erroring) SHALL skip the
 remaining choreography with a one-line note naming completed vs skipped steps, elide
-`pr_attachment`'s `url`/`state` from the emit (the object persists with `branch` and
-`granularity` when the branch work succeeded), and never block or roll back artifact
+`pr_attachment`'s `url`/`state` from the emit (the object persists with `branch`,
+`granularity`, and — on the program path — `doc`, which the write gate requires whenever the
+granularity is `per-architecture`, when the branch work succeeded), and never block or roll back artifact
 generation — the same apply-parity degradation the archive tail carries. RECOVERY IS MANUAL
 BY DESIGN (v1): there is no retry entry point and no idempotent re-run surface. The failure
 note SHALL name the exact commands that complete the interrupted work — the push
@@ -75,6 +100,11 @@ branch. Those three can disagree (a long-lived program branch may carry workflow
 lacks, or the reverse), and the note describes the CI context the NEW PR INHERITS, which is
 the base's — reporting, never
 scaffolding, never prompting.
+
+#### Scenario: A switch that would delete the exploration is not performed
+
+- **WHEN** propose runs in consume mode from a branch where `orbit/explore/<change-name>/` is committed, and that path does not exist on the resolved target ref
+- **THEN** the PR layer is SKIPPED ENTIRELY — no switch occurs, so the staging input is never removed — and artifacts are generated on the current branch with the change proceeding unattached, one note naming the reason
 
 #### Scenario: Reusing an existing branch is possible because selection precedes generation
 

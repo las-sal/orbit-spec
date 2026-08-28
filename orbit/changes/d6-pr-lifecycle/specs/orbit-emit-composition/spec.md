@@ -26,8 +26,10 @@ archive additionally accepts OPTIONAL `pr_url` and `pr_state` narrative pass-thr
 state it observed) (per `orbit-pr-lifecycle` — the trail records
 the outward PR artifact's URL and state AS OBSERVED AT EMIT TIME, never a forward-looking
 claim: `pr_state` is exactly one of the two lowercase strings `"draft"` or `"ready"` (a
-closed or merged PR is NOT representable — the field records the draft/ready axis only, and
-a body that cannot observe the state elides the field). The archive emit is written after the
+closed or merged PR is NOT representable — the field records the draft/ready axis only, so a
+body elides the field both when it CANNOT observe the state and when it observes a condition
+off that axis; `pr_url` may still accompany an elided `pr_state`, recording which PR was
+observed). The archive emit is written after the
 tail's READ-ONLY PREFLIGHT and before its mutations, so it records what the preflight
 OBSERVED — normally `"draft"`, and truthfully `"ready"` when the PR was already flipped (by
 the USER at an earlier point, including at a prior program's arc-done for a program PR

@@ -1,0 +1,137 @@
+{
+  "command": "review",
+  "timestamp": "2026-08-26T14:11:17Z",
+  "change": "d6-pr-lifecycle",
+  "kind": "editorial",
+  "model": "claude-opus-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": [
+    "--fresh"
+  ],
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 3
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 4,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "Phase 1's switch rewrites the working tree, so consume-mode staging input can vanish before phase 2 generation",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-propose-modifications/spec.md",
+      "line": 15,
+      "recommendation": "Phase 1 claims it \"moves a local HEAD and nothing else\", but `git switch` also rewrites every tracked path that differs between HEAD and the target commit — and phase 2 now runs AFTER that. If the user proposes from a branch other than the default, or from a local default carrying unpushed commits, any tracked `orbit/explore/<change-name>/` content present on the current HEAD but not on the resolved base ref is removed from the worktree by the phase-1 switch, and consume-mode generation (baseline `Consume mode when staging directory exists`, which reads `orbit/explore/<name>/explore.md`) then has no seed. Nothing states a current-branch assumption for propose, and the dirty-tree precondition catches only uncommitted modifications. Add a phase-1 postcondition — the mirror of the archive tail's HEAD check — verifying the consume-mode staging input is still present after the switch and SKIPPING with a note naming the branch when it is not; and correct the \"nothing else\" characterisation to say the switch also updates tracked worktree content to the target commit."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "`pr: never` is promised silence by the config requirement but the propose choreography skips it \"with a one-line note\"",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-propose-modifications/spec.md",
+      "line": 49,
+      "recommendation": "`orbit-pr-lifecycle`'s config requirement makes config-first/availability-second normative: under `never`/absent/inert the layer returns immediately, probes nothing, and emits NO availability note — \"the promise `never` makes is silence\" — restated in its `Disabled mode probes nothing and says nothing` scenario. This line lumps `pr: never` in with availability degradation and gives it a one-line note, breaking byte-identity. Split the sentence: degraded-but-active (no remote / no `gh`) skips with one note; `pr: never`/absent/inert produces no PR-layer output at all. `tasks.md` line 54 (\"no remote/no `gh`/`never` → skip with one note\") carries the same error and must be corrected with it."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "\"PR discovery finds nothing\" scenario still routes a wholly absent attachment into the fallback query",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-archive-modifications/spec.md",
+      "line": 281,
+      "recommendation": "The requirement now states a wholly absent `pr_attachment` TERMINATES the PR path and \"never triggers discovery\", with the fallback serving only an attachment that exists but lacks `url`. This scenario's WHEN still describes the opposite state — \"no attachment on any propose/ff emit resolves, AND the constrained query returns no open PR\" — a combination the new rule makes unreachable; a manually closed PR whose record carries a `url` is answered by live validation, not by the fallback. Restate the WHEN as an attachment existing WITHOUT `url` whose constrained query returns zero survivors. The zero-survivors bullet has the same residue: \"change created without propose\" can never reach the fallback, since such a change has no attachment at all."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "Degradation record shape `{branch, granularity}` omits `doc`, which the write gate requires for per-architecture",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-run-summary-emit/spec.md",
+      "line": 25,
+      "recommendation": "The same requirement's key table makes `doc` REQUIRED when `granularity` is `\"per-architecture\"`, and its gate rule REJECTS an emit where `doc` is absent under that granularity. But all three statements of the PR-creation-failure record — here, the `Branch without a PR still records the attachment` scenario, and `orbit-propose-modifications`' mid-flight failure clause — say the object persists with \"`branch` and `granularity`\" only. On the program path (program branch created, `gh pr create` failed at first-configured-touch birth) a body following that shape emits a payload the fail-loud gate rejects, so NO propose emit is written at all. Qualify all three sites: `{branch, granularity, and `doc` when the granularity is per-architecture}`."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "Task 3.1 still orders the propose choreography after artifact generation, contradicting the three-phase requirement",
+      "file": "orbit/changes/d6-pr-lifecycle/tasks.md",
+      "line": 43,
+      "recommendation": "The choreography requirement now mandates THREE ORDERED PHASES with branch selection and the switch BEFORE artifact generation, calling the order normative \"because a simpler one cannot execute\". Task 3.1 still reads \"the config-gated PR steps after artifact generation + validation — ... create `<change-name>` off the default branch, commit artifacts ... push, open a DRAFT PR\", precisely the ordering the requirement rules out; task 3.1b lists the preconditions without saying they belong to phase 1. Only the test tasks (6.2c) reflect the reordering, so the implementation tasks would produce the old, mechanically-impossible flow. Rewrite 3.1/3.1b around the three phases, naming phase 1 (select+switch, local only), phase 2 (generate+validate on the branch, with the branch-named failure note), and phase 3 (commit/push/PR after validation succeeds)."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "Entry-points requirement still says an unattached new/continue change reaches the tail's discovery",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-pr-lifecycle/spec.md",
+      "line": 187,
+      "recommendation": "`orbit-archive-modifications` now makes absence terminal — \"A WHOLLY ABSENT `pr_attachment` TERMINATES THE PR PATH — it never triggers discovery\" — and names the `new`/`continue` case as the exact hazard the rule prevents. This line (\"the tail's discovery finds no PR, notes it in one line, and skips\") and its matching scenario THEN still describe discovery running and coming up empty. Restate both as the PR path terminating before any remote or `gh` work, matching the archive delta's `An unattached change never reaches discovery` scenario."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "title": "Third tail partial-state names only the per-change description rewrite; the program stage-entry append has no stated consequence",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-archive-modifications/spec.md",
+      "line": 226,
+      "recommendation": "The requirement states the validation-skip path-neutrally (\"the description rewrite (per-change) OR the stage-entry append (program)\"), but the four partial-states list names only \"Description rewrite failed\" with the per-change consequence \"its description is the stale intent narrative\". A program PR failing at the append step has a different consequence (the body lacks this stage's entry) and the same `gh pr edit --body-file` recovery. Make bullet three path-neutral with both consequences stated, and note that the fourth state (flip) cannot arise on the program path."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "title": "Arc-done fall-through query is not bound to the four-axis constrained query, and its multi-candidate outcome is unstated",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-pr-lifecycle/spec.md",
+      "line": 242,
+      "recommendation": "Both other sites that reach for this query bind it explicitly: propose runs \"the SAME four-axis constrained query the archive tail uses (per `orbit-archive-modifications`' discovery rule)\" and the tail enumerates repo / head / `--state open` / resolved base with distinct zero, ambiguous, and error outcomes. The arc-done fall-through says only \"the constrained query of the resolved repository with `--head <program-branch>`, and surface whatever it finds\", leaving the base and state filters implicit and the several-survivors case unaddressed. Cite the tail's discovery rule by name and state what the readout does with more than one survivor (naming all candidates is coherent for a report-only seam — but it should be written, not inferred)."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "title": "Reordering rationale's illustrative sequence cannot produce the compatible existing branch it is offered to explain",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-propose-modifications/spec.md",
+      "line": 28,
+      "recommendation": "The normative justification for phase-1-first cites \"an ordinary sequence (propose, degrade for want of `gh`, fix the setup, propose again)\". But under the availability rule a missing `gh` degrades the layer to `never` for that invocation BEFORE any branch work, so the first propose creates no branch and the second finds none to reuse — the reuse path is not reached by this sequence. The reachable route is the mid-flight failure this same requirement specifies (branch created and artifacts committed, then the push or `gh pr create` fails), which is also the setup the 6.2c re-propose harness case needs. Replace the example so the rationale and the test fixture describe the same history."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "Task 5.2 says the program PR is located \"most recent wins\", dropping the URL-bearing qualifier the requirement makes load-bearing",
+      "file": "orbit/changes/d6-pr-lifecycle/tasks.md",
+      "line": 197,
+      "recommendation": "The Shape A requirement specifies \"the most recent URL-BEARING record (never merely the most recent match)\" and explains that a later `{branch, granularity, doc}` record with no `url` would otherwise permanently mask the still-valid program PR — the exact case harness task 6.2f tests. Task 5.2's \"most recent wins\" states the forbidden rule. Add \"URL-bearing\" so the implementation instruction and the requirement agree."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "title": "Emit PR fields are unspecified when the preflight positively invalidates the stored URL (closed / merged / retargeted)",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-archive-modifications/spec.md",
+      "line": 426,
+      "recommendation": "Three statements meet without resolving this case: `pr_state` admits only `\"draft\"`/`\"ready\"` and \"a closed or merged PR is NOT representable\" (`orbit-emit-composition` delta); the fields are \"ELIDED when the state could not be observed\"; and they are \"present whenever an attachment resolves\". A preflight that observes a CLOSED or retargeted PR observed successfully but has no representable value, so an implementer could reasonably elide both, record `pr_url` alone, or (worst) record `\"draft\"`. State it directly: on positive invalidation `pr_state` is elided (the axis does not apply), and say whether `pr_url` is still recorded as the record of what was validated and rejected."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "I concentrated on the last round's text, and the reordered propose choreography absorbed most of the effort: I walked the three phases against the baseline propose requirements (consume mode, the staging move, the both-dirs-exist conflict) and against git's actual switch semantics rather than the spec's description of them. The reordering's core claim holds — selecting before generating is the only way the reuse path can execute, and the nothing-leaves-the-machine-until-validation guarantee survives intact with a named-branch failure note — but the phase-1 boundary is drawn one step too narrow: a switch is not a HEAD move alone, and the change never says where the user is standing when propose runs, which is where the staging-input risk enters. The dirty-tree check remains meaningful where it now sits, and its carve-out for moved staging material is not dead text (it covers the tracked deletions a prior propose's move left behind). Archive consistency was clean under direct comparison: all four MODIFIED blocks reproduce every baseline scenario verbatim, both prose diffs are pure insertions, and fingerprint --check verifies 4/4. The absence-terminates rule and the config-first resolution order are each stated crisply in their owning requirement but not yet swept into the older sentences that surround them — three of the residues found are that shape, and they are cheap to close. Residual risk sits where the specification touches state it cannot see: the emit's representation of a positively-invalid PR, and the propose seam's silence about the worktree it moves the user through.",
+  "passes_run": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "passes_skipped": [],
+  "final_assessment": "0 critical, 5 warning, 6 suggestion.",
+  "iteration": 8,
+  "next_recommended": "/orbit:address-reviews d6-pr-lifecycle --from-file orbit/changes/d6-pr-lifecycle/.orbit-runs/review-proposal-2026-08-26T14-11-17Z.json"
+}

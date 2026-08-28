@@ -40,18 +40,29 @@ Implementation chunks:
 
 ## 3. Propose choreography (workflow body)
 
-- [ ] 3.1 `src/core/templates/workflows/propose.ts`: the config-gated PR steps after
-      artifact generation + validation — per-proposal path (and the per-architecture
-      fallback for an uncited change): create `<change-name>` off the default branch,
-      commit artifacts + moved staging material, push, open a DRAFT PR with the
-      agent-written INTENT description; per-architecture cited path: land on the program
+- [ ] 3.1 `src/core/templates/workflows/propose.ts`: the config-gated PR steps in THREE
+      ORDERED PHASES (the order is normative — a simpler one cannot execute):
+      PHASE 1 select + switch, no NETWORK writes, BEFORE any artifact is generated — and
+      guarded by the GENERATION-INPUT precondition checked BEFORE the switch, since
+      `git switch` rewrites tracked worktree content: when a consume-mode
+      `orbit/explore/<name>/` exists in the worktree but not on the target ref, SKIP the PR
+      layer entirely (no switch at all) and generate on the current branch, unattached, with
+      a note. Checking beforehand rather than recovering after is what keeps phase 1
+      non-destructive;
+      PHASE 2 generate + validate ON that branch (a failure here names the branch the flow
+      switched to, with `git switch <default>` as recovery — nothing committed or pushed);
+      PHASE 3 outward writes only after validation succeeds. Per-proposal path (and the
+      per-architecture fallback for an uncited change): select/create `<change-name>` in
+      phase 1, then in phase 3 commit artifacts + moved staging material, push, open a
+      DRAFT PR with the agent-written INTENT description; per-architecture cited path: land on the program
       branch (create off the RESOLVED REMOTE's default-branch ref if absent — never the
       possibly-stale local ref), open the program PR on first configured touch
       (draft, program-intent body) — but ONLY after resolving existence with the SAME
       four-axis constrained query the archive tail uses: one survivor = ADOPT (record it in
       `pr_attachment`, create nothing), zero = create, several = ambiguity skip, query error
       = degradation skip (never create on error — a duplicate program PR is unrepresentable
-      in Shape A). Degradation: no remote/no `gh`/`never` → skip with one note.
+      in Shape A). Degradation: no remote/no `gh` on an ACTIVE mode → skip with one note;
+      `never`/absent/inert → no probe and NO output at all (config-first resolution order).
 - [ ] 3.1a SHARED resolution helper (body-level, both seams): implement
       `orbit-pr-lifecycle`'s `Remote and default-branch resolution` ONCE as a reusable body
       step and have propose, ff, AND the archive tail invoke it — one remote wins whatever
@@ -63,7 +74,9 @@ Implementation chunks:
       bare PR number in copyable text. Unparseable remote URL = degradation skip. Grep-test
       that no seam resolves a remote or base independently AND that no `gh` invocation in any
       body omits repository qualification.
-- [ ] 3.1b Propose body: propose's OWN preconditions (after invoking 3.1a) —
+- [ ] 3.1b Propose body: propose's OWN preconditions, ALL IN PHASE 1 — evaluated before any
+      artifact exists, so every skip writes nothing and the flow proceeds unattached,
+      generating on the current branch exactly as under `pr: never` (after invoking 3.1a) —
       `git check-ref-format --branch` validation of the mechanical name (skip with a note;
       never silently transform), default-branch NAME COLLISION skip, dirty-tree skip,
       REMOTE-OR-LOCAL existence check before concluding absence (create a local tracking
@@ -194,7 +207,8 @@ Implementation chunks:
       `orbit architecture status --json` + the architecture trail show ARC-DONE, the readout
       surfaces the program PR's URL — found by scanning change trails (active AND archived)
       for `pr_attachment` objects with `granularity: per-architecture` and a matching `doc`,
-      most recent wins — its CURRENT draft state read live via `gh pr view --json isDraft`
+      most recent URL-BEARING record wins (never merely the most recent match — a later
+      URL-less record would permanently mask the still-valid program PR) — its CURRENT draft state read live via `gh pr view --json isDraft`
       (never the recorded `pr_attachment.state`, a point-in-time observation that goes stale
       after emit whatever its initial value). THREE validation outcomes, readout NEVER
       suppressed by any: valid → surface; query FAILED → surface with `state unverified`;
@@ -269,7 +283,10 @@ apply gate's arithmetic covers only apply-completable work.)
       rule wrongly rejected); RE-PROPOSE onto an existing compatible per-proposal branch from
       the default branch (the switch must succeed because selection precedes generation — the
       case that was mechanically impossible under the old ordering); VALIDATION FAILURE after
-      the phase-1 switch (branch named in the note, nothing committed or pushed); DEFAULT
+      the phase-1 switch (branch named in the note, nothing committed or pushed);
+      CONSUME-MODE INPUT ABSENT ON TARGET REF — propose from a branch carrying a committed
+      `orbit/explore/<name>/` the base ref lacks: assert NO switch occurs, the exploration
+      survives, and generation proceeds unattached on the current branch; DEFAULT
       BRANCH ADVANCED between two citing stages — `merge-base`
       still succeeds, branch reused, ahead-by-N note emitted, nothing merged/rebased/skipped;
       an unrelated-root branch IS reported as a collision; REMOTE-ONLY program branch resumed

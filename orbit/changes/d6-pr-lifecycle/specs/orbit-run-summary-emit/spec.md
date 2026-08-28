@@ -22,7 +22,10 @@ The WHOLE object is ELIDED when no branch or PR work occurred at all (`pr: never
 degraded no-remote/no-`gh` repo, or a choreography skipped by a precondition) — an absent
 object is the honest record of "no attachment at this seam", never a null placeholder or an
 empty shell. When the choreography ran but PR creation failed, the object IS present with
-`branch` and `granularity` and no `url`/`state`, because the branch attachment is real even
+`branch` and `granularity` (AND `doc` when the granularity is `"per-architecture"` — the
+conditional key is required by the write gate whatever the PR outcome, so a program-path
+record omitting it is REJECTED and no emit is written at all) and no `url`/`state`, because
+the branch attachment is real even
 when the PR is not.
 
 The object is NARRATIVE pass-through in its VALUES: the emitting body observes and supplies
@@ -70,4 +73,4 @@ mutable `architecture:` citation.
 #### Scenario: Branch without a PR still records the attachment
 
 - **WHEN** the branch is created and pushed but `gh pr create` fails mid-flight
-- **THEN** `pr_attachment` is present with `branch` and `granularity` and WITHOUT `url`/`state` — the branch attachment is real even though the PR is not
+- **THEN** `pr_attachment` is present with `branch` and `granularity` (and `doc` when the granularity is `per-architecture` — the conditional key is gate-required whatever the PR outcome) and WITHOUT `url`/`state` — the branch attachment is real even though the PR is not

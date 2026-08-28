@@ -184,9 +184,10 @@ choreography: artifacts arrive incrementally, so no invocation is the natural br
 and a user stepping through artifacts one at a time is in an exploratory posture where a
 premature PR is noise. The ARCHIVE-SIDE CONSEQUENCE is stated rather than left to discovery:
 a PR-configured change whose artifacts were built via `new`/`continue` reaches archive
-UNATTACHED — the tail's discovery finds no PR, notes it in one line, and skips (it never
-opens one at that seam). A user who wants a PR for such a change opens it manually, or
-starts the next change with `propose`/`ff`.
+UNATTACHED, and the tail's PR path TERMINATES before any remote or `gh` work — absence is
+TERMINAL, so no discovery query runs at all and nothing is committed, pushed, or flipped
+(per `orbit-archive-modifications`). The seam never opens a PR either. A user who wants a PR
+for such a change opens it manually, or starts the next change with `propose`/`ff`.
 
 #### Scenario: ff behaves exactly like propose
 
@@ -196,7 +197,7 @@ starts the next change with `propose`/`ff`.
 #### Scenario: new/continue reaches archive unattached
 
 - **WHEN** a change built via `/orbit:new` + `/orbit:continue` archives under an active `pr:` config
-- **THEN** the archive tail's discovery finds no PR, notes the unattached state in one line, and skips the tail — no PR is opened at the archive seam
+- **THEN** the archive tail's PR path terminates before any remote or `gh` work — no discovery query runs — and one line notes the unattached state; nothing is committed, pushed, or flipped, and no PR is opened at the archive seam
 
 ### Requirement: Program PR (Shape A) semantics
 
@@ -239,10 +240,16 @@ program and a silent readout is indistinguishable from a program that is not fin
   `state unverified` note. Nothing is known, so nothing is claimed.
 - **Positively INVALID** (the query succeeded and reports the recorded PR closed, merged,
   retargeted to another base, or belonging to a different repository) — FALL THROUGH to the
-  constrained query of the resolved repository with `--head <program-branch>`, and surface
-  whatever it finds; when it finds nothing, surface the readout stating that the recorded PR
-  is closed or merged and NO open replacement exists, so the human learns the program has no
-  open PR rather than being handed a dead link.
+  SAME four-axis constrained query the archive tail uses (per
+  `orbit-archive-modifications`' discovery rule — resolved repository, `--head
+  <program-branch>`, `--state open`, base filtered to the resolved default branch), and
+  surface whatever it finds. Its three outcomes are all REPORTED, never suppressed: exactly
+  one survivor → surface it; ZERO → surface the readout stating the recorded PR is closed or
+  merged and NO open replacement exists, so the human learns the program has no open PR
+  rather than being handed a dead link; MORE THAN ONE → surface the readout naming ALL
+  candidates. Listing candidates is correct HERE precisely because this seam only reports —
+  the tail's ambiguity skip exists to avoid writing to the wrong PR, and there is no write
+  to misdirect.
 
 The fall-through is deliberately the OPPOSITE of the archive tail's rule, where a positively
 invalid record is ANSWERED rather than retried. The seams differ in risk, not in vocabulary:
