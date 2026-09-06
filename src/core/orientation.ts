@@ -1,4 +1,5 @@
 import * as fs from 'node:fs';
+import { readProjectConfig, resolvePrMode, type PrMode } from './project-config.js';
 import * as path from 'node:path';
 import {
   loadChangeContext,
@@ -91,6 +92,15 @@ export interface Orientation {
   waiting: string[];
   /** Architecture program buckets — THE architecture-status shapes, built by the shared builder. */
   program: ArchitectureBuckets;
+  /**
+   * The RESOLVED PR regime (D-arc Stage D6). Surfaced here because the workflow bodies must
+   * not re-derive it: `orbit-pr-lifecycle` defines a CLOSED three-value set with every
+   * failure path inert, and a body reading `orbit/config.yaml` itself would re-implement
+   * that resolution in prose — silently accepting a typo the reader rejects, and never
+   * emitting the one-line warning the requirement promises. Reading it here makes the
+   * closed set enforceable rather than aspirational.
+   */
+  pr: PrMode;
 }
 
 // -----------------------------------------------------------------------------
@@ -611,5 +621,9 @@ export function collectOrientation(projectRoot: string): Orientation {
       return keyOf(a) < keyOf(b) ? -1 : keyOf(a) > keyOf(b) ? 1 : 0;
     });
 
-  return { workstreams, sprint, last, waiting, program };
+  // Read-only, and inert on every failure path: an unreadable or malformed `pr:` resolves
+  // to `never` with the reader's one-line warning — orientation never blocks on config.
+  const pr = resolvePrMode(readProjectConfig(projectRoot));
+
+  return { workstreams, sprint, last, waiting, program, pr };
 }

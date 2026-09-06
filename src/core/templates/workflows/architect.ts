@@ -104,6 +104,53 @@ When \`orbit architecture status\` shows a stage quiescent-awaiting-ratification
 
 The body NEVER checks the box on its own judgment, and never nags: the offer fires when the user opens the doc's architect session — not as an interruption elsewhere. (A ratified mark on a NON-quiescent observation is an inconsistency the status render and audit-drift surface; this flow only ever writes marks the engine's observation supports.)
 
+### 5.5. Arc-done readout: the program PR's human acts (D-arc Stage D6)
+
+On EVERY invocation — unconditional and IDEMPOTENT — check whether the doc is ARC-DONE:
+every stage archived AND the closing \`--as architecture\` review recorded (from
+\`orbit architecture status --json\` plus the architecture trail). This check is deliberately
+NOT gated on the ratification interaction above: the natural ordering is final-stage archive
+→ final-stage ratification → closing review, so arc-done becomes true at the LAST step, after
+that interaction has already passed. A ratification-gated readout would never fire.
+
+When arc-done AND the program has a PR, surface the human acts — recommend, NEVER invoke; this
+body makes no outward write:
+
+**Locating the PR.** Scan change trails (active AND archived) for \`pr_attachment\` objects
+with \`granularity: "per-architecture"\` and a \`doc\` matching this doc. Take the most recent
+URL-BEARING record — never merely the most recent match, since \`url\` is optional after a
+failed query or creation, and a later \`{branch, granularity, doc}\` record without one would
+permanently mask the still-valid program PR. When no URL-bearing record exists, fall back to
+the four-axis constrained query (per \`orbit-archive-modifications\`' discovery rule).
+
+**Draft state is read LIVE** —
+\`gh pr view --repo <owner>/<repo> <url> --json isDraft\` — never the recorded
+\`pr_attachment.state\`, which is a point-in-time observation that goes stale after emit
+whatever its initial value was.
+
+**Three validation outcomes; the readout is NEVER SUPPRESSED by any of them** (arc-done is
+surfaced once per program, and a silent readout is indistinguishable from an unfinished
+program):
+
+- **Valid** → surface the PR, its live draft state, and the commands.
+- **Query FAILED** (auth, network, \`gh\` unavailable) → surface anyway with a one-line
+  \`state unverified\` note. Nothing is known, so nothing is claimed.
+- **Positively INVALID** (the query succeeded and reports the PR closed, merged, retargeted,
+  or in another repository) → FALL THROUGH to the constrained \`--head <program-branch>\`
+  query and surface what it finds; when it finds nothing, surface the readout stating the
+  recorded PR is closed or merged and NO open replacement exists. More than one survivor →
+  name ALL candidates. This fall-through is deliberately the OPPOSITE of the archive tail's
+  answered-not-retried rule: the seams differ in RISK, not vocabulary — the tail WRITES, so a
+  second chance there could rewrite and flip the wrong pull request, while this readout only
+  REPORTS and the worst a fall-through can do is name a better URL.
+
+**The acts** are the user's: \`gh pr ready --repo <owner>/<repo> <number>\` and, when
+satisfied, \`gh pr merge --repo <owner>/<repo> <number>\` — repository-qualified so text the
+user copies resolves the same repository the algorithm chose. Orbit flips nothing here and
+merges nothing anywhere. The readout repeats on every later invocation until the PR is no
+longer draft. A whole-program body rewrite is OPTIONAL polish available on request, never a
+required transition step.
+
 ### 6. Out of scope (deliberately — D-d2-6 rungs 6–8)
 
 The body does NOT carry explore-grade thinking-partner stance prose, stage-lifecycle helpers (spin-up/close-out choreography), or retrofit guidance for converting legacy docs. Those are later rungs; v1 is create/resume + capture + render + ratification.

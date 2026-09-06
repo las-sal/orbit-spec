@@ -309,12 +309,14 @@ describe('status orientation surface', () => {
     expect(out).toContain('→'); // entries still carry strips (the full tuple)
   });
 
-  it('bare --json emits {sprint, last, next, also, waiting} with the shared entry shape', async () => {
+  it('bare --json emits {sprint, last, next, also, waiting, pr} with the shared entry shape', async () => {
     await makeChange('json-sprint', { emit: true });
 
     const result = await runCLI(['status', '--json'], { cwd: tempDir });
     const payload = JSON.parse(result.stdout);
-    expect(Object.keys(payload).sort()).toEqual(['also', 'last', 'next', 'sprint', 'waiting']);
+    // `pr` joined in D6: the bodies read the RESOLVED regime here rather than parsing config.
+    expect(Object.keys(payload).sort()).toEqual(['also', 'last', 'next', 'pr', 'sprint', 'waiting']);
+    expect(payload.pr).toBe('never');
     expect(payload.sprint.kind).toBe('change');
     expect(payload.sprint.status).toBeDefined(); // per-change payload NESTS under status
     expect(payload.sprint.gates).toBeUndefined(); // no entry-level gates key
@@ -400,7 +402,7 @@ describe('status orientation surface', () => {
 
     const json = await runCLI(['status', '--json'], { cwd: tempDir });
     const payload = JSON.parse(json.stdout);
-    expect(Object.keys(payload).sort()).toEqual(['last', 'program', 'waiting', 'workstreams']);
+    expect(Object.keys(payload).sort()).toEqual(['last', 'pr', 'program', 'waiting', 'workstreams']);
   });
 
   it('cold-start criterion (arc exit criterion 1): ONE --full --json answers position/last/next per workstream, read-only', async () => {

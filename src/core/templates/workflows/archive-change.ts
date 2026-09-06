@@ -5,6 +5,7 @@
  * templates file into workflow-focused modules.
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
+import { PR_ARCHIVE_TAIL_REFERENCE } from './pr-choreography.js';
 
 
 // Reference: full schema for the Step 5.5 archive run summary. Migrated from the overlay
@@ -61,6 +62,8 @@ The schema below documents the per-command extensions ADDED to that spine (\`arc
   "unresolved_markers": ["<file>:<line> — <marker text>"],
   "user_decision": "proceeded_with_no_critical" | "proceeded_despite_critical" | "audit_skipped_via_flag",
   "consent": "user-invoked" | "prompted",
+  "pr_url": "<D6, optional: the attached PR's URL as observed by the read-only preflight>",
+  "pr_state": "draft" | "ready",  // D6, optional: OBSERVED at preflight; elided when unobservable OR positively invalid (closed/merged/retargeted) — that condition is off the draft/ready axis
   "gate_overridden": { "gate": "review-system", "state": "<unpassed|stale>", "reason": "<gate reason at decision time>" },
   "fingerprint_overridden": [
     { "capability": "<name>", "requirement": "<name>", "base_hash": "sha256:<hex>", "live_hash": "sha256:<hex>" }
@@ -82,6 +85,7 @@ The schema below documents the per-command extensions ADDED to that spine (\`arc
 - **\`sync_specs.capabilities_updated\`** lists capability names whose \`orbit/specs/<capability>/spec.md\` was edited; the delta counts (\`added\`/\`modified\`/\`removed\`/\`renamed\`) sit DIRECTLY under \`sync_specs\`, mirroring \`orbit-conventions\`' canonical lifecycle example.
 - **\`unresolved_markers\`** is an ARRAY of the \`@review:\` markers still present when the archive proceeded (empty array when none) — one \`"<file>:<line> — <marker text>"\` entry per marker. Marker-prompt outcomes that halt the archive write no summary at all.
 - **\`user_decision\`** captures the AUDIT-drift prompt decision and has exactly three values: \`proceeded_with_no_critical\` (clean audit or warnings only), \`proceeded_despite_critical\` (user explicitly proceeded past CRITICAL findings), \`audit_skipped_via_flag\` (\`--skip-audit\` used). An abort at the critical-findings prompt cancels the archive and writes no summary.
+- **\`pr_url\` / \`pr_state\`** (D6, per \`orbit-pr-lifecycle\`) record the attached PR's identity and the state the READ-ONLY PREFLIGHT observed — normally \`"draft"\`, and truthfully \`"ready"\` when the PR was already flipped by the USER at an earlier point (including at a prior program's arc-done, for an adopted program PR; never by a stage). The preflight runs BEFORE this emit, so the value is an OBSERVATION, never a forward-looking claim about the flip the tail is about to perform. On POSITIVE invalidation \`pr_state\` is ELIDED while \`pr_url\` is still recorded — the identity that was validated and rejected. Both absent for UNATTACHED changes; present whenever an attachment resolves, EVEN IF \`pr:\` now reads \`never\` (attachment authority).
 - **\`consent\`** (D1, per \`orbit-lifecycle-consent\`) records the invocation's consent story from the Step 0 provenance check: \`"user-invoked"\` (user-typed \`/orbit:archive\`, or a user-typed \`/orbit:bulk-archive\` whose flow confirmed the batch) or \`"prompted"\` (AI-mediated arrival, consent prompt fired, user proceeded). Exactly two values — a consent Abort writes NO summary. REQUIRED on every post-capability archive emit; absence is the audit-drift tripwire condition. DISTINCT from \`user_decision\` (audit outcome), \`gate_overridden\` (cadence override), and the fingerprint fields (content guard).
 - **\`gate_overridden\`** (C1) is DISTINCT from \`user_decision\` (which is the audit-drift outcome): it is present ONLY when the \`review-system\` gate was unpassed/stale at archive and the user chose **Proceed anyway** at the gate inflection prompt (Step 3.4); shape \`{gate, state, reason}\` captured at decision time. Absent when no gate override occurred.
 - **\`fingerprint_overridden\`** (C2) is present ONLY when the Step 3.45 fingerprint check reported \`diverged\` requirement(s) and the user chose **Proceed anyway** at the divergence inflection prompt — one \`{capability, requirement, base_hash, live_hash}\` entry per diverged requirement, captured at decision time. Absent when no fingerprint override occurred; REQUIRED when proceed-anyway was chosen. DISTINCT from \`gate_overridden\` (review-cadence override) and \`user_decision\` (audit-drift outcome).
@@ -221,7 +225,7 @@ BEFORE any other step — before the Step 1.5 marker scan, the Step 3.4 gate pro
 Determine invocation provenance — an observable transcript fact, never a judgment of delegated intent:
 
 - **User-invoked**: the triggering turn contains an explicit user invocation — the typed \`/orbit:archive\` command, or an unambiguous same-turn prose request naming the act ("archive it"). Proceed with ZERO added prompts (only the anomaly prompts may interrupt); the run summary records \`consent: "user-invoked"\`.
-- **AI-mediated**: everything else — delegation phrases ("finish the cadence"), inference ("continue"), a handoff document, or an eligibility readout pointing here. Fire a consent **AskUserQuestion** BEFORE any of the command's writes: the position readout, what the archive will write (N deltas across M capabilities synced to baseline + the change moved to archive — from a read-only look at \`orbit/changes/<name>/specs/\`), and exactly two options — **Proceed** / **Abort**. Proceed records \`consent: "prompted"\` in the run summary; **Abort leaves no baseline write, no sync, no move, and no run summary**.
+- **AI-mediated**: everything else — delegation phrases ("finish the cadence"), inference ("continue"), a handoff document, or an eligibility readout pointing here. Fire a consent **AskUserQuestion** BEFORE any of the command's writes: the position readout, what the archive will write (N deltas across M capabilities synced to baseline + the change moved to archive — from a read-only look at \`orbit/changes/<name>/specs/\`), and exactly two options — **Proceed** / **Abort**. When the change is PR-ATTACHED (D6 — resolve this from the change's trail as part of the same read-only discovery), the preview ADDITIONALLY names the tail's OUTWARD writes: the branch the archive commit lands on, the PUSH to the resolved remote, and — for a per-proposal PR — the READY FLIP, or for a program PR the APPENDED stage entry. This is required precisely because the tail rides this same entry consent and fires no second prompt: a preview enumerating only in-repo writes would obtain consent for a spec sync and a directory move, then push to a remote and flip a pull request public. The outward line is OMITTED for unattached changes, so the pre-capability prompt is unchanged wherever no PR exists — and it is likewise omitted under \`/orbit:bulk-archive\`, which runs no tail. Proceed records \`consent: "prompted"\` in the run summary; **Abort leaves no baseline write, no sync, no move, and no run summary**.
 - **When provenance is uncertain, treat the arrival as AI-mediated** — erring toward one extra click, never toward a silent proceed.
 
 **Consent-era stamp (migrate-on-touch)**: once consent is established (user-typed provenance, or Proceed at the prompt), read the change's \`.openspec.yaml\`. If it lacks \`schema_version\`, stamp \`consent_era_from: <current UTC timestamp, YYYY-MM-DDTHH:MM:SSZ>\` into it (add-only; never overwrite an existing stamp) — this marks a pre-capability change as tripwire-covered from this touch onward.
@@ -333,6 +337,23 @@ After upstream Step 3 (task-completion check) but before Step 4 (sync-specs):
 
 When \`/orbit:archive --skip-audit <name>\` is invoked, the entire Step 3.5 audit is skipped. The archive run summary records \`audit_skipped_via_flag: true\`. Use case: the user has just run \`/orbit:audit-drift\` manually and doesn't need to repeat it.
 
+## NEW Step 5.45 — PR preflight (READ-ONLY, before the emit — D-arc Stage D6)
+
+Before composing the Step 5.5 emit, resolve whether this change is PR-ATTACHED and observe
+the PR's current state. This step MUTATES NOTHING.
+
+Read \`pr_attachment\` from the LATEST attachment-bearing PROPOSE **or FF** emit on the
+change's trail. A WHOLLY ABSENT attachment TERMINATES the PR path here — no discovery query,
+no remote or \`gh\` work, and no tail at Step 5.7 — the archive ends exactly as
+pre-capability. (\`/orbit:new\` + \`/orbit:continue\` changes never attach.) Otherwise load
+\`references/pr-archive-tail.md\` and follow its preflight: validate a stored \`url\` live,
+fall back to the constrained query only when the record lacks \`url\`, and observe the current
+draft/ready state.
+
+Feed that ONE observation to BOTH the Step 5.5 emit and the Step 5.7 tail so they cannot
+disagree. Cannot observe (no \`gh\`, failed query) → elide the emit's PR fields and skip the
+tail; never block the archive.
+
 ## NEW Step 5.5 — Archive run summary
 
 After upstream Step 5 (move-to-archive) completes, compose the payload — narrative + the extension fields \`references/archive-summary-schema.md\` lists (\`archive_path\`, \`audit\`, \`sync_specs\`, \`unresolved_markers\`, \`user_decision\`, \`consent\`, \`warnings\`) — write it to a temp file, and invoke:
@@ -343,9 +364,30 @@ orbit emit archive --change <name> --payload <payload-file>
 
 The ENGINE resolves the post-move landing itself (the lexically-greatest \`orbit/changes/archive/*-<name>/\` scan) and owns the spine, filename, and collision handling — never hand-compose the JSON or the path.
 
+## NEW Step 5.7 — The PR-attached tail (AFTER the emit — D-arc Stage D6)
+
+Runs ONLY when Step 5.45 resolved an attachment. Follow \`references/pr-archive-tail.md\`:
+its preconditions (\`gh\` availability and the HEAD-branch check, both BEFORE any staging),
+then commit → push → description rewrite (per-change) or stage-entry append (program) →
+\`gh pr ready\` for per-change PRs only.
+
+The tail's outward writes ride the archive's OWN entry consent — no second prompt. Every
+step's failure is inside the degradation contract: skip the remainder with a note naming
+completed vs skipped steps AND the repository-qualified completing command for the step that
+failed. The archive itself (sync, move, emit) has already succeeded and never rolls back.
+
 ## NEW Step 5.6 — Stage-line garnish in the completion readout (D-arc Stage D2)
 
 When the archived change's metadata carries an \`architecture: {doc, stage}\` citation, the "Archive Complete" readout gains ONE stage line: after the move, run \`orbit architecture status --json\` and render the cited stage's post-archive computed position (e.g. \`stage d2-architect: now quiescent — completion is yours to ratify\`). One line riding the existing position render — no prompt, no doc edit; ratification never happens here (D-d2-4). Uncited changes see no stage line.
+
+## NEW Step 5.8 — Residual outward-actions echo (per \`orbit-conventions\`)
+
+When the flow hands control back at an OUTWARD seam, the completion readout echoes the
+residual rule in ONE line — outward acts orbit did not design into a lifecycle step stay the
+human's. After a tail that flipped a per-change PR READY: "merging is yours:
+\`gh pr merge --repo <owner>/<repo> <number>\` when satisfied." After a program-PR append:
+the program PR is named and the flip stays at arc-done. No echo fires for an unattached
+change — there is no outward seam to hand back at.
 
 ## \`.orbit-runs/\` moves with the change
 
@@ -383,6 +425,10 @@ This is a deliberate choice (per \`orbit-archive-modifications\`' \`Audit inform
       {
         name: 'archive-summary-schema.md',
         content: ARCHIVE_SUMMARY_SCHEMA_REFERENCE,
+      },
+      {
+        name: 'pr-archive-tail.md',
+        content: PR_ARCHIVE_TAIL_REFERENCE,
       },
     ],
     license: 'MIT',

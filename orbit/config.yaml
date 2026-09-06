@@ -28,3 +28,23 @@ schema: spec-driven
 #   models:
 #     independent: "any frontier model, clean context"
 #     review-system: "strongest available reviewer"
+
+# PR lifecycle (optional — D-arc Stage D6)
+# A SINGLE scalar with exactly three values. Absent is the same as `never`.
+#
+#   never             No PR machinery anywhere; byte-identical to pre-capability behavior.
+#                     Nothing is probed and nothing is printed.
+#   per-proposal      Every change gets its own `<change-name>` branch and its own PR.
+#   per-architecture  A change CITING an architecture doc rides that doc's program branch
+#                     under the single-program-PR semantics. A change with NO citation
+#                     FALLS BACK to per-proposal behavior (its own branch, its own PR), so
+#                     a standalone change never loses its outward window.
+#
+# In every active mode a draft PR opens at propose and the archive flow commits, pushes,
+# rewrites the description, and flips it READY. MERGING IS ALWAYS THE USER'S ACT.
+#
+# Degradation: with no git remote or no `gh` CLI, an ACTIVE mode degrades to `never`
+# behavior for that invocation and says so in one line — the lifecycle never blocks on the
+# PR layer. Under `never` (or absent) nothing is probed and no note is emitted.
+# Example:
+#   pr: per-architecture

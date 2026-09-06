@@ -1,0 +1,70 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-01T14:59:24Z",
+  "change": "d6-pr-lifecycle",
+  "kind": "editorial",
+  "model": "claude-opus-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": [],
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "The `pr:` reader's inert-value warnings are unreachable — no engine path calls them, and the reference misattributes them",
+      "file": "src/core/project-config.ts",
+      "line": 71,
+      "recommendation": "`orbit-pr-lifecycle`'s config requirement promises that an unrecognized value is \"inert — treated as `never` with a one-line warning naming it\", and a non-scalar shape warns naming the SHAPE. Task 1.1 implements exactly that, with 9 tests. But `resolvePrMode` and the `pr` parsing branch have NO caller outside those tests (verified: `grep -rn resolvePrMode src/` returns only the definition; no CLI surface exposes the resolved mode), because the bodies instruct the AI to \"Read `pr:` from `orbit/config.yaml`\" — i.e. to read the YAML directly, never through the reader. So the promised warning can never be emitted on the path the flow actually takes. The shared reference compounds it by asserting \"Inert-value and invalid-shape warnings come from the config reader itself\", which is false as wired. Resolve by giving the reader a consumer the bodies invoke — surface the resolved mode plus any warning through an existing read-only CLI (e.g. `orbit status --json`) and have the reference tell the body to read it there — or, if the AI is to read the YAML directly, move the inert-detection rules into the reference as the body's own responsibility and drop the misattribution."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "title": "Touchpoints omits `pr-choreography.ts`, the change's one new source file, and freezes at the first apply commit",
+      "file": "orbit/changes/d6-pr-lifecycle/design.md",
+      "line": 170,
+      "recommendation": "The predicted map names propose.ts, ff-change.ts, archive-change.ts, bulk-archive-change.ts, onboard.ts, architect.ts, project-config.ts, emit-composition.ts, config.yaml, the three test trees, and CLAUDE.md — but not `src/core/templates/workflows/pr-choreography.ts`, which chunk 2 created as the single home for the shared choreography. `orbit status --change d6-pr-lifecycle --boot --json` currently reports `touchpoints.actual: null` (no committed apply work yet), so the divergence check has not run; once the apply work is committed the file will surface as `actual_unpredicted` at every audit-drift category-5 sweep. The section is amendable RIGHT NOW and frozen from the first apply commit onward, so add the entry before committing rather than carrying a permanent false positive."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "Scaffolding residue in the new harness fixture: a no-op git call and a CommonJS require in an ESM module",
+      "file": "test/integration/pr-lifecycle/phase1.ts",
+      "line": 210,
+      "recommendation": "`resolveDefaultBranch` opens with `const gh = repo.git('rev-parse', '--show-toplevel'); void gh;` — a call whose result is explicitly discarded, left from drafting; it costs a subprocess per invocation and reads as meaningful. `ghRepoView` then uses `require('node:child_process')` inside a file that otherwise uses ESM imports; it works under vitest's transform but is inconsistent with every other module in the repo. Delete the no-op and hoist `spawnSync` to a top-level import."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Pass 0 held: 30 of 31 tasks complete with 6.3 correctly annotated as user-validation rather than silently checked, every delta requirement has an implementing task, and the design's central decision survived implementation intact — I verified zero-engine-git directly rather than trusting it, and the engine's only child-process use remains the read-only diff inspection in apply-state.ts. Baseline compliance and the surface walk were clean: the generated surface still resolves to 15 skills and 15 commands, the skill generator absorbed propose and ff becoming reference-bearing without special-casing, and no retired vocabulary appears in the new sources. Passes 4 and 5 skipped — no lenses defined in this project. The two warnings share a shape worth naming: both are places where the implementation is correct in isolation but not CONNECTED. The config reader validates exactly what the requirement asks and nothing calls it, because the bodies read the YAML directly — which also makes the shared reference's claim about where those warnings come from false as wired. The Touchpoints map omits the one new source file the change created, which is invisible today because divergence is not computed until apply work is committed, and permanent once it is. Residual risk is concentrated where it was always going to be: the outward half of the choreography has no automated coverage by ratified decision, and the phase-1 transcription proves the documented steps are performable without proving a reading AI performs them. The dogfood is the only instrument that closes either gap.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4",
+    "5"
+  ],
+  "final_assessment": "0 critical, 2 warning, 1 suggestion.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews d6-pr-lifecycle --from-file orbit/changes/d6-pr-lifecycle/.orbit-runs/review-system-2026-09-01T14-59-24Z.json"
+}

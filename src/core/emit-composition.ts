@@ -42,10 +42,22 @@ interface CommandSpec {
 /** The engine-internal command→kind taxonomy table (orbit-conventions becomes engine data). */
 const COMMANDS: Record<string, CommandSpec> = {
   explore: { kind: 'workflow', scopes: { change: true }, payloadFields: ['final_assessment'] },
-  propose: { kind: 'workflow', scopes: { change: true }, payloadFields: ['final_assessment'] },
+  // D6: propose and ff RESOLVE a PR attachment and record its identity as one correlated
+  // unit (`pr_attachment`); archive resolves nothing and reports observed state as two flat
+  // fields. The asymmetry is deliberate — see `orbit-pr-lifecycle`'s zero-engine-git
+  // requirement. `new`/`continue` are explicitly NOT extended: they never attach.
+  propose: {
+    kind: 'workflow',
+    scopes: { change: true },
+    payloadFields: ['final_assessment', 'pr_attachment'],
+  },
   new: { kind: 'workflow', scopes: { change: true }, payloadFields: ['final_assessment'] },
   continue: { kind: 'workflow', scopes: { change: true }, payloadFields: ['final_assessment'] },
-  ff: { kind: 'workflow', scopes: { change: true }, payloadFields: ['final_assessment'] },
+  ff: {
+    kind: 'workflow',
+    scopes: { change: true },
+    payloadFields: ['final_assessment', 'pr_attachment'],
+  },
   apply: {
     kind: 'workflow',
     scopes: { change: true },
@@ -146,6 +158,10 @@ const COMMANDS: Record<string, CommandSpec> = {
       'user_decision',
       'consent',
       'warnings',
+      // D6: archive REPORTS the PR state its read-only preflight observed; it resolves no
+      // attachment, so the fields are flat rather than the correlated `pr_attachment` unit.
+      'pr_url',
+      'pr_state',
     ],
   },
 };
@@ -419,6 +435,64 @@ function validatePayload(command: string, payload: Record<string, unknown>): voi
   }
   if (!('model' in payload)) {
     throw new EmitError(`payload is missing the required 'model' key (explicit null allowed) — provenance is a conscious act.`);
+  }
+
+  // D6 STRUCTURAL validation of the PR fields. Their VALUES stay narrative pass-through —
+  // the engine cannot verify that a branch or a PR exists — but their STRUCTURE is checked
+  // here, because `pr_attachment` is the AUTHORITATIVE record later bodies dereference: an
+  // emit carrying `{granularty: ...}` or a missing `branch` would otherwise sail through a
+  // seam advertised as fail-loud and be read back at archive as truth.
+  validatePrFields(command, payload);
+}
+
+const PR_GRANULARITIES = new Set(['per-proposal', 'per-architecture']);
+const PR_STATES = new Set(['draft', 'ready']);
+const PR_ATTACHMENT_KEYS = new Set(['branch', 'granularity', 'url', 'state', 'doc']);
+
+function validatePrFields(command: string, payload: Record<string, unknown>): void {
+  const attachment = payload.pr_attachment;
+  if (attachment !== undefined) {
+    if (typeof attachment !== 'object' || attachment === null || Array.isArray(attachment)) {
+      throw new EmitError(`'pr_attachment' must be an object for '${command}' — got ${Array.isArray(attachment) ? 'an array' : typeof attachment}.`);
+    }
+    const obj = attachment as Record<string, unknown>;
+    for (const key of Object.keys(obj)) {
+      if (!PR_ATTACHMENT_KEYS.has(key)) {
+        throw new EmitError(`unknown key 'pr_attachment.${key}' — the attachment record's shape is closed (${[...PR_ATTACHMENT_KEYS].join(', ')}).`);
+      }
+    }
+    for (const req of ['branch', 'granularity'] as const) {
+      if (obj[req] === undefined) {
+        throw new EmitError(`'pr_attachment.${req}' is required — the attachment record is the authoritative identity the archive tail reads back.`);
+      }
+    }
+    for (const key of PR_ATTACHMENT_KEYS) {
+      if (obj[key] !== undefined && typeof obj[key] !== 'string') {
+        throw new EmitError(`'pr_attachment.${key}' must be a string — got ${typeof obj[key]}.`);
+      }
+    }
+    if (!PR_GRANULARITIES.has(obj.granularity as string)) {
+      throw new EmitError(`'pr_attachment.granularity' must be one of ${[...PR_GRANULARITIES].join(' | ')} — got '${String(obj.granularity)}'.`);
+    }
+    if (obj.state !== undefined && !PR_STATES.has(obj.state as string)) {
+      throw new EmitError(`'pr_attachment.state' must be one of ${[...PR_STATES].join(' | ')} — got '${String(obj.state)}'; a closed or merged PR is not representable on the draft/ready axis and elides the field.`);
+    }
+    // The conditional `doc` rule, enforced in BOTH directions: without it a program PR
+    // cannot be correlated to its program once the birth change is archived, and a repo
+    // running two programs has two indistinguishable URLs.
+    if (obj.granularity === 'per-architecture' && obj.doc === undefined) {
+      throw new EmitError(`'pr_attachment.doc' is required when granularity is 'per-architecture' — the program PR cannot be correlated to its doc without it.`);
+    }
+    if (obj.granularity === 'per-proposal' && obj.doc !== undefined) {
+      throw new EmitError(`'pr_attachment.doc' must be absent when granularity is 'per-proposal' — a per-change PR belongs to no program.`);
+    }
+  }
+
+  if (payload.pr_url !== undefined && typeof payload.pr_url !== 'string') {
+    throw new EmitError(`'pr_url' must be a string — got ${typeof payload.pr_url}.`);
+  }
+  if (payload.pr_state !== undefined && !PR_STATES.has(payload.pr_state as string)) {
+    throw new EmitError(`'pr_state' must be one of ${[...PR_STATES].join(' | ')} — got '${String(payload.pr_state)}'; a closed or merged PR is not representable on the draft/ready axis and elides the field.`);
   }
 }
 

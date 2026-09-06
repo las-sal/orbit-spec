@@ -45,9 +45,32 @@ export const ProjectConfigSchema = z.object({
     .record(z.string(), z.string())
     .optional()
     .describe('Model hints keyed by schema phase id or cadence slot name'),
+
+  // Optional: PR lifecycle regime (D-arc Stage D6) — a SINGLE scalar with exactly three
+  // mutually exclusive values, never a multi-key block (combinations are inexpressible by
+  // construction, so no combination can be undefined). Absent = 'never'.
+  pr: z
+    .enum(['never', 'per-proposal', 'per-architecture'])
+    .optional()
+    .describe('PR lifecycle regime: never | per-proposal | per-architecture'),
 });
 
 export type ProjectConfig = z.infer<typeof ProjectConfigSchema>;
+
+/** The closed set of recognized `pr:` values (per `orbit-pr-lifecycle`). */
+export const PR_MODES = ['never', 'per-proposal', 'per-architecture'] as const;
+export type PrMode = (typeof PR_MODES)[number];
+
+/**
+ * Resolve the effective PR regime for a project.
+ *
+ * Absent config, absent key, and every inert path (unrecognized value, non-scalar shape)
+ * all resolve to `never` — the pre-capability behavior. Consumers call this rather than
+ * reading `config.pr` directly, so "absent = never" is stated in exactly one place.
+ */
+export function resolvePrMode(config: ProjectConfig | null): PrMode {
+  return config?.pr ?? 'never';
+}
 
 const MAX_CONTEXT_SIZE = 50 * 1024; // 50KB hard limit
 
@@ -167,6 +190,31 @@ export function readProjectConfig(projectRoot: string): ProjectConfig | null {
         if (typeof value === 'string') models[key] = value;
       }
       if (Object.keys(models).length > 0) config.models = models;
+    }
+
+    // Parse pr field (D6 PR-lifecycle regime): a SCALAR with three recognized values.
+    // Every failure path is INERT — treated as `never` with a one-line warning — because
+    // the key is config garnish and a typo must never stop a lifecycle command. A bare
+    // `pr:` with no value parses to null and is treated as absent (silently): "unset" and
+    // "never" are the same outcome, so a warning would be noise.
+    if (raw.pr !== undefined && raw.pr !== null) {
+      if (typeof raw.pr === 'object') {
+        // Non-scalar shape — a map or list where a scalar is expected. Includes the
+        // superseded two-key `{open, program-branches}` block an early adopter may carry.
+        const shape = Array.isArray(raw.pr) ? 'list' : 'map';
+        console.warn(
+          `Invalid 'pr' field in config: expected a scalar (${PR_MODES.join(' | ')}), got a ${shape}; treating as 'never'`
+        );
+      } else {
+        const prResult = z.enum(PR_MODES).safeParse(raw.pr);
+        if (prResult.success) {
+          config.pr = prResult.data;
+        } else {
+          console.warn(
+            `Unrecognized 'pr' value in config: '${String(raw.pr)}' (expected ${PR_MODES.join(' | ')}); treating as 'never'`
+          );
+        }
+      }
     }
 
     // Return partial config even if some fields failed

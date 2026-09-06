@@ -115,16 +115,22 @@ describe('config profile interactive flow', () => {
       fs.writeFileSync(skillPath, `name: ${dirName}\n`, 'utf-8');
     }
 
-    // archive declares a reference (orbit-skill-generation); a synced surface carries it
-    const archiveRefPath = path.join(
-      projectDir, '.claude', 'skills', 'orbit-archive-change', 'references', 'archive-summary-schema.md'
-    );
-    fs.mkdirSync(path.dirname(archiveRefPath), { recursive: true });
-    fs.writeFileSync(archiveRefPath, '# archive run-summary schema\n', 'utf-8');
+    // archive declares references (orbit-skill-generation); a synced surface carries them.
+    // D6 added pr-archive-tail.md alongside the summary schema.
+    for (const refName of ['archive-summary-schema.md', 'pr-archive-tail.md']) {
+      const archiveRefPath = path.join(
+        projectDir, '.claude', 'skills', 'orbit-archive-change', 'references', refName
+      );
+      fs.mkdirSync(path.dirname(archiveRefPath), { recursive: true });
+      fs.writeFileSync(archiveRefPath, `# ${refName}\n`, 'utf-8');
+    }
 
-    // B3 editorial skills declare references too; a synced surface carries them
+    // B3 editorial skills declare references too; a synced surface carries them.
+    // D6 added the shared PR choreography to propose and ff.
     const editorialRefs: Record<string, string[]> = {
       'orbit-explore': ['capture-formats.md'],
+      'orbit-propose': ['pr-choreography.md'],
+      'orbit-ff-change': ['pr-choreography.md'],
       'orbit-review': ['run-summary-schema.md', 'passes-proposal.md', 'passes-system.md', 'passes-architecture.md', 'external-handoff.md', 'mode-sections.md', 'prompt-template.md', 'flags-detail.md'],
       'orbit-address-reviews': ['external-findings-format.md', 'internal-findings-format.md', 'resolution-detail.md', 'run-summary-schema.md'],
       'orbit-audit-drift': ['run-summary-schema.md', 'worked-example.md'],

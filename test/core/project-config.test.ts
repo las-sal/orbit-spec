@@ -6,6 +6,8 @@ import {
   readProjectConfig,
   validateConfigRules,
   suggestSchemas,
+  resolvePrMode,
+  PR_MODES,
 } from '../../src/core/project-config.js';
 
 describe('project-config', () => {
@@ -605,6 +607,82 @@ rules:
       // 'abcdefghijk' has large Levenshtein distance from all schemas
       expect(message).not.toContain('Did you mean');
       expect(message).toContain('Available schemas:');
+    });
+  });
+  // D-arc Stage D6 — the `pr:` regime scalar. Every failure path is INERT (`never` plus a
+  // one-line warning): the key is config garnish and a typo must never stop a lifecycle
+  // command (per `orbit-pr-lifecycle`'s config-vocabulary requirement).
+  describe('pr regime scalar (D6)', () => {
+    function writeConfig(body: string): string {
+      const configDir = path.join(tempDir, 'orbit');
+      fs.mkdirSync(configDir, { recursive: true });
+      fs.writeFileSync(path.join(configDir, 'config.yaml'), body);
+      return tempDir;
+    }
+
+    it('resolves to never when the key is absent', () => {
+      const root = writeConfig('schema: spec-driven\n');
+      const config = readProjectConfig(root);
+      expect(config?.pr).toBeUndefined();
+      expect(resolvePrMode(config)).toBe('never');
+      expect(consoleWarnSpy).not.toHaveBeenCalled();
+    });
+
+    it('resolves to never when there is no config file at all', () => {
+      expect(resolvePrMode(null)).toBe('never');
+    });
+
+    it.each(PR_MODES)('parses the recognized value %s', (mode) => {
+      const root = writeConfig(`schema: spec-driven\npr: ${mode}\n`);
+      const config = readProjectConfig(root);
+      expect(config?.pr).toBe(mode);
+      expect(resolvePrMode(config)).toBe(mode);
+      expect(consoleWarnSpy).not.toHaveBeenCalled();
+    });
+
+    it('treats an unrecognized value as never and names the value', () => {
+      const root = writeConfig('schema: spec-driven\npr: draft-at-propose\n');
+      const config = readProjectConfig(root);
+      expect(config?.pr).toBeUndefined();
+      expect(resolvePrMode(config)).toBe('never');
+      const warning = consoleWarnSpy.mock.calls.map((c) => String(c[0])).join('\n');
+      expect(warning).toContain('draft-at-propose');
+      expect(warning).toContain("treating as 'never'");
+    });
+
+    it('treats a MAP shape as never and names the shape, not a value', () => {
+      // The superseded two-key sketch an early adopter may still carry.
+      const root = writeConfig('schema: spec-driven\npr:\n  open: never\n  program-branches: true\n');
+      const config = readProjectConfig(root);
+      expect(config?.pr).toBeUndefined();
+      expect(resolvePrMode(config)).toBe('never');
+      const warning = consoleWarnSpy.mock.calls.map((c) => String(c[0])).join('\n');
+      expect(warning).toContain('got a map');
+      expect(warning).toContain("treating as 'never'");
+    });
+
+    it('treats a LIST shape as never and names the shape', () => {
+      const root = writeConfig('schema: spec-driven\npr:\n  - per-proposal\n');
+      const config = readProjectConfig(root);
+      expect(config?.pr).toBeUndefined();
+      expect(resolvePrMode(config)).toBe('never');
+      const warning = consoleWarnSpy.mock.calls.map((c) => String(c[0])).join('\n');
+      expect(warning).toContain('got a list');
+    });
+
+    it('treats a bare `pr:` with no value as absent, silently', () => {
+      const root = writeConfig('schema: spec-driven\npr:\n');
+      const config = readProjectConfig(root);
+      expect(resolvePrMode(config)).toBe('never');
+      expect(consoleWarnSpy).not.toHaveBeenCalled();
+    });
+
+    it('never throws on an invalid pr value — other fields still parse', () => {
+      const root = writeConfig('schema: spec-driven\npr: 3\ncontext: hello\n');
+      const config = readProjectConfig(root);
+      expect(config?.schema).toBe('spec-driven');
+      expect(config?.context).toBe('hello');
+      expect(resolvePrMode(config)).toBe('never');
     });
   });
 });

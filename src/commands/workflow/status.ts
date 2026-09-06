@@ -318,6 +318,7 @@ function printSprintView(orientation: Orientation, json: boolean): void {
             w.degraded ? { name: w.name, kind: w.kind, degraded: true } : { name: w.name, kind: w.kind }
           ),
           waiting: orientation.waiting,
+          pr: orientation.pr,
         },
         null,
         2
@@ -402,6 +403,7 @@ function printFullView(orientation: Orientation, json: boolean): void {
           workstreams: orientation.workstreams,
           last: orientation.last,
           waiting: orientation.waiting,
+          pr: orientation.pr,
         },
         null,
         2

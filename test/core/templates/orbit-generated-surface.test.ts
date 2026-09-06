@@ -49,6 +49,9 @@ const SURFACE: Array<[string, string, string[]]> = [
 // B3 editorial skills bundle reference files (multi-file skills)
 const REFERENCE_SKILLS: Record<string, string[]> = {
   'orbit-explore': ['capture-formats.md'],
+  // D6: propose and ff share ONE choreography reference (see pr-choreography.ts).
+  'orbit-propose': ['pr-choreography.md'],
+  'orbit-ff-change': ['pr-choreography.md'],
   'orbit-review': ['run-summary-schema.md', 'passes-proposal.md', 'passes-system.md', 'passes-architecture.md', 'external-handoff.md', 'mode-sections.md', 'prompt-template.md', 'flags-detail.md'],
   'orbit-address-reviews': ['external-findings-format.md', 'internal-findings-format.md', 'resolution-detail.md', 'run-summary-schema.md'],
   'orbit-audit-drift': ['run-summary-schema.md', 'worked-example.md'],
@@ -177,9 +180,16 @@ describe('generated surface fidelity (real init, all workflows, claude + codex)'
   });
 
   it('editorial skills carry their capability metadata in frontmatter (B2 pass-through)', async () => {
-    // orbit-explore joined REFERENCE_SKILLS in D5 but is not a B3 editorial skill
-    // (its capability spec is orbit-explore-modifications; no metadata pass-through).
-    for (const dirName of Object.keys(REFERENCE_SKILLS).filter((d) => d !== 'orbit-explore')) {
+    // The subject is stated EXPLICITLY rather than derived from REFERENCE_SKILLS by
+    // exclusion: carrying references and being a B3 editorial skill are independent
+    // properties, and the exclusion list had already begun accumulating carve-outs
+    // (orbit-explore in D5; orbit-propose and orbit-ff-change in D6).
+    const EDITORIAL_SKILLS = [
+      'orbit-review',
+      'orbit-address-reviews',
+      'orbit-audit-drift',
+    ];
+    for (const dirName of EDITORIAL_SKILLS) {
       const skill = await fs.readFile(
         path.join(testDir, '.claude', 'skills', dirName, 'SKILL.md'),
         'utf-8'

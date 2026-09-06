@@ -174,6 +174,9 @@ choreography steps themselves) rather than as a separate feature section.
 
 ## Touchpoints
 
+- `src/core/templates/workflows/pr-choreography.ts` — NEW: the single source for the shared
+  remote/default-branch resolution, the propose phases, and the archive tail, emitted as a
+  `references/` file into propose, ff, and archive so no seam can drift from another.
 - `src/core/templates/workflows/propose.ts` + `src/core/templates/workflows/ff-change.ts` —
   the shared branch + draft-PR choreography, branch preconditions, intent description
   authoring, no-CI note (`ff` is propose-in-one-breath; `new`/`continue` explicitly out).

@@ -293,6 +293,11 @@ paths are kept out of bodies.
   position readout + the engine's eligibility line (`Ready when you are:`); blanket delegation covers
   work WITHIN the requested command, never the next one — gate `passed` means *eligible*, not
   *commanded*.
+- **Outward actions stay the human's** (D6, `orbit-conventions`) — merging any PR, publishing
+  releases, and filing issues on external trackers are invoked outside orbit workflows, in
+  non-orbit sessions on this repo as much as in orbit ones. Recommend them; never perform them.
+  Where orbit *has* designed the path (the draft PR at propose, the archive tail's READY flip)
+  the workflow owns it; everything else remains off-script by design.
 
 ## When in doubt
 

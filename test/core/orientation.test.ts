@@ -498,3 +498,51 @@ describe('workstream entry shape', () => {
     expect(entry.stage).toEqual({ doc: 'my-arc', stage: 's1' });
   });
 });
+
+/**
+ * D-arc Stage D6 — the resolved PR regime on the orientation surface.
+ *
+ * The bodies read `pr` from here rather than parsing `orbit/config.yaml` themselves, so the
+ * closed value set is enforced once by the reader instead of re-derived in prose at every
+ * seam. These assertions cover the property that motivated surfacing it: every inert path
+ * resolves to `never` rather than leaking a typo into the choreography.
+ */
+describe('orientation exposes the resolved pr regime (D6)', () => {
+  function withConfig(body: string | null): string {
+    if (body !== null) {
+      fs.mkdirSync(path.join(root, 'orbit'), { recursive: true });
+      fs.writeFileSync(path.join(root, 'orbit', 'config.yaml'), body);
+    }
+    return root;
+  }
+
+  it('resolves never when no config file exists at all', () => {
+    expect(collectOrientation(root).pr).toBe('never');
+  });
+
+  it('resolves never when the key is absent', () => {
+    withConfig('schema: spec-driven\n');
+    expect(collectOrientation(root).pr).toBe('never');
+  });
+
+  it.each(['never', 'per-proposal', 'per-architecture'] as const)('resolves %s', (mode) => {
+    withConfig(`schema: spec-driven\npr: ${mode}\n`);
+    expect(collectOrientation(root).pr).toBe(mode);
+  });
+
+  it('resolves an unrecognized value to never — the typo never reaches the choreography', () => {
+    withConfig('schema: spec-driven\npr: per-architect\n');
+    expect(collectOrientation(root).pr).toBe('never');
+  });
+
+  it('resolves a non-scalar shape to never (the superseded two-key block)', () => {
+    withConfig('schema: spec-driven\npr:\n  open: never\n  program-branches: true\n');
+    expect(collectOrientation(root).pr).toBe('never');
+  });
+
+  it('never throws on a malformed config — orientation stays read-only and total', () => {
+    withConfig('schema: spec-driven\npr: [oops\n');
+    expect(() => collectOrientation(root)).not.toThrow();
+    expect(collectOrientation(root).pr).toBe('never');
+  });
+});

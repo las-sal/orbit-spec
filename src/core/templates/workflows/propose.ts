@@ -5,6 +5,7 @@
  * templates file into workflow-focused modules.
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
+import { PR_CHOREOGRAPHY_REFERENCE } from './pr-choreography.js';
 
 export function getOrbitProposeSkillTemplate(): SkillTemplate {
   return {
@@ -268,11 +269,32 @@ detect a parallel change landing on the same requirements (no silent spec data-l
 - If delta specs are edited again later in the session, re-run the stamp so newly touched
   requirements gain fingerprints too (still add-missing-only; safe to repeat).
 
+## PR lifecycle (config-gated — D-arc Stage D6)
+
+Read the RESOLVED regime from the engine FIRST — \`orbit status --json\`, field \`pr\` (never parse \`orbit/config.yaml\` yourself: the value set is closed and every inert path already resolves to \`never\` with the reader's warning). When it is \`never\`, absent, or an inert
+value/shape, RETURN IMMEDIATELY from this section: probe nothing (no remote enumeration, no
+\`gh\`) and emit NO note — \`never\`'s promise is silence, and behavior stays byte-identical to
+pre-capability. Only an ACTIVE mode (\`per-proposal\` / \`per-architecture\`) loads
+\`references/pr-choreography.md\` and follows it.
+
+That reference carries the whole choreography: the shared remote/default-branch resolution
+both PR seams use, the THREE ORDERED PHASES (select + switch BEFORE generation — the order is
+normative, since a compatible branch already tracks the paths generation would leave
+untracked and \`git switch\` refuses to overwrite them), every precondition, the program-PR
+adopt-or-open query, degradation, and the \`pr_attachment\` record. Do not improvise the
+choreography from this summary.
+
+Two things that stay TRUE HERE regardless of config: propose fires NO consent prompt (it is
+not consent-scoped — the choreography rides the user's own invocation), and generation +
+validation are never rolled back by a PR-layer failure.
+
 ## Run-summary emit (one-shot at command completion — via the engine emit surface)
 
 (Per \`orbit-run-summary-emit\`; composed and written via \`orbit emit propose\` — \`orbit-emit-composition\`.)
 
-At command completion, compose the narrative payload (\`final_assessment\` + the required nullable \`model\`) into a temp file and invoke:
+At command completion, compose the narrative payload (\`final_assessment\`, the required
+nullable \`model\`, and — when the PR choreography ran — the \`pr_attachment\` object per
+\`references/pr-choreography.md\`) into a temp file and invoke:
 
 \`\`\`bash
 orbit emit propose --change <name> --payload <payload-file>
@@ -282,6 +304,12 @@ The ENGINE owns the spine, the trail path, timestamp + collision handling, and \
 
 **Completion-prompt override (chat)**: where the upstream steps above prompt "Run \`/orbit:apply\` or ask me to implement", instead prompt: "Run \`/orbit:review <name>\` — review the artifacts before implementation." The upstream text above is kept verbatim; this override is the operative instruction.
 `,
+    references: [
+      {
+        name: 'pr-choreography.md',
+        content: PR_CHOREOGRAPHY_REFERENCE,
+      },
+    ],
     license: 'MIT',
     compatibility: 'Requires orbit CLI.',
     metadata: { author: 'openspec', version: '1.0' },

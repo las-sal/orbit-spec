@@ -203,9 +203,16 @@ describe('orbit content fidelity (B1 relocation)', () => {
   });
 
   describe('references declarations (orbit-skill-generation, D-b2-4 lean scope)', () => {
-    it('archive-change declares exactly archive-summary-schema.md', () => {
+    it('archive-change declares its exact reference set (D6 added the PR tail)', () => {
       const refs = getArchiveChangeSkillTemplate().references ?? [];
-      expect(refs.map((r) => r.name)).toEqual(['archive-summary-schema.md']);
+      expect(refs.map((r) => r.name)).toEqual(['archive-summary-schema.md', 'pr-archive-tail.md']);
+    });
+
+    it('propose and ff declare exactly the shared PR choreography (D6)', () => {
+      for (const getTemplate of [getOrbitProposeSkillTemplate, getFfChangeSkillTemplate]) {
+        const refs = getTemplate().references ?? [];
+        expect(refs.map((r) => r.name)).toEqual(['pr-choreography.md']);
+      }
     });
 
     it('explore declares exactly capture-formats.md (D5 body-economy move)', () => {
@@ -214,7 +221,14 @@ describe('orbit content fidelity (B1 relocation)', () => {
     });
 
     it('no other workflow declares references', () => {
-      const withReferences = new Set(['archive-change', 'explore', ...B3_REFERENCES.map(([n]) => n)]);
+      // D6 added references to propose and ff (the shared PR choreography).
+      const withReferences = new Set([
+        'archive-change',
+        'explore',
+        'propose',
+        'ff-change',
+        ...B3_REFERENCES.map(([n]) => n),
+      ]);
       for (const [name, getTemplate] of RELOCATED) {
         if (withReferences.has(name)) continue;
         expect(getTemplate().references ?? [], `${name} must not declare references`).toEqual([]);
@@ -268,5 +282,116 @@ describe('orbit content fidelity (B1 relocation)', () => {
       expect(content).not.toContain('.claude/skills/');
       expect(content).not.toMatch(/openspec\/(changes|specs|explore|lenses)/);
     });
+  });
+});
+
+/**
+ * D-arc Stage D6 — the PR lifecycle layer.
+ *
+ * The choreography is defined ONCE in `pr-choreography.ts` and consumed as a `references/`
+ * file by propose, ff, and archive. These assertions guard the two properties the spec makes
+ * load-bearing: that no seam resolves a remote or base independently (a seam that did would
+ * defeat the `--repo` constraint the other seam relies on), and that every copyable `gh`
+ * invocation is repository-qualified.
+ */
+describe('D6 PR lifecycle surface', () => {
+  const propose = getOrbitProposeSkillTemplate();
+  const ff = getFfChangeSkillTemplate();
+  const archive = getArchiveChangeSkillTemplate();
+  const bulk = getBulkArchiveChangeSkillTemplate();
+
+  function reference(tpl: SkillTemplate, name: string): string {
+    const ref = (tpl.references ?? []).find((r) => r.name === name);
+    expect(ref, `${tpl.name} is missing references/${name}`).toBeDefined();
+    return ref!.content;
+  }
+
+  it('propose and ff ship the SAME choreography reference (identical bytes)', () => {
+    const a = reference(propose, 'pr-choreography.md');
+    const b = reference(ff, 'pr-choreography.md');
+    expect(a).toBe(b);
+  });
+
+  it('archive ships the tail reference', () => {
+    expect(reference(archive, 'pr-archive-tail.md')).toContain('The read-only PR preflight');
+  });
+
+  it('both references carry the ONE shared resolution algorithm, byte-identical', () => {
+    const choreography = reference(propose, 'pr-choreography.md');
+    const tail = reference(archive, 'pr-archive-tail.md');
+    const marker = '## Remote and default-branch resolution (SHARED — both seams)';
+    expect(choreography).toContain(marker);
+    expect(tail).toContain(marker);
+    // The shared section runs from its heading to the config-order heading that follows it.
+    const slice = (s: string) =>
+      s.slice(s.indexOf(marker), s.indexOf('## Config resolution order'));
+    expect(slice(choreography)).toBe(slice(tail));
+    expect(slice(choreography).length).toBeGreaterThan(200);
+  });
+
+  it('no seam resolves a remote or default branch independently', () => {
+    // The bodies POINT at the reference; only the shared section states the algorithm.
+    for (const tpl of [propose, ff, archive]) {
+      expect(tpl.instructions).not.toMatch(/git symbolic-ref refs\/remotes/);
+      expect(tpl.instructions).not.toMatch(/prefer\s+`?origin`?\s+when present/i);
+    }
+  });
+
+  it('every copyable gh invocation in the references is repository-qualified', () => {
+    for (const content of [
+      reference(propose, 'pr-choreography.md'),
+      reference(archive, 'pr-archive-tail.md'),
+    ]) {
+      // Invocation-shaped: a gh command carrying at least one flag or argument beyond the
+      // subcommand. Bare prose mentions (`gh pr create` erroring) carry no arguments.
+      const invocations = content.match(/`gh (?:repo|pr) [a-z]+ [^`]*`/g) ?? [];
+      expect(invocations.length).toBeGreaterThan(0);
+      for (const inv of invocations) {
+        expect(inv, `unqualified gh invocation: ${inv}`).toContain('--repo');
+      }
+    }
+  });
+
+  it('propose adds NO consent prompt at entry (D-d6-6: propose is not consent-scoped)', () => {
+    expect(propose.instructions).toContain('fires NO consent prompt');
+    const prSection = propose.instructions.slice(propose.instructions.indexOf('## PR lifecycle'));
+    expect(prSection).not.toContain('AskUserQuestion');
+  });
+
+  it('config-first resolution order is stated in the bodies, not only the reference', () => {
+    for (const tpl of [propose, ff]) {
+      expect(tpl.instructions).toMatch(/RETURN IMMEDIATELY/);
+      expect(tpl.instructions).toMatch(/probe nothing/i);
+    }
+  });
+
+  it('archive positions the preflight BEFORE the emit and the tail AFTER it', () => {
+    const b = archive.instructions;
+    // Anchor on the HEADINGS: the prose carries forward references to later steps.
+    const preflight = b.indexOf('## NEW Step 5.45');
+    const emit = b.indexOf('## NEW Step 5.5 — Archive run summary');
+    const tail = b.indexOf('## NEW Step 5.7');
+    expect(preflight).toBeGreaterThan(-1);
+    expect(preflight).toBeLessThan(emit);
+    expect(emit).toBeLessThan(tail);
+  });
+
+  it('archive consent preview names the outward writes for an attached change', () => {
+    expect(archive.instructions).toContain('PR-ATTACHED');
+    expect(archive.instructions).toMatch(/READY FLIP|READY flip/);
+    expect(archive.instructions).toContain('fires no second prompt');
+  });
+
+  it('bulk-archive runs NO tail and names what it left draft', () => {
+    expect(bulk.instructions).toContain('runs NO tail');
+    expect(bulk.instructions).toMatch(/NAME the PR-attached changes it left DRAFT/i);
+    expect(bulk.instructions).not.toMatch(/`gh pr ready`/);
+  });
+
+  it('new and continue are NOT extended with the PR layer', () => {
+    for (const tpl of [getNewChangeSkillTemplate(), getContinueChangeSkillTemplate()]) {
+      expect(tpl.instructions).not.toContain('pr_attachment');
+      expect((tpl.references ?? []).some((r) => r.name.startsWith('pr-'))).toBe(false);
+    }
   });
 });

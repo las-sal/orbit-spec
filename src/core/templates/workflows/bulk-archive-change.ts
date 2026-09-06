@@ -271,6 +271,24 @@ Archive is a consent-scoped command; the bulk wrapper applies the provenance rul
 
 **Sync inheritance (no double-prompt)**: each inner sync-specs step (Step 8a) inherits its containing archive's consent — it never fires a separate consent prompt.
 
+## PR layer: bulk-archive runs NO tail (D-arc Stage D6)
+
+Bulk-archive archives SEVERAL changes in one invocation, and the PR-attached tail is
+inherently SINGLE-BRANCH: HEAD can be on only one branch, so under \`pr: per-proposal\` — where
+every attached change has its own — the tail's HEAD precondition would skip all but at most
+one change, and WHICH one would depend on the incidental fact of where the user was standing.
+Rather than let outward behavior fall out of that accident, this flow performs no tail at all.
+
+Each change is synced, moved, and emitted exactly as pre-capability. NO commit, push,
+description rewrite, or READY flip occurs for any change in the batch, whatever \`pr:\` reads.
+The per-change consent preview accordingly OMITS the outward-writes line (there are none to
+preview).
+
+The **Bulk Archive Complete** readout SHALL NAME the PR-attached changes it left DRAFT, with
+their PR URLs, so a batch never silently strands a pull request — reporting, never acting, per
+\`orbit-conventions\`' residual outward-actions rule. Single-change \`/orbit:archive\` is the
+seam that flips.
+
 ## Per-change base-fingerprint check (C2 — NEW step inside upstream Step 8)
 
 (Per \`orbit-base-fingerprints\` and \`orbit-archive-modifications\`' \`Fingerprint-divergence inflection prompt\` requirement)

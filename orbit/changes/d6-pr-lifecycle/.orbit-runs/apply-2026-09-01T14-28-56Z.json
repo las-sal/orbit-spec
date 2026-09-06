@@ -1,0 +1,34 @@
+{
+  "command": "apply",
+  "timestamp": "2026-09-01T14:28:56Z",
+  "change": "d6-pr-lifecycle",
+  "kind": "workflow",
+  "model": "claude-opus-5",
+  "user_validation_tasks": [
+    "6.3"
+  ],
+  "gate_overridden": {
+    "gate": "review-proposal",
+    "state": "unpassed",
+    "reason": "latest independent pass yielded new findings"
+  },
+  "consent": "user-invoked",
+  "tasks_completed": 30,
+  "tasks_remaining": 1,
+  "user_validation_remaining": 1,
+  "chunk": "3 of 3",
+  "chunk_name": "Surface teach-in + verification",
+  "chunk_complete": true,
+  "tasks_completed_this_session": 12,
+  "files_touched": [
+    "CLAUDE.md",
+    "orbit/changes/d6-pr-lifecycle/tasks.md",
+    "src/core/templates/workflows/architect.ts",
+    "src/core/templates/workflows/archive-change.ts",
+    "src/core/templates/workflows/onboard.ts",
+    "test/core/templates/skill-templates-parity.test.ts"
+  ],
+  "diff_base": "8a309ee6e6871a2f0417561150774477d0210dab",
+  "final_assessment": "Completed chunk 3 of 3 (Surface teach-in + verification); 30 of 31 tasks done. Chunk 3 (teach-in + verification) complete; 30/31 with 6.3 the user-validation dogfood. Onboard teaches the PR layer at the two seams it acts on; the architect body gained the arc-done readout as an unconditional idempotent check with three validation outcomes and a never-suppressed invariant; the archive readout echoes the residual outward-actions rule at the merge seam; root CLAUDE.md instantiates that rule for non-orbit sessions. Task 6.2's SCOPE WAS RATIFIED AT APPLY: as written it had no executable subject, since zero-engine-git means nothing in the test path ever invokes `gh`, so its stub-invocation assertions would have passed vacuously in every case including the ones meant to prove the opposite. What shipped instead is an executable TRANSCRIPTION of the documented phase-1 procedure driven against real git repositories with a recording `gh` stub — 28 cases covering config-order silence, remote and repository resolution, name validity, dirty tree, per-path compatibility, the remote-only tracking branch, the generation-input precondition, and a regression that DEMONSTRATES the switch collision the old ordering hit and then proves the ratified ordering succeeds on the same repository. Its limits are documented in the harness rather than implied: it cannot prove a reading AI follows the prose, and the tail's outward-write cases (6.2d/e/f) were rescoped into the 6.3 dogfood, which now enumerates them. 1960 -> 1988 green across 91 files; build clean, surface regenerated, strict validation passing, fingerprints 4/4.",
+  "next_recommended": "/orbit:review --as system d6-pr-lifecycle"
+}

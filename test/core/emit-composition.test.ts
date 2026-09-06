@@ -819,3 +819,199 @@ describe('exactly-one-file guarantee', () => {
     expect(listRuns('orbit/changes/foo/.orbit-runs').some(f => f.includes('.tmp'))).toBe(false);
   });
 });
+
+// ---------------------------------------------------------------------------
+// D-arc Stage D6 — PR payload fields.
+//
+// VALUES are narrative pass-through (the engine cannot verify a branch or a PR exists);
+// STRUCTURE is gate-validated, because `pr_attachment` is the AUTHORITATIVE record the
+// archive tail dereferences. Per `orbit-run-summary-emit` + `orbit-emit-composition`.
+// ---------------------------------------------------------------------------
+
+describe('D6 PR payload fields', () => {
+  beforeEach(() => {
+    root = fs.mkdtempSync(path.join(os.tmpdir(), 'orbit-emit-d6-'));
+    write('orbit/config.yaml', 'schema: spec-driven\n');
+    makeChange('foo');
+    // archive emits resolve an ARCHIVED directory (target resolution precedes payload
+    // validation), so the archived tree must exist for those cases to reach the gate.
+    write('orbit/changes/archive/2026-01-01-foo/proposal.md', 'p');
+  });
+  afterEach(() => {
+    fs.rmSync(root, { recursive: true, force: true });
+  });
+
+  const perProposal = { branch: 'foo', granularity: 'per-proposal' };
+  const perArchitecture = { branch: 'd-arc', granularity: 'per-architecture', doc: 'd-arc-arbitered-flow' };
+
+  function emitPropose(command: 'propose' | 'ff', attachment: unknown) {
+    return composeAndWriteEmit(
+      command,
+      { change: 'foo' },
+      { model: null, final_assessment: 'done', pr_attachment: attachment },
+      { projectRoot: root }
+    );
+  }
+
+  describe('acceptance on the commands that own the fields', () => {
+    it.each(['propose', 'ff'] as const)('accepts pr_attachment on %s and carries values verbatim', (command) => {
+      const res = emitPropose(command, { ...perProposal, url: 'https://example.test/pr/1', state: 'draft' });
+      const written = JSON.parse(fs.readFileSync(res.path, 'utf-8'));
+      expect(written.pr_attachment).toEqual({
+        branch: 'foo',
+        granularity: 'per-proposal',
+        url: 'https://example.test/pr/1',
+        state: 'draft',
+      });
+    });
+
+    it('accepts a per-architecture attachment carrying doc', () => {
+      const res = emitPropose('propose', perArchitecture);
+      const written = JSON.parse(fs.readFileSync(res.path, 'utf-8'));
+      expect(written.pr_attachment.doc).toBe('d-arc-arbitered-flow');
+    });
+
+    it('accepts the degraded record — branch + granularity, no url/state', () => {
+      const res = emitPropose('propose', perProposal);
+      const written = JSON.parse(fs.readFileSync(res.path, 'utf-8'));
+      expect(written.pr_attachment).toEqual(perProposal);
+      expect(written.pr_attachment.url).toBeUndefined();
+    });
+
+    it('accepts pr_url and pr_state on archive', () => {
+      const res = composeAndWriteEmit(
+        'archive',
+        { change: 'foo' },
+        {
+          model: null,
+          final_assessment: 'archived',
+          archive_path: 'orbit/changes/archive/2026-01-01-foo',
+          pr_url: 'https://example.test/pr/1',
+          pr_state: 'draft',
+        },
+        { projectRoot: root }
+      );
+      const written = JSON.parse(fs.readFileSync(res.path, 'utf-8'));
+      expect(written.pr_url).toBe('https://example.test/pr/1');
+      expect(written.pr_state).toBe('draft');
+    });
+
+    it('accepts pr_url with pr_state ELIDED (positive invalidation: closed/merged/retargeted)', () => {
+      const res = composeAndWriteEmit(
+        'archive',
+        { change: 'foo' },
+        {
+          model: null,
+          final_assessment: 'archived',
+          archive_path: 'orbit/changes/archive/2026-01-01-foo',
+          pr_url: 'https://example.test/pr/1',
+        },
+        { projectRoot: root }
+      );
+      const written = JSON.parse(fs.readFileSync(res.path, 'utf-8'));
+      expect(written.pr_url).toBe('https://example.test/pr/1');
+      expect('pr_state' in written).toBe(false);
+    });
+  });
+
+  describe('structural rejection (fail-loud at the seam)', () => {
+    it('rejects a misspelled nested key', () => {
+      expect(() => emitPropose('propose', { branch: 'foo', granularty: 'per-proposal' })).toThrow(
+        /unknown key 'pr_attachment.granularty'/
+      );
+    });
+
+    it('rejects a missing branch', () => {
+      expect(() => emitPropose('propose', { granularity: 'per-proposal' })).toThrow(
+        /'pr_attachment.branch' is required/
+      );
+    });
+
+    it('rejects a missing granularity', () => {
+      expect(() => emitPropose('propose', { branch: 'foo' })).toThrow(
+        /'pr_attachment.granularity' is required/
+      );
+    });
+
+    it('rejects a non-string field', () => {
+      expect(() => emitPropose('propose', { branch: 42, granularity: 'per-proposal' })).toThrow(
+        /'pr_attachment.branch' must be a string/
+      );
+    });
+
+    it('rejects an out-of-enum granularity', () => {
+      expect(() => emitPropose('propose', { branch: 'foo', granularity: 'per-architect' })).toThrow(
+        /'pr_attachment.granularity' must be one of/
+      );
+    });
+
+    it('rejects an out-of-enum state', () => {
+      expect(() => emitPropose('propose', { ...perProposal, state: 'closed' })).toThrow(
+        /'pr_attachment.state' must be one of/
+      );
+    });
+
+    it('rejects per-architecture WITHOUT doc (the gate-required conditional key)', () => {
+      expect(() => emitPropose('propose', { branch: 'd-arc', granularity: 'per-architecture' })).toThrow(
+        /'pr_attachment.doc' is required when granularity is 'per-architecture'/
+      );
+    });
+
+    it('rejects per-proposal WITH doc', () => {
+      expect(() => emitPropose('propose', { ...perProposal, doc: 'x' })).toThrow(
+        /'pr_attachment.doc' must be absent when granularity is 'per-proposal'/
+      );
+    });
+
+    it('rejects a non-object attachment', () => {
+      expect(() => emitPropose('propose', 'foo')).toThrow(/'pr_attachment' must be an object/);
+      expect(() => emitPropose('propose', ['foo'])).toThrow(/'pr_attachment' must be an object/);
+    });
+
+    it('rejects an out-of-enum pr_state on archive', () => {
+      expect(() =>
+        composeAndWriteEmit(
+          'archive',
+          { change: 'foo' },
+          { model: null, final_assessment: 'a', archive_path: 'p', pr_state: 'merged' },
+          { projectRoot: root }
+        )
+      ).toThrow(/'pr_state' must be one of/);
+    });
+  });
+
+  describe('field ownership — each rejected outside its command set', () => {
+    it('rejects pr_attachment on archive', () => {
+      expect(() =>
+        composeAndWriteEmit(
+          'archive',
+          { change: 'foo' },
+          { model: null, final_assessment: 'a', archive_path: 'p', pr_attachment: perProposal },
+          { projectRoot: root }
+        )
+      ).toThrow(/unknown payload key 'pr_attachment' for 'archive'/);
+    });
+
+    it('rejects pr_url on propose', () => {
+      expect(() =>
+        composeAndWriteEmit(
+          'propose',
+          { change: 'foo' },
+          { model: null, final_assessment: 'a', pr_url: 'https://example.test/pr/1' },
+          { projectRoot: root }
+        )
+      ).toThrow(/unknown payload key 'pr_url' for 'propose'/);
+    });
+
+    it.each(['new', 'continue'] as const)('rejects pr_attachment on %s (never attaches)', (command) => {
+      expect(() =>
+        composeAndWriteEmit(
+          command,
+          { change: 'foo' },
+          { model: null, final_assessment: 'a', pr_attachment: perProposal },
+          { projectRoot: root }
+        )
+      ).toThrow(new RegExp(`unknown payload key 'pr_attachment' for '${command}'`));
+    });
+  });
+});
