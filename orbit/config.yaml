@@ -40,8 +40,12 @@ schema: spec-driven
 #                     FALLS BACK to per-proposal behavior (its own branch, its own PR), so
 #                     a standalone change never loses its outward window.
 #
-# In every active mode a draft PR opens at propose and the archive flow commits, pushes,
-# rewrites the description, and flips it READY. MERGING IS ALWAYS THE USER'S ACT.
+# In every active mode a draft PR opens at propose (or, for a cited change under
+# per-architecture, the single program PR is adopted or opened). The archive flow then:
+#   per-proposal      commits, pushes, rewrites the description, and flips the PR READY.
+#   per-architecture  commits, pushes, and APPENDS this stage's entry to the program PR —
+#                     stage archives never flip it; the READY flip is YOUR act at arc-done.
+# MERGING IS ALWAYS THE USER'S ACT.
 #
 # Degradation: with no git remote or no `gh` CLI, an ACTIVE mode degrades to `never`
 # behavior for that invocation and says so in one line — the lifecycle never blocks on the

@@ -59,8 +59,10 @@ revisions dated 2026-08-12/2026-08-20 recording what the review cadence overturn
   silently skips or degrades by provenance (the D1-carried skip leaning stays superseded).
 - **Zero engine git**: branch/commit/push/`gh pr` live as workflow-body steps (the existing
   review-handoff choreography class); the engine gains only the `pr:` config reader, the
-  optional structured `pr_attachment` object on the propose/ff emit payloads, and the
-  optional flat `pr_url`/`pr_state` pass-through fields on the archive emit payload.
+  read-only `pr` field surfacing its resolved regime on every bare-tier `orbit status --json`
+  shape (what the bodies read), the optional structured `pr_attachment` object on the
+  propose/ff emit payloads, and the optional flat `pr_url`/`pr_state` pass-through fields on
+  the archive emit payload.
 - **Residual outward-actions rule**: the off-script outward-action conventions requirement
   (merges, releases, issue-filing) shrinks to a short `orbit-conventions` requirement echoed
   into lifecycle-completion outputs.

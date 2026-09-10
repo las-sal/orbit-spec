@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-09-10T14:01:10Z",
+  "change": "d6-pr-lifecycle",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "system",
+  "prompt_path": "orbit/changes/d6-pr-lifecycle/.orbit-runs/external-prompt-system-2026-09-10T14-01-09Z.md",
+  "target": null,
+  "final_assessment": "External review prompt packaged for d6-pr-lifecycle (iter 1, mode system); awaiting findings. Handoff preflight FAILED on the working-tree check — 18 uncommitted entries (the walk-10 resolutions across 14 modified files, the new orbit-orientation delta, the two 2026-09-10 trail emits, and this prompt file); remote sync is clean (0 unpushed commits on origin/d-arc). The pull invocation is withheld until the pending work is committed and pushed. First external pass in system mode after two internal passes (in-context, then fresh) whose 11 findings are all resolved; the prompt carries the eight walk-10 resolutions as the verification set, names the ratified non-defects (task 6.3 handoff, the arc doc's superseded sketch pending note 5.5, the prose-only outward half, no lenses), and points the reviewer at the outward choreography as a performing AI — the one probe no automated instrument in this repo can run.",
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/d6-pr-lifecycle/.orbit-runs/external-prompt-system-2026-09-10T14-01-09Z.md into the target AI, save the response as orbit/changes/d6-pr-lifecycle/.orbit-runs/external-system-<TS>.md, then /orbit:address-reviews d6-pr-lifecycle --from-file <path>"
+}

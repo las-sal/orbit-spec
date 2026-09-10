@@ -209,14 +209,26 @@ nothing.
 2. **Validate a stored \`url\` LIVE.** A stored URL is a CLAIM, not a fact: GitHub stays
    mutable between the seams. Check it against the SAME four predicates the fallback uses —
    resolved repository, head branch, resolved base, open state.
+   - **On POSITIVE invalidation** (the record resolves but fails a predicate): skip ONLY the
+     tail's PR-WRITING steps — the description rewrite (per-change) OR the stage-entry append
+     (program), and the flip — with ONE note naming the SPECIFIC reason: \`closed\`,
+     \`merged\`, \`retargeted to <base>\`, \`repository mismatch\`, or \`not found\`
+     (each distinct, never a generic miss). The COMMIT and PUSH still proceed: those writes
+     are the archive's own, they land on the change's branch via the resolved remote, and
+     they are correct whatever became of the pull request. A failed validation NEVER
+     triggers step 3's fallback query as a second chance — a record that resolves to a
+     closed PR is ANSWERED, not missing.
 3. **Fallback**, only when the attachment EXISTS but lacks \`url\`: the four-axis constrained
-   query, requiring EXACTLY ONE survivor. Zero / several / query-error are three distinct
-   one-line notes. The tail flips and records; it never creates.
+   query — \`--repo <owner>/<repo>\`, \`--head <resolved-branch>\`, \`--state open\`, and
+   DISCARD candidates whose base is not the resolved default branch — requiring EXACTLY ONE
+   survivor. Zero / several / query-error are three distinct one-line notes. The tail flips
+   and records; it never creates.
 4. **Observe current draft/ready state** (\`gh pr view --repo <owner>/<repo> --json isDraft\`).
 
 Feed that ONE observation to both the emit and the tail so they cannot disagree. Cannot
-observe (no \`gh\`, failed query) → elide the emit's PR fields and skip the tail; never block
-the archive.
+observe (no \`gh\`, failed query — the observation itself is unavailable, which is DISTINCT
+from step 2's positive invalidation, where the observation succeeded and answered) → elide
+the emit's PR fields and skip the tail; never block the archive.
 
 **Emit fields.** \`pr_url\` + \`pr_state\` record what the preflight OBSERVED — normally
 \`"draft"\`, truthfully \`"ready"\` when the PR was already flipped by the USER at an earlier

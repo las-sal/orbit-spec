@@ -344,13 +344,13 @@ the PR's current state. This step MUTATES NOTHING.
 
 Read \`pr_attachment\` from the LATEST attachment-bearing PROPOSE **or FF** emit on the
 change's trail. A WHOLLY ABSENT attachment TERMINATES the PR path here — no discovery query,
-no remote or \`gh\` work, and no tail at Step 5.7 — the archive ends exactly as
+no remote or \`gh\` work, and no tail at Step 5.6 — the archive ends exactly as
 pre-capability. (\`/orbit:new\` + \`/orbit:continue\` changes never attach.) Otherwise load
 \`references/pr-archive-tail.md\` and follow its preflight: validate a stored \`url\` live,
 fall back to the constrained query only when the record lacks \`url\`, and observe the current
 draft/ready state.
 
-Feed that ONE observation to BOTH the Step 5.5 emit and the Step 5.7 tail so they cannot
+Feed that ONE observation to BOTH the Step 5.5 emit and the Step 5.6 tail so they cannot
 disagree. Cannot observe (no \`gh\`, failed query) → elide the emit's PR fields and skip the
 tail; never block the archive.
 
@@ -364,7 +364,7 @@ orbit emit archive --change <name> --payload <payload-file>
 
 The ENGINE resolves the post-move landing itself (the lexically-greatest \`orbit/changes/archive/*-<name>/\` scan) and owns the spine, filename, and collision handling — never hand-compose the JSON or the path.
 
-## NEW Step 5.7 — The PR-attached tail (AFTER the emit — D-arc Stage D6)
+## NEW Step 5.6 — The PR-attached tail (AFTER the emit, BEFORE the completion readout — D-arc Stage D6)
 
 Runs ONLY when Step 5.45 resolved an attachment. Follow \`references/pr-archive-tail.md\`:
 its preconditions (\`gh\` availability and the HEAD-branch check, both BEFORE any staging),
@@ -376,7 +376,7 @@ step's failure is inside the degradation contract: skip the remainder with a not
 completed vs skipped steps AND the repository-qualified completing command for the step that
 failed. The archive itself (sync, move, emit) has already succeeded and never rolls back.
 
-## NEW Step 5.6 — Stage-line garnish in the completion readout (D-arc Stage D2)
+## NEW Step 5.7 — Stage-line garnish in the completion readout (D-arc Stage D2)
 
 When the archived change's metadata carries an \`architecture: {doc, stage}\` citation, the "Archive Complete" readout gains ONE stage line: after the move, run \`orbit architecture status --json\` and render the cited stage's post-archive computed position (e.g. \`stage d2-architect: now quiescent — completion is yours to ratify\`). One line riding the existing position render — no prompt, no doc edit; ratification never happens here (D-d2-4). Uncited changes see no stage line.
 

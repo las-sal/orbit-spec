@@ -370,10 +370,12 @@ describe('D6 PR lifecycle surface', () => {
     // Anchor on the HEADINGS: the prose carries forward references to later steps.
     const preflight = b.indexOf('## NEW Step 5.45');
     const emit = b.indexOf('## NEW Step 5.5 — Archive run summary');
-    const tail = b.indexOf('## NEW Step 5.7');
+    const tail = b.indexOf('## NEW Step 5.6 — The PR-attached tail');
+    const garnish = b.indexOf('## NEW Step 5.7 — Stage-line garnish');
     expect(preflight).toBeGreaterThan(-1);
     expect(preflight).toBeLessThan(emit);
     expect(emit).toBeLessThan(tail);
+    expect(tail).toBeLessThan(garnish); // numbering follows the text order: emit → tail → readout
   });
 
   it('archive consent preview names the outward writes for an attached change', () => {

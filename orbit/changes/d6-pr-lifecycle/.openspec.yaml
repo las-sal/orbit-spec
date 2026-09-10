@@ -12,3 +12,5 @@ base_fingerprints:
     Consent prompt on AI-mediated archive entry: sha256:37a1b2a30b6f979fd9f8a8662a63bbafbdcdced943d855578cee01a1d76b8511
   orbit-onboard:
     Canonical-flow walkthrough section: sha256:9728d4cbdf14298f563b1d7abd1b52c0a3f50d1c36aee6285c3ad8e7cc446300
+  orbit-orientation:
+    JSON output for both tiers: sha256:b0c2a9e35b8a096d11f9e9366720ff4e0f188be0ac29a8d4cd9d3b9a0bb83245

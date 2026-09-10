@@ -135,7 +135,17 @@ means the delta references a nonexistent requirement (fix the delta; validation 
 ## PR lifecycle (config-gated — D-arc Stage D6)
 
 \`ff\` is propose-in-one-breath, so it carries the IDENTICAL choreography — a change is never
-treated differently for how it was started. Read the RESOLVED regime from the engine FIRST
+treated differently for how it was started.
+
+**Position (this section is placed last for reading, not for running).** Phase 1 (select +
+switch) runs BEFORE Step 2 (\`orbit new change\`): that step writes
+\`orbit/changes/<name>/.openspec.yaml\`, a path a compatible branch already TRACKS, so a
+switch attempted after it is exactly the \`git switch\` refusal the ordering exists to
+prevent. Phase 2 follows a successful Step 4 (validation passes); phase 3 (commit → push →
+draft PR) runs after Step 5's final status, with the commit scope enumerating the change's
+generated artifacts.
+
+Read the RESOLVED regime from the engine FIRST
 — \`orbit status --json\`, field \`pr\` (never parse \`orbit/config.yaml\` yourself: the value
 set is closed and every inert path already resolves to \`never\` with the reader's warning):
 \`never\`, absent, or an inert value/shape means RETURN IMMEDIATELY — probe nothing, emit no

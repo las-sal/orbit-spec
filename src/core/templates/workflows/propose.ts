@@ -271,6 +271,14 @@ detect a parallel change landing on the same requirements (no silent spec data-l
 
 ## PR lifecycle (config-gated — D-arc Stage D6)
 
+**Position (NEW Step 0.5 — this section is placed last for reading, not for running).**
+Phase 1 (select + switch) runs AFTER Step 0's mode detection and BEFORE Step 0a / upstream
+Step 1: generation must land on the target branch, and the reference's generation-input
+precondition presupposes \`orbit/explore/<name>/\` is still in place. Phase 2 (the no-CI
+note) follows a successful generation + validation. Phase 3 (commit → push → draft PR) runs
+AFTER Step 0d's move — its enumerated commit scope names the moved material and the
+staging-directory deletions that move produces.
+
 Read the RESOLVED regime from the engine FIRST — \`orbit status --json\`, field \`pr\` (never parse \`orbit/config.yaml\` yourself: the value set is closed and every inert path already resolves to \`never\` with the reader's warning). When it is \`never\`, absent, or an inert
 value/shape, RETURN IMMEDIATELY from this section: probe nothing (no remote enumeration, no
 \`gh\`) and emit NO note — \`never\`'s promise is silence, and behavior stays byte-identical to

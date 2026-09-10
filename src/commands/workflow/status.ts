@@ -117,7 +117,10 @@ export async function statusCommand(options: StatusOptions): Promise<void> {
 
       // Degradation ladder: (1) ≥1 live workstream → sprint view; (2) zero live
       // + ≥1 parseable doc → the --full view (JSON switches tier too); (3) zero
-      // live + zero parseable docs → the existing no-changes message, unchanged.
+      // live + zero parseable docs → the existing no-changes message (text
+      // unchanged; the JSON shape carries `pr` like every other rung — D6: the
+      // bodies read the resolved regime here, and a fresh adopter's FIRST change
+      // is proposed from exactly this rung).
       if (orientation.sprint) {
         printSprintView(orientation, options.json ?? false);
         return;
@@ -127,7 +130,9 @@ export async function statusCommand(options: StatusOptions): Promise<void> {
         return;
       }
       if (options.json) {
-        console.log(JSON.stringify({ changes: [], message: 'No active changes.' }, null, 2));
+        console.log(
+          JSON.stringify({ changes: [], message: 'No active changes.', pr: orientation.pr }, null, 2)
+        );
         return;
       }
       console.log('No active changes. Create one with: orbit new change <name>');

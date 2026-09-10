@@ -377,10 +377,12 @@ Every git and GitHub action of this capability SHALL live as workflow-body steps
 generated skill bodies — branch creation, commit, push, `gh pr create/edit/ready` — the
 same choreography class as the existing review-handoff commit+push; the orbit
 engine SHALL NOT shell to git or `gh` for any PR-lifecycle purpose. The engine's total
-surface for this capability is the `pr:` config reader, the optional structured
-`pr_attachment` object on the PROPOSE and FF emit payloads, and the optional flat
-`pr_url`/`pr_state` pass-through fields on the ARCHIVE emit payload (per
-`orbit-emit-composition`). The asymmetry is deliberate and is not a naming inconsistency:
+surface for this capability is the `pr:` config reader, the READ-ONLY `pr` field the reader's
+resolved regime is surfaced through on every bare-tier `orbit status --json` shape (per
+`orbit-orientation` — the surface the bodies read the regime from, never parsing the config
+themselves), the optional structured `pr_attachment` object on the PROPOSE and FF emit
+payloads, and the optional flat `pr_url`/`pr_state` pass-through fields on the ARCHIVE emit
+payload (per `orbit-emit-composition`). The asymmetry is deliberate and is not a naming inconsistency:
 propose and ff RESOLVE an attachment and must record its identity as one correlated unit,
 while archive resolves nothing — it reports the state it observed at emit time. Because the
 engine's write gate is fail-loud on unknown payload keys, this enumeration is normative:

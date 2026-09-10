@@ -126,9 +126,17 @@ citing explore.md rather than re-deriving.
   — divergent behavior by provenance confuses; see explore.md (f)).
 - **D-d6-7 — Zero engine git.** All git/gh actions are workflow-body steps (the existing
   review-handoff choreography class). Engine surface: the `pr:` config reader
-  (`project-config.ts`) + the structured `pr_attachment` object on the propose/ff payload
-  tables and flat `pr_url`/`pr_state` on archive's (archive reports observed state; it
-  resolves no attachment). Branch naming: `<change-name>` standalone;
+  (`project-config.ts`) + the read-only `pr` field on every bare-tier `orbit status --json`
+  shape (the reader's resolved regime, which the bodies read instead of parsing config —
+  `orientation.ts` / `status.ts`) + the structured `pr_attachment` object on the propose/ff
+  payload tables and flat `pr_url`/`pr_state` on archive's (archive reports observed state; it
+  resolves no attachment). Touchpoints provenance (2026-09-01, recorded 2026-09-10): the
+  orientation read surface entered scope AFTER the Touchpoints map froze — the first system
+  review found the reader unreachable (no engine path called it) and the walk ratified
+  surfacing the regime on the orientation tier rather than deleting the reader; the second
+  (fresh) system review then found the no-changes rung omitted the key and the walk closed
+  it. `status.ts`, `orientation.ts`, and their tests therefore appear as `actual_unpredicted`
+  in every category-5 sweep by decision, not drift. Branch naming: `<change-name>` standalone;
   the doc's filename stem for program branches (per-doc override waits for a real need); a
   mechanical name colliding with the resolved default branch skips with a note.
 - **D-d6-8 — No-CI surfacing.** When opening a change's first PR on a repo with no

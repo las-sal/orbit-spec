@@ -405,6 +405,27 @@ describe('status orientation surface', () => {
     expect(Object.keys(payload).sort()).toEqual(['last', 'pr', 'program', 'waiting', 'workstreams']);
   });
 
+  it('ladder rung 3: zero live workstreams + zero parseable docs → the no-changes JSON still carries pr (D6: the first-change rung)', async () => {
+    // Regression guard for the fresh-adopter path: `pr: per-proposal`, no changes, no
+    // docs. The bodies read `pr` from bare `orbit status --json`; an ABSENT key reads
+    // as `never` by design, so rung 3 must carry the field like rungs 1 and 2.
+    await fs.mkdir(path.join(tempDir, 'orbit'), { recursive: true });
+    await fs.writeFile(path.join(tempDir, 'orbit', 'config.yaml'), 'pr: per-proposal\n');
+
+    const json = await runCLI(['status', '--json'], { cwd: tempDir });
+    expect(json.exitCode).toBe(0);
+    const payload = JSON.parse(json.stdout);
+    expect(Object.keys(payload).sort()).toEqual(['changes', 'message', 'pr']);
+    expect(payload.changes).toEqual([]);
+    expect(payload.message).toBe('No active changes.');
+    expect(payload.pr).toBe('per-proposal');
+
+    // Text rung stays byte-identical (the message, not the shape, is the D3 promise).
+    const text = await runCLI(['status'], { cwd: tempDir });
+    expect(text.exitCode).toBe(0);
+    expect(text.stdout).toContain('No active changes. Create one with: orbit new change <name>');
+  });
+
   it('cold-start criterion (arc exit criterion 1): ONE --full --json answers position/last/next per workstream, read-only', async () => {
     await makeChange('ws-alpha', { emit: true });
     await makeChange('ws-beta', { emit: true });
