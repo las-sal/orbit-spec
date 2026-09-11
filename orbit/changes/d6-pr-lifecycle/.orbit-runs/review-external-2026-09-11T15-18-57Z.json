@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-09-11T15:18:57Z",
+  "change": "d6-pr-lifecycle",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "system",
+  "prompt_path": "orbit/changes/d6-pr-lifecycle/.orbit-runs/external-prompt-system-2026-09-11T15-18-36Z.md",
+  "target": null,
+  "final_assessment": "External review prompt packaged for d6-pr-lifecycle (iter 4, mode system; pass 7 on the shared axis); awaiting findings. Handoff preflight: the reviewed state is fully committed and pushed (c8a8a9c on origin/d-arc, 0 unpushed) — the working tree carries ONLY this prompt file and its T0 emit, so the pull invocation is withheld until those two packaging files are committed and pushed, per the preflight requirement. The prompt carries the iteration-3 walk's eight resolutions as the verification set (including the instrument hardening — the gh stub now enforces real-CLI grammar and the fidelity sweep is command-specific), names the ratified non-defects, and points the reviewer at cross-file consistency across the reference, transcription, stub, and specs plus real-CLI grammar checks and disposable-repo probes, the instruments that found the last two CRITICALs. No pass has yet come back clean over the current tree.",
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/d6-pr-lifecycle/.orbit-runs/external-prompt-system-2026-09-11T15-18-36Z.md into the target AI, save the response as orbit/changes/d6-pr-lifecycle/.orbit-runs/external-system-<TS>.md, then /orbit:address-reviews d6-pr-lifecycle --from-file <path>"
+}
