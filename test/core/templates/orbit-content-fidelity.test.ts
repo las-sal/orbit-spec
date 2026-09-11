@@ -21,6 +21,7 @@ import {
   getBulkArchiveChangeSkillTemplate,
   getVerifyChangeSkillTemplate,
   getArchiveChangeSkillTemplate,
+  getArchitectSkillTemplate,
   getOnboardSkillTemplate,
   getSyncSpecsSkillTemplate,
   getReviewSkillTemplate,
@@ -227,6 +228,7 @@ describe('orbit content fidelity (B1 relocation)', () => {
         'explore',
         'propose',
         'ff-change',
+        'architect', // D6 (external iter 1): the arc-done readout carries the shared resolution
         ...B3_REFERENCES.map(([n]) => n),
       ]);
       for (const [name, getTemplate] of RELOCATED) {
@@ -341,6 +343,7 @@ describe('D6 PR lifecycle surface', () => {
     for (const content of [
       reference(propose, 'pr-choreography.md'),
       reference(archive, 'pr-archive-tail.md'),
+      reference(getArchitectSkillTemplate(), 'pr-resolution.md'),
     ]) {
       // Invocation-shaped: a gh command carrying at least one flag or argument beyond the
       // subcommand. Bare prose mentions (`gh pr create` erroring) carry no arguments.
@@ -356,6 +359,32 @@ describe('D6 PR lifecycle surface', () => {
     expect(propose.instructions).toContain('fires NO consent prompt');
     const prSection = propose.instructions.slice(propose.instructions.indexOf('## PR lifecycle'));
     expect(prSection).not.toContain('AskUserQuestion');
+  });
+
+  it('the Position paragraphs use the reference\'s phase numbering (phase 2 = generate + validate; phase 3 carries the no-CI note)', () => {
+    for (const tpl of [propose, ff]) {
+      const position = tpl.instructions.slice(tpl.instructions.indexOf('**Position'));
+      expect(position).toMatch(/Phase 2 \(generation \+\s+validation, ON that branch\)/);
+      expect(position).toMatch(/[Pp]hase 3 \(the no-CI\s+note/);
+      expect(position).not.toMatch(/Phase 2 \(the no-CI/);
+    }
+  });
+
+  it('the architect skill carries the shared resolution algorithm as references/pr-resolution.md, byte-identical to the seams', () => {
+    const architect = getArchitectSkillTemplate();
+    const ref = (architect.references ?? []).find((r) => r.name === 'pr-resolution.md');
+    expect(ref, 'architect is missing references/pr-resolution.md').toBeDefined();
+    const marker = '## Remote and default-branch resolution (SHARED — both seams)';
+    // The seams follow the shared resolution with the config-order gate; the architect
+    // reference deliberately omits that gate (the readout is attachment-gated) and follows
+    // it with the four-axis query — so each is sliced at its own next heading.
+    const seamSlice = (s: string) => s.slice(s.indexOf(marker), s.indexOf('## Config resolution order'));
+    const architectSlice = (s: string) => s.slice(s.indexOf(marker), s.indexOf('## The four-axis constrained query'));
+    expect(architectSlice(ref!.content)).toBe(seamSlice(reference(propose, 'pr-choreography.md')));
+    expect(architectSlice(ref!.content).length).toBeGreaterThan(200);
+    expect(ref!.content).not.toContain('## Config resolution order');
+    expect(ref!.content).not.toContain('RETURN');
+    expect(architect.instructions).toContain('references/pr-resolution.md');
   });
 
   it('config-first resolution order is stated in the bodies, not only the reference', () => {

@@ -126,4 +126,8 @@ revisions dated 2026-08-12/2026-08-20 recording what the review cadence overturn
   CI-from-day-one half — `.github/workflows/` carries `ci.yml` and `release-prepare.yml` — so
   the natural candidate is this repo's next standalone (uncited) change. Consequence:
   D-d6-8's no-CI note cannot be exercised here; task 6.2's scratch-repo smoke covers it.
+  Caveat (2026-09-10): phase 1 cuts a per-proposal branch from the RESOLVED DEFAULT
+  (`origin/main`), never from the current branch — run the dogfood once `main` carries the
+  d-arc work (or from a checkout whose default is the intended base), or the branch lands on a
+  tree 190+ commits behind.
 - **No breaking changes**: `pr:` unset = `never` = today's behavior everywhere.

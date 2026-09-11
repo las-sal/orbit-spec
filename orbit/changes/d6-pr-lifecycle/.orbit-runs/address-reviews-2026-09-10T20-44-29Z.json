@@ -1,0 +1,130 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-10T20:44:29Z",
+  "change": "d6-pr-lifecycle",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/d6-pr-lifecycle/.orbit-runs/external-system-2026-09-10T15-31-02Z.md",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-5 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 2,
+    "suggestion": 0
+  },
+  "pushback_verification": "All 3 verified against current state before disposition; none stale. The precondition text was re-read in the reference, the delta, tasks.md, and the transcription (whose create path had no check at all); the null path was confirmed as a codified choice (reader comment + a test named for the silence); the 25 unquoted `node ${bin}` sites were counted across seven files and the failure reproduced in a real copy at a path with a space.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "Fresh explore-to-propose changes are forced onto the unattached path",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/pr-choreography.ts",
+      "line": 79,
+      "classification": "trivial_fix",
+      "action": "Rekeyed the generation-input precondition on TRACKED state in the shared reference (PR_PROPOSE_SECTION): the skip fires only when `orbit/explore/<change-name>/` is tracked in HEAD (`git ls-files --error-unmatch`) AND absent-or-different on the target ref (`git diff --quiet HEAD <target> -- <dir>`), on BOTH the reuse and the create path; an UNTRACKED exploration — the ordinary state, since explore commits nothing — never triggers it, and the one case git would refuse surfaces as the switch-failure skip. The delta requirement (orbit-propose-modifications) now says the same, its existing scenario covers absent-or-different, and a new scenario `An uncommitted exploration does not trigger the skip` names the untracked case on both target kinds; the tasks.md restatement (task 1.x phase list) aligned. Transcription: `generationInputGuard` hoisted ahead of BOTH switch paths in phase1.ts with the tracked-and-differs predicate. Harness: three new cases — untracked on the reuse path proceeds with the exploration intact, untracked on the create path proceeds, tracked-but-different on the target skips with HEAD unmoved and the newer content preserved (31/31). Propose and ff function-payload parity hashes re-pinned (SKILL.md content hashes unchanged — only the reference moved). Both external reviewers (Codex and the clean-context Fable pass) reached this finding independently by the same real-git experiment; the clean-context file's copy will suppress as stale on its walk.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-propose-modifications/spec.md",
+          "orbit/changes/d6-pr-lifecycle/tasks.md",
+          "test/integration/pr-lifecycle/phase1.ts",
+          "test/integration/pr-lifecycle/phase1.test.ts",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "A present null `pr:` value bypasses the required invalid-value warning",
+      "marker_source": "external",
+      "file": "src/core/project-config.ts",
+      "line": 198,
+      "classification": "decision_required",
+      "ratified_via": "chat",
+      "resolution": "A — route a present null through the inert path with its own warning; flip the test; add the clause to the config requirement.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Warn on a present-but-empty pr: (inert, resolves to never, one-line warning naming it empty); flip the codifying test; name the case in the config requirement."
+          },
+          {
+            "label": "B",
+            "body": "Keep the silence and document an empty pr: as the absent case in the delta requirement."
+          }
+        ],
+        "chosen": "A"
+      },
+      "action": "The reader now treats a present null as PRESENT-but-empty: `Empty 'pr' field in config: the key is present with no value (expected never | per-proposal | per-architecture); treating as 'never'` — only a genuinely absent key is silent. The comment that rationalized the silence is replaced. The test that codified it (`treats a bare pr: with no value as absent, silently`) now asserts exactly one warning containing `Empty 'pr' field` and `treating as 'never'`. The orbit-pr-lifecycle delta's config requirement gained the present-but-empty clause and a scenario `Present-but-empty config key warns`; the absent-key scenario is untouched. Chose A because the reader's job is to enforce the closed set once so the bodies never re-derive it, and a blank key is the malformation most likely to be an accident.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/project-config.test.ts",
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-pr-lifecycle/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "CLI tests break when the checkout path contains spaces",
+      "marker_source": "external",
+      "file": "test/commands/spec.test.ts",
+      "line": 62,
+      "classification": "decision_required",
+      "ratified_via": "chat",
+      "resolution": "A — quote the interpolated bin path at every shell-interpolated site now; record it as a walk decision in the D-d6-7 provenance note.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Quote the interpolated bin path at all 25 sites across the seven files (mechanical; keeps input piping, cwd, env intact)."
+          },
+          {
+            "label": "B",
+            "body": "Refactor every site to execFileSync(process.execPath, [bin, ...args]) argument arrays (Codex's suggestion; larger, per-site option handling)."
+          },
+          {
+            "label": "C",
+            "body": "Defer as a follow-up task or fork-tracker issue outside D6."
+          }
+        ],
+        "chosen": "A"
+      },
+      "action": "Quoted `node \"${openspecBin}\"` / `node \"${bin}\"` at all 25 shell-interpolated sites across change.interactive-validate, spec.interactive-validate, validate.enriched-output, show, change.interactive-show, spec.interactive-show, and spec test files (0 unquoted sites remain). Reproduced Codex's failure and the fix in a real copy of the repo at a path containing a space: the seven files pass 25/25 after the fix, and reverting one file in that copy fails 14 of 15 — the space bites exactly as reported. A dated sentence under design D-d6-7 records the seven test/commands files entering scope by walk decision (upstream-inherited pattern, not D6 scope creep) so category-5 sweeps read a decision. Chose A over B for minimal diff with the same portability outcome, and over C because the defect blocked an external reviewer's full-suite verification of this very change.",
+      "ripple_cascade": {
+        "applied": [
+          "test/commands/change.interactive-validate.test.ts",
+          "test/commands/spec.interactive-validate.test.ts",
+          "test/commands/validate.enriched-output.test.ts",
+          "test/commands/show.test.ts",
+          "test/commands/change.interactive-show.test.ts",
+          "test/commands/spec.interactive-show.test.ts",
+          "orbit/changes/d6-pr-lifecycle/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "3 of 3 resolved; 0 unresolved markers in scope. The CRITICAL — which both external reviewers reached independently by the same real-git experiment — is closed at its source: the generation-input precondition now keys on TRACKED state on both switch paths, in the reference, the delta (with a new untracked-exploration scenario), tasks.md, the transcription, and three harness cases. Two decision-lane findings ratified in chat: a present-but-empty pr: now warns instead of silently disabling every seam (reader, test, spec clause + scenario), and the seven upstream-inherited test files quote their bin path so the suite reproduces from a checkout path containing spaces (verified both ways in a real copy). 1997 -> 2000 tests green across 91 files; two parity hashes re-pinned; local surface refreshed. Working tree left uncommitted; the clean-context external file (15-49-04Z) still awaits its walk and shares this CRITICAL.",
+  "iteration": 11,
+  "next_recommended": "/orbit:address-reviews d6-pr-lifecycle --from-file orbit/changes/d6-pr-lifecycle/.orbit-runs/external-system-2026-09-10T15-49-04Z.md"
+}

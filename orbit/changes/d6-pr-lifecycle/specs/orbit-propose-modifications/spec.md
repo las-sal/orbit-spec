@@ -20,21 +20,29 @@ and the order is normative because a simpler one cannot execute:
 3. **OUTWARD WRITES, only after (2) SUCCEEDS.** Commit the generated artifacts (and moved
    staging material), push, and open the DRAFT PR with the agent-written INTENT description
    — or, on the cited program path, land on the program branch and adopt-or-open the
-   program PR.
+   program PR. Then record the attachment in the propose (or ff) emit and COMMIT + PUSH that
+   emit file as the seam's FINAL act: the record is the authority the archive tail
+   dereferences, and an uncommitted record is lost to any fresh checkout between the seams,
+   stranding the PR draft with no designed recovery. Same seam, same invocation, no new
+   consent; the seams-only refresh rule is untouched.
 
-GENERATION-INPUT PRECONDITION (phase 1, checked BEFORE the switch). Because the switch
-rewrites tracked content and phase 2 now runs after it, the flow SHALL verify that every
-input generation will need survives the target ref — specifically, when a consume-mode
-staging directory `orbit/explore/<change-name>/` is present in the worktree, that the same
-path exists on the TARGET REF. When it does not, the choreography SKIPS the PR layer
-ENTIRELY — the switch never happens — and artifacts are generated on the current branch,
-with the change proceeding unattached and one note naming the reason. Checking BEFORE rather
-than recovering after is deliberate: it preserves the property phase 1 is supposed to have,
-that it destroys nothing. The dirty-tree precondition does NOT cover this case, since it
-detects uncommitted modifications while the hazard is COMMITTED content that exists on the
-current branch and not on the base — reachable whenever propose runs from a branch other
-than the resolved default, or from a local default carrying unpushed commits, and the flow
-makes no assumption about where the user is standing.
+GENERATION-INPUT PRECONDITION (phase 1, checked BEFORE the switch, on BOTH the reuse and
+the create path). Because the switch rewrites TRACKED content and phase 2 now runs after it,
+the flow SHALL verify that every input generation will need survives the target ref. The
+check keys on TRACKED state, never on worktree presence: when a consume-mode staging
+directory `orbit/explore/<change-name>/` is TRACKED in HEAD, the TARGET REF must carry the
+same content — absent or different on the target means the switch would delete or rewrite
+the exploration, and the choreography SKIPS the PR layer ENTIRELY — the switch never
+happens — with artifacts generated on the current branch, the change proceeding unattached,
+and one note naming the reason. An UNTRACKED staging directory — the ordinary state, since
+`/orbit:explore` commits nothing — NEVER triggers the skip: `git switch` rewrites only
+tracked paths, so untracked content survives it intact. Checking BEFORE rather than
+recovering after is deliberate: it preserves the property phase 1 is supposed to have, that
+it destroys nothing. The dirty-tree precondition does NOT cover this case, since it detects
+uncommitted modifications while the hazard is COMMITTED content that exists on the current
+branch and not on (or differs from) the target — reachable whenever propose runs from a
+branch other than the resolved default, or from a local default carrying unpushed commits,
+and the flow makes no assumption about where the user is standing.
 
 Selection MUST precede generation because the reuse path is otherwise IMPOSSIBLE: a
 compatible per-proposal branch is DEFINED as one carrying this change's artifact commits, so
@@ -101,10 +109,20 @@ lacks, or the reverse), and the note describes the CI context the NEW PR INHERIT
 the base's — reporting, never
 scaffolding, never prompting.
 
+#### Scenario: The attachment record reaches the branch
+
+- **WHEN** the choreography opens (or adopts) a PR and the propose emit records `pr_attachment`
+- **THEN** that emit file is committed and pushed to the change's branch before propose completes, so a later archive from a fresh checkout of that branch resolves the attachment
+
 #### Scenario: A switch that would delete the exploration is not performed
 
-- **WHEN** propose runs in consume mode from a branch where `orbit/explore/<change-name>/` is committed, and that path does not exist on the resolved target ref
-- **THEN** the PR layer is SKIPPED ENTIRELY — no switch occurs, so the staging input is never removed — and artifacts are generated on the current branch with the change proceeding unattached, one note naming the reason
+- **WHEN** propose runs in consume mode from a branch where `orbit/explore/<change-name>/` is committed, and that path does not exist on the resolved target ref (or exists with different content)
+- **THEN** the PR layer is SKIPPED ENTIRELY — no switch occurs, so the staging input is never removed or rewritten — and artifacts are generated on the current branch with the change proceeding unattached, one note naming the reason
+
+#### Scenario: An uncommitted exploration does not trigger the skip
+
+- **WHEN** propose runs in consume mode with `orbit/explore/<change-name>/` present but UNTRACKED (the ordinary explore-then-propose session), and the target ref — an existing compatible branch or the resolved default for a new one — does not carry that path
+- **THEN** the precondition does NOT fire: the switch proceeds, the untracked exploration survives it intact, and the change attaches normally
 
 #### Scenario: Reusing an existing branch is possible because selection precedes generation
 

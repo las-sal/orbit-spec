@@ -29,7 +29,7 @@ describe('spec show (interactive behavior)', () => {
       process.env.OPEN_SPEC_INTERACTIVE = '0';
       let err: any;
       try {
-        execSync(`node ${bin} spec show`, { encoding: 'utf-8' });
+        execSync(`node "${bin}" spec show`, { encoding: 'utf-8' });
       } catch (e) { err = e; }
       expect(err).toBeDefined();
       expect(err.status).not.toBe(0);

@@ -32,7 +32,11 @@ note that will not run. An unrecognized value is inert — treated as
 A NON-SCALAR shape (a YAML map or list where a scalar is expected — including the two-key
 `{open, program-branches}` block this key superseded, which an early adopter may have
 written) takes the SAME inert path: treated as `never` with a one-line warning naming the
-INVALID SHAPE rather than a value. Garnish never escalates by malformation; a config typo
+INVALID SHAPE rather than a value. A PRESENT-BUT-EMPTY key (`pr:` with no value, which
+parses as null) is NOT the absent case: it takes the same inert path with a one-line warning
+naming the key as empty — only a genuinely ABSENT key is silent, so the closed set carries no
+undocumented exception and a half-finished edit is caught rather than silently disabling
+every PR seam. Garnish never escalates by malformation; a config typo
 must not be the thing that stops a lifecycle command from running.
 
 #### Scenario: Unset config is today's behavior
@@ -58,6 +62,11 @@ must not be the thing that stops a lifecycle command from running.
 
 - **WHEN** `pr:` is absent or `never` in a repository that also has no remote and no `gh`
 - **THEN** the PR layer returns without enumerating remotes or invoking `gh`, and emits NO availability note — byte-identical to pre-capability; the availability note exists only for an ACTIVE mode that could not proceed
+
+#### Scenario: Present-but-empty config key warns
+
+- **WHEN** `orbit/config.yaml` contains `pr:` with no value
+- **THEN** it is treated as `never` with a one-line warning naming the key as empty; no lifecycle command errors or blocks, and an absent key remains silent
 
 #### Scenario: Non-scalar config shape is inert
 
@@ -337,7 +346,13 @@ the way); program PRs — program intent at birth, then appended stage entries a
 archives, and NOTHING FURTHER: the accumulated entries ARE the landmark, so there is no
 mandatory terminal rewrite. (A whole-program rewrite is OPTIONAL polish an agent performs
 only when the user explicitly asks — it is deliberately absent from this SHALL sequence,
-because arc-done has no authorized body to perform an outward write.) No per-emit or
+because arc-done has no authorized body to perform an outward write.) The PR TITLE is set
+ONCE at birth and passed explicitly — `<change-name>: <proposal title line>` for per-change
+PRs, `<doc stem>: <doc title line>` for program PRs — and no seam rewrites it; the program
+body at birth is program intent adapted from the doc's opening prose plus its stage list,
+by the same discipline as the per-change intent body. A stage-entry append is
+READ-APPEND-WRITE (the current body is fetched, the entry appended, the composed whole
+written), never a body replacement. No per-emit or
 per-gate-transition PR edits. Deterministic claims inside the narrative (gate verdicts, counts, positions) SHALL
 be read from the engine's surfaces at authoring time, never hand-invented — the same
 standing discipline as every narrative surface.

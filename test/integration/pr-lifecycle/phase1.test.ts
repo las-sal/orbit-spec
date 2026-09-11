@@ -6,6 +6,8 @@
  * prose (zero engine git). It answers "are the documented steps performable against real
  * git, in the order given?" — the question that caught the switch-collision defect.
  */
+import fs from 'node:fs';
+import path from 'node:path';
 import { describe, it, expect, afterEach } from 'vitest';
 import { makeRepo, type Repo } from './harness.js';
 import { runPhase1, canonicalRepoId } from './phase1.js';
@@ -193,7 +195,7 @@ describe('D6 phase 1 — the reuse path that the old ordering made impossible', 
 
     const res = runPhase1({ repo, mode: 'per-proposal', branch: 'add-thing' });
     expect(res.action).toBe('skip');
-    expect(res.note).toMatch(/unrelated work; collision/);
+    expect(res.note).toMatch(/unrelated work \(unrelated\.md\); collision/);
   });
 });
 
@@ -272,6 +274,54 @@ describe('D6 phase 1 — program branch compatibility (merge-base, not tip ances
   });
 });
 
+describe('D6 phase 1 — step 6, remote-ahead (fast-forward when possible, skip on divergence)', () => {
+  it('fast-forwards a local branch that is strictly BEHIND the resolved remote tip', () => {
+    const repo = repoFor();
+    repo.git('switch', '-q', '-c', 'add-thing');
+    repo.write('orbit/changes/add-thing/proposal.md', '# proposal\n');
+    repo.commitAll('add-thing artifacts');
+    repo.git('push', '-q', 'origin', 'add-thing');
+    // The remote moves ahead (another checkout pushed): simulate by advancing and pushing,
+    // then rewinding the local branch one commit.
+    repo.write('orbit/changes/add-thing/design.md', '# design\n');
+    repo.commitAll('add-thing design');
+    repo.git('push', '-q', 'origin', 'add-thing');
+    const remoteTip = repo.git('rev-parse', 'origin/add-thing').stdout.trim();
+    repo.git('reset', '-q', '--hard', 'HEAD~1');
+    repo.git('switch', '-q', 'main');
+
+    const res = runPhase1({ repo, mode: 'per-proposal', branch: 'add-thing' });
+    expect(res.action).toBe('proceed');
+    expect(repo.git('rev-parse', '--abbrev-ref', 'HEAD').stdout.trim()).toBe('add-thing');
+    expect(repo.git('rev-parse', 'HEAD').stdout.trim()).toBe(remoteTip);
+  });
+
+  it('SKIPS without switching when the local branch has DIVERGED from the remote tip', () => {
+    const repo = repoFor();
+    repo.git('switch', '-q', '-c', 'add-thing');
+    repo.write('orbit/changes/add-thing/proposal.md', '# proposal\n');
+    repo.commitAll('add-thing artifacts');
+    repo.git('push', '-q', 'origin', 'add-thing');
+    // Remote gains one commit; local gains a different one.
+    repo.write('orbit/changes/add-thing/design.md', '# design (remote)\n');
+    repo.commitAll('remote-side design');
+    repo.git('push', '-q', 'origin', 'add-thing');
+    repo.git('reset', '-q', '--hard', 'HEAD~1');
+    repo.write('orbit/changes/add-thing/tasks.md', '# tasks (local)\n');
+    repo.commitAll('local-side tasks');
+    const localTip = repo.git('rev-parse', 'add-thing').stdout.trim();
+    repo.git('switch', '-q', 'main');
+
+    const res = runPhase1({ repo, mode: 'per-proposal', branch: 'add-thing' });
+    expect(res.action).toBe('skip');
+    expect(res.note).toMatch(/diverged/);
+    expect(res.note).toMatch(/never force-moves/);
+    // Nothing moved: HEAD stayed on main and the user's branch is untouched.
+    expect(repo.git('rev-parse', '--abbrev-ref', 'HEAD').stdout.trim()).toBe('main');
+    expect(repo.git('rev-parse', 'add-thing').stdout.trim()).toBe(localTip);
+  });
+});
+
 describe('D6 phase 1 — the generation-input precondition', () => {
   it('does NOT switch when the switch would delete the consume-mode exploration', () => {
     const repo = repoFor();
@@ -294,10 +344,77 @@ describe('D6 phase 1 — the generation-input precondition', () => {
     });
 
     expect(res.action).toBe('skip');
-    expect(res.note).toMatch(/switching would delete the exploration/);
+    expect(res.note).toMatch(/switching would delete or rewrite the exploration/);
     // The whole point: nothing was destroyed and HEAD never moved.
     expect(repo.exists('orbit/explore/add-thing/explore.md')).toBe(true);
     expect(repo.git('rev-parse', '--abbrev-ref', 'HEAD').stdout.trim()).toBe('main');
+  });
+
+  it('an UNTRACKED exploration (the ordinary explore-then-propose state) does NOT trigger the skip on the REUSE path', () => {
+    const repo = repoFor();
+    repo.git('switch', '-q', '-c', 'add-thing');
+    repo.write('orbit/changes/add-thing/proposal.md', '# proposal\n');
+    repo.commitAll('add-thing artifacts');
+    repo.git('push', '-q', 'origin', 'add-thing');
+    repo.git('switch', '-q', 'main');
+
+    // /orbit:explore commits nothing: the staging dir is present but untracked.
+    repo.write('orbit/explore/add-thing/explore.md', '# exploration\n');
+    expect(repo.git('ls-files', '--error-unmatch', 'orbit/explore/add-thing').status).not.toBe(0);
+
+    const res = runPhase1({
+      repo,
+      mode: 'per-proposal',
+      branch: 'add-thing',
+      stagingDir: 'orbit/explore/add-thing',
+    });
+
+    expect(res.action).toBe('proceed');
+    expect(repo.git('rev-parse', '--abbrev-ref', 'HEAD').stdout.trim()).toBe('add-thing');
+    // git switch rewrites only tracked paths: the exploration survived the switch intact.
+    expect(repo.exists('orbit/explore/add-thing/explore.md')).toBe(true);
+  });
+
+  it('an UNTRACKED exploration does NOT trigger the skip on the CREATE path either', () => {
+    const repo = repoFor();
+    repo.write('orbit/explore/add-thing/explore.md', '# exploration\n');
+
+    const res = runPhase1({
+      repo,
+      mode: 'per-proposal',
+      branch: 'add-thing',
+      stagingDir: 'orbit/explore/add-thing',
+    });
+
+    expect(res.action).toBe('proceed');
+    expect(repo.git('rev-parse', '--abbrev-ref', 'HEAD').stdout.trim()).toBe('add-thing');
+    expect(repo.exists('orbit/explore/add-thing/explore.md')).toBe(true);
+  });
+
+  it('a TRACKED exploration that exists on the target with DIFFERENT content is a skip (the switch would silently rewrite it)', () => {
+    const repo = repoFor();
+    // The target branch carries an OLDER version of the exploration.
+    repo.write('orbit/explore/add-thing/explore.md', '# exploration v1\n');
+    repo.commitAll('exploration v1');
+    repo.git('push', '-q', 'origin', 'main');
+    repo.git('switch', '-q', '-c', 'add-thing');
+    repo.git('push', '-q', 'origin', 'add-thing');
+    repo.git('switch', '-q', 'main');
+    // main moved on: the exploration was revised and committed here.
+    repo.write('orbit/explore/add-thing/explore.md', '# exploration v2\n');
+    repo.commitAll('exploration v2');
+
+    const res = runPhase1({
+      repo,
+      mode: 'per-proposal',
+      branch: 'add-thing',
+      stagingDir: 'orbit/explore/add-thing',
+    });
+
+    expect(res.action).toBe('skip');
+    expect(res.note).toMatch(/absent or different/);
+    expect(repo.git('rev-parse', '--abbrev-ref', 'HEAD').stdout.trim()).toBe('main');
+    expect(fs.readFileSync(path.join(repo.dir, 'orbit/explore/add-thing/explore.md'), 'utf-8')).toContain('v2');
   });
 
   it('proceeds when the staging directory survives the target ref', () => {

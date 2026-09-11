@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-09-11T00:33:56Z",
+  "change": "d6-pr-lifecycle",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "system",
+  "prompt_path": "orbit/changes/d6-pr-lifecycle/.orbit-runs/external-prompt-system-2026-09-11T00-33-55Z.md",
+  "target": null,
+  "final_assessment": "External review prompt packaged for d6-pr-lifecycle (iter 3 by file count, mode system; iteration 1 was two parallel passes — GPT-5 Codex and a clean-context Claude Fable 5.1 session); awaiting findings. Handoff preflight FAILED on the working-tree check — 30 uncommitted entries spanning four walks (the Codex walk, the Fable walk, the in-context confirm pass and its walk, plus this prompt file); remote sync is clean (0 unpushed commits on origin/d-arc). The pull invocation is withheld until the pending work is committed and pushed. The prompt carries the 27 resolutions landed since both externals ran as an explicit verification set — none has been checked by an independent eye — names the ratified non-defects, and points the reviewer at cross-seam consistency (bodies, the four sections composed into three references, transcription vs reference) and at the attachment record's new commit+push as a performing AI.",
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/d6-pr-lifecycle/.orbit-runs/external-prompt-system-2026-09-11T00-33-55Z.md into the target AI, save the response as orbit/changes/d6-pr-lifecycle/.orbit-runs/external-system-<TS>.md, then /orbit:address-reviews d6-pr-lifecycle --from-file <path>"
+}

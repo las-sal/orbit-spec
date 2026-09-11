@@ -1,0 +1,80 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-10T23:19:40Z",
+  "change": "d6-pr-lifecycle",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/d6-pr-lifecycle/.orbit-runs/review-system-2026-09-10T23-10-54Z.json",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 1
+  },
+  "pushback_verification": "Both verified against current state before disposition; none stale. The shared constant was read at its boundaries (line 18 start, the config heading at line 48 inside it, the architect reference interpolating the whole at line 370) and the gh-sweep array read at line 342.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The architect's new `references/pr-resolution.md` carries the seams' config-order section verbatim, whose `never → RETURN IMMEDIATELY, probe nothing` rule would suppress the arc-done readout under a later `pr: never` — contradicting the body's `readout is NEVER SUPPRESSED` and the attachment-decides rule.",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/pr-choreography.ts",
+      "line": 370,
+      "classification": "decision_required",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Split the shared constant: `PR_RESOLUTION_SECTION` keeps only the remote/default-branch resolution (through the degradation sentence), and a new `PR_CONFIG_ORDER_SECTION` carries the config-order text; `PR_CHOREOGRAPHY_REFERENCE` and `PR_ARCHIVE_TAIL_REFERENCE` interpolate both (byte-identical output for the seams — the fidelity slice at `## Config resolution order` still holds), while `PR_RESOLUTION_REFERENCE` interpolates only the resolution. Re-pin the architect hash only."
+          },
+          {
+            "label": "B",
+            "body": "Keep the section and add an explicit override sentence to `PR_RESOLUTION_REFERENCE`'s header: the arc-done readout is gated by the ATTACHMENT (a URL-bearing per-architecture record), never by the live `pr:` value — the config-order section below governs propose/ff/archive, not this readout. Minimal diff; the misleading text stays and is disclaimed."
+          }
+        ],
+        "chosen": "A"
+      },
+      "action": "Option A applied. `PR_RESOLUTION_SECTION` now ends at the degradation sentence; the config-order text lives in a new exported `PR_CONFIG_ORDER_SECTION` whose doc comment names why the architect reference omits it. `PR_CHOREOGRAPHY_REFERENCE` and `PR_ARCHIVE_TAIL_REFERENCE` interpolate both constants back to back — their emitted bytes are unchanged (propose, ff, and archive hashes untouched; both generated seam references still carry exactly one `## Config resolution order` heading). `PR_RESOLUTION_REFERENCE` interpolates only the resolution and its header now states the gate: the readout is gated by the ATTACHMENT, never by the live `pr:` value, so the seams' config-order gate is deliberately absent. Verified on disk after `orbit update --force`: the generated architect reference has zero occurrences of `Config resolution order` / `RETURN IMMEDIATELY` and carries `gated by the ATTACHMENT`. The byte-identical fidelity test now slices the architect reference at its own next heading and asserts the gate text is absent. One hash re-pinned (architect function payload; its SKILL.md content hash unchanged).",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/templates/orbit-content-fidelity.test.ts",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The repository-qualified `gh` invocation sweep covers only the propose and archive references; the architect's new reference (which carries a `gh pr list --repo …` invocation) is outside the loop.",
+      "marker_source": "internal-review",
+      "file": "test/core/templates/orbit-content-fidelity.test.ts",
+      "line": 342,
+      "classification": "trivial_fix",
+      "action": "Added `reference(getArchitectSkillTemplate(), 'pr-resolution.md')` to the repository-qualified `gh` sweep's array; the architect reference's `gh pr list --repo …` invocation now sits under the same guarantee as the seams. Passes.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "2 of 2 resolved; 0 unresolved markers in scope. The decision-lane finding ratified in chat as option A: the shared resolution constant is split at the seam where consumers diverge — the config-order gate is its own constant, interpolated by the propose/ff and archive references (bytes unchanged) and deliberately omitted from the architect reference, whose header now names the attachment as the readout's only gate. The suggestion landed: the architect reference is inside the repository-qualified gh sweep. 2004 tests green across 91 files; one hash re-pinned; local surface refreshed and verified; strict-valid. Working tree left uncommitted (28 entries plus this log) across walks 10–13.",
+  "iteration": 13,
+  "next_recommended": "/orbit:review --as system --reviewer external d6-pr-lifecycle"
+}

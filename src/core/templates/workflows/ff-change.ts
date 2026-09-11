@@ -141,9 +141,10 @@ treated differently for how it was started.
 switch) runs BEFORE Step 2 (\`orbit new change\`): that step writes
 \`orbit/changes/<name>/.openspec.yaml\`, a path a compatible branch already TRACKS, so a
 switch attempted after it is exactly the \`git switch\` refusal the ordering exists to
-prevent. Phase 2 follows a successful Step 4 (validation passes); phase 3 (commit → push →
-draft PR) runs after Step 5's final status, with the commit scope enumerating the change's
-generated artifacts.
+prevent. Phase 2 (generation + validation, ON that branch) IS Steps 2–4; phase 3 (the no-CI
+note, then commit → push → draft PR, then the attachment record's own commit + push) runs
+after Step 5's final status, with the commit scope enumerating the change's generated
+artifacts.
 
 Read the RESOLVED regime from the engine FIRST
 — \`orbit status --json\`, field \`pr\` (never parse \`orbit/config.yaml\` yourself: the value
@@ -170,6 +171,10 @@ orbit emit ff --change <name> --payload <payload-file>
 \`\`\`
 
 The ENGINE owns the spine, the trail path, timestamp + collision handling, and \`next_recommended\` composition (propose-shaped: the review-gate pointer). Never hand-compose the JSON.
+
+When the PR choreography ran, the emit is NOT the last act: commit and push the just-written
+emit file per the reference's "Recording the attachment" section — the attachment record the
+archive tail dereferences must reach the branch.
 
 **Completion-prompt override (chat)**: where the upstream steps above prompt "Run \`/orbit:apply\` or ask me to implement", instead prompt: "Run \`/orbit:review <name>\` — review the artifacts before implementation."
 `,

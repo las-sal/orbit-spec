@@ -354,6 +354,13 @@ Feed that ONE observation to BOTH the Step 5.5 emit and the Step 5.6 tail so the
 disagree. Cannot observe (no \`gh\`, failed query) → elide the emit's PR fields and skip the
 tail; never block the archive.
 
+Also observe — read-only — whether HEAD's branch (\`git branch --show-current\`) equals
+\`pr_attachment.branch\`. On mismatch, SAY SO NOW, naming both branches, in the consent
+preview when one fires and otherwise as one line BEFORE any archive write: the tail's HEAD
+precondition (in the reference) remains the guard that skips the PR half, but surfacing the
+mismatch here lets the user switch first instead of carrying uncommitted sync, move, and
+emit writes across a \`git switch\` afterward.
+
 ## NEW Step 5.5 — Archive run summary
 
 After upstream Step 5 (move-to-archive) completes, compose the payload — narrative + the extension fields \`references/archive-summary-schema.md\` lists (\`archive_path\`, \`audit\`, \`sync_specs\`, \`unresolved_markers\`, \`user_decision\`, \`consent\`, \`warnings\`) — write it to a temp file, and invoke:
@@ -386,8 +393,10 @@ When the flow hands control back at an OUTWARD seam, the completion readout echo
 residual rule in ONE line — outward acts orbit did not design into a lifecycle step stay the
 human's. After a tail that flipped a per-change PR READY: "merging is yours:
 \`gh pr merge --repo <owner>/<repo> <number>\` when satisfied." After a program-PR append:
-the program PR is named and the flip stays at arc-done. No echo fires for an unattached
-change — there is no outward seam to hand back at.
+the program PR is named and the flip stays at arc-done. After a tail whose PR half was
+SKIPPED on positive invalidation (the commit and push landed; the rewrite/append and flip did
+not): name the specific reason and that any action on that pull request is the user's. No
+echo fires for an unattached change — there is no outward seam to hand back at.
 
 ## \`.orbit-runs/\` moves with the change
 

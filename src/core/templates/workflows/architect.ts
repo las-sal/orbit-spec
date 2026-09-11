@@ -10,6 +10,7 @@
  * checks; justified by explore D-d2-6 and arc ruling R-d-1.
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
+import { PR_RESOLUTION_REFERENCE } from './pr-choreography.js';
 
 export function getArchitectSkillTemplate(): SkillTemplate {
   return {
@@ -121,7 +122,10 @@ with \`granularity: "per-architecture"\` and a \`doc\` matching this doc. Take t
 URL-BEARING record — never merely the most recent match, since \`url\` is optional after a
 failed query or creation, and a later \`{branch, granularity, doc}\` record without one would
 permanently mask the still-valid program PR. When no URL-bearing record exists, fall back to
-the four-axis constrained query (per \`orbit-archive-modifications\`' discovery rule).
+the four-axis constrained query (per \`orbit-archive-modifications\`' discovery rule). Resolve
+the remote, the canonical \`<owner>/<repo>\`, and the default branch per
+\`references/pr-resolution.md\` — the SAME algorithm propose, ff, and the archive tail
+perform, carried here so this readout never improvises it.
 
 **Draft state is read LIVE** —
 \`gh pr view --repo <owner>/<repo> <url> --json isDraft\` — never the recorded
@@ -172,6 +176,12 @@ The ENGINE owns the spine (\`change: null\` + \`doc\`), the FOURTH trail locatio
 ## Output at session end
 
 Render the doc's computed position from \`orbit architecture status\` verbatim, then the eligibility line (\`Ready when you are: <command>\` — never an imperative). Completing this command ENDS the turn there.`,
+    references: [
+      {
+        name: 'pr-resolution.md',
+        content: PR_RESOLUTION_REFERENCE,
+      },
+    ],
     license: 'MIT',
     compatibility:
       'Requires orbit CLI (orbit architecture status/show/validate). Composes with /orbit:explore (citation-carrying explorations) and /orbit:review --as architecture.',

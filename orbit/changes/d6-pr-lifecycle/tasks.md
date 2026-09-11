@@ -45,10 +45,11 @@ Implementation chunks:
       PHASE 1 select + switch, no NETWORK writes, BEFORE any artifact is generated — and
       guarded by the GENERATION-INPUT precondition checked BEFORE the switch, since
       `git switch` rewrites tracked worktree content: when a consume-mode
-      `orbit/explore/<name>/` exists in the worktree but not on the target ref, SKIP the PR
-      layer entirely (no switch at all) and generate on the current branch, unattached, with
-      a note. Checking beforehand rather than recovering after is what keeps phase 1
-      non-destructive;
+      `orbit/explore/<name>/` is TRACKED in HEAD and absent-or-different on the target ref,
+      SKIP the PR layer entirely (no switch at all) and generate on the current branch,
+      unattached, with a note — an UNTRACKED exploration (the ordinary state) never triggers
+      the skip, on either the reuse or the create path. Checking beforehand rather than
+      recovering after is what keeps phase 1 non-destructive;
       PHASE 2 generate + validate ON that branch (a failure here names the branch the flow
       switched to, with `git switch <default>` as recovery — nothing committed or pushed);
       PHASE 3 outward writes only after validation succeeds. Per-proposal path (and the
@@ -282,12 +283,17 @@ apply gate's arithmetic covers only apply-completable work.)
       not just output text); unset `pr:` byte-identical to `never`; each of the three values
       resolves; unrecognized value inert with a warning; CONFIG-FLIPPED-MID-FLIGHT — a
       change proposed under `per-proposal` and archived after `pr: never` still runs its
-      tail (attachment authority), while a change proposed under `never` runs none.
+      tail (attachment authority), while a change proposed under `never` runs none
+      (tail-side clause RESCOPED to 6.3 at the 2026-09-10 walk — the phase-1 harness
+      cannot exercise the tail).
 - [x] 6.2b Harness cases — DEGRADATION: no remote; `gh` absent from PATH; multiple remotes
       with no `origin` (ambiguity skip); default-branch resolution failure. Each degrades
       with one note, exit 0, artifacts intact. Assert the SHARED algorithm at BOTH seams:
       the same multi-remote checkout skips identically at propose and at the archive tail,
-      and an unresolvable base at archive reports a RESOLUTION failure — never a missing PR.
+      and an unresolvable base at archive reports a RESOLUTION failure — never a missing PR
+      (the archive-seam half RESCOPED to 6.3 at the 2026-09-10 walk — phase-1 harness only;
+      the shared algorithm is asserted byte-identical across both references by the
+      template fidelity suite instead).
 - [x] 6.2c Harness cases — PRECONDITIONS: non-`main` default branch; dirty tree skip;
       branch-name collision with the default branch; per-proposal collision with unrelated
       work; PROGRAM branch reuse across two successive citing changes (the case the old

@@ -52,6 +52,8 @@ const REFERENCE_SKILLS: Record<string, string[]> = {
   // D6: propose and ff share ONE choreography reference (see pr-choreography.ts).
   'orbit-propose': ['pr-choreography.md'],
   'orbit-ff-change': ['pr-choreography.md'],
+  // D6 (external iter 1): the arc-done readout carries the shared resolution algorithm.
+  'orbit-architect': ['pr-resolution.md'],
   'orbit-review': ['run-summary-schema.md', 'passes-proposal.md', 'passes-system.md', 'passes-architecture.md', 'external-handoff.md', 'mode-sections.md', 'prompt-template.md', 'flags-detail.md'],
   'orbit-address-reviews': ['external-findings-format.md', 'internal-findings-format.md', 'resolution-detail.md', 'run-summary-schema.md'],
   'orbit-audit-drift': ['run-summary-schema.md', 'worked-example.md'],

@@ -43,9 +43,15 @@ copyable text without \`--repo\`, or address the PR by full URL.
 available, falling back to \`git symbolic-ref refs/remotes/<resolved-remote>/HEAD\`. When
 neither resolves, SKIP with a one-line note naming the failure — the PR layer degrades, the
 lifecycle never blocks. At the ARCHIVE seam an unresolvable remote or base is a DEGRADATION
-SKIP, never a zero-result: report that resolution failed, never that the PR is missing.
+SKIP, never a zero-result: report that resolution failed, never that the PR is missing.`;
 
-## Config resolution order (config FIRST, availability SECOND)
+/**
+ * The config-order gate (config FIRST, availability SECOND). Interpolated by the propose/ff
+ * and archive references directly after the shared resolution; NOT by the architect
+ * reference — the arc-done readout is gated by the ATTACHMENT, never by the live `pr:` value
+ * (the 2026-09-10 confirm pass caught the whole-constant reuse suppressing that readout).
+ */
+export const PR_CONFIG_ORDER_SECTION = `## Config resolution order (config FIRST, availability SECOND)
 
 Read the RESOLVED regime from the engine — \`orbit status --json\`, field \`pr\` — NOT by
 parsing \`orbit/config.yaml\` yourself. The value set is CLOSED (\`never\` /
@@ -76,14 +82,21 @@ No network writes happen here. But note that \`git switch\` is **not** a HEAD mo
 also rewrites every TRACKED path that differs between HEAD and the target commit. Phase 1
 therefore changes worktree content and must be guarded.
 
-**Generation-input precondition — checked BEFORE the switch.** When a consume-mode staging
-directory \`orbit/explore/<change-name>/\` is present in the worktree, verify the same path
-exists on the TARGET REF. If it does not, SKIP THE PR LAYER ENTIRELY — do not switch — and
-generate on the current branch, the change proceeding unattached, with one note naming the
-reason. Checking beforehand rather than recovering afterward is what keeps phase 1
-non-destructive. The dirty-tree check below does NOT cover this: it detects uncommitted
-modifications, while this hazard is COMMITTED content present on your branch and absent from
-the base.
+**Generation-input precondition — checked BEFORE the switch, on BOTH paths (reusing an
+existing branch, or creating one off \`<remote>/<default>\`).** The check keys on TRACKED
+state, never on worktree presence: when a consume-mode staging directory
+\`orbit/explore/<change-name>/\` is TRACKED in HEAD (\`git ls-files --error-unmatch
+orbit/explore/<change-name>/\` succeeds), verify the TARGET REF carries the same content
+(\`git diff --quiet HEAD <target-ref> -- orbit/explore/<change-name>/\` exits 0 — absent on the
+target counts as different). If it is absent or differs, SKIP THE PR LAYER ENTIRELY — do not
+switch — and generate on the current branch, the change proceeding unattached, with one note
+naming the reason. An UNTRACKED staging directory — the ORDINARY state, since \`/orbit:explore\`
+commits nothing — NEVER triggers the skip: \`git switch\` rewrites only tracked paths, so
+untracked content survives it intact, and the one case git would refuse (the target itself
+carrying that path) surfaces as the switch-failure skip below, not here. Checking beforehand
+rather than recovering afterward is what keeps phase 1 non-destructive. The dirty-tree check
+below does NOT cover this: it detects uncommitted modifications, while this hazard is
+COMMITTED content present on your branch and absent from (or different on) the target.
 
 Then propose's own preconditions, in order. Each SKIP writes nothing, so the flow simply
 proceeds unattached — generating on the current branch exactly as under \`pr: never\`:
@@ -103,8 +116,12 @@ proceeds unattached — generating on the current branch exactly as under \`pr: 
    both locally and on the remote.
 5. **Compatibility**, per path:
    - *Per-proposal* — compatible when absent, or present with no commits beyond the resolved
-     default branch other than this change's own artifact commits. A same-named branch
-     carrying unrelated work is a COLLISION: skip with a note.
+     default branch other than this change's own artifact commits. "Own artifact commits" is a
+     PATH test, never a commit-message test: every path \`git diff --name-only
+     <resolved-remote>/<default>...<branch>\` lists is under \`orbit/changes/<change-name>/\`
+     (or a deletion under \`orbit/explore/<change-name>/\`) — the same discipline the
+     enumerated commit scope imposes at phase 3. Any other path means a same-named branch
+     carrying unrelated work: a COLLISION, skip with a note naming the foreign path.
    - *Program* — compatible when \`git merge-base <program-branch> <resolved-default>\`
      SUCCEEDS (shared ancestry). NOT tip-ancestry: a program branch is long-lived, so the
      default branch advancing underneath it is expected at every stage after the first, and a
@@ -129,9 +146,13 @@ pushed, or opened; the failure note NAMES the branch the flow switched you to, w
 
 Nothing leaves the machine until generation and validation have succeeded.
 
-**Commit scope is an ENUMERATED FILE LIST**: the change's generated artifacts, the moved
-staging material now under \`orbit/changes/<change-name>/\`, and the staging-directory
-DELETIONS the move produced at \`orbit/explore/<change-name>/\`. \`git add -A\` is PROHIBITED, as
+**Commit scope is an ENUMERATED FILE LIST** — every file named, none inferred:
+\`orbit/changes/<change-name>/proposal.md\`, \`design.md\`, \`tasks.md\`, every
+\`specs/<capability>/spec.md\`, \`.openspec.yaml\` (it carries the base fingerprints the
+fingerprint-capture step stamped — forgetting it strands them), the moved staging material
+now under \`orbit/changes/<change-name>/\` (\`explore.md\`, any sketches, and the moved
+\`.orbit-runs/\` trail files — list them), and the staging-directory DELETIONS the move
+produced at \`orbit/explore/<change-name>/\`. \`git add -A\` is PROHIBITED, as
 is staging a bare directory prefix — the artifacts are newly created and therefore untracked,
 so reaching for \`-A\` is exactly what would sweep an unrelated untracked file into a PR you
 are about to publish.
@@ -152,12 +173,22 @@ Then push, and open the PR:
   - Query ERROR → degradation skip. Never create on error: a duplicate program PR is the one
     outcome Shape A cannot represent.
 
+**Title and body at birth (both paths — never improvised).** Pass the title EXPLICITLY:
+\`gh pr create\` without \`--title\` prompts, which a body cannot answer. Per-change title:
+\`<change-name>: <proposal.md's title line, without the leading #>\`. Program title:
+\`<doc stem>: <the architecture doc's title line>\`. Per-change body: the INTENT description
+adapted from proposal.md's Why/What. Program body: PROGRAM INTENT adapted, by the same
+discipline, from the doc's opening prose (everything before its first \`### Stage\` heading)
+plus its stage list — the birth entry the appended stage entries later accumulate under.
+Write the body to a file and pass \`--body-file\`. Titles are set ONCE at birth: the archive
+tail's landmark rewrite and the stage-entry append touch the BODY only.
+
 **Mid-flight failure.** A step that fails (push rejected for auth, branch protection, or
 divergence; \`gh pr create\` erroring) SKIPS the remaining choreography with a one-line note
 naming completed vs skipped steps, and elides \`pr_attachment\`'s \`url\`/\`state\` from the emit.
 RECOVERY IS MANUAL BY DESIGN (v1): there is no retry entry point. The note names the exact
 completing commands — \`git push -u <resolved-remote> <branch>\`, and
-\`gh pr create --repo <owner>/<repo> --draft --base <resolved-base> --head <branch>\` when PR
+\`gh pr create --repo <owner>/<repo> --draft --base <resolved-base> --head <branch> --title "<title>" --body-file <path>\` when PR
 creation was what failed — and states the consequence: the change proceeds UNATTACHED, and
 its archive tail will find no attachment, note it, and skip.
 
@@ -185,7 +216,20 @@ Record \`pr_attachment\` in the propose (or ff) emit payload:
 - \`doc\` — REQUIRED when \`granularity\` is \`"per-architecture"\`, absent otherwise. The write
   gate enforces this in both directions, so a program-path record that omits it is REJECTED
   and no emit is written at all.
-- The whole object is ELIDED when the choreography did not run.`;
+- The whole object is ELIDED when the choreography did not run.
+
+**Then COMMIT and PUSH the record — the seam's final act.** The emit is written AFTER the
+push and the PR creation (it needs \`url\`), so it is NOT in the phase-3 commit; left there it
+is an uncommitted file that a discarded worktree or a fresh checkout between seams loses —
+and the archive tail, finding a WHOLLY ABSENT attachment, terminates the PR path with the PR
+stranded DRAFT and no designed way back. Stage EXACTLY the emit file
+(\`orbit/changes/<change-name>/.orbit-runs/propose-<TS>.json\`, or \`ff-<TS>.json\`), commit,
+and \`git push <resolved-remote> <branch>\`. This is the SAME seam and the user's SAME
+invocation — no new consent — and it is the only push that exists between propose and
+archive; the seams-only rule is untouched. A failure here is a mid-flight failure like any
+other: one note, naming \`git add <emit-path> && git commit && git push <resolved-remote>
+<branch>\` as the completing command and the consequence (the attachment record has not
+reached the branch).`;
 
 /** Archive: the read-only preflight and the PR-attached tail. */
 export const PR_ARCHIVE_TAIL_SECTION = `## The read-only PR preflight (BEFORE the archive emit)
@@ -249,7 +293,9 @@ out of scope entirely** (see \`/orbit:bulk-archive\`).
 - **\`gh\` availability.** Absent \`gh\` skips the WHOLE tail before committing anything, so "no
   \`gh\` = today's behavior" stays true rather than "committed and pushed, then failed".
 - **HEAD.** \`git commit\` writes to whatever HEAD points at, so verify HEAD's branch equals
-  \`pr_attachment.branch\`. On mismatch, SKIP with a note naming BOTH branches and the
+  \`pr_attachment.branch\`. (The archive body already OBSERVES this at its read-only preflight
+  and says so BEFORE any archive write — this check remains the guard; that one is the early
+  warning.) On mismatch, SKIP with a note naming BOTH branches and the
   CASE-SPECIFIC recovery: \`git switch <branch>\` when the branch exists locally;
   \`git fetch <resolved-remote> && git switch -c <branch> --track <resolved-remote>/<branch>\`
   when it exists only on the remote; and a plain statement that no switch recovers it when it
@@ -276,6 +322,12 @@ archive when one was written; (2) otherwise composed from the archive emit's
 architecture-grammar requirement, so the fallback is a real path. Never block, never invent;
 name the source used in one line.
 
+**APPEND means READ-APPEND-WRITE.** The \`--body-file\` edit REPLACES the whole body, so:
+read the current body first (\`gh pr view --repo <owner>/<repo> <url> --json body -q .body\`),
+append this stage's entry to it, write the COMPOSED whole back. Writing only this stage's
+entry would destroy every earlier stage's entry — the accumulated entries ARE the landmark.
+The per-change description REWRITE is the one place the body is replaced outright.
+
 **READY.** Per-change PRs flip now — including on \`gate_overridden\` archives, since the
 recorded override IS the ratification. Program PRs are APPENDED and never flipped here:
 arc-done is later than any archive. ORDERING INVARIANT: the flip fires only AFTER the push
@@ -295,7 +347,8 @@ command and the consequence for the step that failed:
 - **Description rewrite (per-change) or stage-entry append (program)** —
   \`gh pr edit --repo <owner>/<repo> <url> --body-file <path>\`; the PR is current in code but
   its description is the stale intent narrative (per-change), or its body lacks this stage's
-  entry (program).
+  entry (program — the file is the COMPOSED body, current body + this entry, never the entry
+  alone).
 - **READY flip** (per-change only — the program path never flips here) —
   \`gh pr ready --repo <owner>/<repo> <number>\`; the PR is complete and accurate but still
   DRAFT, a safe resting state.
@@ -316,7 +369,34 @@ workflow-BODY step you perform; the orbit engine never shells to git or \`gh\`.
 
 ${PR_RESOLUTION_SECTION}
 
+${PR_CONFIG_ORDER_SECTION}
+
 ${PR_PROPOSE_SECTION}
+`;
+
+/** The reference emitted into the architect skill (arc-done readout — READ-ONLY use). */
+export const PR_RESOLUTION_REFERENCE = `# Reference: remote and default-branch resolution (architect readout)
+
+Loaded by the arc-done human-acts readout ONLY. The readout makes NO outward write: it
+resolves the remote, the canonical \`<owner>/<repo>\`, and the default branch exactly as
+propose, ff, and the archive tail do — ONE algorithm, present wherever it is performed — so
+it can read the program PR's live state and, when no URL-bearing record exists, run the
+four-axis constrained query. This readout is gated by the ATTACHMENT (a URL-bearing
+per-architecture record on a trail), never by the live \`pr:\` value: setting \`pr: never\`
+stops NEW attachments and never hides a program PR that exists — so the seams' config-order
+gate is deliberately NOT part of this reference.
+
+Per \`orbit-pr-lifecycle\`'s zero-engine-git requirement, every git and \`gh\` command here is a
+workflow-BODY step you perform; the orbit engine never shells to git or \`gh\`.
+
+${PR_RESOLUTION_SECTION}
+
+## The four-axis constrained query (discovery without a stored URL)
+
+\`gh pr list --repo <owner>/<repo> --head <program-branch> --state open --json url,baseRefName,isDraft,number\`,
+then DISCARD candidates whose base is not the resolved default branch. Exactly one survivor
+is the program PR; zero / several / query-error are three distinct one-line notes. The
+readout never creates, edits, or flips — it reports, and names the human acts.
 `;
 
 /** The reference emitted into the archive skill. */
@@ -329,6 +409,8 @@ Per \`orbit-pr-lifecycle\`'s zero-engine-git requirement, every git and \`gh\` c
 workflow-BODY step you perform; the orbit engine never shells to git or \`gh\`.
 
 ${PR_RESOLUTION_SECTION}
+
+${PR_CONFIG_ORDER_SECTION}
 
 ${PR_ARCHIVE_TAIL_SECTION}
 `;

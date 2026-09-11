@@ -131,6 +131,7 @@ describe('config profile interactive flow', () => {
       'orbit-explore': ['capture-formats.md'],
       'orbit-propose': ['pr-choreography.md'],
       'orbit-ff-change': ['pr-choreography.md'],
+      'orbit-architect': ['pr-resolution.md'],
       'orbit-review': ['run-summary-schema.md', 'passes-proposal.md', 'passes-system.md', 'passes-architecture.md', 'external-handoff.md', 'mode-sections.md', 'prompt-template.md', 'flags-detail.md'],
       'orbit-address-reviews': ['external-findings-format.md', 'internal-findings-format.md', 'resolution-detail.md', 'run-summary-schema.md'],
       'orbit-audit-drift': ['run-summary-schema.md', 'worked-example.md'],

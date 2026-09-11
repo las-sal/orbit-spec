@@ -670,11 +670,14 @@ rules:
       expect(warning).toContain('got a list');
     });
 
-    it('treats a bare `pr:` with no value as absent, silently', () => {
+    it('a bare `pr:` with no value is PRESENT-but-empty: inert with a warning naming it (only an ABSENT key is silent)', () => {
       const root = writeConfig('schema: spec-driven\npr:\n');
       const config = readProjectConfig(root);
       expect(resolvePrMode(config)).toBe('never');
-      expect(consoleWarnSpy).not.toHaveBeenCalled();
+      expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
+      const warning = String(consoleWarnSpy.mock.calls[0][0]);
+      expect(warning).toContain("Empty 'pr' field");
+      expect(warning).toContain("treating as 'never'");
     });
 
     it('never throws on an invalid pr value — other fields still parse', () => {

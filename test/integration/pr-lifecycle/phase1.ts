@@ -42,6 +42,30 @@ export interface Phase1Result {
 }
 
 /** Config resolution order: config FIRST, availability SECOND. */
+/**
+ * Generation-input precondition (checked BEFORE the switch, on BOTH paths). Keys on TRACKED
+ * state, never worktree presence: "when a consume-mode staging directory is TRACKED in HEAD,
+ * verify the TARGET REF carries the same content — absent or different means the switch
+ * would delete or rewrite the exploration → SKIP THE PR LAYER ENTIRELY." An UNTRACKED
+ * staging directory (the ordinary explore-then-propose state) never triggers the skip:
+ * `git switch` rewrites only tracked paths.
+ */
+function generationInputGuard(
+  repo: Phase1Input['repo'],
+  stagingDir: string | undefined,
+  targetRef: string
+): Phase1Result | null {
+  if (!stagingDir) return null;
+  const tracked = repo.git('ls-files', '--error-unmatch', stagingDir).status === 0;
+  if (!tracked) return null;
+  const same = repo.git('diff', '--quiet', 'HEAD', targetRef, '--', stagingDir).status === 0;
+  if (same) return null;
+  return {
+    action: 'skip',
+    note: `${stagingDir} is tracked here and absent or different on ${targetRef}; switching would delete or rewrite the exploration — PR layer skipped, generating on the current branch`,
+  };
+}
+
 export function runPhase1(input: Phase1Input): Phase1Result {
   const { repo, mode, branch } = input;
 
@@ -133,34 +157,56 @@ export function runPhase1(input: Phase1Input): Phase1Result {
       }
     } else {
       // Per-proposal: "no commits beyond the resolved default branch other than this
-      // change's own artifact commits."
-      const extra = repo
-        .git('rev-list', `${remote}/${defaultBranch}..${ref}`, '--format=%s')
+      // change's own artifact commits" — a PATH test: every path the branch adds beyond the
+      // default is under orbit/changes/<name>/ (or a deletion under orbit/explore/<name>/).
+      const touched = repo
+        .git('diff', '--name-only', `${remote}/${defaultBranch}...${ref}`)
         .stdout.split('\n')
-        .filter((l) => l && !l.startsWith('commit '));
-      const foreign = extra.filter((subject) => !subject.includes(branch));
+        .filter(Boolean);
+      const own = (p: string) =>
+        p.startsWith(`orbit/changes/${branch}/`) || p.startsWith(`orbit/explore/${branch}/`);
+      const foreign = touched.filter((p) => !own(p));
       if (foreign.length > 0) {
-        return { action: 'skip', note: `branch '${branch}' carries unrelated work; collision` };
+        return {
+          action: 'skip',
+          note: `branch '${branch}' carries unrelated work (${foreign[0]}); collision`,
+        };
       }
     }
 
-    // --- Generation-input precondition, BEFORE the switch --------------------------------
-    // "when a consume-mode staging directory is present in the worktree, verify the same
-    //  path exists on the TARGET REF. If it does not, SKIP THE PR LAYER ENTIRELY."
-    if (input.stagingDir && repo.exists(input.stagingDir)) {
-      const onTarget = repo.git('cat-file', '-e', `${ref}:${input.stagingDir}`).status === 0;
-      if (!onTarget) {
+    // --- Generation-input precondition, BEFORE the switch (reuse path) --------------------
+    const guard = generationInputGuard(repo, input.stagingDir, ref);
+    if (guard) return guard;
+
+    // --- Step 6: remote-ahead, BEFORE the switch -----------------------------------------
+    // "compare against the resolved remote's tip: fast-forward when possible, otherwise SKIP
+    //  with a note naming the divergence. Orbit never force-moves ... a user's branch."
+    let fastForwardTo: string | undefined;
+    if (localExists && remoteExists) {
+      const remoteRef = `${remote}/${branch}`;
+      const localBehindOrEqual = repo.git('merge-base', '--is-ancestor', branch, remoteRef).status === 0;
+      const remoteBehindOrEqual = repo.git('merge-base', '--is-ancestor', remoteRef, branch).status === 0;
+      if (localBehindOrEqual) {
+        if (!remoteBehindOrEqual) fastForwardTo = remoteRef; // strictly behind: ff after the switch
+      } else if (!remoteBehindOrEqual) {
         return {
           action: 'skip',
-          note: `${input.stagingDir} exists here but not on ${ref}; switching would delete the exploration — PR layer skipped, generating on the current branch`,
+          note: `branch '${branch}' has diverged from ${remoteRef}; orbit never force-moves, rebases, or force-pushes a user's branch`,
         };
       }
+      // else: local strictly ahead — nothing to do; the push carries it.
     }
 
     if (localExists) {
       const sw = repo.git('switch', branch);
       if (sw.status !== 0) {
         return { action: 'skip', note: `could not switch to '${branch}': ${sw.stderr.trim()}` };
+      }
+      if (fastForwardTo) {
+        const ff = repo.git('merge', '--ff-only', fastForwardTo);
+        if (ff.status !== 0) {
+          return { action: 'skip', note: `could not fast-forward '${branch}' to ${fastForwardTo}: ${ff.stderr.trim()}` };
+        }
       }
     } else {
       const sw = repo.git('switch', '-c', branch, '--track', `${remote}/${branch}`);
@@ -171,6 +217,10 @@ export function runPhase1(input: Phase1Input): Phase1Result {
     }
   } else {
     // Absent both locally and on the remote: create off the RESOLVED REMOTE's default ref.
+    // The generation-input precondition applies here too — the target is the default ref.
+    const guard = generationInputGuard(repo, input.stagingDir, `${remote}/${defaultBranch}`);
+    if (guard) return guard;
+
     const sw = repo.git('switch', '-c', branch, `${remote}/${defaultBranch}`);
     if (sw.status !== 0) {
       return { action: 'skip', note: `could not create '${branch}': ${sw.stderr.trim()}` };

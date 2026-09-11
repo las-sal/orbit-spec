@@ -136,7 +136,11 @@ citing explore.md rather than re-deriving.
   surfacing the regime on the orientation tier rather than deleting the reader; the second
   (fresh) system review then found the no-changes rung omitted the key and the walk closed
   it. `status.ts`, `orientation.ts`, and their tests therefore appear as `actual_unpredicted`
-  in every category-5 sweep by decision, not drift. Branch naming: `<change-name>` standalone;
+  in every category-5 sweep by decision, not drift. Likewise (2026-09-10, external iter 1):
+  seven upstream-inherited `test/commands/*.test.ts` files gained quoted bin paths so the
+  suite reproduces from a checkout path containing spaces — the portability defect that
+  blocked an external reviewer's full-suite verification; a walk decision, not D6 scope
+  creep. Branch naming: `<change-name>` standalone;
   the doc's filename stem for program branches (per-doc override waits for a real need); a
   mechanical name colliding with the resolved default branch skips with a note.
 - **D-d6-8 — No-CI surfacing.** When opening a change's first PR on a repo with no
@@ -172,8 +176,14 @@ choreography steps themselves) rather than as a separate feature section.
   are the landmark's value; GitHub renders long bodies fine; the arc-done rewrite can
   restructure.
 - **Mid-flight adoption** (this repo: `d-arc` is 5 stages deep, unpushed-PR) — covered by
-  "first configured touch" birth; the retroactive program PR simply starts its appended
-  history at the current stage.
+  "first configured touch" birth ONLY when the program branch already carries the mechanical
+  name (the doc's filename stem, D-d6-7): `d-arc` is NOT `d-arc-arbitered-flow`, so enabling
+  `pr: per-architecture` here would not adopt `d-arc` — phase 1 would find no such branch and
+  CREATE one off the resolved default, cutting the worktree back to `main`'s tree. Adoption
+  here needs a branch rename (or the deferred per-doc override). The same base rule reaches
+  the per-proposal dogfood: a standalone change proposed from `d-arc` gets its branch cut from
+  `origin/main`, not from `d-arc`, so the dogfood runs from a checkout whose resolved default
+  IS the branch the work should land on (corrected 2026-09-10, external iter 1).
 - **`gh` availability assumption** — the tail requires the GitHub CLI; degradation reports
   and skips, and exit criterion 2 tests the no-remote path explicitly.
 - **Detached-work drift**: work committed to a program branch by non-orbit sessions won't

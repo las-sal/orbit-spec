@@ -194,11 +194,17 @@ export function readProjectConfig(projectRoot: string): ProjectConfig | null {
 
     // Parse pr field (D6 PR-lifecycle regime): a SCALAR with three recognized values.
     // Every failure path is INERT — treated as `never` with a one-line warning — because
-    // the key is config garnish and a typo must never stop a lifecycle command. A bare
-    // `pr:` with no value parses to null and is treated as absent (silently): "unset" and
-    // "never" are the same outcome, so a warning would be noise.
-    if (raw.pr !== undefined && raw.pr !== null) {
-      if (typeof raw.pr === 'object') {
+    // the key is config garnish and a typo must never stop a lifecycle command. Only an
+    // ABSENT key is silent. A bare `pr:` with no value parses to null: the key is PRESENT
+    // but unusable, so it takes the same inert path with a warning naming it as empty —
+    // a blank key is most likely a half-finished edit, and silently disabling every PR
+    // seam is exactly the undocumented exception the closed set forbids.
+    if (raw.pr !== undefined) {
+      if (raw.pr === null) {
+        console.warn(
+          `Empty 'pr' field in config: the key is present with no value (expected ${PR_MODES.join(' | ')}); treating as 'never'`
+        );
+      } else if (typeof raw.pr === 'object') {
         // Non-scalar shape — a map or list where a scalar is expected. Includes the
         // superseded two-key `{open, program-branches}` block an early adopter may carry.
         const shape = Array.isArray(raw.pr) ? 'list' : 'map';

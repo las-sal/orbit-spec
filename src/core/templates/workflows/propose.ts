@@ -274,10 +274,11 @@ detect a parallel change landing on the same requirements (no silent spec data-l
 **Position (NEW Step 0.5 — this section is placed last for reading, not for running).**
 Phase 1 (select + switch) runs AFTER Step 0's mode detection and BEFORE Step 0a / upstream
 Step 1: generation must land on the target branch, and the reference's generation-input
-precondition presupposes \`orbit/explore/<name>/\` is still in place. Phase 2 (the no-CI
-note) follows a successful generation + validation. Phase 3 (commit → push → draft PR) runs
-AFTER Step 0d's move — its enumerated commit scope names the moved material and the
-staging-directory deletions that move produces.
+precondition presupposes \`orbit/explore/<name>/\` is still in place. Phase 2 (generation +
+validation, ON that branch) IS upstream Step 1 onward / the consume-mode flow, run exactly as
+without the PR layer. Phase 3 (the no-CI note, then commit → push → draft PR, then the
+attachment record's own commit + push) runs AFTER Step 0d's move — its enumerated commit
+scope names the moved material and the staging-directory deletions that move produces.
 
 Read the RESOLVED regime from the engine FIRST — \`orbit status --json\`, field \`pr\` (never parse \`orbit/config.yaml\` yourself: the value set is closed and every inert path already resolves to \`never\` with the reader's warning). When it is \`never\`, absent, or an inert
 value/shape, RETURN IMMEDIATELY from this section: probe nothing (no remote enumeration, no
@@ -309,6 +310,10 @@ orbit emit propose --change <name> --payload <payload-file>
 \`\`\`
 
 The ENGINE owns the spine, the trail path, timestamp + collision handling, and \`next_recommended\` composition (propose-shaped: the review-gate pointer). Never hand-compose the JSON.
+
+When the PR choreography ran, the emit is NOT the last act: commit and push the just-written
+emit file per the reference's "Recording the attachment" section — the attachment record the
+archive tail dereferences must reach the branch.
 
 **Completion-prompt override (chat)**: where the upstream steps above prompt "Run \`/orbit:apply\` or ask me to implement", instead prompt: "Run \`/orbit:review <name>\` — review the artifacts before implementation." The upstream text above is kept verbatim; this override is the operative instruction.
 `,
