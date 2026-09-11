@@ -156,9 +156,11 @@ repository the algorithm chose. A remote URL that does not parse as a GitHub rep
 degradation skip with a one-line note, never a guess. Without this the rule defeats itself:
 the whole point of resolving a remote is defeated if the commands then ask `gh` to pick.
 
-The DEFAULT BRANCH is resolved as `gh repo view --repo <owner>/<repo> --json
-defaultBranchRef` when `gh` is available, falling back to `git symbolic-ref
-refs/remotes/<resolved-remote>/HEAD`. When
+The DEFAULT BRANCH is resolved as `gh repo view <owner>/<repo> --json
+defaultBranchRef` when `gh` is available (the repository is POSITIONAL on this command —
+`gh repo view` has no `--repo` flag and rejects one; repository qualification is
+command-specific: `--repo` on the `gh pr` verbs, positional on `gh repo view`), falling back
+to `git symbolic-ref refs/remotes/<resolved-remote>/HEAD`. When
 neither resolves, the PR work at that seam SKIPS with a one-line note naming the failure —
 the PR layer degrades, the lifecycle never blocks. At the ARCHIVE seam specifically, an
 unresolvable remote or base is a DEGRADATION SKIP, never a zero-result: the tail reports

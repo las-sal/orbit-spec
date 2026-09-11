@@ -1,0 +1,196 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-11T14:57:12Z",
+  "change": "d6-pr-lifecycle",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/d6-pr-lifecycle/.orbit-runs/external-system-2026-09-11T00-54-45Z.md",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-5 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 2,
+    "warning": 5,
+    "suggestion": 1
+  },
+  "pushback_verification": "All 8 verified against current state before disposition (during the evaluation turn and again at walk time); none stale. The gh grammar was reproduced against the installed CLI 2.91.0 both ways; the transcription ordering, the archive reference's composition line, the architect header wording, the record-step wording, the chained recovery command, and the Step 5.45 position were each re-read at their cited lines.",
+  "resolution_summary": {
+    "resolved": 8,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "The shared default-branch command is rejected by the real GitHub CLI",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/pr-choreography.ts",
+      "line": 42,
+      "classification": "trivial_fix",
+      "action": "Reproduced with gh 2.91.0 (`unknown flag: --repo`; the positional form returns `{defaultBranchRef:{name:main}}`). The shared resolution section now states repository qualification COMMAND-SPECIFICALLY — `--repo` on the `gh pr` verbs, POSITIONAL on `gh repo view`, which has no `--repo` flag — and the default-branch command is `gh repo view <owner>/<repo> --json defaultBranchRef`, with the note that an init+remote-add+fetch checkout has no remote HEAD ref, so the fallback cannot rescue healthy GitHub access. Aligned: the orbit-pr-lifecycle delta (positional + the command-specific rule), tasks.md 1.x, the transcription's `ghRepoView` args. The INSTRUMENTS that let five passes miss it are now strict: the `gh` stub rejects `--repo` on `repo view` with the real CLI's message and requires a positional repository, and rejects `gh pr` verbs WITHOUT `--repo`; the fidelity sweep is command-specific (`gh repo view` must be positional and must NOT carry `--repo`; every `gh pr` invocation must); the harness test asserts the exact positional argv and a new case proves the stub fails the flag form and passes the positional one. Zero `repo view --repo` residue anywhere in src/, test/, or the change artifacts.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-pr-lifecycle/spec.md",
+          "orbit/changes/d6-pr-lifecycle/tasks.md",
+          "test/integration/pr-lifecycle/phase1.ts",
+          "test/integration/pr-lifecycle/harness.ts",
+          "test/integration/pr-lifecycle/phase1.test.ts",
+          "test/core/templates/orbit-content-fidelity.test.ts",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "Remote-ahead fast-forward bypasses both input preservation and branch compatibility",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/pr-choreography.ts",
+      "line": 132,
+      "classification": "trivial_fix",
+      "action": "Reference step 6 now reads `resolved FIRST, before step 5 and the generation-input precondition are applied`: it defines the EFFECTIVE TIP (the remote tip when local is strictly behind, else the local tip), states that compatibility and the generation-input check are evaluated against it, and that the generation-input check covers EVERY tree transition (HEAD → local on the switch, local → remote on the fast-forward). The guard paragraph names the target ref as every tip the worktree passes through. Transcription reordered to match: step-6 classification first, `effectiveRef = fastForwardTo ?? ref`, compatibility (merge-base / path test) against `effectiveRef`, the guard run against `ref` AND `fastForwardTo`, then switch + `--ff-only`. Two regression cases: a remote tip that rewrites an exploration HEAD and the local branch agree on → skip with HEAD unmoved and v1 intact; a remote tip carrying a foreign path the clean local branch lacks → collision skip naming the path, nothing imported.",
+      "ripple_cascade": {
+        "applied": [
+          "test/integration/pr-lifecycle/phase1.ts",
+          "test/integration/pr-lifecycle/phase1.test.ts",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Enumerated archive staging still commits unrelated pre-staged files",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/pr-choreography.ts",
+      "line": 308,
+      "classification": "decision_required",
+      "action": "Option A at BOTH seams. Tail: a `Commit ISOLATION` paragraph — `git add <enumerated>` then `git commit --only <the same enumerated paths>`; git builds the commit from exactly those paths and leaves every other staged entry staged, named in the note (`N unrelated staged entries left staged`); never a plain `git commit` here; the staging/commit recovery bullet carries `--only`. Propose phase 3: the same rule after the enumerated list (and the record's own commit uses `--only <emit-path>`). Specs: the orbit-archive-modifications commit-scope requirement says committed in isolation with the reason, and its `Unrelated dirty paths never ride the commit` scenario now covers pre-staged entries (staged stays staged); the orbit-propose-modifications phase-3 text carries the isolation clause. A harness case proves the recipe against real git: a pre-staged `unrelated-staged.txt` is excluded from the commit and remains staged afterward. Chose A over detect-and-skip because it removes the hazard instead of turning an unrelated staged file into a stranded draft PR.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-archive-modifications/spec.md",
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-propose-modifications/spec.md",
+          "test/integration/pr-lifecycle/phase1.test.ts",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "A — commit isolation with `git commit --only <enumerated paths>` at both seams; pre-staged unrelated entries stay staged and are named, never skipped on.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Commit isolation: git add the enumerated set, then git commit --only the same set; unrelated staged entries stay staged and are named in the note. Both seams."
+          },
+          {
+            "label": "B",
+            "body": "Detect out-of-scope index entries before staging (git diff --cached --name-only) and skip the tail's PR half with a note naming the path."
+          }
+        ],
+        "chosen": "A"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The archive reference still contains the live-config early-return gate",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/pr-choreography.ts",
+      "line": 413,
+      "classification": "trivial_fix",
+      "action": "`PR_ARCHIVE_TAIL_REFERENCE` no longer interpolates `PR_CONFIG_ORDER_SECTION`; its header states the attachment is the only gate at this seam and why. The constant's doc comment now says it is interpolated ONLY by the propose/ff reference and records both catches (architect on 09-10, archive on 09-11). The byte-identical fidelity test slices the tail reference at its own next heading and asserts it carries neither `## Config resolution order` nor `RETURN IMMEDIATELY`. Verified on disk: the gate heading appears once in the propose/ff reference and zero times in the archive and architect references.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/templates/orbit-content-fidelity.test.ts",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The architect reference gates discovery on the URL discovery is meant to recover",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/pr-choreography.ts",
+      "line": 384,
+      "classification": "trivial_fix",
+      "action": "Header reworded: the gate is a MATCHING per-architecture record (`granularity: \"per-architecture\"` and `doc` naming this doc), URL OPTIONAL — a URL-bearing record is validated live against the four predicates; a record without `url` (creation failed at propose, completed by hand) takes the four-axis discovery, named as exactly the recovery case discovery exists for. The live `pr:` value remains never a gate.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The new final push can restart choreography after an earlier failure",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/propose.ts",
+      "line": 314,
+      "classification": "trivial_fix",
+      "action": "The record step is now gated: `ONLY when a PR OPENED or was ADOPTED (the emit's pr_attachment carries url)`, with an explicit `Success gate` paragraph — runs only after every phase-3 step succeeded; after a mid-flight failure the emit stays LOCAL, the flow never retries a rejected outward write in the same invocation, and the manual-recovery note gains the line that lands the record once the failed step is completed by hand. Both bodies' emit steps carry the same gate and the local-after-failure rule; the orbit-propose-modifications phase-3 text says the same (matching its existing `opens (or adopts)` scenario).",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/pr-choreography.ts",
+          "src/core/templates/workflows/ff-change.ts",
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-propose-modifications/spec.md",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Attachment-push recovery stops at an already-completed commit",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/pr-choreography.ts",
+      "line": 230,
+      "classification": "trivial_fix",
+      "action": "Recovery is now STEP-DEPENDENT with completed-vs-pending named: commit failed → `git add <emit-path> && git commit --only <emit-path> && git push <remote> <branch>`; commit succeeded but push failed → `git push <remote> <branch>` ONLY, with the reason stated (a chained add-and-commit stops at `nothing to commit, working tree clean` and never reaches the push). Mirrored in the propose-modifications phase-3 text.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-propose-modifications/spec.md",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Put the early HEAD warning in a genuinely pre-write step",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/archive-change.ts",
+      "line": 357,
+      "classification": "trivial_fix",
+      "action": "New `NEW Step 0.7 — PR-attachment entry observation (READ-ONLY, every provenance path)` placed after the Step 0 consent block and BEFORE upstream Step 1: resolve the attachment from the trail (the same read the consent preview and Step 5.45 use), compare HEAD with `pr_attachment.branch`, and on mismatch say so in the consent preview when one fires or as one line before Step 1, naming both branches and the case-specific switch; unattached changes see nothing. Step 5.45 now observes the PR's LIVE state only and points back at 0.7; the reference's HEAD precondition names the entry step as the early warning and itself as the guard. The archive-ordering fidelity test asserts Step 0.7 exists and precedes Step 1.5.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/pr-choreography.ts",
+          "test/core/templates/orbit-content-fidelity.test.ts",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "8 of 8 resolved; 0 unresolved markers in scope. The headline CRITICAL — `gh repo view --repo` is not valid CLI grammar — is closed at the source and, more importantly, at the instruments that let five passes miss it: the stub now rejects the flag form with the real CLI's message and holds `gh pr` verbs to `--repo`, and the fidelity sweep is command-specific. The second CRITICAL closes the fast-forward hole by resolving the effective tip before compatibility and the generation-input guard run, in reference and transcription, with two regression cases. One decision-lane finding ratified in chat as A: commit isolation (`git commit --only`) at both seams, proven against real git. The archive reference lost the live-config gate the architect reference lost yesterday; the architect gate is URL-optional; the record's final push is gated on a PR having opened and its recovery is step-dependent; the early HEAD warning moved to a genuine entry step. 2004 -> 2008 tests green across 91 files; seven parity hash lines re-pinned across four templates; local surface refreshed and verified; strict-valid; fingerprints 5/5. Working tree left uncommitted.",
+  "iteration": 14,
+  "next_recommended": "/orbit:review --as system --reviewer external d6-pr-lifecycle"
+}

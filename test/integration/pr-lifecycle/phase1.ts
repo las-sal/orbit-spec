@@ -140,45 +140,7 @@ export function runPhase1(input: Phase1Input): Phase1Result {
   if (localExists || remoteExists) {
     const ref = localExists ? branch : `${remote}/${branch}`;
 
-    // --- Compatibility, per path ---------------------------------------------------------
-    if (mode === 'per-architecture') {
-      // "compatible when `git merge-base <program-branch> <resolved-default>` SUCCEEDS"
-      const mb = repo.git('merge-base', ref, `${remote}/${defaultBranch}`);
-      if (mb.status !== 0) {
-        return { action: 'skip', note: `branch '${branch}' shares no ancestry with ${defaultBranch} (unrelated root)` };
-      }
-      const mergeBase = mb.stdout.trim();
-      const tip = repo.git('rev-parse', `${remote}/${defaultBranch}`).stdout.trim();
-      if (mergeBase !== tip) {
-        const count = repo
-          .git('rev-list', '--count', `${mergeBase}..${remote}/${defaultBranch}`)
-          .stdout.trim();
-        aheadBy = Number(count);
-      }
-    } else {
-      // Per-proposal: "no commits beyond the resolved default branch other than this
-      // change's own artifact commits" — a PATH test: every path the branch adds beyond the
-      // default is under orbit/changes/<name>/ (or a deletion under orbit/explore/<name>/).
-      const touched = repo
-        .git('diff', '--name-only', `${remote}/${defaultBranch}...${ref}`)
-        .stdout.split('\n')
-        .filter(Boolean);
-      const own = (p: string) =>
-        p.startsWith(`orbit/changes/${branch}/`) || p.startsWith(`orbit/explore/${branch}/`);
-      const foreign = touched.filter((p) => !own(p));
-      if (foreign.length > 0) {
-        return {
-          action: 'skip',
-          note: `branch '${branch}' carries unrelated work (${foreign[0]}); collision`,
-        };
-      }
-    }
-
-    // --- Generation-input precondition, BEFORE the switch (reuse path) --------------------
-    const guard = generationInputGuard(repo, input.stagingDir, ref);
-    if (guard) return guard;
-
-    // --- Step 6: remote-ahead, BEFORE the switch -----------------------------------------
+    // --- Step 6 FIRST: remote-ahead → the EFFECTIVE tip every later check is run against ----
     // "compare against the resolved remote's tip: fast-forward when possible, otherwise SKIP
     //  with a note naming the divergence. Orbit never force-moves ... a user's branch."
     let fastForwardTo: string | undefined;
@@ -195,6 +157,50 @@ export function runPhase1(input: Phase1Input): Phase1Result {
         };
       }
       // else: local strictly ahead — nothing to do; the push carries it.
+    }
+    const effectiveRef = fastForwardTo ?? ref;
+
+    // --- Compatibility, per path — against the EFFECTIVE tip ------------------------------
+    if (mode === 'per-architecture') {
+      // "compatible when `git merge-base <program-branch> <resolved-default>` SUCCEEDS"
+      const mb = repo.git('merge-base', effectiveRef, `${remote}/${defaultBranch}`);
+      if (mb.status !== 0) {
+        return { action: 'skip', note: `branch '${branch}' shares no ancestry with ${defaultBranch} (unrelated root)` };
+      }
+      const mergeBase = mb.stdout.trim();
+      const tip = repo.git('rev-parse', `${remote}/${defaultBranch}`).stdout.trim();
+      if (mergeBase !== tip) {
+        const count = repo
+          .git('rev-list', '--count', `${mergeBase}..${remote}/${defaultBranch}`)
+          .stdout.trim();
+        aheadBy = Number(count);
+      }
+    } else {
+      // Per-proposal: "no commits beyond the resolved default branch other than this
+      // change's own artifact commits" — a PATH test: every path the branch adds beyond the
+      // default is under orbit/changes/<name>/ (or a deletion under orbit/explore/<name>/).
+      const touched = repo
+        .git('diff', '--name-only', `${remote}/${defaultBranch}...${effectiveRef}`)
+        .stdout.split('\n')
+        .filter(Boolean);
+      const own = (p: string) =>
+        p.startsWith(`orbit/changes/${branch}/`) || p.startsWith(`orbit/explore/${branch}/`);
+      const foreign = touched.filter((p) => !own(p));
+      if (foreign.length > 0) {
+        return {
+          action: 'skip',
+          note: `branch '${branch}' carries unrelated work (${foreign[0]}); collision`,
+        };
+      }
+    }
+
+    // --- Generation-input precondition, BEFORE the switch, against EVERY transition -------
+    // HEAD → local tip on the switch, then local tip → remote tip on the fast-forward.
+    const guard = generationInputGuard(repo, input.stagingDir, ref);
+    if (guard) return guard;
+    if (fastForwardTo) {
+      const guard2 = generationInputGuard(repo, input.stagingDir, fastForwardTo);
+      if (guard2) return guard2;
     }
 
     if (localExists) {
@@ -256,7 +262,8 @@ export function canonicalRepoId(url: string): string | null {
   return null;
 }
 
-/** "`gh repo view --repo <owner>/<repo> --json defaultBranchRef` … falling back to symbolic-ref." */
+/** "`gh repo view <owner>/<repo> --json defaultBranchRef` … falling back to symbolic-ref."
+ *  The repository is POSITIONAL: `gh repo view` has no `--repo` flag (the real CLI rejects it). */
 function resolveDefaultBranch(repo: Repo, remote: string, repoId: string): string | null {
   const res = ghRepoView(repo, repoId);
   if (res) return res;
@@ -266,7 +273,7 @@ function resolveDefaultBranch(repo: Repo, remote: string, repoId: string): strin
 }
 
 function ghRepoView(repo: Repo, repoId: string): string | null {
-  const res = spawnSync('gh', ['repo', 'view', '--repo', repoId, '--json', 'defaultBranchRef'], {
+  const res = spawnSync('gh', ['repo', 'view', repoId, '--json', 'defaultBranchRef'], {
     cwd: repo.dir,
     encoding: 'utf-8',
     env: { ...process.env, PATH: `${repo.binDir}:${process.env.PATH}` },

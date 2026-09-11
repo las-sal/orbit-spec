@@ -146,9 +146,12 @@ capability spec files this archive's sync REPORTED as changed (not the `orbit/sp
 directory — staging the directory would sweep dirty edits to capabilities this archive never
 synced, contradicting the unrelated-paths guarantee one step before READY), the DELETION the
 move produced at the pre-move path `orbit/changes/<change-name>/`, and the explicit list of
-at-archive-note edits the flow itself made;
-unrelated dirty paths are left unstaged and named in a one-line note, so a session's stray
-edits can never ride into a PR about to be flipped READY.
+at-archive-note edits the flow itself made — COMMITTED IN ISOLATION (`git commit --only <the
+enumerated paths>`), because an enumerated `git add` does not restrict a plain `git commit`,
+which commits the whole index and would carry any PRE-STAGED unrelated entry;
+unrelated dirty paths are left unstaged (and unrelated pre-staged entries left staged), each
+named in a one-line note, so a session's stray edits can never ride into a PR about to be
+flipped READY.
 
 Staging the DELETION is not optional bookkeeping: the archive move is a FILESYSTEM move (the
 engine performs no git operation — see `orbit-pr-lifecycle`'s zero-engine-git requirement), so
@@ -312,8 +315,8 @@ inside the tail.
 
 #### Scenario: Unrelated dirty paths never ride the commit
 
-- **WHEN** the session left unrelated tracked edits dirty at the archive tail — INCLUDING a dirty file inside `orbit/specs/` belonging to a capability this archive's sync did not touch
-- **THEN** only the archive's enumerated own-write FILES are staged and committed; the unrelated paths (inside `orbit/specs/` or anywhere else) remain unstaged and are named in a one-line note
+- **WHEN** the session left unrelated tracked edits dirty at the archive tail — INCLUDING a dirty file inside `orbit/specs/` belonging to a capability this archive's sync did not touch — OR left unrelated entries already STAGED in the index
+- **THEN** only the archive's enumerated own-write FILES are committed (`git commit --only`); the unrelated paths (inside `orbit/specs/` or anywhere else) remain in whatever state they were — unstaged stays unstaged, staged stays staged — and are named in a one-line note
 
 #### Scenario: Ordering invariant
 

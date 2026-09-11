@@ -324,11 +324,15 @@ describe('D6 PR lifecycle surface', () => {
     const marker = '## Remote and default-branch resolution (SHARED — both seams)';
     expect(choreography).toContain(marker);
     expect(tail).toContain(marker);
-    // The shared section runs from its heading to the config-order heading that follows it.
-    const slice = (s: string) =>
-      s.slice(s.indexOf(marker), s.indexOf('## Config resolution order'));
-    expect(slice(choreography)).toBe(slice(tail));
-    expect(slice(choreography).length).toBeGreaterThan(200);
+    // The shared section runs from its heading to the next heading in each reference: the
+    // config-order gate in the attaching seams' reference, the preflight in the tail's.
+    const seamSlice = (s: string) => s.slice(s.indexOf(marker), s.indexOf('## Config resolution order'));
+    const tailSlice = (s: string) => s.slice(s.indexOf(marker), s.indexOf('## The read-only PR preflight'));
+    expect(seamSlice(choreography)).toBe(tailSlice(tail));
+    expect(seamSlice(choreography).length).toBeGreaterThan(200);
+    // The archive tail is attachment-gated: no live-config return gate (external iter 3).
+    expect(tail).not.toContain('## Config resolution order');
+    expect(tail).not.toContain('RETURN IMMEDIATELY');
   });
 
   it('no seam resolves a remote or default branch independently', () => {
@@ -339,7 +343,7 @@ describe('D6 PR lifecycle surface', () => {
     }
   });
 
-  it('every copyable gh invocation in the references is repository-qualified', () => {
+  it('every copyable gh invocation in the references is repository-qualified IN THE GRAMMAR THE COMMAND ACCEPTS', () => {
     for (const content of [
       reference(propose, 'pr-choreography.md'),
       reference(archive, 'pr-archive-tail.md'),
@@ -350,7 +354,14 @@ describe('D6 PR lifecycle surface', () => {
       const invocations = content.match(/`gh (?:repo|pr) [a-z]+ [^`]*`/g) ?? [];
       expect(invocations.length).toBeGreaterThan(0);
       for (const inv of invocations) {
-        expect(inv, `unqualified gh invocation: ${inv}`).toContain('--repo');
+        if (inv.startsWith('`gh repo view')) {
+          // Real-CLI grammar (external iter 3): the repository is POSITIONAL; `gh repo view`
+          // has no --repo flag and rejects one.
+          expect(inv, `gh repo view must not carry --repo: ${inv}`).not.toContain('--repo');
+          expect(inv, `gh repo view must take a positional repository: ${inv}`).toMatch(/^`gh repo view <owner>\/<repo>/);
+        } else {
+          expect(inv, `unqualified gh invocation: ${inv}`).toContain('--repo');
+        }
       }
     }
   });
@@ -397,7 +408,10 @@ describe('D6 PR lifecycle surface', () => {
   it('archive positions the preflight BEFORE the emit and the tail AFTER it', () => {
     const b = archive.instructions;
     // Anchor on the HEADINGS: the prose carries forward references to later steps.
+    const entryObservation = b.indexOf('## NEW Step 0.7');
     const preflight = b.indexOf('## NEW Step 5.45');
+    expect(entryObservation).toBeGreaterThan(-1);
+    expect(entryObservation).toBeLessThan(b.indexOf('## NEW Step 1.5')); // before any archive write
     const emit = b.indexOf('## NEW Step 5.5 — Archive run summary');
     const tail = b.indexOf('## NEW Step 5.6 — The PR-attached tail');
     const garnish = b.indexOf('## NEW Step 5.7 — Stage-line garnish');

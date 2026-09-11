@@ -311,9 +311,11 @@ orbit emit propose --change <name> --payload <payload-file>
 
 The ENGINE owns the spine, the trail path, timestamp + collision handling, and \`next_recommended\` composition (propose-shaped: the review-gate pointer). Never hand-compose the JSON.
 
-When the PR choreography ran, the emit is NOT the last act: commit and push the just-written
-emit file per the reference's "Recording the attachment" section — the attachment record the
-archive tail dereferences must reach the branch.
+When the choreography OPENED or ADOPTED a PR (the emit's \`pr_attachment\` carries \`url\`), the
+emit is NOT the last act: commit and push the just-written emit file per the reference's
+"Recording the attachment" section — the attachment record the archive tail dereferences must
+reach the branch. After a mid-flight failure the emit stays LOCAL; landing it is part of the
+manual recovery the failure note names.
 
 **Completion-prompt override (chat)**: where the upstream steps above prompt "Run \`/orbit:apply\` or ask me to implement", instead prompt: "Run \`/orbit:review <name>\` — review the artifacts before implementation." The upstream text above is kept verbatim; this override is the operative instruction.
 `,

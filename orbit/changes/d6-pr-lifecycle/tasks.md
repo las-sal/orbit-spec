@@ -68,7 +68,8 @@ Implementation chunks:
       `orbit-pr-lifecycle`'s `Remote and default-branch resolution` ONCE as a reusable body
       step and have propose, ff, AND the archive tail invoke it — one remote wins whatever
       its name; multiple → prefer `origin` else skip with an ambiguity note; default branch
-      via `gh repo view --repo <owner>/<repo>` → `git symbolic-ref refs/remotes/<remote>/HEAD`
+      via `gh repo view <owner>/<repo>` (positional — corrected 2026-09-11, external iter 3: the
+      command has no `--repo` flag) → `git symbolic-ref refs/remotes/<remote>/HEAD`
       → skip with note. Derive the CANONICAL `<owner>/<repo>` identifier from the resolved
       remote's URL (HTTPS and SSH forms) and pass `--repo` on EVERY `gh` invocation at every
       seam — `repo view`, `pr list/create/view/edit/ready`, and any `merge` text; never a

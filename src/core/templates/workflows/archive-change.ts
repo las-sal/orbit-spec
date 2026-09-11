@@ -232,6 +232,21 @@ Determine invocation provenance — an observable transcript fact, never a judgm
 
 **Sync inheritance (no double-prompt)**: the sync-specs step this flow invokes (upstream Step 4) inherits THIS flow's consent — it never fires a separate consent prompt.
 
+## NEW Step 0.7 — PR-attachment entry observation (READ-ONLY, every provenance path — D-arc Stage D6)
+
+Before ANY archive write — before upstream Step 1, before sync (Step 4) and the move (Step 5)
+— resolve whether this change is PR-ATTACHED: read \`pr_attachment\` from the LATEST
+attachment-bearing PROPOSE or FF emit on the change's trail (the same read the consent
+preview in Step 0 uses on the AI-mediated path, and the same read Step 5.45 will use). This
+step mutates nothing and runs on EVERY provenance path, user-typed included. When attached,
+compare HEAD's branch (\`git branch --show-current\`) with \`pr_attachment.branch\`. On mismatch,
+SAY SO NOW — in the consent preview when one fires, otherwise as one line before Step 1 —
+naming both branches and the case-specific switch (\`git switch <branch>\` locally; the
+tracking form when only the remote has it). The tail's HEAD precondition (in the reference)
+remains the GUARD that skips the PR half; this observation is the early warning that lets the
+user switch first instead of carrying uncommitted sync, move, and emit writes across a
+\`git switch\` afterward. Unattached changes see nothing here.
+
 ## NEW Step 1.5 — Unresolved \`@review:\` marker warning
 
 After upstream Step 1 (selection) but before Step 2 (artifact completion check):
@@ -354,12 +369,9 @@ Feed that ONE observation to BOTH the Step 5.5 emit and the Step 5.6 tail so the
 disagree. Cannot observe (no \`gh\`, failed query) → elide the emit's PR fields and skip the
 tail; never block the archive.
 
-Also observe — read-only — whether HEAD's branch (\`git branch --show-current\`) equals
-\`pr_attachment.branch\`. On mismatch, SAY SO NOW, naming both branches, in the consent
-preview when one fires and otherwise as one line BEFORE any archive write: the tail's HEAD
-precondition (in the reference) remains the guard that skips the PR half, but surfacing the
-mismatch here lets the user switch first instead of carrying uncommitted sync, move, and
-emit writes across a \`git switch\` afterward.
+(The HEAD-vs-attachment observation already fired at Step 0.7, before any archive write; this
+step observes the PR's LIVE state only. The tail re-checks HEAD immediately before staging as
+its guard.)
 
 ## NEW Step 5.5 — Archive run summary
 

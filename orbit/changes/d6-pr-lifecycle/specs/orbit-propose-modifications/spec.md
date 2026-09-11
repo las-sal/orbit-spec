@@ -18,13 +18,18 @@ and the order is normative because a simpler one cannot execute:
 2. **ARTIFACT GENERATION + VALIDATION**, performed ON that branch exactly as it is
    performed without the PR layer.
 3. **OUTWARD WRITES, only after (2) SUCCEEDS.** Commit the generated artifacts (and moved
-   staging material), push, and open the DRAFT PR with the agent-written INTENT description
+   staging material) IN ISOLATION — `git commit --only <the enumerated paths>`, so a
+   pre-staged unrelated index entry never rides — push, and open the DRAFT PR with the agent-written INTENT description
    — or, on the cited program path, land on the program branch and adopt-or-open the
-   program PR. Then record the attachment in the propose (or ff) emit and COMMIT + PUSH that
-   emit file as the seam's FINAL act: the record is the authority the archive tail
+   program PR. Then record the attachment in the propose (or ff) emit and — ONLY when a PR
+   opened or was adopted, i.e. every phase-3 step succeeded — COMMIT (in isolation) + PUSH
+   that emit file as the seam's FINAL act: the record is the authority the archive tail
    dereferences, and an uncommitted record is lost to any fresh checkout between the seams,
    stranding the PR draft with no designed recovery. Same seam, same invocation, no new
-   consent; the seams-only refresh rule is untouched.
+   consent; the seams-only refresh rule is untouched. After a mid-flight failure the emit
+   stays local — the flow never retries a rejected outward write in the same invocation —
+   and landing it is a named line of the manual recovery; the recovery for the record's own
+   commit/push is step-dependent (push only when the commit already succeeded).
 
 GENERATION-INPUT PRECONDITION (phase 1, checked BEFORE the switch, on BOTH the reuse and
 the create path). Because the switch rewrites TRACKED content and phase 2 now runs after it,

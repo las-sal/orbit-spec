@@ -8,6 +8,7 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
+import { spawnSync } from 'node:child_process';
 import { describe, it, expect, afterEach } from 'vitest';
 import { makeRepo, type Repo } from './harness.js';
 import { runPhase1, canonicalRepoId } from './phase1.js';
@@ -79,13 +80,27 @@ describe('D6 phase 1 — remote and repository resolution', () => {
     expect(canonicalRepoId('/tmp/some/local/path.git')).toBeNull();
   });
 
-  it('passes --repo on the gh repo view call', () => {
+  it('passes the repository POSITIONALLY on gh repo view — never --repo, which the real CLI rejects', () => {
     const repo = repoFor();
     runPhase1({ repo, mode: 'per-proposal', branch: 'add-thing' });
     const view = repo.ghLog().find((i) => i.args[0] === 'repo');
     expect(view).toBeDefined();
-    expect(view!.args).toContain('--repo');
-    expect(view!.args).toContain('acme/widget');
+    expect(view!.args).toEqual(['repo', 'view', 'acme/widget', '--json', 'defaultBranchRef']);
+    expect(view!.args).not.toContain('--repo');
+  });
+
+  it('the gh stub rejects the flag form of repo view, so the wrong grammar can never pass again', () => {
+    const repo = repoFor();
+    const env = { ...process.env, PATH: `${repo.binDir}:${process.env.PATH}` };
+    const bad = spawnSync('gh', ['repo', 'view', '--repo', 'acme/widget', '--json', 'defaultBranchRef'], { cwd: repo.dir, encoding: 'utf-8', env });
+    expect(bad.status).toBe(1);
+    expect(bad.stderr).toContain('unknown flag: --repo');
+    const good = spawnSync('gh', ['repo', 'view', 'acme/widget', '--json', 'defaultBranchRef'], { cwd: repo.dir, encoding: 'utf-8', env });
+    expect(good.status).toBe(0);
+    expect(JSON.parse(good.stdout).defaultBranchRef.name).toBe('main');
+    // And the pr verbs are held to the contract in the other direction.
+    const unq = spawnSync('gh', ['pr', 'list', '--head', 'x', '--state', 'open', '--json', 'url'], { cwd: repo.dir, encoding: 'utf-8', env });
+    expect(unq.status).toBe(1);
   });
 
   it('falls back to symbolic-ref when gh repo view fails', () => {
@@ -319,6 +334,67 @@ describe('D6 phase 1 — step 6, remote-ahead (fast-forward when possible, skip 
     // Nothing moved: HEAD stayed on main and the user's branch is untouched.
     expect(repo.git('rev-parse', '--abbrev-ref', 'HEAD').stdout.trim()).toBe('main');
     expect(repo.git('rev-parse', 'add-thing').stdout.trim()).toBe(localTip);
+  });
+});
+
+describe('D6 commit isolation (external iter 3): the documented recipe leaves pre-staged unrelated entries out and staged', () => {
+  it('git add <paths> && git commit --only <paths> excludes a pre-staged unrelated file and keeps it staged', () => {
+    const repo = repoFor();
+    // The user had something staged before the seam ran.
+    repo.write('unrelated-staged.txt', 'not mine to publish\n');
+    repo.git('add', 'unrelated-staged.txt');
+    // The seam's enumerated set.
+    repo.write('orbit/changes/add-thing/proposal.md', '# proposal\n');
+    repo.git('add', 'orbit/changes/add-thing/proposal.md');
+    const commit = repo.git('commit', '-q', '--only', 'orbit/changes/add-thing/proposal.md', '-m', 'add-thing artifacts');
+    expect(commit.status).toBe(0);
+    const inCommit = repo.git('show', '--name-only', '--format=', 'HEAD').stdout.split('\n').filter(Boolean);
+    expect(inCommit).toEqual(['orbit/changes/add-thing/proposal.md']);
+    // The unrelated entry is still staged — untouched, not published.
+    expect(repo.git('diff', '--cached', '--name-only').stdout.trim()).toBe('unrelated-staged.txt');
+  });
+});
+
+describe('D6 phase 1 — step 6 resolves the EFFECTIVE tip before the checks (external iter 3)', () => {
+  it('SKIPS when the remote tip would rewrite an exploration that HEAD and the local branch agree on', () => {
+    const repo = repoFor();
+    // Exploration v1 committed on main; branch cut from it (so local branch == HEAD content).
+    repo.write('orbit/explore/add-thing/explore.md', '# exploration v1\n');
+    repo.commitAll('exploration v1');
+    repo.git('push', '-q', 'origin', 'main');
+    repo.git('switch', '-q', '-c', 'add-thing');
+    repo.git('push', '-q', 'origin', 'add-thing');
+    // The REMOTE tip of the branch changes the exploration (another checkout pushed).
+    repo.write('orbit/explore/add-thing/explore.md', '# exploration v2 (remote)\n');
+    repo.commitAll('remote-side exploration');
+    repo.git('push', '-q', 'origin', 'add-thing');
+    repo.git('reset', '-q', '--hard', 'HEAD~1'); // local branch back to v1 == main
+    repo.git('switch', '-q', 'main');
+
+    const res = runPhase1({ repo, mode: 'per-proposal', branch: 'add-thing', stagingDir: 'orbit/explore/add-thing' });
+    expect(res.action).toBe('skip');
+    expect(res.note).toMatch(/absent or different on origin\/add-thing/);
+    expect(repo.git('rev-parse', '--abbrev-ref', 'HEAD').stdout.trim()).toBe('main');
+    expect(fs.readFileSync(path.join(repo.dir, 'orbit/explore/add-thing/explore.md'), 'utf-8')).toContain('v1');
+  });
+
+  it('SKIPS as a collision when the remote tip carries a FOREIGN path the local branch does not', () => {
+    const repo = repoFor();
+    repo.git('switch', '-q', '-c', 'add-thing');
+    repo.write('orbit/changes/add-thing/proposal.md', '# proposal\n');
+    repo.commitAll('add-thing artifacts');
+    repo.git('push', '-q', 'origin', 'add-thing');
+    repo.write('unrelated.md', 'someone else, on the remote\n');
+    repo.commitAll('remote-side unrelated');
+    repo.git('push', '-q', 'origin', 'add-thing');
+    repo.git('reset', '-q', '--hard', 'HEAD~1'); // local is strictly behind, and clean of it
+    repo.git('switch', '-q', 'main');
+
+    const res = runPhase1({ repo, mode: 'per-proposal', branch: 'add-thing' });
+    expect(res.action).toBe('skip');
+    expect(res.note).toMatch(/unrelated work \(unrelated\.md\); collision/);
+    expect(repo.git('rev-parse', '--abbrev-ref', 'HEAD').stdout.trim()).toBe('main');
+    expect(repo.exists('unrelated.md')).toBe(false);
   });
 });
 

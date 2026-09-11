@@ -160,11 +160,16 @@ fs.appendFileSync(${JSON.stringify(logPath)}, JSON.stringify(args) + '\\n');
 const script = JSON.parse(fs.readFileSync(path.join(__dirname, 'gh-script.json'), 'utf-8'));
 const sub = args.join(' ');
 if (sub.startsWith('repo view')) {
+  // Real-CLI grammar: the repository is POSITIONAL; \`gh repo view\` has no --repo flag.
+  if (args.includes('--repo')) { process.stderr.write('unknown flag: --repo\\n'); process.exit(1); }
+  if (!args[2] || args[2].startsWith('--')) { process.stderr.write('stub: gh repo view requires a positional <owner>/<repo>\\n'); process.exit(1); }
   if (script.defaultBranch === null) { process.stderr.write('gh: could not resolve\\n'); process.exit(1); }
   process.stdout.write(JSON.stringify({ defaultBranchRef: { name: script.defaultBranch } }));
   process.exit(0);
 }
 if (sub.startsWith('pr list')) {
+  // Contract: every \`gh pr\` verb is qualified with --repo (the real CLI would guess otherwise).
+  if (!args.includes('--repo')) { process.stderr.write('stub: gh pr verbs must carry --repo per the shared resolution\\n'); process.exit(1); }
   if (script.prList === null) { process.stderr.write('gh: query failed\\n'); process.exit(1); }
   process.stdout.write(JSON.stringify(script.prList));
   process.exit(0);
