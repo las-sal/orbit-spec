@@ -43,8 +43,15 @@ from the one this algorithm chose — defeating the point of resolving a remote 
 PR NUMBER is likewise repository-relative: never put one in copyable text without \`--repo\`,
 or address the PR by full URL.
 
-**Default branch.** \`gh repo view <owner>/<repo> --json defaultBranchRef\` when \`gh\` is
-available, falling back to \`git symbolic-ref refs/remotes/<resolved-remote>/HEAD\` (note: a
+**\`gh\` availability — checked FIRST, before any branch work.** \`command -v gh\` (or an
+equivalent PATH lookup): when \`gh\` is ABSENT, this invocation takes the degraded path (behave
+as \`never\`, one note) and NO branch is created, switched, or fast-forwarded. A missing
+executable is a different fact from an installed CLI whose query fails, and the two must
+never collapse into one null result.
+
+**Default branch.** \`gh repo view <owner>/<repo> --json defaultBranchRef\` — \`gh\` is present
+by now — falling back to \`git symbolic-ref refs/remotes/<resolved-remote>/HEAD\` ONLY for an
+INSTALLED \`gh\` whose query fails (auth, network, rate limit) (note: a
 checkout built by \`git init\` + \`remote add\` + \`fetch\` has NO remote HEAD ref — only a clone
 sets it — so the fallback is not a rescue for healthy GitHub access; the \`gh\` form must be
 right). When
@@ -132,7 +139,11 @@ proceeds unattached — generating on the current branch exactly as under \`pr: 
      <resolved-remote>/<default>...<branch>\` lists is under \`orbit/changes/<change-name>/\`
      (or a deletion under \`orbit/explore/<change-name>/\`) — the same discipline the
      enumerated commit scope imposes at phase 3. Any other path means a same-named branch
-     carrying unrelated work: a COLLISION, skip with a note naming the foreign path.
+     carrying unrelated work: a COLLISION, skip with a note naming the foreign path. The
+     diff must RESOLVE: a same-named branch with NO merge base against the default (an
+     unrelated root — \`git diff\` exits non-zero with \`no merge base\` and empty output) is
+     a COLLISION too, never an empty compatible diff — a failed observation is a skip,
+     not a pass.
    - *Program* — compatible when \`git merge-base <program-branch> <resolved-default>\`
      SUCCEEDS (shared ancestry). NOT tip-ancestry: a program branch is long-lived, so the
      default branch advancing underneath it is expected at every stage after the first, and a
@@ -302,7 +313,11 @@ nothing.
    DISCARD candidates whose base is not the resolved default branch — requiring EXACTLY ONE
    survivor. Zero / several / query-error are three distinct one-line notes. The tail flips
    and records; it never creates.
-4. **Observe current draft/ready state** (\`gh pr view --repo <owner>/<repo> --json isDraft\`).
+4. **Observe current draft/ready state** — \`gh pr view --repo <owner>/<repo> <url> --json isDraft\`,
+   addressing the PR by the URL step 2 validated (or step 3 discovered). The selector is
+   REQUIRED: with \`--repo\` and no URL or number the real CLI exits before any request
+   (\`argument required when using the --repo flag\`), and the observation must never depend
+   on the current checkout branch.
 
 Feed that ONE observation to both the emit and the tail so they cannot disagree. Cannot
 observe (no \`gh\`, failed query — the observation itself is unavailable, which is DISTINCT

@@ -247,6 +247,44 @@ file-resident only — user-judged PASS, 9.6 checked, 31/31). Archive: user-type
 prompts, fingerprints 26/26, sync 33 blocks byte-verified, at-archive notes 9.4/9.5/9.7
 executed in-flow. **1918 tests green.**
 
+**Stage D6 (d6-pr-lifecycle) is COMPLETE and ARCHIVED**
+(`orbit/changes/archive/2026-09-11-d6-pr-lifecycle/`): **the PR lifecycle is a DESIGNED
+lifecycle step**. A three-mode `pr:` scalar in `orbit/config.yaml` (`never | per-proposal |
+per-architecture`; absent = `never`; every inert value warns and resolves to `never`) is READ
+by the bodies from `orbit status --json` field `pr` (every bare-tier rung carries it) — never
+parsed from YAML. Propose and ff open a DRAFT PR on the change's branch through THREE ORDERED
+PHASES (select + switch BEFORE generation, guarded by the tracked-state generation-input
+precondition and the effective-tip rule; generate + validate on the branch; commit in
+ISOLATION with `git commit --only`, push, `gh pr create` with an explicit title and an
+agent-written intent body; then the `pr_attachment` record committed + pushed as the seam's
+success-gated final act). The archive tail is ATTACHMENT-gated (never live-config-gated):
+commit → push → landmark rewrite (per-change) or READ-APPEND-WRITE stage entry (program) →
+`gh pr ready` for per-change PRs ONLY; program PRs (Shape A, one per architecture doc) are
+flipped by the HUMAN at arc-done, surfaced by the architect readout. **ZERO ENGINE GIT**: every
+git/`gh` action is workflow-body choreography from ONE source, `src/core/templates/workflows/
+pr-choreography.ts` (four sections composed into three `references/` files — propose+ff,
+archive, architect — with the shared resolution byte-identical across all three; repository
+qualification is COMMAND-SPECIFIC: `--repo` + a selector on the `gh pr` verbs, POSITIONAL on
+`gh repo view`). Merging is always the user's act (the residual outward-actions rule is an
+`orbit-conventions` requirement echoed at lifecycle seams). Baseline **19 → 20**
+(`orbit-pr-lifecycle` ADDED with 9 requirements; 7 capabilities modified). The cycle: 8-pass
+proposal cadence (3 external GPT-5 Codex iterations, 38 findings) → apply (30/31; 6.3 is the
+exit-criterion-1 dogfood, a declared user-validation handoff) → a SEVEN-pass system cadence:
+in-context → fresh → **external ×2 in parallel (GPT-5 Codex + a clean-context Claude Fable
+5.1**, sharing one CRITICAL found by the same real-git experiment) → in-context confirm →
+**external Codex iter 3** (`gh repo view --repo` was invalid grammar — five passes missed it
+because the stub accepted it) → **external Codex iter 4** (the tail's `gh pr view` lacked the
+selector) — 42 system findings, all walked to zero, none re-opened, the instruments hardened
+each round (the `gh` stub enforces real-CLI grammar; the fidelity sweep is command-specific
+and selector-aware; 33 phase-1 harness cases against real git). Archived through a recorded
+`gate_overridden` (review-system unpassed: no independent pass had yet come back clean over
+the final tree — R-d-10's sanctioned interim path, user-ratified); user-typed, zero consent
+prompts, fingerprints 5/5, sync 19 blocks (14 ADDED + 5 MODIFIED) byte-verified, at-archive
+notes 5.5–5.9 executed in-flow (arc doc stage section retired its superseded sketch and marked
+the D1 leanings resolved; R-d-11 single-session ruling recorded; R-d-4 exception recorded).
+**2011 tests green.** The dogfood (6.3) runs on the next standalone change once `main`
+carries this work — phase 1 cuts branches from the RESOLVED DEFAULT, never the current branch.
+
 ## Source of truth for the plan
 
 - `orbit/architecture/fork-and-orbify.md` — the COMPLETED fork-program architecture (historical record; relocated from orbit/explore/ 2026-07-08). Decisions **D1–D15**

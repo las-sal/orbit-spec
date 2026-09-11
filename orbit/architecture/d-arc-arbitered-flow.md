@@ -82,6 +82,13 @@ is owned by each stage's explore/change per R-d-7 — this index holds only cros
   value `no-new-substantive-findings`: gates.ts + orbit-engine-gates delta + spec-driven v4 +
   conventions prose + tests); until it ships, the recorded `gate_overridden` proceed-anyway is
   the sanctioned interim path.
+- **R-d-11** (Sal, 2026-08-20; recorded at D6 archive 2026-09-11) — Single-session operating
+  assumption: orbit is SINGLE-USER, SINGLE-SESSION — one user-invoked lifecycle command at a
+  time. Concurrency support (locking, serialization, optimistic retry, conflict-merge) is an
+  explicit NON-GOAL across the arc; a finding asking for it is answered with a NAMED v1 LIMIT
+  plus DETECTION (e.g. the remote-tip divergence skip), never with a lock. Cross-stage because
+  it governs every future capability touching shared or remote state (Stage D6 design carries
+  the stance and its first application).
 
 ## Open questions (arc-level)
 
@@ -283,18 +290,25 @@ lifecycle step, not a policed ad-hoc action** — propose opens a DRAFT PR on th
 act outside orbit. The early draft makes the PR the human-facing window onto the change for its
 whole life (artifacts, `.orbit-runs/` trail, and review iterations visible as they happen; CI
 from day one; the pushed-branch requirement shared with review-external's handoff preflight).
-Optional via config (e.g. `pr: draft-at-propose | at-archive | never`) with graceful
-no-remote/no-GitHub degradation. The residual outward-actions rule (off-script merges, releases,
+Optional via config — the ratified three-mode key `pr: never | per-proposal |
+per-architecture` (D6 design D-d6-1/D-d6-2, 2026-08-12; the earlier `draft-at-propose |
+at-archive | never` sketch is SUPERSEDED — a single scalar, never a multi-key block) — with
+graceful no-remote/no-GitHub degradation. The residual outward-actions rule (off-script merges, releases,
 issue-filing) shrinks to a short conventions requirement echoed into lifecycle-completion
 outputs, plus a CLAUDE.md line per project for non-orbit sessions.
 
-Open questions carried from D1: **(e)** draft→READY trigger — leaning archive (READY =
-merge-eligible: all gates passed, baseline synced); **(f)** who ratifies the draft-PR open —
-leaning provenance (user-typed `/orbit:propose` + config = standing consent; AI-mediated propose
-SKIPS the PR step rather than prompting); **(g)** branch-management bite-size — leaning zero
-engine git: branch/commit/push/`gh pr` as workflow-body steps (propose offers to create
-`<change-name>` off the default branch), full `openspec branch`-style scaffolding out; multi-repo
-changes explicitly deferred. Prior art: `openspec-parallel-merge-plan.md` Phase 3.3. Affinity
+Open questions carried from D1 — all three RESOLVED by D6 (`d6-pr-lifecycle`, archived
+2026-09-11; detail in its design.md): **(e)** draft→READY trigger — leaning archive (READY =
+merge-eligible: all gates passed, baseline synced) → RESOLVED: the READY condition is uniform
+(archive), and the flip is PERFORMED for per-change PRs at the archive tail and SURFACED for
+program PRs at arc-done as the human's act (D-d6-4/D-d6-5); **(f)** who ratifies the draft-PR
+open — leaning provenance (user-typed `/orbit:propose` + config = standing consent; AI-mediated
+propose SKIPS the PR step rather than prompting) → SUPERSEDED: propose is not consent-scoped
+and behavior is provenance-INVARIANT — the PR step never silently skips by arrival path
+(D-d6-6); **(g)** branch-management bite-size — leaning zero engine git: branch/commit/push/`gh
+pr` as workflow-body steps (propose offers to create `<change-name>` off the default branch),
+full `openspec branch`-style scaffolding out; multi-repo changes explicitly deferred →
+CONFIRMED: zero engine git shipped (D-d6-7), verified at every review pass. Prior art: `openspec-parallel-merge-plan.md` Phase 3.3. Affinity
 with D5's handoff/boot thread (both make phase boundaries produce durable, transferable
 artifacts); depends on D1's consent vocabulary shipping first.
 
@@ -664,3 +678,45 @@ invisible in tasks.md typography).
   19th capability with a real Purpose; at-archive notes 9.4/9.5/9.7 executed in-flow.
   **1918 tests green.** Stage d5 renders quiescent — completion awaiting ratification (the
   remaining seams of exit criterion 3 gather evidence there).
+
+- **2026-09-11 — D6 ARCHIVED (baseline 19 → 20).** The PR lifecycle as a DESIGNED lifecycle
+  step: the three-mode `pr:` scalar (`never | per-proposal | per-architecture`) read by the
+  bodies from the orientation surface (every bare-tier rung carries `pr`); a draft PR at
+  propose/ff (three ordered phases — select + switch BEFORE generation, guarded by the
+  tracked-state generation-input precondition and the effective-tip rule; commit ISOLATION
+  with `--only`; the attachment record committed + pushed as the seam's success-gated final
+  act); the archive tail (attachment-gated, never live-config-gated: commit → push →
+  landmark rewrite or read-append-write stage entry → READY flip for per-change PRs only);
+  program PRs (Shape A, one per architecture doc, READY flip a human act at arc-done surfaced
+  by the architect readout); ZERO ENGINE GIT — every git/`gh` act is workflow-body
+  choreography from ONE reference source (`pr-choreography.ts`: four sections composed into
+  three references, the shared resolution byte-identical across propose/ff, archive, and
+  architect); `orbit-pr-lifecycle` created as the 20th capability with 9 requirements, 7
+  capabilities modified. The cadence: an 8-pass proposal review (3 external GPT-5 Codex
+  iterations, 38 findings) then apply, then a SEVEN-pass system cadence — in-context (0C/2W/1S)
+  → fresh (1C/5W/2S: the no-changes rung omitted `pr`) → external iteration 1 as TWO parallel
+  passes, **GPT-5 Codex** (1C/2W) and a clean-context **Claude Fable 5.1** (1C/7W/4S), sharing
+  one CRITICAL found by the same real-git experiment (the precondition keyed on worktree
+  presence) → in-context confirm (1W/1S: a shared constant reused past its consumer) →
+  **external Codex iter 3** (2C/5W/1S: `gh repo view --repo` was INVALID GRAMMAR — five passes
+  had missed it because the stub accepted it; the fast-forward bypassed the guards) →
+  **external Codex iter 4** (1C/5W: the tail's `gh pr view` lacked the selector `--repo`
+  requires; ripple misses from the previous walk). 42 system findings across seven passes,
+  all walked to zero, none re-opened; the INSTRUMENTS hardened each time (the `gh` stub now
+  enforces real-CLI grammar in both directions; the fidelity sweep is command-specific and
+  selector-aware; the harness is genuinely `gh`-absent when asked; 33 phase-1 cases). Gate
+  `review-system` UNPASSED at archive — the latest independent pass carried a CRITICAL and no
+  independent pass has yet come back clean over the current tree — and the archive proceeded
+  through a recorded `gate_overridden` (R-d-10's sanctioned interim path), user-ratified at
+  the inflection prompt; task 6.3 (the exit-criterion-1 dogfood on a real change) stays the
+  declared user-validation handoff, to run on the next standalone change once `main` carries
+  this work (phase 1 cuts branches from the resolved default). Archive: user-typed, zero
+  consent prompts, fingerprints 5/5 verified, sync of 19 delta blocks (14 ADDED + 5 MODIFIED)
+  byte-verified, unattached (proposed before the capability existed: no tail), at-archive
+  notes 5.5–5.9 executed in-flow. **2011 tests green.** Stage d6 renders quiescent —
+  completion awaiting ratification (exit criteria 1 and 3 gather their evidence in the
+  dogfood; criterion 2 holds shipped and tested).
+  **R-d-4 subtraction EXCEPTION (user-ratified 2026-08-20; recorded here per at-archive note
+  5.8):** D6 adds an outward-facing capability with no predecessor to reclaim from, so it
+  names NO removal — the rule stands; this departure is dated and visible rather than silent
+  (rationale in the change's design.md).

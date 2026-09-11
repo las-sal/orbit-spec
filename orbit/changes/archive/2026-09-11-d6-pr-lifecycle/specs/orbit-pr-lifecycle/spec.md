@@ -147,12 +147,16 @@ selection — uses that ONE resolved remote.
 Resolving the remote is not enough on its own: `gh` selects a repository by its OWN
 heuristics unless told otherwise, so the resolved remote SHALL be converted into a CANONICAL
 GITHUB REPOSITORY IDENTIFIER (`<owner>/<repo>`, derived from that remote's URL in either the
-HTTPS or SSH form) and that identifier passed EXPLICITLY — `--repo <owner>/<repo>` — on
-EVERY `gh` invocation at either seam: `repo view`, `pr list`, `pr create`, `pr view`,
-`pr edit`, `pr ready`, and any `pr merge` text. A bare PR NUMBER is likewise
-repository-relative and SHALL NOT be used alone; commands surfaced in readouts and recovery
-notes carry the full PR URL or the `--repo` flag, so text the user copies resolves the same
-repository the algorithm chose. A remote URL that does not parse as a GitHub repository is a
+HTTPS or SSH form) and that identifier passed EXPLICITLY on EVERY `gh` invocation at either
+seam, IN THE GRAMMAR EACH COMMAND ACCEPTS: the `gh pr` verbs (`pr list`, `pr create`,
+`pr view`, `pr edit`, `pr ready`, and any `pr merge` text) take `--repo <owner>/<repo>`;
+`gh repo view` takes the repository POSITIONALLY (`gh repo view <owner>/<repo>`) and has no
+`--repo` flag. The selector-taking verbs (`pr view`, `pr edit`, `pr ready`, `pr merge`)
+additionally carry the PR's identity — its full URL, or its number alongside `--repo` — since
+`--repo` without a selector is rejected by the CLI before any request. A bare PR NUMBER is
+likewise repository-relative and SHALL NOT be used alone; commands surfaced in readouts and
+recovery notes carry the full PR URL or the `--repo` flag, so text the user copies resolves
+the same repository the algorithm chose. A remote URL that does not parse as a GitHub repository is a
 degradation skip with a one-line note, never a guess. Without this the rule defeats itself:
 the whole point of resolving a remote is defeated if the commands then ask `gh` to pick.
 
@@ -169,7 +173,7 @@ that it could not resolve, and never reports a missing PR on that basis.
 #### Scenario: Every gh command carries the resolved repository
 
 - **WHEN** any seam invokes `gh` in a fork checkout, or in a checkout whose single remote is not named `origin`
-- **THEN** the invocation carries `--repo <owner>/<repo>` derived from the RESOLVED remote (or addresses the PR by full URL) — `gh`'s implicit repository selection is never relied on, and recovery/readout text the user copies carries the same qualification; an unparseable remote URL is a degradation skip
+- **THEN** the invocation names the repository derived from the RESOLVED remote in the grammar that command accepts — `--repo <owner>/<repo>` on the `gh pr` verbs (with the PR's URL or number where the verb takes a selector), the positional `<owner>/<repo>` on `gh repo view` — so `gh`'s implicit repository selection is never relied on, and recovery/readout text the user copies carries the same qualification; an unparseable remote URL is a degradation skip
 
 #### Scenario: One algorithm, both seams
 

@@ -166,6 +166,30 @@ describe('target resolution and spine composition', () => {
     ).toThrow(/no archived directory matching/);
   });
 
+  it('archive accepts the schema\'s CONDITIONAL fields — gate_overridden, fingerprint override/unverified, audit_skipped_via_flag (D6 archive, 2026-09-11)', () => {
+    write('orbit/changes/archive/2026-09-11-bar/proposal.md', 'p');
+    const gate = { gate: 'review-system', state: 'unpassed', reason: 'latest independent pass carried 1 CRITICAL' };
+    const r = composeAndWriteEmit(
+      'archive',
+      { change: 'bar' },
+      {
+        final_assessment: 'Archived bar through a recorded override.',
+        archive_path: 'orbit/changes/archive/2026-09-11-bar/',
+        gate_overridden: gate,
+        fingerprint_overridden: [{ capability: 'c', requirement: 'r', base_hash: 'sha256:a', live_hash: 'sha256:b' }],
+        fingerprints_unverified: [{ capability: 'c', requirement: 'q' }],
+        audit_skipped_via_flag: true,
+        model: null,
+      },
+      { projectRoot: root }
+    );
+    const persisted = JSON.parse(fs.readFileSync(r.path, 'utf-8'));
+    expect(persisted.gate_overridden).toEqual(gate);
+    expect(persisted.fingerprint_overridden).toHaveLength(1);
+    expect(persisted.fingerprints_unverified).toHaveLength(1);
+    expect(persisted.audit_skipped_via_flag).toBe(true);
+  });
+
   it('collision bumps the token forward and the self-pointer names the FINAL path', () => {
     makeChange('foo');
     vi.useFakeTimers();

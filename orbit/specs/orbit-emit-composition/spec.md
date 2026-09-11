@@ -20,7 +20,25 @@ payload-field table (the fields the emitting AI genuinely authors — review: `m
 count of prior address-reviews emits on the resolved trail plus one, ANCHORED PER DOC on the
 shared architecture trail (a doc-scoped walk counts only logs whose `doc` matches — the same
 per-doc rule as the review-architecture ordinal; doc B's walk never counts doc A's logs),
-rejected when payload-supplied; the table's per-command rows derive from the
+rejected when payload-supplied; propose and ff additionally accept an OPTIONAL structured
+`pr_attachment` object (`{branch, granularity, url?, state?, doc?}` — the composite ATTACHMENT
+record whose owning definition and key semantics live in `orbit-run-summary-emit`), and
+archive additionally accepts OPTIONAL `pr_url` and `pr_state` narrative pass-through fields
+(archive RESOLVES no attachment — it reads the one propose/ff recorded and reports the PR
+state it observed) (per `orbit-pr-lifecycle` — the trail records
+the outward PR artifact's URL and state AS OBSERVED AT EMIT TIME, never a forward-looking
+claim: `pr_state` is exactly one of the two lowercase strings `"draft"` or `"ready"` (a
+closed or merged PR is NOT representable — the field records the draft/ready axis only, so a
+body elides the field both when it CANNOT observe the state and when it observes a condition
+off that axis; `pr_url` may still accompany an elided `pr_state`, recording which PR was
+observed). The archive emit is written after the
+tail's READ-ONLY PREFLIGHT and before its mutations, so it records what the preflight
+OBSERVED — normally `"draft"`, and truthfully `"ready"` when the PR was already flipped (by
+the USER at an earlier point, including at a prior program's arc-done for a program PR
+adopted afterward — never by a stage);
+the READY transition that the tail performs afterward is evidenced by the PR itself and the
+completion readout, NOT by a field asserting a state that has not happened. Both fields are
+elided when absent, never computed by the engine); the table's per-command rows derive from the
 owning capability's emit definitions, and these inline lists are EXCERPTS of that derivation —
 the owning capability's definition governs when they diverge). Fields the engine owns (`command`, `timestamp`,
 `change`, `kind`, the filename token, every deterministic fact per the deterministic-facts
@@ -58,6 +76,11 @@ so provenance is always a conscious act.
 
 - **WHEN** `orbit emit frobnicate --change foo` is invoked
 - **THEN** the surface exits non-zero with a clean error naming the supported command set; no file is written
+
+#### Scenario: PR pass-through fields record emit-time truth
+
+- **WHEN** an archive payload includes `pr_url` and `pr_state` carrying the value the read-only preflight observed — `"draft"` ordinarily, or `"ready"` for a PR already flipped before this archive
+- **THEN** the written emit carries both fields verbatim; the engine enforces the enum and the observed-not-predicted contract, not a particular value (a body composing a state it did NOT observe is the false record — including asserting `"ready"` on the strength of a flip the tail has yet to perform); the same fields on a review payload are rejected as unknown keys
 
 ### Requirement: Engine-owned spine composition and filename discipline
 

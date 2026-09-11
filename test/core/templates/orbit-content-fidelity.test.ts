@@ -190,6 +190,15 @@ describe('orbit content fidelity (B1 relocation)', () => {
     });
   });
 
+  it('onboard teaches the per-granularity archive tail: per-change flips READY, program archives append only (external iter 4)', () => {
+    const body = getOnboardSkillTemplate().instructions;
+    expect(body).toMatch(/for a per-change PR, rewrite the description[^.]*flip the PR \*\*READY\*\*/);
+    expect(body).toMatch(/for a PROGRAM PR[^.]*APPEND this stage's entry[^.]*flip NOTHING/);
+    expect(body).toContain("stage archives never flip the program PR");
+    // The old unconditional sentence must not survive.
+    expect(body).not.toMatch(/\(or append this stage's entry, for a program PR\), and flip the PR/);
+  });
+
   it('onboard reflects the self-contained fork, not the dead overlay model', () => {
     const skill = getOnboardSkillTemplate().instructions;
     // new orbit-spec framing present
@@ -354,6 +363,14 @@ describe('D6 PR lifecycle surface', () => {
       const invocations = content.match(/`gh (?:repo|pr) [a-z]+ [^`]*`/g) ?? [];
       expect(invocations.length).toBeGreaterThan(0);
       for (const inv of invocations) {
+        // Selector-taking pr verbs (external iter 4): `--repo` alone is not runnable grammar —
+        // `gh pr view --repo X` exits with `argument required when using the --repo flag`.
+        // A URL or number must follow the repository.
+        if (/^`gh pr (?:view|edit|ready|merge|close|reopen|checkout) /.test(inv)) {
+          expect(inv, `selector-taking gh pr verb without a PR selector: ${inv}`).toMatch(
+            /--repo <owner>\/<repo> (?:<url>|<number>)/
+          );
+        }
         if (inv.startsWith('`gh repo view')) {
           // Real-CLI grammar (external iter 3): the repository is POSITIONAL; `gh repo view`
           // has no --repo flag and rejects one.

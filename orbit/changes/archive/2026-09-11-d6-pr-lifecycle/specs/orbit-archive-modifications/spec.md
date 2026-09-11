@@ -221,8 +221,10 @@ that finish the interrupted work, keyed to WHICH step failed, and state the cons
 stopping there:
 
 - **Staging or commit failed** — nothing is committed. The note names the enumerated paths
-  and the `git add <paths> && git commit` form; consequence: the archive's writes are
-  present but uncommitted, and the PR is untouched.
+  and the `git add <paths> && git commit --only <paths>` form — the ISOLATED commit, so a
+  manual recovery preserves the pre-staged-entries guarantee exactly as the automatic path
+  does (a plain `git commit` here would publish the whole index); consequence: the archive's
+  writes are present but uncommitted, and the PR is untouched.
 - **Push failed** — a local archive commit exists. The note names
   `git push <resolved-remote> <branch>`; consequence: the PR does not yet contain its own
   archive commit, and READY would be dishonest, which is why the ordering invariant already

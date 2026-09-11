@@ -162,6 +162,14 @@ const COMMANDS: Record<string, CommandSpec> = {
       // attachment, so the fields are flat rather than the correlated `pr_attachment` unit.
       'pr_url',
       'pr_state',
+      // The archive schema's CONDITIONAL fields (C1 gate override; C2 fingerprint override /
+      // unverified; the --skip-audit flat flag). Omitted from this table at D5, which made the
+      // fail-loud gate reject the first proceed-anyway archive routed through the surface
+      // (D6 archive, 2026-09-11) — a required record the spec names.
+      'gate_overridden',
+      'fingerprint_overridden',
+      'fingerprints_unverified',
+      'audit_skipped_via_flag',
     ],
   },
 };

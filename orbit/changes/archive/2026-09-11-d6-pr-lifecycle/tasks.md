@@ -71,9 +71,12 @@ Implementation chunks:
       via `gh repo view <owner>/<repo>` (positional — corrected 2026-09-11, external iter 3: the
       command has no `--repo` flag) → `git symbolic-ref refs/remotes/<remote>/HEAD`
       → skip with note. Derive the CANONICAL `<owner>/<repo>` identifier from the resolved
-      remote's URL (HTTPS and SSH forms) and pass `--repo` on EVERY `gh` invocation at every
-      seam — `repo view`, `pr list/create/view/edit/ready`, and any `merge` text; never a
-      bare PR number in copyable text. Unparseable remote URL = degradation skip. Grep-test
+      remote's URL (HTTPS and SSH forms) and qualify EVERY `gh` invocation at every seam in
+      the grammar each command accepts — `--repo` on `pr list/create/view/edit/ready` and any
+      `merge` text (plus the PR's URL/number on the selector-taking verbs), POSITIONAL on
+      `repo view` (corrected 2026-09-11, external iter 4: the universal-flag wording here was
+      the invalid grammar's last surviving statement); never a bare PR number in copyable
+      text. Unparseable remote URL = degradation skip. Grep-test
       that no seam resolves a remote or base independently AND that no `gh` invocation in any
       body omits repository qualification.
 - [x] 3.1b Propose body: propose's OWN preconditions, ALL IN PHASE 1 — evaluated before any

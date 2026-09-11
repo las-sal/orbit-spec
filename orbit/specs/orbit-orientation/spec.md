@@ -12,7 +12,6 @@ answering the return-after-a-day and cold-start questions with one command and z
 reads. Invocation is CLI-only with a CLAUDE.md cold-start pointer; both tiers support `--json`.
 
 ## Requirements
-
 ### Requirement: Bare `orbit status` renders the current sprint
 
 Bare `orbit status` (no `--change`, no `--full`) SHALL render the CURRENT-SPRINT view when at
@@ -347,13 +346,21 @@ ORDERED ARRAY of chip objects `{phase, glyph, detail?}` — `phase` from the str
 requirement's phase list, `glyph` from its closed glyph mapping, `detail` carrying iteration
 counts (`⟲6`) or progress (`12/20`) when present; the text strip render is DERIVED from this
 array, and JSON never carries a pre-rendered strip string. Bare emits
-`{sprint, last, next, also, waiting}` — `sprint` IS one such workstream entry; `--full` emits
+`{sprint, last, next, also, waiting, pr}` — `sprint` IS one such workstream entry; `--full` emits
 `{program, workstreams, last,
-waiting}` with `workstreams` an array of such entries (the program array reusing the
-architecture-status bucket shapes). The JSON carries untruncated `final_assessment`
+waiting, pr}` with `workstreams` an array of such entries (the program array reusing the
+architecture-status bucket shapes). `pr` is the RESOLVED PR-lifecycle regime (D-arc Stage D6:
+one of `never` / `per-proposal` / `per-architecture`, computed by the engine's `pr:` config
+reader per `orbit-pr-lifecycle` — an absent, unrecognized, or malformed config value resolves
+to `never` with the reader's own warning, never to an absent key), and it is present on EVERY
+bare-tier `--json` shape, including the zero-workstreams / zero-parseable-docs rung whose
+`{changes: [], message}` object gains the same key: the workflow bodies read the regime from
+this surface rather than parsing `orbit/config.yaml`, and a fresh adopter's FIRST change is
+proposed from exactly that rung, so an omitted key there would read as `never` by design. The JSON carries untruncated `final_assessment`
 strings (truncation is a text-render concern only). When the degradation ladder makes bare
 render the `--full` view (zero live workstreams), bare `--json` emits the FULL shape — the
-fallback switches the whole tier, not just the text render. No stability contract beyond shape
+fallback switches the whole tier, not just the text render — and the no-changes rung keeps its
+text byte-identical while its JSON carries `pr`. No stability contract beyond shape
 is promised in this capability (deferred; see the change's proposal).
 
 #### Scenario: Bare JSON carries untruncated last
@@ -370,6 +377,11 @@ is promised in this capability (deferred; see the change's proposal).
 
 - **WHEN** a workstream's metadata load fails and `--json` runs (bare with it as sprint, or `--full`)
 - **THEN** its entry is `{name, kind, degraded: true, error}` plus only trustworthy fields — never a fabricated full tuple, never null-padded
+
+#### Scenario: Every bare-tier JSON rung carries the resolved PR regime
+
+- **WHEN** `orbit status --json` runs with `pr: per-proposal` configured and NO active workstream and NO parseable architecture doc (the degradation ladder's no-changes rung)
+- **THEN** the emitted object is `{changes: [], message, pr}` with `pr` equal to `"per-proposal"` — the same key rungs 1 and 2 carry — and the text render of that rung is unchanged
 
 ### Requirement: CLI-only invocation with a cold-start pointer
 

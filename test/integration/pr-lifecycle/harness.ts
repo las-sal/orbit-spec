@@ -39,14 +39,20 @@ export class Repo {
   constructor(
     readonly dir: string,
     /** Directory holding the `gh` stub; put on PATH for every command this repo runs. */
-    readonly binDir: string
+    readonly binDir: string,
+    /**
+     * The PATH every command this repo runs sees. Defaults to the stub dir ahead of the host
+     * PATH; `gh: 'absent'` narrows it to the stub dir plus the system dirs so a host-installed
+     * `gh` is GENUINELY absent (external iter 4) rather than merely un-stubbed.
+     */
+    readonly envPath: string = `${binDir}:${process.env.PATH}`
   ) {}
 
   git(...args: string[]): { status: number; stdout: string; stderr: string } {
     const res = spawnSync('git', args, {
       cwd: this.dir,
       encoding: 'utf-8',
-      env: { ...process.env, PATH: `${this.binDir}:${process.env.PATH}` },
+      env: { ...process.env, PATH: this.envPath },
     });
     return { status: res.status ?? 1, stdout: res.stdout ?? '', stderr: res.stderr ?? '' };
   }
@@ -111,7 +117,12 @@ export function makeRepo(
 
   if (opts.gh !== 'absent') installGhStub(binDir, opts.gh ?? {}, defaultBranch);
 
-  const repo = new Repo(dir, binDir);
+  // `absent` must mean absent: a PATH of only the (empty) stub dir plus the system dirs,
+  // where git lives but no host-installed gh does.
+  const repo =
+    opts.gh === 'absent'
+      ? new Repo(dir, binDir, `${binDir}:/usr/bin:/bin`)
+      : new Repo(dir, binDir);
   repo.git('init', '-q', '-b', defaultBranch);
   repo.git('config', 'user.email', 'harness@orbit.test');
   repo.git('config', 'user.name', 'Harness');

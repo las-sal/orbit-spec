@@ -59,6 +59,17 @@ describe('D6 phase 1 — remote and repository resolution', () => {
     expect(res.note).toMatch(/never guesses/);
   });
 
+  it('degrades BEFORE any branch work when gh is genuinely absent from PATH — even with a resolvable remote HEAD', () => {
+    const repo = repoFor({ gh: 'absent' });
+    repo.git('remote', 'set-head', 'origin', 'main'); // the symbolic-ref fallback WOULD resolve
+    const res = runPhase1({ repo, mode: 'per-proposal', branch: 'add-thing' });
+    expect(res.action).toBe('skip');
+    expect(res.note).toMatch(/gh is not available/);
+    // No branch or HEAD mutation.
+    expect(repo.git('rev-parse', '--abbrev-ref', 'HEAD').stdout.trim()).toBe('main');
+    expect(repo.git('rev-parse', '--verify', '-q', 'add-thing').status).not.toBe(0);
+  });
+
   it('degrades to never when there is no remote at all', () => {
     const repo = repoFor({ remote: 'none' });
     const res = runPhase1({ repo, mode: 'per-proposal', branch: 'add-thing' });
@@ -199,6 +210,21 @@ describe('D6 phase 1 — the reuse path that the old ordering made impossible', 
 
     expect(res.action).toBe('proceed');
     expect(repo.git('rev-parse', '--abbrev-ref', 'HEAD').stdout.trim()).toBe('add-thing');
+  });
+
+  it('reports a same-named per-proposal branch with NO merge base (unrelated root) as a collision, never an empty compatible diff', () => {
+    const repo = repoFor();
+    repo.git('switch', '-q', '--orphan', 'add-thing');
+    repo.write('foreign.txt', 'someone else, unrelated history\n');
+    repo.commitAll('unrelated root');
+    repo.git('switch', '-q', 'main');
+    expect(repo.exists('foreign.txt')).toBe(false);
+
+    const res = runPhase1({ repo, mode: 'per-proposal', branch: 'add-thing' });
+    expect(res.action).toBe('skip');
+    expect(res.note).toMatch(/no merge base/);
+    expect(repo.git('rev-parse', '--abbrev-ref', 'HEAD').stdout.trim()).toBe('main');
+    expect(repo.exists('foreign.txt')).toBe(false);
   });
 
   it('reports a per-proposal branch carrying unrelated work as a collision', () => {

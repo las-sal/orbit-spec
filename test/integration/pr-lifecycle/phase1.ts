@@ -103,6 +103,13 @@ export function runPhase1(input: Phase1Input): Phase1Result {
     return { action: 'skip', note: `remote URL does not parse as a GitHub repository: ${url}` };
   }
 
+  // --- gh availability — FIRST, before any branch work -----------------------------------
+  // "A missing executable is a different fact from an installed CLI whose query fails."
+  const ghProbe = spawnSync('gh', ['--version'], { cwd: repo.dir, encoding: 'utf-8', env: { ...process.env, PATH: repo.envPath } });
+  if (ghProbe.error || ghProbe.status !== 0) {
+    return { action: 'skip', note: 'gh is not available on PATH; PR layer degrades to never for this invocation (no branch work)' };
+  }
+
   // --- Default branch --------------------------------------------------------------------
   const view = repo.git('rev-parse', '--git-dir'); // ensure repo is sane before shelling gh
   if (view.status !== 0) return { action: 'skip', note: 'not a git repository' };
@@ -179,10 +186,16 @@ export function runPhase1(input: Phase1Input): Phase1Result {
       // Per-proposal: "no commits beyond the resolved default branch other than this
       // change's own artifact commits" — a PATH test: every path the branch adds beyond the
       // default is under orbit/changes/<name>/ (or a deletion under orbit/explore/<name>/).
-      const touched = repo
-        .git('diff', '--name-only', `${remote}/${defaultBranch}...${effectiveRef}`)
-        .stdout.split('\n')
-        .filter(Boolean);
+      const diff = repo.git('diff', '--name-only', `${remote}/${defaultBranch}...${effectiveRef}`);
+      if (diff.status !== 0) {
+        // A failed observation is a skip, never an empty compatible diff: `...` with no merge
+        // base (an unrelated-root branch) exits 128 with empty stdout.
+        return {
+          action: 'skip',
+          note: `branch '${branch}' shares no merge base with ${defaultBranch} (${diff.stderr.trim() || 'diff failed'}); collision`,
+        };
+      }
+      const touched = diff.stdout.split('\n').filter(Boolean);
       const own = (p: string) =>
         p.startsWith(`orbit/changes/${branch}/`) || p.startsWith(`orbit/explore/${branch}/`);
       const foreign = touched.filter((p) => !own(p));
@@ -276,7 +289,7 @@ function ghRepoView(repo: Repo, repoId: string): string | null {
   const res = spawnSync('gh', ['repo', 'view', repoId, '--json', 'defaultBranchRef'], {
     cwd: repo.dir,
     encoding: 'utf-8',
-    env: { ...process.env, PATH: `${repo.binDir}:${process.env.PATH}` },
+    env: { ...process.env, PATH: repo.envPath },
   });
   if (res.status !== 0) return null;
   try {
