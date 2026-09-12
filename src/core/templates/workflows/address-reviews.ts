@@ -591,6 +591,7 @@ The schema below documents per-command extensions ADDED to that spine (\`source\
       "outcome": "resolved" | "stale" | "deferred" | "escalated"
     }
   ],
+  "delegation_directive": "<optional: the user's verbatim mid-walk delegation, when one was issued>",
   "remaining_markers_in_scope": 0,
   "persisted_escalations": [
     { "file": "...", "line": 0, "title": "...", "reason": "..." }

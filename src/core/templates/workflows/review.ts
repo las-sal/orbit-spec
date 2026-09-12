@@ -25,7 +25,7 @@ This schema inherits the 6-field **universal spine** from \`orbit-conventions\`'
 - \`next_recommended\` (the DETERMINISTIC pointer for change modes: the \`/orbit:address-reviews <name> --from-file <this emit's own path>\` invocation when the pass has findings, the \`orbit status --change <name> --report\` render pointer when clean — the engine-computed canonical next rides the rendered tail, never the emit)
 - \`kind: "editorial"\` (review is an editorial command per the kind taxonomy)
 
-The schema below documents per-command extensions ADDED to that spine (\`mode\`, \`iteration\`, \`depth\`, \`reviewer_class\`, \`flags\`, \`passes_run\`, \`passes_skipped\`, \`scorecard\`, \`findings\`, \`stale_suppressed\`, \`commentary\`). The former \`findings_summary\` and \`iteration_note\` fields are RETIRED in CHANGE MODES (D-arc Stage D4): \`scorecard\` supersedes the counts (readers tolerate both generations), and the iteration note is RENDERER-computed from the trail — a stored copy would be a second stale voice. (Architecture-mode emits keep \`findings_summary\` with \`by_pass\` keys on the interim hand-rendered path documented below — no render surface covers the architecture trail yet.) Per-command extensions are review-specific state; they supplement, not replace, the spine.
+The schema below documents per-command extensions ADDED to that spine (\`mode\`, \`iteration\`, \`depth\`, \`reviewer_class\`, \`flags\`, \`passes_run\`, \`passes_skipped\`, \`scorecard\`, \`findings\`, \`stale_suppressed\`, \`commentary\`). The former \`findings_summary\` and \`iteration_note\` fields are RETIRED in CHANGE MODES (D-arc Stage D4): \`scorecard\` supersedes the counts (readers tolerate both generations), and the iteration note is RENDERER-computed from the trail — a stored copy would be a second stale voice. (Architecture-mode emits carry the same \`scorecard\` shape; the interim hand-rendered report path documented below reads it — no render surface covers the architecture trail yet.) Per-command extensions are review-specific state; they supplement, not replace, the spine.
 
 ## Schema
 
@@ -100,7 +100,7 @@ Architecture-mode emits (\`review-architecture-<TS>.json\` in the architecture t
 
 - \`change: null\` and a REQUIRED \`doc\` field (the reviewed doc's filename stem — iteration counting anchors to matching-\`doc\` emits only).
 - \`mode: "architecture"\`; \`iteration\` is per-doc (not per-change).
-- \`findings_summary\` uses \`by_pass\` keys \`"1"\`–\`"6"\` (the six architecture passes); findings cite \`<doc>.md:line\`.
+- \`scorecard\` is the same 3-dimension × 3-severity shape as change modes — the engine runs the scorecard rollup check in architecture mode too (corrected 2026-09-11 by the schema-table parity test; \`findings_summary\` was never accepted by the review payload table); findings cite \`<doc>.md:line\`.
 - \`flags.mark\` / \`flags.skip_verify\` are absent (change-mode-only flags); \`parallel\`/\`fast\`/\`focus\` record their no-op values.
 - \`final_assessment\` / \`next_recommended\` are GATE-LESS: with findings, address-reviews targeting this emit; all-clear, \`"No findings. The architecture trail records this pass."\` — never a lifecycle command.
 - A REQUIRED \`handoff\` section per arc ruling R-d-9(b) (shape owned by \`orbit-architect\`): \`boot_sequence\` (ordered POINTERS into existing artifacts, never duplicated substance), \`next_command\`, \`model_hint\` (nullable), \`seam\`.
@@ -114,7 +114,7 @@ Architecture-mode emits (\`review-architecture-<TS>.json\` in the architecture t
   "mode": "architecture",
   "reviewer_class": "in-context" | "fresh" | "external",
   "iteration": <integer, per-doc>,
-  "findings_summary": { "critical": 0, "warning": 0, "suggestion": 0, "by_pass": { "1": { "critical": 0, "warning": 0, "suggestion": 0 } } },
+  "scorecard": { "completeness": { "critical": 0, "warning": 0, "suggestion": 0 }, "correctness": { "critical": 0, "warning": 0, "suggestion": 0 }, "coherence": { "critical": 0, "warning": 0, "suggestion": 0 } },
   "findings": [ ... same finding shape ... ],
   "final_assessment": "<gate-less phrasing>",
   "next_recommended": "<address-reviews targeting this emit, or the all-clear sentence>",

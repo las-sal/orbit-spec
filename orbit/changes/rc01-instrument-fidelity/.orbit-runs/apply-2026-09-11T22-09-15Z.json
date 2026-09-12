@@ -1,0 +1,24 @@
+{
+  "command": "apply",
+  "timestamp": "2026-09-11T22:09:15Z",
+  "change": "rc01-instrument-fidelity",
+  "kind": "workflow",
+  "model": "claude-fable-5-1",
+  "gate_overridden": {
+    "gate": "review-proposal",
+    "state": "unpassed",
+    "reason": "cadence class 'in-context' has no fresh pass"
+  },
+  "consent": "user-invoked",
+  "tasks_completed": 13,
+  "tasks_remaining": 0,
+  "user_validation_remaining": 0,
+  "chunk": null,
+  "chunk_name": null,
+  "chunk_complete": true,
+  "tasks_completed_this_session": 13,
+  "files_touched": null,
+  "diff_base": "b64fd606456465fd7badfbbbf680d65bbac4e1e7",
+  "final_assessment": "13 of 13 tasks done. All 13 tasks in one session: the gh contract captured from gh 2.91.0 (7 commands with usage shapes, flag arity and short aliases, both error-rule strings verbatim, the availability probe banner), the shared CommonJS validator with 6 unit-test groups, the stub rewritten as a validator over the contract (five hand-written branches gone), the sweep validating every reference snippet through the same validator plus five negative fixtures, the schema-table parity test over every full-record block with three named regression cases, and the two stale mirrors corrected (audit-drift's six extra keys; review's architecture-mode findings_summary → scorecard) — a surface refresh changed exactly those two references/ files. Verification: 2012 → 2032 tests green; the whole suite passes with no host gh on PATH; every spawnSync('gh') site in the test tree passes a stub-first or absent PATH; strict-valid. One read-only accessor (payloadFieldsFor) exported from emit-composition.ts for the parity test — recorded in design Touchpoints and task 4.1; no engine behavior change.",
+  "next_recommended": "/orbit:review --as system rc01-instrument-fidelity"
+}

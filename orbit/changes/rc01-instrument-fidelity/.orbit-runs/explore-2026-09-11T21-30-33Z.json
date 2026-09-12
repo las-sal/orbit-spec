@@ -1,0 +1,12 @@
+{
+  "command": "explore",
+  "timestamp": "2026-09-11T21:30:33Z",
+  "change": "rc01-instrument-fidelity",
+  "kind": "workflow",
+  "model": "claude-fable-5-1",
+  "final_assessment": "Named exploration rc01-instrument-fidelity opened (Mode B): five-section scaffold and minimal metadata written; architecture citation recorded (clean-up-review-cycle / rc01-instrument-fidelity — settled under R-crc-3, the exploration serves the declared stage). Nothing discussed yet.",
+  "decisions_captured": 0,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "next_recommended": "/orbit:explore rc01-instrument-fidelity — continue capturing thinking — no decisions captured yet"
+}

@@ -112,6 +112,19 @@ describe('D6 phase 1 — remote and repository resolution', () => {
     // And the pr verbs are held to the contract in the other direction.
     const unq = spawnSync('gh', ['pr', 'list', '--head', 'x', '--state', 'open', '--json', 'url'], { cwd: repo.dir, encoding: 'utf-8', env });
     expect(unq.status).toBe(1);
+    expect(unq.stderr).toContain('must carry --repo');
+    // repo view without its positional repository is orbit's own contract, not the CLI's.
+    const unpos = spawnSync('gh', ['repo', 'view', '--json', 'defaultBranchRef'], { cwd: repo.dir, encoding: 'utf-8', env });
+    expect(unpos.status).toBe(1);
+    expect(unpos.stderr).toContain('requires a positional');
+    // The selector rule, with the real CLI's message.
+    const nosel = spawnSync('gh', ['pr', 'view', '--repo', 'acme/widget', '--json', 'isDraft'], { cwd: repo.dir, encoding: 'utf-8', env });
+    expect(nosel.status).toBe(1);
+    expect(nosel.stderr).toContain('argument required when using the --repo flag');
+    // The availability probe is answered from the contract's captured banner.
+    const probe = spawnSync('gh', ['--version'], { cwd: repo.dir, encoding: 'utf-8', env });
+    expect(probe.status).toBe(0);
+    expect(probe.stdout).toMatch(/^gh version \d/);
   });
 
   it('falls back to symbolic-ref when gh repo view fails', () => {

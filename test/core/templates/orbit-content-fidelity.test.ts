@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'vitest';
+import fs from 'node:fs';
+import path from 'node:path';
+import { createRequire } from 'node:module';
 
 import {
   getExploreSkillTemplate,
@@ -317,6 +320,22 @@ describe('D6 PR lifecycle surface', () => {
     return ref!.content;
   }
 
+  // The recorded real-CLI contract and the ONE validator the stub also loads.
+  const ghContract = JSON.parse(
+    fs.readFileSync(path.join(process.cwd(), 'test', 'integration', 'pr-lifecycle', 'gh-contract.json'), 'utf-8')
+  );
+  const { validate: validateGh } = createRequire(import.meta.url)(
+    path.join(process.cwd(), 'test', 'integration', 'pr-lifecycle', 'gh-contract-validate.cjs')
+  ) as { validate: (argv: string[], c: unknown) => { ok: boolean; message?: string } };
+  /** Backticked snippet → argv (leading `gh` dropped; placeholders are ordinary tokens; a trailing ellipsis is prose). */
+  function snippetArgv(snippet: string): string[] {
+    return snippet
+      .replace(/^`|`$/g, '')
+      .split(/\s+/)
+      .filter((t) => t && t !== '…' && t !== '...')
+      .slice(1);
+  }
+
   it('propose and ff ship the SAME choreography reference (identical bytes)', () => {
     const a = reference(propose, 'pr-choreography.md');
     const b = reference(ff, 'pr-choreography.md');
@@ -352,7 +371,10 @@ describe('D6 PR lifecycle surface', () => {
     }
   });
 
-  it('every copyable gh invocation in the references is repository-qualified IN THE GRAMMAR THE COMMAND ACCEPTS', () => {
+  it('every copyable gh invocation in the references validates against the recorded real-CLI contract (grammar, not execution)', () => {
+    // rc01-instrument-fidelity: the sweep and the stub derive from ONE contract through ONE
+    // validator; a snippet the real CLI would reject (unknown flag, missing selector) or that
+    // breaks orbit's qualification contract fails here, naming the snippet and the rule.
     for (const content of [
       reference(propose, 'pr-choreography.md'),
       reference(archive, 'pr-archive-tail.md'),
@@ -363,23 +385,25 @@ describe('D6 PR lifecycle surface', () => {
       const invocations = content.match(/`gh (?:repo|pr) [a-z]+ [^`]*`/g) ?? [];
       expect(invocations.length).toBeGreaterThan(0);
       for (const inv of invocations) {
-        // Selector-taking pr verbs (external iter 4): `--repo` alone is not runnable grammar —
-        // `gh pr view --repo X` exits with `argument required when using the --repo flag`.
-        // A URL or number must follow the repository.
-        if (/^`gh pr (?:view|edit|ready|merge|close|reopen|checkout) /.test(inv)) {
-          expect(inv, `selector-taking gh pr verb without a PR selector: ${inv}`).toMatch(
-            /--repo <owner>\/<repo> (?:<url>|<number>)/
-          );
-        }
-        if (inv.startsWith('`gh repo view')) {
-          // Real-CLI grammar (external iter 3): the repository is POSITIONAL; `gh repo view`
-          // has no --repo flag and rejects one.
-          expect(inv, `gh repo view must not carry --repo: ${inv}`).not.toContain('--repo');
-          expect(inv, `gh repo view must take a positional repository: ${inv}`).toMatch(/^`gh repo view <owner>\/<repo>/);
-        } else {
-          expect(inv, `unqualified gh invocation: ${inv}`).toContain('--repo');
-        }
+        const argv = snippetArgv(inv);
+        const r = validateGh(argv, ghContract);
+        expect(r.ok, `${inv} → ${r.message ?? ''}`).toBe(true);
       }
+    }
+  });
+
+  it('the sweep rejects what the stub rejects: negative fixtures per rule', () => {
+    const cases: Array<[string, string]> = [
+      ['`gh repo view --repo <owner>/<repo> --json defaultBranchRef`', 'unknown flag: --repo'],
+      ['`gh repo view --json defaultBranchRef`', 'requires a positional'],
+      ['`gh pr list --head <branch> --state open --json url`', 'must carry --repo'],
+      ['`gh pr view --repo <owner>/<repo> --json isDraft`', 'argument required when using the --repo flag'],
+      ['`gh pr frobnicate --repo <owner>/<repo>`', 'unknown command'],
+    ];
+    for (const [snippet, message] of cases) {
+      const r = validateGh(snippetArgv(snippet), ghContract);
+      expect(r.ok, snippet).toBe(false);
+      expect(r.message, snippet).toContain(message);
     }
   });
 

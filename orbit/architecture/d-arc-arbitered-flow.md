@@ -713,7 +713,9 @@ invisible in tasks.md typography).
   this work (phase 1 cuts branches from the resolved default). Archive: user-typed, zero
   consent prompts, fingerprints 5/5 verified, sync of 19 delta blocks (14 ADDED + 5 MODIFIED)
   byte-verified, unattached (proposed before the capability existed: no tail), at-archive
-  notes 5.5–5.9 executed in-flow. **2011 tests green.** Stage d6 renders quiescent —
+  notes 5.5–5.9 executed in-flow; the archive emit table gained the schema's conditional
+  fields (an engine defect found at the emit, fixed in-flow with a test). **2012 tests green.**
+  Stage d6 renders quiescent —
   completion awaiting ratification (exit criteria 1 and 3 gather their evidence in the
   dogfood; criterion 2 holds shipped and tested).
   **R-d-4 subtraction EXCEPTION (user-ratified 2026-08-20; recorded here per at-archive note

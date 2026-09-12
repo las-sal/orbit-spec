@@ -1,0 +1,29 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-11T17:58:53Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-fable-5-1",
+  "final_assessment": "Created orbit/architecture/clean-up-review-cycle.md in the parseable format at the first architect session. Premise, five falsifiable goals, and four candidate stages (c1-instrument-fidelity, c2-walk-completeness, c3-cadence-arithmetic, c4-schema-table-parity) are scaffolded from the D6 archive's evidence — the seven-pass system cadence that archived through a gate override, the two real-CLI grammar CRITICALs the cycle's own stub and sweep accepted, the ripple-miss findings one walk left for the next pass, the parallel-external ordinal strain, and the archive emit table that lagged its schema. Everything is marked PROPOSED and unratified; no ruling was spoken; nothing ratified; the rulings index is empty. Session ends at the scaffold for Sal to shape.",
+  "stages_touched": [
+    "c1-instrument-fidelity",
+    "c2-walk-completeness",
+    "c3-cadence-arithmetic",
+    "c4-schema-table-parity"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "handoff": {
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md — the scaffold; every section is PROPOSED, read the premise's four observations first",
+      "orbit/changes/archive/2026-09-11-d6-pr-lifecycle/.orbit-runs/ — the evidence trail: external-system-2026-09-11T00-54-45Z.md and -15-27-09Z.md (the grammar CRITICALs), address-reviews-2026-09-11T14-57-12Z.json and -15-54-54Z.json (the walks whose ripple misses the next pass found)",
+      "orbit/architecture/d-arc-arbitered-flow.md — R-d-10 and issue #8 (the cadence exit that stage c3 revisits); the 2026-09-11 status-log entry (the override at archive)",
+      "orbit/.orbit-runs/audit-drift-2026-09-11T17-50-50Z.json — the post-archive project sweep (clean but for the count hotfix)"
+    ],
+    "next_command": "/orbit:architect clean-up-review-cycle",
+    "model_hint": null,
+    "seam": "architect session boundary — scaffold written, awaiting the user's shaping and first rulings before any stage is chartered or explored"
+  },
+  "next_recommended": "/orbit:architect clean-up-review-cycle"
+}

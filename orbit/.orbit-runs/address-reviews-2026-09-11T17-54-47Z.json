@@ -1,0 +1,54 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-11T17:54:47Z",
+  "change": null,
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/.orbit-runs/audit-drift-2026-09-11T17-50-50Z.json",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 1
+  },
+  "pushback_verification": "1 finding verified: both cited lines still read 2011 while the archive commit 6a5e3b6 runs 2012; not stale.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "The D6 stage paragraph (and the arc doc's matching status-log entry) states 2011 tests, but the archive commit it describes carries 2012",
+      "marker_source": "audit-drift",
+      "file": "CLAUDE.md",
+      "line": 285,
+      "classification": "trivial_fix",
+      "action": "Both lines now read 2012 and name the in-flow engine fix that added the test (CLAUDE.md D6 paragraph; arc doc status-log entry at line 716). The arc doc still validates. The archive emit's own final_assessment (audit trail) is left as written.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/architecture/d-arc-arbitered-flow.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/changes/archive/2026-09-11-d6-pr-lifecycle/.orbit-runs/archive-2026-09-11T17-41-00Z.json",
+            "reason": "audit-trail file; cascade skipped by policy"
+          }
+        ]
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "1 of 1 resolved; 0 unresolved markers in scope. Hotfix to two governing-doc lines (test count 2011 → 2012, naming the in-flow engine fix); the archive emit stays as written. Working tree left uncommitted.",
+  "iteration": 1,
+  "next_recommended": "No markers remain in scope; the project trail records this walk."
+}

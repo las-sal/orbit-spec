@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-09-11T23:59:52Z",
+  "change": "rc01-instrument-fidelity",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "mode": "system",
+  "prompt_path": "orbit/changes/rc01-instrument-fidelity/.orbit-runs/external-prompt-system-2026-09-11T23-59-50Z.md",
+  "target": null,
+  "final_assessment": "External review prompt packaged for rc01-instrument-fidelity (iter 1, mode system — the first independent look at the implementation); awaiting findings. Handoff preflight FAILED on the working-tree check — 26 uncommitted entries: the whole change (its artifacts and trail), the eight implementation files (contract, capture script, validator, stub, sweep, parity test, three mirror corrections, the accessor), and today's earlier architecture and audit work. Remote sync is clean (0 unpushed on origin/d-arc at 6a5e3b6). The pull invocation is withheld until the pending work is committed and pushed. The prompt names the seven verification subjects, the two ratified non-defects, and — in place of the absent lens passes — asks for the adversarial probe that matters most here: re-run the capture and diff it, run the suite with gh absent, then try to DEFEAT the instruments with a snippet that is wrong but passes or right but fails. It also carries the program's severity rule (CRITICAL requires a reproduction) so the pass grades by consequence.",
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/rc01-instrument-fidelity/.orbit-runs/external-prompt-system-2026-09-11T23-59-50Z.md into the target AI, save the response as orbit/changes/rc01-instrument-fidelity/.orbit-runs/external-system-<TS>.md, then /orbit:address-reviews rc01-instrument-fidelity --from-file <path>"
+}

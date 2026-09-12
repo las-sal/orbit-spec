@@ -1,0 +1,501 @@
+{
+  "gh_version": "gh version 2.91.0 (2026-04-22)",
+  "captured_at": "2026-09-11",
+  "availability_probe": {
+    "argv": [
+      "--version"
+    ],
+    "stdout": "gh version 2.91.0 (2026-04-22)\nhttps://github.com/cli/cli/releases/tag/v2.91.0\n"
+  },
+  "commands": {
+    "repo view": {
+      "usage": "gh repo view [<repository>] [flags]",
+      "positional": {
+        "shape": "[<repository>]",
+        "required": false
+      },
+      "flags": [
+        {
+          "long": "--branch",
+          "short": "-b",
+          "takes_value": true
+        },
+        {
+          "long": "--jq",
+          "short": "-q",
+          "takes_value": true
+        },
+        {
+          "long": "--json",
+          "short": null,
+          "takes_value": true
+        },
+        {
+          "long": "--template",
+          "short": "-t",
+          "takes_value": true
+        },
+        {
+          "long": "--web",
+          "short": "-w",
+          "takes_value": false
+        },
+        {
+          "long": "--help",
+          "short": null,
+          "takes_value": false
+        }
+      ]
+    },
+    "pr list": {
+      "usage": "gh pr list [flags]",
+      "positional": {
+        "shape": "",
+        "required": false
+      },
+      "flags": [
+        {
+          "long": "--app",
+          "short": null,
+          "takes_value": true
+        },
+        {
+          "long": "--assignee",
+          "short": "-a",
+          "takes_value": true
+        },
+        {
+          "long": "--author",
+          "short": "-A",
+          "takes_value": true
+        },
+        {
+          "long": "--base",
+          "short": "-B",
+          "takes_value": true
+        },
+        {
+          "long": "--draft",
+          "short": "-d",
+          "takes_value": false
+        },
+        {
+          "long": "--head",
+          "short": "-H",
+          "takes_value": true
+        },
+        {
+          "long": "--jq",
+          "short": "-q",
+          "takes_value": true
+        },
+        {
+          "long": "--json",
+          "short": null,
+          "takes_value": true
+        },
+        {
+          "long": "--label",
+          "short": "-l",
+          "takes_value": true
+        },
+        {
+          "long": "--limit",
+          "short": "-L",
+          "takes_value": true
+        },
+        {
+          "long": "--search",
+          "short": "-S",
+          "takes_value": true
+        },
+        {
+          "long": "--state",
+          "short": "-s",
+          "takes_value": true
+        },
+        {
+          "long": "--template",
+          "short": "-t",
+          "takes_value": true
+        },
+        {
+          "long": "--web",
+          "short": "-w",
+          "takes_value": false
+        },
+        {
+          "long": "--help",
+          "short": null,
+          "takes_value": false
+        },
+        {
+          "long": "--repo",
+          "short": "-R",
+          "takes_value": true
+        }
+      ]
+    },
+    "pr create": {
+      "usage": "gh pr create [flags]",
+      "positional": {
+        "shape": "",
+        "required": false
+      },
+      "flags": [
+        {
+          "long": "--assignee",
+          "short": "-a",
+          "takes_value": true
+        },
+        {
+          "long": "--base",
+          "short": "-B",
+          "takes_value": true
+        },
+        {
+          "long": "--body",
+          "short": "-b",
+          "takes_value": true
+        },
+        {
+          "long": "--body-file",
+          "short": "-F",
+          "takes_value": true
+        },
+        {
+          "long": "--draft",
+          "short": "-d",
+          "takes_value": false
+        },
+        {
+          "long": "--dry-run",
+          "short": null,
+          "takes_value": false
+        },
+        {
+          "long": "--editor",
+          "short": "-e",
+          "takes_value": false
+        },
+        {
+          "long": "--fill",
+          "short": "-f",
+          "takes_value": false
+        },
+        {
+          "long": "--fill-first",
+          "short": null,
+          "takes_value": false
+        },
+        {
+          "long": "--fill-verbose",
+          "short": null,
+          "takes_value": false
+        },
+        {
+          "long": "--head",
+          "short": "-H",
+          "takes_value": true
+        },
+        {
+          "long": "--label",
+          "short": "-l",
+          "takes_value": true
+        },
+        {
+          "long": "--milestone",
+          "short": "-m",
+          "takes_value": true
+        },
+        {
+          "long": "--no-maintainer-edit",
+          "short": null,
+          "takes_value": false
+        },
+        {
+          "long": "--project",
+          "short": "-p",
+          "takes_value": true
+        },
+        {
+          "long": "--recover",
+          "short": null,
+          "takes_value": true
+        },
+        {
+          "long": "--reviewer",
+          "short": "-r",
+          "takes_value": true
+        },
+        {
+          "long": "--template",
+          "short": "-T",
+          "takes_value": true
+        },
+        {
+          "long": "--title",
+          "short": "-t",
+          "takes_value": true
+        },
+        {
+          "long": "--web",
+          "short": "-w",
+          "takes_value": false
+        },
+        {
+          "long": "--help",
+          "short": null,
+          "takes_value": false
+        },
+        {
+          "long": "--repo",
+          "short": "-R",
+          "takes_value": true
+        }
+      ]
+    },
+    "pr view": {
+      "usage": "gh pr view [<number> | <url> | <branch>] [flags]",
+      "positional": {
+        "shape": "[<number> | <url> | <branch>]",
+        "required": false
+      },
+      "flags": [
+        {
+          "long": "--comments",
+          "short": "-c",
+          "takes_value": false
+        },
+        {
+          "long": "--jq",
+          "short": "-q",
+          "takes_value": true
+        },
+        {
+          "long": "--json",
+          "short": null,
+          "takes_value": true
+        },
+        {
+          "long": "--template",
+          "short": "-t",
+          "takes_value": true
+        },
+        {
+          "long": "--web",
+          "short": "-w",
+          "takes_value": false
+        },
+        {
+          "long": "--help",
+          "short": null,
+          "takes_value": false
+        },
+        {
+          "long": "--repo",
+          "short": "-R",
+          "takes_value": true
+        }
+      ]
+    },
+    "pr edit": {
+      "usage": "gh pr edit [<number> | <url> | <branch>] [flags]",
+      "positional": {
+        "shape": "[<number> | <url> | <branch>]",
+        "required": false
+      },
+      "flags": [
+        {
+          "long": "--add-assignee",
+          "short": null,
+          "takes_value": true
+        },
+        {
+          "long": "--add-label",
+          "short": null,
+          "takes_value": true
+        },
+        {
+          "long": "--add-project",
+          "short": null,
+          "takes_value": true
+        },
+        {
+          "long": "--add-reviewer",
+          "short": null,
+          "takes_value": true
+        },
+        {
+          "long": "--base",
+          "short": "-B",
+          "takes_value": true
+        },
+        {
+          "long": "--body",
+          "short": "-b",
+          "takes_value": true
+        },
+        {
+          "long": "--body-file",
+          "short": "-F",
+          "takes_value": true
+        },
+        {
+          "long": "--milestone",
+          "short": "-m",
+          "takes_value": true
+        },
+        {
+          "long": "--remove-assignee",
+          "short": null,
+          "takes_value": true
+        },
+        {
+          "long": "--remove-label",
+          "short": null,
+          "takes_value": true
+        },
+        {
+          "long": "--remove-milestone",
+          "short": null,
+          "takes_value": false
+        },
+        {
+          "long": "--remove-project",
+          "short": null,
+          "takes_value": true
+        },
+        {
+          "long": "--remove-reviewer",
+          "short": null,
+          "takes_value": true
+        },
+        {
+          "long": "--title",
+          "short": "-t",
+          "takes_value": true
+        },
+        {
+          "long": "--help",
+          "short": null,
+          "takes_value": false
+        },
+        {
+          "long": "--repo",
+          "short": "-R",
+          "takes_value": true
+        }
+      ]
+    },
+    "pr ready": {
+      "usage": "gh pr ready [<number> | <url> | <branch>] [flags]",
+      "positional": {
+        "shape": "[<number> | <url> | <branch>]",
+        "required": false
+      },
+      "flags": [
+        {
+          "long": "--undo",
+          "short": null,
+          "takes_value": false
+        },
+        {
+          "long": "--help",
+          "short": null,
+          "takes_value": false
+        },
+        {
+          "long": "--repo",
+          "short": "-R",
+          "takes_value": true
+        }
+      ]
+    },
+    "pr merge": {
+      "usage": "gh pr merge [<number> | <url> | <branch>] [flags]",
+      "positional": {
+        "shape": "[<number> | <url> | <branch>]",
+        "required": false
+      },
+      "flags": [
+        {
+          "long": "--admin",
+          "short": null,
+          "takes_value": false
+        },
+        {
+          "long": "--author-email",
+          "short": "-A",
+          "takes_value": true
+        },
+        {
+          "long": "--auto",
+          "short": null,
+          "takes_value": false
+        },
+        {
+          "long": "--body",
+          "short": "-b",
+          "takes_value": true
+        },
+        {
+          "long": "--body-file",
+          "short": "-F",
+          "takes_value": true
+        },
+        {
+          "long": "--delete-branch",
+          "short": "-d",
+          "takes_value": false
+        },
+        {
+          "long": "--disable-auto",
+          "short": null,
+          "takes_value": false
+        },
+        {
+          "long": "--match-head-commit",
+          "short": null,
+          "takes_value": true
+        },
+        {
+          "long": "--merge",
+          "short": "-m",
+          "takes_value": false
+        },
+        {
+          "long": "--rebase",
+          "short": "-r",
+          "takes_value": false
+        },
+        {
+          "long": "--squash",
+          "short": "-s",
+          "takes_value": false
+        },
+        {
+          "long": "--subject",
+          "short": "-t",
+          "takes_value": true
+        },
+        {
+          "long": "--help",
+          "short": null,
+          "takes_value": false
+        },
+        {
+          "long": "--repo",
+          "short": "-R",
+          "takes_value": true
+        }
+      ]
+    }
+  },
+  "rules": {
+    "repo_view_rejects_repo_flag": "unknown flag: --repo",
+    "pr_selector_required_with_repo": "argument required when using the --repo flag",
+    "pr_verbs_require_repo": true,
+    "repo_view_requires_positional": true
+  }
+}

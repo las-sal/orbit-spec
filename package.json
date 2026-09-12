@@ -53,6 +53,7 @@
     "prepublishOnly": "npm run build",
     "postinstall": "node scripts/postinstall.js",
     "check:pack-version": "node scripts/pack-version-check.mjs",
+    "capture:gh": "node scripts/capture-gh-contract.mjs",
     "release": "pnpm run release:ci",
     "release:ci": "pnpm run check:pack-version && pnpm exec changeset publish",
     "changeset": "changeset"

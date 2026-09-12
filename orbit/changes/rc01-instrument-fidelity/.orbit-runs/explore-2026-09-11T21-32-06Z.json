@@ -1,0 +1,12 @@
+{
+  "command": "explore",
+  "timestamp": "2026-09-11T21:32:06Z",
+  "change": "rc01-instrument-fidelity",
+  "kind": "workflow",
+  "model": "claude-fable-5-1",
+  "final_assessment": "Boundary sweep: the four open questions settled under R-crc-3 and MOVED to Decisions (D-rc01-7..10: the contract set is exactly the referenced commands plus the version probe; gh only, never git; the ten schema-less commands deferred to rc07; error strings recorded). Ten decisions, zero open questions, three rejections. Ready to propose; the change is sized at two small deltas plus tests and harness.",
+  "decisions_captured": 10,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "next_recommended": "/orbit:propose rc01-instrument-fidelity — substantial thinking captured; ready to formalize the design (or /orbit:explore rc01-instrument-fidelity to keep refining)"
+}

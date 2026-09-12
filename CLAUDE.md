@@ -104,9 +104,19 @@ B2 exploration; issue #4 closed) — per-command divergence is the desired traje
 stay inline per body.
 The full plan and design decisions live in the docs below — **read them before B-arc work.**
 
-## The ACTIVE program: the D-arc
+## The ACTIVE program: clean-up-review-cycle (the D-arc is quiescent)
 
-The fork program is COMPLETE; the live program is the **D-arc** —
+As of 2026-09-11 the D-arc's six stages are all archived (d1 complete-ratified; d2–d6
+quiescent, awaiting ratification) and the live program is
+**`orbit/architecture/clean-up-review-cycle.md`** — goals G0–G4, rulings R-crc-1..5 (the size
+ceiling, the ordering principle, method delegated to the authoring AI, the canonical review
+cadence, the conditional reversal of D-d6-7), eleven small stages in four phases. Its first
+citing change, `rc01-instrument-fidelity`, is in flight. Read that doc before any rc-stage
+work; the D-arc section below is the historical record of how the engine got here.
+
+## The D-arc (COMPLETE — historical)
+
+The fork program is COMPLETE; the D-arc was the second program —
 `orbit/architecture/d-arc-arbitered-flow.md` (goals, rulings R-d-1.., six stages with exit
 criteria, status log). Read it before any D-arc work. **Position is COMPUTED — run
 `orbit architecture status`** (D2 shipped the engine; the arc doc's hand-maintained state lines
@@ -282,7 +292,7 @@ the final tree — R-d-10's sanctioned interim path, user-ratified); user-typed,
 prompts, fingerprints 5/5, sync 19 blocks (14 ADDED + 5 MODIFIED) byte-verified, at-archive
 notes 5.5–5.9 executed in-flow (arc doc stage section retired its superseded sketch and marked
 the D1 leanings resolved; R-d-11 single-session ruling recorded; R-d-4 exception recorded).
-**2011 tests green.** The dogfood (6.3) runs on the next standalone change once `main`
+**2012 tests green** (2011 at the walk, plus the regression test for the archive emit table's conditional fields, fixed in-flow). The dogfood (6.3) runs on the next standalone change once `main`
 carries this work — phase 1 cuts branches from the RESOLVED DEFAULT, never the current branch.
 
 ## Source of truth for the plan

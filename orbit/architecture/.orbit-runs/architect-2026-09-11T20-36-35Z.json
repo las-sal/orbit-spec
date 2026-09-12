@@ -1,0 +1,28 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-11T20:36:35Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-fable-5-1",
+  "final_assessment": "Second architect session on clean-up-review-cycle. The premise now carries the measured evidence from both repos' trails (findings per change 41 → 131 across the D-arc; later passes 60–100% of findings on files the prior walk edited; home-env-test's surface-parity-audit at 9 passes / 102 findings / no gate) and names the three cycle mechanisms (the freshness loop, prompts steering reviewers at fixed areas, unbounded severity with WARNING blocking). Two stages added as PROPOSED: c0-cadence-convergence (proposed first — severity by consequence with reproductions, SUGGESTIONs never gate, two-clean-passes stop rule, finding-scoped freshness, review vs verification genres, external first) and c5-artifact-hygiene (one voice for facts, propose-time size check, apply-time scenario self-trace, executed commands); c3 now depends on c0. Six candidate rulings put to Sal in chat; none spoken yet; rulings index still empty.",
+  "stages_touched": [
+    "c0-cadence-convergence",
+    "c3-cadence-arithmetic",
+    "c5-artifact-hygiene"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "handoff": {
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md — read the Premise's Measured paragraph and the three mechanisms, then stage c0 (proposed first)",
+      "orbit/architecture/.orbit-runs/architect-2026-09-11T17-58-53Z.json — the scaffold session's emit",
+      "orbit/changes/archive/2026-09-11-d6-pr-lifecycle/.orbit-runs/ — the D6 trail the measurements come from",
+      "/Users/sal/code/home-env-test/orbit/changes/surface-parity-audit/.orbit-runs/ — the nine-pass proposal cadence that never converged (the clearest instance of the loop)"
+    ],
+    "next_command": "/orbit:architect clean-up-review-cycle",
+    "model_hint": null,
+    "seam": "architect session boundary — six candidate rulings await Sal's ratification in chat; no stage is chartered or explored until one is spoken"
+  },
+  "next_recommended": "/orbit:architect clean-up-review-cycle"
+}

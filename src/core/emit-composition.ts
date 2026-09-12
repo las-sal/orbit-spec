@@ -39,6 +39,15 @@ interface CommandSpec {
   payloadFields: string[];
 }
 
+/**
+ * Read-only accessor over the payload-field table, for the schema-table parity test
+ * (rc01-instrument-fidelity): the test derives each schema reference's AI-supplied field set
+ * and asserts the table accepts it. Exposes nothing the write gate does not already enforce.
+ */
+export function payloadFieldsFor(command: string): readonly string[] | undefined {
+  return COMMANDS[command]?.payloadFields;
+}
+
 /** The engine-internal command→kind taxonomy table (orbit-conventions becomes engine data). */
 const COMMANDS: Record<string, CommandSpec> = {
   explore: { kind: 'workflow', scopes: { change: true }, payloadFields: ['final_assessment'] },

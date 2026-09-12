@@ -1,0 +1,213 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-11T21:58:45Z",
+  "change": "rc01-instrument-fidelity",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc01-instrument-fidelity/.orbit-runs/review-proposal-2026-09-11T21-49-43Z.json",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 4,
+    "suggestion": 4
+  },
+  "pushback_verification": "All 9 verified against current state; none stale. The CRITICAL's two cited sites were re-read before the review was persisted (the audit-drift table's field list vs its reference block; `gh --version --help` printing only the banner); the review reference's architecture-mode `findings_summary` was confirmed against the engine's architecture-mode path, which runs the scorecard rollup check; the snippets needing flag arity and the `-q` alias were read in the reference source.",
+  "resolution_summary": {
+    "resolved": 9,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "The parity test as specified cannot be green for audit-drift while task 5.1 forbids any change under src/: the audit-drift schema reference documents six AI-supplied keys its payload table rejects today.",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc01-instrument-fidelity/tasks.md",
+      "line": 20,
+      "classification": "decision_required",
+      "action": "Option A, settled under R-crc-3 (Sal's standing chat delegation of method, 2026-09-11). Design D6 now reads EVERY full-record JSON block, names the two stale mirrors the current tree exposes — audit-drift's six extra keys, and the review reference's architecture-mode `findings_summary` (the engine runs the scorecard rollup check in that mode, so the block and the body sentence are the stale voice) — and records the bounded `src/` correction of both as mirror edits with no behavior change; the known-divergence allowlist is recorded as rejected (a remembered exception is the anti-pattern rc01 retires). Context, Non-Goals, Risks, Migration, and Touchpoints (audit-drift.ts + review.ts added) reworded from 'no src/ change' to 'no engine BEHAVIOR change'. Tasks: 4.2 names three regression cases in order (archive conditional fields, audit-drift keys, review architecture block); new 4.3 performs the two corrections and confirms `update --force` regenerates exactly two references/ files; 5.1 reworded. Proposal Impact reworded. Spec: new scenario `Every full-record block is read` on orbit-emit-composition.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc01-instrument-fidelity/design.md",
+          "orbit/changes/rc01-instrument-fidelity/tasks.md",
+          "orbit/changes/rc01-instrument-fidelity/proposal.md",
+          "orbit/changes/rc01-instrument-fidelity/specs/orbit-emit-composition/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "A — the reference is the documented mirror, so the mirror moves; bounded src/ edits, no behavior change.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Admit ONE bounded src/ edit: correct the audit-drift reference (the extensions sentence and its JSON block in audit-drift.ts) to the table's set (`categories_run`, `findings_by_category`, `findings_total`, `findings`, `stale_suppressed`, plus spine) — the reference is documented as the mirror, so the mirror moves. Make it the second named regression case in task 4.2, and reword 5.1 to 'no engine behavior change; the only src/ diff is the audit-drift schema reference (a generated-surface diff of one references/ file, expected)'. The `update --force` no-op claim in 5.1 must be dropped or scoped accordingly."
+          },
+          {
+            "label": "B",
+            "body": "Keep src/ untouched: the parity test carries an explicit per-command KNOWN-DIVERGENCE list (`audit-drift: [context, caller, depth, flags, categories_skipped, findings_summary]`), asserted to be exactly the observed gap so any new key still fails loudly, and a task files the reference fix for rc07 (the artifact-lint stage that owns one-voice-for-facts). This preserves 5.1 literally but records a remembered exception — the anti-pattern rc01 retires — so state that trade-off in design D6 and the Risks list."
+          }
+        ],
+        "chosen": "A"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The contract's flag entries and the validator's split rule are underspecified on value arity and short aliases, and two swept snippets need both to validate.",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc01-instrument-fidelity/design.md",
+      "line": 22,
+      "classification": "trivial_fix",
+      "action": "D1 now specifies the flag entry shape `{ long, short, takes_value }` derived from the FLAGS / INHERITED FLAGS line grammar (`-q, --jq expression` → alias + takes a value; `--draft` with no TYPE → boolean), names the two existing snippets that require it, and D3's tokenizer consumes it (a value-taking flag eats the next token or its `=value`; a boolean eats nothing). Task 1.1 parses the entries; 1.2 hand-checks `--draft` and `-q`; 2.1 consumes them and unit-tests both snippets accepted.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc01-instrument-fidelity/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The `--version` command entry contradicts the freshness assertion: `gh --version --help` prints the version banner, so that entry has no usage line and no flags.",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc01-instrument-fidelity/tasks.md",
+      "line": 5,
+      "classification": "decision_required",
+      "action": "Option A, settled under R-crc-3 (Sal's standing chat delegation of method, 2026-09-11). `--version` is no longer a command entry: the contract carries a top-level `availability_probe: { argv, stdout }` beside `gh_version`; the command set is the SEVEN commands the references invoke; the stub answers the probe from the captured stdout; the freshness test asserts the probe exists and every one of the seven commands has a usage line and ≥ 1 flag entry. Task 1.1/1.2/1.3 and 2.2/2.3 aligned; D1 and D3 (probe matched first in lookup) updated.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc01-instrument-fidelity/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "A — the probe is a top-level contract entry, not a command; it has no help page to parse.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Drop `--version` from `commands`; record it as a top-level `availability_probe: { argv: ['--version'], stdout: '<captured banner>' }` beside `gh_version`; the stub answers it from the contract; the freshness test asserts the probe exists."
+          },
+          {
+            "label": "B",
+            "body": "Keep `--version` in `commands` with an explicit `usage: null, flags: []` allowance and exempt it from the freshness assertion."
+          }
+        ],
+        "chosen": "A"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The rules list drops a qualification the current stub enforces: `gh repo view` without a positional repository would pass both instruments under the new contract.",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc01-instrument-fidelity/design.md",
+      "line": 20,
+      "classification": "trivial_fix",
+      "action": "D1's rules gained `repo_view_requires_positional: true`, named as an orbit-side qualification the real CLI does not enforce (it would guess a repository) and the current stub does; D3 applies it as the last check; D5 and task 3.2 add the negative fixture (`gh repo view --json defaultBranchRef` rejected by the sweep); task 2.1 unit-tests the rejection and task 2.3 adds the harness case.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc01-instrument-fidelity/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "'Parse the first JSON block' skips the review reference's architecture-mode block, which documents `findings_summary` — a key the review table rejects — so the test would pass over a live instance of the exact defect it exists to catch.",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc01-instrument-fidelity/design.md",
+      "line": 25,
+      "classification": "trivial_fix",
+      "action": "Folded into the CRITICAL's resolution: D6 now parses EVERY block whose top-level keys include `command` and unions the sets, so the review reference's architecture-mode block is checked; its `findings_summary` is the third named regression case and its correction (block and body sentence → `scorecard`, which is what the engine validates in that mode) is task 4.3. The spec scenario `Every full-record block is read` pins the rule.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc01-instrument-fidelity/tasks.md",
+          "orbit/changes/rc01-instrument-fidelity/specs/orbit-emit-composition/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Three restated counts disagree with their sources: 'fourteen' payload tables (13), 'ten' commands without a schema reference (9), and '33' existing harness cases (39).",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc01-instrument-fidelity/design.md",
+      "line": 3,
+      "classification": "trivial_fix",
+      "action": "Restated counts replaced with source phrasing rather than corrected numbers (the rc07 spirit): 'the payloadFields tables (one per emit command)' instead of fourteen; 'every command except review, address-reviews, audit-drift, and archive' instead of ten (design Non-Goals, proposal Impact); 'every existing harness case' instead of 33 (design Context and Migration, tasks 2.3 and 5.1). The two remaining mentions are in explore.md, the historical record, left as written by design.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc01-instrument-fidelity/proposal.md",
+          "orbit/changes/rc01-instrument-fidelity/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 5.2's grep criterion cannot be satisfied as written: four legitimate `spawnSync('gh'` sites exist outside the stub and the capture script, all routed to the stub via PATH.",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc01-instrument-fidelity/tasks.md",
+      "line": 26,
+      "classification": "trivial_fix",
+      "action": "Task 5.2 restated as what it means: (a) every `spawnSync('gh'` in the test tree passes an env whose PATH begins with the harness bin dir or is the `absent` PATH, asserted by grep plus a code read; (b) the whole suite passes with a PATH containing no host `gh` — the real proof of the spec's scenario.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "State the validator's argv convention and command lookup so the stub and the sweep tokenize identically.",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc01-instrument-fidelity/design.md",
+      "line": 22,
+      "classification": "trivial_fix",
+      "action": "D3 now states the argv convention (argv EXCLUDES the leading `gh`; the stub passes `process.argv.slice(2)`; the sweep drops the first token), the command lookup (availability probe first, then the longest leading key — `pr view` before `pr`), the tokenizing rule, and the check order; D5 and task 3.1 use the same wording so both consumers call one function on one shape.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc01-instrument-fidelity/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Post-apply, CLAUDE.md still names the D-arc as 'The ACTIVE program' while the engine renders clean-up-review-cycle with rc01 in-change.",
+      "marker_source": "internal-review",
+      "file": "CLAUDE.md",
+      "line": 107,
+      "classification": "trivial_fix",
+      "action": "CLAUDE.md's active-program section now names clean-up-review-cycle (goals, rulings R-crc-1..5, eleven stages, rc01 in flight) and demotes the D-arc section to a historical record heading; the D-arc prose beneath is unchanged.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "R-crc-3 (Sal, 2026-09-11): \"I do not think I have the ability to drive code development workflow. If there are decisions that you think can be settled by your understanding of what is the state-of-the-art and most effective way to develop in AI, I will defer to you.\" — standing; method-lane decisions settled and recorded, not briefed.",
+  "final_assessment": "9 of 9 resolved; 0 unresolved markers in scope. Two decision-lane findings settled under R-crc-3 as option A each: the parity test's two stale mirrors (audit-drift's reference; review's architecture-mode block) are corrected as bounded src/ mirror edits with no behavior change, recorded as regression cases, and the stage's non-goal reworded from 'no src/ change' to 'no engine behavior change'; the availability probe becomes a top-level contract entry rather than a command. The contract's flag entries now carry arity and short aliases; the orbit-side `repo_view_requires_positional` rule is in the contract; the validator's argv convention, lookup, tokenizing, and check order are specified once for both consumers; the parity test reads every full-record block; restated counts became source phrasing; task 5.2's criterion is provable; CLAUDE.md names the live program. Change validates strict; artifacts only, no code touched.",
+  "iteration": 1,
+  "next_recommended": "/orbit:review --as proposal rc01-instrument-fidelity"
+}

@@ -163,24 +163,28 @@ function installGhStub(binDir: string, script: GhScript, defaultBranch: string):
     prList: script.prList === undefined ? [] : script.prList,
   };
   fs.writeFileSync(path.join(binDir, 'gh-script.json'), JSON.stringify(payload));
+  // The stub DERIVES its accepted-invocation set from the recorded real-CLI contract
+  // (rc01-instrument-fidelity): the contract and the shared validator are copied beside it so
+  // the standalone script can `require` them. No hand-written per-verb branches remain.
+  fs.copyFileSync(path.join(__dirname, 'gh-contract.json'), path.join(binDir, 'gh-contract.json'));
+  fs.copyFileSync(path.join(__dirname, 'gh-contract-validate.cjs'), path.join(binDir, 'gh-contract-validate.cjs'));
   const stub = `#!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
+const { validate } = require(path.join(__dirname, 'gh-contract-validate.cjs'));
 const args = process.argv.slice(2);
 fs.appendFileSync(${JSON.stringify(logPath)}, JSON.stringify(args) + '\\n');
+const contract = JSON.parse(fs.readFileSync(path.join(__dirname, 'gh-contract.json'), 'utf-8'));
 const script = JSON.parse(fs.readFileSync(path.join(__dirname, 'gh-script.json'), 'utf-8'));
-const sub = args.join(' ');
-if (sub.startsWith('repo view')) {
-  // Real-CLI grammar: the repository is POSITIONAL; \`gh repo view\` has no --repo flag.
-  if (args.includes('--repo')) { process.stderr.write('unknown flag: --repo\\n'); process.exit(1); }
-  if (!args[2] || args[2].startsWith('--')) { process.stderr.write('stub: gh repo view requires a positional <owner>/<repo>\\n'); process.exit(1); }
+const v = validate(args, contract);
+if (!v.ok) { process.stderr.write(v.message + '\\n'); process.exit(1); }
+if (v.probe) { process.stdout.write(v.stdout); process.exit(0); }
+if (v.command === 'repo view') {
   if (script.defaultBranch === null) { process.stderr.write('gh: could not resolve\\n'); process.exit(1); }
   process.stdout.write(JSON.stringify({ defaultBranchRef: { name: script.defaultBranch } }));
   process.exit(0);
 }
-if (sub.startsWith('pr list')) {
-  // Contract: every \`gh pr\` verb is qualified with --repo (the real CLI would guess otherwise).
-  if (!args.includes('--repo')) { process.stderr.write('stub: gh pr verbs must carry --repo per the shared resolution\\n'); process.exit(1); }
+if (v.command === 'pr list') {
   if (script.prList === null) { process.stderr.write('gh: query failed\\n'); process.exit(1); }
   process.stdout.write(JSON.stringify(script.prList));
   process.exit(0);

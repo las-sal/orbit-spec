@@ -1,0 +1,9 @@
+{
+  "command": "propose",
+  "timestamp": "2026-09-11T21:35:37Z",
+  "change": "rc01-instrument-fidelity",
+  "kind": "workflow",
+  "model": "claude-fable-5-1",
+  "final_assessment": "Proposed rc01-instrument-fidelity in consume mode from a Mature exploration (ten decisions, zero open questions). Artifacts: proposal (why: two D6 grammar CRITICALs and the archive-table gap share one cause — instruments encoding a remembered truth), design (seven decisions: a checked-in gh contract captured from the real binary; the capture script as the only real-gh caller; one CommonJS validator shared by the stub process and the sweep; the stub keeps scripted responses and loses its branches; the sweep validates snippets as argv; schema-table parity by subtraction with an explicit engine-owned list; two ADDED requirements), two delta specs (orbit-pr-lifecycle: test instruments derive from a recorded real-CLI contract, 4 scenarios; orbit-emit-composition: payload tables agree with their schema references, 2 scenarios), and 12 tasks in 5 groups. Sizing under R-crc-1: 2 capabilities, 2 requirements, tests + harness + one script, no src/ change. ADDED-only, nothing to fingerprint; strict-valid. PR regime resolved never — no choreography. Architecture citation carried from staging.",
+  "next_recommended": "/orbit:review rc01-instrument-fidelity — proposal artifacts ready; review before apply"
+}
