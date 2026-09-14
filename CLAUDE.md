@@ -108,9 +108,9 @@ The full plan and design decisions live in the docs below — **read them before
 
 As of 2026-09-11 the D-arc's six stages are all archived (d1 complete-ratified; d2–d6
 quiescent, awaiting ratification) and the live program is
-**`orbit/architecture/clean-up-review-cycle.md`** — goals G0–G4, rulings R-crc-1..5 (the size
+**`orbit/architecture/clean-up-review-cycle.md`** — goals G0–G4, rulings R-crc-1..8 (the size
 ceiling, the ordering principle, method delegated to the authoring AI, the canonical review
-cadence, the conditional reversal of D-d6-7), fourteen small stages in four phases. Its first
+cadence, the conditional reversal of D-d6-7, the canonical cadence's blind pair, the walk-authors-nothing lanes, explore-produces-mechanism, and finding-quality-never-licenses-another-pass), fourteen small stages in four phases. Its first
 citing change, `rc01-instrument-fidelity`, is ARCHIVED (2026-09-12): the cycle's test
 instruments now DERIVE from a recorded real-CLI contract instead of remembered structure —
 `test/integration/pr-lifecycle/gh-contract.json` captured from the real `gh` by

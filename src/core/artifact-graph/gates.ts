@@ -193,6 +193,17 @@ function passResolved(pass: TrailPass, trail: Trail): boolean {
   const latest = recs[recs.length - 1];
 
   if (latest.readable) {
+    // COMPLETENESS BEFORE DISPOSITION (rc02 walk 7). A readable record certifies only the findings
+    // it actually names: without this, a record listing one of a pass's two WARNINGs resolves both,
+    // because no entry it contains carries a blocking disposition. Every substantive source finding
+    // must be matched by an entry, keyed the same way the new-finding match is keyed.
+    const named = new Set(
+      latest.entries.filter(e => isSubstantive(e.severity)).map(e => JSON.stringify([e.title, e.file]))
+    );
+    const covered = pass.findings
+      .filter(f => isSubstantive(f.severity))
+      .every(f => named.has(JSON.stringify([f.title, f.file])));
+    if (!covered) return false;
     // Per-entry data is PREFERRED over the severity-blind `resolution_summary`.
     return !latest.entries.some(
       e => isSubstantive(e.severity) && (e.disposition === 'deferred' || e.disposition === 'escalated')
@@ -253,7 +264,13 @@ interface SlotAssignment {
 }
 
 /** Why a `blind-pair` slot could not be satisfied, for the reason line. */
-export type PairFailure = 'no-fresh' | 'no-external' | 'blindness-broken' | 'tie' | 'none-standing';
+export type PairFailure =
+  | 'no-fresh'
+  | 'no-external'
+  | 'blindness-broken'
+  | 'tie'
+  | 'none-standing'
+  | 'foreclosed';
 
 /**
  * Candidate assignments for ONE slot, in the TOTAL order the requirement names (later token, then
@@ -315,6 +332,10 @@ function assignCadence(
   trail: Trail
 ): { assignment: SlotAssignment[] } | { failedSlot: number } {
   let deepest = 0;
+  // Memoized FAILURE states. Without it the search re-explores equivalent (slot, consumed set,
+  // lower bound) states and grows exponentially on a cadence with many slots; measured 4.5s at
+  // 22 passes / 12 slots before this.
+  const failed = new Set<string>();
   const search = (
     slotIdx: number,
     used: Set<number>,
@@ -322,6 +343,12 @@ function assignCadence(
     acc: SlotAssignment[]
   ): SlotAssignment[] | null => {
     if (slotIdx >= cadence.length) return acc;
+    // The key is (slot, lower bound) ONLY. The consumed set is redundant for eligibility: every
+    // slot's pass must strictly beat the previous slot's token, so an already-consumed pass — whose
+    // token is at or below the current bound — can never be eligible again. Dropping it from the key
+    // collapses the state space from combinatorial to slots x distinct-tokens.
+    const memoKey = `${slotIdx}|${lowerBound ?? ''}`;
+    if (failed.has(memoKey)) return null;
     if (slotIdx > deepest) deepest = slotIdx;
     const slot = cadence[slotIdx];
     for (const cand of slotCandidates(slot, ordered, used, lowerBound, trail)) {
@@ -340,6 +367,7 @@ function assignCadence(
       ]);
       if (got) return got;
     }
+    failed.add(memoKey);
     return null;
   };
   const found = search(0, new Set(), null, []);
@@ -347,13 +375,21 @@ function assignCadence(
 }
 
 /** Why a blind-pair slot failed, given the passes available to it. */
+/**
+ * Why a blind-pair slot failed. Diagnosis uses the SAME predicates assignment uses — only PAIRABLE
+ * members are candidates — so the reason can never name a class the canonical command does not.
+ * The blindness test is asserted, not negated: an earlier draft returned `blindness-broken` when
+ * blindness HELD, which made the label a constant carrying no information.
+ */
 function diagnosePair(ordered: TrailPass[], trail: Trail): PairFailure {
-  const fresh = ordered.filter(p => p.reviewerClass === 'fresh');
-  const ext = ordered.filter(p => p.reviewerClass === 'external');
+  const pairable = ordered.filter(p => isPairable(p, trail));
+  const fresh = pairable.filter(p => p.reviewerClass === 'fresh');
+  const ext = pairable.filter(p => p.reviewerClass === 'external');
   if (fresh.length === 0 && ext.length === 0) return 'none-standing';
   if (fresh.length === 0) return 'no-fresh';
   if (ext.length === 0) return 'no-external';
   let sawTie = false;
+  let sawBroken = false;
   for (const a of fresh) {
     for (const b of ext) {
       if (a.token === b.token) {
@@ -362,15 +398,23 @@ function diagnosePair(ordered: TrailPass[], trail: Trail): PairFailure {
       }
       const lo = a.token < b.token ? a.token : b.token;
       const hi = a.token < b.token ? b.token : a.token;
-      if (!recordTokensFor([a, b], trail).some(t => t >= lo && t <= hi)) return 'blindness-broken';
+      if (recordTokensFor([a, b], trail).some(t => t >= lo && t <= hi)) sawBroken = true;
+      // A candidate that is blind and still unassigned was excluded by the ORDERING constraints,
+      // not by blindness — reported distinctly so the reason never blames a walk that does not exist.
+      else return 'foreclosed';
     }
   }
-  return sawTie ? 'tie' : 'blindness-broken';
+  return sawBroken ? 'blindness-broken' : sawTie ? 'tie' : 'foreclosed';
 }
 
-/** A standing pass is PAIRABLE while no record referencing it carries a later token. */
+/**
+ * A standing pass is PAIRABLE while no record referencing it carries a token at or after its own.
+ * The bound is INCLUSIVE because the blindness rule is: a record sharing a member's token already
+ * falls inside `[lo, hi]`, so an exclusive test here would recommend buying a partner for a pass
+ * that cannot form a valid pair.
+ */
 function isPairable(pass: TrailPass, trail: Trail): boolean {
-  return !recordsFor(pass, trail).some(r => r.token > pass.token);
+  return !recordsFor(pass, trail).some(r => r.token >= pass.token);
 }
 
 interface ConvergenceResult {
@@ -388,6 +432,13 @@ interface ConvergenceResult {
   confirmNeedsExternal?: boolean;
   /** Deferred SUGGESTION count, surfaced even on a converged gate. */
   deferredSuggestions?: number;
+  /**
+   * Set whenever the cadence declares an UNCOVERED `blind-pair` slot with a PAIRABLE member
+   * standing, WHATEVER clause failed. Computed even when resolution fails, because the walk that
+   * resolution recommends is exactly what forecloses the pair — the recommendation surface must
+   * see this before it sees `unresolvedPass`.
+   */
+  openPair?: { missing: 'fresh' | 'external' | 'either' };
 }
 
 /**
@@ -406,23 +457,41 @@ function evaluateReviewed(
   resolutionPasses: TrailPass[],
   trail: Trail
 ): ConvergenceResult {
+  const ordered0 = [...coveragePasses].sort((a, b) => (a.token < b.token ? -1 : 1));
+
+  // COVERAGE IS COMPUTED FIRST, even though resolution decides the state. The walk that clause (b)
+  // would recommend is the very act that forecloses an open blind pair, so the recommendation
+  // surface has to know about the pair BEFORE it is told to walk.
+  const preCover = assignCadence(gate.cadence, ordered0, trail);
+  let openPair: ConvergenceResult['openPair'];
+  if ('failedSlot' in preCover && gate.cadence[preCover.failedSlot] === 'blind-pair') {
+    const how = diagnosePair(ordered0, trail);
+    if (how === 'no-fresh') openPair = { missing: 'fresh' };
+    else if (how === 'no-external') openPair = { missing: 'external' };
+    else if (how === 'none-standing') openPair = { missing: 'either' };
+  }
+
   // (b) resolution over EVERY relevant same-gate pass — INCLUDING stale ones.
   const resOrdered = [...resolutionPasses].sort((a, b) => (a.token < b.token ? -1 : 1));
   for (const p of resOrdered) {
     if (!passResolved(p, trail)) {
+      const pairNote = openPair
+        ? ` — and the ${gate.cadence.includes('blind-pair') ? 'blind pair is OPEN' : 'pair is open'}: run the ${openPair.missing === 'either' ? 'missing' : openPair.missing} member BEFORE walking these findings, or the pair can never be formed on this state`
+        : '';
       return {
         converged: false,
-        reason: `pass ${p.token} has unresolved substantive findings`,
+        reason: `pass ${p.token} has unresolved substantive findings${pairNote}`,
         unresolvedPass: p,
+        openPair,
       };
     }
   }
   const deferredSuggestions = deferredSuggestionCount(resOrdered, trail);
 
-  const ordered = [...coveragePasses].sort((a, b) => (a.token < b.token ? -1 : 1));
+  const ordered = ordered0;
 
-  // (a) ordered-slot coverage, existential with backtracking.
-  const cover = assignCadence(gate.cadence, ordered, trail);
+  // (a) ordered-slot coverage, existential with backtracking (computed above; reused here).
+  const cover = preCover;
   if ('failedSlot' in cover) {
     const slot = gate.cadence[cover.failedSlot];
     if (slot === 'blind-pair') {
@@ -432,12 +501,14 @@ function evaluateReviewed(
           ? `blind pair broken: a walk of one member's findings stands between them`
           : how === 'tie'
             ? `blind pair ambiguous: two candidate members share a timestamp token`
-            : how === 'none-standing'
+            : how === 'foreclosed'
+            ? `blind pair foreclosed: a pairable fresh and external exist but the cadence's ordering constraints exclude them`
+          : how === 'none-standing'
               ? `blind pair open: no independent pass stands on this state — both members must run before EITHER is walked`
               : how === 'no-fresh'
                 ? `blind pair open: the external pass on this state has no fresh partner; run it before walking these findings`
                 : `blind pair open: the fresh pass on this state has no external partner; run it before walking these findings`;
-      return { converged: false, reason, neededSlot: slot, pairFailure: how, deferredSuggestions };
+      return { converged: false, reason, neededSlot: slot, pairFailure: how, openPair, deferredSuggestions };
     }
     return {
       converged: false,
@@ -569,11 +640,20 @@ export function computeGateStates(
 
     let status: GateStatus;
     if (unmet.length > 0) {
+      // A blocked reviewed gate that declares a budget still reports it: `budgetExhausted` is
+      // present whenever the gate declares a budget and absent only when it declares none, so a
+      // consumer's branch on the boolean stays TOTAL. `review-system` is blocked for the whole
+      // life of every change until apply passes, so this is the common case, not an edge.
+      const blockedBudget =
+        gate.kind === 'reviewed' && gate.budget !== undefined && gateMode(gate) !== null
+          ? { budget: gate.budget, independentSpend: 0, independentSpendFresh: 0, budgetExhausted: false }
+          : {};
       status = {
         id: gate.id,
         kind: gate.kind,
         state: 'blocked',
         reason: `blocked by incomplete requires: ${unmet.join(', ')}`,
+        ...blockedBudget,
         before: gate.before,
         consent: gate.consent,
       };
@@ -660,8 +740,12 @@ function computeReviewedStatus(gate: NormalizedGate, changeName: string, trail: 
   const independentSpendFresh =
     indepAll.filter(p => !isPassStale(p, trail.applyTokens)).length +
     rejected.filter(r => !trail.applyTokens.some(t => t > r.token)).length;
-  const budgetFields =
-    gate.budget === undefined ? {} : { budget: gate.budget, independentSpend, independentSpendFresh };
+  // A reviewed gate whose mode cannot be derived from its id reports NO budget at all, rather than
+  // one summed across every mode's passes (both halves of the pair found this).
+  const budgetReportable = gate.budget !== undefined && mode !== null;
+  const budgetFields = budgetReportable
+    ? { budget: gate.budget, independentSpend, independentSpendFresh }
+    : {};
 
   // Coverage (a)/confirm (c) use fresh passes; resolution (b) uses ALL relevant passes.
   const freshEval = evaluateReviewed(gate, fresh, relevant, trail);
@@ -672,7 +756,7 @@ function computeReviewedStatus(gate: NormalizedGate, changeName: string, trail: 
       kind: gate.kind,
       state: 'passed',
       ...budgetFields,
-      ...(gate.budget === undefined ? {} : { budgetExhausted: false }),
+      ...(budgetReportable ? { budgetExhausted: false } : {}),
       ...(deferred > 0
         ? {
             deferredSuggestions: deferred,
@@ -690,18 +774,22 @@ function computeReviewedStatus(gate: NormalizedGate, changeName: string, trail: 
   const stale = allEval.converged && !freshEval.converged;
 
   const next = canonicalNextForReviewed(gate, mode, changeName, freshEval, trail, fresh);
-  const exhausted = gate.budget !== undefined && independentSpendFresh >= gate.budget;
+  const exhausted = budgetReportable && independentSpendFresh >= (gate.budget as number);
   let reason = stale ? `a review pass is stale (an apply landed after it)` : freshEval.reason;
-  if (exhausted && gate.budget !== undefined) {
+  // A rejected return is named whenever one exists — NOT only at exhaustion. Below the ceiling the
+  // user would otherwise be told to buy another external run with no hint that one already came
+  // back unreadable.
+  const rejectedFresh = rejected.filter(r => !trail.applyTokens.some(t => t > r.token));
+  if (budgetReportable && rejectedFresh.length > 0) {
+    reason = `${reason ?? 'unconverged'} (${rejectedFresh.length} external return${
+      rejectedFresh.length === 1 ? '' : 's'
+    } rejected as malformed — ${rejectedFresh.map(r => path.basename(r.file)).join(', ')})`;
+  }
+  if (exhausted) {
     // The exhausted reason carries the spend AND the clause it displaced: a reader shown only a
-    // spend figure cannot tell what a further pass would be for.
-    reason = `budget spent: ${independentSpendFresh} of ${gate.budget} independent passes${
-      rejected.length > 0
-        ? ` (including ${rejected.length} external return${rejected.length === 1 ? '' : 's'} rejected as malformed — ${rejected
-            .map(r => path.basename(r.file))
-            .join(', ')})`
-        : ''
-    }; ${reason ?? 'still unconverged'}`;
+    // spend figure cannot tell what a further pass would be for. The rejected returns named here
+    // are the TRIGGER-scoped ones, so the parenthetical counts what the sentence counts.
+    reason = `budget spent: ${independentSpendFresh} of ${gate.budget} independent passes; ${reason ?? 'still unconverged'}`;
   }
   return {
     id: gate.id,
@@ -709,7 +797,7 @@ function computeReviewedStatus(gate: NormalizedGate, changeName: string, trail: 
     state: stale ? 'stale' : 'unpassed',
     reason,
     ...budgetFields,
-    ...(gate.budget === undefined ? {} : { budgetExhausted: exhausted }),
+    ...(budgetReportable ? { budgetExhausted: exhausted } : {}),
     ...((freshEval.deferredSuggestions ?? 0) > 0
       ? { deferredSuggestions: freshEval.deferredSuggestions }
       : {}),
@@ -730,6 +818,15 @@ function canonicalNextForReviewed(
   freshPasses: TrailPass[]
 ): { cmd: string; slot?: CadenceEntry } {
   const m: ReviewMode = mode ?? 'proposal';
+  // An OPEN BLIND PAIR outranks the walk recommendation: walking now writes a record between the
+  // two members and forecloses the pair permanently, costing two further independent passes.
+  if (ev.openPair) {
+    const cmd =
+      ev.openPair.missing === 'external'
+        ? `/orbit:review --as ${m} --reviewer external ${change}`
+        : `/orbit:review --as ${m} --fresh ${change}`;
+    return { cmd, slot: 'blind-pair' };
+  }
   if (ev.unresolvedPass) {
     const p = ev.unresolvedPass;
     return { cmd: `/orbit:address-reviews ${change} --from-file ${toRepoRelPath(p.file, trail.changeDir)}` };

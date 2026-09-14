@@ -89,8 +89,8 @@ None.
 - `orbit-run-summary-emit`: one scenario's external-slot wording generalized — the new cadence
   vocabulary means an external return may satisfy a bare `external` slot, an `independent` slot, or
   the external half of a `blind-pair`.
-- `orbit-engine-gates`: the reviewed-gate pass condition becomes severity-aware in clauses (b) and
-  (c) and confirms over the slot's pass set; the cadence-entry vocabulary gains `blind-pair` with
+- `orbit-engine-gates`: the reviewed-gate pass condition becomes severity-aware in clause (b) and in
+  the new-finding match; the cadence-entry vocabulary gains `blind-pair` with
   its blindness and earliest-pair rules; the gate declaration gains `budget`; a new requirement
   defines the budget's count, its reporting beside the state, and its readout token; a new
   requirement defines the reason as the teaching surface; the status readout and single-voiced

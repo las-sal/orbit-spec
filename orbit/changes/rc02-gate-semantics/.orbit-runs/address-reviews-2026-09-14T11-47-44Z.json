@@ -1,0 +1,55 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-14T11:47:44Z",
+  "change": "rc02-gate-semantics",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc02-gate-semantics/.orbit-runs/review-system-2026-09-14T11-45-32Z.json",
+  "source_command": "review",
+  "source_token": "2026-09-14T11-45-32Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 1
+  },
+  "pushback_verification": "Both findings verified against the artifact before acting, and both fixes verified by probe afterwards rather than asserted — six positive probes across the design and the delta. The byte measurement was re-run after the edit and had already moved, which is itself the evidence the first finding describes; the bullet now records its measurement point instead of implying a figure that survives editing.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The design's R-crc-1 self-measurement is stale on two axes after the walk that added a fourth requirement block",
+      "file": "orbit/changes/rc02-gate-semantics/design.md",
+      "line": 419,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "outcome": "resolved",
+      "action": "Re-measured rather than adjusted: ten requirement blocks and 58,485 delta bytes, ~46% over the ~40 KB guide. The bullet now carries its MEASUREMENT POINT (the close of the system cadence) and says plainly that the figure ages with every edit, this bullet's own included — which is not rhetorical: the byte count moved from 57,943 to 58,485 between reading the finding and writing the fix, so the first correction was stale before it was saved. The bullet also now names the class: transcribed figures are what R-crc-7's authoring corollary and rc07's one-voice-for-facts rule exist to remove, and until rc07 derives them they are re-measured at every cadence boundary rather than trusted."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "`blindness-broken` is now near-unreachable, so its scenario and reason string describe a path the pairability filter forecloses",
+      "file": "src/core/artifact-graph/gates.ts",
+      "line": 350,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "outcome": "resolved",
+      "action": "Scoped rather than deleted, which is the conservative half of the finding's own disjunction. The requirement now states that the pairability filter SUBSUMES most of the blindness diagnosis — a record breaking blindness has already made its member unpairable, so the member leaves the candidate set before the blindness test runs — and that `blindness-broken` survives as a DEFENSIVE branch reachable only for a record referencing the later member with an earlier token, which an ordinary trail cannot produce. Keeping the branch costs nothing and removing it would trade dead vocabulary for an unhandled edge; what the finding actually asked for was that the engine stop implying a diagnosis a user should expect to see, and the requirement now says so."
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "R-crc-3 (Sal, 2026-09-11): method decisions are settled by the authoring AI and recorded with rationale.",
+  "final_assessment": "2 of 2 resolved, both coherence, neither a behaviour change. The verification slot's own findings were about vocabulary rather than correctness, which is what a closing pass should produce when the cadence has worked: the 27 reconciliation probes before them all landed, the suite held at 2097, and every archived change still computes. The stale-measurement finding produced a small demonstration of its own thesis — the byte figure aged between reading the finding and saving the fix — so the bullet now carries a measurement point and an explicit statement that it ages, rather than a number pretending to be durable.",
+  "iteration": 9,
+  "next_recommended": "/orbit:review --as system --reviewer external rc02-gate-semantics"
+}

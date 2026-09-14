@@ -25,3 +25,29 @@ A `review-external-<TS>.json` T0 emit is a PACKAGING record, NOT a completed pas
 
 - **WHEN** the engine reads an emit that predates this field
 - **THEN** the class is inferred — `flags.fresh: true` → `"fresh"`; `external-*.md` provenance → `"external"`; otherwise `"in-context"` — and the absence of the field never breaks gate computation
+
+### Requirement: Verify pass recommendation
+
+When standalone `/orbit:verify <name>` passes (verify-change reports no failures), the emit-layer SHALL write `verify-<TS>.json` with `next_recommended`:
+
+```
+"/orbit:review --as system <name> — verification clean; formal pre-archive
+ review recommended (or /orbit:archive <name> if you're skipping the
+ editorial pass)"
+```
+
+The leading token is the GATE GRAPH's canonical system-review command, read from the graph rather
+than composed here (rc02): under a cadence whose first uncovered system slot is `blind-pair` it
+carries the class qualifier the graph computes — `/orbit:review --as system --fresh <name>` — and
+under a cadence whose first uncovered slot is `in-context` it is the bare `/orbit:review --as system
+<name>`. A hardcoded form is PROHIBITED, because a literal goes stale the moment a cadence changes
+and would then name a class satisfying no slot. A downstream status reader extracts the leading
+invocation into `command`/`args`; the class qualifier travels in `args` alongside the change name. The alternative `/orbit:archive <name>` path lives in the reason text and is surfaced to the user via the reader's `reason` field.
+
+#### Scenario: Verify pass emit recommends review-as-system canonically
+- **WHEN** `/orbit:verify foo` passes
+- **THEN** `verify-<TS>.json`'s `next_recommended` begins with the gate graph's canonical system-review invocation for that change — `"/orbit:review --as system --fresh foo"` under `spec-driven` v4, whose first uncovered system slot is `blind-pair` — and the reason text mentions `/orbit:archive foo` as alternative
+
+#### Scenario: Status reader parses verify-pass recommendation
+- **WHEN** a downstream status reader reads the verify-pass JSON and best-effort parses
+- **THEN** `command` is `"/orbit:review --as system"`, `args` carries the class qualifier and the change name as the graph composed them, `reason` is the full verbatim string

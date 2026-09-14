@@ -111,8 +111,22 @@ One goal per phase, each falsifiable, each stage naming its goal (settled under 
   state before any walk; their findings merge into ONE walk; ONE verification pass over the
   walk's diff answers landed / regressed per resolution; converged when the merged reviews
   carried zero CRITICAL and the verification shows no regression. A CRITICAL in the reviews
-  buys exactly ONE more blind review after the walk (the new state, not the diff). Nothing is
-  reviewed after a walk except the walk's own diff — the freshness loop is removed by
+  buys exactly ONE more blind review after the walk (the new state, not the diff).
+  **AMENDED 2026-09-14, on the first pair this repo actually ran, then CORRECTED the same day**: the
+  pair is ONE `fresh` and ONE `external` — the classes are not a choice, and the engine already
+  admits no other combination. Both halves are IN FLIGHT on one artifact state before either is
+  walked. An earlier wording of this amendment said "spawned simultaneously as independent agents",
+  which overreached: `external` means a CROSS-VENDOR handoff a human runs in another tool, and orbit
+  running inside one assistant cannot spawn an agent of a different vendor. What simultaneity buys is
+  available without that claim — both in flight, neither walked — and the blindness predicate already
+  enforces it mechanically rather than as a discipline. The classes stay HARDCODED, permanently and
+  not merely for now: making the pair's composition configurable would invite the degenerate pairing
+  of two same-model reviewers, which buys coverage without the model diversity that is the whole
+  point. What SHOULD become one invocation is the launching (see rc03), because the window between
+  two separate invocations is exactly where the gate can recommend the foreclosing walk. Their DISAGREEMENT is a first-class
+  signal rather than noise: where the halves contradict each other, the contradiction localizes an
+  ambiguity neither would have surfaced alone, and is usually settled by one cheap empirical test.
+  Nothing is reviewed after a walk except the walk's own diff — the freshness loop is removed by
   construction, not bounded. Proposal-mode reviews follow the same shape with one blind
   review (external OR fresh) unless the change is within 20% of the R-crc-1 ceiling, when the
   pair runs. Rationale: pairs of blind reviewers are the standard instrument for both coverage
@@ -385,6 +399,33 @@ reads the pass's immutable CRITICAL count — so this stage's genre split is wha
 distinction available at all, and rc02's own seam is the first instance: two CRITICALs resolved by
 removing the clause they lived in, with the gate still asking for another fresh review.
 
+MEASURED ON THE FIRST REAL PAIR (2026-09-14, rc02's system review). Two independent agents on one
+artifact state with no walk between them: the fresh half returned 1 CRITICAL / 6 WARNING / 5
+SUGGESTION, the external half 4 CRITICAL / 7 WARNING / 0 SUGGESTION. **The CRITICAL overlap was
+ZERO.** Four or five defects were found by both; seven were unique to each. Lincoln-Petersen on
+those counts estimates roughly 29 defects present, so the pair surfaced about four in five of what
+one reviewer alone would have left behind. The halves also DISAGREED once, and the disagreement was
+the most useful thing either produced: one called a token-tie scenario unreachable, the other filed
+it as a CRITICAL with a reproduction. A thirty-second test settled it in both directions — two
+external artifacts cannot share a token because the filename embeds it, so that scenario is
+unreachable and its engine defect is real but harmless, while the SAME test confirmed the other
+half's fence-unaware-parser CRITICAL by feeding the reader a document whose only severity headings
+sat inside a fenced example and watching it count as a clean external pass. Neither half could have
+produced that resolution alone. This stage owns three consequences. (1) ONE INVOCATION LAUNCHES BOTH HALVES — it packages the
+external prompt AND spawns the fresh subagent, so the pair is guaranteed to sit on one artifact
+state and there is no window between two commands for the gate to recommend the walk that forecloses
+it. Orbit can do half of this itself and can only ever do half: the fresh member is a subagent it
+spawns, the external member is a prompt a human carries to another vendor, and no amount of design
+collapses that asymmetry. (2) The pair's CLASSES ARE FIXED at one `fresh` and one `external`, which
+the engine already enforces; the stage records why they should never become configurable rather than
+treating that as deferred work. (3) The DISAGREEMENT class gets a name and a handling rule.
+
+A NOMENCLATURE DEFECT to fix here, found while checking the above: `orbit-review`'s `--fresh`
+requirement describes `--reviewer external` parenthetically as "same model, fresh context, no
+cross-AI handoff" — which is the definition of `--fresh`, not of `external`. The parenthetical is
+attached to the wrong noun in the shipped baseline, and it inverts the one distinction the pair
+depends on.
+
 MEASURED SUPPORT (2026-09-14, rc02's cadence): blind review was applied by hand on three of four
 passes — the reviewer received the artifacts and the code but no resolved-since list — and the
 shared-axis trend recorded **zero repeat findings across four passes**. The other half of that
@@ -411,7 +452,9 @@ flow prompts once and records
 `residual_risk` — what was not converged and why the user accepted it — replacing the
 `gate_overridden` path for that reason. Goal G1. Touches: orbit-orientation,
 orbit-archive-modifications. Exit: (1) the line renders from the trail alone; (2) the residual
-estimate appears whenever a blind pair exists on one state; (3) the archive emit carries
+estimate appears whenever a blind pair exists on one state — its first real measurement is rc02's
+system pair (12 and 11 findings, 4-5 shared, ZERO shared CRITICALs, residual near 60%), which is
+also the first evidence that the estimate is worth rendering at all; (3) the archive emit carries
 `residual_risk` on a budget-ended cadence; (4) the cadence line carries the CHURN-VERSUS-AUTHORING
 diagnostic per R-crc-6 AND R-crc-8, measured PER REQUIREMENT rather than per change — a
 change-level figure cannot see a single clause generating every CRITICAL while the rest converges,
@@ -753,3 +796,17 @@ properties (user-invoked, draft-only, merge never) hold unchanged.
   applied so a failure cannot leave it partial, and each edit is verified against the artifact before
   the log records it; the same multi-edit-script habit cost seven unwritten edits earlier in the day
   and two more in this walk, and only a grep-based reconciliation ever caught it.
+- **2026-09-14 — The first blind pair the repo has run, and what it measured.** rc02's system review
+  ran two independent agents on one artifact state with no walk between them. Fresh: 1C/6W/5S.
+  External (GPT-5 Codex): 4C/7W/0S. **Zero CRITICAL overlap.** Four or five defects shared, seven
+  unique to each half, residual estimated near 60% by capture-recapture. Every CRITICAL is in the
+  engine this change shipped, and the fresh half's is the sharpest: the gate's own canonical next
+  command steers the user into breaking the blind pair, because convergence runs resolution before
+  coverage, so the moment a pair member lands with findings the recommendation becomes "walk it" —
+  which forecloses the pair and spends the budget. It demonstrated itself live: persisting that pass
+  made the gate recommend exactly that. R-crc-4 AMENDED — the pair is SPAWNED SIMULTANEOUSLY rather
+  than packaged and awaited, because simultaneity makes blindness free instead of a discipline, and
+  because it closes the window in which the gate can recommend the foreclosing walk. Also recorded:
+  DISAGREEMENT between the halves is a first-class signal. The two contradicted each other once, one
+  empirical test settled it in both directions at once, and neither half could have produced that
+  resolution alone.

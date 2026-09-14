@@ -276,15 +276,21 @@ function normalizeSeverity(v: unknown): Severity | null {
   return typeof v === 'string' && SEVERITIES.includes(v) ? (v as Severity) : null;
 }
 
-/** A recognised disposition from `outcome`, else the legacy key `status`, else null. */
+/**
+ * A recognised disposition from `outcome`; the legacy key `status` is consulted ONLY when `outcome`
+ * is ABSENT. Presence is tested with `in`, not truthiness or string-ness: `{outcome: null}` is a
+ * PRESENT value the reader cannot interpret, and falling through to `status` there would revive a
+ * legacy key to override a value the emit actually carried.
+ */
 function normalizeDisposition(entry: any): Disposition | null {
-  for (const key of ['outcome', 'status']) {
-    const v = entry?.[key];
-    if (typeof v === 'string' && DISPOSITIONS.includes(v)) return v as Disposition;
-    // A present-but-unrecognised value is NOT retried under the other key: it is a real value the
-    // reader cannot interpret, which makes the record unreadable.
-    if (typeof v === 'string') return null;
-  }
+  const has = (k: string): boolean =>
+    entry !== null && typeof entry === 'object' && Object.prototype.hasOwnProperty.call(entry, k);
+  const read = (k: string): Disposition | null => {
+    const v = entry?.[k];
+    return typeof v === 'string' && DISPOSITIONS.includes(v) ? (v as Disposition) : null;
+  };
+  if (has('outcome')) return read('outcome');
+  if (has('status')) return read('status');
   return null;
 }
 
@@ -355,8 +361,27 @@ function parseExternalMarkdown(file: string, token: string, mode: ReviewMode): T
   let hasHeader = false;
   const sawSections = new Set<string>();
 
+  // FENCE-AWARE (rc02 walk 7): a document whose only severity headings sit inside a fenced
+  // EXAMPLE is not a review. Without this the prompt template itself — which quotes the output
+  // shape in a fence — parses as a clean external pass and can satisfy half a blind pair.
+  let inFence = false;
+  let fenceMarker = '';
+  let hasReviewer = false;
   for (const line of lines) {
+    const fence = line.match(/^\s*(`{3,}|~{3,})/);
+    if (fence) {
+      if (!inFence) {
+        inFence = true;
+        fenceMarker = fence[1][0];
+      } else if (fence[1][0] === fenceMarker) {
+        inFence = false;
+        fenceMarker = '';
+      }
+      continue;
+    }
+    if (inFence) continue;
     if (/^#\s+External Review\b/i.test(line)) hasHeader = true;
+    if (/^\*\*Reviewer\*\*:/i.test(line)) hasReviewer = true;
     const sec = line.match(/^##\s+(CRITICAL|WARNING|SUGGESTION)\s*$/);
     if (sec) {
       section = sec[1] as 'CRITICAL' | 'WARNING' | 'SUGGESTION';
@@ -385,8 +410,11 @@ function parseExternalMarkdown(file: string, token: string, mode: ReviewMode): T
     }
   }
 
-  // Reject malformed/incomplete files: not a confidently-parsed external findings artifact.
-  if (!hasHeader || sawSections.size < 3) return null;
+  // Reject malformed/incomplete files: not a confidently-parsed external findings artifact. The
+  // `**Reviewer**:` field is required alongside the header and all three severity sections — the
+  // canonical shape the format requirement fixes — so a truncated or example-only document is
+  // recorded as a REJECTED return rather than counted as a clean pass.
+  if (!hasHeader || !hasReviewer || sawSections.size < 3) return null;
 
   return {
     token,

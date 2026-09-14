@@ -273,14 +273,25 @@ describe('rc02 clause (a) — the blind-pair slot', () => {
     expect(gate(PAIR_YAML).state).toBe('passed');
   });
 
-  it('a walk of one member between them breaks blindness', () => {
+  it('a walk of one member between them breaks blindness, and the reason names the class the command names', () => {
     review(T(1), 'system', 'fresh', [['WARNING', 'w']]);
     walk(T(2), `review-system-${T(1)}.json`, { entries: [ok('WARNING', 'w')] });
     external(T(3), 'system');
     review(T(4), 'system', 'in-context');
     const g = gate(PAIR_YAML);
     expect(g.state).toBe('unpassed');
-    expect(g.reason).toMatch(/blind pair broken/);
+    // The walked fresh pass is no longer PAIRABLE, so diagnosis — which uses the same predicate
+    // assignment uses — reports the missing class rather than blaming the walk. The point of the
+    // fix is that the reason and the canonical command can never name different classes.
+    expect(g.reason).toMatch(/no fresh partner/);
+    expect(g.nextCommand).toBe('/orbit:review --as system --fresh x');
+  });
+
+  it('the reason and the canonical command always name the same class', () => {
+    external(T(1), 'system');
+    const g = gate(PAIR_YAML);
+    expect(g.reason).toMatch(/no fresh partner/);
+    expect(g.nextCommand).toContain('--fresh');
   });
 
   it('an UNRELATED walk does not break the pair', () => {
@@ -603,5 +614,108 @@ gates:
     const g = schema.gates!.find(x => x.id === 'review-proposal')!;
     expect(g.budget).toBeUndefined();
     expect(g.cadence).toEqual(['independent', 'in-context']);
+  });
+});
+
+// ---- the first blind pair's own findings (rc02 walk 7) ---------------------
+
+describe('rc02 walk 7 — what the first blind pair found', () => {
+  it('an OPEN PAIR outranks the walk recommendation, so the engine never suggests foreclosing it', () => {
+    // The fresh half's CRITICAL, reproduced: one pair member lands carrying a WARNING. Before the
+    // fix the gate said "go walk it", and obeying that writes a record between the members.
+    review(T(1), 'system', 'fresh', [['WARNING', 'w']]);
+    const g = gate(PAIR_YAML);
+    expect(g.state).toBe('unpassed');
+    expect(g.nextCommand).toBe('/orbit:review --as system --reviewer external x');
+    expect(g.reason).toMatch(/blind pair is OPEN/);
+    expect(g.reason).toMatch(/BEFORE walking these findings/);
+  });
+
+  it('a partial resolution record does NOT certify the findings it omits', () => {
+    // The external half's CRITICAL: a record naming one of two WARNINGs resolved both, because no
+    // entry it contained carried a blocking disposition.
+    review(T(1), 'system', 'fresh', [['WARNING', 'a'], ['WARNING', 'b']]);
+    external(T(2), 'system');
+    walk(T(3), `review-system-${T(1)}.json`, { entries: [ok('WARNING', 'a')] }); // omits 'b'
+    review(T(4), 'system', 'in-context');
+    expect(gate(PAIR_YAML).state).toBe('unpassed');
+  });
+
+  it('the same trail with BOTH findings named converges', () => {
+    review(T(1), 'system', 'fresh', [['WARNING', 'a'], ['WARNING', 'b']]);
+    external(T(2), 'system');
+    walk(T(3), `review-system-${T(1)}.json`, { entries: [ok('WARNING', 'a'), ok('WARNING', 'b')] });
+    review(T(4), 'system', 'in-context');
+    expect(gate(PAIR_YAML).state).toBe('passed');
+  });
+
+  it('a present-but-null `outcome` does NOT revive the legacy `status` key', () => {
+    // The external half's CRITICAL: presence must be tested with `in`, not string-ness.
+    review(T(1), 'system', 'fresh', [['WARNING', 'w']]);
+    external(T(2), 'system');
+    walk(T(3), `review-system-${T(1)}.json`, {
+      entries: [{ severity: 'WARNING', title: 'w', file: 'f/w.ts', outcome: null, status: 'resolved' }],
+      summary: { resolved: 0, stale_suppressed: 0, deferred: 1, escalated: 0 },
+    });
+    expect(gate(PAIR_YAML).state).toBe('unpassed');
+  });
+
+  it('an external document whose severity headings sit inside a FENCE is rejected, not counted', () => {
+    // The external half's CRITICAL: the prompt template itself would otherwise parse as a pass.
+    fs.writeFileSync(
+      path.join(runs, `external-system-${T(1)}.md`),
+      '# External Review: x\n\n**Reviewer**: M\n\nExample of the shape:\n\n```markdown\n## CRITICAL\n## WARNING\n## SUGGESTION\n```\n\nNothing real.\n'
+    );
+    const t = readTrail(dir);
+    expect(t.passes).toHaveLength(0);
+    expect(t.rejectedExternals).toHaveLength(1);
+  });
+
+  it('a document missing the `**Reviewer**:` field is rejected', () => {
+    fs.writeFileSync(
+      path.join(runs, `external-system-${T(1)}.md`),
+      '# External Review: x\n\n## CRITICAL\n\nNone.\n\n## WARNING\n\nNone.\n\n## SUGGESTION\n\nNone.\n'
+    );
+    expect(readTrail(dir).rejectedExternals).toHaveLength(1);
+  });
+
+  it('a mode-less reviewed gate reports NO budget rather than a cross-mode one', () => {
+    const yaml = PAIR_YAML.replace('- id: review-system', '- id: peer-check').replace(
+      'cadence: [blind-pair, in-context]',
+      'cadence: [independent]'
+    );
+    review(T(1), 'proposal', 'fresh');
+    review(T(2), 'system', 'fresh');
+    const g = gate(yaml, 'peer-check');
+    expect(g.budget).toBeUndefined();
+    expect(g.budgetExhausted).toBeUndefined();
+  });
+
+  it('a rejected return is named in the reason BELOW the budget ceiling, not only at exhaustion', () => {
+    externalRejected(T(1), 'system');
+    review(T(2), 'system', 'fresh');
+    const g = gate(PAIR_YAML);
+    expect(g.budgetExhausted).toBe(false);
+    expect(g.reason).toMatch(/rejected as malformed/);
+  });
+
+  it('a BLOCKED reviewed gate that declares a budget still reports it, so the boolean stays total', () => {
+    fs.writeFileSync(path.join(dir, 'tasks.md'), '- [ ] one\n'); // apply cannot pass
+    const schema: SchemaYaml = parseSchema(PAIR_YAML);
+    const g = computeGateStates(schema, 'x', dir, new Set(['proposal', 'tasks'])).gates.find(
+      x => x.id === 'review-system'
+    )!;
+    expect(g.state).toBe('blocked');
+    expect(g.budget).toBe(3);
+    expect(g.budgetExhausted).toBe(false);
+  });
+
+  it('the cadence search does not blow up on a long cadence (memoized failures)', () => {
+    const slots = Array(10).fill('independent').concat(['external']).join(', ');
+    const yaml = PAIR_YAML.replace('cadence: [blind-pair, in-context]', `cadence: [${slots}]`);
+    for (let i = 1; i <= 20; i++) review(T(i), 'system', 'fresh');
+    const t0 = Date.now();
+    expect(gate(yaml).state).toBe('unpassed'); // no external ever arrives
+    expect(Date.now() - t0).toBeLessThan(1500);
   });
 });

@@ -38,8 +38,9 @@ Three facts about the existing data shaped the design and were verified before i
   reading data the walk already records and failing safe where that data is unvalidated.
 - Make R-crc-4's blind pair a computable cadence slot, so "two independent reviewers on one state
   before any walk" is a property the engine checks rather than a habit the prompts request.
-- Confirm over the whole of a cadence slot, so a parallel pair's findings cannot depend on which
-  member finished last.
+- (This stage no longer confirms over a whole cadence slot. That goal left with clause (c) on
+  2026-09-14 and is `rc02c-confirmation-semantics`' premise; the shipped predicate still reads the
+  most recent independent pass, and the earlier member's invisibility is a NAMED limit here.)
 - Bound the pathological case with a declared budget whose exhaustion is reported beside the gate
   state, never enforced as a block and never as a state of its own.
 - Make the gate's reason the surface that teaches the new rules, including before their cost is
@@ -196,7 +197,6 @@ ordering is exactly the property a parallel pair lacks. A fifth cadence entry jo
 ```
 blind-pair := two passes P1, P2 such that
   class(P1) = fresh and class(P2) = external   (distinct independent classes, order irrelevant)
-  both fresh under the freshness rule           (no apply token later than either)
   no TrailResolution R with sourcePath referencing P1 or P2
       and min(token(P1),token(P2)) < token(R) < max(token(P1),token(P2))
 slot satisfied at max(token(P1), token(P2))     (what a following slot must beat)
@@ -366,7 +366,7 @@ recommendations (see `explore.md` D-rc02-8 through D-rc02-10):
 
 ## Touchpoints
 
-- `src/core/artifact-graph/gates.ts` — the convergence clauses, the confirming pass set, the
+- `src/core/artifact-graph/gates.ts` — the convergence clauses, the
   blind-pair slot predicate, the budget count and report, reason composition, the readout token.
 - `src/core/artifact-graph/trail.ts` — finding severity; per-entry resolution severity and outcome.
 - `src/core/artifact-graph/types.ts` — the `blind-pair` cadence entry, the gate `budget` field.
@@ -416,9 +416,16 @@ recommendations (see `explore.md` D-rc02-8 through D-rc02-10):
   the change's goal. → Simplified to one readability predicate and one fallback (D2); if a fourth
   pass finds a fourth defect in this clause, the signal is to move the interpretation to the emit
   boundary where the writer can be held to a contract, not to patch again.
-- **Size after six review passes and one scope removal: THREE capabilities, nine requirement
-  blocks, 56 scenarios, ~50 KB of delta, 18 tasks. ONE R-crc-1 axis is exceeded — delta bytes,
-  against a ~40 KB guide — and one sits AT the ceiling: capabilities, where R-crc-1 reads "at most
-  3", so three is compliant rather than breached.** Requirements and tasks remain inside. An earlier
-  draft of this bullet called that two breaches; the honest record is one breach and one at-limit. → Held by the non-goals: the ladder is
+- **Size, RE-MEASURED after the system cadence (2026-09-14): THREE capabilities, TEN requirement
+  blocks, 69 scenarios, ~58.5 KB of delta (58,485 bytes as measured at the close of the system
+  cadence; the figure ages with every edit, this bullet's own included), 18 tasks. ONE R-crc-1 axis
+  is exceeded — delta bytes, ~46% over the ~40 KB guide — and one sits AT the ceiling: capabilities, where R-crc-1 reads "at most
+  3", so three is compliant rather than breached.** Requirements and tasks remain inside. The tenth
+  block arrived in the system walk, closing a baseline break this change had introduced by routing
+  the verify emit through the gate graph. This bullet has now gone stale TWICE inside the sittings
+  that wrote it — an earlier draft claimed two breaches where there was one, and the block and byte
+  figures aged the moment the walk added a delta. That is exactly the transcribed-figure class
+  R-crc-7's authoring corollary and rc07's one-voice-for-facts rule exist to remove: the numbers
+  should be DERIVED at render time, and until rc07 ships they are re-measured at every cadence
+  boundary rather than trusted. → Held by the non-goals: the ladder is
   rc02b's, and every genre, template, and cost-rendering concern stays with rc03 and rc04.

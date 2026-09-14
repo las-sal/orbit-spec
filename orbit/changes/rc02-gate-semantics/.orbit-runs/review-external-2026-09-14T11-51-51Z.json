@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-09-14T11:51:51Z",
+  "change": "rc02-gate-semantics",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "mode": "system",
+  "prompt_path": "orbit/changes/rc02-gate-semantics/.orbit-runs/external-prompt-system-2026-09-14T11-51-50Z.md",
+  "target": null,
+  "final_assessment": "External review prompt packaged for rc02-gate-semantics (iter 2, mode system); awaiting findings. This is the ONE FURTHER INDEPENDENT PASS the stop rule bought after the blind pair's fresh half carried a CRITICAL — spend stands at 2 of 3, so the budget covers it with nothing to spare. The prompt states the narrow question plainly (does the walked state carry a CRITICAL?) and says that zero findings is the expected result rather than a failure, since a clean pass here converges the gate on its own terms for the first time. Handoff preflight FAILED at packaging time: 17 uncommitted paths carrying the very walk the reviewer must examine, so the pull invocation is WITHHELD until the work is committed and pushed.",
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/rc02-gate-semantics/.orbit-runs/external-prompt-system-2026-09-14T11-51-50Z.md into the target AI, save the response as orbit/changes/rc02-gate-semantics/.orbit-runs/external-system-<TS>.md, then /orbit:address-reviews rc02-gate-semantics --from-file <path>"
+}

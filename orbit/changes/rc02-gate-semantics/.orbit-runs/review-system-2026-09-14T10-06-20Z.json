@@ -1,0 +1,167 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-14T10:06:20Z",
+  "change": "rc02-gate-semantics",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": [
+    "--fresh"
+  ],
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 1,
+      "warning": 5,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 4
+    }
+  },
+  "findings": [
+    {
+      "severity": "CRITICAL",
+      "dimension": "correctness",
+      "title": "The gate's canonical next steers the user into breaking the blind pair whenever the standing pass has findings",
+      "file": "src/core/artifact-graph/gates.ts",
+      "line": 733,
+      "description": "`evaluateReviewed` runs clause (b) before clause (a), and `canonicalNextForReviewed` tests `ev.unresolvedPass` before `ev.neededSlot`. So the moment the FIRST half of a blind pair lands carrying any substantive finding, the single canonical next becomes `/orbit:address-reviews <change> --from-file <that pass>` and the reason reads `pass <TS> has unresolved substantive findings` — with no mention that the `blind-pair` slot is open and its partner outstanding. Following the engine's own recommendation writes a record whose token lands strictly between the two members, which is exactly the blindness violation `slotCandidates` rejects (endpoints inclusive). That pair can never be formed on that state again: the walked member is no longer pairable with any later partner, so the cadence costs TWO further independent passes and the budget of 3 is exhausted before the pair is covered. The forward note the spec requires is emitted ONLY when the standing pass has no substantive findings — exactly when there is nothing to walk and the trap cannot spring. The one test covering that reason uses a findings-free pass, so the live case is untested. This defeats the change's own exit criterion 2 and its cost thesis.",
+      "recommendation": "Give the uncovered-blind-pair forward note precedence over the resolution recommendation while a pairable member stands, so the engine never recommends the walk that forecloses its own cadence.",
+      "reproduction": "Against the real spec-driven v4 schema and a COPY of this change's own trail: baseline reports `blind pair open: no independent pass stands on this state`, next `--fresh`, spend 0/3. Write one fresh pair member carrying a WARNING as `review-system-2026-09-14T18-00-00Z.json`. computeGateStates now returns reason `pass 2026-09-14T18-00-00Z has unresolved substantive findings` and next `/orbit:address-reviews rc02-gate-semantics --from-file .../review-system-2026-09-14T18-00-00Z.json`. Obey it (write address-reviews at T18:30 referencing that pass), then land the external half at T19: the pair (T18,T19) now has a referencing record inside [T18,T19], slotCandidates yields nothing, reason becomes `blind pair broken`. Run a third independent pass and the gate reports `budget spent: 3 of 3 independent passes` with the blind-pair slot still uncovered.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Test the open-pair condition BEFORE `ev.unresolvedPass` in `canonicalNextForReviewed`: when the cadence declares an uncovered `blind-pair` and a pairable member stands without a partner, return the missing class's invocation and compose a reason naming BOTH facts, with the walk explicitly deferred. Requires evaluateReviewed to compute coverage even when resolution fails."
+        },
+        {
+          "label": "B",
+          "body": "Keep address-reviews as the command but append the forward note to the reason whenever an uncovered blind-pair has a pairable member standing — cheaper, but leaves the recommendation surface pointing at the action that breaks the pair."
+        }
+      ]
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "diagnosePair ignores pairability, so the reason names `external` while the canonical next command says `--fresh`",
+      "file": "src/core/artifact-graph/gates.ts",
+      "line": 350,
+      "description": "`canonicalNextForReviewed` filters candidate members by `isPairable`; `diagnosePair`, which produces the reason, filters nothing. On the shipped cadence a trail of fresh T1 walked at T2 with no external yields reason `blind pair open: the fresh pass on this state has no external partner; run it before walking these findings` while nextCommand is `--fresh`. The reason names a class the command does not, and its trailing clause is stale advice about findings already walked. A user following the reason buys an external run that can pair with nothing, satisfies no slot, and still counts against the budget — the exact failure pairability was added to prevent. The existing test asserts only nextCommand, never the reason.",
+      "recommendation": "Filter diagnosePair's candidate lists through `isPairable` before diagnosing, and route the all-walked case to `none-standing` so the reason matches the `--fresh` command the engine already returns."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "A rejected external return is named in the reason only when the budget is exhausted, falsifying the spec's unconditional SHALL",
+      "file": "src/core/artifact-graph/gates.ts",
+      "line": 695,
+      "description": "The delta states without condition that the count SHALL include rejected returns in both figures and the reason SHALL name them, and its scenario fixes the case at budget 3 with one valid pass — spend two, NOT exhausted — requiring the artifact to be named. In the code the clause lives only inside `if (exhausted && gate.budget !== undefined)`, so below the ceiling the reason never mentions it: the user is told to buy another external run with no hint that one already came back unreadable, which design D6 names as the settled-against reading. The shipped test constructs spend 3/3, which is why the suite is green over the divergence.",
+      "recommendation": "Move the rejected-return clause out of the exhaustion branch: append it whenever `rejected.length > 0` and the gate declares a budget, with the exhaustion clause composing on top."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "The exhausted reason mixes scopes: the rejected-return count it reports is not the count it claims is included",
+      "file": "src/core/artifact-graph/gates.ts",
+      "line": 698,
+      "description": "The reason reads `budget spent: ${independentSpendFresh} of ${budget} (including ${rejected.length} …)`. The first is the TRIGGER count (fresh only); `rejected` is the whole-trail list, stale returns included. The parenthetical asserts that N rejected artifacts are included in a figure that may contain fewer, and names files excluded from the count by construction. The delta is explicit that any unqualified 'spend' means the trigger count. Executed: rejected T1, fresh T2, apply T3, rejected T4, fresh T5, fresh T6 gives spend 5, fresh 3, exhausted true, and names two files of which only one is inside the 3.",
+      "recommendation": "Restrict the reason's rejected list to the trigger scope so the count and filenames named inside the spend sentence are the ones it is counting."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "A reviewed gate whose id encodes no mode reports a budget counted over every mode's passes",
+      "file": "src/core/artifact-graph/gates.ts",
+      "line": 657,
+      "description": "The delta says a reviewed gate whose mode cannot be derived reports NO budget rather than counting passes of every mode. The code does the opposite: when `gateMode` returns null, `relevant` and `rejected` admit every mode, and `budgetFields` is populated purely on `gate.budget !== undefined`. Project-local and user-override schemas are a supported surface, so a gate like `peer-check` is a real path. Executed with one proposal pass, one system pass and two rejected returns: budget 2, spend 4, fresh 4, exhausted true — exhaustion reported on passes belonging to a mode the gate does not operate over.",
+      "recommendation": "Gate the budget fields and the exhaustion computation on mode derivability, as the spec states."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "A blocked reviewed gate that declares a budget omits every budget field, breaking the stated totality of `budgetExhausted`",
+      "file": "src/core/artifact-graph/gates.ts",
+      "line": 571,
+      "description": "The delta's scenario states the contract normatively: the field is present whenever the gate declares a budget and omitted only when it declares none, so a consumer's branch stays total. The `unmet.length > 0` branch in `computeOne` builds the status before `computeReviewedStatus` is reached and carries none of the four fields. This is not exotic: on the shipped schema `review-system` is blocked for the whole life of every change until apply passes, and `review-proposal` until all four artifacts exist — both declare budget 3. A consumer reading `budgetExhausted === undefined` as 'declares no budget' — the reading the scenario licenses and rc04 is told to branch on — misreads every blocked gate.",
+      "recommendation": "Spread the budget fields with `budgetExhausted: false` into the blocked status for reviewed gates that declare a budget, or amend the scenario to say a blocked gate reports no spend and why."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "title": "design.md still carries the removed clause-(c) rewrite as a delivered goal and a touchpoint",
+      "file": "orbit/changes/rc02-gate-semantics/design.md",
+      "line": 41,
+      "description": "D3 records that the confirming-pass-SET rewrite left this change and is now rc02c's, and the delta says so. Three design sites still read as though it shipped. Goals line 41 states 'Confirm over the whole of a cadence slot, so a parallel pair's findings cannot depend on which member finished last' — a goal this change does not meet and which D3 says is NOT delivered. Touchpoints line 369 names 'the confirming pass set', a construct absent from the shipped code. D4's pseudocode line 199 restates freshness inside the pair predicate, which D2a records as the defect that made the `stale` state unreachable and says was removed. The delta and the code are both correct; only the design record disagrees, and a Pass-0 design-adherence check reading the Goals list would mark the change short of its own goal.",
+      "recommendation": "Strike the Goals bullet or restate it as rc02c's premise, drop the confirming-pass-set touchpoint, and delete the freshness line from D4's pseudocode with a pointer to the quantification convention that owns it."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "title": "diagnosePair's blindness test is inverted, making `blindness-broken` an uninformative constant",
+      "file": "src/core/artifact-graph/gates.ts",
+      "line": 365,
+      "description": "The loop returns 'blindness-broken' when it finds a pair for which the between-test is FALSE — i.e. when blindness HOLDS — and the fall-through returns the same string when every candidate genuinely has a walk between its members. The diagnosis carries no information beyond the other four cases. On the shipped cadence the accident is harmless, because `blind-pair` is slot 0 with no lower bound so the fall-through is always the reachable path. It misfires as soon as the slot is not first: on the delta's own `[external, blind-pair]` scenario the reason computes to 'blind pair broken: a walk of one member's findings stands between them' on a trail with no walk record at all.",
+      "recommendation": "Invert the predicate and add an explicit terminal case for a pair excluded by the ordering constraints, so the reason distinguishes a broken pair from a foreclosed one."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "The 'Token ties fail safe' scenario's second clause contradicts the requirement's total-order rule and describes a trail that cannot exist",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 493,
+      "description": "The scenario asserts that two candidate pairs sharing the same later token with no distinguishing earlier token are REJECTED. The requirement two paragraphs above says the opposite: selection is lexicographically smallest, ties broken by findings-artifact filename, TOTAL and implementation-order-independent — and the code implements that, certifying rather than rejecting. The state is also unreachable: two candidate pairs share both tokens only if two passes of the same class share a token, and within one mode the internal and external filenames are each unique per token, while a fresh/external collision is already rejected as a member tie. The filename component of the sort key is consequently dead. Same class as D4a: a scenario describing a trail the product cannot emit.",
+      "recommendation": "Drop the second clause (keep the reachable member-tie case) or restate it as the determinism rule the requirement specifies, noting the filename tiebreak is a total-order component rather than a reachable branch."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "The archive body's 'Address the gate' example still names the external invocation as the canonical next",
+      "file": "src/core/templates/workflows/archive-change.ts",
+      "line": 280,
+      "description": "The inflection-prompt option reads 'run the canonical next_command (e.g. /orbit:review --as system --reviewer external <change>)'. Under v4 the first uncovered system slot is `blind-pair`, whose canonical command is the FRESH invocation whenever no pairable external stands — the state at every archive attempt that has not already run half a pair. Task 7.2 scoped exactly this class and named emit-composition.ts and apply-change.ts; this sixth site was not swept. The body does instruct reading next_command, so the harm is limited to an example now wrong more often than right.",
+      "recommendation": "Replace the parenthetical with a class-neutral example, or with the fresh invocation v4's leading slot actually yields."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "CLAUDE.md still describes the program as carrying rulings R-crc-1..5",
+      "file": "CLAUDE.md",
+      "line": 111,
+      "description": "The line glosses 'rulings R-crc-1..5'. The program doc now declares R-crc-1 through R-crc-8, and this change both added R-crc-8 — the ruling that authorized removing clause (c) from this very change — and amended R-crc-7, while editing the immediately adjacent clause of the same sentence. A reader orienting from CLAUDE.md does not learn that the sectional trigger or the decision-table ruling exist.",
+      "recommendation": "Extend the range to R-crc-1..8 and add the three new rulings to the gloss."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "design.md's R-crc-1 self-measurement reports 56 scenarios; the change carries 63",
+      "file": "orbit/changes/rc02-gate-semantics/design.md",
+      "line": 419,
+      "description": "The size bullet states three capabilities, nine requirement blocks, 56 scenarios, ~50 KB, 18 tasks. Measured: 3 directories, 9 requirement blocks, 52,216 bytes, 18 checkboxes — all as stated — but 63 scenario lines (56 in orbit-engine-gates alone, plus 3 and 4 in the other two deltas). The scenario figure is a one-capability count presented as the change-level one. Scenarios are not an R-crc-1 axis so the breach accounting is unaffected, but the program's method is to close with a measurement rather than an assertion, and this is the one number in the bullet that was not measured.",
+      "recommendation": "Correct the figure to 63 or state it per capability, and consider deriving the bullet from a command so the next stage's self-measurement is reproducible."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Pass 0 was executed by hand rather than by invoking /orbit:verify, because that command writes an emit onto the change's own trail and this pass must leave the artifact state the external half is reading byte-identical; the same applies to Pass 6's sweeps. Every claim was executed, not read: a scratch harness against dist/, trails written file-by-file into temp .orbit-runs directories and walked through the real computeGateStates, one run against a COPY of this change's live trail and the real v4 schema, and a sweep of all 101 archived address-reviews records and all 38 archived external findings files through the real readers. Suite green at 2086, strict validation passes, fingerprints 8/8, no archived change throws under v4. The pattern behind the findings is one thing, and it is not the arithmetic: the CONVERGENCE MATH IS SOUND and the REASON COMPOSITION is where everything went wrong. Clause (a)'s backtracking search terminates on every trail I could build, genuinely returns the lexicographically smallest assignment rather than merely the first found, composes the earliest-pair rule with the whole-cadence criterion as specified, keeps blindness endpoint-inclusive, fails member ties safe, never lets a consumed index satisfy two slots, and does not let a late second external foreclose a covered cadence. Clause (b) is the cleanest part of the change: against every real archived record it classifies 46 readable and 55 unreadable, the 8 counter-object records and the 1 empty array fall back exactly as the scenarios say, and on real data the only dispositions that ever appear are resolved (294) and stale (15), so the severity-awareness is prophylactic exactly as the design admits. Both stated conventions hold against the code: freshness is filtered at the one call site and nowhere inside a slot predicate, and stale is still reachable including the STALE BUDGET-SPENT combination. Performance is a non-issue on the shipped cadence (60 passes render in 10ms); the search is exponential in the number of blind-pair slots, which matters to nobody today and would matter if a future cadence stacked pairs. Where it goes wrong is the surface this change calls its teaching surface. The reason line is computed by a function that does not know about pairability, does not know whether a walk actually broke a pair, reports rejected returns only once the budget is spent, and mixes the trigger and reported scopes inside one sentence. And the clause ordering means the forward note — the single mitigation D7 names for the trap the blind pair introduces — is suppressed in precisely the case where the trap can spring. Two areas probed and found sound, so silence is not read as absence: the five-value gate-state set is genuinely untouched and every closed-set consumer needed no edit, so reporting spend beside the state was the right call and cost nothing downstream; and the v4 residue sweep is substantially complete, with one missed site and one stale gitignored install copy that `orbit update --force` clears. Risk texture: nothing here loses data and nothing is unrecoverable; the exposure is that a user obeying the tool spends their whole review budget without covering the cadence, which is the specific cost this stage exists to remove. One thing not probed and named rather than hidden: `systemReviewNext`'s guard rejects legitimately-computed non-review next commands and falls back to the bare literal its own comment says must never be hardcoded — left out of the findings as one more instance of the same recommendation-surface pattern rather than an independently actionable defect.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4 — no perspectives defined (orbit/lenses/perspectives.md absent)",
+    "5 — no critical paths defined (orbit/lenses/critical-paths.md absent)"
+  ],
+  "final_assessment": "1 critical, 6 warning, 5 suggestion.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc02-gate-semantics --from-file orbit/changes/rc02-gate-semantics/.orbit-runs/review-system-2026-09-14T10-06-20Z.json"
+}

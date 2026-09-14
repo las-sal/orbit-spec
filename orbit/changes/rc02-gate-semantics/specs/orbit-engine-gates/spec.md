@@ -18,7 +18,8 @@ any sentence elsewhere saying "spend" without qualification means the trigger co
 carry it.
 
 **Spend counts REJECTED returns too.** An external findings file that fails the trail reader's
-shape validation is absent from the pass list, so it satisfies no cadence slot — correctly, since
+shape validation — which is FENCE-AWARE and requires the format's canonical metadata, so a document
+whose only severity headings sit inside a fenced example is not a review — is absent from the pass list, so it satisfies no cadence slot — correctly, since
 its findings cannot be read. It still COST a model run, and "spend is spend" governs: the trail
 reader SHALL surface rejected external artifacts separately from cadence-eligible passes, the
 count SHALL include them in BOTH figures — `independentSpend` counts every rejected artifact
@@ -67,6 +68,32 @@ reach it has recorded a fact worth reading.
   the gate declares a budget and omitted only when it declares none, so a consumer's branch on it
   stays total; budget is never consulted for a converged gate
 
+#### Scenario: An open pair outranks the walk recommendation
+
+- **WHEN** one member of an uncovered `blind-pair` slot stands carrying a substantive finding and
+  its partner has not run
+- **THEN** the canonical next command names the MISSING MEMBER's class, not the walk, and the reason
+  carries both the pass awaiting resolution and the open pair with the walk deferred
+
+#### Scenario: A partial resolution record certifies only what it names
+
+- **WHEN** a pass carried two WARNINGs and the latest referencing record names one of them resolved
+- **THEN** the pass is UNRESOLVED — completeness is checked before disposition, so a record cannot
+  certify a finding it omits
+
+#### Scenario: A present but uninterpretable `outcome` does not revive `status`
+
+- **WHEN** an entry carries `outcome: null` alongside `status: "resolved"`
+- **THEN** the record is UNREADABLE and falls back to the bare counts — the legacy key is consulted
+  only when the `outcome` property is ABSENT
+
+#### Scenario: A fenced example is not a review
+
+- **WHEN** an external findings file's only severity headings sit inside a fenced code block, or the
+  file omits the format's `**Reviewer**:` field
+- **THEN** shape validation rejects it: it satisfies no cadence slot and is recorded as a rejected
+  return that still counts as spend
+
 #### Scenario: A rejected external return still costs
 
 - **WHEN** an external findings file fails shape validation and one valid independent pass exists,
@@ -108,6 +135,17 @@ which cadence slot is uncovered, which pass has unresolved substantive findings,
 clause failed — and, when the spend has reached the declared budget, that clause PLUS the spend — in terms a reader can act on without opening the
 trail. The reason SHALL additionally carry a FORWARD note when the next rule is already
 determinable and acting on it early is cheaper than acting on it late.
+
+**AN OPEN BLIND PAIR OUTRANKS THE RESOLUTION RECOMMENDATION.** Clause (b) fails before clause (a)
+is reached in the ordinary reading, so the moment one pair member lands carrying a substantive
+finding the gate would otherwise recommend walking it — and that walk writes a record between the
+two members, foreclosing the pair permanently and costing two further independent passes. Coverage
+SHALL therefore be computed even when resolution fails, and when the cadence declares an UNCOVERED
+`blind-pair` slot with a PAIRABLE member standing, the canonical next command SHALL name the missing
+member's class rather than the walk, and the reason SHALL carry BOTH facts — the pass awaiting
+resolution AND the open pair, with the walk explicitly deferred until the partner lands. An engine
+that recommends the action which forecloses its own cadence is worse than one that recommends
+nothing.
 
 The named forward case: when the gate's cadence DECLARES a `blind-pair` slot that is not yet
 covered, and one PAIRABLE independent pass stands on the current state without a partner, the
@@ -293,9 +331,15 @@ A record is **READABLE** when `resolutions` is a NON-EMPTY ARRAY and EVERY eleme
 carrying
 BOTH a recognised `severity` (`CRITICAL` | `WARNING` | `SUGGESTION`) AND a recognised DISPOSITION
 (`resolved` | `stale` | `deferred` | `escalated`, read from `outcome`, or from the legacy key
-`status` when `outcome` is absent — both generations are live and readers SHALL tolerate both).
+`status` ONLY when the `outcome` PROPERTY IS ABSENT — presence is a property test, not a
+non-empty-string test, so a present `outcome` the reader cannot interpret (null, a number, an
+object, an unrecognised word) makes the record unreadable rather than reviving the legacy key — both generations are live and readers SHALL tolerate both).
 
-- **Readable record** — the pass is resolved iff NO entry with `severity` CRITICAL or WARNING
+- **Readable record** — COMPLETENESS is checked before disposition. Every SUBSTANTIVE finding of
+  the pass SHALL be matched by an entry, keyed by trimmed title and repo-relative file exactly as
+  the new-finding match is keyed; a record naming only some of a pass's substantive findings
+  certifies only those, and the pass stays UNRESOLVED. Only then does disposition decide: the pass
+  is resolved iff NO entry with `severity` CRITICAL or WARNING
   carries a disposition of `deferred` or `escalated`. SUGGESTION-grade entries NEVER block, whatever
   their disposition and whatever the record's aggregate counters say. The per-entry data is
   PREFERRED over `resolution_summary` when the two disagree.
@@ -492,9 +536,13 @@ self-assessment of review quality.
 
 #### Scenario: Token ties fail safe
 
-- **WHEN** a resolution record referencing one pair member shares a token with that member, or two
-  candidate pairs share the same later token with no distinguishing earlier token
-- **THEN** the pair is REJECTED rather than certified, and the reason names the tie
+- **WHEN** two candidate members share a timestamp token
+- **THEN** the pair is REJECTED rather than certified, and the reason names the tie. (A resolution
+  record sharing a member's token is covered by the INCLUSIVE blindness interval rather than by this
+  rule. Two candidate PAIRS sharing both tokens is not stated because it is UNREACHABLE: two
+  artifacts of one class in one mode cannot share a token, since the filename embeds it — settled
+  2026-09-14 by the blind pair's own disagreement, one half calling it unreachable and the other
+  filing it with a reproduction.)
 
 #### Scenario: An unrecognised disposition makes the record unreadable
 
@@ -629,8 +677,18 @@ class-coverage purposes, but the rendered recommendation stays single-voiced: th
 command only, never co-offered with the external alternative. When the next uncovered slot is `blind-pair`, the canonical command names the class missing from
 the earliest pair STILL FORMABLE on this state. A standing pass counts as a candidate member only
 while it is PAIRABLE — that is, while no `address-reviews-*.json` record referencing its findings
-artifact carries a later token; once a pass has been walked it can never pair with any later
-partner, so its class no longer counts as present. When a pairable fresh pass stands, the command
+artifact carries a token AT OR AFTER its own. The bound is INCLUSIVE because the blindness interval
+is: a record sharing a member's token already falls inside it, so an exclusive test would recommend
+buying a partner for a pass that cannot form a valid pair. Once a pass has been walked it can never
+pair with any later partner, so its class no longer counts as present. DIAGNOSIS USES THE SAME
+PREDICATE AS ASSIGNMENT, so the reason and the canonical command can never name different classes,
+and a pair excluded by the ordering constraints is reported as FORECLOSED rather than as blindness
+broken by a walk that does not exist. One consequence is worth stating rather than leaving as dead
+vocabulary: the pairability filter SUBSUMES most of the blindness diagnosis, because a record that
+breaks blindness has already made the member it references unpairable, so that member leaves the
+candidate set before the blindness test runs. `blindness-broken` therefore survives as a DEFENSIVE
+branch — reachable only for a record referencing the later member with an earlier token, which an
+ordinary trail cannot produce — and not as a diagnosis a user should expect to see. When a pairable fresh pass stands, the command
 is the external invocation; when a pairable external pass stands, the fresh invocation; when NO
 pairable independent pass stands, the command is the fresh invocation as the lighter first half AND
 the gate's reason SHALL state that both members must run before EITHER is walked. Without the

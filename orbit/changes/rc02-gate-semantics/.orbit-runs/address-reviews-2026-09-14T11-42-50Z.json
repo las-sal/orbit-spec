@@ -1,0 +1,131 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-14T11:42:50Z",
+  "change": "rc02-gate-semantics",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc02-gate-semantics/.orbit-runs/review-system-2026-09-14T10-06-20Z.json",
+  "source_command": "review",
+  "source_token": "20Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 6,
+    "suggestion": 5
+  },
+  "pushback_verification": "Every claim executed before acting. The fence-unaware parser was reproduced by feeding the reader a document whose only severity headings sat inside a fence and watching it count as a clean pass. The same-token pair-candidate CRITICAL was DISPUTED by the other half of the pair and settled empirically: two artifacts of one class in one mode cannot share a token because the filename embeds it, so the engine gap is real but unreachable and the defect is in the scenario. The verify-emit baseline break was confirmed against the shipped requirement text. Walk entries were generated FROM what the trail reader actually parsed, not written by hand, because clause (b) now requires every substantive finding to be matched by title and file.",
+  "resolution_summary": {
+    "resolved": 12,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "The gate's canonical next steers the user into breaking the blind pair whenever the standing pass has findings",
+      "file": "src/core/artifact-graph/gates.ts",
+      "outcome": "resolved",
+      "classification": "decision required",
+      "action": "The sharpest finding of the pair, and it demonstrated itself: persisting the fresh half made the gate recommend walking it, which would have written a record between the two members and foreclosed the pair permanently. Option A taken. Coverage is now computed EVEN WHEN RESOLUTION FAILS, and an open blind pair with a pairable member standing OUTRANKS the walk recommendation — the canonical command names the missing member's class and the reason carries both facts, with the walk explicitly deferred until the partner lands. Spec states it normatively; a regression asserts the command and the reason on the exact trail."
+    },
+    {
+      "severity": "WARNING",
+      "title": "diagnosePair ignores pairability, so the reason names `external` while the canonical next command says `--fresh`",
+      "file": "src/core/artifact-graph/gates.ts",
+      "outcome": "resolved",
+      "classification": "trivial fix",
+      "action": "Fixed with the external half's matching finding: diagnosis uses the same pairability predicate assignment uses. The existing test asserted only nextCommand; it now asserts that the reason and the command name the SAME class, which is the property the finding was really about."
+    },
+    {
+      "severity": "WARNING",
+      "title": "A rejected external return is named in the reason only when the budget is exhausted, falsifying the spec's unconditional SHALL",
+      "file": "src/core/artifact-graph/gates.ts",
+      "outcome": "resolved",
+      "classification": "trivial fix",
+      "action": "Fixed with the external half's matching finding: the clause composes whenever a rejected artifact exists, independent of exhaustion."
+    },
+    {
+      "severity": "WARNING",
+      "title": "The exhausted reason mixes scopes: the rejected-return count it reports is not the count it claims is included",
+      "file": "src/core/artifact-graph/gates.ts",
+      "outcome": "resolved",
+      "classification": "trivial fix",
+      "action": "Fixed: the rejected list named inside the spend sentence is now TRIGGER-scoped, so the count and the filenames are the ones the sentence counts."
+    },
+    {
+      "severity": "WARNING",
+      "title": "A reviewed gate whose id encodes no mode reports a budget counted over every mode's passes",
+      "file": "src/core/artifact-graph/gates.ts",
+      "outcome": "resolved",
+      "classification": "trivial fix",
+      "action": "Fixed with the external half's matching finding: budget reporting is gated on mode derivability."
+    },
+    {
+      "severity": "WARNING",
+      "title": "A blocked reviewed gate that declares a budget omits every budget field, breaking the stated totality of `budgetExhausted`",
+      "file": "src/core/artifact-graph/gates.ts",
+      "outcome": "resolved",
+      "classification": "trivial fix",
+      "action": "Fixed: a blocked reviewed gate that declares a budget now reports all four fields with `budgetExhausted: false`, so a consumer's branch stays total. This is the common case rather than an edge — `review-system` is blocked for the whole life of every change until apply passes. Regression added."
+    },
+    {
+      "severity": "WARNING",
+      "title": "design.md still carries the removed clause-(c) rewrite as a delivered goal and a touchpoint",
+      "file": "orbit/changes/rc02-gate-semantics/design.md",
+      "outcome": "resolved",
+      "classification": "trivial fix",
+      "action": "Fixed with the external half's matching finding; all four sites corrected."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "diagnosePair's blindness test is inverted, making `blindness-broken` an uninformative constant",
+      "file": "src/core/artifact-graph/gates.ts",
+      "outcome": "resolved",
+      "classification": "trivial fix",
+      "action": "Fixed: the predicate is asserted rather than negated, and a `foreclosed` case was added for a pair excluded by ordering. Worth noting the deeper consequence the finding did not claim — once diagnosis filters by pairability, a blindness break almost always makes one member unpairable first, so `blindness-broken` is now near-unreachable and the pairability filter subsumes it."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The 'Token ties fail safe' scenario's second clause contradicts the requirement's total-order rule and describes a trail that cannot exist",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "outcome": "resolved",
+      "classification": "trivial fix",
+      "action": "Resolved together with the external half's CRITICAL on the same subject — see that entry. This half was right: the trail is unreachable, and the scenario was the defect."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The archive body's 'Address the gate' example still names the external invocation as the canonical next",
+      "file": "src/core/templates/workflows/archive-change.ts",
+      "outcome": "resolved",
+      "classification": "trivial fix",
+      "action": "Fixed: the example is replaced by a class-neutral instruction to read the CLI's `next_command`, since the class depends on the schema's cadence."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "CLAUDE.md still describes the program as carrying rulings R-crc-1..5",
+      "file": "CLAUDE.md",
+      "outcome": "resolved",
+      "classification": "trivial fix",
+      "action": "Fixed: the range reads R-crc-1..8 and the gloss names the blind pair, the walk-authors-nothing lanes, explore-produces-mechanism, and finding-quality-never-licenses-another-pass."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "design.md's R-crc-1 self-measurement reports 56 scenarios; the change carries 63",
+      "file": "orbit/changes/rc02-gate-semantics/design.md",
+      "outcome": "resolved",
+      "classification": "trivial fix",
+      "action": "Fixed, and re-measured after this walk rather than restated: 69 scenarios across all three deltas."
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "R-crc-3 (Sal, 2026-09-11): method decisions are settled by the authoring AI and recorded with rationale.",
+  "final_assessment": "12 of 12 resolved. The fresh half of the first blind pair. Its CRITICAL demonstrated itself live: persisting this very pass made the gate recommend the walk that would have foreclosed the pair. Coverage is now computed even when resolution fails, and an open pair outranks the walk recommendation. The other eleven were budget-reporting and record-coherence defects, four of which the external half found independently.",
+  "iteration": 8,
+  "next_recommended": "/orbit:review --as system rc02-gate-semantics"
+}
