@@ -1,0 +1,264 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-12T18:59:14Z",
+  "change": "rc02-gate-semantics",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc02-gate-semantics/.orbit-runs/review-proposal-2026-09-12T18-15-33Z.json",
+  "source_command": "review",
+  "source_token": "2026-09-12T18-15-33Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 9,
+    "suggestion": 4
+  },
+  "pushback_verification": "Every claim verified against current state before acting. Measured independently: 40 task checkboxes (grep), 17 in the c2 calibration change, 28,434 delta bytes. Read the four contradicted baseline blocks at their cited locations (orbit-engine-gates' status-readout state enumeration and canonical-next slot vocabulary; orbit-orientation's CLOSED waiting set; orbit-run-summary-emit's gate_overridden state enum) and confirmed each states the pre-change closed set verbatim. Confirmed orbit-conventions' canonical editorial example carries a CRITICAL with no reproduction. Confirmed validateGates has no cadence-entry branch and that the Zod path names an index. Confirmed `resolutions` is a narrative-only payload key with no structural validation at the emit surface. No finding was stale; none was re-fixed.",
+  "resolution_summary": {
+    "resolved": 13,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "R-crc-1 size ceiling breached on tasks (40 vs under 20) and design.md miscounts its own capabilities",
+      "file": "orbit/changes/rc02-gate-semantics/design.md",
+      "line": 255,
+      "marker_source": "internal-review",
+      "classification": "decision required",
+      "action": "Option A — SPLIT, settled under R-crc-3 (stage sizing and ordering sit with the authoring AI; an exception to R-crc-1 would have been a reversal of a Sal-ratified ruling and is not the AI's to take). The program doc gains stage rc02b-severity-ladder; rc02's charter is rewritten to the convergence half with a dated SPLIT note; the status log records the measurement and the two design defects the same pass found. rc02 now measures ONE capability, 7 requirement blocks, 31.9 KB of delta, 19 tasks — inside the ceiling on every axis. The design's stale 'Two capabilities' self-assessment is replaced by the measured set.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/architecture/clean-up-review-cycle.md",
+          "orbit/changes/rc02-gate-semantics/proposal.md",
+          "orbit/changes/rc02-gate-semantics/design.md",
+          "orbit/changes/rc02-gate-semantics/tasks.md",
+          "orbit/changes/rc02-gate-semantics/.openspec.yaml"
+        ]
+      },
+      "ratified_via": "chat",
+      "resolution": "A — split the stage; what a severity MEANS moves to rc02b-severity-ladder, what the engine COMPUTES stays in rc02",
+      "recommendation_fork": {
+        "source": "structured",
+        "labels": [
+          "A",
+          "B"
+        ],
+        "ratified_label": "A"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "budget-exhausted contradicts two unmodified requirements inside orbit-engine-gates itself",
+      "file": "orbit/specs/orbit-engine-gates/spec.md",
+      "line": 279,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Both MODIFIED blocks added, copied whole from baseline: 'Gate-aware status and instructions with position readout' (gate rows carry budget + spend; the position token gains `unpassed BUDGET-SPENT`) and 'Single-voiced canonical-next computation' (cadence slot-name vocabulary gains `blind-pair`; the phase-id example reads v4; a new rule and scenario make the pair's MISSING MEMBER the canonical next). Fingerprints stamped for both.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/.openspec.yaml"
+        ]
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "budget-exhausted contradicts two baseline capabilities the change does not modify, and fixing them breaks the capability ceiling",
+      "file": "orbit/specs/orbit-orientation/spec.md",
+      "line": 188,
+      "marker_source": "internal-review",
+      "classification": "decision required",
+      "action": "None of the three offered options. The finding surfaced a modeling error rather than a scope problem: gate `state` answers whether the gate converged, and a budget-exhausted gate is precisely `unpassed` — the budget changes nothing about convergence. Spend and convergence are ORTHOGONAL axes. D-rc02-6 is REVERSED: the sixth state is dropped, and exhaustion surfaces as a `budgetExhausted` boolean on the gate status, a spend clause in the reason, and the position token `unpassed BUDGET-SPENT`. The rejection's actual concern (the cost must be visible) is met by the token and the reason; every closed-set consumer — orbit-orientation's WAITING derivation, orbit-run-summary-emit's gate_overridden enum, orbit-archive-modifications' prompt condition — is left untouched, so the change needs ZERO extra capability deltas rather than two or four. The `isUnconverged` predicate goes with the state, and tasks 6.4/6.5 (re-routing consumers) disappear.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+          "orbit/changes/rc02-gate-semantics/proposal.md",
+          "orbit/changes/rc02-gate-semantics/design.md",
+          "orbit/changes/rc02-gate-semantics/tasks.md"
+        ]
+      },
+      "ratified_via": "chat",
+      "resolution": "Off-menu — drop the sixth state entirely and report spend beside the state; decided on the modeling argument, not on the capability count",
+      "recommendation_fork": {
+        "source": "structured",
+        "labels": [
+          "A",
+          "B",
+          "C"
+        ],
+        "ratified_label": null
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Clause (c) reads only the LATEST independent pass, so a CRITICAL in the earlier blind-pair member buys nothing",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 198,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Reproduced the trace against the delta and gates.ts before fixing. Clause (c) now evaluates the CONFIRMING PASS SET — the pass or passes satisfying the last independent-bearing cadence slot, BOTH MEMBERS for a blind-pair — and every member must satisfy the predicate. The overclaimed 'buys exactly ONE further independent pass, never an open loop' sentence is replaced by what is true: the repeat is bounded by the gate's budget and by nothing else, which is why the shipped schema declares one on both reviewed gates. New scenario asserts the order-independence.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/design.md",
+          "orbit/changes/rc02-gate-semantics/tasks.md"
+        ]
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "'the latest qualifying pair is taken' conflicts with clause (a)'s earliest-match ordered walk and can report a covered cadence as unpassed",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 178,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Verified gates.ts:197-213 is a greedy earliest-satisfying walk. The rule is inverted: the EARLIEST qualifying pair whose later token beats the previous slot is taken, so the slot composes with clause (a) instead of contradicting it, and a late-arriving second pass of one class never invalidates an assignment the cadence already covers. The reviewer's four-pass trail is now a required test case (task 4.3), and D4 in the design records why the first draft was wrong.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/design.md",
+          "orbit/changes/rc02-gate-semantics/tasks.md"
+        ]
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Clause (b) gates on resolutions[] fields the emit surface never validates, and the fallback does not cover the divergence",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 183,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Confirmed at src/core/emit-composition.ts that `resolutions` is a narrative payload key with no structural validation. Two fail-safe rules added to clause (b): an `outcome` outside the closed four counts as UNRESOLVED for a substantive entry (matching the trail reader's null-means-unresolved precedent), and a `resolution_summary` whose deferred+escalated exceeds the substantive entries read as such falls back to the bare counts. The 'strictly more conservative' claim is now stated of every fallback rather than of the legacy path alone. Two scenarios added.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/design.md",
+          "orbit/changes/rc02-gate-semantics/tasks.md"
+        ]
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The reproduction field has a producer and a gate but no consumer — the walk that must settle it never sees it",
+      "file": "orbit/specs/orbit-address-reviews/spec.md",
+      "line": 86,
+      "marker_source": "internal-review",
+      "classification": "decision required",
+      "action": "Relocated with the split, not deferred: rc02b-severity-ladder's charter now names the address-reviews virtual-marker mapping carrying `reproduction` into the marker AND the address-reviews body's expected-file-format block learning the line, and its third capability is orbit-address-reviews for exactly this reason. The finding is what made the split's arithmetic decisive — the ladder needed a fourth capability that rc02 could not hold.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/architecture/clean-up-review-cycle.md"
+        ]
+      },
+      "ratified_via": "chat",
+      "resolution": "Relocated to rc02b-severity-ladder, whose charter names the reader half explicitly"
+    },
+    {
+      "severity": "WARNING",
+      "title": "orbit-conventions' own canonical review-emit example shows a CRITICAL the new write gate would refuse",
+      "file": "orbit/specs/orbit-conventions/spec.md",
+      "line": 272,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Verified the example at the cited location. Relocated to rc02b-severity-ladder, which owns the write gate that would refuse it; its charter now names this contradiction explicitly so the fix ships with the rule that creates it.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/architecture/clean-up-review-cycle.md"
+        ]
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "New 'Unknown cadence entry rejected' scenario asserts an error shape the code cannot produce and no task implements",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 142,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Verified validateGates (schema.ts:113-150) names the gate id for kind, duplicate, missing cadence and consent but has no cadence-entry branch, and that the Zod path renders an index. Took the reviewer's preferred option: task 5.1 now adds gate-id-naming validation for BOTH new fields — a non-positive or fractional budget AND a cadence entry outside the five-token vocabulary — matching the surrounding error shapes. The scenario stands as written.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/tasks.md"
+        ]
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Reason composition is unspecified when budget-exhausted coincides with an uncovered cadence slot",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 24,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "The budget requirement now mandates that the exhausted reason carry BOTH the spend AND the clause it displaced, with the reviewer's own example phrasing; the reason requirement lists it among the notes riding the forward slot; a scenario asserts it; task 6.2 requires the composite case in the tests.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/design.md",
+          "orbit/changes/rc02-gate-semantics/tasks.md"
+        ]
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The review body's own payload-field sentence is not in the task list that adds reproduction",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 814,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Relocated to rc02b-severity-ladder with the field itself; its charter now names the Step 9 enumeration as one of the two contradictions shipping with the tax, so the body a reviewing AI actually follows is in scope where the field is introduced.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/architecture/clean-up-review-cycle.md"
+        ]
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "review-proposal budget: 2 cannot fund R-crc-4's proposal-mode blind pair, which this change itself qualifies for",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 259,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "review-proposal budget raised from 2 to 3, symmetric with review-system, and the requirement now states why: R-crc-4 runs the proposal gate as a pair whenever the change is within 20% of the R-crc-1 ceiling, so a budget of two would leave such a change exhausted by its own pair before any repeat was possible. Scenario updated.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/design.md"
+        ]
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Scenario title still says v3 while its own WHEN says version 4",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 313,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Scenario renamed to 'v4 declares the consent-marked seams'. Task 8.3's sweep now covers baseline specs as well as generated bodies and references, and explicitly names stale `spec-driven` v3 references (orbit-run-summary-emit carries two) alongside the four-name cadence vocabulary.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/tasks.md"
+        ]
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "R-crc-3 (Sal, 2026-09-11): method decisions — including stage sizing and ordering — are settled by the authoring AI and recorded with rationale, not briefed for ratification.",
+  "final_assessment": "13 of 13 resolved; 0 unresolved markers in scope. The pass found no CRITICAL and two real design defects, both in the blind-pair predicate, both fixed: clause (c) now confirms over the slot's whole pass set so a CRITICAL in the earlier-finishing pair member cannot be invisible, and the pair is assigned EARLIEST rather than latest so it composes with clause (a)'s greedy walk instead of manufacturing the phantom extra pass this stage exists to remove. Two structural outcomes followed. The stage was SPLIT under R-crc-3 after the pass measured it at 40 tasks against a ceiling of under 20 — rc02b-severity-ladder now owns what a severity MEANS, rc02 owns what the engine COMPUTES — and D-rc02-6's sixth gate state was REVERSED in favour of reporting spend beside the state, decided on the modeling argument that convergence and spend are orthogonal axes rather than on the capability count that surfaced it. rc02 now measures one capability, seven requirement blocks, 31.9 KB of delta and 19 tasks, with fingerprints 5 of 5 verified and strict validation clean.",
+  "iteration": 1,
+  "next_recommended": "/orbit:review --as proposal rc02-gate-semantics"
+}

@@ -110,9 +110,22 @@ As of 2026-09-11 the D-arc's six stages are all archived (d1 complete-ratified; 
 quiescent, awaiting ratification) and the live program is
 **`orbit/architecture/clean-up-review-cycle.md`** — goals G0–G4, rulings R-crc-1..5 (the size
 ceiling, the ordering principle, method delegated to the authoring AI, the canonical review
-cadence, the conditional reversal of D-d6-7), eleven small stages in four phases. Its first
-citing change, `rc01-instrument-fidelity`, is in flight. Read that doc before any rc-stage
-work; the D-arc section below is the historical record of how the engine got here.
+cadence, the conditional reversal of D-d6-7), thirteen small stages in four phases. Its first
+citing change, `rc01-instrument-fidelity`, is ARCHIVED (2026-09-12): the cycle's test
+instruments now DERIVE from a recorded real-CLI contract instead of remembered structure —
+`test/integration/pr-lifecycle/gh-contract.json` captured from the real `gh` by
+`npm run capture:gh` (seven commands with usage shapes and per-flag `{long, short,
+takes_value, value_type}`, both error-rule strings verbatim, an availability probe, and two
+orbit-side qualification rules), ONE CommonJS validator shared by the harness stub and the
+docs sweep (the stub's hand-written branches retired), and a schema-table parity test that
+derives each schema reference's AI-supplied field set — every full-record block AND the
+field-note prose — and asserts the payload table accepts it. Its cycle is the program's first
+evidence: one fresh proposal pass, an in-context pass, ONE external pass (GPT-6 Codex, 3
+CRITICAL — all three the same mistake, an instrument built on remembered structure: a
+formatting-anchored key regex, a `repo|pr` command-family regex, and flag names without their
+captured types), then two self-found narrowings, each closed with a measurement rather than an
+assertion. Read that doc before any rc-stage work; the D-arc section below is the historical
+record of how the engine got here.
 
 ## The D-arc (COMPLETE — historical)
 

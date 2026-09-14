@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-09-12T19:05:23Z",
+  "change": "rc02-gate-semantics",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "mode": "proposal",
+  "prompt_path": "orbit/changes/rc02-gate-semantics/.orbit-runs/external-prompt-proposal-2026-09-12T19-05-11Z.md",
+  "target": null,
+  "final_assessment": "External review prompt packaged for rc02-gate-semantics (iter 1, mode proposal); awaiting findings. Handoff preflight FAILED at packaging time: 33 uncommitted paths (the change itself, the program doc's stage split, and this prompt file), 0 unpushed commits — the pull invocation is withheld until the work is committed and pushed. The prompt carries the four structural resolutions from the internal walk (the stage split, the reversed sixth gate state, the confirming pass set, and the earliest-pair rule) and directs the reviewer at trail-tracing probes against the real engine rather than prose reading, since this change rewrites the criterion every later change's gate converges by.",
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/rc02-gate-semantics/.orbit-runs/external-prompt-proposal-2026-09-12T19-05-11Z.md into the target AI, save the response as orbit/changes/rc02-gate-semantics/.orbit-runs/external-proposal-<TS>.md, then /orbit:address-reviews rc02-gate-semantics --from-file <path>"
+}

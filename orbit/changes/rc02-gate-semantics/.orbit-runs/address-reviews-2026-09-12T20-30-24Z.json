@@ -1,0 +1,293 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-12T20:30:24Z",
+  "change": "rc02-gate-semantics",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc02-gate-semantics/.orbit-runs/review-proposal-2026-09-12T20-30-14Z.json",
+  "source_command": "review",
+  "source_token": "2026-09-12T20-30-14Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 4,
+    "warning": 9,
+    "suggestion": 4
+  },
+  "pushback_verification": "RECORD-ONLY CORRECTION: this walk's first emit cited the THIRD pass's findings file as its source because the fourth pass's findings had been walked before being persisted. That record was removed within a minute, before anything consumed it, the fourth pass was persisted as review-proposal-2026-09-12T20-30-14Z.json, and this log re-emitted against it. Every claim verified before acting; none stale. Reproduced the succession oscillation and the existence/scenario contradiction against my own text. Confirmed the empty-`resolutions` record exists on disk (d4 archive, with a non-trivial summary) plus two records omitting the key. Confirmed `commandForClass` returns the in-context command for any unrecognised slot. Confirmed the lifecycle-consent scenario is falsified by the bump. Independently re-measured the archive for the clause-(b) claim: across 101 records, ZERO deferred or escalated dispositions at any severity, and both recorded overrides cite clause (c) verbatim — the reviewer's correction stands and it lands on the evidence this design offered for superseding a Sal-ratified follow-up.",
+  "resolution_summary": {
+    "resolved": 17,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "Clause (c) succession is vacuous when the current set has no findings — the gate cannot converge on a clean pass",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 291,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Reproduced against my own text from the previous walk: with no findings there are no closing records, so 'later than every record in R' held for every independent pass and the iteration oscillated. Fixed on both axes the reviewer named: when R is EMPTY the current set is FINAL (a set with nothing to close has nothing that could supersede it, and that IS the terminal state the clause exists to reach), and otherwise a successor must be strictly later than BOTH every member of the current set AND every record in R. New scenario asserts a clean confirming set terminates; task 3.1 requires it.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/design.md",
+          "orbit/changes/rc02-gate-semantics/tasks.md"
+        ]
+      }
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "An empty `resolutions` array is READABLE and vacuously resolves the pass, overriding a summary that reports deferrals",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 269,
+      "marker_source": "internal-review",
+      "classification": "decision required",
+      "action": "Verified the shape exists on disk (the d4 archive carries `resolutions: []` with a non-trivial summary; two further records omit the key entirely). Option A taken: readability now requires a NON-EMPTY array, so an empty one is unreadable and falls back to the bare counts — conservative and equivalent to today's engine. Option B's cardinality guard was declined and recorded as a deliberate v1 limit with a re-entry trigger: it would add another quantifier of exactly the kind this requirement keeps getting wrong, and completeness belongs at the walk's own emit. New scenario; task 2.2 fixtures the empty-array and key-absent shapes.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/design.md",
+          "orbit/changes/rc02-gate-semantics/tasks.md"
+        ]
+      },
+      "ratified_via": "chat",
+      "resolution": "A — non-empty array required for readability; the cardinality guard declined as a named v1 limit",
+      "recommendation_fork": {
+        "source": "structured",
+        "labels": [
+          "A",
+          "B"
+        ],
+        "ratified_label": "A"
+      }
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "EXISTENCE FIRST is severity-blind, so a SUGGESTION-only pass still gates — defeating the change's headline goal",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 256,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Confirmed the contradiction inside one requirement: clause (b) is headed 'Every pass's SUBSTANTIVE findings are resolved' while the existence rule said 'ANY findings', and the requirement's own scenario 'A new suggestion does not repeat the loop' asserts a gate that passes on an unwalked suggestion-only pass. Existence is now scoped to CRITICAL or WARNING, and the text says plainly that requiring a walk before a suggestion-only pass could clear the gate would be SUGGESTIONs gating by another route. New scenario asserts an unwalked suggestion-only pass does not block.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/design.md",
+          "orbit/changes/rc02-gate-semantics/tasks.md"
+        ]
+      }
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "Once blindness is broken the canonical next command names a class that can never re-form the pair, and each such pass burns budget",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 610,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Verified `commandForClass` and the recommendation rule: the predicate was 'a pass of that class exists' where the needed property is 'a pass of that class can still pair'. The rule now selects the class missing from the earliest pair STILL FORMABLE: a standing pass counts as a candidate only while no record referencing its findings artifact carries a later token, and when NO pairable pass stands the command is the fresh invocation with a reason saying both members must run before either is walked. New scenario for the walked-pass case; task 6.1 now names the implementation site.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/design.md",
+          "orbit/changes/rc02-gate-semantics/tasks.md"
+        ]
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "\"The EARLIEST qualifying pair is taken\" contradicts the existential/backtracking coverage criterion in the same clause",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 236,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Both readings were endorsed by the same clause and by two scenarios. 'Earliest' is now subordinated explicitly: selection applies ONLY among assignments that satisfy the whole cadence, as a determinism rule over successful assignments, never a pre-filter that can foreclose one. Task 4.1 restated the same way so the test list cannot encode the fix-earliest reading.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/tasks.md"
+        ]
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Two budget scenarios contradict: `independentSpend` at budget demands both `budgetExhausted: true` and `false`",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 556,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "The split between reported spend and exhaustion trigger had only one named field, so every downstream 'spend' was ambiguous and the literal reading reproduced the mid-re-cover false exhaustion the split exists to prevent. The trigger is now its own field, `independentSpendFresh`; `budgetExhausted` and both BUDGET-SPENT tokens key off it and never off `independentSpend`, which is display-only. All three affected scenario WHENs and the status requirement now name the field.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/tasks.md"
+        ]
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The blind pair's freshness is stated as an intrinsic member constraint, which makes the `stale` gate state unreachable for the v4 system gate",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 231,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Verified against computeReviewedStatus, which evaluates coverage twice and reports `stale` exactly when the all-passes evaluation converges and the fresh one does not — a discrimination that fails if freshness is baked into the slot predicate. The pass condition now states PASS-LIST QUANTIFICATION once at the top (clauses (a) and (c) over the fresh list, clause (b) over every relevant pass, the stale discrimination re-evaluating (a) and (c) over the full list), and 'both are fresh' is removed from the pair predicate and from task 4.1. Freshness has exactly one home.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/tasks.md"
+        ]
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Clause (a)'s new resolution-record ordering constraint is not in What Changes, and it adds a pass to the proposal cadence",
+      "file": "orbit/changes/rc02-gate-semantics/proposal.md",
+      "line": 37,
+      "marker_source": "internal-review",
+      "classification": "decision required",
+      "action": "Confirmed the constraint applies to every slot on both gates and was documented only inside a task parenthetical. Added as its own What Changes bullet naming the scope, and recorded in design D4 as an INTENDED cost rather than scoped away: the stage's thesis is fewer passes, so an added pass needs a reason, and the reason is that an unchecked walk is the hole the constraint closes — D5 keeps the trailing slot precisely so something reads the walk. The cost is one pass on a gate whose budget is sized for three.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/design.md"
+        ]
+      },
+      "ratified_via": "chat",
+      "resolution": "Keep the constraint on both gates and declare the proposal-cadence cost as intended, rather than scoping it to slots following a blind-pair"
+    },
+    {
+      "severity": "WARNING",
+      "title": "\"The REPEAT IS BOUNDED BY THE GATE'S budget AND BY NOTHING ELSE\" — the budget bounds nothing",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 309,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "The overclaim is the same category the design says it corrected in D3. Restated truthfully: the repeat is NOT bounded by the engine; the budget PRICES it, exhaustion is a report and never a block, and the decision to stop is the user's at the inflection prompt. A gate declaring no budget repeats with no reported ceiling.",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The forward 'open blind pair' note is not scoped to gates whose cadence declares `blind-pair`",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 105,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Verified the trigger condition held on the proposal gate, whose cadence has no pair. The rule now requires the gate's cadence to DECLARE an uncovered `blind-pair` slot and the standing pass to be PAIRABLE. Task 6.2 asserts the proposal gate never renders the note.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/tasks.md"
+        ]
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "No task implements the blind-pair canonical-next command; today's `commandForClass` silently falls through to the in-context review",
+      "file": "orbit/changes/rc02-gate-semantics/tasks.md",
+      "line": 105,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Verified the fall-through at gates.ts:81-87 — any unrecognised slot returns the in-context command, and task 4.1 adds the token without touching that function. Task 6.1 now names `commandForClass` / `canonicalNextForReviewed` as the implementation site AND requires the function be made EXHAUSTIVE over `CadenceEntry`, so a future cadence token can never silently recommend a class that satisfies nothing.",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The v4 bump falsifies an `orbit-lifecycle-consent` scenario that no delta covers, and task 8.3's baseline sweep has no legal way to fix it",
+      "file": "orbit/changes/rc02-gate-semantics/tasks.md",
+      "line": 128,
+      "marker_source": "internal-review",
+      "classification": "decision required",
+      "action": "Verified the scenario asserts `schema_version: 3` from a scaffold, which `orbit new change` writes from the loaded schema, so v4 falsifies both its WHEN and its THEN. Option A taken despite the cost: `orbit-lifecycle-consent` becomes the THIRD MODIFIED capability, with that one scenario made version-agnostic (the scaffolder records the loaded schema's CURRENT version). Deferring a known-false test contract to keep a byte count down would be the wrong trade, and the capability ceiling permits three. Task 8.3 notes the scenario is handled by the delta.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/proposal.md",
+          "orbit/changes/rc02-gate-semantics/tasks.md",
+          "orbit/changes/rc02-gate-semantics/specs/orbit-lifecycle-consent/spec.md"
+        ]
+      },
+      "ratified_via": "chat",
+      "resolution": "A — add the third capability delta and make the scenario version-agnostic",
+      "recommendation_fork": {
+        "source": "structured",
+        "labels": [
+          "A",
+          "B"
+        ],
+        "ratified_label": "A"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Task 8.3's \"two sites are known\" misses a third: the review body's external-slot claim",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 481,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Third site added by name, and the task's framing changed from a closed set to an OPEN sweep with the greps that find them (`cadence slot`, `cadence class`, bare external-slot claims) written in, so an implementer re-sweeps rather than confirming three.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/tasks.md"
+        ]
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "\"Clause (b) — the clause that actually held the D-arc archives\" is contradicted by the archived trail",
+      "file": "orbit/changes/rc02-gate-semantics/design.md",
+      "line": 121,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Re-measured independently and the reviewer is right: across all 101 archived address-reviews records ZERO carry a deferred or escalated disposition at any severity, so clause (b) has never blocked an archive; both recorded overrides cite clause (c) verbatim. The design now carries a dated CORRECTION saying so, states that clause (b)'s severity-awareness is PROPHYLACTIC, and gives the honest form of the argument — a third `confirm` value would not have touched the blocking clause either, because it too selects clause (c). explore.md's copy of the claim corrected in place. This matters beyond accuracy: it was the evidence offered for superseding a Sal-ratified follow-up.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/explore.md"
+        ]
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "explore.md's two ladder decisions are not marked as moved to rc02b, unlike the superseded budget decision",
+      "file": "orbit/changes/rc02-gate-semantics/explore.md",
+      "line": 39,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "D-rc02-1 and D-rc02-2 each gain a 'MOVED 2026-09-12 to rc02b-severity-ladder (design D1); kept verbatim below as the historical record' header, matching the pattern already used for the superseded and reversed entries.",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 8.5 can only be answered by the archive it measures, repeating D6's deferred-dogfood pattern",
+      "file": "orbit/changes/rc02-gate-semantics/tasks.md",
+      "line": 139,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Split in two. 8.5 is the pre-archive half — run the full system cadence and RECORD the pass sequence and the gate's computed verdict at each step, answerable before the archive and landing in the change's own trail. 8.6 is the at-archive half, still a user-validation handoff, and now names where the answer is recorded: the archive emit's gate fields plus one line in the program doc's status log.",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Trailing whitespace on two delta lines",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 31,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Stripped across the whole engine-gates delta, not only the two cited lines — MODIFIED blocks are copied byte-for-byte into baseline and fingerprint-hashed, so stray whitespace would persist into every future delta reproducing the block.",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "R-crc-3 (Sal, 2026-09-11): method decisions are settled by the authoring AI and recorded with rationale, not briefed for ratification.",
+  "final_assessment": "17 of 17 resolved; 0 unresolved markers in scope. Four proposal passes have now found ten CRITICALs in one requirement, and the fourth made the class unmistakable: every one is a rule that quantifies over a set the author assumed non-empty, or that tests EXISTENCE where the property needed is CAPABILITY. Succession went vacuous on a clean confirming set — the terminal state it exists to reach. Readability went vacuous on an empty array, overriding the summary that would have blocked. Existence said 'any findings' in a clause titled 'substantive', killing the stage's headline goal inside its own text. Canonical-next asked whether a pass exists where the question is whether it can still pair, funding a recommendation loop from the budget this change introduces. The response was a SWEEP, not four patches: the pass condition now states two conventions once — which pass list each clause quantifies over, and that an empty set is never vacuously satisfying — and every rule beneath states its empty case. A pre-committed fallback (move clause (b) to the emit boundary) was NOT taken and is recorded instead, because the fourth pass showed the class spans all three clauses. Measured after the walk: THREE capabilities, nine requirement blocks, 67 scenarios, 51.3 KB, 19 tasks — capabilities at R-crc-1's ceiling and bytes 28% over the guide, both recorded in the design rather than hidden.",
+  "iteration": 4,
+  "next_recommended": "/orbit:review --as proposal rc02-gate-semantics"
+}

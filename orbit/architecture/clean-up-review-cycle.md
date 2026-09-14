@@ -128,6 +128,39 @@ One goal per phase, each falsifiable, each stage naming its goal (settled under 
   proposed, and only for steps rc05 has shown to be deterministic by executing them. Flagged:
   this reverses a ruling Sal ratified at D6; struck on a word.
 
+- **R-crc-6** (settled under R-crc-3, 2026-09-14) — THE WALK AUTHORS NOTHING. A resolution walk
+  has exactly three lanes. **REPAIR**: the artifact says the wrong thing and the right thing is
+  local; fix it in the walk. **DESCOPE**: the finding shows the change is doing something it should
+  not; remove it — the only lane that makes the next review cheaper. **REDESIGN**: closing the
+  finding requires mechanism nobody has reviewed; it LEAVES the change and routes back to
+  `/orbit:explore`, which is the only phase licensed to invent. The test is not the finding's size
+  but whether closing it requires inventing something unreviewed. Rationale, measured on rc02's own
+  cadence (2026-09-14): four proposal passes produced 0C/9W/4S → 3C/7W/1S → 3C/8W/2S → 4C/9W/4S with
+  **zero repeat findings across the whole axis** — so this was not the churn the premise describes.
+  Each walk answered findings by inventing new mechanism, and each pass then correctly found defects
+  in mechanism no reviewer had seen. Of the ten CRITICALs, ONE was a fact explore could have read off
+  the product; the other nine were in mechanism that did not exist when explore ended or existed only
+  as a sentence of intent. A walk that repairs converges because each fix reduces what is left to
+  find; a walk that authors resets the review clock and does so invisibly, because nobody reviews a
+  walk. Corollary for measurement (rc04's): prior-walk-file concentration alone cannot separate churn
+  from authoring — pair it with the REPEAT rate. High concentration with high repeats is churn and
+  the answer is to stop reviewing; high concentration with zero repeats is authoring and the answer
+  is to stop walking.
+
+- **R-crc-7** (settled under R-crc-3, 2026-09-14) — EXPLORE PRODUCES MECHANISM TO THE FIDELITY THE
+  ARTIFACT DEMANDS. Where the deliverable is a DECISION PROCEDURE the machine executes, the procedure
+  IS the deliverable: it SHALL be worked out and EXECUTED ONCE against real data or a constructed
+  case before any spec prose is written. Emergent detail remains legitimate where the artifact is
+  not a decision procedure. This GENERALIZES rc09's spike precondition past external tools and
+  protocols — the trigger is the shape of the deliverable, not the presence of a foreign API.
+  Rationale: every CRITICAL in rc02's passes 2 through 4 was found by constructing an input and
+  walking it through the rule, never by reading the rule. That work costs the same at explore time
+  and a fraction as much: no spec to rewrite, no walk to author, no review clock to reset. Authoring
+  corollary: a decision procedure is specified as a DECISION TABLE or normative pseudocode, where
+  empty cases are explicit by construction — all ten of rc02's CRITICALs were prose quantifier
+  ambiguity (a rule ranging over a set assumed non-empty, or testing EXISTENCE where the property
+  needed was usability), and prose is the wrong medium for a procedure a reader must execute.
+
 ## Open questions (program-level)
 
 Raised by the 2026-09-11 cohesion review (the plan has two parents: the orbit-constrained
@@ -154,7 +187,13 @@ never deleted.
   defect fails the suite — is only true once rc05's extractor EXECUTES commands; a regex
   sweep cannot promise it. *Standing recommendation:* move that exit to rc05; rc01 keeps the
   recorded stub contract and the schema-table test.
-- **Q-crc-4 — RESOLVED (rc02 reports `budget-exhausted`; rc04 records `residual_risk`).** `residual_risk` has two owners.** rc02 says budget exhaustion is a recorded
+- **Q-crc-4 — RESOLVED (rc02 reports budget exhaustion; rc04 records `residual_risk`). AMENDED
+  2026-09-12: the gate STATE was reversed to an annotation** — rc02's first external review showed
+  a sixth state contradicting three closed-set requirements in capabilities rc02 does not modify,
+  and the deciding argument was the modeling one: gate `state` answers whether the gate converged,
+  and spend is an orthogonal axis. Exhaustion now surfaces as a `budgetExhausted` boolean, a spend
+  clause in the reason, and the position token `unpassed BUDGET-SPENT` / `STALE BUDGET-SPENT`;
+  rc04 branches on the BOOLEAN, never on a state. Original resolution follows.** `residual_risk` has two owners.** rc02 says budget exhaustion is a recorded
   residual-risk decision at archive; the archive emit field is rc04's; rc02's exit (3)
   depends on rc04 shipping. *Standing recommendation:* rc02 computes `budget-exhausted` as a
   GATE state; rc04 records `residual_risk` at archive; rc02's exit (3) reads "through the
@@ -181,7 +220,8 @@ never deleted.
 
 ## Program stages
 
-Eleven small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4).
+Thirteen small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
+split into rc02 + rc02b on 2026-09-12; rc13 added 2026-09-14).
 Every stage is sized under R-crc-1, names the capabilities it touches, and names its goal.
 Charters are settled under R-crc-3 until a citing change refines them; exit criteria are
 falsifiable and self-measured by the stage's own cadence (G0). Position is computed — see the
@@ -192,7 +232,7 @@ readout, never this text.
 ### Stage rc01-instrument-fidelity — the cycle's instruments enforce the real tool
 
 Depends-on: (none)
-Complete: [ ]
+Complete: [x] 2026-09-14 (Sal)
 
 Charter: the `gh` stub's accepted-invocation set is derived from a RECORDED real-CLI contract
 (captured from the installed binary's `--help`, checked in), rejecting in both directions
@@ -210,19 +250,52 @@ which executes commands; a sweep cannot promise it.)
 Depends-on: (none)
 Complete: [ ]
 
-Charter: the reviewed-gate model gains a SEVERITY LADDER BY CONSEQUENCE (CRITICAL = a user
-path breaks or data is lost, and the finding carries its reproduction; WARNING = an
-implementation could diverge from the spec as written; else SUGGESTION), the rule that
-SUGGESTIONs NEVER GATE (batched into one follow-up walk; issue #8's confirm value ships here),
-the STOP RULE in R-crc-4's terms (converged when the latest blind reviews carried zero
-CRITICAL and their walk's verification shows no regression; a CRITICAL buys one more blind
-review), and a REVIEW BUDGET declared per change (default: the R-crc-4 shape plus one extra
-blind review) whose exhaustion the gate reports as the state `budget-exhausted` — a gate
-state, never a hard block; rc04 records what the user decides at archive. Goal G1. Touches:
-orbit-engine-gates, orbit-conventions, spec-driven schema v4. Exit: (1) `gates.ts` implements
-ladder + stop rule + budget; (2) the gate reason names whichever rule fired; (3) the next
-archive on this repo proceeds through the stop rule, or with the gate reporting
-budget-exhausted — never a `gate_overridden` for "no clean pass yet".
+SPLIT 2026-09-12 (settled under R-crc-3; see the status log). The original charter carried the
+severity ladder AND the convergence arithmetic; measured at proposal review it was 40 tasks
+against R-crc-1's ceiling of under 20, and completing it honestly needed FIVE capabilities
+against a ceiling of three. The ladder half is now stage rc02b-severity-ladder. What the ENGINE
+COMPUTES stays here; what a SEVERITY MEANS moves there. Neither blocks the other: the clauses
+need only the three severity NAMES, which already exist.
+
+Charter: the reviewed-gate model gains SEVERITY-AWARE CONVERGENCE — clauses (b) resolution and
+(c) confirm become substantive-only (CRITICAL + WARNING), so SUGGESTIONs NEVER GATE (issue #8's
+intent ships here; its third-`confirm`-value mechanism is superseded, because `confirm` selects
+clause (c) alone and it was clause (b) that held the D-arc archives) — plus the STOP RULE in
+R-crc-4's terms as a computable cadence slot `blind-pair` (two passes of DISTINCT independent
+classes, both fresh, blind to each other: no walk of either pass's own findings between their
+tokens), and a REVIEW BUDGET declared per gate (the R-crc-4 shape plus one extra independent
+pass) whose exhaustion the gate reports BESIDE the state — a `budgetExhausted` boolean, a spend
+clause in the reason, and a distinct position token, never a new gate state and never a hard
+block; rc04 records what the user decides at archive. Goal G1. Touches: orbit-engine-gates,
+orbit-run-summary-emit (one scenario whose external-slot wording the new cadence vocabulary
+outgrows), spec-driven schema v4. Exit: (1)
+`gates.ts` implements severity-aware clauses + blind-pair + budget; (2) the gate reason names
+whichever rule fired, and names an OPEN BLIND PAIR before its cost is sunk; (3) the next archive
+on this repo proceeds through the stop rule, or with the gate reporting its budget spent — never
+a `gate_overridden` for "no clean pass yet".
+
+### Stage rc02b-severity-ladder — a severity is a consequence, and CRITICAL pays for itself
+
+Depends-on: (none)
+Complete: [ ]
+
+Charter: `orbit-conventions`' Severity ladder requirement, which today says only "three names"
+and "prefer the lower one", gains DEFINITIONS BY CONSEQUENCE — CRITICAL = a user path breaks or
+data is lost AND the finding carries its REPRODUCTION; WARNING = an implementation built to the
+artifact as written could diverge from what it intends; else SUGGESTION — and the evidence tax
+is ENFORCED where evidence is produced (the `orbit emit review` write gate refuses an internal
+CRITICAL with no non-empty `reproduction`) and SURFACED where it cannot be (an external findings
+file's `**Reproduction**:` line; a CRITICAL lacking one is counted, marked unreproduced, and
+never re-graded by any consumer). The tax needs a READER as well as a producer: the
+address-reviews virtual-marker mapping carries `reproduction` into the marker so the walk's
+pushback can re-run it, and the address-reviews body's expected-file-format block learns the
+line. Two contradictions ship with it: `orbit-conventions`' own canonical review-emit example
+shows a CRITICAL with no reproduction — the exact payload the new write gate refuses — and the
+review body's Step 9 field enumeration, which is what a reviewing AI actually follows when
+building a payload, does not name the field. Goal G1. Touches: orbit-conventions, orbit-emit-composition,
+orbit-address-reviews. Exit: (1) a CRITICAL payload without a reproduction is refused at write
+time naming the finding; (2) an external CRITICAL without one parses, stays CRITICAL, and is
+marked unreproduced; (3) the walk that ingests it can see the reproduction it must settle.
 
 ### Stage rc03-review-genres — review is not verification
 
@@ -242,6 +315,13 @@ orbit-address-reviews. Exit: (1) both templates exist and the schema's cadence s
 blind-pair → walk → verification; (2) a verification emit carries per-resolution
 landed/regressed; (3) verification passes raise zero WARNINGs outside the diff and review
 prompts contain no resolved-since list (grep-tested on the generated surface).
+MEASURED SUPPORT (2026-09-14, rc02's cadence): blind review was applied by hand on three of four
+passes — the reviewer received the artifacts and the code but no resolved-since list — and the
+shared-axis trend recorded **zero repeat findings across four passes**. The other half of that
+result belongs in the prompt this stage owns: the highest-yield instruction was to EXECUTE the
+specified behaviour against the real code on inputs the reviewer constructs, rather than to read it
+for plausibility. Every CRITICAL in passes 2 through 4 came from that instruction; none came from
+careful reading.
 
 ### Stage rc04-cost-visibility — the cycle measures itself in-flow
 
@@ -252,12 +332,17 @@ Charter: `orbit status` renders a cadence line per change — passes so far, fin
 trending, budget remaining — and the capture-recapture residual estimate from R-crc-4's blind
 pair (overlap between two independent reviewers' findings estimates what remains; D6's
 parallel externals overlapped 1 of 3 and 12). This stage OWNS the archive-side record: when
-the gate reports `budget-exhausted` (rc02), the archive flow prompts once and records
+the gate reports `budgetExhausted` (rc02 — a boolean beside the state, not a state), the archive
+flow prompts once and records
 `residual_risk` — what was not converged and why the user accepted it — replacing the
 `gate_overridden` path for that reason. Goal G1. Touches: orbit-orientation,
 orbit-archive-modifications. Exit: (1) the line renders from the trail alone; (2) the residual
 estimate appears whenever a blind pair exists on one state; (3) the archive emit carries
-`residual_risk` on a budget-ended cadence.
+`residual_risk` on a budget-ended cadence; (4) the cadence line carries the CHURN-VERSUS-AUTHORING
+diagnostic per R-crc-6 — prior-walk-file concentration crossed with the repeat rate, so the readout
+distinguishes reviewers grinding edited ground (stop reviewing) from walks inventing new mechanism
+(stop walking) from genuine fresh coverage (keep going). rc02's own cadence is the first fixture:
+high concentration, zero repeats, and nothing in the tooling said so for three consecutive passes.
 
 ### Phase 2 — move checking into tests
 
@@ -316,7 +401,9 @@ the log; the R-crc-4 verification pass over the walk's own diff precedes any fur
 Goal G3. Touches: orbit-address-reviews, orbit-emit-composition (the log field). Exit: (1) the log
 carries `sweep_set` per resolution; (2) a later finding at a site the sweep should have
 covered is detectable from the trail as a ripple-miss; (3) the next cadence records zero
-ripple-miss findings.
+ripple-miss findings; (4) the walk body implements R-crc-6's THREE LANES, and a REDESIGN finding
+routes back to `/orbit:explore` rather than being fixed in place — the log records the routing so a
+change that keeps generating them is visible on the trail.
 
 ### Stage rc09-propose-hygiene — spike before spec, size before review
 
@@ -327,9 +414,49 @@ Charter: propose gains two gates of its own. A SIZE CHECK against R-crc-1 (capab
 requirements, bytes, tasks) that names a split when exceeded. A SPIKE PRECONDITION for any
 change touching an external tool or protocol: a disposable prototype has run the outward path
 and its findings are cited in design.md before the spec is written (D6 wrote 108 KB about `gh`
-before anyone ran `gh`). Goal G3. Touches: orbit-propose-modifications, orbit-conventions,
+before anyone ran `gh`). This stage also OWNS the size computation that R-crc-4's conditional
+proposal-mode blind pair depends on: no engine surface computes size proximity today, so "within
+20% of the ceiling runs a pair" is exercised by choice rather than by the cadence until rc09 makes
+proximity computable (surfaced by rc02's first external review, 2026-09-12). Under R-crc-7 the
+SPIKE PRECONDITION generalizes: it fires for any change whose deliverable is a decision procedure,
+not only for one touching an external tool or protocol.
+Goal G3. Touches: orbit-propose-modifications, orbit-conventions,
 the validator. Exit: (1) the size check fires on a fixture over the ceiling and names the split;
 (2) a proposal touching an external tool without a cited spike fails strict validation.
+
+### Stage rc13-explore-mechanism — invention happens in explore, or it happens in review
+
+Depends-on: (none)
+Complete: [ ]
+
+Charter: the explore surface is where invention is licensed, and today it is not strong enough to
+hold it — so invention leaks downstream into walks, which is where R-crc-6 found it. Three
+structural weaknesses, each verified against the shipped surface (2026-09-14). (1) There is NO
+MECHANISM SECTION: the five-section convention is Premise / Decisions / Open questions / Considered
+& out / References, every one about intent and context, and nothing asks how the thing computes; the
+`sketches/` sibling-file affordance appears twice in the whole body, once as decoration inside an
+ASCII-art box and once as an optional aside, and is never prompted, required, or counted. (2)
+MATURITY IS A DECISION COUNT: the explore emit records `decisions_captured`,
+`open_questions_count` and `open_questions_with_recommendation` — three counts — and grades the
+exploration from them, so rc02's exploration read "7 decisions captured … before formalizing" with
+zero worked mechanism behind any of them. That is the same disease as a review budget that counts
+passes: events counted where substance was meant. (3) THERE IS NO FALSIFICATION STEP: decisions are
+auto-captured with a brief acknowledgment, and nothing asks what would make this wrong or requires
+the proposed rule to be run once.
+
+This stage adds the Mechanism section to the convention, makes the emit's maturity signal read
+mechanism PRESENCE rather than decision count, and adds R-crc-7's execute-once step as an explore
+affordance rather than a discipline someone remembers. Goal G3. Touches: orbit-explore-modifications,
+orbit-conventions (the five-section format), orbit-run-summary-emit (the explore extension fields).
+Exit: (1) an exploration whose deliverable is a decision procedure cannot render Mature without a
+Mechanism section carrying an executed case; (2) the emit's recommendation names the missing
+mechanism rather than a decision count; (3) the next stage explored under it reaches its first
+review pass with zero CRITICALs in mechanism authored after the exploration closed.
+
+NOTE ON ORDERING: R-crc-2 places this phase third, and rc13 sits here because it reduces what
+propose injects. It is nevertheless the highest-leverage stage in the program — it addresses the
+ROOT CAUSE that R-crc-6 identified downstream — and pulling it forward would revise a Sal-ratified
+ordering, so the recommendation is surfaced rather than taken.
 
 ### Stage rc10-apply-closure — the end-to-end run precedes the archive
 
@@ -376,6 +503,20 @@ properties (user-invoked, draft-only, merge never) hold unchanged.
   the program, and R-crc-4 removes the loop it addressed by construction (nothing is reviewed
   after a walk except the walk's diff). Deferred. Re-entry trigger: an archive after rc03 ships
   whose `residual_risk` or override names freshness as the reason.
+- **Rewriting rc02's convergence criterion as a decision table before applying it** (2026-09-14) —
+  the medium is the right target (R-crc-7's authoring corollary says so) but doing it inside rc02
+  would re-author the central requirement a fifth time and reset the review clock again, which is
+  the behaviour R-crc-6 names. The criterion's prose has had its quantifier sweep, its task list
+  already demands a test for every rule including the empty cases, and TESTS are the stronger
+  falsifier from here because they persist. The table convention applies to rc02b and everything
+  after. Re-entry trigger: a fifth pass, or an implementation, finding a further quantifier defect
+  in the same requirement.
+- **Splitting rc02 again on the byte overage** (2026-09-14) — rc02 closed at three capabilities (at
+  the ceiling) and 51.3 KB (28% over the guide), with 19 tasks and 9 requirement blocks inside. No
+  FINDING demanded a split: all seventeen in the final walk were repairs to mechanism already in
+  scope. Splitting would move the same criterion into a smaller change where it would still be
+  specified in the same medium, and R-crc-1 itself says capabilities predict cost better than bytes.
+  The overage is recorded in the change's design rather than hidden.
 - **Fixing the cycle by adding reviewer classes or passes** (2026-09-11) — rejected on the
   data: findings per change grew as the machinery matured; the lever is what a pass is asked
   to do and when it stops, not how many there are.
@@ -430,3 +571,68 @@ properties (user-invoked, draft-only, merge never) hold unchanged.
   cadence; rc01's grammar exit moved to rc05; rc06 the map's sole owner and rc10 narrowed;
   rc09's dependency dropped; rc11 moved to Considered & out; rc12 to be explored as two
   changes; premise residue struck. ELEVEN stages remain. First stage to explore: rc01.
+- **2026-09-12 — rc01 ARCHIVED; rc02 explored, proposed, reviewed, and SPLIT.**
+  `rc01-instrument-fidelity` archived (the instruments now derive from a recorded real-CLI
+  contract; one external pass found 3 CRITICAL that were all one mistake). rc02 explored to ten
+  decisions and proposed as one change, then measured by its first fresh proposal pass at 40
+  tasks against R-crc-1's under-20 ceiling, with two baseline capabilities outside its three
+  (`orbit-orientation`'s CLOSED waiting set and `orbit-run-summary-emit`'s `gate_overridden`
+  state enum) contradicted by the new sixth gate state — completing it honestly meant five
+  capabilities. SPLIT under R-crc-3 (stage sizing is the authoring AI's) rather than taking an
+  exception to a Sal-ratified ruling: rc02 keeps what the engine COMPUTES (severity-aware
+  clauses, `blind-pair`, budget, schema v4 — the sixth gate state was itself reversed the same day,
+  see the entry below); the new stage `rc02b-severity-ladder` takes what a severity MEANS (the
+  consequence definitions, the `reproduction` evidence tax, its write-gate enforcement, and the
+  address-reviews reader the original change lacked entirely). The same pass also found two real
+  defects in the blind-pair design — clause (c) reads only the LATEST independent pass, so a
+  CRITICAL in the earlier pair member buys nothing; and "the latest qualifying pair is taken"
+  contradicts clause (a)'s greedy earliest-match walk, which can report a covered cadence as
+  unpassed AND budget-exhausted at once. Both fixed in the walk. TWELVE stages now.
+- **2026-09-12 — rc02's first external pass (GPT-5 Codex) found 3 CRITICAL, all in the blind
+  pair.** The merged walk R-crc-4 prescribes has NO trail representation: an `address-reviews`
+  record carries one `source_path` and `--from-file` is exclusive to one input, so a pair whose
+  members both carried findings needs ONE RECORD PER MEMBER — rc02 had specified a trail the
+  product cannot emit. A cadence-fixed confirming set also had no successor, so a CRITICAL in a
+  pair could never be cleared and the gate could never reach `passed`. And nothing ordered a
+  following slot's pass after the resolution records it exists to check, so the trailing slot's
+  whole safety rationale was unenforced. All three fixed: resolution is per findings artifact and
+  R-crc-4's "one merged walk" is named as one human SITTING, not one emitted record; the
+  confirming set gains a SUCCESSION rule (a later independent pass strictly after the set's
+  resolution records replaces it); slot ordering gains the resolution-record constraint. The pass
+  also measured the trail the engine actually reads — of 526 archived resolution entries, 260
+  carry `outcome`, 49 carry legacy `status`, and 217 carry neither — so clause (b) now reads both
+  disposition keys and falls the whole record back to bare counts when any substantive entry has
+  neither. R-crc-4's near-ceiling proposal pair is assigned to rc09, which owns the size
+  computation it needs.
+- **2026-09-12 — rc02's third proposal pass (fresh, read BLIND) found 3 more CRITICAL, none a
+  repeat.** All three were one kind: a rule whose English reads as obviously right and whose formal
+  content is vacuous, inverted, or narrower than the property it carries. Clause (b)'s replacement
+  sentence quantified over an empty set, so a findings-bearing pass nobody walked read as resolved.
+  A fail-safe rule compared the severity-BLIND `resolution_summary` counters against a
+  severity-FILTERED entry count, so any walk deferring a SUGGESTION fell the record back to the bare
+  rule and re-gated exactly what the stage exists to exempt. And the succession rule added that
+  morning replaced a two-member confirming set with a single latest pass, reintroducing the
+  which-member-finished-last dependency one paragraph after abolishing it. The shared cause is worth
+  the ruling it did not get: each rule had been validated against the trail that motivated it and
+  not against the trails the other rules produce. The response was SIMPLIFICATION rather than a
+  fourth and fifth patch — clause (b) now asks ONE readability question of a record and has ONE
+  fallback, which subsumed three fail-safe rules and two further warnings (a fourth on-disk
+  `resolutions` shape that is a counter object, and the missing fail-safe on the severity axis).
+  Coverage is restated as EXISTENTIAL (a greedy implementation must backtrack), succession is
+  set-valued and iterated, and the budget's exhaustion TRIGGER is separated from its reported spend
+  so an apply landing mid-cadence cannot report exhaustion during the re-cover the gate itself is
+  asking for.
+- **2026-09-14 — The diagnosis changed: this was not churn, and the fix is upstream.** rc02's four
+  proposal passes ran 0C/9W/4S → 3C/7W/1S → 3C/8W/2S → 4C/9W/4S with ZERO repeat findings across the
+  whole axis — so the premise's churn mechanism does not describe it. What was happening instead:
+  each walk answered findings by inventing mechanism, and each pass correctly found defects in
+  mechanism nobody had reviewed. Ten CRITICALs, nine of them in mechanism that did not exist when
+  the exploration closed. Captured as **R-crc-6** (the walk authors nothing; three lanes, with
+  redesign routing back to explore) and **R-crc-7** (explore produces mechanism to the fidelity the
+  artifact demands; execute the procedure once before specifying it; specify procedures as tables).
+  NEW STAGE **rc13-explore-mechanism** carries the fix at its root — the explore surface has no
+  mechanism section, grades maturity by decision COUNT, and never asks the author to falsify. Four
+  charters gained measured evidence rather than new scope: rc03 (blind review produced the zero-repeat
+  result; execute-don't-read produced every CRITICAL), rc04 (the churn-versus-authoring diagnostic),
+  rc08 (the three lanes), rc09 (the generalized spike). Two directions declined and recorded. Thirteen
+  stages.

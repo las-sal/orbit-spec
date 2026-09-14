@@ -1,0 +1,192 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-12T19:54:44Z",
+  "change": "rc02-gate-semantics",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": [
+    "--fresh"
+  ],
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 3,
+      "warning": 3,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "severity": "CRITICAL",
+      "dimension": "correctness",
+      "title": "Clause (b) drops the baseline scenario that pins the no-walk case, and its replacement wording is vacuously true when no walk exists",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 242,
+      "description": "The MODIFIED block silently DELETES the baseline scenario 'Unresolved findings fail the gate' (WHEN a fresh pass has findings and NO completing address-reviews run THEN the gate is unpassed). It is the only scenario covering a findings-bearing pass with no resolution record at all, and MODIFIED replaces the whole requirement block at archive, so the scenario is permanently lost from baseline — the exact class of silent baseline deletion C2 exists to prevent. The prose that replaces it makes the loss consequential: baseline said the record 'shows deferred == 0 AND escalated == 0' (an existence claim, implemented as `!!latest && ...` in passResolved), while the delta says 'For the most recent record whose source_path references a pass's findings artifact, no entry ... carries a DISPOSITION of deferred or escalated' — universally quantified, and VACUOUSLY TRUE when no such record exists. None of the delta's scenarios exercises the no-record case.",
+      "recommendation": "Restore the existence requirement explicitly in clause (b) — a pass with substantive findings SHALL have at least one address-reviews record referencing its findings artifact; absent any such record the pass is UNRESOLVED, matching the trail reader's null-means-unresolved precedent — and carry the deleted baseline scenario forward into the MODIFIED block, updated for severity. Add the test to task 2.3.",
+      "reproduction": "Trail for review-system under v4 cadence [blind-pair, in-context], confirm findings-resolved: apply-T0; external-system-T1 (1 WARNING, 0 CRITICAL); review-system-T2 fresh (0 findings); review-system-T3 in-context (0 findings); NO address-reviews record anywhere. Clause (a): pair (T1,T2) blind and both fresh, satisfied at T2; in-context T3 beats T2 with no previous-slot resolution records to beat — covered. Clause (b): T2 and T3 findings-free; for T1 no record exists, so the quantified sentence has an empty domain and holds. Clause (c): base set {T1,T2}; findings-resolved needs 0 CRITICAL (true) and the set's findings resolved per clause (b) (true by the same vacuity). Gate computes passed with an unwalked WARNING standing. Under the baseline text the same trail is unpassed.",
+      "pass": "4"
+    },
+    {
+      "severity": "CRITICAL",
+      "dimension": "correctness",
+      "title": "Fail-safe rule 3 fires on every walk that defers a SUGGESTION, re-gating the exact findings this change exists to stop gating",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 259,
+      "description": "Rule 3 compares `resolution_summary.deferred + escalated` against the number of SUBSTANTIVE entries read as deferred or escalated. But `resolution_summary` has no severity breakdown: the address-reviews payload field notes define those counters over ALL findings ('Total findings always = sum of resolved + stale_suppressed + deferred + escalated'). So any walk that defers exactly the findings this change means to make non-blocking produces summary.deferred >= 1 against 0 substantive deferrals, rule 3 fires, the record falls back to the bare rule, and the gate is unpassed. The headline goal, the delta's own scenario 'Deferred suggestions do not fail the gate', and the passed-gate deferred-suggestion reason are all unreachable in the commonest trail shape. Rule 2 has the same defect on the 217-entry generation: any fallback to bare counts is severity-blind by construction.",
+      "recommendation": "Make rule 3's right-hand side the count of ALL entries (any severity) read as deferred or escalated, so it detects only genuine summary/entry disagreement. Additionally state what the severity-blind bare-count fallback means when it fires — rules 2 and 3 both block on deferred SUGGESTIONs by construction — and either accept that explicitly for pre-capability records only, or scope the fallback to records the per-entry rule cannot read at all. Add a test: a record with one resolved WARNING and one deferred SUGGESTION leaves the gate passable.",
+      "reproduction": "One address-reviews record referencing a fresh proposal pass's findings artifact, resolutions = [{severity: WARNING, outcome: resolved}, {severity: SUGGESTION, outcome: deferred}], resolution_summary = {resolved: 1, stale_suppressed: 0, deferred: 1, escalated: 0} — the shape the shipped emit table prescribes. Per-entry rule: no substantive entry carries deferred/escalated, so clause (b) holds. Rule 1: no disposition outside the closed four. Rule 2: every substantive entry carries a disposition, does not fire. Rule 3: summary deferred+escalated = 1 versus 0 substantive deferrals, 1 > 0, FIRES, bare counts, deferred == 1 != 0, pass UNRESOLVED, gate unpassed on a deferred SUGGESTION.",
+      "pass": "4"
+    },
+    {
+      "severity": "CRITICAL",
+      "dimension": "correctness",
+      "title": "Succession replaces the confirming SET with a single pass, reintroducing the which-member-finished-last bug for the post-walk repeat pair",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 274,
+      "description": "Clause (c) step 1 makes the base set BOTH pair members precisely because a rule whose strength depends on which parallel reviewer finished first is not a rule (design D3). Step 2 throws that property away: the successor is 'a later independent pass', singular, 'the latest qualifying successor wins'. R-crc-4 says a CRITICAL buys ONE MORE BLIND REVIEW after the walk, and this change's thesis is that independent passes run in parallel pairs; when the repeat is itself a pair, succession silently picks whichever member carries the later token and discards the other. The CRITICAL the earlier-finishing successor found is then resolved by a walk no independent pass ever reads — the identical failure D3 documents and fixes for the base set. Qualification is also measured only against the BASE set's resolution records, never against records closing the successor's own findings.",
+      "recommendation": "Make succession set-valued and symmetric with the base set, and state that qualification is re-measured against the records closing the CURRENT set's findings rather than only the original base set's. Add the both-members assertion from task 3.1 to the succession test in task 3.2.",
+      "reproduction": "System gate, cadence [blind-pair, in-context], confirm findings-resolved. apply-T0; external-system-T1 (1 CRITICAL); review-system-T2 fresh (0 findings) — pair satisfied at T2; address-reviews-T3 (source_path external-system-T1.md, all resolved); review-system-T4 in-context (0 findings) — slot satisfied. Base set {T1,T2} fails on T1's CRITICAL, so one more blind pair runs on the walked state: review-system-T5 fresh (1 CRITICAL, a genuine new defect) and external-system-T6 (0 findings), blind of each other, T6 later; address-reviews-T7 (source_path review-system-T5.json, resolved). Succession: passes strictly later than every record closing the base set's findings ({T3}) are {T5,T6}; latest wins, so the confirming set becomes {T6}. T6 is clean and clause (b) is satisfied, so the gate computes passed while T5's CRITICAL was fixed at T7 and re-read by nobody. Swap T5 and T6 tokens and the gate correctly stays unpassed.",
+      "pass": "4",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "The successor set is every independent pass strictly later than all resolution records closing the previous set's findings, all members must satisfy the predicate, applied iteratively until stable."
+        },
+        {
+          "label": "B",
+          "body": "The successor set is the passes satisfying a re-run of the gate's last independent-bearing slot on the walked state, so a blind-pair gate's repeat is itself evaluated as a pair."
+        }
+      ]
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "Earliest-pair selection can foreclose a covered cadence, because the following slot's constraint depends on the selected pair's resolution records",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 222,
+      "description": "Design D4 argues 'earliest' composes with clause (a)'s greedy walk, but the argument considers only pass tokens. The same edit adds a second ordering constraint — a following slot's pass must also beat every address-reviews record resolving the previous slot's pass findings — and that constraint is NOT monotone in the pair's token: an earlier pair whose findings were walked late imposes a LATER lower bound on the following slot than a later pair walked promptly. Greedy earliest-pair selection can therefore report unpassed on a trail where a different pair assignment covers the cadence — the same class of manufactured cost the 'latest pair' rule was rejected for, arriving through the resolution-record dimension. Example: external T1 (findings), fresh T2 (findings) form pair A; external T4, fresh T5 form pair B; address-reviews T6 closes T4; in-context T7; address-reviews T9 closes T1. Earliest pair A forces the in-context slot past T9, so T7 fails; pair B covers the cadence at T7.",
+      "recommendation": "Either state that pair selection is the earliest pair for which the REMAINING cadence is satisfiable (backtracking, with the stated total order breaking ties among viable candidates), or state explicitly that greedy earliest selection is accepted and can demand a pass a later assignment would not. Say which, since the two produce different gate states on the same trail, and add the foreclosure trail to task 4.3.",
+      "pass": "4"
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "A fourth real resolutions shape exists on disk and flips from unresolved to resolved under the new rules",
+      "file": "orbit/changes/rc02-gate-semantics/design.md",
+      "line": 24,
+      "description": "design.md states that across 526 archived entries 260 carry outcome, 49 carry status, 217 carry neither, and every one carries severity. A FOURTH shape exists that the 526 excludes: 8 archived address-reviews records (6 in b2-grow-generator, 2 in relocate-modified-upstream-workflows) whose `resolutions` is NOT AN ARRAY at all but a counter object ({\"fixed\": 5, \"ratified_as_designed\": 0}), with NO resolution_summary. Today they read as unresolved (the trail reader maps the missing counters to null). Under the new rules they read as RESOLVED: iterating a non-array yields no entries, so the per-entry rule finds nothing blocking, rule 2's 'ANY substantive entry' trigger never fires, and rule 3 has no summary to read. Task 1.1's 'a malformed entry is skipped rather than fatal' makes skipping the specified behavior, and skipping is the unsafe direction here. (Pushback note: the reviewer described this shape as an array of bare strings; on disk it is a counter OBJECT, which makes the gap wider — no rule addresses a non-array `resolutions` at all.)",
+      "recommendation": "Add a fourth fail-safe rule, or widen rule 2: a `resolutions` value that is not an array, an element that is not an object, or an object with no recognised severity, counts as a SUBSTANTIVE entry carrying no disposition — falling the whole record back to the bare counts; and a record with no readable resolution_summary stays unresolved. Correct design.md's measurement to name the fourth shape and add it to task 2.2's fixtures.",
+      "pass": "4"
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "Budget 3 plus stale-counting makes BUDGET-SPENT fire mid-way through a mandatory blind pair after any re-apply",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 9,
+      "description": "Spend counts stale independent passes, the v4 system cadence requires TWO independent passes per state, and the budget is 3. Any apply landing after a converged or partly-covered system cadence staleness-invalidates the pair while its spend stands at 2. The user must then run two more independent passes to re-cover the slot; after the first, spend reaches 3 and the gate — still unpassed because the pair is half-formed — reports budgetExhausted and renders BUDGET-SPENT while its own canonical next command tells the user to run the pair's missing member. The teaching reason and the exhaustion annotation contradict each other in a sequence the cadence itself prescribes, and exit criterion 3 becomes satisfiable by an artifact of the arithmetic rather than by real non-convergence.",
+      "recommendation": "Either exclude stale passes from the spend that drives budgetExhausted while keeping them in the reported figure, or suppress exhaustion while the gate's own canonical next is an uncovered cadence slot on the current state, or raise the declared budget to cover one full re-cover after a staleness event. Add the post-apply re-cover sequence to task 5.3.",
+      "pass": "4"
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "The severity axis has no fail-safe rule, so a malformed severity makes a deferred entry silently non-blocking",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 248,
+      "description": "The delta is explicit that per-entry fields are AI-authored narrative the emit surface does not validate, and builds three fail-safe rules on the DISPOSITION axis. The SEVERITY axis gets none, although it is the axis the whole change depends on: an entry whose severity is 'critical', 'Critical', 'blocker', or absent is neither CRITICAL nor WARNING, so it is not substantive, so it never blocks whatever its disposition says — and rule 2's 'ANY substantive entry' trigger does not fire for it either. The asymmetry points the wrong way: an unreadable disposition is conservative, an unreadable severity is permissive.",
+      "recommendation": "Add a fourth rule mirroring rule 1: a severity outside the closed set {CRITICAL, WARNING, SUGGESTION}, including an absent one, counts as SUBSTANTIVE. Add the test to task 2.3.",
+      "pass": "6"
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "The budget's reported fields are unnamed and the two surfaces that must render them are absent from Impact, Touchpoints, and the tasks",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 492,
+      "description": "The ADDED requirement says the engine reports the spend 'as a first-class field together with the declared budget' and the status requirement says gate rows carry 'the declared budget and observed spend', but only budgetExhausted is ever named, so two implementers produce spend / passesSpent / independentPassCount — and rc04 branches on this surface. Worse, the JSON gate row is an explicit field-by-field projection (GateStatusRow and its mapping in src/core/artifact-graph/instruction-loader.ts) and the human gate row in src/commands/workflow/status.ts prints only id, state, and either checkbox counts or the reason. New fields on GateStatus therefore never reach orbit status --json or the terminal without edits to both files. Neither appears in Impact, Touchpoints, or any task; Impact's 'Unchanged by design' list names orientation.ts and instructions.ts but is silent on these two.",
+      "recommendation": "Name the two fields in the ADDED requirement alongside budgetExhausted, add instruction-loader.ts and status.ts to Impact and Touchpoints, and extend task 5.2 to carry the fields through the GateStatusRow projection and the human gate row.",
+      "pass": "6"
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "Rejected external artifacts are counted as spend with no mode attribution, inflating the other gate's budget",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 12,
+      "description": "Spend is defined as independent passes 'on the gate's mode', but the rejected-artifact clause and task 5.2 say only that rejected external artifacts are surfaced and the count includes them, with no mode qualifier. A rejected external-proposal file would count against review-system's budget and vice versa. The mode is recoverable (the filename regex captures proposal|system before the shape check rejects the body), so this is an omission, not an impossibility. The consequence is a gate reporting BUDGET-SPENT one pass early with a reason naming an artifact from the other phase. Relatedly, 'the gate's mode' is undefined for a reviewed gate whose id encodes no mode — gateMode returns null and the existing filter then admits every pass of both modes.",
+      "recommendation": "State that a rejected external artifact is attributed to the mode in its filename and counts only toward the gate operating on that mode, and that a gate whose mode cannot be derived counts passes of every mode or is exempt from budget reporting. Add the mis-attribution case to task 5.3.",
+      "pass": "5"
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "title": "Task 8.3's residue sweep enumerates four patterns and misses two real sites the v4 cadence invalidates",
+      "file": "orbit/changes/rc02-gate-semantics/tasks.md",
+      "line": 112,
+      "description": "The sweep looks for 'until none', every-finding-resolved, a four-name vocabulary, or v3-as-current. Two live sites are invalidated by v4 and match none of those greps. (1) src/core/templates/workflows/review.ts ships a worked example whose engine tail reads \"Gate review-system: unpassed — cadence class 'external' has no pass\" — a gate line the v4 system cadence can never produce, since review-system has no external slot any more; it is the canonical example a reviewing AI reads when composing its turn. (2) orbit/specs/orbit-run-summary-emit/spec.md's scenario 'Packaged-but-unreturned external is not class coverage' concludes 'the external cadence slot stays unsatisfied', which under v4 is an unsatisfiable state for the only gate consuming external returns.",
+      "recommendation": "Extend task 8.3 to grep for cadence-slot names inside example gate lines and readouts across generated bodies and baseline specs, name both sites, and decide each: rewrite the review body's worked example to a v4-possible gate line, and either generalize the run-summary-emit scenario (a delta on that capability, at 1 of R-crc-1's 3) or record a deliberate deferral.",
+      "pass": "7"
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "title": "The program charter and the exploration record still specify the reversed sixth-state design",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 236,
+      "description": "Q-crc-4 was amended to record the reversal, but two records the change depends on were not. (1) The rc02 stage charter still reads 'Touches: orbit-engine-gates, orbit-orientation, orbit-run-summary-emit (the last two carry the widened unconverged set their own closed-set requirements would otherwise contradict)' — two capabilities the change deliberately does not touch, describing a widening that no longer exists, while the same section's budget sentence already carries the reversed wording, so the charter contradicts itself. The 2026-09-12 status-log entry likewise still lists 'the sixth state and the two contradicted capabilities' as what rc02 keeps. (2) explore.md's D-rc02-6 still records the sixth state, the isUnconverged predicate, and budget 2 for review-proposal, and its Considered & out entry rejects the boolean flag that shipped — while design.md points readers at explore.md as the full decision record. No task updates either doc.",
+      "recommendation": "Update the rc02 charter's Touches line to orbit-engine-gates plus the schema bump and strike the dead parenthetical; add an at-archive task covering the charter and a status-log entry recording the reversal. In explore.md mark D-rc02-6 and the Considered & out entry as SUPERSEDED by design D6 with a pointer, or state in design.md that explore.md is historical and superseded on three specific points.",
+      "pass": "2"
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "'grew monotonically' overstates the measured trend the Why rests on",
+      "file": "orbit/changes/rc02-gate-semantics/proposal.md",
+      "line": 4,
+      "description": "Counting findings across archived trails gives c1 41, c2 18, d1 27, d2 56, d3 51, d4 77, d5 100, d6 131 — a strong trend but not monotonic (c2 and d3 fall). The cited endpoints and the prior-walk-files observation both hold; only the word 'monotonically' and the '12 to 17 passes each' range (c2 ran 7, d1 ran 9) are inaccurate. In a program whose G0 is self-measurement, the Why should not be the one place the numbers are loose.",
+      "recommendation": "Replace 'grew monotonically' with the measured shape, or cite the per-change series.",
+      "pass": "2"
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "Task numbering skips 4.2",
+      "file": "orbit/changes/rc02-gate-semantics/tasks.md",
+      "line": 59,
+      "description": "Section 4 runs 4.1 then 4.3 with no 4.2. The 19-task count and the R-crc-1 measurement are correct either way, but a gap in a numbered list reads as a task dropped during a walk, and task ids are the identifiers the apply gate and the user-validation subset rule key on.",
+      "recommendation": "Renumber 4.3 to 4.2, or state why the ordinal is reserved.",
+      "pass": "1"
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "This pass read the artifacts and the delta BEFORE opening the trail — the blind-review genre rc03 will ship, applied here by choice — then spent most of its time executing the specified arithmetic against gates.ts and trail.ts on hand-written trails, and against the 101 archived address-reviews records and 79 archived review passes on disk. The change is unusually well-argued prose sitting on arithmetic that has not been walked end to end. All three CRITICALs are one kind: a rule whose English reads as obviously right and whose formal content is vacuous, inverted, or narrower than the property it carries. Clause (b)'s replacement sentence quantifies over an empty set when nobody walked; fail-safe rule 3 compares a severity-blind counter against a severity-filtered one and so fires on the very case the change exists to exempt; step 2 of clause (c) restores the single-latest-pass reading step 1 was written to abolish, one paragraph later. They are independent — fixing one leaves the others — but share a cause worth naming: each new rule was validated against the trail that motivated it and not against the trails the other rules produce. Where the design held up: the blind-pair predicate itself is precise and computable, no deadlock among the ordering constraints could be constructed, and every cadence built either converged or named a specific missing pass. The consumer claim holds — every site reading gate state tests unpassed-or-stale, so keeping the set at five values genuinely costs nothing. The R-crc-1 numbers in design.md are the numbers on disk, strict validation passes, no markers remain, and the user-validation task carries the marker the tracked-gate subset rule actually requires. The 526-entry disposition measurement is reproducible to the entry; it is incomplete, not wrong. Residual risk is concentrated in clause (b), now the most mechanism-per-sentence part of the engine, reading the least validated data on the trail. The stage seams are clean and the two handoffs are recorded in both the design and the program doc.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "final_assessment": "3 critical, 8 warning, 2 suggestion.",
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc02-gate-semantics --from-file orbit/changes/rc02-gate-semantics/.orbit-runs/review-proposal-2026-09-12T19-54-44Z.json"
+}

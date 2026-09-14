@@ -1,0 +1,12 @@
+{
+  "command": "explore",
+  "timestamp": "2026-09-12T17:47:17Z",
+  "change": "rc02-gate-semantics",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Seven decisions settled under R-crc-3, three open questions with standing recommendations, four rejected options. The shape: the severity ladder is defined by consequence in orbit-conventions with an evidence tax on CRITICAL (a reproduction), enforced at the internal emit write gate and surfaced-not-regraded for external findings; SUGGESTIONs stop gating by making convergence clauses (b) and (c) substantive-only for every reviewed gate, which supersedes issue #8's third-confirm-value mechanism while shipping R-d-10's intent exactly; R-crc-4's blind pair becomes a fifth cadence entry whose blindness is computed from the trail (no walk of either pass's own findings between them) with byte-exact same-state named as a v1 limit; spec-driven v4 sets the system cadence to [blind-pair, in-context], the trailing slot surviving as the walk check rc03 will rename verification; the review budget counts independent passes per mode and its exhaustion is the sixth gate state budget-exhausted, with consumers routed through one exported isUnconverged predicate; and the gate reason becomes the teaching surface, naming the open blind pair before the cost is sunk. Sized at two capabilities (orbit-engine-gates, orbit-conventions) plus the schema, inside R-crc-1.",
+  "decisions_captured": 7,
+  "open_questions_count": 3,
+  "open_questions_with_recommendation": "3 of 3",
+  "next_recommended": "/orbit:explore rc02-gate-semantics — 7 decisions captured but 3 open questions remain; resolve open questions before formalizing"
+}

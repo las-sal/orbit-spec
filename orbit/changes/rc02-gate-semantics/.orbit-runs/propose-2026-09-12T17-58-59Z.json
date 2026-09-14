@@ -1,0 +1,9 @@
+{
+  "command": "propose",
+  "timestamp": "2026-09-12T17:58:59Z",
+  "change": "rc02-gate-semantics",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Consume mode from orbit/explore/rc02-gate-semantics/: proposal, design, three delta specs, and tasks generated from ten exploration decisions. The three open questions were resolved at promotion under R-crc-3 by their own standing recommendations and promoted to decisions D-rc02-8 through D-rc02-10 (schema-declared budget only, today's gate_overridden seam at budget exhaustion, no migration mechanism for v3-era trails) rather than deferred as markers, so no @review: marker is carried into the change. Deltas: orbit-engine-gates (2 ADDED, 4 MODIFIED), orbit-conventions (2 MODIFIED), orbit-emit-composition (1 MODIFIED) — three capabilities and nine requirement blocks, at the R-crc-1 ceiling but inside it. Fingerprints stamped 7 of 7; validate --strict clean. Staged metadata merged (the architecture citation carried forward; schema/created/schema_version fresh-owned) and the staging directory moved with its two explore emits. PR regime resolved 'never', so no PR choreography ran.",
+  "next_recommended": "/orbit:review rc02-gate-semantics — proposal artifacts ready; review before apply"
+}

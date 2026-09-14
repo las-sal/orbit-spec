@@ -1,0 +1,203 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-12T18:15:33Z",
+  "change": "rc02-gate-semantics",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": [
+    "--fresh"
+  ],
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 6,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 3
+    }
+  },
+  "findings": [
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "R-crc-1 size ceiling breached on tasks (40 vs under 20) and design.md miscounts its own capabilities",
+      "file": "orbit/changes/rc02-gate-semantics/design.md",
+      "line": 255,
+      "description": "Measured against R-crc-1 (at most 3 capabilities, ~12 requirements, ~40 KB of delta, under 20 tasks): capabilities 3 (at the ceiling), requirement blocks 9, delta bytes 28,434 (~27.8 KB), scenarios 46 — and TASKS 40, which is double the ceiling. The calibration change R-crc-1 was derived from (2026-07-07-c2-parallel-merge-guardrail) carries 17 task checkboxes across 5 groups, so 'tasks' in the ruling means checkboxes, not the 10 groups. R-crc-1 also says a proposal over the ceiling 'is split before review, never reviewed as one', so the breach is a pre-review gate, not a post-hoc note. Separately, the design's own self-assessment at this line reads 'Two capabilities, nine requirement blocks' — the change has THREE spec directories; the propose emit got this right, so the risk bullet is the stale voice. This matters because the risk bullet is the artifact that claims the ceiling was checked, and the one dimension it omits is the one that fails.",
+      "recommendation": "Correct 'Two capabilities' to three in the design's size bullet, add the measured task count, and put the 40-task overrun to the user as a scope call (R-crc-1 is Sal-ratified, so an exception is his, not the authoring AI's).",
+      "pass": "2",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Split the stage: rc02a = the severity ladder + the evidence tax + severity-aware clauses (b)/(c) (orbit-conventions + orbit-emit-composition + orbit-engine-gates' pass-condition block, ~groups 1-4 and 9-10); rc02b = blind-pair + budget + the sixth state + schema v4 (groups 5-8). Each half lands under the ceiling and rc03 depends only on rc02b's schema slot."
+        },
+        {
+          "label": "B",
+          "body": "Keep the change whole and record a dated R-crc-1 exception in the program doc naming the measured numbers and why the four moving parts cannot be separated (the schema bump ties the cadence to the budget), so the ceiling is not silently eroded."
+        }
+      ]
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "budget-exhausted contradicts two unmodified requirements inside orbit-engine-gates itself",
+      "file": "orbit/specs/orbit-engine-gates/spec.md",
+      "line": 279,
+      "description": "The delta adds a sixth GateState and a fifth cadence entry, but leaves two requirements in the SAME capability stating the old closed sets. (1) 'Gate-aware status and instructions with position readout' fixes the rendered gate-row set as 'state: blocked | ready | passed | stale | unpassed' and enumerates the position-readout tokens; task 6.3 renders budget-exhausted distinctly in buildPositionReadout, producing a token outside that enumeration. (2) 'Single-voiced canonical-next computation' enumerates the models: hint-key vocabulary as 'the cadence slot names (in-context, fresh, independent, external)' and pins the phase-id list to 'spec-driven v3'; blind-pair becomes a fifth slot name that canonicalNextForReviewed will return as nextSlot, and the schema is v4. Both are cheap MODIFIED blocks within a capability the change already touches, so nothing but oversight explains their absence — but shipped as-is the baseline contradicts itself in two places.",
+      "recommendation": "Add MODIFIED blocks for 'Gate-aware status and instructions with position readout' (six-state row set + the new position token) and 'Single-voiced canonical-next computation' (five-name cadence-slot vocabulary, spec-driven v4), and add the corresponding tasks (they belong beside 6.3).",
+      "pass": "4"
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "budget-exhausted contradicts two baseline capabilities the change does not modify, and fixing them breaks the capability ceiling",
+      "file": "orbit/specs/orbit-orientation/spec.md",
+      "line": 188,
+      "description": "Two requirements outside this change's three capabilities are contradicted by the widening. (1) orbit-orientation 'Waiting-on-you derivation is a closed set' defines source (c) as 'a gate reporting unpassed or stale on a live change' and states 'The set is CLOSED — adding a waiting class requires a spec change, never an inference tweak.' Task 6.4 routes orientation.ts:494 through isUnconverged, which by construction adds budget-exhausted to the WAITING band — the baseline's own words say that requires a spec change. (2) orbit-run-summary-emit types gate_overridden as 'present ONLY when the user proceeds past an unpassed or stale gate' with state: '<unpassed|stale>', while this change's Inflection-prompt delta mandates gate_overridden: {gate, state: 'budget-exhausted', reason}. Adding deltas for both takes the change from 3 to 5 capabilities, over R-crc-1 — which is why this interacts with the size finding and should be decided together with it.",
+      "recommendation": "Decide the coupling explicitly rather than leaving two baselines stale.",
+      "pass": "4",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Add MODIFIED blocks for orbit-orientation's waiting-set requirement and orbit-run-summary-emit's gate_overridden field row + scenario (5 capabilities), and take the R-crc-1 exception consciously."
+        },
+        {
+          "label": "B",
+          "body": "Split per the size finding so the blind-pair/budget half carries the orientation + emit deltas within its own ceiling."
+        },
+        {
+          "label": "C",
+          "body": "Narrow the widening at rc02: keep WAITING and gate_overridden.state on the two-value set by having the budget-exhausted gate report state: 'unpassed' with the budget named in reason, and defer the sixth state to rc04 where cost rendering is the subject. This reverses the rejected 'boolean flag' alternative only for the two external surfaces, keeping isUnconverged and the distinct position-readout token — it should be argued against explore.md's rationale, not adopted silently."
+        }
+      ]
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "Clause (c) reads only the LATEST independent pass, so a CRITICAL in the earlier blind-pair member buys nothing",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 198,
+      "description": "The delta keeps clause (c) scoped to 'the most recent pass from an independent class'. A blind-pair slot puts TWO independent passes on the trail, and only the later one is ever consulted. Trace, under review-system (confirm: findings-resolved, cadence: [blind-pair, in-context]): external-system at T1 carrying 1 CRITICAL; review-system fresh at T2 carrying 0 CRITICAL; one address-reviews walk at T3 resolving both sources with deferred: 0; review-system in-context at T4 with no findings. Clause (a): pair satisfied at T2, in-context at T4 beats it. Clause (b): everything resolved. Clause (c): latest independent = T2, 0 CRITICAL, resolved — gate PASSES. The CRITICAL the external found is never re-checked by any independent pass, even though the same requirement asserts one line earlier that 'A CRITICAL that fails a confirm predicate buys exactly ONE further independent pass', and R-crc-4 states 'A CRITICAL in the reviews buys exactly ONE more blind review after the walk'. Swap T1 and T2 and the gate correctly demands another pass — so the stop rule's strength depends on which pair member happened to finish later. Note also that the 'buys exactly ONE further independent pass, never an open loop' sentence has no implementing mechanism at all: nothing in clause (c) limits repetition, and the only bound is the budget, which the same requirement says may be absent.",
+      "recommendation": "Make clause (c) evaluate the current cadence slot's pass SET, not the single latest independent pass: for a blind-pair slot, require the predicate to hold over BOTH members (0 CRITICAL across the pair, all findings resolved). Then either delete the 'buys exactly ONE further independent pass' sentence or restate it as what it actually is — 'the repeat is bounded only by the gate's budget; an undeclared budget leaves it unbounded'.",
+      "pass": "4"
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "'the latest qualifying pair is taken' conflicts with clause (a)'s earliest-match ordered walk and can report a covered cadence as unpassed",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 178,
+      "description": "Clause (a) is implemented (gates.ts:197-213) as a greedy earliest-satisfying walk: each slot takes the FIRST pass after the previous slot's index. The blind-pair rule instead pins the slot to the LATEST qualifying pair. The two rules disagree whenever more than one pair can be formed. Trace, cadence [blind-pair, in-context], no applies: T1 external-system (0 findings), T2 review-system fresh (0 findings), T3 review-system in-context (0 findings), T4 external-system (a second external returns late, 0 findings). No walks exist, so both (T2 fresh, T1 external) and (T2 fresh, T4 external) are blind pairs. 'Latest is taken' fixes the slot at T4; the in-context slot then needs a pass strictly later than T4 and the one at T3 no longer counts, so the gate reports unpassed and demands a fourth pass — while the assignment pair@T2 then in-context@T3 covers the cadence exactly. With budget: 3 the same trail is simultaneously budget-exhausted (three independent passes), so the user is pushed into an override for a cadence that was in fact satisfied. That is the precise cost this stage exists to remove.",
+      "recommendation": "State the pair selection as the assignment problem it is: a blind-pair slot is satisfied by the EARLIEST qualifying pair whose later token beats the previous slot's, consistent with every other slot's greedy semantics; drop 'when several qualifying pairs exist, the latest is taken', or restrict it to selection among pairs that all beat the previous slot. Add the multi-pair trail above as a test case in task 5.4.",
+      "pass": "4"
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "Clause (b) gates on resolutions[] fields the emit surface never validates, and the fallback does not cover the divergence",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 183,
+      "description": "The new clause (b) blocks only on 'an entry in its resolutions[] array with severity CRITICAL or WARNING [carrying] an outcome of deferred or escalated'. resolutions is a narrative-only payload field for address-reviews (src/core/emit-composition.ts:134), with NO structural validation anywhere — validatePayload checks only the key name, and the only closed-key/typed checks in the file are validatePrFields and scorecardRollupCheck. So severity and outcome are free-form AI-authored strings. The spec says nothing about values outside the documented four. Concretely: an emit carrying resolutions: [{severity: 'WARNING', outcome: 'deferred to rc04'}] with resolution_summary: {deferred: 1, escalated: 0} has per-entry severity present, so the legacy fallback (which triggers only when the record carries no per-entry severity) does not fire; no entry's outcome equals 'deferred'; the gate PASSES on a trail whose own summary records an unresolved deferral. Today's bare-count rule blocks that trail. The claim that the fallback is 'strictly more conservative' is true of the fallback but not of the new rule relative to the old one, which is the comparison that matters. Real emits do carry the fields (11 address-reviews files across the d6 and rc01 archives all have per-entry severity + outcome), so the happy path works; it is the unhappy path that is unspecified.",
+      "recommendation": "Specify the unrecognised-value rule and close the divergence: (a) an outcome outside the closed set {resolved, stale, deferred, escalated} is treated as UNRESOLVED for a substantive entry (fail-safe, matching parseAddressReviews' null-means-unresolved precedent at trail.ts:220-224); and (b) when per-entry data is present but resolution_summary.deferred + escalated exceeds the count of substantive deferred/escalated entries, fall back to the bare counts. Optionally add a closed-set structural check for resolutions[].outcome/severity to the write gate alongside the new reproduction check.",
+      "pass": "4"
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "The reproduction field has a producer and a gate but no consumer — the walk that must settle it never sees it",
+      "file": "orbit/specs/orbit-address-reviews/spec.md",
+      "line": 86,
+      "description": "D2's whole argument for never re-grading an unreproduced CRITICAL is that 'settling an unreproduced claim is the walk's pushback work'. But the walk cannot see the reproduction. orbit-address-reviews' internal-JSON ingestion requirement defines a CLOSED mapping — 'mapping severity directly, title directly, file:line from file + line fields, description from the entry's recommendation field' — so a reproduction field on the emit is dropped at the virtual-marker boundary. The markdown path has the same problem one layer down: the conventions delta extends the --from-file parser to extract the reproduction, but src/core/templates/workflows/address-reviews.ts (the body that IS that parser) documents the expected external file format with no **Reproduction**: line, and no task touches it (task 1.3 names only the external PROMPT template in review.ts; task 10.3's sweep set is three specific phrases). Also: src/core/report-render.ts's NormalizedFinding keeps only severity/dimension/title/fileRef/recommendation, so the reproduction will not appear in orbit status --report either — consistent with description also being unrendered, but it means the evidence the tax collects is visible nowhere a human reads.",
+      "recommendation": "Add the consumer half: a MODIFIED block on orbit-address-reviews' internal-JSON virtual-marker mapping carrying reproduction into the marker (so pushback can re-run it), plus a task extending address-reviews.ts's 'Expected file format' block and its lenient-item list with **Reproduction**: (present on CRITICAL entries; absence never a parse failure). Decide and state whether the renderer surfaces it; if not, say so in the ladder so the omission is a choice rather than a gap.",
+      "pass": "6"
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "orbit-conventions' own canonical review-emit example shows a CRITICAL the new write gate would refuse",
+      "file": "orbit/specs/orbit-conventions/spec.md",
+      "line": 272,
+      "description": "The 'Internal-run JSON summary format' requirement carries the canonical editorial-kind example, whose first finding is {severity: 'CRITICAL', dimension: 'completeness', title: 'Emit timing undefined for bare-mode explore', file: 'specs/emit/spec.md', line: 12, recommendation: '…'} — no reproduction. Under the emit delta ('EVERY review emit, in every mode, additionally passes the SEVERITY-LADDER check'), that exact payload is refused at write time. The requirement sits in orbit-conventions, a capability this change already modifies, so the MODIFIED block costs nothing against the ceiling; its absence ships a spec set that contradicts itself, and the canonical example is precisely what an implementer copies.",
+      "recommendation": "Add a MODIFIED block for orbit-conventions' 'Internal-run JSON summary format' adding reproduction to the CRITICAL entry in the canonical editorial example (and one clause in the editorial per-kind bullet naming the field), with a matching task.",
+      "pass": "4"
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "New 'Unknown cadence entry rejected' scenario asserts an error shape the code cannot produce and no task implements",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 142,
+      "description": "The scenario requires that a cadence slot outside the five-token vocabulary fail 'naming the gate id and the allowed entries'. Cadence entries are checked only by the Zod enum CadenceEntrySchema = z.enum(CADENCE_ENTRIES) on GateSchema.cadence (src/core/artifact-graph/types.ts:34-35, 59), and parseSchema renders Zod issues as path: message (src/core/artifact-graph/schema.ts:96-99) — the path is gates.2.cadence.0, an INDEX, never the gate id. validateGates (schema.ts:113-150) names the gate id for kind, duplicate id, missing cadence and consent, but has no cadence-entry branch. Task 5.1 only adds blind-pair to CADENCE_ENTRIES; task 6.1 adds gate-id-naming validation for budget but not for cadence entries. So the scenario ships unimplemented and untested. (Contrast the sibling ADDED scenario 'Non-positive budget rejected', which task 6.1 does implement.)",
+      "recommendation": "Either add the gate-id-naming cadence-entry check to validateGates with a task beside 6.1, or relax the scenario's THEN to what the Zod path actually produces. The first is the better match for the surrounding error shapes.",
+      "pass": "5"
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "title": "Reason composition is unspecified when budget-exhausted coincides with an uncovered cadence slot",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 24,
+      "description": "budget-exhausted is reported whenever the count reaches the budget AND the gate has not converged, so it always displaces unpassed — including the most diagnostic case: three independent passes burned and the blind-pair slot still uncovered, which is exactly the sequential-habit trap D7 exists to warn about. The scenario says the reason 'names the budget and the count' and the next command is 'unchanged from what the failing clause would otherwise recommend', but nothing requires the reason to ALSO carry the unmet clause. A reader then sees a spend figure plus a command to run a fourth pass, with no statement of what the fourth pass is for. Task 7.1 composes reasons per failing clause; the budget is not a clause, so it is not covered.",
+      "recommendation": "State in the budget requirement that the budget-exhausted reason carries BOTH the spend and the unmet clause it displaced (e.g. 'budget spent: 3 of 3 independent passes; blind pair still uncovered — no fresh partner for the external on this state'), and add the composite case to task 7.4's assertions.",
+      "pass": "5"
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "The review body's own payload-field sentence is not in the task list that adds reproduction",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 814,
+      "description": "Step 9 of the review body enumerates what the reviewer composes: 'findings (each with its owning dimension, title, file, line, recommendation, plus recommendation_options when disjunctive)'. This is the line a reviewing AI actually follows when building the payload. Task 1.2 targets references/run-summary-schema.md; task 1.1 targets 'where the body states severity guidance'. Neither names this sentence, so an implementer working from the task list can leave it stale — and the consequence is the design's own named risk (a hard write-gate refusal at the end of a long pass) firing on a reviewer who followed the body correctly.",
+      "recommendation": "Name review.ts's Step 9 field enumeration explicitly in task 1.2 alongside the schema reference.",
+      "pass": "3"
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "review-proposal budget: 2 cannot fund R-crc-4's proposal-mode blind pair, which this change itself qualifies for",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 259,
+      "description": "R-crc-4 says proposal-mode 'follow[s] the same shape with one blind review (external OR fresh) unless the change is within 20% of the R-crc-1 ceiling, when the pair runs'. The delta sets review-proposal budget: 2, described as 'one blind review plus one'. A change that triggers the pair rule spends both independent passes on the pair and is budget-exhausted before any repeat is possible — the pair rule and the budget number are sized against different cadences. rc02 is itself at 3 of 3 capabilities, i.e. at (not merely within 20% of) the ceiling, so it is the first change the pair rule would select.",
+      "recommendation": "Either set review-proposal budget: 3 (pair plus one, symmetric with the system gate) and say so in the requirement, or record in the design why proposal-mode pairs are expected to converge with no repeat. rc03 owns the pair-selection rule, but the budget number that funds it is declared here.",
+      "pass": "3"
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "Scenario title still says v3 while its own WHEN says version 4",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 313,
+      "description": "'#### Scenario: v3 declares the consent-marked seams' now reads '**WHEN** the shipped spec-driven schema (version 4) is parsed'. The title survived the bump. A grep for v3 across the repo after apply will also hit orbit/specs/orbit-run-summary-emit/spec.md:278 and :343 ('under spec-driven v3, /orbit:review --as system foo'), which become stale prose that no task sweeps (task 10.3's sweep set covers generated bodies and references only, not baseline specs).",
+      "recommendation": "Rename the scenario to 'v4 declares the consent-marked seams' and extend task 10.3's sweep to baseline specs for spec-driven version references.",
+      "pass": "1"
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "I probed this as an engine change first and a document second: I read gates.ts, trail.ts, types.ts, schema.ts, emit-composition.ts, report-render.ts, orientation.ts, instructions.ts, instruction-loader.ts and status.ts before grading anything, diffed all seven MODIFIED blocks byte-wise against their baselines, and parsed twelve real address-reviews emits from the d6 and rc01 archives to test the design's data claims. The thesis holds up under attack. The three facts the design says it verified are true: resolutions[] really does carry per-entry severity and outcome in every emit from the d6 era onward; TrailFinding really is only {title, file}; and schema_version really is a tripwire marker — I traced every read and found no schema selector, so the no-migration decision is sound. Termination also holds: I constructed the worst case (external CRITICAL in the pair, walk, repeat independent, another CRITICAL) and the arithmetic lands on budget-exhausted at three independents rather than looping, and a trailing in-context pass with findings blocks through clause (b) and clears with one walk rather than buying another independent pass. The write-gate friction risk is smaller than the design fears: the body invokes orbit emit review --payload <payload.json>, a file, so a refusal leaves the findings on disk and the retry is genuinely mechanical — no path loses a pass's work. Delta/baseline fidelity is clean; I found no dropped scenario or truncated requirement in either of the two large blocks, orbit validate --strict passes, and there are no marker residues. The failures cluster at exactly one seam: where new vocabulary meets things this change does not modify. Two requirements inside its own edited capability, two capabilities outside it, one consumer body, and one canonical example all still state the pre-change closed sets, and the change's severity ladder now has a producer and an enforcement point but no reader. The second cluster is the blind-pair predicate, which is specified in set-theoretic prose ('the latest qualifying pair') that does not compose with the greedy ordered walk it must run inside — two of my six correctness findings are the same root, an assignment problem written as a selection rule. My risk texture: the ladder, the evidence tax, the SUGGESTION exemption and the budget are all implementable as written and I would not hold them; the blind-pair slot is the part I would want another pair of eyes on before apply, because its failure mode is a silently harder gate, which is the opposite of what the stage is for.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "final_assessment": "0 critical, 9 warning, 4 suggestion.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc02-gate-semantics --from-file orbit/changes/rc02-gate-semantics/.orbit-runs/review-proposal-2026-09-12T18-15-33Z.json"
+}
