@@ -1,5 +1,5 @@
 name: spec-driven
-version: 3
+version: 4
 description: Default OpenSpec workflow - proposal → specs → design → tasks
 artifacts:
   - id: proposal
@@ -149,6 +149,16 @@ artifacts:
 # gates make the engine review-aware. Cadences live here (tuning = a version bump).
 # `consent: user-invoked` (D1) marks the gate's `before:` phase as entered only on
 # an explicit user invocation — the engine surfaces the marker; bodies prompt.
+#
+# v4 (rc02): the system cadence opens with a BLIND PAIR — two passes of distinct
+# independent classes (one fresh, one external) read blind of each other, with no
+# walk of either pass's findings between them. Its trailing `in-context` slot is the
+# check on the walk that resolved the pair's findings, and clause (a) requires that
+# pass to be later than those resolution records, not merely later than the pair.
+# Both reviewed gates declare `budget: 3` — the expected cost of a pair plus one
+# further independent pass. Exhaustion is REPORTED BESIDE the state (a
+# `budgetExhausted` boolean plus a distinct position token), never as a sixth gate
+# state and never as a block.
 gates:
   - id: review-proposal
     kind: reviewed
@@ -156,6 +166,7 @@ gates:
     inputs: [proposal, specs, design, tasks]
     cadence: [independent, in-context]
     confirm: no-new-findings
+    budget: 3
     before: apply
     consent: user-invoked
 
@@ -170,7 +181,8 @@ gates:
   - id: review-system
     kind: reviewed
     requires: [apply]
-    cadence: [in-context, external, in-context]
+    cadence: [blind-pair, in-context]
     confirm: findings-resolved
+    budget: 3
     before: archive
     consent: user-invoked

@@ -31,7 +31,9 @@ export const GateConfirmSchema = z.enum(['no-new-findings', 'findings-resolved']
 // Cadence-entry vocabulary: the three reviewer classes plus the cadence-only
 // meta-class `independent` (satisfied by a `fresh` OR `external` pass; never
 // `in-context`). `independent` is NOT a value the `reviewer_class` emit field carries.
-export const CADENCE_ENTRIES = ['in-context', 'fresh', 'external', 'independent'] as const;
+// `blind-pair` (rc02) is a COMPOUND slot: two passes of distinct independent classes, read blind
+// of each other. Like `independent` it is cadence-only — `reviewer_class` never carries it.
+export const CADENCE_ENTRIES = ['in-context', 'fresh', 'external', 'independent', 'blind-pair'] as const;
 export const CadenceEntrySchema = z.enum(CADENCE_ENTRIES);
 
 // Lifecycle-phase tokens that a gate's `before` may target (in addition to a
@@ -55,10 +57,14 @@ export const GateSchema = z.object({
   tracks: z.string().nullable().optional(),
   // reviewed kind: freshness scope (artifact ids whose change invalidates a pass; defaults to `requires`)
   inputs: z.array(z.string()).optional(),
-  // reviewed kind: ordered slot list (cadence-entry vocabulary)
-  cadence: z.array(CadenceEntrySchema).optional(),
+  // reviewed kind: ordered slot list (cadence-entry vocabulary). Validated against the closed set
+  // in schema.ts — as `kind` is — so the error can name the GATE ID rather than an array index.
+  cadence: z.array(z.string()).optional(),
   // reviewed kind: independent-confirmation predicate (defaults to `no-new-findings`)
   confirm: GateConfirmSchema.optional(),
+  // reviewed kind: the independent-pass ceiling (rc02). Validated as a positive integer in
+  // schema.ts so the error can name the gate id; absent means no budget is reported.
+  budget: z.number().optional(),
   // Target this gate blocks: a declared gate id, a declared artifact id, or a lifecycle-phase token
   before: z.string().optional(),
   // Optional consent marker. Validated against the closed set in schema.ts so the
@@ -99,6 +105,8 @@ export interface NormalizedGate {
   inputs: string[];
   cadence: CadenceEntry[];
   confirm: GateConfirm;
+  /** rc02: the independent-pass ceiling; absent means unbounded and never reported. */
+  budget?: number;
   before?: string;
   consent?: ConsentValue;
   instruction?: string;

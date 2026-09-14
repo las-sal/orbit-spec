@@ -38,18 +38,23 @@ severity NAMES, which already exist, so neither stage blocks the other.
 - **SUGGESTIONs stop gating.** Convergence clauses (b) (resolution) and (c) (the confirm
   predicate) become substantive-only — CRITICAL and WARNING — for every reviewed gate. The closed
   two-value `confirm` set stays closed; issue #8's third value is superseded, its intent shipped.
-  Clause (b) reads the per-entry `severity` and `outcome` the walk already records, with two
-  fail-safe rules for narrative data the emit surface does not validate: an unrecognised `outcome`
-  counts as unresolved, and a summary that disagrees with its own entries falls back to the bare
-  counts.
+  Clause (b) checks EXISTENCE first (a pass carrying a substantive finding must have a record
+  referencing it), then asks ONE readability question of that record: is `resolutions` a non-empty
+  array whose every element carries a recognised severity and a recognised disposition, read from
+  `outcome` or the legacy key `status`. A readable record is read per entry, in PREFERENCE to the
+  severity-blind `resolution_summary`; every other shape falls back whole to the bare counts, and an
+  unreadable record with no readable summary leaves the pass unresolved.
 - **Every cadence slot gains a second ordering constraint.** A satisfying pass must now be later
   than every `address-reviews` record resolving a PREVIOUS slot's pass findings, not only later
   than that slot's pass. This makes a following slot a check on the walk rather than a pass that
   merely arrived late. It applies to BOTH gates, including the otherwise-untouched proposal cadence,
   where a flow that ran both passes and then walked them in one sitting will now need a third pass.
   That cost is intended: an unchecked walk is the hole the constraint closes.
-- **Clause (c) evaluates the confirming pass SET, not one pass.** For a `blind-pair` slot both
-  members are confirmed, so a CRITICAL in the earlier-finishing member cannot go unseen.
+- **Clause (c) is UNCHANGED except on one axis.** The shipped predicate still reads the most recent
+  independent pass; only the new-finding match becomes substantive, so a new SUGGESTION no longer
+  repeats the loop. A rewrite selecting a confirming pass SET with a succession rule was carried
+  here through five review passes and REMOVED on 2026-09-14 under R-crc-8's sectional trigger; the
+  new stage `rc02c-confirmation-semantics` owns it and specifies it as a decision table.
 - **`blind-pair` joins the cadence-entry vocabulary.** A `blind-pair` slot is satisfied by two
   passes of distinct independent classes (one `fresh`, one `external`), both fresh under the
   freshness rule, with no walk of either pass's own findings recorded strictly between their

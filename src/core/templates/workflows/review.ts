@@ -478,7 +478,7 @@ Per the universal spine in \`orbit-conventions\`'s \`Internal-run JSON summary f
 }
 \`\`\`
 
-\`awaiting_findings: true\` is always set at T0. Future tooling may flip this when findings land; for now it's a flag that downstream consumers can use to identify "T0 emit, not yet completed cycle." \`reviewer_class: "external"\` (C1) describes the intended handoff class for audit readability — but per \`orbit-run-summary-emit\`, a T0 emit is a PACKAGING record, NOT a completed pass: an \`external\` cadence slot is satisfied ONLY when an \`external-<as>-<TS>.md\` findings file exists, so a packaged-but-unreturned external never counts as class coverage.
+\`awaiting_findings: true\` is always set at T0. Future tooling may flip this when findings land; for now it's a flag that downstream consumers can use to identify "T0 emit, not yet completed cycle." \`reviewer_class: "external"\` (C1) describes the intended handoff class for audit readability — but per \`orbit-run-summary-emit\`, a T0 emit is a PACKAGING record, NOT a completed pass: whichever cadence slot an external return would satisfy — a bare \`external\` slot, an \`independent\` slot, or the external half of a \`blind-pair\` — is satisfied ONLY when an \`external-<as>-<TS>.md\` findings file exists, so a packaged-but-unreturned external never counts as class coverage.
 
 ### \`next_recommended\` — multi-step prose
 
@@ -891,7 +891,7 @@ covers the architecture trail.
 [run: orbit status --change example-change --report]
 [paste the rendered report verbatim — it ends with the engine tail, e.g.:
 ---
-Gate review-system: unpassed — cadence class 'external' has no pass
+Gate review-system: unpassed — blind pair open: the fresh pass on this state has no external partner; run it before walking these findings
 Position: propose ✓ → review(proposal) (past) → apply ✓ → review(system) unpassed → archive blocked-by-gate
 Ready when you are: /orbit:review --as system --reviewer external example-change]
 

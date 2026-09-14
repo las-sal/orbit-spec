@@ -19,7 +19,7 @@ A `review-external-<TS>.json` T0 emit is a PACKAGING record, NOT a completed pas
 #### Scenario: Packaged-but-unreturned external is not class coverage
 
 - **WHEN** a `review-external-<TS>.json` T0 emit exists with `awaiting_findings: true` but no corresponding `external-<as>-<TS>.md` findings file has landed
-- **THEN** the engine counts NO external pass for class coverage; whichever cadence slot the external return would satisfy (a bare `external` slot, an `independent` slot, or the external half of a `blind-pair`) stays unsatisfied and the gate remains unpassed with the canonical next command targeting the external return
+- **THEN** the engine counts NO external pass for class coverage; whichever cadence slot the external return would satisfy (a bare `external` slot, an `independent` slot, or the external half of a `blind-pair`) stays unsatisfied and the gate remains unpassed, with the canonical next command being whatever `orbit-engine-gates`' single-voiced requirement computes for that uncovered slot — the external return when the slot is `external` or `independent` or a pairable partner already stands, and the fresh invocation when the uncovered slot is a `blind-pair` with no pairable pass standing (a T0 packaging emit is not a pass)
 
 #### Scenario: Legacy emits without the field degrade to inference
 

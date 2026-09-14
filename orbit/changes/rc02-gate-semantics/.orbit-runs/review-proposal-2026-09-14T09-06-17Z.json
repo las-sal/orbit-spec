@@ -1,0 +1,178 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-14T09:06:17Z",
+  "change": "rc02-gate-semantics",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": [
+    "--fresh"
+  ],
+  "scorecard": {
+    "completeness": {
+      "critical": 1,
+      "warning": 4,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 1,
+      "warning": 3,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "severity": "CRITICAL",
+      "dimension": "completeness",
+      "title": "Clause (c) succession states no outcome when the successor set is empty — the canonical cadence has no stated convergence",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 316,
+      "description": "Step 2 states the terminal case for R (the records closing the current set) but not for the SUCCESSOR SET: 'when that set is non-empty it becomes the current set and the rule re-applies' — the complement is silent, and 'the final set' in the next sentence is undefined for it. The requirement's own opening convention supplies the default: where a rule's set is empty, the reading is the one that does NOT advance the gate, unless the rule says otherwise. This rule does not say otherwise, so the literal reading of the two texts together is that a gate whose confirming set had findings, walked them, and has no later independent pass cannot converge. That is exactly the cadence this stage ships. No scenario covers it: 'A clean confirming set terminates the iteration' covers only R empty.",
+      "recommendation": "Add the missing terminal sentence to step 2 and a scenario for the canonical path, and name the succession terminal cases as the exception to the empty-set default.",
+      "reproduction": "Gate review-system, v4 cadence [blind-pair, in-context], confirm findings-resolved. T1 external (0C/1W); T2 fresh (0C/1W); T3 address-reviews closing T1; T4 address-reviews closing T2; T5 in-context (0 findings). Clause (a): pair covers slot 1 at T2, T5 beats both tokens and both records. Clause (b): both members resolved. Clause (c) step 1: base = {T1,T2}. Step 2: R = {T3,T4}, non-empty, so the R-empty terminal does not apply; the successor set = independents later than T2 and T4 = EMPTY. No outcome is stated, and the convention defaults an unstated empty set to not advancing. Two implementers diverge: one returns passed, one returns unpassed forever on a trail where no further pass can change anything."
+    },
+    {
+      "severity": "CRITICAL",
+      "dimension": "correctness",
+      "title": "A clean confirming set is FINAL, so a later independent pass carrying a CRITICAL never enters the predicate — the gate converges on it",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 313,
+      "description": "The base set is fixed by the cadence assignment and succession advances only when records close the CURRENT set's findings. A clean pair therefore closes the iteration permanently: any independent pass running AFTER coverage is met can raise a CRITICAL, have it walked, and never reach the confirm predicate, because the clean pair generated no records and is FINAL by the explicit rule. This is a strength REGRESSION against the shipped engine, where clause (c) reads the most recent independent pass (gates.ts:217) and reports unpassed on the same trail. It is the precise failure the stage exists to prevent — a fix for a CRITICAL that no independent pass has seen, certified as converged — and it is reachable on this repo's own habit of running extra passes after coverage is met.",
+      "recommendation": "Make the terminal condition 'no later independent pass', not 'no records'.",
+      "reproduction": "Gate review-system, v4 cadence [blind-pair, in-context]. T1 external (clean); T2 fresh (clean); T3 in-context (clean) — the gate correctly passes here. Then T4 external carrying 1 CRITICAL, and T5 address-reviews closing T4 with {severity: CRITICAL, outcome: resolved}. Recompute: clause (a) — the only assignment satisfying the whole cadence is pair {T1,T2} + in-context T3, since pair {T2,T4} leaves slot 2 with no later pass; clause (b) — T4's CRITICAL is resolved; clause (c) — base {T1,T2}, R empty, so the set is FINAL, the predicate sees 0 CRITICAL, gate PASSED. The most recent independent pass found a CRITICAL, the fix was never independently re-read. The shipped engine reports unpassed on the identical trail.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Succession advances on lateness, not on records: the successor set is every independent pass strictly later than every member of the current set and (when R is non-empty) later than every record in R; terminate when that set is empty."
+        },
+        {
+          "label": "B",
+          "body": "Keep terminal-on-clean and add an independent guard to clause (c): the gate SHALL NOT pass while any independent pass later than the confirming set carries a CRITICAL, whatever its resolution state."
+        }
+      ]
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "Clause (a) restates freshness inside the slot rule, contradicting the convention and making the `stale` state unreachable",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 236,
+      "description": "The PASS-LIST QUANTIFICATION convention ends 'No individual rule below restates a freshness condition — the filter has exactly one home, this paragraph', and the stale discrimination depends on re-evaluating (a) and (c) over the FULL list. Clause (a) then opens 'Each slot is satisfied by FRESH pass(es) (per the freshness rule)'. An implementer honouring that sentence filters stale passes out again during the full-list re-evaluation, so no reviewed gate can compute `stale` and this change's own STALE BUDGET-SPENT scenario is unreachable. The design records removing this restatement from the pair predicate for exactly this reason; the general slot sentence still carries it.",
+      "recommendation": "Strike FRESH from the slot sentence and leave the filter solely in the convention paragraph."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "The proposal's What Changes still describes the superseded two-fail-safe-rule clause (b), including the rule the design says inverted the goal",
+      "file": "orbit/changes/rc02-gate-semantics/proposal.md",
+      "line": 42,
+      "description": "What Changes says clause (b) ships 'two fail-safe rules … an unrecognised `outcome` counts as unresolved, and a summary that disagrees with its own entries falls back to the bare counts'. The delta ships neither. Under the shipped rule an unrecognised disposition makes the RECORD unreadable and falls back to the bare counts, which can resolve the pass; and per-entry data is PREFERRED over a disagreeing summary — the delta's own deferred-SUGGESTION scenario asserts the opposite of the proposal's second rule. Design D2 records that this summary-disagreement rule inverted the change's goal and was removed. The proposal is what a later reader and rc03/rc04 cite for what this stage decided.",
+      "recommendation": "Rewrite the bullet to the shipped mechanism: existence first, then one readability question, entries preferred over the aggregate, whole-record fallback otherwise."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "The run-summary-emit scenario's THEN contradicts the blind-pair canonical-next rule in this change's own engine-gates delta",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-run-summary-emit/spec.md",
+      "line": 22,
+      "description": "The generalized scenario says a packaged-but-unreturned external leaves its slot unsatisfied 'with the canonical next command targeting the external return', now explicitly including the external half of a blind-pair. The engine-gates delta says the opposite for that case: when the uncovered slot is `blind-pair` and no pairable independent pass stands — precisely the state when a T0 packaging emit is the only thing on the trail, since a T0 emit is not a pass — the command is the fresh invocation. On the commonest instance of the scenario's own WHEN, two deltas of one change render different canonical next commands.",
+      "recommendation": "Scope the THEN to say the slot stays unsatisfied and the command is whatever the engine computes, pointing at the single-voiced requirement rather than restating a command."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "The status requirement omits `STALE BUDGET-SPENT` and `budgetExhausted` from the enumerations it owns",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 596,
+      "description": "'Gate-aware status and instructions with position readout' owns the gate-row field list and the closed position-token vocabulary, and MODIFIED replaces it wholesale at archive. Its field list names `budget`, `independentSpend` and `independentSpendFresh` but not `budgetExhausted`; its token list names `unpassed BUDGET-SPENT` but not `STALE BUDGET-SPENT`. Both are mandated by the ADDED budget requirement and required by task 5.2 through both projections. An implementer building the renderer from the requirement that defines the renderer ships three of four fields and one of two tokens.",
+      "recommendation": "Add `budgetExhausted` to the field list and `STALE BUDGET-SPENT` with its condition to the token enumeration."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "Rejected external returns: which of the two counts they enter, and how freshness applies to them, is undefined",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 24,
+      "description": "The budget requirement defines `independentSpend` as every independent pass on the gate's mode across the whole trail — a definition excluding rejected artifacts, since they are not passes — then says the trigger counts fresh passes 'plus rejected returns on it', then says of rejected artifacts 'the count SHALL include them' without saying which count. The scenario says 'the spend is two' and names no field. A rejected artifact has no TrailPass, so its freshness must come from the filename token against the apply tokens, which no rule states. Implementations will differ on whether a rejected return can push a gate to BUDGET-SPENT.",
+      "recommendation": "State both counts explicitly and name the fields in the rejected-return scenario, with the artifact's filename token used for the freshness comparison."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "Assignment selection is made deterministic only for pair-bearing cadences, yet clause (c)'s base set depends on which assignment is chosen",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 252,
+      "description": "Coverage is existential and the only tie-break supplied is for assignments containing a pair. Clause (c)'s base set is 'the pass or passes satisfying the LAST independent-bearing cadence slot' — a function of the chosen assignment. For a cadence with no pair slot, no rule says which satisfying assignment is chosen, so the base set is implementation-defined whenever more than one pass can satisfy that slot. On the shipped proposal cadence with a fresh pass, an external and an in-context, two assignments satisfy the cadence and give different confirming sets, hence different verdicts when one carries a CRITICAL.",
+      "recommendation": "State one total order over satisfying assignments for every cadence, of which the pair rule is the special case; or define the base set independently of the assignment."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "The token-equality rejection is unscoped, so an unrelated walk sharing a member's token permanently rejects a knowably-blind pair",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 258,
+      "description": "The tie rule rejects a pair when a resolution record shares a token with either member. The blindness rule two paragraphs earlier is scoped to records whose `source_path` references either member and says explicitly that an unrelated walk does not break the pair. The tie rule names no scope, so read literally an audit-drift walk landing in the same second as a member rejects a pair whose blindness is fully determined, costing two passes against a budget of three. Read with the blindness scope it is nearly redundant, since an in-scope record at a member's token already falls inside the inclusive endpoints.",
+      "recommendation": "Scope the tie rule to records the blindness test already considers."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "title": "v4 changes the post-apply canonical next command, and the residue sweep's grep set misses the engine literals and two unreachable baseline requirements",
+      "file": "orbit/changes/rc02-gate-semantics/tasks.md",
+      "line": 145,
+      "description": "Under v3 the first uncovered system slot is `in-context`, so the post-apply canonical next is the in-context review. Under v4 the first slot is `blind-pair` with no pairable pass standing, so it becomes the fresh invocation. Three engine-COMPOSED recommendation strings still hardcode the old form in src/core/emit-composition.ts, so after the bump the engine's own recommendation surface points at a pass satisfying no cadence slot, which the single-voiced requirement forbids; two body sites carry the same stale prediction as prose. Task 8.2's greps catch none of them. Separately orbit-run-summary-emit's 'Apply per-chunk-end emission' requirement and orbit-conventions' external-slot sentence are falsified by v4 and sit outside every delta, so the sweep has no legal fix path.",
+      "recommendation": "Extend the grep set with the post-apply next-command literal and name emit-composition.ts as a site; decide and record the disposition of the two out-of-delta baseline sites with an owning stage named."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "title": "`budgetExhausted` is 'absent' in one scenario and 'FALSE' in another for the same not-exhausted condition",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 63,
+      "description": "'Convergence beats budget' says absent; 'Stale passes count in the reported spend, not in the trigger' says FALSE. The field is carried through a field-by-field JSON projection, so the two are distinguishable to a consumer, and rc04 is specified to branch on the boolean.",
+      "recommendation": "Use `false` whenever the gate declares a budget and omit only when none is declared, so rc04's branch stays total."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "title": "design.md says TWO R-crc-1 axes are exceeded while its own figures show one",
+      "file": "orbit/changes/rc02-gate-semantics/design.md",
+      "line": 423,
+      "description": "R-crc-1 reads 'at most 3 capabilities touched', so three is compliant rather than exceeded. Measured independently: 3 capabilities, 9 requirement blocks, 67 scenarios, 53,020 bytes, 19 task checkboxes — every design figure exact. Only the ~40 KB guide is exceeded; capabilities are AT the ceiling, which the same sentence then says.",
+      "recommendation": "Reword to one axis exceeded and one at the ceiling."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "Typo in task 8.2: 'Then sSweep for residue'",
+      "file": "orbit/changes/rc02-gate-semantics/tasks.md",
+      "line": 145,
+      "description": "An editing artifact in the task the implementer executes last; harmless, but it is the kind of residue the pre-handoff sweep exists to catch.",
+      "recommendation": "Fix to 'Then sweep for residue'."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "I read the artifacts and the engine before the trail, and spent most of the pass writing token sequences on paper and walking them through clause (a), then (b), then (c) against gates.ts and trail.ts as they stand. That is where both CRITICALs came from; neither is visible by reading the requirement for plausibility, and both sit in clause (c)'s succession rule — the part of the text rewritten most and now the most mechanism-dense sentence in the capability. The stated conventions close most of the quantifier class they were added for, but they are a blanket default applied to a requirement whose rules are not uniformly of the kind the default fits: clause (a)'s first-slot ordering constraint, the blindness predicate with no records on the trail, and the succession successor set are all empty-set cases the default would read as do-not-advance, and only one of the three is stated. Two are harmless because no implementer would take them literally; the third is the canonical happy path. What I checked and found sound: the four on-disk resolution generations, recomputed independently — 101 records, 526 entries, 260 with outcome, 49 with status, 217 with neither, 8 counter objects, 1 empty array, 2 absent — every figure in design.md exact. The readability predicate classifies all of them as the prose says, the live disposition vocabulary is a subset of the closed four, and no archived record carries a deferred or escalated count, corroborating the design's own correction that clause (b) has never blocked anything. 55 of 106 records are unreadable under the new predicate and all fall back to clean summaries, so the fallback is not a hidden gate; I could not find a real record the predicate gets wrong. Also sound, and worth saying because I pushed on them: the blind-pair predicate composes with existential coverage without deadlocking on any trail I could construct, including the broken-blindness recovery and the re-entry-after-apply paths; the earliest-pair determinism argument is correct and its backtracking caveat correctly stated; the budget's two-count split genuinely prevents mid-re-cover exhaustion; the five-state set is untouched and the three closed-set consumers hold; the user-validation task is correctly shaped for the subset rule; fingerprints verify; strict validation passes; no marker residue; the MODIFIED blocks drop exactly two baseline scenarios and both have named replacements. Risk texture: residual risk is concentrated in clause (c), not spread. Clauses (a) and (b) now read like specifications; clause (c) still reads like a narrative of the bugs it has survived, and both CRITICALs are in the two sentences added by the last two walks.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "final_assessment": "2 critical, 8 warning, 3 suggestion.",
+  "iteration": 6,
+  "next_recommended": "/orbit:address-reviews rc02-gate-semantics --from-file orbit/changes/rc02-gate-semantics/.orbit-runs/review-proposal-2026-09-14T09-06-17Z.json"
+}

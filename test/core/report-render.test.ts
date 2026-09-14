@@ -463,7 +463,7 @@ describe('the pure render is deterministic over its inputs', () => {
       ],
       repeatCount: 0,
       newCount: 3,
-      gateLine: 'Gate review-proposal: unpassed — pass 2026-07-25T10-00-00Z has unresolved findings',
+      gateLine: 'Gate review-proposal: unpassed — pass 2026-07-25T10-00-00Z has unresolved substantive findings',
       position:
         'propose ✓ → review(proposal) unpassed → apply ready → review(system) blocked-by-gate → archive blocked-by-gate',
       nextCommand:

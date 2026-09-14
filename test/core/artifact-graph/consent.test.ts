@@ -74,9 +74,9 @@ describe('consent attribute (D1) — parse / surface / reject', () => {
     }
   });
 
-  it('the shipped spec-driven schema (version 3) consent-marks both reviewed gates', () => {
+  it('the shipped spec-driven schema (version 4) consent-marks both reviewed gates', () => {
     const schema = resolveSchema('spec-driven');
-    expect(schema.version).toBe(3);
+    expect(schema.version).toBe(4);
     const norm = normalizeGates(schema);
     expect(norm.find(g => g.id === 'review-proposal')!.consent).toBe('user-invoked');
     expect(norm.find(g => g.id === 'review-system')!.consent).toBe('user-invoked');

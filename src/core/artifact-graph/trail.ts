@@ -12,12 +12,26 @@ import * as path from 'node:path';
 export type ReviewerClass = 'in-context' | 'fresh' | 'external';
 export type ReviewMode = 'proposal' | 'system';
 
+/** The closed severity ladder (orbit-conventions). `null` = the emit carried no recognised value. */
+export type Severity = 'CRITICAL' | 'WARNING' | 'SUGGESTION';
+const SEVERITIES: readonly string[] = ['CRITICAL', 'WARNING', 'SUGGESTION'];
+/** CRITICAL and WARNING gate; SUGGESTION never does (rc02). */
+export function isSubstantive(sev: Severity | null): boolean {
+  return sev === 'CRITICAL' || sev === 'WARNING';
+}
+
+/** The closed disposition set an address-reviews entry may carry. */
+export type Disposition = 'resolved' | 'stale' | 'deferred' | 'escalated';
+const DISPOSITIONS: readonly string[] = ['resolved', 'stale', 'deferred', 'escalated'];
+
 /** A normalized finding, keyed for same-gate new-finding matching. */
 export interface TrailFinding {
   /** Trimmed, case-sensitive title. */
   title: string;
   /** Repo-relative file path with any `:line` suffix stripped. */
   file: string;
+  /** Authored severity; `null` when the emit carried no recognised value. NEVER re-graded. */
+  severity: Severity | null;
 }
 
 /** A completed review pass (internal `review-<mode>-*.json` or external `external-<as>-*.md`). */
@@ -35,6 +49,17 @@ export interface TrailPass {
   source: 'internal-review' | 'external';
 }
 
+/** One `resolutions[]` element, normalized. */
+export interface TrailResolutionEntry {
+  severity: Severity | null;
+  /** Read from `outcome`, or the legacy key `status` when `outcome` is absent. */
+  disposition: Disposition | null;
+  /** Trimmed title, for deduplicating the deferred-suggestion count. */
+  title: string;
+  /** Repo-relative file with any `:line` suffix stripped. */
+  file: string;
+}
+
 /** An address-reviews resolution record. */
 export interface TrailResolution {
   token: string;
@@ -43,6 +68,22 @@ export interface TrailResolution {
   /** `null` when the field was absent/non-numeric — treated as UNRESOLVED (not zero). */
   deferred: number | null;
   escalated: number | null;
+  /**
+   * rc02 READABILITY: true only when `resolutions` is a NON-EMPTY array whose EVERY element is an
+   * object carrying a recognised severity AND a recognised disposition. Anything else — absent,
+   * empty, a counter object, a non-object element, an unrecognised value — is UNREADABLE and the
+   * gate falls back WHOLE to the bare counts for that record.
+   */
+  readable: boolean;
+  /** The normalized entries; empty when the record is unreadable. */
+  entries: TrailResolutionEntry[];
+}
+
+/** An external findings artifact the shape validation REJECTED (rc02: spend is spend). */
+export interface RejectedExternal {
+  token: string;
+  file: string;
+  mode: ReviewMode;
 }
 
 export interface Trail {
@@ -52,6 +93,12 @@ export interface Trail {
   resolutions: TrailResolution[];
   /** `apply-*.json` filename tokens (artifact-changing events for freshness). */
   applyTokens: string[];
+  /**
+   * External findings artifacts whose shape validation failed (rc02). They satisfy NO cadence slot
+   * — their findings cannot be read — but they cost a model run, so the budget counts them and the
+   * gate's reason names them. Attributed to the mode in the filename.
+   */
+  rejectedExternals: RejectedExternal[];
   /**
    * The LATEST apply emit's declared `user_validation_tasks` identifier list (D5): the
    * engine-verified record of which unchecked boxes are user-validation handoffs. Absent
@@ -98,7 +145,14 @@ export interface TrailOverlay {
  */
 export function readTrail(changeDir: string, overlay?: TrailOverlay): Trail {
   const runsDir = path.join(changeDir, '.orbit-runs');
-  const trail: Trail = { changeDir, runsDir, passes: [], resolutions: [], applyTokens: [] };
+  const trail: Trail = {
+    changeDir,
+    runsDir,
+    passes: [],
+    resolutions: [],
+    applyTokens: [],
+    rejectedExternals: [],
+  };
   // (token, declared user-validation ids) per apply emit; the latest token wins below.
   const applyUserValidation: Array<[string, string[]]> = [];
 
@@ -133,8 +187,12 @@ export function readTrail(changeDir: string, overlay?: TrailOverlay): Trail {
       // External findings file: external-(proposal|system)-<TS>.md — NOT external-prompt-*.
       const extMatch = name.match(/^external-(proposal|system)-\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}Z\.md$/);
       if (extMatch && token) {
-        const pass = parseExternalMarkdown(full, token, extMatch[1] as ReviewMode);
+        const mode = extMatch[1] as ReviewMode;
+        const pass = parseExternalMarkdown(full, token, mode);
         if (pass) trail.passes.push(pass);
+        // rc02: a return that came back unreadable is still spend. Recorded separately so it can
+        // never satisfy a slot while remaining visible to the budget and the reason.
+        else trail.rejectedExternals.push({ token, file: full, mode });
         continue;
       }
 
@@ -160,6 +218,7 @@ export function readTrail(changeDir: string, overlay?: TrailOverlay): Trail {
   trail.passes.sort((a, b) => (a.token < b.token ? -1 : a.token > b.token ? 1 : 0));
   trail.resolutions.sort((a, b) => (a.token < b.token ? -1 : a.token > b.token ? 1 : 0));
   trail.applyTokens.sort();
+  trail.rejectedExternals.sort((a, b) => (a.token < b.token ? -1 : a.token > b.token ? 1 : 0));
   if (applyUserValidation.length > 0) {
     applyUserValidation.sort((a, b) => (a[0] < b[0] ? -1 : 1));
     trail.latestApplyUserValidation = applyUserValidation[applyUserValidation.length - 1][1];
@@ -183,6 +242,7 @@ function parseInternalReview(file: string, token: string, json: any): TrailPass 
   const findings: TrailFinding[] = findingsArr.map(f => ({
     title: String(f?.title ?? '').trim(),
     file: stripLineSuffix(toRepoRelative(String(f?.file ?? ''))),
+    severity: normalizeSeverity(f?.severity),
   }));
 
   const critical =
@@ -211,12 +271,55 @@ function parseInternalReview(file: string, token: string, json: any): TrailPass 
   };
 }
 
+/** A recognised severity, or null. Never throws; never re-grades. */
+function normalizeSeverity(v: unknown): Severity | null {
+  return typeof v === 'string' && SEVERITIES.includes(v) ? (v as Severity) : null;
+}
+
+/** A recognised disposition from `outcome`, else the legacy key `status`, else null. */
+function normalizeDisposition(entry: any): Disposition | null {
+  for (const key of ['outcome', 'status']) {
+    const v = entry?.[key];
+    if (typeof v === 'string' && DISPOSITIONS.includes(v)) return v as Disposition;
+    // A present-but-unrecognised value is NOT retried under the other key: it is a real value the
+    // reader cannot interpret, which makes the record unreadable.
+    if (typeof v === 'string') return null;
+  }
+  return null;
+}
+
+/**
+ * rc02 readability: a NON-EMPTY array whose EVERY element is an object carrying BOTH a recognised
+ * severity AND a recognised disposition. The empty case is stated, not defaulted — an empty array
+ * is UNREADABLE, so it can never vacuously resolve a pass over its own summary.
+ */
+function readResolutionEntries(raw: unknown): { readable: boolean; entries: TrailResolutionEntry[] } {
+  if (!Array.isArray(raw) || raw.length === 0) return { readable: false, entries: [] };
+  const entries: TrailResolutionEntry[] = [];
+  for (const el of raw) {
+    if (el === null || typeof el !== 'object' || Array.isArray(el)) return { readable: false, entries: [] };
+    const severity = normalizeSeverity((el as any).severity);
+    const disposition = normalizeDisposition(el);
+    if (severity === null || disposition === null) return { readable: false, entries: [] };
+    entries.push({
+      severity,
+      disposition,
+      title: String((el as any).title ?? '').trim(),
+      file: stripLineSuffix(toRepoRelative(String((el as any).file ?? ''))),
+    });
+  }
+  return { readable: true, entries };
+}
+
 function parseAddressReviews(token: string, json: any): TrailResolution {
   const rs = json.resolution_summary ?? {};
   const rawPath = json.source_path ?? null;
+  const { readable, entries } = readResolutionEntries(json.resolutions);
   return {
     token,
     sourcePath: rawPath ? stripLineSuffix(toRepoRelative(String(rawPath))) : null,
+    readable,
+    entries,
     // Missing/non-numeric → null (unresolved), NOT 0: an address-reviews JSON without a
     // proper resolution_summary must not falsely resolve a pass (per the edge-case contract:
     // malformed/missing fields are treated as if no address-reviews ran).
@@ -272,7 +375,8 @@ function parseExternalMarkdown(file: string, token: string, mode: ReviewMode): T
     if (title) {
       counts[section]++;
       pendingTitle = title[1].trim();
-      findings.push({ title: pendingTitle, file: '' });
+      // External findings take their severity from SECTION MEMBERSHIP, which is structural.
+      findings.push({ title: pendingTitle, file: '', severity: section });
       continue;
     }
     const fileField = line.match(/^\*\*File\*\*:\s*(.*\S)\s*$/i);

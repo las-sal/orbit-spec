@@ -21,7 +21,10 @@ carry it.
 shape validation is absent from the pass list, so it satisfies no cadence slot — correctly, since
 its findings cannot be read. It still COST a model run, and "spend is spend" governs: the trail
 reader SHALL surface rejected external artifacts separately from cadence-eligible passes, the
-count SHALL include them, and the gate's reason SHALL name them (`1 external return rejected as
+count SHALL include them in BOTH figures — `independentSpend` counts every rejected artifact
+attributed to the gate's mode across the whole trail, and `independentSpendFresh` counts those with
+no later apply token, the artifact's own filename `<TS>` serving as its token since a rejected
+artifact has no pass record — and the gate's reason SHALL name them (`1 external return rejected as
 malformed — <filename>`). A rejected artifact is ATTRIBUTED to the mode in its filename
 (`external-(proposal|system)-<TS>.md`, recoverable before the shape check runs) and counts only
 toward the gate operating on that mode; a reviewed gate whose mode cannot be derived from its id
@@ -60,8 +63,9 @@ reach it has recorded a fact worth reading.
 #### Scenario: Convergence beats budget
 
 - **WHEN** the same gate's pass condition is met after three independent passes
-- **THEN** its state is `passed` and `budgetExhausted` is absent — budget is never consulted for a
-  converged gate
+- **THEN** its state is `passed` and `budgetExhausted` is `false` — the field is present whenever
+  the gate declares a budget and omitted only when it declares none, so a consumer's branch on it
+  stays total; budget is never consulted for a converged gate
 
 #### Scenario: A rejected external return still costs
 
@@ -212,7 +216,19 @@ its phase still awaits the user's invocation). `spec-driven` sets `consent: user
 
 ### Requirement: Reviewed-gate pass condition — the computed convergence criterion
 
-A `reviewed` gate SHALL pass when ALL of:
+A `reviewed` gate SHALL pass when ALL of the three clauses below hold. Two conventions govern
+every rule in them, stated once here because leaving either implicit has repeatedly produced rules
+that read correctly and compute wrongly:
+
+**PASS-LIST QUANTIFICATION.** Clauses (a) and (c) are evaluated over the FRESH pass list (per the
+freshness rule); clause (b) over EVERY relevant pass, stale ones included. The `stale` versus
+`unpassed` discrimination re-evaluates (a) and (c) over the full list: a gate whose full-list
+evaluation converges while its fresh-list evaluation does not is `stale`. No individual rule below
+restates a freshness condition — the filter has exactly one home, this paragraph.
+
+**EMPTY SETS ARE NEVER VACUOUSLY SATISFYING.** Every rule below quantifies over some set, and each
+one states its empty case explicitly. Where a rule's set is empty, the reading is the one that does
+NOT advance the gate, unless this text says otherwise in that rule.
 
 **(a) class coverage (ordered slots).** The gate's `cadence` is an ordered list of SLOTS, not a
 set. Coverage holds iff THERE EXISTS an assignment of trail passes to slots satisfying every
@@ -221,7 +237,8 @@ works. An implementation MAY search greedily from the earliest candidates, but g
 without backtracking is NOT the criterion: a pair chosen early can raise the lower bound on a
 following slot (through that pair's resolution records) and foreclose an assignment that a later
 pair leaves open, so a greedy implementation SHALL backtrack rather than report a covered cadence
-as unpassed. Each slot is satisfied by FRESH pass(es) (per the freshness rule) of the slot's class, and
+as unpassed. Each slot is satisfied by pass(es) of the slot's class drawn from the list the quantification
+convention selects, and
 slot ordering has TWO constraints, both strict: the satisfying pass(es) SHALL be later than every
 pass satisfying the previous slot, AND later than every `address-reviews-*.json` record that
 resolves a previous slot's pass findings. The second constraint makes a following slot a
@@ -232,20 +249,24 @@ An `independent` slot is satisfied by any `fresh` or `external` pass meeting tho
 
 A **`blind-pair`** slot is satisfied by TWO passes — one `fresh` and one `external`, DISTINCT
 CLASSES, order between them irrelevant — where BOTH members meet the ordering constraints above
-(both strictly later than the previous slot's passes and its resolution records), both are fresh
-per the freshness rule, and the two are BLIND to each other: no `address-reviews-*.json` record
+(both strictly later than the previous slot's passes and its resolution records) and the two are
+BLIND to each other: no `address-reviews-*.json` record
 whose `source_path` references EITHER pass's findings artifact carries a token that falls between
 the two passes' tokens INCLUSIVE OF THE ENDPOINTS (a walk of an unrelated source — an audit-drift
 ingest, say — does NOT break the pair). The slot is satisfied at the LATER of the two tokens,
-which is what a following slot must beat. When several qualifying pairs exist the EARLIEST is
-taken — the pair whose later token is smallest among those meeting the constraints, ties broken by
-the earlier token and then by findings-artifact filename, so selection is TOTAL and
-implementation-order-independent — which makes the slot compose with clause (a)'s greedy
-earliest-satisfying walk rather than contradicting it.
+which is what a following slot must beat. Among the assignments that satisfy the WHOLE cadence, the engine SHALL select the one whose
+assigned token sequence is lexicographically smallest, ties broken by findings-artifact filename —
+a rule stated over EVERY cadence, pair-bearing or not, because clause (c)'s confirming pass is a
+function of the chosen assignment and a cadence with two satisfying assignments would otherwise
+give two verdicts. For a pair-bearing cadence this resolves to the pair with the smallest later
+token, then the smallest earlier token. Selection is TOTAL and implementation-order-independent. "Earliest" is a DETERMINISM
+rule over successful assignments, never a pre-filter: a pair that satisfies its own constraints but
+forecloses a following slot is not selected in preference to one that completes the cadence.
 
 **Token equality fails SAFE.** Trail tokens are second-granular and distinct events can share one.
-Two candidate members sharing a token, or a resolution record sharing a token with either member,
-leave blindness UNKNOWABLE; the engine SHALL reject such a pair rather than certify it, and the
+Two candidate members sharing a token, or a resolution record WHOSE `source_path` REFERENCES either
+member sharing a token with either member, leave blindness UNKNOWABLE (an unrelated walk landing in
+the same second does not, exactly as it does not break blindness); the engine SHALL reject such a pair rather than certify it, and the
 reason SHALL name the tie. SAME-STATE is otherwise APPROXIMATED, not enforced: the engine observes
 apply tokens and walk records, so an unrelated edit between the two passes is an accepted v1 limit
 (detection, never a lock).
@@ -257,15 +278,19 @@ one resolution SITTING by the human, not one emitted record; a multi-source reco
 at this stage and this gate SHALL NOT be specified as though it did. (Whether the walk surface
 should gain multi-source ingest is rc03's to decide when it owns the cadence templates.)
 
-**EXISTENCE FIRST.** A pass carrying ANY findings SHALL have at least one `address-reviews-*.json`
-record whose `source_path` references its findings artifact. Absent any such record the pass is
-UNRESOLVED — never vacuously resolved. A findings-free pass needs no resolution run.
+**EXISTENCE FIRST.** A pass carrying any SUBSTANTIVE (CRITICAL or WARNING) finding SHALL have at
+least one `address-reviews-*.json` record whose `source_path` references its findings artifact.
+Absent any such record that pass is UNRESOLVED — never vacuously resolved. A pass with no findings,
+and a pass whose findings are ALL SUGGESTION-grade, need no resolution run at all: requiring a walk
+before a suggestion-only pass could clear the gate would be SUGGESTIONs gating by another route,
+which is the defect this clause exists to remove.
 
 **ONE READABILITY PREDICATE, ONE FALLBACK.** Per-entry resolution data is AI-authored narrative:
 the emit surface validates the payload KEY and none of the entry shapes, and four generations of
 the shape exist on real trails. The gate asks ONE question of the most recent record referencing the pass's findings artifact.
 
-A record is **READABLE** when `resolutions` is an ARRAY and EVERY element is an object carrying
+A record is **READABLE** when `resolutions` is a NON-EMPTY ARRAY and EVERY element is an object
+carrying
 BOTH a recognised `severity` (`CRITICAL` | `WARNING` | `SUGGESTION`) AND a recognised DISPOSITION
 (`resolved` | `stale` | `deferred` | `escalated`, read from `outcome`, or from the legacy key
 `status` when `outcome` is absent — both generations are live and readers SHALL tolerate both).
@@ -274,8 +299,9 @@ BOTH a recognised `severity` (`CRITICAL` | `WARNING` | `SUGGESTION`) AND a recog
   carries a disposition of `deferred` or `escalated`. SUGGESTION-grade entries NEVER block, whatever
   their disposition and whatever the record's aggregate counters say. The per-entry data is
   PREFERRED over `resolution_summary` when the two disagree.
-- **Unreadable record** — anything else, including a `resolutions` that is absent or not an array
-  (real archived records carry a counter OBJECT there), an element that is not an object, an
+- **Unreadable record** — anything else, including a `resolutions` that is absent, EMPTY, or not an
+  array (real archived records carry a counter OBJECT there, and one carries an empty array), an
+  element that is not an object, an
   unrecognised or absent `severity`, and an unrecognised or absent disposition. The gate falls back
   to the bare `resolution_summary.deferred == 0 AND escalated == 0` rule for that record. When
   `resolution_summary` is itself absent or non-numeric, the pass is UNRESOLVED.
@@ -283,36 +309,32 @@ BOTH a recognised `severity` (`CRITICAL` | `WARNING` | `SUGGESTION`) AND a recog
 The fallback is severity-BLIND by construction, so a pre-capability record that deferred a
 SUGGESTION does block — the accepted cost of not guessing at an unreadable shape.
 
-**(c) independent confirmation (per the gate's `confirm` predicate).** The CONFIRMING PASS SET
-satisfies the gate's `confirm` rule, and EVERY member of the set must satisfy it. The set is
-computed in two steps:
+**(c) independent confirmation (per the gate's `confirm` predicate).** The MOST RECENT pass from
+an independent class (`fresh` or `external`; never `in-context`) satisfies the gate's `confirm`
+rule: `no-new-findings` requires 0 CRITICAL AND 0 new SUBSTANTIVE (CRITICAL or WARNING) findings;
+`findings-resolved` requires 0 CRITICAL AND that pass's findings all resolved per clause (b) (the
+relaxed rule for a gate whose independent class repeats only on CRITICALs — e.g. the system
+external, where a first external pass with findings later resolved via address-reviews DOES
+converge). A **new finding** is matched against same-gate prior passes only, by trimmed
+case-sensitive title equality AND repo-relative file path with any `:line` suffix stripped;
+SUGGESTION-grade findings are excluded from the match set entirely.
 
-1. **Base set** — the pass or passes satisfying the LAST independent-bearing cadence slot: a
-   single pass for an `independent`, `fresh`, or `external` slot; BOTH MEMBERS for a `blind-pair`,
-   so a CRITICAL in the earlier-finishing member is never invisible to the predicate. Where no
-   cadence slot is independent-bearing, the base set is the single most recent independent pass
-   (`fresh` or `external`; never `in-context`).
-2. **Succession (SET-VALUED, iterated)** — let R be every `address-reviews-*.json` record closing
-   the CURRENT set's findings. The successor set is EVERY independent pass whose token is strictly
-   later than every record in R. When that set is non-empty it BECOMES the current set and the
-   rule re-applies against the records closing ITS findings; tokens strictly increase, so the
-   iteration terminates. Every member of the final set must satisfy the predicate.
+This clause is the SHIPPED predicate, edited on ONE axis only: the new-finding match is now
+substantive, so a new SUGGESTION no longer repeats the independent loop. Everything else about how
+confirmation selects its pass is UNCHANGED by this stage, deliberately. A rewrite selecting a
+confirming pass SET with a succession rule was carried here through five review passes and removed
+on 2026-09-14 under R-crc-8's sectional trigger; `rc02c-confirmation-semantics` owns it and will
+specify it as a decision table. The known limits of the shipped rule are that stage's premise, not
+this one's: with a `blind-pair` slot the later-finishing member is the one read, so a CRITICAL in
+the earlier member is invisible to the predicate. That limit is the status quo — it is what the
+engine does today — and shipping it unchanged is strictly safer than the rewrite it replaces, which
+could certify convergence over a CRITICAL that no independent pass had re-read.
 
-   The successor is a SET, not a single latest pass, so a repeat that is itself a blind pair is
-   confirmed as a pair. Qualification is re-measured against the CURRENT set's records at each
-   iteration, so a successor never predates the walk of a CRITICAL raised by a pass it supersedes.
-
-`no-new-findings` requires 0 CRITICAL AND 0 new SUBSTANTIVE (CRITICAL or WARNING) findings across
-the set; `findings-resolved` requires 0 CRITICAL AND the set's findings all resolved per clause (b)
-(the relaxed rule for a gate whose independent class repeats only on CRITICALs). A **new finding**
-is matched against same-gate prior passes only, by trimmed case-sensitive title equality AND
-repo-relative file path with any `:line` suffix stripped; SUGGESTION-grade findings are excluded
-from the match set entirely.
-
-A CRITICAL anywhere in the confirming pass set fails the predicate and costs ONE further
-independent pass on the walked state, which succeeds the set per step 2. The REPEAT IS BOUNDED BY
-THE GATE'S `budget` AND BY NOTHING ELSE — a gate declaring no `budget` can repeat without limit,
-which is why the shipped schema declares one on both reviewed gates.
+A CRITICAL in that pass fails the predicate and costs one further independent pass on the walked
+state. The repeat is NOT BOUNDED BY THE ENGINE. The gate's `budget` PRICES it — the spend is
+reported and exhaustion annotated — and the decision to stop is the user's at the inflection
+prompt, since exhaustion is a report and never a block. A gate declaring no `budget` repeats with
+no reported ceiling.
 
 **Deferred-suggestion aggregation.** The count the reason reports is the number of DISTINCT
 SUGGESTION-grade entries carrying a `deferred` or `escalated` disposition, deduplicated by
@@ -332,8 +354,8 @@ self-assessment of review quality.
 
 #### Scenario: Blind pair satisfied by two distinct classes with no walk between
 
-- **WHEN** a fresh pass and an external pass are both fresh and no walk of either pass's findings
-  is recorded between their tokens
+- **WHEN** a fresh pass and an external pass stand on the current state and no walk of either
+  pass's findings is recorded between their tokens
 - **THEN** the `blind-pair` slot is satisfied at the later token
 
 #### Scenario: A walk between the pair breaks blindness
@@ -410,6 +432,13 @@ self-assessment of review quality.
 - **THEN** the record is UNREADABLE and falls back to the bare counts — an unreadable severity is
   never treated as non-substantive
 
+#### Scenario: The confirming pass is the most recent independent one
+
+- **WHEN** a `blind-pair` slot is covered and the fresh member's token is later than the external
+  member's
+- **THEN** the fresh member is the confirming pass — the shipped selection rule is unchanged by
+  this stage, and the earlier member's invisibility is `rc02c-confirmation-semantics`' premise
+
 #### Scenario: Independent confirmation required
 
 - **WHEN** all coverage and resolution clauses hold but the latest independent-class pass fails the
@@ -432,14 +461,6 @@ self-assessment of review quality.
 - **THEN** the gate passes — the resolved-with-no-CRITICAL external satisfies `findings-resolved`
   even though the findings were "new" relative to prior passes
 
-#### Scenario: A CRITICAL in the earlier pair member still fails the confirm
-
-- **WHEN** a `blind-pair` slot's external member carried 1 CRITICAL, its fresh member carried 0,
-  the fresh member's token is later, and each member's findings were resolved by its OWN
-  `address-reviews` record (one per findings artifact)
-- **THEN** the gate is unpassed — the confirming pass set is BOTH members, so the predicate sees
-  the CRITICAL regardless of which member finished last
-
 #### Scenario: A viable assignment is found rather than foreclosed
 
 - **WHEN** an earlier candidate pair's findings were walked late and a later candidate pair's were
@@ -461,33 +482,6 @@ self-assessment of review quality.
   resolution records at T4 and T5
 - **THEN** the `in-context` slot is UNSATISFIED — its pass precedes the walk it exists to check —
   and the gate is unpassed naming the ordering
-
-#### Scenario: A CRITICAL pair converges through succession
-
-- **WHEN** a pair's external member carried a CRITICAL, both members' findings were resolved by
-  their own records, and one clean independent pass then runs strictly later than both records
-- **THEN** that pass REPLACES the base set as the confirming set, the predicate holds, and the
-  gate reaches `passed` — the further pass a CRITICAL buys is what clears it
-
-#### Scenario: A clean confirming set terminates the iteration
-
-- **WHEN** the current confirming set carries no findings, so no resolution record closes it
-- **THEN** that set is FINAL and the gate converges on it — an empty record set ends the
-  iteration rather than re-admitting every independent pass on the trail
-
-#### Scenario: A successor PAIR is confirmed as a pair
-
-- **WHEN** the repeat after the walk is itself two independent passes of distinct classes, the
-  earlier-finishing one carrying a CRITICAL and the later one clean
-- **THEN** BOTH are in the successor set and the gate stays unpassed — succession is set-valued, so
-  the outcome does not depend on which member finished last
-
-#### Scenario: Succession re-measures against the current set's records
-
-- **WHEN** a successor pass raises its own CRITICAL, that finding is walked, and a further
-  independent pass runs after THAT walk
-- **THEN** the iteration advances to the further pass; a pass predating the walk of a CRITICAL it
-  supersedes never becomes the confirming set
 
 #### Scenario: A pair member cannot be reused from the previous slot
 
@@ -572,13 +566,14 @@ orthogonal to the gate graph.
 ### Requirement: Gate-aware status and instructions with position readout
 
 `orbit status --change <name>` (the per-change form; bare `orbit status` is the orientation surface per `orbit-orientation` — D-arc Stage D3) SHALL render gate rows (state: `blocked | ready | passed | stale | unpassed`, with
-reasons, plus `budget`, `independentSpend` and `independentSpendFresh` on a reviewed gate that
-declares a budget) alongside artifact rows, and a one-line POSITION READOUT of the canonical flow (e.g.
+reasons, plus `budget`, `independentSpend`, `independentSpendFresh` and `budgetExhausted` on a
+reviewed gate that declares a budget) alongside artifact rows, and a one-line POSITION READOUT of the canonical flow (e.g.
 `propose ✓ → review(proposal) (past) → apply ✓ → review(system) unpassed → archive blocked-by-gate`).
 Each position-readout step token is a gate id or lifecycle-phase token (`propose`, `review(proposal)`,
 `apply`, `review(system)`, `archive`); a gate step renders its computed state (`✓` passed, `STALE`,
 `ready`, `blocked-by-gate`, `unpassed`, `unpassed BUDGET-SPENT` when an unpassed gate's
-`independentSpendFresh` has reached its declared budget, or `(past)` for a superseded gate). **Superseded gates**: a
+`independentSpendFresh` has reached its declared budget, `STALE BUDGET-SPENT` when a `stale` gate's
+has, or `(past)` for a superseded gate). **Superseded gates**: a
 `reviewed` gate whose `before` phase is already complete (e.g. `review-proposal` after `apply` has
 passed) is no longer the active frontier — it gated ENTRY to a phase that has since run. Such a gate
 is marked SUPERSEDED (distinct from `passed`: it may never have converged; the flow simply advanced

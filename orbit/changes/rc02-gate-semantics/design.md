@@ -144,7 +144,14 @@ the summary that would have blocked. Existence quantified over "any findings" in
 "substantive", so the stage's headline goal died inside its own text. Canonical-next tested whether
 a pass EXISTS where the property needed was whether it can still PAIR.
 
-Settled under R-crc-3, and applied as a sweep rather than a patch: the pass condition now opens with
+Settled under R-crc-3, and applied as a sweep rather than a patch. That sweep had to be applied
+TWICE: its first application was written through a script that aborted before its single write, so
+seven of the seventeen edits never reached the artifact while the scenarios asserting them did — the
+delta spent one review cycle contradicting itself in three places. The fifth pass caught it by
+grepping each claimed edit rather than re-reading the requirement, which is the verification genre
+rc03 owns and the only instrument that can see a walk's claim diverge from its work.
+
+The pass condition now opens with
 two conventions stated once — which pass list each clause quantifies over, and that an empty set is
 NEVER vacuously satisfying — and every rule beneath states its empty case explicitly. Freshness has
 exactly one home instead of being restated inside the pair predicate, where it made the `stale` gate
@@ -157,38 +164,27 @@ clause (b) specifically, and it is recorded here so a later walk need not redisc
 fourth pass showed the class spans all three clauses, so relocating one would have fixed a third of
 the problem while adding a capability.
 
-### D3 — Clause (c) confirms over the slot's pass SET
+### D3 — Clause (c) leaves this change (2026-09-14)
 
-The shipped clause (c) reads "the most recent pass from an independent class". A `blind-pair` slot
-puts TWO independent passes on the trail, and the first review pass traced the consequence: an
-external carrying a CRITICAL at T1, a clean fresh pass at T2, one walk resolving both, and the
-gate passes — the CRITICAL is never re-checked, purely because the clean pass happened to finish
-later. Swap the two and the gate correctly demands another pass. A convergence rule whose strength
-depends on which of two parallel reviewers finished first is not a rule.
+Clause (c) is the SHIPPED predicate with one edit: the new-finding match becomes substantive, so a
+new SUGGESTION no longer repeats the independent loop. Nothing else about how confirmation selects
+its pass changes here.
 
-Clause (c) therefore evaluates the CONFIRMING PASS SET: the pass or passes satisfying the last
-independent-bearing cadence slot — one pass for a single-class slot, BOTH MEMBERS for a
-`blind-pair`. Every member must satisfy the predicate.
+That is a REVERSAL of what this change carried for five review passes, and R-crc-8's sectional
+trigger is why. Counting CRITICALs by location across six proposal passes, clause (b) took four and
+converged while clause (c) took five and did not; the sixth pass put both of its CRITICALs in a
+succession sentence written ninety minutes earlier to fix the fifth pass's CRITICAL. One of those
+two was decisive on its own: a clean confirming set was FINAL, so an independent pass running after
+coverage was met could raise a CRITICAL, have it walked, and never reach the predicate — while the
+shipped rule reports unpassed on the identical trail. The rewrite was a strength REGRESSION in the
+exact direction this stage exists to prevent.
 
-That base set alone is a trap, as the first external pass showed: a set fixed by the cadence is
-never replaced, so a CRITICAL in a pair member would fail the predicate forever and the gate could
-never reach `passed` while the budget quietly exhausted. The set therefore has a SUCCESSION rule —
-and the rule's FIRST draft immediately undid this decision one paragraph after making it, by
-replacing a two-member set with "the latest qualifying successor", which reinstates the dependency
-on which parallel reviewer finished last. The third proposal pass caught it.
-
-Succession is therefore SET-VALUED and ITERATED: every independent pass strictly later than all
-resolution records closing the CURRENT set's findings becomes the new current set, re-measured each
-round until the set is empty; every member must satisfy the predicate. Set-valued because R-crc-4's
-"one more blind review" is itself a pair; re-measured against the current set because a successor
-must never predate the walk of a CRITICAL raised by a pass it supersedes. Tokens strictly increase,
-so the iteration terminates.
-
-The same trace exposed an overclaim. The requirement said a CRITICAL "buys exactly ONE further
-independent pass, never an open loop", and nothing implemented the bound: clause (c) has no
-repetition counter, and the only limit is the `budget`, which the same requirement said may be
-absent. The sentence now states what is true — the repeat is bounded by the budget and by nothing
-else, which is why the shipped schema declares one on both reviewed gates.
+So the removal is not a retreat. Shipping the unchanged predicate is strictly safer than shipping
+the rewrite, and the rewrite's real motivation — with a `blind-pair` slot the later-finishing member
+is the one read, so a CRITICAL in the earlier member is invisible — survives as the premise of
+`rc02c-confirmation-semantics`, which will specify it as a decision table under R-crc-7 with every
+empty case enumerated before any prose. That limit is the status quo today; this stage neither fixes
+it nor worsens it.
 
 ### D4 — `blind-pair`, with blindness computed and same-state approximated
 
@@ -407,18 +403,22 @@ recommendations (see `explore.md` D-rc02-8 through D-rc02-10):
   unemittable trail). → Resolved by D4a: rc02 specifies only what the product can record today,
   and the multi-source question is handed to rc03 by name. The residual risk is that rc03 chooses
   differently and clause (b) needs revisiting; that is a delta on one requirement, not a rework.
+- **The v4 bump reaches surfaces no delta can touch.** Three sites are inside this change and fixed
+  by task 7.2: the verify emit's three hardcoded post-apply recommendations in
+  `src/core/emit-composition.ts` and two prose predictions in `apply-change.ts`, all of which would
+  name a pass satisfying no v4 slot. Two are outside its three capabilities and are ASSIGNED rather
+  than deferred silently: `orbit-conventions`' external-slot sentence to rc02b, which already
+  touches that capability, and `orbit-run-summary-emit`'s two v3-scoped examples to rc02c, which has
+  capability headroom. Copying an 8.4 KB requirement block to fix two scoped illustrations would
+  cost more against an already-breached byte axis than the assignment does.
 - **Clause (b) is the mechanism concentration point.** It reads the least validated data on the
   trail and has already been rewritten twice, the second time because its own fail-safes inverted
   the change's goal. → Simplified to one readability predicate and one fallback (D2); if a fourth
   pass finds a fourth defect in this clause, the signal is to move the interpretation to the emit
   boundary where the writer can be held to a contract, not to patch again.
-- **Size after four review passes: THREE capabilities, nine requirement blocks, 67 scenarios,
-  51.3 KB of delta, 19 tasks. TWO R-crc-1 axes are now exceeded** and both are recorded rather than
-  hidden: capabilities sit AT the ceiling of three, and the delta is 28% over the ~40 KB guide.
-  Requirements (9 of ~12) and tasks (19 of under 20) remain inside. Every byte added since the last
-  measurement was demanded by a review finding rather than by scope — the third capability
-  (`orbit-lifecycle-consent`) exists because the v4 bump falsifies one of its scenarios, and the
-  rest is the empty-case statement the quantifier sweep required. This is the stage demonstrating
-  R-crc-1's own thesis: a convergence criterion is near the limit of what one requirement block can
-  specify in prose. → Held by the non-goals: the ladder is
+- **Size after six review passes and one scope removal: THREE capabilities, nine requirement
+  blocks, 56 scenarios, ~50 KB of delta, 18 tasks. ONE R-crc-1 axis is exceeded — delta bytes,
+  against a ~40 KB guide — and one sits AT the ceiling: capabilities, where R-crc-1 reads "at most
+  3", so three is compliant rather than breached.** Requirements and tasks remain inside. An earlier
+  draft of this bullet called that two breaches; the honest record is one breach and one at-limit. → Held by the non-goals: the ladder is
   rc02b's, and every genre, template, and cost-rendering concern stays with rc03 and rc04.

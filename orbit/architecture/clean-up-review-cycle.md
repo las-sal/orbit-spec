@@ -157,9 +157,33 @@ One goal per phase, each falsifiable, each stage naming its goal (settled under 
   walking it through the rule, never by reading the rule. That work costs the same at explore time
   and a fraction as much: no spec to rewrite, no walk to author, no review clock to reset. Authoring
   corollary: a decision procedure is specified as a DECISION TABLE or normative pseudocode, where
-  empty cases are explicit by construction — all ten of rc02's CRITICALs were prose quantifier
+  empty cases are explicit by construction. **A blanket default does not substitute for stating
+  them** (added 2026-09-14): rc02 tried to close the class with one convention — "where a rule's set
+  is empty, the reading is the one that does NOT advance the gate" — and the sixth pass showed why a
+  default is not a specification. The convention covered three empty cases in the requirement; two
+  were harmless because no implementer would read them literally, and the third was the canonical
+  happy path, where the default silently means the gate can never converge. A default tells a
+  reader what to assume where the author did not think; a table makes not thinking impossible — all ten of rc02's CRITICALs were prose quantifier
   ambiguity (a rule ranging over a set assumed non-empty, or testing EXISTENCE where the property
   needed was usability), and prose is the wrong medium for a procedure a reader must execute.
+
+- **R-crc-8** (settled under R-crc-3, 2026-09-14) — FINDING QUALITY NEVER LICENSES ANOTHER PASS.
+  The decision to run one more review is made on WHERE findings live, never on whether they are
+  real. A pass can be excellent and the cadence still be wrong, and those two facts are not in
+  tension — a program that asks only "did the review find real defects?" never stops, because a
+  walk that authors guarantees the next pass finds real defects. The discriminating measure is
+  R-crc-6's pair: concentration in walk-authored material, controlled by the REPEAT rate.
+  **Corollary — the redesign-lane trigger is SECTIONAL.** When CRITICALs persist in ONE requirement
+  or clause across passes while the rest of the change converges, that section is a redesign-lane
+  candidate under R-crc-6 and SHALL be removed from the change rather than walked again. A
+  change-level concentration figure cannot see this; the measurement must be per requirement.
+  Evidence (rc02, six proposal passes, 2026-09-14): 72 findings, 13 CRITICAL, **zero repeats across
+  the whole axis** — so the reviewers were never grinding — while the sixth pass put 12 of its 13
+  findings in walk-authored material and both its CRITICALs in a sentence written 90 minutes
+  earlier to fix the previous pass's CRITICAL. By section, clause (b) took four CRITICALs and
+  converged; clause (c) took five and did not. Control against the objection that reviewers produce
+  under pressure: the sixth pass was told explicitly that zero findings was a legitimate outcome and
+  returned thirteen anyway, with a commentary naming what it had tested and found sound.
 
 ## Open questions (program-level)
 
@@ -220,7 +244,7 @@ never deleted.
 
 ## Program stages
 
-Thirteen small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
+Fourteen small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
 split into rc02 + rc02b on 2026-09-12; rc13 added 2026-09-14).
 Every stage is sized under R-crc-1, names the capabilities it touches, and names its goal.
 Charters are settled under R-crc-3 until a citing change refines them; exit criteria are
@@ -257,8 +281,12 @@ against a ceiling of three. The ladder half is now stage rc02b-severity-ladder. 
 COMPUTES stays here; what a SEVERITY MEANS moves there. Neither blocks the other: the clauses
 need only the three severity NAMES, which already exist.
 
-Charter: the reviewed-gate model gains SEVERITY-AWARE CONVERGENCE — clauses (b) resolution and
-(c) confirm become substantive-only (CRITICAL + WARNING), so SUGGESTIONs NEVER GATE (issue #8's
+SCOPE NARROWED 2026-09-14 (R-crc-8's sectional trigger): clause (c) — independent confirmation —
+LEFT this change for the new stage rc02c-confirmation-semantics. rc02 keeps the shipped confirm
+predicate untouched. What remains has been through six proposal passes with its findings now local.
+
+Charter: the reviewed-gate model gains SEVERITY-AWARE CONVERGENCE — clause (b) resolution and the
+new-finding match become substantive-only (CRITICAL + WARNING), so SUGGESTIONs NEVER GATE (issue #8's
 intent ships here; its third-`confirm`-value mechanism is superseded, because `confirm` selects
 clause (c) alone and it was clause (b) that held the D-arc archives) — plus the STOP RULE in
 R-crc-4's terms as a computable cadence slot `blind-pair` (two passes of DISTINCT independent
@@ -293,9 +321,41 @@ line. Two contradictions ship with it: `orbit-conventions`' own canonical review
 shows a CRITICAL with no reproduction — the exact payload the new write gate refuses — and the
 review body's Step 9 field enumeration, which is what a reviewing AI actually follows when
 building a payload, does not name the field. Goal G1. Touches: orbit-conventions, orbit-emit-composition,
-orbit-address-reviews. Exit: (1) a CRITICAL payload without a reproduction is refused at write
+orbit-address-reviews. Also carries one ASSIGNED RESIDUE from rc02's v4 bump (2026-09-14):
+`orbit-conventions`' external-slot sentence — "whose `external` cadence slot must be covered for
+convergence" — which v4 falsifies, since the external return now covers half a `blind-pair`; this
+stage already touches that capability, so the fix costs no ceiling headroom.
+Exit: (1) a CRITICAL payload without a reproduction is refused at write
 time naming the finding; (2) an external CRITICAL without one parses, stays CRITICAL, and is
 marked unreproduced; (3) the walk that ingests it can see the reproduction it must settle.
+
+### Stage rc02c-confirmation-semantics — what counts as having been confirmed
+
+Depends-on: rc02-gate-semantics
+Complete: [ ]
+
+Charter: clause (c) — the independent-confirmation predicate — LEFT rc02 on 2026-09-14 under
+R-crc-8's sectional trigger, after five of rc02's thirteen CRITICALs landed in it while clause (b)
+took four and converged. rc02 ships the SHIPPED predicate unchanged (the most recent independent
+pass must satisfy `confirm`), which on the trail that exposed rc02's worst defect is STRICTLY
+STRONGER than the rewrite it was carrying: a clean confirming set was FINAL, so an independent pass
+running after coverage was met could raise a CRITICAL, have it walked, and never reach the
+predicate, while the shipped rule reports unpassed on the same trail.
+
+This stage owns the redesign, and R-crc-7 governs how: the procedure is worked out as a DECISION
+TABLE with every empty case enumerated, and EXECUTED against constructed trails, before any spec
+prose. The problems it must solve are already measured, not guessed. (1) A `blind-pair` slot puts
+TWO independent passes on one state and the shipped predicate reads only the later one, so a
+CRITICAL in the earlier-finishing member is invisible — found by rc02's first external pass. (2)
+After a CRITICAL is walked, something must define which later pass supersedes the set and when the
+iteration ENDS; rc02's two attempts produced a non-terminating rule and then a falsely-converging
+one. (3) The terminal condition is about LATENESS, not about records. Also carries one ASSIGNED
+RESIDUE from rc02's v4 bump (2026-09-14): `orbit-run-summary-emit`'s two v3-scoped next-command
+examples, which this stage's cadence-vocabulary work has to reconcile anyway. Goal G1. Touches:
+orbit-engine-gates, orbit-run-summary-emit. Exit: (1) the predicate is specified as a table whose every
+cell has a value, with no empty case left to a default; (2) a constructed trail for each cell is a
+test; (3) the pair's earlier member cannot be invisible and a clean set cannot certify a later
+unreviewed CRITICAL.
 
 ### Stage rc03-review-genres — review is not verification
 
@@ -315,13 +375,27 @@ orbit-address-reviews. Exit: (1) both templates exist and the schema's cadence s
 blind-pair → walk → verification; (2) a verification emit carries per-resolution
 landed/regressed; (3) verification passes raise zero WARNINGs outside the diff and review
 prompts contain no resolved-since list (grep-tested on the generated surface).
+REMOVAL IS CONFIRMED BY VERIFICATION, NOT BY ANOTHER REVIEW (2026-09-14). The reviewed-gate rule
+that a CRITICAL buys one further independent pass assumes the defect was FIXED IN PLACE — something
+must re-read the changed state. When a walk resolves BY REMOVAL under R-crc-6's redesign lane, the
+material the CRITICAL described is gone, and the correct confirming instrument is a VERIFICATION
+pass over the walk's diff (is the removal complete, did anything else regress), not a further whole-
+artifact review of a change that just got smaller. The gate cannot distinguish the two cases — it
+reads the pass's immutable CRITICAL count — so this stage's genre split is what makes the
+distinction available at all, and rc02's own seam is the first instance: two CRITICALs resolved by
+removing the clause they lived in, with the gate still asking for another fresh review.
+
 MEASURED SUPPORT (2026-09-14, rc02's cadence): blind review was applied by hand on three of four
 passes — the reviewer received the artifacts and the code but no resolved-since list — and the
 shared-axis trend recorded **zero repeat findings across four passes**. The other half of that
 result belongs in the prompt this stage owns: the highest-yield instruction was to EXECUTE the
 specified behaviour against the real code on inputs the reviewer constructs, rather than to read it
 for plausibility. Every CRITICAL in passes 2 through 4 came from that instruction; none came from
-careful reading.
+careful reading. A third prompt line earned its place at pass 6: state explicitly that reporting
+few or zero findings is a legitimate outcome. It did not suppress anything — that pass returned
+thirteen findings including two CRITICALs — which is the point: it removes the production pressure
+without removing the findings, so a clean pass becomes a readable signal rather than an
+embarrassment.
 
 ### Stage rc04-cost-visibility — the cycle measures itself in-flow
 
@@ -339,7 +413,9 @@ flow prompts once and records
 orbit-archive-modifications. Exit: (1) the line renders from the trail alone; (2) the residual
 estimate appears whenever a blind pair exists on one state; (3) the archive emit carries
 `residual_risk` on a budget-ended cadence; (4) the cadence line carries the CHURN-VERSUS-AUTHORING
-diagnostic per R-crc-6 — prior-walk-file concentration crossed with the repeat rate, so the readout
+diagnostic per R-crc-6 AND R-crc-8, measured PER REQUIREMENT rather than per change — a
+change-level figure cannot see a single clause generating every CRITICAL while the rest converges,
+which is the signal that identifies a redesign-lane section — prior-walk-file concentration crossed with the repeat rate, so the readout
 distinguishes reviewers grinding edited ground (stop reviewing) from walks inventing new mechanism
 (stop walking) from genuine fresh coverage (keep going). rc02's own cadence is the first fixture:
 high concentration, zero repeats, and nothing in the tooling said so for three consecutive passes.
@@ -398,7 +474,16 @@ Charter: when a walk edits a command example or a normative sentence, the addres
 sweeps the owning requirement's prose, every scenario, task restatements, transcriptions, and
 sibling seams before the finding is marked resolved, recording the sweep set per resolution in
 the log; the R-crc-4 verification pass over the walk's own diff precedes any further review.
-Goal G3. Touches: orbit-address-reviews, orbit-emit-composition (the log field). Exit: (1) the log
+This stage also owns the WALK EXECUTION discipline the same cadence exposed twice on 2026-09-14: a
+walk's edit set SHALL be applied so that a failure cannot leave it PARTIALLY applied, and each edit
+SHALL be VERIFIED AGAINST THE ARTIFACT before the log records it. Both failures came from one
+habit — a multi-edit script with a single trailing write, which aborts on a bad match and writes
+nothing while the author fixes only the edit that failed. The first cost seven unwritten edits that
+shipped alongside three scenarios asserting them, and was caught only because the fifth pass grepped
+each claimed edit instead of re-reading the requirement. A log that certifies work which did not
+happen is the one failure no independent reviewer can see, because the claim lives on the trail and
+not in the artifact. Goal G3. Touches: orbit-address-reviews, orbit-emit-composition (the log field).
+Exit: (1) the log
 carries `sweep_set` per resolution; (2) a later finding at a site the sweep should have
 covered is detectable from the trail as a ripple-miss; (3) the next cadence records zero
 ripple-miss findings; (4) the walk body implements R-crc-6's THREE LANES, and a REDESIGN finding
@@ -451,7 +536,9 @@ orbit-conventions (the five-section format), orbit-run-summary-emit (the explore
 Exit: (1) an exploration whose deliverable is a decision procedure cannot render Mature without a
 Mechanism section carrying an executed case; (2) the emit's recommendation names the missing
 mechanism rather than a decision count; (3) the next stage explored under it reaches its first
-review pass with zero CRITICALs in mechanism authored after the exploration closed.
+review pass with zero CRITICALs in mechanism authored after the exploration closed. Evidence base
+(2026-09-14): rc02 ran SIX proposal passes and 72 findings; nine of its first ten CRITICALs, and
+both of the sixth pass's, were in mechanism that did not exist when its exploration closed.
 
 NOTE ON ORDERING: R-crc-2 places this phase third, and rc13 sits here because it reduces what
 propose injects. It is nevertheless the highest-leverage stage in the program — it addresses the
@@ -636,3 +723,33 @@ properties (user-invoked, draft-only, merge never) hold unchanged.
   result; execute-don't-read produced every CRITICAL), rc04 (the churn-versus-authoring diagnostic),
   rc08 (the three lanes), rc09 (the generalized spike). Two directions declined and recorded. Thirteen
   stages.
+- **2026-09-14 — The sixth pass, and the first application of R-crc-6 to the change that produced
+  it.** rc02's sixth proposal pass (fresh, blind, and told explicitly that zero findings was a
+  legitimate outcome) returned 2 CRITICAL / 8 WARNING / 3 SUGGESTION, zero repeats, both CRITICALs
+  in clause (c)'s succession rule — one leaving the change's own canonical cadence with no stated
+  convergence, the other making a clean confirming set FINAL so a later independent pass carrying a
+  CRITICAL never reaches the predicate, a strength REGRESSION against the shipped engine. Twelve of
+  the thirteen findings were in walk-authored material; three were written within ninety minutes.
+  Measured across all six passes: 72 findings, 13 CRITICAL, ZERO repeats — the reviewers were never
+  grinding; the walks were authoring. Captured as **R-crc-8** (finding quality never licenses another
+  pass; the redesign-lane trigger is SECTIONAL and measured per requirement) plus R-crc-7's
+  blanket-default corollary (a convention that defaults unstated empty cases is not a specification —
+  two of rc02's three were harmless and the third was the happy path). ACTED on rather than walked:
+  clause (c) LEAVES rc02 for the new stage **rc02c-confirmation-semantics**, which will specify it as
+  a decision table under R-crc-7 with the three measured problems as its premise. rc02 ships the
+  shipped predicate unchanged, which is stronger than the rewrite it was carrying. Fourteen stages.
+- **2026-09-14 — R-crc-8's first application, and two disciplines it exposed.** rc02's sixth pass was
+  walked under the new ruling and the walk SHRANK the change for the first time: clause (c) left for
+  rc02c, taking five scenarios and a whole task group, and rc02 now ships the shipped confirm
+  predicate with one substantive-match edit — which on the trail that exposed the worst defect is
+  strictly stronger than the rewrite it replaces. Every size figure fell. The other eleven findings
+  were local repairs, and three residue dispositions were recorded rather than swept (five engine and
+  body sites fixed in the change; `orbit-conventions`' external-slot sentence assigned to rc02b and
+  `orbit-run-summary-emit`'s v3-scoped examples to rc02c, both stages already touching those
+  capabilities). Two disciplines captured from the seam rather than from theory. **rc03**: when a walk
+  resolves BY REMOVAL, the confirming instrument is a VERIFICATION pass over the diff, not another
+  review — the gate reads a pass's immutable CRITICAL count and cannot tell a fix-in-place from a
+  removal, so only the genre split makes the distinction available. **rc08**: a walk's edit set is
+  applied so a failure cannot leave it partial, and each edit is verified against the artifact before
+  the log records it; the same multi-edit-script habit cost seven unwritten edits earlier in the day
+  and two more in this walk, and only a grep-based reconciliation ever caught it.

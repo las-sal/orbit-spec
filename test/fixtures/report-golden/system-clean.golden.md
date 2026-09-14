@@ -10,6 +10,6 @@ First system-mode review of this change.
 | Coherence    | 0        | 0       | 0          |
 
 ---
-Gate review-system: unpassed — cadence class 'external' has no fresh pass
+Gate review-system: unpassed — blind pair open: no independent pass stands on this state — both members must run before EITHER is walked
 Position: propose ✓ → review(proposal) (past) → apply ✓ → review(system) unpassed → archive blocked-by-gate
-Ready when you are: /orbit:review --as system --reviewer external sys-change
+Ready when you are: /orbit:review --as system --fresh sys-change

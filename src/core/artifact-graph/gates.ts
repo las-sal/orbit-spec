@@ -2,7 +2,16 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import type { SchemaYaml, NormalizedGate, GateKind, CadenceEntry, ConsentValue } from './types.js';
 import { normalizeGates } from './schema.js';
-import { readTrail, type Trail, type TrailOverlay, type TrailPass, type ReviewMode, type ReviewerClass } from './trail.js';
+import {
+  readTrail,
+  isSubstantive,
+  type Trail,
+  type TrailOverlay,
+  type TrailPass,
+  type TrailResolution,
+  type ReviewMode,
+  type ReviewerClass,
+} from './trail.js';
 
 /**
  * Gate-state computation (C1 engine gates). PURE: reads the change dir + `.orbit-runs/`
@@ -30,6 +39,18 @@ export interface GateStatus {
    * surfaced in the position readout (`apply ✓ (awaiting user validation: 9.6)`).
    */
   userValidationPending?: string[];
+  /** rc02: the declared independent-pass ceiling, when the gate declares one. */
+  budget?: number;
+  /** rc02 REPORTED spend: independent passes on the gate's mode across the whole trail, stale
+   *  included, plus rejected external returns attributed to that mode. DISPLAY ONLY. */
+  independentSpend?: number;
+  /** rc02 EXHAUSTION TRIGGER: the same count restricted to items fresh against the current state. */
+  independentSpendFresh?: number;
+  /** rc02: set when `independentSpendFresh` has reached `budget` AND the gate has not converged.
+   *  Spend is reported BESIDE the state — the five-value state set is unchanged. */
+  budgetExhausted?: boolean;
+  /** rc02: distinct SUGGESTION-grade entries deferred or escalated; reported, never blocking. */
+  deferredSuggestions?: number;
   before?: string;
   /**
    * D1: consent marker from the gate declaration — entry into the gate's `before:`
@@ -79,11 +100,26 @@ function isIndependent(cls: ReviewerClass): boolean {
 
 /** The canonical command that covers a given cadence slot / class. */
 function commandForClass(slot: CadenceEntry, mode: ReviewMode, change: string): string {
-  // `independent` renders the fresh-context review (proposal-phase default), never
-  // co-offered with external, per orbit-engine-gates single-voiced canonical-next.
-  if (slot === 'independent' || slot === 'fresh') return `/orbit:review --as ${mode} --fresh ${change}`;
-  if (slot === 'external') return `/orbit:review --as ${mode} --reviewer external ${change}`;
-  return `/orbit:review --as ${mode} ${change}`; // in-context
+  // EXHAUSTIVE over CadenceEntry (rc02): a new token must never fall through to the in-context
+  // command, which would recommend a class satisfying no slot.
+  switch (slot) {
+    // `independent` renders the fresh-context review (proposal-phase default), never
+    // co-offered with external, per orbit-engine-gates single-voiced canonical-next.
+    case 'independent':
+    case 'fresh':
+    // A `blind-pair` reaching here has no pairable pass standing; the fresh invocation is the
+    // lighter first half. The pairable-partner case is resolved in canonicalNextForReviewed.
+    case 'blind-pair':
+      return `/orbit:review --as ${mode} --fresh ${change}`;
+    case 'external':
+      return `/orbit:review --as ${mode} --reviewer external ${change}`;
+    case 'in-context':
+      return `/orbit:review --as ${mode} ${change}`;
+    default: {
+      const never: never = slot;
+      throw new Error(`unhandled cadence entry: ${String(never)}`);
+    }
+  }
 }
 
 /**
@@ -134,26 +170,207 @@ function uncheckedTaskLines(changeDir: string, tracks: string): Array<{ id: stri
   return out;
 }
 
-/** Does an address-reviews run fully resolve the given pass's findings artifact? */
-function passResolved(pass: TrailPass, trail: Trail): boolean {
-  // A findings-free pass needs no resolution run.
-  if (pass.critical + pass.warning + pass.suggestion === 0) return true;
+/** The address-reviews records whose `source_path` references this pass's findings artifact. */
+function recordsFor(pass: TrailPass, trail: Trail): TrailResolution[] {
   const passFile = path.basename(pass.file);
-  // Most recent address-reviews whose source_path references this pass's artifact.
-  const matching = trail.resolutions
+  return trail.resolutions
     .filter(r => r.sourcePath && path.basename(r.sourcePath) === passFile)
     .sort((a, b) => (a.token < b.token ? -1 : 1));
-  const latest = matching[matching.length - 1];
-  return !!latest && latest.deferred === 0 && latest.escalated === 0;
 }
 
-/** A finding is "new" if its (title, file) matches no finding in the same-gate prior passes. */
+/**
+ * Clause (b). EXISTENCE FIRST (scoped to SUBSTANTIVE findings), then ONE readability predicate
+ * with ONE fallback. Every empty case is STATED, never defaulted.
+ */
+function passResolved(pass: TrailPass, trail: Trail): boolean {
+  // A pass with no substantive findings needs no resolution run — including one whose findings are
+  // ALL SUGGESTION-grade, since requiring a walk there would be SUGGESTIONs gating by another route.
+  if (pass.critical + pass.warning === 0) return true;
+
+  const recs = recordsFor(pass, trail);
+  // EXISTENCE FIRST: no referencing record at all is UNRESOLVED, never vacuously resolved.
+  if (recs.length === 0) return false;
+  const latest = recs[recs.length - 1];
+
+  if (latest.readable) {
+    // Per-entry data is PREFERRED over the severity-blind `resolution_summary`.
+    return !latest.entries.some(
+      e => isSubstantive(e.severity) && (e.disposition === 'deferred' || e.disposition === 'escalated')
+    );
+  }
+  // UNREADABLE: fall back WHOLE to the bare counts. `null` (absent/non-numeric) stays unresolved.
+  return latest.deferred === 0 && latest.escalated === 0;
+}
+
+/**
+ * Distinct SUGGESTION-grade entries deferred or escalated, deduplicated by (trimmed title,
+ * repo-relative file) across the latest record of every relevant pass — the same key the
+ * new-finding match uses, so one suggestion deferred across two passes counts once.
+ */
+function deferredSuggestionCount(passes: TrailPass[], trail: Trail): number {
+  const seen = new Set<string>();
+  for (const p of passes) {
+    const recs = recordsFor(p, trail);
+    const latest = recs[recs.length - 1];
+    if (!latest?.readable) continue;
+    for (const e of latest.entries) {
+      if (e.severity === 'SUGGESTION' && (e.disposition === 'deferred' || e.disposition === 'escalated')) {
+        seen.add(JSON.stringify([e.title, e.file]));
+      }
+    }
+  }
+  return seen.size;
+}
+
+/** Tokens of every record closing the given passes' findings — clause (a)'s second ordering bound. */
+function recordTokensFor(passes: TrailPass[], trail: Trail): string[] {
+  const out: string[] = [];
+  for (const p of passes) for (const r of recordsFor(p, trail)) out.push(r.token);
+  return out;
+}
+
+/**
+ * A finding is "new" if its (title, file) matches no SUBSTANTIVE finding in the same-gate prior
+ * passes. SUGGESTION-grade findings are excluded from the match set entirely (rc02).
+ */
 function hasNewFindings(pass: TrailPass, priorPasses: TrailPass[]): boolean {
   const prior = new Set<string>();
   for (const p of priorPasses) {
-    for (const f of p.findings) prior.add(JSON.stringify([f.title, f.file]));
+    for (const f of p.findings) {
+      if (isSubstantive(f.severity)) prior.add(JSON.stringify([f.title, f.file]));
+    }
   }
-  return pass.findings.some(f => !prior.has(JSON.stringify([f.title, f.file])));
+  return pass.findings.some(
+    f => isSubstantive(f.severity) && !prior.has(JSON.stringify([f.title, f.file]))
+  );
+}
+
+/** One slot's assignment: which passes satisfy it, and the token a later slot must beat. */
+interface SlotAssignment {
+  slot: CadenceEntry;
+  indices: number[];
+  token: string;
+}
+
+/** Why a `blind-pair` slot could not be satisfied, for the reason line. */
+export type PairFailure = 'no-fresh' | 'no-external' | 'blindness-broken' | 'tie' | 'none-standing';
+
+/**
+ * Candidate assignments for ONE slot, in the TOTAL order the requirement names (later token, then
+ * earlier token, then findings-artifact filename), so a depth-first search returning the FIRST
+ * complete assignment returns the lexicographically smallest one.
+ */
+function slotCandidates(
+  slot: CadenceEntry,
+  ordered: TrailPass[],
+  used: Set<number>,
+  lowerBound: string | null,
+  trail: Trail
+): Array<{ indices: number[]; token: string; sortKey: string }> {
+  const eligible = (i: number): boolean =>
+    !used.has(i) && (lowerBound === null || ordered[i].token > lowerBound);
+
+  const out: Array<{ indices: number[]; token: string; sortKey: string }> = [];
+
+  if (slot === 'blind-pair') {
+    for (let i = 0; i < ordered.length; i++) {
+      if (!eligible(i) || ordered[i].reviewerClass !== 'fresh') continue;
+      for (let j = 0; j < ordered.length; j++) {
+        if (i === j || !eligible(j) || ordered[j].reviewerClass !== 'external') continue;
+        const a = ordered[i];
+        const b = ordered[j];
+        // Token equality fails SAFE: blindness between same-second members is unknowable.
+        if (a.token === b.token) continue;
+        const lo = a.token < b.token ? a.token : b.token;
+        const hi = a.token < b.token ? b.token : a.token;
+        // BLINDNESS, endpoints INCLUSIVE, scoped to records referencing either member.
+        if (recordTokensFor([a, b], trail).some(t => t >= lo && t <= hi)) continue;
+        const hiPass = a.token === hi ? a : b;
+        out.push({ indices: [i, j], token: hi, sortKey: [hi, lo, path.basename(hiPass.file)].join('\u0000') });
+      }
+    }
+  } else {
+    for (let i = 0; i < ordered.length; i++) {
+      if (!eligible(i) || !passSatisfiesSlot(slot, ordered[i].reviewerClass)) continue;
+      out.push({
+        indices: [i],
+        token: ordered[i].token,
+        sortKey: [ordered[i].token, path.basename(ordered[i].file)].join('\u0000'),
+      });
+    }
+  }
+  out.sort((x, y) => (x.sortKey < y.sortKey ? -1 : 1));
+  return out;
+}
+
+/**
+ * Clause (a). Coverage is EXISTENTIAL: it holds iff there EXISTS an assignment satisfying every
+ * constraint. Depth-first WITH BACKTRACKING, because a pair chosen early can raise the lower bound
+ * on a following slot (through that pair's resolution records) and foreclose an assignment a later
+ * pair leaves open.
+ */
+function assignCadence(
+  cadence: CadenceEntry[],
+  ordered: TrailPass[],
+  trail: Trail
+): { assignment: SlotAssignment[] } | { failedSlot: number } {
+  let deepest = 0;
+  const search = (
+    slotIdx: number,
+    used: Set<number>,
+    lowerBound: string | null,
+    acc: SlotAssignment[]
+  ): SlotAssignment[] | null => {
+    if (slotIdx >= cadence.length) return acc;
+    if (slotIdx > deepest) deepest = slotIdx;
+    const slot = cadence[slotIdx];
+    for (const cand of slotCandidates(slot, ordered, used, lowerBound, trail)) {
+      const passes = cand.indices.map(i => ordered[i]);
+      // The NEXT slot must beat this slot's passes AND every record closing their findings — what
+      // makes a following slot a CHECK ON THE WALK rather than a pass that merely arrived late.
+      const nextBound = [cand.token, ...recordTokensFor(passes, trail)].reduce(
+        (m, t) => (t > m ? t : m),
+        cand.token
+      );
+      const nextUsed = new Set(used);
+      for (const i of cand.indices) nextUsed.add(i);
+      const got = search(slotIdx + 1, nextUsed, nextBound, [
+        ...acc,
+        { slot, indices: cand.indices, token: cand.token },
+      ]);
+      if (got) return got;
+    }
+    return null;
+  };
+  const found = search(0, new Set(), null, []);
+  return found ? { assignment: found } : { failedSlot: deepest };
+}
+
+/** Why a blind-pair slot failed, given the passes available to it. */
+function diagnosePair(ordered: TrailPass[], trail: Trail): PairFailure {
+  const fresh = ordered.filter(p => p.reviewerClass === 'fresh');
+  const ext = ordered.filter(p => p.reviewerClass === 'external');
+  if (fresh.length === 0 && ext.length === 0) return 'none-standing';
+  if (fresh.length === 0) return 'no-fresh';
+  if (ext.length === 0) return 'no-external';
+  let sawTie = false;
+  for (const a of fresh) {
+    for (const b of ext) {
+      if (a.token === b.token) {
+        sawTie = true;
+        continue;
+      }
+      const lo = a.token < b.token ? a.token : b.token;
+      const hi = a.token < b.token ? b.token : a.token;
+      if (!recordTokensFor([a, b], trail).some(t => t >= lo && t <= hi)) return 'blindness-broken';
+    }
+  }
+  return sawTie ? 'tie' : 'blindness-broken';
+}
+
+/** A standing pass is PAIRABLE while no record referencing it carries a later token. */
+function isPairable(pass: TrailPass, trail: Trail): boolean {
+  return !recordsFor(pass, trail).some(r => r.token > pass.token);
 }
 
 interface ConvergenceResult {
@@ -161,17 +378,27 @@ interface ConvergenceResult {
   reason?: string;
   /** Cadence slot / class still needed, when the failing clause is coverage. */
   neededSlot?: CadenceEntry;
+  /** How the pair failed, when the needed slot is a blind pair. */
+  pairFailure?: PairFailure;
   /** Pass whose findings are unresolved, when the failing clause is resolution. */
   unresolvedPass?: TrailPass;
   /** True when the failing clause is the confirm predicate. */
   confirmFailed?: boolean;
   /** For findings-resolved confirm failure on a CRITICAL, repeat external. */
   confirmNeedsExternal?: boolean;
+  /** Deferred SUGGESTION count, surfaced even on a converged gate. */
+  deferredSuggestions?: number;
 }
 
 /**
- * Evaluates the reviewed-gate pass condition over an ordered pass list:
- *  (a) ordered-slot class coverage, (b) resolution over every pass, (c) confirm predicate.
+ * Evaluates the reviewed-gate pass condition.
+ *
+ * PASS-LIST QUANTIFICATION (stated once, here): clauses (a) and (c) run over the pass list the
+ * CALLER supplies — fresh for the primary evaluation, the full list for the stale discrimination —
+ * while clause (b) always runs over every relevant pass. No rule below restates a freshness
+ * condition; the filter has exactly one home, the call site.
+ *
+ * EMPTY SETS ARE NEVER VACUOUSLY SATISFYING: every rule states its empty case.
  */
 function evaluateReviewed(
   gate: NormalizedGate,
@@ -179,69 +406,90 @@ function evaluateReviewed(
   resolutionPasses: TrailPass[],
   trail: Trail
 ): ConvergenceResult {
-  // (b) resolution over EVERY relevant same-gate pass — INCLUDING stale ones. Freshness
-  // gates only cadence COVERAGE (clause a) + stale reporting, NOT resolution: an unresolved
-  // finding from a pass that later went stale (an apply landed after it) still blocks the
-  // gate (per orbit-engine-gates clause (b): "every pass's findings are resolved").
+  // (b) resolution over EVERY relevant same-gate pass — INCLUDING stale ones.
   const resOrdered = [...resolutionPasses].sort((a, b) => (a.token < b.token ? -1 : 1));
   for (const p of resOrdered) {
     if (!passResolved(p, trail)) {
-      return { converged: false, reason: `pass ${p.token} has unresolved findings`, unresolvedPass: p };
+      return {
+        converged: false,
+        reason: `pass ${p.token} has unresolved substantive findings`,
+        unresolvedPass: p,
+      };
     }
   }
+  const deferredSuggestions = deferredSuggestionCount(resOrdered, trail);
 
   const ordered = [...coveragePasses].sort((a, b) => (a.token < b.token ? -1 : 1));
 
-  // (a) ordered-slot coverage: each slot satisfied by a pass strictly later than the prior slot's.
-  let prevIdx = -1;
-  for (const slot of gate.cadence) {
-    let found = -1;
-    for (let i = prevIdx + 1; i < ordered.length; i++) {
-      if (passSatisfiesSlot(slot, ordered[i].reviewerClass)) {
-        found = i;
-        break;
-      }
+  // (a) ordered-slot coverage, existential with backtracking.
+  const cover = assignCadence(gate.cadence, ordered, trail);
+  if ('failedSlot' in cover) {
+    const slot = gate.cadence[cover.failedSlot];
+    if (slot === 'blind-pair') {
+      const how = diagnosePair(ordered, trail);
+      const reason =
+        how === 'blindness-broken'
+          ? `blind pair broken: a walk of one member's findings stands between them`
+          : how === 'tie'
+            ? `blind pair ambiguous: two candidate members share a timestamp token`
+            : how === 'none-standing'
+              ? `blind pair open: no independent pass stands on this state — both members must run before EITHER is walked`
+              : how === 'no-fresh'
+                ? `blind pair open: the external pass on this state has no fresh partner; run it before walking these findings`
+                : `blind pair open: the fresh pass on this state has no external partner; run it before walking these findings`;
+      return { converged: false, reason, neededSlot: slot, pairFailure: how, deferredSuggestions };
     }
-    if (found === -1) {
-      return {
-        converged: false,
-        reason: `cadence class '${slot}' has no fresh pass`,
-        neededSlot: slot,
-      };
-    }
-    prevIdx = found;
+    return {
+      converged: false,
+      reason: `cadence class '${slot}' has no fresh pass`,
+      neededSlot: slot,
+      deferredSuggestions,
+    };
   }
 
-  // (c) confirm predicate over the most recent independent pass.
+  // (c) confirm predicate over the MOST RECENT independent pass — the SHIPPED selection rule,
+  // edited on one axis only (the new-finding match is substantive). rc02c owns the redesign.
   const independents = ordered.filter(p => isIndependent(p.reviewerClass));
   const latestIndep = independents[independents.length - 1];
   if (!latestIndep) {
-    return { converged: false, reason: `no independent pass for the confirm predicate`, neededSlot: 'independent' };
+    return {
+      converged: false,
+      reason: `no independent pass for the confirm predicate`,
+      neededSlot: 'independent',
+      deferredSuggestions,
+    };
   }
   if (gate.confirm === 'no-new-findings') {
     if (latestIndep.critical > 0) {
-      return { converged: false, reason: `latest independent pass has ${latestIndep.critical} CRITICAL`, confirmFailed: true };
+      return {
+        converged: false,
+        reason: `latest independent pass has ${latestIndep.critical} CRITICAL`,
+        confirmFailed: true,
+        deferredSuggestions,
+      };
     }
-    // "New" = not seen in ANY prior same-gate pass (per orbit-engine-gates: a new
-    // finding is matched against same-gate prior passes — including in-context, not
-    // only prior independents), by trimmed title + repo-relative path.
     const priorPasses = ordered.slice(0, ordered.indexOf(latestIndep));
     if (hasNewFindings(latestIndep, priorPasses)) {
-      return { converged: false, reason: `latest independent pass yielded new findings`, confirmFailed: true };
+      return {
+        converged: false,
+        reason: `latest independent pass yielded new substantive findings`,
+        confirmFailed: true,
+        deferredSuggestions,
+      };
     }
   } else {
-    // findings-resolved: 0 CRITICAL AND that pass's findings resolved (already checked in (b)).
     if (latestIndep.critical > 0) {
       return {
         converged: false,
-        reason: `latest independent pass carried ${latestIndep.critical} CRITICAL; cadence repeats external until none`,
+        reason: `latest independent pass carried ${latestIndep.critical} CRITICAL; one further independent pass on the walked state is required`,
         confirmFailed: true,
         confirmNeedsExternal: true,
+        deferredSuggestions,
       };
     }
   }
 
-  return { converged: true };
+  return { converged: true, deferredSuggestions };
 }
 
 /**
@@ -401,13 +649,36 @@ function computeReviewedStatus(gate: NormalizedGate, changeName: string, trail: 
   const relevant = trail.passes.filter(p => (mode ? p.mode === mode : true));
   const fresh = relevant.filter(p => !isPassStale(p, trail.applyTokens));
 
+  // rc02 BUDGET. The REPORTED figure counts every independent pass on the gate's mode across the
+  // whole trail, stale included — spend is spend — plus every REJECTED external return attributed
+  // to that mode, which satisfies no slot but cost a run. The TRIGGER counts only items fresh
+  // against the current state, so an apply that staleness-invalidates a pair cannot report the
+  // budget spent during the re-cover the gate itself is asking for.
+  const rejected = trail.rejectedExternals.filter(r => (mode ? r.mode === mode : true));
+  const indepAll = relevant.filter(p => isIndependent(p.reviewerClass));
+  const independentSpend = indepAll.length + rejected.length;
+  const independentSpendFresh =
+    indepAll.filter(p => !isPassStale(p, trail.applyTokens)).length +
+    rejected.filter(r => !trail.applyTokens.some(t => t > r.token)).length;
+  const budgetFields =
+    gate.budget === undefined ? {} : { budget: gate.budget, independentSpend, independentSpendFresh };
+
   // Coverage (a)/confirm (c) use fresh passes; resolution (b) uses ALL relevant passes.
   const freshEval = evaluateReviewed(gate, fresh, relevant, trail);
   if (freshEval.converged) {
+    const deferred = freshEval.deferredSuggestions ?? 0;
     return {
       id: gate.id,
       kind: gate.kind,
       state: 'passed',
+      ...budgetFields,
+      ...(gate.budget === undefined ? {} : { budgetExhausted: false }),
+      ...(deferred > 0
+        ? {
+            deferredSuggestions: deferred,
+            reason: `converged with ${deferred} SUGGESTION-grade finding${deferred === 1 ? '' : 's'} deferred (reported, never blocking)`,
+          }
+        : {}),
       before: gate.before,
       consent: gate.consent,
       nextCommand: nextAfterPass(gate, changeName),
@@ -419,11 +690,29 @@ function computeReviewedStatus(gate: NormalizedGate, changeName: string, trail: 
   const stale = allEval.converged && !freshEval.converged;
 
   const next = canonicalNextForReviewed(gate, mode, changeName, freshEval, trail, fresh);
+  const exhausted = gate.budget !== undefined && independentSpendFresh >= gate.budget;
+  let reason = stale ? `a review pass is stale (an apply landed after it)` : freshEval.reason;
+  if (exhausted && gate.budget !== undefined) {
+    // The exhausted reason carries the spend AND the clause it displaced: a reader shown only a
+    // spend figure cannot tell what a further pass would be for.
+    reason = `budget spent: ${independentSpendFresh} of ${gate.budget} independent passes${
+      rejected.length > 0
+        ? ` (including ${rejected.length} external return${rejected.length === 1 ? '' : 's'} rejected as malformed — ${rejected
+            .map(r => path.basename(r.file))
+            .join(', ')})`
+        : ''
+    }; ${reason ?? 'still unconverged'}`;
+  }
   return {
     id: gate.id,
     kind: gate.kind,
     state: stale ? 'stale' : 'unpassed',
-    reason: stale ? `a review pass is stale (an apply landed after it)` : freshEval.reason,
+    reason,
+    ...budgetFields,
+    ...(gate.budget === undefined ? {} : { budgetExhausted: exhausted }),
+    ...((freshEval.deferredSuggestions ?? 0) > 0
+      ? { deferredSuggestions: freshEval.deferredSuggestions }
+      : {}),
     nextCommand: next.cmd,
     nextSlot: next.slot,
     before: gate.before,
@@ -444,6 +733,18 @@ function canonicalNextForReviewed(
   if (ev.unresolvedPass) {
     const p = ev.unresolvedPass;
     return { cmd: `/orbit:address-reviews ${change} --from-file ${toRepoRelPath(p.file, trail.changeDir)}` };
+  }
+  if (ev.neededSlot === 'blind-pair') {
+    // Name the class missing from the earliest pair STILL FORMABLE. A standing pass counts as a
+    // candidate member only while it is PAIRABLE — once walked it can never pair with a later
+    // partner, so recommending its partner would buy a pass that satisfies no slot.
+    const pairable = freshPasses.filter(p => isIndependent(p.reviewerClass) && isPairable(p, trail));
+    const hasFresh = pairable.some(p => p.reviewerClass === 'fresh');
+    const hasExternal = pairable.some(p => p.reviewerClass === 'external');
+    if (hasFresh && !hasExternal) {
+      return { cmd: `/orbit:review --as ${m} --reviewer external ${change}`, slot: 'blind-pair' };
+    }
+    return { cmd: `/orbit:review --as ${m} --fresh ${change}`, slot: 'blind-pair' };
   }
   if (ev.neededSlot) {
     return { cmd: commandForClass(ev.neededSlot, m, change), slot: ev.neededSlot };
@@ -493,13 +794,13 @@ function buildPositionReadout(
           ? `${label} ✓ (awaiting user validation: ${s.userValidationPending.join(', ')})`
           : `${label} ✓`;
       case 'stale':
-        return `${label} STALE`;
+        return s.budgetExhausted ? `${label} STALE BUDGET-SPENT` : `${label} STALE`;
       case 'blocked':
         return `${label} blocked-by-gate`;
       case 'ready':
         return `${label} ready`;
       default:
-        return `${label} unpassed`;
+        return s.budgetExhausted ? `${label} unpassed BUDGET-SPENT` : `${label} unpassed`;
     }
   };
 

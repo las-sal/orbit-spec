@@ -204,6 +204,23 @@ const ENGINE_OWNED_EXTRA: Record<string, string[]> = {
   'review-external': ['awaiting_findings'],
 };
 
+/**
+ * The gate graph's canonical next command for the change's system-review phase (rc02). Verify
+ * emits point AT the review phase, and which class that phase needs is the graph's to compute —
+ * a hardcoded literal goes stale the moment a cadence changes. Falls back to the bare invocation
+ * only when the graph yields nothing (no gated schema, unreadable change).
+ */
+function systemReviewNext(projectRoot: string, name: string): string {
+  try {
+    const status = formatChangeStatus(loadChangeContext(projectRoot, name));
+    const cmd = status.next_command;
+    if (typeof cmd === 'string' && cmd.includes('/orbit:review --as system')) return cmd;
+  } catch {
+    /* fall through to the bare invocation */
+  }
+  return `/orbit:review --as system ${name}`;
+}
+
 export interface EmitTarget {
   change?: string;
   doc?: string;
@@ -1029,11 +1046,15 @@ export function composeAndWriteEmit(
         );
         emit.next_recommended = `/orbit:apply ${name} — ${boxes.tasksRemaining} tasks remaining`;
       } else if (failMode === 'scenarios-fail') {
+        // rc02: the post-verify pointer is the GATE GRAPH's canonical next, never a hardcoded
+        // `--as system` literal. Under spec-driven v4 the first uncovered system slot is
+        // `blind-pair`, whose canonical command is the fresh invocation, so a literal here would
+        // recommend a class satisfying no slot — which the single-voiced requirement forbids.
         // Baseline mode-② template carries the scenario count when the payload supplies it.
         const n = (payload as any).scenarios_failed;
         const countPrefix =
           typeof n === 'number' && Number.isInteger(n) && n > 0 ? `${n} spec scenarios` : 'spec scenarios';
-        emit.next_recommended = `/orbit:review --as system ${name} — ${countPrefix} fail against implementation; system review will surface findings in its scorecard for you to walk each as code fix or spec revision`;
+        emit.next_recommended = `${systemReviewNext(projectRoot, name)} — ${countPrefix} fail against implementation; system review will surface findings in its scorecard for you to walk each as code fix or spec revision`;
       } else if (failMode === 'warnings') {
         // Warn state (pass with non-blocking findings): a truthful record, never 'clean'.
         const n = (payload as any).warnings_count;
@@ -1042,11 +1063,11 @@ export function composeAndWriteEmit(
             `verify fail_mode 'warnings' requires a positive integer warnings_count — a warn-state record without its count is the wrong-but-plausible class this surface exists to prevent.`
           );
         }
-        emit.next_recommended = `/orbit:review --as system ${name} — verification passed with ${n} warnings; system review recommended`;
+        emit.next_recommended = `${systemReviewNext(projectRoot, name)} — verification passed with ${n} warnings; system review recommended`;
       } else if (failMode === 'incomplete') {
         emit.next_recommended = `Re-run /orbit:verify ${name} — prior verify run incomplete (see verify-change output for details)`;
       } else {
-        emit.next_recommended = `/orbit:review --as system ${name} — verification clean; formal pre-archive review recommended (or /orbit:archive ${name} if you're skipping the editorial pass)`;
+        emit.next_recommended = `${systemReviewNext(projectRoot, name)} — verification clean; formal pre-archive review recommended (or /orbit:archive ${name} if you're skipping the editorial pass)`;
       }
       delete (emit as any).fail_mode;
       delete (emit as any).validator_message;

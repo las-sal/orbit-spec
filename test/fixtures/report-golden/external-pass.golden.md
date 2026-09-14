@@ -25,6 +25,6 @@ First proposal-mode review of this change.
 > Probed the archive seam hardest; the engine guard held. Risk texture: low.
 
 ---
-Gate review-proposal: unpassed — pass 2026-07-25T12-00-00Z has unresolved findings
+Gate review-proposal: unpassed — pass 2026-07-25T12-00-00Z has unresolved substantive findings
 Position: propose ✓ → review(proposal) unpassed → apply ready → review(system) blocked-by-gate → archive blocked-by-gate
 Ready when you are: /orbit:address-reviews ext-change --from-file orbit/changes/ext-change/.orbit-runs/external-proposal-2026-07-25T12-00-00Z.md

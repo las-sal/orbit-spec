@@ -205,7 +205,19 @@ export function printStatusText(status: ChangeStatus): void {
           : g.reason
             ? ` (${g.reason})`
             : '';
-      console.log(`  ${gateIndicator(g.state)} ${g.id}: ${g.state}${detail}`);
+      // rc02: spend is reported BESIDE the state. Named here as well as in the JSON projection,
+      // or the fields reach neither surface.
+      const spend =
+        g.budget === undefined
+          ? ''
+          : chalk.dim(
+              ` [spend ${g.independentSpendFresh ?? 0}/${g.budget}${
+                (g.independentSpend ?? 0) !== (g.independentSpendFresh ?? 0)
+                  ? ` fresh, ${g.independentSpend} total`
+                  : ''
+              }${g.budgetExhausted ? ' — BUDGET-SPENT' : ''}]`
+            );
+      console.log(`  ${gateIndicator(g.state)} ${g.id}: ${g.state}${detail}${spend}`);
     }
     if (status.position) {
       console.log();

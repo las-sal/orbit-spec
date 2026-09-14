@@ -1,0 +1,44 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-14T09:13:26Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Captured what the sixth proposal pass taught, and ACTED on it rather than walking it. R-crc-8 records the trap the session nearly fell into: finding quality never licenses another pass, because a walk that authors guarantees the next pass finds real defects, so a program asking only whether reviews find real defects never stops. Its corollary makes the redesign-lane trigger SECTIONAL and per-requirement — a change-level concentration figure cannot see one clause generating every CRITICAL while the rest converges, which is exactly what happened (clause (b) took four CRITICALs and converged; clause (c) took five and did not). R-crc-7 gained the blanket-default corollary: a convention that defaults unstated empty cases is not a specification, since two of rc02's three defaulted cases were harmless and the third was the canonical happy path. Three charters gained evidence: rc04 measures concentration per requirement, rc03 gains the zero-findings-is-legitimate prompt line with the control showing it suppresses nothing, rc13's evidence base is now six passes and 72 findings. The act: clause (c) LEFT rc02 for the new stage rc02c-confirmation-semantics, which will specify it as a decision table under R-crc-7 with three measured problems as its premise; rc02 ships the shipped predicate unchanged, which on the trail that exposed rc02's worst defect is strictly stronger than the rewrite it was carrying. Fourteen stages.",
+  "stages_touched": [
+    "rc02-gate-semantics",
+    "rc02c-confirmation-semantics",
+    "rc03-review-genres",
+    "rc04-cost-visibility",
+    "rc13-explore-mechanism"
+  ],
+  "rulings_captured": [
+    "R-crc-8"
+  ],
+  "completions_ratified": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/clean-up-review-cycle.md",
+        "why": "the live program: rulings R-crc-1 through R-crc-8, fourteen stages, and a status log whose last three entries are the diagnosis this session produced"
+      },
+      {
+        "path": "orbit/changes/rc02-gate-semantics/",
+        "why": "the in-flight change, scope narrowed: six proposal passes and five walks on its trail, clause (c) removed to rc02c"
+      },
+      {
+        "path": "orbit/changes/rc02-gate-semantics/.orbit-runs/",
+        "why": "the evidence for R-crc-6 and R-crc-8: the shared-axis trend line reading zero repeats across 72 findings, and five walk logs recording what each walk authored"
+      },
+      {
+        "path": "src/core/artifact-graph/gates.ts",
+        "why": "the engine rc02 modifies; evaluateReviewed's clause (c) is the part rc02 no longer touches"
+      }
+    ],
+    "next_command": "/orbit:address-reviews rc02-gate-semantics --from-file orbit/changes/rc02-gate-semantics/.orbit-runs/review-proposal-2026-09-14T09-06-17Z.json",
+    "model_hint": "a reasoning-heavy model; the remaining work is local repair plus one scope removal, and the sectional judgment that drove it is already recorded",
+    "seam": "rc02's sixth pass is unwalked. Its two CRITICALs are in clause (c), which has now left the change, so the walk removes that clause rather than fixing them; the other eleven findings are local repairs to material that has converged"
+  },
+  "next_recommended": "/orbit:address-reviews rc02-gate-semantics --from-file orbit/changes/rc02-gate-semantics/.orbit-runs/review-proposal-2026-09-14T09-06-17Z.json"
+}

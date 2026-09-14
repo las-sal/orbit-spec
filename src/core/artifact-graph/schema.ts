@@ -81,6 +81,7 @@ export function normalizeGates(schema: SchemaYaml): NormalizedGate[] {
       tracks: g.tracks ?? null,
       inputs: g.inputs ?? requires,
       cadence: (g.cadence ?? []) as CadenceEntry[],
+      ...(g.budget === undefined ? {} : { budget: g.budget }),
       confirm: (g.confirm ?? 'no-new-findings') as GateConfirm,
       before: g.before,
       consent: g.consent as ConsentValue | undefined,
@@ -138,6 +139,22 @@ function validateGates(schema: SchemaYaml): void {
       );
     }
 
+    // rc02: name the GATE ID for both new fields. The Zod enum names an INDEX
+    // (`gates.2.cadence.0`), while every surrounding error here names the gate.
+    if (g.kind === 'reviewed' && g.cadence) {
+      for (const entry of g.cadence) {
+        if (!(CADENCE_ENTRIES as readonly string[]).includes(entry)) {
+          throw new SchemaValidationError(
+            `Reviewed gate '${g.id}': unknown cadence entry '${entry}' (allowed: ${CADENCE_ENTRIES.join(', ')})`
+          );
+        }
+      }
+    }
+    if (g.budget !== undefined && (!Number.isInteger(g.budget) || g.budget <= 0)) {
+      throw new SchemaValidationError(
+        `Gate '${g.id}': budget must be a positive integer (got ${g.budget})`
+      );
+    }
     if (g.kind === 'reviewed' && (!g.cadence || g.cadence.length === 0)) {
       throw new SchemaValidationError(
         `Reviewed gate '${g.id}': cadence must declare at least one slot (${CADENCE_ENTRIES.join(', ')})`

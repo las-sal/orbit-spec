@@ -630,8 +630,9 @@ rules:
       // review-proposal: independent + in-context, clean.
       emit('review-proposal-2026-07-01T10-00-00Z.json', 'proposal', 'fresh');
       emit('review-proposal-2026-07-01T11-00-00Z.json', 'proposal', 'in-context');
-      // review-system: in-context, external (clean md), in-context.
-      emit('review-system-2026-07-02T10-00-00Z.json', 'system', 'in-context');
+      // review-system (spec-driven v4): a BLIND PAIR — fresh + external, no walk between them —
+      // then the trailing in-context check on the walk (there is none here; both members clean).
+      emit('review-system-2026-07-02T10-00-00Z.json', 'system', 'fresh');
       fs.writeFileSync(
         path.join(runs, 'external-system-2026-07-02T11-00-00Z.md'),
         '# External Review\n\n**Reviewer**: X\n\n## CRITICAL\n\nNone.\n\n## WARNING\n\nNone.\n\n## SUGGESTION\n\nNone.\n'

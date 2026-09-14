@@ -61,7 +61,7 @@ export function getApplyChangeSkillTemplate(): SkillTemplate {
    **Handle states:**
    - If \`state: "blocked"\` (missing artifacts): show message, suggest using orbit-continue-change
    - If \`state: "blocked-by-gate"\` (C1 — the \`review-proposal\` gate is unpassed/stale at apply entry): fire the gate INFLECTION PROMPT via **AskUserQuestion** — **Address the gate** (halt; run the \`next_command\` the CLI returned, e.g. \`/orbit:review --as proposal --fresh <name>\`) / **Proceed anyway** / **Abort**. The gate NEVER hard-blocks (apply-parity). On **Proceed anyway**, record the override in this session's apply emit as \`gate_overridden: {gate, state, reason}\` (copied from the CLI's \`gate\` object) and continue to implementation. On **Address**, stop and run the next command. On **Abort**, stop with no changes.
-   - If \`state: "all_done"\`: congratulate, then render the ENGINE-computed next step — read \`next_command\` (and \`position\`) from \`orbit status --change "<name>" --json\` and surface it verbatim. Do NOT hard-code the next command: the gate graph owns the lifecycle flow. Post-apply this resolves to the \`review-system\` gate's first step (\`/orbit:review --as system <name>\`), which runs verify as its Pass 0 — verify is NOT a separate lifecycle step (it is Pass 0 of system review; a standalone verify gate would double-count).
+   - If \`state: "all_done"\`: congratulate, then render the ENGINE-computed next step — read \`next_command\` (and \`position\`) from \`orbit status --change "<name>" --json\` and surface it verbatim. Do NOT hard-code the next command: the gate graph owns the lifecycle flow. Post-apply this resolves to the \`review-system\` gate's first step — under spec-driven v4 the first uncovered slot is \`blind-pair\`, so the graph yields the fresh invocation rather than any hardcoded form — which runs verify as its Pass 0 — verify is NOT a separate lifecycle step (it is Pass 0 of system review; a standalone verify gate would double-count).
    - Otherwise (\`ready\`): proceed to implementation
 
 4. **Read context files**
@@ -132,10 +132,10 @@ Working on task 4/7: <task description>
 
 All tasks complete.
 Position: <the \`position\` string from \`orbit status --change <name> --json\` — e.g. \`propose ✓ → review(proposal) (past) → apply ✓ → review(system) unpassed → archive blocked-by-gate\`>
-Ready when you are: <the \`next_command\` from \`orbit status --change <name> --json\`, rendered verbatim — post-apply the gate graph yields \`/orbit:review --as system <change-name>\`>
+Ready when you are: <the \`next_command\` from \`orbit status --change <name> --json\`, rendered verbatim — post-apply the gate graph yields whichever class the first uncovered cadence slot needs, NEVER a hardcoded command>
 \`\`\`
 
-**Position-readout convention (C1, D-c1-2)**: every handoff — this completion output AND the emit's \`next_recommended\` — renders the GATE GRAPH's computed \`position\` + \`next_command\` from \`orbit status --change <name> --json\` (the \`--change\` form; bare \`orbit status\` is the D3 orientation surface, whose sprint may be a DIFFERENT change). The skill does NOT hand-write the next lifecycle command — the graph owns the flow (\`propose → review-proposal → apply → review-system → archive\`), so the "what's next" token is always read from the engine, never authored here. Post-apply the graph yields the \`review-system\` gate's first step (\`/orbit:review --as system\`), which executes verify as its Pass 0.
+**Position-readout convention (C1, D-c1-2)**: every handoff — this completion output AND the emit's \`next_recommended\` — renders the GATE GRAPH's computed \`position\` + \`next_command\` from \`orbit status --change <name> --json\` (the \`--change\` form; bare \`orbit status\` is the D3 orientation surface, whose sprint may be a DIFFERENT change). The skill does NOT hand-write the next lifecycle command — the graph owns the flow (\`propose → review-proposal → apply → review-system → archive\`), so the "what's next" token is always read from the engine, never authored here. Post-apply the graph yields the \`review-system\` gate's first step; WHICH CLASS that step needs depends on the schema's cadence, so it is read rather than predicted. It executes verify as its Pass 0.
 
 **Output On Pause (Issue Encountered)**
 
