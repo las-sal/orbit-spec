@@ -286,7 +286,7 @@ which executes commands; a sweep cannot promise it.)
 ### Stage rc02-gate-semantics — convergence bounded by consequence
 
 Depends-on: (none)
-Complete: [ ]
+Complete: [x] 2026-09-14 (Sal)
 
 SPLIT 2026-09-12 (settled under R-crc-3; see the status log). The original charter carried the
 severity ladder AND the convergence arithmetic; measured at proposal review it was 40 tasks
@@ -505,6 +505,18 @@ FOR FACTS rule: a computed number lives in exactly one generated place and prose
 Goal G2. Touches: the validator, orbit-audit-drift, orbit-conventions. Exit: (1) a restated figure that
 disagrees with its source fails validation; (2) the next proposal review carries zero
 restated-count findings.
+MEASURED 2026-09-14: the audit-drift payload divergence this stage inherits is not a TYPE
+disagreement — it is a HARD REFUSAL. The option-B ratification (2026-09-12) and the parity test's
+`KNOWN_DIVERGENCE` note both describe the engine as "accepting a third shape"; in fact
+`orbit emit audit-drift` REJECTS every per-command field the shipped reference documents
+(`context`, `caller`, `depth`, `flags`, `categories_skipped`, `findings_summary`), so the
+standalone command's own Step 10 is unfollowable from its own reference. The project-wide sweep on
+2026-09-14 failed twice on this before its payload was rewritten against `emit-composition.ts`.
+In-place repair was evaluated and rejected: it fails the parity test's exact-set assertion and
+trades a doc-vs-engine break for a doc-vs-baseline break — which is precisely the three-voice knot
+this stage exists to untie. The consequence belongs in the exit criteria: (3) every shipped
+payload reference round-trips through its own emit surface, proven by execution rather than by
+field-set comparison.
 
 ### Phase 3 — reduce injection upstream
 
@@ -798,7 +810,8 @@ properties (user-invoked, draft-only, merge never) hold unchanged.
   and two more in this walk, and only a grep-based reconciliation ever caught it.
 - **2026-09-14 — The first blind pair the repo has run, and what it measured.** rc02's system review
   ran two independent agents on one artifact state with no walk between them. Fresh: 1C/6W/5S.
-  External (GPT-5 Codex): 4C/7W/0S. **Zero CRITICAL overlap.** Four or five defects shared, seven
+  External (GPT-5 Codex): 4C/6W/0S [count corrected 2026-09-14 against the archived findings
+  file; first written 4C/7W/0S]. **Zero CRITICAL overlap.** Four or five defects shared, seven
   unique to each half, residual estimated near 60% by capture-recapture. Every CRITICAL is in the
   engine this change shipped, and the fresh half's is the sharpest: the gate's own canonical next
   command steers the user into breaking the blind pair, because convergence runs resolution before
@@ -810,3 +823,40 @@ properties (user-invoked, draft-only, merge never) hold unchanged.
   DISAGREEMENT between the halves is a first-class signal. The two contradicted each other once, one
   empirical test settled it in both directions at once, and neither half could have produced that
   resolution alone.
+  **CORRECTION APPENDED 2026-09-14** (the log is append-only; the entry above stands as written):
+  the wording "the pair is SPAWNED SIMULTANEOUSLY" overreached and was corrected the same day —
+  R-crc-4 carries the corrected text. `external` means a CROSS-VENDOR handoff a human runs in
+  another tool, and orbit running inside one assistant cannot spawn an agent of a different vendor.
+  What the amendment actually holds is weaker and sufficient: both halves are IN FLIGHT on one
+  artifact state before either is walked, and the blindness predicate enforces that mechanically
+  rather than as a discipline. What should become one invocation is the LAUNCHING (rc03).
+- **2026-09-14 — rc02 CLOSED, and the gate produced the signal the stage was built to produce.**
+  The pair's findings walked to zero over two iterations. The external half's CRITICAL in iteration 2
+  was the sharpest thing the cycle has caught about itself: the fence tracker written during walk 7
+  remembered only the fence CHARACTER, so a four-backtick fence containing a three-backtick line
+  closed early — and a findings-free document could therefore be admitted as a CLEAN EXTERNAL PASS.
+  A parser bug that manufactures convergence is the exact failure class this program exists to
+  remove, and it was introduced BY A WALK, one day after R-crc-6 was ratified for that reason. It is
+  now one shared CommonMark tracker (`src/core/markdown-fence.ts`) behind both the report renderer
+  and the external parser, and external findings require the full `### Title` / `**File**:` /
+  `**Description**:` triple. Measured totals for the pair, stated once here so nothing restates them
+  (rc07's one-voice rule applied to this log): fresh 12 findings (1C/6W/5S), external 10 (4C/6W/0S).
+  **Then the archive.** `review-system` computed `unpassed` with `budgetExhausted: true` — 3 of 3
+  independent passes spent, the latest carrying 1 CRITICAL, since resolved. Exit criterion 3 was
+  satisfied literally: the seam REPORTED THE BUDGET SPENT rather than looping, and the archive
+  proceeded through a recorded `gate_overridden` whose reason IS the budget-spent clause, not
+  R-d-10's "no clean pass yet". Buying a fourth pass would have been exactly the behaviour R-crc-8
+  prohibits. The spend stands as residual risk; rc04 owns replacing that override with a
+  `residual_risk` record, which is the last thing keeping the sanctioned case and the prohibited one
+  in the same field. Sync 10 blocks byte-verified, fingerprints 8/8, 2103 tests green. The three
+  unchecked tasks are all user-validation handoffs: 7.4 and 7.5 were satisfied in-session and at the
+  seam, 7.3 (issue #8) is an outward act and stays the human's.
+  **Two process notes.** The pre-archive and project-wide audits both ran clean on every mechanical
+  category — zero vocabulary residue (no archived delta has EVER carried a REMOVED or RENAMED
+  section, so that category has never had anything to catch here), zero archive-coherence failures,
+  zero consent-record gaps across 23 emits. Every finding either audit produced was DRIFT IN PROSE,
+  which is where rc07's lint should be aimed. And of the six findings the project-wide sweep raised,
+  TWO did not survive their own pushback — one was already owned verbatim by rc04's charter, one was
+  already a ratified and tested rc07 follow-up. An audit that does not run pushback against the
+  program's own declarations manufactures work; the walk is where that gets caught, which is the
+  first evidence for R-crc-8 outside a review.

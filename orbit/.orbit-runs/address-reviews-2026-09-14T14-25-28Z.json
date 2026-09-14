@@ -1,0 +1,89 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-14T14:25:28Z",
+  "change": null,
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "internal-audit-drift",
+  "source_path": "orbit/.orbit-runs/audit-drift-2026-09-14T14-18-48Z.json",
+  "source_command": "audit-drift",
+  "source_token": "2026-09-14T14-18-48Z",
+  "walk_mode": "walk",
+  "walk_mode_source": "default",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 5,
+    "suggestion": 1,
+    "total": 6
+  },
+  "pushback_verification": "All six verified against current state before any edit. TWO did not survive. (1) The rc04 finding was STALE: rc04's charter already owns exactly the recommended mechanism, naming budgetExhausted and stating that residual_risk replaces the gate_overridden path for that reason — the program had answered it before the audit raised it. (2) The audit-drift schema finding was PARTIALLY STALE: the divergence is not unowned drift but a ratified option-B follow-up (2026-09-12) owned by rc07, with test/core/emit-schema-parity.test.ts:28-37 recording the rationale (two archived requirements mandate the documented shape; reconciling three voices exceeds R-crc-1's ceiling) and KNOWN_DIVERGENCE asserting the set EXACTLY so new divergence still fails loudly. Its residual live content is narrower and survives: the recorded rationale describes a SHAPE disagreement ('the engine's payload table accepts a third shape') when the actual behaviour is a HARD REFUSAL — this run's emit failed twice with `unknown payload key 'context'` and only landed after rewriting the payload against the source, so the command's own Step 10 is unfollowable from its shipped reference. Fixing the reference in place was evaluated and rejected on evidence, not preference: the parity test asserts the divergence set exactly, so the edit fails the suite, and it would trade a doc-vs-engine break for a doc-vs-baseline break — the three-voice knot rc07 exists to untie. Separately, verifying a number BEFORE writing it caught an error the audit had not flagged: the CLAUDE.md prose drafted for finding 4 cited the external half as 4C/6W/0S while clean-up-review-cycle.md:801 records 4C/7W/0S; counting the archived external findings file resolved it at 4C/6W/0S, so the status log carries the error and the new prose is correct.",
+  "resolution_summary": {
+    "resolved": 4,
+    "stale": 2,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "CLAUDE.md names two different programs as live",
+      "file": "CLAUDE.md",
+      "line": 365,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "Rewrote the When-in-doubt bullet to name fork-and-orbify and d-arc-arbitered-flow as complete historical records and the LIVE program as clean-up-review-cycle.md, with the read-before-rc-stage-work pointer. Verified by grep plus a negative probe for the retired phrasing."
+    },
+    {
+      "severity": "WARNING",
+      "title": "Newest spec-driven version claim is stale: says version 3, schema is version 4",
+      "file": "CLAUDE.md",
+      "line": 145,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "Re-tensed both present-tense claims to stage-historical ('went to version 2 at this stage' at :62; 'went to version 3 here' at :145) so no line asserts a superseded CURRENT version, and the rc02 prose written for finding 4 states version 4 in current-state position. Negative probe confirms both old phrasings retired. Ripple probe found no other doc asserting the schema version; orbit/specs/orbit-engine-gates/spec.md already says version 4 in three places."
+    },
+    {
+      "severity": "WARNING",
+      "title": "Status log carries the superseded R-crc-4 wording the ruling itself records as corrected",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 807,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "Appended a CORRECTION APPENDED 2026-09-14 block after the entry, stating explicitly that the log is append-only and the entry above stands as written: the 'spawned simultaneously' wording overreached, external is a cross-vendor handoff orbit cannot spawn, and what the amendment actually holds is that both halves are in flight on one artifact state before either is walked, enforced by the blindness predicate. The doc still parses (orbit architecture validate clean-up-review-cycle)."
+    },
+    {
+      "severity": "WARNING",
+      "title": "Neither narrative record captures rc02's close",
+      "file": "CLAUDE.md",
+      "line": 128,
+      "status": "resolved",
+      "lane": "decision",
+      "ratified_via": "chat",
+      "resolution": "Option C — split on the TIER line rather than the command boundary. The walk writes the governing-doc half (CLAUDE.md, same class as the two edits above); the program-tier half (status log entry, the Complete slot) goes to /orbit:architect clean-up-review-cycle, which the user invokes anyway for ratification, so that session does one coherent thing instead of inheriting a chore.",
+      "action": "The finding's own framing was corrected first by evidence: the per-stage-section pattern belongs to the D-arc (a finished program written up retrospectively), while rc-program prose is folded into the ACTIVE-program section and written IN FLIGHT — rc01's landed in implementation commit 5790f37, before its archive, and rc02's own CLAUDE.md update landed in 87df4c9. So the gap was not a missing stage section but in-flight prose stopping one event short of the outcome. Wrote two paragraphs extending the ACTIVE-program section: what rc02 shipped (substantive-only clauses, the hardcoded blind-pair slot with inclusive endpoints, budget reported beside the five-value state, existence-first resolution, the (slot, lowerBound) memo collapsing exponential to polynomial, the shared fence tracker, spec-driven v4, baseline steady at 20), and what its cycle measured (72 findings / 13 CRITICAL / zero repeats reversing the program's own premise; R-crc-6/7/8 and rc13; the first blind pair at fresh 1C/6W/5S vs external 4C/6W/0S with zero CRITICAL overlap and ~60% residual; the archive through a budget-spent gate_overridden, with rc04 owning its replacement)."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Exit criterion 3 leaves the budget-spent record shape ambiguous",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 141,
+      "status": "stale",
+      "lane": "stale",
+      "action": "Suppressed with evidence, no edit. rc04's charter already owns it verbatim: 'when the gate reports budgetExhausted (rc02 — a boolean beside the state, not a state), the archive flow prompts once and records residual_risk — what was not converged and why the user accepted it — replacing the gate_overridden path for that reason.' The program answered this before the audit raised it; no edit."
+    },
+    {
+      "severity": "WARNING",
+      "title": "Shipped audit-drift payload schema is rejected by the engine on first use",
+      "file": ".claude/skills/orbit-audit-drift/references/run-summary-schema.md",
+      "line": 30,
+      "status": "stale",
+      "lane": "stale",
+      "action": "Suppressed as owned, no edit. Divergence is RATIFIED (option B, 2026-09-12) and owned by rc07, with test/core/emit-schema-parity.test.ts:28-37 carrying the rationale and KNOWN_DIVERGENCE asserting the six-field set EXACTLY so new divergence fails loudly. Suppressed as owned. Residual live content — that the behaviour is a HARD REFUSAL rather than the recorded 'accepts a third shape' — is deferred to the architect session as a one-line addition to rc07's charter, program-tier under the ratified boundary. In-place repair rejected on evidence: it fails the parity test's exact-set assertion and trades a doc-vs-engine break for a doc-vs-baseline break."
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": 0,
+  "final_assessment": "6 findings walked: 3 resolved by edit, 1 resolved by edit with its program-tier half deferred, 2 suppressed as stale. 0 unresolved markers in scope. The deferred bundle is four items for an architect session on clean-up-review-cycle, all program-tier under the ratified boundary.",
+  "iteration": 2,
+  "next_recommended": "No markers remain in scope; the project trail records this walk."
+}

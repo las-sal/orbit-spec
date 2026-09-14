@@ -1,0 +1,29 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-14T14:27:54Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Closed rc02's program record and ratified the stage. Four items landed: the status-log entry for rc02's close (the walk-introduced fence bug that could manufacture a clean external pass, the budget-exhausted archive satisfying exit criterion 3 literally, and the pair's measured totals stated once); a measured-count correction at the blind-pair entry (4C/7W/0S to 4C/6W/0S, verified against the archived findings file); rc07's charter extended with a third exit criterion, because the audit-drift payload divergence it inherits is a HARD REFUSAL rather than the type disagreement its ratification recorded; and rc02's Complete slot ratified. No ruling was added or amended this session.",
+  "stages_touched": [
+    "rc02-gate-semantics",
+    "rc07-artifact-lint"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [
+    "rc02-gate-semantics"
+  ],
+  "handoff": {
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md — the live program; rc01 and rc02 complete-ratified, twelve stages premised. Read the status log's last two entries for how rc02 closed and what its audits measured.",
+      "orbit architecture status — computed position; never trust a position stated in prose.",
+      "CLAUDE.md, the ACTIVE-program section — rc02's shipped mechanism and what its cycle measured, in governing-doc form.",
+      "orbit/.orbit-runs/address-reviews-2026-09-14T14-25-28Z.json — the walk that produced this session's agenda, including the two findings that died to pushback."
+    ],
+    "next_command": "/orbit:explore",
+    "model_hint": "A stage spin-up is design-heavy; R-crc-7 puts mechanism in explore, so use the strongest available model for the exploration rather than saving it for propose.",
+    "seam": "Program-tier bookkeeping is closed and rc02 is ratified. The next act is choosing which premised stage to open. rc02b (severity ladder), rc02c (confirmation semantics), and rc13 (explore produces mechanism) all descend from rc02's cycle; rc03 depends on rc02 and now has no blocker. Nothing in the engine is waiting."
+  },
+  "next_recommended": "/orbit:explore"
+}

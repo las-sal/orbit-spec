@@ -58,8 +58,8 @@ COMPUTED from the `.orbit-runs/` trail: ordered cadence slots + resolution-over-
 `confirm`) — plus the v1 timestamp-token **freshness** rule, **single-voiced canonical-next** + a
 one-line **position readout**, and **gate inflection prompts** (apply-parity: surfaced + recorded via
 `gate_overridden`, never hard-blocking). Gate state is a pure function of on-disk artifacts (no new
-state files); new engine modules `src/core/artifact-graph/{trail,gates}.ts`. `spec-driven` is now
-**version 2** (`review-proposal → apply → review-system`). Baseline capabilities **11→12**
+state files); new engine modules `src/core/artifact-graph/{trail,gates}.ts`. `spec-driven` went to
+**version 2** at this stage (`review-proposal → apply → review-system`). Baseline capabilities **11→12**
 (`orbit-engine-gates` ADDED; the 5 editorial baselines gained gate-aware MODIFIED deltas). The C1
 proposal converged through **5 internal + 3 external** review iterations (all resolved) before apply,
 then a full system-review cadence post-apply (in-context → **external (GPT-5 Codex)** → fresh →
@@ -124,7 +124,47 @@ evidence: one fresh proposal pass, an in-context pass, ONE external pass (GPT-6 
 CRITICAL — all three the same mistake, an instrument built on remembered structure: a
 formatting-anchored key regex, a `repo|pr` command-family regex, and flag names without their
 captured types), then two self-found narrowings, each closed with a measurement rather than an
-assertion. Read that doc before any rc-stage work; the D-arc section below is the historical
+assertion.
+
+Its second citing change, `rc02-gate-semantics`, is ARCHIVED (2026-09-14): **the reviewed gate
+now knows what convergence costs.** Clause (b) resolution and the new-finding match are
+SUBSTANTIVE-ONLY (CRITICAL + WARNING), so SUGGESTIONs never gate (issue #8's intent, its
+third-`confirm`-value mechanism superseded — `confirm` selects clause (c), and it was clause (b)
+that held the D-arc archives). R-crc-4's stop rule is now a computable cadence slot,
+**`blind-pair`**: two passes of DISTINCT independent classes (one `fresh`, one `external` —
+HARDCODED, because a configurable pair invites two same-model reviewers and buys coverage
+without the model diversity that is the point), both fresh, blind to each other, with no walk of
+either pass's findings between their tokens and the blindness endpoints INCLUSIVE. Each reviewed
+gate declares a **`budget`**, and exhaustion is reported BESIDE the five-value state — a
+`budgetExhausted` boolean, a spend clause in the reason, a distinct position token — never a
+sixth state and never a hard block; `independentSpend` (whole trail) is display, while
+`independentSpendFresh` is the trigger. Resolution is computed EXISTENCE-FIRST over substantive
+findings, completeness before disposition. `assignCadence` is an existential DFS memoized on
+`(slot, lowerBound)` — the consumed set is redundant under strict token ordering, which collapses
+exponential to polynomial. ONE shared CommonMark fence tracker (`src/core/markdown-fence.ts`) now
+backs both the report renderer and the external-findings parser. **`spec-driven` is version 4**:
+`review-system` cadence `[blind-pair, in-context]`, both reviewed gates `budget: 3`. Baseline
+capabilities stay at **20** (three MODIFIED; 10 delta blocks synced byte-verified). **2103 tests
+green.**
+
+rc02's own cycle is the program's sharpest evidence, and it reversed the program's premise. Six
+proposal passes produced 72 findings, 13 CRITICAL, **zero repeats** — so this was never the churn
+G0 describes. Each walk answered findings by INVENTING MECHANISM, and each next pass correctly
+found defects in mechanism nobody had reviewed; nine of the first ten CRITICALs sat in mechanism
+that did not exist when the exploration closed. That produced **R-crc-6** (the walk authors
+nothing — repair / descope / redesign, with redesign routing back to explore), **R-crc-7**
+(explore produces mechanism; execute the procedure once; specify as decision tables), **R-crc-8**
+(finding quality never licenses another pass; the trigger is sectional and measured per
+requirement), and the new stage `rc13-explore-mechanism`. The post-apply cadence ran the repo's
+FIRST blind pair: fresh 1C/6W/5S, external (GPT-5 Codex) 4C/6W/0S, **zero CRITICAL overlap**,
+residual ≈60% by capture-recapture — and where the halves DISAGREED, one cheap empirical test
+settled it in both directions at once. The archive then produced the state the stage was built
+for: `review-system` unpassed with `budgetExhausted: true`, 3 of 3 independent passes spent.
+It archived through a recorded `gate_overridden` whose reason IS the budget-spent clause — the
+sanctioned terminal signal, not R-d-10's "no clean pass yet" path — with the spend kept as
+residual risk. rc04 owns replacing that override with a `residual_risk` record.
+
+Read that doc before any rc-stage work; the D-arc section below is the historical
 record of how the engine got here.
 
 ## The D-arc (COMPLETE — historical)
@@ -142,7 +182,7 @@ engagement — now also a SHIPPED contract, see D1 below).
 
 **Stage D1 (explicit-lifecycle-consent) is COMPLETE and ARCHIVED**
 (`orbit/changes/archive/2026-07-13-explicit-lifecycle-consent/`): the engine is **consent-aware**.
-The gate vocabulary gains optional `consent: user-invoked` (spec-driven is **version 3**, both
+The gate vocabulary gains optional `consent: user-invoked` (spec-driven went to **version 3** here, both
 reviewed gates consent-marked); readouts are eligibility-framed (`Ready when you are:`, with the
 ` — user-invoked` marker on lifecycle phase entries; imperative `Next:` is prohibited and
 grep-tested); apply/archive/bulk-archive bodies fire provenance-conditioned consent prompts
@@ -362,7 +402,7 @@ paths are kept out of bodies.
 
 ## When in doubt
 
-- The fork plan's decisions remain citable — `orbit/architecture/fork-and-orbify.md` (program complete; the live program is `orbit/architecture/d-arc-arbitered-flow.md`).
+- The fork plan's decisions remain citable — `orbit/architecture/fork-and-orbify.md` (program complete); the D-arc that followed it is `orbit/architecture/d-arc-arbitered-flow.md` (also complete — historical record). The **LIVE program is `orbit/architecture/clean-up-review-cycle.md`**; read it before any rc-stage work.
 - Engine behavior is defined in the vendored TypeScript under `src/` (the architecture doc maps it).
 - Keep tests green: run `npm test` before and after substantive changes; the green baseline is the
   contract.
