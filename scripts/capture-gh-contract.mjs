@@ -29,6 +29,17 @@ function gh(args) {
   return res;
 }
 
+/**
+ * The help line's TYPE token → the parser class the real CLI applies to the value.
+ * `int`/`number` parse as integers; everything else is free-form string. A flag with NO type
+ * token is boolean and rejects an explicit non-boolean `=value`.
+ */
+export function classifyType(type) {
+  const t = String(type).toLowerCase();
+  if (t === 'int' || t === 'number' || t === 'n') return 'int';
+  return 'string';
+}
+
 /** Parse a `gh <cmd> --help` page into { usage, positional, flags }. */
 export function parseHelp(text, command) {
   const lines = text.split('\n');
@@ -58,7 +69,16 @@ export function parseHelp(text, command) {
     const fm = l.match(flagLine);
     if (!fm) continue;
     const [, short, long, type] = fm;
-    flags.push({ long, short: short ?? null, takes_value: Boolean(type && !type.startsWith('-')) });
+    const takes = Boolean(type && !type.startsWith('-'));
+    // The help line's TYPE token is the value's type, and the real CLI parses it before any
+    // network call (`--web=garbage` → ParseBool error; `--limit=garbage` → ParseInt error).
+    // Recording it lets the validator reject a malformed VALUE, not just an unknown name.
+    flags.push({
+      long,
+      short: short ?? null,
+      takes_value: takes,
+      value_type: takes ? classifyType(type) : 'boolean',
+    });
   }
   if (flags.length === 0) throw new Error(`no flags parsed for gh ${command}`);
   return { usage: usageLine, positional, flags };

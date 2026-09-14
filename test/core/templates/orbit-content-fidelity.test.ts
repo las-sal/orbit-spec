@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
+import { fileURLToPath } from 'node:url';
 
 import {
   getExploreSkillTemplate,
@@ -320,20 +321,56 @@ describe('D6 PR lifecycle surface', () => {
     return ref!.content;
   }
 
-  // The recorded real-CLI contract and the ONE validator the stub also loads.
-  const ghContract = JSON.parse(
-    fs.readFileSync(path.join(process.cwd(), 'test', 'integration', 'pr-lifecycle', 'gh-contract.json'), 'utf-8')
-  );
+  // The recorded real-CLI contract and the ONE validator the stub also loads. Paths are
+  // MODULE-RELATIVE (external iter 1): a process.cwd() join broke under an explicit --root.
+  const prLifecycleDir = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..', 'integration', 'pr-lifecycle');
+  const ghContract = JSON.parse(fs.readFileSync(path.join(prLifecycleDir, 'gh-contract.json'), 'utf-8'));
   const { validate: validateGh } = createRequire(import.meta.url)(
-    path.join(process.cwd(), 'test', 'integration', 'pr-lifecycle', 'gh-contract-validate.cjs')
+    path.join(prLifecycleDir, 'gh-contract-validate.cjs')
   ) as { validate: (argv: string[], c: unknown) => { ok: boolean; message?: string } };
-  /** Backticked snippet → argv (leading `gh` dropped; placeholders are ordinary tokens; a trailing ellipsis is prose). */
+
+  /**
+   * Every COPYABLE `gh` snippet in a reference, found by SHAPE — never by a remembered
+   * command family (external iter 1: a `repo|pr` prefix meant `gh frobnicate …` was never
+   * handed to the validator at all, so an unknown TOP-LEVEL command escaped the contract).
+   * Unsupported commands are the CONTRACT's business to reject, not the extractor's.
+   *
+   * Copyable-vs-prose is decided BY THE CONTRACT, not by a heuristic (the flag test that
+   * first replaced the family regex validated 9 snippets where this rule validates 15):
+   * a snippet is PROSE only when its command RESOLVES in the contract and nothing follows it
+   * (`\`gh pr create\`` erroring, `\`gh repo view\`` naming the command). Anything else is
+   * validated — including a command the contract does not know, so an invented or mistyped
+   * verb fails rather than escaping.
+   */
+  function ghSnippets(content: string): string[] {
+    const commandKeys = Object.keys((ghContract as { commands: Record<string, unknown> }).commands).sort(
+      (a, b) => b.length - a.length
+    );
+    return (content.match(/`gh [a-z][a-z0-9-]*(?: [^`]*)?`/g) ?? []).filter((snippet) => {
+      const argv = snippetArgv(snippet);
+      const command = commandKeys.find((k) => k.split(' ').every((part, i) => argv[i] === part));
+      if (!command) return true; // unknown command → the contract must reject it
+      return argv.length > command.split(' ').length; // bare command name → prose
+    });
+  }
+
+  /**
+   * Backticked snippet → argv (leading `gh` dropped). QUOTE-AWARE: a quoted value stays ONE
+   * token, matching the argv a shell hands the stub (external iter 1 — whitespace splitting
+   * made the two consumers disagree on `--title "Fix title"`). A trailing ellipsis is prose.
+   */
   function snippetArgv(snippet: string): string[] {
-    return snippet
-      .replace(/^`|`$/g, '')
-      .split(/\s+/)
-      .filter((t) => t && t !== '…' && t !== '...')
-      .slice(1);
+    const body = snippet.replace(/^`|`$/g, '');
+    const tokens: string[] = [];
+    const re = /"([^"]*)"|'([^']*)'|(\S+)/g;
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(body))) {
+      const tok = m[1] ?? m[2] ?? m[3];
+      if (tok === '…' || tok === '...') continue;
+      // A flag whose value is quoted: `--title "Fix title"` → the quotes are the shell's.
+      tokens.push(tok);
+    }
+    return tokens.slice(1);
   }
 
   it('propose and ff ship the SAME choreography reference (identical bytes)', () => {
@@ -382,7 +419,7 @@ describe('D6 PR lifecycle surface', () => {
     ]) {
       // Invocation-shaped: a gh command carrying at least one flag or argument beyond the
       // subcommand. Bare prose mentions (`gh pr create` erroring) carry no arguments.
-      const invocations = content.match(/`gh (?:repo|pr) [a-z]+ [^`]*`/g) ?? [];
+      const invocations = ghSnippets(content);
       expect(invocations.length).toBeGreaterThan(0);
       for (const inv of invocations) {
         const argv = snippetArgv(inv);
@@ -392,19 +429,47 @@ describe('D6 PR lifecycle surface', () => {
     }
   });
 
-  it('the sweep rejects what the stub rejects: negative fixtures per rule', () => {
+  it('the sweep rejects what the stub rejects: negative fixtures run through the EXTRACTOR', () => {
     const cases: Array<[string, string]> = [
       ['`gh repo view --repo <owner>/<repo> --json defaultBranchRef`', 'unknown flag: --repo'],
       ['`gh repo view --json defaultBranchRef`', 'requires a positional'],
       ['`gh pr list --head <branch> --state open --json url`', 'must carry --repo'],
       ['`gh pr view --repo <owner>/<repo> --json isDraft`', 'argument required when using the --repo flag'],
       ['`gh pr frobnicate --repo <owner>/<repo>`', 'unknown command'],
+      // An unknown TOP-LEVEL command family must not escape the contract (external iter 1),
+      // with or without flags (in-context iter 2: the flag heuristic let the bare form pass).
+      ['`gh frobnicate --repo <owner>/<repo>`', 'unknown command'],
+      ['`gh frobnicate`', 'unknown command'],
+      // Value parse, reproducing the real CLI (external iter 1).
+      ['`gh repo view <owner>/<repo> --web=garbage`', 'ParseBool'],
+      ['`gh pr list --repo <owner>/<repo> --limit=garbage`', 'ParseInt'],
     ];
     for (const [snippet, message] of cases) {
-      const r = validateGh(snippetArgv(snippet), ghContract);
+      // Through the extractor, exactly as a reference's content would be.
+      const extracted = ghSnippets(snippet);
+      expect(extracted, `extractor missed: ${snippet}`).toHaveLength(1);
+      const r = validateGh(snippetArgv(extracted[0]), ghContract);
       expect(r.ok, snippet).toBe(false);
       expect(r.message, snippet).toContain(message);
     }
+  });
+
+  it('a bare command name is prose; the same command with an argument is validated', () => {
+    // The contract decides, so coverage does not depend on whether a snippet carries a flag.
+    expect(ghSnippets('prose `gh repo view` and `gh pr create` name commands')).toEqual([]);
+    const argumented = ghSnippets('the positional form is `gh repo view <owner>/<repo>`');
+    expect(argumented).toHaveLength(1);
+    expect(validateGh(snippetArgv(argumented[0]), ghContract).ok).toBe(true);
+  });
+
+  it('a quoted value is ONE token, so the sweep and the stub see the same argv', () => {
+    const snippet = '`gh pr create --repo <owner>/<repo> --draft --base <b> --title "Fix the title" --body-file <p>`';
+    const argv = snippetArgv(snippet);
+    expect(argv).toContain('Fix the title');
+    expect(validateGh(argv, ghContract).ok).toBe(true);
+    // The same argv a shell hands the stub.
+    const shellArgv = ['pr', 'create', '--repo', 'x/y', '--draft', '--base', 'b', '--title', 'Fix the title', '--body-file', 'p'];
+    expect(validateGh(shellArgv, ghContract).ok).toBe(true);
   });
 
   it('propose adds NO consent prompt at entry (D-d6-6: propose is not consent-scoped)', () => {

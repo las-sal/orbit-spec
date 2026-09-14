@@ -1,0 +1,101 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-12T17:21:06Z",
+  "change": "rc01-instrument-fidelity",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": [],
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "test/core/templates/orbit-content-fidelity.test.ts",
+      "line": 336,
+      "title": "The walk's copyable-vs-prose filter is narrower than the spec's 'every invocation-shaped snippet': a flagless but argumented invocation is skipped, and a bare `gh pr` mention escapes the contract entirely.",
+      "recommendation": "Resolving the external pass's third CRITICAL, I replaced the family regex with shape extraction plus the filter `snippetArgv(s).some(t => t.startsWith('-'))` — a snippet counts as copyable only if it carries a FLAG. Measured against the three references, that validates 9 snippets where a contract-based prose test validates 15. The six it skips are `gh repo view <owner>/<repo>` in all three references (a flagless but well-formed invocation the delta spec's scenario calls invocation-shaped; it validates ok:true when run) and `gh pr` in all three (which the validator REJECTS as `unknown command \"pr\" for \"gh\"` — a real inconsistency in the references that the pre-walk regex also missed, since `gh pr` has no verb). Replace the flag heuristic with a contract-based test: extract by shape (unchanged, family-free), resolve the snippet's command against `contract.commands` by longest leading key, and treat it as PROSE only when the command resolves and NOTHING follows it (`gh pr create` bare, `gh repo view` bare); an unresolved command is always validated, so a mistyped or invented verb still fails. Then either qualify the three `gh pr` mentions in the references (e.g. `the gh pr verbs`) or accept the failure as a real finding — the point is that the sweep decides, not a heuristic.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Contract-based prose test as described, and reword the three bare `gh pr` prose mentions in the references (they name a command family, not a command, so `the `gh pr` verbs` reads correctly and extracts as prose)."
+        },
+        {
+          "label": "B",
+          "body": "Contract-based prose test, and leave the `gh pr` mentions as-is so the sweep fails until the references are reworded — a louder signal, at the cost of a red suite until the wording lands in the same walk."
+        }
+      ]
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "pass": "2",
+      "title": "The shared validator accepts malformed flag values that the captured CLI rejects",
+      "evidence": "Resolved in the walk (address-reviews-2026-09-12T13-54-38Z): the contract now records `value_type` on every flag (54 string / 29 boolean / 1 int, zero missing) and the validator reproduces the real ParseBool/ParseInt messages — re-ran both reproductions, `--web=garbage` and `--limit=garbage` now fail, `--limit=5` passes."
+    },
+    {
+      "pass": "6",
+      "title": "Schema extraction silently drops documented fields based on formatting",
+      "evidence": "Resolved: `topLevelKeys` walks brace depth and skips string contents; the reviewer's two mutations (second key on one line; four-space indent) are negative fixtures and pass; grouped field-note bullets contribute every subject."
+    },
+    {
+      "pass": "3",
+      "title": "Unknown command families bypass the snippet sweep entirely",
+      "evidence": "Partially resolved — the EXTRACTOR is family-free and `gh frobnicate --repo x/y` is now caught and rejected (negative fixture). The residual narrowing introduced by its filter is this pass's finding, not a repeat."
+    },
+    {
+      "pass": "1",
+      "title": "The audit-drift mirror correction leaves contradictory archived emit requirements",
+      "evidence": "Resolved as ratified option B: the reference is reverted to its documented shape with a dated rc07 note, and `KNOWN_DIVERGENCE` pins the exact six-key set in two assertions — verified the generated reference carries the restored keys and the note."
+    },
+    {
+      "pass": "2",
+      "title": "Whitespace splitting makes the sweep disagree with the stub on quoted values",
+      "evidence": "Resolved: quote-aware tokenizer; the paired fixture asserts `--title \"Fix the title\"` accepted from both the snippet and the shell argv."
+    },
+    {
+      "pass": "3",
+      "title": "Resolve the contract files relative to the test module",
+      "evidence": "Resolved: module-relative via `fileURLToPath(import.meta.url)`; re-ran the reviewer's exact repro from /private/tmp with an explicit --root — 114 tests pass where collection previously failed with ENOENT."
+    },
+    {
+      "pass": "6",
+      "title": "Refresh the restated mirror and surface counts from the completed change",
+      "evidence": "Resolved: proposal Impact and design Context state the inventory from the diff and say so explicitly; task 4.3 records the option-B decision and its rc07 owner."
+    }
+  ],
+  "commentary": "Scoped as VERIFICATION over the walk's diff rather than a fresh review of the whole change — this session wrote both the code and the walk, and an independent pass has already read the implementation end to end; re-reviewing it here would spend the pass on what the blind reviewer already covered. Every one of the seven external resolutions was re-run rather than read: both value-parse reproductions, both formatting mutations, the explicit-root invocation, the quoted-value pair, and the restored audit-drift reference with its pinned divergence. All hold, and the contract now carries a value type on every one of its 84 flags with none missing. The one finding is a narrowing I introduced while resolving the third CRITICAL: my copyable-vs-prose heuristic is a flag test, and measuring it against a contract-based test shows 9 validated where 15 would be — the same shape of mistake the CRITICAL itself named, a remembered proxy standing in for the contract's own answer. That it took a measurement rather than a reading to see it is the honest lesson: the instrument's coverage needs a number, not a comment claiming completeness. Residual risk unchanged otherwise: whether the help-line parser survives the next gh release, and whether the positional rule is right for verbs the references do not yet use.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4",
+    "5"
+  ],
+  "final_assessment": "0 critical, 1 warning, 0 suggestion.",
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc01-instrument-fidelity --from-file orbit/changes/rc01-instrument-fidelity/.orbit-runs/review-system-2026-09-12T17-21-06Z.json"
+}

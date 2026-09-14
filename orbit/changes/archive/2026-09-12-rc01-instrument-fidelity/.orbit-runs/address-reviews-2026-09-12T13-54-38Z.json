@@ -1,0 +1,171 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-12T13:54:38Z",
+  "change": "rc01-instrument-fidelity",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc01-instrument-fidelity/.orbit-runs/external-system-2026-09-12T12-24-18Z.md",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6 (Codex)",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 3,
+    "warning": 2,
+    "suggestion": 2
+  },
+  "pushback_verification": "All 7 verified against current state before disposition; none stale. Each CRITICAL was re-run as given (validator accepting --web=garbage and --limit=garbage; the two-space key regex; the repo|pr extractor prefix), the baseline contradiction was read at orbit-conventions:223 and :321 and orbit-run-summary-emit:477, the quoted-value disagreement was reproduced through both consumers, and the explicit-root ENOENT was reproduced and re-run after the fix.",
+  "resolution_summary": {
+    "resolved": 7,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "The shared validator accepts malformed flag values that the captured CLI rejects",
+      "marker_source": "external",
+      "file": "test/integration/pr-lifecycle/gh-contract-validate.cjs",
+      "line": 34,
+      "classification": "trivial_fix",
+      "action": "Reproduced both cases before fixing (--web=garbage -> ok:true; --limit=garbage -> ok:true). The capture script now classifies each flag VALUE TYPE from the help line TYPE token (classifyType: int/number -> int, other -> string, absent -> boolean) and records it as value_type; the validator new checkValue reproduces the real CLI parse errors verbatim (invalid argument \"garbage\" for \"-w, --web\" flag: strconv.ParseBool ... and the ParseInt equivalent) for explicit =value forms and consumed values alike, while reference placeholders (<url>, <owner>/<repo>) stay exempt. The contract was re-captured against gh 2.91.0; --limit now records {long:--limit, short:-L, takes_value:true, value_type:int}. Both reproductions are negative fixtures in the sweep; --limit=5 still passes.",
+      "ripple_cascade": {
+        "applied": [
+          "scripts/capture-gh-contract.mjs",
+          "test/integration/pr-lifecycle/gh-contract.json",
+          "test/core/templates/orbit-content-fidelity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "Schema extraction silently drops documented fields based on formatting",
+      "marker_source": "external",
+      "file": "test/core/emit-schema-parity.test.ts",
+      "line": 40,
+      "classification": "trivial_fix",
+      "action": "Replaced the two-space regex with topLevelKeys, a STRUCTURAL brace/bracket-depth walk that skips string contents, so a second key on the same line and a four-space-indented key are both found; the field-note extractor now collects EVERY backticked subject in a bolded bullet run, so restoring the grouped categories_run / categories_skipped bullet no longer hides a subject. Both of the reviewer mutations ship as negative fixtures (formatting cannot hide a documented key; a grouped field-note bullet contributes EVERY subject it names).",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "Unknown command families bypass the snippet sweep entirely",
+      "marker_source": "external",
+      "file": "test/core/templates/orbit-content-fidelity.test.ts",
+      "line": 385,
+      "classification": "trivial_fix",
+      "action": "The extractor is now family-free: ghSnippets matches gh <token> ... by SHAPE and lets the contract lookup reject unsupported commands, so gh frobnicate --repo <owner>/<repo> is caught and rejected as an unknown command (a negative fixture). Copyable-vs-prose is decided by a family-free rule (the snippet carries at least one flag), since every real invocation in these references is repository-qualified and therefore flagged; that rule replaced the accidental filtering the old repo|pr regex did, which shape extraction exposed by catching prose mentions like gh pr create erroring. Every negative fixture now runs THROUGH the extractor rather than being handed to snippetArgv directly.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The audit-drift mirror correction leaves contradictory archived emit requirements",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/audit-drift.ts",
+      "line": 29,
+      "classification": "decision_required",
+      "ratified_via": "chat",
+      "resolution": "B — revert the audit-drift correction and carry the three-way reconciliation to rc07, pinned as an EXACT known-divergence set.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Add MODIFIED deltas against orbit-conventions and orbit-run-summary-emit so the archived requirements match the engine; rc01 grows to four capabilities, past the R-crc-1 ceiling."
+          },
+          {
+            "label": "B",
+            "body": "Revert the audit-drift correction, record an EXACT known-divergence set in the parity test with a dated rc07 owner, keep rc01 at two capabilities."
+          },
+          {
+            "label": "C",
+            "body": "Keep the correction and defer only the spec reconciliation, shipping a reference that knowingly contradicts an archived requirement."
+          }
+        ],
+        "chosen": "B"
+      },
+      "action": "Verified the contradiction independently: orbit-conventions line 223 states audit-drift and archive-audit emits keep their own findings_summary shapes, its editorial-emit scenario at line 321 requires findings_summary AND finding_titles, and orbit-run-summary-emit line 477 types categories_run as an object of named booleans — three voices, three shapes. Reverted the reference extensions sentence, schema block, and field notes to the documented shape (a first partial revert dropped three keys because a non-greedy regex stopped at the flags object; caught by the parity test and fully restored), and added a dated note naming the contradiction and its rc07 owner. The parity test carries KNOWN_DIVERGENCE as an EXACT set, asserted both in the per-command check and in its own pinning test, so the divergence can neither grow nor be forgotten. My in-context system pass had asserted baseline compliance held after checking only orbit-run-summary-emit; that claim was wrong and this finding corrects it.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/emit-schema-parity.test.ts",
+          "orbit/changes/rc01-instrument-fidelity/tasks.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/specs/orbit-conventions/spec.md",
+            "reason": "baseline spec; add a delta to your current change's specs/<capability>/spec.md to capture this ripple — deferred to rc07 per the ratified option B"
+          },
+          {
+            "path": "orbit/specs/orbit-run-summary-emit/spec.md",
+            "reason": "baseline spec; add a delta to your current change's specs/<capability>/spec.md to capture this ripple — deferred to rc07 per the ratified option B"
+          }
+        ]
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Whitespace splitting makes the sweep disagree with the stub on quoted values",
+      "marker_source": "external",
+      "file": "test/core/templates/orbit-content-fidelity.test.ts",
+      "line": 334,
+      "classification": "trivial_fix",
+      "action": "Reproduced (--title \"Fix title\" -> accepts 0 arg(s), received 1 from the sweep, accepted from the shell argv). snippetArgv is now quote-aware: double- and single-quoted runs stay ONE token, so the sweep hands the validator the same argv a shell hands the stub. A paired fixture asserts both forms accepted for the same invocation. Design D5 whitespace-splitting prescription is superseded by the tokenizer described in the test doc comment.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Resolve the contract files relative to the test module",
+      "marker_source": "external",
+      "file": "test/core/templates/orbit-content-fidelity.test.ts",
+      "line": 325,
+      "classification": "trivial_fix",
+      "action": "Both paths are now module-relative via fileURLToPath(import.meta.url), matching the dedicated contract test. Verified the reviewer exact repro: vitest run --root <repo> test/core/templates/orbit-content-fidelity.test.ts from /private/tmp previously failed collection with ENOENT and now passes 114 tests.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Refresh the restated mirror and surface counts from the completed change",
+      "marker_source": "external",
+      "file": "orbit/changes/rc01-instrument-fidelity/proposal.md",
+      "line": 24,
+      "classification": "trivial_fix",
+      "action": "The proposal Impact and the design Context now state the src/ inventory from the final diff — the review and address-reviews block corrections, the audit-drift dated divergence note, and the accessor — and say explicitly that the inventory is the diff and update --force output, never a count repeated in prose. Task 4.3 is rewritten to the work actually done, including the option-B decision and its rc07 owner.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc01-instrument-fidelity/design.md",
+          "orbit/changes/rc01-instrument-fidelity/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "7 of 7 resolved; 0 unresolved markers in scope. The three CRITICALs were one mistake at three layers — an instrument built to end remembered truths was itself built on remembered structure: remembered formatting (a two-space key regex), remembered command families (a repo|pr prefix), and remembered flag names without their captured types. All three now derive from structure or from the contract: brace-depth key extraction, shape-based snippet extraction with contract lookup deciding legality, and recorded value_type per flag with the real CLI parse errors reproduced. The decision-lane finding was ratified as option B: the audit-drift reference is reverted to its documented shape and its three-way contradiction with two archived requirements is a dated, EXACT, pinned follow-up owned by rc07 rather than a correction this stage may make past its size ceiling — my own in-context pass had wrongly declared baseline compliance after checking one capability. Quote-aware tokenizing makes the two consumers agree on quoted values; module-relative paths fix the explicit-root run (reproduced both ways); the artifacts state their inventory from the diff. 2036 -> 2040 tests green across 93 files; the suite passes with no host gh on PATH; strict-valid; the surface refresh changed exactly the two references touched.",
+  "iteration": 3,
+  "next_recommended": "/orbit:review --as system rc01-instrument-fidelity"
+}

@@ -25,6 +25,20 @@ const ENGINE_OWNED_PER_COMMAND: Record<string, string[]> = {
   review: ['final_assessment'],
 };
 
+/**
+ * KNOWN DIVERGENCE (option B, ratified 2026-09-12). The audit-drift reference documents the
+ * shape two ARCHIVED requirements mandate (`orbit-conventions`' editorial-emit extensions and
+ * scenario keep `findings_summary`/`finding_titles`; `orbit-run-summary-emit` types
+ * `categories_run` as an object of named booleans), and the engine's payload table accepts a
+ * third shape. Reconciling three voices needs MODIFIED deltas against two more capabilities —
+ * past this stage's size ceiling (R-crc-1) — so it is a DATED follow-up owned by rc07
+ * (artifact lint, one-voice-for-facts), not an exception this stage may quietly keep. The set
+ * is asserted EXACT below, so any NEW divergence still fails loudly.
+ */
+const KNOWN_DIVERGENCE: Record<string, string[]> = {
+  'audit-drift': ['context', 'caller', 'depth', 'flags', 'categories_skipped', 'findings_summary'],
+};
+
 const REFERENCES: Array<[command: string, template: () => { references?: Array<{ name: string; content: string }> }, refName: string]> = [
   ['review', getReviewSkillTemplate, 'run-summary-schema.md'],
   ['address-reviews', getAddressReviewsSkillTemplate, 'run-summary-schema.md'],
@@ -32,12 +46,48 @@ const REFERENCES: Array<[command: string, template: () => { references?: Array<{
   ['archive', getArchiveChangeSkillTemplate, 'archive-summary-schema.md'],
 ];
 
+/**
+ * Top-level keys of a schema block, found STRUCTURALLY — by brace/bracket depth, not by
+ * indentation (external iter 1, 2026-09-12: a two-space regex silently dropped a second key
+ * on the same line, and a four-space-indented key, so a documented field could bypass the
+ * parity check by formatting alone). String contents are skipped so a `"` inside a value
+ * never shifts depth.
+ */
+function topLevelKeys(block: string): string[] {
+  const keys: string[] = [];
+  let depth = 0;
+  let inString = false;
+  let escaped = false;
+  let current = '';
+  for (let i = 0; i < block.length; i++) {
+    const ch = block[i];
+    if (inString) {
+      if (escaped) escaped = false;
+      else if (ch === '\\') escaped = true;
+      else if (ch === '"') {
+        inString = false;
+        // A key is a string at depth 1 followed (after spaces) by a colon.
+        if (depth === 1) {
+          const after = block.slice(i + 1).match(/^\s*:/);
+          if (after) keys.push(current);
+        }
+        current = '';
+      } else current += ch;
+      continue;
+    }
+    if (ch === '"') { inString = true; current = ''; continue; }
+    if (ch === '{' || ch === '[') depth += 1;
+    else if (ch === '}' || ch === ']') depth -= 1;
+  }
+  return keys;
+}
+
 /** Top-level keys of every JSON block whose keys include `command` (a full-record block). */
 function documentedKeys(content: string): { keys: Set<string>; blocks: number } {
   const keys = new Set<string>();
   let blocks = 0;
   for (const m of content.matchAll(/```json\n([\s\S]*?)```/g)) {
-    const top = [...m[1].matchAll(/^  "([a-z_]+)":/gm)].map((k) => k[1]);
+    const top = topLevelKeys(m[1]);
     if (!top.includes('command')) continue;
     blocks += 1;
     for (const k of top) keys.add(k);
@@ -56,7 +106,13 @@ function fieldNoteKeys(content: string): Set<string> {
   const section = content.split('## Field notes')[1];
   const keys = new Set<string>();
   if (!section) return keys;
-  for (const m of section.matchAll(/^- \*\*`([a-z_]+)(?:\.[a-z_]+)*`\*\*/gm)) keys.add(m[1]);
+  for (const line of section.split('\n')) {
+    if (!line.startsWith('- **')) continue;
+    // A bullet may name SEVERAL subjects (`- **\`a\` / \`b\`** are strings…`); collect every
+    // backticked identifier in the bolded subject run, not just the first (external iter 1).
+    const subject = line.slice(0, line.indexOf('**', 4) + 2);
+    for (const m of subject.matchAll(/`([a-z_]+)(?:\.[a-z_]+)*`/g)) keys.add(m[1]);
+  }
   return keys;
 }
 
@@ -76,7 +132,10 @@ describe('schema-table parity: every AI-supplied field a schema reference docume
       const owned = new Set([...ENGINE_OWNED, ...(ENGINE_OWNED_PER_COMMAND[command] ?? [])]);
       const aiSupplied = [...keys].filter((k) => !owned.has(k));
       const rejected = aiSupplied.filter((k) => !table!.includes(k));
-      expect(rejected, `${command}: ${refName} documents AI-supplied field(s) the table rejects`).toEqual([]);
+      expect(
+        rejected.sort(),
+        `${command}: ${refName} documents AI-supplied field(s) the table rejects`
+      ).toEqual((KNOWN_DIVERGENCE[command] ?? []).slice().sort());
     });
   }
 
@@ -89,7 +148,7 @@ describe('schema-table parity: every AI-supplied field a schema reference docume
       // note subjects; the check is on TOP-LEVEL emit keys the notes claim.
       const nested = new Set(['recommendation_options', 'severity', 'dimension', 'title', 'file', 'line', 'recommendation', 'evidence', 'ratified_via', 'resolution', 'recommendation_fork', 'ripple_cascade', 'outcome', 'marker_source', 'classification', 'action', 'by_pass', 'by_category', 'reviewer_class', 'walk_mode_shifted_at_finding']);
       const orphaned = [...fieldNoteKeys(ref.content)].filter(
-        (k) => !keys.has(k) && !owned.has(k) && !nested.has(k)
+        (k) => !keys.has(k) && !owned.has(k) && !nested.has(k) && !(KNOWN_DIVERGENCE[command] ?? []).includes(k)
       );
       expect(orphaned, `${command}: ${refName} field notes name key(s) no schema block carries`).toEqual([]);
     });
@@ -102,13 +161,17 @@ describe('schema-table parity: every AI-supplied field a schema reference docume
     }
   });
 
-  it('regression: the audit-drift reference no longer documents fields its table rejects', () => {
+  it('regression: the audit-drift divergence is EXACTLY the ratified rc07 follow-up set', () => {
+    // Option B (2026-09-12): the reference documents the shape two ARCHIVED requirements
+    // mandate; the engine's table accepts a third. Reconciling three voices needs MODIFIED
+    // deltas past this stage's ceiling, so the divergence is dated and owned by rc07 — and
+    // pinned here, so it can neither grow nor be forgotten.
     const ref = (getAuditDriftSkillTemplate().references ?? []).find((r) => r.name === 'run-summary-schema.md')!;
     const { keys } = documentedKeys(ref.content);
-    for (const stale of ['context', 'caller', 'depth', 'flags', 'categories_skipped', 'findings_summary']) {
-      expect([...keys], stale).not.toContain(stale);
-    }
-    expect([...keys]).toContain('findings_by_category');
+    const table = payloadFieldsFor('audit-drift')!;
+    const owned = new Set(ENGINE_OWNED);
+    const diverged = [...keys].filter((k) => !owned.has(k) && !table.includes(k)).sort();
+    expect(diverged).toEqual(KNOWN_DIVERGENCE['audit-drift'].slice().sort());
   });
 
   it('regression: the review reference reads BOTH blocks, and the architecture block carries scorecard, not findings_summary', () => {
@@ -117,6 +180,26 @@ describe('schema-table parity: every AI-supplied field a schema reference docume
     expect(blocks).toBe(2);
     expect([...keys]).not.toContain('findings_summary');
     expect([...keys]).toContain('handoff');
+  });
+
+  it('negative: formatting cannot hide a documented key (external iter 1 mutations)', () => {
+    // Two keys on one line, and a four-space-indented key: the old two-space regex missed both.
+    const block = '```json\n{\n  "command": "x", "unexpected_one": true,\n    "unexpected_two": 1,\n  "nested": { "inner": 2 }\n}\n```';
+    const { keys, blocks } = documentedKeys(block);
+    expect(blocks).toBe(1);
+    expect([...keys].sort()).toEqual(['command', 'nested', 'unexpected_one', 'unexpected_two']);
+    expect([...keys]).not.toContain('inner'); // depth-1 only
+  });
+
+  it('negative: a grouped field-note bullet contributes EVERY subject it names', () => {
+    const content = '## Field notes\n- **`categories_run` / `categories_skipped`** are strings (category IDs).\n- **`findings_total`** is a count.\n';
+    expect([...fieldNoteKeys(content)].sort()).toEqual(['categories_run', 'categories_skipped', 'findings_total']);
+  });
+
+  it('known divergence is EXACT, so a new one still fails', () => {
+    // The audit-drift set is the ratified rc07 follow-up (option B); nothing else may diverge.
+    expect(Object.keys(KNOWN_DIVERGENCE)).toEqual(['audit-drift']);
+    expect(KNOWN_DIVERGENCE['audit-drift'].length).toBe(6);
   });
 
   it('negative: a documented-but-missing field fails naming the field', () => {

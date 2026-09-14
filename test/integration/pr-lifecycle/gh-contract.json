@@ -1,6 +1,6 @@
 {
   "gh_version": "gh version 2.91.0 (2026-04-22)",
-  "captured_at": "2026-09-11",
+  "captured_at": "2026-09-12",
   "availability_probe": {
     "argv": [
       "--version"
@@ -18,32 +18,38 @@
         {
           "long": "--branch",
           "short": "-b",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--jq",
           "short": "-q",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--json",
           "short": null,
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--template",
           "short": "-t",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--web",
           "short": "-w",
-          "takes_value": false
+          "takes_value": false,
+          "value_type": "boolean"
         },
         {
           "long": "--help",
           "short": null,
-          "takes_value": false
+          "takes_value": false,
+          "value_type": "boolean"
         }
       ]
     },
@@ -57,82 +63,98 @@
         {
           "long": "--app",
           "short": null,
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--assignee",
           "short": "-a",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--author",
           "short": "-A",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--base",
           "short": "-B",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--draft",
           "short": "-d",
-          "takes_value": false
+          "takes_value": false,
+          "value_type": "boolean"
         },
         {
           "long": "--head",
           "short": "-H",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--jq",
           "short": "-q",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--json",
           "short": null,
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--label",
           "short": "-l",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--limit",
           "short": "-L",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "int"
         },
         {
           "long": "--search",
           "short": "-S",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--state",
           "short": "-s",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--template",
           "short": "-t",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--web",
           "short": "-w",
-          "takes_value": false
+          "takes_value": false,
+          "value_type": "boolean"
         },
         {
           "long": "--help",
           "short": null,
-          "takes_value": false
+          "takes_value": false,
+          "value_type": "boolean"
         },
         {
           "long": "--repo",
           "short": "-R",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         }
       ]
     },
@@ -146,112 +168,134 @@
         {
           "long": "--assignee",
           "short": "-a",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--base",
           "short": "-B",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--body",
           "short": "-b",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--body-file",
           "short": "-F",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--draft",
           "short": "-d",
-          "takes_value": false
+          "takes_value": false,
+          "value_type": "boolean"
         },
         {
           "long": "--dry-run",
           "short": null,
-          "takes_value": false
+          "takes_value": false,
+          "value_type": "boolean"
         },
         {
           "long": "--editor",
           "short": "-e",
-          "takes_value": false
+          "takes_value": false,
+          "value_type": "boolean"
         },
         {
           "long": "--fill",
           "short": "-f",
-          "takes_value": false
+          "takes_value": false,
+          "value_type": "boolean"
         },
         {
           "long": "--fill-first",
           "short": null,
-          "takes_value": false
+          "takes_value": false,
+          "value_type": "boolean"
         },
         {
           "long": "--fill-verbose",
           "short": null,
-          "takes_value": false
+          "takes_value": false,
+          "value_type": "boolean"
         },
         {
           "long": "--head",
           "short": "-H",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--label",
           "short": "-l",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--milestone",
           "short": "-m",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--no-maintainer-edit",
           "short": null,
-          "takes_value": false
+          "takes_value": false,
+          "value_type": "boolean"
         },
         {
           "long": "--project",
           "short": "-p",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--recover",
           "short": null,
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--reviewer",
           "short": "-r",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--template",
           "short": "-T",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--title",
           "short": "-t",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--web",
           "short": "-w",
-          "takes_value": false
+          "takes_value": false,
+          "value_type": "boolean"
         },
         {
           "long": "--help",
           "short": null,
-          "takes_value": false
+          "takes_value": false,
+          "value_type": "boolean"
         },
         {
           "long": "--repo",
           "short": "-R",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         }
       ]
     },
@@ -265,37 +309,44 @@
         {
           "long": "--comments",
           "short": "-c",
-          "takes_value": false
+          "takes_value": false,
+          "value_type": "boolean"
         },
         {
           "long": "--jq",
           "short": "-q",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--json",
           "short": null,
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--template",
           "short": "-t",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--web",
           "short": "-w",
-          "takes_value": false
+          "takes_value": false,
+          "value_type": "boolean"
         },
         {
           "long": "--help",
           "short": null,
-          "takes_value": false
+          "takes_value": false,
+          "value_type": "boolean"
         },
         {
           "long": "--repo",
           "short": "-R",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         }
       ]
     },
@@ -309,82 +360,98 @@
         {
           "long": "--add-assignee",
           "short": null,
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--add-label",
           "short": null,
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--add-project",
           "short": null,
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--add-reviewer",
           "short": null,
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--base",
           "short": "-B",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--body",
           "short": "-b",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--body-file",
           "short": "-F",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--milestone",
           "short": "-m",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--remove-assignee",
           "short": null,
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--remove-label",
           "short": null,
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--remove-milestone",
           "short": null,
-          "takes_value": false
+          "takes_value": false,
+          "value_type": "boolean"
         },
         {
           "long": "--remove-project",
           "short": null,
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--remove-reviewer",
           "short": null,
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--title",
           "short": "-t",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--help",
           "short": null,
-          "takes_value": false
+          "takes_value": false,
+          "value_type": "boolean"
         },
         {
           "long": "--repo",
           "short": "-R",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         }
       ]
     },
@@ -398,17 +465,20 @@
         {
           "long": "--undo",
           "short": null,
-          "takes_value": false
+          "takes_value": false,
+          "value_type": "boolean"
         },
         {
           "long": "--help",
           "short": null,
-          "takes_value": false
+          "takes_value": false,
+          "value_type": "boolean"
         },
         {
           "long": "--repo",
           "short": "-R",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         }
       ]
     },
@@ -422,72 +492,86 @@
         {
           "long": "--admin",
           "short": null,
-          "takes_value": false
+          "takes_value": false,
+          "value_type": "boolean"
         },
         {
           "long": "--author-email",
           "short": "-A",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--auto",
           "short": null,
-          "takes_value": false
+          "takes_value": false,
+          "value_type": "boolean"
         },
         {
           "long": "--body",
           "short": "-b",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--body-file",
           "short": "-F",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--delete-branch",
           "short": "-d",
-          "takes_value": false
+          "takes_value": false,
+          "value_type": "boolean"
         },
         {
           "long": "--disable-auto",
           "short": null,
-          "takes_value": false
+          "takes_value": false,
+          "value_type": "boolean"
         },
         {
           "long": "--match-head-commit",
           "short": null,
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--merge",
           "short": "-m",
-          "takes_value": false
+          "takes_value": false,
+          "value_type": "boolean"
         },
         {
           "long": "--rebase",
           "short": "-r",
-          "takes_value": false
+          "takes_value": false,
+          "value_type": "boolean"
         },
         {
           "long": "--squash",
           "short": "-s",
-          "takes_value": false
+          "takes_value": false,
+          "value_type": "boolean"
         },
         {
           "long": "--subject",
           "short": "-t",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         },
         {
           "long": "--help",
           "short": null,
-          "takes_value": false
+          "takes_value": false,
+          "value_type": "boolean"
         },
         {
           "long": "--repo",
           "short": "-R",
-          "takes_value": true
+          "takes_value": true,
+          "value_type": "string"
         }
       ]
     }

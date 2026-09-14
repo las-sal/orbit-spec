@@ -12,6 +12,31 @@
  */
 'use strict';
 
+/** Placeholders the generated references use in copyable commands — never real values. */
+const PLACEHOLDER = /^<[^>]+>$|^<[^>]+>\/<[^>]+>$/;
+
+/**
+ * Reproduce the real CLI's value parse for an explicit value. Returns an error message or
+ * undefined. Placeholders are exempt (a reference's `<number>` stands for a real one).
+ */
+function checkValue(flag, value, name) {
+  if (value === undefined || PLACEHOLDER.test(value)) return undefined;
+  const type = flag.value_type ?? (flag.takes_value ? 'string' : 'boolean');
+  if (type === 'boolean') {
+    if (!/^(1|0|t|f|T|F|true|false|TRUE|FALSE|True|False)$/.test(value)) {
+      return `invalid argument "${value}" for "${flag.short ? flag.short + ', ' : ''}${flag.long}" flag: strconv.ParseBool: parsing "${value}": invalid syntax`;
+    }
+    return undefined;
+  }
+  if (type === 'int') {
+    if (!/^-?\d+$/.test(value)) {
+      return `invalid argument "${value}" for "${flag.short ? flag.short + ', ' : ''}${flag.long}" flag: strconv.ParseInt: parsing "${value}": invalid syntax`;
+    }
+    return undefined;
+  }
+  return undefined;
+}
+
 function validate(argv, contract) {
   const probe = contract.availability_probe;
   if (probe && argv.length === probe.argv.length && argv.every((a, i) => a === probe.argv[i])) {
@@ -34,10 +59,20 @@ function validate(argv, contract) {
       const inline = eq > 0 ? tok.slice(eq + 1) : undefined;
       const flag = spec.flags.find((f) => f.long === name || f.short === name);
       if (!flag) return { ok: false, message: `unknown flag: ${name}` };
-      if (flag.takes_value && inline === undefined) {
-        i += 1;
-        if (i >= rest.length) return { ok: false, message: `flag needs an argument: ${name}` };
+      let value;
+      if (flag.takes_value) {
+        if (inline !== undefined) {
+          value = inline;
+        } else {
+          i += 1;
+          if (i >= rest.length) return { ok: false, message: `flag needs an argument: ${name}` };
+          value = rest[i];
+        }
+      } else if (inline !== undefined) {
+        value = inline; // `--boolean=x` is legal shell, and the CLI parses x as a bool.
       }
+      const parseError = checkValue(flag, value, name);
+      if (parseError) return { ok: false, message: parseError };
       flags.push(flag.long);
     } else {
       positionals.push(tok);

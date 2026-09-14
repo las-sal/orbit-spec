@@ -26,7 +26,7 @@ This schema inherits the 6-field **universal spine** from \`orbit-conventions\`'
 - \`next_recommended\` (verbatim recommendation; varies by findings-vs-clean per \`orbit-run-summary-emit\`'s \`Audit-drift standalone recommendations\` requirement)
 - \`kind: "editorial"\` (audit-drift is an editorial command per the kind taxonomy)
 
-The schema below documents per-command extensions ADDED to that spine (\`categories_run\`, \`findings_by_category\`, \`findings_total\`, \`findings\`, \`stale_suppressed\`) — exactly the AI-supplied fields the engine's payload table for \`audit-drift\` accepts (a mirror of the engine's authoritative table, corrected 2026-09-11 by the schema-table parity test; invocation context, caller, depth, flags, and skipped categories are report-body facts, not emit fields). Per-command extensions are audit-drift-specific state.
+The schema below documents per-command extensions ADDED to that spine (\`context\`, \`caller\`, \`depth\`, \`flags\`, \`categories_run\`, \`categories_skipped\`, \`findings_summary\`, \`findings\`, \`stale_suppressed\`). Per-command extensions are audit-drift-specific state. (RESTORED 2026-09-12: \`orbit-conventions\`' editorial-emit requirement preserves audit-drift's own \`findings_summary\`/\`finding_titles\` shapes, and \`orbit-run-summary-emit\` types \`categories_run\` as an object of named booleans — the engine's payload table disagrees with BOTH. The three-way divergence is a known, dated follow-up owned by the artifact-lint stage rc07, not a defect this stage resolves; the parity test records it as a named exception.)
 
 ## Schema
 
@@ -38,16 +38,30 @@ The schema below documents per-command extensions ADDED to that spine (\`categor
   "final_assessment": "<stock phrasing per invocation mode>",
   "next_recommended": "<on findings — change-scoped: '/orbit:address-reviews <name>' WITHOUT --from-file (auto-discovery selects this just-written JSON); project-wide: '/orbit:address-reviews --from-file <this-json>' (no change-directory anchor, so --from-file IS required). On clean — change-scoped: verbatim copy from the prior latest JSON; project-wide: the periodic-re-run phrasing. Per orbit-run-summary-emit's Audit-drift standalone recommendations.>",
   "kind": "editorial",
-  "categories_run": ["1", "2", "3", "4", "5", "6"],
-  "findings_by_category": {
-    "1": { "critical": 0, "warning": 0, "suggestion": 0 },
-    "2": { "critical": 0, "warning": 0, "suggestion": 0 },
-    "3": { "critical": 0, "warning": 0, "suggestion": 0 },
-    "4": { "critical": 0, "warning": 0, "suggestion": 0 },
-    "5": { "critical": 0, "warning": 0, "suggestion": 0 },
-    "6": { "critical": 0, "warning": 0, "suggestion": 0 }
+  "context": "standalone",
+  "caller": null,
+  "depth": "fast" | "full" | "thorough",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "since": null,
+    "strict": false
   },
-  "findings_total": 0,
+  "categories_run": ["1", "2", "3", "4", "5", "6"],
+  "categories_skipped": [],
+  "findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 0,
+    "by_category": {
+      "1": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "2": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "3": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "4": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "5": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "6": { "critical": 0, "warning": 0, "suggestion": 0 }
+    }
+  },
   "findings": [
     {
       "category": "1",
@@ -70,9 +84,10 @@ The schema below documents per-command extensions ADDED to that spine (\`categor
 
 ## Field notes
 
-- Only STANDALONE invocations write an \`audit-drift-<TS>.json\` — library and pre-archive contexts write no separate file (their findings travel in the caller's emit). The invocation context, the caller, the depth, and the flags are stated in the REPORT HEADER, never carried as emit fields.
-- **\`categories_run\`** is an array of category-ID strings; categories SKIPPED, and their skip reasons, are stated in the report body rather than the emit.
-- **\`findings_by_category\`** keys are category IDs \`"1"\` through \`"6"\` (5 = Touchpoints divergence, 6 = Emit attestation cross-check — D-arc Stage D5; include keys only for categories that ran). **\`findings_total\`** is the flat count across them.
+- **\`context\`** is \`"standalone"\` in every audit-drift-<TS>.json — library and pre-archive contexts write no separate file (their findings travel in the caller's emit), so the \`"library"\` / \`"pre-archive"\` values appear only when a caller chooses to embed this shape inside its own emit. Project-wide vs change-scoped standalone is distinguished by the \`change\` field (\`null\` = project-wide; \`<name>\` = change-scoped).
+- **\`caller\`** is \`null\` for standalone emits (the only contexts that write this file).
+- **\`categories_run\` / \`categories_skipped\`** are strings (category IDs); skip reasons in the report body, not the array.
+- **\`findings_summary.by_category\`** keys are category IDs \`"1"\` through \`"6"\` (5 = Touchpoints divergence, 6 = Emit attestation cross-check — D-arc Stage D5; include keys only for categories that ran).
 - **\`recommendation_options\`** is OPTIONAL on each finding. Present only when the finding's recommendation is genuinely disjunctive — multiple defensible remediation paths the user must choose between. Producer-side contract (per \`orbit-audit-drift\` spec's \`Optional recommendation_options field on audit-drift finding entries\`): MUST contain ≥ 2 entries; each entry MUST have non-empty \`label\` (typically \`"A"\`, \`"B"\`, \`"C"\`, …) and non-empty \`body\`. Per-category emit guidance: Category 1 (vocabulary residue) typically single-recommendation; Category 2 (lens staleness) often disjunctive (rename-vs-remove); Category 3 (cross-doc consistency) often disjunctive (which side is canonical); Category 4 (archive coherence) typically single. The prose \`recommendation\` field still summarizes the disjunction for human readers. Field shape is identical to \`orbit-review\`'s \`recommendation_options\`; consumer (address-reviews) parses both producers uniformly. Omit for single-recommendation findings.
 `;
 

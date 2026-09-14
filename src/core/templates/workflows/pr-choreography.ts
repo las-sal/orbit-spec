@@ -33,7 +33,7 @@ A URL that does not parse as a GitHub repository is a DEGRADATION SKIP with a on
 never a guess.
 
 **Qualify EVERY \`gh\` invocation with the resolved repository, in the grammar each command
-actually accepts.** The \`gh pr\` verbs — \`pr list\`, \`pr create\`, \`pr view\`, \`pr edit\`,
+actually accepts.** \`gh\`'s PR verbs — \`pr list\`, \`pr create\`, \`pr view\`, \`pr edit\`,
 \`pr ready\`, and any \`pr merge\` text you surface — take \`--repo <owner>/<repo>\`.
 \`gh repo view\` takes the repository POSITIONALLY (\`gh repo view <owner>/<repo>\`) and has NO
 \`--repo\` flag: the real CLI rejects it with \`unknown flag: --repo\` (a mistake five review
