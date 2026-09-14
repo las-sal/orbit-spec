@@ -161,9 +161,9 @@ introduces this capability (itself a straddler).
 #### Scenario: New change records the schema version
 
 - **WHEN** `orbit new change` scaffolds a change under the shipped `spec-driven` schema
-  (version 3)
-- **THEN** the change's `.openspec.yaml` records `schema_version: 3` alongside `schema` and
-  `created`
+- **THEN** the change's `.openspec.yaml` records that schema's CURRENT version as
+  `schema_version` alongside `schema` and `created` — the scaffolder writes the loaded schema's
+  version, so the marker tracks schema revisions without this scenario restating a number
 
 #### Scenario: Straddler is covered from first post-capability touch
 

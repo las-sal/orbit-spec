@@ -1,0 +1,50 @@
+{
+  "command": "archive",
+  "timestamp": "2026-09-14T14:09:11Z",
+  "change": "rc02-gate-semantics",
+  "kind": "lifecycle",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Archived rc02-gate-semantics to orbit/changes/archive/2026-09-14-rc02-gate-semantics/ through a recorded gate override: review-system computed unpassed with budgetExhausted true — the declared 3-pass independent budget was fully spent and the latest independent pass carried 1 CRITICAL, since walked to resolution. Proceeding through budget exhaustion rather than buying a fourth pass IS the stage's exit criterion 3 and the behaviour R-crc-8 prescribes; the spend is recorded here as residual risk. 10 delta blocks (2 ADDED + 8 MODIFIED) synced byte-verified across 3 capabilities; base fingerprints 8/8 verified; 21/21 items validate; 2103 tests green.",
+  "archive_path": "orbit/changes/archive/2026-09-14-rc02-gate-semantics/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 2
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-engine-gates",
+      "orbit-lifecycle-consent",
+      "orbit-run-summary-emit"
+    ],
+    "added": 2,
+    "modified": 8,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "Archived with 3 incomplete tasks — all declared user-validation handoffs (7.3 close issue #8; 7.4 run one full system cadence and record it; 7.5 confirm the archive seam proceeds through the stop rule or reports the budget spent). The apply gate computed passed-for-flow with these annotated. 7.4 and 7.5 were satisfied in-session and at this seam respectively but their checkboxes are the user's to mark; 7.3 is an outward act on an external tracker and stays the human's.",
+    "Pre-archive audit (pre-archive context), 0 CRITICAL: WARNING — CLAUDE.md:145 asserts spec-driven is version 3 while schemas/spec-driven/schema.yaml is now version 4 (CLAUDE.md:61 carries the same pattern one generation older at version 2); fold the correction into the rc02 stage section CLAUDE.md gains post-archive.",
+    "Pre-archive audit, WARNING — Touchpoints divergence: 8 unpredicted substantive source paths beyond design.md's 7-entry map (src/core/markdown-fence.ts new, src/core/report-render.ts, src/core/emit-composition.ts, and src/core/templates/workflows/{apply-change,archive-change,audit-drift,pr-choreography,review}.ts). This is the measured form of the program's own diagnosis: the walk invented mechanism, and the mechanism landed where nobody predicted.",
+    "Pre-archive audit, SUGGESTION — 6 docs/test paths rode along unpredicted (CLAUDE.md, orbit/architecture/clean-up-review-cycle.md + 3 architect emits, 3 report goldens).",
+    "Pre-archive audit, SUGGESTION — 29 of the 44 actual_unpredicted paths are attributable to rc01's archive commit 5f1e539 rather than to rc02: the diff window reaches back past rc02's propose. A window-boundary artifact, not scope drift.",
+    "Audit categories 2 (lens staleness) and 6 (explore emit attestation) skipped: orbit/lenses/ empty or absent; no staging explorations.",
+    "Not PR-attached (pr: absent in orbit/config.yaml, resolving to never) — the D6 archive tail terminated at preflight; no commit, push, description rewrite, or ready flip was performed by this flow."
+  ],
+  "gate_overridden": {
+    "gate": "review-system",
+    "state": "unpassed",
+    "reason": "budget spent: 3 of 3 independent passes; latest independent pass carried 1 CRITICAL; one further independent pass on the walked state is required"
+  },
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."
+}
