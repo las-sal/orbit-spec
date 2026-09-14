@@ -259,7 +259,7 @@ never deleted.
 ## Program stages
 
 Fourteen small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
-split into rc02 + rc02b on 2026-09-12; rc13 added 2026-09-14).
+split into rc02 + rc02b on 2026-09-12; rc13 added 2026-09-14 and moved to phase 1 the same day).
 Every stage is sized under R-crc-1, names the capabilities it touches, and names its goal.
 Charters are settled under R-crc-3 until a citing change refines them; exit criteria are
 falsifiable and self-measured by the stage's own cadence (G0). Position is computed — see the
@@ -315,6 +315,50 @@ outgrows), spec-driven schema v4. Exit: (1)
 whichever rule fired, and names an OPEN BLIND PAIR before its cost is sunk; (3) the next archive
 on this repo proceeds through the stop rule, or with the gate reporting its budget spent — never
 a `gate_overridden` for "no clean pass yet".
+
+### Stage rc13-explore-mechanism — invention happens in explore, or it happens in review
+
+Depends-on: (none)
+Complete: [ ]
+
+Charter: the explore surface is where invention is licensed, and today it is not strong enough to
+hold it — so invention leaks downstream into walks, which is where R-crc-6 found it. Three
+structural weaknesses, each verified against the shipped surface (2026-09-14). (1) There is NO
+MECHANISM SECTION: the five-section convention is Premise / Decisions / Open questions / Considered
+& out / References, every one about intent and context, and nothing asks how the thing computes; the
+`sketches/` sibling-file affordance appears twice in the whole body, once as decoration inside an
+ASCII-art box and once as an optional aside, and is never prompted, required, or counted. (2)
+MATURITY IS A DECISION COUNT: the explore emit records `decisions_captured`,
+`open_questions_count` and `open_questions_with_recommendation` — three counts — and grades the
+exploration from them, so rc02's exploration read "7 decisions captured … before formalizing" with
+zero worked mechanism behind any of them. That is the same disease as a review budget that counts
+passes: events counted where substance was meant. (3) THERE IS NO FALSIFICATION STEP: decisions are
+auto-captured with a brief acknowledgment, and nothing asks what would make this wrong or requires
+the proposed rule to be run once.
+
+This stage adds the Mechanism section to the convention, makes the emit's maturity signal read
+mechanism PRESENCE rather than decision count, and adds R-crc-7's execute-once step as an explore
+affordance rather than a discipline someone remembers. Goal G3. Touches: orbit-explore-modifications,
+orbit-conventions (the five-section format), orbit-run-summary-emit (the explore extension fields).
+Exit: (1) an exploration whose deliverable is a decision procedure cannot render Mature without a
+Mechanism section carrying an executed case; (2) the emit's recommendation names the missing
+mechanism rather than a decision count; (3) the next stage explored under it reaches its first
+review pass with zero CRITICALs in mechanism authored after the exploration closed. Evidence base
+(2026-09-14): rc02 ran SIX proposal passes and 72 findings; nine of its first ten CRITICALs, and
+both of the sixth pass's, were in mechanism that did not exist when its exploration closed.
+
+ORDERING RESOLVED 2026-09-14 (Sal): rc13 MOVES TO PHASE 1 and is the next stage. This is not an
+exception to R-crc-2 — it is R-crc-2 applied correctly. The stage was originally filed in phase 3
+by its MECHANISM (it reduces what propose injects); phase 1's criterion is "the cheapest,
+highest-lever changes to the cycle's own rules FIRST", which is precisely what this stage is. Where
+a stage's mechanism and its leverage point at different phases, leverage governs placement.
+Two consequences worth stating. Its exit criterion 3 is measured on THE NEXT STAGE EXPLORED UNDER
+IT, so every stage after it is the measurement — running it seventh would have discarded six of
+them. And rc13's own exploration necessarily runs under the weak surface it exists to fix, so
+R-crc-7 is applied BY HAND for this one change (Mechanism section written, the procedure executed
+once before specifying); its own cycle then stands as the control. If mechanism still leaks into
+its walks under manual discipline, that is evidence the affordance is necessary rather than
+merely convenient.
 
 ### Stage rc02b-severity-ladder — a severity is a consequence, and CRITICAL pays for itself
 
@@ -563,42 +607,6 @@ not only for one touching an external tool or protocol.
 Goal G3. Touches: orbit-propose-modifications, orbit-conventions,
 the validator. Exit: (1) the size check fires on a fixture over the ceiling and names the split;
 (2) a proposal touching an external tool without a cited spike fails strict validation.
-
-### Stage rc13-explore-mechanism — invention happens in explore, or it happens in review
-
-Depends-on: (none)
-Complete: [ ]
-
-Charter: the explore surface is where invention is licensed, and today it is not strong enough to
-hold it — so invention leaks downstream into walks, which is where R-crc-6 found it. Three
-structural weaknesses, each verified against the shipped surface (2026-09-14). (1) There is NO
-MECHANISM SECTION: the five-section convention is Premise / Decisions / Open questions / Considered
-& out / References, every one about intent and context, and nothing asks how the thing computes; the
-`sketches/` sibling-file affordance appears twice in the whole body, once as decoration inside an
-ASCII-art box and once as an optional aside, and is never prompted, required, or counted. (2)
-MATURITY IS A DECISION COUNT: the explore emit records `decisions_captured`,
-`open_questions_count` and `open_questions_with_recommendation` — three counts — and grades the
-exploration from them, so rc02's exploration read "7 decisions captured … before formalizing" with
-zero worked mechanism behind any of them. That is the same disease as a review budget that counts
-passes: events counted where substance was meant. (3) THERE IS NO FALSIFICATION STEP: decisions are
-auto-captured with a brief acknowledgment, and nothing asks what would make this wrong or requires
-the proposed rule to be run once.
-
-This stage adds the Mechanism section to the convention, makes the emit's maturity signal read
-mechanism PRESENCE rather than decision count, and adds R-crc-7's execute-once step as an explore
-affordance rather than a discipline someone remembers. Goal G3. Touches: orbit-explore-modifications,
-orbit-conventions (the five-section format), orbit-run-summary-emit (the explore extension fields).
-Exit: (1) an exploration whose deliverable is a decision procedure cannot render Mature without a
-Mechanism section carrying an executed case; (2) the emit's recommendation names the missing
-mechanism rather than a decision count; (3) the next stage explored under it reaches its first
-review pass with zero CRITICALs in mechanism authored after the exploration closed. Evidence base
-(2026-09-14): rc02 ran SIX proposal passes and 72 findings; nine of its first ten CRITICALs, and
-both of the sixth pass's, were in mechanism that did not exist when its exploration closed.
-
-NOTE ON ORDERING: R-crc-2 places this phase third, and rc13 sits here because it reduces what
-propose injects. It is nevertheless the highest-leverage stage in the program — it addresses the
-ROOT CAUSE that R-crc-6 identified downstream — and pulling it forward would revise a Sal-ratified
-ordering, so the recommendation is surfaced rather than taken.
 
 ### Stage rc10-apply-closure — the end-to-end run precedes the archive
 
@@ -860,3 +868,47 @@ properties (user-invoked, draft-only, merge never) hold unchanged.
   already a ratified and tested rc07 follow-up. An audit that does not run pushback against the
   program's own declarations manufactures work; the walk is where that gets caught, which is the
   first evidence for R-crc-8 outside a review.
+- **2026-09-14 — rc13 moved to phase 1, and it is the next stage.** Not an exception to R-crc-2:
+  the stage had been filed in phase 3 by its MECHANISM (it reduces what propose injects) when
+  phase 1's own criterion — "the cheapest, highest-lever changes to the cycle's own rules first"
+  — describes it exactly. The general rule that falls out, recorded here rather than promoted to a
+  ruling until it recurs: where a stage's mechanism and its leverage point at different phases,
+  LEVERAGE GOVERNS PLACEMENT. Two things made the cost of the misfiling concrete. rc13's exit
+  criterion 3 is measured on the next stage explored under it, so each stage run before it discards
+  one measurement — filing it seventh would have thrown away six. And rc02 had already paid the
+  bill the stage exists to prevent: six proposal passes, 72 findings, nine of its first ten
+  CRITICALs in mechanism that did not exist when its exploration closed. Ratified by Sal on the
+  recommendation surfaced in rc13's own charter, which had declined to take it unilaterally.
+- **2026-09-14 — A delta cannot reach non-requirement baseline prose, and orbit tells authors it
+  can.** Reported by an AI using orbit on another project: corrected contract notes placed in a
+  MODIFIED delta's preamble were silently discarded at sync. Verified here BY EXECUTION against the
+  compiled engine — a fixture whose delta changed both a preamble note and `## Purpose` came back
+  with the requirement body replaced and both prose changes dropped, exit 0, no warning.
+  `buildUpdatedSpec` parses the BASELINE for `before`/`preamble`/`after` and re-emits them
+  verbatim, so BOTH sync layers drop delta prose — including the engine path C2 built as the guard
+  for exactly this class of silent loss. Exposure here is total but latent: 0/20 baselines carry
+  requirement-section preamble, 20/20 carry a `## Purpose`, and 0/77 archived delta files have ever
+  carried either, so the behaviour is UNTESTED rather than established. The root cause is a
+  contradiction, not a gap: `buildSpecSkeleton` writes "Update Purpose after archive" (direct
+  baseline edit) while the address-reviews cascade OUT rule tells a walk to "add a delta … to
+  capture this ripple" — and the second fires at the moment of need. Direction: declare
+  non-requirement prose out of delta scope and WARN on discarded delta text, rather than making it
+  deltable — `base_fingerprints` are keyed per requirement, so deltable prose would carry zero
+  divergence detection and reintroduce precisely the data-loss class C2 closed. STANDING
+  RECOMMENDATION: a new small stage (`rc14-delta-scope`), queued after rc13; the close-out half of
+  the report (a task cannot assert post-sync baseline state, because sync runs at archive after
+  apply) is one sentence in rc10, which already owns user-validation tasks as a pre-archive
+  condition. A GitHub issue is drafted and its filing is Sal's.
+- **2026-09-14 — `orbit/lenses/` does not exist here, so three review instruments have never run.**
+  Surfaced by the project-wide audit and recorded for residency rather than treated as drift, since
+  every one of them degrades BY DESIGN: system-mode review Passes 4 (perspective reviews) and 5
+  (critical-path scan) skip when the lens files are empty or absent, and audit-drift Category 2
+  (lens staleness) does the same. The design is sound; the observation is that across roughly
+  thirty review passes in this repo nobody noticed that two of system review's seven passes and one
+  of audit-drift's six categories do nothing on every run. A graceful skip is indistinguishable
+  from a pass that ran and found nothing unless the report says which it was — and the skip notes
+  are loose-form prose, not a counted field. No stage owns lenses today. The question worth putting
+  to a stage is not "should we write lenses" but "should an instrument be allowed to report itself
+  as having run when it did not", which is rc03's genre territory (a pass that cannot run is not a
+  pass that was clean) and rc04's measurement territory (a skipped pass should be visible in the
+  cadence line). Left as a standing observation; no ruling, no stage assignment.
