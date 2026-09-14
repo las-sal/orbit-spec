@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-09-14T09:42:42Z",
+  "change": "rc02-gate-semantics",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "mode": "system",
+  "prompt_path": "orbit/changes/rc02-gate-semantics/.orbit-runs/external-prompt-system-2026-09-14T09-42-11Z.md",
+  "target": null,
+  "final_assessment": "External review prompt packaged for rc02-gate-semantics (iter 1, mode system); awaiting findings. Handoff preflight SATISFIED at packaging time: clean tree, nothing unpushed. This is ONE HALF of the first BLIND PAIR the repo has run — the cadence this change itself ships — so the prompt states plainly that the fresh half must run on the same state before EITHER pass's findings are walked, and instructs the reviewer not to walk or fix anything. The probes direct the reviewer at EXECUTING the engine on invented trails rather than reading it: every CRITICAL across this change's six proposal passes came from constructing a trail and walking it through the rule, and the code is now the artifact.",
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/rc02-gate-semantics/.orbit-runs/external-prompt-system-2026-09-14T09-42-11Z.md into the target AI, save the response as orbit/changes/rc02-gate-semantics/.orbit-runs/external-system-<TS>.md, then /orbit:address-reviews rc02-gate-semantics --from-file <path>"
+}
