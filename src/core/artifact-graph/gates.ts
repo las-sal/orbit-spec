@@ -9,6 +9,7 @@ import {
   type TrailOverlay,
   type TrailPass,
   type TrailResolution,
+  type RejectedExternal,
   type ReviewMode,
   type ReviewerClass,
 } from './trail.js';
@@ -466,9 +467,11 @@ function evaluateReviewed(
   let openPair: ConvergenceResult['openPair'];
   if ('failedSlot' in preCover && gate.cadence[preCover.failedSlot] === 'blind-pair') {
     const how = diagnosePair(ordered0, trail);
+    // ONLY when a PAIRABLE member actually stands, which is the normative qualifier. With NOTHING
+    // standing there is no pair to foreclose, so a safe outstanding walk must run first rather than
+    // being deferred behind a review of a state no future pair member shares.
     if (how === 'no-fresh') openPair = { missing: 'fresh' };
     else if (how === 'no-external') openPair = { missing: 'external' };
-    else if (how === 'none-standing') openPair = { missing: 'either' };
   }
 
   // (b) resolution over EVERY relevant same-gate pass — INCLUDING stale ones.
@@ -644,10 +647,20 @@ export function computeGateStates(
       // present whenever the gate declares a budget and absent only when it declares none, so a
       // consumer's branch on the boolean stays TOTAL. `review-system` is blocked for the whole
       // life of every change until apply passes, so this is the common case, not an edge.
-      const blockedBudget =
-        gate.kind === 'reviewed' && gate.budget !== undefined && gateMode(gate) !== null
-          ? { budget: gate.budget, independentSpend: 0, independentSpendFresh: 0, budgetExhausted: false }
-          : {};
+      let blockedBudget: Record<string, unknown> = {};
+      if (gate.kind === 'reviewed') {
+        const sp = computeSpend(gate, trail);
+        if (sp.reportable) {
+          blockedBudget = {
+            budget: gate.budget,
+            independentSpend: sp.independentSpend,
+            independentSpendFresh: sp.independentSpendFresh,
+            // The pass condition is not runnable while `requires` is unmet, so the gate is never
+            // "exhausted" here — but the spend it already cost is reported truthfully.
+            budgetExhausted: false,
+          };
+        }
+      }
       status = {
         id: gate.id,
         kind: gate.kind,
@@ -724,6 +737,31 @@ export function computeGateStates(
   return { gates: ordered, position: buildPositionReadout(schema, ordered, completedArtifacts) };
 }
 
+/**
+ * The gate's two spend figures, computed from the trail alone (rc02 walk 9). Factored out of
+ * `computeReviewedStatus` because a BLOCKED reviewed gate must report its real totals: blocking on
+ * `requires` is not an exemption from "counts independent passes across the whole trail", and
+ * reviews genuinely do run before the tracked gate completes or under an override.
+ */
+function computeSpend(
+  gate: NormalizedGate,
+  trail: Trail
+): { reportable: boolean; independentSpend: number; independentSpendFresh: number; rejected: RejectedExternal[] } {
+  const mode = gateMode(gate);
+  const reportable = gate.budget !== undefined && mode !== null;
+  const rejected = trail.rejectedExternals.filter(r => (mode ? r.mode === mode : true));
+  const relevant = trail.passes.filter(p => (mode ? p.mode === mode : true));
+  const indepAll = relevant.filter(p => isIndependent(p.reviewerClass));
+  return {
+    reportable,
+    independentSpend: indepAll.length + rejected.length,
+    independentSpendFresh:
+      indepAll.filter(p => !isPassStale(p, trail.applyTokens)).length +
+      rejected.filter(r => !trail.applyTokens.some(t => t > r.token)).length,
+    rejected,
+  };
+}
+
 function computeReviewedStatus(gate: NormalizedGate, changeName: string, trail: Trail): GateStatus {
   const mode = gateMode(gate);
   const relevant = trail.passes.filter(p => (mode ? p.mode === mode : true));
@@ -734,15 +772,11 @@ function computeReviewedStatus(gate: NormalizedGate, changeName: string, trail: 
   // to that mode, which satisfies no slot but cost a run. The TRIGGER counts only items fresh
   // against the current state, so an apply that staleness-invalidates a pair cannot report the
   // budget spent during the re-cover the gate itself is asking for.
-  const rejected = trail.rejectedExternals.filter(r => (mode ? r.mode === mode : true));
-  const indepAll = relevant.filter(p => isIndependent(p.reviewerClass));
-  const independentSpend = indepAll.length + rejected.length;
-  const independentSpendFresh =
-    indepAll.filter(p => !isPassStale(p, trail.applyTokens)).length +
-    rejected.filter(r => !trail.applyTokens.some(t => t > r.token)).length;
+  const spend = computeSpend(gate, trail);
+  const { rejected, independentSpend, independentSpendFresh } = spend;
   // A reviewed gate whose mode cannot be derived from its id reports NO budget at all, rather than
   // one summed across every mode's passes (both halves of the pair found this).
-  const budgetReportable = gate.budget !== undefined && mode !== null;
+  const budgetReportable = spend.reportable;
   const budgetFields = budgetReportable
     ? { budget: gate.budget, independentSpend, independentSpendFresh }
     : {};
@@ -857,8 +891,18 @@ function canonicalNextForReviewed(
 }
 
 function toRepoRelPath(absFile: string, changeDir: string): string {
-  // Best-effort repo-relative rendering: keep from `orbit/` onward if present.
+  // The project root is derived STRUCTURALLY from the change dir rather than by searching the
+  // absolute path for a magic `/orbit/` segment: any ancestor directory named `orbit` made the
+  // first match the wrong one and produced a path to a file that does not exist. The change dir is
+  // always `<root>/orbit/...`, so the LAST such segment in IT locates the root.
   const norm = absFile.replace(/\\/g, '/');
+  const cd = changeDir.replace(/\\/g, '/');
+  const marker = cd.lastIndexOf('/orbit/');
+  if (marker >= 0) {
+    const root = cd.slice(0, marker);
+    const rel = path.relative(root, absFile).replace(/\\/g, '/');
+    if (rel && !rel.startsWith('..')) return rel;
+  }
   const idx = norm.indexOf('/orbit/');
   if (idx >= 0) return norm.slice(idx + 1);
   return path.basename(norm);

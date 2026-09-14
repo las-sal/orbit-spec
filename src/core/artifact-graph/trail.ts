@@ -1,5 +1,6 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import { createFenceTracker } from '../markdown-fence.js';
 
 /**
  * Trail reader (C1 engine gates). Reads a change's `.orbit-runs/` audit trail into
@@ -32,6 +33,9 @@ export interface TrailFinding {
   file: string;
   /** Authored severity; `null` when the emit carried no recognised value. NEVER re-graded. */
   severity: Severity | null;
+  /** External parse bookkeeping: the ingestion contract requires the full field triple. */
+  hasFile?: boolean;
+  hasDescription?: boolean;
 }
 
 /** A completed review pass (internal `review-<mode>-*.json` or external `external-<as>-*.md`). */
@@ -361,25 +365,16 @@ function parseExternalMarkdown(file: string, token: string, mode: ReviewMode): T
   let hasHeader = false;
   const sawSections = new Set<string>();
 
-  // FENCE-AWARE (rc02 walk 7): a document whose only severity headings sit inside a fenced
-  // EXAMPLE is not a review. Without this the prompt template itself — which quotes the output
-  // shape in a fence — parses as a clean external pass and can satisfy half a blind pair.
-  let inFence = false;
-  let fenceMarker = '';
+  // FENCE-AWARE via the SHARED CommonMark tracker (rc02 walk 9). An earlier lean copy here
+  // remembered only the fence CHARACTER, so a three-backtick line closed a four-backtick fence and
+  // the severity headings after it read as structure — admitting a document with no findings at all
+  // as a clean external pass. Two parsers implementing one contract is the defect; the tracker is
+  // imported, never restated.
+  const fence = createFenceTracker();
   let hasReviewer = false;
   for (const line of lines) {
-    const fence = line.match(/^\s*(`{3,}|~{3,})/);
-    if (fence) {
-      if (!inFence) {
-        inFence = true;
-        fenceMarker = fence[1][0];
-      } else if (fence[1][0] === fenceMarker) {
-        inFence = false;
-        fenceMarker = '';
-      }
-      continue;
-    }
-    if (inFence) continue;
+    const wasInFence = fence.inFence;
+    if (fence.handle(line) || wasInFence) continue;
     if (/^#\s+External Review\b/i.test(line)) hasHeader = true;
     if (/^\*\*Reviewer\*\*:/i.test(line)) hasReviewer = true;
     const sec = line.match(/^##\s+(CRITICAL|WARNING|SUGGESTION)\s*$/);
@@ -401,12 +396,17 @@ function parseExternalMarkdown(file: string, token: string, mode: ReviewMode): T
       counts[section]++;
       pendingTitle = title[1].trim();
       // External findings take their severity from SECTION MEMBERSHIP, which is structural.
-      findings.push({ title: pendingTitle, file: '', severity: section });
+      findings.push({ title: pendingTitle, file: '', severity: section, hasFile: false, hasDescription: false });
       continue;
     }
     const fileField = line.match(/^\*\*File\*\*:\s*(.*\S)\s*$/i);
     if (fileField && findings.length > 0) {
       findings[findings.length - 1].file = stripLineSuffix(toRepoRelative(fileField[1]));
+      findings[findings.length - 1].hasFile = true;
+    }
+    const descField = line.match(/^\*\*Description\*\*:\s*(.*\S)\s*$/i);
+    if (descField && findings.length > 0) {
+      findings[findings.length - 1].hasDescription = true;
     }
   }
 
@@ -415,6 +415,10 @@ function parseExternalMarkdown(file: string, token: string, mode: ReviewMode): T
   // canonical shape the format requirement fixes — so a truncated or example-only document is
   // recorded as a REJECTED return rather than counted as a clean pass.
   if (!hasHeader || !hasReviewer || sawSections.size < 3) return null;
+  // SHAPE PARITY with the supported ingestion path (rc02 walk 9): every counted finding must carry
+  // the full `### Title` / `**File**:` / `**Description**:` triple. A truncated entry that the
+  // `--from-file` contract refuses must not make a pass the gate then recommends resolving.
+  if (findings.some(f => !(f as any).hasFile || !(f as any).hasDescription)) return null;
 
   return {
     token,

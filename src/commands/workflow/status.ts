@@ -196,7 +196,19 @@ export function printStatusText(status: ChangeStatus): void {
     console.log('Gates:');
     for (const g of status.gates) {
       if (g.superseded) {
-        console.log(`  ${chalk.dim('·')} ${g.id}: ${chalk.dim('(past — phase already ran)')}`);
+        // Subdued, but NOT silent about cost: reported spend is defined across the whole trail, so
+        // a superseded gate still shows what it spent (rc02 walk 9).
+        const pastSpend =
+          g.budget === undefined
+            ? ''
+            : chalk.dim(
+                ` [spend ${g.independentSpendFresh ?? 0}/${g.budget}${
+                  (g.independentSpend ?? 0) !== (g.independentSpendFresh ?? 0)
+                    ? ` fresh, ${g.independentSpend} total`
+                    : ''
+                }]`
+              );
+        console.log(`  ${chalk.dim('·')} ${g.id}: ${chalk.dim('(past — phase already ran)')}${pastSpend}`);
         continue;
       }
       const detail =

@@ -1,0 +1,98 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-14T13:59:55Z",
+  "change": "rc02-gate-semantics",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc02-gate-semantics/.orbit-runs/external-system-2026-09-14T13-48-57Z.md",
+  "source_command": null,
+  "source_token": "2026-09-14T13-48-57Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-5 Codex",
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 5,
+    "suggestion": 1
+  },
+  "pushback_verification": "All seven executed against the running engine before any edit: the four-backtick fence document was admitted as a clean pass, the bare `###` entry produced a cadence-eligible pass with an empty file, the stale-pass trail showed the open-pair note suppressing a safe walk, and the hardcoded zeros and the early return were read at their lines. Every fix was then re-probed rather than asserted — both malformed documents now reject, the real trail still parses its four system passes with nothing rejected, and the full suite moved 2097 to 2103.",
+  "resolution_summary": {
+    "resolved": 7,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "The gate parser can still certify severity headings that exist only inside a CommonMark fence",
+      "file": "src/core/artifact-graph/trail.ts",
+      "marker_source": "external",
+      "classification": "decision required",
+      "outcome": "resolved",
+      "action": "Reproduced first, then fixed at the root the reviewer named. My walk-7 fence tracker remembered only the fence CHARACTER, so a three-backtick line closed a four-backtick fence. Rather than patch it, the renderer's already-correct CommonMark tracker was EXTRACTED to `src/core/markdown-fence.ts` and both parsers now import it — closing length, whitespace suffix, indent, info-string rule, one implementation. The reviewer's own diagnosis was the fix: two parsers implementing one contract was the defect, not the fence logic. Regression uses the exact four-backtick-outer, three-backtick-inner document."
+    },
+    {
+      "severity": "WARNING",
+      "title": "The gate accepts malformed findings that the supported ingestion path refuses",
+      "file": "src/core/artifact-graph/trail.ts",
+      "marker_source": "external",
+      "classification": "trivial fix",
+      "outcome": "resolved",
+      "action": "Reproduced (a bare `### Truncated warning` produced a cadence-eligible pass with an empty file) and fixed: every counted finding must now carry the full `### Title` / `**File**:` / `**Description**:` triple, so a pass the GATE counts is a pass the WALK can ingest. The rule caught its own fixtures immediately — two existing tests failed because my helper emitted findings without a description, which is the check working."
+    },
+    {
+      "severity": "WARNING",
+      "title": "Blocked reviewed gates erase spend that already exists on disk",
+      "file": "src/core/artifact-graph/gates.ts",
+      "marker_source": "external",
+      "classification": "trivial fix",
+      "outcome": "resolved",
+      "action": "Fixed by factoring budget counting out of `computeReviewedStatus` into `computeSpend`, which the blocked branch now calls. I had hardcoded zeros in walk 7; blocking on `requires` is not an exemption from counting across the whole trail, and reviews genuinely run before the tracked gate completes. `budgetExhausted` stays false while the pass condition is not runnable, which is the reviewer's own suggested state rule."
+    },
+    {
+      "severity": "WARNING",
+      "title": "Open-pair precedence suppresses a safe walk even when no pair member stands",
+      "file": "src/core/artifact-graph/gates.ts",
+      "marker_source": "external",
+      "classification": "trivial fix",
+      "outcome": "resolved",
+      "action": "Reproduced exactly and fixed. My normative rule said 'a PAIRABLE member standing' and my code set `openPair` for `none-standing` too, so a stale unresolved pass with nothing pairable was deferred behind a review of a state no future pair member shares. Precedence now attaches only to `no-fresh` / `no-external`; the `none-standing` explanation survives as a pure coverage reason. The qualifier is now stated as load-bearing IN BOTH DIRECTIONS in the requirement, with a scenario for each side."
+    },
+    {
+      "severity": "WARNING",
+      "title": "The terminal gate row drops all budget data for superseded reviewed gates",
+      "file": "src/commands/workflow/status.ts",
+      "marker_source": "external",
+      "classification": "trivial fix",
+      "outcome": "resolved",
+      "action": "Fixed: the superseded branch keeps its subdued `(past — phase already ran)` rendering and now appends the same spend suffix, fresh versus total. Reported spend is defined across the whole trail, so a superseded gate hiding its historical cost contradicted both the requirement and task 4.2."
+    },
+    {
+      "severity": "WARNING",
+      "title": "Canonical resolution paths break when an ancestor directory is named `orbit`",
+      "file": "src/core/artifact-graph/gates.ts",
+      "marker_source": "external",
+      "classification": "trivial fix",
+      "outcome": "resolved",
+      "action": "Fixed structurally rather than defensively. `toRepoRelPath` derived the repo-relative path by finding the FIRST `/orbit/` segment in the absolute path; the project root is now derived from the change dir's LAST such segment and the path computed with `path.relative`. Regression builds a checkout at `<tmp>/orbit/orbit/changes/c` and asserts the emitted `--from-file` path is `orbit/changes/c/...` rather than `orbit/orbit/changes/c/...`. Worth recording: this was found in the reviewer's checkout, not ours — a defect our directory layout could never have surfaced."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The design pseudocode still specifies an exclusive blindness interval",
+      "file": "orbit/changes/rc02-gate-semantics/design.md",
+      "marker_source": "external",
+      "classification": "trivial fix",
+      "outcome": "resolved",
+      "action": "Fixed: D4's pseudocode now reads `<=` on both sides with an INCLUSIVE marker, matching the delta and the implementation. Two algorithms in one design is the class this program keeps finding."
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "R-crc-3 (Sal, 2026-09-11): method decisions are settled by the authoring AI and recorded with rationale.",
+  "final_assessment": "7 of 7 resolved. The CRITICAL was my own walk-7 fix being incomplete, and the reviewer's diagnosis was better than the finding: the defect was TWO PARSERS IMPLEMENTING ONE CONTRACT, not the fence logic. The renderer's already-correct CommonMark tracker is now extracted to a shared module that both import, and the same sharing argument produced the finding-shape rule — a pass the gate counts must be a pass the walk can ingest. Four of the six WARNINGs were defects I introduced in walk 7 while fixing other things: hardcoded zeros for blocked gates, open-pair precedence ignoring its own 'pairable member standing' qualifier, the superseded row dropping spend, and the design pseudocode keeping an exclusive interval the delta had made inclusive. The path-derivation WARNING was found in the reviewer's checkout rather than ours, which our directory layout could never have surfaced. Suite 2097 to 2103; six new regressions, one per finding.",
+  "iteration": 10,
+  "next_recommended": "/orbit:review --as system --reviewer external rc02-gate-semantics"
+}

@@ -91,7 +91,12 @@ function external(token: string, mode: string, findings: Array<[Sev, string]> = 
   const sec = (s: Sev) => {
     const mine = findings.filter(f => f[0] === s);
     if (mine.length === 0) return `## ${s}\n\nNone.\n`;
-    return `## ${s}\n\n` + mine.map(f => `### ${f[1]}\n**File**: f/${f[1]}.ts\n`).join('\n') + '\n';
+    // The full ingestion triple: a truncated entry is now rejected by the parser (walk 9).
+    return (
+      `## ${s}\n\n` +
+      mine.map(f => `### ${f[1]}\n**File**: f/${f[1]}.ts\n**Description**: d\n`).join('\n') +
+      '\n'
+    );
   };
   fs.writeFileSync(
     path.join(runs, `external-${mode}-${token}.md`),
@@ -717,5 +722,86 @@ describe('rc02 walk 7 — what the first blind pair found', () => {
     const t0 = Date.now();
     expect(gate(yaml).state).toBe('unpassed'); // no external ever arrives
     expect(Date.now() - t0).toBeLessThan(1500);
+  });
+});
+
+// ---- walk 9: what the stop rule's extra pass found -------------------------
+
+describe('rc02 walk 9 — the pass the stop rule bought', () => {
+  it('a FOUR-backtick fence is not closed by a three-backtick line (shared CommonMark tracker)', () => {
+    fs.writeFileSync(
+      path.join(runs, `external-system-${T(1)}.md`),
+      '# External Review: x\n\n**Reviewer**: M\n\n````markdown\n```\n## CRITICAL\n\nNone.\n\n## WARNING\n\nNone.\n\n## SUGGESTION\n\nNone.\n````\n\nNothing real.\n'
+    );
+    const t = readTrail(dir);
+    expect(t.passes).toHaveLength(0);
+    expect(t.rejectedExternals).toHaveLength(1);
+  });
+
+  it('a finding missing the ingestion triple is rejected, not counted', () => {
+    fs.writeFileSync(
+      path.join(runs, `external-system-${T(1)}.md`),
+      '# External Review: x\n\n**Reviewer**: M\n\n## CRITICAL\n\nNone.\n\n## WARNING\n\n### Truncated warning\n\n## SUGGESTION\n\nNone.\n'
+    );
+    expect(readTrail(dir).rejectedExternals).toHaveLength(1);
+  });
+
+  it('a BLOCKED reviewed gate reports the spend already on the trail, not zero', () => {
+    fs.writeFileSync(path.join(dir, 'tasks.md'), '- [ ] one\n'); // apply cannot pass
+    review(T(1), 'system', 'fresh');
+    external(T(2), 'system');
+    const schema: SchemaYaml = parseSchema(PAIR_YAML);
+    const g = computeGateStates(schema, 'x', dir, new Set(['proposal', 'tasks'])).gates.find(
+      x => x.id === 'review-system'
+    )!;
+    expect(g.state).toBe('blocked');
+    expect(g.independentSpend).toBe(2);
+    expect(g.budgetExhausted).toBe(false);
+  });
+
+  it('with NOTHING pairable standing, a safe outstanding walk is not deferred behind a review', () => {
+    review(T(1), 'system', 'fresh', [['WARNING', 'w']]);
+    apply(T(2)); // the pass goes stale; no pairable member stands on the current state
+    const g = gate(PAIR_YAML);
+    expect(g.reason ?? '').not.toMatch(/blind pair is OPEN/);
+    expect(g.nextCommand).toContain('/orbit:address-reviews');
+  });
+
+  it('a pairable member standing DOES still defer the walk', () => {
+    review(T(1), 'system', 'fresh', [['WARNING', 'w']]);
+    const g = gate(PAIR_YAML);
+    expect(g.reason).toMatch(/blind pair is OPEN/);
+    expect(g.nextCommand).toBe('/orbit:review --as system --reviewer external x');
+  });
+
+  it('the canonical findings path survives an ancestor directory named `orbit`', () => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'orbit-'));
+    const nested = path.join(root, 'orbit', 'orbit');
+    const cd = path.join(nested, 'changes', 'c');
+    fs.mkdirSync(path.join(cd, '.orbit-runs'), { recursive: true });
+    fs.writeFileSync(path.join(cd, 'proposal.md'), '# p');
+    fs.writeFileSync(path.join(cd, 'tasks.md'), '- [x] one\n');
+    fs.writeFileSync(
+      path.join(cd, '.orbit-runs', `review-system-${T(1)}.json`),
+      JSON.stringify({
+        command: 'review',
+        mode: 'system',
+        reviewer_class: 'fresh',
+        findings: [{ severity: 'WARNING', title: 'w', file: 'f.ts' }],
+      })
+    );
+    // A cadence WITHOUT a blind pair, so the unresolved pass is the recommendation and the
+    // findings PATH is what gets rendered.
+    const noPair = PAIR_YAML.replace('cadence: [blind-pair, in-context]', 'cadence: [independent]');
+    const schema: SchemaYaml = parseSchema(noPair);
+    const g = computeGateStates(schema, 'c', cd, new Set(['proposal', 'tasks'])).gates.find(
+      x => x.id === 'review-system'
+    )!;
+    // The emitted path must be relative to the PROJECT root, not to the first `/orbit/` segment
+    // anywhere in the absolute path — which here would have produced `orbit/orbit/changes/...`.
+    expect(g.nextCommand).toContain('--from-file');
+    expect(g.nextCommand).toContain('orbit/changes/c/.orbit-runs/review-system-');
+    expect(g.nextCommand).not.toContain('orbit/orbit/changes');
+    fs.rmSync(root, { recursive: true, force: true });
   });
 });

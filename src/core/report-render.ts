@@ -7,6 +7,7 @@ import {
   type ReviewMode,
 } from './artifact-graph/index.js';
 import { modelHintFor, withModelHint } from './model-hints.js';
+import { createFenceTracker } from './markdown-fence.js';
 
 /**
  * Review-report renderer (D-arc Stage D4, per orbit-report-rendering). The
@@ -370,42 +371,6 @@ function reject(detail: string, file: string): never {
 /** Strip a trailing `:line` (and `:line:col`) suffix for matching only. */
 function stripLineSuffix(file: string): string {
   return file.replace(/:\d+(:\d+)?$/, '').trim();
-}
-
-/**
- * Real CommonMark fence tracking (S1) — the ONE helper shared by the strict
- * external parser and the lenient trail counter, so the two can never disagree
- * on what is fenced. A fence OPENS on a run of \`\`\` or ~~~ (length ≥ 3,
- * indented up to three spaces; a backtick fence's info string may not itself
- * contain a backtick) and CLOSES only on a run of the SAME character with AT
- * LEAST the opening length and nothing but whitespace after (also up to three
- * spaces of indent). A three-backtick line inside a four-backtick fence is
- * body content — the fence stays open.
- */
-function createFenceTracker(): { readonly inFence: boolean; handle(line: string): boolean } {
-  let open: { char: string; len: number } | null = null;
-  return {
-    get inFence(): boolean {
-      return open !== null;
-    },
-    /** Feeds one line; returns true iff the line is a fence delimiter (opening or closing). */
-    handle(line: string): boolean {
-      const m = line.match(/^ {0,3}(`{3,}|~{3,})(.*)$/);
-      if (!m) return false;
-      const char = m[1][0];
-      const len = m[1].length;
-      if (open === null) {
-        if (char === '`' && m[2].includes('`')) return false; // not a valid backtick opener
-        open = { char, len };
-        return true;
-      }
-      if (char === open.char && len >= open.len && m[2].trim() === '') {
-        open = null;
-        return true;
-      }
-      return false; // inside the fence: a non-closing delimiter-shaped line is body
-    },
-  };
 }
 
 /** Syntactic YYYY-MM-DD that round-trips as a real UTC calendar date (W3). */

@@ -198,7 +198,7 @@ ordering is exactly the property a parallel pair lacks. A fifth cadence entry jo
 blind-pair := two passes P1, P2 such that
   class(P1) = fresh and class(P2) = external   (distinct independent classes, order irrelevant)
   no TrailResolution R with sourcePath referencing P1 or P2
-      and min(token(P1),token(P2)) < token(R) < max(token(P1),token(P2))
+      and min(token(P1),token(P2)) <= token(R) <= max(token(P1),token(P2))   // INCLUSIVE
 slot satisfied at max(token(P1), token(P2))     (what a following slot must beat)
 ```
 
@@ -417,9 +417,10 @@ recommendations (see `explore.md` D-rc02-8 through D-rc02-10):
   pass finds a fourth defect in this clause, the signal is to move the interpretation to the emit
   boundary where the writer can be held to a contract, not to patch again.
 - **Size, RE-MEASURED after the system cadence (2026-09-14): THREE capabilities, TEN requirement
-  blocks, 69 scenarios, ~58.5 KB of delta (58,485 bytes as measured at the close of the system
-  cadence; the figure ages with every edit, this bullet's own included), 18 tasks. ONE R-crc-1 axis
-  is exceeded — delta bytes, ~46% over the ~40 KB guide — and one sits AT the ceiling: capabilities, where R-crc-1 reads "at most
+  blocks, 72 scenarios, ~60.5 KB of delta (60,521 bytes as measured after walk 9; the
+  figure ages with every edit, this bullet's own included — it has now aged three times inside the
+  sittings that wrote it), 18 tasks. ONE R-crc-1 axis is exceeded — delta bytes, ~51% over the
+  ~40 KB guide — and one sits AT the ceiling: capabilities, where R-crc-1 reads "at most
   3", so three is compliant rather than breached.** Requirements and tasks remain inside. The tenth
   block arrived in the system walk, closing a baseline break this change had introduced by routing
   the verify emit through the gate graph. This bullet has now gone stale TWICE inside the sittings

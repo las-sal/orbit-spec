@@ -18,8 +18,14 @@ any sentence elsewhere saying "spend" without qualification means the trigger co
 carry it.
 
 **Spend counts REJECTED returns too.** An external findings file that fails the trail reader's
-shape validation — which is FENCE-AWARE and requires the format's canonical metadata, so a document
-whose only severity headings sit inside a fenced example is not a review — is absent from the pass list, so it satisfies no cadence slot — correctly, since
+shape validation — which uses the ONE SHARED CommonMark fence tracker (a fence closes only on a run
+of the same character at least as long as the opener with whitespace after, so a three-backtick line
+inside a four-backtick fence is body), requires the format's canonical metadata, and requires every
+counted finding to carry the full `### Title` / `**File**:` / `**Description**:` triple the
+`--from-file` ingestion contract requires. Two parsers implementing one contract is the defect this
+sharing prevents: a lean restatement drifted to a weaker language and admitted a document with no
+findings at all as a clean pass. A pass the gate counts must be a pass the walk can INGEST — is
+absent from the pass list, so it satisfies no cadence slot — correctly, since
 its findings cannot be read. It still COST a model run, and "spend is spend" governs: the trail
 reader SHALL surface rejected external artifacts separately from cadence-eligible passes, the
 count SHALL include them in BOTH figures — `independentSpend` counts every rejected artifact
@@ -42,7 +48,11 @@ precisely `unpassed`: the budget changes nothing about whether the review conver
 convergence are ORTHOGONAL axes, so the engine SHALL keep the gate-state set at its five values
 (`blocked | ready | passed | stale | unpassed`) and surface exhaustion as (a) a boolean
 `budgetExhausted` on the gate status, set when the count is at or above the declared budget AND
-the gate has not converged (`unpassed` or `stale`); (b) the spend clause in the gate's reason; and
+the gate has not converged (`unpassed` or `stale`). A BLOCKED reviewed gate reports its real
+figures too: blocking on `requires` is not an exemption from "counts across the whole trail", since
+reviews genuinely run before the tracked gate completes or under an override. Its `budgetExhausted`
+stays `false` while the pass condition is not runnable, but the spend it already cost is reported
+truthfully rather than as zero; (b) the spend clause in the gate's reason; and
 (c) a distinct position-readout token (`unpassed BUDGET-SPENT` / `STALE BUDGET-SPENT`). Every closed-set consumer of gate state — the WAITING derivation, the
 `gate_overridden.state` record, the inflection prompt's triggering set — therefore keeps working
 unchanged, while a human reading the readout sees the cost. A gate that meets its pass condition
@@ -86,6 +96,25 @@ reach it has recorded a fact worth reading.
 - **WHEN** an entry carries `outcome: null` alongside `status: "resolved"`
 - **THEN** the record is UNREADABLE and falls back to the bare counts — the legacy key is consulted
   only when the `outcome` property is ABSENT
+
+#### Scenario: Nothing pairable standing lets the walk run first
+
+- **WHEN** a pass carrying a substantive finding has gone stale and no pairable independent pass
+  stands on the current state
+- **THEN** the canonical next command is the walk — there is no pair to foreclose, so deferring the
+  resolution would buy nothing
+
+#### Scenario: A blocked reviewed gate reports the spend already on its trail
+
+- **WHEN** a reviewed gate is blocked by an unmet `requires` while two independent passes stand
+- **THEN** its row carries the real `independentSpend` with `budgetExhausted: false` — blocking is
+  not an exemption from counting
+
+#### Scenario: A finding missing the ingestion triple is not a pass
+
+- **WHEN** an external findings file carries a `### Title` with no `**File**:` or `**Description**:`
+- **THEN** shape validation rejects the file — a pass the gate counts must be a pass the walk can
+  ingest
 
 #### Scenario: A fenced example is not a review
 
@@ -141,8 +170,10 @@ is reached in the ordinary reading, so the moment one pair member lands carrying
 finding the gate would otherwise recommend walking it — and that walk writes a record between the
 two members, foreclosing the pair permanently and costing two further independent passes. Coverage
 SHALL therefore be computed even when resolution fails, and when the cadence declares an UNCOVERED
-`blind-pair` slot with a PAIRABLE member standing, the canonical next command SHALL name the missing
-member's class rather than the walk, and the reason SHALL carry BOTH facts — the pass awaiting
+`blind-pair` slot with a PAIRABLE member STANDING, the canonical next command SHALL name the missing
+member's class rather than the walk. The qualifier is load-bearing in both directions: with NOTHING
+pairable standing there is no pair to foreclose, so a safe outstanding walk SHALL run first rather
+than being deferred behind a review of a state no future pair member shares, and the reason SHALL carry BOTH facts — the pass awaiting
 resolution AND the open pair, with the walk explicitly deferred until the partner lands. An engine
 that recommends the action which forecloses its own cadence is worse than one that recommends
 nothing.
