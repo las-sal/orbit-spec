@@ -198,6 +198,22 @@ One goal per phase, each falsifiable, each stage naming its goal (settled under 
   converged; clause (c) took five and did not. Control against the objection that reviewers produce
   under pressure: the sixth pass was told explicitly that zero findings was a legitimate outcome and
   returned thirteen anyway, with a commentary naming what it had tested and found sound.
+- **R-crc-9** (Sal, 2026-09-15) — WHEN THE CORRECT MECHANISM EXCEEDS THE CEILING, SPLIT IT OR
+  DECLARE THE STAGE BLOCKED; NEVER SUBSTITUTE A CHEAPER MECHANISM FOR THE ONE THE PROBLEM NEEDS.
+  R-crc-1's ceiling is not in question and its calibration held — a stage over three capabilities
+  does cost 12-17 passes. What was missing is what a stage DOES when the mechanism the problem
+  actually needs is over that ceiling. Empirical origin: rc03a-blind-prompt. Attestation — recording
+  on the trail what a prompt carried, so the gate could VERIFY blindness instead of trusting it —
+  was identified in its FIRST exploration and deferred THREE times, every time on ceiling grounds,
+  because it needs `orbit-run-summary-emit` and `orbit-engine-gates` on top of the stage's own
+  capabilities. Each deferral bought a cheaper PREVENTION mechanism, and each cheaper mechanism was
+  found wrong by the next independent pass: the premise was false, then the signal was unusable,
+  then the state space was halved. Three passes, 15 CRITICALs, zero repeats, stage WITHDRAWN, and
+  nothing shipped. "The correct fix exceeds the ceiling, so ship a cheaper one" is worse than either
+  building it or not starting — it spends the review budget discovering that the cheap mechanism is
+  the wrong mechanism. The two sanctioned moves are to SPLIT the correct mechanism across stages
+  whose prerequisites are declared, or to DECLARE THE STAGE BLOCKED on its prerequisite and say so
+  in the charter. Neither is a substitution.
 
 ## Open questions (program-level)
 
@@ -337,16 +353,60 @@ passes: events counted where substance was meant. (3) THERE IS NO FALSIFICATION 
 auto-captured with a brief acknowledgment, and nothing asks what would make this wrong or requires
 the proposed rule to be run once.
 
-This stage adds the Mechanism section to the convention, makes the emit's maturity signal read
-mechanism PRESENCE rather than decision count, and adds R-crc-7's execute-once step as an explore
-affordance rather than a discipline someone remembers. Goal G3. Touches: orbit-explore-modifications,
-orbit-conventions (the five-section format), orbit-run-summary-emit (the explore extension fields).
-Exit: (1) an exploration whose deliverable is a decision procedure cannot render Mature without a
-Mechanism section carrying an executed case; (2) the emit's recommendation names the missing
-mechanism rather than a decision count; (3) the next stage explored under it reaches its first
-review pass with zero CRITICALs in mechanism authored after the exploration closed. Evidence base
-(2026-09-14): rc02 ran SIX proposal passes and 72 findings; nine of its first ten CRITICALs, and
-both of the sixth pass's, were in mechanism that did not exist when its exploration closed.
+**RE-AIMED 2026-09-15 (Sal), after rc03a falsified this stage's original cure.** The charter
+proposed a Mechanism section carrying an EXECUTED CASE. rc03a carried exactly that from its first
+exploration onward, would have rendered Mature under the original exit criterion 1 at every point,
+and failed three times across three independent passes. An executed case shows ONE PATH through a
+rule, and none of rc03a's three failures were on a path anyone walked.
+
+THE UNIT IS A CLOSED ENUMERATION per rule, not an executed case. That also dissolves the trigger
+question this stage could not answer for two sessions: the original scoping — "an exploration whose
+deliverable is a decision procedure" — required the AI to classify itself, which is dodgeable in a
+sentence. Under a closed-enumeration unit there is nothing to self-assess: a Decision that states a
+CONDITIONAL has a domain, and either every member is stated or it is not.
+
+THE STAGE ENFORCES SIX MOVES, DERIVED from the structure of a mechanism rather than listed. A
+mechanism is an assembly of parts computing outputs from inputs under constraints, and each part is
+a way to be wrong:
+
+| part | the way it goes wrong | move | status |
+|---|---|---|---|
+| the facts it cites | the fact is not true | READ | EXISTS (read-before-reference) — violated |
+| its input domain | a member it ranges over is unhandled | ENUMERATE | EXISTS (R-crc-7's table) — unenforced |
+| its own parts | two of them assume incompatible things | COHERE | unnamed until 2026-09-15 |
+| its computation | wrong output on a member it handles | EXECUTE | this stage's original proposal |
+| its purpose | correct, and still misses a class of defect | FALSIFY | nobody's |
+| its context | it violates a standing ruling | CONFORM | unenforced |
+
+So this stage's contribution is less "add an affordance" than MAKE EXISTING RULINGS ENFORCEABLE AT
+EXPLORE TIME and add the ones nobody owns. R-crc-7 already says "empty cases are explicit by
+construction; a blanket default does not substitute for stating them" — rc03a shipped prose plus a
+blanket default, its second pass flagged the R-crc-7 violation as a WARNING and the CRITICAL it
+produced as the same defect at two levels, and nothing at explore time had checked.
+
+THE DERIVATION EARNED ITS KEEP WITHIN THE HOUR, which is the stage's own thesis operating on the
+stage. A five-move set was ratified, no sixth could be named on request, and then classifying
+rc03a's fifteen CRITICALs found FOUR that landed nowhere: COHERE — the delta asserting both "empty
+pair → external" and "no pairable pass → fresh"; design D3 forbidding the only signal its own two
+rules required, twice. Not ENUMERATE (the domain was covered twice over, with conflicting
+dispositions) and not CONFORM (nothing external was violated). The most-recurring class on the
+record, invisible to the set ratified minutes earlier. Confidence about closure was wrong twice in
+one sitting; the sixth move was found by CLASSIFYING A RECORD, not by thinking harder.
+
+Goal G3. Touches: orbit-explore-modifications, orbit-conventions (the five-section format),
+orbit-run-summary-emit (the explore extension fields) — THREE, at R-crc-1's ceiling deliberately.
+None is droppable: without the emit change the convention is ADVISORY, which is the exact failure
+R-crc-7 just demonstrated. If the proposal review shows the stage is OVER the ceiling, the standing
+R-crc-1 corollary says SPLIT THE MECHANISM — not shrink it.
+
+Exit: (1) an exploration cannot render Mature while any rule in its Decisions lacks a closed
+enumeration of its domain; (2) the emit's recommendation names what is missing per rule rather than
+a decision count; (3) the next stage explored under it reaches its first review pass with zero
+CRITICALs of the READ, ENUMERATE or COHERE classes — the three that account for eleven of rc03a's
+fifteen. Evidence base: rc02 ran SIX proposal passes and 72 findings, nine of its first ten
+CRITICALs in mechanism that did not exist when its exploration closed (2026-09-14); rc03a ran THREE
+passes and 15 CRITICALs with zero repeats, was WITHDRAWN, and its record is what the six-move set
+was derived against (2026-09-15).
 
 ADDED 2026-09-15 (surfaced twice by rc03a's own cycle): this stage also owns the RE-ENTRY case.
 R-crc-6 routes REDESIGN back to explore, and rc03a took that route twice — but its staging
@@ -1104,3 +1164,31 @@ properties (user-invoked, draft-only, merge never) hold unchanged.
   were paraphrases, so clause (b)'s coverage check correctly reported the pass unresolved. A record
   can look complete and be incomplete by name; the discipline is that a walk echoes each finding's
   title byte-for-byte.
+- **2026-09-15 — rc13 RE-AIMED after it falsified its own cure, and R-crc-9 ratified.** The stage
+  had proposed a Mechanism section carrying an EXECUTED CASE. rc03a carried exactly that from its
+  first exploration onward, would have rendered Mature under the original exit criterion 1 at every
+  point, and failed three times. An executed case shows ONE PATH through a rule, and none of rc03a's
+  three failures were on a path anyone walked. The unit moved up a level to a CLOSED ENUMERATION per
+  rule — which also dissolved the trigger question the stage could not answer across two sessions,
+  since a Decision stating a conditional has a domain and nothing needs to be self-classified.
+  **The move set is SIX, DERIVED from the structure of a mechanism rather than listed** — facts
+  (READ), domain (ENUMERATE), the parts' mutual consistency (COHERE), computation (EXECUTE), purpose
+  (FALSIFY), context (CONFORM) — and two of those already existed as rulings that nothing enforced
+  at explore time. The derivation earned its keep inside the hour, in the way that is the stage's
+  own argument: a FIVE-move set was ratified, no sixth could be named on request, and then
+  classifying rc03a's fifteen CRITICALs found FOUR that landed nowhere. COHERE — a mechanism's own
+  parts assuming incompatible things — was the most-recurring class on the record and had no name.
+  Confidence about closure was wrong twice in one sitting, and the sixth move was found by
+  CLASSIFYING A RECORD rather than by thinking harder. Exit criterion 3 now names the three classes
+  that account for eleven of rc03a's fifteen.
+  **R-crc-9 RATIFIED** (Sal) into the rulings index — when the correct mechanism exceeds R-crc-1's
+  ceiling, SPLIT it or DECLARE THE STAGE BLOCKED; never substitute a cheaper one. It binds
+  immediately: rc13 sits AT the ceiling at three capabilities, none droppable, and the charter now
+  says that if review shows it OVER, the answer is to split rather than shrink.
+  **rc03a left UNRATIFIED, deliberately** (Sal). Its exit criteria were never met and never will be,
+  so ticking `Complete:` would assert something false. The consequence is a readout that renders
+  awaiting-ratification indefinitely for a stage that is finished — the first withdrawn stage in the
+  program, and the grammar has no third state for it. Left as a known gap rather than papered over
+  with a mark that means the wrong thing.
+  **Leverage-governs-placement stays in the log** (Sal) — one firing, on rc13, and no pending
+  decision depends on it. Promote if a second stage is misfiled the same way.
