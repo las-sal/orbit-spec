@@ -217,6 +217,35 @@ One goal per phase, each falsifiable, each stage naming its goal (settled under 
 
 ## Open questions (program-level)
 
+- **Q-crc-11 — the stage grammar has no WITHDRAWN state, and two stages now need one.**
+  Observed 2026-09-15, twice. rc03a was withdrawn after three passes; rc13a's first attempt archived
+  without shipping. Both render `quiescent — completion awaiting your ratification` and will render
+  that FOREVER, because their exit criteria were not met and ticking `Complete: [x]` would assert
+  something false. The grammar has two states where the program now has three: complete, awaiting,
+  and ENDED-WITHOUT-MEETING-ITS-CRITERIA.
+  Standing recommendation: a third mark — `Complete: [~] <date> (<who>) — withdrawn` or an explicit
+  `Withdrawn:` slot — so the readout resolves and a reader can tell a stage that was abandoned from
+  one that is merely unratified. It is an `orbit-architecture-engine` change (a D-arc capability, not
+  an rc one), so it needs either a new rc stage or a declared exception; recorded rather than
+  assigned, because assigning it is a scope call. NOTE the honest counter: a withdrawn stage that
+  keeps asking for ratification is ANNOYING but not WRONG, and the two instances cost nothing but a
+  confusing readout — this may be worth leaving until a third occurrence.
+
+- **Q-crc-12 — the archive seam is silent when the gate that is exhausted is not the gate archive
+  watches.** Observed 2026-09-15, twice in one day. Both rc03a and rc13a archived with
+  `review-proposal` reading `budget spent: 3 of 3` and NO inflection prompt, because Step 3.4 is
+  scoped to `review-system` — which read `blocked (blocked by incomplete requires: apply)`, and
+  `blocked` is neither `unpassed` nor `stale`. `review-proposal`'s `before` is apply rather than
+  archive, so the archive seam never asks about it. No `gate_overridden` was recorded either time,
+  because no override was offered. This is exactly the moment rc02 built the budget signal for, and
+  it fired for neither change.
+  Standing recommendation: the archive prompt should fire on ANY gate that is `unpassed` or
+  `budgetExhausted` at the seam, not only the one whose `before` is archive — a change that never
+  applied still archives past its proposal gate, and that is the case both instances hit. Owner:
+  rc10-apply-closure (the archive-side close-out) or rc04-cost-visibility (which owns the
+  budget-exhaustion record). **ASSIGNED 2026-09-15 (Sal) to rc10-apply-closure**, which already owns
+  the archive-side close-out condition, so the seam's prompt logic is its territory.
+
 Raised by the 2026-09-11 cohesion review (the plan has two parents: the orbit-constrained
 seven-step re-cut and the best-practices suggestions; the seams fall where they meet).
 ALL TEN RESOLVED the same day under R-crc-3 (Sal delegated method); each entry keeps its
@@ -400,6 +429,33 @@ out-of-domain entry carrying the disposition annotation ON THE ENTRY rather than
 it; (3) the shipped body carries ONE conforming exemplar entry, so the convention shows its shape
 rather than describing it.
 
+**FIRST ATTEMPT ARCHIVED 2026-09-15 WITHOUT SHIPPING.** Three independent passes — two fresh, one
+external (GPT-5 Codex) — 55 findings, 17 CRITICALs, ZERO repeats. The stage is NOT done; the
+archived change is the record of an attempt, and a later change may cite this stage again. The
+cadence was working throughout: the change kept being wrong in NEW places, which is the signature
+this program exists to produce rather than the churn G0 describes.
+
+**THE PREREQUISITE THE NEXT ATTEMPT MUST SETTLE FIRST.** The external pass found a contradiction
+load-bearing for this stage AND for rc13b: the requirement says every live rule carries a CLOSED
+enumeration while defining BOUNDED as "the domain is open". An author names a partial list plus a
+residual and satisfies the obligation that exists to stop an open domain reaching propose; rc13b
+gets no honest basis for treating `Closure: BOUNDED` as closed. The move set was declared BOUNDED
+precisely to be honest about openness, and the honesty was real — the WORD was load-bearing in the
+opposite direction, and the contradiction survived three internal passes. Either BOUNDED stops being
+a closure form (an open domain is open, and the maturity signal says so), or "closed" splits into
+two tiers with different consequences. That question is one sitting's work and it is the hinge for
+both stages; it is settled BEFORE the next citing change, not inside it.
+
+**SIX REPAIRS CARRIED, all from the external pass, all verified**: the per-claim rule test has only
+per-ENTRY identifiers and dispositions, so two rule claims in one entry collide on one key; the
+Mechanism grammar names slots without a container, an entry boundary, or a move-line syntax, so no
+parser can be written from it; the situation-set test classifies quantified FACTS as rules, with
+D-rc13-2 as the worked counter-example; re-entry is undefined when an active change AND a staging
+directory both exist, and the carried Mode B resume scenario sends it back to staging; the change
+never tasked the exit-criterion-2 conformance of its own artifact, and its live decision still said
+EIGHT moves with no successor recording INVOKE; and the residue sweep's acceptance grep can never
+return zero, because it exempts a file the grep matches.
+
 KNOWN AND ACCEPTED: this stage is ADVISORY until rc13b lands. An author can ignore the convention and
 no readout notices. That is the dependency, stated rather than discovered — and it is the difference
 between this split and rc03a, which substituted a cheaper MECHANISM for the correct one three times.
@@ -410,6 +466,12 @@ Here the correct mechanism is kept whole and sequenced.
 Depends-on: rc13a-explore-mechanism-convention
 
 Complete: [ ]
+
+**BLOCKED 2026-09-15 on rc13a, which has not shipped.** Its first attempt archived without syncing;
+until rc13a's format exists there is nothing for this stage to parse. Its own inherited residual —
+ENGINE-COMPUTED relocates self-classification rather than removing it — is unaffected and still
+stands. Recorded here so the dependency is a stated block rather than an inferred one, per R-crc-9's
+declare-the-stage-blocked branch.
 
 Charter: the maturity grid's TOP RUNG loses its promotion. `next_recommended` is a required spine
 field whose value is a command, so the engine must point somewhere; what it must stop doing is
@@ -779,6 +841,16 @@ no such record). The scenario map is rc06's; the apply emit points at it. Goal G
 orbit-archive-modifications, orbit-engine-gates (the tracked gate's user-validation subset).
 Exit: (1) an archive with an unchecked user-validation task records a reasoned deferral or
 halts; (2) the next stage's dogfood runs before its archive.
+
+ADDED 2026-09-15 (Sal; Q-crc-12): this stage also owns THE SEAM'S GATE PROMPT. Twice in one day —
+rc03a and rc13a — a change archived with `review-proposal` reading `budget spent: 3 of 3` and NO
+inflection prompt, because the archive's Step 3.4 is scoped to `review-system`, which read `blocked
+(blocked by incomplete requires: apply)` — and `blocked` is neither `unpassed` nor `stale`. A change
+that never applied still archives past its proposal gate, and both instances were exactly that. No
+`gate_overridden` was recorded either time, because no override was offered. The prompt SHALL fire
+on any gate that is `unpassed` or carries `budgetExhausted` at the seam, not only the one whose
+`before` is archive. Exit gains: (3) an archive past an exhausted or unpassed gate of ANY phase
+fires the inflection prompt and records the override.
 
 ### Phase 4 — engine changes last
 
@@ -1227,3 +1299,31 @@ properties (user-invoked, draft-only, merge never) hold unchanged.
   remove self-classification, it RELOCATES it from the payload to the file. The engine sees the rules
   an author declared; a rule never entered yields an empty gap list and the top rung asserts. The
   loophole is reachable by OMISSION, and the requirement must say so.
+- **2026-09-15 — rc13a's first attempt ARCHIVED without shipping, and the stage stays open.** Three
+  independent passes — two fresh, one external (GPT-5 Codex) — 55 findings, 17 CRITICALs, ZERO
+  repeats across the whole axis. The archived change is the record of an ATTEMPT; the stage is not
+  done and a later change may cite it again. The cadence was working throughout: the change kept
+  being wrong in NEW places, which is the signature this program produces rather than the churn G0
+  describes.
+  **The prerequisite the next attempt settles first.** The requirement said every live rule carries a
+  CLOSED enumeration while defining BOUNDED as "the domain is open" — so an author could name a
+  partial list plus a residual and satisfy the obligation that exists to stop an open domain reaching
+  propose, and rc13b would have no honest basis for treating `Closure: BOUNDED` as closed. Worth
+  recording HOW that happened, because it was not carelessness: the move set was declared BOUNDED
+  deliberately, to be honest about its own openness, and the honesty was real. The WORD was
+  load-bearing in the opposite direction. Three internal passes did not catch it and an external one
+  did, which is the clearest argument for the external slot this program has produced.
+  **Not synced, deliberately**: writing a format whose closure vocabulary contradicts itself into
+  baseline would hand rc13b a requirement it cannot read. rc13b is now explicitly BLOCKED on rc13a
+  under R-crc-9's declare-the-stage-blocked branch.
+  **Two SECOND OCCURRENCES recorded as program questions rather than fixed in passing.** Q-crc-11:
+  the stage grammar has no WITHDRAWN state, and rc03a and rc13a will both render "awaiting
+  ratification" forever because their criteria were not met and the mark would assert something
+  false. LEFT AS A QUESTION (Sal) — annoying is not wrong, and two instances cost only a confusing
+  readout; revisit at a third. Q-crc-12: the archive seam fired no prompt for an exhausted budget,
+  twice in one day, because Step 3.4 watches `review-system` while the exhausted gate was
+  `review-proposal`, whose `before` is apply. ASSIGNED to rc10 (Sal) and written into its charter as
+  a third exit criterion. One occurrence is a gap; two in a day is a pattern, and the distinction is
+  why one was assigned and the other was not.
+  **rc13a left UNRATIFIED** (Sal), like rc03a: its exit criteria were never met, so the mark would
+  assert something false.
