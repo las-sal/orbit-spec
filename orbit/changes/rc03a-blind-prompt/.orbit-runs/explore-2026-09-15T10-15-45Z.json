@@ -1,0 +1,12 @@
+{
+  "command": "explore",
+  "timestamp": "2026-09-15T10:15:45Z",
+  "change": "rc03a-blind-prompt",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Second redesign, after the second fresh pass returned 5 CRITICAL with zero repeats. The deny-list shape is ABANDONED. Case 3 did the work two proposal passes had claimed without doing: enumerate every channel by which a pair member can learn its partner's findings — there are ELEVEN, seven on the external half and four on the fresh half, and the eleventh is the launching brief, which has no artifact to edit. Every one is the same instruction wearing different clothes: read the change's own history. Case 4 then ran each possible ORDER against that list and found ordering does not suppress the channels, it EMPTIES them: external-first writes the prompt when nothing stands on the trail, so six sites have nothing to read, leaving exactly one residual (the fresh half's system-mode diff, closable with a path exclusion). Ratified: D-rc03a-9, the fix is ordering plus one exclusion — orbit-engine-gates and orbit-review, two capabilities, with orbit-review-external dropping out of the change entirely. D-rc03a-10 DESCOPES the delivered property from 'blind to all prior history' (mine, and the source of the eleven-channel problem) back to R-crc-4's 'blind to each other', which is a timing fact rather than a censorship problem with no boundary. D-rc03a-11 records that the genre SIGNAL problem dissolves: next_hint_keys.slot was unusable for two independent reasons, and under ordering nothing needs to infer a genre. I rejected external-first TWICE before enumerating, once as a discipline and once as obsoleted, and neither argument survives Case 3. Six earlier decisions are now marked superseded or reversed in place, which the second pass's residue findings showed was not happening on its own.",
+  "decisions_captured": 11,
+  "open_questions_count": 1,
+  "open_questions_with_recommendation": "1 of 1",
+  "next_recommended": "/orbit:propose rc03a-blind-prompt — substantial thinking captured; ready to formalize the design (or /orbit:explore rc03a-blind-prompt to keep refining)"
+}

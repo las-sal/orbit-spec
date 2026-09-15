@@ -28,14 +28,26 @@ before anything is specified.
 ### The rule
 
 The external-handoff branch reads `next_hint_keys.slot` from
-`orbit status --change <name> --json` — the SAME engine call it already makes for mode and gate
-state — and renders the Cycle context section conditionally:
+`orbit status --change <name> --json` — a call the branch DOES NOT MAKE today (corrected
+2026-09-15; `review.ts:288-496` contains no `orbit status` invocation) — and renders the Cycle
+context section conditionally:
 
 ```
-slot == 'blind-pair'   →  cycle context is SUPPRESSED; the section reads
-                          "Cycle context: withheld — this pass fills a blind-pair slot"
-slot != 'blind-pair'   →  today's content, unchanged
-slot unavailable       →  SUPPRESSED (fail closed — see D-rc03a-3)
+SUPERSEDED 2026-09-15 by D-rc03a-9 — kept as the record of a mechanism that did not survive.
+The rule below keyed on `next_hint_keys.slot` and suppressed per site:
+
+  slot == 'blind-pair'   →  cycle context is SUPPRESSED
+  slot != 'blind-pair'   →  today's content, unchanged
+  slot unavailable       →  SUPPRESSED (fail closed — see D-rc03a-3)
+
+It failed three ways, each found by a pass rather than by this file: the slot is scoped to the
+first unpassed gate rather than the reviewed mode; the empty-pair branch it relied on sits
+downstream of the resolution clause, so an absent slot does not mean no pair is forming; and
+suppression-per-site cannot cover eleven channels, one of which has no artifact (Case 3).
+
+THE MECHANISM OF RECORD IS NOW: canonical-next renders the EXTERNAL half first for an empty
+blind-pair slot, and the fresh half's system-mode diff excludes the change's `.orbit-runs/`.
+Blindness by timing, not by instruction — see Case 4.
 ```
 
 No engine change is required for detection. `canonicalNextForReviewed` already returns
@@ -105,10 +117,114 @@ because rc02 survived on exactly this kind of luck. The swap is worth taking as 
 hardening; it is not the deliverable.
 
 
+### Case 3 — enumerate EVERY channel, from source (2026-09-15)
+
+**Input**: `src/core/templates/workflows/review.ts`, grepped for every instruction that points a
+reviewer at prior findings or at the change's trail.
+
+**Procedure**: read each hit; classify by which half receives it.
+
+**Output — eleven channels, not one:**
+
+| # | half | channel | site |
+|---|---|---|---|
+| 1 | external | cycle context — prior internal findings | `review.ts:344` |
+| 2 | external | cycle context — prior external findings | `:345` |
+| 3 | external | cycle context — resolved-since | `:346` |
+| 4 | external | iteration count reads `external-*.md` and its `**Reviewer**:` field | `:334`, `:352` |
+| 5 | external | project-context reading-list pointer at `.orbit-runs/` | `:573` |
+| 6 | external | write-path: "pick a fresh timestamp so this file doesn't overwrite prior reviews" | `:594-599` |
+| 7 | external | system mode: `git diff <change-start>..HEAD` | `:528` |
+| 8 | fresh | Step 5 prior-run read | `:783` |
+| 9 | fresh | disciplines epitome's pushback comparison | `:727` |
+| 10 | fresh | system mode: `git diff <change-start>..HEAD` | `:778` |
+| 11 | fresh | **the launching brief — no artifact at all** | — |
+
+**Finding — every channel is the same instruction wearing different clothes: READ THE CHANGE'S OWN
+HISTORY.** That settles the shape question. Deny-listing eleven prose sites is not a design, it is
+a chore that rots on the next body edit — and #11 cannot be denied at all, because there is no file
+to edit. THIS ENUMERATION IS THE WORK THAT WAS NEVER DONE: the change claimed to close "every
+channel" across two proposal passes while having enumerated none.
+
+### Case 4 — run each ORDER against the channel list (2026-09-15)
+
+**Input**: the eleven channels, and the two possible orders for a pair.
+
+**Procedure**: for each order, ask of each channel whether the partner's findings EXIST at the
+moment that channel is read.
+
+**Output**:
+
+```
+FRESH FIRST (the engine's current default, gates.ts:878)
+  T0  fresh runs        → lands review-system-<TS>.json
+  T1  external prompt   → channels 1,2,3,5,6,7 ALL OPEN — the partner's
+                          findings exist and every one of those sites reads them
+  ............................................................ 6 channels open
+
+EXTERNAL FIRST
+  T0  external prompt   → nothing on the trail; channels 1-7 have nothing
+                          to read. Not suppressed — EMPTY.
+  T1  external findings land as external-<as>-<TS>.md
+  T2  fresh half runs   → Step 5 (8) and the epitome (9) match
+                          review-<mode>-*.json ONLY, so external-*.md is
+                          invisible to both. git diff (10) WOULD see it if
+                          committed.
+  ............................................................ 1 channel open
+```
+
+**Finding — ordering does not SUPPRESS the channels, it EMPTIES them.** Blindness by timing rather
+than by instruction: at T0 the partner's findings do not exist, so there is nothing for six sites
+to leak. One residual remains — the fresh half's system-mode diff — closable with a single path
+exclusion. Eleven prose edits and one unclosable brief, versus one ordering change and one
+exclusion.
+
+**And it retires channel 11.** The launching brief has no artifact to constrain, but under
+external-first the orchestrator holds nothing to leak at the moment it dispatches the fresh half —
+except what the diff exclusion also covers.
+
 ## Decisions
 
+- **2026-09-15 — D-rc03a-9: the fix is ORDERING plus ONE EXCLUSION; the deny-list shape is
+  abandoned** (ratified in chat by Sal, 2026-09-15, after the second fresh pass). Canonical-next
+  renders the EXTERNAL half first for an empty `blind-pair` slot, and the fresh half's system-mode
+  diff instruction excludes `orbit/changes/<name>/.orbit-runs/`. That is the whole mechanism.
+  Capabilities: `orbit-engine-gates` (the order) + `orbit-review` (the exclusion) — TWO, and
+  `orbit-review-external` DROPS OUT of the change entirely.
+  **Why the previous shape was abandoned rather than repaired**: it tried to suppress, site by
+  site, a class of instruction that appears in eleven places and grows with every body edit, one
+  of which has no artifact behind it. Case 4 shows ordering closes ten of the eleven by making the
+  partner's findings NOT YET EXIST, which no amount of prose can do.
+  **I rejected this twice before enumerating** — first as "a discipline, not a fix", then as
+  "obsoleted by D-rc13-4". Neither survives Case 3. It is not a discipline when the ENGINE renders
+  the order in its canonical-next; the user runs what the tool says. And it is not obsoleted,
+  because it is the only mechanism that addresses all channels at once rather than one at a time —
+  D-rc13-4's launcher makes it free, it does not make it unnecessary.
+
+- **2026-09-15 — D-rc03a-10: the property being delivered is R-crc-4's "blind to EACH OTHER", not
+  "blind to all prior history"** (settled under R-crc-3, and this is a DESCOPE). D-rc03a-4 argued
+  for the stronger property on capture-recapture grounds — priming both members on a common prior
+  frame inflates overlap. That reasoning stands, but the stronger property is MINE, not the
+  ruling's, and it is what generated the eleven-channel problem: blinding a pair to each other is a
+  timing fact, while blinding it to all history is a censorship problem with no closed boundary.
+  Under ordering, an iteration-2 pair still sees iteration 1's WALKED findings — legitimate history
+  both members share — and that is exactly what R-crc-4 asks for. The residual inflation is a
+  KNOWN, NAMED limit for rc04's residual estimate to discount, not a defect this stage chases.
+
+- **2026-09-15 — D-rc03a-11: the genre SIGNAL problem dissolves and is not solved here**
+  (settled under R-crc-3). `next_hint_keys.slot` failed for two independent reasons the second
+  fresh pass found: it is scoped to the FIRST UNPASSED gate rather than the gate matching the
+  invoked mode (so a system-mode pair run while `apply` is `ready` reads no slot at all), and the
+  empty-pair branch that the non-leak proof cited sits downstream of the resolution clause (so
+  "pair empty" does not imply "slot rendered"). No conjunction repairs either. Under D-rc03a-9
+  nothing needs to infer the genre: the ENGINE chooses the order, and neither body branch asks a
+  question about what kind of pass it is. The per-gate `nextSlot` already exists on the gate object
+  (`gates.ts:33,839`) and is simply not projected into the status rows — worth exposing WHEN
+  something needs it, which after this change nothing does.
+
+
 - **2026-09-15 — D-rc03a-7: the rule keys on a CONJUNCTION and fires only on a POSITIVE signal;
-  D-rc03a-3's fail-closed default is REVERSED** (ratified in chat by Sal, 2026-09-15, after the
+  D-rc03a-3's fail-closed default is REVERSED** — **SUPERSEDED by D-rc03a-9/D-rc03a-11: the conjunction's first term was unusable. Its non-leak proof was FALSE — the empty-pair branch it cites sits downstream of the resolution clause, so "pair empty" does not imply "slot rendered".** (ratified in chat by Sal, 2026-09-15, after the
   first fresh proposal pass). Withhold when `slot == 'blind-pair'` AND the INVOKED reviewer class
   is independent (`fresh` or `external`). Otherwise retain. No fail-closed branch.
   **What was wrong**: `next_hint_keys.slot` answers "what does the engine recommend NEXT", not
@@ -130,7 +246,7 @@ hardening; it is not the deliverable.
   passed) and the gate still answers whether a pair is in play, so D-rc03a-1's one-voice rule
   survives intact — neither side derives what the other owns.
 
-- **2026-09-15 — D-rc03a-8: three of the five CRITICALs are REPAIRS, not redesign** (ratified in
+- **2026-09-15 — D-rc03a-8: three of the five CRITICALs are REPAIRS, not redesign** — **PARTLY MOOT under D-rc03a-9: the status-read repair and the architecture carve-out belonged to a mechanism that no longer exists. The instruments repair (assertions over the generated surface) survives and still applies.** (ratified in
   chat by Sal, 2026-09-15). R-crc-6's lanes applied to the first fresh pass: (1) the external-handoff
   branch makes NO `orbit status --change --json` call — the premise that it "already makes" one is
   false, and the repair is an explicit new step ordered before the Cycle-context step, plus
@@ -159,7 +275,7 @@ hardening; it is not the deliverable.
 
 
 - **2026-09-15 — D-rc03a-4: blinding is SYMMETRIC, because a blind-pair member is a REVIEW in
-  rc03's genre sense** (settled under R-crc-3; resolves Q-rc03a-2). The first attempt at this rule
+  rc03's genre sense** — **SUPERSEDED by D-rc03a-10: the symmetric-blinding property was the STRONGER "blind to all prior history", which is mine rather than R-crc-4's and is what generated the eleven-channel problem. Ordering delivers "blind to each other" for both halves without enumerating sites.** (settled under R-crc-3; resolves Q-rc03a-2). The first attempt at this rule
   was "a member must not read its PARTNER's findings", which is narrower and wrong. rc03's charter
   already defines the genre: *"A REVIEW reads the whole artifact and the thesis and receives NO
   'resolved since' list."* A blind-pair member IS that genre, so it receives no prior-findings
@@ -182,7 +298,7 @@ hardening; it is not the deliverable.
   three.
 
 - **2026-09-15 — D-rc03a-5: the external-first scheduling swap is OUT, and it is OBSOLETED rather
-  than merely deferred** (settled under R-crc-3). Two reasons, the second decisive. It is
+  than merely deferred** — **REVERSED by D-rc03a-9: the swap IS the fix. Every argument recorded below was made BEFORE the channels were enumerated, and none survives Case 3. Kept verbatim as the record of reasoning that was confident and wrong twice.** (settled under R-crc-3). Two reasons, the second decisive. It is
   ergonomics (dispatch the slow human round-trip first, run the fast subagent while it is out)
   riding on a correctness stage, and after D-rc03a-4 the order no longer affects blindness at all.
   More to the point, rc13's D-rc13-4 already decided that ONE INVOCATION launches both halves —
@@ -191,7 +307,7 @@ hardening; it is not the deliverable.
   Recorded here so the scheduling argument is not rediscovered and mistaken for new.
 
 
-- **2026-09-15 — D-rc03a-1: the prompt's genre is READ FROM THE ENGINE, not inferred by the body**
+- **2026-09-15 — D-rc03a-1: the prompt's genre is READ FROM THE ENGINE, not inferred by the body** — **SUPERSEDED by D-rc03a-9/D-rc03a-11: nothing reads the slot under the ordering mechanism, and the slot could not have carried this anyway (wrong gate scope; absent in reachable pair states). The premise below that the branch "already makes" the call is also FALSE — corrected 2026-09-15.**
   (settled under R-crc-3). The external-handoff branch consults `next_hint_keys.slot` from the
   `orbit status --change <name> --json` call it already makes, and suppresses Cycle context when
   the slot is `blind-pair`. No new engine surface: `canonicalNextForReviewed` already returns that
@@ -199,7 +315,7 @@ hardening; it is not the deliverable.
   is this" — the gate decides cadence, so the gate decides genre, and a body-side heuristic could
   disagree with the gate about the very thing the gate is computing.
 
-- **2026-09-15 — D-rc03a-2: the requirement becomes GENRE-CONDITIONAL, not deleted**
+- **2026-09-15 — D-rc03a-2: the requirement becomes GENRE-CONDITIONAL, not deleted** — **SUPERSEDED by D-rc03a-9: `orbit-review-external` drops out of the change entirely, so there is no genre condition to add.**
   (settled under R-crc-3). `Cycle context populated from prior runs` is CORRECT for a sequential
   iteration — a reviewer verifying whether prior findings were addressed needs to know what they
   were, and Case 1 confirms three of five slot states legitimately keep it. The MODIFIED
