@@ -1,0 +1,12 @@
+{
+  "command": "explore",
+  "timestamp": "2026-09-15T17:05:23Z",
+  "change": "rc07-artifact-lint",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Seven decisions, two worked cases. The marker is a DELIMITED SPAN with string containment — the adjacent-comment form was rejected on R-crc-10 rather than on taste, because across the four real defects (a numeral inside bold, a range endpoint inside an identifier, an English word, a compound of three numbers) any rule for `the number near the marker` infers which token the author meant. The span moves that judgment to the author and leaves the engine a string comparison inside a boundary it was given; all four defects fail correctly, and the fourth settles the design because its source emits a compound string rather than a number. The registry is `orbit/sources.yaml`, named to line up with the marker's own `src:` vocabulary; `project.yaml` was set aside because `orbit/project.md` is an established convention referenced in ten places. And v1 exposes ENGINE SOURCES ONLY, which reversed my own first proposal: a `command:` field would mean someone cloning a project that uses orbit and running `orbit validate` executes repo data, which is a bad default rather than a residual. The engine already computes every fact that went stale today. Cost stated: v1 covers three of four, and the fourth — restating an archived record's counts — is deferred with kind and method, with the honest alternative being that restating a record in living prose is itself the defect.",
+  "decisions_captured": 7,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "next_recommended": "/orbit:propose rc07-artifact-lint — substantial thinking captured; ready to formalize the design (or /orbit:explore rc07-artifact-lint to keep refining)"
+}

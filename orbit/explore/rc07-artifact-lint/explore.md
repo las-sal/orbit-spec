@@ -71,7 +71,101 @@ a human found three. None was found by the artifact that owns the fact.
 count, a grep count, a file. Nothing here needed judgment — only a link from the prose to the
 source, which is precisely what did not exist.
 
+### Case 2 — design the marker by running the four real defects through it (2026-09-15)
+
+**Input**: the four restated-figure defects this session produced, exactly as they were written, and
+the strings their sources emit today.
+
+**Procedure**: propose a marker form, run each defect through it, and reject any form that requires
+the engine to infer.
+
+**The obvious form dies on R-crc-10.** A comment placed BESIDE a figure —
+`seventeen small stages <!-- src:stages -->` — requires the engine to find "the number near the
+marker" in arbitrary prose. The four defects are a numeral inside bold, a range endpoint inside an
+identifier, an English WORD, and a compound of three numbers: any rule for "the number near" is
+inference about which token the author meant, which is what two stages died doing.
+
+**The form that survives is a DELIMITED SPAN.** The author declares the boundary; the engine does
+string containment inside it and nothing else:
+
+```
+<!-- src:stages -->18 small stages<!-- /src -->
+```
+
+The registry maps `stages` to a command; the command emits a STRING; the check is "does the span
+contain that string". No inference about which token, because the author drew the box.
+
+**Output — all four defects, run through it:**
+
+| defect as written | source emits | span contains it? | verdict |
+|---|---|---|---|
+| `version 3` | `4` | no | **FAILS** ✓ |
+| `R-crc-1..8` | `10` | no | **FAILS** ✓ |
+| `seventeen small stages` | `18` | no ("seventeen" is not "18") | **FAILS** ✓ |
+| `4C/7W/0S` | `4C/6W/0S` | no | **FAILS** ✓ |
+
+Four for four, and the fourth matters most: its source emits a COMPOUND STRING, not a number, and
+containment handles it without a special case. **The check never parses a number.** It compares two
+strings inside a boundary the author drew.
+
+**One constraint falls out, and it is the honest cost.** Case 3's prose was "seventeen"; containment
+of `18` requires the marked span to use NUMERALS. Word forms would need a numeral-to-word table —
+cheap, and deferred rather than built, because the day's lesson is that the minimal thing that works
+ships and the elaboration does not. Marked spans use numerals; `eighteen small stages` becomes
+`18 small stages` in the one place it matters.
+
+**And the residual narrows to something small enough to state.** With the span delimited, the hole
+is no longer "prose drifts from its marker" — there is no separate marker value to drift from. The
+hole is only an UNMARKED figure, which is D-rc07-4's residual and unchanged.
+
 ## Decisions
+
+- **2026-09-15 — D-rc07-7: the registry is `orbit/sources.yaml`, and v1 exposes ENGINE SOURCES ONLY**
+  (ratified in chat by Sal, 2026-09-15). A separate file rather than a key in `orbit/config.yaml`:
+  this is project DATA, not tool config.
+  **The name lines up with the marker's own vocabulary** — the span says `src:stages`, the file holds
+  the sources, and a reader who meets one can find the other without being told. `facts.yaml` was
+  rejected as vague; `project.yaml` was considered and set aside because `orbit/project.md` is an
+  established convention (referenced in 10 places across baseline specs and workflow bodies as
+  "project goals + stack"), and two files sharing a stem with different purposes read like one thing
+  in two formats.
+  **NO SHELL, and this reversed my own first proposal.** The obvious entry shape was
+  `command: grep -c …`, which is flexible and wrong: orbit is a PUBLISHED PACKAGE, so someone who
+  clones a project using it and runs `orbit validate` would execute whatever sits in that file —
+  arbitrary code execution from repo data, in a command that reads as read-only. That is not a
+  residual to state; it is a bad default. v1 exposes a CLOSED SET of engine sources and nothing else.
+  **The engine already computes every fact that went stale today**: stage counts and the rulings index
+  (`architecture status`'s parse), capability counts (`orbit/specs/*/`), the schema version (the
+  schema loader). Safe by construction, no new trust boundary, and it is the R-crc-10-preferred
+  form — the engine reads what the engine already owns instead of shelling out to rediscover it.
+  **The source-name domain is SOURCED over the engine's own table**, exactly as the payload table is
+  the authority in rc07b. Adding a fact means EXPOSING it from the engine — a code change with a
+  test — not dropping a line into YAML.
+  **Deferred, with kind and method** (D-bcs-2): the fourth defect — the arc doc restating `4C/7W/0S`
+  from an archived findings file — has NO engine source today, so v1 covers three of this session's
+  four. KIND: a fact computable only by parsing a specific file the engine does not already
+  summarise. METHOD: it surfaces when an author marks a figure and finds no source name for it.
+  A shell escape hatch is the obvious answer IF the need recurs, with its trust boundary designed
+  then rather than assumed now. The honest alternative is that restating a RECORD's contents in
+  living prose is the defect, and the fix is not to restate it.
+
+
+- **2026-09-15 — D-rc07-6: the marker is a DELIMITED SPAN, and the check is string containment**
+  (settled under R-crc-3, by Case 2). `<!-- src:<name> -->…<!-- /src -->` around the figure; the
+  registry maps `<name>` to a command; the command emits a STRING; the check asks only whether the
+  span contains it.
+  **The adjacent-comment form was rejected on R-crc-10, not on taste.** A marker BESIDE a figure
+  requires the engine to find "the number near the marker" in prose that — across the four real
+  defects — is a numeral inside bold, a range endpoint inside an identifier, an English word, and a
+  compound of three numbers. Any rule for "the number near" infers which token the author meant. The
+  span moves that judgment to the AUTHOR, where R-crc-10 says it belongs, and leaves the engine a
+  string comparison inside a boundary it was given.
+  **It is a string test, never a number test**: the fourth defect's source emits `4C/6W/0S`, and
+  containment handles a compound with no special case. Four of four real defects fail correctly.
+  **Cost, stated**: a marked span must use NUMERALS, so `eighteen small stages` becomes `18 small
+  stages`. A numeral-to-word table would lift the constraint and is DEFERRED, not built — the
+  minimal thing that works ships, and the elaboration is how the last two stages died.
+
 
 - **2026-09-15 — D-rc07-5: half (B), the payload round-trip, SPLITS into its own stage**
   (ratified in chat by Sal, 2026-09-15). The two halves share a charter sentence and nothing else —
