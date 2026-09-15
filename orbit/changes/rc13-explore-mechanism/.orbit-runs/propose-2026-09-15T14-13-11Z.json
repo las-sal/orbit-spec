@@ -1,0 +1,9 @@
+{
+  "command": "propose",
+  "timestamp": "2026-09-15T14:13:11Z",
+  "change": "rc13-explore-mechanism",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Generated from the rc13-explore-mechanism exploration in consume mode: three delta specs (orbit-conventions MODIFIED, orbit-explore-modifications 2 ADDED, orbit-run-summary-emit MODIFIED), design, and 23 tasks. Three capabilities, AT R-crc-1's ceiling deliberately and stated as such, with R-crc-9 binding: if review shows it OVER, the answer is to split the mechanism rather than shrink it. The exploration arrived having audited itself against its own rule (Case 8) and closed the two central rules that audit found open (Case 9), so the design's decisions are transcriptions rather than inventions. One defect was caught during generation and is worth recording: the MODIFIED delta on `Named-mode explore recommendation by maturity` initially DROPPED the baseline's Stalled scenario — the silent-content-loss class C2 exists to prevent — found by diffing scenario sets between delta and baseline before fingerprinting, and restored verbatim. Base fingerprints stamped and verified 2/2. Staged metadata merged with the architecture citation carried forward; staging moved, including the sketches/ sibling.",
+  "next_recommended": "/orbit:review rc13-explore-mechanism — proposal artifacts ready; review before apply"
+}

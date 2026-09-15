@@ -1,0 +1,11 @@
+schema: spec-driven
+created: 2026-09-15
+schema_version: 4
+base_fingerprints:
+  orbit-conventions:
+    "`explore.md` five-section format": sha256:d188be95e3a7d468a6fdf3be3841872c9b38f2825e6e56ca3d2a58a43f97fbb9
+  orbit-run-summary-emit:
+    Named-mode explore recommendation by maturity: sha256:21599f15f0d5b7a4c2d046b341a4aef787df855b26a859342e2a149110a53752
+architecture:
+  doc: clean-up-review-cycle
+  stage: rc13-explore-mechanism
