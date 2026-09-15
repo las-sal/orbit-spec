@@ -337,10 +337,10 @@ never deleted.
 
 ## Program stages
 
-Seventeen small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
+Eighteen small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
 split into rc02 + rc02b on 2026-09-12; rc13 added 2026-09-14 and moved to phase 1 the same day;
 rc03a split from rc03 on 2026-09-15 and WITHDRAWN the same day; rc13 split into rc13a + rc13b on
-2026-09-15 under R-crc-9).
+2026-09-15 under R-crc-9; rc07b split from rc07 the same day under R-crc-9 applied PREVENTIVELY).
 Every stage is sized under R-crc-1, names the capabilities it touches, and names its goal.
 Charters are settled under R-crc-3 until a citing change refines them; exit criteria are
 falsifiable and self-measured by the stage's own cadence (G0). Position is computed — see the
@@ -806,27 +806,84 @@ carries the map; (3) a system review's Pass 0 consumes the map rather than rebui
 Depends-on: (none)
 Complete: [ ]
 
-Charter: the cross-doc consistency class the reviews keep finding (a figure restated in prose
-that differs from its generated source; decision ordering; a heading grammar drift; a count in
-a title) moves into `orbit validate` and audit-drift as mechanical checks, under a ONE VOICE
-FOR FACTS rule: a computed number lives in exactly one generated place and prose points at it.
-Goal G2. Touches: the validator, orbit-audit-drift, orbit-conventions. Exit: (1) a restated figure that
-disagrees with its source fails validation; (2) the next proposal review carries zero
-restated-count findings.
-MEASURED 2026-09-14: the audit-drift payload divergence this stage inherits is not a TYPE
-disagreement — it is a HARD REFUSAL. The option-B ratification (2026-09-12) and the parity test's
-`KNOWN_DIVERGENCE` note both describe the engine as "accepting a third shape"; in fact
-`orbit emit audit-drift` REJECTS every per-command field the shipped reference documents
-(`context`, `caller`, `depth`, `flags`, `categories_skipped`, `findings_summary`), so the
-standalone command's own Step 10 is unfollowable from its own reference. The project-wide sweep on
-2026-09-14 failed twice on this before its payload was rewritten against `emit-composition.ts`.
-In-place repair was evaluated and rejected: it fails the parity test's exact-set assertion and
-trades a doc-vs-engine break for a doc-vs-baseline break — which is precisely the three-voice knot
-this stage exists to untie. The consequence belongs in the exit criteria: (3) every shipped
-payload reference round-trips through its own emit surface, proven by execution rather than by
-field-set comparison.
+**SPLIT 2026-09-15 (Sal): the payload round-trip left for rc07b-reference-roundtrip**, under
+R-crc-9 — and PREVENTIVELY, at exploration, before anything was written. R-crc-9's first
+application came after two proposal passes and 48 findings had proved a change too wide; this one
+fired on a charter that had carried both halves since it was drafted, because the ruling was
+applied on purpose rather than in post-mortem. The two shared a sentence and nothing else:
+different inputs, different mechanism, different capabilities. **A ruling that only fires in
+post-mortem costs a stage every time.**
 
-### Phase 3 — reduce injection upstream
+Charter: the cross-doc consistency class the reviews keep finding — a figure restated in prose that
+disagrees with its generated source — moves into `orbit validate` and audit-drift as a mechanical
+check, under ONE VOICE FOR FACTS: a computed number lives in exactly one generated place and prose
+POINTS AT IT.
+
+R-crc-10 APPLIED AT EXPLORATION, and it decided the shape. The engine can observe a NUMBER in prose;
+it cannot observe that the number is a RESTATEMENT, or which source it restates — that is authorial
+intent, and inferring it is what two stages died doing on 2026-09-15. So the deliverable is a RECORD
+the author writes (a marker naming a source) and a CHECK the engine runs against the DECLARED links
+only. The charter's own wording already said it: prose POINTS AT IT.
+
+THE DOMAIN IS THE WHOLE PROJECT, not `orbit/`. Three of the four restated-figure defects the
+2026-09-15 session produced were in `CLAUDE.md`, which no validator reads; a lint scoped to `orbit/`
+would have caught one of four and reported itself clean. It closes three ways, all SOURCED and none
+from memory: FILES over `git ls-files '*.md'` minus a DECLARED exclusion list (61 today), SOURCES
+over a registry file mapping each name to the command that computes it, MARKERS by grep over the
+file domain.
+
+THE EXCLUSIONS FORCED A PRINCIPLE rather than a preference: **the lint reads LIVING documents, never
+RECORDS.** A figure in an archived change or an emit was TRUE WHEN WRITTEN, and linting it would
+demand rewriting history to match the present — which inverts what a record is for. Fixtures
+(`test/**`), templates (`schemas/*/templates/**`), generated surface (`.claude/**`) and superseded
+files follow the same logic. Living-versus-record is decidable BY PATH, so no judgment is asked of
+the engine anywhere in the domain.
+
+THE RESIDUAL IS STATED, per the kind-and-method rule settled in `bounded-closure-semantics`: an
+UNMARKED restatement is INVISIBLE to the lint. KIND — a figure written into living prose that nobody
+marked; METHOD — a human or a review pass notices it, which is today's status quo unchanged. The
+mitigation is a RECORD and not a check: the lint reports per-source marker COVERAGE (`stages = 17
+(2 markers)`), so a reader can see a fact nothing points at. It counts; it judges nothing.
+
+Goal G2. Touches: the validator, orbit-conventions. Exit: (1) a MARKED figure that disagrees with
+its source fails validation — "marked", not "restated", because an unmarked one can never fail
+anything and saying otherwise would promise what R-crc-10 forbids; (2) the next proposal review
+carries zero restated-count findings among MARKED figures; (3) the four facts this session's defects
+earned — stages, rulings, capabilities, schema-version — are registry entries with live commands,
+and `CLAUDE.md` carries markers for each.
+
+### Stage rc07b-reference-roundtrip — a shipped reference is proven by running it
+
+Depends-on: (none)
+Complete: [ ]
+
+SPLIT 2026-09-15 from rc07-artifact-lint under R-crc-9, preventively (see rc07's note). The two
+halves share a charter sentence and nothing else.
+
+Charter: every reference orbit ships describing a payload, a format or an invocation SHALL be
+provable by RUNNING it against the surface it documents. The instrument is round-trip, not
+comparison: build the documented shape, submit it to the real surface, assert acceptance.
+
+The empirical origin is exact, and it is why comparison is not enough. `orbit-audit-drift`'s shipped
+`run-summary-schema.md` documents six per-command payload fields (`context`, `caller`, `depth`,
+`flags`, `categories_skipped`, `findings_summary`). `orbit emit audit-drift` REJECTS every one. The
+existing parity test (`test/core/emit-schema-parity.test.ts`, rc01's instrument) compares FIELD SETS
+and therefore records the gap as a `KNOWN_DIVERGENCE` exemption — accurate, and it let a ratified
+follow-up describe the engine as "accepting a third shape" when the truth is a HARD REFUSAL. The
+project-wide audit-drift sweep on 2026-09-14 failed twice on this before its payload was rewritten
+against `emit-composition.ts`: the standalone command's own documented Step 10 is unfollowable from
+its own reference. **A field-set comparison cannot tell a divergence from a refusal; running it can.**
+
+R-crc-10 CHECK — every input is an artifact the engine owns: the reference text (generated), the
+payload table (`COMMANDS[cmd].payloadFields`), and the surface's own accept/reject on a submitted
+payload. Nothing asks the engine to judge prose, which is why this half is buildable while its
+sibling needs an author-written marker. The contrast between the two is the clearest worked example
+of R-crc-10 the program has.
+
+Goal G2. Touches: orbit-audit-drift, orbit-emit-composition. Exit: (1) a reference whose documented
+shape the surface refuses fails a test, BY EXECUTION; (2) the `KNOWN_DIVERGENCE` exemption is
+retired or re-stated as a refusal rather than a divergence; (3) the audit-drift reference and its
+emit surface agree, so the command's own Step 10 is followable from its own shipped reference.
 
 ### Stage rc08-walk-completeness — walks sweep requirements, not examples
 
@@ -1412,3 +1469,31 @@ properties (user-invoked, draft-only, merge never) hold unchanged.
   **And the recursion was closed deliberately** (D-bcs-5): "is the kind-and-method test itself
   closed?" is NOT pursued. The move set went five to six to eight to nine by exactly that route, and
   naming the stopping point is the discipline the day's two failures bought.
+- **2026-09-15 — rc07 re-cut and rc07b declared: R-crc-9 fired PREVENTIVELY for the first time.**
+  The ruling's first application came after two proposal passes and 48 findings had proved a change
+  too wide. This one fired at EXPLORATION, before anything was written, on a charter that had carried
+  both halves since it was drafted — nothing new made the split visible except applying the test on
+  purpose. **A ruling that only fires in post-mortem costs a stage every time**, and this is the
+  first evidence it need not.
+  **R-crc-10 also fired at exploration, and it decided rc07's shape rather than auditing it.** The
+  engine can see a NUMBER in prose; it cannot see that the number is a RESTATEMENT or which source it
+  restates. So rc07 is a RECORD the author writes (a marker naming a source) plus a CHECK against
+  DECLARED links only — and its exit criterion is restated from "a restated figure" to "a MARKED
+  figure", because an unmarked one can never fail anything and promising otherwise is what R-crc-10
+  forbids. The charter's own wording had said it all along: prose POINTS AT IT.
+  **The domain is the WHOLE PROJECT**, ratified by Sal: `orbit/` is the package's working directory,
+  not the boundary of what must stay true. Three of the four restated-figure defects this session
+  produced were in `CLAUDE.md`, which no validator reads — a lint scoped to `orbit/` would have
+  caught one of four and reported itself clean. It closes three ways, all SOURCED: files over
+  `git ls-files` minus DECLARED exclusions, sources over a registry file, markers by grep.
+  **And the exclusions forced a principle worth keeping beyond this stage: the lint reads LIVING
+  documents, never RECORDS.** A figure in an archived change or an emit was TRUE WHEN WRITTEN, and
+  linting it would demand rewriting history to match the present — which inverts what a record is
+  for. Fixtures, templates, generated surface and superseded files follow the same logic, and
+  living-versus-record is decidable BY PATH, so no judgment is asked of the engine anywhere.
+  **rc07b is the cleanest worked contrast R-crc-10 has**: same charter sentence, and every one of its
+  inputs is engine-owned — the reference text, the payload table, and the surface's own accept/reject
+  on a submitted payload. Its origin is exact: rc01's parity test compares FIELD SETS, so it recorded
+  the audit-drift gap as a `KNOWN_DIVERGENCE` exemption, and that let a ratified follow-up describe
+  the engine as "accepting a third shape" when the truth is a HARD REFUSAL. A comparison cannot tell
+  a divergence from a refusal; running it can.
