@@ -8,6 +8,20 @@
 
 ## Premise
 
+**WHAT THIS PROGRAM IS FOR (stated 2026-09-15, after a day in which one stage shipped and two did
+not).** orbit exists to adapt a development workflow to how ITS OWNER thinks and to how AIs in
+different forms drive work forward. This program is where that adaptation is stress-tested, so
+DIGGING IN AND FAILING IS THE PRODUCT, not an overrun: the breakages are what export to other
+projects. A stage that ships nothing but leaves an intact trail has delivered — rc03a and rc13a
+shipped no baseline and their trails are the evidence base for four rulings. Judge a stage by what
+its cycle taught and recorded, not only by what it merged.
+
+With one distinction that decides when pain is research and when it is a missing constraint:
+**failing in a NEW way is the product; failing the SAME way twice is the signal to CODIFY.** rc03a
+taught something new — the eleven channels, the state-space-versus-site-list error. rc13a taught
+much less, because it repeated rc03a's error in different clothes, and R-crc-10 exists because the
+second one was a repeat.
+
 The D6 system cadence ran SEVEN passes (three internal, three external GPT-5 Codex iterations
 plus a parallel clean-context Claude pass) and 42 findings post-apply, every one walked to zero
 — and still archived through a `gate_overridden`, because no independent pass ever came back
@@ -214,6 +228,26 @@ One goal per phase, each falsifiable, each stage naming its goal (settled under 
   the wrong mechanism. The two sanctioned moves are to SPLIT the correct mechanism across stages
   whose prerequisites are declared, or to DECLARE THE STAGE BLOCKED on its prerequisite and say so
   in the charter. Neither is a substitution.
+
+- **R-crc-10** (Sal, 2026-09-15) — MECHANIZE ONLY WHAT THE ENGINE CAN OBSERVE. Before a stage
+  commits to a mechanism, NAME THE INPUTS the engine will read. If every input is an artifact the
+  engine already owns — a trail record, a timestamp token, a count, a file path — the mechanism is
+  buildable. If any input is PROSE, INTENT, or a JUDGMENT ABOUT SUBSTANCE, the engine cannot check
+  it, and the deliverable is a **RECORD** (a slot the author fills, surfaced where a reader sees it)
+  rather than a **CHECK**.
+  **Evidence, all from one day.** rc02 SHIPPED: its inputs were trail records, tokens and severity
+  counts, and the engine computed them. rc03a spent three passes trying to make the gate see what a
+  reviewer had READ — eleven channels, one of them a subagent brief with no artifact at all — and
+  shipped nothing. rc13a spent three passes trying to make the emit judge whether an enumeration was
+  CLOSED, which is a judgment about prose; its own requirement conceded the engine sees FORM and not
+  TRUTH, and that concession was the stage's obituary. Both failures were visible on day one under
+  this test, and neither was caught until an external pass.
+  **A RECORD IS NOT THE LESSER OUTCOME.** rc02's `budgetExhausted` is a record — reported BESIDE the
+  state, never a block — and it is the most load-bearing thing that stage shipped. So is
+  `gate_overridden`. The instinct that a record is a consolation prize for a check you could not
+  build is what produced both failures.
+  **This ruling complies with itself**: whether a mechanism's inputs are observable is a judgment
+  about substance, so nothing checks it. It is a ruling, and rc09 carries only the QUESTION.
 
 ## Open questions (program-level)
 
@@ -445,6 +479,25 @@ opposite direction, and the contradiction survived three internal passes. Either
 a closure form (an open domain is open, and the maturity signal says so), or "closed" splits into
 two tiers with different consequences. That question is one sitting's work and it is the hinge for
 both stages; it is settled BEFORE the next citing change, not inside it.
+
+**SETTLED 2026-09-15** in `orbit/explore/bounded-closure-semantics/` — the reasoning and its worked
+case live there and are consumed when the next attempt proposes. The answer: the obligation is
+**ACCOUNTED**, not CLOSED, because closure was never the point — **no domain may be open SILENTLY**.
+Two outcomes discharge it. **CLOSED** (DERIVED or SOURCED): every member covered, and the
+justification says why that is provable. **OPEN-DECLARED** (BOUNDED): members covered, a residual
+remains, and the residual NAMES ITS KIND AND THE METHOD by which a member would be found — "there
+may be others" discharges nothing and is the sentence the obligation exists to forbid. BOUNDED stops
+being a third kind of closure and becomes the other way to satisfy the obligation, so `Closure:`
+reads honestly downstream and rc13b never has to pretend.
+The consequence difference is VISIBILITY, never BLOCKING: an open-declared domain does not block
+readiness — if it did, rc02's same-state v1 limit could never have shipped and authors would fake
+closure to proceed — the residual is SURFACED and TRAVELS into the change's artifacts instead of
+dying in the exploration. That is rc02's `budgetExhausted` shape, and under R-crc-10 it is a RECORD
+rather than a check, which is why it is buildable where the previous attempt was not.
+Tested against every bounded claim on the record: rc02's same-state limit passes (names the kind and
+assigns the method to rc04); the previous attempt's move-set residual passes marginally; its
+CLOSURE-TAXONOMY residual FAILS, having named a kind and no method — a defect that sat unchallenged
+through three internal passes, in the artifact that invented the form.
 
 **SIX REPAIRS CARRIED, all from the external pass, all verified**: the per-claim rule test has only
 per-ENTRY identifiers and dispositions, so two rule claims in one entry collide on one key; the
@@ -823,6 +876,11 @@ before anyone ran `gh`). This stage also OWNS the size computation that R-crc-4'
 proposal-mode blind pair depends on: no engine surface computes size proximity today, so "within
 20% of the ceiling runs a pair" is exercised by choice rather than by the cadence until rc09 makes
 proximity computable (surfaced by rc02's first external review, 2026-09-12). Under R-crc-7 the
+INPUTS NAMED (added 2026-09-15, R-crc-10): design.md names the INPUTS the proposed mechanism will
+read, one line each. A reviewer can see whether the list is present and whether any entry is prose,
+intent or a judgment — the engine requires the QUESTION be answered and a human judges the ANSWER,
+which is the `Standing recommendation:` idiom rather than a check. R-crc-10 forbids the engine
+judging observability itself.
 SPIKE PRECONDITION generalizes: it fires for any change whose deliverable is a decision procedure,
 not only for one touching an external tool or protocol.
 Goal G3. Touches: orbit-propose-modifications, orbit-conventions,
@@ -1327,3 +1385,30 @@ properties (user-invoked, draft-only, merge never) hold unchanged.
   why one was assigned and the other was not.
   **rc13a left UNRATIFIED** (Sal), like rc03a: its exit criteria were never met, so the mark would
   assert something false.
+- **2026-09-15 — R-crc-10 ratified, the premise reframed, and BOUNDED settled in one sitting.**
+  Three things, and the order matters because each is the reason for the next.
+  **The premise now says what this program is FOR**, which it did not: orbit adapts a development
+  workflow to how its owner thinks and to how AIs in different forms drive work, and this program is
+  where that adaptation is stress-tested — so digging in and failing IS the product, and the
+  breakages export to other projects. rc03a and rc13a shipped no baseline and their trails are the
+  evidence base for four rulings. A stage is judged by what its cycle taught and recorded, not only
+  by what it merged. With the distinction that makes the claim usable rather than consoling:
+  FAILING IN A NEW WAY IS THE PRODUCT; FAILING THE SAME WAY TWICE IS THE SIGNAL TO CODIFY.
+  **R-crc-10 is what the repeat earned.** Mechanize only what the engine can observe: name the
+  inputs, and if any is prose, intent, or a judgment about substance, the deliverable is a RECORD
+  rather than a CHECK. rc02 shipped because its inputs were trail records, tokens and counts. rc03a
+  spent three passes trying to make the gate see what a reviewer had READ; rc13a spent three trying
+  to make the emit judge whether an enumeration was CLOSED. Both were visible on day one under this
+  test and neither was caught until an external pass. The ruling complies with itself — whether
+  inputs are observable is a judgment, so nothing checks it; rc09 carries only the QUESTION, as a
+  design.md slot a human judges.
+  **BOUNDED then settled in a single sitting, and cheaply, BECAUSE of the ruling.** The obligation is
+  ACCOUNTED, not CLOSED: no domain may be open silently, and both closure and declared-openness
+  discharge that. A residual names its KIND and its METHOD or discharges nothing. The tier difference
+  is VISIBILITY, never blocking — rc02's `budgetExhausted` shape, and the reason authors will not
+  fake closure to proceed. The test was run against every bounded claim on the record and REJECTED
+  one of the previous attempt's own two residuals. All of it is a record; nothing asks the engine to
+  judge prose, which is why the previous attempt could not build it and this one can.
+  **And the recursion was closed deliberately** (D-bcs-5): "is the kind-and-method test itself
+  closed?" is NOT pursued. The move set went five to six to eight to nine by exactly that route, and
+  naming the stopping point is the discipline the day's two failures bought.
