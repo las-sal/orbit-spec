@@ -57,9 +57,18 @@ and judge whether the resulting prompt is correct for that reviewer.
 |---|---|---|---|
 | system, no passes stand (rc02 at 09:42) | `blind-pair` (empty-pair branch) | suppress | CORRECT — this is the pair's first member |
 | system, fresh half landed (the leak path) | `blind-pair` (open-pair branch) | suppress | CORRECT — this is the pair's second member, the case that anchors today |
-| system, pair complete + walked, confirming pass | `external` | retain | CORRECT — a confirming pass SHOULD see what came before |
-| system, budget spent (rc02 at archive) | `external` | retain | CORRECT — same; not a pair member |
+| system, pair complete + walked, confirming pass | `in-context` | retain | CORRECT — a confirming pass SHOULD see what came before |
+| system, budget spent (rc02 at archive) | `in-context` | retain | CORRECT — same; exhaustion is reported BESIDE the state and does not determine the slot |
 | proposal mode, any external pass | `independent` | retain | CORRECT — proposal's cadence has no pair, so no blindness requirement exists |
+| ANY mode, a prior pass's findings stand unwalked | ABSENT | retain (after D-rc03a-7) | the unresolved-findings branch returns no `slot` key (`gates.ts:864-866`); this is the NORMAL state between a review and its walk |
+| ANY mode, every gate passed | ABSENT | retain (after D-rc03a-7) | `next_hint_keys` is `{phase}` with no slot (`instruction-loader.ts:463-471`) |
+
+**CORRECTED 2026-09-15** by the first fresh proposal pass. Rows 3 and 4 originally read `external`;
+the next uncovered slot after a walked pair under `[blind-pair, in-context]` is `in-context`, and
+`external` arises only from the confirm-failure branch. The last two rows were MISSING ENTIRELY —
+and their absence is exactly what let D-rc03a-3's fail-closed default ship as if undeterminable
+slots were rare. The verdicts for rows 3-4 were unaffected, which is why the error survived: a
+table can be wrong in a cell and right in its conclusion, and only the omitted rows mattered.
 
 **Finding — the rule is correct on all five and needs no new engine surface.** It also fixes the
 case rc02 escaped by luck: at 09:42 the slot was `blind-pair` (zero passes standing), so the rule
@@ -97,6 +106,44 @@ hardening; it is not the deliverable.
 
 
 ## Decisions
+
+- **2026-09-15 — D-rc03a-7: the rule keys on a CONJUNCTION and fires only on a POSITIVE signal;
+  D-rc03a-3's fail-closed default is REVERSED** (ratified in chat by Sal, 2026-09-15, after the
+  first fresh proposal pass). Withhold when `slot == 'blind-pair'` AND the INVOKED reviewer class
+  is independent (`fresh` or `external`). Otherwise retain. No fail-closed branch.
+  **What was wrong**: `next_hint_keys.slot` answers "what does the engine recommend NEXT", not
+  "what is the pass in hand". Those coincide while a pair is open and diverge everywhere else, so
+  the original single-key rule failed two ways at once — it withheld from sequential iterations
+  whenever the slot was ABSENT (the routine state between a review and its walk, and the
+  all-gates-passed state), and it blinded `in-context` passes during the pair window even though an
+  in-context pass can never satisfy a blind-pair slot and is, per rc03's charter, the VERIFICATION
+  genre that most needs prior context.
+  **Why positive-only does not leak**: a pair member can only be run in two states — pair empty, or
+  pair open. The empty case renders `blind-pair` from the `neededSlot` branch; the open case renders
+  it from the `openPair` branch, which rc02 deliberately ordered BEFORE `unresolvedPass`. Both
+  produce the signal, so the absent-slot states are never pair states.
+  **Why D-rc03a-3 was reversed rather than defended**: it was argued on consequence asymmetry, and
+  that asymmetry only holds if fail-closed misfires rarely. It misfires on two routine states. The
+  expected cost flipped, and the original decision was made without the frequency data — which the
+  Case 1 table would have carried had it been complete.
+  **Cost**: none in capabilities. The body already knows its invoked class (it is the flag the user
+  passed) and the gate still answers whether a pair is in play, so D-rc03a-1's one-voice rule
+  survives intact — neither side derives what the other owns.
+
+- **2026-09-15 — D-rc03a-8: three of the five CRITICALs are REPAIRS, not redesign** (ratified in
+  chat by Sal, 2026-09-15). R-crc-6's lanes applied to the first fresh pass: (1) the external-handoff
+  branch makes NO `orbit status --change --json` call — the premise that it "already makes" one is
+  false, and the repair is an explicit new step ordered before the Cycle-context step, plus
+  corrections to proposal.md, design.md D1 and tasks.md 1.1 which all lean on the false claim;
+  (2) architecture mode has no change and no gate, so the ADDED requirement's "every reviewer class"
+  binding would blind every architecture pass and contradict the live requirement that architecture
+  mode hand-computes its iteration note from prior emits — the repair is an explicit carve-out with
+  its own scenario; (3) tasks 3.1-3.4 specify tests against engine code that does not exist, because
+  the Cycle context section is composed at runtime by the reviewing AI from a markdown reference —
+  the repair is recasting section 3 as assertions over the GENERATED SURFACE TEXT, which rc01
+  already established as a legitimate instrument class rather than a fallback.
+  The change does NOT return to propose-from-scratch; the shape survives with one keyed correction.
+
 
 - **2026-09-15 — D-rc03a-6: trail ATTESTATION of blindness is OUT OF SCOPE and becomes a declared
   follow-up** (resolved by Sal at promotion, 2026-09-15; resolves Q-rc03a-1). Today the gate infers
@@ -159,7 +206,7 @@ hardening; it is not the deliverable.
   requirement adds the blind-pair condition and a scenario for it; it does not remove the existing
   behaviour or its scenarios.
 
-- **2026-09-15 — D-rc03a-3: when the slot cannot be determined, FAIL CLOSED (suppress)**
+- **2026-09-15 — D-rc03a-3: when the slot cannot be determined, FAIL CLOSED (suppress)** — **SUPERSEDED the same day by D-rc03a-7; kept as the record of what was decided and why it was wrong.**
   (settled under R-crc-3). If `orbit status` fails, the change has no reviewed gate, or the field
   is absent on an older engine, the prompt suppresses cycle context rather than retaining it. The
   consequences are asymmetric: suppressing on a sequential iteration costs that reviewer some
@@ -170,7 +217,17 @@ hardening; it is not the deliverable.
 
 ## Open questions
 
-(None open. Q-rc03a-1 was resolved at promotion — see D-rc03a-6.)
+- **Q-rc03a-2 — `/orbit:explore` has no defined behavior for a name that already promoted.**
+  R-crc-6 routes REDESIGN back to explore, and this change took that route after its first fresh
+  pass. But the staging directory moved into the change at propose, so Mode B would have scaffolded
+  a SECOND `explore.md` while the authoritative one sits in `orbit/changes/<name>/` — a second claim
+  on one truth, which is the exact condition propose's own metadata merge refuses when it discards
+  the staged `.openspec.yaml`. This session resumed in place instead, by judgment, with nothing in
+  the body sanctioning it.
+  Standing recommendation: the body should RESUME IN PLACE against `orbit/changes/<name>/explore.md`
+  when the name resolves to an active change, and say so — never scaffold a second staging
+  directory. PROGRAM-TIER: it is a gap in the explore surface, so it belongs to rc13
+  (explore-mechanism) or rc03 (genres), and assigning it is an architect act, not this change's.
 
 ## Considered & out
 
