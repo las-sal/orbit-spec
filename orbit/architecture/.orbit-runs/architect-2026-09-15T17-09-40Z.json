@@ -1,0 +1,27 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-15T17:09:40Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "\"Drop this\" is now a first-class exploration outcome, captured into rc13a (the declaration) and rc13b (the readout) rather than a third stage. Verified before capturing: no explore path defines a no-change outcome — the only exit is promotion to a change, and Considered & out rejects options WITHIN an exploration, never the exploration itself — and every rung of the maturity grid points at continuing or building, so an exploration that has decided not to build must fight its own readout to say so. That is the same defect as the top rung asserting readiness on heading count, sitting in the surface whose job is to help decide whether to build at all. The program layer already had the concept (rc11 moved to Considered & out with a re-entry trigger, recorded as a good outcome) and the exploration layer had no equivalent verb. Evidence from the day: two stages ran full propose-review-archive cycles and shipped nothing, and rc13a's own second attempt might have concluded at explore — R-crc-10 would have told it to — but there was no way to say so and have the workflow agree. Dropping at explore costs one sitting; dropping at archive cost three passes, twice. Captured into two existing stages because the declaration is convention and the readout is the emit's, and a third stage editing the same two capabilities is how a requirement gets three owners.",
+  "stages_touched": [
+    "rc13a-explore-mechanism-convention",
+    "rc13b-explore-maturity-signal"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "handoff": {
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md — rc13a gains the CONCLUDED declaration, rc13b the fifth rung; the status log's last entry carries the evidence.",
+      "orbit/specs/orbit-run-summary-emit/spec.md — the four shipped rungs, every one pointing at continue or build.",
+      "orbit/explore/rc07-artifact-lint/explore.md — seven decisions, no open questions, proposable.",
+      "orbit/explore/bounded-closure-semantics/explore.md — rc13a's settled prerequisite, waiting for its next attempt."
+    ],
+    "next_command": "/orbit:propose rc07-artifact-lint",
+    "model_hint": "rc07 is the most proposable thing on the board: seven decisions, two worked cases, no open questions, two capabilities, every input engine-owned except the author's marker. rc07b is smaller still and fully engine-owned.",
+    "seam": "No active changes. rc07 is explored and proposable; rc07b is premised and buildable; rc13a and rc13b both gained scope today and rc13b stays blocked on rc13a. Nothing is blocked on the user."
+  },
+  "next_recommended": "/orbit:propose rc07-artifact-lint"
+}

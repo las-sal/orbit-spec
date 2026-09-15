@@ -509,6 +509,27 @@ never tasked the exit-criterion-2 conformance of its own artifact, and its live 
 EIGHT moves with no successor recording INVOKE; and the residue sweep's acceptance grep can never
 return zero, because it exempts a file the grep matches.
 
+ADDED 2026-09-15 (Sal) — **AN EXPLORATION MAY CONCLUDE IN NOTHING, and this stage gives it the
+words.** Today the only exit from an exploration is promotion to a change: nothing in the convention
+defines a no-change outcome, and `Considered & out` rejects OPTIONS WITHIN an exploration, never the
+exploration itself. The program layer already has the concept — rc11 was moved to Considered & out
+with a re-entry trigger and that is recorded as a good outcome — while the exploration layer has no
+equivalent verb. This stage adds it: a CONCLUDED decision stating what was decided and WHY nothing
+is built, a status-header flip from `exploring` to concluded, a re-entry trigger naming what would
+reopen it, and a stated home for the staging directory so the concluded work is a record rather than
+clutter.
+
+**Why it belongs here rather than in a stage of its own**: the declaration is convention, which is
+this stage's subject, and its sibling half — the readout — is rc13b's. A third stage editing the
+same two capabilities is how a requirement ends up with three owners. The irony is worth keeping:
+the fix for building too much would itself have been a new stage if nobody was watching.
+
+**Evidence, 2026-09-15**: two stages ran full propose-review-archive cycles and shipped nothing.
+rc13a's own second attempt might have concluded at EXPLORE — R-crc-10 would have told it to — but
+there was no way to say so and have the workflow agree. Dropping at explore costs one sitting;
+dropping at archive cost three passes, twice. R-crc-10 SHAPE: the author DECLARES the conclusion and
+the engine records it; nothing asks the engine to judge whether an exploration should stop.
+
 KNOWN AND ACCEPTED: this stage is ADVISORY until rc13b lands. An author can ignore the convention and
 no readout notices. That is the dependency, stated rather than discovered — and it is the difference
 between this split and rc03a, which substituted a cheaper MECHANISM for the correct one three times.
@@ -532,6 +553,18 @@ ASSERTING readiness on evidence that cannot support it. Today confidence RISES w
 the floor and middle rungs already defer, and only Mature asserts, on four counted headings and at
 most one open question. Without a closed enumeration for every LIVE rule, the emit renders a
 deferring rung plus the named gap.
+
+ADDED 2026-09-15 (Sal) — **A FIFTH RUNG FOR AN EXPLORATION THAT CONCLUDES IN NOTHING.** Every rung
+in the shipped grid points at continuing or building: Early and Stalled say keep exploring, Mid
+offers propose, Mature asserts readiness. An exploration that has decided NOT to build must fight
+its own readout to say so — the emit keeps recommending propose at it. That is a structural nudge
+toward building, sitting in the one surface whose job is to help decide whether to build, and it is
+the same defect as the top rung asserting readiness on heading count: the readout asserting a
+direction the evidence does not support.
+
+The rung reads the CONCLUDED declaration rc13a's convention defines — a record the author wrote —
+and renders the conclusion plus its re-entry trigger, recommending NEITHER explore nor propose. It
+is the only rung that points at nothing, which is the point of it.
 
 This stage owns the parse rc13a's format makes possible: `rules_open` and `rules_total`,
 ENGINE-COMPUTED from the Mechanism section, with the domain of "every rule" stated — which
@@ -1497,3 +1530,28 @@ properties (user-invoked, draft-only, merge never) hold unchanged.
   the audit-drift gap as a `KNOWN_DIVERGENCE` exemption, and that let a ratified follow-up describe
   the engine as "accepting a third shape" when the truth is a HARD REFUSAL. A comparison cannot tell
   a divergence from a refusal; running it can.
+- **2026-09-15 — "drop this" becomes a first-class exploration outcome (Sal), captured into rc13a
+  and rc13b.** Verified before capturing: NO explore path defines a no-change outcome — the only
+  exit from an exploration is promotion to a change, and `Considered & out` rejects options WITHIN
+  an exploration, never the exploration itself. And the maturity grid cannot express it: Early and
+  Stalled say keep exploring, Mid offers propose, Mature asserts readiness. **Every rung points at
+  continuing or building.** An exploration that has decided not to build must fight its own readout
+  to say so.
+  That is the same defect as the top rung asserting readiness on heading count — a readout asserting
+  a direction the evidence does not support — and it sits in the one surface whose job is to help
+  decide WHETHER to build.
+  **The program layer already had the concept and the exploration layer did not.** rc11 was moved to
+  Considered & out with a re-entry trigger, and that is recorded as a good outcome. rc13a now gives
+  an exploration the same words: a CONCLUDED decision with its reason, a status-header flip, a
+  re-entry trigger naming what would reopen it, and a home for the staging directory so concluded
+  work is a record rather than clutter. rc13b gains the fifth rung that reads it and recommends
+  NEITHER explore nor propose — the only rung pointing at nothing, which is the point of it.
+  **Evidence from this day.** Two stages ran full propose-review-archive cycles and shipped nothing.
+  rc13a's own second attempt might have concluded at EXPLORE — R-crc-10 would have told it to — but
+  there was no way to say so and have the workflow agree. Dropping at explore costs one sitting;
+  dropping at archive cost three passes, twice.
+  **Captured into two existing stages rather than a third**, because the declaration is convention
+  (rc13a's subject) and the readout is rc13b's, and a third stage editing the same two capabilities
+  is how a requirement ends up with three owners. Worth keeping the irony: the fix for building too
+  much would itself have been a new stage if nobody was watching. R-crc-10 shape throughout — the
+  author DECLARES, the engine RECORDS; nothing judges whether an exploration should stop.
