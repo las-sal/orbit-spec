@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-09-15T18:05:18Z",
+  "change": "rc07-artifact-lint",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "mode": "proposal",
+  "prompt_path": "orbit/changes/rc07-artifact-lint/.orbit-runs/external-prompt-proposal-2026-09-15T18-05-08Z.md",
+  "target": null,
+  "final_assessment": "External review prompt packaged for rc07-artifact-lint (iter 1, mode proposal); awaiting findings. Handoff preflight FAILED: the working tree is dirty — the entire change directory orbit/changes/rc07-artifact-lint/ is UNTRACKED, and the consumed staging directory orbit/explore/rc07-artifact-lint/ shows as deleted-but-unstaged. A pull-based handoff against this state would hand the external reader a repo with no change in it. The pull invocation is withheld until the work is committed and pushed.",
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/rc07-artifact-lint/.orbit-runs/external-prompt-proposal-2026-09-15T18-05-08Z.md into the target AI, save the response as orbit/changes/rc07-artifact-lint/.orbit-runs/external-proposal-<TS>.md, then /orbit:address-reviews rc07-artifact-lint --from-file <path>"
+}

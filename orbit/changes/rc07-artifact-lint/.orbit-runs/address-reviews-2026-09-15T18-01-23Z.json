@@ -1,0 +1,172 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-15T18:01:23Z",
+  "change": "rc07-artifact-lint",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "internal-review",
+  "source_path": "orbit/changes/rc07-artifact-lint/.orbit-runs/review-proposal-2026-09-15T17-58-46Z.json",
+  "source_command": "review",
+  "source_token": "2026-09-15T17-58-46Z",
+  "walk_mode": "walk",
+  "walk_mode_source": "default",
+  "input_findings_summary": "8 findings from the in-context proposal pass (iteration 2): 0 CRITICAL, 4 WARNING, 4 SUGGESTION.",
+  "pushback_verification": "All 8 verified against current state before any edit; zero stale. Independently re-checked rather than taken from the report: the delta contains no occurrence of `--sources` or `orbit validate` as a surface statement (finding 1 holds); `schemas/spec-driven/schema.yaml:2` carries `version: 4` as a YAML number, so the string claim is load-bearing (finding 3); design D3's four table rows agree with the spec's, so finding 5 is a duplication risk and not a live disagreement; the stranded lead-in is at the end of the within-file paragraph exactly as reported (finding 8). Entries below are generated FROM the review emit's findings array, so titles and files are byte-identical to the pass they resolve — the fix adopted after the previous walk's corrective re-emit.",
+  "resolution_summary": {
+    "resolved": 8,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "finding": 1,
+      "severity": "WARNING",
+      "title": "No requirement names the surface the lint is reached through",
+      "file": "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+      "line": 5,
+      "outcome": "resolved",
+      "lane": "obvious-fix",
+      "action": "Added a surface paragraph to requirement 1: the lint is reached through `orbit validate --sources`, `--all` runs it alongside the change and spec checks, a finding fails validation with a non-zero exit, coverage renders after the findings on both, and per-item `orbit validate <change>`/`<spec>` are UNCHANGED — with the reason stated (a project-scoped verdict under a per-change name is the wrong frame). The delta can now be read end to end and learn what invokes it.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+          "orbit/changes/rc07-artifact-lint/design.md",
+          "orbit/changes/rc07-artifact-lint/tasks.md"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "finding": 2,
+      "severity": "WARNING",
+      "title": "Task 1.3 is short of the malformed-registry scenario it has to satisfy",
+      "file": "orbit/changes/rc07-artifact-lint/tasks.md",
+      "line": 7,
+      "outcome": "resolved",
+      "lane": "obvious-fix",
+      "action": "Rewrote task 1.3 to name EVERY fault the malformed-registry scenario lists — unparseable YAML, a non-map `sources:`, a scalar entry, a duplicate source name, a missing `engine:`, an unknown `engine:` value, a missing required parameter, an unknown key — and to carry the scenario's own framing that an existing file SHALL NOT be able to reach the absent-file silence. Task 5.1's 'each error path' now inherits the full list.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+          "orbit/changes/rc07-artifact-lint/design.md",
+          "orbit/changes/rc07-artifact-lint/tasks.md"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "finding": 3,
+      "severity": "WARNING",
+      "title": "The spec never states that a source emits a STRING, and one of the four is a YAML number",
+      "file": "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+      "line": 9,
+      "outcome": "resolved",
+      "lane": "obvious-fix",
+      "action": "Added a sentence above the source table: every engine source emits a STRING, and a natively numeric fact (`version: 4` is a YAML number) is rendered to decimal string form AT THE SOURCE, never at the comparison — the check performs no coercion of its own. The spec now carries what design D2 and task 1.2 already assumed.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+          "orbit/changes/rc07-artifact-lint/design.md",
+          "orbit/changes/rc07-artifact-lint/tasks.md"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "finding": 4,
+      "severity": "WARNING",
+      "title": "The pairing table mixes parse errors with a check failure, and says nothing about blast radius",
+      "file": "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+      "line": 65,
+      "outcome": "resolved",
+      "lane": "obvious-fix",
+      "action": "Split the pairing table into KIND and OUTCOME columns and stated the two kinds explicitly: a MARKER ERROR names the offending delimiter (no span exists to compare), a CHECK FAILURE names the source value against the span's text. The empty-span row is now typed CHECK FAILURE so it can never be emitted as a syntax error. Blast radius settled under R-crc-3 and stated: a marker error abandons ONE FILE's remaining spans and reports, while every other file still lints — the run fails but never goes quiet, so one malformed marker cannot turn the lint into a project-wide no-op. Task 2.2 carries both.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+          "orbit/changes/rc07-artifact-lint/design.md",
+          "orbit/changes/rc07-artifact-lint/tasks.md"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "finding": 5,
+      "severity": "SUGGESTION",
+      "title": "The v1 source table now exists in two places, which is the defect this change argues against",
+      "file": "orbit/changes/rc07-artifact-lint/design.md",
+      "line": 97,
+      "outcome": "resolved",
+      "lane": "obvious-fix",
+      "action": "Marked the spec's requirement-1 table NORMATIVE and design D3's the annotated copy, with the tie-break stated: if keeping the two in step ever costs anything, the spec's survives — citing this change's own proposal, which rejects a capability split on the ground that two copies of one rule is a defect.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+          "orbit/changes/rc07-artifact-lint/design.md",
+          "orbit/changes/rc07-artifact-lint/tasks.md"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "finding": 6,
+      "severity": "SUGGESTION",
+      "title": "`prefix` matching and `<n>` are unspecified",
+      "file": "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+      "line": 14,
+      "outcome": "resolved",
+      "lane": "obvious-fix",
+      "action": "Stated the grammar: `<prefix>` is matched LITERALLY, never compiled as a pattern, and `<n>` is one or more decimal digits with nothing following — so `R-crc-10` is an entry and `R-crc-4a` is not.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+          "orbit/changes/rc07-artifact-lint/design.md",
+          "orbit/changes/rc07-artifact-lint/tasks.md"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "finding": 7,
+      "severity": "SUGGESTION",
+      "title": "`specs.capability-count` does not say what it counts over",
+      "file": "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+      "line": 15,
+      "outcome": "resolved",
+      "lane": "obvious-fix",
+      "action": "Replaced 'the count of baseline capability specs' with the countable shape: directories under the project's `specs/` that contain a `spec.md`, BASELINE only (a capability introduced by an unarchived change is not counted), and a directory without a `spec.md` is not counted.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+          "orbit/changes/rc07-artifact-lint/design.md",
+          "orbit/changes/rc07-artifact-lint/tasks.md"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "finding": 8,
+      "severity": "SUGGESTION",
+      "title": "The exclusion-table lead-in got stranded behind the within-file digression",
+      "file": "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+      "line": 110,
+      "outcome": "resolved",
+      "lane": "obvious-fix",
+      "action": "Moved the exclusion lead-in back to the end of the living-versus-records paragraph where it belongs, and gave the table its own short introducer, so it no longer reads as though the author's marker were one of the path exclusions.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+          "orbit/changes/rc07-artifact-lint/design.md",
+          "orbit/changes/rc07-artifact-lint/tasks.md"
+        ],
+        "flagged_not_applied": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "All 8 findings resolved in the obvious-fix lane; no decision fork, nothing deferred, nothing escalated, no ripple outside the change. One method call was settled under R-crc-3 and named for reversal: a marker error's blast radius is ONE FILE, not the run. The change still stands at 18 tasks and 1 capability — every resolution was a sentence, a table column, or a task amendment, and the spec gained the one thing it was missing, a statement of what invokes it.",
+  "iteration": 3,
+  "next_recommended": "/orbit:review --as proposal --fresh rc07-artifact-lint"
+}
