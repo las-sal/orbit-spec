@@ -179,9 +179,14 @@ to leak. One residual remains — the fresh half's system-mode diff — closable
 exclusion. Eleven prose edits and one unclosable brief, versus one ordering change and one
 exclusion.
 
-**And it retires channel 11.** The launching brief has no artifact to constrain, but under
-external-first the orchestrator holds nothing to leak at the moment it dispatches the fresh half —
-except what the diff exclusion also covers.
+**CORRECTED 2026-09-15, during the walk that applied this case.** The first draft of this
+paragraph claimed ordering RETIRES channel 11. It does not. Under external-first the external
+findings land BEFORE the fresh half is dispatched, so the orchestrator holds them at the moment it
+writes the brief — and the brief is its own context, not a file, so no ordering and no exclusion
+reaches it. Channel 11 is the one channel that survives the mechanism intact, and it needs an
+explicit rule. Recording this here rather than letting a third pass find it: the claim was written
+in the same sitting that enumerated the channels, which is how confident-and-wrong reasoning gets
+past an enumeration that was otherwise correct.
 
 ## Decisions
 
@@ -332,6 +337,17 @@ except what the diff exclusion also covers.
 
 
 ## Open questions
+
+- **Q-rc03a-3 — bare `/orbit:address-reviews` does nothing when exactly one active change has an
+  unwalked pass.** Observed 2026-09-15. The body defines bare invocation as a whole-repo `@review:`
+  marker scan, and states that auto-discovery never fires without a positional anchor. With zero
+  markers repo-wide and one active change carrying two unwalked review passes, the defined
+  behaviour is a clean no-findings exit. The intent was unambiguous from context and the walk
+  proceeded by judgment.
+  Standing recommendation: when exactly ONE active change exists and it carries an unwalked pass,
+  bare invocation should resolve to that change and say so — the anchor the body says is missing is
+  computable. PROGRAM-TIER (a gap in the address-reviews surface); belongs with Q-rc03a-2's
+  explore-side sibling, and assigning either is an architect act.
 
 - **Q-rc03a-2 — `/orbit:explore` has no defined behavior for a name that already promoted.**
   R-crc-6 routes REDESIGN back to explore, and this change took that route after its first fresh

@@ -1,9 +1,9 @@
 schema: spec-driven
 created: 2026-09-15
 schema_version: 4
-base_fingerprints:
-  orbit-review-external:
-    Cycle context populated from prior runs: sha256:3d0f8202e4093e8a785b0f259cfc5873d352cbda2fd0d396cbc3e68809c15971
 architecture:
   doc: clean-up-review-cycle
   stage: rc03a-blind-prompt
+base_fingerprints:
+  orbit-engine-gates:
+    Single-voiced canonical-next computation: sha256:384345ac206ef82b689d74a698b9af5a6a6eba9263627c63299565599377153e

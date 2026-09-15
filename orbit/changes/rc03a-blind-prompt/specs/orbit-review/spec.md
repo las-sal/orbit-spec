@@ -1,42 +1,26 @@
 ## ADDED Requirements
 
-### Requirement: A blind-pair member receives no prior-findings context
+### Requirement: A blind-pair member's inputs exclude its partner's findings
 
-The system SHALL withhold prior-findings context from any review pass that is a BLIND-PAIR MEMBER. A blind-pair member is a REVIEW in the genre sense — it reads the whole artifact and the thesis and receives no account of what earlier passes found — so the withholding is not scoped to the partner's findings but to prior-findings context from any source. For the internal reviewer classes this means the prior-run inspection that otherwise fuels the pushback discipline is SKIPPED; that inspection is the internal-class equivalent of the Cycle context section `orbit-review-external` withholds for the external class, and one rule governs both.
+The system SHALL ensure that neither member of a `blind-pair` slot receives its partner's findings through any input it is instructed to read. The property delivered is R-crc-4's — the two members are blind TO EACH OTHER — not blindness to all prior history: findings from earlier, already-walked iterations are legitimate shared context and both members may see them.
 
-**Reading the genre.** The class is READ FROM THE ENGINE — `next_hint_keys.slot` from `orbit status --change <name> --json` — never inferred from flags or file inspection, so the gate that decides cadence also decides genre.
+The mechanism is ORDERING, owned by `orbit-engine-gates`: the canonical command for an empty pair names the external half, so the external prompt is composed while the trail holds no pair member and has nothing of its partner to carry. This requirement covers the ONE residual that ordering does not empty, plus the one channel that has no artifact behind it.
 
-**The rule is a CONJUNCTION on a POSITIVE signal.** A pass is a blind-pair member when the slot is present AND equals `blind-pair` AND the invoked reviewer class is independent (`fresh` or `external`). Absence is never treated as a pair signal:
+**The diff residual.** System-mode reviews are instructed to read the change's commit range. `.orbit-runs/` files are committed, not gitignored, and the external-handoff preflight withholds the pull invocation until the tree is clean and pushed — so by the time the fresh half runs, its partner's findings file is inside that range by construction. The system-mode read instruction SHALL therefore exclude the change's own `.orbit-runs/` directory from the commit range a blind-pair member is told to read.
 
-| `next_hint_keys.slot` | invoked class | prior-run read | why |
-|---|---|---|---|
-| `blind-pair` | `fresh` | **SKIPPED** | the pass can satisfy the slot |
-| `blind-pair` | `in-context` | performed | an in-context pass can never satisfy a blind-pair slot, and is the verification genre that most needs prior context |
-| any other value | any | performed | not a pair slot |
-| ABSENT (findings stand unwalked / all gates passed / status failed / no reviewed gate) | any | performed | absence is not a signal; a sequential pass must not be blinded by a missing field |
+**The brief.** A `fresh` pass runs in a clean execution context, and what reaches that context is the launching brief, not a file — so no file-level rule can constrain it. When the launching context dispatches a blind-pair member, the brief SHALL carry the change name, the mode, and the pass set only, and SHALL name no prior finding, count, severity, or trend. This is the one channel that ordering does not empty: under external-first the orchestrator holds the external half's findings at the moment it dispatches the fresh half, and it is the orchestrator's own context that must be withheld.
 
-**Architecture mode is carved out.** An architecture-mode review has no change, no reviewed gate, and no cadence — it resolves its target through `orbit architecture status` and is governed by the no-gate requirement — so no pair can exist and this requirement does not apply. Its prior-run read remains MANDATORY, because the architecture-mode iteration note is hand-computed from prior `review-architecture-*.json` emits whose `doc` matches the doc under review.
+#### Scenario: System-mode blind-pair member reads a diff excluding the trail
 
-Pushback discipline itself is UNCHANGED and still applies: findings are verified against current state before being reported. What is withheld is the prior-run read, not the verification.
+- **WHEN** a system-mode review pass runs as a member of a `blind-pair` slot
+- **THEN** the commit range it is instructed to read excludes `orbit/changes/<name>/.orbit-runs/`, so the partner's committed findings file is not among its inputs
 
-**The cost is DELIBERATE and larger than duplicate prose.** Both members may re-report findings resolved in earlier iterations. Most are caught by pushback-against-current-state and suppressed as stale by the walk — but a finding closed by a RATIFIED DECISION rather than an artifact edit leaves no current-state evidence for pushback to find, so a blinded member can re-report it as a live CRITICAL. The gate reads a pass's IMMUTABLE severity counts, not the walk's suppressions, so such a re-report fails the confirm predicate and buys a further independent pass against the gate's declared budget. This is ACCEPTED, not mitigated: independence is what makes the pair's overlap interpretable, and priming both members on a common prior frame inflates their overlap and deflates the residual estimate, making the instrument read safer than it is. A deflated residual estimate is a worse failure than a spent pass, because it is invisible.
+#### Scenario: A dispatched blind-pair member's brief names no prior finding
 
-#### Scenario: Fresh pass filling a blind-pair slot skips the prior-run read
+- **WHEN** the launching context dispatches a `fresh` pass as a blind-pair member while holding the other half's findings
+- **THEN** the brief carries the change name, mode and pass set only — no finding title, count, severity or trend — and the pass's emit records `reviewer_class: "fresh"` exactly as an unconstrained dispatch would
 
-- **WHEN** a review pass runs with `--reviewer fresh` (or `--fresh`) and `next_hint_keys.slot` is `blind-pair`
-- **THEN** the pass does NOT read prior `review-<mode>-*.json` summaries for pushback fuel, and the emit records the pass normally with `reviewer_class: "fresh"` — the withheld read changes what the reviewer saw, never how the pass is recorded or how the gate counts it
+#### Scenario: A non-member pass is unaffected
 
-#### Scenario: In-context pass during the pair window retains the read
-
-- **WHEN** a review pass runs with the default `in-context` class while `next_hint_keys.slot` is `blind-pair`
-- **THEN** the pass reads the most-recent matching prior summary as usual, because an in-context pass cannot satisfy a blind-pair slot and blinding it would withhold context from the verification genre
-
-#### Scenario: Absent slot retains the read
-
-- **WHEN** a review pass runs and `next_hint_keys.slot` is absent — a prior pass's findings stand unwalked, every gate has passed, the status call failed, or the change declares no reviewed gate
-- **THEN** the pass reads the most-recent matching prior summary exactly as before
-
-#### Scenario: Architecture mode is unaffected
-
-- **WHEN** a review runs with `--as architecture` against a doc
-- **THEN** the prior-run read over `review-architecture-*.json` emits matching the doc proceeds unchanged and remains mandatory for the hand-computed iteration note; this requirement does not apply, because architecture mode has no cadence and therefore no pair
+- **WHEN** a review pass runs that is not a member of a `blind-pair` slot — a confirming pass, a sequential external iteration, any proposal-mode pass, or any architecture-mode pass
+- **THEN** its inputs are unchanged: the full commit range, the prior-run read, and today's briefing all apply, because the blindness property is scoped to pair members and architecture mode has no cadence at all

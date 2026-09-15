@@ -2,129 +2,94 @@
 
 ## Context
 
-rc02 shipped the `blind-pair` cadence slot and left standing a requirement that contradicts it.
-The full evidence base is `explore.md` (moved here from staging) — Cases 1 and 2, and rc13's
-exploration Cases 2, 3 and 5 before them. The short version:
-
-- `orbit-review-external`'s `Cycle context populated from prior runs` requires prior open findings
-  in every external prompt (`orbit/specs/orbit-review-external/spec.md:273`).
-- The gate's blindness predicate checks only for a WALK between the two passes' tokens, so an
-  anchored pair is certified blind.
-- `gates.ts:878` renders `--fresh` for an empty `blind-pair` slot, making the leaking order the
-  engine's default. rc02 escaped by running external-first, by accident.
+rc02 shipped the `blind-pair` slot and left blindness enforced only against WALKS. The engine's
+canonical command for an empty pair names the fresh half first, which is the order that anchors the
+pair. Full evidence: `explore.md` — Case 3 enumerates the channels, Case 4 runs each order against
+them.
 
 ## Goals / Non-Goals
 
 **Goals**
-- A blind-pair member, in either reviewer class, receives no prior-findings context.
-- The distinction is COMPUTED from the gate, not inferred by a body-side heuristic.
-- A sequential iteration's prompt is byte-unchanged.
+- The two members of a pair do not receive each other's findings, on the path the engine itself
+  recommends.
+- The mechanism is structural, not a list of sites to remember.
 
 **Non-Goals**
-- Attesting blindness on the trail so the gate can VERIFY it rather than trust it (D-rc03a-6 —
-  deferred; needs `orbit-run-summary-emit` + `orbit-engine-gates` on top, which is R-crc-1's
-  ceiling). Fixing the leak and proving it is fixed are separable.
-- Changing the launching flow so one invocation runs both halves (rc13's D-rc13-4).
-- Changing `gates.ts`'s recommended order — obsoleted by that same decision (see Alternatives).
+- Blindness to all prior history (D-rc03a-10 — a descope; R-crc-4 asks for blind to each other,
+  and the stronger property is what made the previous shape unbuildable).
+- Attesting blindness on the trail so the gate can VERIFY rather than trust it (D-rc03a-6).
+- Changing the launching flow so one invocation runs both halves (rc13's D-rc13-4). This change
+  makes that launcher's job easier, not redundant.
 
 ## Decisions
 
-**D1 — the genre is read from the engine, never inferred.** Both branches read
-`next_hint_keys.slot` from `orbit status --change <name> --json`. CORRECTED after the first fresh
-pass: the external-handoff branch makes NO such call today (its only CLI reads are
-`orbit list --json` and the git preflight), so this change ADDS the step rather than reusing one.
-`canonicalNextForReviewed` returns `slot: 'blind-pair'` from the open-pair branch
-(`gates.ts:857-863`) and the empty-pair branch (`gates.ts:868-878`). Alternative considered:
-have the body detect a pair by scanning the trail for a standing unwalked independent pass. Rejected
-— the gate is already computing exactly this, and a second implementation of one question is the
-one-voice-for-facts failure rc07 exists to remove; worse, the two could disagree about the very
-property the gate is certifying.
+**D1 — ordering, not suppression.** The empty-pair canonical command names the external half.
+A prompt composed while the trail holds no pair member has nothing of its partner to carry. This
+closes six channels at once and no prose says the word "withhold" anywhere. Alternative considered
+and abandoned after two proposal passes: suppress per site, keyed on a genre read from the engine.
+It failed on enumeration (eleven sites, one with no artifact) and on the signal (see D3).
 
-**D2 — blinding is symmetric across reviewer classes.** The external half's Cycle context and the
-internal half's Step-5 prior-run read are the same context wearing two names. `explore.md` Case 2
-shows the fresh half does not leak TODAY — but only because Step 5's glob matches
-`review-<mode>-*.json` and external findings live in `external-<as>-*.md`. That immunity rests on a
-filename pattern nobody marked load-bearing. Shipping one half explicitly blinded and the other
-accidentally safe would ship the asymmetry that caused this stage.
+**D2 — the two residuals are handled explicitly, because ordering cannot empty them.**
+The system-mode commit range contains the partner's committed findings file by construction — the
+handoff preflight guarantees a clean, pushed tree — so the blind path's diff instruction excludes
+the change's `.orbit-runs/`. And the launching brief has no artifact behind it: under external-first
+the orchestrator HOLDS the external findings when it dispatches the fresh half, so this is the one
+channel ordering leaves fully open. Recorded honestly rather than waved at: Case 4's first draft
+claimed ordering retired this channel, which was wrong.
 
-**D3 — the rule is a CONJUNCTION on a POSITIVE signal; there is no fail-closed branch.**
-Withhold when the slot is present AND equals `blind-pair` AND the invoked class is independent.
-REPLACES the original fail-closed decision, which was reversed the same day. The original argued
-consequence asymmetry — withholding costs convenience, leaking costs the measurement — and that
-argument only holds if fail-closed misfires rarely. It misfires on two ROUTINE states: the
-unresolved-findings branch of canonical-next carries no slot (the ordinary state between a review
-and its walk), and an all-gates-passed status carries only the phase. The expected cost flipped.
-Positive-only cannot leak, because a pair member is runnable in exactly two states — pair empty,
-pair open — and both render the slot, the open case from the open-pair branch that is evaluated
-before the unresolved-findings branch. The conjunction's second term also fixes a separate error:
-`next_hint_keys.slot` describes the RECOMMENDED NEXT pass, not the pass in hand, so without it an
-`in-context` pass invoked during the pair window would be blinded despite being unable to satisfy
-the slot and being the verification genre that most needs context.
+**D3 — nothing infers a genre, because nothing can.** `next_hint_keys.slot` was the previous
+shape's signal and it is unusable twice over: it is scoped to the FIRST UNPASSED gate rather than
+the gate matching the invoked mode (a system-mode pair run while `apply` is `ready` reads no slot at
+all), and the empty-pair branch a non-leak proof rested on sits downstream of the resolution clause,
+so "pair empty" does not imply "slot rendered". Under ordering the engine simply chooses, and
+neither body branch asks what kind of pass it is. The per-gate `nextSlot` exists on the gate object
+and is not projected into the status rows; exposing it is worth doing WHEN something needs it.
 
-**D4 — the requirement is MODIFIED, not REMOVED.** Case 1 walked all five slot states the cadence
-can produce; three legitimately keep cycle context (a confirming `external` pass, a budget-spent
-`external` pass, and any `independent` pass in proposal mode, whose cadence has no pair at all).
-Deleting the section would make a confirming pass strictly worse at its job.
-
-**D5 — the withheld note is visible, not silent.** The section still renders, carrying the
-iteration number and one line naming why prior findings are absent. A silently-shortened prompt is
-indistinguishable from a bug, and the external reviewer is a human-operated session that benefits
-from knowing the omission is deliberate.
+**D4 — the delivered property is R-crc-4's, stated plainly.** Members are blind to each other.
+An iteration-2 pair still sees iteration 1's walked findings, which both share. The residual
+correlation that introduces into a capture-recapture estimate is a NAMED limit for rc04 to discount,
+not a defect chased here.
 
 ## Risks / Trade-offs
 
-- **Duplicate findings across pair members, and the budget they can burn** → accepted, stated in
-  the requirement. Most duplicates are caught by pushback-against-current-state and suppressed as
-  stale by the walk. But a finding closed by a RATIFIED DECISION rather than an artifact edit
-  leaves no current-state evidence for pushback to find, so a blinded member can re-report it as a
-  live CRITICAL — and the gate reads a pass's IMMUTABLE severity counts, not the walk's
-  suppressions, so that re-report fails the confirm predicate and buys a further independent pass
-  against the declared budget. Accepted rather than mitigated: priming both members on a common
-  prior frame would inflate overlap and DEFLATE the residual estimate, and a deflated estimate is
-  the worse failure because it is invisible, where a spent pass is not.
-- **The body still self-polices** → the gate cannot verify the prompt was actually blinded; that is
-  exactly D-rc03a-6's deferred attestation. Mitigation for now: the withheld note is IN the
-  committed prompt file, so a human reading the trail can see which way it went.
-- **`next_hint_keys` is a status-shape dependency** → it is already consumed by `boot-render.ts` and
-  `report-render.ts` for the model-hint garnish, so this adds a consumer to an existing contract
-  rather than a new one.
+- **The brief constraint is unenforceable by any artifact check** → it is a rule the launching
+  context must follow, with no file to grep. Stated rather than hidden; D-rc03a-6's attestation is
+  the mechanism that would make it checkable, and it is deliberately deferred.
+- **External-first makes the human round-trip the first step** → better scheduling, not worse:
+  the slow half is dispatched while the fast half runs. This was argued as an ergonomic benefit
+  before it was understood as a correctness property.
+- **Iteration-2+ pairs share prior walked history** → accepted (D4), named for rc04.
 
 ## Alternatives considered
 
-- **Delete the Cycle context section.** Rejected — D4.
-- **Scope the rule to "must not read the PARTNER's findings".** Rejected — narrower and wrong.
-  rc03's charter already defines the genre: a REVIEW receives no resolved-since list. A blind-pair
-  member IS that genre, so the rule follows from what a review is, not from who the partner is.
-- **Swap the canonical recommendation to external-first.** Considered three ways and rejected on
-  all three (`explore.md` Considered & out): as the fix it leaves blindness an ordering discipline;
-  as hardening alongside the fix it is superseded by D2, which makes order irrelevant to blindness;
-  as an ergonomic change on its own merits — the strongest reading, since dispatching the slow
-  human round-trip first is genuinely better scheduling — it is obsoleted by rc13's D-rc13-4, which
-  already decided one invocation launches both halves, leaving no first and no second to order.
-- **Attest blindness on the trail.** Deferred — D-rc03a-6; see Non-Goals.
+- **Suppress per site, keyed on the engine-reported genre.** The shape of this change through two
+  proposal passes. Abandoned: eleven channels, one with no artifact, and a signal that cannot carry
+  the question. Both passes' findings are in the trail; the second's CRITICALs invalidated the fix
+  chosen for the first's.
+- **Blind to all prior history.** Stronger than R-crc-4 requires, and the direct cause of the
+  eleven-channel problem. Descoped (D4).
+- **Delete the Cycle context section.** Never necessary under ordering; the section is correct as
+  written and `orbit-review-external` is not touched at all.
 
 ## Migration Plan
 
-None required. Older trails never report a `blind-pair` slot, and D3's fail-closed default covers
-every path where the field is absent. No schema-version bump; no engine change; the generated
-surface regenerates from one source with `npm run build && node bin/orbit.js update --force`.
+None. The ordering change alters a recommendation; older trails receive the new one. No schema bump,
+no metadata change, nothing to backfill.
 
 ## Instruments — what can actually be measured
 
-The Cycle context section is composed AT RUNTIME by the reviewing AI from a markdown reference;
-`src/` contains no engine-side prompt composition. So there is no function to unit-test, and tests
-asserting a rendered prompt's bytes would measure nothing. The instruments here are assertions over
-the GENERATED SURFACE TEXT — the emitted `references/external-handoff.md` and
-`references/prompt-template.md` must state the status read, the decision table including its
-absent-slot rows, the architecture carve-out, and the withheld `.orbit-runs/` pointer. This is the
-rc01 instrument class (derive the check from what actually ships), not a fallback.
+The ordering lives in `gates.ts` and IS unit-testable: assert the empty-pair branch renders the
+external command, and that the open-pair branch still names the missing member. The two residual
+rules live in body prose and are assertable only over the GENERATED surface text — the rc01
+instrument class. The brief constraint is assertable only as surface text; there is no run-time
+check, and saying so is part of the design.
 
 ## Open Questions
 
-None. Q-rc03a-1 was resolved at promotion (D-rc03a-6, deferred as a declared follow-up).
+None.
 
 ## Touchpoints
 
-- `src/core/templates/workflows/review.ts` — the external-handoff reference (new status-read step + cycle-context step), the shared prompt template's project-context reading list, and the internal branches' prior-run step.
-- `orbit/specs/orbit-review-external/spec.md` + `orbit/specs/orbit-review/spec.md` — synced at archive, not by this change.
-- `test/` — assertions over the GENERATED surface text (see design note below); no engine-side prompt composition exists to unit-test.
+- `src/core/artifact-graph/gates.ts` — the empty-pair branch's rendered command.
+- `src/core/templates/workflows/review.ts` — the system-mode read instruction and the dispatch-brief constraint.
+- `test/core/artifact-graph/` + `test/core/templates/` — the ordering unit test and the generated-surface assertions.
