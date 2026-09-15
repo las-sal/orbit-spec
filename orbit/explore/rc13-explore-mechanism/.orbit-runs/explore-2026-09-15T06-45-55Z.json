@@ -1,0 +1,12 @@
+{
+  "command": "explore",
+  "timestamp": "2026-09-15T06:45:55Z",
+  "change": "rc13-explore-mechanism",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Five executed cases, six decisions, three open questions. R-crc-7 applied by hand produced its own evidence: the five cases found THREE defects in shipped, archived rc02 mechanism, none of them reachable by reading the specification — which is what rc02's six proposal passes were doing. (1) The charter's own diagnosis does not survive its evidence: rc02's exploration carried dense mechanism and never executed any of it, so the target is UNEXECUTED mechanism, and a Mechanism section would have been filled and changed nothing. (2) The external prompt carries prior open internal findings by archived requirement, so following the gate's own fresh-first recommendation anchors a blind pair that the gate then certifies as blind — rc02's own pair escaped only by running external-first, 24 minutes before the fresh pass existed. (3) A merged pair walk is unrepresentable: sourcePath is singular, so obeying R-crc-4's one-walk rule strands the second half unresolved; rc02's pair was split into two emits one second apart by the collision bump. Decisions settle the walk-discovery design on the gate's own predicate, one invocation for both halves as a correctness property rather than ergonomics, and the blindness fix leaving rc13's scope as a new stage rc03a-blind-prompt (over R-crc-1's ceiling at four capabilities, and a requirement conflict rather than a prompt tweak). A paste-ready charter is drafted under sketches/; declaring it is an architect act and was deliberately not performed here. Open: what the engine may assert about readiness, whether the unit is mechanism or a worked case, and — still none yet — what triggers the requirement.",
+  "decisions_captured": 6,
+  "open_questions_count": 3,
+  "open_questions_with_recommendation": "3 of 3",
+  "next_recommended": "/orbit:explore rc13-explore-mechanism — 6 decisions captured but 3 open questions remain; resolve open questions before formalizing"
+}

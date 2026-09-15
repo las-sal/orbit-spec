@@ -1,0 +1,12 @@
+{
+  "command": "explore",
+  "timestamp": "2026-09-14T14:47:12Z",
+  "change": "rc13-explore-mechanism",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Staging scaffolded for rc13-explore-mechanism with the architecture citation to clean-up-review-cycle recorded, so the stage renders `exploring` rather than `premised`. The scaffold carries a sixth section — Mechanism — that is NOT part of the shipped five-section convention: R-crc-7 is applied by hand for this change per its charter, and whether that section earns its place is itself under exploration. The charter's three structural claims were re-verified against the shipped surface before any thinking was built on them; two hold exactly and one is sharper than stated (the `sketches/` affordance appears ONCE in the body, not twice — the other occurrence is the word inside a diagram-types list).",
+  "decisions_captured": 0,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "next_recommended": "/orbit:explore rc13-explore-mechanism — continue capturing thinking — no decisions captured yet"
+}

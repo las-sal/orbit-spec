@@ -258,8 +258,9 @@ never deleted.
 
 ## Program stages
 
-Fourteen small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
-split into rc02 + rc02b on 2026-09-12; rc13 added 2026-09-14 and moved to phase 1 the same day).
+Fifteen small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
+split into rc02 + rc02b on 2026-09-12; rc13 added 2026-09-14 and moved to phase 1 the same day;
+rc03a split from rc03 on 2026-09-15).
 Every stage is sized under R-crc-1, names the capabilities it touches, and names its goal.
 Charters are settled under R-crc-3 until a citing change refines them; exit criteria are
 falsifiable and self-measured by the stage's own cadence (G0). Position is computed — see the
@@ -415,9 +416,48 @@ cell has a value, with no empty case left to a default; (2) a constructed trail 
 test; (3) the pair's earlier member cannot be invisible and a clean set cannot certify a later
 unreviewed CRITICAL.
 
-### Stage rc03-review-genres — review is not verification
+### Stage rc03a-blind-prompt — a blind reviewer is told nothing
 
 Depends-on: rc02-gate-semantics
+Complete: [ ]
+
+SPLIT 2026-09-15 from rc03-review-genres (the rc02 → rc02b/rc02c precedent), because the conflict
+below must be resolved BEFORE rc13's own system review runs a blind pair, and rc03 entire is three
+capabilities that would displace rc13 and reverse the ordering decision made the day before.
+Surfaced by rc13's exploration under R-crc-7 applied by hand — five executed cases, of which this
+was cases 2, 3 and 5.
+
+Charter: rc02 added `blind-pair` to the cadence and left standing a requirement that contradicts
+it. `orbit-review-external`'s `Cycle context populated from prior runs` SHALL-includes "prior
+findings (open and resolved)" in every external prompt, with a scenario requiring "counts and short
+titles" of open internal findings. That requirement was written when every external review was a
+SEQUENTIAL ITERATION reviewing what the last one found, where telling the reviewer what is open is
+correct. A blind-pair member must receive NOTHING. Because the gate's blindness predicate checks
+only for a WALK between the two tokens, a pair anchored through its PROMPT is certified blind, and
+the capture-recapture residual estimate rc04 depends on silently stops meaning anything. The engine
+makes this the DEFAULT path: an empty `blind-pair` slot renders `--fresh` first (`gates.ts:113`),
+so the fresh half lands and the external prompt then reads it. rc02's own pair escaped only because
+it happened to run external-first — its prompt was written 24 minutes before the fresh pass
+existed, recording "Prior internal findings still open: 0". The one measurement this program has
+produced survives because the operator did not do what the tool said.
+
+This stage makes the cycle-context section CONDITIONAL ON PASS GENRE rather than unconditional: a
+pass filling a `blind-pair` slot gets no prior-findings context of any kind; a sequential iteration
+keeps today's content, which is correct for it. That is rc03's genre split, scoped to the one
+requirement that is actively wrong, and rc03 inherits the resolved conflict instead of re-deciding
+it. Goal G1. Touches: orbit-review-external. Exit: (1) a blind-pair member's prompt carries no
+prior-findings context, grep-tested on the generated surface; (2) the cycle-context requirement
+reads as genre-conditional, and a sequential external iteration still receives its iteration
+history; (3) rc13's own system-review pair runs under this stage and its external prompt is
+verifiably findings-free — blind by construction, not by ordering luck.
+
+ORDERING: rc03a runs as the NEXT CHANGE while rc13 remains in exploration. The two do not collide —
+`orbit/explore/rc13-explore-mechanism/` is staging, not an active change — and rc13 needs this only
+by the time it reaches system review, not to propose or apply.
+
+### Stage rc03-review-genres — review is not verification
+
+Depends-on: rc02-gate-semantics, rc03a-blind-prompt
 Complete: [ ]
 
 Charter: this stage OWNS the canonical cadence (R-crc-4) and its two pass genres. A REVIEW
@@ -433,6 +473,12 @@ orbit-address-reviews. Exit: (1) both templates exist and the schema's cadence s
 blind-pair → walk → verification; (2) a verification emit carries per-resolution
 landed/regressed; (3) verification passes raise zero WARNINGs outside the diff and review
 prompts contain no resolved-since list (grep-tested on the generated surface).
+NARROWED 2026-09-15: criterion (3)'s prompt clause targeted the "Resolved since last review"
+bullet. rc13's exploration found the ADJACENT bullet — "prior internal review findings still
+open" — is the one that anchors a blind pair, and rc03a-blind-prompt now owns resolving it as a
+requirement conflict. rc03 INHERITS that resolution and does not restate a narrower version of it;
+what remains here is the genre split across the whole template set, of which rc03a is the first
+and most urgent slice.
 REMOVAL IS CONFIRMED BY VERIFICATION, NOT BY ANOTHER REVIEW (2026-09-14). The reviewed-gate rule
 that a CRITICAL buys one further independent pass assumes the defect was FIXED IN PLACE — something
 must re-read the changed state. When a walk resolves BY REMOVAL under R-crc-6's redesign lane, the
@@ -912,3 +958,36 @@ properties (user-invoked, draft-only, merge never) hold unchanged.
   as having run when it did not", which is rc03's genre territory (a pass that cannot run is not a
   pass that was clean) and rc04's measurement territory (a skipped pass should be visible in the
   cadence line). Left as a standing observation; no ruling, no stage assignment.
+- **2026-09-15 — rc03a-blind-prompt SPLIT from rc03, because rc13's exploration found the blind
+  pair is not blind.** R-crc-7 applied by hand to rc13's own exploration produced five executed
+  cases; three found defects in SHIPPED, ARCHIVED rc02 mechanism, none reachable by reading the
+  specification — which is what rc02's six proposal passes were doing. The one that forced a stage:
+  `orbit-review-external`'s `Cycle context populated from prior runs` requires every external
+  prompt to carry prior open internal findings, and the gate's blindness predicate checks only for
+  a WALK between the two tokens. So following the engine's OWN recommendation — an empty
+  `blind-pair` slot renders `--fresh` first — lands the fresh half, feeds its findings into the
+  external half's prompt, and the gate certifies the anchored pair as blind. rc02's pair escaped by
+  ordering luck alone: its external prompt was written 24 minutes before the fresh pass existed and
+  recorded "Prior internal findings still open: 0". The one measurement this program has produced
+  survives because the operator did not do what the tool said. TWO FURTHER DEFECTS are recorded in
+  the exploration and not yet assigned: a merged blind-pair walk is unrepresentable
+  (`TrailResolution.sourcePath` is singular, so obeying R-crc-4's one-walk rule strands the second
+  half unresolved — rc02's own pair was split into two emits one second apart by the collision
+  bump), and walk DISCOVERY uses a private most-recent-by-token rule where the gate's own
+  `passResolved` predicate already defines what is outstanding.
+  **Why a split rather than folding it into rc13**: R-crc-1. rc13 already touches three
+  capabilities and this adds a fourth, and the ruling is explicit that a proposal over the ceiling
+  is split before review, never reviewed as one. Also because Case 5 changed what the fix IS — one
+  grep moved it from a two-line prompt tweak to a conflict between two archived requirements, whose
+  real question is what a review prompt owes a reviewer as a function of what kind of pass it is.
+  rc03 already owned that territory; rc03a is its first and most urgent slice, rc03 now Depends-on
+  it, and rc03's exit criterion (3) was NARROWED to inherit rather than restate a smaller version
+  of it. EXPLICITLY REJECTED: running rc13's own pair external-first by hand, the way rc02 escaped
+  — a stage whose thesis is that disciplines fail where affordances work cannot rely on a
+  discipline to produce its own evidence.
+  **Method note worth keeping**: the charter's own stated diagnosis did not survive its evidence.
+  It said rc02's exploration carried "zero worked mechanism"; that exploration carries dense
+  mechanism and never executed a line of it. A Mechanism section — rc13's charter's own first
+  proposal — would have been FILLED by rc02 and changed nothing. The target is UNEXECUTED
+  mechanism, a harder problem, and the charter's cure was vulnerable to the charter's own critique.
+  That correction is itself the first evidence that executing beats specifying.

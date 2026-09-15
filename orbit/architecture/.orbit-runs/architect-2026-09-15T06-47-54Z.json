@@ -1,0 +1,29 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-15T06:47:54Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Declared rc03a-blind-prompt, split from rc03, on the direction ratified in rc13's exploration. The stage resolves a conflict between two archived requirements that rc02 introduced and nobody noticed: orbit-review-external REQUIRES every external prompt to carry prior open internal findings, while orbit-engine-gates requires a blind-pair's members to be blind — and since the blindness predicate checks only for a walk between the two tokens, following the engine's own fresh-first recommendation produces an anchored pair the gate certifies as blind. rc02's own pair escaped by ordering luck, its prompt written 24 minutes before the fresh pass existed. rc03 now Depends-on rc03a and its exit criterion (3) was NARROWED to inherit the resolution rather than restate a smaller version targeting the adjacent bullet. Stage count fourteen to fifteen. No ruling added or amended; no stage reached ratification. Two further defects from the same exploration are recorded there and deliberately unassigned: the unrepresentable merged pair walk (singular sourcePath) and walk discovery's private recency rule where the gate's own predicate already defines outstanding.",
+  "stages_touched": [
+    "rc03a-blind-prompt",
+    "rc03-review-genres",
+    "rc13-explore-mechanism"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "handoff": {
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md — rc03a-blind-prompt is newly declared and runs as the NEXT CHANGE; rc13 stays in exploration and needs rc03a only by the time it reaches system review.",
+      "orbit/explore/rc13-explore-mechanism/explore.md — five executed cases, six decisions, three open questions; cases 2, 3 and 5 are rc03a's whole evidence base.",
+      "orbit/explore/rc13-explore-mechanism/sketches/rc03a-blind-prompt-charter.md — the draft this declaration came from, plus its open items.",
+      "orbit/specs/orbit-review-external/spec.md:273 — the requirement rc03a modifies.",
+      "src/core/artifact-graph/gates.ts:113 — why fresh-first is the engine's default recommendation."
+    ],
+    "next_command": "/orbit:explore rc03a-blind-prompt",
+    "model_hint": "rc03a's deliverable is a decision procedure — what a prompt owes a reviewer as a function of pass genre — so R-crc-7 applies: write the mechanism and execute it once before specifying. It is one capability and should stay small.",
+    "seam": "rc03a is declared and unstarted; rc13 is mid-exploration with three open questions, one of which (what triggers the worked-case requirement) is still `none yet`. Neither blocks the other. Two outward acts remain the user's: filing the drafted delta-scope issue and closing issue #8 with a pointer to rc02."
+  },
+  "next_recommended": "/orbit:explore rc03a-blind-prompt"
+}
