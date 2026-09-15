@@ -1,0 +1,28 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-15T15:21:44Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "rc13 SPLIT into rc13a-explore-mechanism-convention and rc13b-explore-maturity-signal — R-crc-9's first application, hours after ratification. The second proposal pass found the change was a fourth capability wide with no delta (orbit-emit-composition's computed-extensions requirement enumerates the explore fields and the four-state grid, both falsified) and that a task swept a propose.ts site governed by a fifth. The correct mechanism needs an entry grammar, a decision-ID slot, a parser and two more deltas — over the ceiling, where R-crc-9 says SPLIT or DECLARE BLOCKED. The seam is FORMAT versus ENFORCEMENT and it is a dependency, not a compromise: a pass traced the parser `rules_open` would need and found nothing to key on, because the Decisions section defines no identifiers and the Mechanism entry no boundaries. rc13a ships the machine-readable format; rc13b ships the readout that reads it. The advisory interval D-rc13-10 warned about is real and now stated as the sequence rather than hidden. The retained rc13 heading carries the problem, the diagnosis, and the move set's history — five ratified with no sixth nameable, classification found COHERE; six ratified, a second record found FEASIBILITY and CONSUME; eight ratified, a pass found a ninth in this stage's own Case 8. Stage count fifteen to seventeen. No ruling added; no stage reached ratification.",
+  "stages_touched": [
+    "rc13-explore-mechanism",
+    "rc13a-explore-mechanism-convention",
+    "rc13b-explore-maturity-signal"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "handoff": {
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md — the retained rc13 heading carries the problem and the move set's history; rc13a and rc13b carry the work.",
+      "orbit/changes/rc13-explore-mechanism/ — the active change, scoped to BOTH halves; it must be narrowed to rc13a and its architecture citation repointed.",
+      "The change's two review passes and one walk — 48 findings, 12 CRITICALs, zero repeats.",
+      "R-crc-9 in the rulings index — the ruling this split applies, ratified the same day out of rc03a's withdrawal."
+    ],
+    "next_command": "/orbit:address-reviews rc13-explore-mechanism",
+    "model_hint": "The walk is a DESCOPE (R-crc-6's middle lane): drop the emit delta and its tasks, add the format tasks rc13a now owns, repoint the architecture citation to rc13a, and apply the second pass's ordinary repairs.",
+    "seam": "rc13a and rc13b are declared and premised; the active change still spans both and is the walk's subject. One budgeted pass remains on the proposal gate, best spent as the EXTERNAL half on the narrowed state — the second pass noted that at the ceiling R-crc-4 owed this proposal a blind pair and it got fresh-walk-fresh instead."
+  },
+  "next_recommended": "/orbit:address-reviews rc13-explore-mechanism"
+}

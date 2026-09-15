@@ -274,9 +274,10 @@ never deleted.
 
 ## Program stages
 
-Fifteen small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
+Seventeen small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
 split into rc02 + rc02b on 2026-09-12; rc13 added 2026-09-14 and moved to phase 1 the same day;
-rc03a split from rc03 on 2026-09-15).
+rc03a split from rc03 on 2026-09-15 and WITHDRAWN the same day; rc13 split into rc13a + rc13b on
+2026-09-15 under R-crc-9).
 Every stage is sized under R-crc-1, names the capabilities it touches, and names its goal.
 Charters are settled under R-crc-3 until a citing change refines them; exit criteria are
 falsifiable and self-measured by the stage's own cadence (G0). Position is computed — see the
@@ -338,96 +339,100 @@ a `gate_overridden` for "no clean pass yet".
 Depends-on: (none)
 Complete: [ ]
 
-Charter: the explore surface is where invention is licensed, and today it is not strong enough to
-hold it — so invention leaks downstream into walks, which is where R-crc-6 found it. Three
-structural weaknesses, each verified against the shipped surface (2026-09-14). (1) There is NO
-MECHANISM SECTION: the five-section convention is Premise / Decisions / Open questions / Considered
-& out / References, every one about intent and context, and nothing asks how the thing computes; the
-`sketches/` sibling-file affordance appears twice in the whole body, once as decoration inside an
-ASCII-art box and once as an optional aside, and is never prompted, required, or counted. (2)
-MATURITY IS A DECISION COUNT: the explore emit records `decisions_captured`,
-`open_questions_count` and `open_questions_with_recommendation` — three counts — and grades the
-exploration from them, so rc02's exploration read "7 decisions captured … before formalizing" with
-zero worked mechanism behind any of them. That is the same disease as a review budget that counts
-passes: events counted where substance was meant. (3) THERE IS NO FALSIFICATION STEP: decisions are
-auto-captured with a brief acknowledgment, and nothing asks what would make this wrong or requires
-the proposed rule to be run once.
+**SPLIT 2026-09-15 (Sal) into rc13a + rc13b, under R-crc-9 — its first application.** This heading
+is retained as the program's record of the problem and the evidence; the WORK is declared in the two
+stages below. The split seam is FORMAT versus ENFORCEMENT, and it is a dependency rather than a
+compromise: the engine half was never buildable first, because `rules_open` cannot be computed from
+a format that defines no decision identifiers and no parseable per-rule entry. The format has to
+exist before anything can parse it.
 
-**RE-AIMED 2026-09-15 (Sal), after rc03a falsified this stage's original cure.** The charter
-proposed a Mechanism section carrying an EXECUTED CASE. rc03a carried exactly that from its first
-exploration onward, would have rendered Mature under the original exit criterion 1 at every point,
-and failed three times across three independent passes. An executed case shows ONE PATH through a
-rule, and none of rc03a's three failures were on a path anyone walked.
+THE PROBLEM. Invention is supposed to happen in explore; it happens in walks, which is where
+R-crc-6 found it. rc02 ran six proposal passes and 72 findings, nine of its first ten CRITICALs in
+mechanism that did not exist when its exploration closed. rc03a ran three passes and 15 CRITICALs
+with zero repeats, was WITHDRAWN, and shipped nothing.
 
-THE UNIT IS A CLOSED ENUMERATION per rule, not an executed case. That also dissolves the trigger
-question this stage could not answer for two sessions: the original scoping — "an exploration whose
-deliverable is a decision procedure" — required the AI to classify itself, which is dodgeable in a
-sentence. Under a closed-enumeration unit there is nothing to self-assess: a Decision that states a
-CONDITIONAL has a domain, and either every member is stated or it is not.
+THE DIAGNOSIS THIS STAGE ESTABLISHED, and it is not the one the charter opened with. Explorations
+do not lack mechanism — rc02's carries dense mechanism and rc03a's carried executed cases from its
+first sitting. What an executed case shows is ONE PATH through a rule, and none of those failures
+were on a path anyone walked. Classifying the record by the PART of a mechanism that failed: eleven
+of rc03a's fifteen were READ, ENUMERATE or COHERE failures and ZERO were EXECUTE failures.
 
-THE STAGE ENFORCES SIX MOVES, DERIVED from the structure of a mechanism rather than listed. A
-mechanism is an assembly of parts computing outputs from inputs under constraints, and each part is
-a way to be wrong:
+THE UNIT IS A CLOSED ENUMERATION per rule, closure has three DECLARED forms (DERIVED / SOURCED /
+BOUNDED), and a Decision is a RULE iff it has a DOMAIN OF SITUATIONS — a test deliberately
+GRAMMAR-INDEPENDENT, because a form-based test lets an author state a rule in prose carrying no
+WHEN/THEN and fall outside it.
 
-| part | the way it goes wrong | move | status |
-|---|---|---|---|
-| the facts it cites | the fact is not true | READ | EXISTS (read-before-reference) — violated |
-| its input domain | a member it ranges over is unhandled | ENUMERATE | EXISTS (R-crc-7's table) — unenforced |
-| its own parts | two of them assume incompatible things | COHERE | unnamed until 2026-09-15 |
-| its computation | wrong output on a member it handles | EXECUTE | this stage's original proposal |
-| its purpose | correct, and still misses a class of defect | FALSIFY | nobody's |
-| its context | it violates a standing ruling | CONFORM | unenforced |
+THE MOVE SET IS ITSELF BOUNDED, and its history is the stage's best evidence. A five-move set was
+ratified; no sixth could be named on request; classifying rc03a's record found COHERE. The six were
+then ratified; classifying rc02's four found FEASIBILITY and CONSUME. The eight were then ratified;
+a proposal pass hunting a ninth found one in this stage's own Case 8 — a mechanism that is correct,
+complete, and NEVER INVOKED, which lands outside all eight. Three times, confidence about closure
+was wrong, and each time the correction came from CLASSIFYING A RECORD rather than from thinking
+harder. That is the argument for the whole stage, produced by the stage on itself, and rc13a
+inherits it as its central evidence rather than as a rhetorical flourish.
 
-So this stage's contribution is less "add an affordance" than MAKE EXISTING RULINGS ENFORCEABLE AT
-EXPLORE TIME and add the ones nobody owns. R-crc-7 already says "empty cases are explicit by
-construction; a blanket default does not substitute for stating them" — rc03a shipped prose plus a
-blanket default, its second pass flagged the R-crc-7 violation as a WARNING and the CRITICAL it
-produced as the same defect at two levels, and nothing at explore time had checked.
+### Stage rc13a-explore-mechanism-convention — the format that makes a rule checkable
 
-THE DERIVATION EARNED ITS KEEP WITHIN THE HOUR, which is the stage's own thesis operating on the
-stage. A five-move set was ratified, no sixth could be named on request, and then classifying
-rc03a's fifteen CRITICALs found FOUR that landed nowhere: COHERE — the delta asserting both "empty
-pair → external" and "no pairable pass → fresh"; design D3 forbidding the only signal its own two
-rules required, twice. Not ENUMERATE (the domain was covered twice over, with conflicting
-dispositions) and not CONFORM (nothing external was violated). The most-recurring class on the
-record, invisible to the set ratified minutes earlier. Confidence about closure was wrong twice in
-one sitting; the sixth move was found by CLASSIFYING A RECORD, not by thinking harder.
+Depends-on: (none)
+Complete: [ ]
 
-Goal G3. Touches: orbit-explore-modifications, orbit-conventions (the five-section format),
-orbit-run-summary-emit (the explore extension fields) — THREE, at R-crc-1's ceiling deliberately.
-None is droppable: without the emit change the convention is ADVISORY, which is the exact failure
-R-crc-7 just demonstrated. If the proposal review shows the stage is OVER the ceiling, the standing
-R-crc-1 corollary says SPLIT THE MECHANISM — not shrink it.
+Charter: the explore convention gains a **Mechanism** section whose unit is a CLOSED ENUMERATION per
+rule; the RULE test (a Decision is a rule iff it has a domain of situations, applied PER CLAIM since
+an entry may state a finding and embed a rule); the three DECLARED closure forms with the taxonomy
+itself declared BOUNDED; the move set with its residual and its growth path stated — including where
+a set-finding is RECORDED and what test distinguishes "a way a mechanism is wrong" from "outside the
+set's domain", which the first shape left to the classifier's word; and the explore RE-ENTRY case
+(a name resolving to an active change resumes in place, never scaffolding a second staging directory
+beside the authoritative one).
 
-Exit: (1) an exploration cannot render Mature while any rule in its Decisions lacks a closed
-enumeration of its domain; (2) the emit's recommendation names what is missing per rule rather than
-a decision count; (3) the next stage explored under it reaches its first review pass with zero
-CRITICALs of the READ, ENUMERATE or COHERE classes — the three that account for eleven of rc03a's
-fifteen. Evidence base: rc02 ran SIX proposal passes and 72 findings, nine of its first ten
-CRITICALs in mechanism that did not exist when its exploration closed (2026-09-14); rc03a ran THREE
-passes and 15 CRITICALs with zero repeats, was WITHDRAWN, and its record is what the six-move set
-was derived against (2026-09-15).
+CRITICALLY, AND THIS IS WHY THE SPLIT FALLS HERE: this stage also ships the MACHINE-READABLE FORMAT
+that the enforcement half must parse — a decision-ID slot in the Decisions section, and a per-rule
+Mechanism entry grammar with a declared closure-form token and a disposition slot. The first shape
+of this work asserted an engine-computed `rules_open` over a format that defines no identifiers and
+no entry boundaries; a proposal pass traced the parser it would need and found nothing to key on.
+The format is the prerequisite, not the leftover.
 
-ADDED 2026-09-15 (surfaced twice by rc03a's own cycle): this stage also owns the RE-ENTRY case.
-R-crc-6 routes REDESIGN back to explore, and rc03a took that route twice — but its staging
-directory had moved into the change at propose, so Mode B would have scaffolded a SECOND
-`explore.md` beside the authoritative one, which is the second-claim-on-one-truth condition that
-propose's own metadata merge refuses. Both sessions resumed in place by judgment, with nothing in
-the body sanctioning it. The body should RESUME IN PLACE against `orbit/changes/<name>/explore.md`
-when the name resolves to an active change, and say so.
+Goal G3. Touches: orbit-conventions, orbit-explore-modifications. Exit: (1) a rule's domain
+enumeration, its declared closure form and each move's disposition have named slots a parser can key
+on, and the Decisions section carries a stable identifier per entry; (2) the convention's own
+artifact — this stage's exploration — conforms to it, with every live rule's domain closed and every
+out-of-domain entry carrying the disposition annotation ON THE ENTRY rather than in commentary about
+it; (3) the shipped body carries ONE conforming exemplar entry, so the convention shows its shape
+rather than describing it.
 
-ORDERING RESOLVED 2026-09-14 (Sal): rc13 MOVES TO PHASE 1 and is the next stage. This is not an
-exception to R-crc-2 — it is R-crc-2 applied correctly. The stage was originally filed in phase 3
-by its MECHANISM (it reduces what propose injects); phase 1's criterion is "the cheapest,
-highest-lever changes to the cycle's own rules FIRST", which is precisely what this stage is. Where
-a stage's mechanism and its leverage point at different phases, leverage governs placement.
-Two consequences worth stating. Its exit criterion 3 is measured on THE NEXT STAGE EXPLORED UNDER
-IT, so every stage after it is the measurement — running it seventh would have discarded six of
-them. And rc13's own exploration necessarily runs under the weak surface it exists to fix, so
-R-crc-7 is applied BY HAND for this one change (Mechanism section written, the procedure executed
-once before specifying); its own cycle then stands as the control. If mechanism still leaks into
-its walks under manual discipline, that is evidence the affordance is necessary rather than
-merely convenient.
+KNOWN AND ACCEPTED: this stage is ADVISORY until rc13b lands. An author can ignore the convention and
+no readout notices. That is the dependency, stated rather than discovered — and it is the difference
+between this split and rc03a, which substituted a cheaper MECHANISM for the correct one three times.
+Here the correct mechanism is kept whole and sequenced.
+
+### Stage rc13b-explore-maturity-signal — the readout stops asserting what it cannot see
+
+Depends-on: rc13a-explore-mechanism-convention
+
+Complete: [ ]
+
+Charter: the maturity grid's TOP RUNG loses its promotion. `next_recommended` is a required spine
+field whose value is a command, so the engine must point somewhere; what it must stop doing is
+ASSERTING readiness on evidence that cannot support it. Today confidence RISES with heading count —
+the floor and middle rungs already defer, and only Mature asserts, on four counted headings and at
+most one open question. Without a closed enumeration for every LIVE rule, the emit renders a
+deferring rung plus the named gap.
+
+This stage owns the parse rc13a's format makes possible: `rules_open` and `rules_total`,
+ENGINE-COMPUTED from the Mechanism section, with the domain of "every rule" stated — which
+dispositions put an entry out of it, and in what annotation vocabulary. It also owns the honest
+residual its predecessor claimed to close: ENGINE-COMPUTED does not remove self-classification, it
+RELOCATES it from the payload to the file. The engine sees the rules an author declared; a rule never
+entered yields an empty gap list and the top rung asserts. That is reachable by OMISSION, the
+cross-check is a later reader or audit-drift, and the requirement must say so rather than claim the
+loophole closed.
+
+Goal G3. Touches: orbit-run-summary-emit, orbit-emit-composition. Exit: (1) the rung withholds the
+Mature assertion when any live rule's domain is open, naming the gap by identifier within a bounded
+render; (2) the parse has instruments over the real format — an entry with a declared form, one
+without, each out-of-domain disposition, a fenced block that must not count, a file with no Mechanism
+section; (3) the requirement states what the engine judges (FORM) and what it cannot (whether an
+enumeration is TRUE, and whether a rule was declared at all).
 
 ### Stage rc02b-severity-ladder — a severity is a consequence, and CRITICAL pays for itself
 
@@ -1192,3 +1197,33 @@ properties (user-invoked, draft-only, merge never) hold unchanged.
   with a mark that means the wrong thing.
   **Leverage-governs-placement stays in the log** (Sal) — one firing, on rc13, and no pending
   decision depends on it. Promote if a second stage is misfiled the same way.
+- **2026-09-15 — rc13 SPLIT into rc13a + rc13b: R-crc-9's first application, hours after it was
+  ratified.** Two proposal passes, 48 findings, 12 CRITICALs, zero repeats. The second pass found
+  the change was a FOURTH capability wide with no delta for it — `orbit-emit-composition`'s
+  computed-extensions requirement enumerates exactly which explore fields the surface computes and
+  names the four-state grid, and this work falsifies both — and that a task swept a `propose.ts`
+  site governed by a FIFTH capability the proposal declared untouched. The correct mechanism needs
+  an entry grammar, a decision-ID slot, a parser and two more deltas. That is over the ceiling, and
+  R-crc-9 says SPLIT or DECLARE BLOCKED, never substitute a cheaper mechanism.
+  **The seam is FORMAT versus ENFORCEMENT, and it is a DEPENDENCY rather than a compromise.** The
+  engine half was never buildable first: a proposal pass traced the parser `rules_open` would
+  require and found nothing to key on — the Decisions section defines no identifiers and the
+  Mechanism entry has no stated boundaries. rc13a ships the format that makes a rule checkable;
+  rc13b ships the readout that checks it. D-rc13-10 had argued the emit change was not droppable
+  because the convention is ADVISORY without it, and that is true and now STATED as the interval
+  rather than hidden — it is the sequence, not a concession.
+  **Why this is not rc03a repeating.** rc03a substituted a cheaper MECHANISM three times and shipped
+  nothing. Here the correct mechanism is kept whole and sequenced. That distinction is precisely
+  what R-crc-9 was ratified to make available, and it was available within a day of costing a stage.
+  **What the stage established, carried into rc13a as evidence rather than rhetoric**: an executed
+  case shows ONE PATH, and eleven of rc03a's fifteen CRITICALs were READ/ENUMERATE/COHERE failures
+  with ZERO in EXECUTE. And the move set's own history is the argument: five ratified, no sixth
+  nameable on request, classification found COHERE; six ratified, classification of a second record
+  found FEASIBILITY and CONSUME; eight ratified, a pass hunting a ninth found one in this stage's
+  OWN Case 8 — a mechanism correct, complete and NEVER INVOKED, landing outside all eight. Three
+  times confidence about closure was wrong, and every correction came from CLASSIFYING A RECORD
+  rather than thinking harder.
+  **Also inherited by rc13b, because the first shape claimed to close it**: ENGINE-COMPUTED does not
+  remove self-classification, it RELOCATES it from the payload to the file. The engine sees the rules
+  an author declared; a rule never entered yields an empty gap list and the top rung asserts. The
+  loophole is reachable by OMISSION, and the requirement must say so.
