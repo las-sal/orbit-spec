@@ -348,6 +348,14 @@ review pass with zero CRITICALs in mechanism authored after the exploration clos
 (2026-09-14): rc02 ran SIX proposal passes and 72 findings; nine of its first ten CRITICALs, and
 both of the sixth pass's, were in mechanism that did not exist when its exploration closed.
 
+ADDED 2026-09-15 (surfaced twice by rc03a's own cycle): this stage also owns the RE-ENTRY case.
+R-crc-6 routes REDESIGN back to explore, and rc03a took that route twice — but its staging
+directory had moved into the change at propose, so Mode B would have scaffolded a SECOND
+`explore.md` beside the authoritative one, which is the second-claim-on-one-truth condition that
+propose's own metadata merge refuses. Both sessions resumed in place by judgment, with nothing in
+the body sanctioning it. The body should RESUME IN PLACE against `orbit/changes/<name>/explore.md`
+when the name resolves to an active change, and say so.
+
 ORDERING RESOLVED 2026-09-14 (Sal): rc13 MOVES TO PHASE 1 and is the next stage. This is not an
 exception to R-crc-2 — it is R-crc-2 applied correctly. The stage was originally filed in phase 3
 by its MECHANISM (it reduces what propose injects); phase 1's criterion is "the cheapest,
@@ -435,7 +443,10 @@ SEQUENTIAL ITERATION reviewing what the last one found, where telling the review
 correct. A blind-pair member must receive NOTHING. Because the gate's blindness predicate checks
 only for a WALK between the two tokens, a pair anchored through its PROMPT is certified blind, and
 the capture-recapture residual estimate rc04 depends on silently stops meaning anything. The engine
-makes this the DEFAULT path: an empty `blind-pair` slot renders `--fresh` first (`gates.ts:113`),
+makes this the DEFAULT path: an empty `blind-pair` slot renders `--fresh` first (`gates.ts:878`;
+NOT `gates.ts:113` — `commandForClass`'s `case 'blind-pair':` is unreachable on this path, because
+`canonicalNextForReviewed` intercepts `neededSlot === 'blind-pair'` at 868 before the
+`commandForClass` call at 881. Corrected 2026-09-15),
 so the fresh half lands and the external prompt then reads it. rc02's own pair escaped only because
 it happened to run external-first — its prompt was written 24 minutes before the fresh pass
 existed, recording "Prior internal findings still open: 0". The one measurement this program has
@@ -443,13 +454,42 @@ produced survives because the operator did not do what the tool said.
 
 This stage makes the cycle-context section CONDITIONAL ON PASS GENRE rather than unconditional: a
 pass filling a `blind-pair` slot gets no prior-findings context of any kind; a sequential iteration
-keeps today's content, which is correct for it. That is rc03's genre split, scoped to the one
-requirement that is actively wrong, and rc03 inherits the resolved conflict instead of re-deciding
-it. Goal G1. Touches: orbit-review-external. Exit: (1) a blind-pair member's prompt carries no
-prior-findings context, grep-tested on the generated surface; (2) the cycle-context requirement
-reads as genre-conditional, and a sequential external iteration still receives its iteration
-history; (3) rc13's own system-review pair runs under this stage and its external prompt is
-verifiably findings-free — blind by construction, not by ordering luck.
+keeps today's content, which is correct for it.
+
+**MECHANISM REPLACED 2026-09-15, after two fresh proposal passes.** The paragraph above describes a
+per-site SUPPRESSION keyed on the genre — the shape this stage carried through two review
+iterations, ten CRITICALs, and two redesigns. It is abandoned, and the charter records why, because
+the reasoning is the stage's real content. The change's own exploration finally ENUMERATED the
+channels by which a pair member can reach its partner's findings: there are ELEVEN — three
+cycle-context bullets, an iteration count that reads the trail directory, a project-context
+pointer, a write-path instruction to avoid colliding with files already there, two system-mode diff
+instructions, a prior-run read, the disciplines epitome's own comparison, and a LAUNCHING BRIEF
+WITH NO ARTIFACT BEHIND IT. Every one is the same instruction wearing different clothes: read the
+change's own history. A deny-list over that rots on the next body edit, and the eleventh cannot be
+denied in prose because there is no prose to edit. Running each possible ORDER against that list
+showed ordering does not suppress the channels — it EMPTIES them: an external prompt composed while
+the trail holds no pair member has nothing of its partner to carry, because the partner's findings
+do not yet exist.
+
+THE MECHANISM IS ORDERING plus two explicit residuals. The canonical command for an EMPTY pair names
+the EXTERNAL half, which closes six channels at once with no prose change. The system-mode commit
+range a blind-pair member reads excludes the change's own `.orbit-runs/` (those files are committed,
+and the handoff preflight requires a clean, pushed tree, so the partner's findings are inside the
+range by construction). And a dispatched member's brief names no prior finding, count, severity or
+trend — the one channel ordering leaves fully open, since under external-first the orchestrator
+HOLDS the external findings when it dispatches the fresh half. The property delivered is R-crc-4's,
+stated plainly: the members are blind TO EACH OTHER, not to all prior history — the stronger
+property was this stage's own invention and was the direct cause of the eleven-channel problem.
+
+Goal G1. Touches: orbit-engine-gates, orbit-review. (`orbit-review-external` is NOT touched — the
+capability this stage began as; its `Cycle context populated from prior runs` requirement turns out
+to be correct as written.) Exit: (1) the canonical command for an empty blind pair names the
+external half, unit-tested in `gates.ts`, and the definitive spec states why the order is a
+correctness property rather than a preference; (2) the two residual channels are closed — the
+blind path's commit range excludes the change's `.orbit-runs/`, and the dispatch-brief constraint
+is stated on the generated surface; (3) rc13's own system-review pair runs under this stage and its
+COMMITTED external prompt carries no prior-findings content — blind by construction, not by
+ordering luck.
 
 ORDERING: rc03a runs as the NEXT CHANGE while rc13 remains in exploration. The two do not collide —
 `orbit/explore/rc13-explore-mechanism/` is staging, not an active change — and rc13 needs this only
@@ -619,6 +659,16 @@ Charter: when a walk edits a command example or a normative sentence, the addres
 sweeps the owning requirement's prose, every scenario, task restatements, transcriptions, and
 sibling seams before the finding is marked resolved, recording the sweep set per resolution in
 the log; the R-crc-4 verification pass over the walk's own diff precedes any further review.
+ADDED 2026-09-15 (rc03a's third walk): this stage also owns WALK DISCOVERY. Bare
+`/orbit:address-reviews` is defined as a whole-repo `@review:` marker scan, with auto-discovery
+firing only when a positional anchor is supplied — so with zero markers repo-wide and exactly ONE
+active change carrying two unwalked review passes, its defined behaviour is a clean no-findings
+exit. The anchor the body says is missing is computable. Two related corrections belong here: bare
+invocation resolves to the single active change when exactly one exists and says so, and discovery
+walks EVERY outstanding pass rather than the most-recent-by-token one — reusing the gate's own
+`passResolved` predicate, so a walk and the gate cannot disagree about what is outstanding (rc13's
+exploration, D-rc13-3; blocked there on `TrailResolution.sourcePath` being singular).
+
 This stage also owns the WALK EXECUTION discipline the same cadence exposed twice on 2026-09-14: a
 walk's edit set SHALL be applied so that a failure cannot leave it PARTIALLY applied, and each edit
 SHALL be VERIFIED AGAINST THE ARTIFACT before the log records it. Both failures came from one
@@ -991,3 +1041,37 @@ properties (user-invoked, draft-only, merge never) hold unchanged.
   proposal — would have been FILLED by rc02 and changed nothing. The target is UNEXECUTED
   mechanism, a harder problem, and the charter's cure was vulnerable to the charter's own critique.
   That correction is itself the first evidence that executing beats specifying.
+- **2026-09-15 — rc03a's mechanism REPLACED after two fresh passes, and the stage no longer touches
+  the capability it began as.** Ten CRITICALs across two proposal iterations, zero repeats. The
+  first pass killed the premise (the external-handoff branch makes no `orbit status` call, so
+  "the call it already makes" was false) and the second killed the signal: `next_hint_keys.slot` is
+  scoped to the FIRST UNPASSED gate rather than the reviewed mode, and the empty-pair branch a
+  non-leak proof rested on sits downstream of the resolution clause, so "pair empty" does not imply
+  "slot rendered". Neither is repairable by conjunction.
+  **What finally worked was an enumeration nobody had done.** Two proposal passes shipped a claim
+  to close "every channel" without ever listing the channels. There are ELEVEN, and the eleventh —
+  the launching brief — has no artifact to edit. Every one is the same instruction wearing
+  different clothes: read the change's own history. Deny-listing that is a chore that rots; ORDERING
+  empties it. An external prompt composed while the trail holds no pair member has nothing of its
+  partner to carry. Six channels close at once, with no prose change at all.
+  **Three things this cost, recorded because they are the stage's real content.** (1) External-first
+  was REJECTED TWICE before the enumeration — as "a discipline, not a fix" and as "obsoleted by
+  D-rc13-4" — and neither argument survived a list of sites. Reasoning about a mechanism's SHAPE
+  instead of reading its SITES is the failure this program keeps finding, now at three levels: in
+  rc02's exploration, in rc13's charter, and in rc03a's own two shapes. (2) The property the stage
+  was chasing — blind to ALL PRIOR HISTORY — was its own invention, not R-crc-4's "blind to each
+  other", and was the direct cause of the eleven-channel problem: blinding a pair to each other is a
+  TIMING fact, while blinding it to all history is censorship with no closed boundary. A requirement
+  harder than its ruling could not be met. (3) The third walk FALSIFIED ITS OWN EVIDENCE: the
+  enumeration case claimed ordering retires the launching-brief channel, and it does not, because
+  the orchestrator holds the external findings when it dispatches the fresh half. That claim was
+  written in the same sitting as the correct enumeration — an enumeration protects nothing about the
+  prose wrapped around it.
+  **Two workflow gaps assigned**: rc13 gains the explore RE-ENTRY case (R-crc-6 routes redesign back
+  to explore, but a promoted name has no staging directory, so Mode B would scaffold a second
+  `explore.md`; rc03a hit this twice and resumed in place by judgment both times), and rc08 gains
+  WALK DISCOVERY (bare `/orbit:address-reviews` is a whole-repo marker scan with no anchor, so with
+  one active change carrying two unwalked passes its defined behaviour is a clean exit).
+  **Also corrected**: the charter's `gates.ts:113` citation for the fresh-first default — that case
+  in `commandForClass` is unreachable, because `canonicalNextForReviewed` intercepts at 868 and
+  returns at 878.
