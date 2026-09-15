@@ -175,7 +175,179 @@ MODIFIED delta against a fourth capability (over R-crc-1's ceiling of three) who
 is deciding what a review prompt owes a reviewer AS A FUNCTION OF WHAT KIND OF PASS IT IS. The
 cheap reading and the true reading differ by one executed check.
 
+### Case 6 — run rc13's own cure against rc03a (2026-09-15)
+
+**Input**: rc13's exit criterion 1 — "an exploration whose deliverable is a decision procedure
+cannot render Mature without a Mechanism section carrying an EXECUTED CASE" — and rc03a's three
+failed mechanisms (15 CRITICALs, zero repeats, stage withdrawn 2026-09-15).
+
+**Procedure**: for each of rc03a's three failures, ask whether the criterion would have caught it.
+
+**Output**:
+
+| rc03a failure | had a Mechanism section with executed cases? | would criterion 1 have caught it? |
+|---|---|---|
+| The premise was false — "the `orbit status` call it already makes"; the branch makes none | YES — two executed cases | **NO.** The cases ran the RULE; nobody READ the branch the rule depends on |
+| The signal was unusable — `slot` is gate-scoped to the first unpassed gate, and absent in reachable pair states | YES — Case 1 enumerated five slot states | **NO.** Five is not all. The two absent-slot states were missing, and the verdicts for the five present were correct, so the table looked sound |
+| The state space was halved — the mechanism answered the empty-pair state and left the open-pair one | YES — Cases 3 and 4, and Case 3's channel enumeration was EXHAUSTIVE and correct | **NO.** Sites were enumerated exhaustively; STATES never were |
+
+**Finding — rc13's cure is insufficient BY ITS OWN EVIDENCE BASE.** rc03a carried a Mechanism
+section with executed cases from its first exploration onward. It would have rendered Mature under
+exit criterion 1 at every point, and it failed three times. An executed case shows you ONE PATH
+through a rule; none of rc03a's failures were on the path anyone walked.
+
+**What would have caught each one, named precisely:**
+
+- Failure 1 → **READ.** Verify a cited construct before building on it. That is
+  read-before-reference, an EXISTING discipline, and it was simply violated.
+- Failures 2 and 3 → **ENUMERATE.** Close the domain the rule ranges over and state every member's
+  disposition. That is R-crc-7's decision-table corollary — "empty cases are explicit by
+  construction; a blanket default does not substitute for stating them" — an EXISTING ruling, and
+  nothing at explore time enforced it. rc03a shipped prose plus a blanket default, the second pass
+  flagged the R-crc-7 violation as a WARNING and its consequence as a CRITICAL, and noted they were
+  "the same defect at two levels".
+
+**Consequence — the missing thing is EXHAUSTIVENESS OVER THE RULE'S DOMAIN, not an example of the
+rule running.** The four moves are distinct and rc13's charter conflates the last two:
+
+```
+READ       verify the facts the rule cites            existing (read-before-reference), violated
+ENUMERATE  close the domain; state every member       existing (R-crc-7), unenforced
+EXECUTE    run it; get an output that can be wrong    rc13's proposal
+FALSIFY    name what class of defect this misses      nobody's, yet
+```
+
+rc03a EXECUTED three times and skipped READ once and ENUMERATE twice. So rc13's contribution is
+less "add an affordance" than "make two existing rulings enforceable at explore time, and add the
+one nobody owns."
+
+### Case 7 — DERIVE the move set, then test it against every CRITICAL on record (2026-09-15)
+
+**Input**: the claim that a proposed mechanism can be wrong in a fixed number of ways, and the
+fifteen CRITICALs rc03a's three passes produced.
+
+**Procedure**: derive the set from the STRUCTURE of a mechanism rather than listing moves, then
+classify every recorded CRITICAL into it. A member that classifies nowhere falsifies the set.
+
+**Derivation** — a mechanism is an assembly of parts computing outputs from inputs under
+constraints. Each part is a way to be wrong:
+
+| part of a mechanism | the way it goes wrong | move |
+|---|---|---|
+| the facts it cites | the fact is not true | **READ** |
+| its input domain | a member it ranges over is unhandled | **ENUMERATE** |
+| its own parts | two of them assume incompatible things | **COHERE** |
+| its computation | it produces the wrong output on a member it does handle | **EXECUTE** |
+| its purpose | it is correct and still misses a class of defect | **FALSIFY** |
+| its context | it violates a standing ruling | **CONFORM** |
+
+**Output — the FIVE-move set ratified an hour ago is NOT closed; the test found a sixth.**
+Classifying rc03a's CRITICALs:
+
+```
+READ       "the orbit status call it already makes" (branch makes none); `slot`'s actual
+           gate-scoping semantics; tests asserted against engine code that does not exist
+ENUMERATE  slot absent in reachable states; architecture mode; the prompt-template site; the
+           git log channel; the OPEN-pair state
+EXECUTE    (none — every executed case ran correctly on the path it walked)
+FALSIFY    (none raised as a CRITICAL; the misses surfaced as the NEXT pass's findings)
+CONFORM    the untouched `Cycle context` baseline the new requirement contradicts
+COHERE     ← FOUR CRITICALs classified NOWHERE in the five-move set:
+           the delta asserting both "empty pair → external" and "no pairable pass → fresh";
+           design D3 forbidding the only signal its own two rules require — twice, once per pass
+```
+
+**Finding — internal self-contradiction is a SIXTH move, and it is the one that recurred most.**
+It is not ENUMERATE (the domain was covered, twice over, with conflicting dispositions), and it is
+not CONFORM (nothing external was violated). It is the mechanism's own parts disagreeing. Four of
+fifteen CRITICALs, appearing in both of the last two passes, and invisible to every move in the set
+this exploration ratified before running the test.
+
+**What this case demonstrates about its own method.** The five-move set was derived carefully, felt
+complete, and I could name no sixth when asked — which is exactly the confidence D-rc13-7 says not
+to trust. The sixth was not found by thinking harder; it was found by CLASSIFYING A RECORD. An
+enumeration closes against evidence or it does not close at all, and "I can think of no more" is
+the failure mode, not the check.
+
 ## Decisions
+
+- **2026-09-15 — D-rc13-12: the move set is SIX and is DERIVED from the structure of a mechanism,
+  not listed** (ratified in chat by Sal, 2026-09-15; resolves Q-rc13-4). A mechanism is an assembly
+  of parts computing outputs from inputs under constraints, and each part is a way to be wrong:
+  its FACTS (READ), its input DOMAIN (ENUMERATE), its own PARTS' mutual consistency (COHERE), its
+  COMPUTATION (EXECUTE), its PURPOSE (FALSIFY), its CONTEXT (CONFORM). Deriving rather than listing
+  is what makes the set checkable instead of asserted — and it earned its keep immediately: Case 7
+  classified rc03a's fifteen CRITICALs into it and found FOUR that landed nowhere in the
+  five-move set ratified an hour earlier. COHERE — the mechanism's own parts disagreeing — was the
+  most-recurring class on the record and the one nobody had named.
+  **The Mechanism section's template follows from it**, and is far more implementable than "carry
+  an executed case": per rule, the cited facts verified, the domain closed, the parts checked
+  against each other, one execution, the blind spot named, the standing rulings checked. An author
+  knows when they are done and a reader knows what is missing.
+  **Recorded as the stage's own dogfood**: this decision's predecessor asserted four, I could name
+  no fifth when asked, and Q-rc13-4 named CONFORM within the hour; then classifying a record found
+  COHERE. Twice in one sitting, confidence about closure was wrong. That is the argument for the
+  whole stage, produced by the stage on itself.
+
+
+- **2026-09-15 — D-rc13-11: the unit question is ANSWERED, and its earlier answer was one level too
+  low** (settled under R-crc-3; resolves Q-rc13-1). The question asked whether the unit is
+  "mechanism" or a WORKED CASE, and the standing recommendation was the worked case, argued on one
+  asymmetry: a thin case is visible in two seconds while thin prose is invisible. That argument was
+  RIGHT and its conclusion was one level short. A case is visible when it is thin; it is NOT visible
+  when it is complete-looking and partial — which is exactly what rc03a's five-state table was, and
+  what its channel enumeration was not. The unit is a CLOSED ENUMERATION (D-rc13-7); the same
+  asymmetry carries up a level, because an enumeration either closes or it does not, and a reader
+  can see which. The worked case survives as the EXECUTE move — one of four (D-rc13-8), not the
+  deliverable.
+
+
+- **2026-09-15 — D-rc13-7: the unit is a CLOSED ENUMERATION per rule, not an executed case**
+  (ratified in chat by Sal, 2026-09-15, on Case 6). An executed case shows ONE PATH through a rule.
+  None of rc03a's three failures were on the path anyone walked, and rc03a carried executed cases
+  from its first exploration onward — it would have rendered Mature under this stage's original
+  exit criterion 1 at every point, and failed three times. What catches those failures is closing
+  the DOMAIN the rule ranges over and stating every member's disposition. Executing keeps its place
+  — it is how you discover an output is wrong — but it is secondary and, on this evidence,
+  insufficient alone.
+
+- **2026-09-15 — D-rc13-8: the stage is re-aimed on FOUR MOVES, two of which already exist as
+  rulings and are simply unenforced** — **SUPERSEDED the same day by D-rc13-12: the set is SIX, DERIVED rather than listed. The four named here are real and the list was not closed — Case 7 found COHERE by classifying the record, and CONFORM had already been raised by Q-rc13-4.** (ratified in chat by Sal, 2026-09-15). The charter conflates
+  the last two as one affordance; they are distinct:
+  ```
+  READ       verify the facts the rule cites          read-before-reference — EXISTS, violated
+  ENUMERATE  close the domain; state every member     R-crc-7's table — EXISTS, unenforced
+  EXECUTE    run it; get an output that can be wrong  rc13's original proposal
+  FALSIFY    name what class of defect this misses    nobody owns this yet
+  ```
+  rc03a EXECUTED three times, skipped READ once and ENUMERATE twice. So this stage's contribution
+  is less "add an affordance" than "make two existing rulings enforceable AT EXPLORE TIME, and add
+  the one nobody owns". R-crc-7 already says "empty cases are explicit by construction; a blanket
+  default does not substitute for stating them" — rc03a shipped prose plus a blanket default, and
+  its second pass flagged the R-crc-7 violation as a WARNING and its consequence as a CRITICAL,
+  noting they were the same defect at two levels. The ruling had the answer and nothing enforced it.
+
+- **2026-09-15 — D-rc13-9: the trigger is DERIVABLE FROM THE TEXT, so self-classification is
+  retired** (settled under R-crc-3; resolves Q-rc13-3). The charter scoped the requirement to "an
+  exploration whose deliverable is a decision procedure", which the AI would classify about itself
+  — dodgeable in one sentence, which is why this question sat at `none yet` through two sessions.
+  Under D-rc13-7 the question dissolves: a Decision that states a CONDITIONAL has a domain, and
+  either every member of that domain is stated or it is not. Nothing to self-assess. A thin
+  enumeration is as visible as a thin case, because an enumeration either CLOSES or it does not —
+  which is the same asymmetry that made cases better than prose, applied one level up.
+
+- **2026-09-15 — D-rc13-10: the stage sits AT R-crc-1's ceiling deliberately, and that is stated
+  rather than discovered** (settled under R-crc-3). Three capabilities:
+  `orbit-explore-modifications` (the convention and the four moves), `orbit-conventions` (the
+  five-section format), `orbit-run-summary-emit` (the maturity signal reading enumeration presence
+  rather than decision count). None is droppable — removing the emit change leaves the convention
+  ADVISORY, which is precisely the failure mode R-crc-7 just demonstrated: a correct ruling nothing
+  enforces. Recorded because this stage is being widened immediately after watching rc03a die of
+  being harder than its ceiling, and the standing R-crc-1 corollary (split the mechanism or declare
+  the stage blocked; never substitute a cheaper one) applies to a stage OVER the ceiling. This one
+  is AT it. If the proposal review shows it is over, the corollary says SPLIT — not shrink the
+  mechanism.
+
 
 - **2026-09-14 — D-rc13-1: the target is UNEXECUTED mechanism, not absent mechanism**
   (settled under R-crc-3, by Case 1 above). Explorations produce SPECIFICATIONS, not RUNS, and
@@ -257,17 +429,6 @@ cheap reading and the true reading differ by one executed check.
 
 ## Open questions
 
-- **Q-rc13-1 — What is the unit: "mechanism", or a worked case?**
-  "Mechanism" is a noun that invites prose; "case" is a noun that invites a table. The naming
-  decides what authors actually write.
-  Standing recommendation: a WORKED CASE — named input, the procedure run by hand, the output
-  written down — and the output must be the kind of thing that can be wrong. The argument rests on
-  one asymmetry: a thin case is visible to any reader in two seconds ("Input: a trail. Output: the
-  gate passes." says nothing, obviously), while thin prose is invisible — rc02 proves it, since
-  three CRITICALs sat behind one good, thorough-reading sentence about `sourcePath` blindness. The
-  claim is NOT that cases resist gaming; it is that cases put the gap where a human eye lands
-  instead of behind confident prose.
-
 - **Q-rc13-2 — What may the ENGINE assert about an exploration's readiness?**
   The engine can check structure and never substance. `next_recommended` is a required spine field
   whose value is a command, so "stop grading" is not available — the engine must point somewhere.
@@ -276,21 +437,15 @@ cheap reading and the true reading differ by one executed check.
   middle rungs are already honest — the middle defers with "or /orbit:propose if ready" — and only
   the top rung asserts, on strictly no additional evidence about substance, just more headings.
   Confidence currently RISES with heading count. So: the top rung loses its promotion. Without a
-  worked case, `>=4 decisions` renders the MIDDLE rung's deferring language plus a named gap; with
-  a worked case, it may say ready. One branch of one function, the ratified
+  CLOSED ENUMERATION for every rule in Decisions, `>=4 decisions` renders the MIDDLE rung's
+  deferring language plus a named gap; with one, it may say ready. (UPDATED 2026-09-15 by
+  D-rc13-7 — this slot read "worked case" until the unit moved up a level.) One branch of one function, the ratified
   `Named-mode explore recommendation by maturity` requirement MODIFIED rather than REMOVED, and it
   fits R-crc-1's ceiling.
   Held against it, and worth stating out loud: rc02 would still have hit `>=4 decisions` and still
   been told "continue thinking, or propose if ready", and its author would very likely have
   proposed anyway. This removes the tool's ENDORSEMENT of the mistake without removing the mistake.
   That may be all a readout can honestly do, but we should not pretend it prevents anything.
-
-- **Q-rc13-3 — What triggers the requirement?**
-  The charter scopes it to "an exploration whose deliverable is a decision procedure", which the
-  AI would self-classify — dodgeable in one sentence.
-  Standing recommendation: none yet. Leaning toward DERIVATION over self-classification (from the
-  cited stage's charter, or from the capabilities touched), with "require a case always" as the
-  blunt fallback worth pricing before it is dismissed.
 
 ## Considered & out
 
