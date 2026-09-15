@@ -1,8 +1,8 @@
 ## ADDED Requirements
 
-### Requirement: Six moves applied per rule in the Mechanism section
+### Requirement: Nine moves applied per rule in the Mechanism section
 
-The system SHALL treat the Mechanism section as the record of EIGHT MOVES applied to each RULE in Decisions. The set is **BOUNDED, not DERIVED** — its members are named and an explicit residual is stated. Each move is a way a mechanism can be wrong:
+The system SHALL treat the Mechanism section as the record of NINE MOVES applied to each RULE in Decisions. The set is **BOUNDED, not DERIVED** — its members are named and an explicit residual is stated. Each move is a way a mechanism can be wrong:
 
 | part of the mechanism | the way it goes wrong | move |
 |---|---|---|
@@ -14,14 +14,19 @@ The system SHALL treat the Mechanism section as the record of EIGHT MOVES applie
 | its context | it violates a standing ruling | **CONFORM** |
 | its resources | it does not terminate, or does not fit | **FEASIBILITY** |
 | its output's consumer | the output is correct and the mechanism consuming it breaks | **CONSUME** |
+| its trigger | it is correct, complete, and nothing ever causes it to run | **INVOKE** |
 
-**THE RESIDUAL, stated because BOUNDED requires it**: this set is not closed. It was assembled by classifying two records — one stage's fifteen CRITICALs and another's four — and each classification found members the previous set lacked. FEASIBILITY and CONSUME were found by the second classification, after the six-move set had been ratified. Further classification is expected to find more, and the set SHALL grow when it does; a defect that classifies to no move is a finding about the SET, recorded as such, not an unclassifiable defect. MEDIUM CHOICE — whether a rule belongs in prose or a template slot — is deliberately OUT of the set: it is not a way a mechanism is wrong, and admitting it would make the set range over two different things.
+**THE RESIDUAL, stated because BOUNDED requires it**: this set is not closed, and its own history says so. Five moves were ratified and no sixth could be named on request; classifying one stage's fifteen CRITICALs found COHERE. Six were ratified; classifying a second record's four found FEASIBILITY and CONSUME. Eight were ratified; a review pass hunting a ninth found INVOKE in this stage's own evidence — a rule correct, complete, and never invoked until someone scheduled it. THREE TIMES confidence about closure was wrong, and every correction came from CLASSIFYING A RECORD rather than from further thought.
+
+**HOW THE SET GROWS, and who consumes a finding about it.** A defect that classifies to NO move is a finding about the SET. It SHALL be recorded as an `@review:` marker in the exploration that found it AND carried into that change's review emit as a finding against this requirement, so the set's growth has the same evidence trail as any other defect. Growing the set is a change to this requirement; nothing grows it silently.
+
+**THE TEST that distinguishes a missing move from an out-of-domain concern**, because a dismissal branch with no test is an invitation: a candidate is IN when it names a way the mechanism ITSELF fails — its facts, domain, parts, computation, output, consumer, purpose, context, or trigger. A candidate is OUT when it concerns how the rule is PRESENTED or AUTHORED rather than how it fails. MEDIUM CHOICE — prose versus a template slot — is the standing example of OUT: a remedy question, not a failure mode. When the test does not decide, the candidate is IN, because a set that over-covers costs an author one disposition line while a set that under-covers costs a review cycle.
 
 Two of these are EXISTING obligations that nothing enforced at explore time: READ is the read-before-reference discipline, and ENUMERATE is `orbit-conventions`' closure requirement, itself the explore-time form of the decision-table corollary. The stage's contribution is to make them checkable where the mechanism is authored rather than where it is reviewed.
 
 EXECUTE is NOT the primary move and SHALL NOT be treated as sufficient. An executed case demonstrates ONE PATH through a rule; the program's record shows that eleven of one stage's fifteen CRITICALs were READ, ENUMERATE or COHERE failures and ZERO were EXECUTE failures — every executed case ran correctly on the path it walked.
 
-#### Scenario: A rule's Mechanism entry records all six moves
+#### Scenario: A rule's Mechanism entry records all nine moves
 
 - **WHEN** a RULE is captured in Decisions and its Mechanism entry is written
 - **THEN** the entry records that rule's domain as a closed enumeration with its declared closure form, and the DISPOSITION of each move — applied (with what it found), or not applied (with the reason). A disposition of `not executed — <reason>` satisfies EXECUTE; the enumeration and its declared form are the only parts that cannot be dispositioned away, because they are what the maturity signal reads
@@ -51,7 +56,10 @@ R-crc-6 routes REDESIGN back to explore, and a change that has been promoted no 
 
 ### Requirement: explore.md five-section convention
 
-The system SHALL maintain `orbit/explore/<name>/explore.md` with six sections in fixed order: Premise, **Mechanism**, Decisions, Open questions, Considered & out, References. The Mechanism section carries, per RULE in Decisions, the closed enumeration of that rule's domain and the dispositions of the moves applied to it. Open-question entries carry the `Standing recommendation:` slot per `orbit-conventions`' five-section format (D-arc Stage D5, leak-hardening layer 1): the current leaning verbatim, or the literal `none yet` — a pending leaning discussed in conversation always has a file-resident home.
+The system SHALL maintain `orbit/explore/<name>/explore.md` with six sections in fixed order: Premise, **Mechanism**, Decisions, Open questions, Considered & out, References. The Mechanism section carries, per RULE in Decisions, the closed enumeration of that rule's domain and the dispositions of the moves applied to it.
+> The requirement NAME is retained for delta identity and the base-fingerprint key; the format it
+> specifies is SIX sections. A MODIFIED delta cannot change a requirement title.
+ Open-question entries carry the `Standing recommendation:` slot per `orbit-conventions`' five-section format (D-arc Stage D5, leak-hardening layer 1): the current leaning verbatim, or the literal `none yet` — a pending leaning discussed in conversation always has a file-resident home.
 
 #### Scenario: Initial stub structure
 
@@ -85,7 +93,7 @@ The system SHALL support three invocation modes: (A) bare — no file; (B) named
 #### Scenario: Mode B — new named exploration
 
 - **WHEN** `/orbit:explore <name>` is invoked, `orbit/explore/<name>/` does not exist, AND no active change of that name exists
-- **THEN** the command creates the staging directory and writes a stub `explore.md` with the five sections (Premise / Decisions / Open questions / Considered & out / References) AND a minimal `orbit/explore/<name>/.openspec.yaml` metadata file (D-arc Stage D2; same metadata genre as changes — base fields `schema: spec-driven` + `created: <ISO-8601>`, mirroring change metadata so the reused change-metadata helpers' schema validation passes unchanged; both are placeholders superseded at promotion, where propose's merge writes fresh `schema`/`created`/`schema_version` values) — carrying the optional `architecture: {doc, stage}` citation when the exploration serves a declared stage (offered when the name or conversation indicates a stage; omitted otherwise, with zero ceremony for standalone explores); the BEGIN emit fires immediately after scaffold + metadata are written (per `orbit-run-summary-emit`'s begin-emit scenario — D-arc Stage D3); ongoing conversation populates the file
+- **THEN** the command creates the staging directory and writes a stub `explore.md` with the six sections (Premise / Mechanism / Decisions / Open questions / Considered & out / References) AND a minimal `orbit/explore/<name>/.openspec.yaml` metadata file (D-arc Stage D2; same metadata genre as changes — base fields `schema: spec-driven` + `created: <ISO-8601>`, mirroring change metadata so the reused change-metadata helpers' schema validation passes unchanged; both are placeholders superseded at promotion, where propose's merge writes fresh `schema`/`created`/`schema_version` values) — carrying the optional `architecture: {doc, stage}` citation when the exploration serves a declared stage (offered when the name or conversation indicates a stage; omitted otherwise, with zero ceremony for standalone explores); the BEGIN emit fires immediately after scaffold + metadata are written (per `orbit-run-summary-emit`'s begin-emit scenario — D-arc Stage D3); ongoing conversation populates the file
 
 #### Scenario: Mode B — resume
 

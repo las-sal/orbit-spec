@@ -29,7 +29,7 @@ same defect at two levels, and nothing had checked.
 ## What Changes
 
 - **The explore convention gains a MECHANISM section, and its unit is a CLOSED ENUMERATION per
-  rule** — not an executed case. Executing keeps its place as one move of six.
+  rule** — not an executed case. Executing keeps its place as one move of nine.
 - **A Decision is a RULE iff it has a DOMAIN OF SITUATIONS**, tested by asking which situations it
   governs. Deliberately grammar-independent: a form-based test ("states a conditional") lets an
   author write a rule in prose carrying no WHEN/THEN and fall outside it.
@@ -37,14 +37,16 @@ same defect at two levels, and nothing had checked.
   (exhaustive over a set an authority defines), BOUNDED (members plus an explicit residual). The
   enumeration declares which. *"I can name no more"* is not a form; it is the state every failed
   enumeration on this record was in, and from the inside it is indistinguishable from closure.
-- **Eight moves per rule, declared BOUNDED with an explicit residual**: its FACTS (READ), its
-  DOMAIN (ENUMERATE), its own PARTS' consistency (COHERE), its COMPUTATION (EXECUTE), its PURPOSE
-  (FALSIFY), its CONTEXT (CONFORM), its RESOURCES (FEASIBILITY), its output's CONSUMER (CONSUME).
-  The set was assembled by classifying two records and grew each time; the residual says so, and
-  says the set grows when a further classification finds a member it lacks.
-- **The maturity grid's TOP RUNG loses its promotion.** Without a closed enumeration for every rule,
-  `>=4 decisions` renders the middle rung's deferring language plus a named gap. Confidence
-  currently RISES with heading count on no additional evidence about substance.
+- **Nine moves per rule, declared BOUNDED**, with the residual stating not only that the set is
+  open but HOW IT GROWS (a set-finding is an `@review:` marker plus a review finding against this
+  requirement — nothing grows it silently) and the TEST separating a missing move from an
+  out-of-domain concern. The set's own history is the argument: five ratified with no sixth
+  nameable, classification found COHERE; six ratified, a second record found FEASIBILITY and
+  CONSUME; eight ratified, a pass found INVOKE — a rule correct, complete and never invoked.
+- **The MACHINE-READABLE FORMAT the enforcement half must parse**: a stable identifier slot per
+  Decisions entry, a named Mechanism entry shape (`Domain:` / `Closure:` / one line per move), and
+  a `Disposition:` slot with a FIXED vocabulary (`live` / `superseded` / `assigned` / `illustrative`)
+  so leaving the closure obligation is a named act rather than whatever word fit the sentence.
 - **The explore body gains the RE-ENTRY case**: when the name resolves to an ACTIVE CHANGE, resume
   in place against `orbit/changes/<name>/explore.md` and say so — never scaffold a second staging
   directory beside the authoritative one.
@@ -54,28 +56,36 @@ same defect at two levels, and nothing had checked.
 **New Capabilities**: none.
 
 **Modified Capabilities**:
-- `orbit-conventions` — the format gains Mechanism; the per-claim rule test; the BOUNDED closure taxonomy.
-- `orbit-explore-modifications` — the eight moves and the Mechanism section's content, the re-entry
-  case, AND three MODIFIED requirements that carried a second copy of what this change edits: the
+- `orbit-conventions` — the format gains Mechanism, the per-claim rule test, the BOUNDED closure
+  taxonomy, the decision-ID slot, the Mechanism entry shape, and the `Disposition:` vocabulary.
+- `orbit-explore-modifications` — the nine moves and the Mechanism section's content, the re-entry
+  case, and three MODIFIED requirements carrying the second copy of what this change edits: the
   capability's own `explore.md five-section convention`, `Three invocation modes supported` (whose
-  Mode B scenario would otherwise prescribe the opposite act in the promoted-name case), and
-  `Boundary residency sweep before emits` (whose slot enumeration had no home for Mechanism content).
-- `orbit-run-summary-emit` — the maturity signal reads rule-closure rather than decision count.
+  Mode B scenario would otherwise both prescribe creating a staging directory in the promoted-name
+  case AND scaffold five sections), and `Boundary residency sweep before emits` (whose slot
+  enumeration had no home for Mechanism content).
 
-**NOT touched, and declared rather than absorbed**: `orbit-propose-modifications`' section-to-artifact
-mapping has no Mechanism row, so the closed enumerations this stage produces reach the change
-directory and inform nothing at promotion. That is a FOURTH capability. Per R-crc-9 the sanctioned
-moves are to SPLIT or to declare the gap and its owner — this change declares it: a follow-on stage
-owns propose's consumption of Mechanism, and this stage's deliverable stops at the promotion
-boundary until then.
+**DESCOPED 2026-09-15 to stage rc13a under R-crc-9.** The maturity-signal half — `rules_open` /
+`rules_total`, the top rung losing its promotion, and the parse instruments — is stage
+**rc13b-explore-maturity-signal**, which `Depends-on` this one. A second proposal pass found that
+half was a FOURTH capability wide (`orbit-emit-composition`'s computed-extensions requirement
+enumerates the explore fields and the four-state grid, both falsified) and that it could not be
+implemented at all against a format defining no identifiers and no entry boundaries. R-crc-9 says
+SPLIT or DECLARE BLOCKED, never substitute a cheaper mechanism. The split seam is a DEPENDENCY: the
+engine half was never buildable first.
 
-Three capabilities, AT R-crc-1's ceiling deliberately. None is droppable: without the emit change
-the convention is ADVISORY, which is the exact failure R-crc-7 just demonstrated. Per R-crc-9, if
-review shows this is OVER the ceiling the answer is to SPLIT the mechanism, never to shrink it.
+**KNOWN AND ACCEPTED**: until rc13b lands, this convention is ADVISORY — an author can ignore it and
+no readout notices. That is the interval, stated rather than discovered.
+
+**NOT touched**: `orbit-propose-modifications`' section-to-artifact mapping has no Mechanism row, so
+the enumerations this stage produces inform nothing at promotion; and its `All five sections present`
+validation scenario keeps specifying five. Both are a follow-on stage's, and no task in this change
+edits `propose.ts`.
 
 ## Impact
 
-- `src/core/templates/workflows/explore.ts` — the convention, the six moves, the re-entry case.
+- `src/core/templates/workflows/explore.ts` — the convention, the nine moves, the format slots
+  (decision ID, Mechanism entry shape, `Disposition:`), and the re-entry case.
 - `src/core/parsers/explore-counter.ts` — `maturityRecommendation`'s top rung.
 - `src/core/emit-composition.ts` — the explore extension fields.
 - No schema bump. No migration: an exploration with no rules is unaffected, and existing staging
