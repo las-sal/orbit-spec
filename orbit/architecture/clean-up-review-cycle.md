@@ -429,75 +429,51 @@ unreviewed CRITICAL.
 Depends-on: rc02-gate-semantics
 Complete: [ ]
 
-SPLIT 2026-09-15 from rc03-review-genres (the rc02 → rc02b/rc02c precedent), because the conflict
-below must be resolved BEFORE rc13's own system review runs a blind pair, and rc03 entire is three
-capabilities that would displace rc13 and reverse the ordering decision made the day before.
-Surfaced by rc13's exploration under R-crc-7 applied by hand — five executed cases, of which this
-was cases 2, 3 and 5.
+**WITHDRAWN 2026-09-15 (Sal). Descoped to nothing; its content folds into rc03-review-genres.**
+The stage is kept declared, unratified, as the record of what three independent passes cost and
+bought. Its citing change archives WITHOUT SYNCING — the deltas describe a mechanism nobody is
+implementing, and writing an unimplemented requirement into baseline is the silent-drift class C2
+exists to prevent.
 
-Charter: rc02 added `blind-pair` to the cadence and left standing a requirement that contradicts
-it. `orbit-review-external`'s `Cycle context populated from prior runs` SHALL-includes "prior
-findings (open and resolved)" in every external prompt, with a scenario requiring "counts and short
-titles" of open internal findings. That requirement was written when every external review was a
-SEQUENTIAL ITERATION reviewing what the last one found, where telling the reviewer what is open is
-correct. A blind-pair member must receive NOTHING. Because the gate's blindness predicate checks
-only for a WALK between the two tokens, a pair anchored through its PROMPT is certified blind, and
-the capture-recapture residual estimate rc04 depends on silently stops meaning anything. The engine
-makes this the DEFAULT path: an empty `blind-pair` slot renders `--fresh` first (`gates.ts:878`;
-NOT `gates.ts:113` — `commandForClass`'s `case 'blind-pair':` is unreachable on this path, because
-`canonicalNextForReviewed` intercepts `neededSlot === 'blind-pair'` at 868 before the
-`commandForClass` call at 881. Corrected 2026-09-15),
-so the fresh half lands and the external prompt then reads it. rc02's own pair escaped only because
-it happened to run external-first — its prompt was written 24 minutes before the fresh pass
-existed, recording "Prior internal findings still open: 0". The one measurement this program has
-produced survives because the operator did not do what the tool said.
+SPLIT 2026-09-14 from rc03-review-genres to resolve, ahead of rc13's own system review, a conflict
+rc02 introduced: `orbit-review-external`'s `Cycle context populated from prior runs` SHALL-includes
+prior open findings in every external prompt, while `orbit-engine-gates` requires a `blind-pair`'s
+members to be blind to each other — and the blindness predicate observes WALK RECORDS between two
+tokens, so it cannot see prompt content and certifies an anchored pair as blind. THAT CONFLICT IS
+REAL AND REMAINS UNRESOLVED. What failed was every mechanism proposed for it.
 
-This stage makes the cycle-context section CONDITIONAL ON PASS GENRE rather than unconditional: a
-pass filling a `blind-pair` slot gets no prior-findings context of any kind; a sequential iteration
-keeps today's content, which is correct for it.
+WHAT THREE PASSES ESTABLISHED (15 CRITICALs, ZERO repeats, three mechanisms, no shipped fix):
 
-**MECHANISM REPLACED 2026-09-15, after two fresh proposal passes.** The paragraph above describes a
-per-site SUPPRESSION keyed on the genre — the shape this stage carried through two review
-iterations, ten CRITICALs, and two redesigns. It is abandoned, and the charter records why, because
-the reasoning is the stage's real content. The change's own exploration finally ENUMERATED the
-channels by which a pair member can reach its partner's findings: there are ELEVEN — three
-cycle-context bullets, an iteration count that reads the trail directory, a project-context
-pointer, a write-path instruction to avoid colliding with files already there, two system-mode diff
-instructions, a prior-run read, the disciplines epitome's own comparison, and a LAUNCHING BRIEF
-WITH NO ARTIFACT BEHIND IT. Every one is the same instruction wearing different clothes: read the
-change's own history. A deny-list over that rots on the next body edit, and the eleventh cannot be
-denied in prose because there is no prose to edit. Running each possible ORDER against that list
-showed ordering does not suppress the channels — it EMPTIES them: an external prompt composed while
-the trail holds no pair member has nothing of its partner to carry, because the partner's findings
-do not yet exist.
+1. **Per-site suppression keyed on the engine-reported genre** — pass 1 killed the premise (the
+   external-handoff branch makes no `orbit status` call, so "the call it already makes" was false);
+   pass 2 killed the signal (`next_hint_keys.slot` is scoped to the FIRST UNPASSED gate rather than
+   the reviewed mode, and the empty-pair branch a non-leak proof rested on sits downstream of the
+   resolution clause, so "pair empty" does not imply "slot rendered").
+2. **Ordering** — pass 3 showed it answers only HALF THE STATE SPACE. The mechanism reorders the
+   EMPTY-pair branch; the leaking state is the OPEN-pair branch (`gates.ts:857-863`), which renders
+   `--reviewer external` exactly when a pairable fresh pass stands. That branch was left unchanged
+   by design. **The state space of a blind pair has two entries, not one**, and every mechanism
+   attempted here was a site-level answer to a state-level problem.
+3. **The channels number TWELVE, enumerated from source** — three cycle-context bullets, the
+   iteration count's directory read, the project-context pointer, the write-path collision aside,
+   two system-mode diff instructions, a prior-run read, the disciplines epitome's own comparison,
+   `git log` over the change directory (whose commit subjects in this repo read `7/7 resolved
+   (1C/4W/2S)` — precisely the counts and trend a blind member must not see), and a LAUNCHING BRIEF
+   WITH NO ARTIFACT BEHIND IT. Every one is the same instruction wearing different clothes: read the
+   change's own history.
 
-THE MECHANISM IS ORDERING plus two explicit residuals. The canonical command for an EMPTY pair names
-the EXTERNAL half, which closes six channels at once with no prose change. The system-mode commit
-range a blind-pair member reads excludes the change's own `.orbit-runs/` (those files are committed,
-and the handoff preflight requires a clean, pushed tree, so the partner's findings are inside the
-range by construction). And a dispatched member's brief names no prior finding, count, severity or
-trend — the one channel ordering leaves fully open, since under external-first the orchestrator
-HOLDS the external findings when it dispatches the fresh half. The property delivered is R-crc-4's,
-stated plainly: the members are blind TO EACH OTHER, not to all prior history — the stronger
-property was this stage's own invention and was the direct cause of the eleven-channel problem.
-
-Goal G1. Touches: orbit-engine-gates, orbit-review. (`orbit-review-external` is NOT touched — the
-capability this stage began as; its `Cycle context populated from prior runs` requirement turns out
-to be correct as written.) Exit: (1) the canonical command for an empty blind pair names the
-external half, unit-tested in `gates.ts`, and the definitive spec states why the order is a
-correctness property rather than a preference; (2) the two residual channels are closed — the
-blind path's commit range excludes the change's `.orbit-runs/`, and the dispatch-brief constraint
-is stated on the generated surface; (3) rc13's own system-review pair runs under this stage and its
-COMMITTED external prompt carries no prior-findings content — blind by construction, not by
-ordering luck.
-
-ORDERING: rc03a runs as the NEXT CHANGE while rc13 remains in exploration. The two do not collide —
-`orbit/explore/rc13-explore-mechanism/` is staging, not an active change — and rc13 needs this only
-by the time it reaches system review, not to propose or apply.
+WHAT THE SUCCESSOR SHOULD CARRY: the property is R-crc-4's — members blind TO EACH OTHER, not to
+all prior history; the stronger property was this stage's own invention and is what made the
+problem unbounded. Ordering is a real PARTIAL mechanism (it empties the empty-pair route by making
+the partner's findings not yet exist) and must be paired with something covering the open-pair
+state. And the actual fix is ATTESTATION, not prevention: the prompt file is committed, the T0 emit
+could record what it carried, and the gate could REQUIRE that before counting a blind-pair member —
+converting "the body promised" into "the trail proves", which is R-crc-6's own principle and
+R-d-11's house rule (detection, not prevention). It was deferred three times on ceiling grounds.
 
 ### Stage rc03-review-genres — review is not verification
 
-Depends-on: rc02-gate-semantics, rc03a-blind-prompt
+Depends-on: rc02-gate-semantics
 Complete: [ ]
 
 Charter: this stage OWNS the canonical cadence (R-crc-4) and its two pass genres. A REVIEW
@@ -515,10 +491,32 @@ landed/regressed; (3) verification passes raise zero WARNINGs outside the diff a
 prompts contain no resolved-since list (grep-tested on the generated surface).
 NARROWED 2026-09-15: criterion (3)'s prompt clause targeted the "Resolved since last review"
 bullet. rc13's exploration found the ADJACENT bullet — "prior internal review findings still
-open" — is the one that anchors a blind pair, and rc03a-blind-prompt now owns resolving it as a
-requirement conflict. rc03 INHERITS that resolution and does not restate a narrower version of it;
-what remains here is the genre split across the whole template set, of which rc03a is the first
-and most urgent slice.
+open" — is the one that anchors a blind pair.
+
+**ABSORBED 2026-09-15: rc03a-blind-prompt is WITHDRAWN and this stage owns the conflict itself.**
+There is no inherited resolution — rc03a produced none. What it produced instead is the evidence,
+and this stage starts from it rather than rediscovering it:
+
+- **The conflict is live.** `orbit-review-external`'s `Cycle context populated from prior runs`
+  SHALL-includes prior open findings in every external prompt; `orbit-engine-gates` requires a
+  `blind-pair`'s members blind to each other; the blindness predicate observes walk records and
+  cannot see prompt content, so it certifies an anchored pair as blind.
+- **The state space has TWO entries, not one.** The leaking state is the OPEN-pair branch
+  (`gates.ts:857-863`), which renders `--reviewer external` exactly when a pairable fresh pass
+  stands. Three mechanisms failed here because each answered the empty-pair state; a site-level fix
+  to a state-level problem cannot converge.
+- **There are TWELVE channels**, enumerated from source, including `git log` over the change
+  directory and a launching brief with no artifact behind it. Deny-listing them rots on the next
+  body edit.
+- **Ordering is a real PARTIAL mechanism** — it empties the empty-pair route rather than suppressing
+  it, and must be paired with something for the open-pair state.
+- **The property is R-crc-4's**: blind TO EACH OTHER, not to all prior history. The stronger
+  reading was rc03a's own invention and is what made the problem unbounded.
+- **The fix is ATTESTATION, not prevention** — the prompt is committed, the T0 emit can record what
+  it carried, and the gate can require that before counting a member. R-crc-6's principle and
+  R-d-11's house rule both point there, and rc03a deferred it three times on ceiling grounds.
+
+What remains beyond the conflict is the genre split across the whole template set.
 REMOVAL IS CONFIRMED BY VERIFICATION, NOT BY ANOTHER REVIEW (2026-09-14). The reviewed-gate rule
 that a CRITICAL buys one further independent pass assumes the defect was FIXED IN PLACE — something
 must re-read the changed state. When a walk resolves BY REMOVAL under R-crc-6's redesign lane, the
@@ -1075,3 +1073,34 @@ properties (user-invoked, draft-only, merge never) hold unchanged.
   **Also corrected**: the charter's `gates.ts:113` citation for the fresh-first default — that case
   in `commandForClass` is unreachable, because `canonicalNextForReviewed` intercepts at 868 and
   returns at 878.
+- **2026-09-15 — rc03a WITHDRAWN and folded into rc03, after three independent passes and no
+  shipped fix.** 15 CRITICALs, ZERO repeats, three mechanisms, two redesigns, budget spent 3/3. The
+  conflict rc03a was split out to resolve is real and remains open; every mechanism proposed for it
+  failed, and the stage's deliverable turned out to be the evidence rather than the fix. rc03 now
+  owns the conflict and starts from that evidence: the state space has TWO entries and the leaking
+  one is the OPEN-pair branch that every attempt left alone; the channels number twelve including a
+  `git log` whose commit subjects carry finding counts and a launching brief with no artifact; the
+  property is R-crc-4's "blind to each other", not the unbounded "blind to all history" rc03a
+  invented for itself; ordering is a real partial mechanism; and the fix is ATTESTATION rather than
+  prevention. The citing change archives WITHOUT SYNCING — its deltas describe a mechanism nobody is
+  implementing, and writing an unimplemented requirement into baseline is the silent-drift class C2
+  exists to prevent.
+  **The transferable lesson, and it is about the rulings rather than the stage.** Attestation — the
+  mechanism that would make blindness CHECKABLE instead of promised — was identified in the first
+  exploration and deferred three times, every time on R-crc-1 ceiling grounds: it needs
+  `orbit-run-summary-emit` and `orbit-engine-gates` on top of the stage's own capabilities. Each
+  deferral bought a cheaper prevention mechanism, and each cheaper mechanism was found wrong by the
+  next pass. The ceiling is right and R-crc-1 is not in question — a stage over three capabilities
+  DOES cost 12-17 passes. But "the correct fix exceeds the ceiling, so ship a cheaper one" spent
+  three passes and shipped nothing, which is worse than either building it or not starting. The
+  missing rule is about what a stage does when its correct mechanism is over the ceiling: SPLIT THE
+  MECHANISM, or DECLARE THE STAGE BLOCKED ON ITS PREREQUISITE — never substitute a cheaper mechanism
+  for the one the problem needs. STANDING RECOMMENDATION, not a ruling: R-crc-1 gains that
+  corollary, or R-crc-8 gains a companion for the pre-review side. Ratification is Sal's; recorded
+  here rather than written into the rulings index because it is a priority rule, and priority is
+  his under R-crc-3.
+  **Also recorded**: rc03a's own third walk showed the counting hazard from the other side. Its
+  resolution log wrote eleven entries for eleven findings — complete by COUNT — while five titles
+  were paraphrases, so clause (b)'s coverage check correctly reported the pass unresolved. A record
+  can look complete and be incomplete by name; the discipline is that a walk echoes each finding's
+  title byte-for-byte.
