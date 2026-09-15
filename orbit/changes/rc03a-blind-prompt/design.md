@@ -10,7 +10,7 @@ exploration Cases 2, 3 and 5 before them. The short version:
   in every external prompt (`orbit/specs/orbit-review-external/spec.md:273`).
 - The gate's blindness predicate checks only for a WALK between the two passes' tokens, so an
   anchored pair is certified blind.
-- `gates.ts:877` renders `--fresh` for an empty `blind-pair` slot, making the leaking order the
+- `gates.ts:878` renders `--fresh` for an empty `blind-pair` slot, making the leaking order the
   engine's default. rc02 escaped by running external-first, by accident.
 
 ## Goals / Non-Goals
@@ -30,7 +30,9 @@ exploration Cases 2, 3 and 5 before them. The short version:
 ## Decisions
 
 **D1 — the genre is read from the engine, never inferred.** Both branches read
-`next_hint_keys.slot` from the `orbit status --change <name> --json` call they already make.
+`next_hint_keys.slot` from `orbit status --change <name> --json`. CORRECTED after the first fresh
+pass: the external-handoff branch makes NO such call today (its only CLI reads are
+`orbit list --json` and the git preflight), so this change ADDS the step rather than reusing one.
 `canonicalNextForReviewed` returns `slot: 'blind-pair'` from the open-pair branch
 (`gates.ts:857-863`) and the empty-pair branch (`gates.ts:868-878`). Alternative considered:
 have the body detect a pair by scanning the trail for a standing unwalked independent pass. Rejected
@@ -45,10 +47,19 @@ shows the fresh half does not leak TODAY — but only because Step 5's glob matc
 filename pattern nobody marked load-bearing. Shipping one half explicitly blinded and the other
 accidentally safe would ship the asymmetry that caused this stage.
 
-**D3 — fail closed when the slot is undeterminable.** Asymmetric consequences: withholding from a
-sequential iteration costs convenience and SAYS SO in the prompt; retaining for a pair member
-silently anchors the pair, passes the gate, and corrupts the residual estimate. Severity by
-consequence.
+**D3 — the rule is a CONJUNCTION on a POSITIVE signal; there is no fail-closed branch.**
+Withhold when the slot is present AND equals `blind-pair` AND the invoked class is independent.
+REPLACES the original fail-closed decision, which was reversed the same day. The original argued
+consequence asymmetry — withholding costs convenience, leaking costs the measurement — and that
+argument only holds if fail-closed misfires rarely. It misfires on two ROUTINE states: the
+unresolved-findings branch of canonical-next carries no slot (the ordinary state between a review
+and its walk), and an all-gates-passed status carries only the phase. The expected cost flipped.
+Positive-only cannot leak, because a pair member is runnable in exactly two states — pair empty,
+pair open — and both render the slot, the open case from the open-pair branch that is evaluated
+before the unresolved-findings branch. The conjunction's second term also fixes a separate error:
+`next_hint_keys.slot` describes the RECOMMENDED NEXT pass, not the pass in hand, so without it an
+`in-context` pass invoked during the pair window would be blinded despite being unable to satisfy
+the slot and being the verification genre that most needs context.
 
 **D4 — the requirement is MODIFIED, not REMOVED.** Case 1 walked all five slot states the cadence
 can produce; three legitimately keep cycle context (a confirming `external` pass, a budget-spent
@@ -62,10 +73,15 @@ from knowing the omission is deliberate.
 
 ## Risks / Trade-offs
 
-- **Duplicate stale findings across pair members** → accepted and stated in the spec. Independence
-  is what makes the overlap interpretable; the walk suppresses the duplicates as stale. Priming
-  both members on a common prior frame would inflate overlap and DEFLATE the residual estimate,
-  making the instrument read safer than it is — the more expensive error.
+- **Duplicate findings across pair members, and the budget they can burn** → accepted, stated in
+  the requirement. Most duplicates are caught by pushback-against-current-state and suppressed as
+  stale by the walk. But a finding closed by a RATIFIED DECISION rather than an artifact edit
+  leaves no current-state evidence for pushback to find, so a blinded member can re-report it as a
+  live CRITICAL — and the gate reads a pass's IMMUTABLE severity counts, not the walk's
+  suppressions, so that re-report fails the confirm predicate and buys a further independent pass
+  against the declared budget. Accepted rather than mitigated: priming both members on a common
+  prior frame would inflate overlap and DEFLATE the residual estimate, and a deflated estimate is
+  the worse failure because it is invisible, where a spent pass is not.
 - **The body still self-polices** → the gate cannot verify the prompt was actually blinded; that is
   exactly D-rc03a-6's deferred attestation. Mitigation for now: the withheld note is IN the
   committed prompt file, so a human reading the trail can see which way it went.
@@ -93,12 +109,22 @@ None required. Older trails never report a `blind-pair` slot, and D3's fail-clos
 every path where the field is absent. No schema-version bump; no engine change; the generated
 surface regenerates from one source with `npm run build && node bin/orbit.js update --force`.
 
+## Instruments — what can actually be measured
+
+The Cycle context section is composed AT RUNTIME by the reviewing AI from a markdown reference;
+`src/` contains no engine-side prompt composition. So there is no function to unit-test, and tests
+asserting a rendered prompt's bytes would measure nothing. The instruments here are assertions over
+the GENERATED SURFACE TEXT — the emitted `references/external-handoff.md` and
+`references/prompt-template.md` must state the status read, the decision table including its
+absent-slot rows, the architecture carve-out, and the withheld `.orbit-runs/` pointer. This is the
+rc01 instrument class (derive the check from what actually ships), not a fallback.
+
 ## Open Questions
 
 None. Q-rc03a-1 was resolved at promotion (D-rc03a-6, deferred as a declared follow-up).
 
 ## Touchpoints
 
-- `src/core/templates/workflows/review.ts` — the external-handoff reference's cycle-context step and the internal branches' prior-run step.
+- `src/core/templates/workflows/review.ts` — the external-handoff reference (new status-read step + cycle-context step), the shared prompt template's project-context reading list, and the internal branches' prior-run step.
 - `orbit/specs/orbit-review-external/spec.md` + `orbit/specs/orbit-review/spec.md` — synced at archive, not by this change.
-- `test/core/` — the genre-conditional cases and the fail-closed default.
+- `test/` — assertions over the GENERATED surface text (see design note below); no engine-side prompt composition exists to unit-test.

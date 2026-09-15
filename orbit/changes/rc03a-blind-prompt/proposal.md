@@ -24,18 +24,26 @@ for a blind-pair member. This change makes the distinction computable rather tha
 
 ## What Changes
 
-- The external-handoff branch READS the slot the engine already computes
-  (`next_hint_keys.slot` from `orbit status --change <name> --json`) and SUPPRESSES the Cycle
-  context section when that slot is `blind-pair`, rendering a one-line "withheld" note in its
-  place. No new engine surface: `canonicalNextForReviewed` already returns `slot: 'blind-pair'`
-  from both the open-pair and empty-pair branches.
-- The internal review branches apply the SAME rule to their own prior-run read: a pass filling a
-  `blind-pair` slot skips the Step-5 prior-summary inspection. The external half's cycle context
-  and the fresh half's prior-run read are the same thing wearing two names.
-- When the slot cannot be determined (status fails, no reviewed gate, older engine), both branches
-  FAIL CLOSED — suppress rather than retain.
-- `Cycle context populated from prior runs` becomes GENRE-CONDITIONAL. Its existing behaviour and
-  both existing scenarios are preserved for non-pair passes; the blind-pair condition is added.
+- The external-handoff branch GAINS an explicit `orbit status --change <name> --json` read,
+  ordered before the cycle-context step, and reads `next_hint_keys.slot` from it. This is a NEW
+  call: the branch makes none today — its only CLI reads are `orbit list --json` and the git
+  preflight. No new ENGINE surface is required, because `canonicalNextForReviewed` already returns
+  `slot: 'blind-pair'` from both the open-pair and empty-pair branches; what is missing is the ask.
+- Withholding fires on a CONJUNCTION and a POSITIVE signal only: the slot is present AND equals
+  `blind-pair` AND the invoked reviewer class is independent (`fresh` or `external`). An absent
+  slot is not a pair signal — it is the ordinary state between a review and its walk, and after
+  every gate passes — so a sequential iteration is never blinded by a missing field. An
+  `in-context` pass during the pair window keeps its context, because it can never satisfy a
+  blind-pair slot and is the verification genre that most needs it.
+- Withholding covers EVERY channel carrying prior findings, not only the Cycle context section:
+  the prompt's project-context pointer to `orbit/changes/<name>/.orbit-runs/` is withheld too,
+  since a reading list aimed at the directory holding the partner's emit is not blinded.
+- The internal review branches apply the same rule to their own prior-run read. The external
+  half's cycle context and the fresh half's prior-run read are the same context wearing two names.
+  Architecture mode is explicitly carved out — no change, no gate, no cadence, so no pair.
+- `Cycle context populated from prior runs` becomes GENRE-CONDITIONAL, specified as a DECISION
+  TABLE with the absent-slot rows stated by construction (R-crc-7). Its existing behaviour and both
+  existing scenarios are preserved for non-pair passes.
 
 **Not** BREAKING: a sequential external iteration receives exactly today's prompt.
 
@@ -51,8 +59,10 @@ for a blind-pair member. This change makes the distinction computable rather tha
 
 ## Impact
 
-- `src/core/templates/workflows/review.ts` — the external-handoff reference's cycle-context step
-  and the internal branches' prior-run step; both read a slot they already have access to.
+- `src/core/templates/workflows/review.ts` — the external-handoff reference (a NEW status-read
+  step plus the cycle-context step), the shared prompt template's project-context reading list
+  (`references/prompt-template.md`, where the `.orbit-runs/` pointer lives), and the internal
+  branches' prior-run step.
 - The generated surface (`.claude/skills/orbit-review/`) regenerates from that one source.
 - No engine change. No schema-version bump. No migration: older trails simply never report a
   `blind-pair` slot, and the fail-closed default covers them.

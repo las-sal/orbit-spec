@@ -9,7 +9,7 @@ from prior runs` SHALL-includes "prior findings (open and resolved)" in every ex
 `orbit-engine-gates` requires a `blind-pair`'s two members to be blind to each other. The gate's
 blindness predicate checks only for a WALK recorded between the two passes' tokens, so a pair
 anchored through its PROMPT is certified blind — and the engine's own canonical next command
-(`gates.ts:113`: an empty `blind-pair` slot renders `--fresh`) is the path that produces it.
+(`gates.ts:878`: an empty `blind-pair` slot renders `--fresh`) is the path that produces it.
 
 rc02's pair escaped by ordering luck: its external prompt was written 24 minutes before the fresh
 pass existed, recording "Prior internal findings still open: 0". The only measurement this program
@@ -93,7 +93,7 @@ external first → fresh second   review body Step 5 matches review-<mode>-*.jso
 ```
 
 **Finding — the leak is ONE-DIRECTIONAL, and the engine's default recommendation is the leaking
-order.** An empty `blind-pair` slot renders `--fresh` (`gates.ts:877`), so external is always the
+order.** An empty `blind-pair` slot renders `--fresh` (`gates.ts:878`), so external is always the
 second half on the default path. The safe order is the one rc02 took by accident.
 
 **Consequence — the cheap fix is a mitigation, not a fix.** Swapping the recommendation to
@@ -253,5 +253,8 @@ hardening; it is not the deliverable.
   the requirement this stage modifies, and its two scenarios.
 - `src/core/templates/workflows/review.ts:344` — the shipped prompt-generation step that
   implements it.
-- `src/core/artifact-graph/gates.ts:113` — why `--fresh` is the default first half.
+- `src/core/artifact-graph/gates.ts:878` — why `--fresh` is the default first half. (NOT
+  `gates.ts:113`: that `case 'blind-pair':` in `commandForClass` is unreachable on this path,
+  because `canonicalNextForReviewed` intercepts `neededSlot === 'blind-pair'` at `gates.ts:868`
+  before the `commandForClass` call at 881. Corrected 2026-09-15 by the first fresh pass.)
 - `orbit/architecture/clean-up-review-cycle.md` — the rc03a charter and its three exit criteria.
