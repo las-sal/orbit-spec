@@ -1,5 +1,11 @@
 # Draft stage charter — rc03a-blind-prompt
 
+> **STALE 2026-09-15.** The stage described below WAS declared on 2026-09-15 and WITHDRAWN the
+> same day, after three independent passes and 15 CRITICALs with zero repeats. Its content folded
+> into rc03-review-genres; the conflict it addressed remains LIVE. This file is kept as the record
+> of the draft, not as a statement of current state — the "NOT YET DECLARED" note below was true
+> when written and is now false.
+
 Drafted in explore 2026-09-14, ratified in chat by Sal as the direction. NOT YET DECLARED:
 writing a stage into `orbit/architecture/clean-up-review-cycle.md` is an ARCHITECT act, and
 declaring it from an explore session would leave a stage in the program with no architect emit

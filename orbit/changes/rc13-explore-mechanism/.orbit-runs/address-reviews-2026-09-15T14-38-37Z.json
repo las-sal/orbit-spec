@@ -1,0 +1,244 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-15T14:38:37Z",
+  "change": "rc13-explore-mechanism",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "internal-review",
+  "source_path": "orbit/changes/rc13-explore-mechanism/.orbit-runs/review-proposal-2026-09-15T14-26-34Z.json",
+  "source_command": "review",
+  "source_token": "2026-09-15T14-26-34Z",
+  "walk_mode": "walk",
+  "walk_mode_source": "default",
+  "input_findings_summary": {
+    "critical": 5,
+    "warning": 12,
+    "suggestion": 6,
+    "total": 23
+  },
+  "pushback_verification": "Nothing was suppressed as stale — the pass had already run its own pushback and suppressed six candidates, each verified against current state, including the one this walk most needed checked (both MODIFIED deltas carried their baseline scenarios; no drop in either capability). The walk's own verification work was concentrated on the central CRITICAL: the pass asserted the six-move set was not closed, and rather than accept or dispute it I RAN THE CLASSIFICATION THE PASS SAID WAS SKIPPED — rc02's four CRITICALs against the set, from data already sitting in the same explore.md as Case 1. Two landed outside, in two distinct classes, which confirmed the finding and supplied the repair. That classification is recorded as Case 10 and is what the eight-move BOUNDED declaration rests on. A process failure is also recorded here because it recurred: the first attempt to apply this walk's explore.md edits was a single multi-edit script with one trailing write, and it ABORTED on a bad anchor (a date mismatch in a decision heading) having written NOTHING — the failure mode this repo has recorded three times and assigned to rc08. Caught by checking the case count immediately after, re-applied as five edits with a per-edit assertion and a post-write grep for each.",
+  "resolution_summary": {
+    "resolved": 21,
+    "stale": 0,
+    "deferred": 2,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "`orbit-explore-modifications`' own five-section requirement is left unmodified and contradicts the new six-section format",
+      "file": "orbit/changes/rc13-explore-mechanism/specs/orbit-explore-modifications/spec.md",
+      "line": 1,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "MODIFIED block added carrying the FULL baseline text of `explore.md five-section convention` — six sections, stub scenario asserting six. All 4 baseline scenarios verified carried. Fingerprint stamped and verified."
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "The re-entry requirement contradicts the unmodified `Three invocation modes supported` Mode B scenario",
+      "file": "orbit/changes/rc13-explore-mechanism/specs/orbit-explore-modifications/spec.md",
+      "line": 32,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "MODIFIED block added for `Three invocation modes supported`: Mode B's WHEN gains `AND no active change of that name exists`, so it can no longer prescribe creating a staging directory in the promoted-name case. All 7 baseline scenarios verified carried. Task 3.2 now covers spec and body together."
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "The six-move set is not closed: the derivation generates no move for the mechanism's OUTPUT or for its cost/termination, and a defect on this program's own record lands outside it",
+      "file": "orbit/changes/rc13-explore-mechanism/specs/orbit-explore-modifications/spec.md",
+      "line": 5,
+      "status": "resolved",
+      "lane": "decision",
+      "action": "RATIFIED IN CHAT. Ran the classification the pass said was skipped — rc02's four CRITICALs against the set (explore.md Case 10). TWO landed outside, in two different classes: `assignCadence` exponential blowup (computes, but no output in feasible time — EXECUTE covers wrong output, not no output) and canonical-next steering the user into breaking the pair (output CORRECT, its CONSUMER breaks). Both are genuinely ways a mechanism is wrong, so FEASIBILITY and CONSUME are ADDED — eight moves. The set is then DECLARED BOUNDED, not DERIVED: the structure it derives from is a natural-language characterization, and DERIVED over it is exactly the loophole design.md itself names. The residual is stated in the requirement. D-rc13-12 marked SUPERSEDED. The pass's own NONE finding (medium choice) is deliberately NOT a move — it is outside the set's domain, not a hole in it."
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "The maturity-rung change is not implementable from the spec: no rule-closure input exists, and nothing names one",
+      "file": "orbit/changes/rc13-explore-mechanism/tasks.md",
+      "line": 30,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "The field is named and typed in the requirement: `rules_open: string[]` (decision IDs) and `rules_total: number`, ENGINE-COMPUTED by the emit surface from the Mechanism section's declared closure forms — explicitly NOT caller-supplied, because that would be the self-classification the rule test exists to remove. The requirement also states what the engine judges (FORM: does each live rule carry an enumeration naming a closure form) and what it does not (whether the enumeration is TRUE). Task 4.1 rewritten accordingly."
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "`every RULE in Decisions` has an unclosed domain: superseded, out-of-scope and handed-away rules make the Mature rung unreachable",
+      "file": "orbit/changes/rc13-explore-mechanism/specs/orbit-run-summary-emit/spec.md",
+      "line": 12,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "The domain is now STATED rather than defaulted: a rule counts only while LIVE — SUPERSEDED rules and rules explicitly assigned to another stage are OUT, and an exploration with no Mechanism section has no live rules and is not withheld (the pre-capability case). Without this the append-only Decisions convention would make Mature unreachable for any exploration that ever superseded or handed away a rule. Task 4.4 added."
+    },
+    {
+      "severity": "WARNING",
+      "title": "No stated disposition for a legacy explore.md with no Mechanism section — and the Migration Plan asserts a behavior the engine has no way to produce",
+      "file": "orbit/changes/rc13-explore-mechanism/design.md",
+      "line": 82,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "Moved from design.md's Migration Plan into the SPEC, as the finding required: an exploration with no Mechanism section has no live rules and therefore no open domains. design.md's Migration Plan now points at the spec rather than asserting behavior the engine has no way to produce."
+    },
+    {
+      "severity": "WARNING",
+      "title": "`Four mutually-exclusive maturity states cover the full grid` is false once the closure dimension is added",
+      "file": "orbit/changes/rc13-explore-mechanism/specs/orbit-run-summary-emit/spec.md",
+      "line": 5,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "The grid is now FIVE states with the Open-domain cell named in the bulleted list, and PRECEDENCE is stated explicitly: >1 open question AND open domains → Stalled wins, and Stalled's text additionally names the open-rule count so the gap is never silently unreported. Task 4.3 added."
+    },
+    {
+      "severity": "WARNING",
+      "title": "The withheld-Mature rendering still surfaces `/orbit:propose`, contradicting the Stalled precedent in the same requirement",
+      "file": "orbit/changes/rc13-explore-mechanism/specs/orbit-run-summary-emit/spec.md",
+      "line": 12,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "The Open-domain state does NOT surface the propose alternative, on the same reasoning Stalled uses — an unclosed rule domain is a not-ready signal regardless of decision count. The asymmetry the finding identified is removed rather than justified."
+    },
+    {
+      "severity": "WARNING",
+      "title": "23 tasks is over R-crc-1's `under 20 tasks` ceiling, while the change declares itself AT the ceiling on capabilities only",
+      "file": "orbit/changes/rc13-explore-mechanism/tasks.md",
+      "line": 1,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "Folded rather than restated: 23 → 19, inside `under 20`. Bookkeeping steps merged into the task they serve; every remaining line is a distinct act. design.md's risk bullet now records the real number and notes that the repairs this pass required ADDED tasks, so the list was folded to absorb them. The capability count is unchanged at 3."
+    },
+    {
+      "severity": "WARNING",
+      "title": "Propose's consume-mode mapping has no destination for the Mechanism section — the stage's deliverable is dropped at promotion",
+      "file": "orbit/changes/rc13-explore-mechanism/tasks.md",
+      "line": 5,
+      "status": "deferred",
+      "lane": "decision",
+      "action": "DECLARED, not absorbed — per R-crc-9, which the finding itself invokes. `orbit-propose-modifications` is a FOURTH capability; proposal.md now states the gap, its consequence (the closed enumerations reach the change directory and inform nothing at promotion), and its owner: a follow-on stage owns propose's consumption of Mechanism, and this stage's deliverable stops at the promotion boundary until then. Recorded rather than silently absorbed, which is what the ruling requires.",
+      "ratified_via": "chat",
+      "resolution": "R-crc-9's declare-the-gap branch: a fourth capability is not absorbed into a stage already at the ceiling."
+    },
+    {
+      "severity": "WARNING",
+      "title": "The boundary residency sweep's slot enumeration does not include the Mechanism section",
+      "file": "orbit/changes/rc13-explore-mechanism/specs/orbit-explore-modifications/spec.md",
+      "line": 1,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "MODIFIED block added for `Boundary residency sweep before emits`: the slot enumeration gains Mechanism content — a rule's domain enumeration, its declared closure form, or a move's disposition. Both baseline scenarios verified carried. Without this the sweep that keeps the file honest before every emit was blind to exactly the content this change adds."
+    },
+    {
+      "severity": "WARNING",
+      "title": "The three closure forms are themselves an enumeration that declares no closure form",
+      "file": "orbit/changes/rc13-explore-mechanism/specs/orbit-conventions/spec.md",
+      "line": 9,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "The taxonomy now DECLARES ITSELF BOUNDED with the residual stated: the three are the justifications observed on this program's record, and a justification fitting none of them is a finding about the taxonomy. The finding's circularity charge is answered by not claiming DERIVED — which would rest on a structure the author invented, the loophole design.md names."
+    },
+    {
+      "severity": "WARNING",
+      "title": "`A Decision states exactly one of three things` is falsified by the change's own record — entries state a fact AND embed a rule",
+      "file": "orbit/changes/rc13-explore-mechanism/specs/orbit-conventions/spec.md",
+      "line": 7,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "The partition is fixed as the finding prescribed: the test applies PER CLAIM, not per entry. A Decision ENTRY may carry more than one claim — a finding that embeds a rule in a consequence clause is the example the finding cites from this change's own record. An entry whose rule-clause is INCIDENTAL owes the same closed enumeration or an explicit note that the clause governs no situations."
+    },
+    {
+      "severity": "WARNING",
+      "title": "The six-move scenario mandates an executed case per rule — a heavier bar than the cure the change rejected, and one no exemplar meets",
+      "file": "orbit/changes/rc13-explore-mechanism/specs/orbit-explore-modifications/spec.md",
+      "line": 23,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "The scenario is softened to DISPOSITIONS: each move is applied (with what it found) or not applied (with the reason), and `not executed — <reason>` satisfies EXECUTE. Only the enumeration and its declared form cannot be dispositioned away, because they are what the maturity signal reads — which keeps the scenario consistent with D1 and with the emit rung. Task 2.4 adds ONE conforming exemplar in the shipped body, so the convention shows its shape rather than describing it."
+    },
+    {
+      "severity": "WARNING",
+      "title": "Task 4.4 cites `the #12 lesson`, which is not what issue #12 is about",
+      "file": "orbit/changes/rc13-explore-mechanism/tasks.md",
+      "line": 37,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "Verified: issue #12 is the delta-scope report, unrelated to payload references. The citation is REMOVED entirely in the tasks rewrite rather than re-pointed — the surviving task (4.1) names the field, its shape and its owner directly, which is what the citation was gesturing at. An unresolvable citation in a task is a READ failure of the kind this change ships a move to prevent."
+    },
+    {
+      "severity": "WARNING",
+      "title": "D-rc13-5/D-rc13-6's non-negotiable prerequisite is gone (rc03a WITHDRAWN) and no promoted artifact records it",
+      "file": "orbit/changes/rc13-explore-mechanism/explore.md",
+      "line": 511,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "Both decisions annotated OVERTAKEN in place, matching the file's own convention for superseded entries. AND the consequence is now recorded in design.md's Risks where it belongs: rc03a was withdrawn with the blindness leak unfixed, so rc13's own system-review pair runs on the engine's default order and its overlap number is not independent. Task 7.1 instructs running that pair external-first BY HAND and recording that the order was deliberate."
+    },
+    {
+      "severity": "WARNING",
+      "title": "No task sweeps the `five-section` residue the format change invalidates",
+      "file": "orbit/changes/rc13-explore-mechanism/tasks.md",
+      "line": 51,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "Task 5.1 added naming every live occurrence the finding listed — emit-composition.ts:908 (the warning a user actually sees), explore-counter.ts:12, explore.ts:365/:393/:418, onboard.ts:79, propose.ts:154-156 — and requires a grep-verify that none survives."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The requirement title still says `five-section format` while defining six sections",
+      "file": "orbit/changes/rc13-explore-mechanism/specs/orbit-conventions/spec.md",
+      "line": 3,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "Folded into task 5.1: the TITLE stays verbatim for delta identity and the base_fingerprints key, and that deferral is stated in the delta prose so the name does not read as false in baseline. The finding's own note that a MODIFIED delta cannot change the title (issue #12) is why the rename is not attempted."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The named gap flows verbatim into the orientation `next` line with no bound on length or shape",
+      "file": "orbit/changes/rc13-explore-mechanism/specs/orbit-run-summary-emit/spec.md",
+      "line": 27,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "Bounded in the requirement: ONE line, at most three decision IDs plus `+N more`, and rules identified by DECISION ID rather than prose. Task 4.2 carries the same bound."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Exit criterion 2 asks the recommendation to name what is missing PER RULE; the delta names only which rules are open",
+      "file": "orbit/changes/rc13-explore-mechanism/specs/orbit-run-summary-emit/spec.md",
+      "line": 12,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "Resolved toward the stricter reading rather than the generous one: the Open-domain rung names the open rules by ID, and the requirement states that what the engine judges is FORM — whether a live rule carries an enumeration naming a closure form. Naming the rule IS naming what is missing, because closure-of-form is the only checkable property; that equivalence is now written down instead of left to be judged generously later."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The arc doc's rc13 charter and status log still carry the superseded grammar-keyed rule test",
+      "file": "orbit/changes/rc13-explore-mechanism/../../architecture/clean-up-review-cycle.md",
+      "line": 365,
+      "status": "deferred",
+      "lane": "decision",
+      "action": "PROGRAM-TIER, deferred to an architect session and recorded in task 7.2. The charter and status log still teach D-rc13-9's grammar-keyed rule test, superseded by D-rc13-14. Editing the program doc from a walk would put program content there with no architect emit behind it — the tier boundary ratified earlier in this program.",
+      "ratified_via": "chat",
+      "resolution": "Program-tier content defers to an architect session; the walk records it as a task."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The promoted sketch is stale on its face",
+      "file": "orbit/changes/rc13-explore-mechanism/sketches/rc03a-blind-prompt-charter.md",
+      "line": 3,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "A dated STALE header added to `sketches/rc03a-blind-prompt-charter.md` recording that the stage WAS declared and WITHDRAWN the same day, that its content folded into rc03, and that the conflict remains live — so the file archives as a record of the draft rather than as a false claim about current state."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The Mechanism section ships as prose rules, not as template slots — against the precedent quoted in the requirement being modified",
+      "file": "orbit/changes/rc13-explore-mechanism/tasks.md",
+      "line": 15,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "Task 2.4 requires ONE conforming exemplar entry in the shipped body — the finding's own suggestion, taken. THE CLASSIFICATION IS THE MORE VALUABLE PART AND IS RECORDED AS SUCH: this finding classified NONE, and that is correct — medium choice is not a way a mechanism is wrong, so it is outside the set's domain rather than a hole in it. The requirement now states that exclusion explicitly, so the next reader does not try to grow the set to cover it."
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": 0,
+  "final_assessment": "23 findings walked: 21 resolved by edit, 2 deferred (one to a follow-on stage under R-crc-9, one to an architect session as program-tier). All five CRITICALs resolved. The central one changed the change's own claim: the six-move set is now EIGHT and declared BOUNDED rather than DERIVED. Three MODIFIED requirements were added to carry the second copy of everything this change edits, tasks folded 23 to 19 inside the ceiling, and the maturity field is named, typed and assigned an owner.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc13-explore-mechanism --from-file orbit/changes/rc13-explore-mechanism/.orbit-runs/review-proposal-2026-09-15T14-26-34Z.json"
+}

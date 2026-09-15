@@ -31,7 +31,7 @@ an executed-case test at every point in its life and failed three times; an exec
 path and none of its failures were on a path anyone walked. Classifying its fifteen CRITICALs:
 eleven were READ, ENUMERATE or COHERE; **zero were EXECUTE.**
 
-**D2 — the six moves are DERIVED, not listed.** A mechanism is an assembly of parts computing
+**D2 — the moves are assembled by CLASSIFICATION and the set is declared BOUNDED.** A mechanism is an assembly of parts computing
 outputs from inputs under constraints; each part is a way to be wrong. The derivation is what makes
 the set checkable instead of asserted, and it earned that immediately: a five-move set was ratified,
 no sixth could be named on request, and classifying rc03a's record found COHERE — four CRITICALs
@@ -56,6 +56,19 @@ function; the ratified requirement is MODIFIED, not REMOVED.
 
 ## Risks / Trade-offs
 
+- **rc13's own control measurement now runs against an unfixed blindness leak.** rc03a was
+  withdrawn on 2026-09-15 with its conflict unresolved and folded into rc03, so this stage's own
+  system-review blind pair runs on the engine's default order, where the external half's prompt can
+  carry the fresh half's findings. Exit criterion 3 is measured on the NEXT stage's first pass, and
+  if that pass is a blind pair its overlap number is not independent. Either run it external-first
+  by hand and record that the order was chosen deliberately, or judge criterion 3 on the READ /
+  ENUMERATE / COHERE class counts alone, which do not depend on pair independence.
+- **Task count sits at 19, inside R-crc-1's `under 20`.** The first pass correctly flagged 23 as an
+  overage on the ceiling's FOURTH dimension while the change asserted AT-ceiling on capabilities
+  only. The repairs that pass required added tasks, so the list was folded rather than restated:
+  bookkeeping steps merged into the task they serve, and every remaining line is a distinct act.
+  The capability count is unchanged at 3 and is the dimension R-crc-9 governs.
+
 - **The engine sees form, not truth.** It can check that a rule declares a closure form and names a
   domain; it cannot check that the enumeration is complete. A determined author writes a DERIVED
   claim over a structure they invented. Mitigation is the same asymmetry that makes cases better
@@ -79,8 +92,9 @@ function; the ratified requirement is MODIFIED, not REMOVED.
 
 ## Migration Plan
 
-None. An exploration with no rules is unaffected. Existing staging directories parse unchanged — the
-Mechanism section is additive, and absence renders as no rules recorded rather than as a violation.
+None. The absent-Mechanism-section rule is stated in the SPEC, not here: an exploration with no
+Mechanism section has no live rules and therefore no open domains, so it is not withheld from the
+top rung. Existing staging directories parse unchanged.
 
 ## Instruments — what can actually be measured
 

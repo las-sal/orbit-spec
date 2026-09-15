@@ -367,7 +367,58 @@ cannot be dodged by phrasing, because a rule that governs no situations constrai
 **Output — both domains now close, by DERIVED.** Tested against this file: the classification in (b)
 reproduces Case 8's rule/not-rule split exactly, with no decision falling outside the three kinds.
 
+### Case 10 — run the set against rc02's CRITICALs, the classification that was skipped (2026-09-15)
+
+**Input**: rc02's four blind-pair CRITICALs, recorded in Case 1 of this same file, and the six-move
+set. The first fresh pass observed that Case 7 classified rc03a's fifteen and stopped, with rc02's
+four sitting in the same document.
+
+**Output**:
+
+| rc02 CRITICAL | move | covered? |
+|---|---|---|
+| `isPairable` bound exclusive-vs-inclusive | EXECUTE — run it on a boundary case and the output is wrong | YES |
+| `diagnosePair` "foreclosed" state | ENUMERATE — a state of the domain never handled | YES |
+| `assignCadence` exponential blowup | **none** — the rule computes, but produces NO output in feasible time; EXECUTE is "wrong output on a member it handles" | **NO** |
+| canonical-next steers the user into breaking the pair | **none** — the output is CORRECT; the mechanism that CONSUMES it is what breaks | **NO** |
+
+**Finding — TWO of four land outside the set, in two different classes**, and the first fresh pass
+independently produced a third datum: one of its findings classified NONE, because no move ranges
+over "is this the right MEDIUM for the rule" (prose versus a template slot).
+
+**The three are not the same kind of gap, and the distinction decides the repair.** FEASIBILITY (it
+does not terminate, or does not fit) and OUTPUT-USABILITY (the output is correct and its consumer
+cannot use it) are genuinely WAYS A MECHANISM IS WRONG, so they belong in the set. MEDIUM CHOICE is
+not — it is outside the set's domain rather than a hole in it, and the reviewer said so when
+classifying it NONE.
+
+**Consequence — the set cannot honestly be declared DERIVED.** The structure it derives from is a
+NATURAL-LANGUAGE characterization of a mechanism, not a formal one, so DERIVED over it is precisely
+the loophole this change's own design names: "a determined author writes a DERIVED claim over a
+structure they invented." Declaring DERIVED here would commit the stage's named loophole in the
+artifact that defines it.
+
 ## Decisions
+
+- **2026-09-15 — D-rc13-16: the set is EIGHT moves and is declared BOUNDED, not DERIVED**
+  (ratified in chat by Sal, 2026-09-15, on Case 10). Two moves ADDED because Case 10 found real
+  defects landing outside the six: **FEASIBILITY** — the mechanism does not terminate, or does not
+  fit its resources (rc02's `assignCadence` blowup) — and **CONSUME** — the output is correct and
+  the mechanism that consumes it breaks (rc02's canonical-next steering the user into breaking the
+  pair). The set is then declared **BOUNDED**, with the residual stated: classification will find
+  more, these were found by running two records, and the set grows as records accumulate.
+  **Why BOUNDED rather than a larger DERIVED set**: the structure the derivation rests on is a
+  natural-language characterization of a mechanism, not a formal one. DERIVED over it is exactly the
+  loophole this change's design names — a DERIVED claim over a structure the author invented — so
+  claiming it would commit the stage's own named loophole in the artifact that defines it.
+  **What this buys beyond honesty**: BOUNDED is defined in this change and, until now, exercised
+  nowhere. The set demonstrates it under pressure, where the tempting move was to claim DERIVED and
+  hope. A closure form that no artifact in its own change ever uses is a form nobody knows how to
+  apply.
+  **Out of scope, deliberately**: MEDIUM CHOICE is NOT a move — not a way a mechanism is wrong, but
+  outside the set's domain. The separate finding about the Mechanism section shipping as prose is
+  handled as its own concern, not by growing the set.
+
 
 - **2026-09-15 — D-rc13-15: the engine may never be more confident than its evidence type supports;
   the maturity grid's TOP RUNG loses its promotion** (resolved by Sal at promotion, 2026-09-15;
@@ -411,7 +462,7 @@ reproduces Case 8's rule/not-rule split exactly, with no decision falling outsid
 
 
 - **2026-09-15 — D-rc13-12: the move set is SIX and is DERIVED from the structure of a mechanism,
-  not listed** (ratified in chat by Sal, 2026-09-15; resolves Q-rc13-4). A mechanism is an assembly
+  not listed** — **SUPERSEDED 2026-09-15 by D-rc13-16: the set is EIGHT and BOUNDED. Case 10 — the classification this decision's own corollary demanded and nobody scheduled — found two defects on rc02's record landing outside the six, and the first fresh pass found a third datum independently. The derivation stands as the METHOD; the DERIVED claim about the RESULT does not.** (ratified in chat by Sal, 2026-09-15; resolves Q-rc13-4). A mechanism is an assembly
   of parts computing outputs from inputs under constraints, and each part is a way to be wrong:
   its FACTS (READ), its input DOMAIN (ENUMERATE), its own PARTS' mutual consistency (COHERE), its
   COMPUTATION (EXECUTE), its PURPOSE (FALSIFY), its CONTEXT (CONFORM). Deriving rather than listing
@@ -497,7 +548,7 @@ reproduces Case 8's rule/not-rule split exactly, with no decision falling outsid
   diagnosis, which attributed the failure to explorations carrying no mechanism.
 
 - **2026-09-14 — D-rc13-6: the blindness fix is a new stage `rc03a-blind-prompt`, split from
-  rc03** (ratified in chat by Sal, 2026-09-14; resolves Q-rc13-4). rc03-review-genres already owns
+  rc03** — **OVERTAKEN 2026-09-15: the stage WAS declared, then WITHDRAWN the same day after three passes and 15 CRITICALs. Content folded into rc03. The "has not been performed" clause below records that moment, not current state.** (ratified in chat by Sal, 2026-09-14; resolves Q-rc13-4). rc03-review-genres already owns
   this territory — the prompt-genre split IS its charter — so the fix is a slice of rc03 arriving
   early, not new ground. Carving the slice follows the rc02 → rc02b/rc02c precedent. REJECTED:
   pulling all of rc03 forward (three capabilities, the verification-emit genre, the whole cadence
@@ -508,7 +559,7 @@ reproduces Case 8's rule/not-rule split exactly, with no decision falling outsid
   been performed: writing a stage into the program doc from an explore session would leave a stage
   with no architect emit behind it.
 
-- **2026-09-14 — D-rc13-5: the blindness fix leaves rc13's scope and becomes its own change**
+- **2026-09-14 — D-rc13-5: the blindness fix leaves rc13's scope and becomes its own change** — **OVERTAKEN 2026-09-15: rc03a was declared, ran three passes, and was WITHDRAWN. Its "timing is not negotiable" clause is moot — the conflict folded into rc03 and remains LIVE, so rc13's own system-review pair now runs with the blindness leak unfixed. What that costs rc13's control measurement is recorded in design.md's Risks.**
   (ratified in chat by Sal, 2026-09-14; reverses the same conversation's earlier leaning to fold
   it in). Two reasons, in order of force. (1) R-crc-1: rc13 already touches three capabilities —
   `orbit-explore-modifications`, `orbit-conventions`, `orbit-run-summary-emit` — and the fix adds

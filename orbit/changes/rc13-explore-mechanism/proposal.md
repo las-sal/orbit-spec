@@ -37,9 +37,11 @@ same defect at two levels, and nothing had checked.
   (exhaustive over a set an authority defines), BOUNDED (members plus an explicit residual). The
   enumeration declares which. *"I can name no more"* is not a form; it is the state every failed
   enumeration on this record was in, and from the inside it is indistinguishable from closure.
-- **Six moves per rule**, derived from the parts of a mechanism: its FACTS (READ), its DOMAIN
-  (ENUMERATE), its own PARTS' consistency (COHERE), its COMPUTATION (EXECUTE), its PURPOSE
-  (FALSIFY), its CONTEXT (CONFORM).
+- **Eight moves per rule, declared BOUNDED with an explicit residual**: its FACTS (READ), its
+  DOMAIN (ENUMERATE), its own PARTS' consistency (COHERE), its COMPUTATION (EXECUTE), its PURPOSE
+  (FALSIFY), its CONTEXT (CONFORM), its RESOURCES (FEASIBILITY), its output's CONSUMER (CONSUME).
+  The set was assembled by classifying two records and grew each time; the residual says so, and
+  says the set grows when a further classification finds a member it lacks.
 - **The maturity grid's TOP RUNG loses its promotion.** Without a closed enumeration for every rule,
   `>=4 decisions` renders the middle rung's deferring language plus a named gap. Confidence
   currently RISES with heading count on no additional evidence about substance.
@@ -52,9 +54,20 @@ same defect at two levels, and nothing had checked.
 **New Capabilities**: none.
 
 **Modified Capabilities**:
-- `orbit-conventions` — the five-section format gains Mechanism and the rule/closure definitions.
-- `orbit-explore-modifications` — the six moves, the Mechanism section's content, the re-entry case.
+- `orbit-conventions` — the format gains Mechanism; the per-claim rule test; the BOUNDED closure taxonomy.
+- `orbit-explore-modifications` — the eight moves and the Mechanism section's content, the re-entry
+  case, AND three MODIFIED requirements that carried a second copy of what this change edits: the
+  capability's own `explore.md five-section convention`, `Three invocation modes supported` (whose
+  Mode B scenario would otherwise prescribe the opposite act in the promoted-name case), and
+  `Boundary residency sweep before emits` (whose slot enumeration had no home for Mechanism content).
 - `orbit-run-summary-emit` — the maturity signal reads rule-closure rather than decision count.
+
+**NOT touched, and declared rather than absorbed**: `orbit-propose-modifications`' section-to-artifact
+mapping has no Mechanism row, so the closed enumerations this stage produces reach the change
+directory and inform nothing at promotion. That is a FOURTH capability. Per R-crc-9 the sanctioned
+moves are to SPLIT or to declare the gap and its owner — this change declares it: a follow-on stage
+owns propose's consumption of Mechanism, and this stage's deliverable stops at the promotion
+boundary until then.
 
 Three capabilities, AT R-crc-1's ceiling deliberately. None is droppable: without the emit change
 the convention is ADVISORY, which is the exact failure R-crc-7 just demonstrated. Per R-crc-9, if
