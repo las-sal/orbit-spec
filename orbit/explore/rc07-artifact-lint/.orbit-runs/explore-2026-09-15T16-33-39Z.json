@@ -1,0 +1,12 @@
+{
+  "command": "explore",
+  "timestamp": "2026-09-15T16:33:39Z",
+  "change": "rc07-artifact-lint",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Staging scaffolded for rc07-artifact-lint, the first stage proposed under R-crc-10 — so the first move is that ruling's test, applied before any design: NAME THE INPUTS. It splits the charter's two deliverables into different kinds of work. The payload round-trip is a CHECK: every input (the reference text, the payload table, whether a built payload is accepted) is an artifact the engine owns, and the last one is observable by RUNNING it. One-voice-for-facts is NOT, as stated: the engine can see a number in prose but cannot know it is a restatement or which source it restates, and inferring that is exactly what R-crc-10 forbids and what two stages died doing. The resolution is in the charter's own wording — prose POINTS AT IT — so it is a RECORD the author writes and a CHECK the engine runs against it, and the exit criterion needs restating because an UNMARKED restatement can never fail validation. Case 1 counted the instances this session produced: FOUR restated-figure defects in one day, zero caught by a check, three of them in CLAUDE.md which no validator reads, and every one had a trivially computable source.",
+  "decisions_captured": 0,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "next_recommended": "/orbit:explore rc07-artifact-lint — continue capturing thinking — no decisions captured yet"
+}

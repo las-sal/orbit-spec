@@ -1,0 +1,5 @@
+schema: spec-driven
+created: 2026-09-15
+architecture:
+  doc: clean-up-review-cycle
+  stage: rc07-artifact-lint
