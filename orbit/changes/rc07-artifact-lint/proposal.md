@@ -28,9 +28,15 @@ reads. Each had a trivially computable source; what was missing was a link from 
 - `orbit-source-lint` — the marker format, the registry, the check, the domain and its exclusions,
   and the coverage report.
 
-**Modified Capabilities**: none.
+**Modified Capabilities**: `orbit-architecture-engine` — its `Parseable architecture-doc format`
+requirement asserts that "the engine reads ONLY" stage ids/titles, slots and section boundaries,
+with rulings explicitly engine-opaque. This change makes the SOURCE LINT read a doc's rulings index.
+Keeping the ruling parse out of `parseArchitectureDoc` was not sufficient: the baseline's subject is
+the engine and its verb is *reads*, so the delta narrows the claim to the PARSER's model and names
+the source lint as the one engine-level exception — with the rule that any further such reader must
+be named there too. Without it, the two baselines would contradict each other after archive.
 
-**Why ONE capability and not a split with `orbit-conventions`.** The `@review:` marker convention
+**Why ONE capability and not a split with `orbit-conventions`.** The review-marker convention (`@review`, colon-suffixed — written without the colon so this line is not discovered by that family's own raw grep)
 lives in `orbit-conventions`, and consistency argues for putting `src:` beside it. Rejected: the
 marker's SYNTAX and its SEMANTICS (what it points at, how it is checked, what happens when it
 disagrees) are one mechanism, and separating them puts two capabilities in charge of one rule —

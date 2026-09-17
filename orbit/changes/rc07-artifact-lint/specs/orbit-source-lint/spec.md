@@ -6,7 +6,9 @@ The system SHALL read `orbit/sources.yaml`, whose top-level `sources:` key holds
 
 The lint is reached through `orbit validate --sources`, and `orbit validate --all` runs it alongside the change and spec checks; a finding fails validation with a non-zero exit, and the coverage record renders after the findings on both. Per-item `orbit validate <change>` and `orbit validate <spec>` are UNCHANGED — the lint's domain is the project, not a change, so putting it behind a per-change command would report a project-wide verdict under a per-change name.
 
-This capability owns the `src:` marker family end to end. `orbit-conventions` owns the `@review:` family and its `@review(escalated):` / `@todo:` companions; the `src:` family is deliberately NOT declared there, because the marker's syntax and the rule that checks it are one mechanism and splitting them would put two capabilities in charge of one rule.
+This capability owns the `src:` marker family end to end. `orbit-conventions` owns the review-marker family (`@review`, colon-suffixed) and its escalated and todo companions — spelled here without the literal colon so this sentence is not itself discovered by that family's raw grep; the `src:` family is deliberately NOT declared there, because the marker's syntax and the rule that checks it are one mechanism and splitting them would put two capabilities in charge of one rule.
+
+`schema.version` deliberately skips the user-global override tier the engine's ordinary resolver consults. That tier lives in a developer's data directory, so honouring it would make the same checkout emit different values on different machines, and a marked repository fact would be machine-dependent. The resolution TIER is an input under R-crc-10 and is therefore named rather than inherited.
 
 Every engine source emits a STRING. A fact that is natively numeric (`version: 4` is a YAML number) is rendered to its decimal string form AT THE SOURCE, never at the comparison — the check is `includes` over two strings and performs no coercion of its own.
 
@@ -15,15 +17,17 @@ The v1 engine-source set is CLOSED at four entries, each with its declared param
 | source | parameters | emits |
 |---|---|---|
 | `architecture.stage-count` | `doc` | the count of WELL-FORMED parsed stages in that doc |
-| `architecture.ruling-count` | `doc`, `prefix` | the count of ruling entries in that doc's `## Rulings index` — a top-level list item whose first bold span matches `<prefix>-<n>` |
+| `architecture.ruling-count` | `doc`, `prefix` | the count of ruling entries in that doc's `## Rulings index` — a top-level list item whose first bold span matches `<prefix>-<n>` (both terms defined below) |
 | `specs.capability-count` | — | the count of directories under the project's `specs/` that contain a `spec.md` — BASELINE only, so a capability introduced by an unarchived change is not counted; a directory without a `spec.md` is not counted |
-| `schema.version` | `schema` | that registered schema's `version` |
+| `schema.version` | `schema` | that schema's `version`, resolved PROJECT-LOCAL then PACKAGE BUILT-IN — the user-global override tier is SKIPPED |
 
-In that grammar `<prefix>` is matched LITERALLY, never compiled as a pattern, and `<n>` is one or more decimal digits with nothing following them — so `R-crc-10` is an entry and `R-crc-4a` is not.
+In that grammar `<prefix>` is matched LITERALLY, never compiled as a pattern, and `<n>` is one or more decimal digits with nothing following them — so `R-crc-10` is an entry and `R-crc-4a` is not. TOP-LEVEL means a list item whose `-` or `*` marker begins at indent 0–3 (CommonMark's allowance) and which is not nested inside another list item. The SECTION runs from the `## Rulings index` heading to the next heading at `##` or higher. Both terms are defined because the live doc happens to satisfy either reading, so an ambiguity here would ship unexposed.
+
+Both architecture sources STATE THEIR DOCUMENT PRECONDITIONS: a named doc that is ABSENT, LEGACY (zero parseable stages) or MALFORMED (any grammar violation) is a source-resolution ERROR naming the doc and the source — never a count. `parseArchitectureDoc` populates `stages` even on a malformed doc and returns an empty list for a legacy one, so a source that simply read `stages.length` would emit a short count or a silent zero over a document the engine could not fully read.
 
 `architecture.ruling-count` takes the prefix as a DECLARED parameter rather than deriving it from the doc's name. The doc's identity is its filename stem, which is not the abbreviation its rulings use (`clean-up-review-cycle` versus `R-crc-1`), so any derivation is a guess about a naming convention the engine cannot observe. Declaring it also makes emptiness meaningful: with a prefix given, a `## Rulings index` section that yields ZERO entries is a MALFORMED source that fails naming the doc and the prefix — never a count of zero, which would silently agree with prose that contains a zero digit.
 
-An entry names an ENGINE source and its parameters. Each engine source DECLARES its required parameter names; an entry missing `engine:`, missing a required parameter, or carrying an unknown key is a clean validation error naming the entry. A source name SHALL be unique within the map. An entry SHALL NOT carry a shell command: orbit is a published package, so a `command:` field would mean that cloning a project which uses orbit and running `orbit validate` executes repository data — arbitrary code execution from a command that reads as read-only. The engine-source set is CLOSED and exposed from the engine itself, so adding a fact is a code change with a test rather than a line of YAML.
+An entry names an ENGINE source and its parameters. Each engine source DECLARES its required parameter names; an entry missing `engine:`, missing a required parameter, or carrying an unknown key is a clean validation error naming the entry. A source name SHALL be unique within the map and SHALL match the marker NAME grammar `[a-z0-9][a-z0-9-]*` — otherwise an entry could parse, resolve and appear in coverage while no legal marker could ever name it. Declared parameter values SHALL be non-empty strings; a YAML number, null, or list in a parameter slot is a clean error naming the entry and the parameter. A parameter that names a doc or schema which does not exist is likewise a clean validation error, never a silently absent source. An entry SHALL NOT carry a shell command: orbit is a published package, so a `command:` field would mean that cloning a project which uses orbit and running `orbit validate` executes repository data — arbitrary code execution from a command that reads as read-only. The engine-source set is CLOSED and exposed from the engine itself, so adding a fact is a code change with a test rather than a line of YAML.
 
 #### Scenario: A registry entry resolves to an engine fact
 
@@ -34,6 +38,11 @@ An entry names an ENGINE source and its parameters. Each engine source DECLARES 
 
 - **WHEN** an `architecture.ruling-count` entry declares a prefix and the doc's `## Rulings index` section yields no entry matching it
 - **THEN** validation FAILS naming the doc and the prefix; the source SHALL NOT emit a count of zero
+
+#### Scenario: A broken architecture doc errors rather than counting
+
+- **WHEN** an architecture source names a doc that is absent, LEGACY, or MALFORMED
+- **THEN** validation FAILS naming the doc and the source; neither `architecture.stage-count` nor `architecture.ruling-count` emits a value over a document the engine could not fully read
 
 #### Scenario: An unknown engine source is a clean error
 
@@ -58,6 +67,10 @@ The delimited form is required rather than a marker placed beside a figure. A ma
 
 Because the check is containment of a STRING, a source whose value is compound (`4C/6W/0S`) needs no special case, and a marked span SHALL use numerals: a source emitting `18` is not contained by the word `eighteen`.
 
+**Self-reference is an AUTHORING hazard, and it is stated as a RECORD rather than checked.** A source that reads a document derives its value from that document's bytes, so a marker placed inside the very text being counted changes the input and can invalidate the value it claims to check: `architecture.ruling-count` counts list entries whose first bold span matches its declared prefix, and marking the figure inside such an entry breaks that entry's bold span and drops the count by one. An author SHOULD therefore mark a figure in a current-state sentence written OUTSIDE the counted material.
+
+This is deliberately NOT a check. Detecting it would require the engine to know, per source, which region of a document each value was computed from — an input that is nowhere declared, and one the R-crc-10 discipline this capability is built on forbids leaving unnamed. Making it a SHALL while its input went undeclared was the one place in this capability where judgment slipped back into a check; the hazard is real, so it is recorded here and enforced by the authoring instruction in the dogfood, not by a rule the engine cannot observe.
+
 **Containment's residual is STATED, not closed**: a span whose stale text happens to CONTAIN the current value passes — a source emitting `9` is contained by the stale span `19`, and one emitting `0` by the stale span `R-crc-1..10`. A shrinking or re-prefixed figure can therefore survive. The mitigation is authorial and is a RECORD, not a check: a marked span SHOULD be drawn tight around the figure. A token-boundary rule is deliberately NOT introduced — deciding where a figure's token ends inside arbitrary prose is the inference this capability exists to avoid.
 
 **Span pairing is a CLOSED table**, so no degenerate case is left to an implementer's judgment. Its outcomes are of TWO KINDS, and they report differently: a MARKER ERROR names the file and line of the offending delimiter, because there is no span to compare; a CHECK FAILURE names the source value against the span's text, because there is.
@@ -69,6 +82,8 @@ Because the check is containment of a STRING, a source whose value is compound (
 | closer with no open span | MARKER ERROR | orphan closer, naming its line |
 | opener with no closer before end of file | MARKER ERROR | unclosed marker, naming the opener's line |
 | opener immediately followed by its closer | CHECK FAILURE | an EMPTY span contains no source value, so it fails like any disagreeing span — reported with the source value, not as a syntax error |
+
+Every SPAN-DERIVED finding reports the OPENER's line, including a span that crosses line endings; a MARKER ERROR reports the offending delimiter's own line.
 
 A MARKER ERROR's blast radius is ONE FILE: that file's remaining spans are abandoned (pairing is no longer trustworthy inside it) and the error is reported, while every other file in the domain still lints and still reports. The run fails, but it never goes quiet — one malformed marker SHALL NOT turn the lint into a no-op for the rest of the project.
 
@@ -91,6 +106,19 @@ A MARKER ERROR's blast radius is ONE FILE: that file's remaining spans are aband
 
 - **WHEN** a span names a source absent from `orbit/sources.yaml`
 - **THEN** validation fails naming the file, the line and the unknown source
+
+**Inline-code inertness has a CLOSED grammar**, per CommonMark 0.31.2 code spans — a streaming toggle is not sufficient, because an opening backtick run with no matching run is literal text and cannot be recognised without lookahead:
+
+| case | treatment |
+|---|---|
+| backtick run closed by an EQUAL-LENGTH run | the enclosed bytes are a code region; markers inside are inert |
+| backtick run closed only by a DIFFERENT-LENGTH run | not a delimiter pair; scanning continues for an equal-length run |
+| backtick run with NO matching run anywhere after it | literal text, NOT a code region; markers after it are live |
+| a code span crossing a line ending | one region; inertness spans the line break |
+| two adjacent code spans | two regions; the text between them is live |
+| a backtick run inside a FENCED block | not a code span; the fence already makes the region inert |
+
+The mask is computed over the WHOLE DOCUMENT before marker scanning, not while streaming lines.
 
 #### Scenario: A syntax example is not a marker
 
@@ -123,7 +151,7 @@ The path-decidable exclusions:
 |---|---|
 | `orbit/changes/archive/**`, `**/.orbit-runs/**` | RECORDS — true when written |
 | `test/**` | FIXTURES and GOLDENS — their numbers are test data |
-| `schemas/*/templates/**` | TEMPLATES — placeholders, not claims |
+| `schemas/*/templates/**`, `orbit/schemas/*/templates/**` | TEMPLATES — placeholders, not claims. BOTH tiers: the package's own schemas and a project-local schema directory, which the engine resolves first and which is version-controlled when present |
 | `.claude/**` | GENERATED — the source is what must be true |
 | `README_OLD.md`, `adopter-report-*.md` | HISTORICAL — superseded by their own names; the only glob-shaped entries, still decidable by path |
 
@@ -162,6 +190,11 @@ As the stated mitigation, and as a RECORD rather than a check, the lint SHALL re
 
 - **WHEN** a living document states a figure that disagrees with a computable fact, and the figure is not inside a marked span
 - **THEN** the lint produces no finding for it, and the summary does not describe the document as verified
+
+#### Scenario: Every failure kind is representable
+
+- **WHEN** the lint reports any failure — a registry fault (no markdown line at all), a marker error (a line but no span, no source value), an unknown source named by a well-formed marker (a span but no value), or a mismatch (span text and source value both present)
+- **THEN** each is emitted as a DISCRIMINATED record carrying a `kind` and exactly the fields its kind defines, so no report is padded with nulls and no failure kind is unrepresentable
 
 #### Scenario: Coverage names a source nothing points at
 

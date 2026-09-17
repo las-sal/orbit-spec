@@ -1,0 +1,433 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-17T17:45:12Z",
+  "change": "rc07-artifact-lint",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "external",
+  "source_path": "orbit/changes/rc07-artifact-lint/.orbit-runs/external-proposal-2026-09-15T18-19-29Z.md",
+  "source_command": "review",
+  "source_token": "2026-09-15T18-19-29Z",
+  "external_reviewer": "GPT-5 Codex",
+  "walk_mode": "walk",
+  "walk_mode_source": "default",
+  "input_findings_summary": "12 findings from the first EXTERNAL proposal pass (GPT-5 Codex, iteration 1): 3 CRITICAL, 7 WARNING, 2 SUGGESTION. Zero overlap with either internal pass — the third consecutive time in this program that an external pass and an in-house pass have shared no CRITICALs.",
+  "pushback_verification": "All 12 verified against the committed tree before any edit. Confirmed independently rather than relayed: the arc doc's only `R-crc-10` IS the counted list entry, so the endpoint marker would break its own input (finding 1); `orbit/specs/orbit-architecture-engine/spec.md` does state that rulings are engine-opaque, and this change declared no MODIFIED capabilities (finding 2); both literal review-marker tokens were present and the discovery grep in /orbit:address-reviews is raw with no inertness rule (finding 3); the resolver really is project-local then user-global then package (finding 7); the declared exclusions really yield 54/52 and not the 50/48 this change had written (finding 11). ONE DOWNGRADE NOTE, recorded not suppressed: finding 6's project-local template path is forward-looking — `git ls-files 'orbit/schemas/*'` returns zero today, so the exclusion gap breaks nothing currently; the table was still promising a category it did not cover. Entries below are generated FROM the external findings file, so titles and files are byte-identical to the pass they resolve.",
+  "resolution_summary": {
+    "resolved": 12,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "finding": 1,
+      "severity": "CRITICAL",
+      "title": "The ruling-count source is dogfooded as a different fact and can invalidate its own input",
+      "file": "orbit/changes/rc07-artifact-lint/design.md",
+      "line": 122,
+      "outcome": "resolved",
+      "lane": "decision",
+      "action": "RATIFIED OPTION A (chat). Endpoint marking is REVERSED — a decision this change made two rounds ago and that this finding correctly killed. The dogfood now marks a ruling COUNT inside a written current-state sentence, never the range endpoint, in `CLAUDE.md` (which holds no rulings index, so it is safe by construction). The general rule is now NORMATIVE in the spec with its own scenario: a marked span SHALL NOT sit inside the text its own source is computed from. Design D3 records the reversal and the trap (the arc doc's only `R-crc-10` IS the counted entry; marking it breaks that entry's bold span and drops the count to 9), and notes that count-as-endpoint was unsound anyway since the two coincide only while ids stay contiguous. The architecture doc's own current-state sentence moves to task 5.4 as an ARCHITECT recommendation — apply marks nothing there.",
+      "ratified_via": "chat",
+      "resolution": "Option A — mark a COUNT in a written current-state sentence; endpoint marking reversed; self-reference rule made normative.",
+      "recommendation_fork": {
+        "source": "heuristic",
+        "options_presented": [
+          "A — current-state sentence + ruling COUNT",
+          "B — distinct ruling-endpoint source with gap/duplicate semantics"
+        ],
+        "ratified": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+          "orbit/changes/rc07-artifact-lint/design.md",
+          "orbit/changes/rc07-artifact-lint/tasks.md",
+          "orbit/changes/rc07-artifact-lint/proposal.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "reason": "architecture doc — charter text and the new current-state sentence belong to /orbit:architect (ratified tier boundary); recommended by task 5.4"
+          },
+          {
+            "path": "orbit/specs/orbit-architecture-engine/spec.md",
+            "reason": "baseline spec; finding 2 was resolved by NOT touching it — option B keeps the architecture parser's contract intact, so no MODIFIED delta is owed"
+          },
+          {
+            "path": "docs/cli.md",
+            "reason": "apply-time work; carried by task 5.3 rather than edited during the walk"
+          }
+        ]
+      }
+    },
+    {
+      "finding": 2,
+      "severity": "CRITICAL",
+      "title": "The new ruling parser silently reverses a live baseline contract",
+      "file": "orbit/specs/orbit-architecture-engine/spec.md",
+      "line": 23,
+      "outcome": "resolved",
+      "lane": "decision",
+      "action": "RATIFIED OPTION B (chat). The architecture parser's contract is left INTACT: `countRulingEntries` moves out of `src/core/architecture/parser.ts` and into `src/core/sources-registry.ts` (task 1.1, Touchpoints). Design D3 states the reasoning — the baseline's opacity clause is about what the ARCHITECTURE ENGINE exposes, and a different module reading a section for its own purpose does not change that, so `parseArchitectureDoc`'s model gains no field and nothing downstream of it changes. The declined alternative (adding `orbit-architecture-engine` as MODIFIED to narrow the clause) is recorded with its reason. `Modified Capabilities: none` therefore stays TRUE rather than merely unexamined.",
+      "ratified_via": "chat",
+      "resolution": "Option B — keep the architecture parser's contract intact; the ruling-index read lives in sources-registry.ts.",
+      "recommendation_fork": {
+        "source": "heuristic",
+        "options_presented": [
+          "A — add orbit-architecture-engine as MODIFIED",
+          "B — move the parse off the architecture subsystem"
+        ],
+        "ratified": "B"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+          "orbit/changes/rc07-artifact-lint/design.md",
+          "orbit/changes/rc07-artifact-lint/tasks.md",
+          "orbit/changes/rc07-artifact-lint/proposal.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "reason": "architecture doc — charter text and the new current-state sentence belong to /orbit:architect (ratified tier boundary); recommended by task 5.4"
+          },
+          {
+            "path": "orbit/specs/orbit-architecture-engine/spec.md",
+            "reason": "baseline spec; finding 2 was resolved by NOT touching it — option B keeps the architecture parser's contract intact, so no MODIFIED delta is owed"
+          },
+          {
+            "path": "docs/cli.md",
+            "reason": "apply-time work; carried by task 5.3 rather than edited during the walk"
+          }
+        ]
+      }
+    },
+    {
+      "finding": 3,
+      "severity": "CRITICAL",
+      "title": "Literal review markers will leak into canonical artifacts",
+      "file": "orbit/changes/rc07-artifact-lint/proposal.md",
+      "line": 33,
+      "outcome": "resolved",
+      "lane": "obvious-fix",
+      "action": "Both literal tokens rephrased so the family's own raw grep cannot find them — `proposal.md:33` and the ownership sentence in the new spec now read `@review`, colon-suffixed, with the omission explained in line. Task 5.5 gains the pre-close sweep asserting zero hits across the change (excluding the trail). The sweep command initially contained the literal token itself, which would have guaranteed its own failure; it now uses a character class that matches the marker while keeping the task line out of the result. Verified: zero literal tokens remain in proposal, design, tasks, spec or explore.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+          "orbit/changes/rc07-artifact-lint/design.md",
+          "orbit/changes/rc07-artifact-lint/tasks.md",
+          "orbit/changes/rc07-artifact-lint/proposal.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "reason": "architecture doc — charter text and the new current-state sentence belong to /orbit:architect (ratified tier boundary); recommended by task 5.4"
+          },
+          {
+            "path": "orbit/specs/orbit-architecture-engine/spec.md",
+            "reason": "baseline spec; finding 2 was resolved by NOT touching it — option B keeps the architecture parser's contract intact, so no MODIFIED delta is owed"
+          },
+          {
+            "path": "docs/cli.md",
+            "reason": "apply-time work; carried by task 5.3 rather than edited during the walk"
+          }
+        ]
+      }
+    },
+    {
+      "finding": 4,
+      "severity": "WARNING",
+      "title": "Inline-code inertness is not specified to an implementable grammar",
+      "file": "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+      "line": 55,
+      "outcome": "resolved",
+      "lane": "obvious-fix",
+      "action": "Added a CLOSED six-row inline-code table to the spec (equal-length run closes; different-length run does not; an unmatched run is literal text and the region stays LIVE; a span crossing a line ending is one region; adjacent spans leave live text between them; a run inside a fence is not a code span), with the explicit statement that the mask is computed over the WHOLE DOCUMENT before marker scanning — a streaming toggle cannot decide the unmatched-run case without lookahead. Task 2.2 and the Touchpoints now require an ADDITIVE mask and PROHIBIT modifying `FenceTracker.inFence`/`handle`, which the trail and report parsers share. The reviewer's scope estimate — tens of lines plus tests once the boundary is explicit — is what makes this a specification fix rather than a redesign.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+          "orbit/changes/rc07-artifact-lint/design.md",
+          "orbit/changes/rc07-artifact-lint/tasks.md",
+          "orbit/changes/rc07-artifact-lint/proposal.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "reason": "architecture doc — charter text and the new current-state sentence belong to /orbit:architect (ratified tier boundary); recommended by task 5.4"
+          },
+          {
+            "path": "orbit/specs/orbit-architecture-engine/spec.md",
+            "reason": "baseline spec; finding 2 was resolved by NOT touching it — option B keeps the architecture parser's contract intact, so no MODIFIED delta is owed"
+          },
+          {
+            "path": "docs/cli.md",
+            "reason": "apply-time work; carried by task 5.3 rather than edited during the walk"
+          }
+        ]
+      }
+    },
+    {
+      "finding": 5,
+      "severity": "WARNING",
+      "title": "The JSON contract cannot represent required error kinds or summary validity",
+      "file": "orbit/changes/rc07-artifact-lint/design.md",
+      "line": 156,
+      "outcome": "resolved",
+      "lane": "obvious-fix",
+      "action": "Replaced D5b's flat record with a DISCRIMINATED schema keyed on `kind`: `registry` (registry file + detail, no line/source/span), `marker` (file + line + detail, no span or value), `unknown-source` (file + line + source, no value), `mismatch` (all five fields). Added a spec scenario requiring every failure kind to be representable with exactly its own fields and no null padding. Validity now uses the bulk validator's existing shape — a `sources` entry in `byType` rolled into `summary.totals` — so a non-zero exit can never report zero failed items, and a `--sources`-only run carries only the `sources` key. Task 3.2 carries both.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+          "orbit/changes/rc07-artifact-lint/design.md",
+          "orbit/changes/rc07-artifact-lint/tasks.md",
+          "orbit/changes/rc07-artifact-lint/proposal.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "reason": "architecture doc — charter text and the new current-state sentence belong to /orbit:architect (ratified tier boundary); recommended by task 5.4"
+          },
+          {
+            "path": "orbit/specs/orbit-architecture-engine/spec.md",
+            "reason": "baseline spec; finding 2 was resolved by NOT touching it — option B keeps the architecture parser's contract intact, so no MODIFIED delta is owed"
+          },
+          {
+            "path": "docs/cli.md",
+            "reason": "apply-time work; carried by task 5.3 rather than edited during the walk"
+          }
+        ]
+      }
+    },
+    {
+      "finding": 6,
+      "severity": "WARNING",
+      "title": "The template exclusion misses the engine's project-local schema path",
+      "file": "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+      "line": 126,
+      "outcome": "resolved",
+      "lane": "obvious-fix",
+      "action": "Added `orbit/schemas/*/templates/**` alongside the package path in the exclusion table, with the reason naming both tiers. PUSHBACK NOTE, recorded rather than suppressed: the finding is FORWARD-LOOKING, not live breakage — `git ls-files 'orbit/schemas/*'` returns zero in this repository today, so nothing is currently mislinted. The exclusion table was still promising a category it did not cover, which is the defect. (Noted in passing, not fixed here: `resolver.ts`'s own doc-comment still says `openspec/schemas` while `getProjectSchemasDir` returns `orbit/schemas` — pre-rename residue outside this change.)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+          "orbit/changes/rc07-artifact-lint/design.md",
+          "orbit/changes/rc07-artifact-lint/tasks.md",
+          "orbit/changes/rc07-artifact-lint/proposal.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "reason": "architecture doc — charter text and the new current-state sentence belong to /orbit:architect (ratified tier boundary); recommended by task 5.4"
+          },
+          {
+            "path": "orbit/specs/orbit-architecture-engine/spec.md",
+            "reason": "baseline spec; finding 2 was resolved by NOT touching it — option B keeps the architecture parser's contract intact, so no MODIFIED delta is owed"
+          },
+          {
+            "path": "docs/cli.md",
+            "reason": "apply-time work; carried by task 5.3 rather than edited during the walk"
+          }
+        ]
+      }
+    },
+    {
+      "finding": 7,
+      "severity": "WARNING",
+      "title": "`schema.version` has an unnamed environment-dependent input",
+      "file": "orbit/changes/rc07-artifact-lint/design.md",
+      "line": 107,
+      "outcome": "resolved",
+      "lane": "obvious-fix",
+      "action": "SETTLED UNDER R-crc-3 and named for reversal. `schema.version` resolves PROJECT-LOCAL then PACKAGE BUILT-IN and SKIPS the user-global override tier, because that tier lives in a developer's data directory and honouring it would make the same checkout emit different values on different machines — a marked repository fact would become machine-dependent. The spec states the tier in the source table and in prose as an R-crc-10 input that is NAMED rather than inherited; design D3's table agrees; task 1.2 requires a test that a global override does not change the emitted value. THIS FINDING WAS MISSED BY MY OWN TRIAGE and appeared in neither the obvious-fix preview nor the decision lane; it was caught while applying and is recorded here rather than quietly folded in.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+          "orbit/changes/rc07-artifact-lint/design.md",
+          "orbit/changes/rc07-artifact-lint/tasks.md",
+          "orbit/changes/rc07-artifact-lint/proposal.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "reason": "architecture doc — charter text and the new current-state sentence belong to /orbit:architect (ratified tier boundary); recommended by task 5.4"
+          },
+          {
+            "path": "orbit/specs/orbit-architecture-engine/spec.md",
+            "reason": "baseline spec; finding 2 was resolved by NOT touching it — option B keeps the architecture parser's contract intact, so no MODIFIED delta is owed"
+          },
+          {
+            "path": "docs/cli.md",
+            "reason": "apply-time work; carried by task 5.3 rather than edited during the walk"
+          }
+        ]
+      }
+    },
+    {
+      "finding": 8,
+      "severity": "WARNING",
+      "title": "Registry source names can be valid yet impossible to reference",
+      "file": "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+      "line": 5,
+      "outcome": "resolved",
+      "lane": "obvious-fix",
+      "action": "Requirement 1 now requires registry source names to match the marker NAME grammar `[a-z0-9][a-z0-9-]*`, so an entry can no longer parse, resolve and appear in coverage while being unreferenceable. Declared parameter values must be non-empty strings (a YAML number, null or list is a clean error naming entry and parameter), and a `doc` or `schema` parameter naming something that does not exist is a clean validation error rather than a silently absent source. Task 1.3 enumerates all three.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+          "orbit/changes/rc07-artifact-lint/design.md",
+          "orbit/changes/rc07-artifact-lint/tasks.md",
+          "orbit/changes/rc07-artifact-lint/proposal.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "reason": "architecture doc — charter text and the new current-state sentence belong to /orbit:architect (ratified tier boundary); recommended by task 5.4"
+          },
+          {
+            "path": "orbit/specs/orbit-architecture-engine/spec.md",
+            "reason": "baseline spec; finding 2 was resolved by NOT touching it — option B keeps the architecture parser's contract intact, so no MODIFIED delta is owed"
+          },
+          {
+            "path": "docs/cli.md",
+            "reason": "apply-time work; carried by task 5.3 rather than edited during the walk"
+          }
+        ]
+      }
+    },
+    {
+      "finding": 9,
+      "severity": "WARNING",
+      "title": "Ruling-source zero behavior contradicts itself inside the design",
+      "file": "orbit/changes/rc07-artifact-lint/design.md",
+      "line": 195,
+      "outcome": "resolved",
+      "lane": "obvious-fix",
+      "action": "Rewrote the risk entry, which contradicted D3, the normative spec and task 1.1 by claiming a zero-match 'counts zero'. It now states the correct narrower reason: a zero-match is a SOURCE-RESOLUTION error failing the lint by name, distinct from a change in the document's `docClass`, and `orbit architecture validate` is unchanged. Added the missing normative statement covering BOTH architecture sources: an ABSENT, LEGACY or MALFORMED doc ERRORS naming doc and source rather than emitting a count over a document the engine could not fully read.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+          "orbit/changes/rc07-artifact-lint/design.md",
+          "orbit/changes/rc07-artifact-lint/tasks.md",
+          "orbit/changes/rc07-artifact-lint/proposal.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "reason": "architecture doc — charter text and the new current-state sentence belong to /orbit:architect (ratified tier boundary); recommended by task 5.4"
+          },
+          {
+            "path": "orbit/specs/orbit-architecture-engine/spec.md",
+            "reason": "baseline spec; finding 2 was resolved by NOT touching it — option B keeps the architecture parser's contract intact, so no MODIFIED delta is owed"
+          },
+          {
+            "path": "docs/cli.md",
+            "reason": "apply-time work; carried by task 5.3 rather than edited during the walk"
+          }
+        ]
+      }
+    },
+    {
+      "finding": 10,
+      "severity": "WARNING",
+      "title": "The documentation task leaves `--all` documented with false behavior",
+      "file": "orbit/changes/rc07-artifact-lint/tasks.md",
+      "line": 32,
+      "outcome": "resolved",
+      "lane": "obvious-fix",
+      "action": "Expanded task 5.3 beyond adding a row: the command description and the existing `--all` row in `docs/cli.md` both say the command validates changes and specs only, which this change makes behaviorally false; the JSON example moves to the settled `source_findings`/`source_coverage` shape. The known `openspec` branding deferral is explicitly left alone — fixing false behavior is in scope, closing an unrelated deferral is not.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+          "orbit/changes/rc07-artifact-lint/design.md",
+          "orbit/changes/rc07-artifact-lint/tasks.md",
+          "orbit/changes/rc07-artifact-lint/proposal.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "reason": "architecture doc — charter text and the new current-state sentence belong to /orbit:architect (ratified tier boundary); recommended by task 5.4"
+          },
+          {
+            "path": "orbit/specs/orbit-architecture-engine/spec.md",
+            "reason": "baseline spec; finding 2 was resolved by NOT touching it — option B keeps the architecture parser's contract intact, so no MODIFIED delta is owed"
+          },
+          {
+            "path": "docs/cli.md",
+            "reason": "apply-time work; carried by task 5.3 rather than edited during the walk"
+          }
+        ]
+      }
+    },
+    {
+      "finding": 11,
+      "severity": "SUGGESTION",
+      "title": "The change's own measured counts are already stale",
+      "file": "orbit/changes/rc07-artifact-lint/design.md",
+      "line": 181,
+      "outcome": "resolved",
+      "lane": "obvious-fix",
+      "action": "Removed the incidental totals rather than refreshing them — the reviewer's recommendation and the only self-consistent fix. The design no longer restates a file-domain count at all; it declares the exclusions and says the count is whatever `git ls-files '*.md'` minus them yields at reading time, noting that an earlier draft of that very paragraph went stale within one session. D4b's 'four conforming markers' is likewise gone: the inertness test now DERIVES every current exemplar (any conforming opener or closer inside a backtick span in this change's prose, whatever the number) instead of pinning a count that moves with every scenario added.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+          "orbit/changes/rc07-artifact-lint/design.md",
+          "orbit/changes/rc07-artifact-lint/tasks.md",
+          "orbit/changes/rc07-artifact-lint/proposal.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "reason": "architecture doc — charter text and the new current-state sentence belong to /orbit:architect (ratified tier boundary); recommended by task 5.4"
+          },
+          {
+            "path": "orbit/specs/orbit-architecture-engine/spec.md",
+            "reason": "baseline spec; finding 2 was resolved by NOT touching it — option B keeps the architecture parser's contract intact, so no MODIFIED delta is owed"
+          },
+          {
+            "path": "docs/cli.md",
+            "reason": "apply-time work; carried by task 5.3 rather than edited during the walk"
+          }
+        ]
+      }
+    },
+    {
+      "finding": 12,
+      "severity": "SUGGESTION",
+      "title": "The dogfood description overstates coverage of the motivating defects",
+      "file": "orbit/changes/rc07-artifact-lint/design.md",
+      "line": 204,
+      "outcome": "resolved",
+      "lane": "obvious-fix",
+      "action": "Corrected the migration plan's claim. It now says the dogfood exercises all four v1 registry SOURCES, which is not the same as covering all four defects Case 1 recorded — the fourth, an archived findings file's severity string, has no engine source and stays DELIBERATELY unsupported under D3's deferral with its kind and method named. Task 5.4 carries the distinction into the charter amendment so the split is not narrated as closure.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+          "orbit/changes/rc07-artifact-lint/design.md",
+          "orbit/changes/rc07-artifact-lint/tasks.md",
+          "orbit/changes/rc07-artifact-lint/proposal.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "reason": "architecture doc — charter text and the new current-state sentence belong to /orbit:architect (ratified tier boundary); recommended by task 5.4"
+          },
+          {
+            "path": "orbit/specs/orbit-architecture-engine/spec.md",
+            "reason": "baseline spec; finding 2 was resolved by NOT touching it — option B keeps the architecture parser's contract intact, so no MODIFIED delta is owed"
+          },
+          {
+            "path": "docs/cli.md",
+            "reason": "apply-time work; carried by task 5.3 rather than edited during the walk"
+          }
+        ]
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "All 12 resolved: 10 obvious-fix, 2 decision-lane with chat ratification. Both CRITICAL decisions REVERSED earlier calls in this change — endpoint marking (mine, two rounds ago) and the implicit assumption that extending the architecture parser was free. Still 18 tasks and ONE capability: option B on finding 2 kept the baseline untouched, so no MODIFIED delta is owed and `Modified Capabilities: none` is now true by examination rather than by omission. One process failure recorded on the trail: finding 7 was missed by my own triage — it appeared in neither the obvious-fix preview nor the decision lane — and was caught while applying.",
+  "iteration": 4,
+  "next_recommended": "/orbit:review --as proposal --fresh rc07-artifact-lint"
+}

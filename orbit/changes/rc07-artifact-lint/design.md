@@ -104,10 +104,35 @@ of one rule is a defect.
 | `architecture.stage-count` | `doc` | `parseArchitectureDoc(...).stages.length` — WELL-FORMED stages only | the "fifteen small stages" defect |
 | `architecture.ruling-count` | `doc`, `prefix` | count of ruling entries in the doc's rulings index | the "R-crc-1..8" defect |
 | `specs.capability-count` | — | count of `orbit/specs/*/spec.md` | `CLAUDE.md`'s "Baseline capabilities N" line |
-| `schema.version` | `schema` | the registered schema's `version` | the "spec-driven is version 3" defect |
+| `schema.version` | `schema` | the schema's `version` — PROJECT-LOCAL then PACKAGE, skipping the user-global tier | the "spec-driven is version 3" defect |
 
 Three of the four come free from parses the engine already performs. `architecture.ruling-count`
-needs ONE new parse, and it gets a grammar rather than a heuristic: a ruling entry is a top-level
+needs ONE new parse, and **that parse does NOT go into `src/core/architecture/parser.ts`.** The
+archived `orbit-architecture-engine` baseline states that the engine reads only stage ids/titles,
+the two slots and section boundaries, and that everything else — charter prose, exit criteria,
+premise, RULINGS, status log — is engine-opaque. Extending `parseArchitectureDoc` to count rulings
+would reverse that live contract while this change declares no modified capabilities, and after
+archive the two requirements would flatly contradict each other.
+
+So the ruling-index read lives on the SOURCE-LINT side (`src/core/sources-registry.ts`), and
+`parseArchitectureDoc` gains no field.
+
+**That relocation is necessary but NOT sufficient, and an earlier draft of this section wrongly
+claimed it was.** The draft argued the baseline claim survived because it was "about what that
+subsystem EXPOSES". It is not: the requirement's subject is THE ENGINE and its verb is READS, and
+`src/core/sources-registry.ts` is the engine. The consequence is behavioural rather than verbal —
+once the dogfood lands, reformatting a rulings-index bold span changes a count and turns
+`orbit validate --all` red, which is engine-visible meaning attaching to content the requirement
+calls opaque. Post-archive the two baselines would have contradicted each other.
+
+So this change DOES carry a MODIFIED delta for `orbit-architecture-engine`, narrowing the claim from
+"the engine reads ONLY" to "the architecture PARSER's model contains ONLY", naming the source lint as
+the single engine-level exception, and requiring any future engine-level reader of opaque content to
+be named in the same place. One extra capability (1 → 2, inside R-crc-1's ceiling of 3) buys a
+baseline that stays true; the delta preserves all six original scenarios and adds one asserting the
+parsed model is unchanged.
+
+It gets a grammar rather than a heuristic: a ruling entry is a top-level
 list item inside the `## Rulings index` section whose first bold span matches `<prefix>-<n>`, where
 `prefix` is a DECLARED registry parameter. Anything else in that section is prose the count ignores.
 Fence-aware, like every other parse in `src/core/architecture/parser.ts`.
@@ -119,12 +144,17 @@ use, and no rule can know that it isn't: deriving one is a guess about a naming 
 the inference R-crc-10 forbids. Declaring it also makes zero meaningful — with a prefix given, a
 rulings section yielding nothing is a MALFORMED source that fails, never a count of zero.
 
-**What the dogfood marks is the ENDPOINT, not the range.** `rulings R-crc-1..10` restates two facts —
-how many rulings exist and the highest id — which coincide only while ids stay contiguous. The
-source emits the COUNT, and the span is drawn tight around the endpoint alone
-(`R-crc-1..` then the marked `10`), which is D5's tight-span discipline applied at the one site where
-containment's substring residual actually bites: a loose span reading `R-crc-1..10` would contain a
-stale source value of `0` and pass.
+**What the dogfood marks is a COUNT in a current-state sentence, never the range endpoint — and
+that reverses an earlier decision in this change.** Marking the endpoint (`R-crc-1..` then a marked
+`10`) looked like tight-span discipline and was a trap: the architecture doc has no current-state
+summary, so its only `R-crc-10` IS the counted list entry itself. A marker there changes that
+entry's first bold span, it stops matching the declared prefix, and the count drops to 9 — the
+dogfood invalidating its own input. The general rule this forced is now normative in the spec: a
+marked span SHALL NOT sit inside the text its own source is computed from.
+
+The remedy is the same move D6b already makes for `CLAUDE.md`: WRITE a current-state sentence
+outside the counted material and mark the COUNT in it. Count-as-endpoint was also unsound on its own
+terms — the two coincide only while ruling ids stay contiguous, and nothing requires that.
 
 **A source never silently absorbs a broken doc.** `architecture.stage-count` counts `stages`, not headings — the parser splits well-formed stages from `violations`, and under the NEAR-MISS rule a heading that fails the grammar is MALFORMED, not absent. The two readings agree on the live doc today and diverge the moment a heading breaks, so a MALFORMED or LEGACY doc makes both architecture sources ERROR naming the doc rather than emit a count that quietly omits a near-miss. An error is honest; a short count is the same failure mode twice.
 
@@ -156,8 +186,28 @@ residual, and per R-crc-10 a mitigation over uninspectable input is a record, no
 ### D5b — What `--all --json` gains
 
 With a registry present, `orbit validate --sources --json` and `orbit validate --all --json` carry two
-new arrays: `source_findings` (file, line, source, span text, source value) and `source_coverage`
-(source, value, marker count). `--all`'s existing per-scope keys are untouched, so a consumer that
+new arrays: `source_findings` and `source_coverage` (source, value, marker count).
+
+`source_findings` entries are DISCRIMINATED by `kind`, because the four failures have genuinely
+different shapes and a single flat record would be null-padded for three of them:
+
+| kind | fields |
+|---|---|
+| `registry` | `file` (the registry), `detail` — no markdown line, no source, no span |
+| `marker` | `file`, `line`, `detail` — a malformed delimiter; no span and no source value exist |
+| `unknown-source` | `file`, `line`, `source` — a well-formed span naming nothing declared; no value exists |
+| `mismatch` | `file`, `line`, `source`, `span_text`, `source_value` |
+
+Validity is represented the same way the bulk validator already does it, with the ITEM UNIT named so
+two implementers cannot diverge: **one item is one DECLARED SOURCE.** `byType.sources` carries
+`items` = the number of declared sources, `failed` = sources with at least one finding, `passed` =
+the remainder; a registry-level fault that prevents resolving any source counts as ONE failed
+pseudo-item so the run can never report zero failed items beside a non-zero exit. Source items do
+NOT enter `items[]`, which today holds only `BulkItemResult` records — so `summary.totals.items` on a
+registry-bearing run no longer equals `items.length`. That invariant is RETIRED deliberately rather
+than by accident, and task 3.2 states it, because a consumer cross-checking the two would otherwise
+break silently. A `--sources`-only run has no change or spec item and its `byType` carries only the
+`sources` key. `--all`'s existing per-scope keys are untouched, so a consumer that
 reads only what it read before is unaffected — but the object DOES gain keys, which is why D6's
 byte-identical promise is scoped to the no-registry case and no further.
 
@@ -178,8 +228,23 @@ an architect act (`/orbit:architect`), not this change's to perform — task 5.4
 | the check "moves into `orbit validate` **and audit-drift**" | `orbit validate --sources` only | audit-drift is an AI-driven workflow whose findings are judgments; putting a deterministic string comparison behind an AI pass is the inversion R-crc-10 exists to prevent (D1) |
 | exit criterion (3): registry entries "with **live commands**" | registry entries backed by ENGINE SOURCES; no shell | a `command:` field means cloning a project and running a read-only-looking `orbit validate` executes repository data (D-rc07-7) |
 
-The charter also carries two stale figures of its own — the file domain as "61 today" (the measured
-value is 50 after the declared exclusions, 48 including HISTORICAL) and a coverage example reading
+**The overlap with `orbit-audit-drift` is named rather than left implicit.** That capability's
+Category 3 already extracts "quantitative claims — port numbers, counts, version pins, size limits"
+from governing docs and raises a CRITICAL when one disagrees with a current spec; Case 1 records that
+this is exactly how the schema-version defect was caught. So after this lands, two surfaces report on
+the same marked figure. That is acceptable and is not the "two capabilities in charge of one rule"
+defect the proposal rejects elsewhere, because they are different MECHANISMS with different
+reliability: the lint is a deterministic check over DECLARED links and can never see an unmarked
+figure, while audit-drift is an AI judgement that can — which is precisely the residual the lint
+declares. (A later refinement might have audit-drift suppress quantitative claims inside marked
+spans, to stop it re-reporting what the lint already owns. That would be a MODIFIED delta on
+`orbit-audit-drift` and is out of scope here.)
+
+The charter also carries two stale figures of its own — the file domain as "61 today" (a figure this change does not
+restate: the exclusions are declared here and the count is whatever `git ls-files '*.md'` minus them
+yields at the time of reading — an incidental total in this document would be one more of exactly the
+defect the stage exists to stop, and an earlier draft of this paragraph had already gone stale within
+the same session) and a coverage example reading
 `stages = 17` against a real count of 18. Both are named in the same architect task; neither is
 edited here.
 
@@ -192,18 +257,27 @@ edited here.
   matters; the numeral-to-word table is deferred, not denied.
 - **Coverage could become a Goodhart target** ("mark everything") → coverage counts and judges
   nothing; no gate reads it, and no threshold exists to game.
-- **A new ruling-index grammar is a new way to be MALFORMED** → it is not. The count is a source
-  value, not a doc class: a rulings section that matches nothing counts zero, and
-  `orbit architecture validate` is unchanged. A source that silently counts zero is visible in the
-  coverage record and fails loudly the moment a span claims otherwise.
+- **A new ruling-index grammar is a new way to be MALFORMED** → it is not, but the reason is narrower
+  than an earlier draft of this entry claimed (that draft said the section "counts zero", which
+  contradicts D3, the spec and task 1.1 — all three make a zero-match a FAILING source). The correct
+  statement: a zero-match is a SOURCE-RESOLUTION error that fails the lint naming the doc and the
+  prefix; it does NOT change the document's `docClass`, and `orbit architecture validate` is
+  unchanged. The two failure kinds are separate, and neither is silent.
+
+**Both architecture sources state their document preconditions**: an ABSENT doc, a LEGACY doc (no
+parseable stages) and a MALFORMED doc each ERROR naming the doc and the source, rather than emitting
+a count over a document the engine could not fully read.
 - **`git ls-files` shells out to git** → read-only, no repository data is executed, and a non-git
   checkout degrades to "no domain, no findings" with a named reason rather than an exception.
 
 ## Migration Plan
 
 Additive. The registry and the first marked spans land in the same change (the dogfood), so the
-check has real subjects on day one: the four figures this session got wrong, in `CLAUDE.md` and
-`orbit/architecture/clean-up-review-cycle.md`. Rollback is deleting `orbit/sources.yaml`.
+check has real subjects on day one. Stated precisely, because the looser phrasing overstated it: the
+dogfood exercises ALL FOUR v1 registry SOURCES, which is not the same as covering all four defects
+Case 1 recorded. The fourth defect — an archived findings file's severity string — has no engine
+source and remains DELIBERATELY unsupported (D3's deferral, with its kind and method named). Any
+charter amendment must carry that distinction, so the split is not narrated as closure. Rollback is deleting `orbit/sources.yaml`.
 
 ## Open Questions
 
@@ -218,27 +292,40 @@ explicitly rather than leaving an implementer to discover it mid-apply.
 
 The alternative was to anchor the opener — require it to be preceded on its line only by whitespace,
 or to share a line with its closer. It is cheaper and it is rejected: it forbids marking a figure
-mid-sentence, which is exactly what the rulings endpoint above requires. A rule that outlaws its own
-dogfood is the wrong rule.
+MID-SENTENCE, and every mark the dogfood places is mid-sentence. (An earlier draft justified this by
+citing "the rulings endpoint above"; D3 has since reversed endpoint marking outright, so the
+surviving case is the one that carries the argument — a marked COUNT inside a written current-state
+sentence, in `CLAUDE.md` and in the architecture-doc sentence task 5.4 recommends.) A rule that
+outlaws its own dogfood is the wrong rule.
 
-This capability's own artifacts are the fixtures. Four conforming markers already sit inside backticks
-in this change's prose — three openers (one with no closer after it) and one orphan closer — and every
-one must go silent under the rule. They are why the rule exists: the document describing the check
+This capability's own artifacts are the fixtures — and the test DERIVES them rather than pinning a
+count, because the count moves every time a scenario is added (an earlier draft said "four" and was
+wrong within the same session). The rule is: every conforming opener or closer appearing inside a
+backtick span anywhere in this change's own prose must go silent, whatever the current number is. They are why the rule exists: the document describing the check
 would otherwise fail it.
 
 ### D6b — `CLAUDE.md` has no present tense, and the dogfood has to write one
 
-The charter's exit criterion (3) wants `CLAUDE.md` to carry markers for all four facts. Two of them
-have nothing there to mark. Every capability figure in that file is a transition inside an archived
-stage's narrative (`11→12`, `13 → 14`, "capabilities stay at **20**"); every schema-version figure is
-likewise historical ("went to **version 2** at this stage"). Marking any of those would freeze a
-record against a moving source — the inversion the living-versus-record principle exists to forbid.
+The charter's exit criterion (3) wants `CLAUDE.md` to carry markers for all four facts. **Most** of
+that file's figures have nothing markable: capability figures are transitions inside archived stage
+narratives (`11→12`, `13 → 14`, "capabilities stay at **20**") and most schema-version figures are
+historical ("went to **version 2** at this stage"). Marking those would freeze a record against a
+moving source — the inversion the living-versus-record principle exists to forbid.
 
-So the dogfood WRITES the claim it then marks: one short current-state line carrying the live stage
-count, rulings endpoint, baseline capability count and schema version. That is not a workaround; it
-is the finding. A project doc that narrates every transition and asserts no present state is exactly
-why three of the four defects that motivated this stage lived in that file. The new line is the kind
-of thing that goes stale — which is precisely why it is marked.
+**But an earlier draft of this section claimed the file has NO present tense at all, and that is
+false in exactly the two places that matter.** `CLAUDE.md:113` says "eighteen small stages in four
+phases" while describing the ACTIVE program — a present-tense claim, and the very defect instance
+Case 1 recorded (it read "fifteen", then "seventeen", now 18). `CLAUDE.md:145` says "**`spec-driven`
+is version 4**" — also present tense. Those two are LIVING claims that went stale, and they are the
+right things to mark.
+
+So the dogfood does BOTH, and the division follows the evidence rather than convenience: it MARKS
+THE EXISTING LIVING SENTENCES where they exist (line 113's stage count, converted to a numeral;
+line 145's schema version), and it WRITES a current-state line only for the facts with no present
+tense to mark (the ruling count and the baseline capability count). A duplicate marked figure
+alongside an unmarked one would give the file TWO VOICES for one fact — the charter rule this stage
+exists to enforce — and would protect the copy that was never wrong while leaving the one that
+failed three times unlinted.
 
 ## Alternatives considered
 
@@ -264,8 +351,8 @@ of thing that goes stale — which is precisely why it is marked.
 
 - `src/core/source-lint.ts` — new: domain resolution, span parse, containment check, coverage.
 - `src/core/sources-registry.ts` — new: `orbit/sources.yaml` read + the CLOSED engine-source table.
-- `src/core/architecture/parser.ts` — the rulings-index entry count (declared-prefix grammar).
-- `src/core/markdown-fence.ts` — gains inline-code-span tracking (today: fences only).
+- `src/core/sources-registry.ts` — ALSO carries the rulings-index entry count (declared-prefix grammar); deliberately NOT `src/core/architecture/parser.ts`, whose engine-opacity contract stays intact.
+- `src/core/markdown-fence.ts` — gains an ADDITIVE whole-document code-region mask (today: fences only, line-based). `FenceTracker.inFence`/`handle` are NOT modified — the trail and report parsers share that API.
 - `src/commands/validate.ts` — the `--sources` path and its `--all` inclusion.
 - `src/cli/index.ts` — the `--sources` flag.
 - `orbit/sources.yaml` — new: this project's registry (the dogfood).
