@@ -4,6 +4,7 @@ import { Validator } from '../core/validation/validator.js';
 import { isInteractive, resolveNoInteractive } from '../utils/interactive.js';
 import { getActiveChangeIds, getSpecIds } from '../utils/item-discovery.js';
 import { nearestMatches } from '../utils/match.js';
+import { runSourceLint, type SourceFinding, type SourceLintResult } from '../core/source-lint.js';
 
 type ItemType = 'change' | 'spec';
 
@@ -11,6 +12,7 @@ interface ExecuteOptions {
   all?: boolean;
   changes?: boolean;
   specs?: boolean;
+  sources?: boolean;
   type?: string;
   strict?: boolean;
   json?: boolean;
@@ -32,10 +34,11 @@ export class ValidateCommand {
     const interactive = isInteractive(options);
 
     // Handle bulk flags first
-    if (options.all || options.changes || options.specs) {
+    if (options.all || options.changes || options.specs || options.sources) {
       await this.runBulkValidation({
         changes: !!options.all || !!options.changes,
         specs: !!options.all || !!options.specs,
+        sources: !!options.all || !!options.sources,
       }, { strict: !!options.strict, json: !!options.json, concurrency: options.concurrency, noInteractive: resolveNoInteractive(options) });
       return;
     }
@@ -68,16 +71,16 @@ export class ValidateCommand {
     const choice = await select({
       message: 'What would you like to validate?',
       choices: [
-        { name: 'All (changes + specs)', value: 'all' },
+        { name: 'All (changes + specs + sources)', value: 'all' },
         { name: 'All changes', value: 'changes' },
         { name: 'All specs', value: 'specs' },
         { name: 'Pick a specific change or spec', value: 'one' },
       ],
     });
 
-    if (choice === 'all') return this.runBulkValidation({ changes: true, specs: true }, opts);
-    if (choice === 'changes') return this.runBulkValidation({ changes: true, specs: false }, opts);
-    if (choice === 'specs') return this.runBulkValidation({ changes: false, specs: true }, opts);
+    if (choice === 'all') return this.runBulkValidation({ changes: true, specs: true, sources: true }, opts);
+    if (choice === 'changes') return this.runBulkValidation({ changes: true, specs: false, sources: false }, opts);
+    if (choice === 'specs') return this.runBulkValidation({ changes: false, specs: true, sources: false }, opts);
 
     // one
     const [changes, specs] = await Promise.all([getActiveChangeIds(), getSpecIds()]);
@@ -98,6 +101,7 @@ export class ValidateCommand {
     console.error('  orbit validate --all');
     console.error('  orbit validate --changes');
     console.error('  orbit validate --specs');
+    console.error('  orbit validate --sources');
     console.error('  orbit validate <item-name>');
     console.error('Or run in an interactive terminal.');
   }
@@ -181,8 +185,19 @@ export class ValidateCommand {
     bullets.forEach(b => console.error(`  ${b}`));
   }
 
-  private async runBulkValidation(scope: { changes: boolean; specs: boolean }, opts: { strict: boolean; json: boolean; concurrency?: string; noInteractive?: boolean }): Promise<void> {
+  private async runBulkValidation(scope: { changes: boolean; specs: boolean; sources: boolean }, opts: { strict: boolean; json: boolean; concurrency?: string; noInteractive?: boolean }): Promise<void> {
     const spinner = !opts.json && !opts.noInteractive ? ora('Validating...').start() : undefined;
+    // The source lint is project-scoped and read-only; it runs before the item queue so
+    // that a `--sources`-only run (which enqueues nothing) still reports.
+    const sourceLint = scope.sources ? runSourceLint(process.cwd()) : undefined;
+    const sourcesActive = !!sourceLint?.registryPresent;
+    const sourceSummary = sourcesActive ? summarizeSources(sourceLint!) : undefined;
+    // An empty file domain is REPORTED with its reason in both output modes — a run that
+    // checked nothing must never read as a run that verified everything. It is a warning,
+    // not a finding: the lint produces none and exits zero.
+    if (sourcesActive && sourceLint!.domainReason) {
+      console.error(`Warning: the source lint checked no files — ${sourceLint!.domainReason}`);
+    }
     const [changeIds, specIds] = await Promise.all([
       scope.changes ? getActiveChangeIds() : Promise.resolve<string[]>([]),
       scope.specs ? getSpecIds() : Promise.resolve<string[]>([]),
@@ -217,21 +232,39 @@ export class ValidateCommand {
       spinner?.stop();
 
       const summary = {
-        totals: { items: 0, passed: 0, failed: 0 },
+        totals: {
+          items: 0 + (sourceSummary?.items ?? 0),
+          passed: 0 + (sourceSummary?.passed ?? 0),
+          failed: 0 + (sourceSummary?.failed ?? 0),
+        },
         byType: {
           ...(scope.changes ? { change: { items: 0, passed: 0, failed: 0 } } : {}),
           ...(scope.specs ? { spec: { items: 0, passed: 0, failed: 0 } } : {}),
+          ...(sourceSummary ? { sources: sourceSummary } : {}),
         },
       } as const;
 
       if (opts.json) {
-        const out = { items: [] as BulkItemResult[], summary, version: '1.0' };
+        const out = {
+          items: [] as BulkItemResult[],
+          ...(sourcesActive ? { source_findings: sourceLint!.findings, source_coverage: sourceLint!.coverage } : {}),
+          summary,
+          version: '1.0',
+        };
         console.log(JSON.stringify(out, null, 2));
+      } else if (!scope.changes && !scope.specs) {
+        // A `--sources`-only run: never claim "no items", which would describe the wrong thing.
+        if (!sourcesActive) {
+          console.log(`No source registry (${'orbit/sources.yaml'}); nothing to lint.`);
+        } else {
+          printSourceLint(sourceLint!);
+        }
       } else {
         console.log('No items found to validate.');
+        if (sourcesActive) printSourceLint(sourceLint!);
       }
 
-      process.exitCode = 0;
+      process.exitCode = (sourceSummary?.failed ?? 0) > 0 ? 1 : 0;
       return;
     }
 
@@ -272,26 +305,96 @@ export class ValidateCommand {
     spinner?.stop();
 
     results.sort((a, b) => a.id.localeCompare(b.id));
+    // ONE ITEM IS ONE DECLARED SOURCE. Source items do NOT enter `items[]`, which holds only
+    // BulkItemResult records, so `summary.totals.items === items.length` no longer holds on a
+    // registry-bearing run. That invariant is retired DELIBERATELY (design D5b) and tested.
     const summary = {
-      totals: { items: results.length, passed, failed },
+      totals: {
+        items: results.length + (sourceSummary?.items ?? 0),
+        passed: passed + (sourceSummary?.passed ?? 0),
+        failed: failed + (sourceSummary?.failed ?? 0),
+      },
       byType: {
         ...(scope.changes ? { change: summarizeType(results, 'change') } : {}),
         ...(scope.specs ? { spec: summarizeType(results, 'spec') } : {}),
+        ...(sourceSummary ? { sources: sourceSummary } : {}),
       },
     } as const;
 
     if (opts.json) {
-      const out = { items: results, summary, version: '1.0' };
+      const out = {
+        items: results,
+        ...(sourcesActive ? { source_findings: sourceLint!.findings, source_coverage: sourceLint!.coverage } : {}),
+        summary,
+        version: '1.0',
+      };
       console.log(JSON.stringify(out, null, 2));
     } else {
       for (const res of results) {
         if (res.valid) console.log(`✓ ${res.type}/${res.id}`);
         else console.error(`✗ ${res.type}/${res.id}`);
       }
+      if (sourcesActive) printSourceLint(sourceLint!);
       console.log(`Totals: ${summary.totals.passed} passed, ${summary.totals.failed} failed (${summary.totals.items} items)`);
     }
 
-    process.exitCode = failed > 0 ? 1 : 0;
+    process.exitCode = summary.totals.failed > 0 ? 1 : 0;
+  }
+}
+
+/**
+ * Rolls the source lint into the bulk validator's item accounting. ONE ITEM IS ONE DECLARED
+ * SOURCE; `failed` is the sources carrying at least one attributable finding.
+ *
+ * Two finding kinds cannot be attributed to a declared source — a marker error is a fault of
+ * a FILE, and an unknown-source marker names nothing declared — as is a registry read failure,
+ * which resolves no source at all. Those roll up into ONE failed PSEUDO-ITEM, so the run can
+ * never report zero failed items beside a non-zero exit.
+ */
+function summarizeSources(result: SourceLintResult): { items: number; passed: number; failed: number } {
+  const declared = new Set(result.coverage.map((c) => c.source));
+  const failedSources = new Set<string>();
+  // A source that did not resolve carries a null coverage value and its own registry finding.
+  for (const c of result.coverage) if (c.value === null) failedSources.add(c.source);
+
+  let unattributable = false;
+  for (const f of result.findings) {
+    if (f.kind === 'mismatch' && declared.has(f.source)) {
+      failedSources.add(f.source);
+      continue;
+    }
+    if (f.kind === 'registry' && declared.size > 0) continue; // already attributed above
+    unattributable = true;
+  }
+
+  const pseudo = unattributable ? 1 : 0;
+  const items = declared.size + pseudo;
+  const failed = failedSources.size + pseudo;
+  return { items, passed: items - failed, failed };
+}
+
+function formatSourceFinding(f: SourceFinding): string {
+  switch (f.kind) {
+    case 'registry':
+      return `✗ ${f.file}: ${f.detail}`;
+    case 'marker':
+      return `✗ ${f.file}:${f.line}: ${f.detail}`;
+    case 'unknown-source':
+      return `✗ ${f.file}:${f.line}: unknown source '${f.source}' (not declared in orbit/sources.yaml)`;
+    case 'mismatch':
+      return `✗ ${f.file}:${f.line}: source '${f.source}' emits ${JSON.stringify(f.source_value)}, but the marked span reads ${JSON.stringify(f.span_text)}`;
+  }
+}
+
+/** Findings first, then the coverage section — which counts and judges nothing. */
+function printSourceLint(result: SourceLintResult): void {
+  for (const f of result.findings) console.error(formatSourceFinding(f));
+  if (result.coverage.length > 0) {
+    console.log('Sources:');
+    for (const c of result.coverage) {
+      const value = c.value === null ? '<unresolved>' : c.value;
+      console.log(`  ${c.source} = ${value} (${c.markers} marker${c.markers === 1 ? '' : 's'})`);
+    }
   }
 }
 

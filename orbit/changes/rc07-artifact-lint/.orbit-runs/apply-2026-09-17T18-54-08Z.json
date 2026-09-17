@@ -1,0 +1,40 @@
+{
+  "command": "apply",
+  "timestamp": "2026-09-17T18:54:08Z",
+  "change": "rc07-artifact-lint",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "gate_overridden": {
+    "gate": "review-proposal",
+    "state": "unpassed",
+    "reason": "budget spent: 3 of 3 independent passes; latest independent pass has 2 CRITICAL"
+  },
+  "consent": "user-invoked",
+  "tasks_completed": 18,
+  "tasks_remaining": 0,
+  "user_validation_remaining": 0,
+  "chunk": null,
+  "chunk_name": null,
+  "chunk_complete": true,
+  "tasks_completed_this_session": 18,
+  "files_touched": [
+    "CLAUDE.md",
+    "docs/cli.md",
+    "orbit/changes/rc07-artifact-lint/.openspec.yaml",
+    "orbit/changes/rc07-artifact-lint/.orbit-runs/address-reviews-2026-09-17T17-45-12Z.json",
+    "orbit/changes/rc07-artifact-lint/.orbit-runs/address-reviews-2026-09-17T18-28-27Z.json",
+    "orbit/changes/rc07-artifact-lint/.orbit-runs/external-proposal-2026-09-15T18-19-29Z.md",
+    "orbit/changes/rc07-artifact-lint/.orbit-runs/review-proposal-2026-09-17T18-00-55Z.json",
+    "orbit/changes/rc07-artifact-lint/design.md",
+    "orbit/changes/rc07-artifact-lint/proposal.md",
+    "orbit/changes/rc07-artifact-lint/specs/orbit-architecture-engine/spec.md",
+    "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+    "orbit/changes/rc07-artifact-lint/tasks.md",
+    "src/cli/index.ts",
+    "src/commands/validate.ts",
+    "src/core/markdown-fence.ts"
+  ],
+  "diff_base": "de2bce177ded35825789d9b1cca9fe11682da5b5",
+  "final_assessment": "18 of 18 tasks done. The four v1 sources resolve live (stages=18, rulings=10, capabilities=20, schema-version=4) and each CLAUDE.md mark was confirmed to FAIL under a real perturbation of its source; the no-registry path was verified byte-identical against a pristine HEAD build (modulo durationMs). Two departures from the task text, both recorded: task 5.4 was converted to the repo's checkbox-free at-archive-note form (D5 9.4/9.5/9.7, D6 5.5-5.9 — the convention the task itself cites), so the tracked total is 18 rather than 19; and the dogfood's marked spans were drawn tight around the numerals rather than around the figure-plus-noun the design's illustrative example shows, honouring the spec's residual guidance that a span SHOULD be drawn tight. One gap found against the spec during the sweep and closed: the empty-domain reason was reaching only human output, and is now a stderr warning in both modes.",
+  "next_recommended": "/orbit:review --as system --fresh rc07-artifact-lint"
+}

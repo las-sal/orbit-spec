@@ -1,0 +1,24 @@
+# The source registry (rc07, capability `orbit-source-lint`).
+#
+# Each entry maps a source NAME — the name a `src:` marker uses — to a fact the ENGINE
+# computes. The engine-source set is CLOSED and lives in `src/core/sources-registry.ts`, so
+# adding a fact is a code change with a test, never a line of YAML. There is deliberately no
+# `command:` field: orbit is a published package, and a shell escape hatch would mean that
+# cloning a project which uses orbit and running `orbit validate` executes repository data.
+#
+# Checked by `orbit validate --sources` (and by `--all`). Delete this file and the lint goes
+# entirely silent.
+
+sources:
+  stages:
+    engine: architecture.stage-count
+    doc: clean-up-review-cycle
+  rulings:
+    engine: architecture.ruling-count
+    doc: clean-up-review-cycle
+    prefix: R-crc
+  capabilities:
+    engine: specs.capability-count
+  schema-version:
+    engine: schema.version
+    schema: spec-driven

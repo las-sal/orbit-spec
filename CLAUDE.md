@@ -106,11 +106,13 @@ The full plan and design decisions live in the docs below — **read them before
 
 ## The ACTIVE program: clean-up-review-cycle (the D-arc is quiescent)
 
+**Current state, engine-checked:** the program's rulings index holds <!-- src:rulings -->10<!-- /src --> rulings, and `orbit/specs/` holds <!-- src:capabilities -->20<!-- /src --> baseline capabilities. Every marked figure in this file is checked against `orbit/sources.yaml` by `orbit validate --sources`; an UNMARKED figure is invisible to that check.
+
 As of 2026-09-11 the D-arc's six stages are all archived (d1 complete-ratified; d2–d6
 quiescent, awaiting ratification) and the live program is
-**`orbit/architecture/clean-up-review-cycle.md`** — goals G0–G4, rulings R-crc-1..10 (the size
+**`orbit/architecture/clean-up-review-cycle.md`** — goals G0–G4, the R-crc rulings (the size
 ceiling, the ordering principle, method delegated to the authoring AI, the canonical review
-cadence, the conditional reversal of D-d6-7, the canonical cadence's blind pair, the walk-authors-nothing lanes, explore-produces-mechanism, finding-quality-never-licenses-another-pass, the ceiling corollary — split the mechanism or declare the stage blocked, never substitute a cheaper one — and MECHANIZE ONLY WHAT THE ENGINE CAN OBSERVE: name the inputs, and where any is prose or judgment the deliverable is a RECORD rather than a CHECK), eighteen small stages in four phases (rc03a withdrawn 2026-09-15 after three passes; rc13 split into rc13a/rc13b the same day under R-crc-9's first application; rc07b split from rc07 under R-crc-9 applied PREVENTIVELY, at exploration rather than post-mortem). Its first
+cadence, the conditional reversal of D-d6-7, the canonical cadence's blind pair, the walk-authors-nothing lanes, explore-produces-mechanism, finding-quality-never-licenses-another-pass, the ceiling corollary — split the mechanism or declare the stage blocked, never substitute a cheaper one — and MECHANIZE ONLY WHAT THE ENGINE CAN OBSERVE: name the inputs, and where any is prose or judgment the deliverable is a RECORD rather than a CHECK), <!-- src:stages -->18<!-- /src --> small stages in four phases (rc03a withdrawn 2026-09-15 after three passes; rc13 split into rc13a/rc13b the same day under R-crc-9's first application; rc07b split from rc07 under R-crc-9 applied PREVENTIVELY, at exploration rather than post-mortem). Its first
 citing change, `rc01-instrument-fidelity`, is ARCHIVED (2026-09-12): the cycle's test
 instruments now DERIVE from a recorded real-CLI contract instead of remembered structure —
 `test/integration/pr-lifecycle/gh-contract.json` captured from the real `gh` by
@@ -142,9 +144,9 @@ sixth state and never a hard block; `independentSpend` (whole trail) is display,
 findings, completeness before disposition. `assignCadence` is an existential DFS memoized on
 `(slot, lowerBound)` — the consumed set is redundant under strict token ordering, which collapses
 exponential to polynomial. ONE shared CommonMark fence tracker (`src/core/markdown-fence.ts`) now
-backs both the report renderer and the external-findings parser. **`spec-driven` is version 4**:
+backs both the report renderer and the external-findings parser. **`spec-driven` is version <!-- src:schema-version -->4<!-- /src -->**:
 `review-system` cadence `[blind-pair, in-context]`, both reviewed gates `budget: 3`. Baseline
-capabilities stay at **20** (three MODIFIED; 10 delta blocks synced byte-verified). **2103 tests
+capabilities stayed at **20** (three MODIFIED; 10 delta blocks synced byte-verified). **2103 tests
 green.**
 
 rc02's own cycle is the program's sharpest evidence, and it reversed the program's premise. Six
