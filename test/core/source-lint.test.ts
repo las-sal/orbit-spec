@@ -8,6 +8,7 @@ import {
   parseMarkedSpans,
   resolveFileDomain,
   isExcludedPath,
+  checkSpanAgainstValue,
 } from '../../src/core/source-lint.js';
 import { computeCodeRegionMask } from '../../src/core/markdown-fence.js';
 
@@ -21,6 +22,12 @@ const CLOSE = `<!${'--'} /src ${'--'}>`;
 describe('the check is string containment inside an author-drawn boundary', () => {
   // The FOUR REAL DEFECTS from explore.md Case 2, as written, against what their sources
   // emit. All four must FAIL — that is the whole reason this capability exists.
+  //
+  // These run through `runSourceLint`, NOT through `String.prototype.includes`. An earlier
+  // version asserted `d.span.includes(d.sourceValue)` directly, which is a statement about
+  // JavaScript: it passed identically whether the lint compared strings, parsed numbers, or
+  // did nothing at all. The change's own motivating evidence has to be able to detect a
+  // regression in the code it motivated.
   const realDefects: { name: string; span: string; sourceValue: string }[] = [
     { name: 'a schema version restated in prose', span: 'version 3', sourceValue: '4' },
     { name: 'a ruling range endpoint', span: 'R-crc-1..8', sourceValue: '10' },
@@ -28,15 +35,67 @@ describe('the check is string containment inside an author-drawn boundary', () =
     { name: 'a compound severity string', span: '4C/7W/0S', sourceValue: '4C/6W/0S' },
   ];
 
-  for (const d of realDefects) {
-    it(`FAILS on ${d.name}`, () => {
-      expect(d.span.includes(d.sourceValue)).toBe(false);
+  let root: string;
+  beforeEach(() => {
+    root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'orbit-defects-')));
+    execFileSync('git', ['init', '-q'], { cwd: root, stdio: ['ignore', 'pipe', 'ignore'] });
+    execFileSync('git', ['config', 'user.email', 't@example.com'], { cwd: root, stdio: 'ignore' });
+    execFileSync('git', ['config', 'user.name', 'T'], { cwd: root, stdio: 'ignore' });
+  });
+  afterEach(() => fs.rmSync(root, { recursive: true, force: true }));
+
+  /**
+   * Stands a source up that emits an ARBITRARY string — including a compound one the CLOSED
+   * v1 engine table cannot produce — by giving `specs.capability-count` exactly that many
+   * capability directories, or, for a non-numeric value, by checking the comparison the lint
+   * actually performs against a real parsed span.
+   */
+  const lintWith = (span: string, capabilities: number) => {
+    fs.mkdirSync(path.join(root, 'orbit'), { recursive: true });
+    for (let i = 0; i < capabilities; i++) {
+      const dir = path.join(root, 'orbit', 'specs', `cap-${i}`);
+      fs.mkdirSync(dir, { recursive: true });
+      fs.writeFileSync(path.join(dir, 'spec.md'), '# c\n');
+    }
+    fs.writeFileSync(path.join(root, 'orbit', 'sources.yaml'), 'sources:\n  n:\n    engine: specs.capability-count\n');
+    fs.writeFileSync(path.join(root, 'GOV.md'), `prose ${OPEN('n')}${span}${CLOSE} prose\n`);
+    execFileSync('git', ['add', '-A'], { cwd: root, stdio: 'ignore' });
+    execFileSync('git', ['commit', '-q', '-m', 'x'], { cwd: root, stdio: 'ignore' });
+    return runSourceLint(root);
+  };
+
+  for (const d of realDefects.filter((d) => /^\d+$/.test(d.sourceValue))) {
+    it(`FAILS on ${d.name}, through the real lint`, () => {
+      const r = lintWith(d.span, Number(d.sourceValue));
+      expect(r.findings).toEqual([
+        {
+          kind: 'mismatch',
+          file: 'GOV.md',
+          line: 1,
+          source: 'n',
+          span_text: d.span,
+          source_value: d.sourceValue,
+        },
+      ]);
     });
   }
 
-  it('the compound case needs no numeric parsing: containment alone decides both ways', () => {
-    expect('the pair was 4C/6W/0S overall'.includes('4C/6W/0S')).toBe(true);
-    expect('the pair was 4C/7W/0S overall'.includes('4C/6W/0S')).toBe(false);
+  it('FAILS on a compound severity string, through the real parse and check', () => {
+    // The CLOSED v1 engine table emits no compound value, so this case is exercised one layer
+    // down — at the real parsed span against the real comparison — rather than against
+    // `includes` in the abstract. It is the only fixture that discriminates containment from a
+    // numeric parse, so it must touch the product somewhere.
+    const d = realDefects.find((x) => x.sourceValue === '4C/6W/0S')!;
+    const parsed = parseMarkedSpans(`prose ${OPEN('pair')}${d.span}${CLOSE} prose\n`);
+    expect(parsed.error).toBeNull();
+    expect(parsed.spans).toHaveLength(1);
+    expect(checkSpanAgainstValue(parsed.spans[0].text, d.sourceValue)).toBe(false);
+    expect(checkSpanAgainstValue('the pair was 4C/6W/0S overall', d.sourceValue)).toBe(true);
+  });
+
+  it('an AGREEING span of the same shape passes, so the four failures mean something', () => {
+    const r = lintWith('4 capabilities', 4);
+    expect(r.findings).toEqual([]);
   });
 });
 
@@ -103,31 +162,37 @@ describe('prose ABOUT the syntax never becomes prose CHECKED by it', () => {
     expect(parseMarkedSpans(doc)).toEqual({ spans: [], error: null });
   });
 
-  it('every conforming marker inside a backtick span in this change\'s own prose goes silent', () => {
-    // ENUMERATED FROM THE FILES, never transcribed and never pinned to a count: the number
-    // moves whenever a scenario is added, and an earlier draft that said "four" was already
-    // wrong. The rule is that whatever is there must be inert.
-    const changeDir = path.join('orbit', 'changes', 'rc07-artifact-lint');
-    const files = listMarkdown(changeDir).filter((f) => !f.includes('.orbit-runs'));
+  it('every conforming marker inside a backtick span anywhere in the LIVING project goes silent', () => {
+    // DERIVED FROM THE LINT'S OWN DOMAIN, not from a directory name. The earlier version read
+    // `orbit/changes/rc07-artifact-lint` literally, so archiving this change — its own next
+    // lifecycle step — moved the directory and the suite went red before its first assertion.
+    // Resolving the domain instead is strictly stronger (it covers every living document, not
+    // one directory), and it survives the archive untouched: the change's prose becomes an
+    // excluded RECORD while the synced baseline spec keeps carrying the syntax it describes.
+    const { files, reason } = resolveFileDomain(process.cwd());
+    expect(reason).toBeNull();
     expect(files.length).toBeGreaterThan(0);
 
     const tokenPattern = /<!--\s*(?:src:[a-z0-9][a-z0-9-]*|\/src)\s*-->/g;
-    let inBacktick = 0;
+    let inCodeRegion = 0;
+    const dogfooded = new Map<string, number>();
+
     for (const file of files) {
-      const content = fs.readFileSync(file, 'utf-8');
+      const content = fs.readFileSync(path.join(process.cwd(), file), 'utf-8');
       const code = computeCodeRegionMask(content);
       tokenPattern.lastIndex = 0;
       for (let m = tokenPattern.exec(content); m !== null; m = tokenPattern.exec(content)) {
-        if (code[m.index]) inBacktick++;
+        if (code[m.index]) inCodeRegion++;
       }
-      // Whatever the count, NONE of them may produce a span or a marker error.
-      expect(parseMarkedSpans(content), `${file} must carry no live marker`).toEqual({
-        spans: [],
-        error: null,
-      });
+      const { spans, error } = parseMarkedSpans(content);
+      expect(error, `${file} must carry no malformed marker`).toBeNull();
+      if (spans.length > 0) dogfooded.set(file, spans.length);
     }
-    // The fixtures are real: this change's prose does document the syntax.
-    expect(inBacktick).toBeGreaterThan(0);
+
+    // Prose DESCRIBING the syntax is everywhere in this capability's artifacts and must all be
+    // inert; the only live spans in the project are the deliberate dogfood.
+    expect(inCodeRegion).toBeGreaterThan(0);
+    expect([...dogfooded.keys()]).toEqual(['CLAUDE.md']);
   });
 });
 
@@ -178,6 +243,59 @@ describe('the inline-code grammar (CommonMark 0.31.2 code spans)', () => {
     const m = regions(s);
     expect(m[s.indexOf('lonely')]).toBe(true);
     expect(m[s.indexOf('LIVE')]).toBe(false);
+  });
+});
+
+// ---- Regressions from the system-mode blind pair ---------------------------
+
+describe('the delimiter grammar is matched EXACTLY', () => {
+  // The spec says a comment that does not match the opener grammar exactly is INERT. A
+  // tolerant `\s*` turned every one of these into a live span, so prose the contract declares
+  // inert could raise a false failure.
+  const inertForms = [
+    ['compact, no spaces', `<!${'--'}src:stages${'--'}>18<!${'--'}/src${'--'}>`],
+    ['tabbed', `<!${'--'}\tsrc:stages\t${'--'}>18<!${'--'}\t/src\t${'--'}>`],
+    ['double-spaced', `<!${'--'}  src:stages  ${'--'}>18<!${'--'}  /src  ${'--'}>`],
+    ['split across lines', `<!${'--'}\nsrc:stages\n${'--'}>18<!${'--'}\n/src\n${'--'}>`],
+  ] as const;
+
+  for (const [label, doc] of inertForms) {
+    it(`treats a ${label} comment as inert`, () => {
+      expect(parseMarkedSpans(doc)).toEqual({ spans: [], error: null });
+    });
+  }
+
+  it('still recognises the exact canonical form', () => {
+    expect(parseMarkedSpans(`${OPEN('stages')}18${CLOSE}`).spans).toHaveLength(1);
+  });
+});
+
+describe('the code-region mask respects CommonMark block and escape rules', () => {
+  it('a code span never crosses a blank line, so stray backticks cannot swallow a marker', () => {
+    const doc = ['A sentence with a stray backtick `', '', `has ${OPEN('stages')}99${CLOSE} stages`, '', 'Another stray `'].join('\n');
+    expect(parseMarkedSpans(doc).spans).toHaveLength(1);
+  });
+
+  it('a BACKSLASH-ESCAPED backtick opens nothing, so the marker after it stays live', () => {
+    const doc = `Escaped \\\` then ${OPEN('stages')}99${CLOSE} then \\\` again`;
+    expect(parseMarkedSpans(doc).spans).toHaveLength(1);
+  });
+
+  it('an EVEN number of backslashes leaves the backtick a real delimiter', () => {
+    const doc = `A \\\\\` ${OPEN('stages')}99${CLOSE} \\\\\` B`;
+    expect(parseMarkedSpans(doc).spans).toHaveLength(0);
+  });
+
+  it('pairing is linear: many unmatched runs of distinct lengths do not blow up', () => {
+    // The old implementation re-scanned the whole remaining group per unmatched run. This is
+    // a bound, not a benchmark — it fails on superlinear behaviour, not on a slow machine.
+    let doc = '';
+    for (let i = 1; i <= 400; i++) doc += '`'.repeat((i % 17) + 1) + ` filler ${i} `;
+    doc += `\n\n${OPEN('stages')}99${CLOSE}\n`;
+    const started = Date.now();
+    const { spans } = parseMarkedSpans(doc);
+    expect(Date.now() - started).toBeLessThan(2000);
+    expect(spans).toHaveLength(1);
   });
 });
 
@@ -322,6 +440,59 @@ describe('runSourceLint end to end', () => {
     expect(runSourceLint(root).findings).toHaveLength(1);
   });
 
+  it('a tracked file with a NON-ASCII name is in the domain and its stale span fails', () => {
+    // git's default core.quotePath=true C-quotes such a path, which then named no file on
+    // disk and left the domain with no signal at all — the silent partial lint this
+    // capability's own thesis is written against. `-z` emits raw bytes.
+    fs.writeFileSync(path.join(root, 'dé-café.md'), `has ${OPEN('stages')}99${CLOSE}\n`);
+    fs.writeFileSync(path.join(root, 'plain.md'), `has ${OPEN('stages')}99${CLOSE}\n`);
+    track();
+    const r = runSourceLint(root);
+    expect(r.findings.map((f) => f.file).sort()).toEqual(['dé-café.md', 'plain.md']);
+    // Every domain file was readable, so scanned == domain.
+    expect(r.filesScanned).toBe(resolveFileDomain(root).files.length);
+    expect(resolveFileDomain(root).files).toContain('dé-café.md');
+  });
+
+  it('a tracked path with surrounding spaces survives, because paths are never trimmed', () => {
+    fs.writeFileSync(path.join(root, ' spaced .md'), `has ${OPEN('stages')}99${CLOSE}\n`);
+    track();
+    expect(runSourceLint(root).findings.map((f) => f.file)).toEqual([' spaced .md']);
+  });
+
+  it('a tracked-but-DELETED file is the one correct silence', () => {
+    fs.writeFileSync(path.join(root, 'gone.md'), `has ${OPEN('stages')}99${CLOSE}\n`);
+    track();
+    const listed = resolveFileDomain(root).files.length;
+    fs.rmSync(path.join(root, 'gone.md'));
+    const r = runSourceLint(root);
+    expect(r.findings).toEqual([]);
+    // Still LISTED by git, but not read — and never counted as scanned.
+    expect(resolveFileDomain(root).files.length).toBe(listed);
+    expect(r.filesScanned).toBe(listed - 1);
+  });
+
+  it('an UNREADABLE tracked file is reported, never swallowed, and is not counted as scanned', () => {
+    const unreadable = path.join(root, 'locked.md');
+    fs.writeFileSync(unreadable, `has ${OPEN('stages')}99${CLOSE}\n`);
+    // Deliberately STALE, so its finding proves the readable sibling was still linted.
+    fs.writeFileSync(path.join(root, 'ok.md'), `has ${OPEN('stages')}99${CLOSE}\n`);
+    track();
+    const listed = resolveFileDomain(root).files.length;
+    fs.chmodSync(unreadable, 0o000);
+    try {
+      const r = runSourceLint(root);
+      const marker = r.findings.find((f) => f.kind === 'marker' && f.file === 'locked.md');
+      expect(marker, 'an unreadable tracked file must produce a finding').toBeDefined();
+      expect((marker as { detail: string }).detail).toMatch(/could not be read/);
+      // Every other file still lints; only the unreadable one is missing from the count.
+      expect(r.filesScanned).toBe(listed - 1);
+      expect(r.findings.some((f) => f.kind === 'mismatch' && f.file === 'ok.md')).toBe(true);
+    } finally {
+      fs.chmodSync(unreadable, 0o644);
+    }
+  });
+
   it('coverage names a source nothing points at', () => {
     track();
     const r = runSourceLint(root);
@@ -351,13 +522,3 @@ describe('runSourceLint end to end', () => {
     expect(r.coverage).toEqual([{ source: 'stages', value: null, markers: 1 }]);
   });
 });
-
-function listMarkdown(dir: string): string[] {
-  const out: string[] = [];
-  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    const full = path.join(dir, entry.name);
-    if (entry.isDirectory()) out.push(...listMarkdown(full));
-    else if (entry.name.endsWith('.md')) out.push(full);
-  }
-  return out;
-}

@@ -335,6 +335,112 @@ never deleted.
   clause. Also: exit criteria phrased "on the next cadence" are self-measured by the stage's
   own archive — say so once, in the Program stages preamble.
 
+- **Q-crc-13 — RESOLVED 2026-09-18 (repaired in rc07, not deferred; see the re-walk record `address-reviews-2026-09-18T12-54-57Z.json`).** `orbit-architecture-engine`'s opacity contract was FALSE of the shipped parser API.
+  Observed 2026-09-17 by the system-mode external pass (GPT-5 Codex) on rc07, and DEFERRED by Sal
+  rather than repaired. rc07's MODIFIED delta narrows "the engine reads ONLY" to "the architecture
+  PARSER's model contains ONLY" and names the source lint as the single engine-level exception. But
+  `ParsedArchitectureDoc.lines` is a public field carrying the WHOLE document, `sliceStageSection`
+  reads it downstream to implement `orbit architecture show`, and `countRulingEntries` obtains the
+  rulings THROUGH that same field — so both the "nothing downstream may read it" clause and the
+  single-exception claim are false as written. Verified, not argued: the field and both readers were
+  read at HEAD.
+  Standing recommendation: this is a REDESIGN, not a repair — either separate raw document bytes
+  from the parsed model, or rewrite the requirement around semantic interpretation versus
+  passthrough and name every permitted reader (`sliceStageSection`/`show` included), with a scenario
+  exercising the actual public parser shape. Under R-crc-6 redesign routes back to explore, so it
+  needs its own stage rather than a walk. CONSEQUENCE while it stood: rc07's `review-system` gate
+  could not compute passed — resolution is per-entry and a substantive DEFERRED entry leaves the
+  pass unresolved.
+  **RESOLUTION (Sal, 2026-09-18): repaired inside rc07 as PROSE, and the redesign framing above was
+  over-broad.** The external offered two shapes and the deferral costed the expensive one. Separating
+  raw bytes from the parsed model IS a code redesign; rewriting the requirement around what the
+  parser INTERPRETS versus what it CARRIES invents no mechanism — every sentence describes code that
+  already exists — so R-crc-6 routes it nowhere and it belonged in the change under review, not in a
+  new stage. The delta now names a CLOSED two-row table of engine readers that attach meaning to
+  passthrough (`sliceStageSection` serving `architecture show`; the source lint's ruling count),
+  counted rather than assumed. No code changed; the base fingerprint re-verified; all six original
+  baseline scenarios preserved byte-identically; one scenario added making passthrough falsifiable.
+  **The lesson worth keeping is about the deferral, not the defect:** a finding in an UNARCHIVED
+  delta is not residual risk, because the delta SYNCS INTO BASELINE at archive — deferring one writes
+  the false statement into the live contract permanently. Deferral is a legitimate disposition for a
+  shipped behaviour with a stated workaround; for an unsynced spec claim it is a decision to publish
+  something known to be wrong.
+
+- **Q-crc-14 — the source lint ships with no TRIGGER: nothing in the repo runs it.**
+  Observed 2026-09-17 by the system-mode fresh pass on rc07, which checked each path the design
+  claimed would pick the check up "for free". `.github/workflows/ci.yml` runs build and test only,
+  with no validate step and no npm script calling the CLI; the archive body's pre-archive sweep is
+  `/orbit:audit-drift`; every `orbit validate` in a workflow body is the per-item form, which the
+  lint deliberately leaves unchanged. Only a hand-written close-out task in a change's own tasks.md
+  runs `validate --all`, and that fires at APPLY time — whereas all four motivating defects were
+  edits to living governing prose made during WALKS and at ARCHIVE, when no such task is running.
+  The mechanism is correct and the blind pair could not break it; what is missing is a moment.
+  Standing recommendation: wire the lifecycle seam — `orbit validate --sources` in the archive
+  body's pre-archive sweep and in the address-reviews close-out — which lands the check exactly
+  where the recorded defects were written. It is a workflow-body change to TWO lifecycle bodies, so
+  it is scope rc07 never proposed and no reviewer has seen; it belongs to a stage that declares it.
+  rc07 records the same residual in its own design.md with kind and method.
+
+- **Q-crc-15 — the engine carries TWO CommonMark fence grammars, and one of them is wrong.**
+  Observed 2026-09-17 by the system-mode external pass. `src/core/markdown-fence.ts` is the strict
+  shared tracker; `computeFenceMask` in `src/core/parsers/requirement-blocks.ts` is a depth
+  heuristic in which a bare delimiter closes the current level regardless of its character or
+  length. rc07's ruling parse originally used the heuristic and returned 2 where the answer was 1 on
+  a doc carrying a four-backtick fence around a three-backtick example — admitting the fenced
+  bullets AND masking the live one. rc07 fixed its own reader by importing the tracker; the
+  ARCHITECTURE PARSER still uses the heuristic.
+  Standing recommendation: unify on the shared tracker. Not done inside rc07's walk deliberately —
+  the parser is consumed by `architecture status`, `show` and `validate`, its heuristic was tuned
+  for docs embedding fenced markdown examples, and changing it can reclassify real documents, so it
+  is an engine change that deserves its own review rather than mechanism invented mid-walk
+  (R-crc-6). It surfaces the moment a live doc's fence shape differs between the two grammars.
+
+- **Q-crc-16 — this doc states its own stage count twice, unmarked, and once staler than the other.**
+  Observed 2026-09-17 while applying rc07's recommended amendments. The header blockquote
+  (`Status (2026-09-11)`) says the program was "re-cut into twelve small stages", and the Program
+  stages preamble says "Eighteen small stages in four phases". The second is currently true; the
+  first is a dated record of that session, but it sits in a blockquote that ALSO carries a
+  hand-written state claim which is now false — "Stage charters are proposed until a citing change
+  exists; goals remain proposed" — of the kind `/orbit:architect` says to flag for DELETION rather
+  than update, because every hand-maintained state line is a future staleness bug.
+  Standing recommendation: delete the header blockquote (the R-d-4 subtraction — the engine renders
+  position, and `orbit architecture status` already answers what it claims), then mark the Program
+  stages preamble's count IN PLACE with `src:stages`, converting `Eighteen` to `18`. Marking the
+  preamble while the blockquote survives would leave a marked figure beside an unmarked duplicate of
+  the same fact — two voices for one fact, which is the rule rc07 exists to enforce — so the two
+  moves are COUPLED and neither is applied yet. This supersedes rc07 task 5.5's recommendation to
+  WRITE a new current-state sentence: the doc already has a living present-tense one, so the
+  evidence-driven move is to mark what exists rather than add a third voice.
+
+- **Q-crc-17 — a walk record can certify NOTHING and still read as a clean walk.**
+  Observed 2026-09-18, on this program's own cycle, and caught by Sal asking whether the last
+  review had actually been walked rather than by any check. rc07's fresh-half walk applied and
+  verified all ten of its findings, but the log was written with hand-RETYPED finding titles —
+  abbreviated, em-dashes dropped, backticks lost. The gate matches a resolution entry to a finding
+  on `(title, file)`, so NOT ONE of the six substantive entries matched: the pass read as entirely
+  uncovered while the record declared `resolved: 10, deferred: 0`. The fixes were real and in the
+  tree; the record certified none of them.
+  **Two things made it invisible.** The gate evaluates COVERAGE (clause a) before RESOLUTION
+  (clause b), so while the `in-context` cadence slot was still empty the reason line named the
+  missing slot and never reached the uncovered pass — the readout looked like progress. And the
+  walk body composes entry keys by hand, so the one field the gate keys on is the one field no
+  mechanism checks. This is the stage's own thesis turned on the cycle that produced it: a log that
+  silently certifies nothing is a review reporting itself clean over files it never read.
+  Standing recommendation: `orbit emit address-reviews` already receives `source_path` and already
+  fail-loud-validates the frozen record at write time; it can read that source with the SAME parse
+  the trail uses (external markdown AND internal review/audit-drift JSON — reuse it, never restate
+  it, per the two-fence-grammars lesson in Q-crc-15) and compare keys. The R-crc-10 split matters
+  here, because the two directions are NOT symmetric:
+  (a) an ENTRY whose key matches no finding in the source is a pure defect with no legitimate
+  reading — nothing an author intends produces it — so it FAILS THE WRITE, naming the entry;
+  (b) a FINDING named by no entry may be a deliberately scoped subset, which the engine cannot
+  observe, so it is RECORDED — an engine-computed `uncovered` list on the emit — never refused.
+  Recording (b) is what would have made this visible in seconds: the gap becomes a field instead of
+  a silence. NOTE the honest limit: `source_path` is AI-supplied, so a record pointed at the wrong
+  file still passes both halves. That is a smaller hole than the present one and is not closed here.
+  Recorded rather than assigned; it is engine work on the emit surface, and rc07 is already carrying
+  a walk's worth of new mechanism.
+
 ## Program stages
 
 Eighteen small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
@@ -848,9 +954,16 @@ different inputs, different mechanism, different capabilities. **A ruling that o
 post-mortem costs a stage every time.**
 
 Charter: the cross-doc consistency class the reviews keep finding — a figure restated in prose that
-disagrees with its generated source — moves into `orbit validate` and audit-drift as a mechanical
-check, under ONE VOICE FOR FACTS: a computed number lives in exactly one generated place and prose
-POINTS AT IT.
+disagrees with its generated source — moves into `orbit validate` as a mechanical check, under ONE
+VOICE FOR FACTS: a computed number lives in exactly one generated place and prose POINTS AT IT.
+
+*(AMENDED 2026-09-17, on the shipped change.* The charter said "`orbit validate` **and
+audit-drift**". Audit-drift is an AI-driven workflow whose findings are judgments, and putting a
+deterministic string comparison behind an AI pass is the inversion R-crc-10 exists to prevent; the
+check is `orbit validate --sources`, run by `--all`. The overlap with audit-drift's Category 3
+quantitative-claims scan is acknowledged and left standing — different MECHANISMS with different
+reliability, the lint deterministic over DECLARED links and audit-drift able to see the unmarked
+figure the lint declares as its residual.)*
 
 R-crc-10 APPLIED AT EXPLORATION, and it decided the shape. The engine can observe a NUMBER in prose;
 it cannot observe that the number is a RESTATEMENT, or which source it restates — that is authorial
@@ -861,9 +974,15 @@ only. The charter's own wording already said it: prose POINTS AT IT.
 THE DOMAIN IS THE WHOLE PROJECT, not `orbit/`. Three of the four restated-figure defects the
 2026-09-15 session produced were in `CLAUDE.md`, which no validator reads; a lint scoped to `orbit/`
 would have caught one of four and reported itself clean. It closes three ways, all SOURCED and none
-from memory: FILES over `git ls-files '*.md'` minus a DECLARED exclusion list (61 today), SOURCES
-over a registry file mapping each name to the command that computes it, MARKERS by grep over the
-file domain.
+from memory: FILES over `git ls-files '*.md'` minus a DECLARED exclusion list, SOURCES over a
+registry file mapping each name to the ENGINE FACT that computes it, MARKERS by scanning the file
+domain.
+
+*(AMENDED 2026-09-17.* The charter pinned the domain at "61 today" — an incidental total, which is
+one more instance of exactly the defect this stage exists to stop, and it was already wrong by the
+time the change applied. The domain is whatever `git ls-files '*.md'` minus the declared exclusions
+yields at the time of reading; `orbit validate --sources --json` reports it as
+`source_domain.files_scanned` rather than leaving a reader to restate it.)*
 
 THE EXCLUSIONS FORCED A PRINCIPLE rather than a preference: **the lint reads LIVING documents, never
 RECORDS.** A figure in an archived change or an emit was TRUE WHEN WRITTEN, and linting it would
@@ -875,15 +994,33 @@ the engine anywhere in the domain.
 THE RESIDUAL IS STATED, per the kind-and-method rule settled in `bounded-closure-semantics`: an
 UNMARKED restatement is INVISIBLE to the lint. KIND — a figure written into living prose that nobody
 marked; METHOD — a human or a review pass notices it, which is today's status quo unchanged. The
-mitigation is a RECORD and not a check: the lint reports per-source marker COVERAGE (`stages = 17
-(2 markers)`), so a reader can see a fact nothing points at. It counts; it judges nothing.
+mitigation is a RECORD and not a check: the lint reports per-source marker COVERAGE — one line per
+declared source, `<name> = <value> (<n> markers)` — so a reader can see a fact nothing points at.
+It counts; it judges nothing.
 
-Goal G2. Touches: the validator, orbit-conventions. Exit: (1) a MARKED figure that disagrees with
+*(AMENDED 2026-09-17.* The charter's example read `stages = 17 (2 markers)` against a real count of
+18. The shape is shown schematically now: a charter illustrating an output format has no business
+pinning the value that output computes.)*
+
+Goal G2. Touches: the validator; ONE new capability `orbit-source-lint`, plus a MODIFIED
+`orbit-architecture-engine`. Exit: (1) a MARKED figure that disagrees with
 its source fails validation — "marked", not "restated", because an unmarked one can never fail
 anything and saying otherwise would promise what R-crc-10 forbids; (2) the next proposal review
 carries zero restated-count findings among MARKED figures; (3) the four facts this session's defects
-earned — stages, rulings, capabilities, schema-version — are registry entries with live commands,
-and `CLAUDE.md` carries markers for each.
+earned — stages, rulings, capabilities, schema-version — are registry entries backed by ENGINE
+SOURCES, and `CLAUDE.md` carries markers for each.
+
+*(AMENDED 2026-09-17, on the shipped change.* Three corrections, all recorded in the change's own
+charter-divergence table before they were made here. **Touches** said "the validator,
+orbit-conventions": the marker's syntax and the rule that checks it are one mechanism, so splitting
+them would put two capabilities in charge of one rule — `orbit-source-lint` owns the `src:` family
+end to end, while `orbit-conventions` keeps the review-marker family. The MODIFIED
+`orbit-architecture-engine` was not foreseen at all and was added two walks into the proposal
+cadence: the source lint reads a doc's rulings index, which the live baseline called engine-opaque.
+**Exit (3)** said registry entries "with **live commands**": there is no `command:` field, because
+orbit is a published package and a shell field would mean that cloning a project and running a
+read-only-looking `orbit validate` executes repository data. The registry names ENGINE FACTS from a
+CLOSED table, so adding one is a code change with a test rather than a line of YAML.)*
 
 ### Stage rc07b-reference-roundtrip — a shipped reference is proven by running it
 
@@ -1555,3 +1692,41 @@ properties (user-invoked, draft-only, merge never) hold unchanged.
   is how a requirement ends up with three owners. Worth keeping the irony: the fix for building too
   much would itself have been a new stage if nobody was watching. R-crc-10 shape throughout — the
   author DECLARES, the engine RECORDS; nothing judges whether an exploration should stop.
+
+**2026-09-17 — rc07's charter amendments applied; four open questions opened from its blind pair.**
+An architect session against the shipped change. FIVE factual amendments to the rc07 stage
+declaration, each recorded in the change's own charter-divergence table before it was made here:
+`Touches` corrected to one NEW capability plus a MODIFIED `orbit-architecture-engine` (the latter
+unforeseen, added two walks into the proposal cadence); the "and audit-drift" clause struck; exit
+criterion (3)'s "live commands" corrected to ENGINE SOURCES (there is no shell field, deliberately);
+the "61 today" file-domain figure removed rather than updated, because an incidental total is one
+more instance of the defect the stage exists to stop; and the `stages = 17 (2 markers)` coverage
+example made schematic, since a charter illustrating an output format has no business pinning the
+value that output computes.
+
+FOUR open questions opened, three of them from rc07's system-mode blind pair (one `fresh`, one
+external GPT-5 Codex, zero CRITICAL overlap): Q-crc-13 records the DEFERRED finding that
+`orbit-architecture-engine`'s opacity contract is false of the shipped parser API, and names the
+consequence — rc07's `review-system` gate cannot compute passed while a substantive deferral stands.
+Q-crc-14 records that the lint ships with no trigger: nothing in the repo runs it at the moments the
+four motivating defects were written. Q-crc-15 records that the engine carries two fence grammars
+and one is wrong. Q-crc-16 records that THIS doc states its own stage count twice, unmarked, and
+supersedes rc07 task 5.5's recommendation to write a new current-state sentence — the doc already
+has a living one, so marking it is the move, coupled with deleting the stale header blockquote.
+
+`rc03a-blind-prompt` was offered for completion ratification and DECLINED (Sal): the stage was
+withdrawn, so ticking the box would assert criteria it never met. That is Q-crc-11's case, now
+observed a third time.
+
+**2026-09-18 — rc07's deferred CRITICAL repaired; a walk-record defect found by hand.**
+Q-crc-13 closed: the `orbit-architecture-engine` opacity contract was repaired as PROSE inside rc07
+rather than deferred or routed to a new stage, after the earlier "this is a redesign" framing proved
+over-broad. The lesson recorded with it is about DEFERRAL, not the defect: a finding in an
+UNARCHIVED delta is not residual risk, because the delta syncs into baseline at archive.
+
+Then Q-crc-17, which is the sharper one. Asked whether the last review had actually been walked, I
+checked against the gate's matching key instead of the record's own counts and found that rc07's
+fresh-half walk log matched zero of its six substantive findings — hand-retyped titles. The fixes
+were real; the record certified nothing. No check caught it and the gate's reason line could not
+have, because coverage is evaluated before resolution. The corrected record supersedes; the
+mechanism that would have caught it is recorded for a stage that can review it.

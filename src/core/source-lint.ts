@@ -56,16 +56,33 @@ export interface SourceLintResult {
   registryPresent: boolean;
   findings: SourceFinding[];
   coverage: SourceCoverageEntry[];
-  /** Files actually linted (after exclusions). */
+  /** Files actually READ and parsed (after exclusions, and after read failures). */
   filesScanned: number;
   /** Named reason when the file domain is empty, e.g. a checkout without git. */
   domainReason: string | null;
 }
 
-const OPENER_REGEX = /<!--\s*src:([a-z0-9][a-z0-9-]*)\s*-->/g;
+// The delimiters are matched EXACTLY — one literal space inside each comment, no tabs, no
+// line breaks, no compact form. The spec says a comment that does not match the opener grammar
+// exactly is INERT, and a tolerant regex turned `<!--src:stages-->` into a live span, so prose
+// the contract declares inert could raise a false failure. Only NAME is a pattern.
+/**
+ * THE check, in one place: containment of a STRING inside a boundary the AUTHOR drew.
+ *
+ * Exported so the four motivating defects can be asserted against the product rather than
+ * against `String.prototype.includes` — in particular the compound case (`4C/6W/0S`), which is
+ * the only fixture that discriminates containment from a numeric parse and which the CLOSED
+ * v1 engine table cannot emit as a source value.
+ *
+ * It never parses a number, and it never infers which token in the span is the figure.
+ */
+export function checkSpanAgainstValue(spanText: string, sourceValue: string): boolean {
+  return spanText.includes(sourceValue);
+}
+
+const OPENER_REGEX = /<!-- src:([a-z0-9][a-z0-9-]*) -->/g;
 const CLOSER = '<!-- /src -->';
-// A closer tolerates the same incidental whitespace the opener does.
-const CLOSER_REGEX = /<!--\s*\/src\s*-->/g;
+const CLOSER_REGEX = /<!-- \/src -->/g;
 
 /**
  * The lint reads LIVING documents, never RECORDS. Every exclusion is decidable BY PATH, so
@@ -103,7 +120,12 @@ export function isExcludedPath(repoRelative: string): boolean {
 export function resolveFileDomain(projectRoot: string): { files: string[]; reason: string | null } {
   let stdout: string;
   try {
-    stdout = execFileSync('git', ['ls-files', '*.md'], {
+    // `-z` is not a nicety: git's default `core.quotePath=true` C-quotes any path with a
+    // non-ASCII byte (`"d\303\251-caf\303\251.md"`, quotes included), which then names no
+    // file on disk and leaves the domain with no signal at all. Under `-z` git emits raw
+    // bytes NUL-separated, which also makes a path containing a newline or surrounding
+    // spaces safe — so paths are never trimmed either.
+    stdout = execFileSync('git', ['ls-files', '-z', '--', '*.md'], {
       cwd: projectRoot,
       encoding: 'utf-8',
       stdio: ['ignore', 'pipe', 'ignore'],
@@ -115,8 +137,7 @@ export function resolveFileDomain(projectRoot: string): { files: string[]; reaso
     };
   }
   const files = stdout
-    .split('\n')
-    .map((l) => l.trim())
+    .split('\0')
     .filter((l) => l.length > 0)
     .filter((l) => !isExcludedPath(l))
     .sort();
@@ -270,13 +291,27 @@ export function runSourceLint(projectRoot: string): SourceLintResult {
   const { files, reason } = resolveFileDomain(projectRoot);
   const markerCounts = new Map<string, number>(declared.map((d) => [d.name, 0]));
 
+  let filesRead = 0;
   for (const file of files) {
+    const absolute = path.join(projectRoot, file);
     let content: string;
+    // A tracked path with no working-tree file is the ONE silence that is correct (a deleted
+    // file still appears in `git ls-files`). Every other read failure — a permission error,
+    // an I/O fault — is reported: swallowing it would let the run exit clean while claiming a
+    // tracked living document was scanned when it was never opened.
+    if (!fs.existsSync(absolute)) continue;
     try {
-      content = fs.readFileSync(path.join(projectRoot, file), 'utf-8');
-    } catch {
-      continue; // tracked but not present in the working tree
+      content = fs.readFileSync(absolute, 'utf-8');
+    } catch (err) {
+      findings.push({
+        kind: 'marker',
+        file,
+        line: 1,
+        detail: `tracked file could not be read, so its marked spans were never checked: ${(err as Error).message}`,
+      });
+      continue;
     }
+    filesRead++;
     const { spans, error } = parseMarkedSpans(content);
     for (const span of spans) {
       if (markerCounts.has(span.source)) {
@@ -291,9 +326,7 @@ export function runSourceLint(projectRoot: string): SourceLintResult {
         continue;
       }
       const value = values.get(span.source)!;
-      // Containment of a STRING — never a numeric parse, and never an inference about
-      // which token in the span is the figure.
-      if (!span.text.includes(value)) {
+      if (!checkSpanAgainstValue(span.text, value)) {
         findings.push({
           kind: 'mismatch',
           file,
@@ -315,5 +348,7 @@ export function runSourceLint(projectRoot: string): SourceLintResult {
     markers: markerCounts.get(d.name) ?? 0,
   }));
 
-  return { registryPresent: true, findings, coverage, filesScanned: files.length, domainReason: reason };
+  // `filesScanned` counts files actually READ, never files merely listed — otherwise the one
+  // number answering "what did this run look at" overstates itself precisely when a read failed.
+  return { registryPresent: true, findings, coverage, filesScanned: filesRead, domainReason: reason };
 }

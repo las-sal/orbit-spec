@@ -247,7 +247,7 @@ export class ValidateCommand {
       if (opts.json) {
         const out = {
           items: [] as BulkItemResult[],
-          ...(sourcesActive ? { source_findings: sourceLint!.findings, source_coverage: sourceLint!.coverage } : {}),
+          ...(sourcesActive ? sourceJson(sourceLint!) : {}),
           summary,
           version: '1.0',
         };
@@ -324,7 +324,7 @@ export class ValidateCommand {
     if (opts.json) {
       const out = {
         items: results,
-        ...(sourcesActive ? { source_findings: sourceLint!.findings, source_coverage: sourceLint!.coverage } : {}),
+        ...(sourcesActive ? sourceJson(sourceLint!) : {}),
         summary,
         version: '1.0',
       };
@@ -371,6 +371,22 @@ function summarizeSources(result: SourceLintResult): { items: number; passed: nu
   const items = declared.size + pseudo;
   const failed = failedSources.size + pseudo;
   return { items, passed: items - failed, failed };
+}
+
+/**
+ * The three source keys a registry-bearing run adds to `--json`. All three are gated on a
+ * present registry together, so the no-registry byte-identity promise is untouched.
+ *
+ * `source_domain` exists because stderr is out-of-band for the consumer `--json` serves: a run
+ * that could not list any file was otherwise reporting `passed: 1, failed: 0` — a claim of
+ * verification over a run that opened nothing. `files_scanned` counts files actually read.
+ */
+function sourceJson(result: SourceLintResult) {
+  return {
+    source_findings: result.findings,
+    source_coverage: result.coverage,
+    source_domain: { files_scanned: result.filesScanned, reason: result.domainReason },
+  };
 }
 
 function formatSourceFinding(f: SourceFinding): string {

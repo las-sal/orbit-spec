@@ -9,20 +9,34 @@ carry two labeled slot lines — `Depends-on: <id>[, <id>…]` (or `Depends-on: 
 `Complete: [ ]` / `Complete: [x] <YYYY-MM-DD> (<who>)`. Both slots are OPTIONAL with defined
 omission semantics: an absent `Depends-on:` parses as no dependencies; an absent `Complete:`
 parses as unratified; validation accepts either omission; the architect ratification flow INSERTS
-a missing `Complete:` line when writing a mark (per `orbit-architect`). The ARCHITECTURE PARSER's model contains ONLY:
-stage ids/titles, the two slots, and section boundaries (a stage section runs from its heading to
-the next same-or-higher-level heading). All other content — charter prose, exit criteria, premise,
-rulings, status log — is opaque TO THE PARSER, and nothing downstream of `parseArchitectureDoc`
-may read it.
+a missing `Complete:` line when writing a mark (per `orbit-architect`). The parser INTERPRETS only:
+stage ids/titles, the two slot lines, and section boundaries (a stage section runs from its heading
+to the next same-or-higher-level heading); `docClass` and the grammar-violation list derive from
+that grammar alone. That interpreted set is what OPACITY is a claim about — charter prose, exit
+criteria, premise, rulings and status log carry no meaning the parser assigns, and no engine reader
+may DERIVE meaning from them except where named below.
 
-One NAMED exception exists at the engine level, stated here because the earlier wording ("the
-engine reads ONLY") would otherwise be falsified by it: the SOURCE LINT (`orbit-source-lint`) reads
-a doc's `## Rulings index` section to compute `architecture.ruling-count`. That reader is not the
-parser, contributes no field to the parsed model, and changes no doc classification — but it does
-mean an author who reformats a ruling entry can change a source-lint result, so the opacity claim
-is scoped to the parser rather than asserted of the whole engine. Any FURTHER engine-level reader
-of otherwise-opaque content SHALL be named here the same way; an unnamed one is a violation of this
-requirement. The parser SHALL be fence-aware: headings and slot lines
+The parser additionally CARRIES the document's raw lines as PASSTHROUGH. This is stated rather than
+elided because an earlier wording — "the model contains ONLY … and nothing downstream of
+`parseArchitectureDoc` may read it" — was false of the shipped API in both halves: the parsed model
+holds every line of the document, and two readers consume it. Passthrough confers no meaning by
+itself; it is the substrate section slicing is computed from, and carrying content is not
+interpreting it.
+
+The engine readers that attach meaning to passthrough content are NAMED, and the list is CLOSED:
+
+| reader | what it reads | what it does with it |
+|---|---|---|
+| `sliceStageSection` (serving `orbit architecture show`) | a stage section's lines, by the boundaries the parser interpreted | returns them VERBATIM; assigns no meaning, contributes no field, changes no classification |
+| `orbit-source-lint`'s `architecture.ruling-count` | the `## Rulings index` section | counts entries whose first bold span matches a DECLARED prefix, producing a source value |
+
+Any FURTHER engine-level reader of passthrough content SHALL be named here the same way; an unnamed
+one is a violation of this requirement. The consequence of the second entry is stated plainly rather
+than left implicit: an author who reformats a ruling entry can change a source-lint result, so
+`orbit validate --sources` can go red on an edit the architecture parser is indifferent to. That is
+the price of the named exception, and it is why the exception is named rather than assumed.
+
+The parser SHALL be fence-aware: headings and slot lines
 inside fenced code blocks are content, never declarations. **Near-miss rule** (a doc intended to
 be parseable must not silently degrade to legacy): a heading starting `### Stage ` that fails the
 exact grammar (malformed id, missing ` — <title>`), or a stage-like slot line that fails slot
@@ -61,6 +75,11 @@ outside fences (genuinely opaque prose). Architecture docs live at
 - **WHEN** a doc under `orbit/architecture/` contains zero `### Stage `-prefixed headings outside fences (e.g. a pre-D2 prose document)
 - **THEN** it is listed as legacy/opaque by the status surface and is never an error; only
   parseable docs participate in stage-state computation
+
+#### Scenario: Passthrough is carried, not interpreted
+
+- **WHEN** `orbit architecture show <doc> <stage>` prints a stage section whose charter prose the parser assigns no meaning to
+- **THEN** the section is reproduced VERBATIM from the carried lines, and `parseArchitectureDoc` yields the same stages, slots, `docClass` and violations it would if that prose were different — carrying content is not interpreting it
 
 #### Scenario: Ruling-index content stays out of the parsed model
 

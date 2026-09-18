@@ -2,11 +2,13 @@
 
 ### Requirement: Source registry declares computable facts
 
-The system SHALL read `orbit/sources.yaml`, whose top-level `sources:` key holds a map from a source NAME to an ENGINE-computed fact, and SHALL treat that map as the authority for which names a marker may reference. The `sources:` wrapper is required rather than entries at the document root, so a later top-level key is an addition rather than a format break. An absent file means no sources, no markers, and no lint — the state of every repository today.
+The system SHALL read `orbit/sources.yaml`, whose top-level `sources:` key holds a map from a source NAME to an ENGINE-computed fact, and SHALL treat that map as the authority for which names a marker may reference. The `sources:` wrapper is required rather than entries at the document root, so the document root RESERVES NAMESPACE for a later top-level key. That is a namespace claim, not a forward-compatibility promise: an unknown top-level key is a clean validation error naming it, so introducing one is a version-gated change like any other. Fail-loud wins over tolerance here for the same reason it wins everywhere else in this capability — a registry that silently ignores something is a registry that can silently stop checking. An absent file means no sources, no markers, and no lint — the state of every repository today.
 
 The lint is reached through `orbit validate --sources`, and `orbit validate --all` runs it alongside the change and spec checks; a finding fails validation with a non-zero exit, and the coverage record renders after the findings on both. Per-item `orbit validate <change>` and `orbit validate <spec>` are UNCHANGED — the lint's domain is the project, not a change, so putting it behind a per-change command would report a project-wide verdict under a per-change name.
 
 This capability owns the `src:` marker family end to end. `orbit-conventions` owns the review-marker family (`@review`, colon-suffixed) and its escalated and todo companions — spelled here without the literal colon so this sentence is not itself discovered by that family's raw grep; the `src:` family is deliberately NOT declared there, because the marker's syntax and the rule that checks it are one mechanism and splitting them would put two capabilities in charge of one rule.
+
+A declared parameter that names a document or a schema is an IDENTIFIER, never a path: it SHALL match that kind's name grammar, and the file it resolves to SHALL be CONTAINED within the declared tier (symlinks resolved). Without containment, `schema: ../../schemas/spec-driven` escapes both tiers and a read-only-looking `orbit validate` consumes a file the project never declared as an input — which is the same trust boundary the absent `command:` field exists to hold.
 
 `schema.version` deliberately skips the user-global override tier the engine's ordinary resolver consults. That tier lives in a developer's data directory, so honouring it would make the same checkout emit different values on different machines, and a marked repository fact would be machine-dependent. The resolution TIER is an input under R-crc-10 and is therefore named rather than inherited.
 
@@ -18,7 +20,7 @@ The v1 engine-source set is CLOSED at four entries, each with its declared param
 |---|---|---|
 | `architecture.stage-count` | `doc` | the count of WELL-FORMED parsed stages in that doc |
 | `architecture.ruling-count` | `doc`, `prefix` | the count of ruling entries in that doc's `## Rulings index` — a top-level list item whose first bold span matches `<prefix>-<n>` (both terms defined below) |
-| `specs.capability-count` | — | the count of directories under the project's `specs/` that contain a `spec.md` — BASELINE only, so a capability introduced by an unarchived change is not counted; a directory without a `spec.md` is not counted |
+| `specs.capability-count` | — | the count of directories under the project's `specs/` that contain a `spec.md` — BASELINE only, so a capability introduced by an unarchived change is not counted; a directory without a `spec.md` is not counted. An ABSENT `specs/` directory is a source-resolution ERROR, not a count of zero — 'no baseline to count' is not 'zero capabilities'; a PRESENT but empty directory does emit `0`, because that is a truthful count |
 | `schema.version` | `schema` | that schema's `version`, resolved PROJECT-LOCAL then PACKAGE BUILT-IN — the user-global override tier is SKIPPED |
 
 In that grammar `<prefix>` is matched LITERALLY, never compiled as a pattern, and `<n>` is one or more decimal digits with nothing following them — so `R-crc-10` is an entry and `R-crc-4a` is not. TOP-LEVEL means a list item whose `-` or `*` marker begins at indent 0–3 (CommonMark's allowance) and which is not nested inside another list item. The SECTION runs from the `## Rulings index` heading to the next heading at `##` or higher. Both terms are defined because the live doc happens to satisfy either reading, so an ambiguity here would ship unexposed.
@@ -49,9 +51,19 @@ An entry names an ENGINE source and its parameters. Each engine source DECLARES 
 - **WHEN** an entry names an engine source the engine does not expose
 - **THEN** validation fails naming the entry and the unknown source, and lists the source names the engine does expose
 
+#### Scenario: A parameter naming a path rather than an identifier resolves nothing
+
+- **WHEN** a `doc` or `schema` parameter is spelled as a path that would escape its declared tier (`../../schemas/spec-driven`, an absolute path, or a traversal through a legitimate name)
+- **THEN** validation FAILS naming the entry; no file outside the declared tiers is read, whatever the spelling
+
+#### Scenario: An absent specs directory errors rather than counting zero
+
+- **WHEN** `specs.capability-count` is declared in a project with no `specs/` directory at all
+- **THEN** validation FAILS naming the source; a PRESENT but empty directory instead emits `0`
+
 #### Scenario: A registry that exists but does not parse fails loudly
 
-- **WHEN** `orbit/sources.yaml` exists but is not valid YAML, or its `sources:` value is not a map of entries, or an entry is a scalar rather than a map, or a source name is declared twice
+- **WHEN** `orbit/sources.yaml` exists but is not valid YAML, or its `sources:` value is not a map of entries, or its `sources:` map declares NO entries, or an entry is a scalar rather than a map, or a source name is declared twice
 - **THEN** validation FAILS naming the file and the specific fault; the absent-file silence below SHALL NOT be reached by any file that exists, so a corrupted registry can never disable the lint quietly
 
 #### Scenario: No registry means no lint
@@ -61,7 +73,7 @@ An entry names an ENGINE source and its parameters. Each engine source DECLARES 
 
 ### Requirement: A marker delimits a span and the check is string containment
 
-The system SHALL recognise a marked span opened by `<!-- src:NAME -->` — where NAME matches `[a-z0-9][a-z0-9-]*` exactly — and closed by `<!-- /src -->`, and SHALL verify that the span's text CONTAINS the string the named source emits. A marker is INERT — neither an opener nor a closer — in three cases, so that prose ABOUT the syntax never becomes prose CHECKED by it: a comment that does not match the opener grammar exactly; a marker inside a fenced code block; and a marker inside an inline code span. The third case is required, not cosmetic: this capability's own artifacts carry conforming markers inside backticks, and without the rule the document describing the check would fail it. The check is string containment inside a boundary the AUTHOR drew; it SHALL NOT parse numbers, and it SHALL NOT infer which token in a span is the figure.
+The system SHALL recognise a marked span opened by `<!-- src:NAME -->` — where NAME matches `[a-z0-9][a-z0-9-]*` exactly — and closed by `<!-- /src -->`, and SHALL verify that the span's text CONTAINS the string the named source emits. A marker is INERT — neither an opener nor a closer — in three cases, so that prose ABOUT the syntax never becomes prose CHECKED by it: a comment that does not match the delimiter grammar exactly; a marker inside a fenced code block; and a marker inside an inline code span. EXACTLY means byte-for-byte apart from NAME: one literal space inside each comment, so `<!--src:stages-->`, a tabbed form, a double-spaced form and a form split across lines are all inert. Only NAME is a pattern. The third case is required, not cosmetic: this capability's own artifacts carry conforming markers inside backticks, and without the rule the document describing the check would fail it. The check is string containment inside a boundary the AUTHOR drew; it SHALL NOT parse numbers, and it SHALL NOT infer which token in a span is the figure.
 
 The delimited form is required rather than a marker placed beside a figure. A marker beside a figure would require the engine to identify "the number near the marker" in prose which — across the four defects that motivated this capability — was a numeral inside bold, a range endpoint inside an identifier, an English word, and a compound of three numbers. Any rule for "the number near" infers which token the author meant, and the engine cannot observe intent.
 
@@ -117,6 +129,8 @@ A MARKER ERROR's blast radius is ONE FILE: that file's remaining spans are aband
 | a code span crossing a line ending | one region; inertness spans the line break |
 | two adjacent code spans | two regions; the text between them is live |
 | a backtick run inside a FENCED block | not a code span; the fence already makes the region inert |
+| a backtick run separated from its would-be partner by a BLANK LINE | not a delimiter pair; a code span is an INLINE construct and never crosses a block boundary, so both runs are literal and markers between them stay LIVE |
+| a backtick preceded by an ODD number of backslashes | escaped, therefore literal; it opens and closes nothing, and markers around it stay LIVE (an even number leaves it a real delimiter) |
 
 The mask is computed over the WHOLE DOCUMENT before marker scanning, not while streaming lines.
 
@@ -170,10 +184,17 @@ The path-decidable exclusions:
 - **WHEN** a markdown file carrying a marked span has not been added to git
 - **THEN** the lint does not read it, and the same file enters the domain once it is tracked
 
+The DOMAIN ITSELF is reported alongside the findings: how many files were actually READ, and the named reason when none could be. It rides in both output modes, because a reason carried only on stderr is out-of-band for the consumer a machine-readable mode exists to serve — a run that opened nothing would otherwise report zero failures and read as verification. The count is of files READ, never of files listed: a tracked path with no working-tree file is skipped silently (a deleted file is still tracked), while any OTHER read failure is a finding, so the lint never claims to have checked a document it could not open.
+
 #### Scenario: A checkout without git degrades to an empty domain
 
 - **WHEN** `git ls-files` cannot be run (no git, or not a repository)
-- **THEN** the lint reports the reason, checks nothing, produces no findings, and exits zero — it never throws and never claims the project verified
+- **THEN** the lint reports the reason, checks nothing, produces no findings, and exits zero — it never throws and never claims the project verified; the reason and a scanned count of zero appear in the machine-readable output as well as the human one
+
+#### Scenario: A tracked file that cannot be read is reported, never swallowed
+
+- **WHEN** a tracked markdown file in the domain cannot be read for any reason other than not existing in the working tree
+- **THEN** the lint reports it, does not count it as scanned, and continues linting every other file — a run SHALL NOT exit clean while claiming to have checked a document it never opened
 
 #### Scenario: A marker inside a record is not linted
 

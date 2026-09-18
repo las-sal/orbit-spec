@@ -22,7 +22,7 @@ import {
   loadArchitectureDoc,
   type ParsedArchitectureDoc,
 } from './architecture/parser.js';
-import { computeFenceMask } from './parsers/requirement-blocks.js';
+import { createFenceTracker } from './markdown-fence.js';
 import { parseSchema } from './artifact-graph/schema.js';
 import {
   getPackageSchemasDir,
@@ -33,6 +33,9 @@ export const SOURCES_REGISTRY_PATH = path.join('orbit', 'sources.yaml');
 
 /** A source NAME must be nameable by a marker, whose grammar this mirrors exactly. */
 export const SOURCE_NAME_REGEX = /^[a-z0-9][a-z0-9-]*$/;
+
+/** A schema parameter names a schema DIRECTORY — one kebab-case segment, never a path. */
+export const SCHEMA_NAME_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 /** A fault in the registry file itself: its shape, its names, or its parameters. */
 export class SourceRegistryError extends Error {
@@ -93,7 +96,7 @@ interface EngineSource {
  */
 export function countRulingEntries(doc: ParsedArchitectureDoc, prefix: string): number {
   const lines = doc.lines;
-  const fence = computeFenceMask(lines);
+  const fence = fenceMaskFor(lines);
 
   let start = -1;
   for (let i = 0; i < lines.length; i++) {
@@ -146,6 +149,29 @@ function escapeRegExp(literal: string): string {
   return literal.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+/**
+ * Per-line fenced mask built from the SHARED CommonMark tracker.
+ *
+ * This deliberately does NOT use `computeFenceMask` from the requirement-block parser. That
+ * one is a depth heuristic — a bare delimiter closes the current level regardless of its
+ * character or length — so in a doc carrying a four-backtick fence around a three-backtick
+ * example it both ADMITS the fenced ruling bullets and MASKS the live one, making an
+ * engine-computed source value false. Two fence languages inside one capability is the defect
+ * `markdown-fence.ts` exists to prevent: import the tracker, never restate it.
+ *
+ * (The architecture PARSER still uses the heuristic. Migrating it is engine-wide grammar
+ * unification with its own blast radius — `status`, `show` and `validate` all consume that
+ * parse — and is recorded as a declared residual rather than done inside a review walk.)
+ */
+function fenceMaskFor(lines: string[]): boolean[] {
+  const tracker = createFenceTracker();
+  return lines.map((line) => {
+    const wasInFence = tracker.inFence;
+    const isDelimiter = tracker.handle(line);
+    return wasInFence || isDelimiter;
+  });
+}
+
 // ---------------------------------------------------------------------------
 // The CLOSED engine-source table (task 1.2)
 // ---------------------------------------------------------------------------
@@ -185,11 +211,28 @@ function architectureDocMissing(projectRoot: string, name: string): string | nul
  * on different machines and a marked repository fact would be machine-dependent.
  */
 function findSchemaFile(projectRoot: string, name: string): string | null {
-  const projectPath = path.join(getProjectSchemasDir(projectRoot), name, 'schema.yaml');
-  if (fs.existsSync(projectPath)) return projectPath;
-  const packagePath = path.join(getPackageSchemasDir(), name, 'schema.yaml');
-  if (fs.existsSync(packagePath)) return packagePath;
+  // A schema parameter is an IDENTIFIER, never a path. Passing it straight to path.join let
+  // `../../schemas/spec-driven` escape both declared tiers and resolve a schema.yaml anywhere
+  // reachable — a read-only-looking validation command consuming files outside the project's
+  // declared inputs. The grammar check closes the common case; the containment check closes
+  // it by construction, symlinks included.
+  if (!SCHEMA_NAME_REGEX.test(name)) return null;
+  for (const dir of [getProjectSchemasDir(projectRoot), getPackageSchemasDir()]) {
+    const tierRoot = fs.existsSync(dir) ? fs.realpathSync(dir) : path.resolve(dir);
+    const candidate = path.resolve(tierRoot, name, 'schema.yaml');
+    if (!fs.existsSync(candidate)) continue;
+    const resolved = fs.realpathSync(candidate);
+    if (resolved !== candidate && !isContainedIn(resolved, tierRoot)) continue;
+    if (!isContainedIn(candidate, tierRoot)) continue;
+    return candidate;
+  }
   return null;
+}
+
+/** True when `target` sits at or beneath `root` — a path comparison, never a string prefix. */
+function isContainedIn(target: string, root: string): boolean {
+  const rel = path.relative(root, target);
+  return rel !== '' && !rel.startsWith('..') && !path.isAbsolute(rel);
 }
 
 const ENGINE_SOURCES: Record<string, EngineSource> = {
@@ -212,10 +255,20 @@ const ENGINE_SOURCES: Record<string, EngineSource> = {
   },
   'specs.capability-count': {
     params: [],
-    checkInputs: () => null,
+    // An ABSENT specs directory is 'no baseline to count', not 'zero capabilities' — the same
+    // short-count failure the architecture sources refuse. A PRESENT but empty directory still
+    // emits '0', because that genuinely IS a count.
+    checkInputs: (projectRoot) =>
+      fs.existsSync(path.join(projectRoot, 'orbit', 'specs'))
+        ? null
+        : `the project has no orbit/specs/ directory, so there is no baseline capability count to emit`,
     resolve: (projectRoot) => {
       const specsDir = path.join(projectRoot, 'orbit', 'specs');
-      if (!fs.existsSync(specsDir)) return '0';
+      if (!fs.existsSync(specsDir)) {
+        throw new SourceResolutionError(
+          'specs.capability-count: the project has no orbit/specs/ directory, so no count is emitted'
+        );
+      }
       const count = fs
         .readdirSync(specsDir, { withFileTypes: true })
         .filter(
@@ -306,9 +359,19 @@ export function readSourcesRegistry(projectRoot: string): DeclaredSource[] {
       `${SOURCES_REGISTRY_PATH}: 'sources:' must be a map from source name to entry`
     );
   }
+  // An EXISTING file must never reach the absent-file silence. `sources: {}` otherwise left
+  // `registryPresent` true with no sources, no coverage rows and no output at all — a
+  // truncation could disable every check without a named reason.
+  if (Object.keys(sources).length === 0) {
+    throw new SourceRegistryError(
+      `${SOURCES_REGISTRY_PATH}: 'sources:' declares no entries; delete the file to disable the source lint rather than emptying it`
+    );
+  }
 
+  // Duplicate source names are rejected by `parseYaml(..., { uniqueKeys: true })` above, which
+  // throws `Map keys must be unique` before this loop runs — so no second guard lives here. The
+  // test pins that branch by name rather than accepting either message.
   const declared: DeclaredSource[] = [];
-  const seen = new Set<string>();
   for (const [name, entry] of Object.entries(sources)) {
     const where = `${SOURCES_REGISTRY_PATH}: source '${name}'`;
     if (!SOURCE_NAME_REGEX.test(name)) {
@@ -316,11 +379,6 @@ export function readSourcesRegistry(projectRoot: string): DeclaredSource[] {
         `${where} does not match the marker name grammar [a-z0-9][a-z0-9-]*, so no legal marker could ever name it`
       );
     }
-    if (seen.has(name)) {
-      throw new SourceRegistryError(`${SOURCES_REGISTRY_PATH}: source '${name}' is declared twice`);
-    }
-    seen.add(name);
-
     if (!isPlainObject(entry)) {
       throw new SourceRegistryError(`${where} must be a map, not ${describe(entry)}`);
     }
@@ -328,7 +386,9 @@ export function readSourcesRegistry(projectRoot: string): DeclaredSource[] {
     if (engine === undefined) {
       throw new SourceRegistryError(`${where} is missing 'engine:'`);
     }
-    if (typeof engine !== 'string' || !(engine in ENGINE_SOURCES)) {
+    // `in` walks the prototype chain, so `engine: toString` passed this test and then threw a
+    // raw TypeError on `.params` instead of the clean unknown-source error. Own keys only.
+    if (typeof engine !== 'string' || !Object.hasOwn(ENGINE_SOURCES, engine)) {
       throw new SourceRegistryError(
         `${where} names an unknown engine source '${String(engine)}'; the engine exposes: ${listEngineSources().join(', ')}`
       );

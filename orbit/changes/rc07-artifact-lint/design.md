@@ -58,9 +58,28 @@ a per-item form. The source lint is project-scoped, so it joins the bulk family 
 `--all` runs it. Nothing about per-item `orbit validate <change>` changes: the lint's domain is the
 project, not a change.
 
-*Why not a new verb* (`orbit lint`): the exit criterion is "fails validation", and every path that
-already runs `orbit validate --all` — CI, the pre-archive sweep, a contributor's habit — picks the
-check up for free. A new verb would have to be adopted everywhere before it caught anything.
+*Why not a new verb* (`orbit lint`): the exit criterion is "fails validation", so the check
+belongs to the command that already owns that verdict, and a new verb would have to be adopted
+everywhere before it caught anything.
+
+**An earlier draft of this paragraph justified that with an adoption surface that does not
+exist, and the system-mode fresh pass checked each named path.** It claimed CI, the pre-archive
+sweep and a contributor's habit would pick the check up "for free". In fact: `.github/workflows/
+ci.yml` runs build and test only, with no validate step and no npm script that calls the CLI;
+the archive body's pre-archive sweep is `/orbit:audit-drift`, and every `orbit validate` in a
+workflow body is the per-item form D1 explicitly leaves unchanged. Only the third partly holds —
+change task lists do carry `validate --all --strict` as a hand-written close-out — and it fires
+at APPLY time inside a change, whereas all four motivating defects were edits to living
+governing prose made during walks and at archive, when no such task is running.
+
+*Not in v1, with kind and method stated* (D-bcs-2): on the current tree the lint fires only when
+a human types it. KIND — a missing TRIGGER, not a missing mechanism; the check itself is correct
+and the system pair could not break it. METHOD — wiring it to the lifecycle seam where the
+recorded defects were actually written (the archive body's pre-archive sweep, and the
+address-reviews close-out) is a workflow-body change to two lifecycle bodies, which is scope
+this change never proposed and no reviewer has seen; it belongs to a stage that declares it.
+Until then the dogfood's four marks are checked by anyone running `orbit validate --all`, which
+this change's own close-out task does.
 
 *Why not `orbit-audit-drift`*: audit-drift is an AI-driven workflow whose findings are judgments.
 This check has no judgment in it. Putting a deterministic string comparison behind an AI pass is the
@@ -103,7 +122,7 @@ of one rule is a defect.
 |---|---|---|---|
 | `architecture.stage-count` | `doc` | `parseArchitectureDoc(...).stages.length` — WELL-FORMED stages only | the "fifteen small stages" defect |
 | `architecture.ruling-count` | `doc`, `prefix` | count of ruling entries in the doc's rulings index | the "R-crc-1..8" defect |
-| `specs.capability-count` | — | count of `orbit/specs/*/spec.md` | `CLAUDE.md`'s "Baseline capabilities N" line |
+| `specs.capability-count` | — | count of `orbit/specs/*/spec.md`; an ABSENT `specs/` directory ERRORS (present-but-empty emits `0`) | `CLAUDE.md`'s "Baseline capabilities N" line |
 | `schema.version` | `schema` | the schema's `version` — PROJECT-LOCAL then PACKAGE, skipping the user-global tier | the "spec-driven is version 3" defect |
 
 Three of the four come free from parses the engine already performs. `architecture.ruling-count`
@@ -116,6 +135,23 @@ archive the two requirements would flatly contradict each other.
 
 So the ruling-index read lives on the SOURCE-LINT side (`src/core/sources-registry.ts`), and
 `parseArchitectureDoc` gains no field.
+
+**That read uses the SHARED CommonMark tracker, and the first implementation did not — which
+the system-mode external pass caught as a false source value.** `countRulingEntries` originally
+reused `computeFenceMask` from the requirement-block parser, a depth heuristic in which a bare
+delimiter closes the current level regardless of its character or length. In a doc carrying a
+four-backtick fence around a three-backtick example it both ADMITTED the fenced ruling bullets
+and MASKED the live one, returning 2 where the answer is 1. Two fence languages inside one
+capability is exactly the defect `markdown-fence.ts` was extracted to prevent, so the ruling
+read now imports the tracker.
+
+*Not in v1, with kind and method stated* (D-bcs-2): the ARCHITECTURE PARSER still uses the
+heuristic. KIND — an engine-wide grammar unification, not a source-lint defect: the parser is
+consumed by `architecture status`, `show` and `validate`, its heuristic was tuned for docs
+embedding ```` ```markdown ```` examples, and changing it can reclassify real documents.
+METHOD — it surfaces the moment a live architecture doc's fence shape differs between the two
+grammars, and it belongs to a stage that can be reviewed as an engine change. Unifying it
+inside a review walk would be inventing mechanism nobody has reviewed, which R-crc-6 forbids.
 
 **That relocation is necessary but NOT sufficient, and an earlier draft of this section wrongly
 claimed it was.** The draft argued the baseline claim survived because it was "about what that
@@ -185,8 +221,15 @@ residual, and per R-crc-10 a mitigation over uninspectable input is a record, no
 
 ### D5b — What `--all --json` gains
 
-With a registry present, `orbit validate --sources --json` and `orbit validate --all --json` carry two
-new arrays: `source_findings` and `source_coverage` (source, value, marker count).
+With a registry present, `orbit validate --sources --json` and `orbit validate --all --json` carry
+three new keys: `source_findings`, `source_coverage` (source, value, marker count), and
+`source_domain` (`files_scanned`, `reason`). All three are gated on a present registry together,
+so D6's byte-identity promise is untouched.
+
+`source_domain` exists because stderr is out-of-band for the consumer a machine-readable mode
+serves: without it, a run whose domain could not be listed at all reported `passed: 1, failed: 0`
+— a claim of verification over a run that opened nothing. `files_scanned` counts files actually
+READ, never files merely listed, so it cannot overstate itself precisely when a read failed.
 
 `source_findings` entries are DISCRIMINATED by `kind`, because the four failures have genuinely
 different shapes and a single flat record would be null-padded for three of them:
@@ -264,7 +307,11 @@ edited here.
   prefix; it does NOT change the document's `docClass`, and `orbit architecture validate` is
   unchanged. The two failure kinds are separate, and neither is silent.
 
-**Both architecture sources state their document preconditions**: an ABSENT doc, a LEGACY doc (no
+**Every source states its input preconditions** — the architecture pair from the start, and
+`specs.capability-count` added during the system-mode walk, because an absent `orbit/specs/` is "no
+baseline to count" rather than "zero capabilities" and a silent `'0'` was the same short-count
+failure the architecture sources refuse. A PRESENT but empty directory still emits `0`, which is a
+truthful count. For the architecture pair: an ABSENT doc, a LEGACY doc (no
 parseable stages) and a MALFORMED doc each ERROR naming the doc and the source, rather than emitting
 a count over a document the engine could not fully read.
 - **`git ls-files` shells out to git** → read-only, no repository data is executed, and a non-git

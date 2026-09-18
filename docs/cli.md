@@ -366,6 +366,10 @@ Sources:
       "markers": 1
     }
   ],
+  "source_domain": {
+    "files_scanned": 5,
+    "reason": null
+  },
   "summary": {
     "totals": {
       "items": 3,
@@ -394,8 +398,13 @@ Sources:
 }
 ```
 
-`source_findings` and `source_coverage` appear only when `orbit/sources.yaml` is present; with
-no registry the output is exactly what it was before the lint existed.
+`source_findings`, `source_coverage` and `source_domain` appear only when `orbit/sources.yaml` is
+present; with no registry the output is exactly what it was before the lint existed.
+
+`source_domain` answers "what did this run actually read": `files_scanned` counts files opened and
+parsed (never files merely listed), and `reason` is non-null when the domain could not be resolved
+at all — a checkout without git, for instance. A run that read nothing reports it here rather than
+looking like a clean verification.
 
 Each finding is discriminated by `kind` and carries only that kind's fields:
 

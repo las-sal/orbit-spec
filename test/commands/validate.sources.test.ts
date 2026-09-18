@@ -73,6 +73,7 @@ describe('orbit validate --sources', () => {
     const json = JSON.parse(result.stdout.trim());
     expect(json).not.toHaveProperty('source_findings');
     expect(json).not.toHaveProperty('source_coverage');
+    expect(json).not.toHaveProperty('source_domain');
     expect(json.summary.byType).not.toHaveProperty('sources');
     // The retired invariant still holds while no registry is present.
     expect(json.summary.totals.items).toBe(json.items.length);
@@ -108,6 +109,9 @@ describe('orbit validate --sources', () => {
       'span_text',
     ]);
     expect(json.source_coverage).toEqual([{ source: 'stages', value: '2', markers: 1 }]);
+    // files_scanned counts files actually READ, and rides with the other two source keys.
+    expect(json.source_domain).toEqual({ files_scanned: expect.any(Number), reason: null });
+    expect(json.source_domain.files_scanned).toBeGreaterThan(0);
   });
 
   it('ONE ITEM IS ONE DECLARED SOURCE, rolled into summary.totals', async () => {
@@ -178,6 +182,15 @@ describe('orbit validate --sources', () => {
         expect(result.exitCode, args.join(' ')).toBe(0);
         expect(result.stderr, args.join(' ')).toContain('the source lint checked no files');
       }
+      // stderr is out-of-band for the consumer --json exists to serve, so the reason is IN the
+      // payload too: a run that opened nothing must never read as a run that verified anything.
+      const json = await runCLI(['validate', '--sources', '--json'], {
+        cwd: nogit,
+        env: { GIT_CEILING_DIRECTORIES: os.tmpdir() },
+      });
+      const parsed = JSON.parse(json.stdout.trim());
+      expect(parsed.source_domain.files_scanned).toBe(0);
+      expect(parsed.source_domain.reason).toMatch(/not a repository|no git/i);
     } finally {
       fs.rmSync(nogit, { recursive: true, force: true });
     }

@@ -55,9 +55,20 @@ export function createFenceTracker(): FenceTracker {
  * The source lint needs both, because a document describing the `src:` marker syntax carries
  * conforming markers inside backticks and must not be checked by the rule it documents.
  *
- * Inline code spans need LOOKAHEAD, not a streaming toggle: an opening backtick run with no
- * matching run of EQUAL length anywhere after it is literal text, so anything following it
- * stays live. Spans may cross line endings; fenced lines are barriers that no span crosses.
+ * Three properties the first implementation got wrong, each now enforced and regression-tested:
+ *
+ *  - **Code spans are INLINE, so they never cross a block boundary.** Groups break at blank
+ *    lines as well as at fences. Without this, two unrelated stray backticks in different
+ *    paragraphs pair up and silently neutralize every marker between them — and silence is
+ *    the one failure this lint cannot survive.
+ *  - **A BACKSLASH-ESCAPED backtick is literal** (CommonMark 0.31.2 backslash escapes) and
+ *    opens nothing. Without this, a marker between two escaped backticks is masked and its
+ *    stale claim goes unreported.
+ *  - **Pairing is LINEAR.** Each run's next equal-length partner is pre-indexed in one
+ *    backward sweep, rather than re-scanning the remaining group per unmatched run.
+ *
+ * Lookahead is still required: an opening run with no matching run of EQUAL length anywhere
+ * after it is literal text, so anything following it stays live.
  */
 export function computeCodeRegionMask(content: string): boolean[] {
   const mask: boolean[] = new Array(content.length).fill(false);
@@ -67,7 +78,8 @@ export function computeCodeRegionMask(content: string): boolean[] {
     start: number; // first char of the line
     end: number; // one past the last char, excluding a trailing \r
     nl: number; // offset of the line's \n, or -1 at EOF
-    fenced: boolean;
+    /** Fenced or BLANK: either ends a code-span group, for different reasons. */
+    barrier: boolean;
   }
   const lineSpans: LineSpan[] = [];
   const tracker = createFenceTracker();
@@ -84,21 +96,23 @@ export function computeCodeRegionMask(content: string): boolean[] {
     if (fenced) {
       for (let i = offset; i < rawEnd; i++) mask[i] = true;
     }
-    lineSpans.push({ start: offset, end, nl, fenced });
+    // A blank line ends a paragraph, and an inline code span cannot span one.
+    const blank = !fenced && line.trim() === '';
+    lineSpans.push({ start: offset, end, nl, barrier: fenced || blank });
     if (nl === -1) break;
     offset = nl + 1;
   }
 
-  // Pass 2 — inline code spans, scanned over maximal runs of NON-fenced lines so that a
-  // span may cross a line ending but never a fence boundary.
+  // Pass 2 — inline code spans, scanned over maximal runs of NON-barrier lines so a span
+  // may cross a line ending but never a fence or a paragraph break.
   let i = 0;
   while (i < lineSpans.length) {
-    if (lineSpans[i].fenced) {
+    if (lineSpans[i].barrier) {
       i++;
       continue;
     }
     let j = i;
-    while (j < lineSpans.length && !lineSpans[j].fenced) j++;
+    while (j < lineSpans.length && !lineSpans[j].barrier) j++;
     maskCodeSpans(content, lineSpans.slice(i, j), mask);
     i = j;
   }
@@ -125,42 +139,46 @@ export function computeCodeRegionMask(content: string): boolean[] {
       }
     }
 
-    let p = 0;
-    while (p < s.length) {
+    // Collect candidate delimiter runs, honouring backslash escapes.
+    const runs: { start: number; length: number }[] = [];
+    for (let p = 0; p < s.length; ) {
       if (s[p] !== '`') {
         p++;
         continue;
       }
-      let openEnd = p;
-      while (openEnd < s.length && s[openEnd] === '`') openEnd++;
-      const runLength = openEnd - p;
+      let end = p;
+      while (end < s.length && s[end] === '`') end++;
+      // An ODD number of immediately-preceding backslashes escapes the FIRST backtick, which
+      // is then literal text; the rest of the run may still delimit.
+      let backslashes = 0;
+      for (let b = p - 1; b >= 0 && s[b] === '\\'; b--) backslashes++;
+      const start = backslashes % 2 === 1 ? p + 1 : p;
+      if (end - start > 0) runs.push({ start, length: end - start });
+      p = end;
+    }
 
-      // Look ahead for a run of EXACTLY the same length; a different length is not a
-      // delimiter pair and scanning continues past it.
-      let q = openEnd;
-      let closeStart = -1;
-      while (q < s.length) {
-        if (s[q] !== '`') {
-          q++;
-          continue;
-        }
-        let closeEnd = q;
-        while (closeEnd < s.length && s[closeEnd] === '`') closeEnd++;
-        if (closeEnd - q === runLength) {
-          closeStart = q;
-          q = closeEnd;
-          break;
-        }
-        q = closeEnd;
-      }
+    // Pre-index each run's next EQUAL-LENGTH partner in one backward sweep: pairing is then
+    // linear in the number of runs rather than quadratic in document size.
+    const nextEqual: number[] = new Array(runs.length).fill(-1);
+    const lastSeenByLength = new Map<number, number>();
+    for (let r = runs.length - 1; r >= 0; r--) {
+      const seen = lastSeenByLength.get(runs[r].length);
+      nextEqual[r] = seen === undefined ? -1 : seen;
+      lastSeenByLength.set(runs[r].length, r);
+    }
 
-      if (closeStart === -1) {
+    for (let r = 0; r < runs.length; ) {
+      const close = nextEqual[r];
+      if (close === -1) {
         // No matching run anywhere after it: literal text, and what follows stays live.
-        p = openEnd;
+        r++;
         continue;
       }
-      for (let m = p; m < closeStart + runLength; m++) out[idx[m]] = true;
-      p = closeStart + runLength;
+      const from = runs[r].start;
+      const to = runs[close].start + runs[close].length;
+      for (let m = from; m < to; m++) out[idx[m]] = true;
+      // Every run between the two is inside the span.
+      r = close + 1;
     }
   }
 }

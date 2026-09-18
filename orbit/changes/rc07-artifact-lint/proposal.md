@@ -32,9 +32,15 @@ reads. Each had a trivially computable source; what was missing was a link from 
 requirement asserts that "the engine reads ONLY" stage ids/titles, slots and section boundaries,
 with rulings explicitly engine-opaque. This change makes the SOURCE LINT read a doc's rulings index.
 Keeping the ruling parse out of `parseArchitectureDoc` was not sufficient: the baseline's subject is
-the engine and its verb is *reads*, so the delta narrows the claim to the PARSER's model and names
-the source lint as the one engine-level exception — with the rule that any further such reader must
-be named there too. Without it, the two baselines would contradict each other after archive.
+the engine and its verb is *reads*, so the delta separates what the parser INTERPRETS from what it
+CARRIES as passthrough, and names a CLOSED table of the engine readers that attach meaning to
+passthrough — `sliceStageSection` (serving `orbit architecture show`) and the source lint's ruling
+count — with the rule that any further such reader must be named there too. The second row was not
+foreseen: the system-mode external pass found that the first wording ("the PARSER's model contains
+ONLY … nothing downstream may read it") was false of the shipped API in both halves, since the
+parsed model carries every line of the document and `show` has always sliced charter prose out of
+it. Without the delta the two baselines would contradict each other after archive; without the
+correction the delta would have contradicted the code.
 
 **Why ONE capability and not a split with `orbit-conventions`.** The review-marker convention (`@review`, colon-suffixed — written without the colon so this line is not discovered by that family's own raw grep)
 lives in `orbit-conventions`, and consistency argues for putting `src:` beside it. Rejected: the

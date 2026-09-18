@@ -18,11 +18,52 @@ describe('countRulingEntries', () => {
   it('counts the live program doc: prefix R-crc yields its ruling entries', () => {
     const doc = loadArchitectureDoc('.', 'clean-up-review-cycle')!;
     expect(doc).not.toBeNull();
-    // Derived, never pinned: the grammar must agree with a plain scan of the section.
+    const count = countRulingEntries(doc, 'R-crc');
+
+    // PINNED: the live contract value the task called for. A derived oracle alone can share a
+    // mistake with the implementation — the same section, fence and bold assumptions on both
+    // sides pass each other while both are wrong — so the number is stated outright. When a
+    // ruling is added this test is the thing that must be updated deliberately.
+    expect(count).toBe(10);
+
+    // DERIVED, as a second and independent witness: a plain scan of the section must agree.
     const section = sliceRulingsIndex(doc.lines);
     const byHand = section.filter((l) => /^ {0,3}[-*] \*\*R-crc-\d+\*\*/.test(l)).length;
-    expect(byHand).toBeGreaterThan(0);
-    expect(countRulingEntries(doc, 'R-crc')).toBe(byHand);
+    expect(byHand).toBe(count);
+  });
+
+  it('does NOT count ruling-shaped bullets inside a nested fence, and does not mask the live one', () => {
+    // The ruling parse used the requirement-block heuristic while marker scanning used the
+    // shared CommonMark tracker. In a doc carrying a four-backtick fence around a
+    // three-backtick example, the heuristic admitted both fenced bullets AND masked the live
+    // one, returning 2 where the answer is 1 — an engine-computed source value that is false.
+    const doc = parseArchitectureDoc(
+      [
+        '# P',
+        '',
+        '### Stage s1 — one',
+        '',
+        '## Rulings index',
+        '',
+        '````markdown',
+        '```',
+        '- **R-x-1** an example inside the fence, not an entry',
+        '- **R-x-2** likewise',
+        '````',
+        '',
+        '- **R-x-3** the only real entry',
+      ].join('\n'),
+      'nested-fence'
+    );
+    expect(countRulingEntries(doc, 'R-x')).toBe(1);
+  });
+
+  it('a three-backtick line cannot close a four-backtick fence', () => {
+    const doc = parseArchitectureDoc(
+      ['## Rulings index', '', '````', '```', '- **R-x-1** still fenced', '````', '', '- **R-x-2** live'].join('\n'),
+      'lengths'
+    );
+    expect(countRulingEntries(doc, 'R-x')).toBe(1);
   });
 
   it('throws naming doc and prefix when the declared prefix matches nothing', () => {
@@ -283,7 +324,10 @@ describe('sources registry', () => {
       { name: 'unparseable YAML', yaml: 'sources:\n  a: [unclosed\n', match: /not valid YAML/ },
       { name: 'sources is not a map', yaml: 'sources: a string\n', match: /must be a map from source name to entry/ },
       { name: 'entry is a scalar', yaml: 'sources:\n  a: 5\n', match: /must be a map, not number/ },
-      { name: 'duplicate source name', yaml: 'sources:\n  a:\n    engine: specs.capability-count\n  a:\n    engine: specs.capability-count\n', match: /not valid YAML|declared twice/ },
+      // Pinned to the branch that ACTUALLY fires: parseYaml({uniqueKeys:true}) rejects the
+      // duplicate before any engine-side guard could. An alternation here would pass whichever
+      // path ran and record nothing about which contract is live.
+      { name: 'duplicate source name', yaml: 'sources:\n  a:\n    engine: specs.capability-count\n  a:\n    engine: specs.capability-count\n', match: /not valid YAML/ },
       { name: 'missing engine', yaml: 'sources:\n  a:\n    doc: prog\n', match: /missing 'engine:'/ },
       { name: 'unknown engine', yaml: 'sources:\n  a:\n    engine: nope.nope\n', match: /unknown engine source 'nope.nope'; the engine exposes: architecture\.ruling-count/ },
       { name: 'missing required parameter', yaml: 'sources:\n  a:\n    engine: architecture.stage-count\n', match: /missing required parameter 'doc'/ },
@@ -308,8 +352,48 @@ describe('sources registry', () => {
   });
 
   it('an existing registry can never reach the absent-file silence', () => {
-    writeRegistry('sources:\n');
-    // `sources:` present but null is still a file that exists — it must not lint clean.
-    expect(() => readSourcesRegistry(root)).toThrow(SourceRegistryError);
+    for (const yaml of ['sources:\n', 'sources: {}\n']) {
+      writeRegistry(yaml);
+      // Present-but-null and present-but-empty are both files that EXIST. An empty map used to
+      // be accepted, leaving registryPresent true with no sources, no coverage and no output —
+      // a truncation could disable every check without a named reason.
+      expect(() => readSourcesRegistry(root), yaml).toThrow(SourceRegistryError);
+    }
+  });
+
+  it('a schema parameter is an IDENTIFIER: it cannot traverse out of the declared tiers', () => {
+    // A schema.yaml planted outside both tiers must stay unreachable, however the parameter is
+    // spelled — a read-only-looking validation command never consumes undeclared inputs.
+    const outside = path.join(root, 'schemas', 'spec-driven');
+    fs.mkdirSync(outside, { recursive: true });
+    fs.writeFileSync(path.join(outside, 'schema.yaml'), MINIMAL_SCHEMA(777));
+    for (const attempt of [
+      '../../schemas/spec-driven',
+      '../../../etc',
+      'spec-driven/../../../schemas/spec-driven',
+      '/absolute/spec-driven',
+    ]) {
+      writeRegistry(`sources:\n  v:\n    engine: schema.version\n    schema: "${attempt}"\n`);
+      expect(() => readSourcesRegistry(root), attempt).toThrow(/does not exist project-locally or in the package/);
+    }
+  });
+
+  it('an inherited prototype name is a clean unknown-source error, not a TypeError', () => {
+    for (const name of ['toString', 'constructor', 'hasOwnProperty']) {
+      writeRegistry(`sources:\n  a:\n    engine: ${name}\n`);
+      expect(() => readSourcesRegistry(root), name).toThrow(SourceRegistryError);
+      expect(() => readSourcesRegistry(root), name).toThrow(/the engine exposes: architecture\.ruling-count/);
+    }
+  });
+
+  it('specs.capability-count errors on an ABSENT specs directory but counts an EMPTY one', () => {
+    writeRegistry('sources:\n  caps:\n    engine: specs.capability-count\n');
+    // Present but empty is a truthful zero.
+    fs.rmSync(path.join(root, 'orbit', 'specs'), { recursive: true, force: true });
+    fs.mkdirSync(path.join(root, 'orbit', 'specs'), { recursive: true });
+    expect(resolveSourceValue(root, readSourcesRegistry(root)[0])).toBe('0');
+    // Absent is 'no baseline to count' — the short-count failure the architecture sources refuse.
+    fs.rmSync(path.join(root, 'orbit', 'specs'), { recursive: true, force: true });
+    expect(() => readSourcesRegistry(root)).toThrow(/no orbit\/specs\/ directory/);
   });
 });
