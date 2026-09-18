@@ -214,8 +214,13 @@ function findSchemaFile(projectRoot: string, name: string): string | null {
   // A schema parameter is an IDENTIFIER, never a path. Passing it straight to path.join let
   // `../../schemas/spec-driven` escape both declared tiers and resolve a schema.yaml anywhere
   // reachable — a read-only-looking validation command consuming files outside the project's
-  // declared inputs. The grammar check closes the common case; the containment check closes
-  // it by construction, symlinks included.
+  // declared inputs.
+  //
+  // TWO guards, and it is worth being exact about which does what, because an earlier comment
+  // here credited a third that could never fire. (1) The NAME GRAMMAR admits no separator and
+  // no dot, so `path.resolve(tierRoot, name, …)` cannot leave the tier — that is what closes
+  // traversal, by construction. (2) The SYMLINK check below closes the case the grammar cannot
+  // see: a tier directory or a schema.yaml that resolves outside its tier.
   if (!SCHEMA_NAME_REGEX.test(name)) return null;
   for (const dir of [getProjectSchemasDir(projectRoot), getPackageSchemasDir()]) {
     const tierRoot = fs.existsSync(dir) ? fs.realpathSync(dir) : path.resolve(dir);
@@ -223,7 +228,6 @@ function findSchemaFile(projectRoot: string, name: string): string | null {
     if (!fs.existsSync(candidate)) continue;
     const resolved = fs.realpathSync(candidate);
     if (resolved !== candidate && !isContainedIn(resolved, tierRoot)) continue;
-    if (!isContainedIn(candidate, tierRoot)) continue;
     return candidate;
   }
   return null;

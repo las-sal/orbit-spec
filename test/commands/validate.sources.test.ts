@@ -191,9 +191,62 @@ describe('orbit validate --sources', () => {
       const parsed = JSON.parse(json.stdout.trim());
       expect(parsed.source_domain.files_scanned).toBe(0);
       expect(parsed.source_domain.reason).toMatch(/not a repository|no git/i);
+      // A source compared against NOTHING has not passed. The verdict must not turn on whether
+      // git could answer — it would otherwise flip to green precisely when nothing was checked.
+      expect(parsed.summary.byType.sources).toEqual({ items: 1, passed: 0, failed: 0, unverified: 1 });
+      expect(parsed.summary.totals.unverified).toBe(1);
+      expect(parsed.summary.totals.passed).toBe(0);
     } finally {
       fs.rmSync(nogit, { recursive: true, force: true });
     }
+  });
+
+  it('names the unverified bucket in human output, so passed + failed != items stays legible', async () => {
+    const nogit = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'orbit-nogit-human-')));
+    try {
+      fs.mkdirSync(path.join(nogit, 'orbit', 'architecture'), { recursive: true });
+      fs.writeFileSync(path.join(nogit, 'orbit', 'architecture', 'prog.md'), '# P\n\n### Stage s1 — one\n');
+      fs.writeFileSync(
+        path.join(nogit, 'orbit', 'sources.yaml'),
+        'sources:\n  stages:\n    engine: architecture.stage-count\n    doc: prog\n'
+      );
+      // A real spec, so the run has an item to pass and the totals line is reached — this is
+      // the ordinary shape of the case: everything else validates, only the lint cannot run.
+      fs.mkdirSync(path.join(nogit, 'orbit', 'specs', 'alpha'), { recursive: true });
+      fs.writeFileSync(
+        path.join(nogit, 'orbit', 'specs', 'alpha', 'spec.md'),
+        [
+          '## Purpose',
+          'The alpha capability exists so the validation harness has a real spec to read.',
+          '',
+          '## Requirements',
+          '',
+          '### Requirement: Alpha SHALL be deterministic',
+          'The alpha module SHALL produce a deterministic response for validation.',
+          '',
+          '#### Scenario: Deterministic alpha run',
+          '- **GIVEN** a configured alpha module',
+          '- **WHEN** the module runs the default flow',
+          '- **THEN** the output matches the expected fixture',
+          '',
+        ].join('\n')
+      );
+      const r = await runCLI(['validate', '--all'], { cwd: nogit, env: { GIT_CEILING_DIRECTORIES: os.tmpdir() } });
+      expect(r.exitCode).toBe(0);
+      expect(r.stdout).toMatch(/Totals: .*0 failed, 1 unverified/);
+      expect(r.stdout).not.toMatch(/Totals: 1 passed, 0 failed \(/);
+    } finally {
+      fs.rmSync(nogit, { recursive: true, force: true });
+    }
+  });
+
+  it('a WORKING domain reports no unverified bucket at all', async () => {
+    writeRegistry();
+    track();
+    const result = await runCLI(['validate', '--sources', '--json'], { cwd: root });
+    const json = JSON.parse(result.stdout.trim());
+    expect(json.summary.byType.sources).not.toHaveProperty('unverified');
+    expect(json.summary.totals).not.toHaveProperty('unverified');
   });
 
   it('per-item validation is unchanged by the lint', async () => {

@@ -1,0 +1,117 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-18T13:18:26Z",
+  "change": "rc07-artifact-lint",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "dimension": "correctness",
+      "severity": "WARNING",
+      "title": "The empty-domain fix made the reason visible but left the summary asserting sources passed over a run that read nothing",
+      "file": "src/commands/validate.ts",
+      "line": 196,
+      "recommendation": "Reproduced in a scratch directory that is not a git repository, with a registry present and a README carrying a marked span reading 99 against a source emitting 1: `source_domain` correctly reports `{files_scanned: 0, reason: 'git could not list tracked files...'}`, and the run still emits `byType.sources: {items: 1, passed: 1, failed: 0}` and `totals.failed: 0`, exit 0 — while the live stale span goes entirely unreported. This is the fresh pass's finding only PARTIALLY resolved: it asked for the reason to reach the payload, which it now does, but the count that a CI job actually keys on (`summary.totals.failed === 0`) still reads green over a run that opened zero files. The source DID resolve, so `passed` is defensible on a narrow reading; the problem is that no consumer can distinguish 'one source verified against every marked span' from 'one source resolved and nothing was checked' without also reading `source_domain`, and nothing requires them to.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Represent it in the counts: when the domain is empty for a named reason, report declared sources as neither passed nor failed (e.g. `{items: N, passed: 0, failed: 0}` plus the existing `source_domain`), so a totals-based predicate cannot read as verified. Changes the byType shape, which is new surface and has no consumers yet."
+        },
+        {
+          "label": "B",
+          "body": "Make the spec's meaning explicit instead of changing the shape: state that `byType.sources.passed` counts sources RESOLVED AND NOT CONTRADICTED BY ANY SPAN READ, and that `source_domain.files_scanned` is the required companion for interpreting it. A RECORD rather than a check, consistent with how this capability handles its other residuals, and it costs one spec paragraph."
+        },
+        {
+          "label": "C",
+          "body": "Fail the run when the domain is empty and a registry is present. Rejected on its face — the spec's scenario explicitly requires this path to exit zero and never claim the project verified — but recorded so the walk considers and dismisses it deliberately rather than by omission."
+        }
+      ]
+    },
+    {
+      "dimension": "coherence",
+      "severity": "WARNING",
+      "title": "A file that cannot be read is reported as a `marker` finding, which the discriminated-kind contract defines as a malformed delimiter",
+      "file": "src/core/source-lint.ts",
+      "line": 307,
+      "recommendation": "The walk added an unreadable-file finding and reused `kind: 'marker'` with a synthetic `line: 1`. The type's own comment defines that kind as 'A malformed delimiter — a line, but no span to compare and no source value', and the spec's discriminated table says the same. A read failure has no delimiter and no line: the human renderer prints `✗ <file>:1: tracked file could not be read...`, which reads as a defect on line 1. The spec's new scenario ('A tracked file that cannot be read is reported, never swallowed') says the lint reports it but never says AS WHICH KIND, so spec and implementation are under-specified together rather than divergent — which is why nothing caught it. Behaviour is fine either way: `marker` is unattributable in `summarizeSources`, and a domain fault genuinely is not a source's fault. It is the taxonomy that is wrong, in a change whose subject is discriminated records carrying exactly their kind's fields.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Add a fifth kind — `domain` with `{file, detail}` and no line — and update the spec's kind table, the design's D5b table, and docs/cli.md together. Honest shape; costs one more row in three places."
+        },
+        {
+          "label": "B",
+          "body": "Keep `marker` and make the spec normative about it: state that a tracked file which cannot be read is reported as a marker error naming the file, with the line slot carrying 1 because no delimiter was reached. Cheaper, and defensible since both are file-level faults that no source can be blamed for — but it widens a kind whose definition is currently precise."
+        }
+      ]
+    },
+    {
+      "dimension": "coherence",
+      "severity": "SUGGESTION",
+      "title": "The schema containment guard is unreachable, and its comment claims the protection the grammar check actually provides",
+      "file": "src/core/sources-registry.ts",
+      "line": 196,
+      "recommendation": "`SCHEMA_NAME_REGEX` is `/^[a-z0-9]+(?:-[a-z0-9]+)*$/` — no separators, no dots — so `path.resolve(tierRoot, name, 'schema.yaml')` cannot leave `tierRoot`, and `if (!isContainedIn(candidate, tierRoot)) continue;` can never fire. The SYMLINK check above it is live and does real work (a schema.yaml or tier directory symlinked outside is correctly skipped); only the second check is dead. The comment above the function says 'The grammar check closes the common case; the containment check closes it by construction' — the containment check closes nothing, and a reader would take it as the load-bearing guard. Either drop the dead line and rewrite the comment to credit the grammar check and the symlink check, or keep it as explicit defence-in-depth and say so, so a later widening of the name grammar finds a live guard rather than a comment. Worth noting the self-similarity: this is the same defect class the pair raised about the duplicate-source-name guard, which was deleted on their advice — in this file, in this walk."
+    },
+    {
+      "dimension": "completeness",
+      "severity": "SUGGESTION",
+      "title": "The new passthrough scenario is half-asserted: the half that makes it falsifiable has no test",
+      "file": "orbit/changes/rc07-artifact-lint/specs/orbit-architecture-engine/spec.md",
+      "line": 79,
+      "recommendation": "The scenario added by the re-walk claims two things: that `architecture show` reproduces a stage section VERBATIM from the carried lines, and that `parseArchitectureDoc` yields the same stages, slots, docClass and violations it would if that prose were different. The first is covered by existing tests that predate this change (test/core/architecture/engine.test.ts:185 asserts the slice contains its own heading and prose and excludes the next stage and the status log). The second is asserted nowhere: no test varies a doc's opaque prose and compares the parsed model. That second half is the one carrying the requirement's weight — it is what makes 'carrying content is not interpreting it' falsifiable rather than decorative, and it is the claim the delta now rests on. A small test that parses one doc twice, differing only in charter prose, and deep-equals stages/slots/docClass/violations would close it."
+    },
+    {
+      "dimension": "coherence",
+      "severity": "SUGGESTION",
+      "title": "tasks.md 3.2 describes a two-key JSON contract; three keys shipped",
+      "file": "orbit/changes/rc07-artifact-lint/tasks.md",
+      "line": 19,
+      "recommendation": "Task 3.2 specifies `source_findings` DISCRIMINATED by kind 'plus source_coverage'. The walk added a third key, `source_domain`, and updated the spec, design D5b and docs/cli.md — but not the task. The divergence is recorded in the walk logs and was raised to the user as a deliberate judgment call (tasks are the plan; a walk legitimately exceeds it, and amending checked tasks would make the task list a second contract rather than a record), so this is raised for the record rather than as a disagreement. If it is left, the archived task list understates what shipped by one field; if it is amended, note in the task that the addition came from the system-mode walk, so a reader can tell planned scope from walked scope."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The honest frame first, because it changes how this report should be weighed: I am the in-context reviewer of code I wrote, and this cycle has already measured what that is worth. During apply my own completeness sweep found one gap; the two independent passes then found twenty-two. This pass reviews 196 inserted and 67 deleted source lines that no independent reviewer has seen — roughly a seventh of the engine surface the change touches, concentrated in exactly the functions where independent passes already found five defects. A clean-ish result here is evidence that the cadence is satisfied, not that the work is verified, and I would not read it as the latter.\n\nWhat I went after was the walk's own output rather than the original change, on the theory that the pair already covered the latter and the walk is what nobody has read. Three of the five findings are in code written in the last two turns. The one I would not have predicted is the empty-domain summary: I fixed the fresh pass's finding by adding the reason to the payload, verified that the reason appears, and stopped — without checking whether the COUNTS still overstated. They do. A scratch non-git directory with a live stale span reports `passed: 1, failed: 0`, exit 0, and the span is never mentioned. The fix addressed the symptom that was reported and left the claim underneath it, which is a specific and repeatable way to half-resolve a finding: verify the thing the reviewer named, not the thing they were worried about.\n\nThe second pattern worth naming is self-similarity. The pair told me a guard was unreachable and I deleted it; in the same walk, in the same file, I wrote a new unreachable guard with a comment crediting it for protection the grammar check provides. That is not a coincidence of carelessness — it is what writing defence-in-depth under time pressure produces, and it argues that 'dead guard' is a class worth a lint rather than a finding.\n\nWhat I probed and could not break: the marker grammar is now exact and four inertness forms confirm it; the mask's three rewrites hold against blank lines, escapes, adjacency and unmatched runs; the ruling count returns 1 on the nested-fence case that used to return 2 while the live R-crc count stays 10; the base fingerprint verifies and all six original baseline scenarios are byte-identical; the no-registry path is byte-identical to the pre-change build. The taxonomy finding and the containment finding are both real but neither changes behaviour. What I cannot tell you is whether the rewritten mask is correct in cases neither I nor the pair thought to construct — and since I wrote it, my not thinking of them the second time is not evidence.",
+  "passes_run": [
+    "0 (performed in-context, not delegated)",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4 — no orbit/lenses/perspectives.md",
+    "5 — no orbit/lenses/critical-paths.md"
+  ],
+  "final_assessment": "0 critical, 2 warning, 3 suggestion.",
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc07-artifact-lint --from-file orbit/changes/rc07-artifact-lint/.orbit-runs/review-system-2026-09-18T13-18-26Z.json"
+}

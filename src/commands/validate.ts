@@ -236,6 +236,7 @@ export class ValidateCommand {
           items: 0 + (sourceSummary?.items ?? 0),
           passed: 0 + (sourceSummary?.passed ?? 0),
           failed: 0 + (sourceSummary?.failed ?? 0),
+          ...(sourceSummary?.unverified ? { unverified: sourceSummary.unverified } : {}),
         },
         byType: {
           ...(scope.changes ? { change: { items: 0, passed: 0, failed: 0 } } : {}),
@@ -313,6 +314,7 @@ export class ValidateCommand {
         items: results.length + (sourceSummary?.items ?? 0),
         passed: passed + (sourceSummary?.passed ?? 0),
         failed: failed + (sourceSummary?.failed ?? 0),
+        ...(sourceSummary?.unverified ? { unverified: sourceSummary.unverified } : {}),
       },
       byType: {
         ...(scope.changes ? { change: summarizeType(results, 'change') } : {}),
@@ -335,7 +337,8 @@ export class ValidateCommand {
         else console.error(`✗ ${res.type}/${res.id}`);
       }
       if (sourcesActive) printSourceLint(sourceLint!);
-      console.log(`Totals: ${summary.totals.passed} passed, ${summary.totals.failed} failed (${summary.totals.items} items)`);
+      const unverifiedClause = 'unverified' in summary.totals ? `, ${(summary.totals as { unverified: number }).unverified} unverified` : '';
+      console.log(`Totals: ${summary.totals.passed} passed, ${summary.totals.failed} failed${unverifiedClause} (${summary.totals.items} items)`);
     }
 
     process.exitCode = summary.totals.failed > 0 ? 1 : 0;
@@ -351,7 +354,9 @@ export class ValidateCommand {
  * which resolves no source at all. Those roll up into ONE failed PSEUDO-ITEM, so the run can
  * never report zero failed items beside a non-zero exit.
  */
-function summarizeSources(result: SourceLintResult): { items: number; passed: number; failed: number } {
+function summarizeSources(
+  result: SourceLintResult
+): { items: number; passed: number; failed: number; unverified?: number } {
   const declared = new Set(result.coverage.map((c) => c.source));
   const failedSources = new Set<string>();
   // A source that did not resolve carries a null coverage value and its own registry finding.
@@ -370,6 +375,18 @@ function summarizeSources(result: SourceLintResult): { items: number; passed: nu
   const pseudo = unattributable ? 1 : 0;
   const items = declared.size + pseudo;
   const failed = failedSources.size + pseudo;
+
+  // A source compared against NOTHING has not passed. When the file domain could not be
+  // resolved at all, every source that still resolved is UNVERIFIED rather than passed —
+  // otherwise the summary reports success for a check that never ran, and the verdict would
+  // turn on whether git could answer rather than on whether the repository is correct. The
+  // run still exits zero: the spec requires this path to produce no findings and never to
+  // claim the project verified, and `passed` IS such a claim.
+  if (result.domainReason !== null && result.filesScanned === 0 && declared.size > 0) {
+    const unverified = declared.size - failedSources.size;
+    return { items, passed: items - failed - unverified, failed, unverified };
+  }
+
   return { items, passed: items - failed, failed };
 }
 
@@ -392,6 +409,8 @@ function sourceJson(result: SourceLintResult) {
 function formatSourceFinding(f: SourceFinding): string {
   switch (f.kind) {
     case 'registry':
+      return `✗ ${f.file}: ${f.detail}`;
+    case 'domain':
       return `✗ ${f.file}: ${f.detail}`;
     case 'marker':
       return `✗ ${f.file}:${f.line}: ${f.detail}`;

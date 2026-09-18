@@ -182,6 +182,29 @@ describe('architecture parser', () => {
     expect(result.issues.some((i) => i.message.includes("duplicate stage id 'd1-dup'"))).toBe(true);
   });
 
+  it('carries passthrough without interpreting it: opaque prose changes nothing in the model', () => {
+    // The `Passthrough is carried, not interpreted` scenario (orbit-architecture-engine) claims
+    // two things. That `show` reproduces a section verbatim is covered by the slice test below.
+    // This is the other half, and it is the one the requirement rests on: the parser CARRIES the
+    // document's raw lines, so the model must be identical when only opaque prose differs.
+    const varied = PARSEABLE_DOC.replace(
+      'Charter prose. Exit criteria prose.',
+      'Completely different charter prose — exit criteria, rulings, a status log, none of it read.'
+    );
+    expect(varied).not.toBe(PARSEABLE_DOC);
+
+    const a = parseArchitectureDoc(PARSEABLE_DOC, 'test-arc');
+    const b = parseArchitectureDoc(varied, 'test-arc');
+
+    expect(b.docClass).toBe(a.docClass);
+    expect(b.violations).toEqual(a.violations);
+    expect(b.stages.map((s) => [s.id, s.title, s.dependsOn, s.complete])).toEqual(
+      a.stages.map((s) => [s.id, s.title, s.dependsOn, s.complete])
+    );
+    // The lines DO differ — passthrough is carried, which is exactly why the claim needs proving.
+    expect(b.lines).not.toEqual(a.lines);
+  });
+
   it('slices exactly one stage section', () => {
     const doc = parseArchitectureDoc(PARSEABLE_DOC, 'test-arc');
     const section = sliceStageSection(doc, 'd2-second');

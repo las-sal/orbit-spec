@@ -194,7 +194,20 @@ The DOMAIN ITSELF is reported alongside the findings: how many files were actual
 #### Scenario: A tracked file that cannot be read is reported, never swallowed
 
 - **WHEN** a tracked markdown file in the domain cannot be read for any reason other than not existing in the working tree
-- **THEN** the lint reports it, does not count it as scanned, and continues linting every other file — a run SHALL NOT exit clean while claiming to have checked a document it never opened
+- **THEN** the lint reports it as a DOMAIN fault naming the file, does not count it as scanned, and continues linting every other file — a run SHALL NOT exit clean while claiming to have checked a document it never opened
+
+**A source compared against NOTHING has not passed.** When the file domain could not be resolved at
+all, every declared source that still resolved SHALL be reported as UNVERIFIED rather than as
+passed. Without this the verdict turns on whether git could answer rather than on whether the
+repository is correct, and it turns in the reassuring direction: the same tree reports a failure in
+a git checkout and a success in an export. The run still exits zero and still produces no findings —
+this requirement constrains what the summary may CLAIM, not whether the command fails.
+
+#### Scenario: An unresolvable domain reports sources as unverified, not passed
+
+- **WHEN** the file domain is empty for a named reason and declared sources resolved
+- **THEN** those sources are counted UNVERIFIED, not passed; the run exits zero; and the summary
+  SHALL NOT report them as passing a check that never ran
 
 #### Scenario: A marker inside a record is not linted
 
@@ -214,8 +227,8 @@ As the stated mitigation, and as a RECORD rather than a check, the lint SHALL re
 
 #### Scenario: Every failure kind is representable
 
-- **WHEN** the lint reports any failure — a registry fault (no markdown line at all), a marker error (a line but no span, no source value), an unknown source named by a well-formed marker (a span but no value), or a mismatch (span text and source value both present)
-- **THEN** each is emitted as a DISCRIMINATED record carrying a `kind` and exactly the fields its kind defines, so no report is padded with nulls and no failure kind is unrepresentable
+- **WHEN** the lint reports any failure — a registry fault (no markdown line at all), a DOMAIN fault (a tracked file that could not be read: a file but no line, no span, no source value), a marker error (a line but no span, no source value), an unknown source named by a well-formed marker (a span but no value), or a mismatch (span text and source value both present)
+- **THEN** each is emitted as a DISCRIMINATED record carrying a `kind` and exactly the fields its kind defines, so no report is padded with nulls and no failure kind is unrepresentable — in particular a DOMAIN fault carries no line, because no delimiter was reached and a synthetic one would render as a defect at that line
 
 #### Scenario: Coverage names a source nothing points at
 

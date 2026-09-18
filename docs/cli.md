@@ -403,14 +403,24 @@ present; with no registry the output is exactly what it was before the lint exis
 
 `source_domain` answers "what did this run actually read": `files_scanned` counts files opened and
 parsed (never files merely listed), and `reason` is non-null when the domain could not be resolved
-at all — a checkout without git, for instance. A run that read nothing reports it here rather than
-looking like a clean verification.
+at all — a project that is not a git repository, for instance. When that happens, declared sources
+that still resolved are reported as `unverified` rather than `passed`, both in
+`summary.byType.sources` and in `summary.totals` (the key appears only when non-zero):
+
+```
+Totals: 1 passed, 0 failed, 1 unverified (2 items)
+```
+
+The run still exits zero — the lint genuinely cannot check anything without a file list, and
+`orbit validate` works fully in a non-git project for changes and specs. What it must not do is
+report a source as having passed a check that never ran.
 
 Each finding is discriminated by `kind` and carries only that kind's fields:
 
 | `kind` | fields |
 |--------|--------|
 | `registry` | `file`, `detail` — a fault in the registry itself |
+| `domain` | `file`, `detail` — a tracked file that could not be read (no line: no delimiter was reached) |
 | `marker` | `file`, `line`, `detail` — a malformed delimiter |
 | `unknown-source` | `file`, `line`, `source` — a well-formed span naming nothing declared |
 | `mismatch` | `file`, `line`, `source`, `span_text`, `source_value` |

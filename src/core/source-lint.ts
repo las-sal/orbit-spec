@@ -29,6 +29,13 @@ import {
 export type SourceFinding =
   /** A fault in the registry itself — no markdown line, no source, no span. */
   | { kind: 'registry'; file: string; detail: string }
+  /**
+   * A DOMAIN fault: a tracked file the lint could not read, so its marked spans were never
+   * checked. Distinct from `marker` because there is no delimiter and therefore no line —
+   * an earlier version reused `marker` with a synthetic `line: 1`, which rendered as a defect
+   * on line 1 and widened a kind whose definition is otherwise exact.
+   */
+  | { kind: 'domain'; file: string; detail: string }
   /** A malformed delimiter — a line, but no span to compare and no source value. */
   | { kind: 'marker'; file: string; line: number; detail: string }
   /** A well-formed span naming nothing declared — a span, but no value exists. */
@@ -304,9 +311,8 @@ export function runSourceLint(projectRoot: string): SourceLintResult {
       content = fs.readFileSync(absolute, 'utf-8');
     } catch (err) {
       findings.push({
-        kind: 'marker',
+        kind: 'domain',
         file,
-        line: 1,
         detail: `tracked file could not be read, so its marked spans were never checked: ${(err as Error).message}`,
       });
       continue;

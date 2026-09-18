@@ -482,9 +482,12 @@ describe('runSourceLint end to end', () => {
     fs.chmodSync(unreadable, 0o000);
     try {
       const r = runSourceLint(root);
-      const marker = r.findings.find((f) => f.kind === 'marker' && f.file === 'locked.md');
-      expect(marker, 'an unreadable tracked file must produce a finding').toBeDefined();
-      expect((marker as { detail: string }).detail).toMatch(/could not be read/);
+      const fault = r.findings.find((f) => f.kind === 'domain' && f.file === 'locked.md');
+      expect(fault, 'an unreadable tracked file must produce a DOMAIN finding').toBeDefined();
+      expect((fault as { detail: string }).detail).toMatch(/could not be read/);
+      // A domain fault is NOT a marker error: there is no delimiter, so it carries no line.
+      expect(fault).not.toHaveProperty('line');
+      expect(r.findings.some((f) => f.kind === 'marker')).toBe(false);
       // Every other file still lints; only the unreadable one is missing from the count.
       expect(r.filesScanned).toBe(listed - 1);
       expect(r.findings.some((f) => f.kind === 'mismatch' && f.file === 'ok.md')).toBe(true);

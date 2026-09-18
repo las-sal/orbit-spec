@@ -231,12 +231,23 @@ serves: without it, a run whose domain could not be listed at all reported `pass
 — a claim of verification over a run that opened nothing. `files_scanned` counts files actually
 READ, never files merely listed, so it cannot overstate itself precisely when a read failed.
 
+**Surfacing the reason was not sufficient, and the in-context pass caught the half that was left.**
+A spec paragraph is not in front of the person reading `passed: 1`, and the summary is the only
+place the command makes a CLAIM. So when the domain is empty for a named reason, `byType.sources`
+reports the resolved sources as `unverified` — `{items: N, passed: 0, failed: 0, unverified: N}` —
+and `summary.totals` carries the key only when it is non-zero, leaving every other run's shape
+untouched. The exit code is unchanged at zero, per the degradation requirement. The alternative
+considered and rejected was to leave the counts and define `passed` in the spec: it documents the
+trap rather than removing it, and this surface has no consumers yet, which is exactly why changing
+it is cheap rather than a reason to leave it.
+
 `source_findings` entries are DISCRIMINATED by `kind`, because the four failures have genuinely
 different shapes and a single flat record would be null-padded for three of them:
 
 | kind | fields |
 |---|---|
 | `registry` | `file` (the registry), `detail` — no markdown line, no source, no span |
+| `domain` | `file`, `detail` — a tracked file that could not be read; NO line, because no delimiter was reached |
 | `marker` | `file`, `line`, `detail` — a malformed delimiter; no span and no source value exist |
 | `unknown-source` | `file`, `line`, `source` — a well-formed span naming nothing declared; no value exists |
 | `mismatch` | `file`, `line`, `source`, `span_text`, `source_value` |

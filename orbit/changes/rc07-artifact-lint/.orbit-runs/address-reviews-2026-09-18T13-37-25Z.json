@@ -1,0 +1,117 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-18T13:37:25Z",
+  "change": "rc07-artifact-lint",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc07-artifact-lint/.orbit-runs/review-system-2026-09-18T13-18-26Z.json",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 3
+  },
+  "pushback_verification": "All 5 re-verified against the tree before any edit; zero stale. The empty-domain summary was reproduced twice (once as raw JSON, once as a full non-git project run); the containment line was confirmed still present and still unreachable given SCHEMA_NAME_REGEX; tasks.md was confirmed to contain no mention of source_domain; and the passthrough gap was confirmed by reading engine.test.ts — its docClass assertions compare DIFFERENT docs, never the same doc with differing prose. Entry keys in this record are copied programmatically from the pass, per Q-crc-17, and coverage was asserted before the emit was written.",
+  "resolution_summary": {
+    "resolved": 5,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The empty-domain fix made the reason visible but left the summary asserting sources passed over a run that read nothing",
+      "marker_source": "internal-review",
+      "file": "src/commands/validate.ts",
+      "line": 196,
+      "classification": "decision_required",
+      "action": "Applied option A. `summarizeSources` now reports declared sources as UNVERIFIED — `{items: N, passed: 0, failed: 0, unverified: N}` — when the domain is empty for a named reason; `summary.totals` carries the key only when non-zero, and the human totals line names the bucket (`Totals: 1 passed, 0 failed, 1 unverified (2 items)`) so passed + failed != items stays legible. Exit stays zero per the degradation requirement. Verified both ways in a real non-git project: the self-contradiction is gone (a Warning saying nothing was checked no longer sits above a line saying everything passed), and the same tree WITH git still catches the stale span. Spec gains the normative rule plus a scenario, design D5b records the rejected alternative, docs/cli.md shows the output. Two regressions added; a third asserts a WORKING domain carries no `unverified` key at all.",
+      "ratified_via": "chat",
+      "resolution": "Option A, ratified after two rounds of pushback that improved the finding rather than dismissing it. Sal challenged whether a no-git machine is even worth engineering for; checking rather than arguing showed the engine's git dependency is narrow (source-lint, apply-state — which already carries an explicit isGitRepo guard — and the optional feedback command), that `orbit init` succeeds with no git, and that `validate --all` otherwise works fully in a non-git project. So the trigger is not a missing binary but an ORDINARY state: a project before `git init`, an export, a container copy. That moved the finding from exotic to ordinary. The decisive framing was that the spec had already settled it — its degradation scenario says the lint 'never claims the project verified', and `passed` IS such a claim, so the only coherent alternatives were to fix the claim or delete the whole degradation requirement. I also reversed my own prior recommendation (B) here: 'no consumers yet' is why changing the shape is SAFE, not a reason to leave it.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Report unverified rather than passed when the domain is empty"
+          },
+          {
+            "label": "B",
+            "body": "Leave the counts; define `passed` in the spec with files_scanned as the required companion"
+          },
+          {
+            "label": "C",
+            "body": "Fail the run — rejected: contradicts the spec's exit-zero degradation scenario"
+          }
+        ],
+        "ratified_option": "A"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "A file that cannot be read is reported as a `marker` finding, which the discriminated-kind contract defines as a malformed delimiter",
+      "marker_source": "internal-review",
+      "file": "src/core/source-lint.ts",
+      "line": 307,
+      "classification": "decision_required",
+      "action": "Applied option A. A fifth discriminated kind, `domain` with `{file, detail}` and NO line, replaces the reuse of `marker` with a synthetic `line: 1`. The TypeScript discriminated union caught the missing render case at compile time, which is the contract working. Spec's failure-kind scenario, design D5b's table and docs/cli.md all gain the row; the test now asserts the domain finding carries no `line` property AND that no marker finding is produced.",
+      "ratified_via": "chat",
+      "resolution": "Option A, settled under R-crc-3. This cuts against the cheap-record choice taken on the validate.ts finding in the same walk, deliberately: that one is an interpretation question, while this is the product's own contract. The capability's pitch is discriminated records carrying exactly their kind's fields with no null padding, and widening `marker` to mean 'a malformed delimiter, or a file-level fault with a made-up line' degrades the precise thing the change exists to sell — in the spec that is about to become baseline.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Add a fifth kind `domain {file, detail}` and update spec, design and docs"
+          },
+          {
+            "label": "B",
+            "body": "Keep `marker` and make the spec normative about the synthetic line"
+          }
+        ],
+        "ratified_option": "A"
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The schema containment guard is unreachable, and its comment claims the protection the grammar check actually provides",
+      "marker_source": "internal-review",
+      "file": "src/core/sources-registry.ts",
+      "line": 196,
+      "classification": "trivial_fix",
+      "action": "Deleted the unreachable `if (!isContainedIn(candidate, tierRoot)) continue;` and rewrote the comment to credit what actually protects: the NAME GRAMMAR (no separator, no dot, so path.resolve cannot leave the tier — traversal closed by construction) and the SYMLINK check (which is live and closes what the grammar cannot see). `isContainedIn` is still used by the symlink branch. No behaviour change; the traversal regression added by the previous walk still passes across four spellings."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The new passthrough scenario is half-asserted: the half that makes it falsifiable has no test",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc07-artifact-lint/specs/orbit-architecture-engine/spec.md",
+      "line": 79,
+      "classification": "trivial_fix",
+      "action": "Added the missing half of the passthrough scenario to test/core/architecture/engine.test.ts: one doc parsed twice, differing ONLY in opaque charter prose, asserting identical docClass, violations and stage tuples while `lines` DO differ — which is the point, since passthrough is carried. The verbatim-slicing half was already covered by the pre-existing slice test."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "tasks.md 3.2 describes a two-key JSON contract; three keys shipped",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc07-artifact-lint/tasks.md",
+      "line": 19,
+      "classification": "decision_required",
+      "action": "Amended task 3.2 with one parenthetical recording that the system-mode walk added a third JSON key (`source_domain`) and a `domain` finding kind, that both came from review findings rather than from the plan, and that the contract is carried by the spec, design D5b and docs/cli.md.",
+      "ratified_via": "chat",
+      "resolution": "Amend, reversing my own earlier position that tasks should stay frozen as the plan. The reversal is recorded rather than quiet: a reader of the archived task list would otherwise understate what shipped, and the parenthetical preserves the plan-versus-walked distinction that motivated leaving it alone."
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "take your recommendations and apply all three decisions",
+  "final_assessment": "All 5 resolved, none deferred. Three decision-lane calls ratified by chat directive after real discussion — the empty-domain one survived two rounds of pushback that made the finding stronger rather than dismissing it, and it reversed my own prior recommendation. The two WARNINGs both traded a cheap record for a real shape change, and the walk deliberately split on which deserved which: the taxonomy is the product's contract, the passed/unverified distinction is what the summary is allowed to claim. No behaviour regressions: 2200 tests green, validate --all --strict clean, base fingerprint verified, marker sweep zero, and the no-registry path re-verified byte-identical against the pre-change HEAD build.",
+  "iteration": 10,
+  "next_recommended": "/orbit:review --as system --reviewer external rc07-artifact-lint"
+}
