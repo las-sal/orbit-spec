@@ -178,13 +178,24 @@ describe('prose ABOUT the syntax never becomes prose CHECKED by it', () => {
     }
   });
 
+  it('a LEGACY anonymous-closer pair fails LOUDLY at its opener, never silently', () => {
+    // The migration failure mode, pinned. An old-format document does not go quietly inert: the
+    // anonymous closer is no longer a delimiter, so the opener reaches EOF and the error names
+    // the closer the author now has to write.
+    const legacy = `prose ${OPEN('stages')}18<!${'--'} /src ${'--'}> more\n`;
+    const { spans, error } = parseMarkedSpans(legacy);
+    expect(spans).toEqual([]);
+    expect(error!.detail).toMatch(/unclosed marker/);
+    expect(error!.detail).toContain('<!-- /src:stages -->');
+  });
+
   it('a REAL-named pair in prose IS live — the authoring rule is to use a placeholder', () => {
     // The honest cost of deleting the inline scanner, asserted rather than left implicit.
     const doc = `example: ${OPEN('stages')}18${CLOSE('stages')}\n`;
     expect(parseMarkedSpans(doc).spans).toHaveLength(1);
   });
 
-  it('every conforming marker inside a backtick span anywhere in the LIVING project goes silent', () => {
+  it('no living document carries a malformed marker, and every live span names a declared source', () => {
     // DERIVED FROM THE LINT'S OWN DOMAIN, not from a directory name. The earlier version read
     // `orbit/changes/rc07-artifact-lint` literally, so archiving this change — its own next
     // lifecycle step — moved the directory and the suite went red before its first assertion.
@@ -195,7 +206,9 @@ describe('prose ABOUT the syntax never becomes prose CHECKED by it', () => {
     expect(reason).toBeNull();
     expect(files.length).toBeGreaterThan(0);
 
-    const tokenPattern = /<!--\s*(?:src:[a-z0-9][a-z0-9-]*|\/src)\s*-->/g;
+    // Only CONFORMING delimiters count. The old pattern also matched the retired anonymous
+    // closer, so the sweep could satisfy itself on tokens the parser no longer recognises at all.
+    const tokenPattern = /<!-- (?:src|\/src):[a-z0-9][a-z0-9-]*(?= )[^>]*-->/g;
     let inCodeRegion = 0;
     const dogfooded = new Map<string, string[]>();
 
@@ -211,8 +224,8 @@ describe('prose ABOUT the syntax never becomes prose CHECKED by it', () => {
       if (spans.length > 0) dogfooded.set(file, spans.map((sp) => sp.source));
     }
 
-    // Prose DESCRIBING the syntax is everywhere in this capability's artifacts and must all be
-    // inert. What this does NOT assert is which files carry live spans: pinning the present set
+    // Fenced examples exist across this capability's artifacts and must be inert. What this does
+    // NOT assert is which files carry live spans: pinning the present set
     // would make adding a legitimate marked claim anywhere in the project fail a unit test, and
     // the capability is explicitly project-wide. Every live span must merely be WELL FORMED and
     // name a declared source — a property that stays true however the dogfood grows.
@@ -368,6 +381,7 @@ describe('runSourceLint end to end', () => {
       coverage: [],
       filesScanned: 0,
       domainReason: null,
+      scanComplete: true,
     });
   });
 

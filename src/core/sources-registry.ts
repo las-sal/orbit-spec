@@ -274,6 +274,23 @@ function resolveWithinTier(dir: string, relative: string): string | null {
   return candidate;
 }
 
+/**
+ * The project's baseline specs directory, or null when it is absent or is not a REAL directory
+ * inside the project. A symlinked `orbit/specs` is refused for the same reason a symlinked schema
+ * tier is: the emitted count would depend on untracked state outside the project.
+ */
+function specsTierRoot(projectRoot: string): string | null {
+  const dir = path.resolve(projectRoot, 'orbit', 'specs');
+  let entry: fs.Stats;
+  try {
+    entry = fs.lstatSync(dir);
+  } catch {
+    return null;
+  }
+  if (!entry.isDirectory() || entry.isSymbolicLink()) return null;
+  return dir;
+}
+
 /** True when `target` sits at or beneath `root` — a path comparison, never a string prefix. */
 function isContainedIn(target: string, root: string): boolean {
   const rel = path.relative(root, target);
@@ -304,23 +321,25 @@ const ENGINE_SOURCES: Record<string, EngineSource> = {
     // short-count failure the architecture sources refuse. A PRESENT but empty directory still
     // emits '0', because that genuinely IS a count.
     checkInputs: (projectRoot) =>
-      fs.existsSync(path.join(projectRoot, 'orbit', 'specs'))
+      specsTierRoot(projectRoot)
         ? null
-        : `the project has no orbit/specs/ directory, so there is no baseline capability count to emit`,
+        : `the project has no usable orbit/specs/ directory, so there is no baseline capability count to emit`,
     resolve: (projectRoot) => {
-      const specsDir = path.join(projectRoot, 'orbit', 'specs');
-      if (!fs.existsSync(specsDir)) {
+      const specsDir = specsTierRoot(projectRoot);
+      if (!specsDir) {
         throw new SourceResolutionError(
-          'specs.capability-count: the project has no orbit/specs/ directory, so no count is emitted'
+          'specs.capability-count: the project has no usable orbit/specs/ directory (absent, or not a real directory within the project), so no count is emitted'
         );
       }
+      // The SAME containment policy the doc and schema parameters get: this is the fourth
+      // filesystem-backed source, and it was counting whatever a symlinked tier pointed at.
       const count = fs
         .readdirSync(specsDir, { withFileTypes: true })
         .filter(
           (e) =>
             e.isDirectory() &&
             !e.name.startsWith('.') &&
-            fs.existsSync(path.join(specsDir, e.name, 'spec.md'))
+            resolveWithinTier(specsDir, path.join(e.name, 'spec.md')) !== null
         ).length;
       return String(count);
     },

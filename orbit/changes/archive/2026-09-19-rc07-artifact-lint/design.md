@@ -227,7 +227,7 @@ residual, and per R-crc-10 a mitigation over uninspectable input is a record, no
 
 With a registry present, `orbit validate --sources --json` and `orbit validate --all --json` carry
 three new keys: `source_findings`, `source_coverage` (source, value, marker count), and
-`source_domain` (`files_scanned`, `reason`). All three are gated on a present registry together,
+`source_domain` (`files_scanned`, `reason`, `scan_complete`). All three are gated on a present registry together,
 so D6's byte-identity promise is untouched.
 
 `source_domain` exists because stderr is out-of-band for the consumer a machine-readable mode
@@ -334,7 +334,24 @@ a count over a document the engine could not fully read.
 
 ## Migration Plan
 
-Additive. The registry and the first marked spans land in the same change (the dogfood), so the
+**A PRE-ARCHIVE BREAKING FORMAT REPLACEMENT, not an additive change** — corrected at the
+iteration-3 system review, which found this section and the proposal still calling it additive
+after D4c changed the closer's spelling. The marker format changed mid-cycle: the closer was
+`<!-- /src -->` and is now `<!-- /src:NAME -->`, matching its opener.
+
+The UPGRADE is mechanical — rewrite each closer to name the source its opener names — and the
+transition FAILS LOUD rather than silently, which is the property that makes it safe to ship
+pre-archive. An old-format pair does not become invisible: the anonymous closer is no longer a
+delimiter at all, so the opener runs to end of file and the lint reports `unclosed marker:
+'<!-- src:NAME -->' has no '<!-- /src:NAME -->'` (with the real source name in place of NAME) — an
+error that names the exact replacement.
+A regression pins that diagnostic, because "the migration is loud" is a claim worth being unable
+to break by accident.
+
+Nothing outside this repository can have adopted the old form: the capability is unreleased and
+its only marked spans are this change's own dogfood, which is updated in the same commit.
+
+The registry and the first marked spans land in the same change (the dogfood), so the
 check has real subjects on day one. Stated precisely, because the looser phrasing overstated it: the
 dogfood exercises ALL FOUR v1 registry SOURCES, which is not the same as covering all four defects
 Case 1 recorded. The fourth defect — an archived findings file's severity string — has no engine

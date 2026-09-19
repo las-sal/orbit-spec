@@ -419,8 +419,12 @@ never deleted.
   Standing recommendation, now sized: delete `computeFenceMask` and point its two consumers
   (`requirement-blocks.ts`, `architecture/parser.ts`) at the shared tracker, landing the corpus
   comparison as a TEST so a future malformed document fails loudly instead of being silently
-  rescued. After the document fix only three files still disagree and all three are ARCHIVED
-  copies — records, never validated, correctly left alone. This is an ordinary SMALL CHANGE (one
+  rescued. After the document fix FOUR files still disagree: three are ARCHIVED copies of the same
+  spec — records, never validated, correctly left alone — and one, `docs/concepts.md`, is LIVING
+  documentation the heuristic mis-parses, which is the instance this entry describes correctly two
+  paragraphs above and is the reason the deletion is worth doing at all. (An earlier wording said
+  "only three … all three archived", which would have let a follow-up conclude no living document
+  was affected. Corrected at rc07's pre-archive sweep.) This is an ordinary SMALL CHANGE (one
   MODIFIED capability at most, well under R-crc-1's ceiling), not a stage: it is only weakly
   on-program, and a stage's cycle would cost an order of magnitude more than the work. Not done
   inside rc07's walk deliberately — the parser is shared by `architecture status`, `show` and

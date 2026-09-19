@@ -53,6 +53,8 @@ capability owns the marker end to end.
 
 - The validator gains a check; `orbit/sources.yaml` is new and optional (absent = no markers = no
   lint).
-- No schema bump. No migration: a repo with no `sources.yaml` and no markers lints clean, which is
-  every repo today.
+- No schema bump. A repo with no `sources.yaml` and no markers lints clean, which is every repo
+  today — so nothing existing needs migrating. The marker FORMAT did change once inside this
+  cycle (the closer gained its name; design D4c), and the transition fails loud with an error
+  naming the replacement rather than going silently inert.
 - Unblocks nothing and blocks nothing; `rc07b-reference-roundtrip` is independent.

@@ -407,6 +407,29 @@ describe('sources registry', () => {
     }
   });
 
+  it('specs.capability-count refuses a symlinked specs tier and symlinked spec files', () => {
+    // The fourth filesystem-backed source, which the shared containment repair first missed: a
+    // symlinked orbit/specs enumerated an outside tree, and the emitted project count depended
+    // on untracked state outside the project.
+    const outside = path.join(root, 'elsewhere', 'specs');
+    for (const c of ['a', 'b', 'c']) {
+      fs.mkdirSync(path.join(outside, c), { recursive: true });
+      fs.writeFileSync(path.join(outside, c, 'spec.md'), '# x\n');
+    }
+    fs.rmSync(path.join(root, 'orbit', 'specs'), { recursive: true, force: true });
+    fs.symlinkSync(outside, path.join(root, 'orbit', 'specs'));
+    writeRegistry('sources:\n  caps:\n    engine: specs.capability-count\n');
+    expect(() => readSourcesRegistry(root)).toThrow(/no usable orbit\/specs\/ directory/);
+
+    // A real tier whose individual spec.md escapes is not counted either.
+    fs.rmSync(path.join(root, 'orbit', 'specs'));
+    fs.mkdirSync(path.join(root, 'orbit', 'specs', 'real'), { recursive: true });
+    fs.writeFileSync(path.join(root, 'orbit', 'specs', 'real', 'spec.md'), '# r\n');
+    fs.mkdirSync(path.join(root, 'orbit', 'specs', 'linked'), { recursive: true });
+    fs.symlinkSync(path.join(outside, 'a', 'spec.md'), path.join(root, 'orbit', 'specs', 'linked', 'spec.md'));
+    expect(resolveSourceValue(root, readSourcesRegistry(root)[0])).toBe('1');
+  });
+
   it('specs.capability-count errors on an ABSENT specs directory but counts an EMPTY one', () => {
     writeRegistry('sources:\n  caps:\n    engine: specs.capability-count\n');
     // Present but empty is a truthful zero.
@@ -415,6 +438,6 @@ describe('sources registry', () => {
     expect(resolveSourceValue(root, readSourcesRegistry(root)[0])).toBe('0');
     // Absent is 'no baseline to count' — the short-count failure the architecture sources refuse.
     fs.rmSync(path.join(root, 'orbit', 'specs'), { recursive: true, force: true });
-    expect(() => readSourcesRegistry(root)).toThrow(/no orbit\/specs\/ directory/);
+    expect(() => readSourcesRegistry(root)).toThrow(/no usable orbit\/specs\/ directory/);
   });
 });

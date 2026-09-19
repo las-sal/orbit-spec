@@ -1,0 +1,35 @@
+{
+  "command": "archive",
+  "timestamp": "2026-09-19T19:05:56Z",
+  "change": "rc07-artifact-lint",
+  "kind": "lifecycle",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "rc07-artifact-lint archived with the review-system gate COMPUTED PASSED — the first rc-stage to reach a passed system gate rather than archiving through an override, and it took a deliberate over-budget fourth independent pass to get there. The change shipped `orbit validate --sources`: a `src:` marker delimits a span in living prose, the registry names an engine-computed source, and the check asks only whether the span CONTAINS that string. Four sources are dogfooded in CLAUDE.md. The cycle's own record is the more useful artifact: five independent passes (three external GPT-5 Codex, one fresh, one in-context) produced 38 findings, all walked to zero, none re-opened. The marker FORMAT changed mid-cycle — the closer gained its name so the name grammar could make prose inert — which deleted an inline-code scanner in which four separate reviewers had each found a different defect. Two lessons were institutionalised as program open questions rather than left in the trail: Q-crc-17, that a walk record with hand-retyped finding titles matched ZERO findings by the gate's key while declaring ten resolved, and the completeness lesson the final external pass named — that inferring state from selected finding kinds leaves a new scope uncovered every round, which is why completeness is now CARRIED. 2202 tests green; validate --all --strict clean across 25 items; fingerprints verified; marker sweep zero.",
+  "archive_path": "orbit/changes/archive/2026-09-19-rc07-artifact-lint",
+  "audit": {
+    "ran": true,
+    "critical": 0,
+    "warning": 5,
+    "suggestion": 4,
+    "notes": "Pre-archive sweep, depth full, 0 CRITICAL so no prompt fired. FOUR of the five warnings were FIXED before the sync, because two of them become permanent once the delta lands: docs/cli.md documented the `unverified` trigger as the whole-domain reason and claimed the run 'still exits zero', both behaviorally false after the scanComplete refactor (a partial failure exits non-zero, which the delta's own scenario requires); the docs JSON example and design D5b both still described source_domain as two fields against a shipped three; and Q-crc-15's sizing sentence said 'only three files still disagree and all three are ARCHIVED' when the real count is four, the fourth being docs/concepts.md, a LIVING document the heuristic mis-parses — an error of mine that would have let a follow-up conclude no living document was affected. The fifth warning WAS task 5.4, executed at sync. Four candidate findings were suppressed with evidence rather than reported, including two ADDED requirements absent from baseline that proved to be the deliberate rc03a/rc13a non-syncs. The audit verified the delta's two-row passthrough table against code rather than prose — `grep '\\.lines\\b' src/` returns exactly sliceStageSection and countRulingEntries — so Q-crc-13's resolution holds."
+  },
+  "sync_specs": {
+    "ran": true,
+    "capabilities": [
+      "orbit-source-lint",
+      "orbit-architecture-engine"
+    ],
+    "notes": "orbit-source-lint CREATED with its 4 ADDED requirements byte-identical to the delta; baseline capabilities 20 -> 21. orbit-architecture-engine's `Parseable architecture-doc format` replaced wholesale. One correction to the pre-sync analysis, surfaced by the sync rather than smoothed over: the MODIFIED delta carries EIGHT scenarios, not the seven predicted — the six originals byte-identical (diff-verified) plus TWO added, `Passthrough is carried, not interpreted` and `Ruling-index content stays out of the parsed model`. Nothing was dropped. Task 5.4's at-archive note was executed in the same working tree: CLAUDE.md's src:capabilities span re-read post-sync and corrected 20 -> 21, without which the change's own lint fails on the archived tree. That failure was observed live before the fix (`CLAUDE.md:109: source 'capabilities' emits \"21\", but the marked span reads \"20\"`) — the most direct dogfood evidence this change could produce."
+  },
+  "unresolved_markers": {
+    "count": 3,
+    "decision": "proceeded",
+    "notes": "All three sit inside .orbit-runs/ — a review JSON's recommendation prose and two external-review files. They are AUDIT TRAIL, which the cascade rules make lifecycle-invariant, so two of the skill's three options (address, convert to todo) would have required editing the record. No prompt was fired because no legal alternative to proceeding existed. Task 5.6's sweep excludes .orbit-runs/ for exactly this reason and returns zero; no marker rides the delta into baseline."
+  },
+  "consent": "user-invoked",
+  "warnings": [
+    "independentSpend reads 4 against a budget of 3. The review-system gate computed PASSED because clause (c) is findings-resolved, not no-new-findings: every finding from every pass is resolved, but NO clean independent pass stands on the final tree. Specifically unreviewed by any independent reader: the scanComplete refactor that replaced inferred completeness with carried state, the ENOENT-only lstat narrowing, containment for specs.capability-count, and the four pre-archive documentation corrections above. Residual risk, recorded rather than implied.",
+    "The base-fingerprint check reads `1 verified` AFTER the sync replaced the very requirement it fingerprints. Empirically the check is not broken — perturbing the live baseline produced `1 diverged` immediately and restoring returned it to verified — so the post-sync reading is consistent with baseline now matching the delta, which is the expected end state rather than drift. Recorded as an observation because the semantics of a post-sync check are nowhere stated, not as a defect."
+  ],
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."
+}

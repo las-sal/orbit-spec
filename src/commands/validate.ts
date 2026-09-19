@@ -382,14 +382,12 @@ function summarizeSources(
   // turn on whether git could answer rather than on whether the repository is correct. The
   // run still exits zero: the spec requires this path to produce no findings and never to
   // claim the project verified, and `passed` IS such a claim.
-  // The domain is INCOMPLETE when it could not be resolved at all, OR when any member of it was
-  // not read. Gating only on the whole-domain reason repeated the very pattern this rule was
-  // written to stop: one unreadable file may hold a source's only marker, and counting that
-  // source as passed claims a check that never ran.
-  const domainIncomplete =
-    (result.domainReason !== null && result.filesScanned === 0) ||
-    result.findings.some((f) => f.kind === 'domain');
-  if (domainIncomplete && declared.size > 0) {
+  // Completeness is READ, never inferred. Three earlier versions deduced it from whichever
+  // finding kinds this function happened to inspect, and each one left a scope uncovered — a
+  // partially-read domain, then a file abandoned mid-parse after a marker error. `scanComplete`
+  // is cleared at every point the lint fails to fully examine a domain file, so there is one
+  // place to be right instead of a list to keep widening.
+  if (!result.scanComplete && declared.size > 0) {
     const unverified = declared.size - failedSources.size;
     return { items, passed: items - failed - unverified, failed, unverified };
   }
@@ -409,7 +407,11 @@ function sourceJson(result: SourceLintResult) {
   return {
     source_findings: result.findings,
     source_coverage: result.coverage,
-    source_domain: { files_scanned: result.filesScanned, reason: result.domainReason },
+    source_domain: {
+      files_scanned: result.filesScanned,
+      reason: result.domainReason,
+      scan_complete: result.scanComplete,
+    },
   };
 }
 

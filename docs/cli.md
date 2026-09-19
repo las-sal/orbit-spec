@@ -368,7 +368,8 @@ Sources:
   ],
   "source_domain": {
     "files_scanned": 5,
-    "reason": null
+    "reason": null,
+    "scan_complete": true
   },
   "summary": {
     "totals": {
@@ -401,19 +402,26 @@ Sources:
 `source_findings`, `source_coverage` and `source_domain` appear only when `orbit/sources.yaml` is
 present; with no registry the output is exactly what it was before the lint existed.
 
-`source_domain` answers "what did this run actually read": `files_scanned` counts files opened and
-parsed (never files merely listed), and `reason` is non-null when the domain could not be resolved
-at all — a project that is not a git repository, for instance. When that happens, declared sources
-that still resolved are reported as `unverified` rather than `passed`, both in
-`summary.byType.sources` and in `summary.totals` (the key appears only when non-zero):
+`source_domain` answers "what did this run actually read". `files_scanned` counts files opened and
+parsed, never files merely listed. `reason` is non-null when the domain could not be resolved at
+all — a project that is not a git repository, for instance. `scan_complete` is the one that governs
+the summary: it is false whenever ANY domain file was not fully examined, which covers the
+unresolvable domain AND four partial cases — a file that could not be read, a path that could not
+be inspected, a path skipped by policy, and a file whose parse was abandoned after a marker error.
+
+Whenever `scan_complete` is false, declared sources that still resolved are reported `unverified`
+rather than `passed`, in both `summary.byType.sources` and `summary.totals` (the key appears only
+when non-zero):
 
 ```
 Totals: 1 passed, 0 failed, 1 unverified (2 items)
 ```
 
-The run still exits zero — the lint genuinely cannot check anything without a file list, and
-`orbit validate` works fully in a non-git project for changes and specs. What it must not do is
-report a source as having passed a check that never ran.
+The EXIT CODE depends on which case it is. An unresolvable domain produces no findings and exits
+**zero** — the lint genuinely cannot check anything without a file list, and `orbit validate` works
+fully in a non-git project for changes and specs. A partial failure produces a `domain` finding and
+exits **non-zero**. Either way the sources are reported unverified: what the command must never do
+is report a source as having passed a check that never ran.
 
 Each finding is discriminated by `kind` and carries only that kind's fields:
 

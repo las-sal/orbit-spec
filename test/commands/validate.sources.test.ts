@@ -110,7 +110,7 @@ describe('orbit validate --sources', () => {
     ]);
     expect(json.source_coverage).toEqual([{ source: 'stages', value: '2', markers: 1 }]);
     // files_scanned counts files actually READ, and rides with the other two source keys.
-    expect(json.source_domain).toEqual({ files_scanned: expect.any(Number), reason: null });
+    expect(json.source_domain).toEqual({ files_scanned: expect.any(Number), reason: null, scan_complete: true });
     expect(json.source_domain.files_scanned).toBeGreaterThan(0);
   });
 
@@ -159,8 +159,11 @@ describe('orbit validate --sources', () => {
     const json = JSON.parse(result.stdout.trim());
     expect(json.source_findings[0].kind).toBe('marker');
     expect(Object.keys(json.source_findings[0]).sort()).toEqual(['detail', 'file', 'kind', 'line']);
-    // The declared source passes; the pseudo-item carries the failure.
-    expect(json.summary.byType.sources).toEqual({ items: 2, passed: 1, failed: 1 });
+    // The source is UNVERIFIED, not passed: `parseMarkedSpans` abandons the rest of a file after
+    // a marker error, and the abandoned suffix could hold this source's only marker. The pseudo-
+    // item still carries the failure, so the run still exits non-zero.
+    expect(json.summary.byType.sources).toEqual({ items: 2, passed: 0, failed: 1, unverified: 1 });
+    expect(json.source_domain.scan_complete).toBe(false);
   });
 
   it('an empty file domain is reported with its reason in BOTH output modes', async () => {
@@ -269,6 +272,30 @@ describe('orbit validate --sources', () => {
     const json = JSON.parse(result.stdout.trim());
     expect(json.summary.byType.sources).not.toHaveProperty('unverified');
     expect(json.summary.totals).not.toHaveProperty('unverified');
+    expect(json.source_domain.scan_complete).toBe(true);
+  });
+
+  it('a tracked path under an UNSEARCHABLE parent is reported, not treated as deleted', async () => {
+    // `lstatSync` throws EACCES here, not ENOENT. A bare catch swallowed it as absence, leaving a
+    // tracked living document unexamined while the run still looked clean. A chmodded FILE cannot
+    // cover this branch — it reaches the later readFileSync catch — so the PARENT is locked.
+    writeRegistry();
+    const dir = path.join(root, 'locked-dir');
+    fs.mkdirSync(dir);
+    fs.writeFileSync(path.join(dir, 'inside.md'), `has ${OPEN('stages')}99${CLOSE('stages')}\n`);
+    track();
+    fs.chmodSync(dir, 0o000);
+    try {
+      const result = await runCLI(['validate', '--sources', '--json'], { cwd: root });
+      expect(result.exitCode).toBe(1);
+      const json = JSON.parse(result.stdout.trim());
+      const fault = json.source_findings.find((f: any) => f.kind === 'domain' && f.file === 'locked-dir/inside.md');
+      expect(fault, 'an unstattable tracked path must be reported').toBeDefined();
+      expect(json.source_domain.scan_complete).toBe(false);
+      expect(json.summary.byType.sources.passed).toBe(0);
+    } finally {
+      fs.chmodSync(dir, 0o755);
+    }
   });
 
   it('per-item validation is unchanged by the lint', async () => {

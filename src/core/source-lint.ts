@@ -65,6 +65,17 @@ export interface SourceLintResult {
   coverage: SourceCoverageEntry[];
   /** Files actually READ and parsed (after exclusions, and after read failures). */
   filesScanned: number;
+  /**
+   * True when EVERY file in the domain was fully examined.
+   *
+   * This is CARRIED, not inferred. Four consecutive review rounds found a scope where a source
+   * was reported as passing a check that never ran, because completeness was being deduced from
+   * whichever finding kinds the summary happened to look at — the whole-domain reason, then also
+   * `domain` findings, and so on. Each widening left a new scope uncovered. Every point below
+   * that fails to fully examine a domain file clears this flag, so a further such scope cannot be
+   * silently omitted: it has to clear the flag to exist.
+   */
+  scanComplete: boolean;
   /** Named reason when the file domain is empty, e.g. a checkout without git. */
   domainReason: string | null;
 }
@@ -172,11 +183,10 @@ interface MarkerError {
 /**
  * Parses one document's marked spans.
  *
- * A marker is INERT — neither an opener nor a closer — in three cases, so that prose ABOUT
- * the syntax never becomes prose CHECKED by it: a comment that does not match the opener
- * grammar exactly, a marker inside a fenced code block, and a marker inside an inline code
- * span. The third is required rather than cosmetic: this capability's own artifacts carry
- * conforming markers inside backticks.
+ * A marker is INERT — neither an opener nor a closer — in TWO cases, so that prose ABOUT the
+ * syntax never becomes prose CHECKED by it: a comment that does not match the delimiter grammar
+ * exactly, and a marker inside a fenced code block. Backticks confer NO inertness; the NAME does,
+ * which is why prose writes a PLACEHOLDER name. A real-named pair in prose is LIVE, deliberately.
  *
  * Pairing is a CLOSED table whose outcomes are of two kinds. A MARKER ERROR names the
  * offending delimiter's line, because there is no span to compare; an EMPTY span is NOT a
@@ -281,7 +291,7 @@ export function runSourceLint(projectRoot: string): SourceLintResult {
   const registryFile = path.join(projectRoot, SOURCES_REGISTRY_PATH);
   if (!fs.existsSync(registryFile)) {
     // No registry → no sources, no markers, no lint: the state of every repository today.
-    return { registryPresent: false, findings: [], coverage: [], filesScanned: 0, domainReason: null };
+    return { registryPresent: false, findings: [], coverage: [], filesScanned: 0, domainReason: null, scanComplete: true };
   }
 
   let declared: DeclaredSource[];
@@ -296,6 +306,7 @@ export function runSourceLint(projectRoot: string): SourceLintResult {
       coverage: [],
       filesScanned: 0,
       domainReason: null,
+      scanComplete: true,
     };
   }
 
@@ -314,6 +325,8 @@ export function runSourceLint(projectRoot: string): SourceLintResult {
   }
 
   const { files, reason } = resolveFileDomain(projectRoot);
+  // A domain that could not be listed is the first way a scan is incomplete.
+  let scanComplete = reason === null;
   const markerCounts = new Map<string, number>(declared.map((d) => [d.name, 0]));
 
   let filesRead = 0;
@@ -327,7 +340,17 @@ export function runSourceLint(projectRoot: string): SourceLintResult {
     let entry: fs.Stats;
     try {
       entry = fs.lstatSync(absolute);
-    } catch {
+    } catch (err) {
+      // ONLY a genuinely absent entry is silent. A bare catch also swallowed EACCES (a tracked
+      // path under an unsearchable parent), ENOTDIR and metadata I/O faults, each of which
+      // leaves a tracked living document unexamined while the run still looks clean.
+      if ((err as NodeJS.ErrnoException).code === 'ENOENT') continue;
+      findings.push({
+        kind: 'domain',
+        file,
+        detail: `tracked path could not be inspected (${(err as NodeJS.ErrnoException).code ?? 'unknown error'}), so its marked spans were never checked`,
+      });
+      scanComplete = false;
       continue;
     }
     // A tracked symlink is a DOMAIN fault rather than a file to follow. Git tracks the link
@@ -340,6 +363,7 @@ export function runSourceLint(projectRoot: string): SourceLintResult {
         file,
         detail: 'tracked path is a symlink; the lint reads tracked file content, not link targets, so its marked spans were never checked',
       });
+      scanComplete = false;
       continue;
     }
     try {
@@ -350,6 +374,7 @@ export function runSourceLint(projectRoot: string): SourceLintResult {
         file,
         detail: `tracked file could not be read, so its marked spans were never checked: ${(err as Error).message}`,
       });
+      scanComplete = false;
       continue;
     }
     filesRead++;
@@ -380,6 +405,10 @@ export function runSourceLint(projectRoot: string): SourceLintResult {
     }
     if (error) {
       findings.push({ kind: 'marker', file, line: error.line, detail: error.detail });
+      // A marker error ABANDONS the rest of this file — pairing is no longer trustworthy inside
+      // it — so the abandoned suffix may hold any source's only marker. The file was read but
+      // not fully examined, which is exactly the distinction this flag exists to carry.
+      scanComplete = false;
     }
   }
 
@@ -391,5 +420,5 @@ export function runSourceLint(projectRoot: string): SourceLintResult {
 
   // `filesScanned` counts files actually READ, never files merely listed — otherwise the one
   // number answering "what did this run look at" overstates itself precisely when a read failed.
-  return { registryPresent: true, findings, coverage, filesScanned: filesRead, domainReason: reason };
+  return { registryPresent: true, findings, coverage, filesScanned: filesRead, domainReason: reason, scanComplete };
 }

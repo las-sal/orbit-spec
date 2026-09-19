@@ -1,5 +1,21 @@
-## ADDED Requirements
+# orbit-source-lint Specification
 
+## Purpose
+
+A figure restated in prose that disagrees with its source is a defect a machine should own, not a
+review finding. This capability is the link from the prose to the fact: `orbit/sources.yaml` maps a
+source NAME to one of a CLOSED set of ENGINE-computed facts (no shell — orbit is a published
+package, so a `command:` field would make `orbit validate` execute repository data), a `src:` marker
+DELIMITS a span in living prose, and the check asks only whether that span CONTAINS the string the
+source emits. The file domain is the WHOLE PROJECT — `git ls-files '*.md'` minus a DECLARED
+exclusion list whose every entry is decidable by path and stated with its reason — because the lint
+reads LIVING documents and never RECORDS. Within a file the AUTHOR'S MARKER is the boundary:
+unmarked figures are INVISIBLE to the lint and are never reported as clean, and per-source marker
+COVERAGE is reported so a fact nothing points at stays visible. The lint counts and compares; it
+infers nothing about which token in prose an author meant, and where an input is prose or judgment
+the deliverable is a RECORD rather than a CHECK.
+
+## Requirements
 ### Requirement: Source registry declares computable facts
 
 The system SHALL read `orbit/sources.yaml`, whose top-level `sources:` key holds a map from a source NAME to an ENGINE-computed fact, and SHALL treat that map as the authority for which names a marker may reference. The `sources:` wrapper is required rather than entries at the document root, so the document root RESERVES NAMESPACE for a later top-level key. That is a namespace claim, not a forward-compatibility promise: an unknown top-level key is a clean validation error naming it, so introducing one is a version-gated change like any other. Fail-loud wins over tolerance here for the same reason it wins everywhere else in this capability — a registry that silently ignores something is a registry that can silently stop checking. An absent file means no sources, no markers, and no lint — the state of every repository today.
@@ -8,7 +24,7 @@ The lint is reached through `orbit validate --sources`, and `orbit validate --al
 
 This capability owns the `src:` marker family end to end. `orbit-conventions` owns the review-marker family (`@review`, colon-suffixed) and its escalated and todo companions — spelled here without the literal colon so this sentence is not itself discovered by that family's raw grep; the `src:` family is deliberately NOT declared there, because the marker's syntax and the rule that checks it are one mechanism and splitting them would put two capabilities in charge of one rule.
 
-A declared parameter that names a document or a schema is an IDENTIFIER, never a path: it SHALL match that kind's name grammar, and the file it resolves to SHALL be CONTAINED within the declared tier (symlinks resolved). Without containment, `schema: ../../schemas/spec-driven` escapes both tiers and a read-only-looking `orbit validate` consumes a file the project never declared as an input — which is the same trust boundary the absent `command:` field exists to hold.
+A declared parameter that names a document or a schema is an IDENTIFIER, never a path: it SHALL match that kind's name grammar, and the file it resolves to SHALL be CONTAINED within the declared tier (symlinks resolved). The SAME containment policy governs EVERY filesystem-backed source, not only the parameterised ones — a tier directory that is itself a symlink is refused, and so is a counted file that resolves outside its tier — because a source whose value depends on untracked state outside the project is the same defect whichever source computes it. Without containment, `schema: ../../schemas/spec-driven` escapes both tiers and a read-only-looking `orbit validate` consumes a file the project never declared as an input — which is the same trust boundary the absent `command:` field exists to hold.
 
 `schema.version` deliberately skips the user-global override tier the engine's ordinary resolver consults. That tier lives in a developer's data directory, so honouring it would make the same checkout emit different values on different machines, and a marked repository fact would be machine-dependent. The resolution TIER is an input under R-crc-10 and is therefore named rather than inherited.
 
@@ -192,9 +208,14 @@ The DOMAIN ITSELF is reported alongside the findings: how many files were actual
 - **WHEN** a tracked markdown file in the domain cannot be read for any reason other than not existing in the working tree
 - **THEN** the lint reports it as a DOMAIN fault naming the file, does not count it as scanned, and continues linting every other file — a run SHALL NOT exit clean while claiming to have checked a document it never opened
 
-**A source compared against NOTHING has not passed.** When the file domain is INCOMPLETE — it could
-not be resolved at all, OR any member of it was not read — every declared source that still resolved
-SHALL be reported as UNVERIFIED rather than as passed. Partial incompleteness counts: one unreadable
+**A source compared against NOTHING has not passed.** When the scan is INCOMPLETE, every declared
+source that still resolved SHALL be reported as UNVERIFIED rather than as passed. A scan is
+incomplete whenever ANY file in the domain was not fully examined — the domain could not be listed,
+a path could not be inspected, a file could not be read, a file was skipped by policy, or a file's
+parse was ABANDONED after a marker error. Completeness SHALL be carried as its own state rather than
+inferred from which finding kinds a summary happens to inspect: four successive reviews each found a
+scope the inference did not cover, because widening an inference leaves the next scope uncovered
+while clearing a carried flag is a precondition of the scope existing at all. Partial incompleteness counts: one unreadable
 file may hold a source's only marker, so a rule gated on total failure would report success for a
 source whose single check never ran. Without this the verdict turns on whether git could answer rather than on whether the
 repository is correct, and it turns in the reassuring direction: the same tree reports a failure in
@@ -209,7 +230,7 @@ this requirement constrains what the summary may CLAIM, not whether the command 
 
 #### Scenario: A partially unread domain also reports sources as unverified
 
-- **WHEN** the domain resolved but at least one tracked file in it could not be read
+- **WHEN** the domain resolved but at least one tracked file in it was not fully examined — unreadable, uninspectable, skipped by policy, or abandoned mid-parse after a marker error
 - **THEN** the resolved sources are counted UNVERIFIED, the domain fault is still reported, and the
   run exits NON-zero — incompleteness is incompleteness whether it is total or partial
 
