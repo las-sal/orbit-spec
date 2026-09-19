@@ -1,0 +1,32 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-19T17:19:50Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Q-crc-15 measured and its document half repaired. Running both fence grammars over all 308 tracked markdown files turned an unsized concern into an actionable one: they disagree on 5 files and 382 of 52,805 lines, concentrated in two documents. The reframing that matters is that the heuristic is wrong in BOTH directions — it rescued a malformed baseline spec whose 24 requirement and scenario declarations sat inside an unclosed fence (rendering as one grey code block on GitHub), and it mis-parses a correctly authored document, letting seven lines of an ASCII diagram escape a four-backtick fence. The malformed spec is fixed and the fix verified inert to the engine: the shipped parser sees the same 9 requirements before and after. docs/concepts.md needed no change. The remaining work is sized as an ordinary small change rather than a stage, and the three files that still disagree are archived records that are correctly left alone. Recorded convention exception: the baseline spec was edited directly rather than through a change delta, because the edit alters two fence characters, changes no requirement text and no parse, and no active change fingerprints that capability.",
+  "stages_touched": [],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/clean-up-review-cycle.md",
+        "why": "Q-crc-15 now carries the measurement, the both-directions finding, and the sized remainder; Q-crc-14, 16, 17 still open"
+      },
+      {
+        "path": "orbit/specs/orbit-review-external/spec.md",
+        "why": "the repaired outer fence — four backticks at L81 and L195"
+      },
+      {
+        "path": "src/core/parsers/requirement-blocks.ts",
+        "why": "computeFenceMask, the heuristic to delete, with two consumers"
+      }
+    ],
+    "next_command": "orbit architecture status",
+    "model_hint": "any",
+    "seam": "architect session end; rc07 in-change, review-system unpassed with budget spent"
+  },
+  "next_recommended": "orbit architecture status"
+}

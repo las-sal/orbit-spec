@@ -78,7 +78,7 @@ The system SHALL write the full handoff prompt to a versioned, committed file in
 - **WHEN** an implementer generates the handoff prompt
 - **THEN** it follows the reference template structure below (the implementer may adjust phrasing for clarity but MUST preserve the named sections and the output-format block verbatim so external-review parsers ingest cleanly):
 
-```markdown
+````markdown
 # External Review: <change-name> (iteration <N>)
 
 You are reviewing an OpenSpec change as a second pair of eyes. Your value is
@@ -192,7 +192,7 @@ the markdown directly and the user will save it.
 If you don't have git access, just output the findings markdown in this chat
 (per the chat-only fallback above), state that you could NOT commit/push, and
 the user will commit it manually.
-```
+````
 
 #### Scenario: Output-format block must be verbatim
 

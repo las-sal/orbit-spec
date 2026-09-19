@@ -389,11 +389,42 @@ never deleted.
   a doc carrying a four-backtick fence around a three-backtick example — admitting the fenced
   bullets AND masking the live one. rc07 fixed its own reader by importing the tracker; the
   ARCHITECTURE PARSER still uses the heuristic.
-  Standing recommendation: unify on the shared tracker. Not done inside rc07's walk deliberately —
-  the parser is consumed by `architecture status`, `show` and `validate`, its heuristic was tuned
-  for docs embedding fenced markdown examples, and changing it can reclassify real documents, so it
-  is an engine change that deserves its own review rather than mechanism invented mid-walk
-  (R-crc-6). It surfaces the moment a live doc's fence shape differs between the two grammars.
+  **MEASURED 2026-09-19, and the measurement reframed the question.** The two grammars were run
+  over every tracked markdown file and compared line by line: **5 files of 308 disagreed, 382
+  lines of 52,805.** Four of the five were the same capability spec (`orbit-review-external`, one
+  live baseline and three archived copies); the fifth was `docs/concepts.md`. So the duplication
+  is not a pervasive hazard — it is nearly inert, and it concentrates in two documents.
+
+  **The heuristic is wrong in BOTH directions, which is the part worth keeping.** It does not
+  merely differ from CommonMark; it fails on well-formed input as well as rescuing malformed
+  input:
+  - `orbit/specs/orbit-review-external/spec.md` nested a ```` ```markdown ```` block inside
+    another one. CommonMark closes a three-backtick fence at the first bare three-backtick line,
+    so the file carried an UNCLOSED fence to EOF and **24 `### Requirement:` / `#### Scenario:`
+    declarations sat inside a code block** — rendering as one grey block on GitHub. The heuristic's
+    depth counting accidentally rescued them, which is why nobody noticed for months.
+  - `docs/concepts.md` is authored CORRECTLY, with a four-backtick outer fence. The heuristic
+    treats the first bare three-backtick line inside it as a close and lets seven lines of an
+    ASCII diagram escape the fence. The shared tracker gets it right.
+
+  **The document half is DONE (2026-09-19):** the spec's outer fence is now four backticks. The
+  fix was verified inert to the engine — the shipped parser sees the same 9 requirements before
+  and after, `validate --all --strict` clean, 2199 tests green — so it repairs the RENDERING
+  without touching any requirement. `docs/concepts.md` needed no change; it was already right.
+  Recorded convention exception: a baseline spec was edited DIRECTLY rather than through a
+  change delta, because the edit alters two fence characters, changes no requirement text and no
+  parse, and no active change fingerprints that capability. Routing two characters through a full
+  lifecycle would have been disproportionate.
+
+  Standing recommendation, now sized: delete `computeFenceMask` and point its two consumers
+  (`requirement-blocks.ts`, `architecture/parser.ts`) at the shared tracker, landing the corpus
+  comparison as a TEST so a future malformed document fails loudly instead of being silently
+  rescued. After the document fix only three files still disagree and all three are ARCHIVED
+  copies — records, never validated, correctly left alone. This is an ordinary SMALL CHANGE (one
+  MODIFIED capability at most, well under R-crc-1's ceiling), not a stage: it is only weakly
+  on-program, and a stage's cycle would cost an order of magnitude more than the work. Not done
+  inside rc07's walk deliberately — the parser is shared by `architecture status`, `show` and
+  `validate`, and inventing that mid-walk is what R-crc-6 forbids.
 
 - **Q-crc-16 — this doc states its own stage count twice, unmarked, and once staler than the other.**
   Observed 2026-09-17 while applying rc07's recommended amendments. The header blockquote
@@ -1730,3 +1761,13 @@ fresh-half walk log matched zero of its six substantive findings — hand-retype
 were real; the record certified nothing. No check caught it and the gate's reason line could not
 have, because coverage is evaluated before resolution. The corrected record supersedes; the
 mechanism that would have caught it is recorded for a stage that can review it.
+
+**2026-09-19 — Q-crc-15 measured, and its document half fixed.**
+Running both fence grammars over all 308 tracked markdown files turned a vague "the engine carries
+two grammars" into something actionable: they disagree on 5 files and 382 of 52,805 lines, and the
+heuristic is wrong in BOTH directions — it rescued a malformed spec whose 24 requirements were
+sitting inside an unclosed fence (rendering as a code block on GitHub), and it mis-parses a
+CORRECTLY authored document, letting seven lines escape a four-backtick fence. The malformed spec
+is now fixed, verified inert to the parser. The remaining work is sized as a small change rather
+than a stage. The lesson generalises past this item: "two implementations of one grammar" is a
+claim about RISK, and the cheap way to price it is to run both over the real corpus and count.
