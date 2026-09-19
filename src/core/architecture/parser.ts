@@ -2,9 +2,17 @@
  * Fence-aware parser for architecture docs (D-arc Stage D2).
  *
  * An architecture doc declares engine-readable structure via heading conventions while
- * staying a judgment-dense prose document. The engine reads ONLY: stage ids/titles, the
- * two optional slot lines (`Depends-on:` / `Complete:`), and section boundaries. All
- * other content is engine-opaque.
+ * staying a judgment-dense prose document. This parser INTERPRETS only: stage ids/titles, the
+ * two optional slot lines (`Depends-on:` / `Complete:`), and section boundaries; `docClass` and
+ * the violation list derive from that grammar alone. All other content — charter prose, exit
+ * criteria, premise, rulings, status log — carries no meaning this parser assigns.
+ *
+ * It does CARRY the document's raw lines as passthrough (`ParsedArchitectureDoc.lines`), which
+ * is the substrate `sliceStageSection` slices for `orbit architecture show` and which the source
+ * lint reads to count ruling entries. Carrying content is not interpreting it — but an earlier
+ * version of this comment said "the engine reads ONLY", which was false of that field and of
+ * both readers. The permitted readers of passthrough are enumerated in the
+ * `orbit-architecture-engine` spec; any new one belongs on that list.
  *
  * Near-miss rule: a doc intended to be parseable must never silently degrade to legacy.
  * A heading starting `### Stage ` that fails the exact grammar, or a slot line inside a

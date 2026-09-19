@@ -23,7 +23,7 @@ import {
 
 /**
  * A finding is DISCRIMINATED by `kind` and carries exactly the fields its kind defines: the
- * four failures have genuinely different shapes, and a single flat record would be
+ * five failures have genuinely different shapes, and a single flat record would be
  * null-padded for three of them.
  */
 export type SourceFinding =
@@ -87,9 +87,14 @@ export function checkSpanAgainstValue(spanText: string, sourceValue: string): bo
   return spanText.includes(sourceValue);
 }
 
+// The CLOSER CARRIES ITS NAME, and that is what makes prose safe. An anonymous `<!-- /src -->`
+// has no placeholder form, so every sentence mentioning it was a live orphan closer — which is
+// why an inline-code scanner once existed, and why four reviewers found four defects in it. A
+// named closer is inert in prose by the same NAME-grammar rule that always protected the
+// opener: authors write NAME, and the grammar does the rest.
 const OPENER_REGEX = /<!-- src:([a-z0-9][a-z0-9-]*) -->/g;
-const CLOSER = '<!-- /src -->';
-const CLOSER_REGEX = /<!-- \/src -->/g;
+const CLOSER_REGEX = /<!-- \/src:([a-z0-9][a-z0-9-]*) -->/g;
+const closerFor = (name: string) => `<!-- /src:${name} -->`;
 
 /**
  * The lint reads LIVING documents, never RECORDS. Every exclusion is decidable BY PATH, so
@@ -199,7 +204,7 @@ export function parseMarkedSpans(content: string): { spans: ParsedSpan[]; error:
   CLOSER_REGEX.lastIndex = 0;
   for (let m = CLOSER_REGEX.exec(content); m !== null; m = CLOSER_REGEX.exec(content)) {
     if (code[m.index]) continue;
-    delimiters.push({ type: 'close', start: m.index, end: m.index + m[0].length });
+    delimiters.push({ type: 'close', start: m.index, end: m.index + m[0].length, source: m[1] });
   }
   delimiters.sort((a, b) => a.start - b.start);
 
@@ -208,13 +213,12 @@ export function parseMarkedSpans(content: string): { spans: ParsedSpan[]; error:
   for (const d of delimiters) {
     if (d.type === 'open') {
       if (open) {
-        // The closer is anonymous, so nesting is not expressible; the FIRST opener's line
-        // is the one named.
+        // Nesting is not supported; the FIRST opener's line is the one named.
         return {
           spans,
           error: {
             line: lineOf(open.start),
-            detail: `unclosed marker: '<!-- src:${open.source} -->' has no '${CLOSER}' before the next opener`,
+            detail: `unclosed marker: '<!-- src:${open.source} -->' has no '${closerFor(open.source!)}' before the next opener`,
           },
         };
       }
@@ -222,7 +226,21 @@ export function parseMarkedSpans(content: string): { spans: ParsedSpan[]; error:
       continue;
     }
     if (!open) {
-      return { spans, error: { line: lineOf(d.start), detail: `orphan closer: '${CLOSER}' with no open span` } };
+      return {
+        spans,
+        error: { line: lineOf(d.start), detail: `orphan closer: '${closerFor(d.source!)}' with no open span` },
+      };
+    }
+    if (d.source !== open.source) {
+      // A named closer naming a DIFFERENT source is an authoring error the anonymous form could
+      // not express: re-pairing it silently would close a span the author never opened.
+      return {
+        spans,
+        error: {
+          line: lineOf(d.start),
+          detail: `mismatched closer: '${closerFor(d.source!)}' closes a span opened as '<!-- src:${open.source} -->'`,
+        },
+      };
     }
     spans.push({ source: open.source!, line: lineOf(open.start), text: content.slice(open.end, d.start) });
     open = null;
@@ -232,7 +250,7 @@ export function parseMarkedSpans(content: string): { spans: ParsedSpan[]; error:
       spans,
       error: {
         line: lineOf(open.start),
-        detail: `unclosed marker: '<!-- src:${open.source} -->' has no '${CLOSER}' before end of file`,
+        detail: `unclosed marker: '<!-- src:${open.source} -->' has no '${closerFor(open.source!)}' before end of file`,
       },
     };
   }
@@ -302,11 +320,28 @@ export function runSourceLint(projectRoot: string): SourceLintResult {
   for (const file of files) {
     const absolute = path.join(projectRoot, file);
     let content: string;
-    // A tracked path with no working-tree file is the ONE silence that is correct (a deleted
-    // file still appears in `git ls-files`). Every other read failure — a permission error,
-    // an I/O fault — is reported: swallowing it would let the run exit clean while claiming a
-    // tracked living document was scanned when it was never opened.
-    if (!fs.existsSync(absolute)) continue;
+    // A tracked path with NO DIRECTORY ENTRY is the ONE silence that is correct (a deleted file
+    // still appears in `git ls-files`). `lstat`, never `exists`: the latter follows symlinks, so
+    // a tracked DANGLING symlink — an entry that exists, pointing at nothing — was silently
+    // skipped as though it had been deleted.
+    let entry: fs.Stats;
+    try {
+      entry = fs.lstatSync(absolute);
+    } catch {
+      continue;
+    }
+    // A tracked symlink is a DOMAIN fault rather than a file to follow. Git tracks the link
+    // text; following it would lint bytes that live outside the tracked set, possibly outside
+    // the repository. The policy is deterministic and stated rather than left to what the
+    // filesystem happens to resolve.
+    if (entry.isSymbolicLink()) {
+      findings.push({
+        kind: 'domain',
+        file,
+        detail: 'tracked path is a symlink; the lint reads tracked file content, not link targets, so its marked spans were never checked',
+      });
+      continue;
+    }
     try {
       content = fs.readFileSync(absolute, 'utf-8');
     } catch (err) {

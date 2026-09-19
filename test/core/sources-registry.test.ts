@@ -378,6 +378,27 @@ describe('sources registry', () => {
     }
   });
 
+  it('a SYMLINKED tier root is never trusted, for either parameter kind', () => {
+    // realpath'ing the tier root first made containment tautological: the outside directory
+    // became the root it was compared against, and a schema from outside the declared tier was
+    // read. The tier's own directory entry must not be a symlink.
+    const outsideSchemas = path.join(root, 'elsewhere', 'schemas');
+    fs.mkdirSync(path.join(outsideSchemas, 'spec-driven'), { recursive: true });
+    fs.writeFileSync(path.join(outsideSchemas, 'spec-driven', 'schema.yaml'), MINIMAL_SCHEMA(777));
+    fs.symlinkSync(outsideSchemas, path.join(root, 'orbit', 'schemas'));
+    writeRegistry('sources:\n  v:\n    engine: schema.version\n    schema: spec-driven\n');
+    // Falls through to the PACKAGE tier rather than reading the symlinked one.
+    expect(resolveSourceValue(root, readSourcesRegistry(root)[0])).not.toBe('777');
+
+    const outsideArch = path.join(root, 'elsewhere', 'architecture');
+    fs.mkdirSync(outsideArch, { recursive: true });
+    fs.writeFileSync(path.join(outsideArch, 'ghost.md'), '# P\n\n### Stage s1 — one\n');
+    fs.rmSync(path.join(root, 'orbit', 'architecture'), { recursive: true, force: true });
+    fs.symlinkSync(outsideArch, path.join(root, 'orbit', 'architecture'));
+    writeRegistry('sources:\n  s:\n    engine: architecture.stage-count\n    doc: ghost\n');
+    expect(() => readSourcesRegistry(root)).toThrow(/does not resolve within it|does not exist/);
+  });
+
   it('an inherited prototype name is a clean unknown-source error, not a TypeError', () => {
     for (const name of ['toString', 'constructor', 'hasOwnProperty']) {
       writeRegistry(`sources:\n  a:\n    engine: ${name}\n`);

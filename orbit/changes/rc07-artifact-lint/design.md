@@ -202,12 +202,16 @@ RECORD's contents in living prose is itself the defect.
 
 ### D4 — Parse: delimited spans, fence-aware, one pass per file
 
-An opener is `<!-- src:NAME -->` where NAME matches `[a-z0-9][a-z0-9-]*` EXACTLY; the closer is
-`<!-- /src -->`. The name grammar is strict on purpose: a comment that does not match is not a
-marker at all, so prose describing the syntax (including the line you are reading, where the name
-is a placeholder) is inert. The closer is anonymous, so nesting is not expressible and is not
-supported — an opener before the previous span closes is an unclosed-marker error. Markers inside fenced code blocks AND inside inline code spans are SKIPPED (they are documentation of the syntax,
-including in this very design document), reusing `src/core/markdown-fence.ts`.
+An opener is `<!-- src:NAME -->` and its closer is `<!-- /src:NAME -->`, where NAME matches
+`[a-z0-9][a-z0-9-]*` EXACTLY and the closer's name must match its opener's. The name grammar is
+strict on purpose, and it is the ONLY thing that makes prose inert: a comment that does not match is
+not a marker at all, so prose describing the syntax — including the line you are reading, where the
+name is a placeholder — carries no live delimiter. Nesting is not supported: an opener before the
+previous span closes is an unclosed-marker error, and a closer naming a different source is a
+mismatched-closer error. Markers inside fenced code blocks are SKIPPED, via
+`src/core/markdown-fence.ts`.
+
+**The closer is NAMED, and that reverses this change's original design — see D4c.**
 
 The check is `span.includes(sourceValue)`. It never parses a number; the compound `4C/6W/0S` works
 with no special case (explore.md Case 2).
@@ -241,7 +245,7 @@ considered and rejected was to leave the counts and define `passed` in the spec:
 trap rather than removing it, and this surface has no consumers yet, which is exactly why changing
 it is cheap rather than a reason to leave it.
 
-`source_findings` entries are DISCRIMINATED by `kind`, because the four failures have genuinely
+`source_findings` entries are DISCRIMINATED by `kind`, because the five failures have genuinely
 different shapes and a single flat record would be null-padded for three of them:
 
 | kind | fields |
@@ -342,25 +346,36 @@ charter amendment must carry that distinction, so the split is not narrated as c
 None. The exploration closed with zero open questions; the deferrals above are DECLARED with kind
 and method per D-bcs-2, not open.
 
-### D4b — The inertness rule needs an inline-code scanner, and that cost is named here
+### D4c — the closer is NAMED, and the inline-code scanner is DELETED (system review, iter 2)
 
-Skipping inline code spans is not free. `src/core/markdown-fence.ts` is line-based and tracks FENCES
-only; nothing in the engine tracks backtick spans within a line, so task 2.2 carries that work
-explicitly rather than leaving an implementer to discover it mid-apply.
+The original design gave the closer no name (`<!-- /src -->`) and paid for it with an inline-code
+scanner, so that prose mentioning the closer inside backticks would not become a live orphan
+closer. **That scanner was the single worst-engineered thing in this change, and its failure was
+structural rather than careless.** Four independent reviewers found four separate defects in it: a
+code span crossing a blank line, backslash escapes not honoured, backslash escapes applied INSIDE an
+open span where CommonMark ignores them, and superlinear pairing. The fourth review named the shape:
+inline elements never cross CommonMark BLOCK boundaries, and a blank line is only one of the many
+things that end a block — headings, list items, block quotes, thematic breaks and HTML blocks all do
+it without one. A line-grouping heuristic was doing a block parser's job, and each repair fixed the
+symptom the reviewer had named rather than the invariant underneath.
 
-The alternative was to anchor the opener — require it to be preceded on its line only by whitespace,
-or to share a line with its closer. It is cheaper and it is rejected: it forbids marking a figure
-MID-SENTENCE, and every mark the dogfood places is mid-sentence. (An earlier draft justified this by
-citing "the rulings endpoint above"; D3 has since reversed endpoint marking outright, so the
-surviving case is the one that carries the argument — a marked COUNT inside a written current-state
-sentence, in `CLAUDE.md` and in the architecture-doc sentence task 5.4 recommends.) A rule that
-outlaws its own dogfood is the wrong rule.
+So the NEED was removed instead of the bug. A named closer is inert in prose by exactly the rule
+that always protected the opener, and the authoring rule collapses to one sentence: **use a
+PLACEHOLDER name in prose.** Backticks confer no inertness now; the NAME does.
 
-This capability's own artifacts are the fixtures — and the test DERIVES them rather than pinning a
-count, because the count moves every time a scenario is added (an earlier draft said "four" and was
-wrong within the same session). The rule is: every conforming opener or closer appearing inside a
-backtick span anywhere in this change's own prose must go silent, whatever the current number is. They are why the rule exists: the document describing the check
-would otherwise fail it.
+What this bought, measured: the inline scanner (42 lines) deletes, `computeCodeRegionMask` goes
+112 → 45 lines and is fence-only over the shared tracker, the spec's six-row inline-code table and
+its scenario delete, and two CRITICALs cease to exist because the code they described is gone.
+Every pre-existing document that MENTIONS `<!-- /src -->` goes silent for free.
+
+What it cost, stated: the marker FORMAT changed, which is this capability's core; four prose
+examples using real source names became placeholder-named; the dogfood's four closers were renamed.
+The anchored-opener alternative rejected earlier stays rejected for the same reason as before — it
+forbids marking a figure mid-sentence, and every mark the dogfood places is mid-sentence.
+
+What it gained beyond the deletion: a closer naming the wrong source is now a DETECTABLE authoring
+error rather than a silent re-pairing, and "nesting is not expressible" stops resting on the closer
+having no name — it is now a stated rule with its own error.
 
 ### D6b — `CLAUDE.md` has no present tense, and the dogfood has to write one
 
@@ -387,7 +402,7 @@ failed three times unlinted.
 
 ## Alternatives considered
 
-- **A marker BESIDE the figure** (`18 small stages <!-- src:stages -->`) — rejected on R-crc-10, not
+- **A marker BESIDE the figure** (`18 small stages <!-- src:NAME -->`) — rejected on R-crc-10, not
   on taste: it requires the engine to find "the number near the marker" across prose that in the
   four real defects was a numeral inside bold, a range endpoint inside an identifier, an English
   word, and a compound of three numbers. Any rule for "the number near" infers which token the
@@ -410,7 +425,7 @@ failed three times unlinted.
 - `src/core/source-lint.ts` — new: domain resolution, span parse, containment check, coverage.
 - `src/core/sources-registry.ts` — new: `orbit/sources.yaml` read + the CLOSED engine-source table.
 - `src/core/sources-registry.ts` — ALSO carries the rulings-index entry count (declared-prefix grammar); deliberately NOT `src/core/architecture/parser.ts`, whose engine-opacity contract stays intact.
-- `src/core/markdown-fence.ts` — gains an ADDITIVE whole-document code-region mask (today: fences only, line-based). `FenceTracker.inFence`/`handle` are NOT modified — the trail and report parsers share that API.
+- `src/core/markdown-fence.ts` — gains an ADDITIVE whole-document, per-CHARACTER code-region mask over FENCED blocks, built on the shared tracker. (An inline-code-span scanner lived here briefly and was deleted — D4c.) `FenceTracker.inFence`/`handle` are NOT modified — the trail and report parsers share that API.
 - `src/commands/validate.ts` — the `--sources` path and its `--all` inclusion.
 - `src/cli/index.ts` — the `--sources` flag.
 - `orbit/sources.yaml` — new: this project's registry (the dogfood).

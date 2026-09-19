@@ -382,7 +382,14 @@ function summarizeSources(
   // turn on whether git could answer rather than on whether the repository is correct. The
   // run still exits zero: the spec requires this path to produce no findings and never to
   // claim the project verified, and `passed` IS such a claim.
-  if (result.domainReason !== null && result.filesScanned === 0 && declared.size > 0) {
+  // The domain is INCOMPLETE when it could not be resolved at all, OR when any member of it was
+  // not read. Gating only on the whole-domain reason repeated the very pattern this rule was
+  // written to stop: one unreadable file may hold a source's only marker, and counting that
+  // source as passed claims a check that never ran.
+  const domainIncomplete =
+    (result.domainReason !== null && result.filesScanned === 0) ||
+    result.findings.some((f) => f.kind === 'domain');
+  if (domainIncomplete && declared.size > 0) {
     const unverified = declared.size - failedSources.size;
     return { items, passed: items - failed - unverified, failed, unverified };
   }

@@ -20,6 +20,8 @@ import * as path from 'node:path';
 import { parse as parseYaml } from 'yaml';
 import {
   loadArchitectureDoc,
+  isValidDocName,
+  ARCHITECTURE_DIR,
   type ParsedArchitectureDoc,
 } from './architecture/parser.js';
 import { createFenceTracker } from './markdown-fence.js';
@@ -199,9 +201,23 @@ function requireParseableDoc(projectRoot: string, source: string, name: string):
 }
 
 function architectureDocMissing(projectRoot: string, name: string): string | null {
+  if (!docWithinTier(projectRoot, name)) {
+    return `architecture doc '${name}' does not exist under orbit/architecture/, or does not resolve within it`;
+  }
   return loadArchitectureDoc(projectRoot, name)
     ? null
     : `architecture doc '${name}' does not exist under orbit/architecture/`;
+}
+
+/**
+ * ONE containment rule for both declared parameter kinds. `loadArchitectureDoc` checks the NAME
+ * lexically but follows a symlinked doc wherever it points; that parser is shared by
+ * `architecture status`, `show` and `validate`, so the containment this capability requires is
+ * enforced HERE rather than by widening it.
+ */
+function docWithinTier(projectRoot: string, name: string): boolean {
+  if (!isValidDocName(name)) return false;
+  return resolveWithinTier(path.join(projectRoot, ARCHITECTURE_DIR), `${name}.md`) !== null;
 }
 
 /**
@@ -223,14 +239,39 @@ function findSchemaFile(projectRoot: string, name: string): string | null {
   // see: a tier directory or a schema.yaml that resolves outside its tier.
   if (!SCHEMA_NAME_REGEX.test(name)) return null;
   for (const dir of [getProjectSchemasDir(projectRoot), getPackageSchemasDir()]) {
-    const tierRoot = fs.existsSync(dir) ? fs.realpathSync(dir) : path.resolve(dir);
-    const candidate = path.resolve(tierRoot, name, 'schema.yaml');
-    if (!fs.existsSync(candidate)) continue;
-    const resolved = fs.realpathSync(candidate);
-    if (resolved !== candidate && !isContainedIn(resolved, tierRoot)) continue;
-    return candidate;
+    const candidate = resolveWithinTier(dir, path.join(name, 'schema.yaml'));
+    if (candidate) return candidate;
   }
   return null;
+}
+
+/**
+ * Resolves `relative` inside the LEXICAL tier root `dir`, or null.
+ *
+ * The lexical root is deliberately NOT realpath'd first. An earlier version did, and a symlinked
+ * tier directory then became the root against which containment was compared — making the check
+ * tautologically true and admitting a schema from outside the declared tier. So a tier root that
+ * is itself a symlink is REJECTED, and the candidate's real path must sit inside the real path of
+ * that non-symlinked root. Internal symlinks are still fine; escapes are not.
+ */
+function resolveWithinTier(dir: string, relative: string): string | null {
+  const lexicalRoot = path.resolve(dir);
+  let rootEntry: fs.Stats;
+  try {
+    // lstat, not exists: the TIER DIRECTORY ENTRY itself must not be a symlink. Comparing
+    // realpath(root) to the lexical path would be wrong — an ANCESTOR being symlinked is
+    // ordinary (on macOS `/tmp` and `/var/folders` both are) and says nothing about the tier.
+    rootEntry = fs.lstatSync(lexicalRoot);
+  } catch {
+    return null;
+  }
+  if (rootEntry.isSymbolicLink()) return null; // symlinked tier root: never trusted
+  const realRoot = fs.realpathSync(lexicalRoot);
+  const candidate = path.resolve(lexicalRoot, relative);
+  if (!isContainedIn(candidate, lexicalRoot)) return null;
+  if (!fs.existsSync(candidate)) return null;
+  if (!isContainedIn(fs.realpathSync(candidate), realRoot)) return null;
+  return candidate;
 }
 
 /** True when `target` sits at or beneath `root` — a path comparison, never a string prefix. */

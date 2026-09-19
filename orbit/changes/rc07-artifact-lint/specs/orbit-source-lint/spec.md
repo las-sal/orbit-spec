@@ -73,7 +73,12 @@ An entry names an ENGINE source and its parameters. Each engine source DECLARES 
 
 ### Requirement: A marker delimits a span and the check is string containment
 
-The system SHALL recognise a marked span opened by `<!-- src:NAME -->` — where NAME matches `[a-z0-9][a-z0-9-]*` exactly — and closed by `<!-- /src -->`, and SHALL verify that the span's text CONTAINS the string the named source emits. A marker is INERT — neither an opener nor a closer — in three cases, so that prose ABOUT the syntax never becomes prose CHECKED by it: a comment that does not match the delimiter grammar exactly; a marker inside a fenced code block; and a marker inside an inline code span. EXACTLY means byte-for-byte apart from NAME: one literal space inside each comment, so `<!--src:stages-->`, a tabbed form, a double-spaced form and a form split across lines are all inert. Only NAME is a pattern. The third case is required, not cosmetic: this capability's own artifacts carry conforming markers inside backticks, and without the rule the document describing the check would fail it. The check is string containment inside a boundary the AUTHOR drew; it SHALL NOT parse numbers, and it SHALL NOT infer which token in a span is the figure.
+The system SHALL recognise a marked span opened by `<!-- src:NAME -->` — where NAME matches `[a-z0-9][a-z0-9-]*` exactly — and closed by `<!-- /src:NAME -->` — the closer's NAME SHALL match its opener's — and SHALL verify that the span's text CONTAINS the string the named source emits. A marker is INERT — neither an opener nor a closer — in two cases, so that prose ABOUT the syntax never becomes prose CHECKED by it: a comment that does not match the delimiter grammar exactly, and a marker inside a fenced code block. EXACTLY means byte-for-byte apart from NAME: one literal space inside each comment, so `<!--src:stages-->`, a tabbed form, a double-spaced form and a form split across lines are all inert. Only NAME is a pattern.
+
+**THE CLOSER CARRIES ITS NAME, and that is what keeps prose safe.** An anonymous closer has no placeholder form, so every sentence mentioning it is a live orphan closer — and protecting prose from that required masking inline code spans, which requires knowing where CommonMark blocks begin and end, since inline elements never cross block boundaries. Four independent reviewers found four separate defects in that scanner before the fourth established the shape of the problem: a line-grouping heuristic was doing a block parser's job. The NEED was removed rather than the bug. With a named closer the AUTHORING RULE is one sentence — **write a PLACEHOLDER name in prose** (`<!-- src:NAME -->`, `<!-- /src:NAME -->`) — and the name grammar makes both delimiters inert with no scanner at all, inside backticks or not. Backticks confer no inertness; the NAME does.
+
+A closer whose NAME does not match the open span is a MARKER ERROR, never a silent re-pairing: it is an authoring mistake the anonymous form could not express, and treating it as a close would end a span the author never opened.
+ The check is string containment inside a boundary the AUTHOR drew; it SHALL NOT parse numbers, and it SHALL NOT infer which token in a span is the figure.
 
 The delimited form is required rather than a marker placed beside a figure. A marker beside a figure would require the engine to identify "the number near the marker" in prose which — across the four defects that motivated this capability — was a numeral inside bold, a range endpoint inside an identifier, an English word, and a compound of three numbers. Any rule for "the number near" infers which token the author meant, and the engine cannot observe intent.
 
@@ -89,9 +94,10 @@ This is deliberately NOT a check. Detecting it would require the engine to know,
 
 | situation | kind | outcome |
 |---|---|---|
-| opener then closer | — | one span; its text is the bytes between them |
-| opener then a second opener before any closer | MARKER ERROR | unclosed marker, naming the FIRST opener's line (the closer is anonymous, so nesting is not expressible) |
+| opener then a closer of the SAME name | — | one span; its text is the bytes between them |
+| opener then a second opener before any closer | MARKER ERROR | unclosed marker, naming the FIRST opener's line (nesting is not supported) |
 | closer with no open span | MARKER ERROR | orphan closer, naming its line |
+| closer whose NAME differs from the open span's | MARKER ERROR | mismatched closer, naming its line and both names |
 | opener with no closer before end of file | MARKER ERROR | unclosed marker, naming the opener's line |
 | opener immediately followed by its closer | CHECK FAILURE | an EMPTY span contains no source value, so it fails like any disagreeing span — reported with the source value, not as a syntax error |
 
@@ -119,34 +125,24 @@ A MARKER ERROR's blast radius is ONE FILE: that file's remaining spans are aband
 - **WHEN** a span names a source absent from `orbit/sources.yaml`
 - **THEN** validation fails naming the file, the line and the unknown source
 
-**Inline-code inertness has a CLOSED grammar**, per CommonMark 0.31.2 code spans — a streaming toggle is not sufficient, because an opening backtick run with no matching run is literal text and cannot be recognised without lookahead:
-
-| case | treatment |
-|---|---|
-| backtick run closed by an EQUAL-LENGTH run | the enclosed bytes are a code region; markers inside are inert |
-| backtick run closed only by a DIFFERENT-LENGTH run | not a delimiter pair; scanning continues for an equal-length run |
-| backtick run with NO matching run anywhere after it | literal text, NOT a code region; markers after it are live |
-| a code span crossing a line ending | one region; inertness spans the line break |
-| two adjacent code spans | two regions; the text between them is live |
-| a backtick run inside a FENCED block | not a code span; the fence already makes the region inert |
-| a backtick run separated from its would-be partner by a BLANK LINE | not a delimiter pair; a code span is an INLINE construct and never crosses a block boundary, so both runs are literal and markers between them stay LIVE |
-| a backtick preceded by an ODD number of backslashes | escaped, therefore literal; it opens and closes nothing, and markers around it stay LIVE (an even number leaves it a real delimiter) |
-
-The mask is computed over the WHOLE DOCUMENT before marker scanning, not while streaming lines.
-
 #### Scenario: A syntax example is not a marker
 
-- **WHEN** a document describes the marker form with a placeholder name, shows one inside a fenced code block, or shows a conforming opener or closer inside an inline code span
-- **THEN** none of them is treated as a marker, and the lint reports nothing for any of them
+- **WHEN** a document describes the marker form with a PLACEHOLDER name, or shows a conforming pair inside a fenced code block
+- **THEN** neither is treated as a marker, and the lint reports nothing for either — a placeholder-named pair is inert whether or not it sits inside backticks, because the NAME confers the inertness
+
+#### Scenario: A closer naming a different source is a clean error
+
+- **WHEN** a span opened as `<!-- src:NAME -->` is closed by `<!-- /src:OTHER -->`
+- **THEN** validation fails naming the file, the line and both names; the span SHALL NOT be silently closed
 
 #### Scenario: An unclosed marker is a clean error
 
-- **WHEN** an opening marker has no matching `<!-- /src -->` in the same file
+- **WHEN** an opening marker has no matching closer of its own name in the same file
 - **THEN** validation fails naming the file and the line of the unclosed opener
 
 #### Scenario: An orphan closer is a clean error
 
-- **WHEN** a `<!-- /src -->` appears with no open span
+- **WHEN** a closer appears with no open span
 - **THEN** validation fails naming the file and the line of the orphan closer
 
 ### Requirement: The lint reads living documents across the whole project
@@ -196,9 +192,11 @@ The DOMAIN ITSELF is reported alongside the findings: how many files were actual
 - **WHEN** a tracked markdown file in the domain cannot be read for any reason other than not existing in the working tree
 - **THEN** the lint reports it as a DOMAIN fault naming the file, does not count it as scanned, and continues linting every other file — a run SHALL NOT exit clean while claiming to have checked a document it never opened
 
-**A source compared against NOTHING has not passed.** When the file domain could not be resolved at
-all, every declared source that still resolved SHALL be reported as UNVERIFIED rather than as
-passed. Without this the verdict turns on whether git could answer rather than on whether the
+**A source compared against NOTHING has not passed.** When the file domain is INCOMPLETE — it could
+not be resolved at all, OR any member of it was not read — every declared source that still resolved
+SHALL be reported as UNVERIFIED rather than as passed. Partial incompleteness counts: one unreadable
+file may hold a source's only marker, so a rule gated on total failure would report success for a
+source whose single check never ran. Without this the verdict turns on whether git could answer rather than on whether the
 repository is correct, and it turns in the reassuring direction: the same tree reports a failure in
 a git checkout and a success in an export. The run still exits zero and still produces no findings —
 this requirement constrains what the summary may CLAIM, not whether the command fails.
@@ -208,6 +206,12 @@ this requirement constrains what the summary may CLAIM, not whether the command 
 - **WHEN** the file domain is empty for a named reason and declared sources resolved
 - **THEN** those sources are counted UNVERIFIED, not passed; the run exits zero; and the summary
   SHALL NOT report them as passing a check that never ran
+
+#### Scenario: A partially unread domain also reports sources as unverified
+
+- **WHEN** the domain resolved but at least one tracked file in it could not be read
+- **THEN** the resolved sources are counted UNVERIFIED, the domain fault is still reported, and the
+  run exits NON-zero — incompleteness is incompleteness whether it is total or partial
 
 #### Scenario: A marker inside a record is not linted
 

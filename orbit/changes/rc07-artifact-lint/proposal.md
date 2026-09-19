@@ -9,7 +9,7 @@ reads. Each had a trivially computable source; what was missing was a link from 
 
 ## What Changes
 
-- **A `src:` marker DELIMITS a span** in living prose: `<!-- src:stages -->18 stages<!-- /src -->`.
+- **A `src:` marker DELIMITS a span** in living prose: `<!-- src:NAME -->18 stages<!-- /src:NAME -->`.
   The registry names a source, the source emits a STRING, and the check asks only whether the span
   CONTAINS that string.
 - **`orbit/sources.yaml` maps each source name to an ENGINE-computed fact.** No shell: orbit is a

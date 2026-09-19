@@ -6,7 +6,7 @@ import { execFileSync } from 'node:child_process';
 import { runCLI } from '../helpers/run-cli.js';
 
 const OPEN = (name: string) => `<!${'--'} src:${name} ${'--'}>`;
-const CLOSE = `<!${'--'} /src ${'--'}>`;
+const CLOSE = (name: string) => `<!${'--'} /src:${name} ${'--'}>`;
 
 describe('orbit validate --sources', () => {
   let root: string;
@@ -81,7 +81,7 @@ describe('orbit validate --sources', () => {
 
   it('renders coverage after findings and exits non-zero on a disagreement', async () => {
     writeRegistry();
-    fs.writeFileSync(path.join(root, 'GOV.md'), `The program has ${OPEN('stages')}17${CLOSE} stages.\n`);
+    fs.writeFileSync(path.join(root, 'GOV.md'), `The program has ${OPEN('stages')}17${CLOSE('stages')} stages.\n`);
     track();
     const result = await runCLI(['validate', '--sources'], { cwd: root });
     expect(result.exitCode).toBe(1);
@@ -92,7 +92,7 @@ describe('orbit validate --sources', () => {
 
   it('--json carries discriminated source_findings and source_coverage', async () => {
     writeRegistry();
-    fs.writeFileSync(path.join(root, 'GOV.md'), `has ${OPEN('stages')}17${CLOSE}\n`);
+    fs.writeFileSync(path.join(root, 'GOV.md'), `has ${OPEN('stages')}17${CLOSE('stages')}\n`);
     track();
     const result = await runCLI(['validate', '--sources', '--json'], { cwd: root });
     const json = JSON.parse(result.stdout.trim());
@@ -116,7 +116,7 @@ describe('orbit validate --sources', () => {
 
   it('ONE ITEM IS ONE DECLARED SOURCE, rolled into summary.totals', async () => {
     writeRegistry();
-    fs.writeFileSync(path.join(root, 'GOV.md'), `has ${OPEN('stages')}17${CLOSE}\n`);
+    fs.writeFileSync(path.join(root, 'GOV.md'), `has ${OPEN('stages')}17${CLOSE('stages')}\n`);
     track();
     const result = await runCLI(['validate', '--all', '--json'], { cwd: root });
     const json = JSON.parse(result.stdout.trim());
@@ -240,6 +240,28 @@ describe('orbit validate --sources', () => {
     }
   });
 
+  it('a PARTIAL domain failure also marks sources unverified, not passed', async () => {
+    // One unreadable file may hold a source's only marker. Gating `unverified` on the WHOLE
+    // domain failing repeated the very pattern the bucket was introduced to stop.
+    writeRegistry();
+    const locked = path.join(root, 'locked.md');
+    fs.writeFileSync(locked, `has ${OPEN('stages')}99${CLOSE('stages')}\n`);
+    track();
+    fs.chmodSync(locked, 0o000);
+    try {
+      const result = await runCLI(['validate', '--sources', '--json'], { cwd: root });
+      expect(result.exitCode).toBe(1);
+      const json = JSON.parse(result.stdout.trim());
+      expect(json.source_findings.some((f: any) => f.kind === 'domain')).toBe(true);
+      expect(json.summary.byType.sources.passed).toBe(0);
+      expect(json.summary.byType.sources.unverified).toBe(1);
+      // The domain pseudo-failure is retained, so the run still exits non-zero.
+      expect(json.summary.byType.sources.failed).toBe(1);
+    } finally {
+      fs.chmodSync(locked, 0o644);
+    }
+  });
+
   it('a WORKING domain reports no unverified bucket at all', async () => {
     writeRegistry();
     track();
@@ -251,7 +273,7 @@ describe('orbit validate --sources', () => {
 
   it('per-item validation is unchanged by the lint', async () => {
     writeRegistry();
-    fs.writeFileSync(path.join(root, 'GOV.md'), `has ${OPEN('stages')}17${CLOSE}\n`);
+    fs.writeFileSync(path.join(root, 'GOV.md'), `has ${OPEN('stages')}17${CLOSE('stages')}\n`);
     track();
     const result = await runCLI(['validate', 'alpha', '--json'], { cwd: root });
     expect(result.exitCode).toBe(0);

@@ -426,7 +426,9 @@ Each finding is discriminated by `kind` and carries only that kind's fields:
 | `mismatch` | `file`, `line`, `source`, `span_text`, `source_value` |
 
 In `summary.byType.sources`, **one item is one declared source**; unattributable findings (a
-registry fault, a marker error, an unknown source) roll up into one failed pseudo-item. Source
+registry fault, a DOMAIN fault, a marker error, an unknown source) roll up into one failed
+pseudo-item; when the domain is incomplete, resolved sources are reported `unverified` rather
+than passed. Source
 items do not enter `items[]`, so `summary.totals.items` exceeds `items.length` whenever a
 registry is present.
 

@@ -80,7 +80,7 @@ the strings their sources emit today.
 the engine to infer.
 
 **The obvious form dies on R-crc-10.** A comment placed BESIDE a figure —
-`seventeen small stages <!-- src:stages -->` — requires the engine to find "the number near the
+`seventeen small stages <!-- src:NAME -->` — requires the engine to find "the number near the
 marker" in arbitrary prose. The four defects are a numeral inside bold, a range endpoint inside an
 identifier, an English WORD, and a compound of three numbers: any rule for "the number near" is
 inference about which token the author meant, which is what two stages died doing.
