@@ -1260,9 +1260,13 @@ Complete: [ ]
 **SPLIT 2026-09-21 (Sal) into rc04a + rc04b + rc04c, under R-crc-9 — its second application, and
 the first taken PREVENTIVELY from a size check rather than from a post-mortem.** This heading is
 retained as the program's record of the problem, the charter and the evidence; the WORK is declared
-in the three stages below. Its exploration
-(`orbit/explore/rc04-readiness-record/`, twenty decisions, zero open questions) continues to cite
-THIS stage and is the shared source for all three.
+in the three stages below. Its exploration — twenty decisions, zero open questions — was RENAMED
+to `orbit/explore/rc04a-judgement-record/` and repointed at the FIRST child, because orbit's
+propose consumes a staging directory by NAME and moves it into the change. It remains the shared
+source for all three: rc04b and rc04c read it from wherever rc04a lands, active then archived,
+which is ordinary. It was deliberately NOT copied three ways — three copies of one truth is the
+defect class this program keeps catching, and the decisions interlock (D-rc04-13's qualifying test,
+D-rc04-15's slot and D-rc04-17's verified retirement scope are cited by all three).
 
 **Why three and not two.** The exploration produced the mechanism (D-rc04-13/15/16/17), and
 measuring the mechanism rather than the charter gave TEN capabilities against a ceiling of three —

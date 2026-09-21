@@ -1,6 +1,19 @@
 > **Status**: exploring. Promoted to proposal/design/specs via /orbit:propose when decisions firm up.
 
-# Exploration: rc04-readiness-record
+# Exploration: rc04a-judgement-record
+
+> **RENAMED 2026-09-21 from `rc04-readiness-record`, and its citation repointed** from the parent
+> stage to `rc04a-judgement-record`. The parent was SPLIT three ways under R-crc-9 (see D-rc04-18),
+> and orbit's propose consumes a staging directory by NAME and MOVES it into the change — so this
+> exploration travels with the FIRST child and persists as its `explore.md`.
+>
+> **It remains the shared source for all three.** `rc04b-forward-recommendation` and
+> `rc04c-retire-gate-overridden` read it from wherever rc04a lands (active, then archived), which
+> is ordinary — every stage reads prior archived changes. The decisions are not partitioned: most
+> concern the RECORD, which is rc04a, but D-rc04-13's qualifying test, D-rc04-15's slot and
+> D-rc04-17's verified retirement scope are cited by all three children. Nothing here was copied or
+> duplicated, deliberately: three copies of one truth is the defect class this program keeps
+> catching.
 
 ## Premise
 
