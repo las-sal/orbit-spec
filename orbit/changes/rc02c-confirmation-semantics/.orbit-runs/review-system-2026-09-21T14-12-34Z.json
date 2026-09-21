@@ -1,0 +1,150 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-21T14:12:34Z",
+  "change": "rc02c-confirmation-semantics",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m] (fresh clean-context subagent)",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "src/core/artifact-graph/gates.ts",
+      "line": 43,
+      "title": "Retired clause-(c) and budget-ceiling vocabulary survives in seven engine comments, one of which asserts exactly the reading the delta forbids",
+      "recommendation": "The delta makes this normative: 'A reader who finds `budget: 3` and concludes that it constrains something has been misled, and this sentence exists to prevent that.' Seven comments in the engine still do the misleading, and the tasks set the standard themselves (1.1: 'a field no producer sets is a trap for the next reader'; 2.1: 'a field whose producer is gone but whose projection survives is the trap 1.1 describes, and nothing fails when it happens'). Fix all seven: (a) gates.ts:43 — `GateStatus.budget` is documented as 'the declared independent-pass ceiling', a DIRECT contradiction of types.ts:70 ('NOTHING CONSULTS IT — it is not a ceiling'), and the two are definition sites for the same field; (b) gates.ts:424 — `evaluateReviewed`'s PASS-LIST QUANTIFICATION doc says 'clauses (a) and (c) run over the pass list the CALLER supplies', while the delta rewrote that exact paragraph to name clause (a) alone; (c) gates.ts:719 — '// Coverage (a)/confirm (c) use fresh passes'; (d) gates.ts:746 — '// ... NOT only at exhaustion. Below the ceiling the user would otherwise ...', naming two retired concepts in one sentence; (e) instruction-loader.ts:147 — the JSON projection's doc comment describes a four-field bundle ('the declaration, the reported figure, the trigger count, and the annotation') of which this change deleted two, and it sits directly above the surviving two; (f) trail.ts:102 — 'they cost a model run, so the budget counts them'; (g) trail.ts:198 — 'visible to the budget and the reason'. In (f)/(g) the budget now counts nothing — `independentSpend` does. While there, consider the two variable names that still say budget and now hold spend: `budgetFields` (gates.ts:715) and `blockedBudget` (gates.ts:587). Note trail.ts is absent from the design's Touchpoints map, which is why the sweep never reached it."
+    },
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc02c-confirmation-semantics/design.md",
+      "line": 270,
+      "title": "The Scenario accounting claims a full audit and asserts byte-identity across all eight requirements; two further scenarios were rewritten and renamed",
+      "recommendation": "design.md:247 opens 'Both MODIFIED requirements drop or rewrite scenarios, and this is the full audit' (there are EIGHT MODIFIED requirements), and design.md:270 closes 'Every other scenario across all eight requirements is preserved byte-identically.' Both are false. Two more scenarios changed: in `Gate-aware status and instructions with position readout`, baseline `#### Scenario: A budget-exhausted gate renders its own token` (orbit/specs/orbit-engine-gates/spec.md:599) is rewritten AND renamed to `#### Scenario: Spend never renders a position token` (delta line 526); in `The gate reason names the rule that fired and the rule about to fire`, baseline `#### Scenario: Spend named beside the clause it displaced` (baseline line 944) becomes `#### Scenario: The reason names the rule, never the spend` (delta line 693). Both rewrites are CORRECT and visible in the delta — nothing is lost — so the defect is the completeness claim, not the content. That matters here more than usual: this section exists because a baseline requirement describes what is true and a future reader needs the audit to verify nothing was silently dropped, which is the C2 failure class, and iteration 1 already raised a CRITICAL in this exact territory ('Three scenarios declared preserved byte-identically still assert budgetExhausted and the BUDGET-SPENT token'). The walk fixed the three scenarios it named and did not re-derive the claim. Add the two requirements to the audit, correct 'Both MODIFIED requirements' to name the four that changed scenarios, and derive the byte-identity claim from a diff rather than restating it."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "CLAUDE.md",
+      "line": 194,
+      "title": "CLAUDE.md still asserts clause (c) in the present tense, one paragraph outside the range task 5.2b swept",
+      "recommendation": "Task 5.2b scoped its CLAUDE.md rewrite by LINE RANGE ('lines ~139-143') rather than by vocabulary, and stated the test it was applying: 'The surrounding archive narrative stays as history; this passage does not, because it reads as live engine description.' Line 194, in the rc07 paragraph, fails that same test and was not swept: 'clause (c) is `findings-resolved`, so PASSED means every finding is resolved, NOT that a clean independent pass stands on the final tree.' The conclusion is still true — more so after this change — but the mechanism it cites no longer exists, so a reader who checks the engine finds no clause (c) and has reason to distrust the sentence and its neighbours. Rewrite the clause to carry the fact without the retired mechanism (PASSED is coverage plus resolution), or mark it explicitly as the reading that applied at rc07's archive. Note CLAUDE.md:165 ('review-system unpassed with `budgetExhausted: true`') is genuinely historical — a record of what the engine computed then — and should stay."
+    },
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc02c-confirmation-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 601,
+      "title": "Task 4.1's version-pin sweep reports 'ONE further pin found'; a fourth pin sits inside a requirement this delta itself rewrites",
+      "recommendation": "Task 4.1 (tasks.md:26) records a sweep with a stated rule — a pin in an example sentence is left only when it belongs to a requirement this stage does not touch — and reports exactly one further pin (`src/core/templates/workflows/apply-change.ts`). It missed one that the rule does not excuse: `orbit-engine-gates`' `Single-voiced canonical-next computation` contains 'the active schema's phase ids (for `spec-driven` v4: `review-proposal`, `apply`, `review-system`, plus any other declared phase)' — baseline line 674, reproduced verbatim at delta line 601 — and this delta REWRITES that requirement (it changed the budget sentence at delta line ~560). The version is parenthetical illustration of the `models:` key vocabulary, not the requirement's subject, so the carve-out task 4.1 grants the three `(version 4)` mentions in `spec-driven v1 gates and cadence` does not apply. Either de-pin it the way the two `orbit-run-summary-emit` examples were de-pinned, or record it in 4.1 under the same rule as the other two. Independently of which, correct 'SWEEP RESULT: ONE further pin found' — this repository's own recorded lesson from rc07 is that completeness is CARRIED, never INFERRED, and a future stage will read that line as a sweep it does not need to repeat."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc02c-confirmation-semantics/design.md",
+      "line": 214,
+      "title": "The engine's own touchpoints check reports two substantive engine source files as unpredicted",
+      "recommendation": "`orbit status --change rc02c-confirmation-semantics --boot --json` computes `touchpoints.actual_unpredicted` = [orbit/architecture/.orbit-runs/architect-*.json, orbit/architecture/clean-up-review-cycle.md, src/core/artifact-graph/schema.ts, src/core/artifact-graph/types.ts, test/core/source-lint.test.ts, test/core/sources-registry.test.ts]. `audit-drift.ts:296` grades each substantive source path as WARNING, and `schema.ts` + `types.ts` are substantive: they carry the `confirm` inertness edits. They were predicted at the TASK level all along — task 1.2 names both by filename — so the Touchpoints map is what is incomplete, not the plan. Iteration 2 raised the sibling finding ('CLAUDE.md is absent from Touchpoints although task 5.2b now edits it') and the walk added the one file the reviewer named without re-deriving the map from the tasks; add `src/core/artifact-graph/schema.ts` and `src/core/artifact-graph/types.ts` (and, per the first finding, `trail.ts` if its comments are swept). `predicted_unsatisfied` reports the baseline-specs entry, which is the ordinary propose-time overshoot (the change edits deltas, not baselines) and needs no action."
+    },
+    {
+      "pass": "1",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc02c-confirmation-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 131,
+      "title": "Two baseline requirements will point at a bare `design.md` that becomes unlocatable the moment the change archives",
+      "recommendation": "Delta lines 131 and 344 both end with a pointer of the form 'the change record names each and why (`design.md`, \"Scenario accounting\")'. These sentences sync into `orbit/specs/orbit-engine-gates/spec.md` permanently, but at archive the file they name moves to `orbit/changes/archive/<date>-rc02c-confirmation-semantics/design.md` and the pointer carries no change name to find it by. No other baseline spec in the repository points at a specific change's design.md; every existing `design.md` mention in `orbit/specs/` is parametric (`orbit/changes/<name>/design.md`). This is a by-product of the iteration-1 SUGGESTION that moved the audit out of baseline prose — the move was right, the pointer just needs an address. Name the change: '(`rc02c-confirmation-semantics`'s `design.md`, \"Scenario accounting\")'."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "src/core/artifact-graph/gates.ts",
+      "line": 715,
+      "title": "A reviewed gate whose mode cannot be derived suppresses the `budget` DECLARATION along with the spend, though the declaration does not depend on mode",
+      "recommendation": "Executed, not inferred: a gate declared `budget: 3` with an id that yields no mode (e.g. `review-widget`) returns a status carrying NEITHER `budget` NOR `independentSpend` — `budgetFields` is one bundle gated on `spendReportable`, which is now `mode !== null` (gates.ts:684, 715). The requirement pulls both ways: it says the engine SHALL report TWO NAMED FIELDS, '`budget` (the declaration, when present) and `independentSpend`', and that the JSON projection 'carries `budget` and `independentSpend` as SEPARATE named fields'; the mode-attribution sentence then says such a gate 'reports NO SPEND at all' — silent about the declaration. The change's own argument separates them ('a recorded cost that appears only when an inert field happens to be present is incoherent'), and the converse now holds: a declaration suppressed by a rule that exists to protect the cost figure is the same coupling from the other side. Task 2.3b even names `{ budget, independentSpend }` as one surviving bundle, which is how the coupling survived. No shipped schema reaches this — `spec-driven` declares only `review-proposal` and `review-system` — so this is latent. Either hoist `budget` out of the mode gate, or make the requirement say plainly that an unattributable gate reports neither.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Hoist the declaration: emit `budget` whenever `gate.budget !== undefined`, independent of `spendReportable`, and keep only `independentSpend` behind the mode check — matching 'SEPARATE named fields'."
+        },
+        {
+          "label": "B",
+          "body": "Keep the code as-is and amend the mode-attribution sentence in `Review budget reported beside the gate state` to say a gate whose mode cannot be derived reports neither the spend nor the declaration, so the two sentences stop disagreeing."
+        }
+      ]
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc02c-confirmation-semantics/tasks.md",
+      "line": 30,
+      "title": "The claim that the separate commit keeps this change's Touchpoints honest is contradicted by the engine's touchpoints computation",
+      "recommendation": "Task 5.1 and the second apply emit both state that fixing the two `orbit-source-lint` instruments as separate work keeps 'this change's diff and Touchpoints honest'. The separation is the right call on scope — the fix belongs to another capability — but it was drawn at the COMMIT boundary, and the touchpoints check is not commit-scoped: `orbit status --change rc02c-confirmation-semantics --boot --json` lists `test/core/source-lint.test.ts` and `test/core/sources-registry.test.ts` in both `actual` and `actual_unpredicted`, and the apply emit's own `files_touched` names them. So audit-drift will raise them at pre-archive regardless. Nothing needs undoing; the record should just say what the separation actually bought (a reviewable diff for the instrument fix, and a commit whose message explains it) rather than a Touchpoints isolation it does not deliver — otherwise the pre-archive sweep's finding will read as a surprise."
+    },
+    {
+      "pass": "0",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc02c-confirmation-semantics/tasks.md",
+      "line": 30,
+      "title": "Task 5.1's closure edit left a garbled line that states two different suite counts and a dangling emphasis marker",
+      "recommendation": "Commit 3a91802 rewrote 5.1's head in place, replacing '**BLOCKED — not by this change.**' with '**2204/2204 green** as of the instrument fix committed separately (see below). WAS BLOCKED, not by this change.**'. Three artefacts of that edit survive: an unmatched trailing `**`; '(see below)' pointing at nothing (the referenced explanation is in the commit message, not the task); and the same sentence asserting both '2204/2204 green' and, two clauses later, 'suite 2202/2204', with no marker saying the second figure is the superseded one. tasks.md is the artifact the tracked `apply` gate reads and the one that travels into the archive as the completion record, so a line that contradicts itself is worth one edit. Rewrite 5.1's head as a single current-state sentence and move the blocked-then-cleared narrative behind an explicit marker."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "pass": "1",
+      "title": "Change-scoped retirement narrative will live in the baseline permanently",
+      "evidence": "Re-derived and suppressed as deliberately settled, not missed. The delta's `Reviewed-gate pass condition` keeps ~18 lines of retirement narrative and `Review budget reported beside the gate state` names three identifiers (`budgetExhausted`, `independentSpendFresh`, `BUDGET-SPENT`) that exist nowhere in `src/` after this change, which sits awkwardly beside the change's own rule that 'a baseline requirement describes what is TRUE, not what a change once removed from it' (design.md, Scenario accounting). Iteration 1 raised the same territory as 'Two change-scoped audit paragraphs will live in the baseline permanently'; the walk record (address-reviews-2026-09-21T03-53-52Z.json) shows it resolved off-menu by doing both — trimming the audit AND moving it to design.md — which is a deliberate line about how much retirement rationale baseline prose should carry. Re-litigating it would be a second voice on a settled question; the residual cost (a grep for a retired identifier hits only the spec that retired it) is small and visible."
+    }
+  ],
+  "commentary": "A subtractive change is easy to under-review, so I spent the pass trying to break the subtraction rather than reading the prose that describes it, and the subtraction itself held up under every test I could build.\n\nThe hardest thing I probed was the change's boldest claim — task 5.2's archived-trail verdict diff. I did not take it on the record: I built a git worktree at the pre-apply commit (6d2b676), compiled that engine, and ran BOTH engines over all 19 archived change directories with each change's own schema. 57 gates, 13 changed, 44 identical — the same arithmetic the task claims, and every one of the thirteen is what the task says it is. Seven are reason-only, each losing exactly the `budget spent: N of 3 independent passes; ` prefix and keeping its rule clause verbatim (d2, d3, d4, d5, d6, rc03a, rc13 — the precise seven named). One is a state change, `rc02-gate-semantics / review-system` unpassed to passed, whose old reason was clause (c) word for word. Five are `review-proposal` unpassed to stale (b3, d3, d4, rc02, rc07), and the mechanism the task gives for them checks out: the fresh-list evaluation failed clause (a) in both engines, so the transition can only come from the full-list evaluation, which clause (c) used to fail as well. Nothing changed for a third reason. Exit criterion (2') is met on evidence I generated myself, not on a record I read.\n\nI then executed the engine against constructed trails for every behaviour the removal is supposed to guarantee. A gate declaring no `budget` now reports `independentSpend` and behaves identically to one that declares it, and the `budget` key is genuinely absent rather than undefined-valued. A gate at four spend against a declared budget of one renders `unpassed` with a reason naming only the uncovered slot and a position token carrying no spend-derived annotation — the `[spend 4/3]` readout is unreachable, and the source scan that pins it is real. A blocked reviewed gate with no budget still reports what it cost. A rejected external return is still named in the reason on a budget-less gate, which is newly possible and matches the rewritten requirement rather than drifting from it. `confirm` is inert in the strong sense: both declared values and its absence produce byte-identical state AND reason on one trail, and no call site in `src/` reads `gate.confirm` outside the normalizer's default. I also checked the one structural worry a removal invites — that deleting the `confirmFailed` branch could strand a gate with no canonical next — and it cannot: every non-converged return from `evaluateReviewed` sets `unresolvedPass` or `neededSlot`, so the recommendation function always has a branch. No other surface renders spend: `report-render.ts`, `orientation.ts`, `emit-composition.ts` and the architecture builders never touch the field, and `gate_overridden` is `{gate, state, reason}`, so the closed-set consumers really are untouched. Fingerprints verify 8 of 8, `validate --all --strict` is clean at 26 items, the suite is 2204 green, and the rewritten instruments pin behaviour rather than assert absence — the inertness case and the earlier-member-CRITICAL case are exactly the two tests the charter asked for.\n\nWhat I found instead is a single pattern, and it is worth naming because it repeats four times independently. Every one of my findings is the residue of a walk resolution that landed on the INSTANCE a reviewer named and not on the CLASS the instance belonged to. A reviewer named three scenarios still asserting retired vocabulary; the walk fixed those three and did not re-derive the completeness claim that sits above them, which is now false for two other requirements. A reviewer named CLAUDE.md's live description of the budget signal; the walk rewrote that paragraph by line range and left an identical present-tense clause-(c) assertion fifty lines below. A reviewer named CLAUDE.md as missing from Touchpoints; the walk added that one file and did not re-derive the map from the tasks, which had named `schema.ts` and `types.ts` from the start. A reviewer named a third version-pinned example; the sweep that followed reported one further pin and missed a fourth sitting inside a requirement this delta rewrites. The engine fields were deleted everywhere with real rigour — but the PROSE around them, in comments the instruments cannot scan, still calls `budget` a ceiling in the same file where the change declares it is not one. If there is one thing to carry out of this pass, it is that a walk which fixes what it was shown is not the same as a walk which fixes what it learned, and on a subtractive change the difference shows up almost entirely in sentences rather than in code.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4",
+    "5"
+  ],
+  "final_assessment": "0 critical, 5 warning, 4 suggestion.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc02c-confirmation-semantics --from-file orbit/changes/rc02c-confirmation-semantics/.orbit-runs/review-system-2026-09-21T14-12-34Z.json"
+}
