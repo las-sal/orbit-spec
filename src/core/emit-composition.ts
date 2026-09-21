@@ -3,6 +3,7 @@ import * as path from 'node:path';
 import { loadChangeContext, formatChangeStatus } from './artifact-graph/instruction-loader.js';
 import { collectSameModePasses } from './report-render.js';
 import { normalizeInternalPass } from './report-render.js';
+import { readTrail } from './artifact-graph/trail.js';
 import { parseChunkPreamble, chunkForGroup, type ChunkDeclaration } from './parsers/chunk-preamble.js';
 import { countExploreFile, maturityRecommendation } from './parsers/explore-counter.js';
 import {
@@ -70,7 +71,7 @@ const COMMANDS: Record<string, CommandSpec> = {
   apply: {
     kind: 'workflow',
     scopes: { change: true },
-    payloadFields: ['user_validation_tasks', 'assessment_suffix', 'gate_overridden', 'consent'],
+    payloadFields: ['user_validation_tasks', 'assessment_suffix', 'gate_overridden', 'consent', 'judgements'],
   },
   verify: {
     kind: 'workflow',
@@ -153,7 +154,7 @@ const COMMANDS: Record<string, CommandSpec> = {
   'review-external': {
     kind: 'editorial',
     scopes: { change: true },
-    payloadFields: ['mode', 'prompt_path', 'target', 'final_assessment'],
+    payloadFields: ['mode', 'prompt_path', 'target', 'final_assessment', 'judgements'],
   },
   archive: {
     kind: 'lifecycle',
@@ -167,6 +168,10 @@ const COMMANDS: Record<string, CommandSpec> = {
       'user_decision',
       'consent',
       'warnings',
+      // rc04a: the CADENCE JUDGEMENT record. An array, because the archive is the one emit
+      // admitting both kinds — it may continue past an unpassed `review-system` AND assert
+      // readiness, and those are two decisions rather than one with two faces.
+      'judgements',
       // D6: archive REPORTS the PR state its read-only preflight observed; it resolves no
       // attachment, so the fields are flat rather than the correlated `pr_attachment` unit.
       'pr_url',
@@ -477,6 +482,150 @@ function validatePayload(command: string, payload: Record<string, unknown>): voi
   // emit carrying `{granularty: ...}` or a missing `branch` would otherwise sail through a
   // seam advertised as fail-loud and be read back at archive as truth.
   validatePrFields(command, payload);
+
+  // rc04a: the judgement record's STRUCTURE — shape, kind/disposition agreement, the
+  // required kind-specific extras. Its ORDERING is checked at the write gate instead,
+  // because that check needs the emit's resolved <TS> token, which does not exist yet here.
+  validateJudgements(command, payload);
+}
+
+// ---------------------------------------------------------------------------------------
+// rc04a: THE CADENCE JUDGEMENT RECORD.
+//
+// A judgement formed against INDEPENDENT REVIEW OUTPUT, recorded rather than left in
+// narrative prose. The discriminated union below is for AUTHORING ergonomics inside the
+// engine; it is NOT the enforcement. Payloads arrive as untrusted JSON from `--payload
+// <file>` or stdin, where every type guarantee is erased — so `validateJudgements` below is
+// the only check that can ever fire on real input. Same reasoning as `validatePrFields`.
+// ---------------------------------------------------------------------------------------
+
+interface JudgementBase {
+  formed_against: string[];
+  reasoning: string;
+  ratified_by: 'ai' | 'user';
+}
+export interface ContinuationJudgement extends JudgementBase {
+  kind: 'continuation';
+  disposition: 'proceed' | 'spend';
+  /** Required on `proceed` — byte-for-byte `gate_overridden`'s payload, which it supersedes. */
+  gate?: string;
+  gate_state?: string;
+  gate_reason?: string;
+}
+export interface ReadinessJudgement extends JudgementBase {
+  kind: 'readiness';
+  disposition: 'ready' | 'not-ready';
+  /** The residuals are the assertion's CONTENT, not peer records. */
+  accepted: Array<{ claim: string; why: string }>;
+  /** Required on `not-ready` — where the work goes instead. */
+  destination?: string;
+}
+export type Judgement = ContinuationJudgement | ReadinessJudgement;
+
+const JUDGEMENT_DISPOSITIONS: Record<string, Set<string>> = {
+  continuation: new Set(['proceed', 'spend']),
+  readiness: new Set(['ready', 'not-ready']),
+};
+const JUDGEMENT_COMMON_KEYS = ['kind', 'formed_against', 'disposition', 'reasoning', 'ratified_by'];
+const JUDGEMENT_KEYS_BY_KIND: Record<string, Set<string>> = {
+  continuation: new Set([...JUDGEMENT_COMMON_KEYS, 'gate', 'gate_state', 'gate_reason']),
+  readiness: new Set([...JUDGEMENT_COMMON_KEYS, 'accepted', 'destination']),
+};
+
+function judgementError(i: number, detail: string): never {
+  // The INDEX is always named: an array-shaped error without one cannot be acted on.
+  throw new EmitError(`'judgements[${i}]': ${detail}`);
+}
+
+function validateJudgements(command: string, payload: Record<string, unknown>): void {
+  const raw = payload.judgements;
+  if (raw === undefined) return; // scoped BY PRESENCE — no key, no check, no behaviour change
+  if (!Array.isArray(raw)) {
+    throw new EmitError(`'judgements' must be an ARRAY for '${command}' — one emit can carry more than one judgement.`);
+  }
+  if (raw.length === 0) {
+    throw new EmitError(`'judgements' must not be empty — an emit carrying no judgement OMITS the key, so key presence means a judgement was taken.`);
+  }
+
+  raw.forEach((entry, i) => {
+    if (typeof entry !== 'object' || entry === null || Array.isArray(entry)) {
+      judgementError(i, `must be an object — got ${Array.isArray(entry) ? 'an array' : typeof entry}.`);
+    }
+    const e = entry as Record<string, unknown>;
+
+    const kind = e.kind;
+    if (typeof kind !== 'string' || !(kind in JUDGEMENT_DISPOSITIONS)) {
+      judgementError(i, `'kind' must be one of ${Object.keys(JUDGEMENT_DISPOSITIONS).join(' | ')} — got ${JSON.stringify(kind)}.`);
+    }
+    const allowed = JUDGEMENT_KEYS_BY_KIND[kind as string];
+    for (const key of Object.keys(e)) {
+      if (!allowed.has(key)) {
+        judgementError(i, `unknown key '${key}' for kind '${kind}' — the record's shape is closed (${[...allowed].join(', ')}).`);
+      }
+    }
+
+    // kind/disposition AGREEMENT. TypeScript proves this at authoring time and proves
+    // nothing at the `--payload` boundary, which is the only boundary that matters.
+    const disposition = e.disposition;
+    if (typeof disposition !== 'string' || !JUDGEMENT_DISPOSITIONS[kind as string].has(disposition)) {
+      judgementError(i, `'disposition' must be one of ${[...JUDGEMENT_DISPOSITIONS[kind as string]].join(' | ')} for kind '${kind}' — got ${JSON.stringify(disposition)}.`);
+    }
+
+    const fa = e.formed_against;
+    if (!Array.isArray(fa) || fa.length === 0 || fa.some(t => typeof t !== 'string')) {
+      judgementError(i, `'formed_against' must be a NON-EMPTY array of pass tokens — a judgement formed against no independent output is not a cadence judgement.`);
+    }
+    if (typeof e.reasoning !== 'string' || e.reasoning.trim() === '') {
+      judgementError(i, `'reasoning' is required — the record is prose-bearing by construction.`);
+    }
+    if (e.ratified_by !== 'ai' && e.ratified_by !== 'user') {
+      judgementError(i, `'ratified_by' must be 'ai' or 'user' — the engine SHALL NOT guess whether a human ratified a decision.`);
+    }
+
+    if (kind === 'continuation' && disposition === 'proceed') {
+      for (const req of ['gate', 'gate_state', 'gate_reason'] as const) {
+        if (typeof e[req] !== 'string' || (e[req] as string) === '') {
+          judgementError(i, `'${req}' is required on a continuation/proceed — it carries what gate_overridden carried.`);
+        }
+      }
+    }
+    if (kind === 'readiness') {
+      const acc = e.accepted;
+      if (!Array.isArray(acc)) {
+        judgementError(i, `'accepted' is required on a readiness record (empty array when nothing was left unresolved).`);
+      }
+      (acc as unknown[]).forEach((pair, k) => {
+        const o = pair as Record<string, unknown>;
+        if (typeof o !== 'object' || o === null || typeof o.claim !== 'string' || typeof o.why !== 'string') {
+          judgementError(i, `'accepted[${k}]' must be {claim, why} — the residuals are the assertion's content.`);
+        }
+      });
+      if (disposition === 'not-ready') {
+        if (typeof e.destination !== 'string' || e.destination === '') {
+          judgementError(i, `'destination' is required on a not-ready readiness record — where the work goes instead.`);
+        }
+        if (e.ratified_by !== 'user') {
+          judgementError(i, `a not-ready readiness record must be ratified_by 'user' — routing work out of a cadence is a scope decision, and the record may not claim the AI made it.`);
+        }
+      }
+    }
+  });
+
+  // The coexistence constraint (rc04a -> rc04c). `gate_overridden` and continuation/proceed
+  // carry the same three fields until the former is retired, and rc04c's retirement argument
+  // is that the record is a STRICT WIDENING of the field — an argument that fails outright if
+  // a trail can show them disagreeing. Observable, so R-crc-10 permits a check.
+  const go = payload.gate_overridden as Record<string, unknown> | undefined;
+  if (go && typeof go === 'object') {
+    (raw as Record<string, unknown>[]).forEach((e, i) => {
+      if (e.kind !== 'continuation' || e.disposition !== 'proceed') return;
+      for (const f of ['gate', 'gate_state', 'gate_reason'] as const) {
+        if (go[f] !== undefined && e[f] !== go[f]) {
+          judgementError(i, `'${f}' disagrees with gate_overridden.${f} (${JSON.stringify(e[f])} vs ${JSON.stringify(go[f])}) — the two records describe one fact until gate_overridden is retired.`);
+        }
+      }
+    });
+  }
 }
 
 const PR_GRANULARITIES = new Set(['per-proposal', 'per-architecture']);
@@ -792,8 +941,69 @@ function handoffShapeCheck(handoff: any): void {
   }
 }
 
+/**
+ * rc04a: THE ORDERING REFUSAL — the single computed rule about a judgement record.
+ *
+ * R-crc-11(g) requires the AI to judge readiness KNOWING what the independent reviewers
+ * returned. Belief is not observable; ORDERING is. So the engine refuses a claim that COULD
+ * NOT have been informed by the evidence it names, and judges nothing else — not whether the
+ * judgement was correct, not whether the cited passes were clean, not whether enough were cited.
+ *
+ * It runs HERE rather than in `validatePayload` because it needs the emit's RESOLVED `<TS>`
+ * token, which does not exist until after the collision bump.
+ */
+function judgementOrderingCheck(
+  emit: Record<string, unknown>,
+  target: ResolvedTarget,
+  filePath: string
+): void {
+  const raw = emit.judgements;
+  if (raw === undefined) return; // scoped BY PRESENCE — decided before descending
+
+  // The emit's own token, taken from the FINAL path so the collision bump is included.
+  // One extraction, one representation: the filename token `YYYY-MM-DDTHH-MM-SSZ`, which is
+  // the same form `formed_against` cites. Comparing against the JSON `timestamp` instead
+  // would compare a colon-bearing string to a hyphenated one and silently never match.
+  const m = /-(\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}Z)\.json$/.exec(filePath);
+  if (!m) {
+    throw new EmitError(`write gate: cannot read this emit's own token from '${path.basename(filePath)}' — the ordering check has nothing to compare against.`);
+  }
+  const own = m[1];
+
+  // The RESOLUTION SOURCE is the trail reader's PASS SET — the same passes clause (a) reads,
+  // which admits `review-(proposal|system)-<TS>.json` AND `external-(proposal|system)-<TS>.md`.
+  // Naming it matters: an external pass has no JSON emit and `review-external-<TS>.json` is a
+  // PACKAGING record rather than a pass, so the most common external citation would otherwise
+  // look unresolvable.
+  const changeDir = target.changeDir;
+  const passes = changeDir ? readTrail(changeDir).passes : [];
+  const independent = new Map(
+    passes
+      .filter(pp => pp.reviewerClass === 'fresh' || pp.reviewerClass === 'external')
+      .map(pp => [pp.token, pp])
+  );
+  const anyPass = new Set(passes.map(pp => pp.token));
+
+  (raw as Record<string, unknown>[]).forEach((entry, i) => {
+    for (const token of entry.formed_against as string[]) {
+      if (token >= own) {
+        throw new EmitError(
+          `'judgements[${i}]': cited pass token '${token}' is not STRICTLY earlier than this emit's own token '${own}' — a judgement cannot have been informed by evidence that did not yet exist.`
+        );
+      }
+      if (!independent.has(token)) {
+        const why = anyPass.has(token)
+          ? `it names an in-context pass; 'formed_against' cites INDEPENDENT passes (fresh or external)`
+          : `it resolves to no readable pass on this change's trail`;
+        throw new EmitError(`'judgements[${i}]': cited token '${token}' is unresolvable — ${why}. A citation that resolves to nothing certifies nothing.`);
+      }
+    }
+  });
+}
+
 function writeGate(emit: Record<string, unknown>, target: ResolvedTarget, filePath: string): void {
   universalSpineCheck(emit, target);
+  judgementOrderingCheck(emit, target, filePath);
   const command = emit.command as string;
   if (command === 'review') {
     const mode = (emit as any).mode;

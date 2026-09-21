@@ -65,6 +65,7 @@ The schema below documents the per-command extensions ADDED to that spine (\`arc
   "pr_url": "<D6, optional: the attached PR's URL as observed by the read-only preflight>",
   "pr_state": "draft" | "ready",  // D6, optional: OBSERVED at preflight; elided when unobservable OR positively invalid (closed/merged/retargeted) — that condition is off the draft/ready axis
   "gate_overridden": { "gate": "review-system", "state": "<unpassed|stale>", "reason": "<gate reason at decision time>" },
+  "judgements": [ { "kind": "readiness", "formed_against": ["<independent pass TS>"], "disposition": "ready|not-ready", "reasoning": "<prose>", "ratified_by": "ai|user", "accepted": [ { "claim": "<what was left unresolved>", "why": "<why that was acceptable>" } ], "destination": "<not-ready only>" } ],
   "fingerprint_overridden": [
     { "capability": "<name>", "requirement": "<name>", "base_hash": "sha256:<hex>", "live_hash": "sha256:<hex>" }
   ],
@@ -377,6 +378,10 @@ its guard.)
 
 After upstream Step 5 (move-to-archive) completes, compose the payload — narrative + the extension fields \`references/archive-summary-schema.md\` lists (\`archive_path\`, \`audit\`, \`sync_specs\`, \`unresolved_markers\`, \`user_decision\`, \`consent\`, \`warnings\`) — write it to a temp file, and invoke:
 
+**COMPOSE THE READINESS RECORD (rc04a).** When this archive CONCLUDES A REVIEW CADENCE — readable as the change's trail carrying independent passes, which \`orbit status --change <name> --json\` already reports — the payload SHALL carry a \`judgements\` entry with \`kind: "readiness"\`. Its \`formed_against\` is those passes' \`<TS>\` tokens; its \`disposition\` is your own judgement; its \`accepted\` list is where RESIDUAL RISK goes, one \`{claim, why}\` pair each.
+
+**\`accepted\` versus \`warnings\`, and the test that separates them**: a residual formed AGAINST the independent passes is an \`accepted\` pair; something that arose at the SEAM ITSELF and was formed against no pass — a divergence observed at archive, a correction made in flow — stays a \`warnings\` entry. The test is whether independent review output informed it, which is also what makes the ordering check possible; a \`warnings\` entry cites nothing and can be ordered against nothing. Writing a pass-formed residual into \`warnings\` is the practice this record replaces.
+
 \`\`\`bash
 orbit emit archive --change <name> --payload <payload-file>
 \`\`\`
@@ -394,6 +399,12 @@ The tail's outward writes ride the archive's OWN entry consent — no second pro
 step's failure is inside the degradation contract: skip the remainder with a note naming
 completed vs skipped steps AND the repository-qualified completing command for the step that
 failed. The archive itself (sync, move, emit) has already succeeded and never rolls back.
+
+## NEW Step 5.65 — The readiness line in the completion readout (rc04a)
+
+When the archive emit carried a \`readiness\` entry with \`disposition: "not-ready"\`, the completion readout SHALL state it in ONE line, naming the record — e.g. \`readiness: NOT READY — archived against this session's own judgement; see archive-<TS>.json\`. A \`ready\` disposition renders NOTHING: the ordinary case needs no announcement, and a readout that speaks on every archive teaches readers to skip it.
+
+This line is the record's READER, and it is not decoration. A judgement record that no surface consumes would repeat exactly the defect this capability already found in \`gate_overridden\` — written by every body, read by nothing — inside the change that exists to fix it. A change archived against the author's own judgement should say so where a human is looking, not only inside a JSON field.
 
 ## NEW Step 5.7 — Stage-line garnish in the completion readout (D-arc Stage D2)
 

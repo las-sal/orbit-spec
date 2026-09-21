@@ -1039,3 +1039,176 @@ describe('D6 PR payload fields', () => {
     });
   });
 });
+
+// ---------------------------------------------------------------------------
+// rc04a — the cadence judgement record
+//
+// Two layers, because they catch different things. The discriminated union is
+// AUTHORING ergonomics inside the engine; these tests exercise the RUNTIME
+// validator, which is the only check that can fire on a payload file. Every
+// refusal case asserts BOTH the named error and that NO FILE was written — a
+// refusal that writes is worse than no refusal.
+// ---------------------------------------------------------------------------
+
+describe('rc04a judgement record', () => {
+  const RUNS = 'orbit/changes/foo/.orbit-runs';
+
+  /** A trail with two INDEPENDENT passes and one in-context pass, all earlier than any emit. */
+  function seedPasses(): void {
+    write(`${RUNS}/review-system-2026-01-01T10-00-00Z.json`, JSON.stringify({
+      command: 'review', mode: 'system', reviewer_class: 'fresh', findings: [],
+    }));
+    write(`${RUNS}/external-system-2026-01-01T11-00-00Z.md`,
+      '# External Review: foo (iteration 1)\n\n**Reviewer**: M\n\n## CRITICAL\n\nNone.\n\n## WARNING\n\nNone.\n\n## SUGGESTION\n\nNone.\n');
+    write(`${RUNS}/review-system-2026-01-01T12-00-00Z.json`, JSON.stringify({
+      command: 'review', mode: 'system', reviewer_class: 'in-context', findings: [],
+    }));
+  }
+
+  const FRESH = '2026-01-01T10-00-00Z';
+  const EXTERNAL = '2026-01-01T11-00-00Z';
+  const IN_CONTEXT = '2026-01-01T12-00-00Z';
+
+  const readiness = (over: Record<string, unknown> = {}) => ({
+    kind: 'readiness',
+    disposition: 'ready',
+    formed_against: [FRESH, EXTERNAL],
+    reasoning: 'the pair returned and the residual is acceptable',
+    ratified_by: 'ai',
+    accepted: [{ claim: 'residual findings remain', why: 'two independent reads agreed' }],
+    ...over,
+  });
+
+  const archivePayload = (judgements: unknown) => ({
+    model: 'test-model',
+    final_assessment: 'archived',
+    archive_path: 'orbit/changes/archive/2026-01-02-foo/',
+    audit: { ran: true, failure_reason: null, findings_summary: { critical: 0, warning: 0, suggestion: 0 }, summary_path: null },
+    sync_specs: { ran: true, skipped_reason: null, capabilities_updated: [], added: 0, modified: 0, removed: 0, renamed: 0 },
+    unresolved_markers: [],
+    user_decision: 'proceeded_with_no_critical',
+    consent: 'user-invoked',
+    ...(judgements === undefined ? {} : { judgements }),
+  });
+
+  function archived(): string {
+    // the archive emit resolves the POST-MOVE landing, so the change must already be moved
+    fs.mkdirSync(path.join(root, 'orbit/changes/archive/2026-01-02-foo/.orbit-runs'), { recursive: true });
+    fs.cpSync(
+      path.join(root, RUNS),
+      path.join(root, 'orbit/changes/archive/2026-01-02-foo/.orbit-runs'),
+      { recursive: true }
+    );
+    fs.rmSync(path.join(root, 'orbit/changes/foo'), { recursive: true, force: true });
+    return 'orbit/changes/archive/2026-01-02-foo/.orbit-runs';
+  }
+
+  const emitArchive = (judgements: unknown) =>
+    composeAndWriteEmit('archive', { change: 'foo' }, archivePayload(judgements) as any, { projectRoot: root });
+
+  beforeEach(() => {
+    makeChange('foo');
+    seedPasses();
+  });
+
+  // ---- 4.2 the pass case -------------------------------------------------
+  it('writes a record citing only earlier, resolvable independent tokens', () => {
+    const runs = archived();
+    const r = emitArchive([readiness()]);
+    const written = JSON.parse(fs.readFileSync(r.path, 'utf-8'));
+    expect(written.judgements).toHaveLength(1);
+    expect(written.judgements[0].formed_against).toEqual([FRESH, EXTERNAL]);
+    expect(written.judgements[0].accepted[0].claim).toBe('residual findings remain');
+    // the written BYTES carry the record unchanged — not merely the returned object
+    expect(listRuns(runs).filter(f => f.startsWith('archive-'))).toHaveLength(1);
+  });
+
+  // ---- 4.3 presence scoping ----------------------------------------------
+  it('an emit with no `judgements` KEY behaves exactly as before this change', () => {
+    const runs = archived();
+    const r = emitArchive(undefined);
+    const written = JSON.parse(fs.readFileSync(r.path, 'utf-8'));
+    expect('judgements' in written).toBe(false);
+    expect(listRuns(runs).filter(f => f.startsWith('archive-'))).toHaveLength(1);
+  });
+
+  // ---- 4.1 every refusal -------------------------------------------------
+  const refusals: Array<[string, unknown, RegExp]> = [
+    ['a LATER token', [readiness({ formed_against: ['2099-01-01T00-00-00Z'] })], /not STRICTLY earlier/],
+    ['an EQUAL token', 'SELF', /not STRICTLY earlier/],
+    ['an unresolvable token', [readiness({ formed_against: ['2020-01-01T00-00-00Z'] })], /resolves to no readable pass/],
+    ['an IN-CONTEXT token', [readiness({ formed_against: [IN_CONTEXT] })], /in-context pass/],
+    ['an empty formed_against', [readiness({ formed_against: [] })], /NON-EMPTY/],
+    ['a missing ratified_by', [readiness({ ratified_by: undefined })], /ratified_by/],
+    ['a kind\\/disposition clash', [readiness({ disposition: 'spend' })], /disposition' must be one of ready/],
+    ['a not-ready claiming ai', [readiness({ disposition: 'not-ready', destination: 'architecture' })], /ratified_by 'user'/],
+    ['a not-ready with no destination', [readiness({ disposition: 'not-ready', ratified_by: 'user' })], /destination/],
+    ['an unknown key', [readiness({ oops: 1 })], /unknown key 'oops'/],
+    ['an empty judgements array', [], /must not be empty/],
+    ['a non-array judgements', {}, /must be an ARRAY/],
+  ];
+
+  for (const [label, judgements, pattern] of refusals) {
+    it(`refuses ${label}, naming it and writing nothing`, () => {
+      const runs = archived();
+      let j = judgements;
+      if (j === 'SELF') {
+        // a token EQUAL to the emit's own: freeze the clock so the emit's token is known
+        vi.useFakeTimers();
+        vi.setSystemTime(new Date('2026-06-01T09-00-00Z'.replace(/-(\d\d)-(\d\d)Z$/, ':$1:$2Z')));
+        j = [readiness({ formed_against: ['2026-06-01T09-00-00Z'] })];
+      }
+      expect(() => emitArchive(j)).toThrow(pattern);
+      expect(listRuns(runs).filter(f => f.startsWith('archive-'))).toHaveLength(0);
+    });
+  }
+
+  // ---- 4.1 the per-entry guarantee the array shape earns ------------------
+  it('refuses the SECOND entry by INDEX — a valid entry does not rescue an invalid one', () => {
+    const runs = archived();
+    const good = readiness();
+    const bad = readiness({ formed_against: ['2099-01-01T00-00-00Z'] });
+    expect(() => emitArchive([good, bad])).toThrow(/judgements\[1\]/);
+    expect(listRuns(runs).filter(f => f.startsWith('archive-'))).toHaveLength(0);
+  });
+
+  // ---- the coexistence constraint (rc04a -> rc04c) ------------------------
+  it('refuses a continuation/proceed disagreeing with gate_overridden', () => {
+    const cont = {
+      kind: 'continuation', disposition: 'proceed', formed_against: [FRESH],
+      reasoning: 'proceeded knowing what came back', ratified_by: 'user',
+      gate: 'review-proposal', gate_state: 'unpassed', gate_reason: 'r',
+    };
+    expect(() =>
+      composeAndWriteEmit('apply', { change: 'foo' }, {
+        model: 'test-model',
+        gate_overridden: { gate: 'review-system', state: 'unpassed', reason: 'r' },
+        judgements: [cont],
+      } as any, { projectRoot: root })
+    ).toThrow(/disagrees with gate_overridden/);
+    expect(listRuns(RUNS).filter(f => f.startsWith('apply-'))).toHaveLength(0);
+  });
+
+  it('accepts a continuation/proceed that AGREES with gate_overridden', () => {
+    const cont = {
+      kind: 'continuation', disposition: 'proceed', formed_against: [FRESH],
+      reasoning: 'proceeded knowing what came back', ratified_by: 'user',
+      gate: 'review-proposal', gate_state: 'unpassed', gate_reason: 'r',
+    };
+    const r = composeAndWriteEmit('apply', { change: 'foo' }, {
+      model: 'test-model',
+      gate_overridden: { gate: 'review-proposal', state: 'unpassed', reason: 'r' },
+      judgements: [cont],
+    } as any, { projectRoot: root });
+    expect(JSON.parse(fs.readFileSync(r.path, 'utf-8')).judgements[0].disposition).toBe('proceed');
+  });
+
+  // ---- 1.2 the carrier set is CLOSED -------------------------------------
+  it('refuses `judgements` on a command that takes no judgement', () => {
+    expect(() =>
+      composeAndWriteEmit('explore', { change: 'foo' }, {
+        model: 'test-model', final_assessment: 'x', judgements: [readiness()],
+      } as any, { projectRoot: root })
+    ).toThrow(/unknown payload key 'judgements' for 'explore'/);
+  });
+});

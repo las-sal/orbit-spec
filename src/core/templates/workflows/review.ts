@@ -474,9 +474,12 @@ Per the universal spine in \`orbit-conventions\`'s \`Internal-run JSON summary f
   "reviewer_class": "external",
   "prompt_path": "orbit/changes/<name>/.orbit-runs/external-prompt-<as>-<TS>.md",
   "target": "<named external AI if user specified; null otherwise>",
-  "awaiting_findings": true
+  "awaiting_findings": true,
+  "judgements": [ { "kind": "continuation", "disposition": "spend", "formed_against": ["<independent pass TS>"], "reasoning": "<why a further pass was bought>", "ratified_by": "ai|user" } ]
 }
 \`\`\`
+
+**THE SPEND RECORD (rc04a).** When this handoff is a FURTHER independent pass bought past a gate that has ALREADY passed — a decision the cadence has no other home for — the payload SHALL carry a \`judgements\` entry with \`kind: "continuation"\` and \`disposition: "spend"\`, written at exactly the moment the decision is taken rather than reconstructed later. \`formed_against\` names the passes already returned; \`reasoning\` says why another was worth buying. A handoff that merely covers a DECLARED, still-uncovered cadence slot is not a spend decision and carries no record.
 
 \`awaiting_findings: true\` is always set at T0. Future tooling may flip this when findings land; for now it's a flag that downstream consumers can use to identify "T0 emit, not yet completed cycle." \`reviewer_class: "external"\` (C1) describes the intended handoff class for audit readability — but per \`orbit-run-summary-emit\`, a T0 emit is a PACKAGING record, NOT a completed pass: whichever cadence slot an external return would satisfy — a bare \`external\` slot, an \`independent\` slot, or the external half of a \`blind-pair\` — is satisfied ONLY when an \`external-<as>-<TS>.md\` findings file exists, so a packaged-but-unreturned external never counts as class coverage.
 
