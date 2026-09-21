@@ -62,6 +62,26 @@ is separately gone: rc02c made `budget` inert, so no cadence can end exhausted (
   with the current effort and are common-sense get addressed; findings that require expansion get
   KICKED BACK TO ARCHITECTURE, which is natural and part of development rather than a failure.
   **The AI makes that call**, not the user.
+  **AMENDED 2026-09-21 (Sal, verbatim): *"finding requiring expansion get kicked back to
+  architecture, unless it makes more sense to include them in the current effort despite the
+  expansion. and i think that's what we've been doing pretty well: the AI noting its an expansion,
+  recommending it go back to architecture (or stay if it really makes sense) and then giving me the
+  decision"*.** Two corrections to the original. FIRST, routing to architecture is the DEFAULT and
+  not the rule — sometimes absorbing the expansion is the better call, and the exception is part of
+  the design rather than a lapse from it. SECOND, and this is where the original overstated: the AI
+  does NOT make the call. The AI makes the CLASSIFICATION (this is an expansion) and the
+  RECOMMENDATION (route it, or keep it, with reasons); **the DECISION is Sal's**. That is a
+  three-part division, and it is narrower than "the AI decides" while still satisfying D-rc04-5 —
+  the user is steering, not adjudicating each finding, because the AI has already done the work of
+  naming the fork and taking a position on it.
+  **Observed, not aspirational.** rc02c's cycle ran this shape four times without it being written
+  down: the E7 finding (a future stage's charter requiring a field rc02c deletes) was classified as
+  expansion, recommended for architecture with the reasoning that the defect survives the
+  retirement while only its vocabulary died, and ratified by Sal as option (A); F7 (the declaration
+  hoist) was classified as absorb-it-here and ratified; the instrument fix was recommended as
+  SEPARATE work and ratified as option 1; the scoped iteration-2 pass was recommended over an
+  already-passed gate and ratified. Four forks, four recommendations, four Sal decisions, zero
+  cases of the AI deciding alone and zero cases of Sal adjudicating unaided.
 
 - **2026-09-21 — D-rc04-4: budget is not the constraint** (Sal, verbatim: *"if the blind-pair
   uncovers something that does require expansion, i'm not really worried about the budget of
@@ -121,6 +141,48 @@ is separately gone: rc02c made `budget` inert, so no cadence can end exhausted (
   `residual_risk` record has to structure**, and it is far richer than the charter's original
   "replace `gate_overridden` when a cadence ends on an exhausted budget" — which, after D-rc04-10,
   can no longer happen at all.
+
+- **2026-09-21 (later) — D-rc04-12: what a READINESS RECORD is, defined.** *A dated, AI-authored
+  assertion, made at the end of a cadence, that the work is ready to move forward — citing the
+  independent passes it was formed against, and naming what was accepted without resolution and why
+  that was acceptable.* Four properties, of which exactly ONE is machine-checkable, and that
+  asymmetry is the stage's whole design: it ASSERTS a direction (not checkable — it is a belief);
+  it CITES the independent passes it was formed against (checkable — do they exist on the trail);
+  it POST-DATES every pass it cites (checkable, and this is exit (3), the reason the stage is
+  buildable at all); it NAMES what was accepted unresolved and why (not checkable — prose by
+  construction, R-crc-10). The engine never judges whether the AI was RIGHT to be ready. It refuses
+  a claim the AI COULD NOT HAVE FORMED — one predating the evidence it names.
+
+  **What it is NOT, each contrasted with a thing it would otherwise be confused for.** Not the GATE
+  VERDICT: the gate computes coverage and resolution, which are procedural facts, and after rc02c it
+  computes nothing about convergence at all; D4's single-voiced rule keeps that verdict the
+  engine's alone. Not `gate_overridden`: that record is REACTIVE and NEGATIVE — "the gate said no
+  and I proceeded" — and exists only on failure, whereas a readiness record is AFFIRMATIVE and
+  UNCONDITIONAL, made when the gate passes too. rc02c is the proof: a computed passed gate that
+  still needed six paragraphs of what passing does not mean. Not a CORRECTNESS PROOF: under
+  D-rc04-6 specs and reviews are alignment instruments, so readiness is "aligned and on task,
+  knowing what came back", never "defect-free". Not a COST RECORD: that was rc04-cost-visibility,
+  retired by R-crc-11.
+
+  **The frame that makes it concrete:** a readiness record is to the ARCHIVE what a review emit is
+  to a REVIEW — the D5 emit-composition architecture applied one seam later. Engine owns the spine
+  (timestamps, citations, ordering, refusal); the AI supplies the judgement. Prose with a checkable
+  spine.
+
+  **Worked against rc02c's six `warnings` entries, which sort cleanly into it** — decent evidence
+  the structure is right rather than merely tidy. FORMED AGAINST: the four independent passes on
+  the trail. ACCEPTED UNRESOLVED: the ~58% capture-recapture residual, the 158% size overage, the
+  stale cross-reference left for audit-drift. WHY ACCEPTABLE: "the scoped pass executed a branch
+  matrix and found the walk-authored mechanism sound in the implementation" — which is a citation
+  of a reviewer's forward recommendation, exactly as exit (2) wants. And two entries — the
+  touchpoint divergence and the at-archive correction — are NOT readiness at all; they are process
+  notes, and they were in `warnings` only because `warnings` is where everything goes when nothing
+  has a home. That is the argument for the stage in miniature.
+
+  **What the definition does NOT settle, per D-rc04-3 as amended**: the record's "direction" is the
+  AI's own belief about readiness, but an EXPANSION disposition is not the AI's to decide — it is
+  classified and recommended by the AI and decided by Sal. So a record that routes work to
+  architecture is carrying a RATIFIED decision, not an autonomous one, and it needs to say which.
 
 ## Open questions
 
