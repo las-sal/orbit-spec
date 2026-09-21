@@ -1,0 +1,36 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-20T22:55:48Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "rc07-artifact-lint RATIFIED complete (2026-09-20, Sal) — the third citing change of this program and the first rc-stage to archive through a computed passed system gate rather than an override. All three exit criteria verified against what actually happened rather than asserted: criterion (1) was demonstrated LIVE at archive, when the sync moved baseline capabilities 20 to 21 and the change's own lint immediately failed on CLAUDE.md's marked span still reading 20; criterion (3) by four registry entries backed by engine sources with four marks in CLAUDE.md; criterion (2) under the Program stages preamble's self-measurement rule, since across six passes zero findings concerned a marked figure disagreeing with its source. The residency sweep found one item pending only in conversation — CLAUDE.md carried no rc07 narrative, its ACTIVE-program section stopping at rc02 — so that paragraph is now written, carrying the three lessons worth forwarding: the authoring rule (prose writes a PLACEHOLDER name, because backticks confer no inertness and the name grammar does), completeness is CARRIED rather than inferred, and PASSED under clause (c) means findings-resolved rather than a clean pass standing. While writing it I restated a count and caught it — the paragraph describing the count-restating lint contained an unmarked restated count — which is removed. rc03a-blind-prompt remains unratified and unchanged, still Q-crc-11's case.",
+  "stages_touched": [
+    "rc07-artifact-lint"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [
+    "rc07-artifact-lint"
+  ],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/clean-up-review-cycle.md",
+        "why": "rc07 now reads complete; Q-crc-14, 15, 16, 17 are the live backlog, and Q-crc-15 is sized as the readiest next small change"
+      },
+      {
+        "path": "CLAUDE.md",
+        "why": "the ACTIVE-program section now carries rc07's narrative and its three forwarded lessons"
+      },
+      {
+        "path": "orbit/changes/archive/2026-09-19-rc07-artifact-lint/.orbit-runs/archive-2026-09-19T19-05-56Z.json",
+        "why": "the archive record, including the residual-risk warnings about independentSpend 4-of-3"
+      }
+    ],
+    "next_command": "orbit architecture status",
+    "model_hint": "any",
+    "seam": "architect session end; no active change, rc07 complete, four open questions live"
+  },
+  "next_recommended": "orbit architecture status"
+}

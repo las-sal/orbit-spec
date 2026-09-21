@@ -2,10 +2,6 @@
 
 > Position is COMPUTED — run `orbit architecture status`. This doc declares; the engine renders.
 
-> **Status (2026-09-11):** scaffolded from the D6 review cycle's evidence; re-cut into twelve
-> small stages in four phases at the second session (R-crc-1, R-crc-2 ratified). Stage
-> charters are proposed until a citing change exists; goals remain proposed.
-
 ## Premise
 
 **WHAT THIS PROGRAM IS FOR (stated 2026-09-15, after a day in which one stage shipped and two did
@@ -430,7 +426,7 @@ never deleted.
   inside rc07's walk deliberately — the parser is shared by `architecture status`, `show` and
   `validate`, and inventing that mid-walk is what R-crc-6 forbids.
 
-- **Q-crc-16 — this doc states its own stage count twice, unmarked, and once staler than the other.**
+- **Q-crc-16 — RESOLVED 2026-09-20 (both halves applied together, as the entry required).** This doc stated its own stage count twice, unmarked, and once staler than the other.
   Observed 2026-09-17 while applying rc07's recommended amendments. The header blockquote
   (`Status (2026-09-11)`) says the program was "re-cut into twelve small stages", and the Program
   stages preamble says "Eighteen small stages in four phases". The second is currently true; the
@@ -438,14 +434,22 @@ never deleted.
   hand-written state claim which is now false — "Stage charters are proposed until a citing change
   exists; goals remain proposed" — of the kind `/orbit:architect` says to flag for DELETION rather
   than update, because every hand-maintained state line is a future staleness bug.
-  Standing recommendation: delete the header blockquote (the R-d-4 subtraction — the engine renders
-  position, and `orbit architecture status` already answers what it claims), then mark the Program
-  stages preamble's count IN PLACE with `src:stages`, converting `Eighteen` to `18`. Marking the
-  preamble while the blockquote survives would leave a marked figure beside an unmarked duplicate of
-  the same fact — two voices for one fact, which is the rule rc07 exists to enforce — so the two
-  moves are COUPLED and neither is applied yet. This supersedes rc07 task 5.5's recommendation to
-  WRITE a new current-state sentence: the doc already has a living present-tense one, so the
-  evidence-driven move is to mark what exists rather than add a third voice.
+  **RESOLUTION.** Both halves applied together, as the coupling required. The header blockquote is
+  DELETED — the R-d-4 subtraction; all three of its clauses had gone false (twelve stages, charters
+  proposed, goals proposed) and `orbit architecture status` already answers everything it claimed.
+  The Program stages preamble's count is MARKED IN PLACE, `Eighteen` converted to the numeral a
+  marked span requires. Doing one without the other would have left a marked figure beside an
+  unmarked stale duplicate — the exact rule rc07 exists to enforce, committed inside rc07's own
+  program doc.
+
+  This superseded rc07 task 5.5's recommendation to WRITE a new current-state sentence: the doc
+  already had a living present-tense one, so marking what exists beat adding a third voice.
+
+  Verified rather than assumed: the mark FAILS when the source moves (declaring a nineteenth stage
+  produced `source 'stages' emits "19", but the marked span reads "18"`), and it is free of the
+  self-reference hazard the spec records — the mark sits above the first counted `### Stage`
+  heading, so it is outside the text its own source is computed from. This doc is now the second
+  marked document in the repository, and the first that is not `CLAUDE.md`.
 
 - **Q-crc-17 — a walk record can certify NOTHING and still read as a clean walk.**
   Observed 2026-09-18, on this program's own cycle, and caught by Sal asking whether the last
@@ -478,7 +482,7 @@ never deleted.
 
 ## Program stages
 
-Eighteen small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
+<!-- src:stages -->18<!-- /src:stages --> small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
 split into rc02 + rc02b on 2026-09-12; rc13 added 2026-09-14 and moved to phase 1 the same day;
 rc03a split from rc03 on 2026-09-15 and WITHDRAWN the same day; rc13 split into rc13a + rc13b on
 2026-09-15 under R-crc-9; rc07b split from rc07 the same day under R-crc-9 applied PREVENTIVELY).
@@ -978,7 +982,7 @@ carries the map; (3) a system review's Pass 0 consumes the map rather than rebui
 ### Stage rc07-artifact-lint — consistency is a lint, not a review
 
 Depends-on: (none)
-Complete: [ ]
+Complete: [x] 2026-09-20 (Sal)
 
 **SPLIT 2026-09-15 (Sal): the payload round-trip left for rc07b-reference-roundtrip**, under
 R-crc-9 — and PREVENTIVELY, at exploration, before anything was written. R-crc-9's first
@@ -1775,3 +1779,31 @@ CORRECTLY authored document, letting seven lines escape a four-backtick fence. T
 is now fixed, verified inert to the parser. The remaining work is sized as a small change rather
 than a stage. The lesson generalises past this item: "two implementations of one grammar" is a
 claim about RISK, and the cheap way to price it is to run both over the real corpus and count.
+
+**2026-09-20 — rc07-artifact-lint RATIFIED complete; the stage's own lesson applied to this log.**
+All three exit criteria met, and criterion (1) was demonstrated LIVE rather than argued: at archive,
+the moment the sync moved baseline capabilities 20 → 21, the change's own lint failed on
+`CLAUDE.md:109` because the marked span still read 20. A stage catching the exact defect class it
+was built for, on its own archive, in the one place nothing else would have looked. Criterion (2)
+holds under the preamble's self-measurement rule — across six passes, zero findings concerned a
+MARKED figure disagreeing with its source.
+
+Worth recording that the two count errors reviewers DID find this cycle (a design table saying
+"four failures" above a five-member union, and Q-crc-15's own sizing sentence claiming three files
+when the answer is four) were both UNMARKED figures. That is the declared residual operating
+exactly as specified, twice, inside the cadence of the stage that declared it — which is better
+evidence for the residual being real than any argument for it.
+
+This stage also archived with `independentSpend: 4` against a budget of 3, passing because clause
+(c) is `findings-resolved`. PASSED therefore means every finding is resolved, not that a clean
+independent pass stands on the final tree. The distinction is recorded as residual risk in the
+archive emit. **rc04 still owns replacing that shape of record with a `residual_risk` field**, and
+this is now the second stage to need it.
+
+**2026-09-20 — Q-crc-16 closed; this doc now carries a live mark.**
+The header blockquote is gone and the Program stages preamble's count is marked. Both halves landed
+together because either alone reproduces the defect: a marked figure beside an unmarked stale
+duplicate. The mark was perturbation-tested (a nineteenth stage makes it fail) and checked against
+the self-reference hazard (it sits above the first counted heading). The program doc is now the
+second marked document in the repository, which is the first evidence that `orbit-source-lint`
+works on something other than the file it was dogfooded in.

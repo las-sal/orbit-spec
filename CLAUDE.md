@@ -166,6 +166,43 @@ It archived through a recorded `gate_overridden` whose reason IS the budget-spen
 sanctioned terminal signal, not R-d-10's "no clean pass yet" path — with the spend kept as
 residual risk. rc04 owns replacing that override with a `residual_risk` record.
 
+Its third citing change, `rc07-artifact-lint`, is ARCHIVED (2026-09-19) and the stage is
+RATIFIED — **the first rc-stage to archive through a COMPUTED PASSED system gate** rather than a
+recorded override. A `src:` marker DELIMITS a span in living prose
+(`<!-- src:NAME -->18 stages<!-- /src:NAME -->`), `orbit/sources.yaml` maps a source NAME to an
+ENGINE fact from a CLOSED four-entry table (`architecture.stage-count`,
+`architecture.ruling-count`, `specs.capability-count`, `schema.version` — no `command:` field,
+deliberately: orbit is a published package and a shell field would execute repository data), and
+the check asks ONLY whether the span CONTAINS that string — never a numeric parse, never an
+inference about which token the author meant. The file domain is `git ls-files -z '*.md'` minus a
+DECLARED exclusion list, so it reads LIVING documents and never RECORDS. Per-source marker
+COVERAGE is reported as a RECORD, because an UNMARKED figure is invisible to the lint and always
+will be. Baseline capabilities **20 → 21** (`orbit-source-lint` ADDED; `orbit-architecture-engine`
+MODIFIED — its opacity claim narrowed from "the engine reads ONLY" to what the PARSER INTERPRETS,
+with a CLOSED two-row table of the readers that consume passthrough). **2202 tests green.**
+
+**Three things from its cycle are worth carrying forward.** (1) The AUTHORING RULE: prose writes a
+PLACEHOLDER name (`NAME`), because backticks confer NO inertness — the name grammar does. The
+closer is NAMED for exactly this reason, a format change adopted mid-cycle that DELETED an
+inline-code scanner in which four separate reviewers had each found a different defect; the fourth
+named the shape rather than another instance (a line-grouping heuristic doing a block parser's
+job). Removing the need beat patching the bug. (2) **Completeness is CARRIED, never INFERRED** —
+four consecutive reviews each found a scope where a source was reported as passing a check that
+never ran, because incompleteness was being deduced from whichever finding kinds the summary
+inspected. `scanComplete` is now cleared at every point the lint fails to fully examine a file.
+(3) The gate read `independentSpend: 4` against a budget of 3: clause (c) is `findings-resolved`,
+so PASSED means every finding is resolved, NOT that a clean independent pass stands on the final
+tree. That distinction is recorded as residual risk in the archive emit rather than implied.
+
+Four open questions came out of it and remain live — **Q-crc-14** (the lint ships with no TRIGGER:
+nothing in the repo runs it at the moments the four motivating defects were written), **Q-crc-15**
+(the engine carries two CommonMark fence grammars and one is wrong in BOTH directions — it rescued
+a malformed spec AND mis-parses a correctly authored one; measured across every tracked markdown
+file and now sized as an ordinary small change), **Q-crc-16** (this doc's own
+stage count stated twice, unmarked), and **Q-crc-17** (a walk record with hand-retyped finding
+titles matched ZERO findings by the gate's key while declaring ten resolved — found by a human
+question, not a check).
+
 Read that doc before any rc-stage work; the D-arc section below is the historical
 record of how the engine got here.
 

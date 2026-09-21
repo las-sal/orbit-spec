@@ -1,0 +1,28 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-21T01:08:52Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Q-crc-16 CLOSED. The program doc stated its own stage count twice — a header blockquote claiming twelve stages (plus two other clauses that had gone false: charters proposed, goals proposed) and a preamble saying eighteen. The blockquote is deleted as the R-d-4 subtraction, since orbit architecture status already answers everything it asserted, and the preamble's count is marked in place with the numeral a marked span requires. Both halves landed together because either alone reproduces the defect it describes: a marked figure beside an unmarked stale duplicate of the same fact, which is the rule rc07 exists to enforce, committed inside rc07's own program doc. This superseded rc07 task 5.5's recommendation to WRITE a new current-state sentence — the doc already had a living one, so marking what exists beat adding a third voice. Verified rather than asserted: declaring a nineteenth stage makes the mark fail, and the mark sits above the first counted stage heading so it is clear of the self-reference hazard the spec records. The program doc is now the second marked document in the repository and the first outside CLAUDE.md, which is the first evidence orbit-source-lint works on something other than the file it was dogfooded in.",
+  "stages_touched": [],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/clean-up-review-cycle.md",
+        "why": "rc07 complete and ratified; Q-crc-16 closed; Q-crc-14, 15, 17 remain the live backlog"
+      },
+      {
+        "path": "orbit/specs/orbit-source-lint/spec.md",
+        "why": "the capability now governing both marked documents"
+      }
+    ],
+    "next_command": "orbit architecture status",
+    "model_hint": "any",
+    "seam": "architect session end; no active change, no doc defect outstanding, ready for the next exploration"
+  },
+  "next_recommended": "orbit architecture status"
+}
