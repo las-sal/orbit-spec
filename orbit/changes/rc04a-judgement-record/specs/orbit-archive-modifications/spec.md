@@ -21,6 +21,15 @@ not readiness judgements and are not formed against independent passes. The dist
 qualifying test, not a stylistic preference — a `warnings` entry cites nothing and can be ordered
 against nothing.
 
+**THE CONTINUATION RECORD AT THIS SEAM.** When the Step 3.4 `review-system` gate prompt is answered
+**Proceed anyway**, the archive emit SHALL carry, ALONGSIDE `gate_overridden`, a `judgements` entry
+with `kind: "continuation"` and `disposition: "proceed"` whose `gate`, `gate_state` and `gate_reason`
+are identical to the `gate_overridden` object's `gate`, `state` and `reason`. This seam — not
+apply's — is where the override is most often taken, and a record that admits the entry while no
+body is told to write it ships the capability inert at its own primary carrier. The pass tokens
+SHALL be read BEFORE the Step 5 move, because afterwards the change's active path no longer
+resolves.
+
 A `disposition: "not-ready"` record SHALL NOT block the archive. Readiness is a judgement and the
 engine does not evaluate judgements (R-crc-10); the seam already carries consent, gate and audit
 prompts for stopping, and an AI belief that could veto a user's archive would invert the steering
@@ -75,6 +84,20 @@ relationship the lifecycle is built on.
   in flow — that was not formed against any independent pass
 - **THEN** it remains a `warnings` entry and is NOT an `accepted` pair, because it fails the
   qualifying test and carries nothing to order against
+
+#### Scenario: A gate override at archive carries its continuation successor
+
+- **WHEN** the archive proceeds past an unpassed or stale `review-system` gate
+- **THEN** the archive run summary carries BOTH `gate_overridden: {gate, state, reason}` AND a
+  `judgements` entry `{kind: "continuation", disposition: "proceed", gate, gate_state, gate_reason}`
+  whose three gate facts match the override object's, and a mismatch between them is refused
+
+#### Scenario: A not-ready record is the author's own dissent
+
+- **WHEN** a readiness record carries `disposition: "not-ready"`
+- **THEN** it records that the work archived against the author's judgement, with `ratified_by`
+  stating honestly whether that judgement was the AI's or the user's, and it carries no routing
+  `destination` — routing has no carrier in this cadence
 
 #### Scenario: not-ready does not block
 
@@ -169,11 +192,11 @@ residue that path renaming alone does not fix — satisfying the deferral record
 - **THEN** that path resolves within the generated skill directory (the B1-era dangling cite is
   closed)
 
-#### Scenario: The readiness record is documented in the shipped reference
+#### Scenario: The judgement record is documented in the shipped reference
 
 - **WHEN** the shipped archive schema reference is read after init
 - **THEN** it documents the conditional `judgements` array and its `readiness` entry alongside the
-  other conditional fields — its `kind`, `formed_against`, `disposition`, `reasoning`, `ratified_by`, `accepted` and
-  (on `not-ready`) `destination` — in the same style `gate_overridden` and the fingerprint fields
-  use, so the reference and the payload table agree per `orbit-emit-composition`'s parity
-  requirement
+  other conditional fields — its `kind`, `formed_against`, `disposition`, `reasoning`, `ratified_by` and `accepted` — AND the
+  `continuation` entry shape this seam also admits (`gate`/`gate_state`/`gate_reason`), in the same
+  style `gate_overridden` and the fingerprint fields use, including a `## Field notes` bullet, so
+  the reference and the payload table agree per `orbit-emit-composition`'s parity requirement

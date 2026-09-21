@@ -4,8 +4,9 @@
 
 This change implements the first child of `rc04-readiness-record`, split three ways under R-crc-9
 on 2026-09-21 after a size check measured the full mechanism at ten capabilities against a ceiling
-of three. The mechanism itself was settled in exploration — twenty decisions, zero open questions —
-so this design CITES rather than invents. See `explore.md`, which travels with this change and
+of three. The mechanism itself was settled in exploration — eighteen decisions, and two open questions both
+carrying standing recommendations, neither owned by this child — so this design CITES rather than
+invents. See `explore.md`, which travels with this change and
 remains the shared source for `rc04b-forward-recommendation` and `rc04c-retire-gate-overridden`.
 
 The prior art is close at hand and is the model: `orbit-address-reviews` gives walk decisions
@@ -58,12 +59,20 @@ mid-cadence; `readiness` is terminal. The acceptances are the terminal assertion
 peer records — *"I accepted the residual because I bought a scoped pass and it came back sound"* is
 one statement, and modelling it as two loses the because.
 
-### D3 — ordering is the only computed rule, and it is checked at the WRITE GATE
+### D3 — ordering is the only computed rule ABOUT THE EVIDENCE, and it is checked at the WRITE GATE
 
 Not at the gate graph. The gate graph computes coverage and resolution and must keep computing only
 those — rc02c retired clause (c) precisely to stop it computing judgements. The refusal belongs
 where `orbit-emit-composition` already validates frozen records, materialize-first, so the
 validated candidate and the written bytes are one read of caller state.
+
+Two other refusals shipped and are NOT counterexamples, because they are about the record's SHAPE
+and LOCATION rather than about the judgement's relation to its evidence: the carrier table's KIND
+half (a `readiness` on a `review-external` T0 emit has no reader), and the `gate_overridden`
+field-agreement constraint (D6 below). Both are fully observable, so R-crc-10 permits them; the
+second retires with `gate_overridden` in rc04c. What stays off limits is the engine forming an
+opinion about whether the judgement was RIGHT — including whether the cited passes were clean,
+whether enough were cited, or whether they were the right MODE.
 
 ### D4 — the record cites by TOKEN, and this is the load-bearing detail
 

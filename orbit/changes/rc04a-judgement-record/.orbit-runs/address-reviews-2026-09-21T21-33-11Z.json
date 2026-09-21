@@ -1,0 +1,112 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-21T21:33:11Z",
+  "change": "rc04a-judgement-record",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc04a-judgement-record/.orbit-runs/external-system-2026-09-21T19-41-52Z.md",
+  "external_reviewer": "OpenAI Codex (GPT-5)",
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 3,
+    "suggestion": 1
+  },
+  "pushback_verification": "All 5 verified against current state before any edit, and the two engine findings were verified the way the reviewer found them — by EXECUTION. The coexistence guard: read both shapes, confirmed `gate_overridden` is `{gate, state, reason}` while the record is `{gate, gate_state, gate_reason}`, so only `gate` was ever compared. The carrier table: confirmed `validateJudgements` never consulted `command`. The archive body: confirmed Step 3.4's Proceed-anyway bullet named only `gate_overridden` while apply's mirror bullet carried the full instruction. ZERO stale. This is the SECOND consecutive pair in which the external half found a defect by constructing a payload and running the real CLI against it — the prompt's own advice, and the method that keeps finding rules that read correctly and compute wrongly.",
+  "resolution_summary": {
+    "resolved": 5,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "The archive override path never composes its continuation record",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/archive-change.ts",
+      "line": 282,
+      "classification": "trivial_fix",
+      "action": "MERGED with the fresh half's F1 — both reviewers found it independently. the two halves independently found this; resolved once, certified on both records. Step 3.4's **Proceed anyway** bullet now carries THE CONTINUATION RECORD paragraph: alongside `gate_overridden`, compose `{kind: \"continuation\", disposition: \"proceed\", gate: \"review-system\", gate_state, gate_reason}` carrying the three facts identically (the gate refuses a mismatch), and CAPTURE THE TOKENS BEFORE THE MOVE, since afterwards the active path no longer resolves. The archive schema JSON block now shows BOTH admissible entry shapes rather than readiness alone, the opening enumeration names `judgements`, and a `## Field notes` bullet documents it (which also closes the fresh half's F8 — the parity instrument reads field notes, so the absent bullet was invisible to the only check over that file). `orbit-archive-modifications` gained a THE CONTINUATION RECORD AT THIS SEAM requirement paragraph and a scenario asserting both records travel together with matching gate facts. Covered by a new test: one archive emit carrying both kinds.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The coexistence guard compares two nonexistent legacy keys",
+      "marker_source": "external",
+      "file": "src/core/emit-composition.ts",
+      "line": 622,
+      "classification": "trivial_fix",
+      "action": "Verified before fixing: `gate_overridden` is `{gate, state, reason}`, the record is `{gate, gate_state, gate_reason}`, and the loop indexed BOTH with the record's names — so `go.gate_state` and `go.gate_reason` were always `undefined` and two thirds of the check never ran. The suite passed because its single mismatch case happened to differ on `gate`, the one field whose name is shared. Replaced with an explicit `GATE_FIELD_PAIRS` list (`gate`<->`gate`, `state`<->`gate_state`, `reason`<->`gate_reason`), hardened the legacy-object guard against arrays, and added ONE TEST PER FIELD. Probed across the real `--payload` boundary: a `state` disagreement now refuses naming both values, exit 1, no file. The fixture also asserts all three mismatches, so the widening argument rc04c depends on is executable rather than claimed.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Carrier-specific judgement kinds are not enforced",
+      "marker_source": "external",
+      "file": "src/core/emit-composition.ts",
+      "line": 540,
+      "classification": "trivial_fix",
+      "action": "MERGED with the fresh half's F4. the two halves independently found this; resolved once, certified on both records. Took the finding's option (A) — enforce — because the requirement's own sentence (\"admitting it anywhere would make its location meaningless\") reads as a refusal contract, and kind-per-command is fully observable, so R-crc-10 permits a check rather than only a record. Added `JUDGEMENT_KINDS_BY_COMMAND` (apply -> continuation, review-external -> continuation, archive -> both) consulted in `validateJudgements`, refusing with the command and the kind named. The `Where a judgement record may appear` requirement now says BOTH HALVES OF THAT TABLE ARE ENFORCED and carries a scenario; the apply and review body texts state their admitted kind. Probed via the real CLI: a `readiness` on `review-external` now refuses, no file.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The not-ready contract conflates archived dissent with routing",
+      "marker_source": "external",
+      "file": "orbit/changes/rc04a-judgement-record/specs/orbit-run-summary-emit/spec.md",
+      "line": 54,
+      "classification": "decision_required",
+      "action": "RATIFIED IN CHAT: option (A). The finding is exactly right that my own validator refused the case my own readout describes. `not-ready` is now an ARCHIVE-TIME DISSENT: no `destination` (it is refused as an unknown key), and `ratified_by` takes EITHER value, recording honestly whether the belief was the session's own (`ai`) or a human's (`user`). The routing framing leaves rc04a entirely. The decisive argument is the one that already settled the carrier question: routing was descoped from this stage FOR WANT OF A READER, so requiring `destination` on a disposition that can only appear at archive re-imported the descoped concept through the validator. Swept the validator (both refusals deleted, `destination` out of the closed key set), `orbit-run-summary-emit` (the paragraph rewritten; the user-ratification scenario replaced by an AI-dissent ACCEPTANCE scenario plus a destination-refusal scenario), `orbit-archive-modifications` (a not-ready-is-dissent scenario; the documentation scenario no longer names `destination`), both workflow bodies, the archive schema block, and task 2.5's description. Two refusal cases retired from the suite; one acceptance case added. Step 5.65's readout line needed no change — it already said 'this session's own judgement', which is precisely what made the old contract incoherent.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "Option A — allow an AI-authored archive dissent with no routing destination; drop the routing framing from rc04a entirely.",
+      "recommendation_fork": {
+        "source": "heuristic",
+        "options": [
+          "A",
+          "B"
+        ],
+        "ratified": "A"
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The acceptance fixture asserts the classification it claims to derive",
+      "marker_source": "external",
+      "file": "test/core/judgement-record-fixture.test.ts",
+      "line": 44,
+      "classification": "trivial_fix",
+      "action": "Conceded in full: the fixture selected by INDEX, labelled in comments, checked an opening phrase, and hand-attached a pass list that never went near the write gate — so it could not have detected a wrong sort, and in fact detected none of the defects this same review found. Rewritten so every classification is settled by the ENGINE: a scratch project is seeded with rc02c's REAL pass files, qualifying entries compose a readiness record that `composeAndWriteEmit` ACCEPTS citing real tokens, and non-qualifying entries cite nothing, so `formed_against` is empty and the gate REFUSES them — the exclusion is now demonstrated by the engine rather than by a phrase check. Added: the in-context citation is refused (independence enforced, not assumed), and the continuation case composes from rc02c's own archived `gate_overridden` and is asserted to AGREE with it field-for-field plus refuse on each mismatch. The index-and-phrase assertions survive only where that is honestly their job — pinning the IDENTITY of the archived entry a claim is about, so the test breaks if the cited artifact moves. 6 cases, all green.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": null,
+  "final_assessment": "The external half of rc04a's system blind pair, walked in ONE SITTING with the fresh half and recorded on its own source. 1 CRITICAL, 3 WARNING, 1 SUGGESTION, all resolved, zero stale, none deferred. Two findings (the archive continuation record, the unenforced carrier kinds) were found independently by both halves and are certified on both records. One was the sitting's only decision: `not-ready` conflated archived dissent with routing, and my own validator refused the AI-dissent case my own readout describes — ratified in chat as option A, which drops the routing framing from rc04a entirely on the same ground that descoped routing in the first place, want of a reader. The half's own pattern holds: every one of its findings is a place where a rule READS correctly and COMPUTES wrongly, and each was found by constructing a payload and running the real CLI rather than by reading the code.",
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc04a-judgement-record --from-file orbit/changes/rc04a-judgement-record/.orbit-runs/review-system-2026-09-21T19-48-15Z.json"
+}

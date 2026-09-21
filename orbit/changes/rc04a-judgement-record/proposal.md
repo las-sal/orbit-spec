@@ -41,9 +41,14 @@ which is the whole of what is mechanized here, per R-crc-10.
 - **`kind: readiness`** — formed at the cadence's end. Dispositions are `ready` and `not-ready`,
   and it carries `accepted: [{claim, why}]` — the residuals are the assertion's CONTENT, not peer
   judgements.
-- **ONE computed rule, and only one.** Every token in `formed_against` MUST precede the record's
-  own timestamp, or the write gate REFUSES the emit with a named error. The engine never judges
-  whether the AI was RIGHT to be ready; it refuses a claim that could not have been informed.
+- **ONE computed rule about the record's RELATION TO ITS EVIDENCE.** Every token in
+  `formed_against` MUST precede the record's own timestamp, or the write gate REFUSES the emit with
+  a named error. The engine never judges whether the AI was RIGHT to be ready; it refuses a claim
+  that could not have been informed. Two further refusals are about the record's SHAPE and LOCATION
+  rather than its evidence, and both are there because the alternative is a contract that behaves
+  like a comment: the CLOSED carrier table is enforced by kind as well as by command, and a
+  `continuation/proceed` coexisting with `gate_overridden` must AGREE with it field for field — a
+  narrowly-scoped constraint that retires with `gate_overridden` in rc04c.
 - **`ratified_by` is REQUIRED**, because the difference between the AI's own belief and a
   user ratification has to be STATED rather than inferred from context that will not survive.
 - **A `not-ready` record RECORDS and never BLOCKS**, and it gets a READER: the archive completion

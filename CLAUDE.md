@@ -165,7 +165,7 @@ settled it in both directions at once. The archive then produced the state the s
 for: `review-system` unpassed with `budgetExhausted: true`, 3 of 3 independent passes spent.
 It archived through a recorded `gate_overridden` whose reason IS the budget-spent clause — the
 sanctioned terminal signal, not R-d-10's "no clean pass yet" path — with the spend kept as
-residual risk. rc04 owns replacing that override with a `residual_risk` record.
+residual risk. rc04 owns replacing that override with a judgement record; the field shipped by `rc04a-judgement-record` is `judgements`, whose `readiness` entry carries the residuals as `accepted: [{claim, why}]` pairs (the earlier working name `residual_risk` still appears in the architecture doc and is rc04's to reconcile).
 
 Its third citing change, `rc07-artifact-lint`, is ARCHIVED (2026-09-19) and the stage is
 RATIFIED — **the first rc-stage to archive through a COMPUTED PASSED system gate** rather than a

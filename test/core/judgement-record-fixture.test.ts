@@ -1,6 +1,8 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import * as fs from 'node:fs';
+import * as os from 'node:os';
 import * as path from 'node:path';
+import { composeAndWriteEmit } from '../../src/core/emit-composition.js';
 
 /**
  * rc04a exit criterion (3) — THE ACCEPTANCE FIXTURE.
@@ -18,13 +20,29 @@ import * as path from 'node:path';
  * against independent review output?* — not under the exploration's earlier worked example,
  * which predates the test and sorted these differently. That correction is the point: the
  * exit criterion is only meaningful if the sort follows the rule the change ships.
+ *
+ * WHAT THE SYSTEM WALK CHANGED (external finding E5). The first version of this file asserted
+ * the classification it claimed to derive: it selected entries by INDEX, labelled them in
+ * comments, checked an opening phrase, and hand-attached a pass list that never went near the
+ * write gate. It therefore could not have detected a wrong sort, and in fact detected none of
+ * the carrier or coexistence defects the same review found. Every classification below is now
+ * settled by COMPOSING the record and running it through `composeAndWriteEmit` against a
+ * project seeded with rc02c's REAL trail:
+ *
+ *   - an entry that qualifies composes a record the write gate ACCEPTS, citing real tokens;
+ *   - an entry that does not qualify cites NOTHING, so its `formed_against` is empty and the
+ *     gate REFUSES it. The exclusion is demonstrated by the engine, not by a phrase check.
+ *
+ * The index-and-phrase assertions survive only where that is honestly their job: pinning the
+ * IDENTITY of the archived entry a given claim is about, so the test breaks if the cited
+ * artifact changes underneath it.
  */
 
-const ARCHIVE = path.join(
+const ARCHIVE_SRC = path.join(
   process.cwd(),
   'orbit/changes/archive/2026-09-21-rc02c-confirmation-semantics/.orbit-runs'
 );
-const EMIT = path.join(ARCHIVE, 'archive-2026-09-21T15-38-59Z.json');
+const EMIT = path.join(ARCHIVE_SRC, 'archive-2026-09-21T15-38-59Z.json');
 
 /** rc02c's INDEPENDENT passes — the tokens a judgement on that trail could cite. */
 const FRESH = '2026-09-21T14-12-34Z';
@@ -32,58 +50,144 @@ const EXTERNAL_1 = '2026-09-21T14-11-34Z';
 const EXTERNAL_2 = '2026-09-21T15-17-10Z';
 const IN_CONTEXT = '2026-09-21T14-56-15Z';
 
-describe('rc04a acceptance fixture — rc02c\'s six warnings under the shipped shape', () => {
-  const emit = JSON.parse(fs.readFileSync(EMIT, 'utf-8')) as { warnings: string[] };
+const emit = JSON.parse(fs.readFileSync(EMIT, 'utf-8')) as {
+  warnings: string[];
+  archive_path: string;
+};
 
+/** A `{claim, why}` pair from one free-prose entry — the split the record's shape implies. */
+const pair = (w: string) => ({ claim: w.split('.')[0], why: w.slice(w.indexOf('.') + 1).trim() });
+
+let root: string;
+
+/**
+ * A scratch project carrying rc02c's REAL trail under an ARCHIVED change directory, which is
+ * what an `archive` emit resolves against. Only the pass files are copied: those are what the
+ * write gate resolves `formed_against` citations to.
+ */
+beforeEach(() => {
+  root = fs.mkdtempSync(path.join(os.tmpdir(), 'orbit-rc04a-fixture-'));
+  const runs = path.join(root, 'orbit/changes/archive/2026-09-21-rc02c-derived/.orbit-runs');
+  fs.mkdirSync(runs, { recursive: true });
+  for (const f of fs.readdirSync(ARCHIVE_SRC)) {
+    if (/^(review-(proposal|system)|external-(proposal|system))-/.test(f)) {
+      fs.copyFileSync(path.join(ARCHIVE_SRC, f), path.join(runs, f));
+    }
+  }
+});
+
+afterEach(() => fs.rmSync(root, { recursive: true, force: true }));
+
+const archivePayload = (judgements: unknown) => ({
+  model: 'test-model',
+  final_assessment: 'archived',
+  archive_path: 'orbit/changes/archive/2026-09-21-rc02c-derived/',
+  audit: {
+    ran: true,
+    failure_reason: null,
+    findings_summary: { critical: 0, warning: 0, suggestion: 0 },
+    summary_path: null,
+  },
+  sync_specs: {
+    ran: true,
+    skipped_reason: null,
+    capabilities_updated: [],
+    added: 0,
+    modified: 0,
+    removed: 0,
+    renamed: 0,
+  },
+  unresolved_markers: [],
+  user_decision: 'proceeded_with_no_critical',
+  consent: 'user-invoked',
+  judgements,
+});
+
+const emitDerived = (judgements: unknown, extra: Record<string, unknown> = {}) =>
+  composeAndWriteEmit(
+    'archive',
+    { change: 'rc02c-derived' },
+    { ...archivePayload(judgements), ...extra } as any,
+    { projectRoot: root }
+  );
+
+describe("rc04a acceptance fixture — rc02c's six warnings under the shipped shape", () => {
   it('the cited artifact still carries the six free-prose entries the design describes', () => {
     expect(emit.warnings).toHaveLength(6);
     const chars = emit.warnings.join('').length;
     expect(chars).toBeGreaterThan(3000); // "3,333 characters of free prose"
   });
 
-  it('TWO entries are formed against independent passes and become `accepted` pairs', () => {
+  it('TWO entries compose a readiness record the WRITE GATE accepts, citing rc02c real tokens', () => {
     // [0] a passed gate does not mean a clean independent pass stands — formed against the passes
     // [1] the ~58% capture-recapture residual — formed against the blind pair
     const accepted = [emit.warnings[0], emit.warnings[1]];
     expect(accepted[0]).toMatch(/RESIDUAL RISK, recorded rather than implied/);
     expect(accepted[1]).toMatch(/RESIDUAL RISK, measured/);
 
-    // each is expressible as a {claim, why} pair inside ONE readiness record citing real tokens
-    const record = {
-      kind: 'readiness' as const,
-      disposition: 'ready' as const,
-      formed_against: [EXTERNAL_1, FRESH, EXTERNAL_2],
-      reasoning: 'the blind pair and the scoped pass returned; the residual is acceptable',
-      ratified_by: 'ai' as const,
-      accepted: accepted.map(w => ({ claim: w.split('.')[0], why: w.slice(w.indexOf('.') + 1).trim() })),
-    };
-    expect(record.accepted).toHaveLength(2);
-    expect(record.accepted.every(p => p.claim.length > 0 && p.why.length > 0)).toBe(true);
-    // every cited token is an INDEPENDENT pass that exists on the trail
-    for (const t of record.formed_against) {
-      const isPass =
-        fs.existsSync(path.join(ARCHIVE, `review-system-${t}.json`)) ||
-        fs.existsSync(path.join(ARCHIVE, `external-system-${t}.md`));
-      expect(isPass, `${t} must be a real pass on rc02c's trail`).toBe(true);
-    }
-    expect(record.formed_against).not.toContain(IN_CONTEXT);
+    const r = emitDerived([
+      {
+        kind: 'readiness',
+        disposition: 'ready',
+        formed_against: [EXTERNAL_1, FRESH, EXTERNAL_2],
+        reasoning: 'the blind pair and the scoped pass returned; the residual is acceptable',
+        ratified_by: 'ai',
+        accepted: accepted.map(pair),
+      },
+    ]);
+
+    // The ENGINE accepted it. Every cited token resolved to a real INDEPENDENT pass on the
+    // copied trail, and every one preceded the emit's own — neither asserted here, both
+    // ENFORCED by the write gate this call went through.
+    const written = JSON.parse(fs.readFileSync(r.path, 'utf-8'));
+    expect(written.judgements[0].accepted).toHaveLength(2);
+    expect(written.judgements[0].accepted.every((p: any) => p.claim && p.why)).toBe(true);
+    expect(written.judgements[0].formed_against).toEqual([EXTERNAL_1, FRESH, EXTERNAL_2]);
   });
 
-  it('THREE entries arose at the seam and correctly STAY in warnings', () => {
+  it('the in-context pass is REFUSED as a citation — independence is enforced, not assumed', () => {
+    expect(() =>
+      emitDerived([
+        {
+          kind: 'readiness',
+          disposition: 'ready',
+          formed_against: [IN_CONTEXT],
+          reasoning: 'formed against the in-context pass',
+          ratified_by: 'ai',
+          accepted: [pair(emit.warnings[0])],
+        },
+      ])
+    ).toThrow(/in-context pass/);
+  });
+
+  it('THREE entries arose at the seam and are EXCLUDED by the gate, not by a phrase check', () => {
     // [3] the stale cross-reference — found by the SYNC AGENT, not by any review pass
     // [4] touchpoint divergence — computed at the seam
     // [5] the at-archive correction — made in flow
     expect(emit.warnings[3]).toMatch(/found by the sync agent/);
     expect(emit.warnings[4]).toMatch(/TOUCHPOINT DIVERGENCE at archive/);
     expect(emit.warnings[5]).toMatch(/AT-ARCHIVE CORRECTION, made in flow/);
-    // none of them cites a pass, which is exactly why they fail the qualifying test:
-    // a warnings entry cites nothing and can be ordered against nothing
+
     for (const w of [emit.warnings[3], emit.warnings[4], emit.warnings[5]]) {
+      // None cites a pass — which is not a stylistic observation but the whole qualifying
+      // test. A record built from one can cite nothing, so the gate refuses it outright.
       expect(w).not.toMatch(/\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}Z/);
+      expect(() =>
+        emitDerived([
+          {
+            kind: 'readiness',
+            disposition: 'ready',
+            formed_against: [],
+            reasoning: 'a seam-arising note has nothing to be formed against',
+            ratified_by: 'ai',
+            accepted: [pair(w)],
+          },
+        ])
+      ).toThrow(/NON-EMPTY/);
     }
   });
 
-  it('ONE entry is a METHOD call misfiled in warnings, and the new shape makes that visible', () => {
+  it('ONE entry is a METHOD call misfiled in warnings, and the gate excludes it the same way', () => {
     // [2] the size overage — formed against R-crc-1, not against any pass. It is neither an
     // `accepted` pair nor a seam-arising process note: it is a method call whose correct home
     // is design.md's size section, where it also already lives. Naming it is the point —
@@ -91,35 +195,58 @@ describe('rc04a acceptance fixture — rc02c\'s six warnings under the shipped s
     expect(emit.warnings[2]).toMatch(/^SIZE, over the ceiling/);
     expect(emit.warnings[2]).toMatch(/R-crc-1/);
     expect(emit.warnings[2]).not.toMatch(/\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}Z/);
+    expect(() =>
+      emitDerived([
+        {
+          kind: 'readiness',
+          disposition: 'ready',
+          formed_against: [],
+          reasoning: 'a method call is formed against a ruling, not against a pass',
+          ratified_by: 'ai',
+          accepted: [pair(emit.warnings[2])],
+        },
+      ])
+    ).toThrow(/NON-EMPTY/);
   });
 
-  it('the continuation cases on the same trail cite earlier, resolvable tokens (task 5.2)', () => {
-    // the apply's gate_overridden -> continuation/proceed
+  it("the continuation case composes from rc02c's own gate_overridden and AGREES with it (task 5.2)", () => {
     const applies = fs
-      .readdirSync(ARCHIVE)
+      .readdirSync(ARCHIVE_SRC)
       .filter(f => f.startsWith('apply-') && f.endsWith('.json'))
-      .sort();
-    expect(applies.length).toBeGreaterThan(0);
-    const withOverride = applies
-      .map(f => JSON.parse(fs.readFileSync(path.join(ARCHIVE, f), 'utf-8')))
+      .map(f => JSON.parse(fs.readFileSync(path.join(ARCHIVE_SRC, f), 'utf-8')))
       .filter(d => d.gate_overridden);
-    expect(withOverride.length).toBeGreaterThan(0);
-    // its gate/state/reason are exactly what a continuation/proceed would carry
-    for (const d of withOverride) {
-      expect(typeof d.gate_overridden.gate).toBe('string');
-      expect(typeof d.gate_overridden.state).toBe('string');
-      expect(typeof d.gate_overridden.reason).toBe('string');
-    }
+    expect(applies.length).toBeGreaterThan(0);
 
-    // the scoped iteration-2 handoff -> continuation/spend, taken AFTER the pair returned
-    const t0 = fs
-      .readdirSync(ARCHIVE)
-      .filter(f => f.startsWith('review-external-') && f.endsWith('.json'))
-      .sort()
-      .pop()!;
-    const spendToken = /(\d{4}-\d{2}-\d{2}T[\d-]+Z)/.exec(t0)![1];
-    for (const cited of [EXTERNAL_1, FRESH]) {
-      expect(cited < spendToken, `${cited} must precede the spend decision at ${spendToken}`).toBe(true);
+    const go = applies[0].gate_overridden as { gate: string; state: string; reason: string };
+    const continuation = {
+      kind: 'continuation',
+      disposition: 'proceed',
+      formed_against: [EXTERNAL_1, FRESH],
+      reasoning: 'proceeded past the gate knowing what the pair returned',
+      ratified_by: 'user',
+      // THE STRICT WIDENING, executed: the same three facts, plus a citation that can be
+      // ordered. rc04c's retirement argument is exactly this record being a superset.
+      gate: go.gate,
+      gate_state: go.state,
+      gate_reason: go.reason,
+    };
+
+    const r = emitDerived([continuation], { gate_overridden: go });
+    const written = JSON.parse(fs.readFileSync(r.path, 'utf-8'));
+    expect(written.judgements[0].gate).toBe(written.gate_overridden.gate);
+    expect(written.judgements[0].gate_state).toBe(written.gate_overridden.state);
+    expect(written.judgements[0].gate_reason).toBe(written.gate_overridden.reason);
+
+    // and a record that DISAGREES with the field it supersedes is refused on every field —
+    // the constraint the widening argument depends on
+    for (const [key, legacy] of [
+      ['gate', 'gate'],
+      ['gate_state', 'state'],
+      ['gate_reason', 'reason'],
+    ] as const) {
+      expect(() =>
+        emitDerived([{ ...continuation, [key]: 'something else' }], { gate_overridden: go })
+      ).toThrow(new RegExp(`'${key}' disagrees with gate_overridden\\.${legacy}`));
     }
   });
 });

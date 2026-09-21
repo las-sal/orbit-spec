@@ -493,34 +493,13 @@ function validatePayload(command: string, payload: Record<string, unknown>): voi
 // rc04a: THE CADENCE JUDGEMENT RECORD.
 //
 // A judgement formed against INDEPENDENT REVIEW OUTPUT, recorded rather than left in
-// narrative prose. The discriminated union below is for AUTHORING ergonomics inside the
-// engine; it is NOT the enforcement. Payloads arrive as untrusted JSON from `--payload
-// <file>` or stdin, where every type guarantee is erased — so `validateJudgements` below is
-// the only check that can ever fire on real input. Same reasoning as `validatePrFields`.
+// narrative prose. There is ONE enforcement layer and it is this one: payloads arrive as
+// untrusted JSON from `--payload <file>` or stdin, where every type guarantee is erased, so a
+// TypeScript shape would describe the record without ever checking one. (A discriminated
+// union was authored and then deleted during rc04a's system walk — it had no consumer, no
+// test, and `tsconfig.json` excludes `test/`, so a compile-negative could not have run
+// against it either. Same reasoning as `validatePrFields`, which is also runtime-only.)
 // ---------------------------------------------------------------------------------------
-
-interface JudgementBase {
-  formed_against: string[];
-  reasoning: string;
-  ratified_by: 'ai' | 'user';
-}
-export interface ContinuationJudgement extends JudgementBase {
-  kind: 'continuation';
-  disposition: 'proceed' | 'spend';
-  /** Required on `proceed` — byte-for-byte `gate_overridden`'s payload, which it supersedes. */
-  gate?: string;
-  gate_state?: string;
-  gate_reason?: string;
-}
-export interface ReadinessJudgement extends JudgementBase {
-  kind: 'readiness';
-  disposition: 'ready' | 'not-ready';
-  /** The residuals are the assertion's CONTENT, not peer records. */
-  accepted: Array<{ claim: string; why: string }>;
-  /** Required on `not-ready` — where the work goes instead. */
-  destination?: string;
-}
-export type Judgement = ContinuationJudgement | ReadinessJudgement;
 
 const JUDGEMENT_DISPOSITIONS: Record<string, Set<string>> = {
   continuation: new Set(['proceed', 'spend']),
@@ -529,7 +508,21 @@ const JUDGEMENT_DISPOSITIONS: Record<string, Set<string>> = {
 const JUDGEMENT_COMMON_KEYS = ['kind', 'formed_against', 'disposition', 'reasoning', 'ratified_by'];
 const JUDGEMENT_KEYS_BY_KIND: Record<string, Set<string>> = {
   continuation: new Set([...JUDGEMENT_COMMON_KEYS, 'gate', 'gate_state', 'gate_reason']),
-  readiness: new Set([...JUDGEMENT_COMMON_KEYS, 'accepted', 'destination']),
+  readiness: new Set([...JUDGEMENT_COMMON_KEYS, 'accepted']),
+};
+
+/**
+ * The CLOSED carrier table from `orbit-run-summary-emit`, enforced rather than described.
+ * `payloadFields` refuses the KEY on a command that takes no judgement; this refuses the KIND
+ * on a command that takes the key but not that kind — without it a `readiness` writes cleanly
+ * onto a `review-external` T0 emit, where nothing will ever read it, which is precisely the
+ * write-only record this capability condemns. Kind-per-command is fully observable, so
+ * R-crc-10 permits a check.
+ */
+const JUDGEMENT_KINDS_BY_COMMAND: Record<string, Set<string>> = {
+  apply: new Set(['continuation']),
+  'review-external': new Set(['continuation']),
+  archive: new Set(['continuation', 'readiness']),
 };
 
 function judgementError(i: number, detail: string): never {
@@ -554,9 +547,16 @@ function validateJudgements(command: string, payload: Record<string, unknown>): 
     const e = entry as Record<string, unknown>;
 
     const kind = e.kind;
-    if (typeof kind !== 'string' || !(kind in JUDGEMENT_DISPOSITIONS)) {
+    // `in` would walk the prototype chain, so `kind: "toString"` would pass here and then
+    // crash below on the inherited function. OWN keys only.
+    if (typeof kind !== 'string' || !Object.prototype.hasOwnProperty.call(JUDGEMENT_DISPOSITIONS, kind)) {
       judgementError(i, `'kind' must be one of ${Object.keys(JUDGEMENT_DISPOSITIONS).join(' | ')} — got ${JSON.stringify(kind)}.`);
     }
+    const admitted = JUDGEMENT_KINDS_BY_COMMAND[command];
+    if (admitted && !admitted.has(kind as string)) {
+      judgementError(i, `kind '${kind}' is not admitted on '${command}' — that seam admits ${[...admitted].join(' | ')}. The record marks where a decision was TAKEN, and a kind recorded where it could not have been taken has no reader.`);
+    }
+
     const allowed = JUDGEMENT_KEYS_BY_KIND[kind as string];
     for (const key of Object.keys(e)) {
       if (!allowed.has(key)) {
@@ -600,28 +600,31 @@ function validateJudgements(command: string, payload: Record<string, unknown>): 
           judgementError(i, `'accepted[${k}]' must be {claim, why} — the residuals are the assertion's content.`);
         }
       });
-      if (disposition === 'not-ready') {
-        if (typeof e.destination !== 'string' || e.destination === '') {
-          judgementError(i, `'destination' is required on a not-ready readiness record — where the work goes instead.`);
-        }
-        if (e.ratified_by !== 'user') {
-          judgementError(i, `a not-ready readiness record must be ratified_by 'user' — routing work out of a cadence is a scope decision, and the record may not claim the AI made it.`);
-        }
-      }
     }
   });
 
   // The coexistence constraint (rc04a -> rc04c). `gate_overridden` and continuation/proceed
-  // carry the same three fields until the former is retired, and rc04c's retirement argument
+  // carry the same three facts until the former is retired, and rc04c's retirement argument
   // is that the record is a STRICT WIDENING of the field — an argument that fails outright if
   // a trail can show them disagreeing. Observable, so R-crc-10 permits a check.
-  const go = payload.gate_overridden as Record<string, unknown> | undefined;
-  if (go && typeof go === 'object') {
+  //
+  // THE TWO SHAPES DO NOT SHARE KEY NAMES. `gate_overridden` is `{gate, state, reason}`; the
+  // record is `{gate, gate_state, gate_reason}`, because the record sits inside an entry whose
+  // sibling keys are already about the judgement. Indexing both objects with one name set
+  // compares `gate` and silently skips the other two — the whole check, minus one third.
+  const GATE_FIELD_PAIRS: Array<[string, string]> = [
+    ['gate', 'gate'],
+    ['state', 'gate_state'],
+    ['reason', 'gate_reason'],
+  ];
+  const go = payload.gate_overridden;
+  if (typeof go === 'object' && go !== null && !Array.isArray(go)) {
+    const overridden = go as Record<string, unknown>;
     (raw as Record<string, unknown>[]).forEach((e, i) => {
       if (e.kind !== 'continuation' || e.disposition !== 'proceed') return;
-      for (const f of ['gate', 'gate_state', 'gate_reason'] as const) {
-        if (go[f] !== undefined && e[f] !== go[f]) {
-          judgementError(i, `'${f}' disagrees with gate_overridden.${f} (${JSON.stringify(e[f])} vs ${JSON.stringify(go[f])}) — the two records describe one fact until gate_overridden is retired.`);
+      for (const [legacy, record] of GATE_FIELD_PAIRS) {
+        if (overridden[legacy] !== undefined && e[record] !== overridden[legacy]) {
+          judgementError(i, `'${record}' disagrees with gate_overridden.${legacy} (${JSON.stringify(e[record])} vs ${JSON.stringify(overridden[legacy])}) — the two records describe one fact until gate_overridden is retired.`);
         }
       }
     });

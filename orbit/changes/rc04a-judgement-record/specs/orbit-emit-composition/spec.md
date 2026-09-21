@@ -50,7 +50,15 @@ Two edges are settled rather than left to the implementer. (a) An `in-context` t
 well-formedness check on the citation, not the forbidden judgement about whether ENOUGH passes were
 cited. (b) A REJECTED external return (`trail.rejectedExternals` — a return that came back
 unreadable and still cost a run) is not a pass and citing one is REFUSED: it satisfies no slot and
-carries no findings a judgement could have been formed against.
+carries no findings a judgement could have been formed against. (c) The cited pass's MODE is
+DELIBERATELY NOT CHECKED, and this is settled rather than overlooked: `TrailPass.mode` is as
+observable as the other two, so a terminal `readiness` at archive citing only a
+`review-proposal` pass could be refused as a category confusion. It is not, because a proposal-phase
+pass genuinely CAN inform a terminal judgement — a design objection raised before apply and accepted
+without resolution is exactly an `accepted` pair — and refusing it would be the engine ruling on
+whether the cited evidence was the RIGHT evidence, which is the judgement R-crc-10 puts off limits.
+Edges (a) and (b) are well-formedness of the CITATION; mode would be an opinion about the
+JUDGEMENT.
 
 #### Scenario: Scorecard/findings mismatch refused at write
 

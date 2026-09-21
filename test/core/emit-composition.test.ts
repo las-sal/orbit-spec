@@ -1141,8 +1141,8 @@ describe('rc04a judgement record', () => {
     ['an empty formed_against', [readiness({ formed_against: [] })], /NON-EMPTY/],
     ['a missing ratified_by', [readiness({ ratified_by: undefined })], /ratified_by/],
     ['a kind\\/disposition clash', [readiness({ disposition: 'spend' })], /disposition' must be one of ready/],
-    ['a not-ready claiming ai', [readiness({ disposition: 'not-ready', destination: 'architecture' })], /ratified_by 'user'/],
-    ['a not-ready with no destination', [readiness({ disposition: 'not-ready', ratified_by: 'user' })], /destination/],
+    ['a routing destination', [readiness({ disposition: 'not-ready', destination: 'architecture' })], /unknown key 'destination'/],
+    ['a prototype-chain kind', [readiness({ kind: 'toString' })], /'kind' must be one of/],
     ['an unknown key', [readiness({ oops: 1 })], /unknown key 'oops'/],
     ['an empty judgements array', [], /must not be empty/],
     ['a non-array judgements', {}, /must be an ARRAY/],
@@ -1173,22 +1173,6 @@ describe('rc04a judgement record', () => {
   });
 
   // ---- the coexistence constraint (rc04a -> rc04c) ------------------------
-  it('refuses a continuation/proceed disagreeing with gate_overridden', () => {
-    const cont = {
-      kind: 'continuation', disposition: 'proceed', formed_against: [FRESH],
-      reasoning: 'proceeded knowing what came back', ratified_by: 'user',
-      gate: 'review-proposal', gate_state: 'unpassed', gate_reason: 'r',
-    };
-    expect(() =>
-      composeAndWriteEmit('apply', { change: 'foo' }, {
-        model: 'test-model',
-        gate_overridden: { gate: 'review-system', state: 'unpassed', reason: 'r' },
-        judgements: [cont],
-      } as any, { projectRoot: root })
-    ).toThrow(/disagrees with gate_overridden/);
-    expect(listRuns(RUNS).filter(f => f.startsWith('apply-'))).toHaveLength(0);
-  });
-
   it('accepts a continuation/proceed that AGREES with gate_overridden', () => {
     const cont = {
       kind: 'continuation', disposition: 'proceed', formed_against: [FRESH],
@@ -1202,6 +1186,97 @@ describe('rc04a judgement record', () => {
     } as any, { projectRoot: root });
     expect(JSON.parse(fs.readFileSync(r.path, 'utf-8')).judgements[0].disposition).toBe('proceed');
   });
+
+  // ---- the archive-time DISSENT (rc04a system walk, external finding E4) ------
+  //
+  // `not-ready` was first specified as a USER-ratified routing decision carrying
+  // `destination: "architecture"`. But readiness lands only on `archive`, and the archive's
+  // own readout calls the record "this session's own judgement" — so the honest AI dissent the
+  // reader describes was refused by the validator, while the only accepted shape claimed work
+  // was going to architecture on an emit that had just archived it. Routing was already
+  // descoped from rc04a for having no reader; requiring `destination` re-imported it through
+  // the validator. The record now says what the reader already says.
+  it('accepts an AI-authored not-ready dissent with no destination', () => {
+    const runs = archived();
+    const r = emitArchive([readiness({ disposition: 'not-ready', ratified_by: 'ai' })]);
+    const written = JSON.parse(fs.readFileSync(r.path, 'utf-8'));
+    expect(written.judgements[0].disposition).toBe('not-ready');
+    expect(written.judgements[0].ratified_by).toBe('ai');
+    expect('destination' in written.judgements[0]).toBe(false);
+    expect(listRuns(runs).filter(f => f.startsWith('archive-'))).toHaveLength(1);
+  });
+
+  // ---- 1.2 the carrier table's KIND half ---------------------------------
+  it('refuses a readiness record on the apply emit — apply admits only continuation', () => {
+    expect(() =>
+      composeAndWriteEmit('apply', { change: 'foo' }, {
+        model: 'test-model', judgements: [readiness()],
+      } as any, { projectRoot: root })
+    ).toThrow(/kind 'readiness' is not admitted on 'apply'/);
+    expect(listRuns(RUNS).filter(f => f.startsWith('apply-'))).toHaveLength(0);
+  });
+
+  it('refuses a readiness record on the review-external T0 emit, where nothing reads it', () => {
+    expect(() =>
+      composeAndWriteEmit('review-external', { change: 'foo' }, {
+        model: 'test-model',
+        mode: 'system',
+        prompt_path: `${RUNS}/external-prompt-system-2026-01-02T00-00-00Z.md`,
+        target: 'a reviewer',
+        final_assessment: 'packaged',
+        judgements: [readiness()],
+      } as any, { projectRoot: root })
+    ).toThrow(/kind 'readiness' is not admitted on 'review-external'/);
+    expect(listRuns(RUNS).filter(f => f.startsWith('review-external-'))).toHaveLength(0);
+  });
+
+  it('admits BOTH kinds on one archive emit — the reason the carrier is an array', () => {
+    const runs = archived();
+    const cont = {
+      kind: 'continuation', disposition: 'proceed', formed_against: [FRESH],
+      reasoning: 'proceeded past an unpassed review-system knowing what came back',
+      ratified_by: 'user',
+      gate: 'review-system', gate_state: 'unpassed', gate_reason: 'spend 3',
+    };
+    const r = composeAndWriteEmit('archive', { change: 'foo' }, {
+      ...archivePayload([cont, readiness()]),
+      gate_overridden: { gate: 'review-system', state: 'unpassed', reason: 'spend 3' },
+    } as any, { projectRoot: root });
+    const written = JSON.parse(fs.readFileSync(r.path, 'utf-8'));
+    expect(written.judgements.map((j: any) => j.kind)).toEqual(['continuation', 'readiness']);
+    expect(listRuns(runs).filter(f => f.startsWith('archive-'))).toHaveLength(1);
+  });
+
+  // ---- the coexistence constraint, FIELD BY FIELD -------------------------
+  //
+  // `gate_overridden` is `{gate, state, reason}`; the record is `{gate, gate_state,
+  // gate_reason}`. The first implementation indexed BOTH with the record's names, so only
+  // `gate` was ever compared — two thirds of the check silently absent, and the suite passed
+  // because its one mismatch case happened to differ on `gate`. One case per field now.
+  const coexistence: Array<[string, Record<string, string>, Record<string, string>, RegExp]> = [
+    ['gate', { gate: 'review-proposal' }, { gate: 'review-system' }, /'gate' disagrees with gate_overridden\.gate/],
+    ['state', { gate_state: 'unpassed' }, { state: 'stale' }, /'gate_state' disagrees with gate_overridden\.state/],
+    ['reason', { gate_reason: 'spend 2' }, { reason: 'spend 3' }, /'gate_reason' disagrees with gate_overridden\.reason/],
+  ];
+
+  for (const [field, recordOver, legacyOver, pattern] of coexistence) {
+    it(`refuses a continuation/proceed whose ${field} disagrees with gate_overridden`, () => {
+      const cont = {
+        kind: 'continuation', disposition: 'proceed', formed_against: [FRESH],
+        reasoning: 'proceeded knowing what came back', ratified_by: 'user',
+        gate: 'review-proposal', gate_state: 'unpassed', gate_reason: 'spend 2',
+        ...recordOver,
+      };
+      expect(() =>
+        composeAndWriteEmit('apply', { change: 'foo' }, {
+          model: 'test-model',
+          gate_overridden: { gate: 'review-proposal', state: 'unpassed', reason: 'spend 2', ...legacyOver },
+          judgements: [cont],
+        } as any, { projectRoot: root })
+      ).toThrow(pattern);
+      expect(listRuns(RUNS).filter(f => f.startsWith('apply-'))).toHaveLength(0);
+    });
+  }
 
   // ---- 1.2 the carrier set is CLOSED -------------------------------------
   it('refuses `judgements` on a command that takes no judgement', () => {

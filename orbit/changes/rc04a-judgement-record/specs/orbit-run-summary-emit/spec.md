@@ -52,11 +52,18 @@ disagreeing. The constraint is observable, so R-crc-10 permits a check here rath
 record.
 
 **`kind: "readiness"`** is formed at the cadence's END. Its `disposition` is `ready` or `not-ready`.
-A `not-ready` record SHALL additionally carry `destination` — where the work is going instead, which
-is `architecture` today — and its `ratified_by` SHALL be `user`, because routing work out of a
-cadence is a scope decision and the AI classifies and recommends rather than decides it. A
-`not-ready` record claiming `ratified_by: "ai"` is REFUSED. Every readiness record additionally
-carries `accepted`: a list of `{claim, why}` pairs naming what was accepted WITHOUT resolution and
+
+A `not-ready` record is an ARCHIVE-TIME DISSENT: the work was archived against the author's own
+judgement. It is NOT a routing decision, and it carries no `destination`. Readiness is admitted
+only on `archive`, the archive's completion readout calls the record *the session's own
+judgement*, and routing a cadence back to architecture was already excluded from this capability
+for want of a reader — so requiring a routing destination here would re-import the excluded
+concept through the validator while refusing the honest dissent the one reader describes.
+Accordingly `ratified_by` on a `not-ready` record takes EITHER value and records which it was: `ai`
+when the belief is the authoring session's own, `user` when a human ratified it. That is the field
+doing its ordinary work — the difference between the AI's belief and a user's ratification is a
+fact about the decision, and here it is recorded rather than legislated. Every readiness record
+additionally carries `accepted`: a list of `{claim, why}` pairs naming what was accepted WITHOUT resolution and
 why that was acceptable. The accepted residuals are the assertion's CONTENT, not peer records —
 *"I accepted the residual because the scoped pass came back sound"* is one statement, and splitting
 it loses the because.
@@ -83,11 +90,19 @@ and audit prompts for stopping.
 - **THEN** the emit is refused naming the field — the engine SHALL NOT guess whether a human
   ratified a decision
 
-#### Scenario: A not-ready record must be user-ratified
+#### Scenario: An AI-authored archive dissent is accepted
 
-- **WHEN** a `readiness` entry carries `disposition: "not-ready"` with `ratified_by: "ai"`
-- **THEN** the emit is refused — routing work out of a cadence is a scope decision, and the record
-  may not claim the AI made it
+- **WHEN** a `readiness` entry carries `disposition: "not-ready"` with `ratified_by: "ai"` and no
+  `destination`
+- **THEN** the emit is WRITTEN — the record is the authoring session's own dissent about work that
+  archived anyway, and refusing it would leave the archive readout describing a record the engine
+  will not accept
+
+#### Scenario: A routing destination is refused as an unknown key
+
+- **WHEN** a `readiness` entry carries `destination`
+- **THEN** the emit is refused naming the key — the record's shape is closed, and routing has no
+  carrier in this capability
 
 ### Requirement: Where a judgement record may appear
 
@@ -110,6 +125,14 @@ depends on having.
 A judgement record supplied on any other emit is REFUSED naming the command. The record marks where
 a decision was TAKEN; admitting it anywhere would make its location meaningless, and the location
 is what the ordering check is anchored to.
+
+**BOTH HALVES OF THAT TABLE ARE ENFORCED.** The COMMAND half is the payload allowlist, which refuses
+the `judgements` key outright on any command outside the three. The KIND half is a separate refusal:
+an entry whose `kind` is not in the `admits` column for the command being emitted is REFUSED, naming
+the command and the kind. Without it the `admits` column reads as a contract and behaves as a
+comment — a `readiness` writes cleanly onto a `review-external` T0 emit, which no surface reads,
+producing exactly the write-only record this capability condemns. Kind-per-command is fully
+observable, so R-crc-10 permits a check rather than only a record.
 
 **DELIBERATELY NOT ADMITTED HERE: the `address-reviews` emit.** A cadence can also end by ROUTING
 the work back to architecture rather than archiving, and that judgement is real. It is NOT carried
@@ -135,6 +158,12 @@ condemns. Its carrier belongs with whatever surface reads it, which no stage has
 
 - **WHEN** `judgements` is supplied on any command outside the closed three
 - **THEN** the emit is refused naming the command
+
+#### Scenario: A kind the seam does not admit is refused
+
+- **WHEN** a `readiness` entry is supplied on an `apply` or `review-external` emit — a command that
+  admits `judgements` but not that kind
+- **THEN** the emit is refused naming the command and the kind; no file is written
 
 #### Scenario: An emit with no judgement omits the key
 
