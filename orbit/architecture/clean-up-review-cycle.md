@@ -682,6 +682,43 @@ never deleted.
   position token) and the baseline prose at `orbit-engine-gates` lines 324-326 that prices the
   repeat. No schema version bump.
 
+- **Q-crc-20 — a gate can compute PASSED over mechanism no independent pass has read, because
+  freshness keys on APPLY tokens and a walk's commits are not an apply.**
+  Observed 2026-09-21 on rc02c's own cadence, at the moment its `review-system` gate passed.
+  The blind pair read the tree at `fbcee57`. The walk that resolved their findings then landed
+  **42 insertions and 24 deletions of ENGINE code** — a two-branch change to how gate status is
+  assembled (the `spendFields` hoist), the conditional spreads in `formatChangeStatus`, the
+  passed-gate reason string — plus the normative rules and scenarios behind them. The gate
+  computed `passed` over that tree. It was not wrong: clause (a) coverage and clause (b)
+  resolution were both genuinely satisfied, and the freshness rule invalidates passes only when a
+  LATER APPLY TOKEN exists. A walk's commits are not an apply, so nothing marked those passes
+  stale, and nothing needed to.
+
+  **The gap is not a defect in the rule; it is a category the rule cannot see.** R-crc-6 says the
+  walk authors nothing, and where that holds the rule is exactly right — repairs to prose and
+  records need no re-review. But this program has TWICE recorded walks that DID author mechanism:
+  rc02's cycle ("nine of the first ten CRITICALs sat in mechanism that did not exist when the
+  exploration closed"), and rc02c's own decision lane, where two ratified options became engine
+  behaviour mid-walk. When a walk authors, the gate's passed verdict covers a tree that is no
+  longer the tree anybody independent read, and NOTHING SURFACES THAT — not the state, not the
+  reason, not the position readout.
+
+  Standing recommendation: **do not make this a new gate state or a blocking rule.** The reasoning
+  that retired `budgetExhausted` applies, and a gate that re-opened itself on every commit would
+  be unusable. The deliverable is a RECORD under R-crc-10, because the input is a judgement about
+  whether a walk AUTHORED or merely REPAIRED and no engine can observe that: at the archive seam,
+  surface how much of the tree changed since the last independent pass and let the human decide
+  whether it needs another look. The figure is already computable from the trail and the diff.
+  Related: `rc04-readiness-record` owns the record this would feed, and R-crc-6's
+  repair/descope/redesign lanes are the vocabulary for classifying which kind of walk happened.
+  Recorded rather than assigned; assigning it is a scope call.
+
+  **What it cost here, for calibration**: nothing yet, and possibly nothing at all — rc02c bought
+  a scoped external pass BY CHOICE over the passed gate to cover exactly this diff (iteration 2,
+  packaged 2026-09-21). That decision came from reading the evidence, not from a prompt, which is
+  the behaviour R-crc-11 wants. It is also precisely why this question exists: it should not have
+  depended on the authoring AI happening to notice.
+
 
 ## Program stages
 
