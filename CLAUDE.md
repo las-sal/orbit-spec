@@ -106,7 +106,7 @@ The full plan and design decisions live in the docs below — **read them before
 
 ## The ACTIVE program: clean-up-review-cycle (the D-arc is quiescent)
 
-**Current state, engine-checked:** the program's rulings index holds <!-- src:rulings -->10<!-- /src:rulings --> rulings, and `orbit/specs/` holds <!-- src:capabilities -->21<!-- /src:capabilities --> baseline capabilities. Every marked figure in this file is checked against `orbit/sources.yaml` by `orbit validate --sources`; an UNMARKED figure is invisible to that check.
+**Current state, engine-checked:** the program's rulings index holds <!-- src:rulings -->11<!-- /src:rulings --> rulings, and `orbit/specs/` holds <!-- src:capabilities -->21<!-- /src:capabilities --> baseline capabilities. Every marked figure in this file is checked against `orbit/sources.yaml` by `orbit validate --sources`; an UNMARKED figure is invisible to that check.
 
 As of 2026-09-11 the D-arc's six stages are all archived (d1 complete-ratified; d2–d6
 quiescent, awaiting ratification) and the live program is

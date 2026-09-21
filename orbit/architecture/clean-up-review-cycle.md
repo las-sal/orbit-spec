@@ -77,11 +77,22 @@ place.
 
 One goal per phase, each falsifiable, each stage naming its goal (settled under R-crc-3):
 
-- **G1 — the cycle ends (Phase 1).** A change's post-apply cadence converges in at most three
-  passes (blind pair, walk, verification) with no CRITICAL, or in five with one; the archive
-  records residual risk instead of an override. Falsified by any `gate_overridden` whose
-  reason is "no clean pass yet" after rc02 ships, or by a fourth review pass without a
-  CRITICAL having been found.
+- **G1 — the cycle ends in AGREEMENT (Phase 1).** A change's post-apply cadence ends when the
+  independent reviewers agree the work is aligned and on task, and the AI states that it is ready
+  to move forward KNOWING what those reviewers returned. The archive records that readiness
+  judgement — what was accepted and why — instead of an override. Falsified by an archive whose
+  readiness was asserted BEFORE the independent passes it cites, by an independent pass whose
+  recommendation is absent or unread, or by a review that GREW the proposal instead of routing the
+  expansion to architecture.
+
+  *(REWRITTEN 2026-09-21 under R-crc-11, because the original was falsified by work the user judged
+  successful.* It read "converges in at most three passes … or in five with one", and was falsified
+  by "a fourth review pass". rc07-artifact-lint ran FOUR independent passes plus an in-context one,
+  carried CRITICALs in three of them, archived through the program's first COMPUTED PASSED system
+  gate, and was ratified complete. A goal whose falsification criteria fire on the outcome the user
+  calls success is measuring the wrong thing: G1 was a COST bound wearing a convergence costume,
+  and R-crc-11(c) says cost is not what is being protected. The cost figures are not lost — they
+  remain computable from the trail, and Q-crc-18 records what becomes of them.)*
 - **G2 — claims a machine can check leave the reviewer's budget (Phase 2).** Documented
   commands run in CI; scenarios name their tests and verify reports the map; restated facts
   fail validation. Falsified if an independent review after Phase 2 carries a grammar defect,
@@ -244,6 +255,71 @@ One goal per phase, each falsifiable, each stage naming its goal (settled under 
   build is what produced both failures.
   **This ruling complies with itself**: whether a mechanism's inputs are observable is a judgment
   about substance, so nothing checks it. It is a ruling, and rc09 carries only the QUESTION.
+
+- **R-crc-11** (Sal, 2026-09-21) — **THE PROGRAM OPTIMISES FOR ALIGNMENT, NOT FOR CYCLE COST.**
+  Stated whole, because every earlier ruling in this index assumed the opposite and the assumption
+  was never written down. (a) Code and specs are written TO BE REVIEWED, from different angles and
+  different AIs; the BLIND PAIR is the mechanism and is the point, not a coverage device. (b) A
+  review MUST NOT grow the proposal: findings that are common-sense and tightly aligned with the
+  current effort get addressed, and findings requiring EXPANSION are kicked back to ARCHITECTURE —
+  which is natural and part of development, not a failure. **The AI makes that call.** (c) When a
+  blind pair uncovers something that requires expansion, the REVIEW BUDGET IS NOT THE CONCERN; the
+  goal is a good implementation with the extra work routed to architecture. (d) The AI decides
+  more and the user decides less: the user is a highly technical product manager confirming
+  direction and catching deviation, not defining every aspect. (e) SPECS exist to keep the AI
+  aligned and on task; REVIEWS exist so independent reviewers AGREE that it is. Neither is a
+  correctness proof. (f) The IN-CONTEXT pass is a REACTION — it uses the context it alone holds to
+  react to, push back on, and learn from the independent reviewers — not a second search. (g) The
+  readiness signal is **the AI believing it is ready to move forward, knowing what came back in the
+  independent reviews**; and independent reviews should carry a general RECOMMENDATION on moving
+  forward, which nothing emits today.
+  (h) **EFFORT IS RECORDED, NEVER TARGETED** (added by Sal, 2026-09-21, as part of the same
+  statement). How much a change cost — passes by class, findings per pass, walks, elapsed span — is
+  RECORDED on every change, because it is the evidence base for developing orbit itself and for
+  understanding what is actually happening in the dev flow. It never becomes a goal, a bound, or a
+  gate input. The distinction is measure-versus-target: a cost TARGET distorts the behaviour it
+  measures (a cadence stops early to hit a number, which is the failure R-crc-11 exists to prevent),
+  while a cost RECORD is how the tool gets better. Both halves are load-bearing; dropping the
+  recording to escape the targeting would throw away the program's only longitudinal evidence.
+  **THE RECORDED SHAPE** (ratified by Sal, 2026-09-21, extending (h)). Effort is recorded per PASS
+  *and per WALK* — walks are frequently the more expensive half and omitting them would make the
+  record describe the cheaper activity. The unit carries its own PROVENANCE, because reliability
+  differs by class and a figure that is a measurement in one place and a guess in another is worse
+  than no figure at all — it invites averaging across incomparable numbers:
+
+  `cost: { tokens: <number|null>, tool_uses: <number|null>, source: "harness" | "reported" | "unavailable" }`
+
+  `harness` — a real number the runtime reported (a `fresh` pass run as a subagent; measured
+  examples from 2026-09-21: 208,424 tokens / 56 tool uses for a system review, 159,151 / 72 for an
+  audit sweep, 87,099 / 23 for a spec sync). `reported` — a figure the external tool showed and a
+  human transcribed, for an `external` pass orbit cannot see. `unavailable` — no honest number
+  exists, which is the truthful value for anything running IN CONTEXT, where the activity has no
+  boundary to measure between. A null with a stated source is a record; a null without one is a gap.
+
+  **THE ASYMMETRY, stated because it is the uncomfortable part**: the most expensive activity is the
+  least measurable. Walks run in-context BY DESIGN — they need the whole context to be any good —
+  so their `tokens` will usually be `unavailable`. Their cost is therefore carried by DERIVABLE
+  proxies instead: resolutions walked, files touched, and elapsed. This is a real limit on the
+  evidence base, not a defect to engineer away, and it is written down so nobody later reads an
+  all-`unavailable` walk column as "walks are cheap".
+
+  **ELAPSED IS FREE AND ALREADY THERE**: every emit is timestamped, so per-pass and per-walk elapsed
+  is engine-computed with no new field and applies retroactively to every archived change. It is
+  noisy — it includes the human being asleep — and it is still worth recording beside the rest.
+
+  **TOKENS ARE THE FIELD THIS RULING WILL BE TESTED ON.** Named explicitly rather than left to (h)'s
+  general protection, because a token count is the most targetable number a development process can
+  hold, and the first reader who wants to "bring the cost down" will reach for it. Recording it is
+  how orbit gets better; targeting it would make a cadence stop early to hit a number, which is the
+  exact failure R-crc-11 exists to prevent. Record it; never bound it; never let a readout rank
+  changes by it.
+
+  (i) The division of labour, stated crisply because it is the theme the rest of this ruling
+  serves: **the user FRAMES and GUARDRAILS; the AI SOLVES.**
+
+  CONSEQUENCE, stated so it is not discovered later: this ruling REVERSES the premise under which
+  G1 and the rc02 budget were written. It does not reverse the blind pair (it promotes it), the
+  severity ladder, or any Phase 2/3/4 goal.
 
 ## Open questions (program-level)
 
@@ -480,6 +556,93 @@ never deleted.
   Recorded rather than assigned; it is engine work on the emit surface, and rc07 is already carrying
   a walk's worth of new mechanism.
 
+- **Q-crc-18 — RESOLVED 2026-09-21 by R-crc-11(h): effort is RECORDED, never targeted.** The
+  question as first written asked "what becomes of the cost figures", which was vague enough to be
+  unactionable. Concretely there are six, and they are three different kinds of thing:
+  **EFFORT** — (1) pass count by class, (2) budget spend, (3) findings per pass trending.
+  **RESIDUAL** — (4) the capture-recapture estimate from a blind pair's overlap, (5) whether the
+  cadence ended on a walk or a pass.
+  **DIAGNOSTIC** — (6) churn-versus-authoring, per requirement.
+  RESOLUTION: (1)-(3) are RECORDED on every change and TARGETED by nothing — that is R-crc-11(h)'s
+  whole content. (4)-(5) are subsumed by R-crc-11(g): an AI stating readiness after reading the
+  independents IS someone having read the final state, so the proxy is redundant rather than wrong.
+  (6) is re-homed as an INPUT to the readiness judgement rather than a cost readout — "the last two
+  passes found nothing in new territory" is evidence of alignment, and "every round the walk invents
+  mechanism the next round breaks" is evidence against it.
+
+  **The finding that made this cheap: effort is ALREADY recorded, and what is missing is a READER.**
+  A full profile for every archived change — passes by class, walks, findings per pass, elapsed span
+  — was derived on 2026-09-21 from existing `.orbit-runs/` trails with NO new instrumentation. The
+  same shape as `gate_overridden` being write-only: the data exists and nothing consumes it. So the
+  deliverable is a reading surface, not a recording obligation, which is both cheaper and more
+  robust — there is no new field anyone can forget to write.
+
+  What the first reading already showed, recorded here because it is the kind of thing this
+  evidence base exists to produce: **findings-per-pass going back UP is the signature of a walk
+  having invented mechanism.** Changes that converged are monotonic (`c1: 5,0,0,0`; `c2: 3,0,0`;
+  `consent: 3,0,0,0`); changes that ground oscillate (`d5: 8,6,1,1,3,9,0`; `d6: 3,12,8,6,3,8…`;
+  `rc07: 12,8,5,10,5` — the jump to 10 at pass four is the external pass finding defects in code the
+  previous walk had just written). Nothing in the tooling said so at the time; it took reading a
+  reviewer's prose.
+  The one thing the trail CANNOT yield retroactively is token cost — see R-crc-11(h)'s recorded
+  shape, ratified 2026-09-21: `cost: {tokens, tool_uses, source}` per pass AND per walk, with
+  provenance in the unit because a `fresh` subagent yields a harness number, an `external` pass
+  yields a transcription, and anything in-context yields nothing honest. Everything else in the
+  profile above is derivable from records that already exist.
+  Standing recommendation: the reading surface is cross-change and program-level rather than
+  per-change, so it belongs beside `orbit architecture status` rather than in a change's readout.
+  Whether that is rc04's to build or its own small stage is not settled here.
+
+- **Q-crc-19 — RESOLVED 2026-09-21 (Sal): YES. `budget` is demoted to a recorded figure.**
+  rc02 built `budget` to bound convergence cost and made exhaustion a boolean reported BESIDE the
+  state — deliberately never a block. R-crc-11(c) establishes that cost is not what the user is
+  protecting, and R-crc-11(h) establishes that effort is RECORDED, never TARGETED. `budgetExhausted`
+  is a target-shaped signal by construction: it says "you have spent too much", which is the one
+  thing the ruling forbids the record from saying.
+
+  **What is decided.** The SPEND figure survives, as effort under (h): how many independent passes a
+  cadence ran is exactly the kind of number the evidence base exists to hold. What stops is the
+  spend COLOURING THE GATE — the reason string, the distinct position token, and the
+  `budgetExhausted` boolean itself, all of which exist to make a reader feel the cost. A gate should
+  report what is MISSING, not what was SPENT.
+
+  **The evidence this resolves against, rather than the argument.** rc07 ran a FOURTH independent
+  pass over an exhausted budget. That pass was the most valuable of the five: it validated the
+  format change the previous walk had made, confirmed the migration fails loud, and named the root
+  cause — completeness inferred rather than carried — that four rounds of patching had missed. The
+  only cost of running it was a readout line saying `4 of 3`, and the only effect of that line was
+  to make a good decision feel like a transgression. That is the distortion R-crc-11 exists to
+  prevent, observed in the wild.
+
+  **What this REVERSES, stated plainly because rc02 is archived, complete and user-ratified.** Part
+  of rc02's shipped model goes: `orbit-engine-gates`' budget reporting (baseline lines 324-326 price
+  the repeat and report exhaustion) and the schema's `budget: 3` on both reviewed gates. The rest of
+  rc02 — the blind pair, the substantive-only resolution, the cadence slots, `assignCadence` — is
+  UNTOUCHED and in several places PROMOTED by R-crc-11. This is a narrow reversal of one signal, not
+  a repudiation of the stage.
+
+  **The schema fork is SETTLED too (Sal, 2026-09-21): `budget` STAYS in the grammar.** Removing it
+  would cost a schema version bump and a migration of every declaring schema, for no behavioural
+  gain — the gate simply stops consulting it either way.
+
+  But an inert field that LOOKS live is a landmine, and this program has spent two stages on exactly
+  that defect, so the retained declaration is given a job rather than left as a vestige. `budget`
+  becomes the cadence's **DECLARED EXPECTATION** — what a pair plus one repeat is expected to cost —
+  which is genuinely useful documentation at the point a schema is authored. Effort records what the
+  cadence ACTUALLY cost (R-crc-11(h)). **Nothing compares the two automatically**, and that gap is
+  the entire point: a declared expectation informs an author, while an automatic comparison against
+  it is a target, which (h) forbids. The spec must say this plainly — a reader who finds `budget: 3`
+  and assumes it constrains something is the failure mode this decision creates and must therefore
+  close.
+
+  **Who implements it.** rc02c owns the predicate, so it owns this: a MODIFIED delta on
+  `orbit-engine-gates` retiring `budgetExhausted`, the distinct position token and the budget clause
+  in the reason string, while restating `budget` as a declared expectation; plus the schema comment
+  at `schemas/spec-driven/schema.yaml` (which today describes the exhaustion boolean and the
+  position token) and the baseline prose at `orbit-engine-gates` lines 324-326 that prices the
+  repeat. No schema version bump.
+
+
 ## Program stages
 
 <!-- src:stages -->18<!-- /src:stages --> small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
@@ -513,6 +676,16 @@ which executes commands; a sweep cannot promise it.)
 
 Depends-on: (none)
 Complete: [x] 2026-09-14 (Sal)
+
+**PARTIALLY REVERSED 2026-09-21 by R-crc-11 / Q-crc-19 — recorded here because this stage is
+complete and ratified, and a reader arriving at it should not have to find out elsewhere.** The
+`budget` mechanism this stage shipped is demoted from a gate-adjacent signal to a recorded figure:
+the SPEND survives as effort under R-crc-11(h), while `budgetExhausted`, the distinct position
+token, and the budget clause in the gate's reason string go. The reasoning is that
+`budgetExhausted` is target-shaped by construction — it says "you have spent too much" — and
+R-crc-11 establishes that cost is recorded and never targeted. Everything else rc02 shipped stands,
+and the blind pair is PROMOTED by the same ruling from a coverage device to the program's central
+mechanism. rc02c carries the implementation.
 
 SPLIT 2026-09-12 (settled under R-crc-3; see the status log). The original charter carried the
 severity ladder AND the convergence arithmetic; measured at proposal review it was 40 tasks
@@ -686,6 +859,16 @@ Depends-on: rc13a-explore-mechanism-convention
 
 Complete: [ ]
 
+**R-crc-11 IMPACT (2026-09-21) — SAME DISEASE, DIFFERENT SURFACE.** This charter says the maturity
+grid must "stop ASSERTING readiness on evidence that cannot support it", because confidence today
+rises with heading count. R-crc-11 says the review cadence must stop asserting convergence from PASS
+COUNTS. Those are one defect on two surfaces: a proxy that is easy to count standing in for a
+judgement nobody recorded. The remedy is the same shape in both places — an asserted readiness is
+replaced by a RECORDED one, and the engine verifies ORDERING (was the belief formed after the
+evidence) rather than the belief. rc13b and rc04 should be read together by whoever proposes either,
+and if one ships a vocabulary for recorded readiness the other adopts it rather than inventing a
+second.
+
 **BLOCKED 2026-09-15 on rc13a, which has not shipped.** Its first attempt archived without syncing;
 until rc13a's format exists there is nothing for this stage to parse. Its own inherited residual —
 ENGINE-COMPUTED relocates self-classification rather than removing it — is unaffected and still
@@ -732,6 +915,15 @@ enumeration is TRUE, and whether a rule was declared at all).
 Depends-on: (none)
 Complete: [ ]
 
+**R-crc-11 IMPACT (2026-09-21) — this stage becomes load-bearing for a rule it did not know about.**
+R-crc-11(b) says a review must not GROW the proposal: findings that are common-sense and tightly
+aligned get addressed, findings requiring EXPANSION go back to architecture, and **the AI makes that
+call**. That call needs a vocabulary, and severity-by-consequence is the only candidate the program
+has. A ladder that distinguishes "a user path breaks" from "an implementation built to the artifact
+would be wrong" is exactly the distinction between fix-now and route-to-architecture. Without it the
+AI is making the routing call on unstated instinct, which is what R-crc-11(d) asks it to do MORE of
+and therefore needs a defensible basis for.
+
 Charter: `orbit-conventions`' Severity ladder requirement, which today says only "three names"
 and "prefer the lower one", gains DEFINITIONS BY CONSEQUENCE — CRITICAL = a user path breaks or
 data is lost AND the finding carries its REPRODUCTION; WARNING = an implementation built to the
@@ -758,6 +950,16 @@ marked unreproduced; (3) the walk that ingests it can see the reproduction it mu
 
 Depends-on: rc02-gate-semantics
 Complete: [ ]
+
+**R-crc-11 IMPACT (2026-09-21) — read this before proposing.** The ruling moves the cycle's end
+condition from CONVERGENCE (computed) to AGREEMENT (recorded), which does not delete clause (c) but
+does change what it is FOR. The predicate no longer has to decide whether the work is done — the
+readiness record does that — so it can shrink to what it is actually good at: telling the cadence
+what is MISSING. The boundary with rc04 is drawn in that stage: **rc02c owns the predicate, rc04
+owns the record and the judgement, and the predicate may read the record's existence but never its
+content.** Also inherited: `budget` is no longer a thing the user is protecting (R-crc-11(c)), so
+whether it stays a gate input or becomes a readout is Q-crc-19 and is settled BEFORE this stage
+proposes, not inside it.
 
 Charter: clause (c) — the independent-confirmation predicate — LEFT rc02 on 2026-09-14 under
 R-crc-8's sectional trigger, after five of rc02's thirteen CRITICALs landed in it while clause (b)
@@ -786,6 +988,15 @@ unreviewed CRITICAL.
 
 Depends-on: rc02-gate-semantics
 Complete: [ ]
+
+**R-crc-11 IMPACT (2026-09-21) — the withdrawn stage's UNRESOLVED CONFLICT is now load-bearing.**
+This stage was withdrawn with its content folded into rc03, and the conflict it could not solve was
+left standing: `orbit-review-external` requires the cycle context to include prior open findings,
+while `orbit-engine-gates` requires a blind pair's members to be blind to each other — and the
+blindness predicate observes WALK RECORDS, so it cannot see prompt content and will certify an
+anchored pair as blind. R-crc-11(a) promotes the blind pair from coverage device to THE mechanism,
+which raises the cost of that hole from a latent inconsistency to a defect in the program's central
+instrument. Whoever proposes rc03 inherits it; it is no longer optional to resolve.
 
 **WITHDRAWN 2026-09-15 (Sal). Descoped to nothing; its content folds into rc03-review-genres.**
 The stage is kept declared, unratified, as the record of what three independent passes cost and
@@ -833,6 +1044,20 @@ R-d-11's house rule (detection, not prevention). It was deferred three times on 
 
 Depends-on: rc02-gate-semantics
 Complete: [ ]
+
+**R-crc-11 IMPACT (2026-09-21) — this stage is PROMOTED, and gains a deliverable.** R-crc-11(a)
+makes the blind pair the point rather than a coverage device, and R-crc-11(f) states what this
+charter had already MEASURED independently: the in-context pass is a REACTION to the independent
+reviewers, not a second search (one CRITICAL in ~25 in-context passes across the D-arc). Product
+intent and trail evidence arriving at the same conclusion from opposite directions is the strongest
+signal this program has produced; it should be said out loud in the shipped requirement rather than
+left as a parenthetical.
+
+NEW, from R-crc-11(g): every independent pass carries a forward RECOMMENDATION. The genre split is
+where it belongs, because a REVIEW recommends a direction on the whole artifact while a VERIFICATION
+answers landed/regressed on a diff — they cannot carry the same recommendation vocabulary. The
+record and the readiness judgement are rc04's; the PROMPT and the EMIT SHAPE that make a
+recommendation exist are this stage's.
 
 Charter: this stage OWNS the canonical cadence (R-crc-4) and its two pass genres. A REVIEW
 reads the whole artifact and the thesis and receives NO "resolved since" list; the post-apply
@@ -924,30 +1149,48 @@ thirteen findings including two CRITICALs — which is the point: it removes the
 without removing the findings, so a clean pass becomes a readable signal rather than an
 embarrassment.
 
-### Stage rc04-cost-visibility — the cycle measures itself in-flow
+### Stage rc04-readiness-record — the cycle ends when someone says it is ready, and says why
 
 Depends-on: rc02-gate-semantics
+
 Complete: [ ]
 
-Charter: `orbit status` renders a cadence line per change — passes so far, findings per pass
-trending, budget remaining — and the capture-recapture residual estimate from R-crc-4's blind
-pair (overlap between two independent reviewers' findings estimates what remains; D6's
-parallel externals overlapped 1 of 3 and 12). This stage OWNS the archive-side record: when
-the gate reports `budgetExhausted` (rc02 — a boolean beside the state, not a state), the archive
-flow prompts once and records
-`residual_risk` — what was not converged and why the user accepted it — replacing the
-`gate_overridden` path for that reason. Goal G1. Touches: orbit-orientation,
-orbit-archive-modifications. Exit: (1) the line renders from the trail alone; (2) the residual
-estimate appears whenever a blind pair exists on one state — its first real measurement is rc02's
-system pair (12 and 11 findings, 4-5 shared, ZERO shared CRITICALs, residual near 60%), which is
-also the first evidence that the estimate is worth rendering at all; (3) the archive emit carries
-`residual_risk` on a budget-ended cadence; (4) the cadence line carries the CHURN-VERSUS-AUTHORING
-diagnostic per R-crc-6 AND R-crc-8, measured PER REQUIREMENT rather than per change — a
-change-level figure cannot see a single clause generating every CRITICAL while the rest converges,
-which is the signal that identifies a redesign-lane section — prior-walk-file concentration crossed with the repeat rate, so the readout
-distinguishes reviewers grinding edited ground (stop reviewing) from walks inventing new mechanism
-(stop walking) from genuine fresh coverage (keep going). rc02's own cadence is the first fixture:
-high concentration, zero repeats, and nothing in the tooling said so for three consecutive passes.
+**RE-CHARTERED 2026-09-21 under R-crc-11, from `rc04-cost-visibility`.** The original stage asked
+what the cycle COSTS — a cadence line (passes, findings trending, budget remaining) and a
+capture-recapture residual estimate from the blind pair. R-crc-11 establishes that cost is not what
+the user is protecting, so two of the three chartered deliverables were answering a question nobody
+asked. The third — the archive-side record of what was not converged and why that was acceptable —
+survives, because it was a READINESS judgement wearing a cost costume all along.
+
+Charter: the cadence produces two judgements today and records neither. An INDEPENDENT reviewer
+forms a view on whether the work should move forward and emits only findings; the IN-CONTEXT AI
+forms a view on whether it is ready and states it in chat, where it dies. This stage gives both a
+home. Each independent pass carries a forward RECOMMENDATION (R-crc-11(g)) — a direction with its
+reasons, distinct from the engine's gate verdict, which remains the engine's alone. The archive
+carries the AI's READINESS judgement: what it believes, what it accepted, and why.
+
+THE ONE COMPUTABLE THING, and the reason this is buildable where a general readiness check would
+not be: R-crc-11(g) says the AI must believe it is ready *knowing what came back*. Belief is not
+observable, but ORDERING is — the readiness record must POST-DATE the independent passes it cites,
+and the engine can refuse a record that does not. Everything else here is a RECORD under R-crc-10,
+because "why this was acceptable" is prose by construction.
+
+Goal G1. Touches: orbit-review, orbit-review-external, orbit-archive-modifications.
+Exit: (1) every independent pass emits a forward recommendation, and a pass without one is
+incomplete rather than merely quiet; (2) the archive carries a readiness record naming the
+recommendations it was formed against; (3) the engine REFUSES a readiness record that predates a
+pass it cites; (4) `gate_overridden` either gains a reader or is retired — today nothing in `src/`
+reads it, so replacing one write-only record with another would deliver nothing.
+
+**BOUNDARY WITH rc02c, drawn before either proposes** (the two-capabilities-one-rule defect this
+program keeps catching): rc02c owns the PREDICATE — what the engine COMPUTES about a cadence.
+rc04 owns the RECORD and the JUDGEMENT — what the reviewers RECOMMEND and what the AI BELIEVES.
+Where they meet: the predicate may read the record's existence, never its content.
+
+**Prior exploration**: `orbit/explore/rc04-readiness-record/` carries eight decisions taken with
+Sal on 2026-09-21, the measurements that were taken and then deliberately set aside once the
+question changed, and three open questions with standing recommendations.
+
 
 ### Phase 2 — move checking into tests
 
@@ -1807,3 +2050,92 @@ duplicate. The mark was perturbation-tested (a nineteenth stage makes it fail) a
 the self-reference hazard (it sits above the first counted heading). The program doc is now the
 second marked document in the repository, which is the first evidence that `orbit-source-lint`
 works on something other than the file it was dogfooded in.
+
+**2026-09-21 — R-crc-11 recorded; the program reworked around it.**
+Sal restated what the program is for, and the restatement reversed an assumption every earlier
+ruling had made without writing it down: the cycle is optimised for ALIGNMENT, not for cycle cost.
+The clearest evidence that the old premise had gone wrong is that **G1 was falsified by work the
+user judged successful** — it bounded a cadence at three passes, or five with one CRITICAL, and
+declared itself falsified by a fourth; rc07 ran four independent passes plus an in-context one,
+carried CRITICALs in three, archived through the program's first computed-passed system gate, and
+was ratified complete. G1 is rewritten to end in AGREEMENT rather than convergence.
+
+The rework reached five other stages, and two of the connections were not visible before. **rc13b
+turns out to have the same defect on a different surface**: its charter says the maturity grid must
+stop asserting readiness from heading counts, while R-crc-11 says the cadence must stop asserting
+convergence from pass counts — one disease, two proxies standing in for a judgement nobody
+recorded, and the remedy is the same shape in both places. And **rc02b becomes load-bearing for a
+rule it did not know about**: R-crc-11(b) has the AI deciding what to fix now versus what to route
+to architecture, and severity-by-consequence is the only vocabulary the program has for making that
+call defensibly.
+
+rc04 is re-chartered from `cost-visibility` to `readiness-record` and renamed, with its boundary
+against rc02c drawn in the charter rather than left to be discovered: the predicate is computed,
+the record and the judgement are recorded, and the predicate may read the record's existence but
+never its content. Two open questions carry what the rework could not settle — what becomes of the
+cost figures (Q-crc-18) and whether `budget` stops being a gate input (Q-crc-19, a ruling-level
+call, raised not taken).
+
+Worth recording as evidence rather than anecdote: adding R-crc-11 moved the ruling count and
+`orbit validate --sources` went red on CLAUDE.md's marked span within seconds — the third time in
+two days that rc07's lint has caught live work, and the first time it caught an edit to the
+architecture doc itself.
+
+**2026-09-21 (later) — R-crc-11 gains (h) and (i); the recorded cost shape is ratified.**
+Sal amended the ruling with the half I had got wrong: cost is not a constraint, but it IS worth
+RECORDING — passes, walks, effort — because it is the evidence base for developing orbit and for
+seeing what the dev flow actually does. Measure-versus-target, with both halves load-bearing.
+
+Two findings came out of testing that rather than asserting it. **Effort is already recorded and
+merely unread**: a full profile for every archived change — passes by class, walks, findings per
+pass, elapsed — was derived from existing `.orbit-runs/` trails with no instrumentation at all, so
+the deliverable is a reading surface rather than a recording obligation. And the first reading
+already produced a diagnostic: **findings-per-pass going back UP is the signature of a walk having
+invented mechanism.** Converged changes are monotonic (`c1: 5,0,0,0`); ground ones oscillate
+(`rc07: 12,8,5,10,5`, where the jump at pass four is an external reviewer finding defects in code
+the previous walk had just written). Nothing in the tooling said so at the time.
+
+The cost shape was ratified with its provenance inside the unit, and with the asymmetry written
+down rather than discovered: walks run in-context by design, so the most expensive activity is the
+least measurable, and an all-`unavailable` walk column must never be read as "walks are cheap".
+Tokens are named as the field this ruling will be tested on, because it is the most targetable
+number a development process can hold.
+
+This is the third write-only record found in two days — `gate_overridden`, the residual in a
+`warnings` string, and now the effort profile. **Orbit is better at writing records than at reading
+them.** Recorded as an observation rather than a ruling; a fourth instance would earn one.
+
+**2026-09-21 (later still) — Q-crc-19 resolved: `budget` is demoted to a recorded figure.**
+Sal ratified the lean. The SPEND survives as effort under R-crc-11(h); what stops is the spend
+COLOURING THE GATE — `budgetExhausted`, the distinct position token, and the budget clause in the
+reason string. The reasoning is that `budgetExhausted` is target-shaped by construction: it says
+"you have spent too much", which is the single thing R-crc-11(h) forbids a record from saying.
+
+It resolves against evidence rather than argument. rc07 ran a FOURTH independent pass over an
+exhausted budget, and that pass was the most valuable of its five — it validated the format change
+the previous walk had made, confirmed the migration fails loud rather than silently, and named the
+root cause that four rounds of patching had missed. The only cost of running it was a readout line
+saying `4 of 3`, and the only effect of that line was to make a good decision feel like a
+transgression. That is R-crc-11's distortion, observed in the wild, in the stage that triggered
+the whole reframe.
+
+**This partially reverses rc02, which is archived, complete and user-ratified**, so the reversal is
+recorded in rc02's own stage section as well as here — a reader arriving at that stage should not
+have to learn it somewhere else. The reversal is NARROW: one signal. The blind pair, the
+substantive-only resolution, the cadence slots and `assignCadence` all stand, and R-crc-11 PROMOTES
+the blind pair from a coverage device to the program's central mechanism. rc02c carries the
+implementation, and inherits one genuinely open fork the direction does not settle — whether
+`budget` leaves the schema grammar (a version bump, migrating every declaring schema) or stays as
+an inert declaration the gate no longer consults.
+
+**2026-09-21 — the Q-crc-19 schema fork settled: `budget` stays, with a job.**
+Sal chose the inert-declaration path over removing `budget` from the grammar, which avoids a schema
+version bump and a migration of every declaring schema for no behavioural gain. Settled under
+R-crc-3 in the same breath: an inert field that LOOKS live is a landmine, and this program has
+spent two stages on that exact defect, so the retained declaration is given a job instead of being
+left vestigial. `budget` becomes the cadence's DECLARED EXPECTATION — what a pair plus one repeat is
+expected to cost, useful at the moment a schema is authored — while effort records what it actually
+cost, and NOTHING compares the two automatically. That gap is the point rather than an omission: a
+declared expectation informs an author; an automatic comparison against it is a target, which
+R-crc-11(h) forbids. The spec has to say so plainly, because a reader who finds `budget: 3` and
+assumes it constrains something is the failure mode this choice creates.

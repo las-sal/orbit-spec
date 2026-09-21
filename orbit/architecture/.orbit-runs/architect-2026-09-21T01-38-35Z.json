@@ -1,0 +1,37 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-21T01:38:35Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "The program reworked around R-crc-11, a ruling Sal stated whole: the cycle is optimised for ALIGNMENT, not for cycle cost. It reverses an assumption every earlier ruling made without writing it down, and the sharpest evidence that the old premise had failed is that G1 was falsified by work the user judged successful — it bounded a cadence at three passes, or five with one CRITICAL, and declared itself falsified by a fourth, while rc07 ran four independent passes plus an in-context one, carried CRITICALs in three, archived through the program's first computed-passed system gate, and was ratified complete. G1 is rewritten to end in AGREEMENT rather than convergence, with falsification criteria that key on ordering and routing rather than counts. rc04 is re-chartered from cost-visibility to readiness-record and renamed (its exploration directory and citation moved with it), keeping only the deliverable that was a readiness judgement wearing a cost costume, and drawing its boundary against rc02c in the charter: the predicate is computed, the record and judgement are recorded, and the predicate may read the record's existence but never its content. Five further stages gained impact annotations, two of which surfaced connections that were not visible before — rc13b carries the SAME defect on a different surface (a proxy that is easy to count standing in for a judgement nobody recorded), and rc02b becomes load-bearing for R-crc-11(b), since severity-by-consequence is the only vocabulary the program has for the fix-now-versus-route-to-architecture call the AI is now asked to make. Two open questions carry what the rework could not settle: Q-crc-18 (what becomes of the cost figures, with the measurements preserved) and Q-crc-19 (whether budget stops being a gate input — a ruling-level call, raised not taken). The rulings count moved to 11 and rc07's lint went red on CLAUDE.md within seconds, which is the first time it has caught an edit to the architecture doc itself.",
+  "stages_touched": [
+    "rc04-readiness-record",
+    "rc02c-confirmation-semantics",
+    "rc03-review-genres",
+    "rc02b-severity-ladder",
+    "rc13b-explore-maturity-signal",
+    "rc03a-blind-prompt"
+  ],
+  "rulings_captured": [
+    "R-crc-11"
+  ],
+  "completions_ratified": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/clean-up-review-cycle.md",
+        "why": "R-crc-11 is the premise everything now derives from; G1 rewritten; five stages carry R-crc-11 IMPACT blocks; Q-crc-18 and Q-crc-19 hold what is unsettled"
+      },
+      {
+        "path": "orbit/explore/rc04-readiness-record/explore.md",
+        "why": "eight decisions with Sal, the measurements set aside, and three open questions with standing recommendations"
+      }
+    ],
+    "next_command": "orbit architecture status",
+    "model_hint": "any",
+    "seam": "architect session end; rc04 exploring, Q-crc-19 blocks rc02c and rc04 from proposing"
+  },
+  "next_recommended": "orbit architecture status"
+}
