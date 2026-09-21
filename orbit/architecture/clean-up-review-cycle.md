@@ -722,7 +722,7 @@ never deleted.
 
 ## Program stages
 
-<!-- src:stages -->18<!-- /src:stages --> small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
+<!-- src:stages -->21<!-- /src:stages --> small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
 split into rc02 + rc02b on 2026-09-12; rc13 added 2026-09-14 and moved to phase 1 the same day;
 rc03a split from rc03 on 2026-09-15 and WITHDRAWN the same day; rc13 split into rc13a + rc13b on
 2026-09-15 under R-crc-9; rc07b split from rc07 the same day under R-crc-9 applied PREVENTIVELY).
@@ -1257,6 +1257,31 @@ Depends-on: rc02-gate-semantics
 
 Complete: [ ]
 
+**SPLIT 2026-09-21 (Sal) into rc04a + rc04b + rc04c, under R-crc-9 — its second application, and
+the first taken PREVENTIVELY from a size check rather than from a post-mortem.** This heading is
+retained as the program's record of the problem, the charter and the evidence; the WORK is declared
+in the three stages below. Its exploration
+(`orbit/explore/rc04-readiness-record/`, twenty decisions, zero open questions) continues to cite
+THIS stage and is the shared source for all three.
+
+**Why three and not two.** The exploration produced the mechanism (D-rc04-13/15/16/17), and
+measuring the mechanism rather than the charter gave TEN capabilities against a ceiling of three —
+3.3x. The charter named three because it was written before the mechanism existed. The single
+largest surprise: **`gate_overridden` occurs in SIX baseline specs**, so retiring it (exit
+criterion (4)) is itself a ceiling-sized piece of work. A two-way split does not exist — the record
+is 3 capabilities and everything else is 6 — so three is the minimum that keeps each stage AT the
+ceiling rather than over it.
+
+**The seam is WHAT IS RECORDED versus WHAT IS RECOMMENDED versus WHAT IS RETIRED**, and the
+ordering is a dependency, not a preference: `continuation/proceed` must exist before the record it
+replaces can be retired.
+
+**ACCEPTED COST, bounded rather than hoped away.** Between rc04a and rc04c, `gate_overridden` and
+`continuation/proceed` both exist — two records for one fact, which is the defect class this
+program keeps catching. It is accepted deliberately and bounded by declaring rc04c NOW; rc03a's
+history is the warning, where attestation was deferred three times on ceiling grounds and each
+deferral bought a cheaper mechanism that failed.
+
 **RE-CHARTERED 2026-09-21 under R-crc-11, from `rc04-cost-visibility`.** The original stage asked
 what the cycle COSTS — a cadence line (passes, findings trending, budget remaining) and a
 capture-recapture residual estimate from the blind pair. R-crc-11 establishes that cost is not what
@@ -1295,6 +1320,95 @@ question changed, and three open questions with standing recommendations.
 
 
 ### Phase 2 — move checking into tests
+
+### Stage rc04a-judgement-record — the judgement gets a structured home
+
+Depends-on: rc02-gate-semantics
+Complete: [ ]
+
+Charter: the cadence's judgements are recorded unevenly. WALK decisions have real structure —
+`ratified_via`, `recommendation_fork`, a verbatim `resolution` — because `orbit-address-reviews`
+was built for them. READINESS-shaped judgements have none: "buy a scoped external pass over an
+already-passed gate", the clearest readiness call of rc02c's cycle, lives in a T0 emit's
+`final_assessment` as prose, readable back by nothing. This stage gives them the same treatment.
+
+ONE SPINE, TWO KINDS (explore D-rc04-15). Every record carries `kind`
+(`continuation` | `readiness`), a NON-EMPTY `formed_against` list of independent pass TOKENS,
+a kind-varying `disposition`, prose `reasoning`, and `ratified_by` (`ai` | `user`) — the last
+required because the difference between the AI's own belief and a Sal ratification must be STATED
+rather than implied. `continuation` is mid-cadence (`proceed` past a gate that says no, carrying
+`gate`/`gate_state`/`gate_reason`; or `spend`, buying a further pass past a gate that says yes).
+`readiness` is terminal (`ready` | `not-ready`, carrying `accepted: [{claim, why}]` — the residuals
+are the assertion's CONTENT, not peer judgements).
+
+THE ONE COMPUTED RULE: every token in `formed_against` MUST precede the record's own timestamp, or
+the write gate REFUSES it. That is R-crc-11(g) made checkable — belief is not observable, ORDERING
+is — and it is why the citation is BY TOKEN rather than the prose citation `gate_overridden` uses.
+A `not-ready` record RECORDS and never BLOCKS (D-rc04-16): readiness is judgement, and an engine
+blocking on it acts on what it cannot verify. No new trail location — the records land on emits
+that already exist.
+
+Goal G1. Touches: orbit-emit-composition, orbit-run-summary-emit, orbit-archive-modifications.
+Exit: (1) a readiness record citing a pass token that POSTDATES it is refused at the write gate,
+with a named error; (2) the archive completion readout STATES a `not-ready` disposition — the
+record has a reader, which exit (4) of the parent charter demands; (3) rc02c's six free-prose
+`warnings` entries are reproducible as structured records, three of them as `accepted` pairs and
+the rest correctly OUT of scope as process notes.
+
+### Stage rc04b-forward-recommendation — an independent pass says which way, not just what is wrong
+
+Depends-on: rc02-gate-semantics
+Complete: [ ]
+
+Charter: an independent reviewer forms a view on whether the work should move forward and emits
+only findings; the view dies in prose. R-crc-11(g) makes that view the readiness judgement's
+INPUT, so it has to survive. Each independent pass carries a forward RECOMMENDATION — a direction
+with its reasons, distinct from the engine's gate verdict, which stays the engine's alone.
+
+Evidence it is close to free: rc02c's scoped iteration-2 external pass wrote one UNPROMPTED into
+its Notes — *"the declaration hoist, conditional spreads and public reason are sound in the
+implementation; the residual risk is that the comments and under-specific assertions do not
+preserve that result against later edits"* — a ship verdict plus what would undo it, naming no
+count, no gate state and no next command. The practice exists; what is missing is a NAMED SLOT so
+it is reliably present and machine-readable rather than arriving when a reviewer happens to offer
+it. That also narrows D4's commentary prohibition on the right axis: the line is
+JUDGEMENT-versus-COMPUTATION, not who-may-speak (explore Q-rc04-c).
+
+LOOSELY COUPLED to rc04a by construction: a readiness record cites pass TOKENS whether or not
+those passes carry recommendations, so neither stage blocks the other.
+
+Goal G1. Touches: orbit-review, orbit-review-external, orbit-report-rendering.
+Exit: (1) an independent pass without a recommendation is INCOMPLETE rather than merely quiet;
+(2) the recommendation RENDERS in the report under the existing single-voiced rules, asserting no
+gate state; (3) the external prompt template carries it as a named field rather than as Notes prose.
+
+### Stage rc04c-retire-gate-overridden — one record for one fact
+
+Depends-on: rc04a-judgement-record
+Complete: [ ]
+
+Charter: `gate_overridden` is write-only. Verified 2026-09-21 rather than assumed, because the
+parent charter's exit (4) turns on it: in `src/` it occurs ONLY as a payload-field declaration in
+`emit-composition.ts` (the write gate accepting the key) and as prose in four workflow templates
+instructing bodies to write it. NOTHING COMPUTES ANYTHING FROM IT. Once rc04a ships
+`continuation/proceed` — which carries `gate`, `gate_state` and `gate_reason`, the whole of
+`gate_overridden`'s payload, PLUS the `formed_against` tokens it never had — the old record is a
+strict subset of the new one and keeping both is two records for one fact.
+
+RETIRED FROM THE WRITE PATH, not deprecated (D-rc04-17): a deprecation period protects readers and
+there are none. Readers of ARCHIVED trails are handled by the existing generation precedent —
+`report-render.ts` already fails loud on a prior emit generation with a clean named error — so old
+records stay readable as history and are never written again. Nothing is deleted.
+
+SCOPE NAMED UP FRONT: `gate_overridden` appears in SIX baseline specs
+(`orbit-engine-gates`, `orbit-run-summary-emit`, `orbit-archive-modifications`, `orbit-pr-lifecycle`,
+`orbit-emit-composition`, `orbit-conventions`) and four workflow templates. The three not already
+touched by rc04a are this stage's capabilities.
+
+Goal G1. Touches: orbit-engine-gates, orbit-pr-lifecycle, orbit-conventions.
+Exit: (1) no workflow body instructs writing `gate_overridden`, grep-verified; (2) an archived
+trail carrying the old record still reads without error, as a prior generation; (3) the parent
+charter's exit (4) is MET — the record is retired rather than left write-only.
 
 ### Stage rc05-executable-references — documented commands run in CI
 
@@ -2424,3 +2538,41 @@ scenario is preserved byte-identically" after a scenario had been added beneath 
 of the authoring AI's own came from its own bad probe and was overturned by EXECUTING the check
 rather than reading it. If rc08-walk-completeness wants a premise, this is it: the walk's failure
 mode is not missing findings, it is resolving them narrowly.
+
+
+**2026-09-21 — rc04 SPLIT THREE WAYS, and the split came from a SIZE CHECK rather than a
+post-mortem.**
+
+R-crc-9's second application, and its first taken PREVENTIVELY. rc13's split came after three
+passes and 17 CRITICALs; rc07b's came at exploration. This one came from measuring a mechanism
+against R-crc-1 BEFORE promoting it: **ten capabilities against a ceiling of three, 3.3x over.**
+
+**The charter named three because it was written before the mechanism existed.** The exploration
+then produced the mechanism — one test for which judgements qualify, executed against all eleven
+judgements rc02c's cycle actually made; a two-kind slot derived from the four that qualified; and
+two settlements about blocking and retirement. Measuring THAT rather than the charter gave ten.
+The single largest surprise was not the record at all: **`gate_overridden` occurs in SIX baseline
+specs**, so retiring it — the parent charter's own exit criterion (4) — is itself a ceiling-sized
+piece of work. No two-way split exists (the record is 3, everything else is 6), so three is the
+minimum that keeps each stage AT the ceiling rather than over it.
+
+**The seam is WHAT IS RECORDED / WHAT IS RECOMMENDED / WHAT IS RETIRED**, and the ordering is a
+dependency rather than a preference: `continuation/proceed` must exist before the record it
+replaces can go. rc04a and rc04b are loosely coupled by construction — a readiness record cites
+pass TOKENS whether or not those passes carry recommendations — so neither blocks the other, and
+only rc04c has a hard `Depends-on`.
+
+**The accepted cost is named and BOUNDED rather than hoped away**: between rc04a and rc04c,
+`gate_overridden` and `continuation/proceed` both exist, which is two records for one fact and
+exactly the defect class this program keeps catching. It is bounded by declaring rc04c NOW.
+rc03a is the warning — attestation deferred three times on ceiling grounds, each deferral buying a
+cheaper mechanism that failed, which is why R-crc-9 exists at all.
+
+**One thing the session demonstrated in passing, and it belongs to Q-crc-14.** Adding three stages
+moved the program's stage count 18 → 21, and the `src:` lint caught BOTH stale marked spans
+immediately — in `CLAUDE.md` and in this document. It caught them because the author chose to run
+`orbit validate --sources` by hand. **Nothing triggered it.** Q-crc-14's second instance recorded
+the same gap from the other direction, where a pinned ruling count sat red through a whole stage
+because nobody ran the check. Here the check ran and worked; the gap is that running it was a
+judgement, not a seam. That is the third instance, and the first where the lint SUCCEEDED and the
+missing trigger is still the finding.

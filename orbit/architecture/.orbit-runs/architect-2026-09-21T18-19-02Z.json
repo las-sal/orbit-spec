@@ -1,0 +1,29 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-21T18:19:02Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Split rc04 three ways on Sal's ratification, under R-crc-9 — its second application and the first taken PREVENTIVELY from a size check rather than from a post-mortem. rc13's split came after three passes and 17 CRITICALs; this one came from measuring a mechanism against R-crc-1 before promoting it: ten capabilities against a ceiling of three. The charter named three because it was written before the mechanism existed, and the largest surprise was not the record at all — gate_overridden occurs in SIX baseline specs, so retiring it, which is the parent charter's own exit criterion (4), is itself a ceiling-sized piece of work. No two-way split exists, the record being 3 capabilities and everything else 6, so three is the minimum keeping each stage AT the ceiling. rc04-readiness-record is RETAINED as the record of the problem and the charter, per the rc13 precedent, and its exploration continues to cite it as the shared source for all three children. Declared: rc04a-judgement-record (emit-composition, run-summary-emit, archive-modifications) carrying the two-kind slot and the one computed rule, that every formed_against token must precede the record's own timestamp or the write gate refuses it; rc04b-forward-recommendation (review, review-external, report-rendering), loosely coupled by construction since readiness cites pass tokens regardless; and rc04c-retire-gate-overridden (engine-gates, pr-lifecycle, conventions), the only one with a hard Depends-on, because continuation/proceed must exist before the record it replaces can go. Each child carries three exit criteria written to be falsifiable rather than aspirational. The accepted cost is named and BOUNDED rather than hoped away: gate_overridden and continuation/proceed coexist between rc04a and rc04c, two records for one fact, bounded by declaring rc04c now — rc03a being the warning, where attestation was deferred three times on ceiling grounds and each deferral bought a cheaper mechanism that failed. One incident recorded for Q-crc-14: adding three stages moved the count 18 to 21 and the src: lint caught BOTH stale marked spans immediately, in CLAUDE.md and in this doc. It caught them because I chose to run validate --sources by hand. Nothing triggered it. That is Q-crc-14's third instance and the first where the lint SUCCEEDED and the missing trigger is still the finding.",
+  "stages_touched": [
+    "rc04-readiness-record",
+    "rc04a-judgement-record",
+    "rc04b-forward-recommendation",
+    "rc04c-retire-gate-overridden"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "handoff": {
+    "next_command": "/orbit:propose rc04a-judgement-record",
+    "model_hint": "propose is conversational; the exploration at orbit/explore/rc04-readiness-record/ is the authoritative seed for all three children",
+    "seam": "rc04a is the first child and has no hard dependency. Its mechanism is fully settled in the shared exploration — twenty decisions, zero open questions — so propose consumes rather than invents. NOTE the citation wrinkle: the exploration directory is named rc04-readiness-record and cites the RETAINED parent stage, so promoting it to a change named rc04a-judgement-record needs the metadata citation pointed at the child.",
+    "boot_sequence": [
+      "orbit/explore/rc04-readiness-record/explore.md — twenty decisions, zero open questions; D-rc04-13 (which judgements qualify), D-rc04-15 (the slot), D-rc04-16/17 (the two settlements), D-rc04-18 (the size check) are what rc04a implements",
+      "orbit/architecture/clean-up-review-cycle.md — the rc04 parent's SPLIT note and the three child declarations with their exit criteria",
+      "orbit/changes/archive/2026-09-21-rc02c-confirmation-semantics/.orbit-runs/archive-2026-09-21T15-38-59Z.json — the six free-prose warnings rc04a's exit (3) must reproduce as structured records",
+      "src/core/emit-composition.ts — the write gate where the ordering rule lands, and the payload tables that gain fields"
+    ]
+  },
+  "next_recommended": "/orbit:propose rc04a-judgement-record"
+}
