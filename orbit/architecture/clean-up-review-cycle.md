@@ -1026,7 +1026,7 @@ marked unreproduced; (3) the walk that ingests it can see the reproduction it mu
 ### Stage rc02c-confirmation-semantics — what counts as having been confirmed
 
 Depends-on: rc02-gate-semantics
-Complete: [ ]
+Complete: [x] 2026-09-21 (Sal)
 
 **SUPERSEDED 2026-09-21 (Sal), after the stage proposed and applied — the IMPACT block below is
 kept verbatim as the record of what was expected, and this note states what actually shipped.**
@@ -2377,3 +2377,50 @@ already settled here (2026-09-14: "one human SITTING, not one emitted record") a
 first mechanical application. And the walker's own instrument failed once: a probe of the
 touchpoints finding read the wrong JSON key, returned null, and briefly made a valid finding look
 stale — the rc01 lesson landing on the person checking rather than the person authoring.
+
+
+**2026-09-21 — rc02c ARCHIVED through a computed passed gate, and the gate said it in this
+change's own words.**
+
+`review-system: passed — passed with 1 SUGGESTION-grade finding deferred`. That string is the
+change's own repair: an external reviewer found the engine still emitting `converged with …` on a
+passed gate, inside the change whose whole thesis is that the engine no longer computes
+convergence. The verdict is now rendered in the vocabulary rc02c introduced. Third rc-stage to
+archive without an override; 8 MODIFIED requirements synced and byte-verified 8/8 two independent
+ways; baseline capabilities stay at 21.
+
+**The closing move is the one worth carrying forward: a pass bought BY CHOICE over an
+already-passed gate.** The blind pair read the tree, and the walk that resolved their findings then
+landed 42 insertions and 24 deletions of ENGINE code — the two-branch declaration hoist, the
+conditional spreads, the reason string. The gate computed `passed` over that, correctly, because
+coverage and resolution were both satisfied and freshness keys on apply tokens. So a SCOPED
+iteration-2 external pass was packaged against exactly that diff, asking one question: does the
+walk's own mechanism hold? GPT-5 Codex ran a branch matrix — live and blocked gates, derivable and
+underivable modes, declared and undeclared budgets — and reported the mechanism SOUND IN THE
+IMPLEMENTATION. What it found instead was DURABILITY: three engine comments still defining the
+resolution key by reference to a rule clause (c) deleted, a projection comment asserting the
+opposite of the surface split this change specifies, and — the sharpest finding of the cycle — a
+test suite that pinned the new behaviour without excluding the old, plus a hoist applied in two
+branches and covered in one. The new coverage was verified by MUTATION rather than by reading.
+
+**This is Q-crc-20 with a worked example attached.** The question was opened from the observation;
+the scoped pass is what the standing recommendation looks like when a human performs it by
+judgement instead of being prompted. It cost one model run and it is the reason this archive's
+residual-risk record can say the walk-authored mechanism was independently executed rather than
+merely asserted by its author.
+
+**The cycle in numbers.** Four independent passes (fresh proposal, blind pair = fresh + external,
+scoped external), five walk records, 35 findings, **ZERO CRITICAL anywhere in the system phase**,
+none re-opened. The blind pair overlapped on 2 of 15 distinct findings, residual ≈58% by
+capture-recapture, matching rc02's first pair at ≈60%.
+
+**And the cycle's own diagnosis, which four independent reviewers reached separately.** Every
+residue this change produced had ONE shape: a fix that landed on the INSTANCE a reviewer named and
+stopped at the edge of the CLASS it belonged to. Spec references updated, code comments missed.
+New behaviour asserted, old behaviour not excluded. A vocabulary swept through prose and stopped at
+comments no instrument scans. It recurred through propose, two walks, the pair's walk, and the
+archive itself — where the sync agent caught a synced requirement still claiming "every other
+scenario is preserved byte-identically" after a scenario had been added beneath it. Twice a finding
+of the authoring AI's own came from its own bad probe and was overturned by EXECUTING the check
+rather than reading it. If rc08-walk-completeness wants a premise, this is it: the walk's failure
+mode is not missing findings, it is resolving them narrowly.
