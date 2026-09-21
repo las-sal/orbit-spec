@@ -278,6 +278,58 @@ is separately gone: rc02c made `budget` inert, so no cadence can end exhausted (
   emit, written at exactly the moment that decision is taken; `readiness` on the ARCHIVE emit. The
   stage adds fields to three existing payload tables and invents no fourth trail.
 
+- **2026-09-21 — D-rc04-16: a `not-ready` record RECORDS; it never blocks. And it has READERS,
+  because exit (4) forbids anything else.** (Settles Q-rc04-e (i) under R-crc-3.)
+
+  **Why not blocking**, three independent grounds that agree. R-crc-10: mechanize only what the
+  engine can observe — readiness is a judgement, and an engine that blocks on it is acting on
+  something it cannot verify. D-rc04-5 with D-rc04-3 as amended: Sal steers, and an AI belief that
+  can veto Sal's archive inverts that exactly. And redundancy: the archive already carries THREE
+  stopping mechanisms — the consent prompt, the gate inflection prompt, and the audit prompt — so a
+  fourth adds a way to stop without adding a reason to.
+
+  **But record-only is not enough on its own.** Exit (4) is explicit that a write-only record
+  delivers nothing, and it would be absurd to retire `gate_overridden` for that sin and commit it
+  in the same stage. So `not-ready` gets TWO readers, both small and both real: the archive
+  COMPLETION READOUT states it (a change archived against the AI's own judgement should say so at
+  the moment it happens, not only in a JSON field), and `orbit status --change` surfaces the latest
+  readiness record for a change, which is also what makes it visible to a cold session.
+
+  **Where a `not-ready` record LIVES, since it cannot be the archive emit in the routing case.**
+  Readiness is written at CADENCE END, and the cadence can end two ways. Ending in ARCHIVE — the
+  record goes on the archive emit, and `not-ready` there is the honest dissent case: *archived, and
+  I did not believe it was ready*. Ending by ROUTING TO ARCHITECTURE (D-rc04-3) — there is no
+  archive, so the record goes on the `address-reviews` emit that closed the final walk, which is
+  the emit being written at that moment. Both already exist; D-rc04-15's no-new-trail finding
+  holds.
+
+- **2026-09-21 — D-rc04-17: `gate_overridden` is RETIRED from the write path, not deprecated.**
+  (Settles Q-rc04-e (ii) under R-crc-3.)
+
+  **Verified rather than assumed**, because exit (4) turns on it: `gate_overridden` occurs in
+  `src/` in exactly two kinds of place — a payload-field DECLARATION in `emit-composition.ts`
+  (lines 73 and 178, which is the write gate ACCEPTING the key) and prose in four workflow
+  templates instructing bodies to write it. **Nothing computes anything from it.** A deprecation
+  period exists to protect readers; there are none, so deprecating it protects nobody and is
+  ceremony.
+
+  **Readers of ARCHIVED trails are handled by precedent, not by an alias.** `report-render.ts:178`
+  already fails loud on a prior emit generation with a clean `pre-capability emit` error naming the
+  boundary. `gate_overridden` records in archived trails are exactly that: a prior generation,
+  recognized and readable as history, never written again. Nothing is deleted and nothing is
+  silently reinterpreted.
+
+  **Nothing is LOST**, which is the condition that makes retirement honest rather than convenient:
+  `continuation/proceed` carries `gate`, `gate_state` and `gate_reason` — `gate_overridden`'s
+  entire payload — plus the `formed_against` tokens it never had. The retirement is a strict
+  widening.
+
+  **Named scope this creates, so it is not discovered mid-apply:** four workflow templates instruct
+  bodies to write `gate_overridden` (`apply-change.ts` x2, `archive-change.ts` x2, plus a
+  `pr-choreography.ts` reference to "`gate_overridden` archives"). All four need rewriting, and the
+  PR one is a prose reference rather than an instruction. That is body work in a capability rc04
+  does not otherwise touch, and it belongs in the size check before this promotes.
+
 ## Open questions
 
 - **Q-rc04-c — how far does D4's commentary prohibition narrow?** It currently forbids a reviewer
@@ -326,13 +378,10 @@ is separately gone: rc02c made `budget` inert, so no cadence can end exhausted (
   structuring only half of it leaves the citation dangling in prose. **RATIFIED: both**
   (D-rc04-14, Sal).
 
-  **Still open, and both are small.** (i) Does a `readiness` record with `disposition: not-ready`
-  BLOCK the archive, or merely RECORD that the cadence ended by routing to architecture? Leaning:
-  record only — a blocking readiness record re-creates the target-shaped signal R-crc-11(h)
-  retires, and the archive already has consent and gate prompts for stopping. (ii) Is
-  `gate_overridden` RETIRED outright here, or kept as a deprecated alias for one release? Leaning:
-  retire — exit (4) says a write-only record delivers nothing, nothing in `src/` reads it, and a
-  deprecated alias for a record with no readers is ceremony.
+  **BOTH SETTLED 2026-09-21 under R-crc-3** — D-rc04-16 (record, never block; with two named
+  readers, because exit (4) forbids a write-only record) and D-rc04-17 (retire `gate_overridden`
+  from the write path; nothing reads it, so a deprecation period protects nobody). Q-rc04-e is
+  CLOSED. The exploration has no open questions.
 
 ## Considered & out
 
