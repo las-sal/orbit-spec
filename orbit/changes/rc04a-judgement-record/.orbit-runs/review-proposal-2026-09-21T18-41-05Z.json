@@ -1,0 +1,228 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-21T18:41:05Z",
+  "change": "rc04a-judgement-record",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m] (fresh clean-context subagent)",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 2,
+      "warning": 4,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 5,
+      "warning": 2,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 4
+    }
+  },
+  "findings": [
+    {
+      "dimension": "correctness",
+      "severity": "CRITICAL",
+      "title": "The MODIFIED `Archive run summary written` block drops four baseline scenarios",
+      "file": "orbit/changes/rc04a-judgement-record/specs/orbit-archive-modifications/spec.md",
+      "line": 3,
+      "recommendation": "The live baseline (orbit/specs/orbit-archive-modifications/spec.md, `Archive run summary written`) carries SIX scenarios: Summary contents, Gate override recorded in the summary, Fingerprint override recorded in the summary, Unverified fingerprints recorded in the summary, Consent recorded in the summary, PR fields recorded at emit-time state. This delta reproduces only the first two and adds four new ones. A MODIFIED block REPLACES the baseline requirement wholesale at sync, so applying this change deletes C2's `fingerprint_overridden` scenario, C2's `fingerprints_unverified` scenario, D1's `consent` scenario, and D6's `pr_url`/`pr_state` scenario from the baseline. `base_fingerprints` does NOT catch this: it hashes the BASELINE requirement at propose and re-checks it against the LIVE baseline at archive, so it detects parallel drift, not delta omission -- and `orbit validate --strict` passes. This is the exact defect class C2 was built for, and the one that C2's own proposal cycle caught in C2's own delta. Restore all four scenarios byte-identically before the two new residual/warnings scenarios, then re-verify with a scenario-name diff of the delta block against the baseline block.",
+      "pass": "1"
+    },
+    {
+      "dimension": "correctness",
+      "severity": "CRITICAL",
+      "title": "The MODIFIED `Stage line` block silently rewrites baseline prose and both baseline scenarios",
+      "file": "orbit/changes/rc04a-judgement-record/specs/orbit-archive-modifications/spec.md",
+      "line": 63,
+      "recommendation": "Beyond appending THE READINESS LINE, this block rewrites D2-era text the change has no business touching: `carries an \\`architecture:\\` citation` becomes `carries an \\`architecture: {doc, stage}\\` citation`; the `<other-change> remains active` example becomes `<other-change> also cites it`; `ratification happens in an architect session or by hand, never here` loses `or by hand, never here`; and BOTH baseline scenarios are renamed and reworded (`Quiescent stage surfaced at archive` -> `Cited stage renders its post-archive position`, dropping the `no other live work cites that stage` precondition and the quiescent-awaiting-ratification / already-ratified distinction; `Uncited change unchanged` -> `Uncited change renders no stage line`, replacing `byte-identical to pre-D2 behavior` with the weaker `unchanged from pre-capability output`). None of these edits is announced in proposal.md or design.md, none is fingerprint-guarded, and each lands on the baseline at sync as an unreviewed change. Restore the baseline prose and both scenarios verbatim and confine the delta to the appended readiness paragraph plus the two new scenarios -- or, if any rewrite is intended, state it in the proposal so it is reviewed as a change rather than absorbed as formatting.",
+      "pass": "1"
+    },
+    {
+      "dimension": "completeness",
+      "severity": "CRITICAL",
+      "title": "The payload key that carries the record is never named, and its cardinality is never fixed",
+      "file": "orbit/changes/rc04a-judgement-record/specs/orbit-run-summary-emit/spec.md",
+      "line": 13,
+      "recommendation": "`COMMANDS[cmd].payloadFields` in src/core/emit-composition.ts is a flat allowlist of literal top-level keys, and `validatePayload` refuses any key not in it (`unknown payload key '<k>' for '<cmd>'`). Task 1.2 says `Add the record to the payload tables` without naming the key; the three deltas call it `a \\`readiness\\` judgement record`, `\\`continuation\\` on the APPLY emit`, and `identified by the presence of \\`formed_against\\`, and by nothing else` -- three mutually incompatible readings (one key per kind vs one shared key vs a nested probe). Two implementers will ship `readiness`+`continuation`, `judgement`, or `judgement_record`, and the rc01 schema-table parity requirement (`Payload tables agree with their schema references`) derives literal top-level keys from the reference block, so the name is test-visible, not cosmetic. Cardinality is equally open: an archive that overrides the `review-system` gate AND asserts readiness needs two records on one emit, which neither a scalar key nor the `presence of formed_against` probe can express. Name the key, state whether it is a scalar or an array, and state where `formed_against` sits relative to it.",
+      "pass": "5"
+    },
+    {
+      "dimension": "completeness",
+      "severity": "CRITICAL",
+      "title": "kind/disposition agreement is delegated to the type system, which is erased at the only boundary that matters",
+      "file": "orbit/changes/rc04a-judgement-record/tasks.md",
+      "line": 5,
+      "recommendation": "Task 1.1 requires `a \\`readiness\\` record with \\`disposition: \"spend\"\\` must be a type error, not a runtime check`, and task 4.4 declares that needing a runtime guard means 1.1 was built wrong. But payloads reach the write gate as untrusted JSON parsed from `--payload <file>` (src/cli/index.ts:284) or stdin, and `composeEmit` receives `Record<string, unknown>` (src/core/emit-composition.ts:833) -- TypeScript types are erased, so a payload file carrying `{kind: \"readiness\", disposition: \"spend\"}` sails through every compile-time guarantee this change specifies. The precedent is in the same function: `validatePrFields` (line 486) is a RUNTIME structural validator added at D6 for exactly this reason, and its comment says why (`an emit carrying {granularty: ...} or a missing branch would otherwise sail through a seam advertised as fail-loud`). As written, tasks 1.1 and 4.4 actively instruct the implementer NOT to build the only check that can fire. Keep the discriminated union for authoring ergonomics, and ADD the runtime kind/disposition refusal (plus the required kind-specific extras: `gate`/`gate_state`/`gate_reason` on `proceed`, `accepted` on `readiness`) to section 2's refusal list with a constructed-payload case in 4.1.",
+      "pass": "6"
+    },
+    {
+      "dimension": "correctness",
+      "severity": "CRITICAL",
+      "title": "`continuation` on the ARCHIVE emit is claimed by the proposal and the charter but excluded by the spec",
+      "file": "orbit/changes/rc04a-judgement-record/specs/orbit-run-summary-emit/spec.md",
+      "line": 88,
+      "recommendation": "The spec restricts `continuation` to the apply and `review-external` emits and gives archive only `readiness`. But proposal.md's own What Changes bullet says `\\`continuation/proceed\\` on apply and archive`, explore D-rc04-15 says `on the APPLY emit (where \\`gate_overridden\\` lives now) and on ARCHIVE`, and the baseline `Archive run summary written` scenario `Gate override recorded in the summary` puts `gate_overridden` at archive for the `review-system` gate. This is not hypothetical: three recent archive emits carry the field (2026-09-11-d6-pr-lifecycle, 2026-09-12-rc01-instrument-fidelity, 2026-09-14-rc02-gate-semantics), each with `gate: \"review-system\"` -- archive is where the override actually happens, since apply is gated by `review-proposal` and archive by `review-system`. The proposal contradicts itself in adjacent bullets (`on apply and archive` vs `\\`continuation\\` on the first two`), so this is unresolved rather than a considered descope. It also breaks the declared downstream contract: rc04c cannot retire `gate_overridden` while the archive seam has no `continuation/proceed` to replace it, and rc04c's `Depends-on: rc04a-judgement-record` is premised on the replacement existing. Either add `continuation` to the archive emit (and resolve the resulting two-records-on-one-emit cardinality with the finding above) or state the exclusion and its consequence for rc04c explicitly in the proposal.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Admit `continuation` on the archive emit alongside `readiness`, make the record carrier an ARRAY so one archive can hold both, and fix the proposal's self-contradiction."
+        },
+        {
+          "label": "B",
+          "body": "Keep the archive to `readiness` only, correct proposal.md's `on apply and archive` bullet, and record in design.md that the archive-seam `gate_overridden` has no continuation equivalent until rc04c -- which then must ship that seam itself rather than merely retiring a record."
+        }
+      ],
+      "pass": "2"
+    },
+    {
+      "dimension": "correctness",
+      "severity": "CRITICAL",
+      "title": "The acceptance fixture sorts rc02c's six warnings three different ways, one of which violates this change's own qualifying test",
+      "file": "orbit/changes/rc04a-judgement-record/tasks.md",
+      "line": 30,
+      "recommendation": "Task 5.1 names the three that become `accepted` as the capture-recapture residual, the passed-gate-is-not-a-clean-pass reading, and `the stale cross-reference deferred to audit-drift`. But the stale cross-reference (rc02c archive warnings[3], verbatim: `found by the sync agent and deliberately NOT fixed here`) was NOT formed against any independent pass -- and this change's own delta makes that disqualifying twice over: orbit-archive-modifications/spec.md:46 (`WHEN a cadence ends with residual risk formed against the independent passes`) and :50-55 (`A seam-arising process note stays in warnings ... because it fails the qualifying test`). Explore D-rc04-13's executed table agrees, classifying it row 7 `NO -- found by the sync agent, not a review pass | process note -- correct home`. Meanwhile explore D-rc04-12's worked example gives a THIRD set (`the ~58% capture-recapture residual, the 158% size overage, the stale cross-reference`), and D-rc04-13 row 6 calls the size overage a method call `MISFILED in warnings` -- which task 5.1 would have stay in `warnings` as a correctly-placed `process note`. Since this fixture IS the stage's exit criterion (3), it cannot be executed as written without contradicting the spec it is meant to validate. Re-run the sort against the archive emit's six entries under the spec's qualifying test, name the resulting three explicitly, and say what happens to the size-overage entry (misfiled method call, not a process note) rather than letting the count of three carry the claim.",
+      "pass": "2"
+    },
+    {
+      "dimension": "correctness",
+      "severity": "CRITICAL",
+      "title": "The `address-reviews` routing case reaches into a fourth capability with no delta, no task, and no reader",
+      "file": "orbit/changes/rc04a-judgement-record/specs/orbit-run-summary-emit/spec.md",
+      "line": 92,
+      "recommendation": "The spec places the routing-case `readiness` record on the `address-reviews` emit and task 1.2 puts `address-reviews` in the payload table as one of `exactly FOUR commands`. But the address-reviews emit's shape is owned by `orbit-address-reviews` (its `Resolution-log JSON shape extensions` requirement, orbit/specs/orbit-address-reviews/spec.md:~488), and `address-reviews` is one of the four commands inside the rc01 parity requirement's scope (`review, address-reviews, audit-drift, archive`), so its schema reference must document the field too. This change carries no delta for that capability, design.md's Touchpoints names no address-reviews template, no task instructs its body to author the record, and proposal.md's Modified Capabilities does not mention it at all -- so the routing branch would ship as a payload key nothing writes. It also has no reader: the archive completion readout is the single reader D5 relies on for exit (4), and in the routing case there IS no archive, so a routing-case `not-ready` record would be precisely the write-only record this change condemns. Finally, adding the capability makes four, breaching the three-capability ceiling the split exists to respect (R-crc-1/R-crc-9; the stage charter says `Touches: orbit-emit-composition, orbit-run-summary-emit, orbit-archive-modifications`).",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Descope the routing case from rc04a: remove `address-reviews` from task 1.2, cut the routing sentence from the run-summary delta and from design D6, and declare the routing-case carrier as rc04b/rc04c or a later stage's work -- keeping this change at three capabilities."
+        },
+        {
+          "label": "B",
+          "body": "Keep it and pay for it honestly: add an `orbit-address-reviews` delta, a body/schema-reference task, a touchpoint, and a named reader for the routing case; declare the four-capability count in the proposal and record the ceiling breach against R-crc-1 rather than letting it arrive unannounced."
+        }
+      ],
+      "pass": "2"
+    },
+    {
+      "dimension": "correctness",
+      "severity": "WARNING",
+      "title": "The archive schema-reference requirement enumerates the emit's fields and is not updated",
+      "file": "orbit/specs/orbit-archive-modifications/spec.md",
+      "line": 143,
+      "recommendation": "`Archive summary schema reference ships with the skill`, scenario `Reference exists after init`, enumerates what the shipped reference documents: the spine, the five lifecycle extensions, `warnings`, the conditional `gate_overridden`, the conditional fingerprint fields, and `consent`. Task 3.1 adds the readiness shape to that reference but no delta extends this requirement's enumeration, so post-apply the baseline understates what the reference ships. It does not strictly contradict (the enumeration reads additively), which is why this is a WARNING and not a CRITICAL -- but the precedent is direct: `gate_overridden` was omitted from the archive payload table at D5 and the omission was discovered by a failing archive, not by review. Add a MODIFIED block for this requirement naming the readiness field in the same conditional style the other fields use.",
+      "pass": "4"
+    },
+    {
+      "dimension": "correctness",
+      "severity": "WARNING",
+      "title": "`not-ready`'s destination is dropped from the record shape without a stated rationale",
+      "file": "orbit/changes/rc04a-judgement-record/specs/orbit-run-summary-emit/spec.md",
+      "line": 36,
+      "recommendation": "Explore D-rc04-15 specifies `readiness` as `\\`ready\\` or \\`not-ready\\`, the latter carrying the destination D-rc04-3 names (architecture) and being a RATIFIED disposition rather than an autonomous one`, and D-rc04-12 closes with `a record that routes work to architecture is carrying a RATIFIED decision, not an autonomous one, and it needs to say which`. The shipped shape carries `ratified_by` (which answers the `which`) but no destination field, and neither design.md's Decisions nor its Non-Goals mentions the omission. Design D6 uses the routing case to justify the address-reviews carrier, so the routing concept is retained while the field that expresses it is silently dropped. Either add the destination to the `not-ready` shape or record the exclusion in design.md as a deliberate narrowing with its reason -- an omitted decision from a cited exploration should be visible as a decision, not as an absence.",
+      "pass": "2"
+    },
+    {
+      "dimension": "completeness",
+      "severity": "WARNING",
+      "title": "`gate_overridden` and `continuation/proceed` will duplicate the same three fields with no stated consistency constraint",
+      "file": "orbit/changes/rc04a-judgement-record/tasks.md",
+      "line": 19,
+      "recommendation": "Task 3.3 says `Do NOT touch \\`gate_overridden\\` anywhere`, and the record's `proceed` disposition carries `gate`, `gate_state` and `gate_reason` -- byte-for-byte `gate_overridden`'s payload. So a single apply emit will carry both, authored independently by the body, with nothing specifying that they must agree. design.md's Risks section names the coexistence (`Two records for one fact, deliberately, until rc04c`) but not the DIVERGENCE risk, which is the part that actually hurts: rc04c's retirement argument is that `continuation/proceed` is a strict widening of `gate_overridden`, and that argument fails if the two can disagree on a trail. Specify that when both are present they carry identical `gate`/`gate_state`/`gate_reason`, and ideally refuse the mismatch at the write gate (it is observable, so R-crc-10 permits a check rather than only a record).",
+      "pass": "6"
+    },
+    {
+      "dimension": "completeness",
+      "severity": "WARNING",
+      "title": "`a readable pass on the change's trail` is undefined at two edges that both occur in the fixture",
+      "file": "orbit/changes/rc04a-judgement-record/specs/orbit-emit-composition/spec.md",
+      "line": 32,
+      "recommendation": "The refusal turns on whether a cited token names `a readable pass on the change's trail`, and task 2.1 says to compare tokens `the way the trail reader already does`. `readTrail` (src/core/artifact-graph/trail.ts:149) builds `trail.passes` from `review-(proposal|system)-<TS>.json` AND `external-(proposal|system)-<TS>.md`, which is what makes an external citation resolvable at all -- worth stating, because the external pass has no JSON emit and `review-external-*.json` is explicitly NOT a pass (trail.ts:177). Two edges are left open. (a) `trail.passes` includes `in-context` passes, but the field is specified as `independent pass <TS> tokens (fresh or external)`; the spec also says the engine must not judge `whether enough of them were cited`, so an implementer may either admit or refuse an in-context token and both readings are defensible. (b) A malformed external return lands in `trail.rejectedExternals` (trail.ts:88, `a return that came back unreadable is still spend`) and is NOT a pass, so citing one is refused -- arguably correct, but unstated. Name `readTrail`'s pass set as the resolution source and settle both edges in the spec.",
+      "pass": "5"
+    },
+    {
+      "dimension": "completeness",
+      "severity": "WARNING",
+      "title": "`the candidate record's own timestamp token` names a field the record does not have",
+      "file": "orbit/changes/rc04a-judgement-record/specs/orbit-emit-composition/spec.md",
+      "line": 21,
+      "recommendation": "The refusal compares each cited token against `the candidate record's own timestamp token`, and the scenario at :55 refuses `naming the offending token and the record's timestamp`. But the record shape (orbit-run-summary-emit delta :15-21) carries `kind`, `formed_against`, `disposition`, `reasoning`, `ratified_by` and no timestamp -- so the comparand must be the EMIT's engine-composed timestamp, which the spec never says. This matters because the emit has two representations of that instant (the JSON `timestamp` with colons and the filename `<TS>` token with hyphens, per the spine block at orbit-run-summary-emit/spec.md:78) and the comparison is specified against tokens. State that the record's timestamp IS the emit's engine-composed `<TS>` filename token, so the two are compared in one representation.",
+      "pass": "5"
+    },
+    {
+      "dimension": "completeness",
+      "severity": "WARNING",
+      "title": "No task instructs the archive body WHEN to author a readiness record",
+      "file": "orbit/changes/rc04a-judgement-record/tasks.md",
+      "line": 17,
+      "recommendation": "The archive delta says the emit `SHALL carry a \\`readiness\\` judgement record ... whenever the archive concludes a review cadence`, which is a condition the body must evaluate at the seam. Task 3.1 covers three things -- the payload table entry, the schema reference shape, and the residual-risk-vs-warnings guidance -- but never instructs the body to compose the record, nor how to decide that a cadence was concluded (scenario :39 says `a change with independent review passes on its trail`, which is readable from `orbit status --change --json` but nothing says to read it), nor where `formed_against` tokens come from. Since `payloadFields` only PERMITS a key, an archive body that is never told to write one produces emits without records and the change ships inert. Add the body instruction and the qualifying condition to 3.1, and consider having 6.2's sweep assert that at least one cadence-concluding archive produces a record.",
+      "pass": "6"
+    },
+    {
+      "dimension": "coherence",
+      "severity": "SUGGESTION",
+      "title": "The per-command record is specified inside the spine requirement despite saying it is not a spine field",
+      "file": "orbit/changes/rc04a-judgement-record/specs/orbit-run-summary-emit/spec.md",
+      "line": 88,
+      "recommendation": "The inserted paragraph opens `THE JUDGEMENT RECORD IS A PER-COMMAND EXTENSION, not a spine field` and then sits inside `Workflow-kind emit shape (extends the universal spine)`, which is the spine requirement. The capability already has three precedents for exactly this kind of field getting its own requirement: `Reviewer-class field on review-cycle emits` (:531), `Consent field on the apply emit` (:557), and `PR attachment record on the propose and ff emits` (:582). Moving the placement rules into the ADDED `The judgement record` requirement (or a small fourth requirement in the established style) would also shrink the MODIFIED block, which is where delta-fidelity defects concentrate.",
+      "pass": "9"
+    },
+    {
+      "dimension": "coherence",
+      "severity": "SUGGESTION",
+      "title": "`which are three` immediately precedes a fourth case, and task 1.2 says four",
+      "file": "orbit/changes/rc04a-judgement-record/specs/orbit-run-summary-emit/spec.md",
+      "line": 89,
+      "recommendation": "The paragraph says the record appears on the emits `which are three`, then names a fourth carrier (`address-reviews`) two sentences later, and the scenario at :117 has to write around it (`outside the three ... (and outside the \\`address-reviews\\` routing case)`). Task 1.2 states the same set as `exactly FOUR commands`. Whatever the routing-case finding resolves to, make the count agree with the enumeration in both places so a reader does not have to reconcile them.",
+      "pass": "9"
+    },
+    {
+      "dimension": "coherence",
+      "severity": "SUGGESTION",
+      "title": "The Why section overstates what nine walk resolutions carry",
+      "file": "orbit/changes/rc04a-judgement-record/proposal.md",
+      "line": 7,
+      "recommendation": "`Nine of them across rc02c's cycle carry \\`ratified_via\\`, a \\`recommendation_fork\\` and a verbatim \\`resolution\\`` -- measured across rc02c's six address-reviews emits, nine resolutions carry `ratified_via`, but only five carry all three. That is by design, not by lapse: orbit/specs/orbit-address-reviews/spec.md:399 makes `resolution` conditional (`when the direction is not one of the briefed options, or no fork was detected`) and :436 makes fork ABSENCE the canonical no-fork representation. The contrast the paragraph is drawing survives intact at `nine carry \\`ratified_via\\`, five of those also carrying a \\`recommendation_fork\\` and a verbatim \\`resolution\\``; as written it misstates the capability it is citing as prior art.",
+      "pass": "9"
+    },
+    {
+      "dimension": "coherence",
+      "severity": "SUGGESTION",
+      "title": "The recommended architect note omits the two residues the exploration already identified",
+      "file": "orbit/changes/rc04a-judgement-record/tasks.md",
+      "line": 38,
+      "recommendation": "Task 6.4 recommends an architect note covering exit criteria and rc04c's unblocking, but explore.md already names two program-doc residues this stage creates or leaves: (a) D-rc04-9's `CHARTER RESIDUE to recommend at the next architect session` -- the rc04 boundary paragraph still closes `the predicate may read the record's existence, never its content`, describing a relationship with a predicate rc02c deleted (orbit/architecture/clean-up-review-cycle.md:1320); and (b) the field name `residual_risk`, which this change does not ship under that name, still appears in CLAUDE.md:168 and seven places in the architecture doc (:393, :399, :402, :1686, :1743, :1889, :2276). Both are recommendations for `/orbit:architect` rather than edits this change makes, which is correct -- but naming them in 6.4 is what keeps them from being rediscovered by a future audit-drift sweep.",
+      "pass": "7"
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Fresh clean-context pass. The change's central argument is sound and I could not break it: belief is not observable, ordering is, and refusing a citation that postdates its own record is a real constraint that costs nothing in judgement. I pushed hardest on that claim's edges and most of them held. The archive seam resolves correctly post-move (resolveTarget's `archive` branch already points at the archived directory, so the cited trail travels with the change and the cited tokens stay readable -- I expected this to be the change's hidden bug and it is not). The external-pass citation is resolvable despite an external pass having no JSON emit, because readTrail already treats `external-<mode>-<TS>.md` as a first-class pass. The presence-scoping claim that no existing emit can newly fail is true as far as I could push it, and task 6.2 proposes to measure it rather than assert it, which is the right instinct. The `not-ready`-records-never-blocks decision is triple-grounded and I have no argument against it. Sizing is genuinely inside every R-crc-1 dimension (19,145 B of delta, 3 capabilities, 5 requirement blocks, 19 tasks) -- the split did its job. Task 5.2's continuation reproduction checks out against the real trail: rc02c's apply emits and the iteration-2 `review-external` T0 emit all cite earlier, resolvable tokens.\n\nWhere it comes apart is not in the idea but in two places the idea does not reach. First, the delta AUTHORING: I diffed each MODIFIED block against its live baseline scenario-by-scenario, which is the check `orbit validate --strict` and `base_fingerprints` structurally cannot perform -- fingerprints hash the baseline, not the delta's fidelity to it. The emit-composition and run-summary blocks are clean, purely additive, exactly as they should be. Both archive-modifications blocks are not: one deletes four baseline scenarios covering C2's fingerprint records, D1's consent field and D6's PR fields; the other rewrites D2-era prose and replaces both baseline scenarios with reworded variants. That is the same defect C2 exists to prevent and the same one C2's own proposal cycle found in C2's own delta, and it is invisible to every automated instrument this repo has. Second, the shipping contract: the record is described with real care and never NAMED. `payloadFields` is a literal top-level key allowlist that refuses unknown keys, and no artifact says what key to add, whether it is scalar or array, or where `formed_against` sits inside it -- and the one place the change does reach for enforcement, it reaches for the type system, which is erased at the JSON boundary where the payload actually arrives. The pattern across both is the same and worth naming: this change reasons at the level of the RECORD and stops short of the level of the BYTES, in a codebase whose entire recent history is about the gap between those two.\n\nOne thing I want to flag as a texture rather than a finding. The exploration is unusually good -- twenty decisions, a test executed against eleven real judgements off a real trail, a size check run before promotion rather than after. But it is also shared across three stages, and the seams show: the qualifying test that D-rc04-13 executed carefully is contradicted by task 5.1's own fixture sort, and D-rc04-12 and D-rc04-13 sort the same six warnings entries differently between themselves. A shared source is the right call under R-crc-7, and the cost is that the child change has to re-derive rather than cite -- exit criterion (3) is the place that cost landed.",
+  "passes_run": [
+    "1",
+    "2",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [
+    "3 (partial) -- orbit/project.md and *_convention.md are absent; CLAUDE.md cross-checks ran, lens-driven cross-checks skipped"
+  ],
+  "final_assessment": "7 critical, 6 warning, 4 suggestion.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc04a-judgement-record --from-file orbit/changes/rc04a-judgement-record/.orbit-runs/review-proposal-2026-09-21T18-41-05Z.json"
+}

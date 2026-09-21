@@ -8,7 +8,6 @@ base_fingerprints:
   orbit-archive-modifications:
     Archive run summary written: sha256:3d305b7bbc1bd60c40abe399ad8c58e647ab9da0123e44e57bb8ba5c342074f8
     Stage line in the archive completion readout: sha256:a6524f5678b90fcd6e0bf0e64a8e5843f1e4e40f33dc5ca466871687c038934a
+    Archive summary schema reference ships with the skill: sha256:bddb9c37715cafc150b7ea07a2a87c594fa3f774e8232293c6c6e8e19a8f5f50
   orbit-emit-composition:
     Write-gate validation via the shared normalizers: sha256:c640865b8aa12ffde7d82f4f5b15c55e9326e831115d5c71995619d65959f3b1
-  orbit-run-summary-emit:
-    Workflow-kind emit shape (extends the universal spine): sha256:eedb0b0173ddcdc30ac5d160b1ed03f246b50f172ee5803a9589f2faa7e34455

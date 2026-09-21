@@ -83,13 +83,23 @@ But record-only alone would violate exit (4), so `not-ready` gets a reader: **th
 completion readout states it**. A change archived against the AI's own judgement should say so
 where a human is looking, not only in a JSON field.
 
-### D6 — where a `not-ready` record lives when there is no archive
+### D6 — the ROUTING case is deliberately not carried, and the reason is readers not size
 
 A cadence can end two ways. Ending in ARCHIVE — the record goes on the archive emit, and
 `not-ready` there is the honest dissent case: *archived, and I did not believe it was ready*.
-Ending by ROUTING TO ARCHITECTURE (explore D-rc04-3) — there is no archive, so the record goes on
-the `address-reviews` emit that closed the final walk, which is the emit being written at that
-moment. Both already exist, so the no-new-trail property holds in both branches.
+Ending by ROUTING TO ARCHITECTURE (explore D-rc04-3) — there is no archive.
+
+The first draft of this change carried the routing case on the `address-reviews` emit. That was
+wrong, and the proposal review found why: **the routing case has no reader.** The archive
+completion readout is the single reader that satisfies the parent charter's exit (4), and in the
+routing case there is no archive to carry it. A routing-case record would therefore be precisely
+the write-only record this change condemns `gate_overridden` for being — committed in the stage
+whose own charter names that sin. It would also have reached a FOURTH capability
+(`orbit-address-reviews`), breaching the three-capability ceiling the split exists to respect.
+
+So the routing case is DESCOPED, and its carrier belongs with whatever surface reads it — which no
+stage has yet declared. Recorded here rather than dropped silently, because the judgement is real
+and someone will need it.
 
 ## Touchpoints
 
@@ -102,7 +112,7 @@ moment. Both already exist, so the no-new-trail property holds in both branches.
   line, and the archive payload table gains `readiness`.
 - `src/core/templates/workflows/apply-change.ts` — the apply payload table gains `continuation`.
 - `src/core/templates/workflows/review.ts` — the `review-external` T0 payload table gains
-  `continuation` with disposition `spend`.
+  `judgements` admitting `continuation` with disposition `spend`.
 - `test/core/` — the ordering-refusal cases and the rc02c reproduction fixture.
 
 ## Risks / Trade-offs

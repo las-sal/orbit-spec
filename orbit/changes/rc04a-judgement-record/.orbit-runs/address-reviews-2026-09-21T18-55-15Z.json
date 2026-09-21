@@ -1,0 +1,305 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-21T18:55:15Z",
+  "change": "rc04a-judgement-record",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc04a-judgement-record/.orbit-runs/review-proposal-2026-09-21T18-41-05Z.json",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "input_findings_summary": {
+    "critical": 7,
+    "warning": 6,
+    "suggestion": 4
+  },
+  "pushback_verification": "All 17 verified against current state before any fix. The three structural CRITICALs were verified by EXECUTION rather than reading: a scenario-name diff of each MODIFIED block against its baseline confirmed 4 dropped and 2 replaced; grep confirmed the unknown-payload-key throw at emit-composition.ts:467; grep confirmed validatePrFields at :486. Finding 6 was re-derived from the archived rc02c warnings array directly, and finding 16 was re-measured across rc02c address-reviews emits — where my count disagreed with the reviewer and I used mine. ZERO stale.",
+  "resolution_summary": {
+    "resolved": 17,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "The MODIFIED `Archive run summary written` block drops four baseline scenarios",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04a-judgement-record/specs/orbit-archive-modifications/spec.md",
+      "line": 3,
+      "classification": "trivial_fix",
+      "action": "REBUILT the block from the baseline rather than patching the four dropped scenarios back — patching by hand is the same authoring mode that produced the defect. A script re-extracts the baseline requirement, inserts the new paragraph after the opening SHALL and appends the new scenarios, then ASSERTS that every baseline scenario survives byte-identically and that zero baseline lines were removed. Verified: 6 baseline scenarios preserved, 4 added, 0 lines removed.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "The MODIFIED `Stage line` block silently rewrites baseline prose and both baseline scenarios",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04a-judgement-record/specs/orbit-archive-modifications/spec.md",
+      "line": 63,
+      "classification": "trivial_fix",
+      "action": "Same rebuild-from-baseline treatment. The D2-era prose and both baseline scenarios are byte-identical again; the delta is now the appended readiness paragraph plus two new scenarios and nothing else. Verified: 2 baseline scenarios preserved, 2 added, 0 lines removed.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "The payload key that carries the record is never named, and its cardinality is never fixed",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04a-judgement-record/specs/orbit-run-summary-emit/spec.md",
+      "line": 13,
+      "classification": "trivial_fix",
+      "action": "NAMED it: the payload key is `judgements` and it is an ARRAY, stated in the spec as a literal top-level key with the reason (the payload tables are an allowlist that refuses unknowns, so a key left to the implementer is a record that does not ship). `formed_against` sits INSIDE each entry, never beside the array, because two judgements on one emit may cite different passes and the ordering check runs per entry. Task 1.2 now names the key and also directs the SCHEMA REFERENCES to be updated, since the parity requirement derives literal top-level keys from the reference block.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "kind/disposition agreement is delegated to the type system, which is erased at the only boundary that matters",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04a-judgement-record/tasks.md",
+      "line": 5,
+      "classification": "trivial_fix",
+      "action": "Added task 2.5 — RUNTIME structural validation modelled directly on `validatePrFields` (emit-composition.ts:486), which exists for exactly this reason and whose comment says why. Rewrote 1.1 so the discriminated union is described as AUTHORING ergonomics rather than as the enforcement, and rewrote 4.4 to require BOTH layers, naming the payload-file case as the one that actually fires. The finding is right that the tasks as written instructed the implementer not to build the only check that can catch real input.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "`continuation` on the ARCHIVE emit is claimed by the proposal and the charter but excluded by the spec",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04a-judgement-record/specs/orbit-run-summary-emit/spec.md",
+      "line": 88,
+      "classification": "decision_required",
+      "action": "Option (A). `archive` now admits BOTH kinds and the carrier is an ARRAY, with a scenario for one emit carrying a continuation and a readiness record together. The placement rules moved into their own ADDED requirement carrying a CLOSED three-row table (apply / review-external / archive) with the reason each admits what it does.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "Option (A), ratified by Sal in chat as \"f5:A\". The deciding fact is not symmetry: gate_overridden at archive guards review-system while apply is gated by review-proposal, and three archived changes carry the field at the archive seam. Under (B) rc04c’s retirement argument — that continuation/proceed is a STRICT WIDENING of gate_overridden — would be false exactly where the field is most used, and rc04c would have to BUILD the archive seam rather than retire a record, breaking the dependency the split declared.",
+      "recommendation_fork": {
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Admit `continuation` on the archive emit alongside `readiness`, make the record carrier an ARRAY so one archive can hold both, and fix the proposal's self-contradiction."
+          },
+          {
+            "label": "B",
+            "body": "Keep the archive to `readiness` only, correct proposal.md's `on apply and archive` bullet, and record in design.md that the archive-seam `gate_overridden` has no continuation equivalent until rc04c -- which then must ship that seam itself rather than merely retiring a record."
+          }
+        ],
+        "chosen": "A"
+      }
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "The acceptance fixture sorts rc02c's six warnings three different ways, one of which violates this change's own qualifying test",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04a-judgement-record/tasks.md",
+      "line": 30,
+      "classification": "trivial_fix",
+      "action": "RE-DERIVED the sort under the shipped qualifying test instead of carrying the exploration’s earlier one, and the count changed: TWO become `accepted` (the passed-gate reading and the capture-recapture residual), THREE stay `warnings` as process notes (the stale cross-reference found by the sync agent, the touchpoint divergence, the at-archive correction), and ONE — the size overage — is a METHOD call misfiled in `warnings`, whose correct home is design.md’s size section. Task 5.1 now names each entry by index with its reason, and states plainly that the count moved from three to two because the test this change ships disqualifies the stale cross-reference. The proposal’s Impact bullet was rippled to match.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "The `address-reviews` routing case reaches into a fourth capability with no delta, no task, and no reader",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04a-judgement-record/specs/orbit-run-summary-emit/spec.md",
+      "line": 92,
+      "classification": "decision_required",
+      "action": "Option (A). The routing case is DESCOPED: removed from task 1.2, removed from the spec’s carrier set, and design D6 rewritten from \"where the routing record lives\" into \"why it is not carried\". The change stays at THREE capabilities.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "Option (A), ratified by Sal in chat as \"F7:A\". Taken on the READER argument rather than the size one, which is the stronger of the two the finding offers: the archive completion readout is the single reader satisfying exit (4), and the routing case has no archive to read it — so carrying it would ship precisely the write-only record this change condemns gate_overridden for being, inside the stage whose own charter names that sin. The four-capability ceiling breach is real but secondary. D6 records the descope and states that the carrier belongs with whatever surface reads it, which no stage has yet declared.",
+      "recommendation_fork": {
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Descope the routing case from rc04a: remove `address-reviews` from task 1.2, cut the routing sentence from the run-summary delta and from design D6, and declare the routing-case carrier as rc04b/rc04c or a later stage's work -- keeping this change at three capabilities."
+          },
+          {
+            "label": "B",
+            "body": "Keep it and pay for it honestly: add an `orbit-address-reviews` delta, a body/schema-reference task, a touchpoint, and a named reader for the routing case; declare the four-capability count in the proposal and record the ceiling breach against R-crc-1 rather than letting it arrive unannounced."
+          }
+        ],
+        "chosen": "A"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The archive schema-reference requirement enumerates the emit's fields and is not updated",
+      "marker_source": "internal-review",
+      "file": "orbit/specs/orbit-archive-modifications/spec.md",
+      "line": 143,
+      "classification": "trivial_fix",
+      "action": "Added a THIRD MODIFIED block for `Archive summary schema reference ships with the skill`, built with the same rebuild-and-verify script: 4 baseline scenarios preserved byte-identically, 1 added documenting the readiness record in the same conditional style gate_overridden and the fingerprint fields use.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "`not-ready`'s destination is dropped from the record shape without a stated rationale",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04a-judgement-record/specs/orbit-run-summary-emit/spec.md",
+      "line": 36,
+      "classification": "trivial_fix",
+      "action": "Added `destination` to the `not-ready` shape, as explore D-rc04-15 specified. Went further than the finding asked on one point the exploration implied but did not state: a `not-ready` record’s `ratified_by` SHALL be `user`, and claiming `ai` is REFUSED — routing work out of a cadence is a scope decision under D-rc04-3 as amended, so the record may not claim the AI made it. Added a scenario.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "`gate_overridden` and `continuation/proceed` will duplicate the same three fields with no stated consistency constraint",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04a-judgement-record/tasks.md",
+      "line": 19,
+      "classification": "trivial_fix",
+      "action": "Added the constraint as a REFUSAL rather than only prose: when an emit carries both a continuation/proceed record and a gate_overridden field, their gate / gate_state / gate_reason MUST be identical or the emit is refused. The finding’s reasoning is what makes it a check rather than a note — rc04c’s retirement argument is that the record is a strict widening of the field, and that argument fails outright if the trail can show them disagreeing. The constraint is observable, so R-crc-10 permits a check.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "`a readable pass on the change's trail` is undefined at two edges that both occur in the fixture",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04a-judgement-record/specs/orbit-emit-composition/spec.md",
+      "line": 32,
+      "classification": "trivial_fix",
+      "action": "Named `trail.passes` as the resolution source, with the reason (an external pass has no JSON emit and review-external-*.json is a packaging record, so without naming it the most common external citation would look unresolvable). SETTLED both edges the finding left open rather than leaving them defensible-either-way: an in-context token is REFUSED (formed_against names INDEPENDENT passes, and this is well-formedness rather than the forbidden judgement about whether enough were cited), and a rejected external return is REFUSED (it is not a pass and carries no findings a judgement could have been formed against).",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "`the candidate record's own timestamp token` names a field the record does not have",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04a-judgement-record/specs/orbit-emit-composition/spec.md",
+      "line": 21,
+      "classification": "trivial_fix",
+      "action": "Named the comparand as the EMIT’S OWN `<TS>` filename token, with the reason the finding gives — the emit holds that instant in two representations and comparing across them would silently never match. Then swept the consequence: four further sites still said \"the record’s timestamp\" after the record was established to have none, and all four are corrected.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "No task instructs the archive body WHEN to author a readiness record",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04a-judgement-record/tasks.md",
+      "line": 17,
+      "classification": "trivial_fix",
+      "action": "Task 3.1 now INSTRUCTS THE BODY TO COMPOSE THE RECORD, which no task did — the finding is right that payloadFields only PERMITS a key, so a body never told to write one ships the change inert. Also named the qualifying condition (the trail carries independent passes, readable from `orbit status --change --json`) and where formed_against tokens come from.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The per-command record is specified inside the spine requirement despite saying it is not a spine field",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04a-judgement-record/specs/orbit-run-summary-emit/spec.md",
+      "line": 88,
+      "classification": "trivial_fix",
+      "action": "Resolved better than the finding proposed. Rather than moving the placement rules into the existing ADDED requirement, they became their own ADDED requirement — which let the MODIFIED block on the spine requirement be dropped ENTIRELY. `orbit-run-summary-emit`’s delta is now ADDED-ONLY, so the capability where two delta-fidelity defects appeared no longer carries a MODIFIED block at all. Its now-stale base fingerprint was removed by hand, since `orbit fingerprint` is add-missing-only and cannot retract one.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "`which are three` immediately precedes a fourth case, and task 1.2 says four",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04a-judgement-record/specs/orbit-run-summary-emit/spec.md",
+      "line": 89,
+      "classification": "trivial_fix",
+      "action": "Resolved by the F7 descope: the carrier set is now THREE, stated as a closed table, and no fourth case follows it. Task 1.2 says three. The scenario no longer has to write around an exception.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The Why section overstates what nine walk resolutions carry",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04a-judgement-record/proposal.md",
+      "line": 7,
+      "classification": "trivial_fix",
+      "action": "Corrected with MEASURED figures rather than the finding’s suggested wording, which was also wrong: across rc02c’s cycle 9 resolutions carry ratified_via, 5 carry a recommendation_fork and 5 a verbatim resolution, but only 1 carries BOTH. The finding said five carry all three. 5 + 5 − 1 = 9, so the two fields are COMPLEMENTARY by design — exactly what orbit-address-reviews specifies, making resolution required only when the direction is off-menu or no fork was detected. The Why section now says that.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The recommended architect note omits the two residues the exploration already identified",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04a-judgement-record/tasks.md",
+      "line": 38,
+      "classification": "trivial_fix",
+      "action": "Task 6.4 now names both residues explicitly — D-rc04-9’s charter residue (the rc04 parent’s boundary paragraph still describing a relationship with the predicate rc02c deleted) and the `residual_risk` field name, which this change does not ship under that name and which still appears in CLAUDE.md and seven places in the architecture doc. Both stay recommendations for /orbit:architect rather than edits this change makes.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "walk them",
+  "final_assessment": "All 17 findings from the first fresh proposal pass walked to resolution; zero stale. Fifteen took the obvious-fix lane, two the decision lane, both ratified by Sal as option A. The pass diagnosis was right and better stated than mine: the change reasoned at the level of the RECORD and stopped short of the level of the BYTES. Four CRITICALs were one omission at different scales — two MODIFIED blocks that dropped or rewrote baseline content, a payload key that was never named, and enforcement delegated to a type system that is erased at the JSON boundary where payloads actually arrive. The first of those is the sharpest: the archive delta would have DELETED four baseline scenarios covering C2 fingerprint records, D1 consent and D6 PR fields — the exact defect class C2 exists to prevent, invisible to validate --strict and to base_fingerprints, which hash the baseline rather than the delta fidelity to it. Both archive blocks were REBUILT from the baseline by script rather than patched by hand, because patching is the same authoring mode that produced the defect; the script asserts byte-identity of every baseline scenario and zero removed lines, and it now covers all four MODIFIED blocks. Two resolutions went beyond what was asked. Finding 14 was resolved by giving the placement rules their own ADDED requirement rather than relocating them, which let the MODIFIED block on the spine requirement be dropped entirely — so orbit-run-summary-emit is now ADDED-ONLY, and the capability where two fidelity defects appeared carries no MODIFIED block at all. Finding 16 was corrected with measured figures rather than the reviewer proposed wording, which was also wrong: 9 resolutions carry ratified_via, 5 a recommendation_fork and 5 a resolution, only 1 both — the two are complementary by design, which is what the capability specifies. Two self-caught residues during the walk: my own edits mangled a sentence and left four sites still saying the record has a timestamp after establishing it has none, and a base fingerprint went stale when its requirement stopped being MODIFIED, requiring a hand removal since orbit fingerprint is add-missing-only. R-crc-1 re-measured after all edits: 3 of 3 capabilities, 6 requirements, 19 tasks, 27,527 bytes at 67 percent. Task count hit 20 mid-walk and was brought back to 19 by consolidating the refusal-contract task into the refusal task it describes, which is a real consolidation rather than a number game. Fingerprints 4 of 4 verified, validate --all --strict clean at 26 items, zero markers, delta fidelity CLEAN across every block.",
+  "iteration": 1,
+  "next_recommended": "/orbit:review --as proposal rc04a-judgement-record"
+}

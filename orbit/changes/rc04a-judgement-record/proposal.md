@@ -5,8 +5,10 @@
 The cadence produces two judgements and records one of them unevenly.
 
 WALK decisions already have a structured home. Nine of them across rc02c's cycle carry
-`ratified_via`, a `recommendation_fork` and a verbatim `resolution`, because
-`orbit-address-reviews` was built for exactly that shape. READINESS-shaped judgements have no home
+`ratified_via`; five carry a `recommendation_fork` and five a verbatim `resolution`, which are
+COMPLEMENTARY by design rather than incomplete — `orbit-address-reviews` makes `resolution`
+required only when the ratified direction is off-menu or no fork was detected, so five plus five
+minus one overlap is exactly the nine. The capability was built for this shape. READINESS-shaped judgements have no home
 at all. *"Buy a scoped external pass over an already-passed gate"* — the clearest readiness call of
 that entire cycle, and the one that found the walk-authored mechanism nobody independent had read —
 lives in a T0 emit's `final_assessment` as prose, indistinguishable from any other sentence in a
@@ -27,7 +29,9 @@ which is the whole of what is mechanized here, per R-crc-10.
 
 ## What Changes
 
-- **A structured judgement record, ONE spine with TWO kinds.** Every record carries `kind`
+- **A structured judgement record under the payload key `judgements`, an ARRAY.** One spine, two
+  kinds; an array because one archive emit can legitimately carry both a continuation and a
+  readiness record. Every entry carries `kind`
   (`continuation` | `readiness`), a NON-EMPTY `formed_against` list of independent pass TOKENS, a
   kind-varying `disposition`, prose `reasoning`, and `ratified_by` (`ai` | `user`).
 - **`kind: continuation`** — formed mid-cadence, *given what came back, what next?* Dispositions
@@ -48,7 +52,11 @@ which is the whole of what is mechanized here, per R-crc-10.
 - **No new trail location.** Verified against rc02c's archived trail: every qualifying judgement
   already lands on an emit that exists — `continuation/proceed` on apply and archive,
   `continuation/spend` on the `review-external` T0 emit written at exactly the moment that decision
-  is taken, `readiness` on archive.
+  is taken, `readiness` on archive. The ROUTING case, where a cadence ends by sending work back to
+  architecture instead of archiving, is deliberately NOT carried here: the archive completion
+  readout is the single reader that keeps this record from being write-only, and the routing case
+  has no archive to read it. Carrying it would ship exactly the write-only record this change
+  condemns.
 
 **What this change does NOT do**, because the split declared it elsewhere: it does not make
 independent passes emit a forward recommendation (`rc04b-forward-recommendation`), and it does not
@@ -69,8 +77,11 @@ program keeps catching.
 - `orbit-emit-composition`: the write gate gains the ORDERING refusal — a record whose
   `formed_against` cites a token at or after its own timestamp is refused, materialize-first, with
   a named error. The payload tables gain the judgement fields for three commands.
-- `orbit-run-summary-emit`: the `apply`, `review-external` and `archive` emit shapes gain the
-  judgement record, with `continuation` on the first two and `readiness` on the third.
+- `orbit-run-summary-emit`: two ADDED requirements — the record's shape, and the CLOSED set of
+  three emits that may carry it (`apply` and `review-external` admit `continuation`; `archive`
+  admits BOTH kinds, since `review-system` is overridden there and the cadence ends there). The
+  spine requirement is NOT modified: placement is its own requirement rather than an insertion into
+  the spine, which keeps the delta ADDED-only.
 - `orbit-archive-modifications`: the archive emit carries the terminal `readiness` record, and the
   completion readout STATES a `not-ready` disposition — the reader that keeps the record from being
   write-only.
@@ -87,5 +98,6 @@ program keeps catching.
   ever have run against it. Citation BY TOKEN is what makes the constraint real rather than
   aspirational.
 - The archived rc02c trail is the acceptance fixture: its six `warnings` entries are the concrete
-  thing this record has to structure, and three of them are `accepted` pairs while the rest are
-  correctly OUT of scope as process notes.
+  thing this record has to structure. Re-derived under the shipped qualifying test: TWO are `accepted`
+  pairs, THREE are process notes correctly staying in `warnings`, and ONE — the size overage — is a
+  method call misfiled in `warnings` today, which the new shape makes visible.
