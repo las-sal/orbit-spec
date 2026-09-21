@@ -107,6 +107,31 @@ rc04a's continuation record carries them, and why this stage is a MOVE rather th
   three capabilities demanding a record the emit layer refuses. Same total work, one ordering has
   an incoherent middle and the other does not.
 
+- **2026-09-21 — D-rc04c-4: the split is RATIFIED and DECLARED — `rc04d-override-vocabulary`
+  precedes `rc04c-retire-gate-overridden`.** (Sal, settling Q-rc04c-c; declared in
+  `clean-up-review-cycle.md` in the same session, which is where stage declarations live.)
+
+  Two stages of three capabilities each, both AT the ceiling rather than one at double.
+  `rc04d` carries `Depends-on: (none)` and the pure de-naming of `orbit-engine-gates`,
+  `orbit-pr-lifecycle` and `orbit-conventions` (5 requirements, no `src/` change — its exit (2)
+  makes that falsifiable by requiring a green suite with no `src/` in the stage's diff). `rc04c`
+  gains `Depends-on: rc04a-judgement-record, rc04d-override-vocabulary` and keeps the retirement
+  proper: `orbit-emit-composition`, `orbit-run-summary-emit`, `orbit-archive-modifications`
+  (9 requirements), the three workflow bodies, D-rc04c-1's totality rule, and the removal of the
+  coexistence guard.
+
+  **The naming was decided on evidence.** Nothing declares `Depends-on: rc04c`, but NINETEEN
+  immutable records cite it in prose — rc04a's four archived artifacts, eleven of its trail emits
+  including the readiness record's own reasoning, two architect emits, and this exploration's own
+  directory name, metadata citation and emits — all saying rc04c retires `gate_overridden`.
+  Re-lettering the pair to put the sequence in the letters would have made all nineteen false.
+  `Depends-on` carries sequence; letters are labels.
+
+  **Open follow-up, deliberately not answered here**: `rc04d` has no exploration and may not need
+  one — it is pure vocabulary with its mechanism already worked out in D-rc04c-3's table. Whether
+  it goes straight to `/orbit:propose` or gets its own exploration first is a call for whoever
+  picks it up.
+
 ## Open questions
 
 - **Q-rc04c-b — what guarantees the widening once the guard that enforced it is gone?**
@@ -118,19 +143,6 @@ rc04a's continuation record carries them, and why this stage is a MOVE rather th
   record and nothing to disagree with. What deserves to survive is a test asserting the
   continuation record still carries all three gate facts, so the loss of the legacy shape does not
   quietly become a loss of the fields.
-
-- **Q-rc04c-c — what shape does the split take, and what are the halves called?**
-  A SCOPE call, so it is raised and not taken (R-crc-3; the D-rc04-18 precedent — splitting a
-  chartered stage is architecture work and belongs to `/orbit:architect`).
-  Standing recommendation: **two stages of three capabilities each, de-naming first.**
-  (i) the de-naming pass over `orbit-engine-gates`, `orbit-pr-lifecycle` and `orbit-conventions` —
-  5 requirements, every edit a one-line reword, no behaviour change, no dependency, and safe to
-  archive on its own; then (ii) the retirement proper over `orbit-emit-composition`,
-  `orbit-run-summary-emit` and `orbit-archive-modifications` — 9 requirements, carrying D-rc04c-1's
-  totality rule, the three workflow bodies, and the removal of the coexistence guard. (ii)
-  `Depends-on:` (i). Both halves sit AT the ceiling rather than over it. The alternative axis —
-  splitting by seam (apply vs archive) — was considered and is worse: `orbit-emit-composition` and
-  `orbit-engine-gates` straddle both seams, so neither half would be self-contained.
 
 ## Considered & out
 

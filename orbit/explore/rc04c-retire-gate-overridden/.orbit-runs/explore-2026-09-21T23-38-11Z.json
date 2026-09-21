@@ -1,0 +1,12 @@
+{
+  "command": "explore",
+  "timestamp": "2026-09-21T23:38:11Z",
+  "change": "rc04c-retire-gate-overridden",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Boundary emit following the architect session that settled Q-rc04c-c. D-rc04c-4 captured: the split is RATIFIED and DECLARED — rc04d-override-vocabulary (no dependency, pure de-naming of three capabilities, 5 requirements, exit (2) requiring a green suite with NO src/ change so 'this is pure vocabulary' is falsifiable) precedes rc04c-retire-gate-overridden, which gains Depends-on rc04a + rc04d and keeps the retirement proper across three capabilities and nine requirements. Both halves sit AT R-crc-1's ceiling instead of one at double. The naming was decided on evidence rather than taste: nothing declares Depends-on rc04c, but nineteen immutable records cite it in prose — including rc04a's readiness record and this exploration's own directory name — all saying rc04c retires gate_overridden, so re-lettering would have falsified all nineteen to buy one letter of reading order. Q-rc04c-c moved out of Open questions into Decisions, leaving one open question (Q-rc04c-b, what guarantees the widening once the guard that enforced it is gone) with its standing recommendation intact. One follow-up recorded and deliberately unanswered: rc04d has no exploration and may not need one, since D-rc04c-3's table already carries its mechanism.",
+  "decisions_captured": 4,
+  "open_questions_count": 1,
+  "open_questions_with_recommendation": "1 of 1",
+  "next_recommended": "/orbit:propose rc04c-retire-gate-overridden — substantial thinking captured; ready to formalize the design (or /orbit:explore rc04c-retire-gate-overridden to keep refining)"
+}

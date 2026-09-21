@@ -777,10 +777,10 @@ never deleted.
 
 ## Program stages
 
-<!-- src:stages -->21<!-- /src:stages --> small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
+<!-- src:stages -->22<!-- /src:stages --> small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
 split into rc02 + rc02b on 2026-09-12; rc13 added 2026-09-14 and moved to phase 1 the same day;
 rc03a split from rc03 on 2026-09-15 and WITHDRAWN the same day; rc13 split into rc13a + rc13b on
-2026-09-15 under R-crc-9; rc07b split from rc07 the same day under R-crc-9 applied PREVENTIVELY).
+2026-09-15 under R-crc-9; rc07b split from rc07 the same day under R-crc-9 applied PREVENTIVELY; rc04d split from rc04c on 2026-09-21, the THIRD preventive application, caught at exploration by a size check rather than after a cadence).
 Every stage is sized under R-crc-1, names the capabilities it touches, and names its goal.
 Charters are settled under R-crc-3 until a citing change refines them; exit criteria are
 falsifiable and self-measured by the stage's own cadence (G0). Position is computed — see the
@@ -1458,15 +1458,68 @@ Exit: (1) an independent pass without a recommendation is INCOMPLETE rather than
 (2) the recommendation RENDERS in the report under the existing single-voiced rules, asserting no
 gate state; (3) the external prompt template carries it as a named field rather than as Notes prose.
 
-### Stage rc04c-retire-gate-overridden — one record for one fact
+### Stage rc04d-override-vocabulary — the override is a fact, not a field
 
-Depends-on: rc04a-judgement-record
+Depends-on: (none)
 Complete: [ ]
 
-Charter: `gate_overridden` is write-only. Verified 2026-09-21 rather than assumed, because the
-parent charter's exit (4) turns on it: in `src/` it occurs ONLY as a payload-field declaration in
-`emit-composition.ts` (the write gate accepting the key) and as prose in four workflow templates
-instructing bodies to write it. NOTHING COMPUTES ANYTHING FROM IT. Once rc04a ships
+Charter: THREE capabilities name `gate_overridden` only while stating that an override is
+RECORDED. They do not depend on its shape: `orbit-engine-gates` ("records `gate_overridden:
+{gate, state, reason}`"), `orbit-pr-lifecycle` ("a recorded `gate_overridden` proceed-anyway SHALL
+still flip READY"), and `orbit-conventions` ("choosing proceed records `gate_overridden` in the
+archive run summary"). De-named — *the override is recorded on the emit, shape owned by
+`orbit-run-summary-emit`* — every one of those sentences is TRUE BEFORE AND AFTER the retirement.
+
+**That property is the whole reason this stage exists SEPARATELY and FIRST.** Run first, there is
+never a moment where a spec normatively demands a field nothing writes. Run after, the interim
+state has three capabilities requiring a record the emit layer has already refused. The same total
+work in either order; one ordering has an incoherent middle and the other does not. Split from
+rc04c on 2026-09-21 under R-crc-9, applied PREVENTIVELY at exploration — the third time this
+program has caught a ceiling breach before proposing rather than after.
+
+**It is also what makes rc04c buildable.** `gate_overridden` spans SIX baseline capabilities
+across FOURTEEN requirements, twice R-crc-1's ceiling on the binding dimension. This stage removes
+three of them from the retirement's scope while moving no behaviour at all, leaving both halves AT
+the ceiling rather than one at double.
+
+**NO BEHAVIOUR CHANGES.** No engine edit, no workflow-body edit, no emit-shape change. If a task
+in this stage touches `src/`, the stage has been mis-scoped — and exit (2) is written to catch
+exactly that rather than leave it to a reviewer's judgement.
+
+Goal G1. Touches: orbit-engine-gates, orbit-pr-lifecycle, orbit-conventions.
+Exit: (1) no requirement in the three capabilities names `gate_overridden`, grep-verified;
+(2) every de-named requirement is true of the CURRENT engine — verified by the suite staying green
+with NO `src/` change anywhere in the stage's diff, which makes "this is pure vocabulary" a
+falsifiable claim rather than an assertion; (3) `gate_overridden`'s footprint in `orbit/specs/`
+drops from 6 capabilities to 3, measured the same way it was measured at exploration.
+
+### Stage rc04c-retire-gate-overridden — one record for one fact
+
+Depends-on: rc04a-judgement-record, rc04d-override-vocabulary
+Complete: [ ]
+
+Charter: `gate_overridden` is write-only. **Two claims in this paragraph were checked again when
+the stage opened for exploration (2026-09-21) and BOTH had gone stale — recorded here rather than
+corrected away, because the charter was right to state them and the re-check is the point.**
+(i) "NOTHING COMPUTES ANYTHING FROM IT" is NO LONGER TRUE: rc04a's coexistence guard
+(`emit-composition.ts:620`) reads the field and computes a refusal from it, so the parent
+charter's exit (4) — *"either gains a reader or is retired"* — was technically satisfied by the
+stage that prepared its retirement. That reader exists ONLY to prove the successor carries what
+the old record carried, so it is scaffolding and comes down with the thing it braced; retiring the
+field DELETES ITS ONLY READER in the same stroke. (ii) "four workflow templates" is THREE
+(`apply-change`, `archive-change`, `pr-choreography`); `emit-composition.ts` is the engine, not a
+template, and `bulk-archive-change` never mentions the field. The six-baseline-spec claim below IS
+correct.
+
+**And one claim checked in the RETIRING field's favour.** The tempting simplification is that
+`gate_overridden` was always redundant, since `orbit-engine-gates` makes gate state a pure
+function of on-disk artifacts and any past state should therefore be recomputable. The trail
+refutes it: four archived apply emits record `reason: "latest independent pass yielded new
+findings"` — clause-(c) vocabulary that rc02c RETIRED, which today's engine cannot produce for any
+input. A recorded reason is what the human SAW; a recomputed one is what today's rules WOULD say.
+So this stage MOVES three facts rather than deleting a redundancy.
+
+Once rc04a ships
 `continuation/proceed` — which carries `gate`, `gate_state` and `gate_reason`, the whole of
 `gate_overridden`'s payload, PLUS the `formed_against` tokens it never had — the old record is a
 strict subset of the new one and keeping both is two records for one fact.
@@ -1479,17 +1532,40 @@ can. So the widening is strict over every override this repo has actually record
 rc04a's archive: 20 `gate_overridden` emits across every archived change, all 20 with an earlier
 independent pass, 0/20 reaching the edge — but it is NOT strict over the field's full domain.
 `orbit-archive-modifications` now carries the case as a scenario (the entry is omitted and
-`gate_overridden` stands alone), so this stage's job is to decide what the retired field's
-absence means THERE, not to rediscover that the case exists.
+`gate_overridden` stands alone).
+
+**THE HOLE IS CLOSED BY D-rc04c-1 (Sal, 2026-09-21), and closing it is this stage's first task.**
+An empty `formed_against` becomes LEGAL on a `continuation/proceed` — and ONLY when the emptiness
+is TRUE. The engine verifies that no independent pass precedes the emit's token and REFUSES an
+empty citation when one exists, naming the pass it should have cited. *"I cited nothing because
+there was nothing to cite"* is fully observable, so R-crc-10 permits the check. That makes the
+continuation record TOTAL over the override's domain, which is what "strict subset" needed in
+order to be true, and it does so by ADDING a check rather than relaxing one. The exemption is
+scoped to `proceed` alone: `spend` buys a pass past a gate that has already passed, so passes
+necessarily exist, and an empty citation on `readiness` would be the uncheckable record rc04a's
+design refused. Recorded honestly: this amends `formed_against` one day after rc04a shipped it
+through a blind pair.
 
 RETIRED FROM THE WRITE PATH, not deprecated (D-rc04-17): a deprecation period protects readers and
 there are none. Readers of ARCHIVED trails are handled by the existing generation precedent —
 `report-render.ts` already fails loud on a prior emit generation with a clean named error — so old
 records stay readable as history and are never written again. Nothing is deleted.
 
-SCOPE NAMED UP FRONT: `gate_overridden` appears in SIX baseline specs
-(`orbit-engine-gates`, `orbit-run-summary-emit`, `orbit-archive-modifications`, `orbit-pr-lifecycle`,
-`orbit-emit-composition`, `orbit-conventions`) and four workflow templates. The three not already
+SCOPE, RE-MEASURED AT EXPLORATION AND NARROWED BY THE SPLIT: `gate_overridden` spans SIX baseline
+capabilities across FOURTEEN requirements — twice R-crc-1's ceiling on capabilities-touched, which
+is the binding dimension. `rc04d-override-vocabulary` takes `orbit-engine-gates`,
+`orbit-pr-lifecycle` and `orbit-conventions` (5 requirements, pure de-naming); THIS stage takes
+`orbit-emit-composition`, `orbit-run-summary-emit` and `orbit-archive-modifications` (9
+requirements) plus the three workflow bodies, D-rc04c-1's totality rule, and the removal of the
+coexistence guard. Both halves sit AT the ceiling. The alternative split axis — by SEAM, apply
+versus archive — was considered and rejected: `orbit-emit-composition` and `orbit-engine-gates`
+straddle both seams, so neither half would be self-contained and the capability count would not
+actually drop.
+
+(Superseded scope note, kept because the charter's original reasoning is still instructive: the
+line below assigned this stage "the three not already touched by rc04a", which had the right
+instinct and half the work — rc04a MODIFIED those three capabilities without removing
+`gate_overridden` from any of them.) The three not already
 touched by rc04a are this stage's capabilities.
 
 Goal G1. Touches: orbit-engine-gates, orbit-pr-lifecycle, orbit-conventions.
@@ -2707,3 +2783,45 @@ strict subset of `gate_overridden`. It is not, quite: `formed_against` must be n
 gate is unpassed precisely when its cadence is incomplete — including when no independent pass
 exists to cite. Measured at archive: 20 recorded overrides across every archived change, all 20
 with an earlier independent pass, so 0/20 reach the edge. The charter now carries it.
+
+**2026-09-21 — rc04c SPLIT into rc04d-override-vocabulary + rc04c-retire-gate-overridden; the
+third PREVENTIVE application of R-crc-9.**
+A size check run at exploration — before anything was proposed — measured `gate_overridden` across
+**6 baseline capabilities and 14 requirements**, twice R-crc-1's ceiling on capabilities-touched.
+The charter's own scope line ("the three not already touched by rc04a are this stage's
+capabilities") had the right instinct and half the work: rc04a MODIFIED those three capabilities
+without removing the field from any of them, so all six still needed normative change.
+
+**What the size check produced was better than a split.** Three of the six name the field only
+while saying an override is RECORDED — they do not depend on its shape. De-named, every one of
+those sentences is TRUE BEFORE AND AFTER the retirement, which is the property that decides the
+ORDER: de-naming first, there is never a moment when a spec normatively demands a field nothing
+writes; retiring first, the interim has three capabilities requiring a record the emit layer has
+already refused. Same total work, and only one ordering has a coherent middle. rc04d therefore
+carries no dependency and rc04c depends on it.
+
+**The naming was decided on evidence, not taste.** Nothing declares `Depends-on: rc04c`, but
+NINETEEN immutable records cite it in prose — rc04a's four archived artifacts, eleven of its trail
+emits including the readiness record's own reasoning, two architect emits, and the live
+exploration's directory name, metadata citation and both its emits — all saying rc04c retires
+`gate_overridden`. Re-lettering the pair would have made all nineteen false to buy one letter of
+reading order. `Depends-on` carries sequence; letters are labels, and this doc's letters have
+never ordered anything.
+
+**Two charter claims had gone stale and are corrected in place rather than quietly dropped.**
+"NOTHING COMPUTES ANYTHING FROM IT" stopped being true the moment rc04a shipped: the coexistence
+guard READS the field and computes a refusal from it, which means the parent charter's exit (4) —
+*"either gains a reader or is retired"* — was satisfied by the stage that prepared the retirement,
+and that reader is scaffolding which comes down with what it braced. And "four workflow templates"
+was three. A third check went the retiring field's way and changed the stage's framing from
+deletion to MOVE: the recorded gate reason is not reconstructible, because four archived emits
+carry clause-(c) vocabulary rc02c retired that today's engine cannot produce for any input.
+
+**D-rc04c-1 closes the hole this doc named yesterday.** An empty `formed_against` is legal on a
+`continuation/proceed` and ONLY when the emptiness is TRUE — the engine verifies no independent
+pass precedes the emit and refuses an empty citation when one exists. The absence of evidence
+becomes a CHECKED ASSERTION rather than an unchecked hole, which makes the continuation record
+total over the override's domain and the strict-subset claim finally true. It adds a check rather
+than relaxing one, and it amends `formed_against` one day after rc04a shipped it through a blind
+pair — recorded loudly here for that reason.
+

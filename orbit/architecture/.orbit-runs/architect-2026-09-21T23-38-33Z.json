@@ -1,0 +1,28 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-21T23:38:33Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Scope session settling Q-rc04c-c. rc04c is SPLIT (Sal, 2026-09-21) into rc04d-override-vocabulary + rc04c-retire-gate-overridden — the THIRD preventive application of R-crc-9, caught at exploration by a size check before anything was proposed. The check measured gate_overridden across 6 baseline capabilities and 14 requirements, twice R-crc-1's ceiling on the binding dimension; the charter's own scope line had the right instinct and half the work, because rc04a MODIFIED three capabilities without removing the field from any of them. What the size check produced was better than a split: three of the six name the field only while saying an override is RECORDED, and every de-named form is true BEFORE AND AFTER the retirement — which decides the ORDER, since de-naming first means no interim state where a spec demands a field nothing writes, while retiring first leaves three capabilities requiring a record the emit layer has already refused. rc04d therefore carries no dependency and rc04c depends on it. The NAMING was decided on evidence: nothing declares Depends-on rc04c, but nineteen immutable records cite it in prose — rc04a's four archived artifacts, eleven trail emits including the readiness record's own reasoning, two architect emits, and the live exploration's directory name and metadata — all saying rc04c retires gate_overridden, so re-lettering the pair would have falsified all nineteen to buy one letter of reading order. Two stale charter claims corrected in place rather than dropped: NOTHING COMPUTES ANYTHING FROM IT stopped being true when rc04a shipped its coexistence guard (which means the parent charter's exit (4) was satisfied by the stage that prepared the retirement, and that reader is scaffolding that comes down with what it braced), and four workflow templates was three. A third check went the retiring field's way and reframed the stage from deletion to MOVE: the recorded gate reason is not reconstructible, since four archived emits carry clause-(c) vocabulary rc02c retired. rc04c's charter now carries D-rc04c-1, which closes the domain hole this doc named yesterday by making an empty formed_against legal on continuation/proceed ONLY when the emptiness is verifiably true. Stage count ripples 21 to 22 across both marked spans; validate --sources clean at 25.",
+  "stages_touched": [
+    "rc04d-override-vocabulary",
+    "rc04c-retire-gate-overridden"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "handoff": {
+    "seam": "post-split; rc04d premised with no dependency, rc04c exploring and now buildable at the ceiling",
+    "next_command": "/orbit:propose rc04d-override-vocabulary",
+    "model_hint": "a careful editor; rc04d is pure vocabulary and its exit criterion forbids touching src/",
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md — read rc04d's charter and rc04c's amended one together; the ORDER between them is the point, not an accident",
+      "orbit architecture status — position is COMPUTED; rc04d renders premised, rc04c exploring",
+      "orbit/explore/rc04c-retire-gate-overridden/explore.md — D-rc04c-3 carries rc04d's whole mechanism as a three-row table; D-rc04c-1 carries rc04c's totality rule",
+      "src/core/emit-composition.ts:606-632 — the coexistence guard: gate_overridden's only reader, and scaffolding rc04c removes",
+      "orbit/specs/orbit-engine-gates/spec.md, orbit-pr-lifecycle/spec.md, orbit-conventions/spec.md — rc04d's three capabilities; the de-naming targets"
+    ]
+  },
+  "next_recommended": "/orbit:propose rc04d-override-vocabulary"
+}
