@@ -321,6 +321,30 @@ One goal per phase, each falsifiable, each stage naming its goal (settled under 
   G1 and the rc02 budget were written. It does not reverse the blind pair (it promotes it), the
   severity ladder, or any Phase 2/3/4 goal.
 
+- **R-crc-12** (Sal, 2026-09-21) — **A CRITERION WRITTEN BEFORE THE TEST CANNOT GRADE THE TEST.**
+  An exit criterion is authored at charter time, before the mechanism exists and often before the
+  vocabulary that mechanism will introduce. When the SHIPPED mechanism invalidates the criterion's
+  own terms, the stage REVISES the criterion and RECORDS WHY, in the same archive that ships the
+  mechanism. It does not quietly satisfy a different criterion, and it does not fail one that was
+  measuring the wrong thing.
+
+  **The two instances that produced this.** rc07's exit read `independentSpend: 4` against a
+  budget of 3 and was ratified as a MISS, with the real reading recorded as residual risk —
+  honest, but it left a criterion standing that the stage had shown to be measuring something
+  else. rc04a's exit (3) named THREE `accepted` pairs; the qualifying test the stage SHIPPED
+  disqualified one of them, and the stage revised the criterion to TWO with the derivation
+  recorded. The second handling is the one this ruling generalises.
+
+  **The boundary, because this ruling is easy to abuse.** Revision is available when the
+  mechanism CHANGED WHAT THE CRITERION MEANS — a definition the stage introduced, a test the
+  stage shipped, a term the stage retired. It is NOT available when the stage simply did not
+  reach the bar: a criterion the mechanism can still measure and does not meet is a MISS, and a
+  miss is recorded as a miss. The distinguishing question is whether the criterion is still
+  measurable in the shipped vocabulary. If it is, it grades; if it is not, it is revised.
+
+  WHO: the stage PROPOSES the revision with its derivation (a method call under R-crc-3); the
+  architect session RECORDS it. A revision that never reaches the doc did not happen.
+
 ## Open questions (program-level)
 
 - **Q-crc-11 — the stage grammar has no WITHDRAWN state, and two stages now need one.**
@@ -718,6 +742,37 @@ never deleted.
   packaged 2026-09-21). That decision came from reading the evidence, not from a prompt, which is
   the behaviour R-crc-11 wants. It is also precisely why this question exists: it should not have
   depended on the authoring AI happening to notice.
+
+- **Q-crc-21 — the Touchpoints parser reads a LINE where its own spec says LIST ITEM, and drops
+  the difference silently.**
+  Found 2026-09-21 by the pre-archive audit sweep on rc04a, then verified directly against both
+  sides. `orbit-propose-modifications` defines an entry as *"a markdown list item whose LEADING
+  inline-code span(s) name the targets"*, with several `+`-joined spans permitted for grouped
+  alternatives. `src/core/parsers/touchpoints.ts:31` anchors `LIST_ITEM` to `/^\s*[-*+]\s+(.*)$/`
+  — a LINE. A list item that WRAPS therefore loses every target on its continuation lines, and
+  the loss is SILENT: the dropped members are not reported `malformed`, they simply never enter
+  the predicted map.
+
+  **Observed live, in the change that found it.** rc04a's own `design.md` declares a three-member
+  baseline group across three lines; the engine's predicted map carries two of them, and
+  `orbit/specs/orbit-archive-modifications/spec.md` is absent. No wrong answer resulted there —
+  the whole group was unsatisfied pre-archive either way — but a wrapped group whose later member
+  IS touched yields a false `predicted_unsatisfied` AND a false `actual_unpredicted` from one
+  defect, in a check whose entire output is those two lists.
+
+  **Why it belongs on this list rather than in a stage.** It is the same shape as Q-crc-15 (two
+  fence grammars, one wrong) and as rc07's retired inline-code scanner: a line-grouping heuristic
+  standing in for a block parser. That is now the THIRD instance of one class, which is the
+  threshold at which this program has previously stopped patching instances and named the class —
+  and rc07's lesson was that REMOVING THE NEED beat patching the bug. Sizing looks ordinary (one
+  parser, one spec, its scenarios), so it is a candidate stage rather than a question needing
+  research.
+
+  Standing recommendation: **fold it into Q-crc-15's stage rather than chartering a fourth.**
+  Both are one-parser-one-grammar defects in the same engine, both are ordinary-sized, and a
+  single stage that fixes the fence tracker and the touchpoints entry parser together would cost
+  barely more than either alone while making the CLASS the unit of work rather than the instance.
+  Whether that stage exists, and whether these two belong in it, is a scope call.
 
 
 ## Program stages
@@ -1316,7 +1371,13 @@ reads it, so replacing one write-only record with another would deliver nothing.
 **BOUNDARY WITH rc02c, drawn before either proposes** (the two-capabilities-one-rule defect this
 program keeps catching): rc02c owns the PREDICATE — what the engine COMPUTES about a cadence.
 rc04 owns the RECORD and the JUDGEMENT — what the reviewers RECOMMEND and what the AI BELIEVES.
-Where they meet: the predicate may read the record's existence, never its content.
+Where they meet: **NOWHERE, as it turned out.** The boundary was drawn against clause (c), the
+`confirm` predicate — the only part of the gate that could have read a readiness record. rc02c
+RETIRED clause (c) outright rather than narrowing it, so the predicate reads nothing about the
+record, not even its existence. The line survives as the shape of a boundary that no longer has
+two sides. Recorded at rc04a's archive (2026-09-21) rather than quietly corrected, because the
+residue is instructive: a boundary drawn between two stages stops describing anything the moment
+either stage deletes its own half, and nothing in the program surfaces that.
 
 **Prior exploration**: `orbit/explore/rc04-readiness-record/` carries eight decisions taken with
 Sal on 2026-09-21, the measurements that were taken and then deliberately set aside once the
@@ -1328,7 +1389,7 @@ question changed, and three open questions with standing recommendations.
 ### Stage rc04a-judgement-record — the judgement gets a structured home
 
 Depends-on: rc02-gate-semantics
-Complete: [ ]
+Complete: [x] 2026-09-21 (Sal)
 
 Charter: the cadence's judgements are recorded unevenly. WALK decisions have real structure —
 `ratified_via`, `recommendation_fork`, a verbatim `resolution` — because `orbit-address-reviews`
@@ -1345,8 +1406,14 @@ rather than implied. `continuation` is mid-cadence (`proceed` past a gate that s
 `readiness` is terminal (`ready` | `not-ready`, carrying `accepted: [{claim, why}]` — the residuals
 are the assertion's CONTENT, not peer judgements).
 
-THE ONE COMPUTED RULE: every token in `formed_against` MUST precede the record's own timestamp, or
-the write gate REFUSES it. That is R-crc-11(g) made checkable — belief is not observable, ORDERING
+THE ONE COMPUTED RULE ABOUT THE EVIDENCE: every token in `formed_against` MUST precede the
+record's own timestamp, or the write gate REFUSES it. **Qualified at rc04a's archive** — two
+further refusals shipped, and both are about the record's SHAPE and LOCATION rather than its
+relation to what it cites, so neither contradicts the claim this line was making: the carrier
+table's KIND half (a `readiness` on a `review-external` emit has no reader), and the
+`gate_overridden` field-agreement constraint, which retires with the field in rc04c. Both are
+fully observable, so R-crc-10 permits them. What stays off limits is unchanged and is the point:
+the engine never forms an opinion about whether the judgement was RIGHT. That is R-crc-11(g) made checkable — belief is not observable, ORDERING
 is — and it is why the citation is BY TOKEN rather than the prose citation `gate_overridden` uses.
 A `not-ready` record RECORDS and never BLOCKS (D-rc04-16): readiness is judgement, and an engine
 blocking on it acts on what it cannot verify. No new trail location — the records land on emits
@@ -1356,8 +1423,13 @@ Goal G1. Touches: orbit-emit-composition, orbit-run-summary-emit, orbit-archive-
 Exit: (1) a readiness record citing a pass token that POSTDATES it is refused at the write gate,
 with a named error; (2) the archive completion readout STATES a `not-ready` disposition — the
 record has a reader, which exit (4) of the parent charter demands; (3) rc02c's six free-prose
-`warnings` entries are reproducible as structured records, three of them as `accepted` pairs and
-the rest correctly OUT of scope as process notes.
+`warnings` entries are reproducible as structured records, TWO of them as `accepted` pairs and
+the rest correctly OUT of scope as process notes. **REVISED at rc04a's archive (2026-09-21) from
+THREE.** The criterion was written from the exploration's worked example, which predates the
+qualifying test the stage shipped; re-deriving the sort under that test disqualified the stale
+cross-reference (found by the sync agent, formed against no pass). A criterion written before the
+test cannot grade the test — the stage revised it and recorded why, which is the only honest move
+available once the two disagree.
 
 ### Stage rc04b-forward-recommendation — an independent pass says which way, not just what is wrong
 
@@ -1398,6 +1470,17 @@ instructing bodies to write it. NOTHING COMPUTES ANYTHING FROM IT. Once rc04a sh
 `continuation/proceed` — which carries `gate`, `gate_state` and `gate_reason`, the whole of
 `gate_overridden`'s payload, PLUS the `formed_against` tokens it never had — the old record is a
 strict subset of the new one and keeping both is two records for one fact.
+
+**ONE NAMED HOLE IN THAT SUBSET CLAIM, found by rc04a's own trailing pass and inherited here
+rather than left to be discovered.** `formed_against` is required NON-EMPTY, and a gate is
+unpassed precisely when its cadence is incomplete — which INCLUDES the state where no independent
+pass exists at all. In that state the successor record CANNOT be written, while `gate_overridden`
+can. So the widening is strict over every override this repo has actually recorded — measured at
+rc04a's archive: 20 `gate_overridden` emits across every archived change, all 20 with an earlier
+independent pass, 0/20 reaching the edge — but it is NOT strict over the field's full domain.
+`orbit-archive-modifications` now carries the case as a scenario (the entry is omitted and
+`gate_overridden` stands alone), so this stage's job is to decide what the retired field's
+absence means THERE, not to rediscover that the case exists.
 
 RETIRED FROM THE WRITE PATH, not deprecated (D-rc04-17): a deprecation period protects readers and
 there are none. Readers of ARCHIVED trails are handled by the existing generation precedent —
@@ -1683,7 +1766,8 @@ properties (user-invoked, draft-only, merge never) hold unchanged.
   moving the freshness rule from pass-level to finding-level is the riskiest engine change in
   the program, and R-crc-4 removes the loop it addressed by construction (nothing is reviewed
   after a walk except the walk's diff). Deferred. Re-entry trigger: an archive after rc03 ships
-  whose `residual_risk` or override names freshness as the reason.
+  whose readiness record's `accepted` residuals or gate override names freshness as the reason.
+  (Field name corrected 2026-09-21: rc04a ships `judgements[].accepted`, never `residual_risk`.)
 - **Rewriting rc02's convergence criterion as a decision table before applying it** (2026-09-14) —
   the medium is the right target (R-crc-7's authoring corollary says so) but doing it inside rc02
   would re-author the central requirement a fifth time and reset the review clock again, which is
@@ -2580,3 +2664,46 @@ the same gap from the other direction, where a pinned ruling count sat red throu
 because nobody ran the check. Here the check ran and worked; the gap is that running it was a
 judgement, not a seam. That is the third instance, and the first where the lint SUCCEEDED and the
 missing trigger is still the finding.
+
+**2026-09-21 — rc04a-judgement-record ARCHIVED; the program's first readiness record, and the
+first record it wrote about itself.**
+Archived through a computed PASSED gate, no override. The archive emit carries a `readiness`
+judgement — `ratified_by: "ai"`, formed against three named independent passes, with four
+residuals as structured `{claim, why}` pairs. rc02c's identical residuals, four days earlier,
+were 3,333 characters of free prose in `warnings`. Baseline stayed at 21 capabilities (the two
+ADDED requirements land in an existing one); 6 blocks synced byte-verified 6/6, 25 scenarios
+added, 0 dropped. Cadence: fresh proposal pass → in-context → system blind pair (external GPT-5
+Codex + clean-context fresh) → trailing in-context. 21 findings across three walks, all resolved,
+none re-opened, ZERO repeats between passes.
+
+**The mechanism dogfooded itself one level deeper than the record.** Step 5.5 read its pass tokens
+from the ARCHIVED trail, because `orbit status --change` no longer resolves post-move — which is
+exactly the defect the fresh reviewer found and the walk fixed, exercised in flow one command
+later.
+
+**Two findings from its cycle are worth more than the stage.** First: both external findings were
+rules that READ correctly and COMPUTED wrongly — a coexistence guard indexing two differently
+shaped objects with one key set, and a closed carrier table enforced by command but never by kind
+— and both were found by CONSTRUCTING A PAYLOAD AND RUNNING THE REAL CLI, not by reading code.
+That is rc01's thesis arriving from the reviewer's side. Second, and it belongs to Q-crc-14: the
+trailing pass pointed an EXISTING instrument at one file it had never read (`external-handoff.md`,
+added to the schema-parity table), and got a pre-existing defect for free — the reference
+documented a `reviewer_class` field the payload table REFUSES and the engine never composes, so
+it had been leading authors into a refused emit for as long as it existed. Widening an
+instrument's domain by one row has now paid this program twice.
+
+**Recorded here because the stage could not record it itself.** Four residues from rc04a's own
+cadence were routed to this session and are now repaired in place: exit (3)'s count moved THREE →
+TWO with the reason; the stage's ONE-COMPUTED-RULE claim qualified to name what it is a rule
+ABOUT; the rc04 parent's boundary-with-rc02c paragraph, which described a relationship with the
+clause-(c) predicate rc02c DELETED; and the `residual_risk` field name in the one forward-looking
+place it still steered something (the Considered & out re-entry trigger). The field never shipped
+under that name — `judgements[].accepted` is the shipped shape. The remaining `residual_risk`
+occurrences sit in the status log and in RESOLVED question records, and are deliberately left: a
+ledger that is rewritten to match what later happened stops being evidence.
+
+**One inherited hole, named rather than discovered.** rc04c's charter claimed the new record is a
+strict subset of `gate_overridden`. It is not, quite: `formed_against` must be non-empty, and a
+gate is unpassed precisely when its cadence is incomplete — including when no independent pass
+exists to cite. Measured at archive: 20 recorded overrides across every archived change, all 20
+with an earlier independent pass, so 0/20 reach the edge. The charter now carries it.

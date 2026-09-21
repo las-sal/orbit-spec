@@ -28,7 +28,15 @@ describe('countRulingEntries', () => {
     // 10 -> 11 on 2026-09-21: R-crc-11 (alignment over cost) was recorded. This edit IS the
     // deliberate update the comment above demands — the pin did its job, going red the moment
     // the program's contract value moved, and the failure is the feature.
-    expect(count).toBe(11);
+    //
+    // 11 -> 12 on 2026-09-21: R-crc-12 (a criterion written before the test cannot grade the
+    // test) was recorded in the architect session that ratified rc04a-judgement-record. Same
+    // story, second time: the pin went red on the ruling that had just been captured, which is
+    // the only signal in the repo that would have caught a ruling landing without its count
+    // moving. Worth noting it fired HERE and `orbit validate --sources` did not, because the
+    // marked span in CLAUDE.md had already been updated in the same edit — the two checks
+    // cover different failure modes and neither subsumes the other.
+    expect(count).toBe(12);
 
     // DERIVED, as a second and independent witness: a plain scan of the section must agree.
     const section = sliceRulingsIndex(doc.lines);

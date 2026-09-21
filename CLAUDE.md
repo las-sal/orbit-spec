@@ -106,13 +106,13 @@ The full plan and design decisions live in the docs below — **read them before
 
 ## The ACTIVE program: clean-up-review-cycle (the D-arc is quiescent)
 
-**Current state, engine-checked:** the program's rulings index holds <!-- src:rulings -->11<!-- /src:rulings --> rulings, and `orbit/specs/` holds <!-- src:capabilities -->21<!-- /src:capabilities --> baseline capabilities. Every marked figure in this file is checked against `orbit/sources.yaml` by `orbit validate --sources`; an UNMARKED figure is invisible to that check.
+**Current state, engine-checked:** the program's rulings index holds <!-- src:rulings -->12<!-- /src:rulings --> rulings, and `orbit/specs/` holds <!-- src:capabilities -->21<!-- /src:capabilities --> baseline capabilities. Every marked figure in this file is checked against `orbit/sources.yaml` by `orbit validate --sources`; an UNMARKED figure is invisible to that check.
 
 As of 2026-09-11 the D-arc's six stages are all archived (d1 complete-ratified; d2–d6
 quiescent, awaiting ratification) and the live program is
 **`orbit/architecture/clean-up-review-cycle.md`** — goals G0–G4, the R-crc rulings (the size
 ceiling, the ordering principle, method delegated to the authoring AI, the canonical review
-cadence, the conditional reversal of D-d6-7, the canonical cadence's blind pair, the walk-authors-nothing lanes, explore-produces-mechanism, finding-quality-never-licenses-another-pass, the ceiling corollary — split the mechanism or declare the stage blocked, never substitute a cheaper one — and MECHANIZE ONLY WHAT THE ENGINE CAN OBSERVE: name the inputs, and where any is prose or judgment the deliverable is a RECORD rather than a CHECK), <!-- src:stages -->21<!-- /src:stages --> small stages in four phases (rc03a withdrawn 2026-09-15 after three passes; rc13 split into rc13a/rc13b the same day under R-crc-9's first application; rc07b split from rc07 under R-crc-9 applied PREVENTIVELY, at exploration rather than post-mortem). Its first
+cadence, the conditional reversal of D-d6-7, the canonical cadence's blind pair, the walk-authors-nothing lanes, explore-produces-mechanism, finding-quality-never-licenses-another-pass, the ceiling corollary — split the mechanism or declare the stage blocked, never substitute a cheaper one — MECHANIZE ONLY WHAT THE ENGINE CAN OBSERVE — name the inputs, and where any is prose or judgment the deliverable is a RECORD rather than a CHECK, THE PROGRAM OPTIMISES FOR ALIGNMENT NOT CYCLE COST — the user FRAMES and GUARDRAILS, the AI SOLVES, and A CRITERION WRITTEN BEFORE THE TEST CANNOT GRADE THE TEST — when a stage's shipped mechanism invalidates its own exit criterion's terms the stage revises the criterion and records why, though a criterion the mechanism can still measure and does not meet is a MISS), <!-- src:stages -->21<!-- /src:stages --> small stages in four phases (rc03a withdrawn 2026-09-15 after three passes; rc13 split into rc13a/rc13b the same day under R-crc-9's first application; rc07b split from rc07 under R-crc-9 applied PREVENTIVELY, at exploration rather than post-mortem). Its first
 citing change, `rc01-instrument-fidelity`, is ARCHIVED (2026-09-12): the cycle's test
 instruments now DERIVE from a recorded real-CLI contract instead of remembered structure —
 `test/integration/pr-lifecycle/gh-contract.json` captured from the real `gh` by
@@ -197,14 +197,17 @@ as residual risk in rc07's archive emit rather than implied. (The mechanism that
 clause-(c) confirm predicate, was RETIRED by rc02c; the distinction survives its retirement,
 because coverage and resolution still say nothing about a pass standing clean.)
 
-Four open questions came out of it and remain live — **Q-crc-14** (the lint ships with no TRIGGER:
-nothing in the repo runs it at the moments the four motivating defects were written), **Q-crc-15**
-(the engine carries two CommonMark fence grammars and one is wrong in BOTH directions — it rescued
-a malformed spec AND mis-parses a correctly authored one; measured across every tracked markdown
-file and now sized as an ordinary small change), **Q-crc-16** (this doc's own
-stage count stated twice, unmarked), and **Q-crc-17** (a walk record with hand-retyped finding
-titles matched ZERO findings by the gate's key while declaring ten resolved — found by a human
-question, not a check).
+Three open questions came out of it and are still live — **Q-crc-14** (the lint ships with no
+TRIGGER: nothing in the repo runs it at the moments the four motivating defects were written),
+**Q-crc-15** (the engine carries two CommonMark fence grammars and one is wrong in BOTH directions
+— it rescued a malformed spec AND mis-parses a correctly authored one; measured across every
+tracked markdown file and now sized as an ordinary small change), and **Q-crc-17** (a walk record
+with hand-retyped finding titles matched ZERO findings by the gate's key while declaring ten
+resolved — found by a human question, not a check). The fourth, **Q-crc-16** (this doc's own stage
+count stated twice, unmarked), was RESOLVED 2026-09-20 — both halves applied together, and this
+file now carries a live mark. Do NOT read this paragraph as the program's full live set: it lists
+only what rc07 produced. The authoritative list is the program doc's own Open questions section,
+which also carries Q-crc-11, Q-crc-12, Q-crc-20 and Q-crc-21.
 
 Read that doc before any rc-stage work; the D-arc section below is the historical
 record of how the engine got here.
