@@ -4,15 +4,44 @@
 
 ## Premise
 
-The cycle cannot see what it costs while it is being paid.
+The cadence produces two judgements and records neither.
 
-rc04's charter asks for three things: a cadence line in `orbit status` (passes so far, findings
-trending, budget remaining), the capture-recapture residual estimate from a blind pair, and the
-archive-side `residual_risk` record that replaces `gate_overridden` when a cadence ends on an
-exhausted budget.
+An INDEPENDENT reviewer forms a view on whether the work should move forward, and emits only
+findings. The IN-CONTEXT AI forms a view on whether it is ready, and states it in chat, where it
+dies. Both are the output R-crc-11 says the cycle exists to produce, and both are thrown away at
+the moment they are made. This stage gives each one a home: a forward RECOMMENDATION on every
+independent pass, and a READINESS RECORD at the archive naming the recommendations it was formed
+against.
 
-What makes it startable NOW rather than speculative is that every exit criterion names a fixture
-that already exists on disk, and two of them acquired a second data point this week.
+**What makes it buildable, where a general readiness check would not be.** Belief is not
+observable. ORDERING is. R-crc-11(g) says the AI must believe it is ready *knowing what came back*,
+and the engine can enforce exactly that much: a readiness record must POST-DATE the independent
+passes it cites, and a record that does not is refused. Everything else here is a RECORD under
+R-crc-10, because "why this was acceptable" is prose by construction. The engine never judges
+readiness; it only refuses a claim that could not have been informed.
+
+**The artifact this replaces now exists, and it is the argument for the stage.** rc02c archived on
+2026-09-21 through a computed passed gate with SIX residual-risk entries — 3,333 characters of free
+prose — in the archive emit's `warnings` array, a field whose schema example is
+`"Archived with 2 incomplete artifacts"`. Each entry is a judgement a human made and wrote down: a
+passed gate that does not mean a clean independent pass stands on the final tree; a measured ~58%
+capture-recapture residual; a size measurement over the R-crc-1 ceiling; a stale cross-reference in
+an untouched capability; an expected touchpoint divergence; a correction made in flow. That is
+what a readiness record has to structure, observed rather than imagined. See D-rc04-11.
+
+**And exit criterion (4) is the guard that keeps this honest**: `gate_overridden` either gains a
+reader or is retired. Nothing in `src/` reads it today, so replacing one write-only record with
+another would deliver nothing. A readiness record that no surface consumes is the same failure in
+new vocabulary.
+
+**HISTORICAL — what this stage used to be.** rc04 was `rc04-cost-visibility` and asked what the
+cycle COSTS: a cadence line in `orbit status` (passes so far, findings trending, budget remaining),
+a capture-recapture residual estimate from the blind pair, and an archive record replacing
+`gate_overridden` when a cadence ended on an exhausted budget. R-crc-11 established that cost is
+not what the user is protecting, so two of those three answered a question nobody asked — they are
+in Considered & out with the measurements that were taken before they were set aside. The third
+survived because it was a readiness judgement wearing a cost costume. The exhausted-budget TRIGGER
+is separately gone: rc02c made `budget` inert, so no cadence can end exhausted (D-rc04-10).
 
 ## Decisions
 
@@ -62,20 +91,38 @@ that already exists on disk, and two of them acquired a second data point this w
   on whether the work should ship. Under D-rc04-6 that is the reviewer's most useful output, and it
   is the input the readiness judgement in D-rc04-1 has to be formed against.
 
+- **2026-09-21 (later) — D-rc04-9: the rc04/rc02c boundary DISSOLVED rather than being drawn**
+  (resolves Q-rc04-a by events). The standing recommendation was "rc02c owns the predicate, rc04
+  owns the record and the judgement". rc02c then shipped and DELETED the predicate outright: there
+  is no clause (c), and the gate computes nothing about whether a change has converged. So there is
+  no adjacent rule for rc04 to collide with, and the boundary question is not answered — it is
+  gone. **rc04 owns the record and the judgement, full stop.** This is the cleaner outcome and it
+  removes the prerequisite that blocked either stage from proposing.
+  One CHARTER RESIDUE to recommend at the next architect session: the stage declaration's boundary
+  paragraph still closes with "the predicate may read the record's existence, never its content".
+  That clause describes a relationship with something that no longer exists. It is harmless — it
+  constrains nothing — but it will read to a future proposer as though a predicate is waiting for
+  this record to appear.
+
+- **2026-09-21 (later) — D-rc04-10: `budget` is no longer a gate input, DELIVERED** (resolves
+  Q-rc04-b). Raised here as a ruling-level call; taken by Sal as Q-crc-19 and shipped by rc02c the
+  same day. `budget` is an inert DECLARED EXPECTATION that nothing consults; `independentSpend`
+  survives as the recorded cost, reports on gate mode alone, and renders alone. The question needs
+  no further work from this stage — but note what it cost to answer: it took its own stage, because
+  demoting a signal meant retiring the predicate that made the signal meaningful.
+
+- **2026-09-21 (later) — D-rc04-11: the artifact rc04 replaces now EXISTS, and it is 3,333
+  characters of free prose.** rc02c's archive emit carries SIX residual-risk entries in `warnings`
+  — a passed gate that does not mean a clean independent pass stands; a measured ~58% capture-
+  recapture residual; a size measurement over the R-crc-1 byte ceiling; a stale cross-reference in
+  an untouched capability; an expected touchpoint divergence; and an at-archive correction made in
+  flow. Every one is a judgement a human made and wrote down, in a field whose schema says
+  "`<text — e.g., 'Archived with 2 incomplete artifacts'>`". **That is the concrete shape of what a
+  `residual_risk` record has to structure**, and it is far richer than the charter's original
+  "replace `gate_overridden` when a cadence ends on an exhausted budget" — which, after D-rc04-10,
+  can no longer happen at all.
+
 ## Open questions
-
-- **Q-rc04-a — where is the rc04 / rc02c boundary?** rc02c owns clause (c), "what counts as having
-  been confirmed". The readiness record is adjacent to that and could easily become a second
-  capability in charge of one rule — the defect this program keeps catching.
-  Standing recommendation: rc02c owns the PREDICATE (what the engine computes about a cadence);
-  rc04 owns the RECORD and the JUDGEMENT (what the reviewers recommend and what the AI believes).
-  Not yet ratified; drawing this line is a prerequisite for either stage proposing.
-
-- **Q-rc04-b — does `budget` stop being a gate input?** D-rc04-4 says cost is not the constraint.
-  Budget exists to bound convergence cost, so on that reading it should be a READOUT rather than a
-  clause the gate consults.
-  Standing recommendation: demote it to a readout, keeping the spend figure visible. This partially
-  reverses rc02, so it is a RULING-level call for Sal rather than a method call — raised, not taken.
 
 - **Q-rc04-c — how far does D4's commentary prohibition narrow?** It currently forbids a reviewer
   stating finding counts, gate verdicts, or next commands, to keep the engine single-voiced.
@@ -83,6 +130,32 @@ that already exists on disk, and two of them acquired a second data point this w
   Standing recommendation: forbid asserting the GATE's state (still the engine's alone), permit
   asserting the REVIEWER's own recommendation, and keep counts with the engine since it computes
   them. The distinction is judgement-versus-computation, not who-may-speak.
+  **EVIDENCE 2026-09-21: the prohibition as written may already permit what D-rc04-8 wants.** The
+  scoped iteration-2 external pass on rc02c ended its Notes with *"The declaration hoist,
+  conditional spreads, and public reason are sound in the implementation; the residual risk is that
+  the comments and under-specific assertions do not preserve that result against later edits."*
+  That is a forward recommendation in substance — a verdict on whether the work should ship and
+  what would undo it — delivered inside the commentary slot while naming no count, no gate state
+  and no next command. So the change D-rc04-8 asks for may be SMALLER than a new practice: give the
+  recommendation a NAMED SLOT so it is reliably present and machine-readable, rather than arriving
+  as the last sentence of prose when a reviewer happens to offer it. Worth checking the other three
+  passes of that cycle for whether they did the same unprompted.
+
+- **Q-rc04-d — is the readiness record WRITTEN at the archive, or RENDERED there from a judgement
+  formed earlier?** The charter and Q-crc-20 both place the record at the archive seam. But the
+  judgement it records is formed earlier — at the end of the cadence, when the independent passes
+  have returned and the AI decides whether to buy another. rc02c has a worked instance: a scoped
+  external pass was bought BY CHOICE over an already-passed gate, because the walk had authored
+  mechanism no independent reader had seen. That decision WAS the readiness judgement, and it
+  happened hours before the archive. By the time the archive ran, it was history being reported.
+  Standing recommendation: BOTH, with the archive record DERIVED rather than authored — the
+  judgement is captured at the moment it is formed (which is also the moment the ordering
+  constraint in exit (3) can be checked against the passes that informed it), and the archive
+  renders it. The reason to prefer derivation: authorship at the seam is precisely how rc02c
+  produced 3,333 characters of free prose in a `warnings` array. A record composed at the moment of
+  judgement is short because the judgement is fresh; a record composed at the seam is long because
+  it is reconstructing. NOT RATIFIED — this is a scope call about how much of the cadence the stage
+  touches, and it may be the difference between one capability and two.
 
 ## Considered & out
 
@@ -113,3 +186,10 @@ that already exists on disk, and two of them acquired a second data point this w
   the archive that spent its budget and overrode.
 - `orbit/changes/archive/2026-09-11-d6-pr-lifecycle/` — the other `gate_overridden` customer.
 - `src/core/orientation.ts` — where a cadence line would render.
+- `orbit/changes/archive/2026-09-21-rc02c-confirmation-semantics/.orbit-runs/archive-2026-09-21T15-38-59Z.json`
+  — the SIX-entry `warnings` array D-rc04-11 describes: the concrete artifact this stage replaces.
+- `orbit/changes/archive/2026-09-21-rc02c-confirmation-semantics/.orbit-runs/external-system-2026-09-21T15-17-10Z.md`
+  — the Notes slot carrying an unprompted forward recommendation (evidence under Q-rc04-c).
+- `orbit/architecture/clean-up-review-cycle.md` — **Q-crc-20**, opened 2026-09-21: a gate can
+  compute PASSED over mechanism no independent pass has read, because freshness keys on APPLY
+  tokens. Its standing recommendation is a RECORD at the archive seam, which is rc04's territory.
