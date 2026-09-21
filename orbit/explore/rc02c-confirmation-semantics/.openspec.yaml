@@ -1,0 +1,5 @@
+schema: spec-driven
+created: 2026-09-21
+architecture:
+  doc: clean-up-review-cycle
+  stage: rc02c-confirmation-semantics
