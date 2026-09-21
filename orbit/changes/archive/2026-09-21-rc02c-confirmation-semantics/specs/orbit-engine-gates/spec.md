@@ -346,8 +346,8 @@ expectation was declared. Coupling them would be the mirror of the defect this r
 the exhaustion era except in what it guards: it now keeps a recorded cost attributed to the cadence
 that paid it, rather than keeping a trigger from firing on the wrong passes.
 
-Two scenarios were REMOVED with the signal and six REWRITTEN; every other scenario is preserved
-byte-identically. The change record names each and why (`rc02c-confirmation-semantics`'s
+Two scenarios were REMOVED with the signal, six REWRITTEN and one ADDED; every other scenario is
+preserved byte-identically. The change record names each and why (`rc02c-confirmation-semantics`'s
 `design.md`, "Scenario accounting").
 
 #### Scenario: An open pair outranks the walk recommendation

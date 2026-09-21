@@ -16,10 +16,12 @@ validation), `requires` (artifact and/or gate ids that must be complete/passed b
 runnable), and per-kind fields — `tracks` (checkbox file, `tracked` kind), `inputs` (freshness
 scope: artifact ids whose change invalidates a pass; `reviewed` kind; defaults to `requires`),
 `cadence` (ordered slot list, `reviewed` kind — see the cadence-entry vocabulary below), `confirm`
-(the independent-confirmation predicate, `reviewed` kind: `no-new-findings` | `findings-resolved` —
-a CLOSED set; selects which clause-(c) rule the gate uses; defaults to `no-new-findings`), `budget`
-(optional positive integer, `reviewed` kind — the independent-pass ceiling per the review-budget
-requirement; absent means unbounded), `before`
+(a CLOSED set, `reviewed` kind: `no-new-findings` | `findings-resolved`; defaults to
+`no-new-findings`. ACCEPTED BUT INERT — the clause it selected is retired, and the field remains
+only so existing schemas stay valid without a version bump), `budget`
+(optional positive integer, `reviewed` kind — the DECLARED EXPECTATION per the review-budget
+requirement; absent means NO EXPECTATION IS DECLARED — never "unbounded", which would imply the
+present form bounds something), `before`
 (the target this gate blocks — see legal `before:` targets below), optional `consent` (see the
 consent vocabulary below), and optional `instruction`.
 There is NO generic pass-condition plugin mechanism — the two kinds are the extension surface.
@@ -200,13 +202,13 @@ and the pending obligation is always surfaced, never hidden.
 
 ### Requirement: Reviewed-gate pass condition — the computed convergence criterion
 
-A `reviewed` gate SHALL pass when ALL of the three clauses below hold. Two conventions govern
+A `reviewed` gate SHALL pass when BOTH of the two clauses below hold. Two conventions govern
 every rule in them, stated once here because leaving either implicit has repeatedly produced rules
 that read correctly and compute wrongly:
 
-**PASS-LIST QUANTIFICATION.** Clauses (a) and (c) are evaluated over the FRESH pass list (per the
+**PASS-LIST QUANTIFICATION.** Clause (a) is evaluated over the FRESH pass list (per the
 freshness rule); clause (b) over EVERY relevant pass, stale ones included. The `stale` versus
-`unpassed` discrimination re-evaluates (a) and (c) over the full list: a gate whose full-list
+`unpassed` discrimination re-evaluates (a) over the full list: a gate whose full-list
 evaluation converges while its fresh-list evaluation does not is `stale`. No individual rule below
 restates a freshness condition — the filter has exactly one home, this paragraph.
 
@@ -240,8 +242,8 @@ the two passes' tokens INCLUSIVE OF THE ENDPOINTS (a walk of an unrelated source
 ingest, say — does NOT break the pair). The slot is satisfied at the LATER of the two tokens,
 which is what a following slot must beat. Among the assignments that satisfy the WHOLE cadence, the engine SHALL select the one whose
 assigned token sequence is lexicographically smallest, ties broken by findings-artifact filename —
-a rule stated over EVERY cadence, pair-bearing or not, because clause (c)'s confirming pass is a
-function of the chosen assignment and a cadence with two satisfying assignments would otherwise
+a rule stated over EVERY cadence, pair-bearing or not, because the assignment determines which
+passes clause (b) quantifies over and a cadence with two satisfying assignments would otherwise
 give two verdicts. For a pair-bearing cadence this resolves to the pair with the smallest later
 token, then the smallest earlier token. Selection is TOTAL and implementation-order-independent. "Earliest" is a DETERMINISM
 rule over successful assignments, never a pre-filter: a pair that satisfies its own constraints but
@@ -282,8 +284,10 @@ non-empty-string test, so a present `outcome` the reader cannot interpret (null,
 object, an unrecognised word) makes the record unreadable rather than reviving the legacy key — both generations are live and readers SHALL tolerate both).
 
 - **Readable record** — COMPLETENESS is checked before disposition. Every SUBSTANTIVE finding of
-  the pass SHALL be matched by an entry, keyed by trimmed title and repo-relative file exactly as
-  the new-finding match is keyed; a record naming only some of a pass's substantive findings
+  the pass SHALL be matched by an entry, keyed by the tuple (TRIMMED TITLE, REPO-RELATIVE FILE) —
+  stated directly here because the new-finding match this used to cite was retired with clause (c),
+  and a key defined by reference to a deleted rule cannot be derived without archaeology; a record
+  naming only some of a pass's substantive findings
   certifies only those, and the pass stays UNRESOLVED. Only then does disposition decide: the pass
   is resolved iff NO entry with `severity` CRITICAL or WARNING
   carries a disposition of `deferred` or `escalated`. SUGGESTION-grade entries NEVER block, whatever
@@ -299,38 +303,40 @@ object, an unrecognised word) makes the record unreadable rather than reviving t
 The fallback is severity-BLIND by construction, so a pre-capability record that deferred a
 SUGGESTION does block — the accepted cost of not guessing at an unreadable shape.
 
-**(c) independent confirmation (per the gate's `confirm` predicate).** The MOST RECENT pass from
-an independent class (`fresh` or `external`; never `in-context`) satisfies the gate's `confirm`
-rule: `no-new-findings` requires 0 CRITICAL AND 0 new SUBSTANTIVE (CRITICAL or WARNING) findings;
-`findings-resolved` requires 0 CRITICAL AND that pass's findings all resolved per clause (b) (the
-relaxed rule for a gate whose independent class repeats only on CRITICALs — e.g. the system
-external, where a first external pass with findings later resolved via address-reviews DOES
-converge). A **new finding** is matched against same-gate prior passes only, by trimmed
-case-sensitive title equality AND repo-relative file path with any `:line` suffix stripped;
-SUGGESTION-grade findings are excluded from the match set entirely.
+**(c) independent confirmation — RETIRED.** The convergence criterion is clauses (a) and (b)
+ONLY. There is no third clause, and the gate SHALL NOT compute whether a change has converged.
 
-This clause is the SHIPPED predicate, edited on ONE axis only: the new-finding match is now
-substantive, so a new SUGGESTION no longer repeats the independent loop. Everything else about how
-confirmation selects its pass is UNCHANGED by this stage, deliberately. A rewrite selecting a
-confirming pass SET with a succession rule was carried here through five review passes and removed
-on 2026-09-14 under R-crc-8's sectional trigger; `rc02c-confirmation-semantics` owns it and will
-specify it as a decision table. The known limits of the shipped rule are that stage's premise, not
-this one's: with a `blind-pair` slot the later-finishing member is the one read, so a CRITICAL in
-the earlier member is invisible to the predicate. That limit is the status quo — it is what the
-engine does today — and shipping it unchanged is strictly safer than the rewrite it replaces, which
-could certify convergence over a CRITICAL that no independent pass had re-read.
+The retired predicate read the MOST RECENT independent pass and failed on any CRITICAL, costing
+"one further independent pass on the walked state". It is removed rather than repaired because the
+question it asked is not the question this cadence answers. Under R-crc-11 a cadence ends when the
+AI judges the work ready knowing what the independent reviewers returned — it does NOT end when
+reviewers stop finding things. Measured across the eleven gate-era archives that ran a system review, only THREE ever had an
+independent pass standing clean on the final state, and none of the recent ones: the retired clause
+stated a demand the terminal state almost never satisfies.
 
-A CRITICAL in that pass fails the predicate and costs one further independent pass on the walked
-state. The repeat is NOT BOUNDED BY THE ENGINE. The gate's `budget` PRICES it — the spend is
-reported and exhaustion annotated — and the decision to stop is the user's at the inflection
-prompt, since exhaustion is a report and never a block. A gate declaring no `budget` repeats with
-no reported ceiling.
+Two defects are removed with it rather than fixed. Nothing selects a single pass any more, so a
+`blind-pair` slot's earlier-finishing member can no longer carry a CRITICAL the predicate never
+reads — the limit the shipped rule declared as its known cost. And no rule demands a further pass,
+so the engine never prices a repeat it cannot bound.
+
+**Independent review is NOT weakened, and the reason is structural**: clause (a) coverage requires
+the cadence's declared slots, which for `review-system` are a `blind-pair` and an `in-context`
+pass. Clause (c) only ever governed what happened AFTER those slots were satisfied. Removing it
+removes no review.
+
+The obligation that eventually stands in its place — that a readiness RECORD exist and post-date
+every independent pass it cites — belongs to `rc04-readiness-record`, which writes that record.
+It is deliberately NOT specified here: a requirement demanding a record no command yet writes
+would fail every gate, which is the defect this retirement removes.
+
+Three scenarios were REMOVED with the clause and one REWRITTEN; the change record names each and
+why (`rc02c-confirmation-semantics`'s `design.md`, "Scenario accounting").
 
 **Deferred-suggestion aggregation.** The count the reason reports is the number of DISTINCT
 SUGGESTION-grade entries carrying a `deferred` or `escalated` disposition, deduplicated by
 (trimmed title, repo-relative file) across the most recent resolution record of every pass
-relevant to the gate — the same dedup key the new-finding match uses, so one suggestion deferred
-across two passes counts once.
+relevant to the gate — the SAME (trimmed title, repo-relative file) tuple clause (b) uses for
+completeness, so one suggestion deferred across two passes counts once.
 
 The engine SHALL NEVER RE-GRADE a finding's authored severity — the counts it reads are the
 reviewer's. The criterion SHALL be computed exclusively from the audit trail — never from AI
@@ -422,34 +428,13 @@ self-assessment of review quality.
 - **THEN** the record is UNREADABLE and falls back to the bare counts — an unreadable severity is
   never treated as non-substantive
 
-#### Scenario: The confirming pass is the most recent independent one
+#### Scenario: System gate passes on a resolved external, with no confirmation clause
 
-- **WHEN** a `blind-pair` slot is covered and the fresh member's token is later than the external
-  member's
-- **THEN** the fresh member is the confirming pass — the shipped selection rule is unchanged by
-  this stage, and the earlier member's invisibility is `rc02c-confirmation-semantics`' premise
-
-#### Scenario: Independent confirmation required
-
-- **WHEN** all coverage and resolution clauses hold but the latest independent-class pass fails the
-  gate's `confirm` predicate — a CRITICAL under either predicate, OR (for `confirm: no-new-findings`)
-  a new SUBSTANTIVE finding
-- **THEN** the gate is unpassed; the canonical next command continues the cadence's
-  independent+address loop
-
-#### Scenario: A new suggestion does not repeat the loop
-
-- **WHEN** the latest independent proposal pass carries 0 CRITICAL, no new WARNING, and two new
-  SUGGESTIONs
-- **THEN** the `no-new-findings` predicate is satisfied and the gate passes
-
-#### Scenario: System gate converges on a resolved external
-
-- **WHEN** a `review-system` gate (`confirm: findings-resolved`) has full ordered class coverage,
-  its latest external pass carried findings, those findings are resolved per clause (b), and that
-  external pass yielded 0 CRITICAL
-- **THEN** the gate passes — the resolved-with-no-CRITICAL external satisfies `findings-resolved`
-  even though the findings were "new" relative to prior passes
+- **WHEN** a `review-system` gate has full ordered class coverage and its latest external pass
+  carried findings that are resolved per clause (b)
+- **THEN** the gate passes on (a) and (b) alone; whether that external pass carried a CRITICAL is
+  IRRELEVANT to the verdict, because no clause reads it — a CRITICAL that was found, walked and
+  resolved is a resolved finding like any other
 
 #### Scenario: A viable assignment is found rather than foreclosed
 
@@ -526,19 +511,24 @@ and `review-system` (`kind: reviewed`, `requires: [apply]`,
 `before: archive`, `consent: user-invoked`).
 `independent` in a cadence is the meta-class satisfiable by either `fresh` or `external`, and
 `blind-pair` is the compound slot requiring one of each read blind of the other (per the
-cadence-entry vocabulary). The proposal gate's `no-new-findings` confirm matches its repeat rule
-(the independent+address pair repeats while the independent pass yields new substantive findings);
-the system gate's `findings-resolved` confirm matches its repeat rule (a further independent pass
-is bought only by a CRITICAL, so a resolved no-CRITICAL pair converges). The system cadence's
+cadence-entry vocabulary). **`confirm` is DECLARED and INERT.** Both gates still carry a value —
+`no-new-findings` on the proposal gate, `findings-resolved` on the system gate — so every existing
+schema keeps validating without a version bump, but NOTHING READS EITHER. The convergence criterion
+is clauses (a) and (b) only, and there are no repeat rules left for a `confirm` value to match: a
+cadence ends when the AI judges the work ready knowing what the independent reviewers returned, not
+when a predicate certifies that they stopped finding things. The system cadence's
 leading slot is the BLIND PAIR — two independent classes on one state before any walk — and its
 trailing `in-context` slot is the check on the walk that resolved the pair's findings; a `--fresh`
 system run (reviewer_class `fresh`) does NOT satisfy that trailing slot. Both budgets declare the SAME
-expected cost — three independent passes. The proposal gate's cadence is NOT conditional: R-crc-4
+expected cost — three independent passes — and the declaration is ALL they are; nothing consults
+either figure. The proposal gate's cadence is NOT conditional: R-crc-4
 describes a near-ceiling proposal running a blind pair, but no engine surface computes size
 proximity and this stage does not add one (the size computation belongs with rc09, which owns the
 propose-time size check; until it ships, a near-ceiling proposal pair is run by choice, not by the
-cadence). The budget is sized for that choice being made — one independent pass, a second by
-choice, and one repeat — so exercising it never exhausts spend before a repeat is possible. The cadence arrays and budgets live in the schema
+cadence). No sizing argument attaches to either budget — not headroom for a repeat, not a
+threshold to stay under. `budget` records what a cadence is EXPECTED to cost, never what it is
+PERMITTED to cost (R-crc-11(h)): a cost target distorts the behaviour it measures, and the figure
+this change demoted was doing exactly that. The cadence arrays and budgets live in the schema
 YAML — tuning the review rhythm is a schema revision (version bump), not an engine or config
 change. Verify remains a command (Pass 0 inside system review), not a gate; audit-drift remains
 orthogonal to the gate graph.
@@ -572,14 +562,22 @@ orthogonal to the gate graph.
 ### Requirement: Gate-aware status and instructions with position readout
 
 `orbit status --change <name>` (the per-change form; bare `orbit status` is the orientation surface per `orbit-orientation` — D-arc Stage D3) SHALL render gate rows (state: `blocked | ready | passed | stale | unpassed`, with
-reasons, plus `budget`, `independentSpend`, `independentSpendFresh` and `budgetExhausted` on a
-reviewed gate that declares a budget) alongside artifact rows, and a one-line POSITION READOUT of the canonical flow (e.g.
+reasons, plus the RECORDED SPEND on a reviewed gate) alongside artifact rows, and a one-line
+POSITION READOUT of the canonical flow (e.g.
 `propose ✓ → review(proposal) (past) → apply ✓ → review(system) unpassed → archive blocked-by-gate`).
+
+**THE TWO GATE-ROW SURFACES DIFFER DELIBERATELY, and the split is normative.** The HUMAN row
+renders `independentSpend` ALONE — never beside the declaration, never composed with it. The JSON
+projection carries the optional `budget` declaration and `independentSpend` as SEPARATE named
+fields, composing neither, and OMITS either key entirely when its value is absent rather than
+emitting it undefined-valued: an in-process consumer testing key presence must not be told a gate
+declares a budget it does not.
+
 Each position-readout step token is a gate id or lifecycle-phase token (`propose`, `review(proposal)`,
 `apply`, `review(system)`, `archive`); a gate step renders its computed state (`✓` passed, `STALE`,
-`ready`, `blocked-by-gate`, `unpassed`, `unpassed BUDGET-SPENT` when an unpassed gate's
-`independentSpendFresh` has reached its declared budget, `STALE BUDGET-SPENT` when a `stale` gate's
-has, or `(past)` for a superseded gate). **Superseded gates**: a
+`ready`, `blocked-by-gate`, `unpassed` — there is NO spend-derived token, because no
+token may make a recorded cost read as a verdict (the retired forms were `unpassed BUDGET-SPENT`
+and `STALE BUDGET-SPENT`), or `(past)` for a superseded gate). **Superseded gates**: a
 `reviewed` gate whose `before` phase is already complete (e.g. `review-proposal` after `apply` has
 passed) is no longer the active frontier — it gated ENTRY to a phase that has since run. Such a gate
 is marked SUPERSEDED (distinct from `passed`: it may never have converged; the flow simply advanced
@@ -596,12 +594,19 @@ carry the same fields for downstream readers.
 - **WHEN** `orbit status --change <name>` runs on a gated schema
 - **THEN** the output includes the position readout and per-gate rows with reasons
 
-#### Scenario: A budget-exhausted gate renders its own token
+#### Scenario: An undeclared budget is absent as a KEY, not merely as a JSON value
 
-- **WHEN** an unpassed reviewed gate's `independentSpendFresh` has reached its declared budget
-- **THEN** its gate row carries `state: "unpassed"` with `budgetExhausted: true` and the
-  spend-and-clause reason, and its position token reads `unpassed BUDGET-SPENT` — the cost is
-  visible in the one-line readout without adding a state
+- **WHEN** a gate declaring no `budget` is projected to the gate-status row
+- **THEN** the row carries NO `budget` key at all — `Object.hasOwn(row, 'budget')` is false, so an
+  in-process consumer testing key presence is never told a gate declares what it does not; JSON
+  hiding an undefined value is not sufficient
+
+#### Scenario: Spend never renders a position token
+
+- **WHEN** an unpassed reviewed gate's independent spend has reached or exceeded its declared budget
+- **THEN** its gate row carries `state: "unpassed"` with `independentSpend` reporting the figure,
+  its reason names only the clause that failed, and its position token reads `unpassed` — no
+  spend-derived token exists, because a recorded cost must never read as a verdict
 
 #### Scenario: Instructions surface blocked-by-gate
 
@@ -651,7 +656,7 @@ is the external invocation; when a pairable external pass stands, the fresh invo
 pairable independent pass stands, the command is the fresh invocation as the lighter first half AND
 the gate's reason SHALL state that both members must run before EITHER is walked. Without the
 pairability test the engine recommends a partner for a pass that can never pair, and every
-recommended run satisfies no slot while counting against the budget.
+recommended run satisfies no slot while still costing an independent pass.
 Recommendation surfaces (gate
 reasons, blocked-by-gate payloads, and the workflow handoffs that render them) SHALL present only
 this canonical command: no advertised alternatives, no skip paths, and no bare command names
@@ -671,7 +676,7 @@ names (`next_recommended`) are unchanged — display wording only.
 `models:` map and the canonical-next command's phase or cadence slot has an entry, the rendered
 eligibility line SHALL append ` — hint: <value>` (after any ` — user-invoked` marker). Valid
 keys are the two vocabularies the engine already computes against: the active schema's phase
-ids (for `spec-driven` v4: `review-proposal`, `apply`, `review-system`, plus any other declared
+ids (under the active schema, e.g. `review-proposal`, `apply`, `review-system`, plus any other declared
 phase) and the cadence slot names (`in-context`, `fresh`, `independent`, `external`,
 `blind-pair`). When both
 the resolved command's phase AND its cadence slot carry entries, the SLOT entry wins (the more
@@ -750,18 +755,35 @@ the engine reports, the skill prompts, the user decides, the trail records.
 
 ### Requirement: Review budget reported beside the gate state
 
-A `reviewed` gate SHALL accept an optional `budget` — a positive integer bounding the INDEPENDENT
-review passes the gate's convergence is expected to cost. The engine SHALL count independent
-passes (`reviewer_class` `fresh` or `external`) on the gate's mode across the WHOLE trail, STALE
-PASSES INCLUDED (spend is spend; a pass invalidated by a later apply was still paid for), and
-SHALL distinguish the REPORTED spend from the EXHAUSTION TRIGGER. The reported figure counts every
-independent pass on the gate's mode across the whole trail, stale included — spend is spend, and a
-pass invalidated by a later apply was still paid for. The trigger counts only passes that are FRESH
-against the current state, plus rejected returns on it. The engine SHALL report THREE NAMED FIELDS on the gate's status: `budget` (the
-declaration), `independentSpend` (the reported figure — DISPLAY ONLY) and `independentSpendFresh`
-(the trigger count), alongside the `budgetExhausted` boolean. `budgetExhausted` and the
-`BUDGET-SPENT` position tokens key off `independentSpendFresh` and NEVER off `independentSpend`;
-any sentence elsewhere saying "spend" without qualification means the trigger count. The names are normative: a new field on the gate status reaches
+A `reviewed` gate SHALL accept an optional `budget` — a positive integer declaring what the gate's
+cadence is EXPECTED to cost in independent review passes. **The declaration is documentation for
+the schema author; NOTHING CONSULTS IT.** The engine SHALL NOT compare it against actual spend,
+SHALL NOT derive an exhaustion signal from it, and SHALL NOT let it colour any gate state, reason
+string, position token or recommendation. A reader who finds `budget: 3` and concludes that it
+constrains something has been misled, and this sentence exists to prevent that.
+
+**NO SURFACE RENDERS SPEND AGAINST THE DECLARATION.** The prohibition above enumerates the four
+COMPUTED outputs, and a rendered gate row is none of them — so it is stated separately here, because
+the readout that motivated this change was exactly that: a terminal row reading `[spend 4/3]`. A
+ratio is a verdict wearing a figure's clothes. The rule is about COMPOSITION, never about
+co-presence, and it splits by surface. On every RENDERED surface — the live gate row and the
+superseded gate row — `independentSpend` appears ALONE: never as a fraction of `budget`, never
+beside a label derived from comparing the two. The JSON projection carries `budget` and
+`independentSpend` as SEPARATE named fields and composes neither; the declaration is a real part of
+the schema and stays readable there. What may not exist on any surface is the two of them divided.
+
+The reason is R-crc-11(h): effort is RECORDED, never TARGETED. A cost target distorts the behaviour
+it measures — a cadence stops early to hit a number — while a cost record is how the tool gets
+better. `budgetExhausted` was target-shaped by construction: it said "you have spent too much",
+which is the one thing a cost record must not say. It is RETIRED, together with the
+`independentSpendFresh` trigger count that existed only to fire it and the `BUDGET-SPENT` position
+tokens that rendered it.
+
+What survives is the RECORD. The engine SHALL count independent passes (`reviewer_class` `fresh` or
+`external`) on the gate's mode across the WHOLE trail, STALE PASSES INCLUDED (spend is spend; a
+pass invalidated by a later apply was still paid for), and SHALL report TWO NAMED FIELDS on the
+gate's status: `budget` (the declaration, when present) and `independentSpend` (what the cadence
+actually cost). The names are normative: a new field on the gate status reaches
 `orbit status --change --json` and the terminal gate row only when BOTH field-by-field projections
 carry it.
 
@@ -770,61 +792,28 @@ shape validation — which uses the ONE SHARED CommonMark fence tracker (a fence
 of the same character at least as long as the opener with whitespace after, so a three-backtick line
 inside a four-backtick fence is body), requires the format's canonical metadata, and requires every
 counted finding to carry the full `### Title` / `**File**:` / `**Description**:` triple the
-`--from-file` ingestion contract requires. Two parsers implementing one contract is the defect this
-sharing prevents: a lean restatement drifted to a weaker language and admitted a document with no
-findings at all as a clean pass. A pass the gate counts must be a pass the walk can INGEST — is
-absent from the pass list, so it satisfies no cadence slot — correctly, since
-its findings cannot be read. It still COST a model run, and "spend is spend" governs: the trail
-reader SHALL surface rejected external artifacts separately from cadence-eligible passes, the
-count SHALL include them in BOTH figures — `independentSpend` counts every rejected artifact
-attributed to the gate's mode across the whole trail, and `independentSpendFresh` counts those with
-no later apply token, the artifact's own filename `<TS>` serving as its token since a rejected
-artifact has no pass record — and the gate's reason SHALL name them (`1 external return rejected as
-malformed — <filename>`). A rejected artifact is ATTRIBUTED to the mode in its filename
-(`external-(proposal|system)-<TS>.md`, recoverable before the shape check runs) and counts only
-toward the gate operating on that mode; a reviewed gate whose mode cannot be derived from its id
-reports no budget at all rather than counting passes of every mode.
+`--from-file` ingestion contract requires — is not a pass, and does not satisfy coverage. It DOES
+count toward the recorded spend, because the attempt was paid for whether or not it returned a
+usable artifact. The trail reader SHALL surface rejected external artifacts separately from
+cadence-eligible passes, and the gate's reason SHALL NAME them (`1 external return rejected as
+malformed — <filename>`). Naming a rejected artifact is not reporting the spend: it names the
+rule that fired — a return arrived and could not be read — which is exactly what the reason slot
+is for, and it survives the rule that the reason NEVER carries the spend figure.
 
-**A STALE gate can be budget-exhausted.** "Has not converged" includes `stale`, and stale passes
-explicitly count toward spend, so the annotation SHALL apply to a stale gate exactly as to an
-unpassed one: the state stays `stale`, `budgetExhausted` is set, the reason carries spend plus the
-staleness, and the position token reads `STALE BUDGET-SPENT`.
+**Mode attribution survives the demotion.** A rejected artifact is ATTRIBUTED to the mode in its
+filename (`external-(proposal|system)-<TS>.md`, recoverable before the shape check runs) and counts
+only toward the gate operating on that mode; a reviewed gate whose mode cannot be derived from its
+id reports NO SPEND at all rather than counting passes of every mode — but it STILL REPORTS ITS
+`budget` when one is declared. The declaration and the record are gated SEPARATELY and always have
+independent fates: `budget` is schema text, and deriving a mode has nothing to do with whether an
+expectation was declared. Coupling them would be the mirror of the defect this requirement removes
+— a figure that appears only when an unrelated field happens to be present. The rule is unchanged from
+the exhaustion era except in what it guards: it now keeps a recorded cost attributed to the cadence
+that paid it, rather than keeping a trigger from firing on the wrong passes.
 
-**Spend is reported BESIDE the state, never as a state.** The gate `state` answers one question —
-has this gate converged, and if not, which clause is unmet — and a budget-exhausted gate is
-precisely `unpassed`: the budget changes nothing about whether the review converged. Spend and
-convergence are ORTHOGONAL axes, so the engine SHALL keep the gate-state set at its five values
-(`blocked | ready | passed | stale | unpassed`) and surface exhaustion as (a) a boolean
-`budgetExhausted` on the gate status, set when the count is at or above the declared budget AND
-the gate has not converged (`unpassed` or `stale`). A BLOCKED reviewed gate reports its real
-figures too: blocking on `requires` is not an exemption from "counts across the whole trail", since
-reviews genuinely run before the tracked gate completes or under an override. Its `budgetExhausted`
-stays `false` while the pass condition is not runnable, but the spend it already cost is reported
-truthfully rather than as zero; (b) the spend clause in the gate's reason; and
-(c) a distinct position-readout token (`unpassed BUDGET-SPENT` / `STALE BUDGET-SPENT`). Every closed-set consumer of gate state — the WAITING derivation, the
-`gate_overridden.state` record, the inflection prompt's triggering set — therefore keeps working
-unchanged, while a human reading the readout sees the cost. A gate that meets its pass condition
-is `passed` regardless of what it cost; a gate with no `budget` declared never reports exhaustion.
-
-Exhaustion is a REPORT, never a block — the apply-parity contract is unchanged: the engine
-reports, the skill prompts, the user decides, the trail records. The budget is a BACKSTOP, not an
-exit: when the pass condition converges as designed, no change reaches it, and a change that does
-reach it has recorded a fact worth reading.
-
-#### Scenario: Budget exhausted on an unconverged gate
-
-- **WHEN** a `review-system` gate declares `budget: 3` and `independentSpendFresh` is three while
-  the gate's pass condition is unmet
-- **THEN** its state is `unpassed` with `budgetExhausted: true`, the reason names the budget, the
-  count, AND the clause still unmet, and the canonical next command is unchanged from what that
-  clause would otherwise recommend
-
-#### Scenario: Convergence beats budget
-
-- **WHEN** the same gate's pass condition is met after three independent passes
-- **THEN** its state is `passed` and `budgetExhausted` is `false` — the field is present whenever
-  the gate declares a budget and omitted only when it declares none, so a consumer's branch on it
-  stays total; budget is never consulted for a converged gate
+Two scenarios were REMOVED with the signal, six REWRITTEN and one ADDED; every other scenario is
+preserved byte-identically. The change record names each and why (`rc02c-confirmation-semantics`'s
+`design.md`, "Scenario accounting").
 
 #### Scenario: An open pair outranks the walk recommendation
 
@@ -855,8 +844,8 @@ reach it has recorded a fact worth reading.
 #### Scenario: A blocked reviewed gate reports the spend already on its trail
 
 - **WHEN** a reviewed gate is blocked by an unmet `requires` while two independent passes stand
-- **THEN** its row carries the real `independentSpend` with `budgetExhausted: false` — blocking is
-  not an exemption from counting
+- **THEN** its row carries the real `independentSpend` — blocking is not an exemption from
+  counting
 
 #### Scenario: A finding missing the ingestion triple is not a pass
 
@@ -873,43 +862,48 @@ reach it has recorded a fact worth reading.
 
 #### Scenario: A rejected external return still costs
 
-- **WHEN** an external findings file fails shape validation and one valid independent pass exists,
-  against `budget: 3`
+- **WHEN** an external findings file fails shape validation and one valid independent pass exists
 - **THEN** the spend is two, the rejected artifact is named in the reason, and it satisfies no
   cadence slot
 
 #### Scenario: A stale gate reports its spend
 
-- **WHEN** a previously-converged gate goes stale after an apply, with spend at its budget
-- **THEN** the state stays `stale`, `budgetExhausted` is set, and the position token reads
-  `STALE BUDGET-SPENT`
+- **WHEN** a previously-converged gate goes stale after an apply, with a recorded spend at or
+  above its declared `budget`
+- **THEN** the state stays `stale` and the position token reads `STALE` — the spend appears only
+  as `independentSpend`, and no token is derived from it
 
-#### Scenario: Stale passes count in the reported spend, not in the trigger
+#### Scenario: Stale passes count in the recorded spend
 
-- **WHEN** two independent passes are stale (a later apply landed) and one is fresh, against
-  `budget: 3`
-- **THEN** `independentSpend` reports three, `independentSpendFresh` reports one, and
-  `budgetExhausted` is FALSE — the trigger counts the
-  one pass fresh against the current state, so a re-cover after an apply is never reported as
-  exhaustion mid-pair
+- **WHEN** a gate's trail carries independent passes invalidated by a later apply
+- **THEN** they are counted in `independentSpend` — spend is spend — and there is no second count,
+  because no trigger remains for one to feed
+
+#### Scenario: A mode-underivable gate keeps its declaration and reports no spend
+
+- **WHEN** a reviewed gate declares `budget: 3` but its id yields no derivable mode
+- **THEN** it reports the `budget` declaration and NO `independentSpend` — the declaration is
+  schema text and does not depend on mode, while the spend does, and the two are gated separately
 
 #### Scenario: No budget declared
 
 - **WHEN** a reviewed gate declares no `budget`
-- **THEN** the gate never reports exhaustion and behaves exactly as before the attribute existed
+- **THEN** `independentSpend` is still reported and the gate behaves identically to one that
+  declares a budget — the declaration changes nothing the engine computes
 
 #### Scenario: The closed-set consumers are untouched
 
-- **WHEN** a budget-exhausted gate is read by the WAITING derivation, the inflection prompt, and
-  the `gate_overridden` record
+- **WHEN** an unpassed gate whose recorded spend exceeds its declared `budget` is read by the
+  WAITING derivation, the inflection prompt, and the `gate_overridden` record
 - **THEN** each sees `state: "unpassed"` and behaves exactly as for any unpassed gate — no
-  consumer enumerates a new state, and the override record carries the spend inside `reason`
+  consumer enumerates a new state, and the spend reaches them only as `independentSpend`, never
+  inside `reason`
 
 ### Requirement: The gate reason names the rule that fired and the rule about to fire
 
 A non-passed reviewed gate's `reason` SHALL name the specific rule that produced the state —
-which cadence slot is uncovered, which pass has unresolved substantive findings, or which confirm
-clause failed — and, when the spend has reached the declared budget, that clause PLUS the spend — in terms a reader can act on without opening the
+which cadence slot is uncovered, or which pass has unresolved substantive findings — and NEVER the
+spend, which is a recorded cost rather than a rule that fired — in terms a reader can act on without opening the
 trail. The reason SHALL additionally carry a FORWARD note when the next rule is already
 determinable and acting on it early is cheaper than acting on it late.
 
@@ -930,9 +924,8 @@ The named forward case: when the gate's cadence DECLARES a `blind-pair` slot tha
 covered, and one PAIRABLE independent pass stands on the current state without a partner, the
 reason SHALL say the pair is open and name the missing class BEFORE the standing pass's findings
 are walked — a walk of those findings makes the pair unformable on that
-state, and the cost is not recoverable. Two further notes ride the same slot: the spend clause
-when the declared budget is reached, and a passed gate whose walk deferred SUGGESTION-grade
-findings (reported, never blocking).
+state, and the cost is not recoverable. One further note rides the same slot: a passed gate whose walk deferred
+SUGGESTION-grade findings (reported, never blocking).
 
 #### Scenario: Open blind pair announced before the walk
 
@@ -941,12 +934,12 @@ findings (reported, never blocking).
 - **THEN** the gate's reason states that the blind pair is open and names the missing `fresh`
   class, and the canonical next command targets it
 
-#### Scenario: Spend named beside the clause it displaced
+#### Scenario: The reason names the rule, never the spend
 
-- **WHEN** an unpassed gate's independent-pass spend has reached its declared budget while a
-  cadence slot is still uncovered
-- **THEN** the reason carries both — the spend figure AND the uncovered slot — so a reader can
-  tell what a further pass would be for
+- **WHEN** an unpassed gate's independent-pass spend has reached or exceeded its declared budget
+  while a cadence slot is still uncovered
+- **THEN** the reason names the uncovered slot ONLY; the spend appears in `independentSpend` and
+  nowhere in the reason, because naming it would make a recorded cost read as a cause
 
 #### Scenario: Deferred suggestions surfaced on a passed gate
 

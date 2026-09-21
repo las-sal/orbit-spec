@@ -275,7 +275,7 @@ Implementation chunks:
 
 The emit follows these rules:
 
-1. **Chunk completion**: when the last task in chunk N is checked, emit with `chunk: "N of M"`, `chunk_complete: true`, and `next_recommended` = the engine's post-landing canonical `next_command` per `orbit-emit-composition`'s post-write-semantics class — `/orbit:apply <name>` while chunks remain (the engine MAY extend it with the engine-composed ` — next chunk: <chunk-name>` suffix; the next chunk's name is preamble data), or the schema's next phase command on apply-complete (chunk N == M; under `spec-driven` v3, `/orbit:review --as system <name>`). Never a hand-authored or fixed alternative — the pre-gates verify-first vocabulary is retired from this surface.
+1. **Chunk completion**: when the last task in chunk N is checked, emit with `chunk: "N of M"`, `chunk_complete: true`, and `next_recommended` = the engine's post-landing canonical `next_command` per `orbit-emit-composition`'s post-write-semantics class — `/orbit:apply <name>` while chunks remain (the engine MAY extend it with the engine-composed ` — next chunk: <chunk-name>` suffix; the next chunk's name is preamble data), or the schema's next phase command on apply-complete (chunk N == M — the SCHEMA's value, read from the gate graph and never transcribed here; a version-pinned example in this sentence goes stale at the next bump, as the `v3` one written here did). Never a hand-authored or fixed alternative — the pre-gates verify-first vocabulary is retired from this surface.
 2. **Mid-chunk session pause**: when the user pauses or hands off mid-chunk-N (e.g., "stopping here for now"), emit with `chunk: "N of M"`, `chunk_complete: false`, and `next_recommended: "/orbit:apply <name>"` to resume.
 3. **No-chunking apply**: when tasks.md has no explicit chunk preamble, emit once at session end with `chunk: null`; `chunk_complete` is COMPUTED by the same engine formula with the whole task set as the "current chunk" (all unchecked tasks minus the full user-validation set == 0 — never a constant), and `next_recommended` is the engine's post-landing canonical `next_command` — the schema's next phase command when that computation is true, `/orbit:apply <name>` while AI-doable tasks remain.
 
@@ -340,7 +340,7 @@ gate_overridden              object | absent  present ONLY when the user proceed
 
 #### Scenario: Apply-complete recommends the engine's canonical next
 - **WHEN** `/orbit:apply foo` completes the last task in the final chunk
-- **THEN** `apply-<TS>.json` is written with `chunk_complete: true` and `next_recommended` equal to the engine's post-landing canonical `next_command` (under `spec-driven` v3, `/orbit:review --as system foo`) — never a hand-authored alternative
+- **THEN** `apply-<TS>.json` is written with `chunk_complete: true` and `next_recommended` equal to the engine's post-landing canonical `next_command` as the gate graph computes it for the change's schema — never a hand-authored alternative
 
 #### Scenario: No-chunking apply emits once at session end
 - **WHEN** `/orbit:apply foo` runs on a change with no explicit chunk preamble in tasks.md and completes all AI-doable tasks
