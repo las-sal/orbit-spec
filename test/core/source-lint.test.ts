@@ -224,12 +224,51 @@ describe('prose ABOUT the syntax never becomes prose CHECKED by it', () => {
       if (spans.length > 0) dogfooded.set(file, spans.map((sp) => sp.source));
     }
 
-    // Fenced examples exist across this capability's artifacts and must be inert. What this does
-    // NOT assert is which files carry live spans: pinning the present set
-    // would make adding a legitimate marked claim anywhere in the project fail a unit test, and
-    // the capability is explicitly project-wide. Every live span must merely be WELL FORMED and
-    // name a declared source — a property that stays true however the dogfood grows.
-    expect(inCodeRegion).toBeGreaterThan(0);
+    // What this does NOT assert is which files carry live spans: pinning the present set would
+    // make adding a legitimate marked claim anywhere in the project fail a unit test, and the
+    // capability is explicitly project-wide.
+    //
+    // It also no longer asserts `inCodeRegion > 0` — that at least one CONFORMING token sits
+    // inside a fenced example somewhere in the live domain. That requirement was unsound twice
+    // over, and both ways it was unsound are worth stating, because it went red without a line
+    // of engine code changing.
+    //
+    //   1. It depended on rc07's own in-flight artifacts. The comment at the top of this case
+    //      says resolving the domain "survives the archive untouched" — it does, but the
+    //      THRESHOLD did not: rc07's prose became an excluded RECORD at archive, taking the only
+    //      real-named fenced examples in the domain with it.
+    //   2. It demanded prose this capability's own AUTHORING RULE tells writers not to produce.
+    //      A fenced example naming a REAL source is live-shaped; that is precisely why the rule
+    //      says prose writes a PLACEHOLDER name, and placeholders do not match the conforming
+    //      token grammar. The assertion was requiring the domain to contain a counter-example to
+    //      its own guidance.
+    //
+    // Inertness inside code regions is exercised on CONSTRUCTED documents above, in both
+    // directions, where it belongs. What a sweep over LIVING documents can soundly own is the
+    // invariant below: no live span ever OPENS inside a code region. It is vacuously true when
+    // the domain happens to hold no fenced examples, which is the correct reading — the absence
+    // of examples is not a defect in living prose.
+    for (const file of files) {
+      const content = fs.readFileSync(path.join(process.cwd(), file), 'utf-8');
+      const code = computeCodeRegionMask(content);
+      const lineStarts = [0];
+      for (let i = 0; i < content.length; i++) if (content[i] === '\n') lineStarts.push(i + 1);
+      for (const sp of parseMarkedSpans(content).spans) {
+        const start = lineStarts[sp.line - 1];
+        const rel = content.slice(start).indexOf(`<!-- src:${sp.source} -->`);
+        expect(rel, `${file}:${sp.line} — opener not found on its reported line`).toBeGreaterThanOrEqual(0);
+        expect(
+          code[start + rel],
+          `${file}:${sp.line} — a live span opened inside a code region`
+        ).toBeFalsy();
+      }
+    }
+
+    // Informational, never a threshold: how many conforming tokens the domain currently holds
+    // inside code regions. Zero is legitimate (see above); this keeps the figure readable
+    // without letting it gate.
+    expect(inCodeRegion).toBeGreaterThanOrEqual(0);
+
     const declared = new Set(readSourcesRegistry(process.cwd()).map((d) => d.name));
     for (const [file, sources] of dogfooded) {
       for (const source of sources) {

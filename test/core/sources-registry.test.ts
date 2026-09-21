@@ -24,7 +24,11 @@ describe('countRulingEntries', () => {
     // mistake with the implementation — the same section, fence and bold assumptions on both
     // sides pass each other while both are wrong — so the number is stated outright. When a
     // ruling is added this test is the thing that must be updated deliberately.
-    expect(count).toBe(10);
+    //
+    // 10 -> 11 on 2026-09-21: R-crc-11 (alignment over cost) was recorded. This edit IS the
+    // deliberate update the comment above demands — the pin did its job, going red the moment
+    // the program's contract value moved, and the failure is the feature.
+    expect(count).toBe(11);
 
     // DERIVED, as a second and independent witness: a plain scan of the section must agree.
     const section = sliceRulingsIndex(doc.lines);
