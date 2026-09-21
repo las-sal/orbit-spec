@@ -203,23 +203,46 @@ is separately gone: rc02c made `budget` inert, so no cadence can end exhausted (
   as the last sentence of prose when a reviewer happens to offer it. Worth checking the other three
   passes of that cycle for whether they did the same unprompted.
 
-- **Q-rc04-d — is the readiness record WRITTEN at the archive, or RENDERED there from a judgement
-  formed earlier?** The charter and Q-crc-20 both place the record at the archive seam. But the
-  judgement it records is formed earlier — at the end of the cadence, when the independent passes
-  have returned and the AI decides whether to buy another. rc02c has a worked instance: a scoped
-  external pass was bought BY CHOICE over an already-passed gate, because the walk had authored
-  mechanism no independent reader had seen. That decision WAS the readiness judgement, and it
-  happened hours before the archive. By the time the archive ran, it was history being reported.
-  Standing recommendation: BOTH, with the archive record DERIVED rather than authored — the
-  judgement is captured at the moment it is formed (which is also the moment the ordering
-  constraint in exit (3) can be checked against the passes that informed it), and the archive
-  renders it. The reason to prefer derivation: authorship at the seam is precisely how rc02c
-  produced 3,333 characters of free prose in a `warnings` array. A record composed at the moment of
-  judgement is short because the judgement is fresh; a record composed at the seam is long because
-  it is reconstructing. NOT RATIFIED — this is a scope call about how much of the cadence the stage
-  touches, and it may be the difference between one capability and two.
+- **Q-rc04-e — which judgements get a STRUCTURED home, and what is the shape?** (replaces the
+  retired Q-rc04-d; see Considered & out.)
+  The trail as of rc02c shows a split that nobody designed. WALK decisions have real structure —
+  nine across the cycle, each carrying `ratified_via`, `recommendation_fork.chosen` and a verbatim
+  `resolution` — because `orbit-address-reviews` was built for them. READINESS-shaped judgements
+  have none: "buy a scoped external pass over an already-passed gate", the clearest readiness call
+  of the cycle, lives in the T0 emit's `final_assessment` as prose, indistinguishable from any
+  other sentence in a paragraph and readable back by nothing.
+  That asymmetry is the whole of what rc04 has to fix, and fixing it makes the archive step
+  exactly what Sal describes: the records already exist, so summarize and emit.
+  Standing recommendation: give readiness judgements the SAME treatment walk decisions already
+  have — a named, structured slot written AT THE DECISION POINT, carrying what was decided, what
+  data it was formed against (the pass tokens), and whether the disposition was the AI's own belief
+  or a Sal ratification (D-rc04-3 as amended requires that distinction). The archive then RENDERS
+  rather than composes, and exit (3)'s ordering check has something to check.
+  Open sub-question: WHICH judgements qualify. "Buy another pass", "this residual is acceptable",
+  "I believe this is ready", and "route this expansion to architecture" are four different shapes
+  and may not want one slot. Not yet worked.
 
 ## Considered & out
+
+- **2026-09-21 — Q-rc04-d, "is the readiness record WRITTEN at the archive or RENDERED there from
+  a judgement formed earlier?" — RETIRED as a false distinction, by Sal.** The question was raised
+  with a standing recommendation for rendering, on the argument that authorship at the seam is what
+  produced rc02c's 3,333 characters of `warnings` prose. Sal's response: *"these things seem the
+  same to me. we are working through this flow together, when we get to decision points (gates), we
+  make a judgement based on the data, record it, and move on as indicated. at archive, there is
+  record of the judgements and we can summarize and emit."* Checked against the trail rather than
+  argued, and Sal is right — the flow ALREADY works that way, and the walk decisions ARE recorded
+  at their decision points with real structure. The 3,333 characters were not caused by authoring
+  at the seam; they were caused by three of the six entries having no structured home to be
+  rendered FROM, so they were rewritten from prose scattered across narrative fields. The axis was
+  wrong: not WHEN the record is written, but WHICH judgements have a structured home. Replaced by
+  Q-rc04-e. Kept here because the diagnosis inside it survives — authorship reconstructs, and
+  reconstruction is where length and drift come from.
+  (A residue worth keeping too: THREE of rc02c's six warnings genuinely AROSE at the archive seam
+  — the sync agent's stale cross-reference, the at-archive correction, the touchpoint divergence.
+  Those are not reconstructions. D-rc04-12 already classifies them as PROCESS NOTES rather than
+  readiness, which suggests `warnings` is their legitimate home and rc04 should not try to absorb
+  them.)
 
 - **2026-09-21 — the cadence line and the capture-recapture residual estimate (rc04's first two
   chartered deliverables).** Both answer "what did this cost and what remains uncovered". D-rc04-1
