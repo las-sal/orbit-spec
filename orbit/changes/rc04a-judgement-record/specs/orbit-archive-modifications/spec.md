@@ -30,6 +30,16 @@ body is told to write it ships the capability inert at its own primary carrier. 
 SHALL be read BEFORE the Step 5 move, because afterwards the change's active path no longer
 resolves.
 
+**THE ONE EDGE WHERE THE SUCCESSOR CANNOT BE WRITTEN.** `formed_against` is required NON-EMPTY, and
+the `review-system` gate is unpassed precisely when the cadence is incomplete — which INCLUDES the
+state where no independent pass exists at all. When no independent pass precedes this emit, the
+entry SHALL be OMITTED and `gate_overridden` stands alone: the record cannot be formed against
+evidence that does not exist, and inventing a token is refused by the ordering check. This is a
+NAMED case rather than a gap: across every archived change, 20 emits carry `gate_overridden` and
+all 20 have an earlier independent pass, so the edge is unobserved — but it is inside the
+override's own trigger condition, so the stage that RETIRES `gate_overridden` must handle a domain
+the successor provably cannot cover, rather than discover it.
+
 A `disposition: "not-ready"` record SHALL NOT block the archive. Readiness is a judgement and the
 engine does not evaluate judgements (R-crc-10); the seam already carries consent, gate and audit
 prompts for stopping, and an AI belief that could veto a user's archive would invert the steering
@@ -91,6 +101,13 @@ relationship the lifecycle is built on.
 - **THEN** the archive run summary carries BOTH `gate_overridden: {gate, state, reason}` AND a
   `judgements` entry `{kind: "continuation", disposition: "proceed", gate, gate_state, gate_reason}`
   whose three gate facts match the override object's, and a mismatch between them is refused
+
+#### Scenario: An override with no independent pass to cite omits the entry
+
+- **WHEN** the archive proceeds past an unpassed `review-system` gate on a trail carrying no
+  independent pass earlier than the emit
+- **THEN** `gate_overridden` is recorded alone and the `judgements` entry is OMITTED — a non-empty
+  `formed_against` is unavailable, so the successor record cannot be formed
 
 #### Scenario: A not-ready record is the author's own dissent
 

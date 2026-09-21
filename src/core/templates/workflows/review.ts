@@ -471,7 +471,6 @@ Per the universal spine in \`orbit-conventions\`'s \`Internal-run JSON summary f
   "next_recommended": "<multi-step prose; see below>",
   "kind": "editorial",
   "mode": "proposal" | "system",
-  "reviewer_class": "external",
   "prompt_path": "orbit/changes/<name>/.orbit-runs/external-prompt-<as>-<TS>.md",
   "target": "<named external AI if user specified; null otherwise>",
   "awaiting_findings": true,

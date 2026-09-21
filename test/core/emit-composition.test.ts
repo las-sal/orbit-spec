@@ -1142,7 +1142,9 @@ describe('rc04a judgement record', () => {
     ['a missing ratified_by', [readiness({ ratified_by: undefined })], /ratified_by/],
     ['a kind\\/disposition clash', [readiness({ disposition: 'spend' })], /disposition' must be one of ready/],
     ['a routing destination', [readiness({ disposition: 'not-ready', destination: 'architecture' })], /unknown key 'destination'/],
-    ['a prototype-chain kind', [readiness({ kind: 'toString' })], /'kind' must be one of/],
+    // the pattern REQUIRES the offending value: the defect was a refusal that named an internal
+    // identifier instead of it, so a prefix-only assertion would not have caught the defect.
+    ['a prototype-chain kind', [readiness({ kind: 'toString' })], /'kind' must be one of .* got "toString"/],
     ['an unknown key', [readiness({ oops: 1 })], /unknown key 'oops'/],
     ['an empty judgements array', [], /must not be empty/],
     ['a non-array judgements', {}, /must be an ARRAY/],

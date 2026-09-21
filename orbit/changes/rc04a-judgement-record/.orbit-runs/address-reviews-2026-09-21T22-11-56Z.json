@@ -1,0 +1,142 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-21T22:11:56Z",
+  "change": "rc04a-judgement-record",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc04a-judgement-record/.orbit-runs/review-system-2026-09-21T21-53-41Z.json",
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 5,
+    "suggestion": 2
+  },
+  "pushback_verification": "All 7 re-verified against current state before any edit, which mattered more than usual because I authored them ten minutes earlier and a self-authored finding is the one most likely to be wrong. ZERO stale — but ONE was narrowed: F1 claimed the spec requirement hard-codes the AI as dissenter, and it does not (`spec.md:119` says 'the author's own judgement', agnostic, as is its scenario), so the fix landed on the body alone. The grep that produced the false half returned 0 because the phrase wraps across a line break — a single-line pattern against multi-line prose, which is the FIFTH instrument error of this session and the same class each time. F6's verification went past the finding and changed its weight: adding `review-external` to the parity table made the test fail on `reviewer_class`, a field the block documents, the payload table refuses, and the engine never composes — confirmed against a real trail emit.",
+  "resolution_summary": {
+    "resolved": 7,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The record's SOLE reader hard-codes one of the two `ratified_by` values the walk just admitted",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/archive-change.ts",
+      "line": 414,
+      "classification": "trivial_fix",
+      "action": "PARTIALLY APPLIED — pushback narrowed my own finding before the fix landed. I cited the spec requirement as also hard-coding the AI; it does not. `specs/orbit-archive-modifications/spec.md:119` says 'archived against the author's own judgement', which is `ratified_by`-agnostic, and its scenario is agnostic too, so NO spec edit was warranted. (The grep that made me think otherwise returned 0 because the phrase wraps across a line break — a single-line pattern against multi-line prose, the fifth instrument error of this session and the same class every time.) Fixed the one site that was actually wrong: Step 5.65 now says the readout RENDERS `ratified_by`, and gives both concrete forms — 'this session's own judgement' for `ai`, 'the user's ratified judgement' for `user` — with the reason stated, that a line presupposing one value misreports the other.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The archive's `SHALL carry a continuation entry` is unsatisfiable when no independent pass precedes the override",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04a-judgement-record/specs/orbit-archive-modifications/spec.md",
+      "line": 24,
+      "classification": "trivial_fix",
+      "action": "Settled the edge in the requirement rather than leaving it to be discovered. `specs/orbit-archive-modifications/spec.md` gained THE ONE EDGE WHERE THE SUCCESSOR CANNOT BE WRITTEN: when no independent pass precedes the emit, the entry is OMITTED and `gate_overridden` stands alone — a record cannot be formed against evidence that does not exist, and inventing a token is refused by the ordering check. Carried the measurement into the prose (20 overrides across every archived change, all 20 with an earlier independent pass) so the edge reads as unobserved-but-named rather than hypothetical, and stated plainly that the stage retiring `gate_overridden` must HANDLE a domain the successor provably cannot cover. Added the matching scenario, and mirrored one clause into the archive body's Step 3.4 so an author at the seam is told to omit rather than improvise.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "`explore.md` — the DECLARED shared source for rc04b and rc04c — still states two things this change now refuses",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04a-judgement-record/explore.md",
+      "line": 275,
+      "classification": "decision_required",
+      "action": "RATIFIED IN CHAT: option (C) — append, plus forward pointers. Appended a dated D-rc04-19 at the end of the Decisions section recording both corrections, and added a one-line '(SUPERSEDED by D-rc04-19: ...)' pointer at D-rc04-15's readiness paragraph and at the 'THE ENGINE RULE, and it is the only one' paragraph. The append follows this file's own convention (supersession appends, never rewrites); the pointers exist because the readers will be clean-context sessions with no reason to know that convention, and because the file already contained a latent contradiction for them to trip on. D-rc04-19 itself records WHY the correction goes this way: D-rc04-16 had already separated the archive-dissent case from the routing case, two cases with two carriers, and rc04a's proposal-stage walk collapsed them by bolting `destination` onto the archive case — so this is a restoration, not a new choice. It also records that the routing judgement remains real and remains uncarried.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc04a-judgement-record/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "Option C — append a dated D-rc04-19 recording both supersessions, AND add one-line forward pointers at D-rc04-15 and the engine-rule paragraph.",
+      "recommendation_fork": {
+        "source": "heuristic",
+        "options": [
+          "A",
+          "B",
+          "C"
+        ],
+        "ratified": "C"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Task 3.1 still names the token source that this same walk proved cannot answer",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04a-judgement-record/tasks.md",
+      "line": 17,
+      "classification": "trivial_fix",
+      "action": "Replaced the clause. Task 3.1 now names the trail listing all three bodies carry — each `review-<mode>-<TS>.json` whose `reviewer_class` is fresh or external, plus each `external-<mode>-<TS>.md`, the set the write gate resolves citations against — and states parenthetically what the system walk established by execution: `orbit status --change --json` carries gate spend counts and no pass tokens, and post-move does not resolve the change at all. Recording the disproof rather than just the correction, so the next reader does not re-derive it.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "F6's third cited site is neither fixed nor routed — the stage declaration still says THE ONE COMPUTED RULE",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04a-judgement-record/tasks.md",
+      "line": 42,
+      "classification": "trivial_fix",
+      "action": "Added as item (c) on task 6.4's architect list, with the substance the architect needs rather than a pointer: the stage declaration's ONE COMPUTED RULE line should name the ordering rule as the one rule about the record's relation to its EVIDENCE, with the carrier-kind and gate-agreement refusals named as shape/location constraints and the second marked as retiring with `gate_overridden` in rc04c. Also corrected item (b) in passing — it still claimed `residual_risk` appears in `CLAUDE.md`, which the blind-pair walk had already fixed; it now says seven places in the architecture doc and notes CLAUDE.md as the one site outside that doc's ownership.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "`judgements` was added to a schema block no parity instrument reads",
+      "marker_source": "internal-review",
+      "file": "test/core/emit-schema-parity.test.ts",
+      "line": 43,
+      "classification": "trivial_fix",
+      "action": "Fixed, and it surfaced the pre-existing divergence the instrument argument predicted. Added `review-external` -> `external-handoff.md` to the parity REFERENCES table with `awaiting_findings` declared engine-owned. The test then FAILED on `reviewer_class`, which the block documented but the payload table REFUSES as an unknown key and the engine never composes — verified against a real trail emit (`review-external-2026-09-21T19-28-17Z.json` has no such field). So the schema reference was leading an author into a REFUSED emit, undetected for as long as the block has existed. Removed the line; the parity test now passes with the reference covered, which also proves there is no OTHER divergence in it. Sizing was a method call under R-crc-3: one table row and one deleted doc line is nowhere near R-crc-1's ceiling, so this was fixed rather than routed.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The prototype-kind regression test does not assert the thing the finding was about",
+      "marker_source": "internal-review",
+      "file": "test/core/emit-composition.test.ts",
+      "line": 1145,
+      "classification": "trivial_fix",
+      "action": "Tightened the pattern to `/'kind' must be one of .* got \"toString\"/` with a comment recording why: the defect F3 named was a refusal that printed an internal identifier instead of the offending value, so a prefix-only assertion would have passed against the very message the finding was about. The test now asserts the contract rather than the crash.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": null,
+  "final_assessment": "The trailing in-context pass walked to zero: 7 findings, 0 CRITICAL, all resolved, none stale, none deferred. Five of the seven were residue of the blind-pair walk two hours earlier — the same shape five times, a fix landing where the reviewer pointed and stopping at the edge of its class — and the walk that fixed them produced one more instance of the class in flight: appending D-rc04-19 invalidated the decision count that the previous walk had just corrected, caught by the ripple check and swept. Two findings were not residue. The archive's continuation SHALL is now a named edge rather than an unsatisfiable requirement, with the measurement (20 overrides, all 20 citable) carried into the prose so rc04c inherits a handled case instead of a discovery. And F6's fix surfaced a pre-existing defect the instrument argument predicted exactly: `external-handoff.md` documented `reviewer_class`, which the payload table refuses and the engine never composes, so the schema reference had been leading authors into a refused emit for as long as it existed — invisible because that reference was the one schema block no parity instrument read. It is read now. 2238 tests green; validate --strict clean at 26.",
+  "iteration": 5,
+  "next_recommended": "/orbit:archive rc04a-judgement-record — user-invoked"
+}

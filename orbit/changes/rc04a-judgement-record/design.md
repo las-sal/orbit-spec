@@ -4,9 +4,10 @@
 
 This change implements the first child of `rc04-readiness-record`, split three ways under R-crc-9
 on 2026-09-21 after a size check measured the full mechanism at ten capabilities against a ceiling
-of three. The mechanism itself was settled in exploration — eighteen decisions, and two open questions both
-carrying standing recommendations, neither owned by this child — so this design CITES rather than
-invents. See `explore.md`, which travels with this change and
+of three. The mechanism itself was settled in exploration — eighteen decisions at propose time, nineteen now
+(D-rc04-19 was appended during the post-apply system cadence, correcting two of D-rc04-15's claims
+against what shipped), and two open questions both carrying standing recommendations, neither owned
+by this child — so this design CITES rather than invents. See `explore.md`, which travels with this change and
 remains the shared source for `rc04b-forward-recommendation` and `rc04c-retire-gate-overridden`.
 
 The prior art is close at hand and is the model: `orbit-address-reviews` gives walk decisions

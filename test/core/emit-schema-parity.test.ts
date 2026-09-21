@@ -23,6 +23,8 @@ const ENGINE_OWNED = ['command', 'timestamp', 'change', 'doc', 'kind', 'model', 
 const ENGINE_OWNED_PER_COMMAND: Record<string, string[]> = {
   // review: the counts sentence is engine-composed from the scorecard (D4).
   review: ['final_assessment'],
+  // review-external: the T0 handoff flag is composed by the engine, never supplied.
+  'review-external': ['awaiting_findings'],
 };
 
 /**
@@ -41,6 +43,12 @@ const KNOWN_DIVERGENCE: Record<string, string[]> = {
 
 const REFERENCES: Array<[command: string, template: () => { references?: Array<{ name: string; content: string }> }, refName: string]> = [
   ['review', getReviewSkillTemplate, 'run-summary-schema.md'],
+  // rc04a system walk: the `review-external` T0 block lives in a DIFFERENT reference of the same
+  // skill, and was unread here — so rc04a added `judgements` to a block no instrument checked, and
+  // a pre-existing divergence sat undetected: the block documented `reviewer_class`, which the
+  // payload table REFUSES as an unknown key and the engine never composes, so an author following
+  // the schema would have written a refused emit.
+  ['review-external', getReviewSkillTemplate, 'external-handoff.md'],
   ['address-reviews', getAddressReviewsSkillTemplate, 'run-summary-schema.md'],
   ['audit-drift', getAuditDriftSkillTemplate, 'run-summary-schema.md'],
   ['archive', getArchiveChangeSkillTemplate, 'archive-summary-schema.md'],

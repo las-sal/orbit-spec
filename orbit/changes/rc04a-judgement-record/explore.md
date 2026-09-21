@@ -273,12 +273,15 @@ is separately gone: rc02c made `budget` inert, so no cadence can end exhausted (
 
   **`kind: readiness`** — formed at the cadence's end. `disposition` is `ready` or `not-ready`, the
   latter carrying the destination D-rc04-3 names (architecture) and being a RATIFIED disposition
-  rather than an autonomous one. It additionally carries `accepted`: a list of `{claim, why}` pairs
+  rather than an autonomous one. **(SUPERSEDED by D-rc04-19: the archive-carried `not-ready`
+  sheds `destination` and takes EITHER `ratified_by` value.)** It additionally carries `accepted`: a list of `{claim, why}` pairs
   — the residuals, which are the assertion's CONTENT and not peer judgements. rc02c's would have
   held three: the capture-recapture residual, the passed-gate-is-not-a-clean-pass reading, and the
   stale cross-reference deferred to audit-drift.
 
-  **THE ENGINE RULE, and it is the only one.** Every token in `formed_against` MUST precede the
+  **THE ENGINE RULE, and it is the only one.** **(SUPERSEDED by D-rc04-19: it is the only rule
+  about the record's relation to its EVIDENCE; two further refusals ship.)** Every token in
+  `formed_against` MUST precede the
   record's own timestamp, and a record violating that is REFUSED at the write gate — the
   materialize-first shape `orbit-emit-composition` already uses. Nothing else here is computed: the
   engine never judges whether the AI was RIGHT to be ready, only that the claim could have been
@@ -384,6 +387,38 @@ is separately gone: rc02c made `budget` inert, so no cadence can end exhausted (
   **This is a SCOPE call, so it is a recommendation and not a decision** (D-rc04-3 as amended):
   the AI classifies and recommends, Sal decides. Splitting a chartered stage into three is
   architecture work and belongs to `/orbit:architect`, not to this exploration.
+
+- **2026-09-21 — D-rc04-19: two corrections from rc04a's SHIPPED state, recorded here because this
+  file is the declared shared source for `rc04b` and `rc04c`.** (Supersedes parts of D-rc04-15.
+  Both surfaced in rc04a's post-apply system cadence — the first from the external half of the
+  blind pair, the second from the trailing in-context pass — and both are recorded rather than
+  edited in place, per this file's append-only convention.)
+
+  **(a) The archive-carried `not-ready` is a DISSENT, not a ROUTING decision.** It carries NO
+  `destination`, and its `ratified_by` takes EITHER value — `ai` when the belief is the authoring
+  session's own, `user` when a human ratified it. D-rc04-15 specified the opposite (a `destination`
+  of `architecture`, and `user` required), and the engine now REFUSES that shape: `destination` is
+  an unknown key on a closed record.
+
+  **Why the correction goes this way, and why it is a restoration rather than a new choice.**
+  D-rc04-16 below already drew the line correctly — *"Ending in ARCHIVE — the record goes on the
+  archive emit, and `not-ready` there is the honest dissent case... Ending by ROUTING TO
+  ARCHITECTURE — there is no archive, so the record goes on the `address-reviews` emit."* Two
+  cases, two carriers. rc04a's proposal-stage walk then bolted `destination` onto the ARCHIVE case,
+  collapsing them. Since rc04a carries only the archive carrier — routing was descoped for want of
+  a reader — requiring a routing destination re-imported the descoped concept through the
+  validator, and REFUSED the AI-dissent case the archive readout itself describes. The routing
+  judgement remains real and remains uncarried; its `destination` belongs with whatever surface
+  reads it, which is still no stage's declared work.
+
+  **(b) The ordering rule is the only computed rule ABOUT THE EVIDENCE**, not the only computed
+  rule. Two further refusals shipped, both about the record's SHAPE and LOCATION rather than its
+  relation to what it cites, and both permitted by R-crc-10 because both are fully observable:
+  the carrier table's KIND half (a `readiness` on a `review-external` T0 emit has no reader), and
+  the `gate_overridden` field-agreement constraint, which retires with the field in `rc04c`. What
+  stays off limits is unchanged and is the point: the engine never forms an opinion about whether
+  the judgement was RIGHT — not whether the cited passes were clean, not whether enough were cited,
+  not whether they were the right MODE.
 
 ## Open questions
 
