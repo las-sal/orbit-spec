@@ -336,6 +336,13 @@ One goal per phase, each falsifiable, each stage naming its goal (settled under 
   assigned, because assigning it is a scope call. NOTE the honest counter: a withdrawn stage that
   keeps asking for ratification is ANNOYING but not WRONG, and the two instances cost nothing but a
   confusing readout — this may be worth leaving until a third occurrence.
+  **2026-09-21 — the counter's own test, sharpened.** The ratification offer fired again for rc03a
+  in an architect session and was again declined, which makes the cost RECURRING rather than
+  one-time: the readout does not ask once, it asks at EVERY architect session on this doc, forever,
+  and each time a human has to re-derive from the charter that the correct answer is "no". That is
+  still not a third WITHDRAWN stage, so the standing recommendation does not change — but the
+  counter's premise that two instances "cost nothing but a confusing readout" is now measurably
+  weaker than when it was written.
 
 - **Q-crc-12 — the archive seam is silent when the gate that is exhausted is not the gate archive
   watches.** Observed 2026-09-15, twice in one day. Both rc03a and rc13a archived with
@@ -452,6 +459,26 @@ never deleted.
   where the recorded defects were written. It is a workflow-body change to TWO lifecycle bodies, so
   it is scope rc07 never proposed and no reviewer has seen; it belongs to a stage that declares it.
   rc07 records the same residual in its own design.md with kind and method.
+
+  **SECOND INSTANCE, 2026-09-21 — the missing moment is now MEASURED, not argued, and it is one
+  layer up from where this question first found it.** `test/core/sources-registry.test.ts` pins the
+  live ruling count at a literal, deliberately: its own comment says a derived oracle can share a
+  mistake with the implementation, so the number is stated outright and "when a ruling is added this
+  test is the thing that must be updated deliberately." **R-crc-11 was recorded into this doc on
+  2026-09-21 and nobody performed that update.** The pin went red and sat red through an entire
+  stage's propose, two reviews, two walks and an apply — surfacing only when rc02c's apply ran the
+  full suite for an unrelated reason. Nothing in the architect session that added the ruling, and
+  nothing at any lifecycle seam since, asked whether the doc's dependent checks still held.
+
+  This sharpens the question in two ways. First, the gap is not specific to the `src:` lint: it is
+  ANY check coupled to this doc's live content, and the architect seam has the same hole the archive
+  and walk seams do. Second, it supplies the cheap test of whether the standing recommendation is
+  sufficient — wiring `validate --sources` into the archive and address-reviews bodies would NOT
+  have caught this one, because the tripwire that fired is a unit test, not the lint. Whoever takes
+  this up should decide whether the answer is "run the lint at more seams" or the broader "the
+  architect seam runs the doc's dependent checks", and the second reading is the one this instance
+  supports. Recorded rather than fixed, per R-crc-10: the input is a judgement about which seams
+  matter, so the deliverable is this record until a stage declares it.
 
 - **Q-crc-15 — the engine carries TWO CommonMark fence grammars, and one of them is wrong.**
   Observed 2026-09-17 by the system-mode external pass. `src/core/markdown-fence.ts` is the strict
@@ -593,7 +620,13 @@ never deleted.
   per-change, so it belongs beside `orbit architecture status` rather than in a change's readout.
   Whether that is rc04's to build or its own small stage is not settled here.
 
-- **Q-crc-19 — RESOLVED 2026-09-21 (Sal): YES. `budget` is demoted to a recorded figure.**
+- **Q-crc-19 — RESOLVED 2026-09-21 (Sal): YES. `budget` is demoted to a recorded figure.
+  DELIVERED 2026-09-21 by rc02c's apply.** `budgetExhausted`, the `independentSpendFresh` trigger
+  count, both `BUDGET-SPENT` position tokens and the `budget spent: N of M` reason clause are gone
+  from the engine. `budget` keeps its grammar slot with no version bump and nothing consults it;
+  the record is `independentSpend`, which now reports on MODE alone rather than on an inert
+  declaration happening to be present, and renders ALONE — `[spend 1]`, never a ratio. The `4 of 3`
+  readout this question resolves against cannot be produced by any surface.
   rc02 built `budget` to bound convergence cost and made exhaustion a boolean reported BESIDE the
   state — deliberately never a block. R-crc-11(c) establishes that cost is not what the user is
   protecting, and R-crc-11(h) establishes that effort is RECORDED, never TARGETED. `budgetExhausted`
@@ -951,6 +984,20 @@ marked unreproduced; (3) the walk that ingests it can see the reproduction it mu
 Depends-on: rc02-gate-semantics
 Complete: [ ]
 
+**SUPERSEDED 2026-09-21 (Sal), after the stage proposed and applied — the IMPACT block below is
+kept verbatim as the record of what was expected, and this note states what actually shipped.**
+rc02c DELETES clause (c) outright rather than shrinking it. The reasoning is in the change's design
+D6, and it is one sentence: "what is MISSING from the cadence" is COVERAGE, and clause (a) already
+computes coverage over the declared slots — so the shrunken predicate would have been a second
+voice on one question, which is the defect class clause (c) kept producing. The exploration reached
+the same place from the other direction (D-rc02c-5/6): under R-crc-11 a cadence ends when the AI
+judges the work ready knowing what the reviewers returned, and no predicate computes that judgement
+without the readiness record rc04 owns and has not written. The boundary with rc04 is UNCHANGED —
+rc04 still owns the record and the judgement; what changed is that rc02c ships no predicate for the
+record to be read by. Evidence the removal strands nothing: with clause (c) gone the recommendation
+function's `confirmFailed` branch becomes unreachable, and the verdict diff over all 19 archived
+changes (57 gates) found 13 changes, 44 identical, ZERO unexplained.
+
 **R-crc-11 IMPACT (2026-09-21) — read this before proposing.** The ruling moves the cycle's end
 condition from CONVERGENCE (computed) to AGREEMENT (recorded), which does not delete clause (c) but
 does change what it is FOR. The predicate no longer has to decide whether the work is done — the
@@ -983,6 +1030,17 @@ orbit-engine-gates, orbit-run-summary-emit. Exit: (1) the predicate is specified
 cell has a value, with no empty case left to a default; (2) a constructed trail for each cell is a
 test; (3) the pair's earlier member cannot be invisible and a clean set cannot certify a later
 unreviewed CRITICAL.
+
+**EXIT CRITERIA AMENDED 2026-09-21 (Sal), for the same reason the IMPACT block is superseded.**
+(1) and (2) presuppose a shipped predicate and DISSOLVE with it — there is no table to specify and
+no cells to construct trails for. (3) is SATISFIED, but BY the dissolution rather than by design:
+with no selection rule left, a blind pair's earlier member cannot be invisible to one, and a clean
+set cannot certify a later unreviewed CRITICAL because nothing certifies anything. The criteria
+that REPLACE (1) and (2), against which this stage is judged: **(1')** clause (c) is removed from
+the convergence computation and no engine surface computes whether a change has converged;
+**(2')** the removal is verified against EVERY archived trail, with each changed verdict explicable
+by clause (c)'s removal or the budget demotion and no verdict changing for a third reason. Both
+were met at apply — (2') by the 19-change, 57-gate diff recorded in the status log below.
 
 ### Stage rc03a-blind-prompt — a blind reviewer is told nothing
 
@@ -2169,3 +2227,54 @@ new is that the target is now MEASURABLE and the claim FALSIFIABLE. Captured as 
 rather than a stage, per Sal, so findings can accrete against it while the current stages proceed —
 the issue carries the full fourteen-change table, the reproduction method, the two competing
 readings and the discriminator between them.
+
+
+**2026-09-21 — rc02c applied: clause (c) is gone, and the gate demonstrated the case for its own
+removal before removing it.**
+
+The stage ran its declared proposal cadence to completion — one `fresh` independent pass
+(6 CRITICAL / 8 WARNING / 3 SUGGESTION), a walk resolving all seventeen, the `in-context` pass
+(0 CRITICAL / 5 WARNING / 2 SUGGESTION), a walk resolving all seven — and then produced, without
+anybody constructing it, the terminal state D-rc02c-5 describes. With clauses (a) and (b) both
+satisfied the gate advanced to clause (c), selected the most recent INDEPENDENT pass, read its six
+CRITICAL, and demanded a fourth review pass. **All six were resolved.** The predicate reads a
+pass's findings, never their disposition, so resolution could not answer it and the cadence had no
+slot left to put another pass in. The change applied through a recorded `gate_overridden` whose
+reason is that line. Once applied, the same gate computed PASSED on the identical trail. That is
+the second consecutive stage where this predicate produced this over-spend — rc07 archived at
+`independentSpend: 4` against `budget: 3` for the same reason — and two instances on different
+changes is a measurement rather than an anecdote.
+
+**What the verdict diff showed.** Old engine against new over all 19 archived changes, 57 gates:
+**13 changed, 44 identical, ZERO unexplained.** Seven reason-only changes losing exactly the
+`budget spent: N of 3` prefix and keeping the rule clause verbatim. One state change on
+`rc02-gate-semantics / review-system`, `unpassed` -> `passed`, whose old reason was clause (c)
+verbatim — rc02 being the change that archived through an override for precisely this. And five
+`review-proposal` transitions to `stale`, whose mechanism was checked rather than assumed: `stale`
+is `allEval.converged && !freshEval.converged`, and clause (c) used to fail the ALL-pass evaluation
+too, masking staleness as plain `unpassed`. Budget never entered convergence, so no transition can
+originate there.
+
+**The cycle's own shape is worth recording, because both walks left residue at their own edges.**
+The fresh pass found a change that had swept its vocabulary through the paragraphs it rewrote and
+stopped at their boundaries — the requirement's opening SHALL contradicting its own body 100 lines
+down, three scenarios still demanding a retired signal, a sibling requirement outside the delta, a
+terminal render two files over. The walk fixed those paragraphs and stopped at ITS boundaries: a
+count sentence written before the section it counted was finished, a Touchpoints list predicting
+the work as it stood at propose while the walk had added a file to it, a task naming one module for
+one field while the sibling field sat in a second module. The in-context pass found five of those
+seven. Then the post-fix completeness sweep found one MORE that no review reported — the recorded
+delta-size figures went stale the moment a finding rewrote a rule. Structural edits have a blast
+radius prose edits do not, and the discipline that caught each round was the same: RECOMPUTE, never
+hand-adjust. This is the same shape as Q-crc-17 (records written beside the thing they describe
+rather than derived from it) and belongs as evidence against issue #13.
+
+**Two instruments went red without a line of engine code changing**, and the diagnosis is recorded
+under Q-crc-14 because only one of them was actually wrong. `countRulingEntries`' pinned ruling
+count was WORKING AS DESIGNED — its comment demands a deliberate update whenever a ruling is added,
+R-crc-11 was recorded without one, and the red was the feature. `source-lint`'s requirement that the
+live file domain contain at least one fenced `src:` example was genuinely unsound twice over: it
+depended on rc07's own in-flight artifacts, which became excluded RECORDS at archive, and it
+demanded prose this capability's own AUTHORING RULE tells writers not to produce. Both were fixed
+as SEPARATE work in their own commit, deliberately outside rc02c, so the stage's diff and its
+predicted Touchpoints stayed what they claim to be.
