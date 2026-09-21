@@ -99,8 +99,8 @@ export interface Trail {
   applyTokens: string[];
   /**
    * External findings artifacts whose shape validation failed (rc02). They satisfy NO cadence slot
-   * — their findings cannot be read — but they cost a model run, so the budget counts them and the
-   * gate's reason names them. Attributed to the mode in the filename.
+   * — their findings cannot be read — but they cost a model run, so `independentSpend` counts them
+   * and the gate's reason names them. Attributed to the mode in the filename.
    */
   rejectedExternals: RejectedExternal[];
   /**
@@ -195,7 +195,7 @@ export function readTrail(changeDir: string, overlay?: TrailOverlay): Trail {
         const pass = parseExternalMarkdown(full, token, mode);
         if (pass) trail.passes.push(pass);
         // rc02: a return that came back unreadable is still spend. Recorded separately so it can
-        // never satisfy a slot while remaining visible to the budget and the reason.
+        // never satisfy a slot while remaining visible to `independentSpend` and the reason.
         else trail.rejectedExternals.push({ token, file: full, mode });
         continue;
       }

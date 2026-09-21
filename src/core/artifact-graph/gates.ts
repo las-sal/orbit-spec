@@ -40,7 +40,8 @@ export interface GateStatus {
    * surfaced in the position readout (`apply ✓ (awaiting user validation: 9.6)`).
    */
   userValidationPending?: string[];
-  /** rc02: the declared independent-pass ceiling, when the gate declares one. */
+  /** rc02c: the DECLARED EXPECTATION of what the cadence costs, when the gate declares one.
+   *  Nothing consults it — it is not a ceiling and it bounds nothing. */
   budget?: number;
   /** rc02c RECORDED COST (R-crc-11(h)): independent passes on the gate's mode across the whole
    *  trail, stale included, plus rejected external returns attributed to that mode. Effort is
@@ -421,7 +422,7 @@ interface ConvergenceResult {
 /**
  * Evaluates the reviewed-gate pass condition.
  *
- * PASS-LIST QUANTIFICATION (stated once, here): clauses (a) and (c) run over the pass list the
+ * PASS-LIST QUANTIFICATION (stated once, here): clause (a) runs over the pass list the
  * CALLER supplies — fresh for the primary evaluation, the full list for the stale discrimination —
  * while clause (b) always runs over every relevant pass. No rule below restates a freshness
  * condition; the filter has exactly one home, the call site.
@@ -584,14 +585,17 @@ export function computeGateStates(
       // A blocked reviewed gate still reports the spend already on its trail: blocking is not an
       // exemption from counting. `review-system` is blocked for the whole life of every change
       // until apply passes, so this is the common case, not an edge.
-      let blockedBudget: Record<string, unknown> = {};
+      let blockedSpend: Record<string, unknown> = {};
       if (gate.kind === 'reviewed') {
         const sp = computeSpend(gate, trail);
         if (sp.reportable) {
-          blockedBudget = {
+          blockedSpend = {
             ...(gate.budget !== undefined ? { budget: gate.budget } : {}),
             independentSpend: sp.independentSpend,
           };
+        } else if (gate.budget !== undefined) {
+          // Mode-underivable: no spend to report, but the declaration still exists.
+          blockedSpend = { budget: gate.budget };
         }
       }
       status = {
@@ -599,7 +603,7 @@ export function computeGateStates(
         kind: gate.kind,
         state: 'blocked',
         reason: `blocked by incomplete requires: ${unmet.join(', ')}`,
-        ...blockedBudget,
+        ...blockedSpend,
         before: gate.before,
         consent: gate.consent,
       };
@@ -709,14 +713,20 @@ function computeReviewedStatus(gate: NormalizedGate, changeName: string, trail: 
   const { rejected, independentSpend } = spend;
   // A reviewed gate whose mode cannot be derived from its id reports NO SPEND at all, rather than
   // one summed across every mode's passes (both halves of the pair found this).
-  // rc02c: `budget` is present only when actually DECLARED — never an undefined-valued key, since
-  // the projection's field names are normative. The spend reports on mode alone.
+  // rc02c: the DECLARATION and the RECORD are SEPARATE fields and are gated separately.
+  // `budget` is emitted whenever it is declared — it is schema text, and nothing about deriving a
+  // mode makes a declared expectation stop existing. `independentSpend` is gated on mode alone,
+  // because a spend summed across every mode's passes would be attributed to the wrong cadence.
+  // Coupling them in one bundle was the mirror of the defect this change removes: a cost that
+  // appeared only when an inert field happened to be present. Neither key is ever emitted
+  // undefined-valued.
   const spendReportable = spend.reportable;
-  const budgetFields = spendReportable
-    ? { ...(gate.budget !== undefined ? { budget: gate.budget } : {}), independentSpend }
-    : {};
+  const spendFields = {
+    ...(gate.budget !== undefined ? { budget: gate.budget } : {}),
+    ...(spendReportable ? { independentSpend } : {}),
+  };
 
-  // Coverage (a)/confirm (c) use fresh passes; resolution (b) uses ALL relevant passes.
+  // Coverage (a) uses fresh passes; resolution (b) uses ALL relevant passes. There is no (c).
   const freshEval = evaluateReviewed(gate, fresh, relevant, trail);
   if (freshEval.converged) {
     const deferred = freshEval.deferredSuggestions ?? 0;
@@ -724,11 +734,13 @@ function computeReviewedStatus(gate: NormalizedGate, changeName: string, trail: 
       id: gate.id,
       kind: gate.kind,
       state: 'passed',
-      ...budgetFields,
+      ...spendFields,
       ...(deferred > 0
         ? {
             deferredSuggestions: deferred,
-            reason: `converged with ${deferred} SUGGESTION-grade finding${deferred === 1 ? '' : 's'} deferred (reported, never blocking)`,
+            // rc02c: NOT "converged" — the engine no longer computes convergence, and a public
+            // reason claiming it is the readiness claim this change moves to rc04's record.
+            reason: `passed with ${deferred} SUGGESTION-grade finding${deferred === 1 ? '' : 's'} deferred (reported, never blocking)`,
           }
         : {}),
       before: gate.before,
@@ -743,8 +755,9 @@ function computeReviewedStatus(gate: NormalizedGate, changeName: string, trail: 
 
   const next = canonicalNextForReviewed(gate, mode, changeName, freshEval, trail, fresh);
   let reason = stale ? `a review pass is stale (an apply landed after it)` : freshEval.reason;
-  // A rejected return is named whenever one exists — NOT only at exhaustion. Below the ceiling the
-  // user would otherwise be told to buy another external run with no hint that one already came
+  // A rejected return is named UNCONDITIONALLY — there is no ceiling for the naming to be below,
+   // and naming it names the rule that fired, not the spend. Otherwise the
+  // user would be told to buy another external run with no hint that one already came
   // back unreadable.
   const rejectedFresh = rejected.filter(r => !trail.applyTokens.some(t => t > r.token));
   if (spendReportable && rejectedFresh.length > 0) {
@@ -757,7 +770,7 @@ function computeReviewedStatus(gate: NormalizedGate, changeName: string, trail: 
     kind: gate.kind,
     state: stale ? 'stale' : 'unpassed',
     reason,
-    ...budgetFields,
+    ...spendFields,
     ...((freshEval.deferredSuggestions ?? 0) > 0
       ? { deferredSuggestions: freshEval.deferredSuggestions }
       : {}),

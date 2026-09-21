@@ -84,8 +84,10 @@ non-empty-string test, so a present `outcome` the reader cannot interpret (null,
 object, an unrecognised word) makes the record unreadable rather than reviving the legacy key — both generations are live and readers SHALL tolerate both).
 
 - **Readable record** — COMPLETENESS is checked before disposition. Every SUBSTANTIVE finding of
-  the pass SHALL be matched by an entry, keyed by trimmed title and repo-relative file exactly as
-  the new-finding match is keyed; a record naming only some of a pass's substantive findings
+  the pass SHALL be matched by an entry, keyed by the tuple (TRIMMED TITLE, REPO-RELATIVE FILE) —
+  stated directly here because the new-finding match this used to cite was retired with clause (c),
+  and a key defined by reference to a deleted rule cannot be derived without archaeology; a record
+  naming only some of a pass's substantive findings
   certifies only those, and the pass stays UNRESOLVED. Only then does disposition decide: the pass
   is resolved iff NO entry with `severity` CRITICAL or WARNING
   carries a disposition of `deferred` or `escalated`. SUGGESTION-grade entries NEVER block, whatever
@@ -128,13 +130,13 @@ It is deliberately NOT specified here: a requirement demanding a record no comma
 would fail every gate, which is the defect this retirement removes.
 
 Three scenarios were REMOVED with the clause and one REWRITTEN; the change record names each and
-why (`design.md`, "Scenario accounting").
+why (`rc02c-confirmation-semantics`'s `design.md`, "Scenario accounting").
 
 **Deferred-suggestion aggregation.** The count the reason reports is the number of DISTINCT
 SUGGESTION-grade entries carrying a `deferred` or `escalated` disposition, deduplicated by
 (trimmed title, repo-relative file) across the most recent resolution record of every pass
-relevant to the gate — the same dedup key the new-finding match uses, so one suggestion deferred
-across two passes counts once.
+relevant to the gate — the SAME (trimmed title, repo-relative file) tuple clause (b) uses for
+completeness, so one suggestion deferred across two passes counts once.
 
 The engine SHALL NEVER RE-GRADE a finding's authored severity — the counts it reads are the
 reviewer's. The criterion SHALL be computed exclusively from the audit trail — never from AI
@@ -336,12 +338,17 @@ is for, and it survives the rule that the reason NEVER carries the spend figure.
 **Mode attribution survives the demotion.** A rejected artifact is ATTRIBUTED to the mode in its
 filename (`external-(proposal|system)-<TS>.md`, recoverable before the shape check runs) and counts
 only toward the gate operating on that mode; a reviewed gate whose mode cannot be derived from its
-id reports NO SPEND at all rather than counting passes of every mode. The rule is unchanged from
+id reports NO SPEND at all rather than counting passes of every mode — but it STILL REPORTS ITS
+`budget` when one is declared. The declaration and the record are gated SEPARATELY and always have
+independent fates: `budget` is schema text, and deriving a mode has nothing to do with whether an
+expectation was declared. Coupling them would be the mirror of the defect this requirement removes
+— a figure that appears only when an unrelated field happens to be present. The rule is unchanged from
 the exhaustion era except in what it guards: it now keeps a recorded cost attributed to the cadence
 that paid it, rather than keeping a trigger from firing on the wrong passes.
 
 Two scenarios were REMOVED with the signal and six REWRITTEN; every other scenario is preserved
-byte-identically. The change record names each and why (`design.md`, "Scenario accounting").
+byte-identically. The change record names each and why (`rc02c-confirmation-semantics`'s
+`design.md`, "Scenario accounting").
 
 #### Scenario: An open pair outranks the walk recommendation
 
@@ -433,7 +440,8 @@ scope: artifact ids whose change invalidates a pass; `reviewed` kind; defaults t
 `no-new-findings`. ACCEPTED BUT INERT — the clause it selected is retired, and the field remains
 only so existing schemas stay valid without a version bump), `budget`
 (optional positive integer, `reviewed` kind — the DECLARED EXPECTATION per the review-budget
-requirement; absent means unbounded), `before`
+requirement; absent means NO EXPECTATION IS DECLARED — never "unbounded", which would imply the
+present form bounds something), `before`
 (the target this gate blocks — see legal `before:` targets below), optional `consent` (see the
 consent vocabulary below), and optional `instruction`.
 There is NO generic pass-condition plugin mechanism — the two kinds are the extension surface.
@@ -500,8 +508,17 @@ its phase still awaits the user's invocation). `spec-driven` sets `consent: user
 ### Requirement: Gate-aware status and instructions with position readout
 
 `orbit status --change <name>` (the per-change form; bare `orbit status` is the orientation surface per `orbit-orientation` — D-arc Stage D3) SHALL render gate rows (state: `blocked | ready | passed | stale | unpassed`, with
-reasons, plus `budget` and `independentSpend` on a reviewed gate) alongside artifact rows, and a one-line POSITION READOUT of the canonical flow (e.g.
+reasons, plus the RECORDED SPEND on a reviewed gate) alongside artifact rows, and a one-line
+POSITION READOUT of the canonical flow (e.g.
 `propose ✓ → review(proposal) (past) → apply ✓ → review(system) unpassed → archive blocked-by-gate`).
+
+**THE TWO GATE-ROW SURFACES DIFFER DELIBERATELY, and the split is normative.** The HUMAN row
+renders `independentSpend` ALONE — never beside the declaration, never composed with it. The JSON
+projection carries the optional `budget` declaration and `independentSpend` as SEPARATE named
+fields, composing neither, and OMITS either key entirely when its value is absent rather than
+emitting it undefined-valued: an in-process consumer testing key presence must not be told a gate
+declares a budget it does not.
+
 Each position-readout step token is a gate id or lifecycle-phase token (`propose`, `review(proposal)`,
 `apply`, `review(system)`, `archive`); a gate step renders its computed state (`✓` passed, `STALE`,
 `ready`, `blocked-by-gate`, `unpassed` — there is NO spend-derived token, because no
@@ -598,7 +615,7 @@ names (`next_recommended`) are unchanged — display wording only.
 `models:` map and the canonical-next command's phase or cadence slot has an entry, the rendered
 eligibility line SHALL append ` — hint: <value>` (after any ` — user-invoked` marker). Valid
 keys are the two vocabularies the engine already computes against: the active schema's phase
-ids (for `spec-driven` v4: `review-proposal`, `apply`, `review-system`, plus any other declared
+ids (under the active schema, e.g. `review-proposal`, `apply`, `review-system`, plus any other declared
 phase) and the cadence slot names (`in-context`, `fresh`, `independent`, `external`,
 `blind-pair`). When both
 the resolved command's phase AND its cadence slot carry entries, the SLOT entry wins (the more

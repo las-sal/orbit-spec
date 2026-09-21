@@ -144,7 +144,8 @@ export interface GateStatusRow {
   superseded?: boolean;
   /** D5 subset rule: unchecked user-validation handoff ids when the tracked gate passed-for-flow. */
   userValidationPending?: string[];
-  /** rc02 budget: the declaration, the reported figure, the trigger count, and the annotation.
+  /** rc02c: the inert DECLARATION (present only when declared) and the RECORDED COST. The
+   *  trigger count and the exhaustion annotation are retired.
    *  This projection is field-by-field, so a new gate-status field reaches JSON only by being
    *  named here AND in the human gate row. */
   budget?: number;
@@ -424,9 +425,12 @@ export function formatChangeStatus(context: ChangeContext, overlay?: TrailOverla
       consent: g.consent,
       superseded: g.superseded,
       userValidationPending: g.userValidationPending,
-      budget: g.budget,
-      independentSpend: g.independentSpend,
-      deferredSuggestions: g.deferredSuggestions,
+      // rc02c: OPTIONAL fields are spread conditionally, never emitted as undefined-valued keys.
+      // `Object.hasOwn(row, 'budget')` must be false on a gate that declares none — JSON hides an
+      // undefined value, but an in-process consumer of this exported function does not.
+      ...(g.budget !== undefined ? { budget: g.budget } : {}),
+      ...(g.independentSpend !== undefined ? { independentSpend: g.independentSpend } : {}),
+      ...(g.deferredSuggestions !== undefined ? { deferredSuggestions: g.deferredSuggestions } : {}),
     }));
     position = computation.position;
     // D1: entry into the apply phase carries the ` — user-invoked` marker when the

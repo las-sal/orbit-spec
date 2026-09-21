@@ -191,9 +191,11 @@ job). Removing the need beat patching the bug. (2) **Completeness is CARRIED, ne
 four consecutive reviews each found a scope where a source was reported as passing a check that
 never ran, because incompleteness was being deduced from whichever finding kinds the summary
 inspected. `scanComplete` is now cleared at every point the lint fails to fully examine a file.
-(3) The gate read `independentSpend: 4` against a budget of 3: clause (c) is `findings-resolved`,
-so PASSED means every finding is resolved, NOT that a clean independent pass stands on the final
-tree. That distinction is recorded as residual risk in the archive emit rather than implied.
+(3) The gate read `independentSpend: 4` against a budget of 3, and PASSED meant every finding was
+resolved — NOT that a clean independent pass stood on the final tree. That distinction is recorded
+as residual risk in rc07's archive emit rather than implied. (The mechanism that produced it, the
+clause-(c) confirm predicate, was RETIRED by rc02c; the distinction survives its retirement,
+because coverage and resolution still say nothing about a pass standing clean.)
 
 Four open questions came out of it and remain live — **Q-crc-14** (the lint ships with no TRIGGER:
 nothing in the repo runs it at the moments the four motivating defects were written), **Q-crc-15**

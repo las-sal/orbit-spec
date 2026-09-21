@@ -1,0 +1,178 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-21T14:48:30Z",
+  "change": "rc02c-confirmation-semantics",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc02c-confirmation-semantics/.orbit-runs/review-system-2026-09-21T14-12-34Z.json",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 5,
+    "suggestion": 4
+  },
+  "pushback_verification": "All 17 verified against current state before any fix, across both halves: instruction-loader.ts:427, gates.ts:731 and the seven comment sites read directly; the delta spec lines for the unbounded, new-finding-match, status-row and version-pin findings read directly; the architecture doc grepped for every live budgetExhausted reference and the two FORWARD-LOOKING ones separated from the many historical mentions; the mode-less test case read and its stale property access confirmed; the scenario-accounting claim re-derived by diffing all eight delta requirements against their live baselines, which CONFIRMED the external half is third rewrite. ZERO stale. One finding I nearly suppressed on a bad probe (touchpoints read the wrong JSON key and returned null) turned out to be exactly as reported.",
+  "resolution_summary": {
+    "resolved": 9,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Retired clause-(c) and budget-ceiling vocabulary survives in seven engine comments, one of which asserts exactly the reading the delta forbids",
+      "marker_source": "internal-review",
+      "file": "src/core/artifact-graph/gates.ts",
+      "line": 43,
+      "classification": "trivial_fix",
+      "action": "Merged into the vocabulary sweep with the external half’s sibling; see that entry. THIS half found trail.ts and three gates.ts comments the external half did not, and trail.ts is absent from Touchpoints, which is why no earlier sweep reached it.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "merged_into": "external #4 (vocabulary sweep)"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The Scenario accounting claims a full audit and asserts byte-identity across all eight requirements; two further scenarios were rewritten and renamed",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02c-confirmation-semantics/design.md",
+      "line": 270,
+      "classification": "trivial_fix",
+      "action": "Merged with the external half’s sibling, which was the more complete of the two; see that entry.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "merged_into": "external #6 (scenario accounting)"
+    },
+    {
+      "severity": "WARNING",
+      "title": "CLAUDE.md still asserts clause (c) in the present tense, one paragraph outside the range task 5.2b swept",
+      "marker_source": "internal-review",
+      "file": "CLAUDE.md",
+      "line": 194,
+      "classification": "trivial_fix",
+      "action": "Rewrote CLAUDE.md:194 to carry the fact without the retired mechanism — PASSED meant every finding was resolved, not that a clean independent pass stood on the final tree — with a parenthetical stating that clause (c) was retired by rc02c and the distinction survives its retirement. Left CLAUDE.md:165 alone: it records what the engine computed at rc07’s archive and is genuinely historical.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Task 4.1's version-pin sweep reports 'ONE further pin found'; a fourth pin sits inside a requirement this delta itself rewrites",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02c-confirmation-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 601,
+      "classification": "trivial_fix",
+      "action": "De-pinned the fourth example: \"for `spec-driven` v4: review-proposal, apply, review-system\" becomes \"under the active schema, e.g. ...\". The finding is right that task 4.1’s carve-out does not reach it — the carve-out covers a requirement whose SUBJECT is the shipped version, and this delta rewrites the requirement in question.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The engine's own touchpoints check reports two substantive engine source files as unpredicted",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02c-confirmation-semantics/design.md",
+      "line": 214,
+      "classification": "trivial_fix",
+      "action": "Added src/core/artifact-graph/schema.ts, types.ts and trail.ts to the Touchpoints map, with the annotation recording that task 1.2 named the first two from the start and they were absent until the engine’s own divergence check was read. My first probe of this finding read the wrong JSON key and returned null — the finding stands; the instrument was mine and wrong.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Two baseline requirements will point at a bare `design.md` that becomes unlocatable the moment the change archives",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02c-confirmation-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 131,
+      "classification": "trivial_fix",
+      "action": "Both baseline-bound pointers now name the change: \"(`rc02c-confirmation-semantics`’s `design.md`, \\\"Scenario accounting\\\")\". The finding is right that every other design.md mention in orbit/specs/ is parametric, and that a bare filename becomes unlocatable the moment the change moves into the dated archive directory.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "A reviewed gate whose mode cannot be derived suppresses the `budget` DECLARATION along with the spend, though the declaration does not depend on mode",
+      "marker_source": "internal-review",
+      "file": "src/core/artifact-graph/gates.ts",
+      "line": 715,
+      "classification": "decision_required",
+      "action": "RATIFIED BY SAL as option (A): hoisted. `budget` is now emitted whenever declared, independent of the mode check; only independentSpend stays behind it, because a spend summed across every mode’s passes would be attributed to the wrong cadence. Applied in BOTH gates.ts branches (live and blocked), carried into the spec’s mode-attribution sentence, and the test updated — including the assertion I had added minutes earlier in this same walk, which option (A) makes wrong.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "prompt",
+      "recommendation_fork": {
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Hoist the declaration: emit `budget` whenever `gate.budget !== undefined`, independent of `spendReportable`, and keep only `independentSpend` behind the mode check — matching 'SEPARATE named fields'."
+          },
+          {
+            "label": "B",
+            "body": "Keep the code as-is and amend the mode-attribution sentence in `Review budget reported beside the gate state` to say a gate whose mode cannot be derived reports neither the spend nor the declaration, so the two sentences stop disagreeing."
+          }
+        ],
+        "chosen": "A"
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The claim that the separate commit keeps this change's Touchpoints honest is contradicted by the engine's touchpoints computation",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02c-confirmation-semantics/tasks.md",
+      "line": 30,
+      "classification": "trivial_fix",
+      "action": "Rewrote what the commit separation actually bought: a reviewable diff and a commit message that explains it. It did NOT isolate Touchpoints — the divergence check is diff-scoped, not commit-scoped, so both instrument test files appear in actual_unpredicted regardless and will surface at the pre-archive sweep. Stated as expected rather than left to read as a surprise.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 5.1's closure edit left a garbled line that states two different suite counts and a dangling emphasis marker",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02c-confirmation-semantics/tasks.md",
+      "line": 30,
+      "classification": "trivial_fix",
+      "action": "Rewrote task 5.1’s head as one current-state sentence (build green, 2205/2205, validate clean at 26 items) with the blocked-then-cleared narrative moved behind explicit sub-bullets. The dangling `**`, the \"(see below)\" pointing at nothing, and the contradictory 2204/2202 pair are gone; asterisk parity checked across the file.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "walk all",
+  "final_assessment": "The FRESH half of the system blind pair, recorded as its own resolution record against its own pass. This is ONE SITTING with the external half — R-crc-4 requires the pair to merge into one walk, and this program already settled what that means: rc02 status log, 2026-09-14, \"R-crc-4 one merged walk is named as one human SITTING, not one emitted record.\" Clause (b) matches records to passes by source_path, so a single record naming only the external file would certify only the external pass and leave this one reading unresolved — the exact shape Q-crc-17 describes, a record certifying less than the walk actually did. Both records carry the same walk: 15 distinct findings across 17, 2 overlapping, zero stale, thirteen obvious-fix and two decision-lane items ratified by Sal. This record carries the nine findings this half raised; the companion record (address-reviews-2026-09-21T14-47-59Z.json) carries the external eight and the full narrative.",
+  "iteration": 4,
+  "next_recommended": "/orbit:review --as system rc02c-confirmation-semantics"
+}

@@ -109,7 +109,8 @@ export interface NormalizedGate {
   inputs: string[];
   cadence: CadenceEntry[];
   confirm: GateConfirm;
-  /** rc02: the independent-pass ceiling; absent means unbounded and never reported. */
+  /** rc02c: the DECLARED EXPECTATION of what the cadence costs; absent means no expectation is
+   *  declared. It is not a ceiling and bounds nothing — nothing consults it. */
   budget?: number;
   before?: string;
   consent?: ConsentValue;

@@ -153,6 +153,33 @@ The independent evidence is the engine itself — with clause (c) gone the recom
 architect workflow owns stage declarations. Task 5.4 carries the recommendation; ratification is
 Sal's act in `/orbit:architect`.
 
+### D7 — the retirement leaves TWO FUTURE stages holding an impossible signal, recorded not amended
+
+Found by the external half of the system blind pair. The post-apply architecture amendments marked
+Q-crc-19 delivered and superseded this stage's IMPACT block, but two FORWARD-LOOKING instructions
+in `orbit/architecture/clean-up-review-cycle.md` still require the field this change deletes:
+
+- **`rc10-apply-closure`'s charter** (line ~1476): the seam SHALL branch "on any gate that is
+  `unpassed` or carries `budgetExhausted` at the seam, not only the one whose `before` is archive".
+- **Q-crc-12's standing recommendation** (lines ~347-360): the same instruction, in the question
+  that motivated rc10's clause.
+
+Nothing is broken today — both stages are `premised`, so no code and no live prose depends on it.
+What is wrong is the PLAN: a later stage is currently instructed to consume a signal that no longer
+exists, and whoever picks up rc10 inherits a charter it cannot execute as written.
+
+**The amendment is not "delete the field", and that is why this is recorded rather than patched.**
+Q-crc-12 and rc10 were pointing at a REAL seam defect — the archive prompt is silent when the
+exhausted gate is not the gate archive watches — and that defect SURVIVES `budgetExhausted`'s
+retirement untouched. Only the vocabulary it was framed in died. The correct amendment re-frames
+the seam in terms of live gate states and whatever readiness record `rc04` ultimately ships, which
+is a scope decision about two future stages, not a find-and-replace.
+
+**Why this change does not make it.** R-crc-6: the walk authors nothing, and stage declarations
+belong to `/orbit:architect` — the same boundary D6 observes for this stage's own charter
+divergence. Task 5.4 carries the recommendation; ratification is Sal's act in an architect session.
+Ratified by Sal, 2026-09-21, as option (A) of the walk's decision lane.
+
 ## Size against R-crc-1 (measured, not estimated)
 
 R-crc-1 caps a design-heavy change at **3 capabilities / ~12 requirements / ~40 KB of delta / under
@@ -164,10 +191,10 @@ the first proposal walk:
 | Capabilities touched | 2 | ≤ 3 | inside |
 | Requirements | 8 | ~12 | inside |
 | Tasks | 18 | < 20 | inside |
-| Delta bytes | **62,720** | **~40 KB** | **153%** |
+| Delta bytes | **63,985** | **~40 KB** | **156%** |
 
-**The byte figure is over, and it is recorded rather than explained away.** Of those 62,720 bytes,
-changed lines account for **12,283 B**; the remaining **50,437 B (80%) is verbatim baseline text
+**The byte figure is over, and it is recorded rather than explained away.** Of those 63,985 bytes,
+changed lines account for **14,023 B**; the remaining **49,962 B (78%) is verbatim baseline text
 that the MODIFIED delta format obliges this change to reproduce.** Every requirement here is
 MODIFIED; none is ADDED.
 
@@ -218,8 +245,12 @@ the repeat rate, and at iteration 1 there is no repeat data for it to read.
 - `src/commands/workflow/status.ts` — the `BUDGET-SPENT` chip, the `spend N/budget` RATIO at both
   render sites (live and superseded), and the budget-presence guard on spend reporting.
 - `CLAUDE.md` — the rc02 paragraph's present-tense description of the budget signal.
-- `src/core/artifact-graph/instruction-loader.ts` — its `budgetExhausted` read AND its
-  `independentSpendFresh` declaration and projection.
+- `src/core/artifact-graph/instruction-loader.ts` — its `budgetExhausted` read, its
+  `independentSpendFresh` declaration and projection, and the public row's optional-field spreads.
+- `src/core/artifact-graph/schema.ts` + `src/core/artifact-graph/types.ts` — the `confirm`
+  inertness edits (named by task 1.2 from the start; absent here until the blind pair read the
+  engine's own divergence check).
+- `src/core/artifact-graph/trail.ts` — two comments describing spend as something `budget` counts.
 - `schemas/spec-driven/schema.yaml` — the comment describing exhaustion and the position token.
 - `test/core/artifact-graph/` — the gate-model suite; constructed-trail cases for the removal.
 - `orbit/specs/orbit-engine-gates/spec.md` + `orbit/specs/orbit-run-summary-emit/spec.md` — the two
@@ -244,7 +275,10 @@ recorded — those are RECORDS, true when written, and are never rewritten.
 
 ## Scenario accounting
 
-Both MODIFIED requirements drop or rewrite scenarios, and this is the full audit. It lives here
+FOUR of the eight MODIFIED requirements drop or rewrite scenarios, and this is the full audit.
+The list below was DERIVED by mechanically diffing each delta requirement against its live
+baseline, not restated from memory — the first two entries were written that way and the last two
+were found by the blind pair precisely because they were not. It lives here
 rather than in the spec deltas because a baseline requirement describes what is TRUE, not what a
 change once removed from it — a reader a year out would find the spec telling them about a change
 they cannot see. The spec carries a one-line pointer to this section instead.
@@ -267,10 +301,32 @@ the `BUDGET-SPENT` token, so each would have demanded behaviour this change dele
 
 The last three of those six were caught by the first proposal review, not by authoring: the
 requirement's prose was swept for the retired vocabulary and the scenarios beneath it were not.
-Every other scenario across all eight requirements is preserved byte-identically.
+Across all eight requirements, every scenario not named above is preserved byte-identically —
+verified by diff at the time of writing, which is the only way this sentence is worth anything.
 
 **`spec-driven v1 gates and cadence`.** No scenario removed or rewritten; all four are preserved
 byte-identically. Only the requirement's prose changed.
+
+**`Gate-aware status and instructions with position readout`.** REWRITTEN AND RENAMED (1):
+`A budget-exhausted gate renders its own token` becomes `Spend never renders a position token` —
+the scenario asserted the retired token's existence, so retitling it is what keeps the assertion
+honest rather than inverted under its old name.
+
+**`The gate reason names the rule that fired and the rule about to fire`.** REWRITTEN AND RENAMED
+(1): `Spend named beside the clause it displaced` becomes `The reason names the rule, never the
+spend`.
+
+**`orbit-run-summary-emit` / `Apply per-chunk-end emission`.** REWRITTEN (1, body only, no rename):
+`Apply-complete recommends the engine's canonical next` — the assigned-residue de-pin, which reads
+the schema's value from the gate graph instead of naming a version. Its sibling
+`Per-chunk touched files computed from the diff` differs only in trailing whitespace.
+
+**These last three were found by the blind pair, not by authoring**, and that is the point of
+recording the derivation method above: the earlier version of this section named the requirements
+it remembered touching and asserted completeness over all eight. Both reviewers independently
+disproved the assertion, and the external half found the `orbit-run-summary-emit` rewrite that the
+fresh half missed. Completeness is CARRIED, never INFERRED — this program's own rc07 lesson,
+arriving here as a claim that was cheaper to verify than to trust.
 
 ## Open Questions
 

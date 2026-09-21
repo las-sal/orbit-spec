@@ -730,16 +730,46 @@ describe('rc02 walk 7 — what the first blind pair found', () => {
     expect(readTrail(dir).rejectedExternals).toHaveLength(1);
   });
 
-  it('a mode-less reviewed gate reports NO budget rather than a cross-mode one', () => {
+  it('a mode-less reviewed gate reports NO SPEND rather than a cross-mode one, and keeps its declaration', () => {
     const yaml = PAIR_YAML.replace('- id: review-system', '- id: peer-check').replace(
       'cadence: [blind-pair, in-context]',
       'cadence: [independent]'
     );
     review(T(1), 'proposal', 'fresh');
     review(T(2), 'system', 'fresh');
-    const g = gate(yaml, 'peer-check');
-    expect(g.budget).toBeUndefined();
-    expect(g.budgetExhausted).toBeUndefined();
+    const g = gate(yaml, 'peer-check') as unknown as Record<string, unknown>;
+    // rc02c: the LIVE invariant is mode attribution — a gate whose mode cannot be derived from its
+    // id reports NO SPEND, rather than one summed across every mode's passes. Asserted
+    // structurally, because vitest does not type-check and `g.budgetExhausted` (the old assertion)
+    // read a property that no longer exists on GateStatus — green while covering nothing.
+    expect('independentSpend' in g).toBe(false);
+    expect('budgetExhausted' in g).toBe(false);
+    // rc02c walk (system pair): the DECLARATION survives mode-underivability. It is schema text;
+    // only the spend is mode-attributed. The two are gated separately, by design.
+    expect(g.budget).toBe(3);
+  });
+
+  // rc02c (external system pass, iter 1): the no-undefined-key rule must hold at the PROJECTION
+  // layer too. computeGateStates honoured it while formatChangeStatus reconstructed every row
+  // unconditionally, putting `budget: undefined` back on the public object — invisible to JSON,
+  // visible to an in-process consumer testing key presence.
+  it('the public status row omits an undeclared budget as a KEY, not merely as a JSON value', async () => {
+    const { loadChangeContext, formatChangeStatus } = await import(
+      '../../../src/core/artifact-graph/instruction-loader.js'
+    );
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'rc02c-proj-'));
+    const cd = path.join(root, 'orbit', 'changes', 'c');
+    fs.mkdirSync(path.join(cd, 'specs'), { recursive: true });
+    fs.mkdirSync(path.join(cd, '.orbit-runs'), { recursive: true });
+    for (const f of ['proposal.md', 'design.md']) fs.writeFileSync(path.join(cd, f), '# x');
+    fs.writeFileSync(path.join(cd, 'specs', 's.md'), '# s');
+    fs.writeFileSync(path.join(cd, 'tasks.md'), '- [ ] one\n');
+    const status = formatChangeStatus(loadChangeContext(root, 'c'));
+    const applyRow = status.gates.find(g => g.id === 'apply')! as unknown as Record<string, unknown>;
+    // A TRACKED gate declares no budget and computes no spend: neither key may be present.
+    expect('budget' in applyRow).toBe(false);
+    expect('independentSpend' in applyRow).toBe(false);
+    fs.rmSync(root, { recursive: true, force: true });
   });
 
   // rc02c: there is no ceiling left for the naming to be "below" — it is unconditional, which is
