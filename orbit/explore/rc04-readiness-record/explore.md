@@ -330,6 +330,48 @@ is separately gone: rc02c made `budget` inert, so no cadence can end exhausted (
   PR one is a prose reference rather than an instruction. That is body work in a capability rc04
   does not otherwise touch, and it belongs in the size check before this promotes.
 
+- **2026-09-21 — D-rc04-18: the SIZE CHECK says SPLIT — 10 capabilities against a ceiling of 3.**
+  Run before promotion rather than discovered by a reviewer, which is what R-crc-1 asks for
+  ("a proposal over the ceiling is split before review, never reviewed as one") and what R-crc-9
+  applied PREVENTIVELY looks like.
+
+  **Measured, not estimated.** The charter names three capabilities. The mechanism as settled in
+  D-rc04-14/15/16/17 touches TEN, and the gap is not scope creep — it is the charter having been
+  written before the mechanism existed. `orbit-emit-composition` (the write-gate ordering rule);
+  `orbit-run-summary-emit` (the fields on three emits); `orbit-archive-modifications` (readiness +
+  the completion-readout reader); `orbit-review` and `orbit-review-external` (exit (1)'s forward
+  recommendation, both classes); `orbit-report-rendering` (the recommendation must RENDER — D4
+  owns the report and Commentary is a quarantined slot there); `orbit-orientation` (D-rc04-16's
+  status reader); and `orbit-engine-gates`, `orbit-pr-lifecycle`, `orbit-conventions` — because
+  **`gate_overridden` occurs in SIX baseline specs**, not the one the charter implies. **3.3x the
+  ceiling.**
+
+  **RECOMMENDED SPLIT — three stages, each AT the ceiling, ordered by dependency.**
+  **rc04a — the judgement record.** The continuation and readiness slots plus the write-gate
+  ordering rule. Touches `orbit-emit-composition`, `orbit-run-summary-emit`,
+  `orbit-archive-modifications` = 3. `gate_overridden` keeps being written; the two coexist. Ships
+  with ONE reader (the archive completion readout), which satisfies exit (4) — a second reader is
+  not needed to avoid write-only.
+  **rc04b — the forward recommendation.** Every independent pass emits one; it renders. Touches
+  `orbit-review`, `orbit-review-external`, `orbit-report-rendering` = 3. Depends on rc04a only
+  loosely: a readiness record cites pass TOKENS whether or not those passes carry recommendations,
+  so rc04a does not block on this.
+  **rc04c — retire `gate_overridden`.** Touches `orbit-engine-gates`, `orbit-pr-lifecycle`,
+  `orbit-conventions` = 3, plus the four workflow-template bodies D-rc04-17 names. MUST follow
+  rc04a, because `continuation/proceed` has to exist before the record it replaces can go.
+  `orbit-orientation`'s status reader defers to rc04c or later — it is the SECOND reader, and exit
+  (4) is already satisfied by the first.
+
+  **What the split costs, stated so it is not discovered later**: `gate_overridden` and
+  `continuation/proceed` coexist between rc04a and rc04c, which is two records for one fact — the
+  exact defect this program keeps catching. It is accepted deliberately and BOUNDED by rc04c being
+  declared up front rather than hoped for. The alternative — one stage at 3.3x the ceiling — is
+  what R-crc-1 exists to prevent, and rc02's six-pass proposal cadence is what it costs.
+
+  **This is a SCOPE call, so it is a recommendation and not a decision** (D-rc04-3 as amended):
+  the AI classifies and recommends, Sal decides. Splitting a chartered stage into three is
+  architecture work and belongs to `/orbit:architect`, not to this exploration.
+
 ## Open questions
 
 - **Q-rc04-c — how far does D4's commentary prohibition narrow?** It currently forbids a reviewer
