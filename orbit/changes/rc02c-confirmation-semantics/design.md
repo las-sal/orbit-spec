@@ -89,6 +89,75 @@ prose carries the meaning.
 (baseline lines 278 and 343, both reading "under `spec-driven` v3"). The schema is at v4. rc02
 assigned this residue to whichever stage next touched the cadence vocabulary; that is this one.
 
+### D6 — this change DIVERGES from its own stage charter, and the divergence is recorded here
+
+The stage's R-crc-11 IMPACT block (2026-09-21, Sal) says the ruling "does not delete clause (c) but
+does change what it is FOR": the predicate was to shrink to reporting what is MISSING, reading the
+readiness record's existence but never its content. The stage's exit criteria follow from that —
+**(1)** the predicate specified as a table whose every cell has a value, **(2)** a constructed trail
+per cell as a test, **(3)** the pair's earlier member cannot be invisible.
+
+**This change deletes the predicate outright**, so (1) and (2) cannot be met as written. That is a
+divergence from a dated, user-authored charter, and it is named here rather than left for a reader
+to discover from the gap between the stage declaration and the shipped specs.
+
+The reason the shrunken predicate was not built: there was nothing left for it to do. "What is
+MISSING from the cadence" is COVERAGE, and clause (a) already computes coverage over the declared
+cadence slots — a third clause reporting the same fact would be a second voice on one question,
+which is the defect class clause (c) kept producing. The exploration reached the same place from
+the other direction (D-rc02c-5/6): under R-crc-11 a cadence ends when the AI judges the work ready
+knowing what the reviewers returned, and no predicate can compute that judgement without the
+readiness record, which rc04 owns and has not written.
+
+**Disposition of the three exit criteria**: (1) and (2) DISSOLVE with the predicate — there is no
+table to specify and no cells to construct trails for. (3) is SATISFIED, but by dissolution rather
+than by design: with no selection rule left, a blind pair's earlier member cannot be invisible to
+one, and a clean set cannot certify a later unreviewed CRITICAL because nothing certifies anything.
+The independent evidence is the engine itself — with clause (c) gone the recommendation function's
+`confirmFailed` branch becomes unreachable, so no gate state is stranded by the removal.
+
+**This change does not amend the architecture doc.** R-crc-6 — the walk authors nothing — and the
+architect workflow owns stage declarations. Task 5.4 carries the recommendation; ratification is
+Sal's act in `/orbit:architect`.
+
+## Size against R-crc-1 (measured, not estimated)
+
+R-crc-1 caps a design-heavy change at **3 capabilities / ~12 requirements / ~40 KB of delta / under
+20 tasks**, and says a proposal over the ceiling is split before review. Measured at the close of
+the first proposal walk:
+
+| Dimension | This change | Ceiling | |
+|---|---|---|---|
+| Capabilities touched | 2 | ≤ 3 | inside |
+| Requirements | 8 | ~12 | inside |
+| Tasks | 18 | < 20 | inside |
+| Delta bytes | **62,555** | **~40 KB** | **153%** |
+
+**The byte figure is over, and it is recorded rather than explained away.** Of those 62,555 bytes,
+changed lines account for **12,117 B**; the remaining **50,438 B (81%) is verbatim baseline text
+that the MODIFIED delta format obliges this change to reproduce.** Every requirement here is
+MODIFIED; none is ADDED.
+
+That distinction is why the change is not split. R-crc-1's calibration anchor is c2-parallel-merge
+— 2 capabilities / 9 requirements / 21,623 B — and **7 of c2's 9 requirements were ADDED**, where
+bytes and novel content are nearly the same quantity. On a wholly-MODIFIED change they are not, so
+comparing this delta's byte count to a ceiling calibrated on an ADDED-heavy change measures two
+different things. The ruling anticipates this: *"Capabilities touched predicts cost better than
+bytes."* On that dimension, and on requirements and tasks, this change sits comfortably inside.
+
+**Cadence consequence.** R-crc-4 describes a near-ceiling proposal running a blind pair rather than
+a single independent pass. The program has already placed that mechanism: the status-log entry of
+2026-09-14 assigns it to **rc09**, *"which owns the size computation it needs"* — and the
+`spec-driven v1 gates and cadence` requirement states in normative prose that the proposal gate's
+cadence is NOT conditional, with a near-ceiling pair run by choice rather than by the cadence. The
+proposal cadence therefore runs as DECLARED (`[independent, in-context]`). No pair is bought here,
+and the reason is the program's own prior ruling, not this change's convenience.
+
+One argument was available and is explicitly NOT made: the first fresh pass returned 6 CRITICAL,
+which is rich. **R-crc-8 forbids reading that as a license** — finding quality never licenses
+another pass, the discriminating measure is concentration in walk-authored material controlled by
+the repeat rate, and at iteration 1 there is no repeat data for it to read.
+
 ## Alternatives considered
 
 - **`stands` as the redesigned clause (c)** — an independent pass stands iff it carried zero
@@ -136,6 +205,36 @@ assigned this residue to whichever stage next touched the cadence vocabulary; th
 Additive-to-subtractive with no data migration. No schema version bump; `budget` declarations stay
 valid and simply stop being consulted. Emits already written keep whatever `budgetExhausted` they
 recorded — those are RECORDS, true when written, and are never rewritten.
+
+## Scenario accounting
+
+Both MODIFIED requirements drop or rewrite scenarios, and this is the full audit. It lives here
+rather than in the spec deltas because a baseline requirement describes what is TRUE, not what a
+change once removed from it — a reader a year out would find the spec telling them about a change
+they cannot see. The spec carries a one-line pointer to this section instead.
+
+**`Reviewed-gate pass condition` — clause (c).** REMOVED (3): `The confirming pass is the most
+recent independent one` (asserted the selection rule that no longer exists), `Independent
+confirmation required` (asserted the predicate's failure mode), `A new suggestion does not repeat
+the loop` (asserted the new-finding match inside `no-new-findings`). REWRITTEN (1): `System gate
+converges on a resolved external` — its assertion survives as a clause-(b) fact once the
+confirmation framing is gone.
+
+**`Review budget reported beside the gate state` — the signal.** REMOVED (2): `Budget exhausted on
+an unconverged gate` and `Convergence beats budget`, both asserting the precedence of an exhaustion
+signal that no longer exists. REWRITTEN (6): `Stale passes count in the reported spend, not in the
+trigger` (there is no trigger); `No budget declared` (its contrast was exhaustion-versus-none);
+`A stale gate reports its spend`, `A blocked reviewed gate reports the spend already on its trail`
+and `The closed-set consumers are untouched` (each ASSERTED the retired `budgetExhausted` field or
+the `BUDGET-SPENT` token, so each would have demanded behaviour this change deletes); and
+`A rejected external return still costs` (dropped an inert `against budget: 3` framing).
+
+The last three of those six were caught by the first proposal review, not by authoring: the
+requirement's prose was swept for the retired vocabulary and the scenarios beneath it were not.
+Every other scenario across all seven requirements is preserved byte-identically.
+
+**`spec-driven v1 gates and cadence`.** No scenario removed or rewritten; all four are preserved
+byte-identically. Only the requirement's prose changed.
 
 ## Open Questions
 

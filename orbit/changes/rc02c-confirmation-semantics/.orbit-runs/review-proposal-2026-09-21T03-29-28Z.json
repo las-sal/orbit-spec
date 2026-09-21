@@ -1,0 +1,227 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-21T03:29:28Z",
+  "change": "rc02c-confirmation-semantics",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m] (fresh clean-context subagent)",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 1,
+      "warning": 2,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 4,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 1,
+      "warning": 5,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "CRITICAL",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc02c-confirmation-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 5,
+      "title": "The requirement's opening SHALL still demands ALL THREE clauses while its body says there is no third",
+      "recommendation": "Line 5 reads `A reviewed gate SHALL pass when ALL of the three clauses below hold`; line 106 reads `The convergence criterion is clauses (a) and (b) ONLY. There is no third clause.` This is the requirement's normative sentence contradicting the change's central decision, and it syncs into the baseline verbatim. Rewrite line 5 to `A reviewed gate SHALL pass when BOTH of the two clauses below hold` (and check the following sentence's `every rule in them` still reads correctly)."
+    },
+    {
+      "pass": "2",
+      "severity": "CRITICAL",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc02c-confirmation-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 386,
+      "title": "Three scenarios declared 'preserved byte-identically' still assert budgetExhausted and the BUDGET-SPENT token",
+      "recommendation": "The requirement claims at line 326-332 that only two scenarios were removed and two rewritten, and that `Every other scenario is preserved byte-identically`. But `A stale gate reports its spend` (line 386) asserts `budgetExhausted is set, and the position token reads STALE BUDGET-SPENT`; `A blocked reviewed gate reports the spend already on its trail` (line 360) asserts `budgetExhausted: false`; and `The closed-set consumers are untouched` (line 404) opens `WHEN a budget-exhausted gate is read by ...`. All three assert the exact signal tasks 2.1/2.2 delete, so the synced baseline would demand behaviour the implementation cannot provide. Rewrite all three (stale gate: state stays `stale`, token reads `STALE`, spend appears only in `independentSpend`; blocked gate: drop the `budgetExhausted: false` clause; closed-set consumers: restate the WHEN as an unpassed gate whose recorded spend is high) and correct the removal/rewrite inventory at line 326 so it names five, not four."
+    },
+    {
+      "pass": "2",
+      "severity": "CRITICAL",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc02c-confirmation-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 671,
+      "title": "The gate-reason requirement still lists 'the spend clause' among the notes its reason carries",
+      "recommendation": "Line 648-650 now says the reason names the uncovered slot or the unresolved pass `and NEVER the spend`. Line 671-673 still reads `Two further notes ride the same slot: the spend clause and a passed gate whose walk deferred SUGGESTION-grade findings` - the deletion removed the qualifier (`when the declared budget is reached`) but left the clause itself and the now-wrong count. Replace with `One further note rides the same slot: a passed gate whose walk deferred SUGGESTION-grade findings (reported, never blocking).`"
+    },
+    {
+      "pass": "6",
+      "severity": "CRITICAL",
+      "dimension": "completeness",
+      "file": "src/commands/workflow/status.ts",
+      "line": 226,
+      "title": "The status row's `spend N/budget` ratio - the `4 of 3` readout Q-crc-19 names as the harm - is neither retired nor specified",
+      "recommendation": "Both gate-row renders (lines 202-210 for superseded gates, 223-231 for live ones) print `[spend ${independentSpendFresh}/${budget} ...]`. That ratio IS the `4 of 3` line Q-crc-19 cites as its entire evidence (`the only effect of that line was to make a good decision feel like a transgression`). Task 2.2 removes only the `BUDGET-SPENT` chip; nothing says what the ratio becomes, and deleting `independentSpendFresh` (task 2.1) leaves the expression broken, so an implementer must invent the replacement. Worse, the delta's own prohibition at line 296-298 enumerates `gate state, reason string, position token or recommendation` - a terminal gate row is none of those, so the spec as written permits `spend 4/3` to survive. Add a sentence to the budget requirement stating that no surface renders spend AGAINST the declaration (the figure renders alone), and add a task removing the ratio from both render sites."
+    },
+    {
+      "pass": "4",
+      "severity": "CRITICAL",
+      "dimension": "correctness",
+      "file": "orbit/specs/orbit-engine-gates/spec.md",
+      "line": 528,
+      "title": "The baseline requirement `spec-driven v1 gates and cadence` keeps confirm's repeat rules and budget-sized-for-a-repeat, and is not in the delta",
+      "recommendation": "Lines 528-543 of the live baseline say `The proposal gate's no-new-findings confirm matches its repeat rule (the independent+address pair repeats while the independent pass yields new substantive findings); the system gate's findings-resolved confirm matches its repeat rule (a further independent pass is bought only by a CRITICAL...)` and `The budget is sized for that choice being made - one independent pass, a second by choice, and one repeat - so exercising it never exhausts spend before a repeat is possible.` After this change there are no repeat rules and no exhaustion, and `confirm` is inert. This requirement is NOT among the six MODIFIED deltas, so the post-apply baseline would carry normative prose describing the retired mechanism - and it directly defeats design D3's stated obligation to stop a reader concluding that `budget: 3` constrains something. Add a seventh MODIFIED delta for this requirement (with its base fingerprint), or state in design why it is deliberately left."
+    },
+    {
+      "pass": "3",
+      "severity": "CRITICAL",
+      "dimension": "coherence",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 982,
+      "title": "The stage's three exit criteria presuppose a shipped predicate, and the change names no amendment",
+      "recommendation": "The stage declaration's exit criteria are `(1) the predicate is specified as a table whose every cell has a value ... (2) a constructed trail for each cell is a test; (3) the pair's earlier member cannot be invisible...`. This change ships no predicate and no table, so (1) and (2) cannot be met as written - and the stage's own R-crc-11 IMPACT block (line 954-958, dated by Sal) says the ruling `does not delete clause (c)` and that `the predicate may read the record's existence but never its content`. Deleting the predicate outright reverses that. The reversal is well-reasoned and user-grounded (explore D-rc02c-5 quotes Sal's practice), but nothing in proposal.md, design.md or tasks.md names it: task 5.4 recommends architect amendments for the three inherited problems and Q-crc-19 only. Add a design decision recording the charter divergence (exit criteria (1)/(2) dissolved with the predicate; (3) satisfied by dissolution) and extend task 5.4's recommended amendment list to cover the exit criteria and the `does not delete clause (c)` line."
+    },
+    {
+      "pass": "9",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc02c-confirmation-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 494,
+      "title": "The position-token sentence is left mangled, and now lists both `STALE` and `stale`",
+      "recommendation": "Lines 493-497 read `... a gate step renders its computed state (`checkmark` passed, `STALE`, `ready`, `blocked-by-gate`, `unpassed`, `stale` - there is NO spend-derived token ... and a `stale` gate's / has, or `(past)` for a superseded gate)`. Two defects: the token list now contains both `STALE` (what the engine renders, gates.ts:938) and a lowercase `stale` the engine never renders; and the trailing fragment `and a stale gate's has,` is orphaned prose left over from the deleted BUDGET-SPENT clause. The baseline was already damaged here, but this delta rewrites the sentence and so owns it. Drop the lowercase `stale` and the orphan fragment so the parenthetical closes cleanly."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc02c-confirmation-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 317,
+      "title": "Deleted spend prose leaves two preserved scenarios unsupported and mode-less gates unspecified",
+      "recommendation": "The rewrite of `Spend counts REJECTED returns too` (lines 317-324) deletes two normative sentences the delta does not replace: (a) `the gate's reason SHALL name them (1 external return rejected as malformed - <filename>)`, which the preserved scenario `A rejected external return still costs` (line 379) still asserts (`the rejected artifact is named in the reason`) - and which now sits awkwardly against the reason requirement's new `NEVER the spend` rule; and (b) `A rejected artifact is ATTRIBUTED to the mode in its filename ... a reviewed gate whose mode cannot be derived from its id reports no budget at all rather than counting passes of every mode`, which is the rule behind the live `mode !== null` guard (gates.ts:751). With (b) gone and reporting now unconditional, what a mode-underivable reviewed gate reports is unspecified. Restore both sentences (trimmed of exhaustion vocabulary), or drop the scenarios that depend on them."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc02c-confirmation-semantics/tasks.md",
+      "line": 11,
+      "title": "`independentSpend` becomes unconditional on a declared budget, and no task directs the change",
+      "recommendation": "The rewritten scenario `No budget declared` (delta line 398-402) now asserts `independentSpend is still reported and the gate behaves identically to one that declares a budget`, where the baseline asserted the gate `behaves exactly as before the attribute existed`. That is a real behaviour change: today `reportable = gate.budget !== undefined && mode !== null` (gates.ts:751, 779) suppresses all three fields when no budget is declared, and status.ts renders the spend only `if (g.budget !== undefined)`. Task 2.1 says only `independentSpend SURVIVES`, which reads as unchanged. Add an explicit task removing the budget-presence condition from spend reporting (engine + both status render sites), or revert the scenario to the baseline's reading."
+    },
+    {
+      "pass": "1",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc02c-confirmation-semantics/.openspec.yaml",
+      "line": 4,
+      "title": "The touched `orbit-run-summary-emit` requirement carries no base fingerprint",
+      "recommendation": "`node bin/orbit.js fingerprint --check rc02c-confirmation-semantics --json` reports `orbit-run-summary-emit / Apply per-chunk-end emission` as `unverified` (6 verified, 1 unverified). `orbit-base-fingerprints` requires that every workflow generating delta specs stamp `base_fingerprints` for every touched baseline requirement; with none stored, C2's archive-time divergence guard has nothing to compare for that requirement and a parallel edit to the live baseline would be overwritten silently. Run `node bin/orbit.js fingerprint rc02c-confirmation-semantics` (add-missing-only) and commit the updated `.openspec.yaml`."
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "CLAUDE.md",
+      "line": 140,
+      "title": "CLAUDE.md's live description of the budget signal goes stale at apply, and no task updates it",
+      "recommendation": "CLAUDE.md lines 139-143 describe current engine behaviour in the present tense: `Each reviewed gate declares a budget, and exhaustion is reported BESIDE the five-value state - a budgetExhausted boolean, a spend clause in the reason, a distinct position token ... independentSpend (whole trail) is display, while independentSpendFresh is the trigger.` All of that is false after this change. (Lines 164-165 and 193 are archive narrative and stay true as history.) Add a task rewriting that passage, or state in design that CLAUDE.md's rc02 paragraph is historical record and will be amended with the architect pass."
+    },
+    {
+      "pass": "7",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/specs/orbit-run-summary-emit/spec.md",
+      "line": 385,
+      "title": "A third version-pinned example sits one requirement away and is outside the delta",
+      "recommendation": "Task 4.1 requires verifying `no other spec or body pins a schema version in an example sentence`. Running it: `orbit/specs/orbit-run-summary-emit/spec.md:385` (requirement `Verify pass recommendation`) reads `\"/orbit:review --as system --fresh foo\" under spec-driven v4, whose first uncovered system slot is blind-pair` - the same pinned-example shape as the two being fixed, currently accurate and structurally guaranteed to go stale at the next bump. The delta touches only `Apply per-chunk-end emission`, so an implementer executing 4.1 will find it with no instruction and would have to author spec during apply.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Add `Verify pass recommendation` as a second MODIFIED requirement in the orbit-run-summary-emit delta (with its base fingerprint) and de-pin the example the same way."
+        },
+        {
+          "label": "B",
+          "body": "Keep the delta at one requirement and amend task 4.1 to record line 385 as a known, currently-accurate pin deliberately left to the stage that next touches that requirement - so the sweep has a defined answer instead of an open one."
+        }
+      ]
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc02c-confirmation-semantics/design.md",
+      "line": 123,
+      "title": "The delta is ~58 KB against R-crc-1's ~40 KB ceiling and no artifact records the measurement",
+      "recommendation": "R-crc-1 caps a design-heavy change at 3 capabilities / ~12 requirements / ~40 KB of delta / under 20 tasks, and says `A proposal over the ceiling is split before review, never reviewed as one`. Measured: 2 capabilities, 7 requirements, 15 tasks - all comfortably inside - but 57,688 bytes of delta, 144% of the byte ceiling. Almost all of it is baseline text the MODIFIED delta format obliges you to reproduce (the novel prose is roughly 6 KB), so the spirit of the ceiling is not breached; but neither proposal.md nor design.md records the measurement, and R-crc-4 makes a near-ceiling proposal the trigger for running the blind pair rather than a single independent pass. This is exactly the kind of judgement input R-crc-10 says to RECORD.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Add a short size paragraph to design.md recording all four dimensions, noting that the byte figure is dominated by mandatory MODIFIED reproduction, and stating that the proposal cadence therefore runs as declared."
+        },
+        {
+          "label": "B",
+          "body": "Record the measurement AND run the proposal blind pair by choice (an external pass alongside this fresh one), per R-crc-4's near-ceiling clause and the baseline note that the proposal cadence is not conditional in the engine."
+        }
+      ]
+    },
+    {
+      "pass": "9",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc02c-confirmation-semantics/sketches/stands-decision-table.py",
+      "line": 1,
+      "title": "The carried-forward sketch carries no header saying it is rejected mechanism",
+      "recommendation": "The file begins at `SUB = ('CRITICAL','WARNING')` with no module docstring. It runs clean (12 cells, 0 mismatches), and design D4 justifies carrying it - but a reader who finds an executable `stands()` in a change's sketches/ has every reason to think it defines shipped mechanism, and nothing in the file says otherwise. Nothing references it either: no task mentions it, and after archiving it will sit under a dated directory with no pointer from rc04 or Q-crc-18. Add a 4-6 line docstring naming its status (NOT SHIPPED; rejected as a clause by D-rc02c-5/6; re-homed as a recorded fact under R-crc-11(h)), its intended future reader (Q-crc-18's reading surface / rc04), and how to run it. Note also that the file contains the twelve constructed cells only - the `validated against all eleven real trails` measurement explore.md credits it with is not in it."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc02c-confirmation-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 111,
+      "title": "The `eleven archived changes / only THREE` measurement states no population",
+      "recommendation": "This figure is the change's headline evidence and it will live in the baseline permanently, but neither the spec, design.md nor explore.md says which eleven. The archive holds 19 changes, 16 with a trail, 13 from the gate era; I could only recover `eleven` by hypothesis (C1-onward changes that ran a review-system pass = exactly 11). Six words fix it: `Measured across the eleven gate-era archives that ran a system review, only THREE ...`. (I tried to reproduce the count independently and got a higher number, then found my own instrument was wrong - it scored `review-external-*.json` T0 handoff packaging emits as clean independent passes - so this is a reproducibility note, not a challenge to the figure.)"
+    },
+    {
+      "pass": "7",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc02c-confirmation-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 379,
+      "title": "A preserved scenario still frames itself `against budget: 3`",
+      "recommendation": "`A rejected external return still costs` (line 379-383) sets up `one valid independent pass exists, against budget: 3`. The declaration is now inert and irrelevant to what the scenario asserts (the spend is two, the artifact satisfies no slot). Dropping `, against budget: 3` removes the last suggestion that the number participates in the computation."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc02c-confirmation-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 130,
+      "title": "Two change-scoped audit paragraphs will live in the baseline permanently",
+      "recommendation": "`SCENARIOS REMOVED WITH THE CLAUSE, named so the drop is auditable rather than silent` (line 130-136) and `SCENARIOS REMOVED OR REWRITTEN WITH THE SIGNAL` (line 326-332) are excellent review aids, and they are also change-log prose that a MODIFIED delta syncs verbatim into a document that describes current state. A year from now the baseline will tell readers which scenarios a change they cannot see once removed. Consider keeping them in design.md (where the same auditability is served) and leaving the baseline requirement to describe only what is true - or trimming them to one line each after the delta has been reviewed."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "A subtraction reviews differently from an addition: there is very little new text, and almost all of the risk lives in the seams where removed mechanism used to be load-bearing. So I spent the pass diffing rather than reading. I reconstructed every MODIFIED requirement against its live baseline programmatically, scenario by scenario, and audited the change's own claim that everything not named was preserved byte-identically. That claim is true for the scenario BODIES - 25 of them are byte-for-byte identical, and the inventory of what was removed and why is unusually honest for a subtraction. It is not true for what those scenarios ASSERT: three of them still demand the retired signal, and two more lost the prose that made them meaningful. The pattern behind most of the findings is the same shape as that: the change swept its vocabulary through the paragraphs it rewrote, and stopped at the edges of those paragraphs - the requirement's own opening sentence, the scenarios below it, a sibling requirement one screen away, and a terminal render two files over.\n\nWhat I tried hardest to break and could not: the central argument. I read R-crc-11, Q-crc-19 and the stage charter first and looked for a stage quietly widening its own scope, which is the usual failure of a change that deletes a predicate. It is the opposite - the design refuses three things it could plausibly have shipped (the readiness obligation, `stands`, the walk-invalidation rule), and each refusal is argued from sequencing rather than from effort. D2's reasoning that shipping the readiness clause before rc04 writes the record would fail every gate is correct and is the strongest paragraph in the change. I also traced the removal through the engine to check the claim that no review is lost: with clause (c) gone, the recommendation function's `confirmFailed` branch becomes genuinely unreachable (every unpassed state is already claimed by an earlier slot or resolution branch, and the tail falls through to the stale case), so the deletion does not strand a state - the claim holds under reading, not just under assertion. The blind-pair invisibility defect really does dissolve rather than move. D4b's decision to keep a stale-sounding requirement title rather than trigger a RENAMED operation is right for the reason given, and the fingerprint evidence cited for it is real. And the residue fix is exact: baseline lines 278 and 343 are precisely the two v3 pins, and the replacement text de-pins rather than re-pinning.\n\nThe one place I went looking for a bad number and found my own instrument was wrong is worth recording. I tried to reproduce `only three of eleven` across the archive by re-implementing the sketch's `stands` over the real trails, and got a much higher count - until I noticed my reader was counting `review-external-*.json` T0 handoff packaging emits as clean independent passes, and that my token extraction was comparing filename fragments rather than timestamps. Both bugs inflate the result in the change's disfavour. That is the rc01 lesson landing on the reviewer instead of the author, and it is why the finding I filed is about stating the population, not about the figure.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "final_assessment": "6 critical, 8 warning, 3 suggestion.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc02c-confirmation-semantics --from-file orbit/changes/rc02c-confirmation-semantics/.orbit-runs/review-proposal-2026-09-21T03-29-28Z.json"
+}

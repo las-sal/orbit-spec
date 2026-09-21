@@ -1,6 +1,9 @@
 schema: spec-driven
 created: 2026-09-21
 schema_version: 4
+architecture:
+  doc: clean-up-review-cycle
+  stage: rc02c-confirmation-semantics
 base_fingerprints:
   orbit-engine-gates:
     Reviewed-gate pass condition — the computed convergence criterion: sha256:deaf4aa3830218572e3fe70a65dd090817aa8afb00187ff8ac1466f4f332e0a3
@@ -9,6 +12,6 @@ base_fingerprints:
     Gate-aware status and instructions with position readout: sha256:3649ad0dae7251eb2ed757b5d362ce3e2cc15c071c5fd7e6bec4184ce92e44cf
     Single-voiced canonical-next computation: sha256:384345ac206ef82b689d74a698b9af5a6a6eba9263627c63299565599377153e
     The gate reason names the rule that fired and the rule about to fire: sha256:a87df982ff5299dc7d3df4e644e45c0298105a31af8c342a41cb33c3add87737
-architecture:
-  doc: clean-up-review-cycle
-  stage: rc02c-confirmation-semantics
+    spec-driven v1 gates and cadence: sha256:8c07c0205a957131ffdc2f833878d1d802775d26c396d21b53a0fc64a9786ba9
+  orbit-run-summary-emit:
+    Apply per-chunk-end emission: sha256:a256346776ed5b032813a6abbbd5bf24ef377dd0724fd674954d66f6b364ad7f

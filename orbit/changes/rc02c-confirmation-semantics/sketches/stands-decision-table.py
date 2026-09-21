@@ -1,3 +1,20 @@
+"""`stands` — REJECTED MECHANISM. NOT SHIPPED by this change.
+
+This predicate was built during rc02c's exploration as the replacement for clause (c): a
+self-sufficient test for whether an independent pass STANDS on the current state. It was rejected
+as a gate clause by D-rc02c-5/6 — a cadence ends when the AI judges the work ready knowing what the
+reviewers returned (R-crc-11), not when a predicate says the reviewers stopped finding things — so
+rc02c retires clause (c) outright rather than replacing it. The idea is RE-HOMED as a recorded
+fact under R-crc-11(h): what a future reading surface (Q-crc-18 / `rc04-readiness-record`) may want
+to SHOW a human, never something a gate computes a verdict from.
+
+Scope note: this file holds the TWELVE CONSTRUCTED CELLS only. explore.md line 105 also credits the
+predicate with validation against eleven real archived trails; that run was done separately against
+`.orbit-runs/` and is NOT reproduced here.
+
+Run: python3 stands-decision-table.py  (no deps; prints the table and a mismatch count)
+"""
+
 SUB = ('CRITICAL','WARNING')
 def stands(trail):
     """D-rc02c-3 (refined by cell F): an independent pass STANDS iff
