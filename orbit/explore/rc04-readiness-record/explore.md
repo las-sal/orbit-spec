@@ -234,6 +234,50 @@ is separately gone: rc02c made `budget` inert, so no cadence can end exhausted (
   must cite passes by TOKEN**, with prose as commentary beside it rather than instead of it.
   Whatever else rc04 ships, this is the part that makes it checkable rather than merely tidy.
 
+- **2026-09-21 — D-rc04-14: SHIP BOTH SHAPES** (Sal, ratifying D-rc04-13's standing
+  recommendation). The stage carries the CONTINUATION judgement and the TERMINAL readiness
+  assertion, not the terminal one alone. They are not independent: a readiness assertion CITES
+  continuation decisions as its reasons — *"I accepted the residual because I bought a scoped pass
+  and it came back sound"* is one statement spanning both shapes, and structuring half of it leaves
+  the citation dangling back in prose, which is the failure this stage exists to remove. Accepted
+  cost: a larger stage than chartered, the second time rc04 grew today (the first being exit (4)
+  turning out to be answerable).
+
+- **2026-09-21 — D-rc04-15: the SLOT, worked out from the four qualifying judgements.**
+
+  **ONE SPINE, two kinds.** Every record carries: `kind` (`continuation` | `readiness`);
+  `formed_against` — a NON-EMPTY list of independent pass TOKENS, which is the whole checkable
+  surface and the reason D-rc04-13's test is the test; `disposition`, whose value set varies by
+  kind; `reasoning` (prose, R-crc-10); and `ratified_by` (`ai` | `user`), required because
+  D-rc04-3 as amended makes the difference between the AI's own belief and a Sal ratification a
+  thing the record must STATE rather than imply.
+
+  **`kind: continuation`** — formed mid-cadence, "given what came back, what next?".
+  `disposition` is `proceed` (past a gate that says no — today's `gate_overridden`) or `spend`
+  (buy a further pass past a gate that says yes — what has no home at all). The `proceed` case
+  additionally carries `gate`, `gate_state` and `gate_reason`, which is exactly `gate_overridden`'s
+  existing payload, so the generalisation is ADDITIVE and the old record's content survives intact.
+
+  **`kind: readiness`** — formed at the cadence's end. `disposition` is `ready` or `not-ready`, the
+  latter carrying the destination D-rc04-3 names (architecture) and being a RATIFIED disposition
+  rather than an autonomous one. It additionally carries `accepted`: a list of `{claim, why}` pairs
+  — the residuals, which are the assertion's CONTENT and not peer judgements. rc02c's would have
+  held three: the capture-recapture residual, the passed-gate-is-not-a-clean-pass reading, and the
+  stale cross-reference deferred to audit-drift.
+
+  **THE ENGINE RULE, and it is the only one.** Every token in `formed_against` MUST precede the
+  record's own timestamp, and a record violating that is REFUSED at the write gate — the
+  materialize-first shape `orbit-emit-composition` already uses. Nothing else here is computed: the
+  engine never judges whether the AI was RIGHT to be ready, only that the claim could have been
+  informed. This is exit (3) finally with something to check, because the citation is BY TOKEN
+  rather than the prose citation `gate_overridden` carries today.
+
+  **NO NEW TRAIL LOCATION IS NEEDED**, verified against rc02c's archived trail: every qualifying
+  judgement already lands on an emit that exists. `continuation/proceed` on the APPLY emit (where
+  `gate_overridden` lives now) and on ARCHIVE; `continuation/spend` on the `review-external` T0
+  emit, written at exactly the moment that decision is taken; `readiness` on the ARCHIVE emit. The
+  stage adds fields to three existing payload tables and invents no fourth trail.
+
 ## Open questions
 
 - **Q-rc04-c — how far does D4's commentary prohibition narrow?** It currently forbids a reviewer
@@ -272,14 +316,23 @@ is separately gone: rc02c made `budget` inert, so no cadence can end exhausted (
   (formed against independent review output), and they take TWO shapes — continuation and terminal
   — with `gate_overridden` generalising into the first. Note that "route this expansion to
   architecture" turned out NOT to need a new home: it is per-FINDING and the walk's decision lane
-  already structures it. What remains open here is the SLOT'S FIELD SHAPE, and one scope call:
+  already structures it. FIELD SHAPE is settled by D-rc04-15 and SCOPE by D-rc04-14; what remains is narrower than either (see the two leanings below). Historical framing of the scope call:
   whether rc04 ships BOTH shapes or only the terminal assertion the charter names. Continuation
   produced the most value in rc02c's cycle and has no home at all, which argues for both; shipping
   both is also a larger stage than chartered, so under D-rc04-3 as amended this is a recommendation
   for Sal rather than a call the AI makes. **Standing recommendation: ship both**, because the
   terminal assertion cites continuation decisions as its reasons — "I accepted the residual because
   I bought a scoped pass and it came back sound" is one sentence spanning both shapes, and
-  structuring only half of it leaves the citation dangling in prose.
+  structuring only half of it leaves the citation dangling in prose. **RATIFIED: both**
+  (D-rc04-14, Sal).
+
+  **Still open, and both are small.** (i) Does a `readiness` record with `disposition: not-ready`
+  BLOCK the archive, or merely RECORD that the cadence ended by routing to architecture? Leaning:
+  record only — a blocking readiness record re-creates the target-shaped signal R-crc-11(h)
+  retires, and the archive already has consent and gate prompts for stopping. (ii) Is
+  `gate_overridden` RETIRED outright here, or kept as a deprecated alias for one release? Leaning:
+  retire — exit (4) says a write-only record delivers nothing, nothing in `src/` reads it, and a
+  deprecated alias for a record with no readers is ceremony.
 
 ## Considered & out
 
