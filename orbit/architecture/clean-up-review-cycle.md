@@ -358,6 +358,13 @@ One goal per phase, each falsifiable, each stage naming its goal (settled under 
   rc10-apply-closure (the archive-side close-out) or rc04-cost-visibility (which owns the
   budget-exhaustion record). **ASSIGNED 2026-09-15 (Sal) to rc10-apply-closure**, which already owns
   the archive-side close-out condition, so the seam's prompt logic is its territory.
+  **RECOMMENDATION RE-FRAMED 2026-09-21 (Sal), same reason as rc10's charter: `budgetExhausted` is
+  retired and the DEFECT IS NOT.** Read `unpassed` or `stale` wherever the sentence above says
+  `unpassed` or `budgetExhausted`. The question stands open and its owner is unchanged; what
+  changed is that its recommendation can no longer be implemented literally. Worth noting how this
+  was caught — an external reviewer reading the PLAN against the diff, not a check: nothing in the
+  repo compares a stage's charter to the engine it will run on, which is the same missing moment
+  Q-crc-14 describes one layer down.
 
 Raised by the 2026-09-11 cohesion review (the plan has two parents: the orbit-constrained
 seven-step re-cut and the best-practices suggestions; the seams fall where they meet).
@@ -1477,6 +1484,19 @@ on any gate that is `unpassed` or carries `budgetExhausted` at the seam, not onl
 `before` is archive. Exit gains: (3) an archive past an exhausted or unpassed gate of ANY phase
 fires the inflection prompt and records the override.
 
+**AMENDED 2026-09-21 (Sal) — `budgetExhausted` NO LONGER EXISTS; the defect above does.** rc02c
+retired the field, so the clause as written instructs this stage to branch on a signal the engine
+cannot produce. The amendment is a RE-FRAME and deliberately not a deletion, because the defect the
+2026-09-15 block describes is untouched by the retirement: an archive seam scoped to one gate is
+silent about every other gate, and a change that never applied still archives past its proposal
+gate. Only the vocabulary died. **The prompt SHALL fire on any gate whose computed state is not a
+passing one — `unpassed` or `stale` — at the seam, whatever its `before` phase**, and the recorded
+`independentSpend` MAY be shown in that prompt but SHALL NOT be branched on: under R-crc-11(h)
+effort is recorded, never targeted, so a cost figure may inform the human at the seam and may never
+decide whether the seam speaks. Exit (3) restated: an archive past a non-passing gate of ANY phase
+fires the inflection prompt and records the override. Found by rc02c's system blind pair, which
+read the plan and not only the diff.
+
 ### Phase 4 — engine changes last
 
 ### Stage rc12-engine-owned-choreography — deterministic git steps become an engine command
@@ -2278,3 +2298,45 @@ depended on rc07's own in-flight artifacts, which became excluded RECORDS at arc
 demanded prose this capability's own AUTHORING RULE tells writers not to produce. Both were fixed
 as SEPARATE work in their own commit, deliberately outside rc02c, so the stage's diff and its
 predicted Touchpoints stayed what they claim to be.
+
+
+**2026-09-21 — rc02c's system blind pair: the program's SECOND pair, and it reproduced the first
+one's economics.**
+
+Two independent reads of the same tree. External (GPT-5 Codex) returned 8 findings; fresh
+(clean-context Opus) returned 9; **2 overlapped, 15 distinct, ZERO CRITICAL from either half.**
+Capture-recapture on those counts puts the population near 36, so **roughly 58% of what exists was
+still unfound after two independent passes.** rc02's first pair measured ≈60% residual with ZERO
+CRITICAL overlap. Two pairs, on different stages, months apart, agreeing to within a couple of
+points: **the residual is a property of the pipeline, not of a bad day.** That is the number issue
+#13 exists to move, and it is now measured twice rather than once.
+
+**Each half found what the other structurally could not**, which is the argument for the pair's
+HARDCODED class composition (R-crc-4) stated as evidence rather than as design intent. The external
+half alone found the PROJECTION-layer defect — `formatChangeStatus` reconstructing every gate row
+unconditionally, putting `budget` back as an undefined-valued key on the public object *after* the
+computation had correctly omitted it, invisible to JSON and visible to an in-process consumer — plus
+a passed gate still emitting `reason: "converged with …"` in the change whose whole thesis is that
+the engine no longer computes convergence. The fresh half alone found `trail.ts`, the fourth
+version pin, and the engine's own touchpoints divergence. Where they overlapped, the external half
+was the more complete BOTH times, including a third unaccounted scenario rewrite the fresh half
+missed.
+
+**The finding that reached THIS document was one only a reviewer reading the PLAN could make.** The
+external half checked rc02c's diff against the program and found that `rc10-apply-closure`'s charter
+and Q-crc-12's standing recommendation both still instruct a future seam to branch on
+`budgetExhausted` — a field the change under review deletes. Nothing was broken, because both are
+premised; what was wrong was the PLAN, which now told a later stage to consume an impossible signal.
+Both are re-framed above, deliberately as a RE-FRAME and not a deletion: the seam defect they
+describe survives the retirement untouched, and only its vocabulary died. **Nothing in this
+repository compares a stage's charter to the engine it will run on**, which is the same missing
+moment Q-crc-14 describes one layer down, now observed at the program layer.
+
+**Two smaller things worth keeping.** The walk applied R-crc-4's "one merged walk" as ONE SITTING
+with TWO RECORDS — because clause (b) matches resolution records to passes by `source_path`, a
+single record naming only the external file would have certified only the external pass and left
+the fresh one reading unresolved, which is precisely the shape Q-crc-17 describes. The reading was
+already settled here (2026-09-14: "one human SITTING, not one emitted record") and this is its
+first mechanical application. And the walker's own instrument failed once: a probe of the
+touchpoints finding read the wrong JSON key, returned null, and briefly made a valid finding look
+stale — the rc01 lesson landing on the person checking rather than the person authoring.

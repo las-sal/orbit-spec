@@ -1,0 +1,27 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-21T14:53:03Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Executed the amendments rc02c's system blind pair earned, and recorded the pair's economics. Two re-frames, no new rulings, no ratifications. (1) rc10-apply-closure's charter and (2) Q-crc-12's standing recommendation both instructed a future seam to branch on `budgetExhausted`, which rc02c deletes. Both are RE-FRAMED rather than deleted, and the distinction is the substance: the defect they describe — an archive seam scoped to one gate is silent about every other gate, and a change that never applied still archives past its proposal gate — survives the retirement completely untouched. Only its vocabulary died. The prompt now fires on any gate whose computed state is not a passing one, whatever its `before` phase, and the recorded spend MAY be shown at the seam but SHALL NOT be branched on, per R-crc-11(h). The status log records the pair itself: 8 external and 9 fresh, 2 overlapping, 15 distinct, zero CRITICAL, and a capture-recapture residual near 58% — against rc02's first pair at roughly 60% with zero CRITICAL overlap. Two pairs on different stages months apart agreeing within a couple of points makes the residual a property of the pipeline rather than a bad day, which is the number issue #13 exists to move and is now measured twice. It also records the finding only a reviewer reading the PLAN could make, and the observation behind it: nothing in this repository compares a stage's charter to the engine it will run on, which is Q-crc-14's missing moment observed one layer up at the program layer. rc03a remains quiescent-awaiting-ratification; the offer was surfaced and declined earlier in this same session and was NOT re-fired, which is the no-nagging rule operating and is itself the recurring cost Q-crc-11's counter now records.",
+  "stages_touched": [
+    "rc10-apply-closure"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "handoff": {
+    "next_command": "/orbit:review --as system rc02c-confirmation-semantics",
+    "model_hint": "in-context is the declared uncovered slot and the cheap one; its reader authored the walk it would be checking, which is a real limit on what it can certify",
+    "seam": "rc02c is applied at 18/18 with its blind pair covered and walked. The review-system gate is unpassed on the trailing in-context slot only — resolution is satisfied for both pair members. The program doc now matches the engine rc02c ships, including the two forward-looking instructions that did not.",
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md — read the 2026-09-21 status-log entries (rc02c's apply, then its blind pair) and the AMENDED blocks in rc10-apply-closure and Q-crc-12",
+      "orbit/changes/rc02c-confirmation-semantics/design.md — D1 carries the observed clause-(c) instance; D6 the charter divergence; D7 the forward-looking plan defect; the size section the R-crc-1 measurement",
+      "orbit/changes/rc02c-confirmation-semantics/.orbit-runs/ — the full cycle: four review passes, four walk records (note: the system pair is ONE SITTING, TWO RECORDS)",
+      "src/core/artifact-graph/gates.ts — where clause (c) and the budget signal were removed, and where the declaration/record split now lives",
+      "Q-crc-14 in the program doc — its second instance (2026-09-21) and the program-layer observation in the blind-pair log entry are the same gap at two altitudes"
+    ]
+  },
+  "next_recommended": "/orbit:review --as system rc02c-confirmation-semantics"
+}
