@@ -1,0 +1,12 @@
+{
+  "command": "explore",
+  "timestamp": "2026-09-21T23:32:46Z",
+  "change": "rc04c-retire-gate-overridden",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Boundary emit. Three decisions captured. D-rc04c-1 (Sal, option C over A/B/D): an empty `formed_against` is legal on `continuation/proceed` and ONLY when the emptiness is TRUE — the engine verifies that no independent pass precedes the emit, so the citation's absence becomes a checked assertion rather than an unchecked hole, and the continuation record becomes TOTAL over the override's domain, which is what the strict-widening argument needed. Its mechanism is worked out as a decision table: the non-empty check SPLITS, because it currently lives in the structural validator which has no trail access while the exemption is conditional on trail state. D-rc04c-2: the size check says 6 capabilities across 14 requirements against a ceiling of 3, so R-crc-9 fires — the charter's own scope line had the right intuition and assigned half the work, because rc04a modified three capabilities without removing the field from any of them. D-rc04c-3 is what the size check produced: DE-NAMING the three capabilities that reference the field without depending on its shape shrinks the retirement from six to three, and because every de-named form is true both before and after, doing it FIRST removes the inconsistent interim entirely rather than merely reordering the same work. The split itself is a SCOPE call, raised as Q-rc04c-c with a standing recommendation and not taken (D-rc04-18 precedent). Four rejections recorded with rationale.",
+  "decisions_captured": 3,
+  "open_questions_count": 2,
+  "open_questions_with_recommendation": "2 of 2",
+  "next_recommended": "/orbit:explore rc04c-retire-gate-overridden — continue thinking, or /orbit:propose rc04c-retire-gate-overridden if ready to formalize"
+}
