@@ -1,0 +1,146 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-21T04:08:27Z",
+  "change": "rc02c-confirmation-semantics",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc02c-confirmation-semantics/.orbit-runs/review-proposal-2026-09-21T03-58-20Z.json",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 5,
+    "suggestion": 2
+  },
+  "pushback_verification": "All 7 verified against current state before any fix — design.md:234, instruction-loader.ts:152/431, the spend-rendering paragraph at spec.md:301-305, the Touchpoints list, gates.ts:781, and proposal.md What Changes each read directly. ZERO stale: the findings were an hour old and nothing had moved.",
+  "resolution_summary": {
+    "resolved": 7,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "design.md still says 'all seven requirements' after this change grew to eight",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02c-confirmation-semantics/design.md",
+      "line": 234,
+      "classification": "trivial_fix",
+      "action": "design.md:234 \"all seven requirements\" -> \"all eight requirements\", matching the size table at line 132 and the section own third subsection.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "`independentSpendFresh` in instruction-loader.ts is named by no task, so the deletion leaves a dead field in the second projection",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02c-confirmation-semantics/tasks.md",
+      "line": 12,
+      "classification": "trivial_fix",
+      "action": "Extended task 2.1 with \"AND EVERY CONSUMER\" — the phrase task 1.1 uses for the clause-(c) fields — and named the two instruction-loader.ts sites explicitly (declaration ~152, projection ~431), with the reason stated: a field whose producer is gone but whose projection survives is the trap 1.1 describes, and nothing fails when it happens.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02c-confirmation-semantics/design.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "src/core/artifact-graph/instruction-loader.ts",
+            "reason": "source edit is apply-time work on a proposal-stage change; specified in task 2.1 instead"
+          }
+        ]
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The new spend-rendering prohibition says `independentSpend` renders ALONE in the JSON projection, then says `budget` stays readable there",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02c-confirmation-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 298,
+      "classification": "trivial_fix",
+      "action": "Split the rule by surface, as the finding recommended. The rule is now stated as being about COMPOSITION, never co-presence: on every RENDERED surface (live and superseded gate rows) independentSpend appears alone, never as a fraction and never beside a label derived from comparing the two; the JSON projection carries budget and independentSpend as SEPARATE named fields and composes neither. The two sentences no longer fight over the same surface.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02c-confirmation-semantics/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "CLAUDE.md is absent from Touchpoints although task 5.2b now edits it at apply",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02c-confirmation-semantics/design.md",
+      "line": 181,
+      "classification": "trivial_fix",
+      "action": "Added a `CLAUDE.md` Touchpoints entry naming the rc02 paragraph present-tense description of the budget signal. Apply has not begun, so the predicted map is still revisable and the entry lands before the freeze.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Task 2.3b splits a three-field bundle without saying what happens to the `budget` field itself",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02c-confirmation-semantics/tasks.md",
+      "line": 15,
+      "classification": "trivial_fix",
+      "action": "Extended task 2.3b to state the surviving field bundle rather than leave it derived: after 2.1 removes independentSpendFresh the survivor is { budget, independentSpend }; the spend field reports on mode alone, and budget is present only when actually declared — never emitted as an undefined-valued key, since the projection field names are normative.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": [
+          {
+            "path": "src/core/artifact-graph/gates.ts",
+            "reason": "source edit is apply-time work on a proposal-stage change; specified in task 2.3b instead"
+          }
+        ]
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The status.ts touchpoint annotation still describes only the BUDGET-SPENT chip",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02c-confirmation-semantics/design.md",
+      "line": 185,
+      "classification": "trivial_fix",
+      "action": "Widened the status.ts Touchpoints annotation to name all three edits (the BUDGET-SPENT chip, the spend N/budget ratio at both render sites, the budget-presence guard). The parsed path was already correct; only the human-readable annotation was understating.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "proposal.md's What Changes does not mention that `confirm` becomes a declared-and-inert attribute",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02c-confirmation-semantics/proposal.md",
+      "line": 22,
+      "classification": "trivial_fix",
+      "action": "Added a What Changes bullet: confirm STAYS in the schema grammar and becomes INERT, both declared values kept so existing schemas validate without a version bump, with the schema-author consequence named — the attribute survives the removal of what it selected.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "All 7 findings from the in-context proposal pass walked to resolution; zero stale, zero deferred, zero escalated, and every one took the obvious-fix lane — none involved a design choice or a scope call, which is the expected shape when a pass is auditing a prior walk rather than a proposal. Five of the seven were residue the earlier walk left at its own edges, and the post-fix completeness sweep found one more of exactly that kind that no review had reported: the recorded delta-size figures in the design size section went stale the moment finding 3 rewrote the spend-rendering rule. Those are now RECOMPUTED rather than hand-adjusted — 62,720 B, 153% of the R-crc-1 byte ceiling, 80% mandatory MODIFIED reproduction — and the same sweep cascaded a second Touchpoints annotation (instruction-loader.ts) that task 2.1 had outgrown. The substantive repair of the seven is finding 2: task 2.1 now carries the same AND EVERY CONSUMER phrase task 1.1 uses, and names both instruction-loader.ts sites, so the deletion cannot leave a projected field whose producer is gone. Nothing in this walk touched the change argument; all seven edits were to counts, task scope, predicted-touchpoint accuracy, and one rule split by surface.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal --fresh rc02c-confirmation-semantics"
+}

@@ -298,11 +298,12 @@ constrains something has been misled, and this sentence exists to prevent that.
 **NO SURFACE RENDERS SPEND AGAINST THE DECLARATION.** The prohibition above enumerates the four
 COMPUTED outputs, and a rendered gate row is none of them — so it is stated separately here, because
 the readout that motivated this change was exactly that: a terminal row reading `[spend 4/3]`. A
-ratio is a verdict wearing a figure's clothes. Wherever spend is shown — terminal gate row,
-superseded gate row, JSON projection — `independentSpend` renders ALONE, never as a fraction of
-`budget` and never beside a derived label. The `budget` field remains readable in the JSON
-projection because the declaration is a real part of the schema; what may not exist anywhere is the
-two of them divided.
+ratio is a verdict wearing a figure's clothes. The rule is about COMPOSITION, never about
+co-presence, and it splits by surface. On every RENDERED surface — the live gate row and the
+superseded gate row — `independentSpend` appears ALONE: never as a fraction of `budget`, never
+beside a label derived from comparing the two. The JSON projection carries `budget` and
+`independentSpend` as SEPARATE named fields and composes neither; the declaration is a real part of
+the schema and stays readable there. What may not exist on any surface is the two of them divided.
 
 The reason is R-crc-11(h): effort is RECORDED, never TARGETED. A cost target distorts the behaviour
 it measures — a cadence stops early to hit a number — while a cost record is how the tool gets

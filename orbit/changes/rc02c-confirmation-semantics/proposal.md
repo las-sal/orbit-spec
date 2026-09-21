@@ -30,6 +30,12 @@ thing a cost record must never say.
   a "latest" pass any more.
 - **`budgetExhausted`, its distinct position token, and the budget clause in the gate's reason
   string are RETIRED** (Q-crc-19). The SPEND figure survives as effort under R-crc-11(h).
+- **`confirm` STAYS in the schema grammar and becomes INERT.** Both gates keep their declared
+  values (`no-new-findings`, `findings-resolved`) so every existing schema validates without a
+  version bump — but `confirm` selected clause (c), and with the clause gone nothing reads either
+  value. A schema author maintaining `schemas/spec-driven/schema.yaml` will see the attribute
+  survive the removal of what it chose; the delta says so in normative prose rather than leaving
+  it to be inferred.
 - **`budget` STAYS in the schema grammar** — no version bump, no migration — restated as the
   cadence's DECLARED EXPECTATION. Nothing compares it to actual effort, and that gap is the point:
   a declared expectation informs an author, an automatic comparison is a target.

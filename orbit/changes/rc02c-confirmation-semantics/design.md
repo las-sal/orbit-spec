@@ -27,6 +27,39 @@ walked state" — the sentence that drove rc07 to a fourth over-budget pass — 
 **Independent review is NOT weakened.** Clause (a) coverage still requires the blind pair and the
 in-context slot. Clause (c) only ever governed what happened after them.
 
+**OBSERVED ON THIS CHANGE'S OWN GATE, 2026-09-21.** The argument above is no longer only an
+argument. rc02c's proposal cadence ran to completion — one `fresh` independent pass (6 CRITICAL /
+8 WARNING / 3 SUGGESTION), a full walk resolving all seventeen, then the declared `in-context` pass
+(0 CRITICAL / 5 WARNING / 2 SUGGESTION) and a second walk resolving all seven. At that point clause
+(a) is covered and clause (b) is satisfied: every substantive finding on every relevant pass is
+resolved. The gate's reason changed shape accordingly — from `cadence class 'in-context' has no
+fresh pass` to:
+
+```
+Gate review-proposal: unpassed — latest independent pass has 6 CRITICAL
+Position: propose ✓ → review(proposal) unpassed → apply ready → ...
+Ready when you are: /orbit:review --as proposal --fresh rc02c-confirmation-semantics
+```
+
+Clause (c) selects the most recent INDEPENDENT pass — the `fresh` one, since `in-context` is not
+independent — reads its SIX CRITICAL, and demands another independent pass. **All six are
+resolved.** The predicate reads a pass's findings, never their disposition, so resolution cannot
+answer it; only a differently-shaped future pass can, and the cadence has no slot left to put one
+in. The engine is asking this change to buy a fourth review pass for precisely the reason this
+change argues is the wrong question.
+
+This is the terminal state D-rc02c-5 describes, reached by the ordinary operation of the declared
+cadence rather than by a constructed trail: the cycle ended on a walk of a review with findings,
+which is correct, and clause (c) cannot recognise it as an ending. It is also the second time the
+same predicate has produced the same outcome on this program — rc07 archived at
+`independentSpend: 4` against `budget: 3` for the same reason, and that spend is recorded in its
+archive emit as residual risk. One instance is an anecdote; two consecutive stages, on different
+changes, with the same predicate producing the same over-spend, is the measurement.
+
+The change's own gate will therefore be `unpassed` at apply, and that is the honest reading rather
+than an embarrassment: the gate is correctly reporting the rule as it stands today, and the rule is
+what this change retires.
+
 ### D2 — the readiness obligation is NOT shipped here, and the sequencing is the reason
 
 **Decided at propose, not in the exploration.** `explore.md` D-rc02c-6 frames clause (c) as
@@ -131,10 +164,10 @@ the first proposal walk:
 | Capabilities touched | 2 | ≤ 3 | inside |
 | Requirements | 8 | ~12 | inside |
 | Tasks | 18 | < 20 | inside |
-| Delta bytes | **62,555** | **~40 KB** | **153%** |
+| Delta bytes | **62,720** | **~40 KB** | **153%** |
 
-**The byte figure is over, and it is recorded rather than explained away.** Of those 62,555 bytes,
-changed lines account for **12,117 B**; the remaining **50,438 B (81%) is verbatim baseline text
+**The byte figure is over, and it is recorded rather than explained away.** Of those 62,720 bytes,
+changed lines account for **12,283 B**; the remaining **50,437 B (80%) is verbatim baseline text
 that the MODIFIED delta format obliges this change to reproduce.** Every requirement here is
 MODIFIED; none is ADDED.
 
@@ -182,8 +215,11 @@ the repeat rate, and at iteration 1 there is no repeat data for it to read.
 
 - `src/core/artifact-graph/gates.ts` — the clause (c) block, `budgetExhausted` computation, the
   reason strings that name budget, and the position-token labels.
-- `src/commands/workflow/status.ts` — the `BUDGET-SPENT` chip in the gate readout.
-- `src/core/artifact-graph/instruction-loader.ts` — its `budgetExhausted` read.
+- `src/commands/workflow/status.ts` — the `BUDGET-SPENT` chip, the `spend N/budget` RATIO at both
+  render sites (live and superseded), and the budget-presence guard on spend reporting.
+- `CLAUDE.md` — the rc02 paragraph's present-tense description of the budget signal.
+- `src/core/artifact-graph/instruction-loader.ts` — its `budgetExhausted` read AND its
+  `independentSpendFresh` declaration and projection.
 - `schemas/spec-driven/schema.yaml` — the comment describing exhaustion and the position token.
 - `test/core/artifact-graph/` — the gate-model suite; constructed-trail cases for the removal.
 - `orbit/specs/orbit-engine-gates/spec.md` + `orbit/specs/orbit-run-summary-emit/spec.md` — the two
@@ -231,7 +267,7 @@ the `BUDGET-SPENT` token, so each would have demanded behaviour this change dele
 
 The last three of those six were caught by the first proposal review, not by authoring: the
 requirement's prose was swept for the retired vocabulary and the scenarios beneath it were not.
-Every other scenario across all seven requirements is preserved byte-identically.
+Every other scenario across all eight requirements is preserved byte-identically.
 
 **`spec-driven v1 gates and cadence`.** No scenario removed or rewritten; all four are preserved
 byte-identically. Only the requirement's prose changed.
