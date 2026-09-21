@@ -414,6 +414,12 @@ byte-identically. The change record names each and why (`rc02c-confirmation-sema
 - **THEN** they are counted in `independentSpend` — spend is spend — and there is no second count,
   because no trigger remains for one to feed
 
+#### Scenario: A mode-underivable gate keeps its declaration and reports no spend
+
+- **WHEN** a reviewed gate declares `budget: 3` but its id yields no derivable mode
+- **THEN** it reports the `budget` declaration and NO `independentSpend` — the declaration is
+  schema text and does not depend on mode, while the spend does, and the two are gated separately
+
 #### Scenario: No budget declared
 
 - **WHEN** a reviewed gate declares no `budget`
@@ -539,6 +545,13 @@ carry the same fields for downstream readers.
 
 - **WHEN** `orbit status --change <name>` runs on a gated schema
 - **THEN** the output includes the position readout and per-gate rows with reasons
+
+#### Scenario: An undeclared budget is absent as a KEY, not merely as a JSON value
+
+- **WHEN** a gate declaring no `budget` is projected to the gate-status row
+- **THEN** the row carries NO `budget` key at all — `Object.hasOwn(row, 'budget')` is false, so an
+  in-process consumer testing key presence is never told a gate declares what it does not; JSON
+  hiding an undefined value is not sufficient
 
 #### Scenario: Spend never renders a position token
 

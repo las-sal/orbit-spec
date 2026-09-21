@@ -191,10 +191,10 @@ the first proposal walk:
 | Capabilities touched | 2 | ≤ 3 | inside |
 | Requirements | 8 | ~12 | inside |
 | Tasks | 18 | < 20 | inside |
-| Delta bytes | **63,985** | **~40 KB** | **156%** |
+| Delta bytes | **64,751** | **~40 KB** | **158%** |
 
-**The byte figure is over, and it is recorded rather than explained away.** Of those 63,985 bytes,
-changed lines account for **14,023 B**; the remaining **49,962 B (78%) is verbatim baseline text
+**The byte figure is over, and it is recorded rather than explained away.** Of those 64,751 bytes,
+changed lines account for **14,798 B**; the remaining **49,953 B (77%) is verbatim baseline text
 that the MODIFIED delta format obliges this change to reproduce.** Every requirement here is
 MODIFIED; none is ADDED.
 
@@ -275,10 +275,21 @@ recorded — those are RECORDS, true when written, and are never rewritten.
 
 ## Scenario accounting
 
-FOUR of the eight MODIFIED requirements drop or rewrite scenarios, and this is the full audit.
+FIVE of the eight MODIFIED requirements add, drop or rewrite scenarios, and this is the full audit.
 The list below was DERIVED by mechanically diffing each delta requirement against its live
 baseline, not restated from memory — the first two entries were written that way and the last two
-were found by the blind pair precisely because they were not. It lives here
+were found by the blind pair precisely because they were not.
+
+**How to re-derive it, including the trap.** Split both files on `### Requirement:` then
+`#### Scenario:`, and compare each scenario **with trailing whitespace stripped**. The LAST
+scenario of a requirement block carries a different trailing-newline count depending on whether
+another requirement follows it or the file ends — a BLOCK-BOUNDARY artifact of the split, never
+authored content. A naive comparison reports three false rewrites here (`A v3-era archived trail
+still computes`, `Deferred suggestions surfaced on a passed gate`, `Per-chunk touched files
+computed from the diff`), and an earlier run of exactly that naive comparison put a "differs only
+in trailing whitespace" disclosure into this section for one of the three. It has been removed:
+disclosing a difference that does not exist is its own defect, and the fix belongs in the
+instrument rather than in the delta. It lives here
 rather than in the spec deltas because a baseline requirement describes what is TRUE, not what a
 change once removed from it — a reader a year out would find the spec telling them about a change
 they cannot see. The spec carries a one-line pointer to this section instead.
@@ -316,10 +327,17 @@ honest rather than inverted under its old name.
 (1): `Spend named beside the clause it displaced` becomes `The reason names the rule, never the
 spend`.
 
+**SCENARIOS ADDED (2), by the trailing in-context pass of the system cadence.** Two rules the
+blind pair's walk introduced were shipping into baseline asserted only by unit tests, which makes
+them invisible to `rc06-scenario-test-map` — whose premise is that scenarios are what tests map to.
+Both are transcription of behaviour the tests already execute: `An undeclared budget is absent as a
+KEY, not merely as a JSON value` under `Gate-aware status and instructions with position readout`,
+and `A mode-underivable gate keeps its declaration and reports no spend` under `Review budget
+reported beside the gate state`.
+
 **`orbit-run-summary-emit` / `Apply per-chunk-end emission`.** REWRITTEN (1, body only, no rename):
 `Apply-complete recommends the engine's canonical next` — the assigned-residue de-pin, which reads
-the schema's value from the gate graph instead of naming a version. Its sibling
-`Per-chunk touched files computed from the diff` differs only in trailing whitespace.
+the schema's value from the gate graph instead of naming a version.
 
 **These last three were found by the blind pair, not by authoring**, and that is the point of
 recording the derivation method above: the earlier version of this section named the requirements
