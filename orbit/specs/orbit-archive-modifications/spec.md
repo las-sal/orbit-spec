@@ -59,6 +59,47 @@ The system SHALL prompt the user (not block) when audit-drift reports critical f
 
 The system SHALL write a JSON summary to `orbit/changes/archive/<YYYY-MM-DD>-<change-name>/.orbit-runs/archive-<TS>.json` after a successful archive (the `<YYYY-MM-DD>-` prefix is added by upstream's archive move step).
 
+**THE TERMINAL READINESS RECORD (rc04a).** The archive emit SHALL carry, in its `judgements` array,
+an entry with `kind: "readiness"` (shape and carrier both defined by `orbit-run-summary-emit`)
+whenever the archive concludes a review cadence. The archive is the one emit admitting BOTH kinds,
+so the array may also hold a `continuation` entry from the same seam.
+It is the archive's statement of what the AI BELIEVED about the work, formed against the
+independent passes it names, and it is distinct from every record already here: `user_decision`
+records the audit-drift prompt's outcome, `gate_overridden` records a refusal to be blocked, and
+the fingerprint fields record a content guard. None of them says whether the work was judged ready.
+
+The record's `accepted` list is where RESIDUAL RISK belongs — each `{claim, why}` pair naming
+something left unresolved and why that was acceptable. This SUPERSEDES the practice of writing
+residual risk as free prose into `warnings`: `warnings` remains the home for PROCESS NOTES that
+arose at the seam itself (a divergence observed at archive, a correction made in flow), which are
+not readiness judgements and are not formed against independent passes. The distinction is the
+qualifying test, not a stylistic preference — a `warnings` entry cites nothing and can be ordered
+against nothing.
+
+**THE CONTINUATION RECORD AT THIS SEAM.** When the Step 3.4 `review-system` gate prompt is answered
+**Proceed anyway**, the archive emit SHALL carry, ALONGSIDE `gate_overridden`, a `judgements` entry
+with `kind: "continuation"` and `disposition: "proceed"` whose `gate`, `gate_state` and `gate_reason`
+are identical to the `gate_overridden` object's `gate`, `state` and `reason`. This seam — not
+apply's — is where the override is most often taken, and a record that admits the entry while no
+body is told to write it ships the capability inert at its own primary carrier. The pass tokens
+SHALL be read BEFORE the Step 5 move, because afterwards the change's active path no longer
+resolves.
+
+**THE ONE EDGE WHERE THE SUCCESSOR CANNOT BE WRITTEN.** `formed_against` is required NON-EMPTY, and
+the `review-system` gate is unpassed precisely when the cadence is incomplete — which INCLUDES the
+state where no independent pass exists at all. When no independent pass precedes this emit, the
+entry SHALL be OMITTED and `gate_overridden` stands alone: the record cannot be formed against
+evidence that does not exist, and inventing a token is refused by the ordering check. This is a
+NAMED case rather than a gap: across every archived change, 20 emits carry `gate_overridden` and
+all 20 have an earlier independent pass, so the edge is unobserved — but it is inside the
+override's own trigger condition, so the stage that RETIRES `gate_overridden` must handle a domain
+the successor provably cannot cover, rather than discover it.
+
+A `disposition: "not-ready"` record SHALL NOT block the archive. Readiness is a judgement and the
+engine does not evaluate judgements (R-crc-10); the seam already carries consent, gate and audit
+prompts for stopping, and an AI belief that could veto a user's archive would invert the steering
+relationship the lifecycle is built on.
+
 #### Scenario: Summary contents
 
 - **WHEN** the archive completes
@@ -88,6 +129,53 @@ The system SHALL write a JSON summary to `orbit/changes/archive/<YYYY-MM-DD>-<ch
 
 - **WHEN** the archive completes for a PR-ATTACHED change (per `orbit-pr-lifecycle`)
 - **THEN** the archive run summary additionally includes `pr_url` and `pr_state` — the PR's URL and its state AS OBSERVED by the read-only preflight that precedes the emit — normally `"draft"`, but truthfully `"ready"` when the PR was already flipped by the USER at an earlier point (including at a prior program's arc-done, for a program PR adopted afterward — never by a stage), and ELIDED when the state could not be observed. The field records what was seen, never a forward-looking claim about the flip this tail is about to perform. When the preflight POSITIVELY INVALIDATES the stored URL (the PR is closed, merged, retargeted, or in another repository), `pr_state` is ELIDED — the draft/ready axis does not apply to a PR in that condition, and recording `"draft"` would be a false observation — while `pr_url` IS still recorded, since it is the identity that was validated and rejected and the trail should show which PR the tail declined to write to. Both fields are absent for UNATTACHED changes — including changes originally proposed under `pr: never` — and present whenever an attachment resolves, EVEN IF `pr:` now reads `never`, per this capability's attachment-authority scope rule (the same invocation that runs the tail records its PR). The READY transition is evidenced by the PR itself and the completion readout, not by this record.
+
+#### Scenario: Readiness recorded on an archive that concludes a cadence
+
+- **WHEN** a change with independent review passes on its trail is archived
+- **THEN** the archive run summary's `judgements` array carries a `kind: "readiness"` entry naming
+  those passes in its `formed_against`, a `disposition`, prose `reasoning`, `ratified_by`, and an `accepted` list which
+  is empty when nothing was left unresolved
+
+#### Scenario: Residual risk moves out of warnings and into accepted
+
+- **WHEN** a cadence ends with residual risk formed against the independent passes
+- **THEN** each item appears as a `{claim, why}` pair in the readiness record's `accepted` list,
+  NOT as free prose in `warnings`
+
+#### Scenario: A seam-arising process note stays in warnings
+
+- **WHEN** something is observed at the archive itself — a touchpoint divergence, a correction made
+  in flow — that was not formed against any independent pass
+- **THEN** it remains a `warnings` entry and is NOT an `accepted` pair, because it fails the
+  qualifying test and carries nothing to order against
+
+#### Scenario: A gate override at archive carries its continuation successor
+
+- **WHEN** the archive proceeds past an unpassed or stale `review-system` gate
+- **THEN** the archive run summary carries BOTH `gate_overridden: {gate, state, reason}` AND a
+  `judgements` entry `{kind: "continuation", disposition: "proceed", gate, gate_state, gate_reason}`
+  whose three gate facts match the override object's, and a mismatch between them is refused
+
+#### Scenario: An override with no independent pass to cite omits the entry
+
+- **WHEN** the archive proceeds past an unpassed `review-system` gate on a trail carrying no
+  independent pass earlier than the emit
+- **THEN** `gate_overridden` is recorded alone and the `judgements` entry is OMITTED — a non-empty
+  `formed_against` is unavailable, so the successor record cannot be formed
+
+#### Scenario: A not-ready record is the author's own dissent
+
+- **WHEN** a readiness record carries `disposition: "not-ready"`
+- **THEN** it records that the work archived against the author's judgement, with `ratified_by`
+  stating honestly whether that judgement was the AI's or the user's, and it carries no routing
+  `destination` — routing has no carrier in this cadence
+
+#### Scenario: not-ready does not block
+
+- **WHEN** the readiness record carries `disposition: "not-ready"`
+- **THEN** the archive completes normally — sync, move and emit all proceed — and the record stands
+  as the dissent
 
 ### Requirement: `.orbit-runs/` directory moves with the change
 
@@ -187,6 +275,15 @@ residue that path renaming alone does not fix — satisfying the deferral record
 - **WHEN** the archive skill body instructs reading `references/archive-summary-schema.md`
 - **THEN** that path resolves within the generated skill directory (the B1-era dangling cite is
   closed)
+
+#### Scenario: The judgement record is documented in the shipped reference
+
+- **WHEN** the shipped archive schema reference is read after init
+- **THEN** it documents the conditional `judgements` array and its `readiness` entry alongside the
+  other conditional fields — its `kind`, `formed_against`, `disposition`, `reasoning`, `ratified_by` and `accepted` — AND the
+  `continuation` entry shape this seam also admits (`gate`/`gate_state`/`gate_reason`), in the same
+  style `gate_overridden` and the fingerprint fields use, including a `## Field notes` bullet, so
+  the reference and the payload table agree per `orbit-emit-composition`'s parity requirement
 
 ### Requirement: Fingerprint-divergence inflection prompt
 
@@ -298,6 +395,14 @@ remains active`). One line riding the existing position render — no prompt, no
 mechanism (D-arc D-d2-4: the readout is the reminder; ratification happens in an architect
 session or by hand, never here). Uncited changes see no stage line.
 
+**THE READINESS LINE (rc04a).** The completion readout SHALL additionally STATE a readiness record
+whose `disposition` is `not-ready` — one line naming that the change was archived against the
+author's own judgement, and pointing at the record. This is the record's READER, and it exists
+because a judgement record that no surface consumes would repeat the defect this program already
+found in `gate_overridden`: written by everyone, read by nothing. A `ready` disposition renders no
+line — the ordinary case needs no announcement, and a readout that speaks on every archive teaches
+readers to skip it.
+
 #### Scenario: Quiescent stage surfaced at archive
 
 - **WHEN** a change citing `{doc, stage}` archives and no other live work cites that stage
@@ -307,6 +412,17 @@ session or by hand, never here). Uncited changes see no stage line.
 
 - **WHEN** a change without an `architecture:` citation archives
 - **THEN** the completion readout contains no stage line and is byte-identical to pre-D2 behavior
+
+#### Scenario: A not-ready archive says so where a human is looking
+
+- **WHEN** the archive carries a readiness record with `disposition: "not-ready"`
+- **THEN** the completion readout states it in one line and names the record, so the dissent is
+  visible at the moment it happens rather than only inside a JSON field
+
+#### Scenario: A ready archive adds no line
+
+- **WHEN** the readiness record carries `disposition: "ready"`
+- **THEN** the completion readout is unchanged — the record is written, and the readout stays quiet
 
 ### Requirement: PR-attached archive tail
 

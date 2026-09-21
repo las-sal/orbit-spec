@@ -1,0 +1,73 @@
+{
+  "command": "archive",
+  "timestamp": "2026-09-21T23:08:19Z",
+  "change": "rc04a-judgement-record",
+  "kind": "lifecycle",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "rc04a-judgement-record is ARCHIVED through a COMPUTED PASSED gate, no override — and it is the FIRST archive in this repo to carry the record it ships: a readiness judgement, formed against three named independent passes, with four residuals as structured {claim, why} pairs where rc02c's identical residuals were 3,333 characters of free prose in `warnings`. The mechanism dogfooded itself at its own seam, including the part that matters: the body read its pass tokens from the archived trail because `orbit status --change` no longer resolves post-move, which is exactly the defect the fresh half found and the walk fixed. Baseline capabilities stay at 21 — two ADDED requirements land in an existing capability — with 6 requirement blocks synced and byte-verified 6/6, 25 scenarios added, 0 dropped, 363 insertions and 0 deletions. The cadence: one fresh proposal pass, one in-context pass, then a system blind pair (external GPT-5 Codex + clean-context fresh, zero-CRITICAL overlap but the SAME critical found twice) and a trailing in-context pass; 21 findings across three walks, all resolved, none re-opened, zero repeats. Two findings are worth carrying forward past this stage. The external half's two defects were both rules that READ correctly and COMPUTED wrongly — a coexistence guard indexing two objects with one key set, and a closed carrier table enforced by command but never by kind — and both were found by constructing a payload and running the real CLI, not by reading code. And the in-context pass's F6 got a free pre-existing defect by pointing an existing instrument at one file it had never read: `external-handoff.md` documented a `reviewer_class` field the payload table REFUSES and the engine never composes, so that schema reference had been leading authors into a refused emit for as long as it existed. That is Q-crc-14's shape — an instrument with too small a domain — and it is the second time this program has been paid for widening one by a single row. 2238 tests green; validate --strict clean at 26; fingerprints 4/4 verified; consent user-invoked, zero prompts beyond the ratified sync.",
+  "archive_path": "orbit/changes/archive/2026-09-21-rc04a-judgement-record/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 5
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-emit-composition",
+      "orbit-run-summary-emit",
+      "orbit-archive-modifications"
+    ],
+    "added": 2,
+    "modified": 4,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "TOUCHPOINT DIVERGENCE at archive, three-part. actual_unpredicted: ['CLAUDE.md'] — the system walk corrected the rc04-owns-the-record sentence there, docs riding along rather than source drift. predicted_unsatisfied: the baseline-spec group, which this very command's sync then satisfied — the prediction was right about the destination and wrong about the moment, which is what a frozen-at-apply map costs. And a THIRD member of that group, orbit/specs/orbit-archive-modifications/spec.md, never reached the engine's predicted map at all: it sits on a continuation line of a wrapped list item, and the parser is line-anchored. Formed against no pass; observed at the seam.",
+    "AUDIT-DRIFT, 0 CRITICAL / 2 WARNING / 5 SUGGESTION, proceeded without prompting per the no-critical branch. Both warnings VERIFIED against current state rather than taken on report, and both are PROJECT-level rather than defects in this change. (1) CLAUDE.md states four open questions 'remain live' and lists Q-crc-16, which clean-up-review-cycle.md:539 records as RESOLVED 2026-09-20 — the governing doc contradicts the program doc. (2) orbit-propose-modifications defines a Touchpoints entry as 'a markdown list item', but src/core/parsers/touchpoints.ts:31 anchors LIST_ITEM to a line, so a +-joined group that wraps loses its later members SILENTLY — not flagged malformed. Both belong to /orbit:architect; neither is fixed here, per the audit-is-informational contract.",
+    "AT-ARCHIVE CORRECTION, made in flow: the in-context review's commentary stated the MODIFIED-block scenario fidelity as 'eleven added'. The true figure was 14 at the time of that pass and 15 at sync (emit-composition +5; archive-modifications +7/+2/+1), with 10 more arriving via the two ADDED requirements for 25 total. Caught by the sync agent and re-verified independently before acceptance. Zero dropped and zero body-changed in every count, so nothing was lost — the number was wrong, not the check.",
+    "METHOD NOTE, formed against no pass: FIVE instrument errors occurred across this change's cycle, and every one is the same class — a pattern matched against the wrong shape. A naive scenario splitter mis-reporting three changed scenarios on a trailing-newline artifact; a touchpoints probe reading the wrong JSON key; a rehash script wrong for the generated-content half of the parity pins; a single-line grep against multi-line prose producing half a false finding about my own spec; and the miscount above. In four of the five the instrument was mine and the authoritative source was already at hand — the test's own diff, the engine's own output. Recorded because the pattern has now outlived three stages and is the strongest standing argument for rc01's thesis."
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "disposition": "ready",
+      "formed_against": [
+        "2026-09-21T18-41-05Z",
+        "2026-09-21T19-41-52Z",
+        "2026-09-21T19-48-15Z"
+      ],
+      "ratified_by": "ai",
+      "reasoning": "READY, and this is the first readiness record orbit has ever written — rc04a asserting its own mechanism at its own archive seam. Formed against the three independent passes this trail carries: the proposal-phase fresh pass that shaped the design, and the system blind pair (external GPT-5 Codex + clean-context fresh) whose two halves independently found the same CRITICAL. Twenty-one findings across three walks, all resolved, none re-opened, zero repeats between passes. The gate computes PASSED on clauses (a) and (b) with no override. What I believe, knowing what came back: the mechanism is sound and its edges are named rather than latent — the two defects the external half found were both rules that read correctly and computed wrongly, and both now refuse across the real --payload boundary with a test per field. What I do not believe is that this tree has been independently read; that is the first acceptance below and it is the honest cost of walking two heavy find-lists after the pair returned. Citing the proposal-phase pass alongside the system ones is deliberate and permitted: the delta settles pass MODE as a non-check, because a design objection raised before apply and accepted without resolution is exactly an `accepted` pair.",
+      "accepted": [
+        {
+          "claim": "NO INDEPENDENT PASS HAS READ THE FINAL TREE",
+          "why": "independentSpend is 2, and both system-mode independent passes read the PRE-WALK state. Twenty-one findings have been resolved since, reviewed only by the session that wrote them — including every line of the validator, the carrier map and the rewritten fixture. Accepted because the gate's clauses are coverage and resolution and both are satisfied on their own terms; because R-crc-8 forbids buying a further pass on finding quality alone; and because rc07 recorded this same distinction rather than spending past it. It is the same residual rc02c carried, and it is the strongest argument for the forward-recommendation work rc04b owns."
+        },
+        {
+          "claim": "THE SYSTEM BLIND PAIR LEFT AN ESTIMATED ~49% OF ITS POPULATION UNFOUND",
+          "why": "Capture-recapture over the pair: 11 fresh findings, 5 external, overlap 2, so population ~27 against 14 distinct found. Comparable to rc02's ~60% and rc02c's ~58%. The estimate is coarse at this overlap and I corrected it downward mid-session after recounting the overlap, which is itself a reason to treat it as an order of magnitude rather than a figure. Accepted because the pair is the mechanism R-crc-4 declares sufficient, and because the residual is a property of blind pairs generally rather than of this change."
+        },
+        {
+          "claim": "THE PASS-MODE EDGE IS DELIBERATELY LEFT UNCHECKED",
+          "why": "TrailPass.mode is as observable as the two edges the delta DOES settle, so a terminal readiness citing only proposal-phase passes could be refused as a category confusion. It is not, and the delta now says why: a proposal pass genuinely can inform a terminal judgement, so refusing it would be the engine ruling on whether the cited evidence was the RIGHT evidence — the judgement R-crc-10 puts off limits. Accepted as a reasoned non-check rather than an omission, which is the distinction the fresh pass asked for."
+        },
+        {
+          "claim": "rc04c INHERITS A NAMED DOMAIN HOLE IN THE STRICT-WIDENING PREMISE",
+          "why": "The continuation successor cannot be written when no independent pass precedes the override, because formed_against is required non-empty and the gate is unpassed precisely when the cadence is incomplete. Measured across every archived change: 20 recorded gate_overridden emits, all 20 with an earlier independent pass, so 0/20 reach the edge. Accepted because it is now a NAMED case in orbit-archive-modifications with its own scenario — the entry is omitted and gate_overridden stands alone — so the stage that retires the field inherits a handled case rather than a discovery."
+        }
+      ]
+    }
+  ],
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."
+}
