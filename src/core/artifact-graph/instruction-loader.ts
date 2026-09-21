@@ -146,8 +146,10 @@ export interface GateStatusRow {
   userValidationPending?: string[];
   /** rc02c: the inert DECLARATION (present only when declared) and the RECORDED COST. The
    *  trigger count and the exhaustion annotation are retired.
-   *  This projection is field-by-field, so a new gate-status field reaches JSON only by being
-   *  named here AND in the human gate row. */
+   *  This projection is field-by-field and EXPLICIT: a new gate-status field reaches JSON only by
+   *  being named here. The human gate row is an INDEPENDENT surface with its own rules — rc02c
+   *  deliberately splits them, so `budget` is projected here while the terminal row renders the
+   *  recorded spend ALONE. Do NOT reintroduce a rule requiring a field to appear on both. */
   budget?: number;
   independentSpend?: number;
   /** rc02: reported, never blocking. */

@@ -159,7 +159,10 @@ describe('rc02 clause (b) — existence first, one readability predicate, one fa
     const g = gate(PAIR_YAML);
     expect(g.state).toBe('passed');
     expect(g.deferredSuggestions).toBe(1);
-    expect(g.reason).toMatch(/1 SUGGESTION-grade finding deferred/);
+    // rc02c: pin the PREFIX too. A suffix-only match was satisfied by the retired
+    // `converged with ...` reason as happily as by the new `passed with ...` one, so the change
+    // that retired the convergence claim was unpinned by the test meant to cover it.
+    expect(g.reason).toMatch(/^passed with 1 SUGGESTION-grade finding deferred/);
   });
 
   it('a deferred WARNING blocks', () => {
@@ -781,6 +784,22 @@ describe('rc02 walk 7 — what the first blind pair found', () => {
     const g = gate(PAIR_YAML);
     expect(g.reason).toMatch(/rejected as malformed/);
     expect(g.reason).not.toMatch(/budget|spent/i);
+  });
+
+  // rc02c (external system pass, iter 2): the hoist was applied in TWO branches and only the live
+  // one was covered — the blocked test below uses `review-system`, whose mode IS derivable, so the
+  // mode-less blocked path never executed. A regression there would have stayed green.
+  it('a BLOCKED and MODE-LESS reviewed gate keeps its declaration and still reports no spend', () => {
+    fs.writeFileSync(path.join(dir, 'tasks.md'), '- [ ] one\n'); // apply cannot pass
+    const yaml = PAIR_YAML.replace('- id: review-system', '- id: peer-check').replace(
+      'cadence: [blind-pair, in-context]',
+      'cadence: [independent]'
+    );
+    review(T(1), 'system', 'fresh');
+    const g = gate(yaml, 'peer-check') as unknown as Record<string, unknown>;
+    expect(g.state).toBe('blocked');
+    expect(g.budget).toBe(3); // the declaration survives mode-underivability AND blocking
+    expect('independentSpend' in g).toBe(false); // the spend does not
   });
 
   it('a BLOCKED reviewed gate still carries its declaration and its record', () => {

@@ -194,7 +194,9 @@ function passResolved(pass: TrailPass, trail: Trail): boolean {
     // COMPLETENESS BEFORE DISPOSITION (rc02 walk 7). A readable record certifies only the findings
     // it actually names: without this, a record listing one of a pass's two WARNINGs resolves both,
     // because no entry it contains carries a blocking disposition. Every substantive source finding
-    // must be matched by an entry, keyed the same way the new-finding match is keyed.
+    // must be matched by an entry, keyed by the tuple (TRIMMED, CASE-SENSITIVE TITLE + REPO-RELATIVE FILE).
+    // (Stated directly: the "new-finding match" this comment used to cite was retired with
+    // clause (c), so a key defined by reference to it can no longer be looked up.)
     const named = new Set(
       latest.entries.filter(e => isSubstantive(e.severity)).map(e => JSON.stringify([e.title, e.file]))
     );
@@ -213,8 +215,9 @@ function passResolved(pass: TrailPass, trail: Trail): boolean {
 
 /**
  * Distinct SUGGESTION-grade entries deferred or escalated, deduplicated by (trimmed title,
- * repo-relative file) across the latest record of every relevant pass — the same key the
- * new-finding match uses, so one suggestion deferred across two passes counts once.
+ * repo-relative file) across the latest record of every relevant pass — the SAME key clause (b)
+ * uses for completeness above, so one suggestion deferred across two passes counts once. Named
+ * directly rather than by reference to the retired new-finding match.
  */
 function deferredSuggestionCount(passes: TrailPass[], trail: Trail): number {
   const seen = new Set<string>();
@@ -675,7 +678,8 @@ export function computeGateStates(
 }
 
 /**
- * The gate's two spend figures, computed from the trail alone (rc02 walk 9). Factored out of
+ * The gate's RECORDED SPEND, computed from the trail alone (rc02 walk 9; rc02c reduced this to
+ * ONE figure — `budget` is a declaration read from the schema, never computed here). Factored out of
  * `computeReviewedStatus` because a BLOCKED reviewed gate must report its real totals: blocking on
  * `requires` is not an exemption from "counts independent passes across the whole trail", and
  * reviews genuinely do run before the tracked gate completes or under an override.

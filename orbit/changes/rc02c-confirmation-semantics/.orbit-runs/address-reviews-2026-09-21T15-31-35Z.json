@@ -1,0 +1,77 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-21T15:31:35Z",
+  "change": "rc02c-confirmation-semantics",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc02c-confirmation-semantics/.orbit-runs/external-system-2026-09-21T15-17-10Z.md",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-5 Codex",
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 1
+  },
+  "pushback_verification": "All 3 verified against current state before any fix, each by reading the cited line rather than trusting the citation: gates.ts:197 and 215-217 and trail.ts:28 all still defined the key by reference to the retired rule; instruction-loader.ts:149 still asserted the both-surfaces rule and gates.ts:678 still said \"two spend figures\"; the deferred-suggestion assertion was suffix-only and the blocked test did use review-system rather than a mode-less id. ZERO stale. The third finding was additionally verified by MUTATION after the fix, which is the only way to know a new test covers the branch it names.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The deleted new-finding match still anchors active engine documentation",
+      "marker_source": "external",
+      "file": "src/core/artifact-graph/gates.ts",
+      "line": 197,
+      "classification": "trivial_fix",
+      "action": "Named the key DIRECTLY at all three comment sites as the tuple (trimmed, case-sensitive title + repo-relative file), each with a one-line note that the \"new-finding match\" the comment used to cite was retired with clause (c) so a key defined by reference to it can no longer be looked up. Sites: gates.ts:197 (clause (b) completeness), gates.ts:215-217 (deferred-suggestion dedup), trail.ts:28 (the public TrailFinding doc). The finding is right that iteration 1’s vocabulary finding was only PARTIALLY resolved — the earlier sweep fixed the SPEC’s references to the deleted rule and stopped at the engine comments that define the same key by reference to it.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The projection comment contradicts the newly specified surface split",
+      "marker_source": "external",
+      "file": "src/core/artifact-graph/instruction-loader.ts",
+      "line": 149,
+      "classification": "trivial_fix",
+      "action": "Rewrote instruction-loader.ts:149 so it no longer asserts the opposite of the rule this change specifies: the projection is now described as field-by-field and EXPLICIT (a field reaches JSON by being named there), with the human gate row called out as an INDEPENDENT surface, the budget/spend split named as deliberate, and an explicit prohibition on reintroducing a both-surfaces rule. Also corrected gates.ts:678, where computeSpend was still described as producing \"two spend figures\" — rc02c reduced it to ONE, since budget is a declaration read from the schema and is no longer computed or bundled there. The finding correctly notes the IMPLEMENTATION was already right; what was wrong was maintainer guidance sitting next to it that would have told the next change to collapse the split.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The tests do not pin the changed reason prefix or the blocked mode-less hoist",
+      "marker_source": "external",
+      "file": "test/core/artifact-graph/rc02-gate-semantics.test.ts",
+      "line": 162,
+      "classification": "trivial_fix",
+      "action": "Both halves fixed, and the second is the one that mattered. (a) The deferred-suggestion assertion now pins the PREFIX — /^passed with 1 SUGGESTION-grade finding deferred/ — so the retired \"converged with ...\" reason can no longer satisfy the test meant to cover its retirement. (b) Added a BLOCKED and MODE-LESS case: the hoist was applied in TWO branches and only the live one was covered, because the existing blocked test uses review-system, whose mode IS derivable, so the mode-less blocked path never executed. Verified the new case genuinely reaches it by MUTATION rather than by reading: disabling the blocked-branch hoist fails exactly one test, the new one, and restoring it returns the suite to green.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "walk all",
+  "final_assessment": "The scoped iteration-2 external pass, walked. Three findings, zero CRITICAL, zero stale, all obvious-fix. The pass answered the question it was bought to ask and the answer was yes: the reviewer ran a BRANCH MATRIX over the engine — live and blocked reviewed gates, derivable and underivable modes, declared and undeclared budgets, plus a deferred-suggestion trail — and reported the declaration hoist, the conditional spreads and the public reason string SOUND IN THE IMPLEMENTATION. That is the one category of state Q-crc-20 says a passed gate cannot currently guarantee, now verified by execution rather than asserted by its author. What it found instead is DURABILITY: every finding is about whether the result survives the next editor, not whether it is correct today. Two were maintainer guidance contradicting the code beside it — three engine comments still defining the resolution key by reference to the new-finding match clause (c) deleted, and a projection comment asserting a field reaches JSON only by also appearing on the human row, which is the exact opposite of the surface split this change specifies. One was test weakness, and it is the sharpest finding of the cycle: the deferred-suggestion assertion matched only a suffix, so the retired reason satisfied it as happily as the new one, and the hoist I added in TWO branches was covered in only ONE because the blocked test uses a mode-derivable gate. The mode-less blocked branch had never executed. Both are fixed, and the new coverage was verified by MUTATION rather than by reading: disabling the branch fails exactly one test, the new one. The residue has the same shape as the rest of this cycle — the sweep ran across the spec and stopped at the code comments; the tests asserted the new behaviour without excluding the old. Suite 2206 of 2206 (up one), validate --all --strict clean at 26 items, fingerprints 8 of 8, zero markers. No spec delta changed, so the recorded size figures stand unaltered at 64,751 B.",
+  "iteration": 6,
+  "next_recommended": "/orbit:archive rc02c-confirmation-semantics — user-invoked"
+}

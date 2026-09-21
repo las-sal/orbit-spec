@@ -25,7 +25,9 @@ export function isSubstantive(sev: Severity | null): boolean {
 export type Disposition = 'resolved' | 'stale' | 'deferred' | 'escalated';
 const DISPOSITIONS: readonly string[] = ['resolved', 'stale', 'deferred', 'escalated'];
 
-/** A normalized finding, keyed for same-gate new-finding matching. */
+/** A normalized finding. Its KEY is the tuple (TRIMMED, CASE-SENSITIVE TITLE + REPO-RELATIVE FILE) — used by clause (b)
+ *  for resolution completeness and for deferred-suggestion dedup. (It was introduced for the
+ *  new-finding match, which rc02c retired with clause (c); the key outlived the rule.) */
 export interface TrailFinding {
   /** Trimmed, case-sensitive title. */
   title: string;
