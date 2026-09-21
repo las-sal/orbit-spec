@@ -131,16 +131,17 @@ assertion.
 Its second citing change, `rc02-gate-semantics`, is ARCHIVED (2026-09-14): **the reviewed gate
 now knows what convergence costs.** Clause (b) resolution and the new-finding match are
 SUBSTANTIVE-ONLY (CRITICAL + WARNING), so SUGGESTIONs never gate (issue #8's intent, its
-third-`confirm`-value mechanism superseded — `confirm` selects clause (c), and it was clause (b)
+third-`confirm`-value mechanism superseded — `confirm` selected clause (c), and it was clause (b)
 that held the D-arc archives). R-crc-4's stop rule is now a computable cadence slot,
 **`blind-pair`**: two passes of DISTINCT independent classes (one `fresh`, one `external` —
 HARDCODED, because a configurable pair invites two same-model reviewers and buys coverage
 without the model diversity that is the point), both fresh, blind to each other, with no walk of
 either pass's findings between their tokens and the blindness endpoints INCLUSIVE. Each reviewed
-gate declares a **`budget`**, and exhaustion is reported BESIDE the five-value state — a
-`budgetExhausted` boolean, a spend clause in the reason, a distinct position token — never a
-sixth state and never a hard block; `independentSpend` (whole trail) is display, while
-`independentSpendFresh` is the trigger. Resolution is computed EXISTENCE-FIRST over substantive
+gate declares a **`budget`**, and rc02 reported EXHAUSTION beside the five-value state — a
+`budgetExhausted` boolean, a spend clause in the reason, a distinct position token. **All of that
+is RETIRED by rc02c below**: `budget` is now an inert declaration, the only live figure is
+`independentSpend` (whole trail, rendered alone), and clause (c) no longer exists. Resolution is
+computed EXISTENCE-FIRST over substantive
 findings, completeness before disposition. `assignCadence` is an existential DFS memoized on
 `(slot, lowerBound)` — the consumed set is redundant under strict token ordering, which collapses
 exponential to polynomial. ONE shared CommonMark fence tracker (`src/core/markdown-fence.ts`) now

@@ -249,22 +249,61 @@ describe('rc02 clause (b) — existence first, one readability predicate, one fa
 
 // ---- clause (c): substantive new-finding match -----------------------------
 
-describe('rc02 clause (c) — the new-finding match is substantive', () => {
-  it('a new SUGGESTION satisfies no-new-findings', () => {
+describe('rc02c clause (c) — RETIRED: convergence is clauses (a) and (b) ONLY', () => {
+  it('a new SUGGESTION never held the gate, and still does not', () => {
     review(T(1), 'proposal', 'fresh', [['SUGGESTION', 'a']]);
     review(T(2), 'proposal', 'in-context');
     review(T(3), 'proposal', 'fresh', [['SUGGESTION', 'brand-new']]);
     expect(gate(PROPOSAL_YAML, 'review-proposal').state).toBe('passed');
   });
 
-  it('a new WARNING does not', () => {
+  // rc02c: this trail was `unpassed` with reason `new substantive findings`. The INTENT of the old
+  // case — "the gate does not falsely converge" — is deliberately retired: a cadence ends when the
+  // work is judged ready knowing what the reviewers returned, not when reviewers stop finding
+  // things. The behaviour change is pinned here rather than deleted with the case.
+  it('a RESOLVED new substantive finding no longer holds the gate', () => {
     review(T(1), 'proposal', 'fresh');
     review(T(2), 'proposal', 'in-context');
     review(T(3), 'proposal', 'fresh', [['WARNING', 'brand-new']]);
     walk(T(4), `review-proposal-${T(3)}.json`, { entries: [ok('WARNING', 'brand-new')] });
+    expect(gate(PROPOSAL_YAML, 'review-proposal').state).toBe('passed');
+  });
+
+  it('an UNRESOLVED finding still holds it — clause (b) is untouched by the retirement', () => {
+    review(T(1), 'proposal', 'fresh');
+    review(T(2), 'proposal', 'in-context');
+    review(T(3), 'proposal', 'fresh', [['WARNING', 'unwalked']]);
     const g = gate(PROPOSAL_YAML, 'review-proposal');
     expect(g.state).toBe('unpassed');
-    expect(g.reason).toMatch(/new substantive findings/);
+    expect(g.reason).toMatch(/unresolved substantive findings/);
+  });
+
+  // rc02c task 1.2: `confirm` stays ACCEPTED and becomes INERT. Two schemas identical but for the
+  // confirm value must compute identically on one trail — asserted, never assumed.
+  it('`confirm` is INERT: both declared values compute the same state on one trail', () => {
+    review(T(1), 'system', 'fresh', [['CRITICAL', 'c']]);
+    external(T(2), 'system');
+    walk(T(3), `review-system-${T(1)}.json`, { entries: [ok('CRITICAL', 'c')] });
+    review(T(4), 'system', 'in-context');
+    const resolved = gate(PAIR_YAML);
+    const noNew = gate(PAIR_YAML.replace('confirm: findings-resolved', 'confirm: no-new-findings'));
+    const absent = gate(PAIR_YAML.replace('    confirm: findings-resolved\n', ''));
+    expect(resolved.state).toBe('passed');
+    expect(noNew.state).toBe(resolved.state);
+    expect(absent.state).toBe(resolved.state);
+    expect(noNew.reason).toBe(resolved.reason);
+    expect(absent.reason).toBe(resolved.reason);
+  });
+
+  // The defect rc02c was chartered on: a blind pair puts TWO independent passes on one state and
+  // the retired predicate read only the LATER one, so a CRITICAL in the earlier-finishing member
+  // was invisible. With nothing selecting a pass, the case cannot arise.
+  it('a blind pair whose EARLIER member carried a CRITICAL converges once resolved', () => {
+    review(T(1), 'system', 'fresh', [['CRITICAL', 'early']]);
+    external(T(2), 'system');
+    walk(T(3), `review-system-${T(1)}.json`, { entries: [ok('CRITICAL', 'early')] });
+    review(T(4), 'system', 'in-context');
+    expect(gate(PAIR_YAML).state).toBe('passed');
   });
 });
 
@@ -362,38 +401,42 @@ describe('rc02 clause (a) — the blind-pair slot', () => {
 
 // ---- the budget ------------------------------------------------------------
 
-describe('rc02 budget — reported BESIDE the state, never as a state', () => {
-  it('exhaustion annotates an unconverged gate without adding a state', () => {
+describe('rc02c budget — a DECLARED EXPECTATION nothing consults; the RECORD is the spend', () => {
+  // rc02c: this trail used to set `budgetExhausted`, carry a `budget spent: 3 of 3` reason clause
+  // and render a BUDGET-SPENT token. Effort is RECORDED, never TARGETED (R-crc-11(h)), so the
+  // over-budget gate is now indistinguishable from any other unpassed gate except in its figure.
+  it('a gate OVER its declared budget renders no token and names no spend in its reason', () => {
     review(T(1), 'system', 'fresh', [['CRITICAL', 'c']]);
     walk(T(2), `review-system-${T(1)}.json`, { entries: [ok('CRITICAL', 'c')] });
     review(T(3), 'system', 'fresh');
     review(T(4), 'system', 'fresh');
     const g = gate(PAIR_YAML);
-    expect(g.state).toBe('unpassed'); // the five-value set is untouched
-    expect(g.budgetExhausted).toBe(true);
-    expect(g.independentSpendFresh).toBe(3);
-    expect(g.reason).toMatch(/budget spent: 3 of 3 independent passes; /);
-    expect(g.reason).toMatch(/blind pair/); // the clause it displaced is named too
+    expect(g.state).toBe('unpassed');
+    expect(g.independentSpend).toBe(3);
+    expect(g.budget).toBe(3);
+    expect(g.reason).not.toMatch(/budget|spent|exhaust/i);
+    expect(g.reason).toMatch(/blind pair/); // the rule that actually fired
+    const { position } = computeGateStates(parseSchema(PAIR_YAML), 'x', dir, new Set(['proposal', 'tasks']));
+    expect(position).toMatch(/review\(system\) unpassed/);
+    expect(position).not.toMatch(/BUDGET-SPENT/);
   });
 
-  it('convergence beats budget, and the boolean stays present-but-false', () => {
+  it('the retired fields are gone from the gate status entirely', () => {
     review(T(1), 'system', 'fresh');
-    external(T(2), 'system');
-    review(T(3), 'system', 'in-context');
-    const g = gate(PAIR_YAML);
-    expect(g.state).toBe('passed');
-    expect(g.budgetExhausted).toBe(false);
+    review(T(2), 'system', 'fresh');
+    review(T(3), 'system', 'fresh');
+    const g = gate(PAIR_YAML) as Record<string, unknown>;
+    expect('budgetExhausted' in g).toBe(false);
+    expect('independentSpendFresh' in g).toBe(false);
   });
 
-  it('stale passes count in the REPORTED figure but not in the TRIGGER', () => {
+  // 3.3 — the RECORD survives the deletion. These are exactly what a careless removal takes too.
+  it('stale passes count in the recorded spend — spend is spend', () => {
     review(T(1), 'system', 'fresh');
     external(T(2), 'system');
     apply(T(3)); // invalidates both
     review(T(4), 'system', 'fresh');
-    const g = gate(PAIR_YAML);
-    expect(g.independentSpend).toBe(3);
-    expect(g.independentSpendFresh).toBe(1);
-    expect(g.budgetExhausted).toBe(false); // no exhaustion mid re-cover
+    expect(gate(PAIR_YAML).independentSpend).toBe(3);
   });
 
   it('a rejected malformed external counts as spend while satisfying no slot, and the reason names it', () => {
@@ -403,28 +446,24 @@ describe('rc02 budget — reported BESIDE the state, never as a state', () => {
     const g = gate(PAIR_YAML);
     expect(g.independentSpend).toBe(3);
     expect(g.state).toBe('unpassed'); // the rejected return satisfied nothing
-    expect(g.budgetExhausted).toBe(true);
     expect(g.reason).toMatch(/rejected as malformed/);
+    expect(g.reason).not.toMatch(/budget|spent/i); // naming a return is not reporting the spend
   });
 
-  it('a gate declaring no budget never reports exhaustion', () => {
-    const yaml = PAIR_YAML.replace('    budget: 3\n', '');
+  // 2.3b / 3.2 — the record no longer hangs off an inert declaration.
+  it('a schema with NO budget reports the spend identically to one that declares it', () => {
+    const noBudget = PAIR_YAML.replace('    budget: 3\n', '');
     review(T(1), 'system', 'fresh');
     review(T(2), 'system', 'fresh');
     review(T(3), 'system', 'fresh');
-    const g = gate(yaml);
-    expect(g.budgetExhausted).toBeUndefined();
-    expect(g.budget).toBeUndefined();
-  });
-
-  it('the position readout carries the BUDGET-SPENT token rather than a new state', () => {
-    review(T(1), 'system', 'fresh', [['CRITICAL', 'c']]);
-    walk(T(2), `review-system-${T(1)}.json`, { entries: [ok('CRITICAL', 'c')] });
-    review(T(3), 'system', 'fresh');
-    review(T(4), 'system', 'fresh');
-    const schema: SchemaYaml = parseSchema(PAIR_YAML);
-    const { position } = computeGateStates(schema, 'x', dir, new Set(['proposal', 'tasks']));
-    expect(position).toMatch(/review\(system\) unpassed BUDGET-SPENT/);
+    const declared = gate(PAIR_YAML);
+    const undeclared = gate(noBudget);
+    expect(undeclared.independentSpend).toBe(declared.independentSpend);
+    expect(undeclared.state).toBe(declared.state);
+    expect(undeclared.reason).toBe(declared.reason);
+    // `budget` is present ONLY when declared — never an undefined-valued key.
+    expect(declared.budget).toBe(3);
+    expect('budget' in (undeclared as Record<string, unknown>)).toBe(false);
   });
 });
 
@@ -510,8 +549,8 @@ describe('rc02 canonical next — pairability, not mere existence', () => {
 
 // ---- the two projections ---------------------------------------------------
 
-describe('rc02 budget fields reach BOTH gate-row projections', () => {
-  it('the JSON gate row carries all four fields', async () => {
+describe('rc02c spend fields reach BOTH gate-row projections', () => {
+  it('the JSON gate row carries the declaration and the record — and neither retired field', async () => {
     const { loadChangeContext, formatChangeStatus } = await import(
       '../../../src/core/artifact-graph/instruction-loader.js'
     );
@@ -528,17 +567,24 @@ describe('rc02 budget fields reach BOTH gate-row projections', () => {
     );
     const status = formatChangeStatus(loadChangeContext(root, 'c'));
     const row = status.gates.find(g => g.id === 'review-system')!;
-    expect(row.budget).toBe(3); // the shipped spec-driven v4 declaration
+    expect(row.budget).toBe(3); // the shipped spec-driven v4 declaration, inert but readable
     expect(row.independentSpend).toBe(1);
-    expect(row.independentSpendFresh).toBe(1);
-    expect(row.budgetExhausted).toBe(false);
+    const asRec = row as unknown as Record<string, unknown>;
+    expect('independentSpendFresh' in asRec).toBe(false);
+    expect('budgetExhausted' in asRec).toBe(false);
     fs.rmSync(root, { recursive: true, force: true });
   });
 
-  it('the human gate row names the spend beside the state', () => {
+  it('the human gate row renders the record ALONE — never a ratio, never a derived label', () => {
     const src = fs.readFileSync('src/commands/workflow/status.ts', 'utf-8');
-    expect(src).toMatch(/independentSpendFresh/);
-    expect(src).toMatch(/BUDGET-SPENT/);
+    // The field still reaches the terminal row...
+    expect(src).toMatch(/independentSpend/);
+    // ...but nothing composes it with the declaration. `[spend 4/3]` is the readout Q-crc-19
+    // named as the harm: a ratio is a verdict wearing a figure's clothes.
+    expect(src).not.toMatch(/independentSpendFresh/);
+    expect(src).not.toMatch(/BUDGET-SPENT/);
+    expect(src).not.toMatch(/budgetExhausted/);
+    expect(src).not.toMatch(/\$\{g\.independentSpend[^}]*\}\/\$\{g\.budget\}/);
   });
 });
 
@@ -696,15 +742,18 @@ describe('rc02 walk 7 — what the first blind pair found', () => {
     expect(g.budgetExhausted).toBeUndefined();
   });
 
-  it('a rejected return is named in the reason BELOW the budget ceiling, not only at exhaustion', () => {
+  // rc02c: there is no ceiling left for the naming to be "below" — it is unconditional, which is
+  // what the case was reaching for. Naming a rejected return names the RULE THAT FIRED (a return
+  // arrived and could not be read), never the spend, so it survives the NEVER-the-spend rule.
+  it('a rejected return is named in the reason unconditionally', () => {
     externalRejected(T(1), 'system');
     review(T(2), 'system', 'fresh');
     const g = gate(PAIR_YAML);
-    expect(g.budgetExhausted).toBe(false);
     expect(g.reason).toMatch(/rejected as malformed/);
+    expect(g.reason).not.toMatch(/budget|spent/i);
   });
 
-  it('a BLOCKED reviewed gate that declares a budget still reports it, so the boolean stays total', () => {
+  it('a BLOCKED reviewed gate still carries its declaration and its record', () => {
     fs.writeFileSync(path.join(dir, 'tasks.md'), '- [ ] one\n'); // apply cannot pass
     const schema: SchemaYaml = parseSchema(PAIR_YAML);
     const g = computeGateStates(schema, 'x', dir, new Set(['proposal', 'tasks'])).gates.find(
@@ -712,7 +761,7 @@ describe('rc02 walk 7 — what the first blind pair found', () => {
     )!;
     expect(g.state).toBe('blocked');
     expect(g.budget).toBe(3);
-    expect(g.budgetExhausted).toBe(false);
+    expect('budgetExhausted' in (g as Record<string, unknown>)).toBe(false);
   });
 
   it('the cadence search does not blow up on a long cadence (memoized failures)', () => {
@@ -755,8 +804,7 @@ describe('rc02 walk 9 — the pass the stop rule bought', () => {
       x => x.id === 'review-system'
     )!;
     expect(g.state).toBe('blocked');
-    expect(g.independentSpend).toBe(2);
-    expect(g.budgetExhausted).toBe(false);
+    expect(g.independentSpend).toBe(2); // blocking is not an exemption from counting
   });
 
   it('with NOTHING pairable standing, a safe outstanding walk is not deferred behind a review', () => {

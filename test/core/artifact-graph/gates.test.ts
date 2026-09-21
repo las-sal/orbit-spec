@@ -324,7 +324,11 @@ describe('artifact-graph/gates — computation', () => {
     expect(rp.state).toBe('passed'); // in-context finding counts toward the independent's known-set
   });
 
-  it('review-proposal unpassed on new findings even after resolution (no-new-findings confirm)', () => {
+  // rc02c: this case ASSERTED clause (c)'s new-finding match. Its intent — "the gate does not
+  // falsely converge" — is DELIBERATELY retired: a cadence ends when the work is judged ready
+  // knowing what the reviewers returned, not when reviewers stop finding things. Rewritten to
+  // assert what the same trail now computes, so the behaviour change is pinned rather than lost.
+  it('rc02c: a resolved NEW finding no longer holds the gate — coverage + resolution are the whole criterion', () => {
     writeJson('review-proposal-2026-06-30T10-00-00Z.json', {
       command: 'review', mode: 'proposal', reviewer_class: 'fresh',
       findings_summary: { critical: 0, warning: 1, suggestion: 0 },
@@ -340,9 +344,10 @@ describe('artifact-graph/gates — computation', () => {
       findings_summary: { critical: 0, warning: 0, suggestion: 0 }, findings: [],
     });
     const rp = computeGateStates(schema, 'mychange', dir, allArtifacts).gates.find(g => g.id === 'review-proposal')!;
-    // resolved, but the fresh pass yielded a NEW finding → confirm not met → repeat independent
-    expect(rp.state).toBe('unpassed');
-    expect(rp.nextCommand).toBe('/orbit:review --as proposal --fresh mychange');
+    // Cadence [independent, in-context] is covered and every substantive finding is resolved.
+    // Pre-rc02c this was `unpassed` with nextCommand `--fresh` (confirm: no-new-findings matched
+    // the WARNING as new). There is no third clause to fail now.
+    expect(rp.state).toBe('passed');
   });
 
   // --- Regression tests for the external-system-review bypass findings ---

@@ -149,8 +149,6 @@ export interface GateStatusRow {
    *  named here AND in the human gate row. */
   budget?: number;
   independentSpend?: number;
-  independentSpendFresh?: number;
-  budgetExhausted?: boolean;
   /** rc02: reported, never blocking. */
   deferredSuggestions?: number;
 }
@@ -428,8 +426,6 @@ export function formatChangeStatus(context: ChangeContext, overlay?: TrailOverla
       userValidationPending: g.userValidationPending,
       budget: g.budget,
       independentSpend: g.independentSpend,
-      independentSpendFresh: g.independentSpendFresh,
-      budgetExhausted: g.budgetExhausted,
       deferredSuggestions: g.deferredSuggestions,
     }));
     position = computation.position;

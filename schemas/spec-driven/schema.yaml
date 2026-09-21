@@ -155,10 +155,19 @@ artifacts:
 # walk of either pass's findings between them. Its trailing `in-context` slot is the
 # check on the walk that resolved the pair's findings, and clause (a) requires that
 # pass to be later than those resolution records, not merely later than the pair.
-# Both reviewed gates declare `budget: 3` — the expected cost of a pair plus one
-# further independent pass. Exhaustion is REPORTED BESIDE the state (a
-# `budgetExhausted` boolean plus a distinct position token), never as a sixth gate
-# state and never as a block.
+# rc02c: `budget` is a DECLARED EXPECTATION and NOTHING CONSULTS IT. Both reviewed
+# gates declare `budget: 3` — what the cadence is expected to cost in independent
+# passes — but the engine never compares it to actual spend, derives no exhaustion
+# signal from it, and lets it colour no state, reason, token or recommendation. The
+# RECORD is `independentSpend`, reported beside the state and rendered alone: effort
+# is RECORDED, never TARGETED (R-crc-11(h)), because a cost target distorts the
+# behaviour it measures while a cost record is how the tool gets better.
+#
+# rc02c: `confirm` likewise stays ACCEPTED and is INERT. Both values below are kept
+# so existing schemas validate without a version bump, but `confirm` selected the
+# retired clause (c) and nothing reads it. Convergence is clauses (a) and (b) only:
+# a cadence ends when the AI judges the work ready knowing what the independent
+# reviewers returned, not when reviewers stop finding things.
 gates:
   - id: review-proposal
     kind: reviewed

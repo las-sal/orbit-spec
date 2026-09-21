@@ -25,7 +25,9 @@ export const ApplyPhaseSchema = z.object({
 // pass-condition plugin. See spec: orbit-engine-gates "Gate declaration in schema YAML".
 export const GateKindSchema = z.enum(['tracked', 'reviewed']);
 
-// Reviewed-gate confirm predicate (clause (c) selector). CLOSED set.
+// Reviewed-gate `confirm` — the RETIRED clause (c) selector. CLOSED set, still ACCEPTED by the
+// grammar so existing schemas validate without a version bump, and INERT since rc02c: nothing
+// reads it. Convergence is clauses (a) and (b) only.
 export const GateConfirmSchema = z.enum(['no-new-findings', 'findings-resolved']);
 
 // Cadence-entry vocabulary: the three reviewer classes plus the cadence-only
@@ -60,10 +62,12 @@ export const GateSchema = z.object({
   // reviewed kind: ordered slot list (cadence-entry vocabulary). Validated against the closed set
   // in schema.ts — as `kind` is — so the error can name the GATE ID rather than an array index.
   cadence: z.array(z.string()).optional(),
-  // reviewed kind: independent-confirmation predicate (defaults to `no-new-findings`)
+  // reviewed kind: the RETIRED independent-confirmation selector (defaults to `no-new-findings`).
+  // Accepted and INERT — see GateConfirmSchema.
   confirm: GateConfirmSchema.optional(),
-  // reviewed kind: the independent-pass ceiling (rc02). Validated as a positive integer in
-  // schema.ts so the error can name the gate id; absent means no budget is reported.
+  // reviewed kind: the DECLARED EXPECTATION of what the cadence costs in independent passes
+  // (rc02, demoted by rc02c). Validated as a positive integer in schema.ts so the error can name
+  // the gate id. NOTHING CONSULTS IT — it is not a ceiling; the record is `independentSpend`.
   budget: z.number().optional(),
   // Target this gate blocks: a declared gate id, a declared artifact id, or a lifecycle-phase token
   before: z.string().optional(),

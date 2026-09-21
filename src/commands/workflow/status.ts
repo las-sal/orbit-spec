@@ -199,15 +199,7 @@ export function printStatusText(status: ChangeStatus): void {
         // Subdued, but NOT silent about cost: reported spend is defined across the whole trail, so
         // a superseded gate still shows what it spent (rc02 walk 9).
         const pastSpend =
-          g.budget === undefined
-            ? ''
-            : chalk.dim(
-                ` [spend ${g.independentSpendFresh ?? 0}/${g.budget}${
-                  (g.independentSpend ?? 0) !== (g.independentSpendFresh ?? 0)
-                    ? ` fresh, ${g.independentSpend} total`
-                    : ''
-                }]`
-              );
+          g.independentSpend === undefined ? '' : chalk.dim(` [spend ${g.independentSpend}]`);
         console.log(`  ${chalk.dim('·')} ${g.id}: ${chalk.dim('(past — phase already ran)')}${pastSpend}`);
         continue;
       }
@@ -217,18 +209,12 @@ export function printStatusText(status: ChangeStatus): void {
           : g.reason
             ? ` (${g.reason})`
             : '';
-      // rc02: spend is reported BESIDE the state. Named here as well as in the JSON projection,
-      // or the fields reach neither surface.
+      // rc02c: the RECORDED COST is reported beside the state — ALONE. Never as a fraction of
+      // `budget` and never beside a label derived from comparing the two: a ratio is a verdict
+      // wearing a figure's clothes, and `[spend 4/3]` is the readout Q-crc-19 named as the harm.
+      // Named here as well as in the JSON projection, or the field reaches neither surface.
       const spend =
-        g.budget === undefined
-          ? ''
-          : chalk.dim(
-              ` [spend ${g.independentSpendFresh ?? 0}/${g.budget}${
-                (g.independentSpend ?? 0) !== (g.independentSpendFresh ?? 0)
-                  ? ` fresh, ${g.independentSpend} total`
-                  : ''
-              }${g.budgetExhausted ? ' — BUDGET-SPENT' : ''}]`
-            );
+        g.independentSpend === undefined ? '' : chalk.dim(` [spend ${g.independentSpend}]`);
       console.log(`  ${gateIndicator(g.state)} ${g.id}: ${g.state}${detail}${spend}`);
     }
     if (status.position) {

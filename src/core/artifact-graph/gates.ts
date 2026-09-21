@@ -42,14 +42,10 @@ export interface GateStatus {
   userValidationPending?: string[];
   /** rc02: the declared independent-pass ceiling, when the gate declares one. */
   budget?: number;
-  /** rc02 REPORTED spend: independent passes on the gate's mode across the whole trail, stale
-   *  included, plus rejected external returns attributed to that mode. DISPLAY ONLY. */
+  /** rc02c RECORDED COST (R-crc-11(h)): independent passes on the gate's mode across the whole
+   *  trail, stale included, plus rejected external returns attributed to that mode. Effort is
+   *  RECORDED, never TARGETED — nothing compares this to `budget`. */
   independentSpend?: number;
-  /** rc02 EXHAUSTION TRIGGER: the same count restricted to items fresh against the current state. */
-  independentSpendFresh?: number;
-  /** rc02: set when `independentSpendFresh` has reached `budget` AND the gate has not converged.
-   *  Spend is reported BESIDE the state — the five-value state set is unchanged. */
-  budgetExhausted?: boolean;
   /** rc02: distinct SUGGESTION-grade entries deferred or escalated; reported, never blocking. */
   deferredSuggestions?: number;
   before?: string;
@@ -241,22 +237,6 @@ function recordTokensFor(passes: TrailPass[], trail: Trail): string[] {
   return out;
 }
 
-/**
- * A finding is "new" if its (title, file) matches no SUBSTANTIVE finding in the same-gate prior
- * passes. SUGGESTION-grade findings are excluded from the match set entirely (rc02).
- */
-function hasNewFindings(pass: TrailPass, priorPasses: TrailPass[]): boolean {
-  const prior = new Set<string>();
-  for (const p of priorPasses) {
-    for (const f of p.findings) {
-      if (isSubstantive(f.severity)) prior.add(JSON.stringify([f.title, f.file]));
-    }
-  }
-  return pass.findings.some(
-    f => isSubstantive(f.severity) && !prior.has(JSON.stringify([f.title, f.file]))
-  );
-}
-
 /** One slot's assignment: which passes satisfy it, and the token a later slot must beat. */
 interface SlotAssignment {
   slot: CadenceEntry;
@@ -427,10 +407,6 @@ interface ConvergenceResult {
   pairFailure?: PairFailure;
   /** Pass whose findings are unresolved, when the failing clause is resolution. */
   unresolvedPass?: TrailPass;
-  /** True when the failing clause is the confirm predicate. */
-  confirmFailed?: boolean;
-  /** For findings-resolved confirm failure on a CRITICAL, repeat external. */
-  confirmNeedsExternal?: boolean;
   /** Deferred SUGGESTION count, surfaced even on a converged gate. */
   deferredSuggestions?: number;
   /**
@@ -521,48 +497,10 @@ function evaluateReviewed(
     };
   }
 
-  // (c) confirm predicate over the MOST RECENT independent pass — the SHIPPED selection rule,
-  // edited on one axis only (the new-finding match is substantive). rc02c owns the redesign.
-  const independents = ordered.filter(p => isIndependent(p.reviewerClass));
-  const latestIndep = independents[independents.length - 1];
-  if (!latestIndep) {
-    return {
-      converged: false,
-      reason: `no independent pass for the confirm predicate`,
-      neededSlot: 'independent',
-      deferredSuggestions,
-    };
-  }
-  if (gate.confirm === 'no-new-findings') {
-    if (latestIndep.critical > 0) {
-      return {
-        converged: false,
-        reason: `latest independent pass has ${latestIndep.critical} CRITICAL`,
-        confirmFailed: true,
-        deferredSuggestions,
-      };
-    }
-    const priorPasses = ordered.slice(0, ordered.indexOf(latestIndep));
-    if (hasNewFindings(latestIndep, priorPasses)) {
-      return {
-        converged: false,
-        reason: `latest independent pass yielded new substantive findings`,
-        confirmFailed: true,
-        deferredSuggestions,
-      };
-    }
-  } else {
-    if (latestIndep.critical > 0) {
-      return {
-        converged: false,
-        reason: `latest independent pass carried ${latestIndep.critical} CRITICAL; one further independent pass on the walked state is required`,
-        confirmFailed: true,
-        confirmNeedsExternal: true,
-        deferredSuggestions,
-      };
-    }
-  }
-
+  // (c) is RETIRED (rc02c). The convergence criterion is clauses (a) and (b) ONLY: the gate SHALL
+  // NOT compute whether a change has converged. Under R-crc-11 a cadence ends when the AI judges
+  // the work ready knowing what the independent reviewers returned — not when reviewers stop
+  // finding things. `gate.confirm` is still ACCEPTED by the grammar and is read by nothing.
   return { converged: true, deferredSuggestions };
 }
 
@@ -643,21 +581,16 @@ export function computeGateStates(
 
     let status: GateStatus;
     if (unmet.length > 0) {
-      // A blocked reviewed gate that declares a budget still reports it: `budgetExhausted` is
-      // present whenever the gate declares a budget and absent only when it declares none, so a
-      // consumer's branch on the boolean stays TOTAL. `review-system` is blocked for the whole
-      // life of every change until apply passes, so this is the common case, not an edge.
+      // A blocked reviewed gate still reports the spend already on its trail: blocking is not an
+      // exemption from counting. `review-system` is blocked for the whole life of every change
+      // until apply passes, so this is the common case, not an edge.
       let blockedBudget: Record<string, unknown> = {};
       if (gate.kind === 'reviewed') {
         const sp = computeSpend(gate, trail);
         if (sp.reportable) {
           blockedBudget = {
-            budget: gate.budget,
+            ...(gate.budget !== undefined ? { budget: gate.budget } : {}),
             independentSpend: sp.independentSpend,
-            independentSpendFresh: sp.independentSpendFresh,
-            // The pass condition is not runnable while `requires` is unmet, so the gate is never
-            // "exhausted" here — but the spend it already cost is reported truthfully.
-            budgetExhausted: false,
           };
         }
       }
@@ -746,18 +679,19 @@ export function computeGateStates(
 function computeSpend(
   gate: NormalizedGate,
   trail: Trail
-): { reportable: boolean; independentSpend: number; independentSpendFresh: number; rejected: RejectedExternal[] } {
+): { reportable: boolean; independentSpend: number; rejected: RejectedExternal[] } {
   const mode = gateMode(gate);
-  const reportable = gate.budget !== undefined && mode !== null;
+  // rc02c: the RECORD is gated on mode alone. It used to require a declared `budget` too, but the
+  // declaration is inert now — a recorded cost that appears only when an inert field happens to be
+  // present is incoherent. Mode attribution STAYS: a gate whose mode cannot be derived from its id
+  // reports NO SPEND rather than one summed across every mode's passes.
+  const reportable = mode !== null;
   const rejected = trail.rejectedExternals.filter(r => (mode ? r.mode === mode : true));
   const relevant = trail.passes.filter(p => (mode ? p.mode === mode : true));
   const indepAll = relevant.filter(p => isIndependent(p.reviewerClass));
   return {
     reportable,
     independentSpend: indepAll.length + rejected.length,
-    independentSpendFresh:
-      indepAll.filter(p => !isPassStale(p, trail.applyTokens)).length +
-      rejected.filter(r => !trail.applyTokens.some(t => t > r.token)).length,
     rejected,
   };
 }
@@ -767,18 +701,19 @@ function computeReviewedStatus(gate: NormalizedGate, changeName: string, trail: 
   const relevant = trail.passes.filter(p => (mode ? p.mode === mode : true));
   const fresh = relevant.filter(p => !isPassStale(p, trail.applyTokens));
 
-  // rc02 BUDGET. The REPORTED figure counts every independent pass on the gate's mode across the
-  // whole trail, stale included — spend is spend — plus every REJECTED external return attributed
-  // to that mode, which satisfies no slot but cost a run. The TRIGGER counts only items fresh
-  // against the current state, so an apply that staleness-invalidates a pair cannot report the
-  // budget spent during the re-cover the gate itself is asking for.
+  // rc02c RECORD. ONE figure: every independent pass on the gate's mode across the whole trail,
+  // stale included — spend is spend, a pass invalidated by a later apply was still paid for — plus
+  // every REJECTED external return attributed to that mode, which satisfies no slot but cost a run.
+  // There is no second, fresh-restricted count: the trigger it fed is retired (Q-crc-19).
   const spend = computeSpend(gate, trail);
-  const { rejected, independentSpend, independentSpendFresh } = spend;
-  // A reviewed gate whose mode cannot be derived from its id reports NO budget at all, rather than
+  const { rejected, independentSpend } = spend;
+  // A reviewed gate whose mode cannot be derived from its id reports NO SPEND at all, rather than
   // one summed across every mode's passes (both halves of the pair found this).
-  const budgetReportable = spend.reportable;
-  const budgetFields = budgetReportable
-    ? { budget: gate.budget, independentSpend, independentSpendFresh }
+  // rc02c: `budget` is present only when actually DECLARED — never an undefined-valued key, since
+  // the projection's field names are normative. The spend reports on mode alone.
+  const spendReportable = spend.reportable;
+  const budgetFields = spendReportable
+    ? { ...(gate.budget !== undefined ? { budget: gate.budget } : {}), independentSpend }
     : {};
 
   // Coverage (a)/confirm (c) use fresh passes; resolution (b) uses ALL relevant passes.
@@ -790,7 +725,6 @@ function computeReviewedStatus(gate: NormalizedGate, changeName: string, trail: 
       kind: gate.kind,
       state: 'passed',
       ...budgetFields,
-      ...(budgetReportable ? { budgetExhausted: false } : {}),
       ...(deferred > 0
         ? {
             deferredSuggestions: deferred,
@@ -808,22 +742,15 @@ function computeReviewedStatus(gate: NormalizedGate, changeName: string, trail: 
   const stale = allEval.converged && !freshEval.converged;
 
   const next = canonicalNextForReviewed(gate, mode, changeName, freshEval, trail, fresh);
-  const exhausted = budgetReportable && independentSpendFresh >= (gate.budget as number);
   let reason = stale ? `a review pass is stale (an apply landed after it)` : freshEval.reason;
   // A rejected return is named whenever one exists — NOT only at exhaustion. Below the ceiling the
   // user would otherwise be told to buy another external run with no hint that one already came
   // back unreadable.
   const rejectedFresh = rejected.filter(r => !trail.applyTokens.some(t => t > r.token));
-  if (budgetReportable && rejectedFresh.length > 0) {
+  if (spendReportable && rejectedFresh.length > 0) {
     reason = `${reason ?? 'unconverged'} (${rejectedFresh.length} external return${
       rejectedFresh.length === 1 ? '' : 's'
     } rejected as malformed — ${rejectedFresh.map(r => path.basename(r.file)).join(', ')})`;
-  }
-  if (exhausted) {
-    // The exhausted reason carries the spend AND the clause it displaced: a reader shown only a
-    // spend figure cannot tell what a further pass would be for. The rejected returns named here
-    // are the TRIGGER-scoped ones, so the parenthetical counts what the sentence counts.
-    reason = `budget spent: ${independentSpendFresh} of ${gate.budget} independent passes; ${reason ?? 'still unconverged'}`;
   }
   return {
     id: gate.id,
@@ -831,7 +758,6 @@ function computeReviewedStatus(gate: NormalizedGate, changeName: string, trail: 
     state: stale ? 'stale' : 'unpassed',
     reason,
     ...budgetFields,
-    ...(budgetReportable ? { budgetExhausted: exhausted } : {}),
     ...((freshEval.deferredSuggestions ?? 0) > 0
       ? { deferredSuggestions: freshEval.deferredSuggestions }
       : {}),
@@ -879,12 +805,6 @@ function canonicalNextForReviewed(
   }
   if (ev.neededSlot) {
     return { cmd: commandForClass(ev.neededSlot, m, change), slot: ev.neededSlot };
-  }
-  if (ev.confirmFailed) {
-    if (ev.confirmNeedsExternal) {
-      return { cmd: `/orbit:review --as ${m} --reviewer external ${change}`, slot: 'external' };
-    }
-    return { cmd: `/orbit:review --as ${m} --fresh ${change}`, slot: 'fresh' };
   }
   // stale — re-validate against current state via a fresh independent pass.
   return { cmd: commandForClass('independent', m, change), slot: 'independent' };
@@ -935,13 +855,13 @@ function buildPositionReadout(
           ? `${label} ✓ (awaiting user validation: ${s.userValidationPending.join(', ')})`
           : `${label} ✓`;
       case 'stale':
-        return s.budgetExhausted ? `${label} STALE BUDGET-SPENT` : `${label} STALE`;
+        return `${label} STALE`;
       case 'blocked':
         return `${label} blocked-by-gate`;
       case 'ready':
         return `${label} ready`;
       default:
-        return s.budgetExhausted ? `${label} unpassed BUDGET-SPENT` : `${label} unpassed`;
+        return `${label} unpassed`;
     }
   };
 
