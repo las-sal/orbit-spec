@@ -184,6 +184,56 @@ is separately gone: rc02c made `budget` inert, so no cadence can end exhausted (
   classified and recommended by the AI and decided by Sal. So a record that routes work to
   architecture is carrying a RATIFIED decision, not an autonomous one, and it needs to say which.
 
+- **2026-09-21 — D-rc04-13: WHICH judgements qualify, settled by ONE test, executed against a real
+  trail** (answers Q-rc04-e's sub-question; R-crc-7 — mechanism worked out before any spec prose).
+
+  **THE TEST.** *Is the judgement FORMED AGAINST INDEPENDENT REVIEW OUTPUT?* If yes it is
+  readiness-shaped and needs a structured slot. If no, it is a METHOD call (R-crc-3 — the AI
+  settles it and records the rationale), a SCOPE call (Sal's), or a PROCESS NOTE. The test is worth
+  more than its tidiness: **citing the passes is the same property exit (3) makes checkable**, so
+  the qualifying criterion and the enforceable constraint are one thing rather than two. A
+  judgement that cites no pass has no ordering to check, which is exactly why it does not belong.
+
+  **EXECUTED against all ELEVEN judgements rc02c's cycle actually made** (not constructed — read
+  off the archived trail and this session's ratifications):
+
+  | # | Judgement | Formed against passes? | Where it lives today | Verdict |
+  |---|---|---|---|---|
+  | 1 | Don't split despite 153% of the byte ceiling | NO — against R-crc-1 + c2 calibration | `design.md` size section | method — correct home |
+  | 2 | Apply over an unpassed `review-proposal` | **YES** | `gate_overridden` | **QUALIFIES** (partial — see below) |
+  | 3 | Fix the two lint instruments as separate work | NO — capability boundary | task 5.1 prose | scope — correct home |
+  | 4 | Buy a scoped external pass over a PASSED gate | **YES** | `final_assessment` prose | **QUALIFIES — no home** |
+  | 5 | Accept the ~58% capture-recapture residual | **YES** | `warnings` prose | **QUALIFIES — no home** |
+  | 6 | Accept the 158% size overage | NO — against R-crc-1 | `warnings` + `design.md` | method — MISFILED in warnings |
+  | 7 | Accept the stale `orbit-review` cross-reference | NO — found by the sync agent, not a review pass | `warnings` | process note — correct home |
+  | 8 | Sync specs now rather than archive unsynced | NO — against the fingerprint check | NOWHERE | ratification, unrecorded |
+  | 9 | Ratify rc02c complete | NO — against exit criteria | `Complete: [x]` | program — correct home |
+  | 10 | Leave rc03a unratified | NO | nowhere (deliberately not re-prompted) | program |
+  | 11 | **Believe the work is ready to archive** | **YES** | **NOWHERE** | **QUALIFIES — the missing terminal assertion** |
+
+  **FOUR of eleven qualify.** The test earns its keep by what it EXCLUDES: six judgements that feel
+  readiness-adjacent are not, and two of them are provably in the wrong place today — #6 is a
+  method call misfiled into `warnings`, and #8 is a ratification recorded nowhere at all. Neither
+  is rc04's to fix, and saying so is the point: this stage would otherwise absorb them.
+
+  **TWO SHAPES, not four.** The qualifying set splits cleanly by WHEN it is formed.
+  **(A) CONTINUATION** — mid-cadence, "given what came back, what next?" — covering #2 and #4, whose
+  dispositions are the negative `proceed` (past a gate that says no) and the positive `spend` (buy
+  another pass past a gate that says yes). **(B) READINESS ASSERTION** — terminal, "given what came
+  back, I believe this is ready, accepting X and Y" — covering #11, with #5 as its CONTENT rather
+  than a peer: the accepted residuals are the assertion's reasons, not separate judgements.
+
+  **THIS ANSWERS EXIT CRITERION (4).** The charter says `gate_overridden` must gain a reader or be
+  retired, because nothing in `src/` reads it and swapping one write-only record for another
+  delivers nothing. It gains a reader by **becoming the negative case of the continuation slot** —
+  same shape, opposite disposition. rc04 does not add a record beside it; it generalises it.
+
+  **ONE DEFECT FOUND IN PASSING, and it constrains the design.** `gate_overridden` cites its pass
+  in PROSE — `"latest independent pass has 6 CRITICAL"` — not by token. Exit (3)'s ordering check
+  could not run against that even today: there is nothing to compare timestamps with. **The slot
+  must cite passes by TOKEN**, with prose as commentary beside it rather than instead of it.
+  Whatever else rc04 ships, this is the part that makes it checkable rather than merely tidy.
+
 ## Open questions
 
 - **Q-rc04-c — how far does D4's commentary prohibition narrow?** It currently forbids a reviewer
@@ -218,9 +268,18 @@ is separately gone: rc02c made `budget` inert, so no cadence can end exhausted (
   data it was formed against (the pass tokens), and whether the disposition was the AI's own belief
   or a Sal ratification (D-rc04-3 as amended requires that distinction). The archive then RENDERS
   rather than composes, and exit (3)'s ordering check has something to check.
-  Open sub-question: WHICH judgements qualify. "Buy another pass", "this residual is acceptable",
-  "I believe this is ready", and "route this expansion to architecture" are four different shapes
-  and may not want one slot. Not yet worked.
+  Sub-question ANSWERED by D-rc04-13: four of eleven observed judgements qualify, under one test
+  (formed against independent review output), and they take TWO shapes — continuation and terminal
+  — with `gate_overridden` generalising into the first. Note that "route this expansion to
+  architecture" turned out NOT to need a new home: it is per-FINDING and the walk's decision lane
+  already structures it. What remains open here is the SLOT'S FIELD SHAPE, and one scope call:
+  whether rc04 ships BOTH shapes or only the terminal assertion the charter names. Continuation
+  produced the most value in rc02c's cycle and has no home at all, which argues for both; shipping
+  both is also a larger stage than chartered, so under D-rc04-3 as amended this is a recommendation
+  for Sal rather than a call the AI makes. **Standing recommendation: ship both**, because the
+  terminal assertion cites continuation decisions as its reasons — "I accepted the residual because
+  I bought a scoped pass and it came back sound" is one sentence spanning both shapes, and
+  structuring only half of it leaves the citation dangling in prose.
 
 ## Considered & out
 
