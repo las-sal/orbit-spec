@@ -2139,3 +2139,33 @@ cost, and NOTHING compares the two automatically. That gap is the point rather t
 declared expectation informs an author; an automatic comparison against it is a target, which
 R-crc-11(h) forbids. The spec has to say so plainly, because a reader who finds `budget: 3` and
 assumes it constrains something is the failure mode this choice creates.
+
+**2026-09-21 — the first measurement off R-crc-11(h)'s evidence base, and it is about PROPOSE, not review.**
+Sal's standing surprise — how many issues turn up in reviews that the original propose/apply did not
+address — is now quantified from the trails. **The first INDEPENDENT look at applied work finds a
+mean of 5.3 substantive findings, 1.3 of them CRITICAL, across fourteen archived changes. It has
+never once been zero.** Range 1 to 10, with the two worst being the two most recent design-heavy
+stages (rc02 at 10, rc07 at 10). An earlier cut of this number was confounded and is recorded here
+so it is not repeated: measuring the FIRST pass of any class gives near-zero, because in-context
+went first on most changes and in-context finds almost nothing by design (rc03's own measurement:
+one CRITICAL in ~25 passes). Only the first INDEPENDENT pass measures what propose/design/apply
+actually missed.
+
+So the gap is structural rather than occasional: this pipeline has never produced work an
+independent reader had nothing substantive to say about. Two readings remain open and the evidence
+does not yet separate them. **(a)** propose/design under-specify, apply fills the gaps with
+unreviewed judgement, and review is where that judgement first meets resistance — in which case a
+heavier exploration attacks it directly. **(b)** ~5 findings is simply what any independent reading
+of a few hundred new lines yields regardless of upstream rigour — in which case a heavier
+exploration moves cost rather than removing it. The cheap discriminator, stated so whoever picks
+this up does not have to invent it: does first-pass count correlate with how much MECHANISM the
+exploration settled before propose?
+
+The program has been here before without naming it this way. **R-crc-7** — explore produces
+mechanism, execute the procedure once, specify as decision tables — was ratified out of rc02's
+cycle for exactly this reason, and **rc13a is the stage that tried to build it and archived without
+shipping** (17 CRITICALs across three passes). The insight exists; the mechanism does not. What is
+new is that the target is now MEASURABLE and the claim FALSIFIABLE. Captured as **issue #13**
+rather than a stage, per Sal, so findings can accrete against it while the current stages proceed —
+the issue carries the full fourteen-change table, the reproduction method, the two competing
+readings and the discriminator between them.

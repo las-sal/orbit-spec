@@ -84,6 +84,19 @@ whether R-crc-11 DISSOLVES two of the three rather than requiring them to be sol
   twelve-cell table that produced it are kept at `sketches/stands-decision-table.py`; the work is
   not wasted, it is re-homed.
 
+- **2026-09-21 — D-rc02c-8: the INVALIDATION thread is DROPPED — it does not matter** (Sal). The
+  question was whether a walk that resolved only SUGGESTIONs invalidates a standing pass, and
+  underneath it whether "edits vs no edits" is the truer criterion than severity (it is — the basis
+  is staleness, and staleness has nothing to do with consequence, which made my earlier carve-out
+  incoherent with its own justification). Both are dropped, because the premise underneath them
+  fails: a review is performed on code the last propose/apply produced, ANY AI's output will carry
+  issues, and once named those issues are walked immediately. A pass's standing relative to the
+  current tree therefore carries little weight — stale findings can still be walked, and a blind
+  pair is effective precisely because its members read the same state at the same time. Not built,
+  and deliberately not half-built: the `files_touched` field a correct edits-vs-no-edits rule would
+  need is NOT added, because adding a field to sharpen a distinction nobody acts on is cost without
+  a decision attached.
+
 ## Open questions
 
 ## Considered & out
