@@ -16,14 +16,18 @@ error on stderr, and empty stdout. One validator, two gates: the fail-loud bound
 placed at render time moves to write time, so a malformed emit is refused before it becomes a
 record rather than discovered when rendered.
 
-**THE ORDERING REFUSAL (rc04a).** A payload carrying a JUDGEMENT RECORD — identified by the
-presence of `formed_against`, and by nothing else — SHALL additionally pass an ORDERING check:
-every token in `formed_against` MUST be STRICTLY EARLIER than the EMIT'S OWN `<TS>` FILENAME
+**THE ORDERING REFUSAL (rc04a).** A payload carrying JUDGEMENT RECORDS — identified by the presence
+of the top-level `judgements` KEY, and by nothing else — SHALL additionally pass an ORDERING check
+PER ENTRY. `judgements` is an ARRAY (shape owned by `orbit-run-summary-emit`) and each entry carries
+its own `formed_against`, so the check iterates: it is not one comparison against a merged set, and
+two entries on one emit may legitimately cite different passes. For EVERY entry,
+every token in that entry's `formed_against` MUST be STRICTLY EARLIER than the EMIT'S OWN `<TS>` FILENAME
 TOKEN — the engine-composed one, compared in that single representation. The record carries no
 timestamp of its own; the comparand is the emit's, and naming it explicitly matters because the
 emit holds that instant in TWO forms (the colon-bearing JSON `timestamp` and the hyphenated
-filename `<TS>`) and comparing across the two would silently never match. A record citing a token equal to or later than that
-is REFUSED, naming the offending token and the emit's token. This is the single computed thing about a judgement
+filename `<TS>`) and comparing across the two would silently never match. An ENTRY citing a token equal to or later than that
+is REFUSED, naming the offending token, the emit's token, and the entry's index — an array of
+judgements needs the index or the error cannot be acted on. This is the single computed thing about a judgement
 record and the reason the record is buildable at all: R-crc-11(g) requires the AI to judge
 readiness KNOWING what the independent reviewers returned, belief is not observable, and ORDERING
 is. The engine SHALL NOT evaluate whether the judgement was correct, whether the cited passes were
@@ -31,7 +35,9 @@ clean, or whether enough of them were cited — it refuses only a claim that COU
 informed by the evidence it names.
 
 The check is SCOPED BY PRESENCE so that no emit that exists today can newly fail: a payload with no
-`formed_against` field carries no judgement record and is not ordering-checked. The RESOLUTION SOURCE is the trail reader's PASS SET — the same `trail.passes` that clause (a)
+`judgements` key carries no judgement record and is not ordering-checked. Scoping on the KEY rather
+than on a nested field is what keeps the check cheap and total — the engine decides whether to
+descend at all before it reads anything inside. The RESOLUTION SOURCE is the trail reader's PASS SET — the same `trail.passes` that clause (a)
 coverage reads, which admits `review-(proposal|system)-<TS>.json` AND `external-(proposal|system)-<TS>.md`.
 Naming it matters: an external pass has no JSON emit and `review-external-<TS>.json` is a PACKAGING
 record rather than a pass, so without this the most common external citation would look
@@ -63,25 +69,32 @@ carries no findings a judgement could have been formed against.
 
 #### Scenario: A readiness record citing a LATER pass is refused
 
-- **WHEN** an archive payload carries a `readiness` record whose `formed_against` names a pass token
-  later than the emit's own `<TS>` token
+- **WHEN** an archive payload's `judgements` array holds a `readiness` entry whose `formed_against`
+  names a pass token later than the emit's own `<TS>` token
 - **THEN** the surface exits non-zero naming the offending token and the emit's `<TS>` token; no file
   is written; stdout is empty
 
 #### Scenario: A record citing its own timestamp exactly is refused
 
-- **WHEN** `formed_against` names a token EQUAL to the emit's own `<TS>` token
+- **WHEN** an entry's `formed_against` names a token EQUAL to the emit's own `<TS>` token
 - **THEN** it is refused — the comparison is STRICTLY earlier, because a judgement formed in the
   same second as the pass it cites cannot be shown to have been informed by it
 
 #### Scenario: An unresolvable citation is refused rather than skipped
 
-- **WHEN** `formed_against` names a token matching no readable pass on the change's trail
+- **WHEN** an entry's `formed_against` names a token matching no readable pass on the change's trail
 - **THEN** the emit is refused naming the unresolvable token — a citation that resolves to nothing
   certifies nothing
 
+#### Scenario: The check runs per entry, not over a merged set
+
+- **WHEN** an emit's `judgements` array holds two entries, one citing only earlier tokens and one
+  citing a later token
+- **THEN** the emit is refused naming the SECOND entry's index and its offending token — a valid
+  entry does not rescue an invalid one, and a merged comparison would have hidden it
+
 #### Scenario: A payload with no judgement record is not ordering-checked
 
-- **WHEN** any emit without a `formed_against` field is composed
+- **WHEN** any emit without a `judgements` key is composed
 - **THEN** the ordering check does not run and the emit's behaviour is byte-identical to before this
   change — the check is scoped by PRESENCE so no existing emit can newly fail

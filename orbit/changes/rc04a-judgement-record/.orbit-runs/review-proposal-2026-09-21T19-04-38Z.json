@@ -1,0 +1,84 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-21T19:04:38Z",
+  "change": "rc04a-judgement-record",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 1,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "severity": "CRITICAL",
+      "dimension": "correctness",
+      "title": "The array carrier never reached `orbit-emit-composition`, so the write gate cannot find the records it must check",
+      "file": "orbit/changes/rc04a-judgement-record/specs/orbit-emit-composition/spec.md",
+      "line": 19,
+      "recommendation": "The walk's resolution of finding 3 named the payload key `judgements` and made it an ARRAY with `formed_against` INSIDE each entry. That landed in `orbit-run-summary-emit` and in `orbit-archive-modifications`. It never reached `orbit-emit-composition`, which is the capability that has to DETECT and ITERATE the records — `judgements` appears in that delta zero times. Two consequences, both fatal to the check as specified. (a) DETECTION: the delta says a judgement record is 'identified by the presence of `formed_against`, and by nothing else', and that 'a payload with no `formed_against` field carries no judgement record and is not ordering-checked'. After the array resolution there IS no top-level `formed_against` — it sits one level down, inside each entry — so the rule as written detects nothing and the presence-scoping claim is unimplementable exactly as stated. (b) ITERATION: the phrase 'per entry' or 'each entry' appears zero times in this delta, while `orbit-run-summary-emit` says plainly that 'the write gate's ordering check runs per entry' and ships a scenario for one archive emit carrying TWO entries with different `formed_against` lists. The capability that owns the loop was never told there is a loop. Rewrite the detection rule to key on the presence of the `judgements` KEY, state that the ordering check runs PER ENTRY over that array, and re-word the four ordering scenarios to name an entry rather than a bare record. Note this is the same class the fresh pass named — a fix landing on the instance and stopping at the edge of its class — committed inside the walk that resolved it."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "title": "Three sites still name the record without its key, after the walk gave it one",
+      "file": "orbit/changes/rc04a-judgement-record/specs/orbit-archive-modifications/spec.md",
+      "line": 7,
+      "recommendation": "The archive delta says the emit 'SHALL carry a `readiness` judgement record', its scenario says 'the archive run summary carries a `readiness` record', and the schema-reference scenario says 'the conditional `readiness` judgement record' — three formulations that predate the key being named and none of which mentions `judgements`. An implementer reading only `orbit-archive-modifications` would reasonably add a top-level `readiness` key, which is precisely the ambiguity finding 3 was raised to remove and which `payloadFields` would then refuse. Restate each as a `judgements` entry with `kind: \"readiness\"`. Lower than CRITICAL because the key IS named unambiguously in `orbit-run-summary-emit` and the two specs are read together — but it is the same omission as the finding above, one capability over."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "The change sits at 19 of under-20 tasks, so the next walk has no headroom",
+      "file": "orbit/changes/rc04a-judgement-record/tasks.md",
+      "line": 1,
+      "recommendation": "The walk added task 2.5, hit 20, and came back to 19 by consolidating 2.4 into it. That was a real consolidation rather than a number game, but it leaves ZERO headroom against R-crc-1's `under 20 tasks`: the CRITICAL above needs work in `orbit-emit-composition`, and if it lands as a new task the change breaches the ceiling again. Worth deciding deliberately now rather than at the next walk — either fold the emit-composition correction into an existing section-2 task, or record that the task dimension is at its limit so the next reviewer is not the one who discovers it. Noting because this change was SPLIT specifically to respect that ceiling, and a dimension sitting exactly at the boundary is one edit from undoing that."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "pass": "1",
+      "title": "Touchpoints names no schema-reference file although task 1.2 updates three",
+      "evidence": "Task 1.2 directs updating the SCHEMA REFERENCES for three commands while design.md's Touchpoints names no reference file — suppressed with evidence. The `.claude/skills/*/references/` tree is GENERATED output; its source is `src/core/templates/workflows/*.ts`, and Touchpoints names all three relevant templates (archive-change.ts, apply-change.ts, review.ts). The reference work is therefore covered by the predicted map, and the finding would have been a false positive from reading the generated path rather than the source."
+    }
+  ],
+  "commentary": "This is the trailing in-context slot and I pointed it where the spec says it belongs: at the walk that resolved the pair of prior findings, not at the change as a whole. I authored that walk, so nothing here is independent evidence about the change's substance — what this pass can do is re-run the mechanical checks the walk's own claims rest on, and that is where both findings came from.\n\nWhat held. The delta-fidelity rebuild is genuinely clean, and I re-verified it rather than trusting the walk's own assertion: every MODIFIED block across all three capabilities preserves every baseline scenario byte-identically, with zero baseline lines removed. That was the walk's largest and most consequential repair and it landed. The routing descope is complete — no residue of the `address-reviews` carrier anywhere except the one place that deliberately records why it is absent, and no surviving `four commands` or `which are three` contradiction. The `orbit-run-summary-emit` delta really is ADDED-only now, which took a capability that had carried two fidelity defects and removed its MODIFIED surface entirely. Fingerprints are 4 of 4 with the stale entry gone, and `validate --all --strict` is clean at 26.\n\nWhat did not hold is the same shape the fresh pass diagnosed, committed inside the walk that was resolving it. The array carrier — the walk's own answer to the unnamed-key finding — propagated to two capabilities and stopped at the third, which happens to be the one that has to detect and iterate the thing. The detection rule still names a top-level field that no longer exists at the top level, and the word 'entry' appears nowhere in the capability that owns the loop, while the capability that defines the shape ships a scenario for two entries on one emit. That is not a wording slip: the write gate as specified cannot find the records, so the single computed rule this whole change rests on would not fire.\n\nI want to be precise about what that does and does not say. It is a proposal-stage defect in prose that no implementer has read yet, caught before apply, which is what this slot is for. But it is the third consecutive cycle where the same failure mode has produced the sharpest finding, and the second time it has appeared inside the very walk that was fixing an earlier instance of it. The discipline that keeps catching it is also consistent: executing the check rather than reading the prose — here, counting occurrences of a key across the three deltas rather than re-reading them for sense.",
+  "passes_run": [
+    1,
+    2,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "passes_skipped": [
+    3
+  ],
+  "final_assessment": "1 critical, 1 warning, 1 suggestion.",
+  "iteration": 2,
+  "next_recommended": "/orbit:address-reviews rc04a-judgement-record --from-file orbit/changes/rc04a-judgement-record/.orbit-runs/review-proposal-2026-09-21T19-04-38Z.json"
+}

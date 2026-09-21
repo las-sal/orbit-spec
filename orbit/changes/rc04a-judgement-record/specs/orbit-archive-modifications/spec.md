@@ -4,8 +4,10 @@
 
 The system SHALL write a JSON summary to `orbit/changes/archive/<YYYY-MM-DD>-<change-name>/.orbit-runs/archive-<TS>.json` after a successful archive (the `<YYYY-MM-DD>-` prefix is added by upstream's archive move step).
 
-**THE TERMINAL READINESS RECORD (rc04a).** The archive emit SHALL carry a `readiness` judgement
-record (shape defined by `orbit-run-summary-emit`) whenever the archive concludes a review cadence.
+**THE TERMINAL READINESS RECORD (rc04a).** The archive emit SHALL carry, in its `judgements` array,
+an entry with `kind: "readiness"` (shape and carrier both defined by `orbit-run-summary-emit`)
+whenever the archive concludes a review cadence. The archive is the one emit admitting BOTH kinds,
+so the array may also hold a `continuation` entry from the same seam.
 It is the archive's statement of what the AI BELIEVED about the work, formed against the
 independent passes it names, and it is distinct from every record already here: `user_decision`
 records the audit-drift prompt's outcome, `gate_overridden` records a refusal to be blocked, and
@@ -57,8 +59,8 @@ relationship the lifecycle is built on.
 #### Scenario: Readiness recorded on an archive that concludes a cadence
 
 - **WHEN** a change with independent review passes on its trail is archived
-- **THEN** the archive run summary carries a `readiness` record naming those passes in
-  `formed_against`, a `disposition`, prose `reasoning`, `ratified_by`, and an `accepted` list which
+- **THEN** the archive run summary's `judgements` array carries a `kind: "readiness"` entry naming
+  those passes in its `formed_against`, a `disposition`, prose `reasoning`, `ratified_by`, and an `accepted` list which
   is empty when nothing was left unresolved
 
 #### Scenario: Residual risk moves out of warnings and into accepted
@@ -170,8 +172,8 @@ residue that path renaming alone does not fix — satisfying the deferral record
 #### Scenario: The readiness record is documented in the shipped reference
 
 - **WHEN** the shipped archive schema reference is read after init
-- **THEN** it documents the conditional `readiness` judgement record alongside the other conditional
-  fields — its `kind`, `formed_against`, `disposition`, `reasoning`, `ratified_by`, `accepted` and
+- **THEN** it documents the conditional `judgements` array and its `readiness` entry alongside the
+  other conditional fields — its `kind`, `formed_against`, `disposition`, `reasoning`, `ratified_by`, `accepted` and
   (on `not-ready`) `destination` — in the same style `gate_overridden` and the fingerprint fields
   use, so the reference and the payload table agree per `orbit-emit-composition`'s parity
   requirement
