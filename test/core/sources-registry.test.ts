@@ -36,7 +36,12 @@ describe('countRulingEntries', () => {
     // moving. Worth noting it fired HERE and `orbit validate --sources` did not, because the
     // marked span in CLAUDE.md had already been updated in the same edit — the two checks
     // cover different failure modes and neither subsumes the other.
-    expect(count).toBe(12);
+    //
+    // 12 -> 13 on 2026-09-22: R-crc-13 (a gate reports, it never rules; passage is a joint
+    // judgement) was recorded. Third consecutive deliberate bump, and the pin has now gone red
+    // on every ruling this program has added since it was written — which is the whole of its
+    // job.
+    expect(count).toBe(13);
 
     // DERIVED, as a second and independent witness: a plain scan of the section must agree.
     const section = sliceRulingsIndex(doc.lines);

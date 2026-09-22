@@ -1,0 +1,30 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-22T13:48:41Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Resume session on clean-up-review-cycle, opened immediately after rc04d's system cadence closed. Three captures and two decisions.\n\nCAPTURES. (1) A DESCOPE SWEEP COROLLARY on R-crc-6 — the session's substantive contribution. R-crc-6 calls descope 'the only lane that makes the next review cheaper', which is true of the mechanism and false of the artifacts: when a walk deletes something a ratified decision ARGUED FOR, every artifact carrying that argument goes wrong at the moment of deletion, and a descope does not look like a substantive modification because its diff is a subtraction. Measured on rc04d: its 03:02 walk took the lane correctly, the delta was then right and STAYED right (zero findings in it on the next pass), and that pass found nine elsewhere, SEVEN of them descope wake. Recorded with the cheap practical form — grep the change's own artifacts for the removed thing's vocabulary before closing the finding. (2) A clean SECOND OBSERVATION on Q-crc-17: rc04d's walk matched 9 of 9 entries to findings on (title, file), measured rather than assumed, and matched only because the author copied keys verbatim while the source was in context. Nothing checked it, so a clean instance is evidence about the walk and not about the mechanism; the standing recommendation is unchanged and still unbuilt. (3) A SECOND INSTANCE on Q-crc-20, sharper than rc02c's: rc02c's walk authored engine code ADJACENT to what its pair read, whereas rc04d's walk DELETED THE REVIEWED SENTENCE ITSELF, so the shipped site-2 text has been read only in-context. The calibration figure this question asks for is unusually clean here — one normative sentence changed since the last independent pass, everything after it prose, verified byte-identical.\n\nDECISIONS. rc03a-blind-prompt's ratification offer fired for the THIRD time and was declined again; the slot stays [ ]. Recorded on Q-crc-11, where it matters: that question set itself an ambiguous trigger ('a third withdrawn stage' vs 'a third time the gap costs something') and the second reading is now satisfied, while the first is not. The rc04d residual was raised as a SCOPE call and TAKEN by Sal — archive as is, residual carried in rc04a's readiness record as a {claim, why} pair, on the reasoning that the site-2 sentence's correctness is the most-reviewed question in the stage and a fourth pass would buy coverage of a conclusion rather than of an argument. The commit-boundary recommendation was NOT taken with it and remains standing: exit (2)'s scoped check reads clean by construction only if the R-crc-13 ruling-count bump lands in its own architect commit; otherwise clause (c) carries the test/ residual.\n\nNothing was authored into this doc that the engine renders: no state lines, no position summaries. Doc validates; sources clean at 13 rulings, 22 stages, 21 capabilities, schema 4. Not arc-done (13 premised, 2 exploring, 1 in-change), so no program-PR readout.",
+  "stages_touched": [
+    "rc04d-override-vocabulary",
+    "rc03a-blind-prompt"
+  ],
+  "rulings_captured": [
+    "R-crc-6 — DESCOPE SWEEP COROLLARY (appended 2026-09-22, settled under R-crc-3): descope is the cheap lane for MECHANISM and the expensive one for ARTIFACTS; the sweep of everything that argued for the removed thing belongs to the lane, not to a follow-up. Evidenced 7-of-9 on rc04d. Appended rather than promoted to R-crc-14 deliberately — the ruling count stays 13, keeping the src:rulings marker and the sources-registry pin out of rc04d's working tree."
+  ],
+  "completions_ratified": [],
+  "handoff": {
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md — R-crc-6's DESCOPE SWEEP COROLLARY: the newest method rule, and the one a resolution walk should read before closing a descope finding.",
+      "orbit/architecture/clean-up-review-cycle.md — Q-crc-20's SECOND INSTANCE: why rc04d's passed gate carries a residual, and the measured figure that sizes it.",
+      "orbit/architecture/clean-up-review-cycle.md status log, 2026-09-22 entry — the scope call as taken, and the commit-boundary recommendation still standing.",
+      "orbit/changes/rc04d-override-vocabulary/tasks.md AT-ARCHIVE NOTE — three clauses now; (c) is the readiness-record entry this session's decision requires.",
+      "orbit/changes/rc04d-override-vocabulary/.orbit-runs/address-reviews-2026-09-22T03-25-51Z.json — the nine-finding walk whose resolutions the archive will read."
+    ],
+    "next_command": "/orbit:archive rc04d-override-vocabulary",
+    "model_hint": null,
+    "seam": "post-cadence program capture; rc04d sits at the archive seam with its gate passed and its residual ratified"
+  },
+  "next_recommended": "/orbit:archive rc04d-override-vocabulary"
+}

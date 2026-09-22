@@ -182,6 +182,26 @@ One goal per phase, each falsifiable, each stage naming its goal (settled under 
   the answer is to stop reviewing; high concentration with zero repeats is authoring and the answer
   is to stop walking.
 
+  **DESCOPE SWEEP COROLLARY** (added 2026-09-22, settled under R-crc-3): *descope is "the only
+  lane that makes the next review cheaper" — TRUE OF THE MECHANISM, FALSE OF THE ARTIFACTS.* When a
+  walk removes something a ratified decision ARGUED FOR, every artifact carrying that argument goes
+  wrong the instant the removal lands: the decision record, the proposal's summary of what shipped,
+  the task that certifies the decision, the handoff pointing a downstream stage at it. Nothing in
+  the lane's definition says they travel with the deletion, and a descope does not LOOK like a
+  substantive modification because the diff it produces is a subtraction. Measured on rc04d
+  (2026-09-22): its 03:02 walk correctly took this lane on an external CRITICAL, deleting a
+  shape-ownership claim from the delta. The delta was then right and STAYED right — the next pass
+  found ZERO findings in it. That pass found NINE elsewhere, SEVEN of them descope wake: the
+  stage's own designated source-of-truth table still held the refuted wording; the task certifying
+  that table claimed it recorded corrections it did not; the handoff record actively pointed the
+  downstream stage at the refuted form; the proposal miscounted what shipped; the design's decision
+  section still CLOSED with the argument its own body called wrong. So the lane is not complete
+  when the artifact under review is correct — it is complete when every artifact that argued for
+  the removed thing has been swept, and the sweep belongs to the lane rather than to a follow-up.
+  Practical form, because this one is cheap: after a descope lands, grep the change's own artifacts
+  for the REMOVED THING'S VOCABULARY before closing the finding. On rc04d that grep is
+  `two-owner|shape owned by|moves OWNERSHIP`, and it returns all seven sites in one command.
+
 - **R-crc-7** (settled under R-crc-3, 2026-09-14) — EXPLORE PRODUCES MECHANISM TO THE FIDELITY THE
   ARTIFACT DEMANDS. Where the deliverable is a DECISION PROCEDURE the machine executes, the procedure
   IS the deliverable: it SHALL be worked out and EXECUTED ONCE against real data or a constructed
@@ -345,6 +365,67 @@ One goal per phase, each falsifiable, each stage naming its goal (settled under 
   WHO: the stage PROPOSES the revision with its derivation (a method call under R-crc-3); the
   architect session RECORDS it. A revision that never reaches the doc did not happen.
 
+  **THE THIRD CASE, added 2026-09-22 (settled under R-crc-3; recorded because this ruling says of
+  itself that it is easy to abuse): AN INSTRUMENT CORRECTION IS NOT A REVISION, AND MUST NOT BE
+  RECORDED AS ONE.** The ruling above splits two cases — the criterion changed meaning (revise) or
+  the stage missed the bar (MISS). rc04d hit a third: the criterion was right, measurable, and met,
+  while the COMMAND WRITTEN TO MEASURE IT measured something else. Its task 2.2 read
+  "`git diff --name-only` for this change touches NOTHING under `src/`/`test/`" — an UNSCOPED
+  command standing in for a change-scoped claim, so on a shared working tree it reported a
+  concurrent workstream's edit as the stage's. Nothing about the shipped mechanism caused that;
+  rc04d shipped NO mechanism, being a pure-vocabulary stage. So the distinguishing question this
+  ruling already states — *is the criterion still measurable in the shipped vocabulary?* — answers
+  YES, and the criterion GRADES. It graded MET.
+  Why the distinction earns a paragraph rather than a footnote: "I fixed the measuring tool" and
+  "the criterion changed meaning" produce the same diff in a task file and mean opposite things,
+  and only one of them is licensed here. An instrument correction is ordinary repair — it needs no
+  licence, it does not touch the charter, and claiming R-crc-12 for it would launder a bad command
+  into a ratified change of terms. The recording obligation is unchanged and independent: say what
+  the instrument measured, what it should have measured, and what the corrected instrument reads.
+  **Corollary for authors**: an exit criterion lives in the CHARTER; the command in a task is only
+  its instrument. When they disagree, the charter grades. rc04d's charter exit (2) says `src/` and
+  the suite; its task had tightened this to `src/` AND `test/` without the charter ever saying so,
+  and it was the unratified half that appeared to fail. A task may not silently narrow the bar its
+  stage is graded against.
+
+- **R-crc-13** (Sal, 2026-09-22) — **A GATE REPORTS; IT NEVER RULES. PASSAGE IS A JOINT
+  JUDGEMENT.** The mechanics compute a position and the engine states it. The decision to go
+  forward from that position is taken TOGETHER, on the facts, by the AI and the user — and the
+  same is true of every other decision the flow reaches: whether to split a proposal, whether to
+  buy another pass, whether the work is ready. **An emit RECORDS that judgement and tracks
+  position. It does not grade how the past went.**
+
+  Stated verbatim because the phrasing is the ruling: *"we move through the flow based on the
+  mechanics laid down, but the judgement to go forward is always a joint decision between the AI
+  and me … we look at the facts, and then we jointly move forward — passing the gate. The emits
+  just help us track the status — they aren't necessarily rendering judgement on how the past
+  went."*
+
+  **This is not new behaviour and the ruling does not change any.** `orbit-engine-gates`' own
+  override contract has said it since C1 — *"Gates NEVER hard-block — apply-parity enforcement:
+  the engine reports, the skill prompts, the user decides, the trail records"* — and D1 built the
+  consent model on it. What the ruling adds is STANDING: the contract lived inside one capability
+  as an enforcement note, where a later stage could narrow it without anyone noticing the premise
+  had moved. It is a program-level commitment now, and a stage that wants to make a gate
+  authoritative must argue against this entry rather than merely edit that sentence.
+
+  **What follows from it, named so the consequences are not rediscovered.** (a) R-crc-10's
+  "mechanize only what the engine can observe" is a COROLLARY rather than a neighbour: an engine
+  that cannot rule has nothing to compute a verdict from, so a judgement input yields a RECORD.
+  (b) rc04a's `ratified_by: ai | user` is this ruling's existing mechanism — the field exists
+  precisely because the difference between the AI's belief and a joint ratification is a fact the
+  record must state. (c) The program's vocabulary does not match the ruling: "override" names a
+  breach of authority the gate never had, and Q-crc-23 carries that question with its scope
+  unresolved. (d) A readiness record that RECORDS a belief is consistent with this ruling; a
+  readiness record that BLOCKED would not be, which is why rc04a's never-blocks clause is load-
+  bearing rather than a courtesy.
+
+  **The boundary, since "joint" is easy to over-read.** Joint means the decision is taken on
+  shared facts with both parties able to see them — it does not mean every decision needs a
+  prompt. R-crc-3 still governs: method is the AI's to settle and record, scope and rulings are
+  Sal's. D1's consent model still decides WHERE a prompt fires. This ruling says what a gate IS,
+  not how often the user is asked.
+
 ## Open questions (program-level)
 
 - **Q-crc-11 — the stage grammar has no WITHDRAWN state, and two stages now need one.**
@@ -367,6 +448,17 @@ One goal per phase, each falsifiable, each stage naming its goal (settled under 
   still not a third WITHDRAWN stage, so the standing recommendation does not change — but the
   counter's premise that two instances "cost nothing but a confusing readout" is now measurably
   weaker than when it was written.
+  **2026-09-22 — THIRD FIRING, declined again (Sal).** The offer fired for rc03a in a third
+  architect session and was declined for the third time, on the same reasoning the charter has
+  carried since 2026-09-15. The cost is now a MEASURED CADENCE rather than an inference: three
+  sessions, three identical prompts, three identical answers, and the only thing preventing a wrong
+  mark each time is that whoever answers re-derives the charter's reasoning. Still not a third
+  WITHDRAWN stage, so the recommendation STILL does not change — but the honest counter that opened
+  this entry ("worth leaving until a third occurrence") has now been overtaken on its own terms by
+  a third OCCURRENCE OF THE COST, which is not the same thing as the third instance it named. Worth
+  stating plainly for whoever takes the scope call: the trigger this question set itself is
+  ambiguous between "a third withdrawn stage" and "a third time the gap costs something", and the
+  second reading is now satisfied.
 
 - **Q-crc-12 — the archive seam is silent when the gate that is exhausted is not the gate archive
   watches.** Observed 2026-09-15, twice in one day. Both rc03a and rc13a archived with
@@ -613,6 +705,15 @@ never deleted.
   file still passes both halves. That is a smaller hole than the present one and is not closed here.
   Recorded rather than assigned; it is engine work on the emit surface, and rc07 is already carrying
   a walk's worth of new mechanism.
+  **SECOND OBSERVATION 2026-09-22 (rc04d), and it is clean — which is the point.** That walk's nine
+  entries matched all nine findings on `(title, file)`: measured, not assumed —
+  `entries matching a finding: 9, orphan entries: 0, uncovered findings: 0`. The keys matched
+  because the author happened to copy them verbatim while the source JSON was in context. NOTHING
+  CHECKED IT. The gate went `unpassed → passed` on those keys, and would have gone
+  `unpassed → still unpassed, reason naming a different clause` on nine retyped ones, with the
+  fixes equally real in the tree either way. So the hazard's realisation is a coin-flip on author
+  diligence at the moment of writing, and a clean instance is evidence about THIS WALK rather than
+  about the mechanism. The standing recommendation above is unchanged and still unbuilt.
 
 - **Q-crc-18 — RESOLVED 2026-09-21 by R-crc-11(h): effort is RECORDED, never targeted.** The
   question as first written asked "what becomes of the cost figures", which was vague enough to be
@@ -743,6 +844,25 @@ never deleted.
   the behaviour R-crc-11 wants. It is also precisely why this question exists: it should not have
   depended on the authoring AI happening to notice.
 
+  **SECOND INSTANCE 2026-09-22 (rc04d), and it is SHARPER than rc02c's — the walk changed the
+  REVIEWED SENTENCE ITSELF.** rc02c's walk authored engine code ADJACENT to what the pair read.
+  rc04d's blind pair (external GPT-5 Codex 02-21-40Z, fresh 02-25-46Z) reviewed a site-2
+  replacement reading *"The record's SHAPE is owned by the EMITTING COMMAND'S OWN CAPABILITY —
+  `orbit-run-summary-emit` for the apply emit, `orbit-archive-modifications` for the archive
+  emit"*. The external half's CRITICAL refuted it; the 03:02 walk took the descope lane and DELETED
+  the clause. The shipped requirement now reads *"the FIELD those facts are carried in, and its
+  shape, belong to the emit layer and are not named here"* — a sentence NO INDEPENDENT PASS HAS
+  EVER READ. The only pass over it is in-context (03:10Z). The gate computed `passed`, correctly:
+  coverage and resolution are both genuinely satisfied, and no apply token followed, so nothing
+  went stale.
+  **The calibration figure this question asks for is unusually clean here**, because the walk that
+  followed was measured prose-only: `git diff --stat` on `specs/` byte-identical across it,
+  fingerprints 5/5, 2238/2238 green. So the record would read *one normative sentence changed since
+  the last independent pass, in the requirement that pass was reviewing; everything since is
+  prose.* That is exactly the figure a human needs and exactly the figure nothing surfaces. Note
+  what it also shows: the DESCOPE lane is the cheap one for mechanism (R-crc-6) and the expensive
+  one for this question, because deleting a reviewed sentence leaves a replacement nobody read.
+
 - **Q-crc-21 — the Touchpoints parser reads a LINE where its own spec says LIST ITEM, and drops
   the difference silently.**
   Found 2026-09-21 by the pre-archive audit sweep on rc04a, then verified directly against both
@@ -773,6 +893,85 @@ never deleted.
   single stage that fixes the fence tracker and the touchpoints entry parser together would cost
   barely more than either alone while making the CLASS the unit of work rather than the instance.
   Whether that stage exists, and whether these two belong in it, is a scope call.
+
+- **Q-crc-22 — the blind pair has a PRODUCER and no CONSUMER: no invocation walks two passes
+  together, and the one that looks like it does silently walks one.**
+  Raised 2026-09-22 after the gap was hit for the SECOND time in a single session (rc04a's system
+  pair, then rc04d's), resolved by conversation both times because no command does it.
+
+  rc02 shipped `blind-pair` as a two-member cadence slot and R-crc-4 requires both members to
+  return before EITHER is walked — the gate enforces it, and its reason string says so in words.
+  But every ingest path on the walk side is SINGLE-SOURCE, verified against the shipped bodies
+  rather than remembered: `--from-file <path>` takes one path and is specified as "always
+  exclusive" (it suppresses marker grep and auto-discovery); auto-discovery picks "the SINGLE
+  most-recent file by filename `<TS>` token"; there is no multi-path flag; and `address-reviews`
+  is not a CLI command at all, so there is no engine-side parse to extend — the only engine
+  surface is `orbit emit address-reviews`, which writes ONE record per invocation.
+
+  **The sharpest edge is not the missing feature, it is the SILENT one.** Bare
+  `/orbit:address-reviews <change>` — the form that reads as "walk this change's findings" —
+  auto-discovers the single most-recent pass. Run against a returned blind pair it walks whichever
+  half arrived later, ignores the other, and produces a resolution log that reads as complete. At
+  rc04d that would have walked the fresh half and dropped the external half's CRITICAL. Clause (b)
+  would then have gone on to report the unwalked half as unresolved, which is the system working —
+  but only after the walk had already presented itself as finished.
+
+  **Why this is a CLASS, not an oversight.** It is the same shape as Q-crc-14 (a lint that ships
+  with no trigger): a mechanism is built, and the surface that CONSUMES it is never built, so the
+  mechanism's guarantee depends on a human remembering the procedure. rc02 built the pair; nothing
+  built the pair's walk. Two sessions of evidence now say the procedure does not survive contact
+  without the operator reconstructing it each time.
+
+- **Q-crc-23 — the word "override" encodes the hard-gate authority the program does not claim,
+  and one requirement is visibly arguing with itself about it.**
+  Raised 2026-09-22 (Sal, top-down, mid-walk on rc04d): *"i've never been a big fan of hard gates
+  … we move through the flow based on the mechanics laid down, but the judgement to go forward is
+  always a joint decision between the AI and me … the emits just help us track the status — they
+  aren't necessarily rendering judgement on how the past went."*
+
+  **The contract already says exactly that**, and has since C1: `orbit-engine-gates`' own
+  `Inflection-prompt override contract` closes *"Gates NEVER hard-block — apply-parity
+  enforcement: the engine reports, the skill prompts, the user decides, the trail records."* The
+  PHILOSOPHY is not in dispute and is not new. What is in dispute is the VOCABULARY wrapped around
+  it, because you override something that had authority over you, and under this contract the gate
+  never had any.
+
+  **The tension is visible inside a single requirement.** Its title is `Inflection-prompt OVERRIDE
+  contract`; its first scenario is `Override recorded, NOT PREVENTED` — a scenario name already
+  arguing with the title it sits under; and the field it mandates is `gate_OVERRIDDEN`. Meanwhile
+  rc04a's successor record names the same event the other way without anyone having noticed:
+  `continuation` / `proceed`, formed against named evidence, carrying `ratified_by: ai | user` —
+  a JOINT DECISION RECORDED rather than a breach logged. The new vocabulary was already built on
+  the frame this question asks about.
+
+  **Measured before being characterised**: `override` appears 48 times across `orbit/specs/`
+  (heaviest in `orbit-base-fingerprints` 8, `orbit-archive-modifications` 15) and the workflow
+  bodies carry 17 `gate_overridden`, 9 `Proceed anyway` and 5 `proceed-anyway`. Note the
+  fingerprint and audit-drift seams use `override` for their OWN proceed-anyway prompts, so this
+  is not one field's vocabulary — it is the program's word for "the human decided to continue",
+  used at four distinct seams.
+
+  **Why it matters beyond taste.** `rc04c-retire-gate-overridden`'s charter says it retires a
+  FIELD. If the frame is wrong, the honest scope is a WORD across ten capabilities and four
+  seams, which is far past R-crc-1's ceiling and would trigger R-crc-9 on sight. A stage that
+  believes it is doing the former while the program means the latter is exactly the
+  mis-scoping this program keeps recording.
+
+  Standing recommendation: **do NOT widen rc04c.** Keep it retiring the field, and declare the
+  vocabulary reframe an explicit NON-GOAL in its charter so the boundary is stated rather than
+  discovered mid-apply. Whether the reframe becomes its own stage, rides an existing one, or is
+  judged not worth doing at all is a SCOPE call — raised here, not taken. Worth weighing when it
+  is taken: the successor vocabulary already exists and is already right, so the cost may be
+  mostly mechanical once `gate_overridden` is gone; and a rename that touches four seams for
+  conceptual clarity alone is precisely the kind of change R-crc-11 says to judge on ALIGNMENT
+  rather than on cycle cost.
+
+  Standing recommendation: **`rc08-walk-completeness` should own this, and it is the strongest
+  evidence that stage has.** The minimum deliverable is not a merge feature — it is making the
+  SILENT case loud: when a change's trail carries an unwalked pass that the selected source does
+  not cover, the walk SAYS SO rather than reporting clean. Whether the surface also grows a
+  two-source ingest is a design call for that stage; whether rc08 is the right home, and when it
+  runs, is a scope call and is raised here rather than taken.
 
 
 ## Program stages
@@ -1461,14 +1660,25 @@ gate state; (3) the external prompt template carries it as a named field rather 
 ### Stage rc04d-override-vocabulary — the override is a fact, not a field
 
 Depends-on: (none)
-Complete: [ ]
+Complete: [x] 2026-09-22 (Sal)
 
 Charter: THREE capabilities name `gate_overridden` only while stating that an override is
 RECORDED. They do not depend on its shape: `orbit-engine-gates` ("records `gate_overridden:
 {gate, state, reason}`"), `orbit-pr-lifecycle` ("a recorded `gate_overridden` proceed-anyway SHALL
 still flip READY"), and `orbit-conventions` ("choosing proceed records `gate_overridden` in the
-archive run summary"). De-named — *the override is recorded on the emit, shape owned by
-`orbit-run-summary-emit`* — every one of those sentences is TRUE BEFORE AND AFTER the retirement.
+archive run summary"). De-named — *the override is recorded on the emit* — every one of those
+sentences is TRUE BEFORE AND AFTER the retirement.
+
+**THIS CHARTER DELIBERATELY NAMES NO SHAPE OWNER**, and the deletion is itself a finding. It
+originally illustrated the de-named form as *"shape owned by `orbit-run-summary-emit`"*. The
+stage's own cadence has now refuted that wording TWICE from two independent directions: a fresh
+proposal pass established it is wrong for the ARCHIVE emit, and the external system pass
+established that the two-owner replacement is ALSO wrong, because `orbit-archive-modifications`
+itself says the successor record's *"shape and carrier [are] both defined by
+`orbit-run-summary-emit`"*. A charter that illustrates a form the stage is still litigating
+becomes a third voice on an unsettled fact. The AUTHORITY on the de-named wording is the stage's
+delta, not this paragraph; the paragraph states the PROPERTY the wording must have — true before
+and after the retirement — and stops there.
 
 **That property is the whole reason this stage exists SEPARATELY and FIRST.** Run first, there is
 never a moment where a spec normatively demands a field nothing writes. Run after, the interim
@@ -1554,7 +1764,9 @@ records stay readable as history and are never written again. Nothing is deleted
 SCOPE, RE-MEASURED AT EXPLORATION AND NARROWED BY THE SPLIT: `gate_overridden` spans SIX baseline
 capabilities across FOURTEEN requirements — twice R-crc-1's ceiling on capabilities-touched, which
 is the binding dimension. `rc04d-override-vocabulary` takes `orbit-engine-gates`,
-`orbit-pr-lifecycle` and `orbit-conventions` (5 requirements, pure de-naming); THIS stage takes
+`orbit-pr-lifecycle` and `orbit-conventions` (5 requirements — four plain substitutions plus ONE
+ownership move, which is where every finding against that stage landed; "pure de-naming" was the
+split-time estimate and is corrected here); THIS stage takes
 `orbit-emit-composition`, `orbit-run-summary-emit` and `orbit-archive-modifications` (9
 requirements) plus the three workflow bodies, D-rc04c-1's totality rule, and the removal of the
 coexistence guard. Both halves sit AT the ceiling. The alternative split axis — by SEAM, apply
@@ -1568,7 +1780,13 @@ instinct and half the work — rc04a MODIFIED those three capabilities without r
 `gate_overridden` from any of them.) The three not already
 touched by rc04a are this stage's capabilities.
 
-Goal G1. Touches: orbit-engine-gates, orbit-pr-lifecycle, orbit-conventions.
+Goal G1. Touches: orbit-emit-composition, orbit-run-summary-emit, orbit-archive-modifications.
+(CORRECTED 2026-09-22: this slot read `orbit-engine-gates, orbit-pr-lifecycle, orbit-conventions`
+— byte-identical to rc04d's own line — for the whole interval between the split declaring the two
+stages and rc04d's external review finding it. The SCOPE paragraph above was rewritten at the
+split and the machine-shaped SLOT was not, which is the class this program keeps recording: a fix
+landing where the edit was and stopping at the edge of the thing it described. Nothing catches it
+— `orbit architecture validate` reads the slot's GRAMMAR, never its agreement with the prose.)
 Exit: (1) no workflow body instructs writing `gate_overridden`, grep-verified; (2) an archived
 trail carrying the old record still reads without error, as a prior generation; (3) the parent
 charter's exit (4) is MET — the record is retired rather than left write-only.
@@ -2825,3 +3043,155 @@ total over the override's domain and the strict-subset claim finally true. It ad
 than relaxing one, and it amends `formed_against` one day after rc04a shipped it through a blind
 pair — recorded loudly here for that reason.
 
+**2026-09-22 — Q-crc-22 opened; three rc04d-earned corrections applied to this doc.**
+The blind pair has a producer and no consumer. rc02 shipped `blind-pair` as a two-member slot and
+R-crc-4 requires both members back before EITHER is walked, but no invocation walks two passes
+together — `--from-file` is single-path and "always exclusive", auto-discovery picks "the SINGLE
+most-recent file", and `address-reviews` is a workflow body rather than a CLI command, so there is
+no engine-side parse to extend. The gap was hit TWICE in one session (rc04a's system pair, rc04d's)
+and resolved by conversation both times. The sharp edge is the silent one: bare
+`/orbit:address-reviews <change>` auto-discovers ONE pass and reports a complete-looking walk; at
+rc04d it would have dropped the external half's CRITICAL. Recommended to `rc08-walk-completeness`,
+whose minimum deliverable is making that case LOUD rather than building a merge feature.
+
+**Three corrections this doc earned from rc04d's cadence, applied here because stage declarations
+are the architect's.** (a) rc04c's `Touches:` slot named rc04d's three capabilities, byte-identical
+to rc04d's own line, for the entire interval between the split and rc04d's external review — the
+SCOPE paragraph was rewritten at the split and the machine-shaped SLOT was not. `orbit architecture
+validate` reads that slot's grammar and never its agreement with the prose, so nothing caught it.
+(b) rc04d is no longer described as "5 requirements, pure de-naming": four are plain substitutions
+and one is an ownership move, which is where every finding against that stage landed. (c) rc04d's
+charter now names NO SHAPE OWNER at all, and that deletion is the interesting one — the charter
+illustrated the de-named form as "shape owned by `orbit-run-summary-emit`", and the stage's cadence
+refuted that wording twice from two directions: a fresh pass showed it wrong for the archive emit,
+and the external pass showed the two-owner replacement ALSO wrong, because
+`orbit-archive-modifications` itself says the successor's shape and carrier are defined by
+`orbit-run-summary-emit`. A charter that illustrates a form the stage is still litigating becomes a
+third voice on an unsettled fact; the delta is the authority, and the charter now states only the
+PROPERTY the wording must have.
+
+**Worth recording about the cadence itself.** rc04d's blind pair converged on ONE defect from
+opposite sides with zero title overlap — the fresh half attacked the ARGUMENT ("your reason is
+wrong: that capability does cover archive") and the external half attacked the CONCLUSION ("your
+owner is wrong: that capability owns the shape"). Neither could have reached the other's evidence.
+Capture-recapture over the pair: 4 + 2 findings, overlap 1, population ~8, five distinct, residual
+~37% — the lowest of the session, on the smallest change of the session.
+
+**2026-09-22 — R-crc-13 captured and Q-crc-23 opened: the program says what a gate IS, and asks
+whether its own vocabulary agrees.**
+Raised top-down by Sal mid-walk on rc04d, which is worth noting because the prompt was not a
+finding: *"i've never been a big fan of hard gates … the judgement to go forward is always a joint
+decision between the AI and me … the emits just help us track the status — they aren't necessarily
+rendering judgement on how the past went."*
+
+**R-crc-13 changes no behaviour and that is the point.** `orbit-engine-gates` has carried the
+contract verbatim since C1 — *"Gates NEVER hard-block — apply-parity enforcement: the engine
+reports, the skill prompts, the user decides, the trail records"* — and D1 built consent on it.
+What the ruling adds is STANDING. The commitment lived inside one capability as an enforcement
+note, where a later stage could narrow it without anyone noticing the premise had moved; it is a
+program-level entry now, and a stage wanting an authoritative gate has to argue against it rather
+than edit a sentence. Its corollaries are named in the entry so they are not rediscovered: R-crc-10
+follows FROM it rather than sitting beside it, rc04a's `ratified_by` is its existing mechanism, and
+rc04a's never-blocks clause is load-bearing rather than a courtesy.
+
+**Q-crc-23 asks the question the ruling exposes.** You override something that had authority over
+you; under R-crc-13 the gate never had any. The tension is visible inside ONE requirement — title
+`Inflection-prompt OVERRIDE contract`, first scenario `Override recorded, NOT PREVENTED` (a
+scenario name arguing with its own title), field `gate_OVERRIDDEN` — while rc04a's successor
+already names the same event correctly (`continuation`/`proceed`, formed against named evidence,
+`ratified_by: ai | user`) without anyone having remarked on it. Measured rather than
+characterised: `override` appears 48 times across `orbit/specs/` and the bodies carry 17
+`gate_overridden`, 9 `Proceed anyway`, 5 `proceed-anyway` — and the fingerprint, audit-drift and PR
+seams use the word for their OWN proceed-anyway prompts, so this is the program's word for "the
+human decided to continue" at FOUR seams, not one field's vocabulary.
+
+**The scope consequence is named rather than left to be discovered.** `rc04c-retire-gate-overridden`
+believes it is retiring a FIELD. If the frame is wrong, the honest scope is a WORD across ten
+capabilities and four seams — past R-crc-1 on sight. The standing recommendation is to NOT widen
+rc04c and to declare the reframe an explicit NON-GOAL in its charter, so the boundary is stated
+rather than found mid-apply; whether the reframe becomes its own stage is a scope call raised and
+not taken.
+
+
+**2026-09-22 — rc04d's system cadence closed; three captures, and one scope call raised and not
+taken.** The stage's `review-system` gate computed PASSED with `independentSpend: 2` of a declared
+3, no override — a blind pair (external GPT-5 Codex, fresh), both halves walked in one sitting,
+then an in-context confirm finding 9 (2C/5W/2S), all nine walked to zero. The delta closed
+byte-identical to its pre-walk state: fingerprints 5/5, `validate --strict` clean, 2238/2238 green,
+`gate_overridden` absent from the deltas.
+
+**Ratification offered and declined (rc03a, third firing).** The engine's readout raised
+`rc03a-blind-prompt — quiescent, completion awaiting your ratification`; the slot stays `[ ]`. The
+recurring cost is recorded on Q-crc-11, where it now overtakes that question's own "leave it until a
+third occurrence" counter on the second of its two readings.
+
+**What the cadence earned this doc.** (1) A DESCOPE SWEEP COROLLARY on R-crc-6, settled under
+R-crc-3 and appended rather than promoted to a new ruling — the ruling count stays 13, deliberately,
+so the `src:rulings` marker and the `sources-registry` pin stay out of rc04d's working tree (see the
+exit-(2) note below). Its content: descope is the cheap lane for MECHANISM and the expensive one for
+ARTIFACTS, evidenced 7-of-9. (2) A clean SECOND OBSERVATION on Q-crc-17 — nine entries matched nine
+findings, measured; the keys matched because the author copied them verbatim and nothing checked it,
+so a clean instance is evidence about the walk and not about the mechanism. (3) A SECOND INSTANCE on
+Q-crc-20, sharper than rc02c's.
+
+**THE SCOPE CALL, RAISED AND NOT TAKEN — rc04d is archive-eligible over a sentence no independent
+pass has read.** Q-crc-20's new instance is not abstract for this stage: the blind pair reviewed the
+two-owner site-2 replacement, the external half refuted it, the 03:02 walk DELETED the clause, and
+the shipped sentence has been read only in-context. The gate is right to pass — coverage and
+resolution are both satisfied and no apply followed — and the residual is real. It is also unusually
+small and measured: ONE normative sentence changed since the pair, everything after it prose, with
+the delta byte-identical across the confirm walk.
+*Standing recommendation*: ARCHIVE AS IS and carry the residual in rc04a's readiness record
+`accepted` list as a `{claim, why}` pair — the sentence's own correctness is the most-reviewed
+question in the stage (three independent refutations converged on removal, and R-crc-13 supplies the
+principle), so a fourth pass would be buying coverage of a conclusion rather than of an argument.
+Buying one scoped independent pass is the defensible alternative and is what rc02c chose in the
+analogous spot.
+**TAKEN 2026-09-22 (Sal): archive as is, residual carried in the readiness record.** Recorded here
+because the alternative was live and evidenced, and a later reader should see that the residual was
+WEIGHED rather than missed. The commit-boundary recommendation below was NOT taken with it and
+remains standing: clause (c) carries the `test/` residual unless the R-crc-13 bump is landed
+separately first.
+
+**Exit (2)'s instrument was corrected mid-cadence, and the correction is a program-level lesson.**
+rc04d's task 2.2 read "`git diff --name-only` for this change touches NOTHING under `src/`/`test/`"
+— an UNSCOPED command standing in for a change-scoped claim, so on a shared working tree it reports
+another workstream's edits as the stage's and the criterion stops being falsifiable. It is now
+path-scoped to the change's own commits, with the R-crc-10 boundary stated explicitly: WHICH COMMITS
+carry a change is observable and may be checked; WHETHER an edit belongs to a workstream is a
+judgement and is RECORDED at archive. The concrete residual is `test/core/sources-registry.test.ts`,
+red from the R-crc-13 ruling-count bump — the ruling rc04d's own design rests on. Landing that bump
+in its own architect commit makes the scoped check read clean by construction; the commit boundary
+is the user's, and rc04d's AT-ARCHIVE NOTE clause (c) records the residual either way.
+
+**2026-09-22 — rc04d-override-vocabulary RATIFIED COMPLETE (Sal); R-crc-12 gains its third case.**
+Ratified on measurement rather than on the archive's own report, re-run against the post-archive
+tree: exit (1) greps ZERO across the three capabilities; exit (2) shows `src/` untouched with
+2238/2238 green; exit (3) reads 6 capabilities down to 3. The split's arithmetic closes exactly —
+`gate_overridden` spanned 14 requirements across 6 capabilities, rc04d took 5 across 3, and rc04c
+now inherits a MEASURED 9 across 3 (`orbit-run-summary-emit` 4, `orbit-archive-modifications` 4,
+`orbit-emit-composition` 1), which is the figure its charter has claimed since the split and is
+now verified rather than asserted. Both halves sit AT R-crc-1's ceiling, which is what R-crc-9's
+third preventive application was for.
+
+**R-crc-12 THIRD CASE — an instrument correction is not a revision.** Recorded because ratifying
+rc04d required deciding what its mid-cadence exit-(2) change actually was, and the wrong answer was
+available and flattering. R-crc-12 splits two cases: the shipped mechanism changed the criterion's
+meaning (REVISE) or the stage missed the bar (MISS). rc04d was neither — the criterion was right and
+measurable throughout, and the COMMAND WRITTEN TO MEASURE IT measured the working tree while
+claiming to measure the change. rc04d shipped no mechanism at all, so nothing could have changed the
+criterion's meaning, and the ruling's own distinguishing question (*is the criterion still measurable
+in the shipped vocabulary?*) answers YES. So it GRADED, and it graded MET. The clarification carries
+a corollary the stage earned the hard way: an exit criterion lives in the CHARTER and the command in
+a task is only its instrument — rc04d's task had tightened the bar from `src/` to `src/` AND `test/`
+without the charter ever saying so, and it was the unratified half that appeared to fail. A task may
+not silently narrow the bar its stage is graded against. Appended inside R-crc-12 rather than
+promoted to R-crc-14: the ruling count stays 13, keeping the `src:rulings` marker and the
+`sources-registry` pin out of an already-uncommitted tree — the same reasoning as the R-crc-6
+corollary earlier today, and now twice-applied enough to be a habit worth naming.
+
+**rc03a was NOT re-prompted.** Its offer was fired and declined earlier the same day (Q-crc-11's
+third firing, recorded there). The body is told never to nag, and firing an identical declined prompt
+twice within one day is nagging — so the readout was stated in prose and the slot left `[ ]`. Noted
+because Q-crc-11 is accumulating cost evidence and a SUPPRESSED firing is different from an absent
+one: the annoyance was real, it was simply not paid twice.

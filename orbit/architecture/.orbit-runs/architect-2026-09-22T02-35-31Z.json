@@ -1,0 +1,28 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-22T02:35:31Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Q-crc-22 OPENED: the blind pair has a PRODUCER and no CONSUMER. rc02 shipped `blind-pair` as a two-member cadence slot and R-crc-4 requires both members back before EITHER is walked, but every ingest path on the walk side is single-source — verified against the shipped bodies rather than remembered: `--from-file` takes one path and is specified as 'always exclusive', auto-discovery picks 'the SINGLE most-recent file', there is no multi-path flag, and `address-reviews` is a workflow body rather than a CLI command so there is no engine parse to extend. The gap was hit TWICE in one session and resolved by conversation both times. The sharpest edge is the SILENT one: bare `/orbit:address-reviews <change>` auto-discovers one pass and produces a resolution log that reads as complete; at rc04d it would have walked the fresh half and dropped the external half's CRITICAL. Recommended to `rc08-walk-completeness` with the minimum deliverable stated as making the silent case LOUD rather than building a merge feature — whether the surface also grows two-source ingest is that stage's design call, and whether rc08 is the right home is a scope call raised rather than taken. THREE charter corrections rc04d's cadence earned, applied here because stage declarations belong to the architect: rc04c's `Touches:` slot named rc04d's three capabilities byte-identically for the whole interval between the split and rc04d's external review, because the scope PARAGRAPH was rewritten at the split and the machine-shaped SLOT was not, and `orbit architecture validate` reads that slot's grammar and never its agreement with the prose; rc04d is no longer called 'pure de-naming' since one of its five sites is an ownership move and that is where every finding against it landed; and rc04d's charter now names NO shape owner at all, because the stage's own cadence refuted that illustration twice from two directions and a charter illustrating a form the stage is still litigating becomes a third voice on an unsettled fact. Also recorded: rc04d's blind pair converged on one defect from opposite sides with ZERO title overlap — the fresh half attacked the argument, the external half attacked the conclusion — residual ~37% by capture-recapture, the lowest of the session on the smallest change of the session.",
+  "stages_touched": [
+    "rc04d-override-vocabulary",
+    "rc04c-retire-gate-overridden"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "handoff": {
+    "seam": "post-external-pass architect session; rc04d's blind pair is closed and unwalked, Q-crc-22 opened",
+    "next_command": "/orbit:address-reviews rc04d-override-vocabulary --from-file orbit/changes/rc04d-override-vocabulary/.orbit-runs/external-system-2026-09-22T02-21-40Z.md",
+    "model_hint": "a reasoning-heavy model; the open CRITICAL needs a distinction drawn, not a name swapped",
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md — Q-crc-22 first if you are touching the walk surface; the rulings index now holds 12",
+      "orbit architecture status — position is COMPUTED; rc04d is in-change, rc04c exploring",
+      "orbit/changes/rc04d-override-vocabulary/.orbit-runs/external-system-2026-09-22T02-21-40Z.md and review-system-2026-09-22T02-25-46Z.json — the two halves of a closed blind pair, BOTH unwalked; they must be walked together and recorded as two emits matched by source_path",
+      "orbit/specs/orbit-archive-modifications/spec.md:63 — the sentence the external CRITICAL turns on: the archive judgements entry's shape and carrier are both defined by orbit-run-summary-emit",
+      "orbit/changes/rc04d-override-vocabulary/specs/orbit-engine-gates/spec.md:74-78 — the clause that has now been wrong twice"
+    ]
+  },
+  "next_recommended": "/orbit:address-reviews rc04d-override-vocabulary --from-file orbit/changes/rc04d-override-vocabulary/.orbit-runs/external-system-2026-09-22T02-21-40Z.md"
+}
