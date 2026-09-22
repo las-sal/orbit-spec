@@ -84,6 +84,14 @@ rc04a's continuation record carries them, and why this stage is a MOVE rather th
   requirements** (`orbit-archive-modifications` 4, `orbit-run-summary-emit` 4,
   `orbit-engine-gates` 3, `orbit-conventions` 1, `orbit-emit-composition` 1,
   `orbit-pr-lifecycle` 1) against R-crc-1's ceiling of <=3 capabilities and ~12 requirements.
+  **SUPERSEDED BY EVENTS 2026-09-22 — the figures above are the PRE-SPLIT measurement and are kept
+  because they are what triggered R-crc-9.** rc04d shipped and archived the same day, taking 5
+  requirements across 3 capabilities. Re-measured against the post-sync tree, THIS stage's actual
+  footprint is **3 capabilities / 9 requirements** — `orbit-run-summary-emit` 4,
+  `orbit-archive-modifications` 4, `orbit-emit-composition` 1 — which is AT the ceiling, exactly
+  what the split was for. Also measured and NOT in the original figures: 3 workflow templates
+  (`apply-change` 3 occurrences, `archive-change` 9, `pr-choreography` 1), the engine
+  (`emit-composition.ts`, 7), and FOUR test files.
   Capabilities-touched is the binding dimension and it is double. The charter's own line — "the
   three not already touched by rc04a are this stage's capabilities" — had the right intuition and
   assigned only HALF the work: rc04a MODIFIED those three capabilities but did not remove
@@ -100,6 +108,18 @@ rc04a's continuation record carries them, and why this stage is a MOVE rather th
   | `orbit-engine-gates` | "records `gate_overridden: {gate, state, reason}`" | "records the override on the emit (shape owned by `orbit-run-summary-emit`)" |
   | `orbit-pr-lifecycle` | "a recorded `gate_overridden` proceed-anyway SHALL still flip READY" | "a recorded proceed-anyway override SHALL still flip READY" |
   | `orbit-conventions` | "choosing proceed records `gate_overridden` in the archive run summary" | "choosing proceed records the override in the archive run summary" |
+
+  **EXECUTED 2026-09-22 by `rc04d-override-vocabulary`, and the `orbit-engine-gates` row above did
+  NOT ship as written — read the shipped delta, not this row.** The row's de-named form
+  ("shape owned by `orbit-run-summary-emit`") was refuted TWICE during rc04d's cadence: a fresh
+  proposal pass showed it wrong for the ARCHIVE emit, and the external system pass showed the
+  two-owner replacement ALSO wrong, since it would be true today and false after THIS stage. The
+  shipped text names NO shape owner at all, under R-crc-13 — a gate REPORTS, an emit RECORDS, so
+  shape was never that capability's to adjudicate. The `orbit-pr-lifecycle` row additionally
+  gained a qualifier it does not show here ("at the `review-system` gate"), because the unqualified
+  form widened a normative SHALL across both archive-seam overrides. AUTHORITY for all five
+  replacements is the archived delta at
+  `orbit/changes/archive/2026-09-22-rc04d-override-vocabulary/specs/`, never this table.
 
   Every de-named form is TRUE BEFORE AND AFTER the retirement. That is the property that matters:
   done first, there is never a moment where a spec normatively requires a field nothing writes.
@@ -132,6 +152,88 @@ rc04a's continuation record carries them, and why this stage is a MOVE rather th
   it goes straight to `/orbit:propose` or gets its own exploration first is a call for whoever
   picks it up.
 
+  **ANSWERED 2026-09-22: it got its own exploration, and needed it.** The "mechanism already
+  worked out" premise was the thing that turned out to be wrong — D-rc04c-3's table had a defect
+  in the row that mattered (above), and rc04d's cadence spent one fresh proposal pass and one
+  external system pass refuting two successive formulations of it before R-crc-13 settled the
+  question. A stage whose mechanism is one table is still a stage whose table can be wrong, which
+  is R-crc-7 arriving from the other direction: explore produces mechanism, and mechanism
+  inherited from a sibling exploration has not been reviewed just because it is written down.
+
+- **2026-09-22 — D-rc04c-5: rc04c NAMES THE SUCCESSOR CORRECTLY IN TEXT IT WRITES, AND HUNTS
+  NOWHERE.** (Sal, ratifying the line as stated. Settles a tension the charter's new NON-GOAL
+  created the same morning.)
+
+  The charter now declares the vocabulary reframe an explicit NON-GOAL (Q-crc-23: this stage
+  retires a FIELD, not a WORD). But rc04c must REWRITE nine requirements that currently describe
+  `gate_overridden`, and writing a sentence means choosing a word — so the NON-GOAL, read
+  literally, forbids nothing and decides nothing at the only moment it matters.
+
+  Three readings were on the table: (i) keep "override" in the new sentences, faithful to the
+  NON-GOAL but knowingly writing nine NEW sentences in a word R-crc-13 says is wrong; (ii) use the
+  successor vocabulary, correct but performing the reframe in three capabilities by the back door;
+  (iii) describe structurally and name neither.
+
+  **THE RATIFIED LINE.** rc04c MAY name the successor record correctly — `continuation`,
+  `proceed` — wherever it is ALREADY WRITING NEW TEXT, because that is not a rename: the stage
+  deletes a field and the sentences describing it, then writes sentences about the record that
+  replaces it, and that record's own name is `continuation`/`proceed`. Naming a thing by its name
+  is accuracy, not editorialising. rc04c MAY NOT go hunting for `override` in text it is not
+  otherwise touching — no sweep of the fingerprint guard, audit-drift, or PR seams, and no
+  requirement opened solely to change a word.
+
+  **Why the line falls there.** The NON-GOAL's own text already concedes the principle: it says
+  retiring the field shrinks the wrong word's footprint as a SIDE EFFECT. A side effect is exactly
+  what this is — vocabulary improving where the stage was working anyway, and nowhere else. The
+  boundary is therefore not "which word" but "which text", which is observable: a diff either
+  touches a requirement or it does not. That makes the NON-GOAL enforceable at review instead of
+  arguable, which is what a declared boundary is for.
+
+  **What it protects.** The difference between rc04c touching 9 requirements and rc04c being
+  tempted toward ten capabilities — R-crc-9 on sight, and the mis-scoping this program keeps
+  recording. Q-crc-23's scope call (whether the residual reframe becomes its own stage) stays open
+  and is NOT prejudged by this decision.
+
+- **2026-09-22 — D-rc04c-6: the four red test files are THREE KINDS of break, and naming the kinds
+  is what keeps the stage honestly sized.** (Settled under R-crc-3; measured from source, not from
+  the inherited inventory.)
+
+  rc04d's D-rc04d-1 handed this stage a list of FOUR test files that go red the moment the bodies
+  stop writing `gate_overridden`. The list is correct and the framing is not: treating it as four
+  instances of one problem overstates the work and, worse, hides that one entry carries no
+  semantic content at all. Enumerated by reading each site:
+
+  | site | kind | what rc04c actually does |
+  |---|---|---|
+  | `orbit-content-fidelity` (`apply-change`, `archive-change` body markers) | SEMANTIC | the pins assert the BODIES write the field; the bodies stop, so the pins go |
+  | `emit-schema-parity.test.ts:167` | SEMANTIC | the field leaves the archive schema table's conditional-field set |
+  | `emit-composition.test.ts` | SEMANTIC | asserts `persisted.gate_overridden` on a real archive emit |
+  | `emit-schema-parity.test.ts:219` | **FIXTURE ONLY** | does not test the field. It CRIPPLES the payload table by filtering `gate_overridden` out, to prove the parity check notices a documented-but-missing key. Needs a NEW VICTIM (`fingerprint_overridden` qualifies, VERIFIED not assumed: absent from the test's `ENGINE_OWNED` list — `['command','timestamp','change','doc','kind','model','next_recommended','iteration']`, with no per-command additions for `archive` — documented among the archive reference's conditional fields, and live in the payload table at `emit-composition.ts:184`); one line, zero semantic content |
+  | `judgement-record-fixture.test.ts` | **DIES WITH THE GUARD** | exists to exercise the coexistence pairing; it is the guard's test and goes when the guard goes — see Q-rc04c-b, where the surviving three-facts assertion should REPLACE its body rather than arrive as a new file |
+
+  **Why this is a decision and not a note.** The two framings produce different stages. "Fix four
+  broken test files" reads as four units of retirement work; "three semantic updates, one fixture
+  swap, one deletion-with-replacement" is both smaller and true, and it is the version that
+  survives a size check honestly. Mis-sizing in the CONSERVATIVE direction is still mis-sizing —
+  it is how a stage acquires imaginary weight and gets split, or gets deferred, for work that does
+  not exist. R-crc-9 has fired three times in this program on measurements; a measurement that
+  corrects DOWNWARD deserves the same standing as one that corrects up.
+
+  **SIZE CHECK, run preventively at exploration and CLEAN — the first one in this program that
+  found nothing.** 3 capabilities on the binding dimension against R-crc-1's ceiling of <=3, and 9
+  requirements against ~12. D-rc04c-5 does not move it: naming the successor record inside text
+  the stage is already rewriting adds no capability. D-rc04c-6 does not move it either — it
+  corrects the test inventory DOWNWARD. Recorded because R-crc-9 has now fired three times in this
+  program on size checks that found a breach, and a check that reports no breach is evidence about
+  the check as much as about the stage; an instrument only ever seen firing is an instrument nobody
+  has seen exercise its negative case.
+
+  **The generalisable half, worth carrying past this stage**: a grep for a symbol finds every
+  mention, and a mention is not a dependency. `emit-schema-parity:219` names `gate_overridden`
+  while depending only on the existence of SOME documented AI-supplied key. Inventories built by
+  grep should be read once at the SITE before their counts are believed — which is the same
+  instrument lesson this program has now recorded at rc01, rc07, rc04d's exit (2), and here.
+
 ## Open questions
 
 - **Q-rc04c-b — what guarantees the widening once the guard that enforced it is gone?**
@@ -143,6 +245,16 @@ rc04a's continuation record carries them, and why this stage is a MOVE rather th
   record and nothing to disagree with. What deserves to survive is a test asserting the
   continuation record still carries all three gate facts, so the loss of the legacy shape does not
   quietly become a loss of the fields.
+  **SHARPENED 2026-09-22 by rc04d's cycle, and the successor test has an obvious home.**
+  `test/core/judgement-record-fixture.test.ts` exists to exercise the coexistence pairing, so it
+  dies with the guard — which means the surviving assertion should REPLACE its body rather than be
+  written as a new file, and the retirement then reads as a narrowing of an existing test instead
+  of a deletion plus an unrelated addition. Note also what R-crc-6's DESCOPE SWEEP COROLLARY
+  (recorded 2026-09-22) says about this shape: removing the guard is descope-shaped — cheap for the
+  MECHANISM and expensive for the ARTIFACTS, because every sentence that argued for coexistence
+  goes wrong the moment the guard leaves. `orbit-run-summary-emit` currently spends a paragraph on
+  the two records coexisting "until `gate_overridden` is retired"; that paragraph is this stage's
+  to sweep, and it is exactly the kind of prose a mechanism-only diff leaves standing.
 
 ## Considered & out
 
@@ -175,6 +287,21 @@ rc04a's continuation record carries them, and why this stage is a MOVE rather th
 - `orbit/changes/archive/2026-09-21-rc04a-judgement-record/.orbit-runs/archive-2026-09-21T23-08-19Z.json`
   — the program's first readiness record; the shape this stage's argument depends on.
 - `src/core/emit-composition.ts:606-632` — the coexistence guard: the field's only reader.
+  Verified still present 2026-09-22, with `validateJudgements:533` and `judgementOrderingCheck:958`
+  both live as D-rc04c-1's mechanism table names them.
+- `orbit/changes/archive/2026-09-22-rc04d-override-vocabulary/` — the PRECEDING stage, archived and
+  ratified. Its `specs/` holds the AUTHORITATIVE shipped wording for all five de-namings
+  (D-rc04c-3's table is superseded); its `explore.md` D-rc04d-1 carries the four-test-file
+  inventory this stage inherits; its `tasks.md` 3.1-3.4 are the handoff records written FOR this
+  stage, including task 3.3, which points here and was itself corrected when it briefly pointed at
+  a refuted formulation.
+- `orbit/architecture/clean-up-review-cycle.md` — rc04c's charter, now carrying the explicit
+  **NON-GOAL** (the vocabulary reframe is not this stage's; see D-rc04c-5 for the line as ratified)
+  and, in the rulings index, R-crc-13, R-crc-6's DESCOPE SWEEP COROLLARY and R-crc-12's THIRD CASE
+  — all three recorded during rc04d's cadence and all three operative here.
+- `orbit/explore/rc04c-retire-gate-overridden/explore.md:100` — **this file's own D-rc04c-3 table**,
+  flagged by rc04d's tasks 3.3 as carrying a superseded row and deliberately left unedited then
+  (cascade scope is the current change). Corrected in place 2026-09-22.
 - `orbit/specs/orbit-engine-gates/spec.md:112` — "Gate state is a pure function of existing
   on-disk artifacts", the claim that makes the redundancy argument tempting and the retired
   vocabulary that defeats it.
