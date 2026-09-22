@@ -1,0 +1,15 @@
+schema: spec-driven
+created: 2026-09-22
+schema_version: 4
+architecture:
+  doc: clean-up-review-cycle
+  stage: rc04d-override-vocabulary
+base_fingerprints:
+  orbit-conventions:
+    Review mode decision framework: sha256:64acedbb809353962a40170d821728768ed5c636fab4ca7808d9a024e3e3ed52
+  orbit-engine-gates:
+    Gate-aware status and instructions with position readout: sha256:7f31735881a675ebbd4702cc8c96664b45d94c9173a32c67cb4d66aecb8003c3
+    Inflection-prompt override contract: sha256:7cc5dfaab94bd35225b54bf61463cb77bd8066a2e304de659528994a8f35980a
+    Review budget reported beside the gate state: sha256:df6b228d2304a7d0f99c4232f24c613beb3f858103538152366c2df3461e8fe4
+  orbit-pr-lifecycle:
+    Generalized READY rule: sha256:b0a41e8851d6eb8bbc9b3d4e4dde8dcb5f8c1ce4667a91763514f1426e85a2ef

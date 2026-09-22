@@ -1,0 +1,12 @@
+{
+  "command": "explore",
+  "timestamp": "2026-09-21T23:50:50Z",
+  "change": "rc04d-override-vocabulary",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Mode B scaffold for rc04d-override-vocabulary, opened after the split declared the stage. Architecture citation recorded, so the stage renders `exploring`. The scaffold starts with all five de-naming sites READ rather than assumed — three capabilities, five requirements, at the ceiling rather than over it. The read turned up an asymmetry the charter did not anticipate: four of the five sites name the field in passing, but `orbit-engine-gates`' Inflection-prompt override contract names its SHAPE (`{gate, state, reason}`), which makes that capability a second voice on a fact `orbit-run-summary-emit` owns — the one-voice-for-facts defect rc07 was built around, sitting inside the stage meant to stop naming the field. That produces the exploration's first real question: whether de-naming REMOVES the name or MOVES the ownership. Two open questions, both carrying standing recommendations.",
+  "decisions_captured": 0,
+  "open_questions_count": 2,
+  "open_questions_with_recommendation": "2 of 2",
+  "next_recommended": "/orbit:explore rc04d-override-vocabulary — continue capturing thinking — no decisions captured yet"
+}
