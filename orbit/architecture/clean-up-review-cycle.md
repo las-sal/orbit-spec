@@ -966,6 +966,17 @@ never deleted.
   conceptual clarity alone is precisely the kind of change R-crc-11 says to judge on ALIGNMENT
   rather than on cycle cost.
 
+  **THE NON-GOAL HALF IS APPLIED 2026-09-22.** rc04c's charter now carries an explicit NON-GOAL
+  declaring the reframe out of scope, with the measurement and the R-crc-9 reasoning stated there
+  rather than left for its exploration to rediscover — which was this recommendation's whole
+  point. Recorded here because a standing recommendation that is quietly acted on becomes
+  indistinguishable from one nobody read. THE SCOPE CALL REMAINS OPEN AND UNTAKEN: whether the
+  reframe becomes its own stage, rides an existing one, or is judged not worth doing at all. Note
+  one thing the charter now says that sharpens the question — retiring the field shrinks the wrong
+  word's footprint as a SIDE EFFECT, since rc04a's successor vocabulary already names the event
+  correctly. So the residual reframe after rc04c is smaller than the 48-occurrence figure above
+  suggests, and whoever takes the scope call should re-measure rather than inherit that number.
+
   Standing recommendation: **`rc08-walk-completeness` should own this, and it is the strongest
   evidence that stage has.** The minimum deliverable is not a merge feature — it is making the
   SILENT case loud: when a change's trail carries an unwalked pass that the selected source does
@@ -1779,6 +1790,24 @@ line below assigned this stage "the three not already touched by rc04a", which h
 instinct and half the work — rc04a MODIFIED those three capabilities without removing
 `gate_overridden` from any of them.) The three not already
 touched by rc04a are this stage's capabilities.
+
+**NON-GOAL — THE VOCABULARY REFRAME. This stage retires a FIELD, not a WORD.** Declared here
+under Q-crc-23's standing recommendation so the boundary is STATED rather than discovered
+mid-apply. R-crc-13 establishes that a gate REPORTS and never RULES, which makes "override" — a
+word meaning *you overrode something that had authority over you* — the wrong name for a joint
+decision the gate never had standing to refuse. That is a real defect and it is NOT this stage's.
+Measured before being bounded: `override` appears 48 times across `orbit/specs/`, and the bodies
+carry `gate_overridden`, `Proceed anyway` and `proceed-anyway` at FOUR distinct seams — the gate,
+the fingerprint guard, audit-drift, and the PR seam — so the reframe is a word across roughly ten
+capabilities, far past R-crc-1 and an R-crc-9 trigger on sight. A stage that believes it is doing
+the former while the program means the latter is exactly the mis-scoping this program keeps
+recording, which is why the line is drawn in the charter rather than left to exploration.
+What this stage MAY do without widening: retire `gate_overridden` as a FIELD, and let rc04a's
+successor vocabulary (`continuation` / `proceed`, formed against named evidence, carrying
+`ratified_by`) stand where it already stands. It names the same event correctly and was built on
+the right frame before anyone remarked on it, so the field's retirement shrinks the wrong word's
+footprint as a SIDE EFFECT. Whether the remaining reframe becomes its own stage, rides an existing
+one, or is judged not worth doing at all stays a SCOPE call, open at Q-crc-23 and not taken here.
 
 Goal G1. Touches: orbit-emit-composition, orbit-run-summary-emit, orbit-archive-modifications.
 (CORRECTED 2026-09-22: this slot read `orbit-engine-gates, orbit-pr-lifecycle, orbit-conventions`

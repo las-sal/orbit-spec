@@ -112,8 +112,8 @@ As of 2026-09-11 the D-arc's six stages are all archived (d1 complete-ratified; 
 quiescent, awaiting ratification) and the live program is
 **`orbit/architecture/clean-up-review-cycle.md`** — goals G0–G4, the R-crc rulings (the size
 ceiling, the ordering principle, method delegated to the authoring AI, the canonical review
-cadence, the conditional reversal of D-d6-7, the canonical cadence's blind pair, the walk-authors-nothing lanes, explore-produces-mechanism, finding-quality-never-licenses-another-pass, the ceiling corollary — split the mechanism or declare the stage blocked, never substitute a cheaper one — MECHANIZE ONLY WHAT THE ENGINE CAN OBSERVE — name the inputs, and where any is prose or judgment the deliverable is a RECORD rather than a CHECK, THE PROGRAM OPTIMISES FOR ALIGNMENT NOT CYCLE COST — the user FRAMES and GUARDRAILS, the AI SOLVES, A CRITERION WRITTEN BEFORE THE TEST CANNOT GRADE THE TEST — when a stage's shipped mechanism invalidates its own exit criterion's terms the stage revises the criterion and records why, though a criterion the mechanism can still measure and does not meet is a MISS, and A GATE REPORTS, IT NEVER RULES — passage is a joint judgement taken on the facts by the AI and the user together, and an emit RECORDS that judgement rather than grading how the past went), <!-- src:stages -->22<!-- /src:stages --> small stages in four phases (rc03a withdrawn 2026-09-15 after three passes; rc13 split into rc13a/rc13b the same day under R-crc-9's first application; rc07b split from rc07 under R-crc-9 applied PREVENTIVELY; rc04d split from rc04c 2026-09-21, the third preventive application — a size check at exploration measured the stage at twice the ceiling before anything was proposed). Its first
-citing change, `rc01-instrument-fidelity`, is ARCHIVED (2026-09-12): the cycle's test
+cadence, the conditional reversal of D-d6-7, the canonical cadence's blind pair, the walk-authors-nothing lanes, explore-produces-mechanism, finding-quality-never-licenses-another-pass, the ceiling corollary — split the mechanism or declare the stage blocked, never substitute a cheaper one — MECHANIZE ONLY WHAT THE ENGINE CAN OBSERVE — name the inputs, and where any is prose or judgment the deliverable is a RECORD rather than a CHECK, THE PROGRAM OPTIMISES FOR ALIGNMENT NOT CYCLE COST — the user FRAMES and GUARDRAILS, the AI SOLVES, A CRITERION WRITTEN BEFORE THE TEST CANNOT GRADE THE TEST — when a stage's shipped mechanism invalidates its own exit criterion's terms the stage revises the criterion and records why, though a criterion the mechanism can still measure and does not meet is a MISS — and an INSTRUMENT CORRECTION is neither, because a criterion whose measuring command was simply wrong still grades, and A GATE REPORTS, IT NEVER RULES — passage is a joint judgement taken on the facts by the AI and the user together, and an emit RECORDS that judgement rather than grading how the past went), <!-- src:stages -->22<!-- /src:stages --> small stages in four phases (rc03a withdrawn 2026-09-15 after three passes; rc13 split into rc13a/rc13b the same day under R-crc-9's first application; rc07b split from rc07 under R-crc-9 applied PREVENTIVELY; rc04d split from rc04c 2026-09-21, the third preventive application — a size check at exploration measured the stage at twice the ceiling before anything was proposed). Its first
+stage to ship, `rc01-instrument-fidelity`, is ARCHIVED (2026-09-12): the cycle's test
 instruments now DERIVE from a recorded real-CLI contract instead of remembered structure —
 `test/integration/pr-lifecycle/gh-contract.json` captured from the real `gh` by
 `npm run capture:gh` (seven commands with usage shapes and per-flag `{long, short,
@@ -128,7 +128,7 @@ formatting-anchored key regex, a `repo|pr` command-family regex, and flag names 
 captured types), then two self-found narrowings, each closed with a measurement rather than an
 assertion.
 
-Its second citing change, `rc02-gate-semantics`, is ARCHIVED (2026-09-14): **the reviewed gate
+`rc02-gate-semantics` is ARCHIVED (2026-09-14): **the reviewed gate
 now knows what convergence costs.** Clause (b) resolution and the new-finding match are
 SUBSTANTIVE-ONLY (CRITICAL + WARNING), so SUGGESTIONs never gate (issue #8's intent, its
 third-`confirm`-value mechanism superseded — `confirm` selected clause (c), and it was clause (b)
@@ -167,7 +167,7 @@ It archived through a recorded `gate_overridden` whose reason IS the budget-spen
 sanctioned terminal signal, not R-d-10's "no clean pass yet" path — with the spend kept as
 residual risk. rc04 owns replacing that override with a judgement record; the field shipped by `rc04a-judgement-record` is `judgements`, whose `readiness` entry carries the residuals as `accepted: [{claim, why}]` pairs (the earlier working name `residual_risk` still appears in the architecture doc and is rc04's to reconcile).
 
-Its third citing change, `rc07-artifact-lint`, is ARCHIVED (2026-09-19) and the stage is
+`rc07-artifact-lint` is ARCHIVED (2026-09-19) and the stage is
 RATIFIED — **the first rc-stage to archive through a COMPUTED PASSED system gate** rather than a
 recorded override. A `src:` marker DELIMITS a span in living prose
 (`<!-- src:NAME -->18 stages<!-- /src:NAME -->`), `orbit/sources.yaml` maps a source NAME to an
@@ -207,7 +207,43 @@ resolved — found by a human question, not a check). The fourth, **Q-crc-16** (
 count stated twice, unmarked), was RESOLVED 2026-09-20 — both halves applied together, and this
 file now carries a live mark. Do NOT read this paragraph as the program's full live set: it lists
 only what rc07 produced. The authoritative list is the program doc's own Open questions section,
-which also carries Q-crc-11, Q-crc-12, Q-crc-20 and Q-crc-21.
+which also carries Q-crc-11, Q-crc-12, Q-crc-20, Q-crc-21, Q-crc-22 and Q-crc-23.
+
+**Three more stages have shipped since, and the program is SIX stages complete.**
+
+`rc02c-confirmation-semantics` is ARCHIVED (2026-09-21): **the budget stopped being a target.**
+R-crc-11(h) — effort is RECORDED, never TARGETED — retired `budgetExhausted`, the
+`independentSpendFresh` trigger that existed only to fire it, and the `BUDGET-SPENT` position
+tokens that rendered it. `budget` survives as an INERT declaration that nothing consults; the only
+live figure is `independentSpend`, rendered ALONE on every human surface (a ratio is a verdict
+wearing a figure's clothes) and carried beside `budget` as a separate named field in JSON. Clause
+(c) — the `confirm` predicate — no longer exists.
+
+`rc04a-judgement-record` is ARCHIVED (2026-09-21): **the archive emit carries a `judgements`
+array.** A `readiness` entry states what the AI BELIEVED about the work, `formed_against` the
+independent pass tokens it names, with residual risk as `accepted: [{claim, why}]` pairs — superseding
+the practice of writing residuals as prose into `warnings` (the test is whether independent review
+output informed it; a `warnings` entry cites nothing and can be ordered against nothing). A
+`continuation/proceed` entry is `gate_overridden`'s strict widening at the archive seam, with ONE
+named hole: `formed_against` is required non-empty, so the entry cannot be written when no
+independent pass exists at all — inside the override's own trigger condition, and rc04c inherits it.
+
+`rc04d-override-vocabulary` is ARCHIVED and RATIFIED (2026-09-22): **five requirement texts across
+three capabilities stopped naming `gate_overridden`**, splitting the retirement so neither half
+breaches R-crc-1 (R-crc-9's third preventive application, and the first caught by a size check at
+exploration before anything was proposed). Four are phrase substitutions; `orbit-pr-lifecycle`'s
+also narrows its SHALL to the `review-system` gate; and `orbit-engine-gates`' `Inflection-prompt
+override contract` stops restating the record's SHAPE and names no shape owner at all — the
+reversal of an ownership move ratified earlier in the same change, refuted twice by two independent
+reviewers and finally settled by **R-crc-13** (a gate REPORTS, it never RULES; an emit RECORDS).
+The field's baseline footprint is now **6 capabilities → 3**, and the survivors —
+`orbit-run-summary-emit`, `orbit-archive-modifications`, `orbit-emit-composition`, a MEASURED 9
+requirements — are exactly `rc04c`'s scope. Its cadence produced **R-crc-6's DESCOPE SWEEP
+COROLLARY** (descope is the cheap lane for MECHANISM and the expensive one for ARTIFACTS: 7 of 9
+findings in the next pass were wake from one deletion) and **R-crc-12's THIRD CASE** (an INSTRUMENT
+CORRECTION is not a REVISION — rc04d's exit (2) was measurable throughout and the command written
+to measure it was not, so the criterion graded, and graded MET; an exit criterion lives in the
+CHARTER, and a task may not silently narrow the bar its stage is graded against).
 
 Read that doc before any rc-stage work; the D-arc section below is the historical
 record of how the engine got here.
