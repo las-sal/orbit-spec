@@ -624,7 +624,7 @@ carry the same fields for downstream readers.
   to the `apply-*.json` emit (expected + moot per the v1 freshness scope) and the gate has already
   served its purpose, so mid-apply continuation is never re-blocked. Apply-parity holds throughout:
   even at entry the gate NEVER hard-blocks — the consuming skill prompts (address / proceed-anyway /
-  abort) and records `gate_overridden` on proceed-anyway.
+  abort) and records the override on proceed-anyway.
 
 ### Requirement: Single-voiced canonical-next computation
 
@@ -737,8 +737,11 @@ user-owned config, never spec.
 
 The consuming workflow SHALL fire an inflection prompt when a user invokes a command whose phase
 is gated by an unpassed or stale gate, offering exactly: address the gate (halt; canonical next
-command), proceed anyway, or abort. Proceeding SHALL be recorded in the command's run summary
-(`gate_overridden: {gate, state, reason}`). Gates NEVER hard-block — apply-parity enforcement:
+command), proceed anyway, or abort. Proceeding SHALL be recorded in the command's run summary,
+carrying the gate, its state, and its reason AT DECISION TIME. This requirement states THAT the
+override is recorded and WHICH FACTS ABOUT THE GATE it must carry; the FIELD those facts are
+carried in, and its shape, belong to the emit layer and are not named here.
+Gates NEVER hard-block — apply-parity enforcement:
 the engine reports, the skill prompts, the user decides, the trail records.
 
 #### Scenario: Override recorded, not prevented
@@ -894,7 +897,7 @@ preserved byte-identically. The change record names each and why (`rc02c-confirm
 #### Scenario: The closed-set consumers are untouched
 
 - **WHEN** an unpassed gate whose recorded spend exceeds its declared `budget` is read by the
-  WAITING derivation, the inflection prompt, and the `gate_overridden` record
+  WAITING derivation, the inflection prompt, and the override record
 - **THEN** each sees `state: "unpassed"` and behaves exactly as for any unpassed gate — no
   consumer enumerates a new state, and the spend reaches them only as `independentSpend`, never
   inside `reason`

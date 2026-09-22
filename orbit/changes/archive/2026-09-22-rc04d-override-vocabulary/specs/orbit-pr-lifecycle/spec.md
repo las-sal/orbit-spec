@@ -11,7 +11,8 @@ flip is PERFORMED by the archive tail (it happens constantly, and a body is pres
 exact moment the condition becomes true), while a program flip is SURFACED for the human
 (it happens once per program, no body is present when arc-done becomes true, and the user is
 standing at the ratification anyway). A change archived via a
-recorded proceed-anyway override at the `review-system` gate SHALL still flip READY — the recorded override IS
+recorded proceed-anyway override at the `review-system` gate SHALL still flip READY — the
+recorded override IS
 the user's ratification, and a draft PR contradicting the user's explicit decision would be
 the falser record; the landmark narrative records the override. MERGING IS NEVER an orbit
 action in either mode — READY is the terminus for per-change PRs; for program PRs both the

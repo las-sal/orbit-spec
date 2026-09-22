@@ -1,0 +1,87 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-22T03:02:22Z",
+  "change": "rc04d-override-vocabulary",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc04d-override-vocabulary/.orbit-runs/review-system-2026-09-22T02-25-46Z.json",
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 1
+  },
+  "pushback_verification": "All 4 verified before acting; ZERO stale. F1's claim was checked at every site it names — explore.md row 4a carried no CORRECTED mark while row 2 did, design.md D1 listed 4a among plain substitutions, task 1.4 was ticked claiming confirmation against a row the shipped text does not match, and the 112-character line was measured. F2's undercount was re-measured with the grep the finding proposes: four test files, confirming the finding rather than the original claim. F3 was verified and then MERGED into the external half's CRITICAL, which proves the same defect decisively from the other side. F4's premise — that nothing parses note placement — was checked rather than assumed.",
+  "resolution_summary": {
+    "resolved": 4,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Site 4a ships wording absent from the stage's own ratified table, narrowing the SHALL to `review-system`, and the correction was never cascaded",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04d-override-vocabulary/specs/orbit-pr-lifecycle/spec.md",
+      "line": 14,
+      "classification": "trivial_fix",
+      "action": "Row 4a is now marked CORRECTED in `explore.md` D-rc04d-2 with the two-override rationale, `design.md` D1's heading and body no longer call it a plain substitution, task 1.4 is restated against the text that actually SHIPPED and tells the reader to confirm against the corrected row, task 3.3 now names `rc04c`'s explore:101 alongside :100, and the 112-character line is re-wrapped (max line length in that delta is now 92). The finding is exactly right that the stage's own tripwire fired unnoticed — tasks.md's section-1 preamble says a task needing NEW wording means the delta and the table have diverged, and the box was ticked anyway.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The rc04c handoff inventories two red pins; at least four test sites hard-pin `gate_overridden` and will break",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04d-override-vocabulary/tasks.md",
+      "line": 51,
+      "classification": "trivial_fix",
+      "action": "The full inventory is now in task 3.1, measured by `grep -rn gate_overridden test/ src/` rather than inferred: FOUR test files, not two — `orbit-content-fidelity` (the two body markers), `emit-schema-parity` (the archive-table regression AND the negative test asserting `rejected` equals exactly `['gate_overridden']`), `emit-composition` (asserts `persisted.gate_overridden` on a real archive emit), and `judgement-record-fixture` (composes a continuation alongside the legacy object). design.md's Risks entry is corrected from 'two red pins' to four files. The finding's diagnosis of the cause is the part worth keeping and is recorded with the fix: D-rc04d-1's measurement asked whether anything couples SPEC wording to BODY wording, and the handoff claim built on top of it is about what rc04c BREAKS — a different question that grep never measured.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "D2's justification for the two-owner correction misstates `orbit-run-summary-emit`'s scope, and rc04c inherits the misstatement",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04d-override-vocabulary/design.md",
+      "line": 76,
+      "classification": "trivial_fix",
+      "action": "MERGED with the external half's CRITICAL and resolved there — see that record. This finding named the same defect from the opposite side: it attacked the ARGUMENT (D2's claim that `orbit-run-summary-emit`'s Purpose scopes it away from archive, which is false — its Emit-scope requirement covers /orbit:archive and the judgement-record carrier table's third row IS the archive), while the external attacked the CONCLUSION. Both are now moot: D2 no longer makes an ownership argument at all, because the requirement no longer makes an ownership claim. D2 is rewritten around R-crc-13 and records the reversal explicitly. The finding's closing observation — that the post-rc04c survival was a re-check rc04c must perform rather than a settled inheritance — is what the external half proved decisively.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The AT-ARCHIVE NOTE is cited as being \"at the end of this section\" but tasks 2.4 and 2.5 follow it",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04d-override-vocabulary/tasks.md",
+      "line": 35,
+      "classification": "trivial_fix",
+      "action": "The AT-ARCHIVE NOTE now sits below task 2.5, so 'at the end of this section' is true, and both pointers say so explicitly. Verified the finding's premise first — nothing parses task numbers or note placement, so this was cosmetic — but fixed because the note carries the ONLY surviving statement of exit criterion (1) at its charter scope and exit (3)'s post-sync half, which makes its discoverability at the archive seam load-bearing.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": null,
+  "final_assessment": "The fresh half of rc04d's system blind pair, walked in ONE SITTING with the external half and recorded on its own source. 4 findings, 0 CRITICAL, all resolved, none stale. One (F3) MERGED into the external half's CRITICAL: the two halves found one defect from opposite directions with zero title overlap — the fresh attacked the ARGUMENT for the ownership clause, the external attacked its CONCLUSION — and neither could have reached the other's evidence. F1 is the sharpest of the four because the stage's own tripwire caught the author: tasks.md declares that a task needing NEW wording means the delta and the source table have diverged, the wording diverged during the proposal walk, and the box was ticked anyway. F2's value is its diagnosis rather than its count — a claim about what rc04c BREAKS was built on a measurement that asked whether anything couples spec wording to body wording, which is a different question — and that is the session's recurring theme stated precisely: for every claim, ask which instrument actually measured it.",
+  "iteration": 4,
+  "next_recommended": "/orbit:review --as system rc04d-override-vocabulary"
+}

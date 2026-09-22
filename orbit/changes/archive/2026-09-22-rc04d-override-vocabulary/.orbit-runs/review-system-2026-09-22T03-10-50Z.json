@@ -1,0 +1,180 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-22T03:10:50Z",
+  "change": "rc04d-override-vocabulary",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 2,
+      "warning": 2,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "CRITICAL",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc04d-override-vocabulary/explore.md",
+      "line": 73,
+      "title": "The stage's designated source-of-truth table still carries the REFUTED two-owner wording, and tasks.md 1.2 certifies it as recording both corrections",
+      "recommendation": "D-rc04d-2 row 2's `to` cell reads \"The record's SHAPE is owned by the EMITTING COMMAND'S OWN CAPABILITY — `orbit-run-summary-emit` for the apply emit, `orbit-archive-modifications` for the archive emit\" — the two-owner form the external system pass refuted and the 03:02 walk reversed. The shipped delta (specs/orbit-engine-gates/spec.md:75-77) names no owner. This is not cosmetic: design.md D1 instructs \"The verbatim table is `explore.md` D-rc04d-2 — transcribe it; do not re-derive the wording\", tasks.md:6 declares \"if a task here requires NEW wording, the delta and `explore.md` D-rc04d-2 have diverged and that is the finding\", and tasks.md:9 states row 2 \"records both corrections\" when its note records ONE (\"CORRECTED 2026-09-22 after the fresh proposal pass\") and its `to` cell holds the refuted form. The tripwire fired and the box is ticked — the same class the fresh pass caught at row 4a, recurring one row up. Rewrite row 2's `to` cell to the shipped text and extend its note to \"CORRECTED TWICE\", matching the Premise table's row 2 at explore.md:18 which already carries the final form and both corrections.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Replace D-rc04d-2 row 2's `to` cell with the shipped delta text verbatim and rewrite its note to CORRECTED TWICE (single-owner refuted by the fresh proposal pass, two-owner by the external system pass, final form names no owner under R-crc-13) — i.e. make row 2 read exactly as the Premise table's row 2 at explore.md:18 already does."
+        },
+        {
+          "label": "B",
+          "body": "Keep the superseded wording visible as history but mark it inert: move the two-owner text into the note cell prefixed SUPERSEDED, put the shipped text in the `to` cell, so a transcriber can only reach the live form."
+        }
+      ]
+    },
+    {
+      "pass": "6",
+      "severity": "CRITICAL",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc04d-override-vocabulary/tasks.md",
+      "line": 30,
+      "title": "Task 3.3 directs rc04c's author to \"the corrected two-owner form\" — the formulation this change reversed — in the record that exists to stop exactly that propagation",
+      "recommendation": "Task 3.3's closing sentence reads \"Whoever proposes rc04c should read the corrected two-owner form in THIS change's `design.md` D2 and `explore.md` D-rc04d-2 rather than the sibling row — the error propagated through four artifacts by faithful transcription, which is exactly the hazard the reviewer named.\" The two-owner form was refuted by the external system pass and removed from the delta hours later; and the pointer RESOLVES to the wrong text, because explore.md:73 still carries it (finding above). A downstream author following this instruction faithfully transcribes a known-wrong form into rc04c — the exact failure the sentence warns against. Rewrite to point at the FINAL form and name what is superseded: rc04d's site-2 wording names NO shape owner (R-crc-13: a gate reports, an emit records), superseding both the single-owner text at `orbit/explore/rc04c-retire-gate-overridden/explore.md:100` and the two-owner form that briefly replaced it."
+    },
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc04d-override-vocabulary/proposal.md",
+      "line": 22,
+      "title": "The proposal's only substantive bullet ends mid-sentence, and the Modified Capabilities entry carries a dangling verb from the same edit",
+      "recommendation": "proposal.md:22 terminates at \"That requirement\" with no predicate — the sentence is severed, and it is the bullet that describes the stage's one substantive edit. proposal.md:32 reads \"the override contract moves / stops restating `{gate, state, reason}`\", where \"moves\" is residue from the pre-reversal phrase \"moves ownership\". Both are artefacts of the 03:02 reversal walk editing around the removed clause. Finish the severed sentence (or delete the fragment) and drop the orphaned \"moves\". In a stage whose entire product is the precision of five prose edits, a shipped proposal that does not parse is a poor advertisement for the mechanism."
+    },
+    {
+      "pass": "1",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc04d-override-vocabulary/proposal.md",
+      "line": 17,
+      "title": "proposal.md says four of five sites are plain substitutions; design.md D1 says three, and the delta agrees with the design",
+      "recommendation": "proposal.md:17-18 states \"Four are plain substitutions of the field name for the concept (`gate_overridden` → \\\"the override\\\"). The fifth — `orbit-engine-gates`' `Inflection-prompt override contract` — additionally STOPS RESTATING the record's shape\". But design.md D1's heading reads \"three passing mentions are plain substitutions; pr-lifecycle gains a gate qualifier\" and its body states \"Site 4a is NOT a plain substitution\" — the shipped pr-lifecycle prose gained \"at the `review-system` gate\" (verified against specs/orbit-pr-lifecycle/spec.md:13-14 and the baseline word-diff). So the shipped shape is three plain substitutions + one narrowed SHALL + one shape-claim removal. Correct the proposal to match, or the change's front door misreports what it did to a normative requirement."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc04d-override-vocabulary/design.md",
+      "line": 84,
+      "title": "D2's closing paragraph and section heading still argue the ownership move the same section records as reversed",
+      "recommendation": "design.md:84-87 reads \"That final clause is true today AND after `rc04c`, which is the entire reason the ownership moves now: a pure substitution would leave `orbit-engine-gates` quietly authoritative about another capability's record, and `rc04c` would have to return to a capability this stage was supposed to finish with\" — verbatim the argument the same section calls wrong twenty lines earlier (\"The move was approved on the argument that naming a shape owner would stop `rc04c` returning to a capability this stage had finished with. That argument was wrong\"). There is also no \"final clause\" left to refer to. Two companions: the heading at design.md:49 still reads \"D2 — site 2 moves OWNERSHIP\", and design.md:137 asserts in Alternatives considered that \"the correct two-owner form turned out to be one clause with an existing precedent rather than new design\" — a form later refuted. A reader who takes D2's last word gets the rationale the stage abandoned. Retitle D2 to the removal it shipped, delete or rewrite the closing paragraph, and mark the Alternatives sentence superseded."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc04d-override-vocabulary/tasks.md",
+      "line": 27,
+      "title": "The \"two pins\" figure the fresh pass corrected to FOUR survives in three places, including the concluding sentence of the corrected bullet itself",
+      "recommendation": "Task 3.1 opens by correcting the inventory to FOUR test files (`orbit-content-fidelity`, `emit-schema-parity`, `emit-composition`, `judgement-record-fixture`) and then concludes \"Those two pins go RED the moment rc04c stops the bodies writing the field\" — the superseded figure, in the sentence rc04c inherits as its planning instruction. Same residue at design.md:33 (\"The two `orbit-content-fidelity` pins on `gate_overridden` are rc04c's to update\") and proposal.md:45 (Impact names only `orbit-content-fidelity.test.ts`). design.md's Risks section already carries the corrected four-file list, so the change holds both figures at once. Sweep all three to FOUR — this is the same correction landing where the edit was and stopping at the edge of the thing it described, which the architecture doc names as the class this program keeps recording."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc04d-override-vocabulary/tasks.md",
+      "line": 17,
+      "title": "Exit (2)'s instrument is an unscoped `git diff --name-only`, and the working tree currently gives it a `test/` hit",
+      "recommendation": "Task 2.2 words the criterion as \"`git diff --name-only` for this change touches NOTHING under `src/` and NOTHING under `test/`\" and instructs \"A hit means the stage was mis-scoped — do not 'fix' it by widening the stage; stop and report.\" Reporting: `git diff --name-only` right now returns `test/core/sources-registry.test.ts` alongside rc04d's artifacts. The cause is legitimate and NOT mis-scoping — the ruling-count pin was bumped 12 → 13 when the architect session recorded R-crc-13, the ruling design.md D2 cites as supplying its principled line — but the instrument as written cannot tell the two apart, because a bare `git diff` measures the working tree, not the change. The stage's own mechanism is therefore currently unmeasurable, and the next commit decides whether it reads as a pass or a failure. Note the charter's exit (2) at clean-up-review-cycle.md:1620 says only `src/`; the `test/` clause is tasks.md's own tightening. Verified 2238/2238 tests green with no rc04d-authored test edit.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Scope the instrument to the change: restate 2.2 as `git diff --name-only -- src/ test/` evaluated over the commits that carry rc04d's artifacts (or `git diff --name-only <base>..HEAD -- src/ test/`), and land the R-crc-13 ruling bump + CLAUDE.md marker in a separate architect commit so the stage's diff is clean by construction."
+        },
+        {
+          "label": "B",
+          "body": "Keep the unscoped instrument and record the `test/` touch explicitly as an accepted, named exception — in the archive readiness record's `accepted` list as a `{claim, why}` pair naming `test/core/sources-registry.test.ts` and R-crc-13 — so the hit is a documented carve-out rather than an unexplained failure of the stage's own exit criterion."
+        }
+      ]
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc04d-override-vocabulary/explore.md",
+      "line": 18,
+      "title": "The Premise table's row 2 has five cells against a three-column header and now holds replacement text in a column headed \"the text naming the field\"",
+      "recommendation": "explore.md:13's header declares three columns (`#`, `capability :: requirement`, `the text naming the field`); rows 1, 3, 4 and 5 carry three, row 2 carries five. CommonMark drops the surplus cells, so the final form and its CORRECTED TWICE note render nowhere. The table's stated job is recording the CURRENT text read before anything was written — row 2 now also carries the replacement, duplicating D-rc04d-2's role. Either restore row 2 to three cells (current text only, with the correction history living in D-rc04d-2 where the other four sites' does), or widen the header to match. Worth fixing because this table is the change's \"all five sites read before anything was written about them\" evidence."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc04d-override-vocabulary/design.md",
+      "line": 22,
+      "title": "The design claims site 2 says NOTHING about shape; the shipped text makes a (weaker) locational claim — \"belong to the emit layer\"",
+      "recommendation": "design.md:22-24 states the goal as \"stops being a second voice on the override record's SHAPE — by SAYING NOTHING about shape\", and design.md:57 repeats \"names NOTHING about the record's shape\". The shipped requirement (specs/orbit-engine-gates/spec.md:76-77) reads \"the FIELD those facts are carried in, and its shape, belong to the emit layer and are not named here\" — which does not name a capability but does assert WHERE shape lives. That is defensible and almost certainly right under R-crc-13, and it is strictly weaker than the refuted forms; but \"says nothing about shape\" overstates it, and the overstatement is what let two earlier formulations pass self-review. Either soften the design's self-description to \"names no shape OWNER\" (which is exactly true, and is the wording tasks.md:9 already uses), or drop the four words \"belong to the emit layer\" from the requirement so the claim and the description match."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "pass": "6",
+      "title": "Site 4a ships wording absent from the stage's own ratified table, narrowing the SHALL to `review-system`, and the correction was never cascaded",
+      "evidence": "Resolved by the 03:02 walk: explore.md:75 row 4a now reads \"CORRECTED 2026-09-22\" and carries the shipped qualifier with its justification (orbit-archive-modifications:116); design.md:42-45 records it; tasks.md:11 instructs confirming against the corrected row. Word-diff against baseline confirms the delta matches."
+    },
+    {
+      "pass": "6",
+      "title": "The live rc04d charter still says the de-named form is \"shape owned by `orbit-run-summary-emit`\" (external system pass, CRITICAL)",
+      "evidence": "Resolved in the architect session: clean-up-review-cycle.md:1590-1598 now reads \"THIS CHARTER DELIBERATELY NAMES NO SHAPE OWNER\" and narrates both refutations; the status-log entry at :2975-2987 records all three rc04d-earned corrections."
+    },
+    {
+      "pass": "6",
+      "title": "rc04c's `Touches:` slot is byte-identical to rc04d's, contradicting the scope paragraph fourteen lines above (task 3.2a)",
+      "evidence": "Applied by the architect: clean-up-review-cycle.md:1707 now reads `Touches: orbit-emit-composition, orbit-run-summary-emit, orbit-archive-modifications` with a CORRECTED note; :1557's \"pure de-naming\" description was likewise corrected at :1684-1687."
+    },
+    {
+      "pass": "6",
+      "title": "The AT-ARCHIVE NOTE is cited as being \"at the end of this section\" but tasks 2.4 and 2.5 follow it",
+      "evidence": "Resolved: the note now sits at tasks.md:23, after 2.5 at tasks.md:21, and 2.3's pointer reads \"at the end of this section (below 2.5)\" — which is now true."
+    },
+    {
+      "pass": "1",
+      "title": "D2's justification for the two-owner correction misstates `orbit-run-summary-emit`'s scope, and rc04c inherits the misstatement",
+      "evidence": "The two-owner clause is gone from the shipped delta (grep 'EMITTING COMMAND' over specs/ returns zero) and design.md D2 now records the refutation. Residue in design.md's narrative sections is reported separately above rather than suppressed."
+    }
+  ],
+  "commentary": "Pass 1, 2 and 3 came back clean, and they are the passes that could have sunk this stage. Each of the five replacements was word-diffed against live baseline per requirement, and every diff is exactly the named substitution with zero scenario churn: 27 scenario titles preserved across the three capabilities, the delta files built from baseline rather than retyped. Site 4a's new qualifier was checked against the engine rather than against its own justification — orbit-archive-modifications:80 scopes the archive proceed-anyway prompt to the `review-system` gate specifically, and :116 keeps `fingerprint_overridden` separately, so \"at the `review-system` gate\" is true of the engine as it stands. Fingerprints verify 5/5, `validate --strict` passes, 2238/2238 tests green with no rc04d-authored test edit. The mechanism did what it said.\n\nEverything I found is in the second ring: the ARTIFACTS that explain the mechanism, not the mechanism. That is not a coincidence, and it has one cause. The 03:02 walk reversed a decision this change had already ratified, applied the reversal cleanly to the delta, and then updated the surrounding prose site by site — so the reversal is complete where it is normative and incomplete everywhere it is narrative. Seven of nine findings are the same edit's wake. The sharpest instance is that the stage's OWN designated source of truth — D-rc04d-2, the table design.md tells you to transcribe and not re-derive — still holds the refuted wording, and the task that certifies it claims it records both corrections. The stage built itself a tripwire for exactly this (\"if a task here requires NEW wording, the delta and explore.md D-rc04d-2 have diverged and that is the finding\"), the tripwire's condition is met, and the box is ticked. The fresh half of the blind pair caught this at row 4a; the reversal put it back at row 2.\n\nWhat I probed hardest and could not break: whether any of the five de-named forms is now less true of the engine than the field name it replaced. Read each against behaviour rather than against its predecessor's wording, per task 2.4. They hold. The one place I'd push is the phrase \"belong to the emit layer\" — a locational claim the design describes as saying nothing at all, which is the kind of gap between claim and description that let two earlier formulations survive their own author's review.\n\nThe exit-(2) finding is a different animal and worth reading carefully: it is not a defect in the stage, it is a criterion that has become unmeasurable in the state the stage is in. A bare `git diff --name-only` measures the working tree; the stage's claim is about the change. R-crc-13's ruling-count pin bump is sitting in that working tree right now, and the ruling in question is the one design.md D2 leans on. Whichever way it is resolved, resolving it by deciding what the commit contains rather than by re-reading the diff is the honest move.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4",
+    "5"
+  ],
+  "final_assessment": "2 critical, 5 warning, 2 suggestion.",
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc04d-override-vocabulary --from-file orbit/changes/rc04d-override-vocabulary/.orbit-runs/review-system-2026-09-22T03-10-50Z.json"
+}

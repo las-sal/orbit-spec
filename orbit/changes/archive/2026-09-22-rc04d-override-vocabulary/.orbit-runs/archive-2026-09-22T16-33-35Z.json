@@ -1,0 +1,67 @@
+{
+  "command": "archive",
+  "timestamp": "2026-09-22T16:33:35Z",
+  "change": "rc04d-override-vocabulary",
+  "kind": "lifecycle",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Archived rc04d-override-vocabulary to orbit/changes/archive/2026-09-22-rc04d-override-vocabulary/. Five MODIFIED requirements synced across three capabilities, all five blocks byte-verified against their deltas and independently re-verified after the sync agent reported; baseline capability count unchanged at 21, diff 11 insertions / 7 deletions, zero scenario churn across 27 titles. Both AT-ARCHIVE measurements executed in-flow against the post-sync tree: exit (1) at its own scope returns ZERO, exit (3) reads 3 capabilities down from the 6 recorded at task 2.3, and the survivors — orbit-run-summary-emit, orbit-archive-modifications, orbit-emit-composition — are exactly rc04c's declared scope, leaving that stage AT R-crc-1's ceiling rather than at twice it, which was the whole point of the split. Gate review-system computed PASSED (independentSpend 2 of 3, no override); fingerprints 5/5 verified; 0 unresolved markers; audit 0 CRITICAL / 1 WARNING; consent user-invoked with zero added prompts. Readiness: READY, formed against three independent passes, carrying three named residuals — the site-2 sentence no independent pass has read (user-ratified scope call), the test/ pin bumped by R-crc-13, and the cross-workstream row in rc04c's exploration. Not PR-attached: no pr_attachment on the propose emit and `pr:` unset in config, so the D6 tail did not run and no outward write occurred.",
+  "archive_path": "orbit/changes/archive/2026-09-22-rc04d-override-vocabulary/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-engine-gates",
+      "orbit-pr-lifecycle",
+      "orbit-conventions"
+    ],
+    "added": 0,
+    "modified": 5,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "In-flow observation, formed at the seam rather than against any pass: bare `orbit validate --strict` exits with a 'Nothing to validate' usage message when given no target — the sync verification had to use `validate --all --strict` (26 passed, 0 failed). Noted because several task and body texts across this repo write `validate --strict` as though it were self-targeting.",
+    "The stage ships with `Complete: [ ]` in `clean-up-review-cycle.md`; ratification is a separate user act and is never taken by this flow (D-d2-4)."
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "formed_against": [
+        "2026-09-22T00-37-56Z",
+        "2026-09-22T02-21-40Z",
+        "2026-09-22T02-25-46Z"
+      ],
+      "disposition": "ready",
+      "ratified_by": "user",
+      "reasoning": "A pure-vocabulary stage whose falsifiable claim held under every instrument aimed at it. Five requirement texts across three capabilities stopped naming `gate_overridden` while remaining true of the engine as it stands: each replacement was word-diffed against live baseline per requirement, 27 scenario titles preserved with zero churn, and the one narrowing (site 4a's `at the review-system gate`) was checked against the engine rather than against its own justification — `orbit-archive-modifications` scopes the archive proceed-anyway prompt to `review-system` specifically. Exit (2), the stage's real mechanism, holds: nothing under `src/` touched at all, 2238/2238 green, no rc04d-authored test edit. Both AT-ARCHIVE measurements ran post-sync in this flow and were verified independently of the sync agent that reported them: exit (1) at its own scope returns ZERO, exit (3) reads 3 capabilities down from 6, and the three survivors are exactly rc04c's declared scope. The cadence: a proposal pass, a fresh proposal pass, then a system blind pair of DISTINCT independent classes (external GPT-5 Codex + fresh) walked in one sitting, then an in-context confirm finding 9 (2C/5W/2S) walked to zero. The gate computed PASSED with independentSpend 2 of a declared 3 — no override, no budget clause. What earns `ready` rather than a hedge is that the residuals below are all NAMED and SIZED rather than suspected, and the largest of them was put to the user as a scope call and ratified deliberately.",
+      "accepted": [
+        {
+          "claim": "The shipped site-2 sentence has been read by NO independent pass. The system blind pair (external 02-21-40Z, fresh 02-25-46Z) reviewed a two-owner formulation; the external half refuted it; the 03:02 walk took the descope lane and DELETED the clause. The replacement — `the FIELD those facts are carried in, and its shape, belong to the emit layer and are not named here` — has been reviewed only in-context (03-10-50Z). The gate is right to pass (coverage and resolution both satisfied, no apply token followed) and the residual is real.",
+          "why": "Raised as a SCOPE call in the architect session and TAKEN by the user: archive as is. The sentence's correctness is the most-reviewed question in the stage — three independent refutations converged on removal, and R-crc-13 (a gate REPORTS, an emit RECORDS) supplies the principle rather than the evidence alone — so a fourth pass would buy coverage of a conclusion rather than of an argument. The residual is also unusually small and measured: ONE normative sentence changed since the pair, everything after it prose, with the delta byte-identical across the confirm walk. Recorded as Q-crc-20's second and sharper instance in `clean-up-review-cycle.md`; buying one scoped independent pass was the live alternative and is what rc02c chose in the analogous spot."
+        },
+        {
+          "claim": "`test/core/sources-registry.test.ts` is modified in the working tree while this stage's exit (2) declares NOTHING under `test/`. This is AT-ARCHIVE NOTE clause (c), executed here.",
+          "why": "Not mis-scoping. The ruling-count pin was bumped 12 to 13 when the architect session recorded R-crc-13 — the ruling this change's own design.md D2 rests on — and the pin going red on a new ruling is the pin doing its job. Measured: nothing under `src/` touched, 2238/2238 green, no rc04d-authored test edit. The instrument itself was the real defect and was corrected in-cadence: task 2.2's unscoped `git diff --name-only` measured the WORKING TREE while claiming to measure the change, so on a shared tree the stage's falsifiable claim became unfalsifiable. It is now path-scoped, with the R-crc-10 boundary stated explicitly — which commits carry a change is observable and may be CHECKED; whether an edit belongs to a workstream is judgement and is RECORDED, which is this entry. The standing recommendation, not taken: landing the R-crc-13 bump in its own architect commit would make the scoped check read clean by construction."
+        },
+        {
+          "claim": "`orbit/explore/rc04c-retire-gate-overridden/explore.md:100` still carries the SINGLE-OWNER de-named form (`records the override on the emit (shape owned by orbit-run-summary-emit)`), superseded twice over by this stage. It is the sole finding of the pre-archive audit sweep (1 WARNING, 0 CRITICAL).",
+          "why": "Deliberately not edited: cascade scope is the current change, and that file belongs to a sibling workstream's exploration. Recorded rather than fixed, in tasks 3.3, which now points whoever proposes rc04c at the SHIPPED DELTA as the authority rather than at any narrative retelling of it — the correction this walk made precisely because the pointer had been aimed at the refuted two-owner form. The risk is bounded: rc04c cannot propose without reading its own charter, and the live charter in `clean-up-review-cycle.md` was corrected in the same cadence to name no shape owner at all."
+        }
+      ]
+    }
+  ],
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."
+}

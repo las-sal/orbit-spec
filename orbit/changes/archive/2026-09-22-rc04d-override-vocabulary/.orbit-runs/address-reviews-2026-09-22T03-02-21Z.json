@@ -1,0 +1,78 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-22T03:02:21Z",
+  "change": "rc04d-override-vocabulary",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc04d-override-vocabulary/.orbit-runs/external-system-2026-09-22T02-21-40Z.md",
+  "external_reviewer": "Codex (GPT-5)",
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 1,
+    "suggestion": 0
+  },
+  "pushback_verification": "Both verified before acting. The CRITICAL's decisive citation was read directly — `orbit-archive-modifications`:63 does say the archive judgements entry's shape and carrier are both defined by `orbit-run-summary-emit`, which is text this program wrote in rc04a — so the two-owner clause really was true today and false after rc04c. The WARNING came back STALE: the architect session had already removed the charter's owner claim, and pushback distinguished the two surviving `shape owned by` hits as QUOTATIONS inside a correction note and the status log rather than live claims. Suppressed with evidence, not re-fixed.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 1,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "dimension": "correctness",
+      "title": "The archive ownership pointer does not survive the successor it is meant to bridge",
+      "file": "orbit/changes/rc04d-override-vocabulary/specs/orbit-engine-gates/spec.md",
+      "line": 75,
+      "marker_source": "external",
+      "classification": "decision_required",
+      "action": "RATIFIED IN CHAT: option (C) — the requirement says NOTHING about the record's shape. It now states THAT the override is recorded and WHICH FACTS ABOUT THE GATE it must carry, and names neither the field nor an owner. The finding is correct and its citation verified: `orbit-archive-modifications`:63 says the archive judgements entry's \"shape and carrier [are] both defined by `orbit-run-summary-emit`\", so the two-owner clause was true today and false after rc04c — exactly the invariance it existed to provide. THIS IS A RECORDED REVERSAL, not a wording fix: the ownership move was ratified on my argument that it would stop rc04c revisiting a capability this stage had finished with, and that argument was wrong because the ownership question was never rc04d's to settle. R-crc-13 (captured in the architect session between the pair's return and this walk) supplies the principled line the evidence only gestured at — a gate REPORTS, an emit RECORDS — so `orbit-engine-gates` owns which facts about ITSELF a joint decision must preserve and has no standing over the field's shape. The one-voice defect is still fixed, by REMOVAL rather than redirection. Codex's own suggestion (abstract the obligation/shape distinction without naming capabilities) was considered and rejected: under R-crc-13 this capability should not be adjudicating shape ownership at all, so being vaguer about a claim it should not make is not an improvement. CASCADED from the CLAIM rather than the finding's pointer: delta, design.md Goals and D2, explore.md D-rc04d-2 row 2, tasks.md 1.2, proposal.md x2 — and each carries the correction AS a correction, with row 2 recording that it was wrong TWICE and why.",
+      "ratified_via": "chat",
+      "resolution": "Option C — the requirement says nothing about the record's shape; it keeps only the obligation and which gate facts must be preserved. A recorded reversal of the earlier ownership move.",
+      "recommendation_fork": {
+        "source": "heuristic",
+        "options": [
+          "C",
+          "D",
+          "B"
+        ],
+        "ratified": "C"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc04d-override-vocabulary/design.md",
+          "orbit/changes/rc04d-override-vocabulary/proposal.md",
+          "orbit/changes/rc04d-override-vocabulary/explore.md",
+          "orbit/changes/rc04d-override-vocabulary/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "title": "The architecture charter still carries the rejected single-owner wording",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 1470,
+      "marker_source": "external",
+      "classification": "stale",
+      "action": "STALE — already fixed, and not by the route the finding proposed. The architect session between the pair's return and this walk removed the owner claim from the charter ENTIRELY rather than updating it to the two-owner form, on the grounds that a charter illustrating a form the stage was still litigating becomes a third voice on an unsettled fact. That judgement is now vindicated by this walk's CRITICAL, which refuted the two-owner form the finding would have had us write there. Evidence: charter:1470 now reads 'De-named — *the override is recorded on the emit* —' with a paragraph explaining the deliberate omission; the two surviving `shape owned by` hits at :1591 and :2983 are QUOTATIONS of the old wording inside the correction note and the status log, not live claims. The finding's underlying point — that task 3.2 omitted the charter copy — was also addressed there.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": null,
+  "final_assessment": "The external half of rc04d's system blind pair, walked in ONE SITTING with the fresh half and recorded on its own source. 1 CRITICAL resolved via the decision lane, 1 WARNING stale. The CRITICAL is the second refutation of the same clause from a second independent reviewer, and it ended the ownership attempt rather than improving it: option C removes the shape claim entirely, which is a RECORDED REVERSAL of a decision ratified earlier in this change. What settled it was not the evidence but R-crc-13, captured between the pair's return and this walk — a gate REPORTS, an emit RECORDS — which drew the boundary the two failed formulations had been groping for. Worth recording that the charter WARNING went stale because the architect session had already chosen to delete the owner claim rather than update it, a call this walk's CRITICAL then vindicated.",
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc04d-override-vocabulary --from-file orbit/changes/rc04d-override-vocabulary/.orbit-runs/review-system-2026-09-22T02-25-46Z.json"
+}
