@@ -72,9 +72,11 @@ carry the same fields for downstream readers.
 The consuming workflow SHALL fire an inflection prompt when a user invokes a command whose phase
 is gated by an unpassed or stale gate, offering exactly: address the gate (halt; canonical next
 command), proceed anyway, or abort. Proceeding SHALL be recorded in the command's run summary,
-carrying the gate, its state, and its reason AT DECISION TIME. The record's SHAPE is owned by
-`orbit-run-summary-emit` and named there, not here — this requirement states THAT the override is
-recorded and WHAT it must carry, never the field it is carried in. Gates NEVER hard-block — apply-parity enforcement:
+carrying the gate, its state, and its reason AT DECISION TIME. The record's SHAPE is owned by the
+EMITTING COMMAND'S OWN CAPABILITY — `orbit-run-summary-emit` for the apply emit,
+`orbit-archive-modifications` for the archive emit — and named there, not here; this requirement
+states THAT the override is recorded and WHAT it must carry, never the field it is carried in.
+Gates NEVER hard-block — apply-parity enforcement:
 the engine reports, the skill prompts, the user decides, the trail records.
 
 #### Scenario: Override recorded, not prevented

@@ -20,7 +20,9 @@ convenience — it is what makes the two stages orderable at all (see `explore.m
 - Five requirement texts across three capabilities stop naming `gate_overridden`, while remaining
   true of the engine exactly as it stands today.
 - `orbit-engine-gates` stops being a second voice on the override record's SHAPE; ownership moves
-  to `orbit-run-summary-emit`, which already holds it.
+  to the emitting command's own capability — `orbit-run-summary-emit` for the apply emit,
+  `orbit-archive-modifications` for the archive emit. BOTH owners are named, because the
+  requirement is gate-generic and its own first scenario is the archive case.
 - `gate_overridden`'s footprint in `orbit/specs/` drops from six capabilities to three, leaving
   `rc04c` a stage that fits under R-crc-1 rather than one at twice the ceiling.
 
@@ -47,11 +49,22 @@ proceed-anyway override". Nothing else in those requirements moves. The verbatim
 
 `orbit-engine-gates`' `Inflection-prompt override contract` currently reads
 "…recorded in the command's run summary (`gate_overridden: {gate, state, reason}`)". That restates
-a shape `orbit-run-summary-emit` owns, which is the one-voice-for-facts defect `rc07` was built
+a shape another capability owns (`orbit-run-summary-emit` for the apply emit,
+`orbit-archive-modifications` for the archive one), which is the one-voice-for-facts defect `rc07` was built
 around — sitting inside the requirement this stage is editing anyway. The replacement states THAT
 the override is recorded and WHAT it must carry (gate, state, reason AT DECISION TIME), then names
-`orbit-run-summary-emit` as the shape's owner and says explicitly that this requirement never
-names the field carrying it.
+the EMITTING COMMAND'S OWN CAPABILITY as the shape's owner — `orbit-run-summary-emit` for the
+apply emit, `orbit-archive-modifications` for the archive emit — and says explicitly that this
+requirement never names the field carrying it.
+
+**The two-owner form is a CORRECTION made during the proposal cadence, not the original design.**
+The first version named `orbit-run-summary-emit` alone. That capability's Purpose scopes it to
+WORKFLOW commands and its `gate_overridden` entry sits inside `Apply per-chunk-end emission`,
+naming `apply-<TS>.json`; the ARCHIVE record's shape is stated in `orbit-archive-modifications`.
+The requirement being edited is GATE-GENERIC and its own first scenario is the archive case, so
+the single-owner pointer was wrong for half its domain — it would have replaced one
+cross-capability voice problem with another. The two-owner sentence mirrors an existing precedent
+one requirement away in the file it targets (`orbit-run-summary-emit`:567, the consent field).
 
 That final clause is true today AND after `rc04c`, which is the entire reason the ownership moves
 now: a pure substitution would leave `orbit-engine-gates` quietly authoritative about another
@@ -92,7 +105,17 @@ aspiration.
 
 ## Alternatives considered
 
-- **Minimal de-naming at site 2** (rejected 2026-09-21, `explore.md` Q-rc04d-a): substitute the
+- **Minimal de-naming at site 2** — RAISED AND REJECTED TWICE, which is why it is worth reading
+  carefully. First at exploration (2026-09-21, `explore.md` Q-rc04d-a) on the grounds below.
+  Then AGAIN during the proposal walk (2026-09-22), after the fresh pass's CRITICAL showed the
+  ownership move was harder than it had been presented: the option there was to retreat to a plain
+  substitution, make all five sites uniform, and leave the one-voice defect for rc04c. Rejected a
+  second time, on a different argument from the first — retreating would forfeit the reason the
+  move was ratified (stopping rc04c returning to a capability this stage had finished with), and
+  the correct two-owner form turned out to be one clause with an existing precedent rather than
+  new design. The honest counter, recorded because it is reasonable: a "pure vocabulary" stage
+  that keeps growing judgement is evidence it should have stayed vocabulary. The original
+  exploration-time reasoning follows. Substitute the
   phrase and leave the shape restatement in place. Cheaper and mechanically uniform across all
   five sites, but it leaves `orbit-engine-gates` silently authoritative about a record belonging to
   another capability, and forces `rc04c` back into a capability this stage had finished with.

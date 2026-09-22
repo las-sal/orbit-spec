@@ -17,7 +17,9 @@ both halves AT the ceiling rather than one at double.
 - **Five requirement texts are re-worded across three capabilities.** Four are plain
   substitutions of the field name for the concept (`gate_overridden` → "the override"). The fifth
   — `orbit-engine-gates`' `Inflection-prompt override contract` — additionally MOVES OWNERSHIP of
-  the record's shape to `orbit-run-summary-emit`, which already owns it. That requirement
+  the record's shape to THE EMITTING COMMAND'S OWN CAPABILITY: `orbit-run-summary-emit` for the
+  apply emit, `orbit-archive-modifications` for the archive emit. Both, not one — the requirement
+  is gate-generic and its own first scenario is the archive case. That requirement
   currently restates `{gate, state, reason}`, making `orbit-engine-gates` a second voice on
   another capability's fact.
 - **NO BEHAVIOUR CHANGES.** No engine edit, no workflow-body edit, no emit-shape change, no test
@@ -38,7 +40,8 @@ both halves AT the ceiling rather than one at double.
 ### Modified Capabilities
 
 - `orbit-engine-gates`: three requirements stop naming the field; the override contract moves
-  record-shape ownership to `orbit-run-summary-emit` rather than restating `{gate, state, reason}`.
+  record-shape ownership to the emitting command's own capability (`orbit-run-summary-emit` for
+  apply, `orbit-archive-modifications` for archive) rather than restating `{gate, state, reason}`.
 - `orbit-pr-lifecycle`: the `Generalized READY rule` and its scenario describe a recorded
   proceed-anyway override rather than a named field.
 - `orbit-conventions`: the `Review mode decision framework` scenario records "the override"

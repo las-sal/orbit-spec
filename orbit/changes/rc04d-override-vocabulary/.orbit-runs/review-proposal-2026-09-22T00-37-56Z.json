@@ -1,0 +1,138 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-22T00:37:56Z",
+  "change": "rc04d-override-vocabulary",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m] (fresh clean-context subagent)",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 2
+    },
+    "correctness": {
+      "critical": 1,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "severity": "CRITICAL",
+      "dimension": "correctness",
+      "title": "Site 2's ownership pointer is false for the archive half of the override's own domain",
+      "file": "orbit/changes/rc04d-override-vocabulary/specs/orbit-engine-gates/spec.md",
+      "line": 75,
+      "recommendation": "The stage's one substantive edit asserts: \"The record's SHAPE is owned by `orbit-run-summary-emit` and named there, not here.\" That is true for the APPLY emit only. `orbit-run-summary-emit`'s Purpose (orbit/specs/orbit-run-summary-emit/spec.md:5) scopes the capability to WORKFLOW commands (explore, propose, new, continue, ff, apply, verify, architect) plus the review-external T0 record; its `gate_overridden` table entry (line 324) and its scenario (line 359) are both inside `Requirement: Apply per-chunk-end emission` and name only `apply-<TS>.json` and the `review-proposal` gate. The ARCHIVE record's shape is owned by `orbit-archive-modifications` — `{gate, state, reason}` is stated there at spec.md:111 and :156, and `archive` is `kind: lifecycle` in the engine registry (src/core/emit-composition.ts:160-188). The repo already has an explicit precedent sentence for exactly this split: `orbit-run-summary-emit`'s consent requirement ends \"The archive emit's consent field is specified in `orbit-archive-modifications`' `Archive run summary written` requirement.\" This matters here specifically because the requirement being edited is gate-generic and its OWN first scenario (delta line 82, `Override recorded, not prevented`) is the ARCHIVE case — so a reader following the new pointer for the scenario the requirement itself gives lands in a capability that does not cover it. This falsifies the stage's load-bearing claim for half the requirement's domain, and replaces one cross-capability voice problem with a different one. FIX: name both owners in the clause — \"…is owned by the emitting command's own capability (`orbit-run-summary-emit` for the apply emit, `orbit-archive-modifications` for the archive emit) and named there, not here\" — mirroring the consent-field precedent verbatim. The error is inherited from the sibling exploration (orbit/explore/rc04c-retire-gate-overridden/explore.md:100, D-rc04c-3's table row), so fixing it here should be flagged as a CORRECTION rather than a divergence from the cited source."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "De-naming 4a widens `orbit-pr-lifecycle`'s READY rule across two distinct archive-seam overrides",
+      "file": "orbit/changes/rc04d-override-vocabulary/specs/orbit-pr-lifecycle/spec.md",
+      "line": 14,
+      "recommendation": "\"A change archived via a recorded `gate_overridden` proceed-anyway SHALL still flip READY\" becomes \"…a recorded proceed-anyway override SHALL still flip READY\". The archive seam has TWO proceed-anyway inflection prompts, both recorded, and `orbit-archive-modifications` spends a sentence keeping them apart: the `review-system` gate prompt records `gate_overridden` (spec.md:111) and the Step 3.45 fingerprint-divergence prompt records `fingerprint_overridden`, \"distinct from `gate_overridden` (review-cadence override)\" (spec.md:116). After the substitution the normative SHALL no longer says which. Behaviour is unaffected (pr-choreography.ts:388 flips every per-change PR and calls out gate overrides only as a not-an-exception), so this is precision loss rather than a behaviour claim gone false — but the justification clause that follows (\"the recorded override IS the user's ratification\") was argued about the GATE override, and the requirement now appears to extend it to a content-guard override nobody argued it for. This is the exact class the stage's own risk register names, and the D-rc04d-2 table did not catch it. FIX: qualify the noun — \"a recorded proceed-anyway override at the `review-system` gate\" — in the requirement prose; the scenario at delta line 22 is already anchored by \"the gate inflection prompt's Proceed-anyway\" and needs no change."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "Exit criterion (3) has no task that performs it — task 2.3 is satisfied by deferring, and the at-archive note it defers to does not exist",
+      "file": "orbit/changes/rc04d-override-vocabulary/tasks.md",
+      "line": 18,
+      "recommendation": "The charter's exit (3) is \"`gate_overridden`'s footprint in `orbit/specs/` drops from 6 capabilities to 3, measured the same way it was measured at exploration\" (clean-up-review-cycle.md:1492-1494). Task 2.3 correctly observes the measurement only reads true post-sync, then closes with \"note it for the at-archive step rather than asserting it now\" — but it is itself a `- [ ]` checkbox, so it gets ticked during apply by the act of noting, and NO at-archive note is created anywhere in tasks.md. The repo has a settled convention rc04d does not use: a CHECKBOX-LESS line reading `AT-ARCHIVE NOTE (execute in the archive flow, not at apply): …` (archive/2026-09-19-rc07-artifact-lint/tasks.md:33, citing D5's 9.4/9.5/9.7 and D6's 5.5-5.9 as the precedent chain). As written, the one exit criterion only checkable after sync is the one with no mechanism — in a stage whose whole argument (design.md D4) is that exit criteria are mechanisms rather than aspirations. FIX: split 2.3 into (a) a checkbox task recording the PRE-sync figure of six, and (b) a checkbox-less `AT-ARCHIVE NOTE` line instructing the archive flow to re-run the measurement post-sync and confirm three."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "title": "rc04c's charter `Touches:` line still names the three capabilities rc04d took, contradicting rc04c's own scope paragraph",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 1571,
+      "recommendation": "rc04c's stage declaration ends `Goal G1. Touches: orbit-engine-gates, orbit-pr-lifecycle, orbit-conventions.` — byte-identical to rc04d's own Touches line at 1489 — while rc04c's SCOPE paragraph fourteen lines above (1556-1560) says rc04c takes `orbit-emit-composition`, `orbit-run-summary-emit` and `orbit-archive-modifications`. The split that created this contradiction is rc04d's premise, and rc04d's proposal explicitly claims rc04c \"inherits a scope narrowed from six capabilities to three\" (proposal.md:55-56). The doc's own near-miss/one-voice discipline makes a stale MACHINE-SHAPED slot worse than stale prose, and `orbit architecture validate` passes, so nothing will catch it. rc04d must NOT edit the charter itself (stage declarations belong to /orbit:architect), so the correct move is the rc07 5.5 precedent: add a `RECOMMEND — do not perform` task naming the architect amendments this stage earns — (a) rc04c's `Touches:` line at 1571 should read `orbit-emit-composition, orbit-run-summary-emit, orbit-archive-modifications`, and (b) line 1557's description of rc04d as \"5 requirements, pure de-naming\" is now inaccurate, since site 2 is an ownership move the stage itself calls its \"one substantive edit\"."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "title": "Exit criterion (1) is checked against the delta directory, never against the three capabilities it is written about",
+      "file": "orbit/changes/rc04d-override-vocabulary/tasks.md",
+      "line": 16,
+      "recommendation": "Exit (1) is \"no requirement in the three capabilities names `gate_overridden`, grep-verified\" (clean-up-review-cycle.md:1490). Task 2.1 greps the delta directory instead. The two are equivalent TODAY — verified by grep that all six occurrences in the three baselines (engine-gates:627,741,897; pr-lifecycle:329,338; conventions:816) fall inside the five requirements the deltas replace — but the equivalence is an inference the task does not state, and it stops holding the moment anything else in those capabilities mentions the field. FIX: keep 2.1 as the delta check and add the criterion's own grep against the three baselines to the at-archive note, where it can actually run post-sync."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "title": "Task 2.5 requires an independent scenario-level fidelity check but names no reproducible instrument",
+      "file": "orbit/changes/rc04d-override-vocabulary/tasks.md",
+      "line": 20,
+      "recommendation": "2.5 asks for a per-requirement delta-vs-baseline check proving 0 dropped scenarios and exactly-the-named-substitution bodies, and rightly warns against trusting the authoring script's own assertions. But it specifies no command, so whoever executes it re-invents the parse — precisely the instrument-error class rc01 recorded. I had to write a throwaway `### Requirement:` / `#### Scenario:` splitter to verify the claim, and a fence-unaware splitter is a known live hazard here (Q-crc-15; the spec-sync `requirement-blocks.ts` fence bug found at C1 archive). FIX: state the check concretely in 2.5 — split both files on `^### Requirement: ` and `^#### Scenario: `, assert set equality of scenario titles per requirement, and unified-diff each requirement body — or point at an existing helper, so the witness is reproducible rather than remembered."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "The site-2 rewrite leaves a 119-character line where the file wraps at ~95",
+      "file": "orbit/changes/rc04d-override-vocabulary/specs/orbit-engine-gates/spec.md",
+      "line": 77,
+      "recommendation": "\"recorded and WHAT it must carry, never the field it is carried in. Gates NEVER hard-block — apply-parity enforcement:\" is 119 chars; every other prose line in this requirement and the surrounding delta sits under ~100, and the baseline line it grew out of was within that. It is the only line in the three delta files that visibly breaks the file's wrap, so it reads as an unfinished edit at exactly the site the stage most wants read carefully. FIX: re-wrap so the new sentence ends its own line and `Gates NEVER hard-block` starts the next."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "pass": "2",
+      "title": "`created: 2026-09-22` in .openspec.yaml appears to be a day ahead of the artifacts' 2026-09-21 dates",
+      "evidence": "Not a defect: `date -u` at review time is 2026-09-22T00:31Z. The metadata is UTC-correct; the artifacts' prose dates are local. Matches the repo's date -u-for-timestamps discipline."
+    },
+    {
+      "pass": "3",
+      "title": "audit-drift Category 1 (vocabulary residue) will fire on the interim state where bodies still name a field their specs de-named",
+      "evidence": "Read src/core/templates/workflows/audit-drift.ts:205-222 and orbit/specs/orbit-audit-drift/spec.md:47-58. Category 1 builds its residue-pattern set exclusively from archived changes' RENAMED-FROM symbols and REMOVED requirement names, and greps only orbit/specs/*/spec.md, CLAUDE.md, orbit/project.md and root *_convention.md. rc04d has zero RENAMED and zero REMOVED requirements and the scan never reads src/, so the interim state is invisible to it. D-rc04d-1's conclusion survives extension to the workflow instruments, not just the test suite."
+    },
+    {
+      "pass": "3",
+      "title": "CLAUDE.md's six `gate_overridden` mentions go stale when the specs stop naming the field",
+      "evidence": "Read all six (CLAUDE.md:60,166,241,266,290,388). Five are historical narrative about archives that really did record the field; line 60 describes what C1 shipped. The field still exists after this stage — rc04c retires it — so none is false post-apply. Correctly out of scope here."
+    },
+    {
+      "pass": "2",
+      "title": "D-rc04d-1's three measured claims are asserted rather than re-verified",
+      "evidence": "Re-ran all three independently. grep -c \"orbit/specs\" test/core/templates/orbit-content-fidelity.test.ts = 0. grep -rln \"orbit/specs\" test/ returns only source-lint.test.ts, sources-registry.test.ts and one report-golden fixture. pr-choreography.ts:388 does name the field as cited. Every read-before-reference citation in explore.md and design.md checked out."
+    },
+    {
+      "pass": "1",
+      "title": "MODIFIED blocks may have dropped baseline scenarios (this repo's characteristic defect)",
+      "evidence": "Verified mechanically per requirement, not taken on the author's word: 5+2+13 / 2 / 5 = 27 scenario headings, set-equal to the live baselines with zero dropped, zero added, zero renamed; a unified diff of each requirement body against its baseline shows exactly six changed lines, all six being the named substitutions plus site 2's two-line-to-four-line rewrite. orbit fingerprint --check reports 5 verified / 0 diverged, and validate --strict is clean. The claim holds."
+    }
+  ],
+  "commentary": "The pattern is that this stage's mechanical half is unusually well built and its judgemental half is where the defects sit. I went after the scenario-preservation claim first and hardest, because the brief flags it as the house defect and because validate --strict and base_fingerprints structurally cannot see it — I split both trees on requirement and scenario headings, set-compared titles per requirement, then unified-diffed every requirement body line by line. It is clean, and the diff is exactly as narrow as advertised: six changed lines, nothing else moved. Fingerprints verify 5/5. So the delta-authoring-by-script approach did what it claimed, and the second independent check the tasks demand is genuinely the right discipline even though the tasks do not say how to run it.\n\nWhere the stage is weaker is precisely where it stops being mechanical. Four of the five sites are substitutions whose truth is self-evident; the fifth is the one the author calls the substantive edit, and it is the one that does not survive checking. The de-naming argument is that orbit-engine-gates should stop being a second voice on another capability's fact — correct — but the replacement names the wrong other capability for half of the requirement's own domain, and the requirement's very first scenario is the half it gets wrong. The repo already contains the sentence pattern that gets this right, one requirement away in the same file the pointer targets. That is the shape of the risk here generally: the stage reasoned from a three-row table written in a sibling exploration and transcribed it faithfully, which is exactly what it set out to do, but faithful transcription carries an unverified ownership claim straight through the proposal, the design, the explore and the delta without anyone pointing at orbit-run-summary-emit's Purpose line. The transcribe-don't-re-derive discipline that protects the four easy sites is what let the hard one through.\n\nThe second-order texture is about falsifiability. The stage's rhetoric leans on exit criteria being mechanisms rather than assertions, and exit (2) genuinely is one — a diff check nothing can argue with. But exit (1) is checked against the wrong tree by a task that happens to be equivalent today, and exit (3) is checked by a task that instructs deferral to a note that was never written, in a repo with a settled convention for that exact move sitting in the last archived stage's task list. Two of three exit criteria are softer than the prose about them. I also widened the probe outward, because the interim-state claim was the one most likely to be an argument rather than a measurement: I re-ran the author's three measurements, then extended them to the instrument the author did not check — audit-drift's Category 1, a vocabulary-residue scanner and therefore the obvious candidate for coupling spec wording to body wording. It derives its patterns from RENAMED and REMOVED requirements and never reads src/, so the interim really is invisible. That claim holds, and it holds for a better reason than the one given.\n\nRisk texture: nothing here can break the build, nothing touches behaviour, and the diff is small enough to hold in one head. The exposure is entirely in what the specs will SAY for as long as they stand — one pointer that sends readers to a capability that does not cover the case, one normative SHALL that no longer distinguishes two overrides the archive capability spends a sentence distinguishing, and a sibling stage's charter slot that now names the wrong capabilities in a program doc that is read before every stage.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [
+    "3 (partial) — orbit/lenses/, orbit/project.md and root *_convention.md do not exist in this repo; Pass 3 ran its CLAUDE.md and architecture-doc cross-checks only, per the graceful-degradation rule"
+  ],
+  "final_assessment": "1 critical, 3 warning, 3 suggestion.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc04d-override-vocabulary --from-file orbit/changes/rc04d-override-vocabulary/.orbit-runs/review-proposal-2026-09-22T00-37-56Z.json"
+}

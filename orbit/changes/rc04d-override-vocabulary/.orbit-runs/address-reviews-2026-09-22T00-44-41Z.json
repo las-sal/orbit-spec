@@ -1,0 +1,148 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-22T00:44:41Z",
+  "change": "rc04d-override-vocabulary",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc04d-override-vocabulary/.orbit-runs/review-proposal-2026-09-22T00-37-56Z.json",
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 3,
+    "suggestion": 3
+  },
+  "pushback_verification": "All 7 verified against current state before any edit; ZERO stale. The CRITICAL was checked hardest and in four parts, because it lands on this change's one substantive edit and I authored it: orbit-run-summary-emit's Purpose scope, the location of its gate_overridden entry (inside `Apply per-chunk-end emission`), orbit-archive-modifications:111 stating the archive shape, and the edited requirement's own first scenario being the archive case. All four hold; the finding is correct in full. The rc07 AT-ARCHIVE NOTE precedent was read at tasks.md:33 rather than taken on the reviewer's word, as was the archive-modifications:116 sentence distinguishing the two overrides, the byte-identity of clean-up-review-cycle.md lines 1489 and 1571, and the 119-character line length. One thing the reviewer did not raise and the post-walk audit surfaced: of the 21 changed lines across all three deltas, 18 are the named substitutions and THREE are trailing-blank-line removals at the end of each file's last requirement block — an artifact of the delta writer's rstrip, harmless because every one is end-of-file so no blocks can join. Worth recording because it is the mirror of a FALSE finding earlier in this program, where the same block-boundary whitespace produced three phantom 'changed' scenarios.",
+  "resolution_summary": {
+    "resolved": 7,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "Site 2's ownership pointer is false for the archive half of the override's own domain",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04d-override-vocabulary/specs/orbit-engine-gates/spec.md",
+      "line": 75,
+      "classification": "decision_required",
+      "action": "RATIFIED IN CHAT: option (A) — name BOTH owners. Verified in full before acting, and all four claims hold: orbit-run-summary-emit's Purpose enumerates the WORKFLOW commands and then says 'alongside the existing editorial and lifecycle emit-producing commands', so archive is explicitly elsewhere; its gate_overridden table entry and scenario both sit inside `Apply per-chunk-end emission` naming apply-<TS>.json and review-proposal; orbit-archive-modifications:111 states {gate, state, reason} for the archive; and the edited requirement's FIRST scenario is `Override recorded, not prevented` — 'the user proceeds past an unpassed review-system gate at archive'. So the single-owner pointer sent a reader to the wrong capability for the requirement's own opening scenario. The clause now reads: the record's SHAPE is owned by the EMITTING COMMAND'S OWN CAPABILITY — orbit-run-summary-emit for the apply emit, orbit-archive-modifications for the archive emit — mirroring the precedent at orbit-run-summary-emit:567 (the consent field), one requirement away in the file the pointer targets. Option (B), retreating to a plain substitution, was briefed and rejected: it would forfeit the reason the ownership move was ratified, which was to stop rc04c returning to a capability this stage had finished with. CASCADED to all three other in-set sites (design.md D2, explore.md's D-rc04d-2 table row, tasks.md 1.2), each carrying the correction AS a correction rather than silently — the row now records what the original said and why it was wrong, because the error propagated through four artifacts by faithful transcription and the next reader should see that happen.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc04d-override-vocabulary/design.md",
+          "orbit/changes/rc04d-override-vocabulary/explore.md",
+          "orbit/changes/rc04d-override-vocabulary/tasks.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/explore/rc04c-retire-gate-overridden/explore.md",
+            "reason": "cross-change ripple; cascade scope is current change only — the sibling exploration's D-rc04c-3 row carries the same single-owner wording and is RECORDED in task 3.4 rather than edited"
+          }
+        ]
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "Option A — name both owners (orbit-run-summary-emit for apply, orbit-archive-modifications for archive), mirroring the consent-field precedent; keep the ownership move rather than retreating to a plain substitution.",
+      "recommendation_fork": {
+        "source": "heuristic",
+        "options": [
+          "A",
+          "B"
+        ],
+        "ratified": "A"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "De-naming 4a widens `orbit-pr-lifecycle`'s READY rule across two distinct archive-seam overrides",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04d-override-vocabulary/specs/orbit-pr-lifecycle/spec.md",
+      "line": 14,
+      "classification": "trivial_fix",
+      "action": "Qualified the noun: 'a recorded proceed-anyway override AT THE `review-system` GATE SHALL still flip READY'. Verified the finding's premise first — orbit-archive-modifications:116 does spend a sentence keeping the two archive-seam overrides apart ('This is distinct from `gate_overridden` (review-cadence override)'), so the unqualified substitution really did extend a normative SHALL, and its trailing justification clause ('the recorded override IS the user's ratification'), across a content-guard override nobody argued it for. Behaviour is unaffected either way, which is why this is precision loss rather than a false claim — but it is precisely the risk this change's own register names, and the D-rc04d-2 table did not catch it. The scenario needed no change: it is already anchored by 'the gate inflection prompt's Proceed-anyway'.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Exit criterion (3) has no task that performs it — task 2.3 is satisfied by deferring, and the at-archive note it defers to does not exist",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04d-override-vocabulary/tasks.md",
+      "line": 18,
+      "classification": "trivial_fix",
+      "action": "Split task 2.3 and added the repo's checkbox-less AT-ARCHIVE NOTE, whose precedent I verified rather than assumed — rc07's tasks.md:33 carries exactly this form and cites D5's 9.4/9.5/9.7 and D6's 5.5-5.9 as its chain. 2.3 now records the PRE-SYNC figure of six so the post-sync check has a before-value; the NOTE instructs the archive flow to re-run both measurements against the post-sync tree in the same archive commit. The finding is exactly right about the failure mode: a `- [ ]` that instructs deferral is ticked by the act of noting, so the one exit criterion only checkable after sync was the one with no mechanism — inside a stage whose design argues exit criteria are mechanisms rather than aspirations.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "rc04c's charter `Touches:` line still names the three capabilities rc04d took, contradicting rc04c's own scope paragraph",
+      "marker_source": "internal-review",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 1571,
+      "classification": "trivial_fix",
+      "action": "Recorded as a RECOMMENDATION (task 3.3), not performed — stage declarations belong to /orbit:architect and a stage change does not edit program-layer docs. Verified the contradiction directly: line 1571 (rc04c's Touches) is BYTE-IDENTICAL to line 1489 (rc04d's Touches), both naming orbit-engine-gates/orbit-pr-lifecycle/orbit-conventions, while rc04c's scope paragraph at 1556-1558 says rc04c takes orbit-emit-composition/orbit-run-summary-emit/orbit-archive-modifications. This is my own residue from the architect session that declared the split: I rewrote the scope PARAGRAPH and left the machine-shaped SLOT, and `orbit architecture validate` passes so nothing catches it. The recommendation also names the second amendment the finding identified — line 1557 still calls rc04d '5 requirements, pure de-naming', which the ownership move makes inaccurate.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Exit criterion (1) is checked against the delta directory, never against the three capabilities it is written about",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04d-override-vocabulary/tasks.md",
+      "line": 16,
+      "classification": "trivial_fix",
+      "action": "Task 2.1 now STATES the equivalence it relies on instead of depending on it silently: the delta-directory grep equals the charter's wording only while every baseline occurrence falls inside a replaced requirement, which holds today (all six do) and stops holding the moment anything else in those capabilities mentions the field. The criterion AT ITS OWN SCOPE — grep across the three baselines returning zero — is added to the AT-ARCHIVE NOTE, where it can actually run post-sync. Both halves of the finding are now covered rather than one.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 2.5 requires an independent scenario-level fidelity check but names no reproducible instrument",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04d-override-vocabulary/tasks.md",
+      "line": 20,
+      "classification": "trivial_fix",
+      "action": "Task 2.5 now names the instrument concretely: split both files on `^### Requirement: ` and `^#### Scenario: `, assert set-equality of scenario TITLES per requirement (27 expected: 5+2+13 / 2 / 5), then unified-diff each requirement BODY and confirm every changed line is a named substitution. Also recorded the hazard the instrument itself carries, which the finding correctly flags: a fence-unaware splitter is a live defect class here (Q-crc-15; the requirement-blocks.ts fence bug found at C1 archive), so the check must track fences before its result is trusted if any body gains a fenced block. Re-ran the check after the whole walk: 27 scenarios, 0 set mismatches, fingerprints still 5/5.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The site-2 rewrite leaves a 119-character line where the file wraps at ~95",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04d-override-vocabulary/specs/orbit-engine-gates/spec.md",
+      "line": 77,
+      "classification": "trivial_fix",
+      "action": "Re-wrapped as part of the CRITICAL's rewrite — the offending line no longer exists. Verified: the site-2 block now runs 52-98 characters across every line. The remaining >100-character lines in that delta (5, 8, 17, 29, 63, 148) are PRE-EXISTING BASELINE TEXT copied verbatim, and re-wrapping them would break the property the whole delta rests on — that nothing changed except the named substitutions — so they are deliberately left. The finding was right that the long line sat at exactly the site the stage most wants read carefully.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": null,
+  "final_assessment": "The fresh proposal pass walked to zero: 7 findings, 1 CRITICAL, all resolved, none stale, none deferred. The CRITICAL is the one that matters and it was correct — this stage's single substantive edit named the wrong capability as owner of the override record's shape for the ARCHIVE half of the requirement's domain, and the requirement's own opening scenario is that half. Ratified option A: name both owners, mirroring a precedent sitting one requirement away in the very file the pointer targets. The reviewer's diagnosis is worth more than the fix — the error was authored in a sibling exploration's table and then transcribed faithfully into explore, proposal, design and delta, so the transcribe-don't-re-derive discipline that protected the four easy substitutions is exactly what carried the one unverified claim through four artifacts unexamined. That is a real limit on a practice this session has been treating as pure upside. Two findings were my own residue from earlier in the same session: rc04c's Touches slot, where the architect session rewrote the scope paragraph and left the machine-shaped line, and the exit-criteria softness in a stage whose design argues exit criteria should be mechanisms. Post-walk: 27 scenarios intact, 0 set mismatches, fingerprints 5/5, 2238 tests green, validate --strict clean.",
+  "iteration": 1,
+  "next_recommended": "/orbit:review --as proposal rc04d-override-vocabulary"
+}
