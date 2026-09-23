@@ -1,0 +1,249 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-22T23:25:59Z",
+  "change": "rc04c-retire-gate-overridden",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc04c-retire-gate-overridden/.orbit-runs/review-proposal-2026-09-22T21-17-10Z.json",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "input_findings_summary": {
+    "critical": 3,
+    "warning": 4,
+    "suggestion": 3
+  },
+  "pushback_verification": "All 10 re-verified against current state before any edit; 0 stale — nothing had been touched between the pass (21:17) and the walk. Citations were also spot-checked during the review itself rather than trusted: the OMIT instruction is verbatim inside archive-change.ts:287, the four extra test sites sit exactly at 1178/1235/1259-1261, the SHALL-NOT sufficiency clause is real, and F10's count re-measured to 10 emits across 4 changes. Two citations carried small offsets (CLAUDE.md :59 not :60; explore.md :36 not :37) — substance correct in both, noted rather than treated as defects. One assumption in the source was WRONG in the change's favour: F10 called explore.md a cross-change OUT, but promotion had already moved it into the change directory, so it was IN-set and cascaded.",
+  "resolution_summary": {
+    "resolved": 10,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "The totality rule has no body-side task: archive-change.ts still instructs OMITTING the entry in the no-pass case, and both bodies still declare `formed_against` NON-EMPTY.",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04c-retire-gate-overridden/tasks.md",
+      "line": 27,
+      "classification": "trivial_fix",
+      "action": "Added 2.1a (archive-change's OMIT branch becomes the write-with-`formed_against: []` rule), 2.1b (the shipped archive-summary-schema.md field note an AI reads while composing), and 2.2a (apply-change's independent NON-EMPTY declaration). The finding was right and the gap was mine: the design claimed the successor becomes TOTAL end-to-end and I traced it through the engine and the specs, then stopped at the boundary where the bodies actually compose the payload.",
+      "ratified_via": "chat",
+      "resolution": "Previewed in the obvious-fix lane; user directed \"walk all\".",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "Task 3.3 names one site in `emit-composition.test.ts`; the file holds four more that the engine tasks break, including the coexistence suite that must be DELETED — a fourth kind of break the D3 classification does not carry.",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04c-retire-gate-overridden/tasks.md",
+      "line": 50,
+      "classification": "trivial_fix",
+      "action": "Added 3.3a (the :169 conditional-fields test including its TITLE, which names four fields), 3.3b (:1235 fixture-only strip), 3.3c (DELETION of :1178 and :1259-1281). Section 3 retitled THREE -> FOUR kinds; 4.4 qualified to name five sites in one file. Cascaded to design.md D3, which is rewritten to carry the fourth kind AND the reason the original missed it: D-rc04c-6 read one site per FILE, and the generalisable twin of its own lesson is that a grep finds every file but one site is not the file. Also recorded that :1254's comment marks those deleted cases as an earned external-review regression, which raises 3.5's importance — the narrowed assertion becomes the only remaining check that all three gate facts travel together.",
+      "ratified_via": "chat",
+      "resolution": "Previewed in the obvious-fix lane; user directed \"walk all\".",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc04c-retire-gate-overridden/design.md",
+          "orbit/changes/rc04c-retire-gate-overridden/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "The new emptiness refusal contradicts an UNMODIFIED baseline requirement: `orbit-emit-composition`'s ordering refusal says the engine SHALL NOT evaluate \"whether enough of them were cited\".",
+      "marker_source": "internal-review",
+      "file": "orbit/specs/orbit-emit-composition/spec.md",
+      "line": 322,
+      "classification": "decision_required",
+      "action": "Option A. Extracted `Write-gate validation via the shared normalizers` verbatim from baseline into the emit-composition delta (a TENTH MODIFIED requirement) and added the emptiness refusal as named edge (d). The reconciliation turned out cleaner than the finding proposed: the requirement ALREADY draws the needed distinction at edge (a), which calls refusing an in-context token 'a well-formedness check on the citation, not the forbidden judgement about whether ENOUGH passes were cited'. So the SHALL-NOT needed no narrowing — edge (d) joins (a) and (b) as citation well-formedness, with the boundary stated as exactly ZERO: at zero the trail can contradict the claim; above zero adequacy stays off limits. Three scenarios added, including one pinning the boundary (citing one pass when two preceded is ACCEPTED). Capability count unchanged at 3, so R-crc-1's binding dimension holds.",
+      "ratified_via": "chat",
+      "resolution": "User replied \"a\", selecting the MODIFIED block over keeping the rule solely in orbit-run-summary-emit. Recommendation rested on putting the clarification where the contradiction is rather than where it is convenient — the requirement governing judgementOrderingCheck is the one that should say what that function may do.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Add a MODIFIED block for THE ORDERING REFUSAL carrying the emptiness rule as a fourth named refusal, narrowing the SHALL-NOT to sufficiency above zero. Costs a tenth requirement."
+          },
+          {
+            "label": "B",
+            "body": "Keep the rule solely in orbit-run-summary-emit and state there that the check is well-formedness, not sufficiency. Cheaper, leaves the SHALL-NOT unqualified in the governing capability."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc04c-retire-gate-overridden/specs/orbit-emit-composition/spec.md",
+          "orbit/changes/rc04c-retire-gate-overridden/proposal.md",
+          "orbit/changes/rc04c-retire-gate-overridden/design.md",
+          "orbit/changes/rc04c-retire-gate-overridden/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The proposal's `orbit-emit-composition` bullet describes two changes that are not in that capability's delta.",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04c-retire-gate-overridden/proposal.md",
+      "line": 61,
+      "classification": "trivial_fix",
+      "action": "Rewrote both bullets: the engine CHECKS are specified in orbit-run-summary-emit and say so; the orbit-emit-composition bullet now describes what its delta does. Rewritten again after F3 landed, since that capability now carries TWO requirements.",
+      "ratified_via": "chat",
+      "resolution": "Previewed in the obvious-fix lane; user directed \"walk all\".",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The stated task order puts 1.4 (payload-table removal) BEFORE the bodies stop composing the field — the likelier mid-flight refusal, and the opposite of the hazard the preamble names.",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04c-retire-gate-overridden/tasks.md",
+      "line": 18,
+      "classification": "decision_required",
+      "action": "Option A. Section 1 is now 'the checks' (1.1, 1.2); the removals moved to a new section 2.5 AFTER the bodies (2.5a guard, 2.5b payload tables), and the preamble states BOTH hazards with the normative order 1.1,1.2 -> section 2 -> 2.5a,2.5b. The backward hazard is the sharper one: validatePayload refuses unknown keys OUTRIGHT, so removing the table entry while installed bodies still compose the field refuses every apply and archive emit in the window — not degraded, refused. The repo's own comment at emit-composition.ts:179-181 records this exact failure happening once before. Five stale task-number references cascaded.",
+      "ratified_via": "chat",
+      "resolution": "User replied \"a\", choosing structural reordering over declaring sections 1+2 a single commit. Recommendation rested on B converting a free structural guarantee into a procedural promise that depends on an implementer remembering not to emit mid-section — the class of unobservable precondition this program keeps converting into structure.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Reorder to 1.1, 1.2 -> bodies -> guard removal and payload-table removal last; give the preamble both hazards."
+          },
+          {
+            "label": "B",
+            "body": "Keep the order but declare sections 1 and 2 one commit with no emit taken between them."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc04c-retire-gate-overridden/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "CLAUDE.md states the retired contract in the present tense (\"`formed_against` is required non-empty, so the entry cannot be written when no independent pass exists at all\") and no task updates it.",
+      "marker_source": "internal-review",
+      "file": "CLAUDE.md",
+      "line": 228,
+      "classification": "trivial_fix",
+      "action": "Added task 5.0 to PERFORM both rewrites — CLAUDE.md:227-229 (the named hole, stated live and handed forward as 'rc04c inherits it') and CLAUDE.md:59 (C1's prompts described as 'surfaced + recorded via gate_overridden') — with an explicit scope guard: archive NARRATIVE stays as history, only live-engine-description is rewritten, no `src:` marked span touched. Cited the rc02c task 5.2b precedent the finding supplied. The architect-owned copy at clean-up-review-cycle.md:1611 became RECOMMEND-only task 5.1a.",
+      "ratified_via": "chat",
+      "resolution": "Previewed in the obvious-fix lane; user directed \"walk all\".",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "reason": "architect-owned stage declaration; recorded as RECOMMEND task 5.1a rather than edited"
+          }
+        ]
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "A live engine error message names the retired field, and none of the stage's three sweeps looks at `src/core/`.",
+      "marker_source": "internal-review",
+      "file": "src/core/emit-composition.ts",
+      "line": 588,
+      "classification": "trivial_fix",
+      "action": "Folded the reword into task 1.1 (which already rewrites that function, five lines below) and WIDENED exit 4.1's grep to cover src/core/emit-composition.ts, recording why the engine path was added: 4.1 covered templates only and 4.5 covers artifacts and specs, so the retirement's own implementation file was measured by nothing. Kept the NON-GOAL boundary explicit — this is the retired FIELD NAME, not the `override` word.",
+      "ratified_via": "chat",
+      "resolution": "Previewed in the obvious-fix lane; user directed \"walk all\".",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "\"NAMING the pass that should have been cited\" does not say which pass is named when several precede the emit.",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04c-retire-gate-overridden/tasks.md",
+      "line": 11,
+      "classification": "trivial_fix",
+      "action": "Specified the LATEST preceding independent pass, with the reason stated (the ordinary trail carries several; the error text is what a user acts on; it matches how the rest of the check reports a single offending token). Cascaded into BOTH deltas, since the requirement text is the normative source and the task only mirrors it — three sites across orbit-run-summary-emit and orbit-archive-modifications.",
+      "ratified_via": "chat",
+      "resolution": "Previewed in the obvious-fix lane; user directed \"walk all\".",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc04c-retire-gate-overridden/specs/orbit-run-summary-emit/spec.md",
+          "orbit/changes/rc04c-retire-gate-overridden/specs/orbit-archive-modifications/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The prior-generation readability claim (exit 2) has only a one-time manual check; the narrowing in 3.5 can silently drop the standing pin that exists today.",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04c-retire-gate-overridden/tasks.md",
+      "line": 58,
+      "classification": "trivial_fix",
+      "action": "Added the KEEP THE ARCHIVE DERIVATION clause to 3.5: the narrowed test SHALL still read the real archived apply emits and derive the three facts from the one carrying the retired field, never from synthesized values. Stated the failure mode the finding identified — synthesizing satisfies the task's words while converting an executable prior-generation guarantee into a sentence in a spec.",
+      "ratified_via": "chat",
+      "resolution": "Previewed in the obvious-fix lane; user directed \"walk all\".",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "\"Four archived apply emits record `reason: \"latest independent pass yielded new findings\"`\" — the count is ten emits across four changes.",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04c-retire-gate-overridden/design.md",
+      "line": 24,
+      "classification": "trivial_fix",
+      "action": "Corrected to TEN emits across FOUR changes in design.md, and cascaded to explore.md — which the finding had assumed was cross-change OUT, but promotion had already moved it into the change directory, making it IN-set. Re-measured against disk to confirm (10 / 4) rather than trusting the finding's figure. The architect-owned charter copy became RECOMMEND-only task 5.1b.",
+      "ratified_via": "chat",
+      "resolution": "Previewed in the obvious-fix lane; user directed \"walk all\".",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc04c-retire-gate-overridden/explore.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "reason": "architect-owned stage declaration; recorded as RECOMMEND task 5.1b rather than edited"
+          }
+        ]
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "CORRECTION EMIT — supersedes address-reviews-2026-09-22T23-25-00Z, which certified NOTHING for two of its ten entries.\n\nThe walk itself was complete and its fixes are real and in the tree; the RECORD was defective. Composing that payload I hand-shortened two finding titles — the CLAUDE.md WARNING and the count SUGGESTION — and the gate keys a resolution entry to a finding on (title, file), so neither matched. Measured after the fact: 10 findings, 10 entries, 8 matched, 2 orphan entries, 2 uncovered findings. The gate correctly reported the pass as still carrying an unresolved substantive finding.\n\nThis is Q-crc-17 occurring live, on the walk of a change in the program that recorded it. The bitter detail: its SECOND OBSERVATION was written this same morning, on rc04d, reporting a CLEAN 9-of-9 match and stating explicitly that the keys matched 'because the author happened to copy them verbatim while the source JSON was in context. NOTHING CHECKED IT.' A few hours later the same author did not copy them verbatim, and nothing checked it. A clean instance was evidence about that walk, exactly as recorded — and this one is evidence about the mechanism.\n\nTwo things this sharpens for Q-crc-17's standing recommendation, which remains unbuilt. (a) The failure is SILENT AT THE WALK: the walk reports success, the fixes are real, and only the gate's refusal to advance reveals it — after the walk has ended. (b) Direction (a) of that recommendation (an ENTRY whose key matches no finding FAILS THE WRITE, naming the entry) would have caught this at the write, before the record existed. Direction (b) (a FINDING named by no entry is RECORDED as an engine-computed `uncovered` list) would have surfaced it in the emit itself. Both directions fired here, which is the first observation of the two-sided case the recommendation describes.\n\nSuperseded record kept on the trail rather than rewritten: an audit trail that edits away its own defective entries cannot be evidence about how often they occur.\n\n---\n\nAll 10 findings from the fresh proposal pass resolved, 0 stale, 0 deferred — 8 through the obvious-fix lane and 2 through the decision lane, both ratified by chat directive. Artifacts end valid, fingerprints 10/10 verified, deltas at 10 MODIFIED requirements across 3 capabilities, tasks 22 -> 30.\n\nTWO STRUCTURAL CHANGES came out of the decision lane. F3 added a TENTH requirement: the emptiness refusal lives in judgementOrderingCheck, which orbit-emit-composition's `Write-gate validation via the shared normalizers` governs, and that requirement's prose forbade the engine judging 'whether enough of them were cited'. The reconciliation was cleaner than the finding proposed — the requirement already draws the distinction at edge (a), calling an in-context refusal 'well-formedness of the citation, not the forbidden judgement about whether ENOUGH passes were cited' — so the SHALL-NOT needed no narrowing and edge (d) simply joins (a) and (b), with the boundary stated as exactly ZERO. F5 reordered the engine work around a hazard the preamble had missed: validatePayload refuses unknown keys OUTRIGHT, so removing the payload-table entry before the bodies stop composing the field refuses every emit in the window, and the repo's own comment at emit-composition.ts:179-181 records that exact failure happening once before.\n\nThe pattern the fresh pass named — 'a boundary drawn one line short' — held up under the walk and produced a second instance of itself: D-rc04c-6's generalisable lesson was 'a grep finds every mention, and a mention is not a dependency', and its twin, which it did not draw, is that a grep finds every FILE and one site is not the file. That is now recorded in design D3 alongside the corrected four-kind classification.\n\nONE SEAM-ARISEN OBSERVATION, out of scope and deliberately not fixed: `npm test` shows test/core/source-lint.test.ts failing with ENOENT on orbit/explore/rc04c-retire-gate-overridden/explore.md. It is NOT caused by this walk. The lint enumerates via `git ls-files` — the INDEX, not the worktree — and propose moved explore.md with `mv` without staging the deletion, so the lint reads a path git still tracks. Measured: the ENOENT set is exactly that one file, and the file at its NEW path is untracked and therefore currently invisible to the lint. Both conditions resolve at commit. Two observations worth carrying to the program rather than to this stage: the lint hard-fails (an exception, not a clean finding) on a state that EVERY consume-mode propose creates between the move and the commit, and during that window the moved document is unlinted. That belongs with Q-crc-14, which already records that the lint ships with no trigger.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal rc04c-retire-gate-overridden"
+}

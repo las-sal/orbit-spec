@@ -1,0 +1,20 @@
+schema: spec-driven
+created: 2026-09-22
+schema_version: 4
+architecture:
+  doc: clean-up-review-cycle
+  stage: rc04c-retire-gate-overridden
+base_fingerprints:
+  orbit-archive-modifications:
+    Archive run summary written: sha256:ff8c048d91f72881747a5a9cc80932d1a8fa4080929b68736cc9930b7d094068
+    Audit informational, not blocking by default: sha256:904466b99958ff928ff981f658137ebd5fd9424432dae59baaceaa994f5c4f71
+    Archive summary schema reference ships with the skill: sha256:558328e4779c70f399b6ad115037b5940d9a842d32a8f7531e49e291ec9deb9d
+    Stage line in the archive completion readout: sha256:a72b1e5e564e6996bce3da1e1f5469992aeaf99afe77c779ae9e95effa1ad844
+  orbit-emit-composition:
+    Payload tables agree with their schema references: sha256:76fd1b10675318e4626d75efdae733c463f594cf2ba1e1982735f43fe6b28b6c
+    Write-gate validation via the shared normalizers: sha256:87d5bae21e1e10c56719a0ccf50c052f50440cf9552cb4de47e45f79900eb902
+  orbit-run-summary-emit:
+    Apply per-chunk-end emission: sha256:60c83bf214f3d3919cdd8b6550e6f2c4185558e9b2df79cbf4cdfd77f9d82e2a
+    Consent field on the apply emit: sha256:95939e2dbee6aa5f3bcb6926384d1658c79c22aca4b899fbc4e750c0d8a95bf8
+    The judgement record — one spine, two kinds: sha256:fbfe2b2ea1b56e2458ae2485193295574eb579357d25e080616ea802b83bec91
+    Where a judgement record may appear: sha256:4153cc864f88780cf3945339061b9bb0ab1a167b8157398ad859a4f40e8dcc39

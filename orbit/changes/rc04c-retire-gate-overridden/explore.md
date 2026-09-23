@@ -33,7 +33,7 @@ touch: `orbit-engine-gates`, `orbit-pr-lifecycle`, `orbit-conventions`).
 **What the check ALSO settled, in the retiring field's favour.** A tempting simplification is that
 `gate_overridden` was always redundant, because `orbit-engine-gates` states gate state is a pure
 function of on-disk artifacts — so the state at any past token should be recomputable and the
-record adds nothing. **That is false, and the trail proves it.** Four archived apply emits record
+record adds nothing. **That is false, and the trail proves it.** TEN archived apply emits across FOUR changes record
 `reason: "latest independent pass yielded new findings"` — clause-(c) vocabulary that rc02c
 RETIRED. Today's engine cannot produce that string for any input. The recorded reason is what the
 human SAW at decision time; a recomputed reason is what today's rules would say, and after any
@@ -92,6 +92,15 @@ rc04a's continuation record carries them, and why this stage is a MOVE rather th
   what the split was for. Also measured and NOT in the original figures: 3 workflow templates
   (`apply-change` 3 occurrences, `archive-change` 9, `pr-choreography` 1), the engine
   (`emit-composition.ts`, 7), and FOUR test files.
+  **SUPERSEDED AGAIN 2026-09-22, by the proposal walk rather than by events: the requirement count
+  is TEN, not nine.** The fresh proposal pass found that the emptiness rule this stage adds to
+  `judgementOrderingCheck` sits under `orbit-emit-composition`'s `Write-gate validation via the
+  shared normalizers`, whose prose forbids the engine judging "whether enough of them were cited" —
+  so shipping the rule without touching that requirement would leave two live baselines disagreeing
+  about what the write gate may do. It is now a tenth MODIFIED requirement carrying the refusal as a
+  named well-formedness edge. CAPABILITIES are unchanged at three, so R-crc-1's binding dimension
+  still holds and the stage stays AT the ceiling. Every "9 requirements" below is the pre-walk
+  figure; the artifacts carry the current one.
   Capabilities-touched is the binding dimension and it is double. The charter's own line — "the
   three not already touched by rc04a are this stage's capabilities" — had the right intuition and
   assigned only HALF the work: rc04a MODIFIED those three capabilities but did not remove
@@ -234,27 +243,41 @@ rc04a's continuation record carries them, and why this stage is a MOVE rather th
   grep should be read once at the SITE before their counts are believed — which is the same
   instrument lesson this program has now recorded at rc01, rc07, rc04d's exit (2), and here.
 
-## Open questions
+- **2026-09-22 — D-rc04c-7: after the overlap there is nothing to disagree with, so the guarantee
+  is a TEST, not a mechanism — and it replaces the guard's own test rather than joining it.**
+  (Sal, resolving Q-rc04c-b at promotion. The standing recommendation carried unchanged since
+  2026-09-21 and was sharpened rather than challenged.)
 
-- **Q-rc04c-b — what guarantees the widening once the guard that enforced it is gone?**
-  The coexistence refusal is the only mechanism proving the two records agree. It is also the only
-  reader of the field being retired, so it cannot outlive it. Once both are gone, the claim "the
-  new record carries everything the old one did" is supported by nothing executable.
-  Standing recommendation: this is probably fine and should be stated rather than solved — the
-  guard's job was to hold the invariant DURING the overlap, and after the overlap there is one
-  record and nothing to disagree with. What deserves to survive is a test asserting the
-  continuation record still carries all three gate facts, so the loss of the legacy shape does not
-  quietly become a loss of the fields.
-  **SHARPENED 2026-09-22 by rc04d's cycle, and the successor test has an obvious home.**
-  `test/core/judgement-record-fixture.test.ts` exists to exercise the coexistence pairing, so it
-  dies with the guard — which means the surviving assertion should REPLACE its body rather than be
-  written as a new file, and the retirement then reads as a narrowing of an existing test instead
-  of a deletion plus an unrelated addition. Note also what R-crc-6's DESCOPE SWEEP COROLLARY
-  (recorded 2026-09-22) says about this shape: removing the guard is descope-shaped — cheap for the
-  MECHANISM and expensive for the ARTIFACTS, because every sentence that argued for coexistence
-  goes wrong the moment the guard leaves. `orbit-run-summary-emit` currently spends a paragraph on
-  the two records coexisting "until `gate_overridden` is retired"; that paragraph is this stage's
-  to sweep, and it is exactly the kind of prose a mechanism-only diff leaves standing.
+  The coexistence refusal in `validateJudgements` is the only executable proof that
+  `continuation/proceed` and `gate_overridden` agree, and it is also the field's ONLY reader — so
+  it cannot outlive the retirement. The question was what guarantees the widening afterwards.
+
+  **The answer is that the question dissolves rather than being solved.** The guard's job was to
+  hold the invariant DURING the overlap, while two records described one fact. After the overlap
+  there is ONE record, and a single record cannot disagree with anything. Demanding a successor
+  mechanism would be building a guard against a contradiction that no longer has two parties.
+  This is stated rather than solved DELIBERATELY, and the statement belongs in the change record
+  so that a later reader does not mistake the absence of a check for an oversight.
+
+  **What DOES deserve to survive is narrower and concrete**: an assertion that the continuation
+  record still carries all three gate facts (`gate`, `gate_state`, `gate_reason`), so that
+  retiring the legacy SHAPE does not quietly become a loss of the FIELDS. That is a different
+  claim from the coexistence claim — it is about completeness of one record, not agreement
+  between two — and it is the half that still has teeth once the field is gone.
+
+  **It REPLACES `judgement-record-fixture.test.ts`'s body rather than arriving as a new file.**
+  That test exists to exercise the coexistence pairing (D-rc04c-6 classifies it as the one test
+  that dies with the guard), so narrowing it in place makes the retirement read as what it is — a
+  test losing the half that became meaningless and keeping the half that did not. A deletion plus
+  an unrelated new file would tell the same story worse.
+
+  **R-crc-6's DESCOPE SWEEP COROLLARY applies and names a specific victim.** Removing the guard is
+  descope-shaped: cheap for the MECHANISM and expensive for the ARTIFACTS, because every sentence
+  arguing for coexistence goes wrong the moment the guard leaves. `orbit-run-summary-emit` spends
+  a paragraph on the two records coexisting *"until `gate_overridden` is retired"* — prose a
+  mechanism-only diff leaves standing. It is in this stage's scope and is swept here.
+
+## Open questions
 
 ## Considered & out
 
