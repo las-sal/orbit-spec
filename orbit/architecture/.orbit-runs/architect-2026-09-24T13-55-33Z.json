@@ -1,0 +1,29 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-24T13:55:33Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Single-purpose session: land the R-crc-1 clarification rc04c's external review earned, which task 5.1c had declared a GATE on that stage's cadence. Both halves recorded, and the interesting part is that they were handled differently on purpose.\n\nTHE BYTE HALF is a measurement error R-crc-1 could not have anticipated. The delta format compels a MODIFIED block to carry its requirement's full text, so a retirement stage ships tens of KB of verbatim carriage regardless of what it changes — rc04c reads 57,418 bytes against 163 changed lines. The ruling's calibration point was a MECHANISM stage where bytes and new text were nearly the same quantity, so the ceiling was never calibrated on the case it now fires hardest on. Appended INSIDE R-crc-1 rather than promoted to a new ruling, because a reader who reaches R-crc-1 must not be able to apply the superseded measure; the clarification also states what it does NOT do, since a ruling that relaxes a ceiling invites exactly the abuse it must refuse.\n\nTHE TASK HALF WAS NOT CLARIFIED, and declining to was the substantive act. rc04c is over at 34 against 'under 20' and stays over. Two escapes existed — redefine the dimension to count work items only (22, still over, transparently motivated) or coalesce boxes — and the external reviewer had named both IN ADVANCE as hiding overage by recounting. Taking either would have made the ruling amendment a laundering operation. Instead the overage is recorded as R-crc-9's FIRST ratified breach, at its real figure, in rc04c's stage section, with the reason stated as a reason the breach is acceptable rather than a reason it is not one: the count grew 22 → 30 → 34 as three review passes converted findings into sub-tasks naming exact sites, so it measures review depth rather than scope.\n\nR-crc-9's split branch was examined rather than waved past: the obvious split leaves one requirement in each of the same three capabilities on both sides, so neither half drops below the binding dimension — `D-rc04c-4`'s objection to splitting by seam, arriving again from a new direction. The program has now twice proposed a split for this stage family and twice found the capability count immovable, which is itself worth knowing before a third attempt.\n\nRecorded against myself: this is the THIRD capture in three days appended inside an existing ruling rather than promoted to a new one, holding the index at 13 across three substantive additions. Each was defensible on its merits. The status log now says plainly that if a fourth arrives, the question is whether the rulings index is being kept artificially short — partly under pressure from a test pin that goes red on every new ruling.\n\nrc03a remains quiescent-awaiting-ratification and was NOT re-prompted; its offer was fired and declined twice already, and Q-crc-11 carries the recurring cost. Doc validates; sources clean at 13 rulings, 22 stages, 21 capabilities, schema 4. Not arc-done.",
+  "stages_touched": [
+    "rc04c-retire-gate-overridden"
+  ],
+  "rulings_captured": [
+    "R-crc-1 — BYTE-DIMENSION CLARIFICATION (appended 2026-09-23/24, Sal ratifying option B on rc04c's external iter 1): ~40 KB counts CHANGED bytes, not CARRIED bytes, because the MODIFIED delta format compels reproduction of each requirement's full text. Explicitly scoped: it touches no other dimension and is not a licence to remeasure an inconvenient ceiling — the producing stage was over on two dimensions and only one was measuring the wrong thing."
+  ],
+  "completions_ratified": [],
+  "handoff": {
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md — R-crc-1's byte clarification and its explicit NOT-THIS scope; read before measuring any stage against the ceiling.",
+      "orbit/architecture/clean-up-review-cycle.md — rc04c's stage section: R-crc-9's first ratified breach, with the split-does-not-help reasoning.",
+      "orbit/changes/rc04c-retire-gate-overridden/tasks.md — task 5.1c is now CLOSED and records that the cadence gate it named is open.",
+      "orbit/changes/rc04c-retire-gate-overridden/.orbit-runs/address-reviews-2026-09-23T19-05-00Z.json — the external walk this session's work came out of.",
+      "orbit/architecture/clean-up-review-cycle.md status log, 2026-09-24 — the third-instance note on appending inside rulings rather than adding them."
+    ],
+    "next_command": "/orbit:review --as proposal rc04c-retire-gate-overridden",
+    "model_hint": null,
+    "seam": "program-layer unblock; rc04c's review cadence was gated on this ruling and is now free to continue"
+  },
+  "next_recommended": "/orbit:review --as proposal rc04c-retire-gate-overridden"
+}

@@ -18,8 +18,11 @@ something left unresolved and why that was acceptable. This SUPERSEDES the pract
 residual risk as free prose into `warnings`: `warnings` remains the home for PROCESS NOTES that
 arose at the seam itself (a divergence observed at archive, a correction made in flow), which are
 not readiness judgements and are not formed against independent passes. The distinction is the
-qualifying test, not a stylistic preference — a `warnings` entry cites nothing and can be ordered
-against nothing.
+qualifying test, not a stylistic preference — a `warnings` entry cites nothing AND occupies no
+cadence position, so it can be ordered against nothing. (The second half is what carries the
+distinction. An empty `formed_against` on a `continuation`/`proceed` also cites nothing, yet it
+DOES hold a cadence position and its emptiness is itself checked against the trail — so
+"cites nothing" alone never settles membership; see `orbit-run-summary-emit`.)
 
 **THE CONTINUATION RECORD AT THIS SEAM.** When the Step 3.4 `review-system` gate prompt is answered
 **Proceed anyway**, the archive emit SHALL carry a `judgements` entry with `kind: "continuation"`

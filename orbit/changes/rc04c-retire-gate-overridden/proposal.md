@@ -73,8 +73,19 @@ proper, at R-crc-1's ceiling rather than twice it.
 
 - **`orbit/specs/` — 3 capabilities, 10 requirements.** `orbit-run-summary-emit` 4,
   `orbit-archive-modifications` 4, `orbit-emit-composition` 2. The tenth was ADDED during the
-  proposal walk (the fresh pass found the ordering-refusal contradiction); CAPABILITIES — R-crc-1's
-  binding dimension — are unchanged at 3, so the stage stays AT the ceiling rather than over it.
+  proposal walk (the fresh pass found the ordering-refusal contradiction).
+  **SIZE, STATED AGAINST ALL FOUR OF R-crc-1'S DIMENSIONS rather than the one that flattered it**
+  (corrected after external iter 1): capabilities 3 of 3 AT · requirements 10 of ~12 UNDER ·
+  delta 57,418 B of ~40 KB **OVER** · tasks 34 of "under 20" **OVER**. The earlier claim that the
+  stage was simply "AT the ceiling on the binding dimension" cited R-crc-1's own line that
+  capabilities predict cost better than bytes — true, and not a repeal of the other three limits.
+  Two breaches stand, handled differently and neither absorbed: the BYTE figure is ~43 KB verbatim
+  carriage forced by the MODIFIED format (the large majority of it verbatim carriage; only ~150 lines differ from baseline), which tasks 5.1c
+  proposes the ruling should stop counting; the TASK figure is a real breach proposed as R-crc-9's
+  first RATIFIED one. **BOTH LANDED 2026-09-24** via `/orbit:architect` (task 5.1c): R-crc-1 now
+  measures CHANGED bytes, under which this stage reads UNDER at 163 differing lines, and the task
+  overage is recorded in the stage section as R-crc-9's FIRST ratified breach at its real figure.
+  Three dimensions UNDER, one a citable ratified breach; the review cadence may continue.
 - **`src/core/templates/workflows/` — 3 bodies.** `apply-change.ts` (3 occurrences),
   `archive-change.ts` (9), `pr-choreography.ts` (1).
 - **`src/core/emit-composition.ts`** — 7 occurrences: the payload tables, the coexistence guard

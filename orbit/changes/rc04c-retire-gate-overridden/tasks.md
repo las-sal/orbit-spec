@@ -57,24 +57,32 @@ off by one; `emit-composition.ts` is the engine and `bulk-archive-change.ts` nev
   (`specs/orbit-archive-modifications/spec.md`, the edge-that-now-can-be-written requirement), so
   body and spec would otherwise disagree on the stage's central claim.
 - [ ] 2.1b The shipped `archive-summary-schema.md` reference (composed in `archive-change.ts:97`)
-  carries the `judgements` field note an AI READS while composing an archive emit. Restate
-  `formed_against` there as non-empty EXCEPT on `continuation`/`proceed`, where an empty array is
-  legal exactly when the emptiness is true of the trail. A reference that still says
-  unconditionally non-empty teaches the composing AI to omit the entry, which is the same defect as
-  2.1a arriving by a different route.
+  carries the `judgements` field note an AI READS while composing an archive emit. TWO edits, not
+  one — the cardinality AND the membership rule:
+  (i) restate `formed_against` as non-empty EXCEPT on `continuation`/`proceed`, where an empty
+  array is legal exactly when the emptiness is true of the trail;
+  (ii) `archive-change.ts:97` currently says `judgements` is present ONLY when a decision "formed
+  against INDEPENDENT REVIEW OUTPUT" was taken — the MEMBERSHIP definition, which excludes the
+  evidence-free record by its own terms. Re-ground it on CADENCE POSITION the way the spec now
+  does. Changing only the cardinality leaves the body's own definition forbidding the record the
+  same body is told to write. (External iter 1 found exactly this: the tasks changed cardinality
+  and left the definition.)
+  A reference that still says unconditionally non-empty teaches the composing AI to omit the
+  entry, which is the same defect as 2.1a arriving by a different route.
 - [ ] 2.2 `src/core/templates/workflows/apply-change.ts` (3 occurrences) — same, at the
   `review-proposal` inflection.
 - [ ] 2.2a `apply-change.ts:205` states the contract as "`formed_against` (NON-EMPTY array of
-  independent pass `<TS>` tokens...)" — false for `continuation`/`proceed` once 1.1 lands. Qualify
-  it the same way as 2.1b. Both bodies declare this contract independently, so both need the
-  qualification; fixing one is the boundary-one-line-short failure this change is prone to.
+  independent pass `<TS>` tokens...)" — false for `continuation`/`proceed` once 1.1 lands — AND
+  carries the same "formed against INDEPENDENT REVIEW OUTPUT" membership sentence. Apply BOTH of
+  2.1b's edits here. Both bodies declare this contract independently, so both need both; fixing one
+  body, or one half in each, is the boundary-one-line-short failure this change is prone to.
 - [ ] 2.3 `src/core/templates/workflows/pr-choreography.ts` (1 occurrence) — the reference to a
   recorded override; name the `continuation` record instead. NOTE D-rc04c-5's line: this is text
   the stage is already rewriting, so naming the successor correctly here is in scope — but do NOT
   sweep `override` vocabulary elsewhere in this file.
 - [ ] 2.4 Rebuild and refresh the local surface (`npm run build && node bin/orbit.js update
   --force`), because template edits do not bump the version and plain `update`'s smart detection
-  may skip them.
+  may skip them. **This is NOT the final build — see 2.6.**
 
 ## 2.5 The engine (part 2 — the removals, AFTER the bodies)
 
@@ -89,6 +97,18 @@ rather than by remembering not to emit mid-section.
   `payloadFields` tables. After this a payload carrying it is refused as an unknown key, which is
   the intended terminal behaviour (`design.md` D5) — no deprecation path, no warn-then-refuse.
   (Was task 1.4.)
+- [ ] 2.6 **REBUILD AGAIN — the runnable surface, not just the source.** `npm run build && node
+  bin/orbit.js update --force`, AFTER 2.5a/2.5b. `bin/orbit.js` imports `../dist/cli/index.js`, so
+  without this the installed CLI still carries the coexistence guard and still accepts
+  `gate_overridden` while `src/` grep and the Vitest suite (which exercise `src/`) both pass green
+  — a source/runtime split that hides the stage's own central claim from the only surface a user
+  touches. Then SMOKE-TEST THE BUILT CLI, not the source: submit a payload carrying
+  `gate_overridden` to an apply and an archive emit through `node bin/orbit.js emit ...` and confirm
+  the unknown-key refusal fires and no file is written.
+  **This task exists because the F5 reorder created the gap**: before it, the removals sat in
+  section 1 and 2.4's build followed everything; moving them after the bodies stranded the only
+  build in the middle. External iter 1 caught it. A reorder that fixes one ordering hazard can
+  create another, and the build step is the thing to re-check whenever work moves across it.
 
 ## 3. The tests — FOUR kinds of break, sized per `design.md` D3
 
@@ -129,17 +149,36 @@ surfaced, and it missed four sites in a file the grep DID surface.
   body with the assertion that a `continuation`/`proceed` entry carries all three gate facts
   (`gate`, `gate_state`, `gate_reason`). Per `design.md` D2 this REPLACES rather than joins — the
   test loses the half that became meaningless and keeps the half that did not.
-  **KEEP THE ARCHIVE DERIVATION** (`:213-220`): the narrowed test SHALL still read the REAL archived
-  apply emits and derive the three facts from the one carrying the retired field, never from
-  synthesized values. That read is currently the only STANDING regression pin that an archived emit
-  carrying `gate_overridden` still parses — exactly what exit (2) otherwise verifies by hand once.
-  Synthesizing would satisfy the words of this task while silently converting an executable
-  prior-generation guarantee into a sentence in a spec. It costs nothing: this change does not
-  rewrite the archived emit.
+  **KEEP THE ARCHIVE DERIVATION** (`:213-220`) AND PUT IT THROUGH A READER: the narrowed test SHALL
+  still read the REAL archived apply emits and derive the three facts from the one carrying the
+  retired field, never from synthesized values — AND it SHALL reach them via `readTrail`
+  (`src/core/artifact-graph/trail.ts:152`, which takes a change DIRECTORY and so can be pointed at
+  `orbit/changes/archive/<dated-name>/`) rather than via raw `fs.readFileSync` + `JSON.parse`.
+  **The raw read proves nothing about compatibility** — external iter 1 found that the existing
+  derivation only demonstrates that JSON parses as JSON, which was never in doubt. The claim this
+  stage makes is that ORBIT'S READERS tolerate a prior-generation emit carrying a field the engine
+  no longer accepts, and only a reader can witness that. Synthesizing values, or keeping the raw
+  read, would satisfy the words of this task while leaving exit (2) with no executable evidence at
+  all. It costs nothing: this change does not rewrite the archived emit.
+- [ ] 3.5b ADD a STANDING NEGATIVE REGRESSION for the retired key, one per command: submit a
+  payload carrying `gate_overridden` to `apply` and to `archive` and assert the ordinary unknown-key
+  refusal fires AND no emit file is written. The existing pattern is
+  `test/core/emit-composition.test.ts:1016` (`unknown payload key 'pr_attachment' for 'archive'`),
+  so this is a transcription, not new machinery. **Why it is needed even though the key is being
+  deleted**: section 3 otherwise only DELETES or rewrites the tests that currently exercise the
+  field, and `emit-schema-parity` is ONE-WAY — it asserts documented keys are accepted, so it stays
+  green if a later edit silently re-adds an undocumented legacy key. Task 4.1's grep is a one-time
+  apply-day check, not a standing pin. Without this, nothing in the suite would notice the
+  retirement being undone.
 - [ ] 3.6 ADD coverage for the new rule (1.2), both directions, because a conditional accepted
   without its refusal is half a check: an empty `formed_against` ACCEPTED on `continuation`/`proceed`
-  with an empty trail, and REFUSED naming the pass when one precedes the emit. Include the
-  scope guard — empty still refused on `readiness` and on `continuation`/`spend`.
+  with an empty trail, and REFUSED when one precedes the emit. **The refusal case SHALL seed at
+  least TWO preceding independent passes and assert the error names the LATEST token** — and,
+  preferably, asserts it does NOT name the older one — plus the entry index. A fixture with a
+  single preceding pass would satisfy a looser wording while an implementation naming the oldest,
+  or an arbitrary, pass still violated the spec; "latest" was made normative in 1.2 precisely
+  because the ordinary trail carries several. Include the scope guard — empty still refused on
+  `readiness` and on `continuation`/`spend`.
 
 ## 4. Verify the stage did what it claims
 
@@ -149,10 +188,19 @@ surfaced, and it missed four sites in a file the grep DID surface.
   live error message naming the field that every sweep in this change missed: 4.1 covered templates
   only and 4.5 covers artifacts and specs, so the retirement's own implementation file was measured
   by nothing.
-- [ ] 4.2 Exit (2): an archived trail carrying the old record still reads without error. Run the
-  orientation and report surfaces against a real archived change whose emit carries
-  `gate_overridden` (20 such emits exist) and confirm no parse failure and no degraded row. This is
-  the PRIOR-GENERATION claim, and it is the one a reviewer should attack hardest.
+- [ ] 4.2 Exit (2): an archived trail carrying the old record still reads without error.
+  **THE COMMAND THIS TASK ORIGINALLY NAMED DOES NOT WORK, and external iter 1 proved it by running
+  it**: `orbit status --change <archived-name> --report` fails with `Change '<name>' not found`
+  before rendering, because `--report` resolves through `validateChangeExists`, which accepts only
+  ACTIVE `orbit/changes/<name>` directories. A task instructing an impossible verification is worse
+  than no task, because it reads as covered.
+  Verify instead through surfaces that CAN address archived data: (a) the standing `readTrail`
+  regression added in 3.5, which is the executable half and the one that survives this session; and
+  (b) bare `orbit status` (no `--change`), which scans archived trails for global-LAST selection —
+  confirm it renders without parse failure and without a degraded row while an archived emit
+  carrying `gate_overridden` is the most recent. Both are runnable; neither invents a surface.
+  This is the PRIOR-GENERATION claim, and it is the one a reviewer should attack hardest — it has
+  now been attacked twice and failed once.
 - [ ] 4.3 Exit (3): the parent charter's exit (4) is MET — the field is retired rather than left
   write-only. State it against the charter's wording, not a paraphrase.
 - [ ] 4.4 `npm test` green. Expect the four files in section 3 to have been deliberately updated
@@ -191,6 +239,57 @@ surfaced, and it missed four sites in a file the grep DID surface.
   copy of the unreconstructible-reason figure (see 5.1b).
 - [ ] 5.1b RECOMMEND — do not perform: the rc04c charter repeats design.md's "four archived apply
   emits" figure, which is four CHANGES / ten EMITS (corrected here per the fresh pass). Architect-owned.
+- [x] 5.1c **LANDED 2026-09-24 — the gate this task named is OPEN.** `/orbit:architect` recorded
+  both halves: R-crc-1 gained the byte-measurement clarification (changed bytes, not carried
+  bytes — appended inside the ruling so a reader who reaches R-crc-1 cannot apply the old measure),
+  and rc04c's stage section carries the TASK breach as R-crc-9's first RATIFIED one (Sal,
+  2026-09-24), at its real figure of 34 with the split-does-not-help reasoning recorded. Three of
+  four dimensions now read UNDER; the fourth is a recorded, citable breach rather than an
+  unexamined overage. The stage's review cadence may continue. Original recommendation follows.
+
+  RECOMMEND — do not perform — AND IT GATES THIS STAGE: an R-crc-1 clarification the
+  external pass earned. Rulings are architect-owned (D-d2-4), so this stage RECORDS the draft and
+  edits nothing in `orbit/architecture/`; it must be landed by `/orbit:architect` BEFORE this
+  stage's review cadence continues, because until it does the stage is over ceiling and R-crc-1
+  says an over-ceiling proposal is split before review, never reviewed as one.
+
+  **Measured against all four dimensions** (external iter 1, GPT-5 Codex): capabilities 3 of 3 AT;
+  requirements 10 of ~12 UNDER; delta 57,418 B against ~40 KB, ~40% OVER; tasks 34 against
+  "under 20", 70% OVER. **These figures ROSE during the external walk** (56,262 B / 30
+  tasks at the time the finding was written): resolving the six findings added precision, and
+  precision costs boxes and bytes. That direction of travel is itself evidence for draft (b) — a
+  count that grows every time a reviewer is right is measuring review depth, not scope — and it is
+  recorded rather than smoothed, because a ceiling argument that quietly restates a smaller number
+  is the failure this stage keeps finding in others.
+
+  **DRAFT (a) — the byte ceiling should measure CHANGED bytes, not CARRIED bytes.** The delta
+  format requires a MODIFIED block to reproduce the requirement's FULL updated content, so a stage
+  that rewrites ten long prose requirements carries their entire text whether it changes one line
+  or fifty. Measured here: across the three deltas only ~145 lines differ from their baselines, so
+  roughly 43 KB of the 56 KB is verbatim carriage. R-crc-1 was calibrated on `c2-parallel-merge`
+  (21 KB / 9 requirements), a MECHANISM stage whose delta bytes were mostly new text. For a
+  RETIREMENT or DE-NAMING stage the same figure measures format, not scope, and predicts nothing
+  about review cost. Changed-bytes is as observable as total-bytes (R-crc-10 permits the check),
+  so the clarification costs no judgement.
+
+  **DRAFT (b) — the TASK overage is NOT explained away, and is proposed as a ratified breach under
+  R-crc-9 instead.** Settled under R-crc-3 and recorded with the reasoning, because the tempting
+  move here is the dishonest one. 34 boxes decompose as work items plus verification and handoff records — and even
+  counting only work the stage is AT OR OVER a ceiling of "under 20", and redefining what counts as a task to get under it is
+  precisely the "hide the overage by coalescing checkboxes" the external reviewer named. It is also
+  worth recording WHY the count grew: 22 at propose, 30 after two review passes, every addition a
+  sub-task naming an exact site a reviewer had found. Those passes made the stage more precise, not
+  larger. That is an argument for why the breach is acceptable, NOT an argument that it is not a
+  breach. R-crc-9 permits a ratified breach and the program has never taken one; this is proposed
+  as the first, on the record, rather than absorbed.
+- [ ] 5.1d RECORD (do not perform) — a real limitation found while fixing 4.2, and out of scope
+  here: **`orbit status --change <name> --report` cannot target an ARCHIVED change.** It resolves
+  through `validateChangeExists`, which enumerates active `orbit/changes/` only, so no rendered
+  review report can ever be produced for a change once archived — and the archived trail is exactly
+  where a report is most useful for a reader reconstructing how a change converged. Fixing it is an
+  engine change in the status/orientation surface, a capability this stage neither touches nor
+  holds a fingerprint on; doing it here would take the stage to FOUR capabilities and breach the one
+  R-crc-1 dimension it is still inside (see 5.1c). Recorded for whoever owns that surface next.
 - [ ] 5.2 RECORD for the archive seam: whether this stage's resolution walk AUTHORED engine
   mechanism or merely REPAIRED it (R-crc-6's lanes). `design.md` D4 runs the blind pair AFTER apply
   precisely so the pair reads the shipping tree; if the walk then authors, the pair's verdict no

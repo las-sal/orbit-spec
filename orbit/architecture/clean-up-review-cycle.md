@@ -117,6 +117,26 @@ One goal per phase, each falsifiable, each stage naming its goal (settled under 
   design-heavy stage that converged in a week (c2-parallel-merge) was 2 capabilities / 9
   requirements / 21 KB. Capabilities touched predicts cost better than bytes. A proposal over
   the ceiling is split before review, never reviewed as one.
+
+  **HOW THE BYTE DIMENSION IS MEASURED, clarified 2026-09-23 (Sal, ratifying option B on rc04c's
+  external iteration 1): ~40 KB counts CHANGED bytes, not CARRIED bytes.** The delta format
+  requires a MODIFIED block to reproduce its requirement's FULL updated content, so a stage that
+  rewrites ten long prose requirements carries their entire text into the delta whether it alters
+  one line or fifty. Measured on `rc04c-retire-gate-overridden`: 57,418 bytes of delta across three
+  capabilities, of which only ~150 lines differ from their baselines — roughly 43 KB is verbatim
+  carriage the format compels. Counting that as size makes the ceiling fire on the FORMAT rather
+  than on the work, and it fires hardest on exactly the stages this program keeps producing:
+  retirements and de-namings, which touch many requirements shallowly. The calibration point stands
+  and explains why — `c2-parallel-merge`'s 21 KB was a MECHANISM stage, where delta bytes and new
+  text were nearly the same thing. Changed-bytes is as observable as total-bytes, so R-crc-10
+  permits the check rather than only a record.
+
+  **WHAT THIS CLARIFICATION DOES NOT DO.** It does not touch the other three dimensions, and it is
+  not a general licence to remeasure a ceiling that is inconvenient. The stage that produced it was
+  over on TWO dimensions; only the byte one was measuring the wrong thing. Its task overage was
+  left standing as a breach to be ratified under R-crc-9 rather than defined away — redefining what
+  counts as a task to get under the bound is the move this ruling exists to prevent, and a stage
+  arguing its way under a ceiling should expect the argument to be read as evidence it is over.
 - **R-crc-2** (Sal, 2026-09-11) — ORDERING PRINCIPLE for this program: (1) stop the bleeding
   — the cheapest, highest-lever changes to the cycle's own rules first; (2) move checking
   into tests — every claim a machine can verify leaves the reviewer's budget; (3) reduce
@@ -1719,6 +1739,35 @@ drops from 6 capabilities to 3, measured the same way it was measured at explora
 Depends-on: rc04a-judgement-record, rc04d-override-vocabulary
 Complete: [ ]
 
+**RATIFIED CEILING BREACH — the task dimension (Sal, 2026-09-24). R-crc-9's first.** Measured at
+external iteration 1 and re-measured after its walk, this stage sits UNDER R-crc-1 on three
+dimensions — capabilities 3 of 3, requirements 10 of ~12, and changed-bytes 163 lines under the
+2026-09-23 clarification — and OVER on the fourth: **34 tasks against "under 20"** (22 work items
+plus 12 verification and handoff records).
+
+**Why the breach is accepted rather than split.** R-crc-9's own first branch was considered and
+does not help here: the obvious split — the totality amendment out, the legacy-key retirement in —
+puts one requirement in EACH of the same three capabilities on both sides, so neither half drops
+below 3 on the binding dimension. That is `D-rc04c-4`'s recorded objection to splitting by seam,
+arriving again from a different direction, and a split that leaves both halves at the ceiling buys
+nothing but a second cadence.
+
+**What the count actually grew from, stated because it is the whole argument and also its own
+limit.** 22 tasks at propose, 30 after the fresh internal pass, 34 after the external pass. Every
+addition was a sub-task naming an exact site a reviewer had found: the body-side OMIT branch, four
+previously unnamed test sites, a second build step, a standing negative regression. The stage did
+not grow — its description got more precise, and precision costs boxes. **That is a reason this
+breach is acceptable, NOT a reason it is not a breach.** The honest reading is that a task ceiling
+is a poor proxy for cost in a program whose review cadence converts findings into enumerated
+sub-tasks, and this stage is the first place that showed plainly.
+
+**What was NOT done, deliberately.** The task dimension was not redefined to count work items only
+(which would read 22 — still over), and the boxes were not coalesced. Both moves were available and
+both are what the external reviewer named as hiding overage by recounting. The breach is recorded
+at its real figure so a later reader can weigh it, and so R-crc-1's task bound can be recalibrated
+on evidence if this recurs rather than on one stage's inconvenience.
+
+
 Charter: `gate_overridden` is write-only. **Two claims in this paragraph were checked again when
 the stage opened for exploration (2026-09-21) and BOTH had gone stale — recorded here rather than
 corrected away, because the charter was right to state them and the re-check is the point.**
@@ -3224,3 +3273,43 @@ third firing, recorded there). The body is told never to nag, and firing an iden
 twice within one day is nagging — so the readout was stated in prose and the slot left `[ ]`. Noted
 because Q-crc-11 is accumulating cost evidence and a SUPPRESSED firing is different from an absent
 one: the annoyance was real, it was simply not paid twice.
+
+**2026-09-24 — R-crc-1 clarified on the BYTE dimension; rc04c's TASK overage ratified as R-crc-9's
+first recorded breach.** Both halves earned by rc04c's external iteration 1 (GPT-5 Codex), which
+measured the stage against all four of R-crc-1's dimensions where the proposal had argued only the
+one that flattered it.
+
+**The byte half is a measurement error the ruling could not have anticipated.** The delta format
+compels a MODIFIED block to carry its requirement's FULL text, so a stage rewriting ten long prose
+requirements ships ~43 KB of verbatim carriage regardless of what it changes. rc04c reads 57,418
+bytes and 163 changed lines. R-crc-1's calibration point, `c2-parallel-merge` at 21 KB, was a
+MECHANISM stage where delta bytes and new text were nearly the same quantity — so the ceiling was
+never calibrated on the case it now fires hardest on, which is exactly the retirements and
+de-namings this program keeps producing. Clarified INSIDE R-crc-1 rather than as a new ruling,
+deliberately: a reader who reaches R-crc-1 must not be able to apply the superseded measure.
+
+**The task half was NOT clarified, and that distinction is the point.** rc04c is over on tasks (34
+against "under 20"; 22 work items plus 12 verification and handoff records) and stays over. Two
+escapes were available and both were declined: redefining the dimension to count work items only
+(22 — still over, and transparently motivated), and coalescing boxes. The external reviewer named
+both in advance as hiding overage by recounting, which is the correct reading and is why neither
+was taken. R-crc-9 permits a ratified breach and the program had never taken one; this is the first,
+recorded at its real figure in the stage section with the reason — the count grew 22 → 30 → 34 as
+three review passes each converted findings into sub-tasks naming exact sites, so it measures
+review DEPTH rather than scope. That is an argument for accepting this breach, not for pretending
+it is not one, and the stage section says so in those words.
+
+**R-crc-9's split branch was examined and rejected on evidence, not preference.** The obvious split
+— totality amendment out, legacy-key retirement in — leaves one requirement in EACH of the same
+three capabilities on both sides, so neither half drops below the binding dimension. That is
+`D-rc04c-4`'s objection to splitting by seam arriving again from a new direction, and it is worth
+noting that the program has now twice proposed a split for this stage family and twice found the
+capability count immovable.
+
+**Habit worth continuing to watch (third instance).** This is the third capture in three days
+appended INSIDE an existing ruling rather than promoted to a new one — R-crc-6's descope corollary,
+R-crc-12's third case, and now R-crc-1's byte clarification. Each was right on its merits: all three
+complete an existing rule and a reader of that rule needs to see them. But the count has now been
+held at 13 across three substantive additions, and the earlier note that this habit is partly
+shaped by a test pin still stands. If a fourth arrives, the question to ask is whether the rulings
+index is being kept artificially short.
