@@ -1242,6 +1242,23 @@ describe('rc04a judgement record', () => {
     expect(listRuns(RUNS).filter(f => f.startsWith('apply-'))).toHaveLength(0);
   });
 
+  it('REFUSES an empty formed_against on the ARCHIVE seam too — the seam where the decision is most often taken', () => {
+    // The refusal direction was pinned on apply only; the archive seam had the acceptance case
+    // (the empty-trail 'bar' emit) and a CLI probe that does not survive the session
+    // (in-context system pass, 2026-09-24). Same seeded trail, same assertions, other seam.
+    const runs = archived();
+    let caught: unknown;
+    try {
+      emitArchive([proceed({ gate: 'review-system', formed_against: [FRESH] }), proceed({ gate: 'review-system' })]);
+    } catch (e) { caught = e; }
+    expect(caught).toBeInstanceOf(EmitError);
+    const msg = (caught as Error).message;
+    expect(msg).toMatch(/judgements\[1\]/);
+    expect(msg).toContain(EXTERNAL);
+    expect(msg).not.toContain(FRESH);
+    expect(listRuns(runs).filter(f => f.startsWith('archive-'))).toHaveLength(0);
+  });
+
   it('the exemption does NOT extend to continuation/spend — empty is refused structurally, on an empty trail', () => {
     // empty the trail (keep the dir — `archived()` copies it) so the refusal is provably
     // structural rather than the trail-driven edge (d)
@@ -1327,6 +1344,10 @@ describe('rc04a judgement record', () => {
   });
 
   it('admits BOTH kinds on one archive emit — the reason the carrier is an array', () => {
+    // ALSO pins orbit-run-summary-emit's 'Sufficiency above zero remains outside the engine'
+    // scenario: the continuation cites ONE of the two preceding independent passes ([FRESH] on a
+    // trail holding FRESH and EXTERNAL) and the emit WRITES — whether one was ENOUGH is the
+    // judgement R-crc-10 keeps out of the engine, and edge (d)'s boundary is exactly zero.
     const runs = archived();
     const cont = {
       kind: 'continuation', disposition: 'proceed', formed_against: [FRESH],

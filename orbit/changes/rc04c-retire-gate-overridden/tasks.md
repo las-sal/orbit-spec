@@ -437,4 +437,15 @@ tree. (b) Confirm `gate_overridden`'s footprint in `orbit/specs/` reads ZERO cap
 from the 3 this stage inherited — measured the way rc04d measured it, by counting capabilities
 whose requirements NAME the field normatively; the five descriptive prior-generation mentions in
 these deltas are not normative demands and do not count. (c) Record 5.2's walk-lane judgement in
-the readiness record's `accepted` list if the walk authored anything.
+the readiness record's `accepted` list if the walk authored anything. (d) **ACCEPTED RESIDUAL,
+recorded at the in-context system walk (2026-09-24) for the readiness record's `accepted` list:**
+claim — *the token-source paragraph in four bodies (apply's seam, archive Steps 3.4 and 5.5, review's
+spend record) still enumerates the citable set BY CLASS, which R-crc-14's boundary names as definition
+rather than pointer*; why — *no body-readable surface prints the trail reader's accepted independent
+passes (the status payload carries counts; the report renders ordinals), so a body that stopped
+enumerating would leave the composing AI no procedure; the enumeration is now correct as far as a
+filename rule can be, the `ACCEPTED as a pass` fidelity pin holds the four copies identical, and the
+fix that satisfies the ruling is Q-crc-24's surface, canonized in the program (Sal: "a with b as a
+follow up")*. The readiness record cites the pair's tokens (`2026-09-24T14-43-22Z` external,
+`2026-09-24T14-50-44Z` fresh) — this residual was formed against the fresh half's W2 and the
+in-context pass that followed it.
