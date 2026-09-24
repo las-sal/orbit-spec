@@ -15,6 +15,13 @@
 > the stage rather than another repair**: stop and say so rather than fixing it quietly, because at
 > four the right response may be a different decomposition rather than a fourth deletion.
 >
+> **Task count, stated because this stage carries a ratified ceiling breach and stale figures are
+> the failure it keeps finding in others.** R-crc-9's breach was ratified at THIRTY-FOUR; the count
+> is now 35, the additions being handoff RECORDS (5.1e, 5.1f) written at the pre-apply boundary,
+> not new work. The ratification stands — it ratified a breach, not a number — but
+> `clean-up-review-cycle.md`'s rc04c stage section cites 34, and the next architect session should
+> reconcile the two rather than let them drift.
+>
 > **Two trail facts that will mislead a cold reader if not said here.** (a) `independentSpend`
 > reads 3, but two of those are ONE reviewer's re-run of the same review — the trail cannot
 > distinguish a re-run from an independent pass, so do not read 3 as three distinct reviews.
