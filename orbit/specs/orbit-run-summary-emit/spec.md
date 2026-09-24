@@ -321,11 +321,6 @@ diff_base                    string | null    the git TREE OID of the tracked wo
                                               per orbit-emit-composition; D-arc Stage D5); the next apply emit
                                               diffs from it, making per-chunk lists exact under every commit
                                               ordering; null outside a git repo; payload supply rejected
-gate_overridden              object | absent  present ONLY when the user proceeds past an unpassed or stale gate
-                                              at the apply phase (the `review-proposal` gate gates `apply`, per
-                                              orbit-engine-gates) via the inflection prompt; shape
-                                              {gate, state, reason} captured at decision time. Absent when no
-                                              override occurred; REQUIRED when proceed-anyway was chosen.
 ```
 
 **Semantic rule**: `chunk_complete: true` means "AI-doable work in this chunk is done." `tasks_remaining > 0` AND `user_validation_remaining == tasks_remaining` is the expected state at the final chunk's emit when user-validation tasks exist — the AI is done; the remaining work is user-driven runtime testing. `tasks_remaining > 0` AND `user_validation_remaining < tasks_remaining` with `chunk_complete: true` is a contradiction the emit-layer MUST NOT produce.
@@ -354,9 +349,9 @@ gate_overridden              object | absent  present ONLY when the user proceed
 - **WHEN** `/orbit:apply foo` completes the last AI-doable task in the final chunk, but 6 user-validation tasks (e.g., "9.1 Live-test ...", "9.9 (User-validation handoff)") remain explicitly unchecked per the user-validation convention (the payload's `user_validation_tasks` list names them; the engine verifies each and derives the counts)
 - **THEN** `apply-<TS>.json` is written with `chunk_complete: true`, `tasks_remaining: 6`, `user_validation_remaining: 6` (matching `tasks_remaining`), and `next_recommended` equal to the engine's canonical `next_command` — the AI is done; user-validation happens through the review-system phase's verify pass
 
-#### Scenario: Apply past an unpassed proposal gate records the override
+#### Scenario: Apply past an unpassed proposal gate records the decision
 - **WHEN** the user invokes `/orbit:apply foo` while the `review-proposal` gate is unpassed or stale and chooses proceed-anyway at the inflection prompt
-- **THEN** the `apply-<TS>.json` emit includes `gate_overridden: {gate: "review-proposal", state: "<unpassed|stale>", reason: "<gate reason at decision time>"}`; emits for applies with no gate override omit the field entirely
+- **THEN** the `apply-<TS>.json` emit carries a `judgements` entry with `kind: "continuation"`, `disposition: "proceed"`, `gate: "review-proposal"`, and its `gate_state` and `gate_reason` captured at decision time; emits for applies where no such decision was taken omit the `judgements` key entirely
 
 #### Scenario: Per-chunk touched files computed from the diff
 - **WHEN** a chunk-completion emit fires in a git repository with commits and/or uncommitted tracked edits since the previous apply emit
@@ -571,7 +566,7 @@ summary written` requirement.
 
 - **WHEN** a user-typed `/orbit:apply` session writes its chunk-end emit
 - **THEN** the emit includes `consent: "user-invoked"` alongside the existing spine and
-  per-command extensions (`gate_overridden` unchanged and independent)
+  per-command extensions (the `judgements` record unchanged and independent)
 
 #### Scenario: Consent constant across one apply's chunk emits
 
@@ -654,13 +649,24 @@ mutable `architecture:` citation.
 
 ### Requirement: The judgement record — one spine, two kinds
 
-A CADENCE JUDGEMENT is a decision formed against INDEPENDENT REVIEW OUTPUT, and it SHALL be
-recorded rather than left in narrative prose. The qualifying test is exactly that — *is the
-judgement formed against independent review output?* — and it is not a tidiness rule: citing the
-passes is the SAME property the write gate's ordering check consumes, so the criterion for
-belonging and the constraint that makes the record trustworthy are ONE thing. A judgement citing no
-pass has no ordering to check, which is why it does not belong here: method calls, scope calls and
-process notes keep their existing homes.
+A CADENCE JUDGEMENT SHALL be recorded rather than left in narrative prose. It is a decision taken
+at a CADENCE POSITION — a seam where the review cadence is consulted: proceeding past a gate that
+has not passed, buying a further independent pass, or asserting readiness at the cadence's end.
+The qualifying test is the POSITION, not the citation count. Each record's `formed_against`
+names the readable independent evidence available at that position, and that is not a tidiness
+rule: citing the passes is the SAME property the write gate's ordering check consumes, so the
+criterion for belonging (the position) and the constraint that makes the record trustworthy (the
+citation) travel in ONE record. A decision CAN hold a cadence position while having nothing to
+cite: a gate is unpassed precisely when its cadence is incomplete, which INCLUDES the state where
+no independent pass has run at all, and a decision to proceed anyway is taken at a cadence seam
+whether or not evidence exists to name. Such a record is ADMITTED, and what the ordering check
+consumes there is the emptiness ITSELF: the entry asserts the trail is empty and the trail is read
+to confirm it (the rule and its scope are below; the check is `orbit-emit-composition`'s edge (d)).
+An empty citation is checked, not unchecked.
+
+**WHAT IS EXCLUDED, AND ON WHAT GROUND.** Method calls, scope calls and process notes keep their
+existing homes: they occupy no position in a cadence, so there is nothing about them for the
+ordering check to consume.
 
 **THE PAYLOAD KEY IS `judgements`, AND IT IS AN ARRAY.** It is a literal top-level payload key on
 the commands named below, and it is named here because `orbit-emit-composition`'s payload tables
@@ -674,7 +680,10 @@ Each entry SHALL carry:
 
 ```
 kind            enum          "continuation" | "readiness"
-formed_against  string[]      NON-EMPTY list of independent pass <TS> tokens (fresh or external)
+formed_against  string[]      list of independent pass <TS> tokens (fresh or external); NON-EMPTY
+                              except on `continuation`/`proceed`, where `[]` is legal under the
+                              totality rule below — which states the predicate and its SET once;
+                              this row does not restate either
 disposition     enum          kind-dependent; see below
 reasoning       string        prose — why, in the author's own words (a RECORD under R-crc-10)
 ratified_by     enum          "ai" | "user"
@@ -687,21 +696,39 @@ formed against different passes, and the write gate's ordering check runs per en
 user's ratification is a fact about the decision that context will not preserve, and a record that
 leaves it implicit claims an authority it may not have.
 
-`formed_against` cites BY TOKEN, never in prose. A prose citation — the shape `gate_overridden`
-uses — cannot be ordered against anything, which is why no ordering check has ever been possible on
-it.
+`formed_against` cites BY TOKEN, never in prose. A prose citation — the shape the RETIRED
+`gate_overridden` field used — cannot be ordered against anything, which is why no ordering check
+was ever possible on it.
 
 **`kind: "continuation"`** is formed MID-CADENCE and answers *given what came back, what next?*
 Its `disposition` is `proceed` (continue past a gate that has not passed, additionally carrying
 `gate`, `gate_state` and `gate_reason`) or `spend` (buy a further independent pass past a gate that
 HAS passed — a decision the cadence has no other home for).
 
-**When an emit carries BOTH a `continuation/proceed` record and a `gate_overridden` field, their
-`gate`, `gate_state` and `gate_reason` MUST be identical, and a mismatch is REFUSED.** The two
-coexist until `gate_overridden` is retired, and the retirement argument is that the record is a
-STRICT WIDENING of the field — an argument that fails outright if the trail can show them
-disagreeing. The constraint is observable, so R-crc-10 permits a check here rather than only a
-record.
+**`formed_against` MAY be EMPTY on a `continuation`/`proceed` entry, and ONLY when the emptiness is
+TRUE.** `[]` is accepted IF AND ONLY IF the trail's PASS SET carries no member
+(`reviewer_class` `fresh` or `external`, any mode) earlier than this emit's own token; where one
+exists the emit is REFUSED, NAMING the LATEST preceding such pass. **The set is the trail reader's
+PASS SET — the same one the ordering check resolves citations against — and a REJECTED external
+return is NOT a member of it.** That exclusion is the non-obvious half and is stated rather than
+left to be inferred: a rejected return carries the `external` reviewer class and counts toward
+recorded spend (per `orbit-engine-gates`), so a rule phrased on reviewer class alone would read it
+as a pass and refuse a legal empty citation — in precisely the case where there was nothing
+citable, since the ordering check REFUSES citing a rejected return. One predicate, one set, stated
+here and consulted by `orbit-emit-composition`'s edge (d). "Latest" is normative rather than
+incidental: the ordinary trail carries several preceding passes, and an unqualified "names the
+pass" leaves an implementer to choose between one and all while the error text is what a user
+acts on. This is what makes the record TOTAL over the
+proceed-anyway domain: a gate is unpassed precisely when its cadence is incomplete, which INCLUDES
+the state where no independent pass exists at all, so a record that could not be written there
+would leave that case with no successor. *"I cited nothing because there was nothing to cite"* is
+fully observable, so R-crc-10 permits a CHECK rather than only a record.
+
+**The exemption is scoped to `continuation`/`proceed` and to nothing else.** `continuation`/`spend`
+buys a further pass past a gate that HAS passed, so independent passes necessarily exist;
+`readiness` asserts a belief formed knowing what came back, and with nothing back there is no
+readiness judgement to record. An empty citation on either would be the uncheckable record this
+capability refuses.
 
 **`kind: "readiness"`** is formed at the cadence's END. Its `disposition` is `ready` or `not-ready`.
 
@@ -730,11 +757,26 @@ and audit prompts for stopping.
 - **THEN** the record's `accepted` list names each `{claim, why}`, and they appear there rather
   than as separate judgement records
 
-#### Scenario: An empty formed_against is refused
+#### Scenario: An empty formed_against is refused when a pass was available to cite
 
-- **WHEN** a judgement entry carries `formed_against: []`
-- **THEN** the emit is refused — a judgement formed against no independent output is not a cadence
-  judgement, and recording it here would defeat the test that defines the record
+- **WHEN** a `continuation`/`proceed` entry carries `formed_against: []` AND the trail carries an
+  independent pass earlier than this emit's own token
+- **THEN** the emit is REFUSED, naming the LATEST preceding independent pass — claiming an empty
+  cadence while one is on disk is not a cadence judgement, and the claim is checkable
+
+#### Scenario: An empty formed_against is LEGAL on proceed when the trail is genuinely empty
+
+- **WHEN** a `continuation`/`proceed` entry carries `formed_against: []` AND no independent pass
+  precedes this emit's own token
+- **THEN** the emit is ACCEPTED — the emptiness is the truth about the cadence. This is the one
+  case the retired `gate_overridden` field could express and the record previously could not, and
+  closing it is what makes the record TOTAL over the override's domain rather than nearly total
+
+#### Scenario: The empty exemption does not extend to readiness or to spend
+
+- **WHEN** a `readiness` entry, or a `continuation`/`spend` entry, carries `formed_against: []`
+- **THEN** the emit is REFUSED regardless of trail state — the exemption is scoped to
+  `continuation`/`proceed`, the only disposition whose trigger condition admits an empty cadence
 
 #### Scenario: ratified_by is never inferred
 
@@ -768,11 +810,10 @@ taken. There are THREE, and the enumeration is CLOSED:
 | `archive` | `continuation` AND `readiness` | `review-system` is overridden here, and the cadence ends here |
 
 The archive admits BOTH kinds, which is why the carrier is an array. This is not symmetry for its
-own sake: `gate_overridden` at archive guards `review-system` while apply is gated by
-`review-proposal`, and the archive seam is where that override is actually taken — three archived
-changes carry the field there. A `continuation/proceed` that could not be recorded at archive would
-leave `gate_overridden`'s most common use with no successor, which the stage that retires it
-depends on having.
+own sake: the archive seam guards `review-system` while apply is gated by `review-proposal`, and
+the archive is where the proceed-anyway decision is most often actually taken. A
+`continuation/proceed` that could not be recorded at archive would leave the commonest override
+with no record at all.
 
 A judgement record supplied on any other emit is REFUSED naming the command. The record marks where
 a decision was TAKEN; admitting it anywhere would make its location meaningless, and the location

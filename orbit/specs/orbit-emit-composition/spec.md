@@ -345,7 +345,24 @@ observable as the other two, so a terminal `readiness` at archive citing only a
 pass genuinely CAN inform a terminal judgement — a design objection raised before apply and accepted
 without resolution is exactly an `accepted` pair — and refusing it would be the engine ruling on
 whether the cited evidence was the RIGHT evidence, which is the judgement R-crc-10 puts off limits.
-Edges (a) and (b) are well-formedness of the CITATION; mode would be an opinion about the
+(d) An EMPTY `formed_against` is REFUSED on a `continuation`/`proceed` entry WHEN ANY independent
+pass in the resolution set is strictly earlier than the emit's own token, naming the LATEST such
+pass and the entry's index; it is ACCEPTED when none is. `orbit-run-summary-emit` owns the rule's
+statement and its scope (the exemption exists for `continuation`/`proceed` alone); this requirement
+names it because THIS is the check that performs it, and a reader asking what the ordering check
+may refuse must find it here.
+
+**Edge (d) is well-formedness, NOT sufficiency, and the distinction is the same one edge (a)
+already turns on.** The SHALL-NOT above forbids the engine judging whether ENOUGH passes were
+cited — a question about adequacy, answerable only by opinion, and it remains forbidden: the engine
+still never asks whether two passes should have been three. Edge (d) asks something the trail
+answers outright — the entry asserts *there was nothing to cite*, and the trail either bears that
+out or contradicts it. Refusing a contradicted assertion is the same act as refusing an
+`in-context` token or a rejected external: the CITATION is malformed, not the judgement inadequate.
+The boundary is ZERO: at zero the claim is checkable against the trail; above zero, adequacy is
+opinion and the engine stays out.
+
+Edges (a), (b) and (d) are well-formedness of the CITATION; mode would be an opinion about the
 JUDGEMENT.
 
 #### Scenario: Scorecard/findings mismatch refused at write
@@ -388,6 +405,27 @@ JUDGEMENT.
   citing a later token
 - **THEN** the emit is refused naming the SECOND entry's index and its offending token — a valid
   entry does not rescue an invalid one, and a merged comparison would have hidden it
+
+#### Scenario: An empty citation is refused when the trail contradicts it
+
+- **WHEN** a `continuation`/`proceed` entry carries `formed_against: []` and the resolution set holds
+  an independent pass strictly earlier than the emit's own token
+- **THEN** the emit is REFUSED, naming the LATEST such pass and the entry's index — the entry
+  asserts an empty cadence and the trail contradicts it, which is a malformed CITATION rather than
+  an opinion about whether enough passes were cited
+
+#### Scenario: An empty citation is accepted when the trail bears it out
+
+- **WHEN** a `continuation`/`proceed` entry carries `formed_against: []` and no independent pass in
+  the resolution set precedes the emit's own token
+- **THEN** the ordering check ACCEPTS it — the assertion is true of the trail, and this is the case
+  that makes the record total over the proceed-anyway domain
+
+#### Scenario: Sufficiency above zero remains outside the engine
+
+- **WHEN** an entry cites ONE independent pass while two preceded the emit
+- **THEN** the emit is ACCEPTED — whether the cited evidence was ENOUGH is the judgement R-crc-10
+  puts off limits, and edge (d)'s boundary is exactly zero
 
 #### Scenario: A payload with no judgement record is not ordering-checked
 
@@ -508,7 +546,7 @@ For every emit command whose per-command schema is documented in a `references/*
 
 #### Scenario: A documented conditional field is accepted by the table
 
-- **WHEN** the archive schema reference documents `gate_overridden`, `fingerprint_overridden`, `fingerprints_unverified`, and `audit_skipped_via_flag`
+- **WHEN** the archive schema reference documents `fingerprint_overridden`, `fingerprints_unverified`, and `audit_skipped_via_flag`
 - **THEN** the parity test asserts each is in the archive command's `payloadFields`, and removing any one from the table fails the test naming the field and the reference
 
 #### Scenario: Every full-record block is read

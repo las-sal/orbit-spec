@@ -65,35 +65,45 @@ whenever the archive concludes a review cadence. The archive is the one emit adm
 so the array may also hold a `continuation` entry from the same seam.
 It is the archive's statement of what the AI BELIEVED about the work, formed against the
 independent passes it names, and it is distinct from every record already here: `user_decision`
-records the audit-drift prompt's outcome, `gate_overridden` records a refusal to be blocked, and
-the fingerprint fields record a content guard. None of them says whether the work was judged ready.
+records the audit-drift prompt's outcome, a `continuation` entry records a decision to proceed past
+a gate that had not passed, and the fingerprint fields record a content guard. None of them says whether the work was judged ready.
 
 The record's `accepted` list is where RESIDUAL RISK belongs — each `{claim, why}` pair naming
 something left unresolved and why that was acceptable. This SUPERSEDES the practice of writing
 residual risk as free prose into `warnings`: `warnings` remains the home for PROCESS NOTES that
 arose at the seam itself (a divergence observed at archive, a correction made in flow), which are
 not readiness judgements and are not formed against independent passes. The distinction is the
-qualifying test, not a stylistic preference — a `warnings` entry cites nothing and can be ordered
-against nothing.
+qualifying test, not a stylistic preference — a `warnings` entry cites nothing AND occupies no
+cadence position, so it can be ordered against nothing. (The second half is what carries the
+distinction. An empty `formed_against` on a `continuation`/`proceed` also cites nothing, yet it
+DOES hold a cadence position and its emptiness is itself checked against the trail — so
+"cites nothing" alone never settles membership; see `orbit-run-summary-emit`.)
 
 **THE CONTINUATION RECORD AT THIS SEAM.** When the Step 3.4 `review-system` gate prompt is answered
-**Proceed anyway**, the archive emit SHALL carry, ALONGSIDE `gate_overridden`, a `judgements` entry
-with `kind: "continuation"` and `disposition: "proceed"` whose `gate`, `gate_state` and `gate_reason`
-are identical to the `gate_overridden` object's `gate`, `state` and `reason`. This seam — not
-apply's — is where the override is most often taken, and a record that admits the entry while no
-body is told to write it ships the capability inert at its own primary carrier. The pass tokens
+**Proceed anyway**, the archive emit SHALL carry a `judgements` entry with `kind: "continuation"`
+and `disposition: "proceed"` carrying the gate, its state and its reason AT DECISION TIME as
+`gate`, `gate_state` and `gate_reason`. This entry is the SOLE record of the decision — the
+`gate_overridden` field it once accompanied is RETIRED, and emits written before that retirement
+carry the field as a PRIOR GENERATION that readers continue to accept. This seam — not apply's —
+is where the decision is most often taken, and a record that admits the entry while no body is
+told to write it ships the capability inert at its own primary carrier. The pass tokens
 SHALL be read BEFORE the Step 5 move, because afterwards the change's active path no longer
 resolves.
 
-**THE ONE EDGE WHERE THE SUCCESSOR CANNOT BE WRITTEN.** `formed_against` is required NON-EMPTY, and
-the `review-system` gate is unpassed precisely when the cadence is incomplete — which INCLUDES the
-state where no independent pass exists at all. When no independent pass precedes this emit, the
-entry SHALL be OMITTED and `gate_overridden` stands alone: the record cannot be formed against
-evidence that does not exist, and inventing a token is refused by the ordering check. This is a
-NAMED case rather than a gap: across every archived change, 20 emits carry `gate_overridden` and
-all 20 have an earlier independent pass, so the edge is unobserved — but it is inside the
-override's own trigger condition, so the stage that RETIRES `gate_overridden` must handle a domain
-the successor provably cannot cover, rather than discover it.
+**THE EDGE THAT ONCE COULD NOT BE WRITTEN, AND NOW CAN.** The `review-system` gate is unpassed
+precisely when the cadence is incomplete — which INCLUDES the state where no independent pass
+exists at all. That case previously fell outside the successor, because `formed_against` was
+unconditionally NON-EMPTY, and `gate_overridden` stood alone there. It no longer does: on a
+`continuation`/`proceed` entry `formed_against: []` is LEGAL or REFUSED per the totality rule in
+`orbit-run-summary-emit`, which owns both the predicate and the SET it is evaluated over. This
+capability deliberately does NOT restate the condition: a rule restated in a second place is a rule
+with two extensions, and this one already diverged once that way.
+So when no pass precedes the emit, the entry SHALL still be written, with an empty
+`formed_against`. The record is now TOTAL over the override's domain, which is what "strict
+widening" required in order to be true rather than nearly true. The edge remains UNOBSERVED in
+practice — every archived emit carrying the retired field has an earlier independent pass — but it
+sits inside the override's own trigger condition, so it is closed by rule rather than left to a
+first occurrence.
 
 A `disposition: "not-ready"` record SHALL NOT block the archive. Readiness is a judgement and the
 engine does not evaluate judgements (R-crc-10); the seam already carries consent, gate and audit
@@ -108,12 +118,12 @@ relationship the lifecycle is built on.
 #### Scenario: Gate override recorded in the summary
 
 - **WHEN** the `review-system` gate is unpassed or stale at archive and the user chooses proceed-anyway at the inflection prompt (per `orbit-engine-gates`' override contract)
-- **THEN** the archive run summary additionally includes `gate_overridden: {gate, state, reason}` captured at decision time (e.g. `{gate: "review-system", state: "unpassed", reason: <gate reason>}`); the field is absent when no gate override occurred and REQUIRED when proceed-anyway was chosen. This is distinct from `user_decision`, which records the audit-drift prompt outcome.
+- **THEN** the archive run summary carries a `judgements` entry `{kind: "continuation", disposition: "proceed", gate, gate_state, gate_reason}` captured at decision time (e.g. `{gate: "review-system", gate_state: "unpassed", gate_reason: <gate reason>}`); the entry is absent when no such decision was taken and REQUIRED when proceed-anyway was chosen. This is distinct from `user_decision`, which records the audit-drift prompt outcome.
 
 #### Scenario: Fingerprint override recorded in the summary
 
 - **WHEN** the user chooses proceed-anyway at the fingerprint-divergence inflection prompt (per this capability's `Fingerprint-divergence inflection prompt` requirement)
-- **THEN** the archive run summary additionally includes `fingerprint_overridden: [{capability, requirement, base_hash, live_hash}]` — one entry per diverged requirement, captured at decision time; the field is absent when no fingerprint override occurred and REQUIRED when proceed-anyway was chosen. This is distinct from `gate_overridden` (review-cadence override) and `user_decision` (audit-drift outcome).
+- **THEN** the archive run summary additionally includes `fingerprint_overridden: [{capability, requirement, base_hash, live_hash}]` — one entry per diverged requirement, captured at decision time; the field is absent when no fingerprint override occurred and REQUIRED when proceed-anyway was chosen. This is distinct from the `continuation` judgement entry (review-cadence decision) and `user_decision` (audit-drift outcome).
 
 #### Scenario: Unverified fingerprints recorded in the summary
 
@@ -123,7 +133,7 @@ relationship the lifecycle is built on.
 #### Scenario: Consent recorded in the summary
 
 - **WHEN** the archive completes (post-consent-capability)
-- **THEN** the archive run summary includes `consent: "user-invoked" | "prompted"` per `orbit-lifecycle-consent`'s emit-field requirement — `user-invoked` for a user-typed invocation, `prompted` when the AI-mediated-entry consent prompt fired and the user proceeded; there is no third value (a consent abort writes no summary). Distinct from `user_decision` (audit outcome), `gate_overridden` (cadence override), and the fingerprint fields (content guard).
+- **THEN** the archive run summary includes `consent: "user-invoked" | "prompted"` per `orbit-lifecycle-consent`'s emit-field requirement — `user-invoked` for a user-typed invocation, `prompted` when the AI-mediated-entry consent prompt fired and the user proceeded; there is no third value (a consent abort writes no summary). Distinct from `user_decision` (audit outcome), the `continuation` judgement entry (cadence decision), and the fingerprint fields (content guard).
 
 #### Scenario: PR fields recorded at emit-time state
 
@@ -153,16 +163,19 @@ relationship the lifecycle is built on.
 #### Scenario: A gate override at archive carries its continuation successor
 
 - **WHEN** the archive proceeds past an unpassed or stale `review-system` gate
-- **THEN** the archive run summary carries BOTH `gate_overridden: {gate, state, reason}` AND a
-  `judgements` entry `{kind: "continuation", disposition: "proceed", gate, gate_state, gate_reason}`
-  whose three gate facts match the override object's, and a mismatch between them is refused
+- **THEN** the archive run summary carries a `judgements` entry
+  `{kind: "continuation", disposition: "proceed", gate, gate_state, gate_reason}` as the SOLE
+  record of the decision — there is no second object to agree with, and no cross-record check
+  remains because one record cannot disagree with itself
 
-#### Scenario: An override with no independent pass to cite omits the entry
+#### Scenario: An override with no independent pass to cite is still recorded
 
 - **WHEN** the archive proceeds past an unpassed `review-system` gate on a trail carrying no
   independent pass earlier than the emit
-- **THEN** `gate_overridden` is recorded alone and the `judgements` entry is OMITTED — a non-empty
-  `formed_against` is unavailable, so the successor record cannot be formed
+- **THEN** the `judgements` entry is STILL written, carrying `formed_against: []` — legal here
+  precisely because the emptiness is true of the trail (per `orbit-run-summary-emit`), so the
+  decision is recorded rather than lost. Where an independent pass DOES precede the emit, an empty
+  `formed_against` is refused naming that pass
 
 #### Scenario: A not-ready record is the author's own dissent
 
@@ -226,7 +239,7 @@ The system SHALL treat audit-drift findings as informational unless the user exp
 #### Scenario: Don't re-run reviews
 
 - **WHEN** the user invokes archive
-- **THEN** the command does NOT automatically invoke `/orbit:review --as system` even if it hasn't run — the user owns review execution. The `review-system` gate (per `orbit-engine-gates`) computes whether system review has converged; when the gate is unpassed or stale, the archive flow fires the inflection prompt (address the gate / proceed anyway / abort) with the canonical next command, and proceeding records `gate_overridden` in the archive run summary. The gate surfaces and records — it never auto-runs review and never hard-blocks the archive.
+- **THEN** the command does NOT automatically invoke `/orbit:review --as system` even if it hasn't run — the user owns review execution. The `review-system` gate (per `orbit-engine-gates`) computes whether system review has converged; when the gate is unpassed or stale, the archive flow fires the inflection prompt (address the gate / proceed anyway / abort) with the canonical next command, and proceeding records the decision as a `continuation`/`proceed` judgement entry in the archive run summary. The gate surfaces and records — it never auto-runs review and never hard-blocks the archive.
 
 ### Requirement: Archive summary schema reference ships with the skill
 
@@ -245,9 +258,7 @@ residue that path renaming alone does not fix — satisfying the deferral record
   documents the archive emit's fields: the universal spine plus the five named lifecycle-kind
   extensions (`archive_path`, `audit`, `sync_specs`, `unresolved_markers`, `user_decision`) per
   `orbit-conventions`' `Internal-run JSON summary format` requirement, plus `warnings` (present
-  in that requirement's canonical lifecycle example), plus the conditional `gate_overridden`
-  field (`{gate, state, reason}`; present only when the user proceeded past an unpassed/stale
-  `review-system` gate, per `orbit-engine-gates`' override contract), plus the conditional
+  in that requirement's canonical lifecycle example), plus the conditional
   fingerprint fields (`fingerprint_overridden: [{capability, requirement, base_hash, live_hash}]`
   and `fingerprints_unverified: [{capability, requirement}]`; present only when the corresponding
   fingerprint outcome occurred, per this capability's `Archive run summary written` requirement),
@@ -282,7 +293,7 @@ residue that path renaming alone does not fix — satisfying the deferral record
 - **THEN** it documents the conditional `judgements` array and its `readiness` entry alongside the
   other conditional fields — its `kind`, `formed_against`, `disposition`, `reasoning`, `ratified_by` and `accepted` — AND the
   `continuation` entry shape this seam also admits (`gate`/`gate_state`/`gate_reason`), in the same
-  style `gate_overridden` and the fingerprint fields use, including a `## Field notes` bullet, so
+  style the fingerprint fields use, including a `## Field notes` bullet, so
   the reference and the payload table agree per `orbit-emit-composition`'s parity requirement
 
 ### Requirement: Fingerprint-divergence inflection prompt
@@ -399,7 +410,7 @@ session or by hand, never here). Uncited changes see no stage line.
 whose `disposition` is `not-ready` — one line naming that the change was archived against the
 author's own judgement, and pointing at the record. This is the record's READER, and it exists
 because a judgement record that no surface consumes would repeat the defect this program already
-found in `gate_overridden`: written by everyone, read by nothing. A `ready` disposition renders no
+found in the RETIRED `gate_overridden` field: written by everyone, read by nothing. A `ready` disposition renders no
 line — the ordinary case needs no announcement, and a readout that speaks on every archive teaches
 readers to skip it.
 

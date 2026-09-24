@@ -1,0 +1,78 @@
+{
+  "command": "archive",
+  "timestamp": "2026-09-24T15:44:24Z",
+  "change": "rc04c-retire-gate-overridden",
+  "kind": "lifecycle",
+  "model": "claude-fable-5-1",
+  "final_assessment": "Archived rc04c-retire-gate-overridden (stage rc04c-retire-gate-overridden of clean-up-review-cycle) to orbit/changes/archive/2026-09-24-rc04c-retire-gate-overridden/ through a COMPUTED PASSED review-system gate — the blind pair (external GPT-5 Codex 2C/1W, fresh 0C/3W/4S, both blind, zero critical overlap) plus an in-context confirm, every substantive finding resolved, independent spend 2. Sync applied 10 MODIFIED requirements across 3 capabilities, byte-verified; the retired field's normative footprint in orbit/specs/ now reads ZERO capabilities (five descriptive prior-generation mentions remain, none a demand). All three exit criteria met and measured at apply and re-measured here. User-typed, zero consent prompts, fingerprints 10/10, 2243 tests green.",
+  "archive_path": "orbit/changes/archive/2026-09-24-rc04c-retire-gate-overridden/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 6
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-run-summary-emit",
+      "orbit-archive-modifications",
+      "orbit-emit-composition"
+    ],
+    "added": 0,
+    "modified": 10,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "AT-ARCHIVE RECORD (tasks.md 5.2, formed against no pass): both resolution walks were REPAIR and RECORD — the external walk repaired one sentence in four bodies and rewrote one requirement's definition by deletion; the fresh walk applied R-crc-14 by deletion, scoped one scenario, reworded one test comment, and added dated notes; the in-context walk recorded a residual and added one test case. No engine mechanism was authored after the pair read the tree.",
+    "TOUCHPOINT DIVERGENCE at archive (engine-computed, pre-archive audit category 5 — noted drift, 1 WARNING / 6 SUGGESTION): actual-but-unpredicted — src/core/templates/workflows/review.ts (substantive: the fourth copy of the token-source sentence, touched by the external walk; the plan named three bodies), CLAUDE.md, orbit/architecture/clean-up-review-cycle.md, two architect emits, test/core/sources-registry.test.ts, test/core/templates/skill-templates-parity.test.ts (docs, program and tests riding along). Predicted-but-unsatisfied at audit time: the three baseline specs — satisfied by the sync that followed.",
+    "PRE-ARCHIVE AUDIT, stale-suppressed with evidence: category 4 flagged two ADDED requirements in the 2026-09-15-rc13-explore-mechanism archive as absent from baseline (orbit-explore-modifications). That archive's own emit records sync_specs.ran: false, user-ratified, with the reason — not a propagation failure. Not counted.",
+    "INSTRUMENT NOTE from the pre-archive audit: `orbit status --change <name> --boot --json` carries no `touchpoints` key on this tree, while the text render of the same command prints the ACTUAL/PREDICTED maps; audit-drift category 5 is specified to read the JSON. Category 5 was run from the text render instead. Recorded for whoever owns the boot surface.",
+    "AT-ARCHIVE CORRECTION, already made in flow and repeated here for the reader: the apply emit apply-2026-09-24T14-27-44Z.json states 'no fourth instance of the rule-stated-twice watch appeared'. Both halves of the blind pair read the tree as saying it did; the external walk's record carries the correction; R-crc-14 is the stop. The emit is audit trail and is not edited.",
+    "TEST-SIZING LESSON, formed at apply and not against any pass: the stage sized its red-test set by grepping for the retired field's name, and a hash pin names nothing — the template parity pin went red on exactly the two bodies the stage names and had no line in the plan. Recorded in tasks.md 4.4 and in the program's status log.",
+    "The review-proposal gate reads `stale` post-apply — the freshness rule doing its job (apply tokens postdate its passes); not a finding."
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "disposition": "ready",
+      "formed_against": [
+        "2026-09-22T21-17-10Z",
+        "2026-09-23T02-10-20Z",
+        "2026-09-23T02-21-43Z",
+        "2026-09-24T14-43-22Z",
+        "2026-09-24T14-50-44Z"
+      ],
+      "reasoning": "Ready. The engine half was proven twice from the built CLI on every trail state the totality rule names (the fresh half of the pair drove all four states on both seams; the apply's own smoke covered the retired key), and the pair's one shared defect was in the prose that feeds the engine, closed by deletion under R-crc-14. Both walks stayed in the repair and record lanes — no engine mechanism was authored after the pair read the tree (design D4; tasks.md 5.2), so the pair's verdict covers the shipped tree. The readiness is the AI's own; the archive invocation is consent, not a ratification of this belief.",
+      "ratified_by": "ai",
+      "accepted": [
+        {
+          "claim": "The token-source paragraph in four workflow bodies (apply's seam, archive Steps 3.4 and 5.5, review's spend record) still enumerates the citable pass set BY CLASS, which R-crc-14's boundary names as definition rather than pointer.",
+          "why": "No body-readable surface prints the trail reader's accepted independent passes — the status payload carries counts, the report renders ordinals — so a body that stopped enumerating would leave the composing AI no procedure. The enumeration is correct as far as a filename rule can be, the ACCEPTED-as-a-pass fidelity pin holds the four copies identical, and the fix that satisfies the ruling is Q-crc-24's surface, canonized in the program by Sal ('a with b as a follow up'). Formed against the fresh pass's W2 and the in-context pass that followed it."
+        },
+        {
+          "claim": "The R-crc-14 rewrite of the bodies and the shipped schema reference — the fresh walk's edits — was read by the in-context confirm pass only; no independent pass read that prose.",
+          "why": "The rewrite deleted restatements and added none; it is bounded by the fidelity pins (formed_against: [], ACCEPTED as a pass) and by the template hash pin, and the in-context pass that read it found exactly one residual, recorded above. Buying a further independent pass to read a deletion would be effort targeted rather than recorded (R-crc-11(h))."
+        },
+        {
+          "claim": "The edge the stage closed — a proceed-anyway on a trail carrying only a rejected external return, or none — remains UNOBSERVED in practice on this repository.",
+          "why": "All twenty archived overrides had an earlier independent pass, and 'any mode' means the edge stays unreached at archive. It is closed by rule and pinned by tests (both directions on both seams, the rejected-external membership case, the LATEST-naming refusal, the retired-key negative regression), which is the only evidence an unobserved edge can have."
+        },
+        {
+          "claim": "Exit (2)'s executable witness proves less than the task first claimed: readTrail reads only an apply emit's token and user_validation_tasks, so it shows the trail reader INGESTS a directory holding the field, not that a field-aware reader tolerates it.",
+          "why": "Stated at its real strength in the test and in tasks.md 4.2 after the fresh pass named it; the stronger witness (orientation's spine read over the archived global-LAST scan) was exercised by hand at 4.2(b) — bare orbit status rendered exit 0 with no degraded row over twenty archived emits carrying the field. Formed against the fresh pass's S2."
+        }
+      ]
+    }
+  ],
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."
+}
