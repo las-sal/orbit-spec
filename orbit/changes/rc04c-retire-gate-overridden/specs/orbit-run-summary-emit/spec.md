@@ -160,8 +160,9 @@ Each entry SHALL carry:
 ```
 kind            enum          "continuation" | "readiness"
 formed_against  string[]      list of independent pass <TS> tokens (fresh or external); NON-EMPTY
-                              except on `continuation`/`proceed`, where `[]` is legal IF AND ONLY IF
-                              no independent pass precedes this emit — see the totality rule below
+                              except on `continuation`/`proceed`, where `[]` is legal under the
+                              totality rule below — which states the predicate and its SET once;
+                              this row does not restate either
 disposition     enum          kind-dependent; see below
 reasoning       string        prose — why, in the author's own words (a RECORD under R-crc-10)
 ratified_by     enum          "ai" | "user"
@@ -184,9 +185,16 @@ Its `disposition` is `proceed` (continue past a gate that has not passed, additi
 HAS passed — a decision the cadence has no other home for).
 
 **`formed_against` MAY be EMPTY on a `continuation`/`proceed` entry, and ONLY when the emptiness is
-TRUE.** `[]` is accepted IF AND ONLY IF the trail carries NO independent pass (`reviewer_class`
-`fresh` or `external`, any mode) earlier than this emit's own token; where one exists the emit is
-REFUSED, NAMING the LATEST preceding independent pass. "Latest" is normative rather than
+TRUE.** `[]` is accepted IF AND ONLY IF the trail's PASS SET carries no member
+(`reviewer_class` `fresh` or `external`, any mode) earlier than this emit's own token; where one
+exists the emit is REFUSED, NAMING the LATEST preceding such pass. **The set is the trail reader's
+PASS SET — the same one the ordering check resolves citations against — and a REJECTED external
+return is NOT a member of it.** That exclusion is the non-obvious half and is stated rather than
+left to be inferred: a rejected return carries the `external` reviewer class and counts toward
+recorded spend (per `orbit-engine-gates`), so a rule phrased on reviewer class alone would read it
+as a pass and refuse a legal empty citation — in precisely the case where there was nothing
+citable, since the ordering check REFUSES citing a rejected return. One predicate, one set, stated
+here and consulted by `orbit-emit-composition`'s edge (d). "Latest" is normative rather than
 incidental: the ordinary trail carries several preceding passes, and an unqualified "names the
 pass" leaves an implementer to choose between one and all while the error text is what a user
 acts on. This is what makes the record TOTAL over the

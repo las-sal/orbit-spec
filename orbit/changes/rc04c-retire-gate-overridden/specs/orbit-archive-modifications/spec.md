@@ -39,8 +39,10 @@ resolves.
 precisely when the cadence is incomplete — which INCLUDES the state where no independent pass
 exists at all. That case previously fell outside the successor, because `formed_against` was
 unconditionally NON-EMPTY, and `gate_overridden` stood alone there. It no longer does: on a
-`continuation`/`proceed` entry `formed_against: []` is LEGAL exactly when no independent pass
-precedes this emit, and REFUSED — naming the LATEST preceding independent pass — when one exists (per `orbit-run-summary-emit`).
+`continuation`/`proceed` entry `formed_against: []` is LEGAL or REFUSED per the totality rule in
+`orbit-run-summary-emit`, which owns both the predicate and the SET it is evaluated over. This
+capability deliberately does NOT restate the condition: a rule restated in a second place is a rule
+with two extensions, and this one already diverged once that way.
 So when no pass precedes the emit, the entry SHALL still be written, with an empty
 `formed_against`. The record is now TOTAL over the override's domain, which is what "strict
 widening" required in order to be true rather than nearly true. The edge remains UNOBSERVED in
