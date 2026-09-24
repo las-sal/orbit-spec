@@ -50,16 +50,22 @@ import {
 // Per-workflow REQUIRED markers (every listed marker must appear in the skill body).
 // A workflow that silently loses its disciplines block, run-summary section, or
 // completion-prompt override fails its own assertion — no disjunctive escape hatch.
+//
+// rc04c (2026-09-24): the `gate_overridden` pins on apply-change and archive-change RETIRED
+// with the bodies — the field is gone from the write path, and the continuation/proceed
+// judgement entry is the sole record of a proceed-anyway. A pin going red on deliberate work
+// is the pin doing its job; the successor marker (`continuation`) takes its slot so a body
+// that silently drops the record's instruction still fails here.
 const RELOCATED: Array<[string, () => SkillTemplate, string[]]> = [
   ['explore', getExploreSkillTemplate, ['execution disciplines', 'Run-summary emit', 'BEGIN emit', 'orbit emit explore', 'No retro-fire', 'BACK-FILLED counts']],
   ['propose', getOrbitProposeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
   ['new-change', getNewChangeSkillTemplate, ['execution disciplines', 'Run-summary emit']],
   ['continue-change', getContinueChangeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
-  ['apply-change', getApplyChangeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override', 'blocked-by-gate', 'gate_overridden', 'Consent at entry', 'consent_era_from', '"user-invoked" | "prompted"', 'orbit emit apply']],
+  ['apply-change', getApplyChangeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override', 'blocked-by-gate', 'continuation', 'formed_against: []', 'Consent at entry', 'consent_era_from', '"user-invoked" | "prompted"', 'orbit emit apply']],
   ['ff-change', getFfChangeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
   ['bulk-archive-change', getBulkArchiveChangeSkillTemplate, ['# Orbit additions', 'execution disciplines', 'Per-change consent', 'consent_era_from']],
   ['verify-change', getVerifyChangeSkillTemplate, ['execution disciplines', 'Run-summary emit']],
-  ['archive-change', getArchiveChangeSkillTemplate, ['execution disciplines', 'run summary', 'review-system gate inflection', 'gate_overridden', 'Consent at entry', 'consent_era_from', 'Sync inheritance']],
+  ['archive-change', getArchiveChangeSkillTemplate, ['execution disciplines', 'run summary', 'review-system gate inflection', 'continuation', 'formed_against: []', 'Consent at entry', 'consent_era_from', 'Sync inheritance']],
   ['onboard', getOnboardSkillTemplate, ['execution disciplines', 'self-contained', 'Four execution disciplines']],
   ['sync-specs', getSyncSpecsSkillTemplate, ['execution disciplines', 'Consent inheritance']],
   // B3 editorial workflows (net-new relocation; parity proof per D-b3-4)

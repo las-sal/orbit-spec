@@ -166,16 +166,23 @@ describe('target resolution and spine composition', () => {
     ).toThrow(/no archived directory matching/);
   });
 
-  it('archive accepts the schema\'s CONDITIONAL fields — gate_overridden, fingerprint override/unverified, audit_skipped_via_flag (D6 archive, 2026-09-11)', () => {
+  it('archive accepts the schema\'s CONDITIONAL fields — fingerprint override/unverified, audit_skipped_via_flag (D6 archive, 2026-09-11; the C1 gate-override field retired at rc04c)', () => {
     write('orbit/changes/archive/2026-09-11-bar/proposal.md', 'p');
-    const gate = { gate: 'review-system', state: 'unpassed', reason: 'latest independent pass carried 1 CRITICAL' };
+    // rc04c: the proceed-anyway decision rides the continuation entry ALONE. `bar` carries no
+    // trail, so an EMPTY formed_against is the truthful citation — and the accepted one.
+    const continuation = {
+      kind: 'continuation', disposition: 'proceed', formed_against: [],
+      reasoning: 'proceeded past an unpassed review-system with no independent pass on the trail',
+      ratified_by: 'user',
+      gate: 'review-system', gate_state: 'unpassed', gate_reason: 'cadence incomplete — no independent pass yet',
+    };
     const r = composeAndWriteEmit(
       'archive',
       { change: 'bar' },
       {
-        final_assessment: 'Archived bar through a recorded override.',
+        final_assessment: 'Archived bar through a recorded continuation.',
         archive_path: 'orbit/changes/archive/2026-09-11-bar/',
-        gate_overridden: gate,
+        judgements: [continuation],
         fingerprint_overridden: [{ capability: 'c', requirement: 'r', base_hash: 'sha256:a', live_hash: 'sha256:b' }],
         fingerprints_unverified: [{ capability: 'c', requirement: 'q' }],
         audit_skipped_via_flag: true,
@@ -184,7 +191,8 @@ describe('target resolution and spine composition', () => {
       { projectRoot: root }
     );
     const persisted = JSON.parse(fs.readFileSync(r.path, 'utf-8'));
-    expect(persisted.gate_overridden).toEqual(gate);
+    expect(persisted.judgements).toEqual([continuation]);
+    expect('gate_overridden' in persisted).toBe(false);
     expect(persisted.fingerprint_overridden).toHaveLength(1);
     expect(persisted.fingerprints_unverified).toHaveLength(1);
     expect(persisted.audit_skipped_via_flag).toBe(true);
@@ -1174,19 +1182,105 @@ describe('rc04a judgement record', () => {
     expect(listRuns(runs).filter(f => f.startsWith('archive-'))).toHaveLength(0);
   });
 
-  // ---- the coexistence constraint (rc04a -> rc04c) ------------------------
-  it('accepts a continuation/proceed that AGREES with gate_overridden', () => {
-    const cont = {
-      kind: 'continuation', disposition: 'proceed', formed_against: [FRESH],
-      reasoning: 'proceeded knowing what came back', ratified_by: 'user',
-      gate: 'review-proposal', gate_state: 'unpassed', gate_reason: 'r',
+  // ---- rc04c edge (d): EMPTINESS-TRUTHFULNESS on continuation/proceed ------
+  //
+  // The NON-EMPTY requirement is relaxed for continuation/proceed ONLY, and the relaxation is
+  // a CHECK, not a hole: `[]` asserts "there was nothing to cite", and the trail either bears
+  // that out or contradicts it. Both directions are pinned, because a conditional accepted
+  // without its refusal is half a check. (These cases took the slot of the coexistence
+  // guard's tests, deleted with the guard: rc04c task 3.3c.)
+  const proceed = (over: Record<string, unknown> = {}) => ({
+    kind: 'continuation', disposition: 'proceed', formed_against: [],
+    reasoning: 'proceeded with nothing to cite', ratified_by: 'user',
+    gate: 'review-proposal', gate_state: 'unpassed', gate_reason: 'no independent pass yet',
+    ...over,
+  });
+  const emitApply = (judgements: unknown) =>
+    composeAndWriteEmit('apply', { change: 'foo' }, { model: 'test-model', judgements } as any, { projectRoot: root });
+
+  it('ACCEPTS an empty formed_against on continuation/proceed when the trail carries NO pass at all', () => {
+    fs.rmSync(path.join(root, RUNS), { recursive: true, force: true }); // undo seedPasses
+    const r = emitApply([proceed()]);
+    const written = JSON.parse(fs.readFileSync(r.path, 'utf-8'));
+    expect(written.judgements[0].formed_against).toEqual([]);
+    expect(listRuns(RUNS).filter(f => f.startsWith('apply-'))).toHaveLength(1);
+  });
+
+  it('ACCEPTS an empty formed_against when only an IN-CONTEXT pass precedes — the set is INDEPENDENT passes', () => {
+    fs.rmSync(path.join(root, RUNS), { recursive: true, force: true });
+    write(`${RUNS}/review-proposal-${IN_CONTEXT}.json`, JSON.stringify({
+      command: 'review', mode: 'proposal', reviewer_class: 'in-context', findings: [],
+    }));
+    const r = emitApply([proceed()]);
+    expect(JSON.parse(fs.readFileSync(r.path, 'utf-8')).judgements[0].formed_against).toEqual([]);
+  });
+
+  it('ACCEPTS an empty formed_against when the only external return was REJECTED — a rejected return is not a member of the pass set', () => {
+    // The non-obvious half the spec states outright: a rejected return carries the `external`
+    // class and counts as spend, so a rule phrased on reviewer class alone would refuse a legal
+    // empty citation in precisely the case where citing it is ALSO refused.
+    fs.rmSync(path.join(root, RUNS), { recursive: true, force: true });
+    write(`${RUNS}/external-proposal-2026-01-01T09-00-00Z.md`, 'not a review — unreadable return\n');
+    const r = emitApply([proceed()]);
+    expect(JSON.parse(fs.readFileSync(r.path, 'utf-8')).judgements[0].formed_against).toEqual([]);
+  });
+
+  it('REFUSES an empty formed_against when an independent pass precedes — naming the LATEST one, not the older, and the entry index', () => {
+    // seedPasses: fresh @10:00 (FRESH), external @11:00 (EXTERNAL) — TWO preceding independent
+    // passes, so an implementation naming the oldest or an arbitrary one still fails here.
+    // A valid entry sits at [0] so the index named must be [1].
+    let caught: unknown;
+    try {
+      emitApply([proceed({ formed_against: [FRESH] }), proceed()]);
+    } catch (e) { caught = e; }
+    expect(caught).toBeInstanceOf(EmitError);
+    const msg = (caught as Error).message;
+    expect(msg).toMatch(/judgements\[1\]/);
+    expect(msg).toMatch(/'formed_against' is EMPTY/);
+    expect(msg).toContain(EXTERNAL);
+    expect(msg).not.toContain(FRESH);
+    expect(listRuns(RUNS).filter(f => f.startsWith('apply-'))).toHaveLength(0);
+  });
+
+  it('the exemption does NOT extend to continuation/spend — empty is refused structurally, on an empty trail', () => {
+    // empty the trail (keep the dir — `archived()` copies it) so the refusal is provably
+    // structural rather than the trail-driven edge (d)
+    for (const f of listRuns(RUNS)) fs.rmSync(path.join(root, RUNS, f));
+    const runs = archived();
+    const spend = {
+      kind: 'continuation', disposition: 'spend', formed_against: [],
+      reasoning: 'buying another pass', ratified_by: 'user',
     };
-    const r = composeAndWriteEmit('apply', { change: 'foo' }, {
-      model: 'test-model',
-      gate_overridden: { gate: 'review-proposal', state: 'unpassed', reason: 'r' },
-      judgements: [cont],
-    } as any, { projectRoot: root });
-    expect(JSON.parse(fs.readFileSync(r.path, 'utf-8')).judgements[0].disposition).toBe('proceed');
+    expect(() => emitArchive([spend])).toThrow(/NON-EMPTY/);
+    expect(listRuns(runs).filter(f => f.startsWith('archive-'))).toHaveLength(0);
+  });
+  // (`readiness` with `[]` is covered by the refusal table above — /NON-EMPTY/ — and by the
+  // acceptance fixture, both on trails where passes DO exist; the scope guard is the kind.)
+
+  // ---- rc04c 3.5b: the STANDING NEGATIVE REGRESSION for the retired key ----
+  //
+  // Schema parity is ONE-WAY (documented keys must be accepted), so it stays green if a later
+  // edit silently re-admits an undocumented legacy key. This is the pin that goes red if the
+  // retirement is undone. Same shape as the `pr_attachment`-on-archive ownership case.
+  it('rejects the RETIRED gate_overridden key on apply as an ordinary unknown key — and writes nothing', () => {
+    expect(() =>
+      composeAndWriteEmit('apply', { change: 'foo' }, {
+        model: 'test-model',
+        gate_overridden: { gate: 'review-proposal', state: 'unpassed', reason: 'r' },
+      } as any, { projectRoot: root })
+    ).toThrow(/unknown payload key 'gate_overridden' for 'apply'/);
+    expect(listRuns(RUNS).filter(f => f.startsWith('apply-'))).toHaveLength(0);
+  });
+
+  it('rejects the RETIRED gate_overridden key on archive as an ordinary unknown key — and writes nothing', () => {
+    const runs = archived();
+    expect(() =>
+      composeAndWriteEmit('archive', { change: 'foo' }, {
+        ...archivePayload(undefined),
+        gate_overridden: { gate: 'review-system', state: 'unpassed', reason: 'r' },
+      } as any, { projectRoot: root })
+    ).toThrow(/unknown payload key 'gate_overridden' for 'archive'/);
+    expect(listRuns(runs).filter(f => f.startsWith('archive-'))).toHaveLength(0);
   });
 
   // ---- the archive-time DISSENT (rc04a system walk, external finding E4) ------
@@ -1240,45 +1334,11 @@ describe('rc04a judgement record', () => {
       ratified_by: 'user',
       gate: 'review-system', gate_state: 'unpassed', gate_reason: 'spend 3',
     };
-    const r = composeAndWriteEmit('archive', { change: 'foo' }, {
-      ...archivePayload([cont, readiness()]),
-      gate_overridden: { gate: 'review-system', state: 'unpassed', reason: 'spend 3' },
-    } as any, { projectRoot: root });
+    const r = composeAndWriteEmit('archive', { change: 'foo' }, archivePayload([cont, readiness()]) as any, { projectRoot: root });
     const written = JSON.parse(fs.readFileSync(r.path, 'utf-8'));
     expect(written.judgements.map((j: any) => j.kind)).toEqual(['continuation', 'readiness']);
     expect(listRuns(runs).filter(f => f.startsWith('archive-'))).toHaveLength(1);
   });
-
-  // ---- the coexistence constraint, FIELD BY FIELD -------------------------
-  //
-  // `gate_overridden` is `{gate, state, reason}`; the record is `{gate, gate_state,
-  // gate_reason}`. The first implementation indexed BOTH with the record's names, so only
-  // `gate` was ever compared — two thirds of the check silently absent, and the suite passed
-  // because its one mismatch case happened to differ on `gate`. One case per field now.
-  const coexistence: Array<[string, Record<string, string>, Record<string, string>, RegExp]> = [
-    ['gate', { gate: 'review-proposal' }, { gate: 'review-system' }, /'gate' disagrees with gate_overridden\.gate/],
-    ['state', { gate_state: 'unpassed' }, { state: 'stale' }, /'gate_state' disagrees with gate_overridden\.state/],
-    ['reason', { gate_reason: 'spend 2' }, { reason: 'spend 3' }, /'gate_reason' disagrees with gate_overridden\.reason/],
-  ];
-
-  for (const [field, recordOver, legacyOver, pattern] of coexistence) {
-    it(`refuses a continuation/proceed whose ${field} disagrees with gate_overridden`, () => {
-      const cont = {
-        kind: 'continuation', disposition: 'proceed', formed_against: [FRESH],
-        reasoning: 'proceeded knowing what came back', ratified_by: 'user',
-        gate: 'review-proposal', gate_state: 'unpassed', gate_reason: 'spend 2',
-        ...recordOver,
-      };
-      expect(() =>
-        composeAndWriteEmit('apply', { change: 'foo' }, {
-          model: 'test-model',
-          gate_overridden: { gate: 'review-proposal', state: 'unpassed', reason: 'spend 2', ...legacyOver },
-          judgements: [cont],
-        } as any, { projectRoot: root })
-      ).toThrow(pattern);
-      expect(listRuns(RUNS).filter(f => f.startsWith('apply-'))).toHaveLength(0);
-    });
-  }
 
   // ---- 1.2 the carrier set is CLOSED -------------------------------------
   it('refuses `judgements` on a command that takes no judgement', () => {

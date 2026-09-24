@@ -385,8 +385,8 @@ append this stage's entry to it, write the COMPOSED whole back. Writing only thi
 entry would destroy every earlier stage's entry — the accumulated entries ARE the landmark.
 The per-change description REWRITE is the one place the body is replaced outright.
 
-**READY.** Per-change PRs flip now — including on \`gate_overridden\` archives, since the
-recorded override IS the ratification. Program PRs are APPENDED and never flipped here:
+**READY.** Per-change PRs flip now — including on archives that proceeded past an unpassed
+\`review-system\` gate, since the recorded \`continuation\` entry IS the ratification. Program PRs are APPENDED and never flipped here:
 arc-done is later than any archive. ORDERING INVARIANT: the flip fires only AFTER the push
 succeeds, so the PR contains its own archive commit before READY is honest. An already-READY
 PR is reported in one line, never re-flipped and never an error.

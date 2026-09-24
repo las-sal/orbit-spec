@@ -56,8 +56,8 @@ source-of-truth. **C1 (engine gates/freshness) is COMPLETE and ARCHIVED**
 `tracked` (checkbox arithmetic; upstream `apply` normalized in) and `reviewed` (a convergence criterion
 COMPUTED from the `.orbit-runs/` trail: ordered cadence slots + resolution-over-every-pass + per-gate
 `confirm`) — plus the v1 timestamp-token **freshness** rule, **single-voiced canonical-next** + a
-one-line **position readout**, and **gate inflection prompts** (apply-parity: surfaced + recorded via
-`gate_overridden`, never hard-blocking). Gate state is a pure function of on-disk artifacts (no new
+one-line **position readout**, and **gate inflection prompts** (apply-parity: surfaced + recorded — since
+rc04c, as the `judgements` array's `continuation`/`proceed` entry — never hard-blocking). Gate state is a pure function of on-disk artifacts (no new
 state files); new engine modules `src/core/artifact-graph/{trail,gates}.ts`. `spec-driven` went to
 **version 2** at this stage (`review-proposal → apply → review-system`). Baseline capabilities **11→12**
 (`orbit-engine-gates` ADDED; the 5 editorial baselines gained gate-aware MODIFIED deltas). The C1
@@ -224,9 +224,13 @@ array.** A `readiness` entry states what the AI BELIEVED about the work, `formed
 independent pass tokens it names, with residual risk as `accepted: [{claim, why}]` pairs — superseding
 the practice of writing residuals as prose into `warnings` (the test is whether independent review
 output informed it; a `warnings` entry cites nothing and can be ordered against nothing). A
-`continuation/proceed` entry is `gate_overridden`'s strict widening at the archive seam, with ONE
-named hole: `formed_against` is required non-empty, so the entry cannot be written when no
-independent pass exists at all — inside the override's own trigger condition, and rc04c inherits it.
+`continuation/proceed` entry was shipped as the C1 override field's strict widening at the archive
+seam, with ONE named hole: `formed_against` was required non-empty, so the entry could not be written
+when no independent pass existed at all — inside the override's own trigger condition. **That hole is
+CLOSED and the record is TOTAL** (rc04c, applied 2026-09-24): `formed_against: []` is legal on a
+`continuation`/`proceed` exactly when no independent pass precedes the emit, and is refused naming the
+latest preceding pass when one does; the legacy field is retired from the write path and survives only
+as a prior generation on archived trails.
 
 `rc04d-override-vocabulary` is ARCHIVED and RATIFIED (2026-09-22): **five requirement texts across
 three capabilities stopped naming `gate_overridden`**, splitting the retirement so neither half

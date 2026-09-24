@@ -52,7 +52,7 @@ The backward hazard was found by the fresh proposal pass; the original preamble 
 forward one and then ordered the work by it, which is how a rationale that is true ends up
 justifying the wrong sequence.
 
-- [ ] 1.1 `src/core/emit-composition.ts` — `validateJudgements` (`:533`): RELAX the non-empty
+- [x] 1.1 `src/core/emit-composition.ts` — `validateJudgements` (`:533`): RELAX the non-empty
   `formed_against` requirement for `kind: "continuation"` + `disposition: "proceed"` ONLY. Every
   other kind/disposition keeps the unconditional refusal. The array-of-strings check is unchanged.
   Per `design.md` D1's table — the split exists because this function is STRUCTURAL and has no
@@ -62,7 +62,7 @@ justifying the wrong sequence.
   same engine refuses as unknown. Replace that clause with what the record carries in its own terms
   (the gate facts at decision time). This is the retired FIELD NAME, not the `override` word — the
   charter NON-GOAL is untouched.
-- [ ] 1.2 `src/core/emit-composition.ts` — `judgementOrderingCheck` (`:958`): ADD the
+- [x] 1.2 `src/core/emit-composition.ts` — `judgementOrderingCheck` (`:958`): ADD the
   emptiness-truthfulness rule. An empty `formed_against` on `continuation`/`proceed` is REFUSED,
   NAMING the LATEST preceding independent pass, when any independent pass (`reviewer_class` `fresh`
   or `external`, any mode) precedes this emit's own token; accepted when none does. "LATEST" is
@@ -75,10 +75,10 @@ justifying the wrong sequence.
 Three bodies, verified by enumeration at exploration (NOT four — the charter's original claim was
 off by one; `emit-composition.ts` is the engine and `bulk-archive-change.ts` never mentions it).
 
-- [ ] 2.1 `src/core/templates/workflows/archive-change.ts` (9 occurrences) — Step 3.4 stops
+- [x] 2.1 `src/core/templates/workflows/archive-change.ts` (9 occurrences) — Step 3.4 stops
   composing `gate_overridden` and composes only the `continuation`/`proceed` entry. The archive
   schema reference it ships must lose the field too, or `emit-schema-parity` fails on the mismatch.
-- [ ] 2.1a **THE OMIT BRANCH — without this the stage ships its own headline claim contradicted.**
+- [x] 2.1a **THE OMIT BRANCH — without this the stage ships its own headline claim contradicted.**
   `archive-change.ts:287` currently instructs: *"If the trail carries NO independent pass earlier
   than this emit, OMIT the entry and let `gate_overridden` stand alone: `formed_against` must be
   non-empty, so a record cannot be written here."* Replace it with the write rule: the entry IS
@@ -87,7 +87,7 @@ off by one; `emit-composition.ts` is the engine and `bulk-archive-change.ts` nev
   — and names a field the same section retires. The archive delta makes the write NORMATIVE
   (`specs/orbit-archive-modifications/spec.md`, the edge-that-now-can-be-written requirement), so
   body and spec would otherwise disagree on the stage's central claim.
-- [ ] 2.1b The shipped `archive-summary-schema.md` reference (composed in `archive-change.ts:97`)
+- [x] 2.1b The shipped `archive-summary-schema.md` reference (composed in `archive-change.ts:97`)
   carries the `judgements` field note an AI READS while composing an archive emit. TWO edits, not
   one — the cardinality AND the membership rule:
   (i) restate `formed_against` as non-empty EXCEPT on `continuation`/`proceed`, where an empty
@@ -100,18 +100,18 @@ off by one; `emit-composition.ts` is the engine and `bulk-archive-change.ts` nev
   and left the definition.)
   A reference that still says unconditionally non-empty teaches the composing AI to omit the
   entry, which is the same defect as 2.1a arriving by a different route.
-- [ ] 2.2 `src/core/templates/workflows/apply-change.ts` (3 occurrences) — same, at the
+- [x] 2.2 `src/core/templates/workflows/apply-change.ts` (3 occurrences) — same, at the
   `review-proposal` inflection.
-- [ ] 2.2a `apply-change.ts:205` states the contract as "`formed_against` (NON-EMPTY array of
+- [x] 2.2a `apply-change.ts:205` states the contract as "`formed_against` (NON-EMPTY array of
   independent pass `<TS>` tokens...)" — false for `continuation`/`proceed` once 1.1 lands — AND
   carries the same "formed against INDEPENDENT REVIEW OUTPUT" membership sentence. Apply BOTH of
   2.1b's edits here. Both bodies declare this contract independently, so both need both; fixing one
   body, or one half in each, is the boundary-one-line-short failure this change is prone to.
-- [ ] 2.3 `src/core/templates/workflows/pr-choreography.ts` (1 occurrence) — the reference to a
+- [x] 2.3 `src/core/templates/workflows/pr-choreography.ts` (1 occurrence) — the reference to a
   recorded override; name the `continuation` record instead. NOTE D-rc04c-5's line: this is text
   the stage is already rewriting, so naming the successor correctly here is in scope — but do NOT
   sweep `override` vocabulary elsewhere in this file.
-- [ ] 2.4 Rebuild and refresh the local surface (`npm run build && node bin/orbit.js update
+- [x] 2.4 Rebuild and refresh the local surface (`npm run build && node bin/orbit.js update
   --force`), because template edits do not bump the version and plain `update`'s smart detection
   may skip them. **This is NOT the final build — see 2.6.**
 
@@ -121,14 +121,14 @@ Both tasks here REMOVE the legacy key's support and MUST follow section 2 per th
 above. Nothing composes `gate_overridden` by this point, so the window is closed by construction
 rather than by remembering not to emit mid-section.
 
-- [ ] 2.5a `src/core/emit-composition.ts` — REMOVE the coexistence guard (`:606-632`, the
+- [x] 2.5a `src/core/emit-composition.ts` — REMOVE the coexistence guard (`:606-632`, the
   `GATE_FIELD_PAIRS` block). It is the field's only reader and comes down with it (`design.md` D2).
   (Was task 1.3 before the ordering correction.)
-- [ ] 2.5b `src/core/emit-composition.ts` — remove `gate_overridden` from the `archive` and `apply`
+- [x] 2.5b `src/core/emit-composition.ts` — remove `gate_overridden` from the `archive` and `apply`
   `payloadFields` tables. After this a payload carrying it is refused as an unknown key, which is
   the intended terminal behaviour (`design.md` D5) — no deprecation path, no warn-then-refuse.
   (Was task 1.4.)
-- [ ] 2.6 **REBUILD AGAIN — the runnable surface, not just the source.** `npm run build && node
+- [x] 2.6 **REBUILD AGAIN — the runnable surface, not just the source.** `npm run build && node
   bin/orbit.js update --force`, AFTER 2.5a/2.5b. `bin/orbit.js` imports `../dist/cli/index.js`, so
   without this the installed CLI still carries the coexistence guard and still accepts
   `gate_overridden` while `src/` grep and the Vitest suite (which exercise `src/`) both pass green
@@ -149,20 +149,20 @@ DELETION — was found by the fresh proposal pass, which read the whole of
 recorded rather than absorbed: the original sizing was produced by reading SITES a grep had
 surfaced, and it missed four sites in a file the grep DID surface.
 
-- [ ] 3.1 SEMANTIC — `test/core/templates/orbit-content-fidelity.test.ts`: the `apply-change` and
+- [x] 3.1 SEMANTIC — `test/core/templates/orbit-content-fidelity.test.ts`: the `apply-change` and
   `archive-change` body pins on `gate_overridden` retire with the bodies. Record the reason in the
   test comment the way the ruling-count pin does — a pin going red on deliberate work is the pin
   doing its job, and the next reader should see which.
-- [ ] 3.2 SEMANTIC — `test/core/emit-schema-parity.test.ts:167`: the archive conditional-field set
+- [x] 3.2 SEMANTIC — `test/core/emit-schema-parity.test.ts:167`: the archive conditional-field set
   drops to three (`fingerprint_overridden`, `fingerprints_unverified`, `audit_skipped_via_flag`).
-- [ ] 3.3 SEMANTIC — `test/core/emit-composition.test.ts:187`: the assertion on
+- [x] 3.3 SEMANTIC — `test/core/emit-composition.test.ts:187`: the assertion on
   `persisted.gate_overridden` becomes an assertion on the `continuation` entry.
-- [ ] 3.3a SEMANTIC — `test/core/emit-composition.test.ts:169`: the conditional-fields test drops
+- [x] 3.3a SEMANTIC — `test/core/emit-composition.test.ts:169`: the conditional-fields test drops
   to three fields, INCLUDING ITS TITLE, which names four.
-- [ ] 3.3b FIXTURE ONLY — `test/core/emit-composition.test.ts:1235` ('admits BOTH kinds on one
+- [x] 3.3b FIXTURE ONLY — `test/core/emit-composition.test.ts:1235` ('admits BOTH kinds on one
   archive emit'): the test is about KINDS and merely passes `gate_overridden` in its payload. Strip
   the field from the fixture; the assertion is unaffected. Same class as 3.4.
-- [ ] 3.3c DELETION — `test/core/emit-composition.test.ts:1178` ('accepts a continuation/proceed
+- [x] 3.3c DELETION — `test/core/emit-composition.test.ts:1178` ('accepts a continuation/proceed
   that AGREES with gate_overridden') and `:1259-1281` (three parameterized 'refuses ... whose
   <field> disagrees with gate_overridden' cases). These EXERCISE THE GUARD 2.5a deletes and assert
   its error text by regex; they cannot be updated, only removed. **Read the comment at `:1254`
@@ -170,13 +170,13 @@ surfaced, and it missed four sites in a file the grep DID surface.
   comparing only ONE of the three fields, so these cases are an earned regression. Deleting them is
   correct (the guard is gone) but the earned lesson should survive in 3.5's narrowed assertion,
   which is the only remaining check that all three facts travel together.
-- [ ] 3.4 FIXTURE ONLY — `test/core/emit-schema-parity.test.ts:219`: this test does NOT test
+- [x] 3.4 FIXTURE ONLY — `test/core/emit-schema-parity.test.ts:219`: this test does NOT test
   `gate_overridden`; it filters the field out of the payload table to prove the parity check
   notices a documented-but-missing key. Swap the victim to `fingerprint_overridden` and update the
   `toEqual` accordingly. One line, zero semantic content. Verified available: absent from
   `ENGINE_OWNED`, no per-command additions for `archive`, documented in the archive reference, live
   in the payload table at `emit-composition.ts:184`.
-- [ ] 3.5 NARROWED IN PLACE — `test/core/judgement-record-fixture.test.ts`: replace the coexistence
+- [x] 3.5 NARROWED IN PLACE — `test/core/judgement-record-fixture.test.ts`: replace the coexistence
   body with the assertion that a `continuation`/`proceed` entry carries all three gate facts
   (`gate`, `gate_state`, `gate_reason`). Per `design.md` D2 this REPLACES rather than joins — the
   test loses the half that became meaningless and keeps the half that did not.
@@ -191,7 +191,7 @@ surfaced, and it missed four sites in a file the grep DID surface.
   no longer accepts, and only a reader can witness that. Synthesizing values, or keeping the raw
   read, would satisfy the words of this task while leaving exit (2) with no executable evidence at
   all. It costs nothing: this change does not rewrite the archived emit.
-- [ ] 3.5b ADD a STANDING NEGATIVE REGRESSION for the retired key, one per command: submit a
+- [x] 3.5b ADD a STANDING NEGATIVE REGRESSION for the retired key, one per command: submit a
   payload carrying `gate_overridden` to `apply` and to `archive` and assert the ordinary unknown-key
   refusal fires AND no emit file is written. The existing pattern is
   `test/core/emit-composition.test.ts:1016` (`unknown payload key 'pr_attachment' for 'archive'`),
@@ -201,7 +201,7 @@ surfaced, and it missed four sites in a file the grep DID surface.
   green if a later edit silently re-adds an undocumented legacy key. Task 4.1's grep is a one-time
   apply-day check, not a standing pin. Without this, nothing in the suite would notice the
   retirement being undone.
-- [ ] 3.6 ADD coverage for the new rule (1.2), both directions, because a conditional accepted
+- [x] 3.6 ADD coverage for the new rule (1.2), both directions, because a conditional accepted
   without its refusal is half a check: an empty `formed_against` ACCEPTED on `continuation`/`proceed`
   with an empty trail, and REFUSED when one precedes the emit. **The refusal case SHALL seed at
   least TWO preceding independent passes and assert the error names the LATEST token** — and,
@@ -213,13 +213,15 @@ surfaced, and it missed four sites in a file the grep DID surface.
 
 ## 4. Verify the stage did what it claims
 
-- [ ] 4.1 Exit (1): `grep -rn "gate_overridden" src/core/templates/ src/core/emit-composition.ts`
+- [x] 4.1 Exit (1): `grep -rn "gate_overridden" src/core/templates/ src/core/emit-composition.ts`
   returns ZERO — no workflow body instructs writing the field AND the engine file the stage is
   named after carries no residue. The engine path was ADDED after the fresh proposal pass found a
   live error message naming the field that every sweep in this change missed: 4.1 covered templates
   only and 4.5 covers artifacts and specs, so the retirement's own implementation file was measured
   by nothing.
-- [ ] 4.2 Exit (2): an archived trail carrying the old record still reads without error.
+  **MEASURED 2026-09-24 at apply:** `grep -rn "gate_overridden" src/core/templates/ src/core/emit-composition.ts`
+  → 0 lines. The whole of `src/` reads 0 as well (informational; the criterion names the two paths).
+- [x] 4.2 Exit (2): an archived trail carrying the old record still reads without error.
   **THE COMMAND THIS TASK ORIGINALLY NAMED DOES NOT WORK, and external iter 1 proved it by running
   it**: `orbit status --change <archived-name> --report` fails with `Change '<name>' not found`
   before rendering, because `--report` resolves through `validateChangeExists`, which accepts only
@@ -232,22 +234,57 @@ surfaced, and it missed four sites in a file the grep DID surface.
   carrying `gate_overridden` is the most recent. Both are runnable; neither invents a surface.
   This is the PRIOR-GENERATION claim, and it is the one a reviewer should attack hardest — it has
   now been attacked twice and failed once.
-- [ ] 4.3 Exit (3): the parent charter's exit (4) is MET — the field is retired rather than left
+  **MEASURED 2026-09-24 at apply:** (a) `judgement-record-fixture.test.ts`'s narrowed case hands
+  `orbit/changes/archive/2026-09-21-rc02c-confirmation-semantics/` to `readTrail`, asserts the reader
+  surfaced both apply tokens and all four pass tokens with `rejectedExternals: []`, then derives the
+  three gate facts from the emit the reader NAMED — green. (b) bare `orbit status` rendered exit 0 with
+  no degraded row over a tree whose archived trails hold 20 emits carrying the field. Stated rather than
+  implied: the global LAST resolved to this change's own `address-reviews` emit, so the archived emits
+  were SCANNED by the selection, not SELECTED by it — the parse-without-failure half is witnessed, the
+  render-as-LAST half is not, and (a) is the half that survives the session.
+- [x] 4.3 Exit (3): the parent charter's exit (4) is MET — the field is retired rather than left
   write-only. State it against the charter's wording, not a paraphrase.
-- [ ] 4.4 `npm test` green. Expect the four files in section 3 to have been deliberately updated
+  **STATED 2026-09-24 against the charter's wording** — *"(4) `gate_overridden` either gains a reader
+  or is retired — today nothing in `src/` reads it, so replacing one write-only record with another
+  would deliver nothing."* MET on the second disjunct, RETIRED: the field is gone from the write path
+  (three bodies, two payload tables, the shipped schema reference — 4.1 reads 0), the built CLI refuses
+  it on `apply` and `archive` as an unknown key with no file written (2.6 smoke, and 3.5b pins it), and
+  the one reader it had gained (the coexistence guard) came down with it. The successor is not "another
+  write-only record": it has the archive readout as its reader (Step 5.65) and the ordering check as
+  its consumer, which is what the charter's second clause was guarding against.
+- [x] 4.4 `npm test` green. Expect the four files in section 3 to have been deliberately updated
   (five sites in `emit-composition.test.ts` alone — see 3.3/3.3a/3.3b/3.3c);
   no OTHER test may need editing. A test outside that set going red means the retirement reached
   further than the stage claims — stop and report rather than widening.
-- [ ] 4.5 DESCOPE SWEEP (R-crc-6's corollary, and the defect class this stage is most exposed to):
+  **REPORTED 2026-09-24 — one test OUTSIDE the named set went red, and it is recorded here rather than
+  absorbed.** First full run after section 3: 2239 passed, 2 failed, both in
+  `test/core/templates/skill-templates-parity.test.ts` — a SHA-256 pin over every template body and
+  generated skill. The only hashes that moved were `getApplyChangeSkillTemplate`,
+  `getArchiveChangeSkillTemplate` and their two generated skills: EXACTLY the two bodies section 2 names
+  (pr-choreography's edit rides inside the archive skill's references). So the retirement did NOT reach
+  further than the stage claims; the stage's test SIZING did not reach far enough — D-rc04c-6 sized the
+  test set by grepping for the field name, and a hash pin names nothing. That is design.md D3's lesson
+  in a third form: a grep finds every mention, a mention is not a dependency, and a pin is a dependency
+  that is not a mention. Re-pinned as the file's own header prescribes ("updating it IS that act";
+  precedent: rc04a's apply commit), with a dated comment naming which hashes moved and why. Final run
+  after the re-pin: see the apply emit's assessment. No other file outside the set was touched.
+- [x] 4.5 DESCOPE SWEEP (R-crc-6's corollary, and the defect class this stage is most exposed to):
   after the guard is removed, grep the change's own artifacts AND the touched specs for the removed
   thing's vocabulary — `coexist`, `until .* retired`, `strict widening`, `GATE_FIELD_PAIRS` — and
   confirm no prose still argues for a coexistence that no longer exists. The known instance is
   `orbit-run-summary-emit`'s coexistence paragraph, already swept in the delta; this task is the
   check that nothing else survives.
+  **SWEPT 2026-09-24:** `grep -rn -i "coexist\|until .* retired\|strict widening\|GATE_FIELD_PAIRS"`
+  over the change's artifacts, the three deltas, the three touched baselines, the engine, the bodies and
+  the touched tests. Hits fall in three classes and none argues for a coexistence that persists: (1) the
+  change's own proposal/design/explore/tasks DESCRIBE the guard's removal; (2) the BASELINE
+  `orbit-run-summary-emit` still carries the coexistence paragraph, inside `The judgement record — one
+  spine, two kinds`, which this delta MODIFIES — so sync replaces it at archive (the delta file itself:
+  zero hits); (3) two test comments record the history of what the walk changed. Engine and bodies: zero.
 
 ## 5. Hand off what the next stage inherits
 
-- [ ] 5.0 PERFORM — rewrite CLAUDE.md's two LIVE-ENGINE-DESCRIPTION passages, which this change
+- [x] 5.0 PERFORM — rewrite CLAUDE.md's two LIVE-ENGINE-DESCRIPTION passages, which this change
   falsifies. (a) `CLAUDE.md:227-229` states the named hole in the present tense — "`formed_against`
   is required non-empty, so the entry cannot be written when no independent pass exists at all …
   and rc04c inherits it" — which is simply FALSE after apply, and it hands forward a hole this
@@ -258,18 +295,37 @@ surfaced, and it missed four sites in a file the grep DID surface.
   live engine description are rewritten — and no `src:` marked span is touched (`orbit validate
   --sources` must stay clean). Precedent: `orbit/changes/archive/2026-09-21-rc02c-confirmation-semantics/tasks.md`
   task 5.2b did exactly this, for exactly this reason.
-- [ ] 5.1 RECORD (do not perform): Q-crc-23's residual vocabulary reframe. After this stage,
+  **PERFORMED 2026-09-24:** (a) the rc04a paragraph now records the hole as CLOSED and the record as
+  TOTAL, dated to this apply; (b) the C1 passage names the `continuation`/`proceed` entry. Six other
+  mentions remain in CLAUDE.md, all archive narrative (rc02's, D1's, D2's, D3's, D6's recorded overrides
+  and rc04d's headline) — history, untouched per the scope guard. `orbit validate --sources` clean.
+- [x] 5.1 RECORD (do not perform): Q-crc-23's residual vocabulary reframe. After this stage,
   `override` still appears at the fingerprint, audit-drift and PR seams. The charter's NON-GOAL and
   `design.md`'s D-rc04c-5 line kept it out of scope deliberately. Re-MEASURE the residual rather
   than inheriting the 48-occurrence figure — retiring the field shrinks it as a side effect, so the
   number recorded at Q-crc-23 will be stale by the time this archives.
-- [ ] 5.1a RECOMMEND — do not perform — the architect amendment this stage earns:
+  **RE-MEASURED 2026-09-24** (`grep -oiw override`, whole word, case-insensitive, occurrences):
+  `orbit/specs/` reads **53** on the pre-sync tree and **46** post-sync (computed by substituting each
+  delta requirement for its baseline text: `orbit-archive-modifications` 16→11, `orbit-run-summary-emit`
+  4→2, every other capability unchanged — `orbit-base-fingerprints` 10, `orbit-conventions` 6,
+  `orbit-engine-gates` 6, `orbit-pr-lifecycle` 6, `orbit-source-lint` 2, one each in address-reviews,
+  audit-drift, propose-modifications). Q-crc-23's 48 was a different count on an earlier tree; the
+  measure that matters is that the field's retirement removed 7 and left 46 across ten capabilities —
+  the word is the program's word for "the human decided to continue" at the fingerprint, audit-drift
+  and PR seams, and this stage did not touch it there. Workflow bodies: `gate_overridden` 17→**0**;
+  the word `override` 17→**11**; `Proceed anyway` 7; `proceed-anyway` 8. Whoever takes the scope call
+  inherits 46 + 11, not 48 + 17.
+- [x] 5.1a RECOMMEND — do not perform — the architect amendment this stage earns:
   `orbit/architecture/clean-up-review-cycle.md:1611` states the same unconditional NON-EMPTY
   contract inside rc04a's stage section, and this change falsifies it. Stage declarations belong to
   `/orbit:architect`, so RECORD the recommendation and edit nothing there. Same for the charter's
   copy of the unreconstructible-reason figure (see 5.1b).
-- [ ] 5.1b RECOMMEND — do not perform: the rc04c charter repeats design.md's "four archived apply
+  **RECORDED 2026-09-24, not performed.** `clean-up-review-cycle.md`'s rc04a stage section still states
+  the unconditional NON-EMPTY contract; this apply falsifies it. Architect-owned; for the next
+  `/orbit:architect` session.
+- [x] 5.1b RECOMMEND — do not perform: the rc04c charter repeats design.md's "four archived apply
   emits" figure, which is four CHANGES / ten EMITS (corrected here per the fresh pass). Architect-owned.
+  **RECORDED 2026-09-24, not performed.** Architect-owned figure correction (four CHANGES / ten EMITS).
 - [x] 5.1c **LANDED 2026-09-24 — the gate this task named is OPEN.** `/orbit:architect` recorded
   both halves: R-crc-1 gained the byte-measurement clarification (changed bytes, not carried
   bytes — appended inside the ruling so a reader who reaches R-crc-1 cannot apply the old measure),
@@ -313,7 +369,7 @@ surfaced, and it missed four sites in a file the grep DID surface.
   larger. That is an argument for why the breach is acceptable, NOT an argument that it is not a
   breach. R-crc-9 permits a ratified breach and the program has never taken one; this is proposed
   as the first, on the record, rather than absorbed.
-- [ ] 5.1d RECORD (do not perform) — a real limitation found while fixing 4.2, and out of scope
+- [x] 5.1d RECORD (do not perform) — a real limitation found while fixing 4.2, and out of scope
   here: **`orbit status --change <name> --report` cannot target an ARCHIVED change.** It resolves
   through `validateChangeExists`, which enumerates active `orbit/changes/` only, so no rendered
   review report can ever be produced for a change once archived — and the archived trail is exactly
@@ -321,7 +377,9 @@ surfaced, and it missed four sites in a file the grep DID surface.
   engine change in the status/orientation surface, a capability this stage neither touches nor
   holds a fingerprint on; doing it here would take the stage to FOUR capabilities and breach the one
   R-crc-1 dimension it is still inside (see 5.1c). Recorded for whoever owns that surface next.
-- [ ] 5.1e RECOMMEND — do not perform — a program-level observation for **Q-crc-14** (the source
+  **RECORDED 2026-09-24.** Re-confirmed in passing at 4.2: the archived trail was reachable only through
+  `readTrail` and bare `orbit status`; `--report` still cannot address it.
+- [x] 5.1e RECOMMEND — do not perform — a program-level observation for **Q-crc-14** (the source
   lint ships with no TRIGGER), found at this change's own promotion: `source-lint` enumerates via
   `git ls-files` — the INDEX — so during the window between a consume-mode `/orbit:propose` moving
   `explore.md` with `mv` and the change being committed, the lint READS A PATH GIT STILL TRACKS AND
@@ -331,7 +389,9 @@ surfaced, and it missed four sites in a file the grep DID surface.
   consume-mode propose creates that window, and a lint that throws rather than reports during a
   routine lifecycle step is a different failure mode from the missing trigger Q-crc-14 already
   names.
-- [ ] 5.1f RECOMMEND — do not perform — a vocabulary gap in the SPEND record, found while packaging
+  **RECORDED 2026-09-24, not performed** — carried to the program doc's Q-crc-14 entry by whoever next
+  edits it.
+- [x] 5.1f RECOMMEND — do not perform — a vocabulary gap in the SPEND record, found while packaging
   this change's external handoff. `orbit-run-summary-emit` admits a `continuation`/`spend` entry
   when a handoff buys a further independent pass past a gate that has ALREADY PASSED. This handoff
   was neither that nor the other named case (covering a declared, still-uncovered slot): the
@@ -342,10 +402,19 @@ surfaced, and it missed four sites in a file the grep DID surface.
   vocabulary. The trigger keys on gate PASSAGE, and a cadence can reach "another independent pass
   is worth buying" without the gate having passed. Recorded, not taken — assigning it is a scope
   call.
-- [ ] 5.2 RECORD for the archive seam: whether this stage's resolution walk AUTHORED engine
+  **RECORDED 2026-09-24, not performed** — a scope call, open.
+- [x] 5.2 RECORD for the archive seam: whether this stage's resolution walk AUTHORED engine
   mechanism or merely REPAIRED it (R-crc-6's lanes). `design.md` D4 runs the blind pair AFTER apply
   precisely so the pair reads the shipping tree; if the walk then authors, the pair's verdict no
   longer covers what ships, and Q-crc-20 says that is a RECORD at archive rather than a gate.
+  **RECORDED 2026-09-24 at apply; the JUDGEMENT is taken at archive per at-archive note (c).** What is
+  known now: no walk has run (D4 runs the blind pair AFTER this apply, on the tree it produced). The
+  engine mechanism the pair will read is tasks 1.1/1.2 (the relaxed structural check and the
+  emptiness-truthfulness rule in `judgementOrderingCheck`) plus the two payload-table removals — all
+  written here, under the tasks, before any review. So the line to hold at the seam: a post-pair walk
+  that REPAIRS those functions (an off-by-one, an error string, a missed guard) is the repair lane; one
+  that adds a predicate, a set, or a branch the pair did not read is AUTHORING, and the readiness
+  record's `accepted` list must say so.
 
 AT-ARCHIVE NOTE (execute in the archive flow, not at apply): (a) re-run 4.1 against the post-sync
 tree. (b) Confirm `gate_overridden`'s footprint in `orbit/specs/` reads ZERO capabilities, down

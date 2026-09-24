@@ -162,9 +162,9 @@ describe('schema-table parity: every AI-supplied field a schema reference docume
     });
   }
 
-  it('regression: the archive table accepts the four conditional fields its schema defines', () => {
+  it('regression: the archive table accepts the three conditional fields its schema defines (four until rc04c retired the gate-override field)', () => {
     const table = payloadFieldsFor('archive')!;
-    for (const k of ['gate_overridden', 'fingerprint_overridden', 'fingerprints_unverified', 'audit_skipped_via_flag']) {
+    for (const k of ['fingerprint_overridden', 'fingerprints_unverified', 'audit_skipped_via_flag']) {
       expect(table, k).toContain(k);
     }
   });
@@ -216,8 +216,11 @@ describe('schema-table parity: every AI-supplied field a schema reference docume
     const { keys } = documentedKeys(ref.content);
     const owned = new Set(ENGINE_OWNED);
     const aiSupplied = [...keys].filter((k) => !owned.has(k));
-    const crippled = payloadFieldsFor('archive')!.filter((k) => k !== 'gate_overridden');
+    // The victim is a FIXTURE choice, not the subject: it must be documented in the archive
+    // reference and live in the table. `fingerprint_overridden` (rc04c: the previous victim
+    // was retired from both, so it could no longer stand in).
+    const crippled = payloadFieldsFor('archive')!.filter((k) => k !== 'fingerprint_overridden');
     const rejected = aiSupplied.filter((k) => !crippled.includes(k));
-    expect(rejected).toEqual(['gate_overridden']);
+    expect(rejected).toEqual(['fingerprint_overridden']);
   });
 });

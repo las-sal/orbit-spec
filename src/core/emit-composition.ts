@@ -71,7 +71,7 @@ const COMMANDS: Record<string, CommandSpec> = {
   apply: {
     kind: 'workflow',
     scopes: { change: true },
-    payloadFields: ['user_validation_tasks', 'assessment_suffix', 'gate_overridden', 'consent', 'judgements'],
+    payloadFields: ['user_validation_tasks', 'assessment_suffix', 'consent', 'judgements'],
   },
   verify: {
     kind: 'workflow',
@@ -176,11 +176,12 @@ const COMMANDS: Record<string, CommandSpec> = {
       // attachment, so the fields are flat rather than the correlated `pr_attachment` unit.
       'pr_url',
       'pr_state',
-      // The archive schema's CONDITIONAL fields (C1 gate override; C2 fingerprint override /
-      // unverified; the --skip-audit flat flag). Omitted from this table at D5, which made the
-      // fail-loud gate reject the first proceed-anyway archive routed through the surface
-      // (D6 archive, 2026-09-11) — a required record the spec names.
-      'gate_overridden',
+      // The archive schema's CONDITIONAL fields (C2 fingerprint override / unverified; the
+      // --skip-audit flat flag). Omitted from this table at D5, which made the fail-loud gate
+      // reject the first proceed-anyway archive routed through the surface (D6 archive,
+      // 2026-09-11) — a required record the spec names. The C1 gate-override field that once
+      // led this list was RETIRED at rc04c: the `judgements` continuation/proceed entry is the
+      // sole record, and a payload still carrying the legacy key is refused as unknown.
       'fingerprint_overridden',
       'fingerprints_unverified',
       'audit_skipped_via_flag',
@@ -572,7 +573,19 @@ function validateJudgements(command: string, payload: Record<string, unknown>): 
     }
 
     const fa = e.formed_against;
-    if (!Array.isArray(fa) || fa.length === 0 || fa.some(t => typeof t !== 'string')) {
+    if (!Array.isArray(fa) || fa.some(t => typeof t !== 'string')) {
+      judgementError(i, `'formed_against' must be an array of pass-token strings.`);
+    }
+    // rc04c (D-rc04c-1): the NON-EMPTY requirement is RELAXED for continuation/proceed ONLY.
+    // A gate is unpassed precisely when its cadence is incomplete, which INCLUDES the state
+    // where no independent pass exists at all — so `[]` is a LEGAL claim on a proceed, and
+    // whether it is a TRUE claim is settled against the trail by `judgementOrderingCheck`
+    // (edge (d)), because this function is STRUCTURAL and cannot see the trail. Every other
+    // kind/disposition keeps the unconditional refusal: `spend` buys a pass past a gate that
+    // HAS passed, so passes exist; `readiness` is formed knowing what came back, so with
+    // nothing back there is no readiness judgement to record.
+    const emptyExempt = kind === 'continuation' && disposition === 'proceed';
+    if (fa.length === 0 && !emptyExempt) {
       judgementError(i, `'formed_against' must be a NON-EMPTY array of pass tokens — a judgement formed against no independent output is not a cadence judgement.`);
     }
     if (typeof e.reasoning !== 'string' || e.reasoning.trim() === '') {
@@ -585,7 +598,7 @@ function validateJudgements(command: string, payload: Record<string, unknown>): 
     if (kind === 'continuation' && disposition === 'proceed') {
       for (const req of ['gate', 'gate_state', 'gate_reason'] as const) {
         if (typeof e[req] !== 'string' || (e[req] as string) === '') {
-          judgementError(i, `'${req}' is required on a continuation/proceed — it carries what gate_overridden carried.`);
+          judgementError(i, `'${req}' is required on a continuation/proceed — the record carries the gate, its state and its reason at decision time.`);
         }
       }
     }
@@ -602,33 +615,6 @@ function validateJudgements(command: string, payload: Record<string, unknown>): 
       });
     }
   });
-
-  // The coexistence constraint (rc04a -> rc04c). `gate_overridden` and continuation/proceed
-  // carry the same three facts until the former is retired, and rc04c's retirement argument
-  // is that the record is a STRICT WIDENING of the field — an argument that fails outright if
-  // a trail can show them disagreeing. Observable, so R-crc-10 permits a check.
-  //
-  // THE TWO SHAPES DO NOT SHARE KEY NAMES. `gate_overridden` is `{gate, state, reason}`; the
-  // record is `{gate, gate_state, gate_reason}`, because the record sits inside an entry whose
-  // sibling keys are already about the judgement. Indexing both objects with one name set
-  // compares `gate` and silently skips the other two — the whole check, minus one third.
-  const GATE_FIELD_PAIRS: Array<[string, string]> = [
-    ['gate', 'gate'],
-    ['state', 'gate_state'],
-    ['reason', 'gate_reason'],
-  ];
-  const go = payload.gate_overridden;
-  if (typeof go === 'object' && go !== null && !Array.isArray(go)) {
-    const overridden = go as Record<string, unknown>;
-    (raw as Record<string, unknown>[]).forEach((e, i) => {
-      if (e.kind !== 'continuation' || e.disposition !== 'proceed') return;
-      for (const [legacy, record] of GATE_FIELD_PAIRS) {
-        if (overridden[legacy] !== undefined && e[record] !== overridden[legacy]) {
-          judgementError(i, `'${record}' disagrees with gate_overridden.${legacy} (${JSON.stringify(e[record])} vs ${JSON.stringify(overridden[legacy])}) — the two records describe one fact until gate_overridden is retired.`);
-        }
-      }
-    });
-  }
 }
 
 const PR_GRANULARITIES = new Set(['per-proposal', 'per-architecture']);
@@ -988,7 +974,27 @@ function judgementOrderingCheck(
   const anyPass = new Set(passes.map(pp => pp.token));
 
   (raw as Record<string, unknown>[]).forEach((entry, i) => {
-    for (const token of entry.formed_against as string[]) {
+    const cited = entry.formed_against as string[];
+
+    // rc04c edge (d) — EMPTINESS-TRUTHFULNESS. Structural validation has already confined an
+    // empty `formed_against` to continuation/proceed, so what reaches here is the claim
+    // "there was nothing to cite". That claim is checkable: if any independent pass precedes
+    // this emit's own token, the trail contradicts it and the entry is REFUSED naming the
+    // LATEST such pass (the ordinary trail carries several; the error names one, the way the
+    // rest of this check does). The boundary is ZERO — above zero, whether ENOUGH was cited is
+    // the adequacy judgement R-crc-10 forbids the engine, and it is not asked.
+    if (cited.length === 0) {
+      const preceding = [...independent.keys()].filter(t => t < own).sort();
+      if (preceding.length > 0) {
+        const latest = preceding[preceding.length - 1];
+        throw new EmitError(
+          `'judgements[${i}]': 'formed_against' is EMPTY but an independent pass precedes this emit — the latest is '${latest}'. The entry asserts there was nothing to cite and the trail contradicts it.`
+        );
+      }
+      return; // the emptiness is true of the trail — nothing further to resolve
+    }
+
+    for (const token of cited) {
       if (token >= own) {
         throw new EmitError(
           `'judgements[${i}]': cited pass token '${token}' is not STRICTLY earlier than this emit's own token '${own}' — a judgement cannot have been informed by evidence that did not yet exist.`

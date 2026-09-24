@@ -3,6 +3,7 @@ import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import { composeAndWriteEmit } from '../../src/core/emit-composition.js';
+import { readTrail } from '../../src/core/artifact-graph/trail.js';
 
 /**
  * rc04a exit criterion (3) — THE ACCEPTANCE FIXTURE.
@@ -209,44 +210,63 @@ describe("rc04a acceptance fixture — rc02c's six warnings under the shipped sh
     ).toThrow(/NON-EMPTY/);
   });
 
-  it("the continuation case composes from rc02c's own gate_overridden and AGREES with it (task 5.2)", () => {
-    const applies = fs
-      .readdirSync(ARCHIVE_SRC)
-      .filter(f => f.startsWith('apply-') && f.endsWith('.json'))
-      .map(f => JSON.parse(fs.readFileSync(path.join(ARCHIVE_SRC, f), 'utf-8')))
-      .filter(d => d.gate_overridden);
-    expect(applies.length).toBeGreaterThan(0);
+  it("the continuation/proceed record carries all THREE gate facts, derived from rc02c's prior-generation apply emit through the trail READER (rc04c task 3.5)", () => {
+    // NARROWED at rc04c (design D2). This test once asserted the coexistence guard: that the
+    // record AGREED with the `gate_overridden` field beside it. The guard is gone with the
+    // field, and one record cannot disagree with itself — so the half that became meaningless
+    // is dropped and the half that did not is kept: losing the legacy SHAPE must not quietly
+    // become losing the FIELDS. The gate/gate_state/gate_reason trio is the earned lesson of a
+    // prior external review (the first coexistence check compared only ONE of the three), and
+    // this is now the only remaining assertion that all three travel together.
+    //
+    // THE PRIOR-GENERATION CLAIM, witnessed by a READER. rc02c's archived apply emits carry
+    // the field rc04c retired. Parsing them as JSON proves nothing (external iter 1: JSON
+    // parses as JSON, which was never in doubt). The archived change directory is handed to
+    // `readTrail` — the reader every gate computation goes through — which must consume the
+    // trail without error and surface the apply emits; the three facts are then DERIVED from
+    // the emit the reader NAMED, never synthesized here.
+    const trail = readTrail(path.dirname(ARCHIVE_SRC));
+    expect(trail.applyTokens.length).toBeGreaterThan(0);
+    expect(trail.passes.map(p => p.token)).toEqual(
+      expect.arrayContaining([FRESH, EXTERNAL_1, EXTERNAL_2, IN_CONTEXT])
+    );
+    expect(trail.rejectedExternals).toEqual([]);
 
-    const go = applies[0].gate_overridden as { gate: string; state: string; reason: string };
+    const legacy = trail.applyTokens
+      .map(t => JSON.parse(fs.readFileSync(path.join(trail.runsDir, `apply-${t}.json`), 'utf-8')))
+      .find(d => d.gate_overridden);
+    expect(legacy).toBeDefined();
+    const go = legacy.gate_overridden as { gate: string; state: string; reason: string };
+    // pin the IDENTITY of the cited artifact — rc02c proceeded past review-proposal, and its
+    // recorded reason is clause-(c) vocabulary today's engine cannot produce (design.md Context)
+    expect(go.gate).toBe('review-proposal');
+    expect(go.state).toBe('unpassed');
+    expect(go.reason).toMatch(/latest independent pass/);
+
     const continuation = {
       kind: 'continuation',
       disposition: 'proceed',
       formed_against: [EXTERNAL_1, FRESH],
       reasoning: 'proceeded past the gate knowing what the pair returned',
       ratified_by: 'user',
-      // THE STRICT WIDENING, executed: the same three facts, plus a citation that can be
-      // ordered. rc04c's retirement argument is exactly this record being a superset.
       gate: go.gate,
       gate_state: go.state,
       gate_reason: go.reason,
     };
 
-    const r = emitDerived([continuation], { gate_overridden: go });
+    const r = emitDerived([continuation]);
     const written = JSON.parse(fs.readFileSync(r.path, 'utf-8'));
-    expect(written.judgements[0].gate).toBe(written.gate_overridden.gate);
-    expect(written.judgements[0].gate_state).toBe(written.gate_overridden.state);
-    expect(written.judgements[0].gate_reason).toBe(written.gate_overridden.reason);
+    expect('gate_overridden' in written).toBe(false); // the successor is the SOLE record
+    expect(written.judgements[0].gate).toBe(go.gate);
+    expect(written.judgements[0].gate_state).toBe(go.state);
+    expect(written.judgements[0].gate_reason).toBe(go.reason);
 
-    // and a record that DISAGREES with the field it supersedes is refused on every field —
-    // the constraint the widening argument depends on
-    for (const [key, legacy] of [
-      ['gate', 'gate'],
-      ['gate_state', 'state'],
-      ['gate_reason', 'reason'],
-    ] as const) {
-      expect(() =>
-        emitDerived([{ ...continuation, [key]: 'something else' }], { gate_overridden: go })
-      ).toThrow(new RegExp(`'${key}' disagrees with gate_overridden\\.${legacy}`));
+    // and the assertion with teeth: a record missing ANY ONE of the three facts is refused
+    for (const key of ['gate', 'gate_state', 'gate_reason'] as const) {
+      const { [key]: _dropped, ...without } = continuation;
+      expect(() => emitDerived([without])).toThrow(
+        new RegExp(`'${key}' is required on a continuation/proceed`)
+      );
     }
   });
 });
