@@ -104,11 +104,11 @@ const archivePayload = (judgements: unknown) => ({
   judgements,
 });
 
-const emitDerived = (judgements: unknown, extra: Record<string, unknown> = {}) =>
+const emitDerived = (judgements: unknown) =>
   composeAndWriteEmit(
     'archive',
     { change: 'rc02c-derived' },
-    { ...archivePayload(judgements), ...extra } as any,
+    archivePayload(judgements) as any,
     { projectRoot: root }
   );
 
@@ -219,12 +219,16 @@ describe("rc04a acceptance fixture — rc02c's six warnings under the shipped sh
     // prior external review (the first coexistence check compared only ONE of the three), and
     // this is now the only remaining assertion that all three travel together.
     //
-    // THE PRIOR-GENERATION CLAIM, witnessed by a READER. rc02c's archived apply emits carry
-    // the field rc04c retired. Parsing them as JSON proves nothing (external iter 1: JSON
-    // parses as JSON, which was never in doubt). The archived change directory is handed to
-    // `readTrail` — the reader every gate computation goes through — which must consume the
-    // trail without error and surface the apply emits; the three facts are then DERIVED from
-    // the emit the reader NAMED, never synthesized here.
+    // THE PRIOR-GENERATION CLAIM, witnessed by a READER — and stated at its real strength.
+    // rc02c's archived apply emits carry the field rc04c retired. The archived change directory
+    // is handed to `readTrail`, the reader every gate computation goes through, which must
+    // consume the whole trail without error and surface the apply emits; the three facts are
+    // then DERIVED from the emit the reader NAMED, never synthesized here. What this pins: the
+    // artifact still carries the field, and orbit's trail reader ingests the directory it sits
+    // in. What it does NOT pin (fresh system pass, 2026-09-24): `readTrail` reads only an apply
+    // emit's token and `user_validation_tasks`, so an unknown key cannot fail it — this is a
+    // weak witness for "readers tolerate the field", and the stronger one (orientation's spine
+    // read over the archived global-LAST scan) is covered by hand at tasks.md 4.2(b).
     const trail = readTrail(path.dirname(ARCHIVE_SRC));
     expect(trail.applyTokens.length).toBeGreaterThan(0);
     expect(trail.passes.map(p => p.token)).toEqual(

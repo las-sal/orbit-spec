@@ -68,7 +68,8 @@ knowing what came back; with nothing back there is no readiness judgement to rec
 citation there would be the uncheckable hole rc04a's design refused.
 
 Both functions were re-verified present before this design named them: `validateJudgements:533`,
-`judgementOrderingCheck:958`.
+`judgementOrderingCheck:958`. (Post-apply, 2026-09-24: `:534` and `:944`; the coexistence guard
+block at `:606-632` is gone. The figures above are left as the record of what was checked when.)
 
 ### D2 — the guarantee after the guard is a TEST, and it replaces the guard's own test
 

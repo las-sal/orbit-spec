@@ -239,8 +239,8 @@ and audit prompts for stopping.
 
 #### Scenario: An empty formed_against is refused when a pass was available to cite
 
-- **WHEN** a judgement entry carries `formed_against: []` AND the trail carries an independent pass
-  earlier than this emit's own token
+- **WHEN** a `continuation`/`proceed` entry carries `formed_against: []` AND the trail carries an
+  independent pass earlier than this emit's own token
 - **THEN** the emit is REFUSED, naming the LATEST preceding independent pass — claiming an empty
   cadence while one is on disk is not a cadence judgement, and the claim is checkable
 

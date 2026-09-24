@@ -238,7 +238,11 @@ surfaced, and it missed four sites in a file the grep DID surface.
   **MEASURED 2026-09-24 at apply:** (a) `judgement-record-fixture.test.ts`'s narrowed case hands
   `orbit/changes/archive/2026-09-21-rc02c-confirmation-semantics/` to `readTrail`, asserts the reader
   surfaced both apply tokens and all four pass tokens with `rejectedExternals: []`, then derives the
-  three gate facts from the emit the reader NAMED — green. (b) bare `orbit status` rendered exit 0 with
+  three gate facts from the emit the reader NAMED — green. **Stated at its real strength (fresh system
+  pass, 2026-09-24): `readTrail` reads only an apply emit's token and `user_validation_tasks`, so this
+  witnesses that the trail reader INGESTS a directory holding the field, not that a field-aware reader
+  tolerates it — the stronger executable witness would be orientation's spine read, covered by hand
+  in (b).** (b) bare `orbit status` rendered exit 0 with
   no degraded row over a tree whose archived trails hold 20 emits carrying the field. Stated rather than
   implied: the global LAST resolved to this change's own `address-reviews` emit, so the archived emits
   were SCANNED by the selection, not SELECTED by it — the parse-without-failure half is witnessed, the

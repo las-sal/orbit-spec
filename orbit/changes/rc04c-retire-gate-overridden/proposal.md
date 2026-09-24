@@ -6,7 +6,7 @@ for one fact is the defect this stage exists to remove, and the parent charter's
 `gate_overridden` "either gains a reader or is retired".
 
 It gained one, and that is the whole argument for acting now: rc04a's coexistence guard
-(`src/core/emit-composition.ts:606-632`) reads the field solely to refuse an emit whose two
+(`src/core/emit-composition.ts:606-632` — the block removed at apply, 2026-09-24) reads the field solely to refuse an emit whose two
 records disagree. That reader is SCAFFOLDING — it exists to prove the successor carries what the
 legacy object carried — so it comes down with the thing it braced. Deferring leaves a field
 written by three workflow bodies, read by one guard that exists only to watch it, and described
