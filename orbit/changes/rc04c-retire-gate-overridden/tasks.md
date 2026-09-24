@@ -1,3 +1,27 @@
+> **READ THIS FIRST IF YOU ARE A COLD SESSION.** The proposal gate PASSED after three review
+> passes (fresh internal → external GPT-5 Codex → in-context), 17 findings, all resolved. Boot with
+> `orbit status --change rc04c-retire-gate-overridden --boot`, which renders position, read order,
+> emit summaries and the predicted touchpoint map.
+>
+> **ONE LIVE WATCH DURING APPLY, and it is the only thing from the review cycle that does not
+> survive in the artifacts on its own.** Three times in this change a rule turned out to be STATED
+> IN MORE PLACES THAN ONCE, and all three times the correct fix was to DELETE a statement rather
+> than reconcile two: (1) rc04d's site-2 edit, reversed twice before landing on removal rather than
+> redirection; (2) external iter 1's C1, where a requirement's defining clause excluded the record
+> its own lower clause admitted; (3) the in-context pass's WARNING, where one predicate had two
+> extensions across two capabilities. That is not a run of unlucky edits — it is what a RETIREMENT
+> does to a spec that grew by accretion, because removing a field exposes every place its behaviour
+> was described. **If a FOURTH instance appears during apply, treat it as a structural signal about
+> the stage rather than another repair**: stop and say so rather than fixing it quietly, because at
+> four the right response may be a different decomposition rather than a fourth deletion.
+>
+> **Two trail facts that will mislead a cold reader if not said here.** (a) `independentSpend`
+> reads 3, but two of those are ONE reviewer's re-run of the same review — the trail cannot
+> distinguish a re-run from an independent pass, so do not read 3 as three distinct reviews.
+> (b) The boot render surfaces the `review-external` T0 emit with `awaiting_findings: true` and the
+> text "awaiting findings from". Findings DID return (two files, both walked to zero); nothing flips
+> that flag today, by design — see `references/external-handoff.md`. It is not an outstanding task.
+
 ## 1. The engine (part 1 — the checks)
 
 **THE ORDER IS NORMATIVE AND IT CLOSES A WINDOW IN BOTH DIRECTIONS.** Run
@@ -290,6 +314,27 @@ surfaced, and it missed four sites in a file the grep DID surface.
   engine change in the status/orientation surface, a capability this stage neither touches nor
   holds a fingerprint on; doing it here would take the stage to FOUR capabilities and breach the one
   R-crc-1 dimension it is still inside (see 5.1c). Recorded for whoever owns that surface next.
+- [ ] 5.1e RECOMMEND — do not perform — a program-level observation for **Q-crc-14** (the source
+  lint ships with no TRIGGER), found at this change's own promotion: `source-lint` enumerates via
+  `git ls-files` — the INDEX — so during the window between a consume-mode `/orbit:propose` moving
+  `explore.md` with `mv` and the change being committed, the lint READS A PATH GIT STILL TRACKS AND
+  THROWS `ENOENT`. It does not report a finding; it fails the suite with an exception. Measured
+  here: the ENOENT set was exactly the moved file, and the file at its NEW path was untracked and
+  therefore unlinted for the same window. Both clear on commit. Worth recording because EVERY
+  consume-mode propose creates that window, and a lint that throws rather than reports during a
+  routine lifecycle step is a different failure mode from the missing trigger Q-crc-14 already
+  names.
+- [ ] 5.1f RECOMMEND — do not perform — a vocabulary gap in the SPEND record, found while packaging
+  this change's external handoff. `orbit-run-summary-emit` admits a `continuation`/`spend` entry
+  when a handoff buys a further independent pass past a gate that has ALREADY PASSED. This handoff
+  was neither that nor the other named case (covering a declared, still-uncovered slot): the
+  `review-proposal` cadence is `[independent, in-context]`, the `independent` slot was already
+  covered by the fresh pass, and the slot the gate waited on was `in-context` — which an external
+  pass cannot satisfy. So it was a genuine further-independent-pass decision taken past an UNPASSED
+  gate whose remaining slot is a different class: a spend in substance with no carrier in the
+  vocabulary. The trigger keys on gate PASSAGE, and a cadence can reach "another independent pass
+  is worth buying" without the gate having passed. Recorded, not taken — assigning it is a scope
+  call.
 - [ ] 5.2 RECORD for the archive seam: whether this stage's resolution walk AUTHORED engine
   mechanism or merely REPAIRED it (R-crc-6's lanes). `design.md` D4 runs the blind pair AFTER apply
   precisely so the pair reads the shipping tree; if the walk then authors, the pair's verdict no
