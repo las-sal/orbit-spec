@@ -56,16 +56,22 @@ import {
 // judgement entry is the sole record of a proceed-anyway. A pin going red on deliberate work
 // is the pin doing its job; the successor marker (`continuation`) takes its slot so a body
 // that silently drops the record's instruction still fails here.
+//
+// rc04c system blind pair (2026-09-24): `ACCEPTED as a pass` pins the token-source qualifier in
+// every body that enumerates citable passes (apply, archive ×2, review's spend record) — both
+// halves of the pair found the enumeration counting REJECTED external returns as citable, which
+// the write gate refuses. The sentence is stated in four bodies; this pin is what keeps the
+// qualifier from dropping out of one of them silently.
 const RELOCATED: Array<[string, () => SkillTemplate, string[]]> = [
   ['explore', getExploreSkillTemplate, ['execution disciplines', 'Run-summary emit', 'BEGIN emit', 'orbit emit explore', 'No retro-fire', 'BACK-FILLED counts']],
   ['propose', getOrbitProposeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
   ['new-change', getNewChangeSkillTemplate, ['execution disciplines', 'Run-summary emit']],
   ['continue-change', getContinueChangeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
-  ['apply-change', getApplyChangeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override', 'blocked-by-gate', 'continuation', 'formed_against: []', 'Consent at entry', 'consent_era_from', '"user-invoked" | "prompted"', 'orbit emit apply']],
+  ['apply-change', getApplyChangeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override', 'blocked-by-gate', 'continuation', 'formed_against: []', 'ACCEPTED as a pass', 'Consent at entry', 'consent_era_from', '"user-invoked" | "prompted"', 'orbit emit apply']],
   ['ff-change', getFfChangeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
   ['bulk-archive-change', getBulkArchiveChangeSkillTemplate, ['# Orbit additions', 'execution disciplines', 'Per-change consent', 'consent_era_from']],
   ['verify-change', getVerifyChangeSkillTemplate, ['execution disciplines', 'Run-summary emit']],
-  ['archive-change', getArchiveChangeSkillTemplate, ['execution disciplines', 'run summary', 'review-system gate inflection', 'continuation', 'formed_against: []', 'Consent at entry', 'consent_era_from', 'Sync inheritance']],
+  ['archive-change', getArchiveChangeSkillTemplate, ['execution disciplines', 'run summary', 'review-system gate inflection', 'continuation', 'formed_against: []', 'ACCEPTED as a pass', 'Consent at entry', 'consent_era_from', 'Sync inheritance']],
   ['onboard', getOnboardSkillTemplate, ['execution disciplines', 'self-contained', 'Four execution disciplines']],
   ['sync-specs', getSyncSpecsSkillTemplate, ['execution disciplines', 'Consent inheritance']],
   // B3 editorial workflows (net-new relocation; parity proof per D-b3-4)
@@ -137,6 +143,14 @@ describe('D4 external prompt output-format block: delta <-> shipped template byt
     };
     const template = getReviewSkillTemplate().references.find((r) => r.name === 'prompt-template.md').content;
     expect(extract(delta)).toBe(extract(template));
+  });
+
+  it("review's spend-record token source carries the ACCEPTED-as-a-pass qualifier (rc04c system blind pair)", () => {
+    // The fourth copy of the token-source sentence lives in the external-handoff REFERENCE, not
+    // the skill body, so the body-marker table above cannot pin it; this does.
+    const ref = getReviewSkillTemplate().references.find((r) => r.name === 'external-handoff.md')!.content;
+    expect(ref).toContain('ACCEPTED as a pass');
+    expect(ref).not.toContain('cannot be unresolvable');
   });
 });
 

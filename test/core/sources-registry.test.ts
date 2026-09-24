@@ -41,7 +41,12 @@ describe('countRulingEntries', () => {
     // judgement) was recorded. Third consecutive deliberate bump, and the pin has now gone red
     // on every ruling this program has added since it was written — which is the whole of its
     // job.
-    expect(count).toBe(13);
+    //
+    // 13 -> 14 on 2026-09-24: R-crc-14 (a rule is stated once, in the spec that owns it; every
+    // other surface names it and points) was recorded in the architect session that followed
+    // rc04c's system blind pair. Moved in the SAME edit as the ruling and CLAUDE.md's marked span,
+    // per Q-crc-14's second instance — the first time this pin did not have to go red to be moved.
+    expect(count).toBe(14);
 
     // DERIVED, as a second and independent witness: a plain scan of the section must agree.
     const section = sliceRulingsIndex(doc.lines);

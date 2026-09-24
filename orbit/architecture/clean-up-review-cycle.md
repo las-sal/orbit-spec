@@ -446,6 +446,39 @@ One goal per phase, each falsifiable, each stage naming its goal (settled under 
   Sal's. D1's consent model still decides WHERE a prompt fires. This ruling says what a gate IS,
   not how often the user is asked.
 
+- **R-crc-14** (Sal, 2026-09-24) — **A RULE IS STATED ONCE, IN THE SPEC THAT OWNS IT; EVERY OTHER
+  SURFACE NAMES IT AND POINTS.** A workflow body, a shipped reference, a sibling capability or
+  CLAUDE.md may NAME a rule and state its observable CONSEQUENCE for the reader in front of it —
+  "the gate refuses an empty citation when a pass precedes the emit" — but never restates the
+  PREDICATE or the SET it ranges over. Two statements of one rule are two extensions, and they
+  diverge.
+
+  **Earned by rc04c, which paid for it four times in one change.** (1) rc04d's site-2 edit was
+  reversed twice before landing on removal rather than redirection. (2) External proposal iter 1
+  found a requirement whose defining clause excluded the record its own lower clause admitted.
+  (3) The in-context pass found one predicate with two extensions across two capabilities. (4) The
+  system blind pair — both halves, independently — found the token-source sentence pasted into
+  four bodies, all four wrong the same way, already diverged from the schema reference's field
+  note beside them. Every time, the fix that held was DELETE the copy, keep the owner; every
+  attempt to RECONCILE two statements produced a third. rc04c's own preamble named the pattern at
+  three and said stop at four; four arrived, and this is the stop.
+
+  **What follows, named so it is not rediscovered.** (a) For RETIREMENTS: removing a field exposes
+  every place its behaviour was described, so a retirement stage's sweep looks for RESTATED RULES,
+  not only the retired name — the grep for the name found none of the four. (b) For WALKS: when a
+  finding lands on a restated rule, the lane is delete-the-copy, never reconcile-the-two; R-crc-6's
+  descope-sweep corollary already says deletion is the cheap lane for mechanism, and this extends
+  it to prose. (c) For the consumer half: Q-crc-24's reader-backed surface is this ruling's
+  mechanism where the "rule" is a computed SET — a body that reads the set from the engine cannot
+  restate it. (d) A field NAME in a shipped reference is a POINTER, not a predicate; the schema
+  references keep listing fields.
+
+  **The boundary.** This does not forbid a body from telling its reader what will happen to them:
+  an instruction needs its consequence in place. It forbids the body from carrying the rule's
+  DEFINITION — the class list, the exclusion, the comparison — which is what turns a pointer into
+  a second extension. The test is whether the sentence could be WRONG on its own: a pointer cannot,
+  a restatement can.
+
 ## Open questions (program-level)
 
 - **Q-crc-11 — the stage grammar has no WITHDRAWN state, and two stages now need one.**
@@ -622,6 +655,17 @@ never deleted.
   architect seam runs the doc's dependent checks", and the second reading is the one this instance
   supports. Recorded rather than fixed, per R-crc-10: the input is a judgement about which seams
   matter, so the deliverable is this record until a stage declares it.
+
+  **THIRD INSTANCE, 2026-09-22 (recorded 2026-09-24 from rc04c's handoff), and it is a different
+  FAILURE MODE from the missing trigger.** The lint enumerates its file domain through `git
+  ls-files` — the INDEX. During the window between a consume-mode `/orbit:propose` moving
+  `explore.md` with `mv` and the change being committed, the lint reads a path git still tracks and
+  THROWS `ENOENT`: it does not report a finding, it fails the suite with an exception, and the file
+  at its new path is untracked and therefore unlinted for the same window. Measured at rc04c's
+  promotion: the ENOENT set was exactly the moved file; both clear on commit. EVERY consume-mode
+  propose opens that window. So the answer to "run the lint at more seams" has a precondition this
+  instance names — the lint's domain must survive an uncommitted move — and whoever wires the
+  trigger should read the working tree's tracked set, not the index's paths, or tolerate the miss.
 
 - **Q-crc-15 — the engine carries TWO CommonMark fence grammars, and one of them is wrong.**
   Observed 2026-09-17 by the system-mode external pass. `src/core/markdown-fence.ts` is the strict
@@ -986,6 +1030,15 @@ never deleted.
   conceptual clarity alone is precisely the kind of change R-crc-11 says to judge on ALIGNMENT
   rather than on cycle cost.
 
+  **RE-MEASURED 2026-09-24 at rc04c's apply, as this entry asked.** Whole word, case-insensitive:
+  `override` reads 53 across `orbit/specs/` on the pre-sync tree and **46 post-sync** (computed by
+  substituting rc04c's delta requirements for their baseline text: `orbit-archive-modifications`
+  16→11, `orbit-run-summary-emit` 4→2, every other capability unchanged — base-fingerprints 10,
+  conventions 6, engine-gates 6, pr-lifecycle 6, source-lint 2, one each in address-reviews,
+  audit-drift and propose-modifications). Workflow bodies: `gate_overridden` 17→**0**, the word
+  `override` 17→**11**. The 48 above was a different count on an earlier tree; whoever takes the
+  scope call inherits **46 + 11**, across ten capabilities and the same four seams.
+
   **THE NON-GOAL HALF IS APPLIED 2026-09-22.** rc04c's charter now carries an explicit NON-GOAL
   declaring the reframe out of scope, with the measurement and the R-crc-9 reasoning stated there
   rather than left for its exploration to rediscover — which was this recommendation's whole
@@ -1004,6 +1057,60 @@ never deleted.
   two-source ingest is a design call for that stage; whether rc08 is the right home, and when it
   runs, is a scope call and is raised here rather than taken.
 
+
+- **Q-crc-24 — the citable-pass set is enumerated BY HAND in four workflow bodies, and the
+  enumeration was wrong in all four the same way.**
+  Found 2026-09-24 by BOTH halves of rc04c's system blind pair, independently. The token-source
+  sentence — "list `.orbit-runs/`, take each `review-<mode>-<TS>.json` whose class is fresh or
+  external, plus each `external-<mode>-<TS>.md`; that set is exactly what the write gate resolves
+  against" — is one paragraph pasted into apply's proceed seam, archive Steps 3.4 and 5.5, and
+  review's spend record. The write gate's set is `readTrail(...).passes` filtered to the two
+  independent classes, and the trail reader routes an unreadable external return to
+  `rejectedExternals`, so the enumeration over-counts by exactly the rejected returns. On a trail
+  holding only such a return the reference taught `formed_against: []` and the body taught citing
+  the token — a refusal, and at archive a refusal AFTER the move. Repaired once, everywhere, with a
+  fidelity pin (option A); the mechanism below was declined inside rc04c because the blind pair had
+  already read the tree (design D4) and the stage sat at R-crc-1's capability ceiling.
+
+  **This is the engine-computes / body-reads thesis with a hole in it.** The set IS engine-computed
+  — the gate consults it on every render — but no surface PRINTS it, so four bodies reconstruct it
+  from filename rules and one of the rules is a lie by omission. It is the same class as Q-crc-14
+  and Q-crc-22: a mechanism whose consumer was never built, so its guarantee depends on prose
+  staying in step with code. Standing recommendation (Sal, 2026-09-24 — "B as a follow-up,
+  canonized here"): an engine surface that prints, for a change, the trail reader's ACCEPTED
+  independent passes as `{token, class, mode}` — most naturally on `orbit status --change <name>
+  --json`, which every body already reads for the gate, so the token source becomes "read the
+  `passes` field" and the four copies collapse to a call. Fully observable, so R-crc-10 permits it.
+  Owner: a stage that declares it; rc12's charter (engine computes, body reads) is the nearest home
+  in spirit, though its scope is the PR choreography, so this is more likely its own small stage or
+  a rider on whichever stage next touches the judgement bodies. Until then the fidelity pin
+  (`ACCEPTED as a pass`) is what holds the four copies honest.
+
+- **Q-crc-25 — the SPEND record has a carrier only for a pass bought past a gate that has
+  PASSED, and rc04c bought one past a gate that had not.**
+  Found 2026-09-22 while packaging rc04c's proposal-mode external handoff; recorded 2026-09-24.
+  `orbit-run-summary-emit` admits `continuation`/`spend` when a handoff buys a FURTHER independent
+  pass past a gate that has ALREADY PASSED, and says a handoff merely covering a declared,
+  still-uncovered slot carries no record. rc04c's handoff was neither: the `review-proposal`
+  cadence is `[independent, in-context]`, the independent slot was already covered by the fresh
+  pass, and the slot the gate still waited on was `in-context` — which an external pass cannot
+  satisfy. So it was a genuine "another independent pass is worth buying" decision, taken past an
+  UNPASSED gate whose remaining slot is a different class: a spend in substance with no carrier in
+  the vocabulary, because the trigger keys on gate PASSAGE. Recorded, not taken — widening the
+  trigger to "a further independent pass beyond what the cadence requires, whatever the gate
+  state" is a one-sentence spec change plus a body change, but assigning it is a scope call.
+
+- **Q-crc-26 — `orbit status --change <name> --report` cannot target an ARCHIVED change.**
+  Found 2026-09-22 by rc04c's external proposal pass, which ran the command the exit criterion
+  named and got `Change '<name>' not found`. `--report` resolves through `validateChangeExists`,
+  which enumerates active `orbit/changes/` only — so no rendered review report can be produced for
+  a change once archived, and the archived trail is exactly where a report is most useful to a
+  reader reconstructing how a change converged. It is an engine change in the status/orientation
+  surface, a capability rc04c neither touched nor held a fingerprint on; doing it there would have
+  taken the stage to four capabilities. Standing recommendation: the same archived-fallback the
+  emit surface already performs for `address-reviews` (triple scope) is the pattern — resolve
+  active first, then `orbit/changes/archive/<date>-<name>`. Owner: whichever stage next touches
+  `orbit-orientation` or `orbit-report-rendering`.
 
 ## Program stages
 
@@ -1636,6 +1743,13 @@ rather than implied. `continuation` is mid-cadence (`proceed` past a gate that s
 `readiness` is terminal (`ready` | `not-ready`, carrying `accepted: [{claim, why}]` — the residuals
 are the assertion's CONTENT, not peer judgements).
 
+**AMENDED BY rc04c (applied 2026-09-24; D-rc04c-1).** NON-EMPTY holds for every kind EXCEPT
+`continuation`/`proceed`, where `formed_against: []` is LEGAL exactly when no independent pass the
+trail reader accepted precedes the emit's own token (a rejected external return is not one), and
+is REFUSED naming the latest preceding pass otherwise. The paragraph above is left as ratified;
+this line is what a reader of it needs to know now. `orbit-run-summary-emit` owns the rule and its
+set, stated once.
+
 THE ONE COMPUTED RULE ABOUT THE EVIDENCE: every token in `formed_against` MUST precede the
 record's own timestamp, or the write gate REFUSES it. **Qualified at rc04a's archive** — two
 further refusals shipped, and both are about the record's SHAPE and LOCATION rather than its
@@ -1743,7 +1857,11 @@ Complete: [ ]
 external iteration 1 and re-measured after its walk, this stage sits UNDER R-crc-1 on three
 dimensions — capabilities 3 of 3, requirements 10 of ~12, and changed-bytes 163 lines under the
 2026-09-23 clarification — and OVER on the fourth: **34 tasks against "under 20"** (22 work items
-plus 12 verification and handoff records).
+plus 12 verification and handoff records). **FINAL FIGURE 36 (reconciled 2026-09-24):** two more
+handoff RECORDS (5.1e, 5.1f) were written at the pre-apply boundary after ratification, and the
+preamble's own arithmetic then misstated the total as 35 until both halves of the system blind pair
+caught it. The ratification stands — it ratified a BREACH, not a number — and both figures are
+stated here so neither reader is misled.
 
 **Why the breach is accepted rather than split.** R-crc-9's own first branch was considered and
 does not help here: the obvious split — the totality amendment out, the legacy-key retirement in —
@@ -1784,7 +1902,8 @@ correct.
 **And one claim checked in the RETIRING field's favour.** The tempting simplification is that
 `gate_overridden` was always redundant, since `orbit-engine-gates` makes gate state a pure
 function of on-disk artifacts and any past state should therefore be recomputable. The trail
-refutes it: four archived apply emits record `reason: "latest independent pass yielded new
+refutes it: TEN archived apply emits across FOUR changes (CORRECTED 2026-09-24 — the charter said
+"four"; rc04c's fresh proposal pass counted) record `reason: "latest independent pass yielded new
 findings"` — clause-(c) vocabulary that rc02c RETIRED, which today's engine cannot produce for any
 input. A recorded reason is what the human SAW; a recomputed one is what today's rules WOULD say.
 So this stage MOVES three facts rather than deleting a redundancy.
@@ -1802,7 +1921,8 @@ can. So the widening is strict over every override this repo has actually record
 rc04a's archive: 20 `gate_overridden` emits across every archived change, all 20 with an earlier
 independent pass, 0/20 reaching the edge — but it is NOT strict over the field's full domain.
 `orbit-archive-modifications` now carries the case as a scenario (the entry is omitted and
-`gate_overridden` stands alone).
+`gate_overridden` stands alone). **SUPERSEDED at rc04c's apply (2026-09-24): the delta makes the
+WRITE normative — the entry IS written, with `formed_against: []`, and the field is retired.**
 
 **THE HOLE IS CLOSED BY D-rc04c-1 (Sal, 2026-09-21), and closing it is this stage's first task.**
 An empty `formed_against` becomes LEGAL on a `continuation/proceed` — and ONLY when the emptiness
@@ -1868,6 +1988,32 @@ landing where the edit was and stopping at the edge of the thing it described. N
 Exit: (1) no workflow body instructs writing `gate_overridden`, grep-verified; (2) an archived
 trail carrying the old record still reads without error, as a prior generation; (3) the parent
 charter's exit (4) is MET — the record is retired rather than left write-only.
+
+**APPLY AND SYSTEM CADENCE RECORD (2026-09-24).** Applied 36/36 in one session; the three exit
+criteria measured at apply — (1) the grep over `src/core/templates/` and `emit-composition.ts`
+reads 0; (2) witnessed through `readTrail` over rc02c's archived trail and bare `orbit status`
+over twenty archived emits carrying the field; (3) met on the RETIRED disjunct, the field's only
+reader (the coexistence guard) removed with it. The built CLI refuses the legacy key on both
+seams with no file written. ONE test outside the stage's sized set went red: the template hash
+pin, moved by exactly the two bodies the stage names — a sizing miss (a grep for a field name
+finds no hash pin), re-pinned and reported, not absorbed.
+
+The system cadence ran design D4's way, the blind pair AFTER apply on the shipping tree: external
+(GPT-5 Codex) 2 CRITICAL / 1 WARNING, fresh 0 / 3 / 4, both blind, no walk between them. The
+halves converged on ONE defect: the token-source sentence — one paragraph pasted into FOUR bodies
+— told the composing AI to cite every `external-<mode>-<TS>.md`, while the write gate's set is the
+trail reader's ACCEPTED passes and a rejected return is not one; on a rejected-only trail the body
+led straight into a refusal, at archive after the move. The fresh half proved the engine on all
+four trail states from the built CLI; the defect was in the prose that feeds it. **This was the
+FOURTH instance of the rule-stated-in-several-places watch the stage's own preamble said to stop
+on, and the apply emit had claimed no fourth instance appeared — a false claim, corrected on the
+walk record.** Closed by DELETION (option A, Sal, 2026-09-24): the sentence repaired once, everywhere,
+with a fidelity pin on the qualifier; the reader-backed engine surface that would make the copies
+collapse to a call (option B) was declined INSIDE the stage — authoring after the pair read the
+tree, at the capability ceiling — and is canonized at **Q-crc-24**. The external half also found
+the owning requirement's opening definition still excluding the zero-pass record (the earlier
+repair had added a paragraph beside the sentence instead of replacing it) — closed by deletion too,
+the sentence rewritten around cadence position and stated once.
 
 ### Stage rc05-executable-references — documented commands run in CI
 
@@ -3313,3 +3459,38 @@ complete an existing rule and a reader of that rule needs to see them. But the c
 held at 13 across three substantive additions, and the earlier note that this habit is partly
 shaped by a test pin still stands. If a fourth arrives, the question to ask is whether the rulings
 index is being kept artificially short.
+
+**2026-09-24 — rc04c APPLIED and its system blind pair FORMED; the FOURTH instance arrived and
+R-crc-14 is the stop.** The apply landed 36/36 with the engine half proven from the built CLI on
+every trail state the totality rule names. The pair ran design D4's way — after apply, on the
+shipping tree, both halves blind: external (GPT-5 Codex) 2C/1W, fresh 0C/3W/4S — and converged on
+one defect neither the apply nor its three proposal passes had seen: the token-source sentence,
+one paragraph in four bodies, counting rejected external returns as citable. It was the FOURTH
+instance of the rule-stated-in-more-places-than-once pattern rc04c's preamble had been counting,
+and the apply emit had claimed no fourth appeared. The walk closed it by deletion (option A) and
+recorded the mechanism that would make the copies collapse to a call (option B) at Q-crc-24.
+
+**The ruling, not another append.** The previous entry warned that a fourth capture appended
+inside an existing ruling would be the moment to ask whether the index was being kept short. The
+fourth capture was a NEW rule, and it went in as R-crc-14 — a rule is stated once, in its owning
+spec; everything else names it and points. The pin moved with it in the same edit (13 → 14 in
+CLAUDE.md's marked span and in `sources-registry.test.ts`), which is Q-crc-14's second-instance
+lesson applied rather than re-learned.
+
+**Records of fact corrected in this session, none of them state.** rc04a's stage section now
+carries the NON-EMPTY amendment as a dated line under the ratified paragraph; rc04c's "four
+archived apply emits" reads ten across four changes; its omit-scenario sentence is marked
+superseded by the delta's normative write; its task figure is stated at both 34 (ratified) and 36
+(final), with why. Q-crc-14 gained a THIRD instance (the lint throws ENOENT during a consume-mode
+propose's uncommitted-move window — a different failure mode from the missing trigger); Q-crc-23
+carries the re-measurement it asked for (46 in specs post-sync, 11 in bodies); Q-crc-25 (the spend
+record's trigger keys on gate PASSAGE and rc04c's handoff had no carrier) and Q-crc-26 (`--report`
+cannot address an archived change) are new, from the apply's handoff notes.
+
+**Two things worth carrying forward from the cadence itself.** The test-sizing lesson: rc04c
+sized its red-test set by grepping for the field name, and a HASH PIN names nothing — the template
+parity pin went red on exactly the two bodies the stage names, and the stage had no line for it.
+And the pair's shape: zero CRITICAL overlap by severity, but the top finding was shared, found by
+both halves through different routes (the external by reading the bodies against the spec, the
+fresh by driving the CLI and then reading the prose that feeds it). One cheap experiment settled
+the engine question in both directions at once, which is rc02's lesson repeating.

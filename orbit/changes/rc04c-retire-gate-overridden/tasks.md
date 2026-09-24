@@ -17,8 +17,9 @@
 >
 > **Task count, stated because this stage carries a ratified ceiling breach and stale figures are
 > the failure it keeps finding in others.** R-crc-9's breach was ratified at THIRTY-FOUR; the count
-> is now 35, the additions being handoff RECORDS (5.1e, 5.1f) written at the pre-apply boundary,
-> not new work. The ratification stands — it ratified a breach, not a number — but
+> is now 36 (34 + 5.1e + 5.1f — the earlier "35" here was the preamble's own arithmetic off by
+> one, caught by both halves of the system blind pair), the additions being handoff RECORDS
+> written at the pre-apply boundary, not new work. The ratification stands — it ratified a breach, not a number — but
 > `clean-up-review-cycle.md`'s rc04c stage section cites 34, and the next architect session should
 > reconcile the two rather than let them drift.
 >
@@ -403,6 +404,17 @@ surfaced, and it missed four sites in a file the grep DID surface.
   is worth buying" without the gate having passed. Recorded, not taken — assigning it is a scope
   call.
   **RECORDED 2026-09-24, not performed** — a scope call, open.
+
+  RECOMMEND — do not perform — **the reader-backed token surface (ratified as a FOLLOW-UP, Sal,
+  2026-09-24, at the system blind-pair walk).** Both halves of the pair found the token-source
+  sentence — pasted into four bodies (apply's seam paragraph, archive Steps 3.4 and 5.5, review's
+  spend record) — counting REJECTED external returns as citable, which the write gate refuses. The
+  walk took option A (repair the sentence once, everywhere; a fidelity pin holds the qualifier) and
+  recorded option B here: an engine surface that PRINTS the citable pass set (the trail reader's
+  accepted passes, filtered to `fresh`/`external`), so no body re-enumerates filenames at all and
+  the four copies collapse to one call. B is authoring, and it was declined inside this stage
+  because the pair had already read the tree (design D4) and the stage sits at R-crc-1's capability
+  ceiling. Sal intends to canonize it in the program via `/orbit:architect` after this change.
 - [x] 5.2 RECORD for the archive seam: whether this stage's resolution walk AUTHORED engine
   mechanism or merely REPAIRED it (R-crc-6's lanes). `design.md` D4 runs the blind pair AFTER apply
   precisely so the pair reads the shipping tree; if the walk then authors, the pair's verdict no

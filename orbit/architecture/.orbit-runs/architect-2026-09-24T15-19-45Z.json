@@ -1,0 +1,31 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-24T15:19:45Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-fable-5-1",
+  "final_assessment": "Architect session after rc04c's apply and system blind pair. R-crc-14 captured (a rule is stated once, in the spec that owns it; every other surface names it and points) — the fourth instance of the restated-rule pattern promoted to a ruling rather than appended inside one, with the marked span and the ruling-count pin moved in the same edit. Three open questions opened from the apply's handoff (Q-crc-24 the reader-backed citable-pass surface, canonizing the walk's option B; Q-crc-25 the spend record's passage-keyed trigger; Q-crc-26 --report cannot address an archived change); Q-crc-14 gained a third instance and Q-crc-23 its re-measurement. Records of fact corrected in rc04a's and rc04c's stage sections (NON-EMPTY amendment; ten emits across four changes; the superseded omit sentence; the task figure at both 34 ratified and 36 final) and rc04c's apply-and-cadence record appended. rc03a's ratification offered and declined (not yet). No state lines written; doc validates; sources agree at rulings 14.",
+  "stages_touched": [
+    "rc04a-judgement-record",
+    "rc04c-retire-gate-overridden"
+  ],
+  "rulings_captured": [
+    "R-crc-14 (Sal, 2026-09-24) — A RULE IS STATED ONCE, IN THE SPEC THAT OWNS IT; EVERY OTHER SURFACE NAMES IT AND POINTS. A body, reference, sibling capability or CLAUDE.md may name a rule and state its observable consequence, never restate its predicate or set. Earned by rc04c's four instances; consequences named for retirements (sweep for restated rules, not the retired name), walks (delete the copy, never reconcile), and the consumer half (Q-crc-24). A field name in a schema reference is a pointer, not a predicate."
+  ],
+  "completions_ratified": [],
+  "handoff": {
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md — R-crc-14 in the rulings index: read before editing any body or reference that describes an engine rule.",
+      "orbit/architecture/clean-up-review-cycle.md — Q-crc-24: the standing recommendation for the citable-pass surface (Sal's option B), the mechanism rc04c's walk declined and this program now owns.",
+      "orbit/architecture/clean-up-review-cycle.md — rc04c's stage section, APPLY AND SYSTEM CADENCE RECORD: what the pair found, what was deleted, and the false no-fourth-instance claim corrected.",
+      "orbit/changes/rc04c-retire-gate-overridden/.orbit-runs/review-system-2026-09-24T14-50-44Z.json — the fresh half of the pair, unwalked: 3 WARNING / 4 SUGGESTION, two of the warnings already closed by the external walk.",
+      "orbit/changes/rc04c-retire-gate-overridden/.orbit-runs/address-reviews-2026-09-24T14-59-59Z.json — the external walk: option A ratified, option B recorded, the record-only correction to the apply emit.",
+      "orbit/architecture/clean-up-review-cycle.md status log, 2026-09-24 (second entry) — the session's ledger, including the hash-pin sizing lesson."
+    ],
+    "next_command": "/orbit:address-reviews rc04c-retire-gate-overridden --from-file orbit/changes/rc04c-retire-gate-overridden/.orbit-runs/review-system-2026-09-24T14-50-44Z.json",
+    "model_hint": null,
+    "seam": "program-layer capture between the two halves of rc04c's system walk; the fresh half is next and nothing here gates it"
+  },
+  "next_recommended": "/orbit:address-reviews rc04c-retire-gate-overridden --from-file orbit/changes/rc04c-retire-gate-overridden/.orbit-runs/review-system-2026-09-24T14-50-44Z.json"
+}

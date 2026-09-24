@@ -129,23 +129,24 @@ summary written` requirement.
 
 ### Requirement: The judgement record — one spine, two kinds
 
-A CADENCE JUDGEMENT is a decision formed against INDEPENDENT REVIEW OUTPUT, and it SHALL be
-recorded rather than left in narrative prose. The qualifying test is exactly that — *is the
-judgement formed against independent review output?* — and it is not a tidiness rule: citing the
-passes is the SAME property the write gate's ordering check consumes, so the criterion for
-belonging and the constraint that makes the record trustworthy are ONE thing.
+A CADENCE JUDGEMENT SHALL be recorded rather than left in narrative prose. It is a decision taken
+at a CADENCE POSITION — a seam where the review cadence is consulted: proceeding past a gate that
+has not passed, buying a further independent pass, or asserting readiness at the cadence's end.
+The qualifying test is the POSITION, not the citation count. Each record's `formed_against`
+names the readable independent evidence available at that position, and that is not a tidiness
+rule: citing the passes is the SAME property the write gate's ordering check consumes, so the
+criterion for belonging (the position) and the constraint that makes the record trustworthy (the
+citation) travel in ONE record. A decision CAN hold a cadence position while having nothing to
+cite: a gate is unpassed precisely when its cadence is incomplete, which INCLUDES the state where
+no independent pass has run at all, and a decision to proceed anyway is taken at a cadence seam
+whether or not evidence exists to name. Such a record is ADMITTED, and what the ordering check
+consumes there is the emptiness ITSELF: the entry asserts the trail is empty and the trail is read
+to confirm it (the rule and its scope are below; the check is `orbit-emit-composition`'s edge (d)).
+An empty citation is checked, not unchecked.
 
 **WHAT IS EXCLUDED, AND ON WHAT GROUND.** Method calls, scope calls and process notes keep their
 existing homes: they occupy no position in a cadence, so there is nothing about them for the
-ordering check to consume. The exclusion is by CADENCE POSITION, not by citation count — and the
-distinction is load-bearing, because a decision CAN hold a cadence position while having nothing
-to cite. A gate is unpassed precisely when its cadence is incomplete, which INCLUDES the state
-where no independent pass has run at all, and a decision to proceed anyway is taken at a cadence
-seam whether or not evidence exists to name. Such a record is ADMITTED, and what the ordering
-check consumes there is the emptiness ITSELF: the entry asserts the trail is empty and the trail
-is read to confirm it (the rule and its scope are below; the check is `orbit-emit-composition`'s
-edge (d)). So the criterion and the constraint remain ONE thing — an empty citation is checked,
-not unchecked.
+ordering check to consume.
 
 **THE PAYLOAD KEY IS `judgements`, AND IT IS AN ARRAY.** It is a literal top-level payload key on
 the commands named below, and it is named here because `orbit-emit-composition`'s payload tables

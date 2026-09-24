@@ -43,11 +43,14 @@ import { generateSkillContent } from '../../../src/core/shared/skill-generation.
 // these two hashes (and their two generated-skill hashes) moved — exactly the bodies the stage
 // names. Worth recording: this pin was NOT in the stage's sized test set, because it was sized
 // by grepping for the field name and a hash pin never names anything.
+// Re-pinned again the same day at the system blind-pair walk: the token-source sentence in
+// apply and archive gained the ACCEPTED-as-a-pass qualifier (review's copy moved too; not
+// pinned here).
 const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   getExploreSkillTemplate: '1dfd25f63ce539fc14a418bd6f9c22efa9b54720a7cd5f2548653c6731fb0d87',
   getNewChangeSkillTemplate: '8f68be94db91a147b93d492f6f32ab3c02725a20a001c87602ac8d9741587614',
   getContinueChangeSkillTemplate: '98c49b247140ba301964c1e5a825686485b74a525f65f31a365d19e0aa84923e',
-  getApplyChangeSkillTemplate: '184b28ed328d92a57adb3abde85b3cc2010e3d84802dd7e33ff42c911666939b',
+  getApplyChangeSkillTemplate: '72bb9d33a435e37a211be989b1fc3cf8fb3a1f3b5c71b9300ae606e041fe23a4',
   getFfChangeSkillTemplate: 'b4411dbfa4c2fe0c02b5b5137006edf50f993d9187153b21e43de680b3f9b148',
   getSyncSpecsSkillTemplate: 'a9672b720eff36fb30f2229d835fd9a9e4cc88e81f1773bc74aff79247aa9809',
   getOnboardSkillTemplate: '8125f0ed4b7b936689448473249ccf76f6e93fd253bd9c6e3726b912bfec9841',
@@ -56,7 +59,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   getOrbitContinueCommandTemplate: 'e1ecd4fffee224e284453be717226824c7567041d7c1676b6b6bca4727e3a9dd',
   getOrbitApplyCommandTemplate: 'e5a4f72b65777d13fdd9d968e3ba50ec3c9d49c890a604a64e8dbb472bf130f8',
   getOrbitFfCommandTemplate: '57607811009ca5ece844affae130fa47efc8e64f2c14c181113f581c81978405',
-  getArchiveChangeSkillTemplate: 'd3cab2ac3bb55e4718761c8873ba4ddfb096fb5b034fa5e56f61729027c9157d',
+  getArchiveChangeSkillTemplate: 'd99094555f7a7522e245c8600dcd933631089dfe6192d0c6316c28249a555208',
   getBulkArchiveChangeSkillTemplate: 'd95ac9d5b2317736ac8395e44ff8eae1ce8d063b6eaa5fe16c225b41eeaa597d',
   getOrbitSyncCommandTemplate: '1067039e869d8dedf7922da46230b53a88253cf3fe27c7a5d60c96bc9a43453f',
   getVerifyChangeSkillTemplate: '13736310b7089e7ae108df25d6c3dc75ff923dbd9f52f02cfc322837f8e6ac4c',
@@ -75,10 +78,10 @@ const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
   'orbit-explore': 'ee4acd730d76d5f6ee9b0f08f439f6b0be39d87886bf1a5dafdb430f262ceb62',
   'orbit-new-change': '94c9d6377c6de0484f3a51923eba08214ca45cab5d87a55e46e032de2640b925',
   'orbit-continue-change': 'f61634ab5e96436b33fd30c210f84a57f55baf1716d6ef4679c1ed2a518cc3d3',
-  'orbit-apply-change': '3064936848400e4724ecf32f043b2366d66c7cead9b2f6b00262dbe76bc71fa8',
+  'orbit-apply-change': '69175890edd843de0de9c31393b7aef547cb466e68a99e1eb0a09dc8d556f32c',
   'orbit-ff-change': '77ea91cebd3be1e220824780ece9d90d82aa2f70783eedbf314a3298ec1f31e0',
   'orbit-sync-specs': '23adf56ababc77dac8dcc06048b4d74d27ded9bc4f49a57858e17c4ea7866a75',
-  'orbit-archive-change': 'df7297521e63b11c8be0b75ef1018ce7aef891e876ea4882cde8d47aaabc8fed',
+  'orbit-archive-change': 'a3180590805be9c006270ceeec9724250867b9a4edfe5addd2c53789a547caf1',
   'orbit-bulk-archive-change': '601dd7c74804c06a9818428f86030c8cef5311a9fc7c59f2dc14e490007a291d',
   'orbit-verify-change': '0d8f6b82d40bf95bd6b49f447fbd66d5414af79fa157872345668b9cb709ab6d',
   'orbit-onboard': 'df4e90ff9d19df86ff6027c39f42e6f4c34a96410dd331980138eb508fd35a42',
