@@ -209,7 +209,7 @@ file now carries a live mark. Do NOT read this paragraph as the program's full l
 only what rc07 produced. The authoritative list is the program doc's own Open questions section,
 which also carries Q-crc-11, Q-crc-12, Q-crc-20, Q-crc-21, Q-crc-22 and Q-crc-23.
 
-**Three more stages have shipped since, and the program is SIX stages complete.**
+**Four more stages have shipped since, and the program is SEVEN stages complete** (rc04c ratified 2026-09-25).
 
 `rc02c-confirmation-semantics` is ARCHIVED (2026-09-21): **the budget stopped being a target.**
 R-crc-11(h) — effort is RECORDED, never TARGETED — retired `budgetExhausted`, the
@@ -248,6 +248,35 @@ findings in the next pass were wake from one deletion) and **R-crc-12's THIRD CA
 CORRECTION is not a REVISION — rc04d's exit (2) was measurable throughout and the command written
 to measure it was not, so the criterion graded, and graded MET; an exit criterion lives in the
 CHARTER, and a task may not silently narrow the bar its stage is graded against).
+
+`rc04c-retire-gate-overridden` is ARCHIVED (2026-09-24): **one record for one fact — the field is
+gone from the write path.** Three bodies stop composing it, two payload tables refuse it as an
+unknown key (no deprecation path, by design), the shipped archive schema reference stops documenting
+it, and the coexistence guard — the field's only reader — came down with it. The successor is TOTAL:
+`formed_against: []` is legal on a `continuation`/`proceed` exactly when no accepted independent pass
+precedes the emit, refused naming the LATEST preceding pass otherwise (the structural check relaxed in
+`validateJudgements`; the emptiness-truthfulness rule in `judgementOrderingCheck`, whose set is the
+trail reader's accepted passes — a REJECTED external return is not a member). The field's normative
+footprint in `orbit/specs/` reads **3 capabilities → 0**; twenty archived emits keep it as a prior
+generation. **The second rc-stage through a COMPUTED PASSED gate, and the first through the
+blind-pair cadence**: external (GPT-5 Codex) 2C/1W and fresh 0C/3W/4S, run AFTER apply on the
+shipping tree per design D4, blind to each other, zero critical overlap — yet both converged on one
+defect the apply and three proposal passes had missed: the token-source sentence, ONE paragraph
+pasted into FOUR bodies, counting rejected external returns as citable. That was the FOURTH instance
+of the rule-stated-in-more-places-than-once pattern the stage's own preamble had been counting (the
+apply emit's claim that no fourth appeared was false, corrected on the walk record), and it produced
+**R-crc-14** — a rule is stated ONCE, in the spec that owns it; every other surface NAMES it and
+points — with the rulings count moved to <!-- src:rulings -->14<!-- /src:rulings --> in the same edit as
+the pin. Option A (repair the sentence once, everywhere; delete the restatements) was taken; option
+B (an engine surface that PRINTS the citable pass set so bodies never enumerate) is canonized at
+**Q-crc-24**, with **Q-crc-25** (the spend record's trigger keys on gate PASSAGE) and **Q-crc-26**
+(`--report` cannot address an archived change) opened from the apply's handoff. The readiness record
+carries four accepted residuals — the class-list enumeration awaiting Q-crc-24, the R-crc-14 rewrite
+read only in-context, the closed-by-rule edge unobserved in practice, and the trail-reader witness
+stated at its real strength. One sizing lesson: the stage sized its red-test set by grepping for the
+field name, and a HASH PIN names nothing — the template parity pin went red on exactly the two bodies
+the stage names and had no line in the plan. Ratified task breach at 34, final count 36, both stated.
+**2243 tests green.**
 
 Read that doc before any rc-stage work; the D-arc section below is the historical
 record of how the engine got here.

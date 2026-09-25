@@ -1851,7 +1851,7 @@ drops from 6 capabilities to 3, measured the same way it was measured at explora
 ### Stage rc04c-retire-gate-overridden — one record for one fact
 
 Depends-on: rc04a-judgement-record, rc04d-override-vocabulary
-Complete: [ ]
+Complete: [x] 2026-09-25 (Sal)
 
 **RATIFIED CEILING BREACH — the task dimension (Sal, 2026-09-24). R-crc-9's first.** Measured at
 external iteration 1 and re-measured after its walk, this stage sits UNDER R-crc-1 on three
@@ -3494,3 +3494,20 @@ And the pair's shape: zero CRITICAL overlap by severity, but the top finding was
 both halves through different routes (the external by reading the bodies against the spec, the
 fresh by driving the CLI and then reading the prose that feeds it). One cheap experiment settled
 the engine question in both directions at once, which is rc02's lesson repeating.
+
+**2026-09-25 — rc04c RATIFIED; rc03a declined a FOURTH time.** rc04c's completion ratified by Sal the
+morning after its archive, on the readout the engine rendered (quiescent, all citing work archived)
+and the three exit criteria measured at apply and re-measured at archive. Seven stages complete.
+The same offer fired for rc03a — its fourth firing (2026-09-22, 2026-09-24 twice counting the
+suppressed one, now 2026-09-25) — and was declined again: the stage is WITHDRAWN and the grammar has
+no state for that, so every "complete?" offer asks the wrong question. Q-crc-11's cost evidence now
+stands at four firings for one stage, which is the number a reader should weigh when that question
+is taken up.
+
+**Closed out between sessions, recorded so the trail is whole.** A project-wide `/orbit:audit-drift`
+after the archive found one drift: CLAUDE.md's handoff narrative had no rc04c archive paragraph, the
+first time the customary paragraph was not written at the seam. Walked and written the next morning,
+with the ruling figure inside it MARKED so the source lint checks it. The same audit corrected a
+record of its own: the pre-archive sweep inside rc04c's archive emit claimed the boot JSON carries
+no `touchpoints` key; it does, nested under `boot` as `orbit-orientation` specifies — a reader error,
+corrected on the audit's record and not by editing the emit.
