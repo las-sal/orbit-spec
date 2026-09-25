@@ -532,6 +532,14 @@ One goal per phase, each falsifiable, each stage naming its goal (settled under 
   stating plainly for whoever takes the scope call: the trigger this question set itself is
   ambiguous between "a third withdrawn stage" and "a third time the gap costs something", and the
   second reading is now satisfied.
+  **2026-09-25 — ASSIGNED (Sal): `rc15-ended-stage-state`, declared in Phase 4.** Taken up on the
+  second reading, after a FOURTH firing for rc03a earlier the same day (declined, then suppressed for
+  the rest of the day rather than fired a fifth time). The stage carries both layers — the `Complete:`
+  slot's third production for a user-declared ENDED stage, and the state reader consulting the concluded
+  header in a citing staging directory — because D-bcs-6 showed them to be one missing state. The
+  standing recommendation above is the stage's starting shape, not its specification; the mark's
+  spelling is the exploration's. This question CLOSES when rc03a carries the mark and the next architect
+  session offers it nothing (rc15's exit (1)).
 
 - **Q-crc-12 — the archive seam is silent when the gate that is exhausted is not the gate archive
   watches.** Observed 2026-09-15, twice in one day. Both rc03a and rc13a archived with
@@ -1140,10 +1148,11 @@ never deleted.
 
 ## Program stages
 
-<!-- src:stages -->22<!-- /src:stages --> small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
+<!-- src:stages -->24<!-- /src:stages --> small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
 split into rc02 + rc02b on 2026-09-12; rc13 added 2026-09-14 and moved to phase 1 the same day;
 rc03a split from rc03 on 2026-09-15 and WITHDRAWN the same day; rc13 split into rc13a + rc13b on
-2026-09-15 under R-crc-9; rc07b split from rc07 the same day under R-crc-9 applied PREVENTIVELY; rc04d split from rc04c on 2026-09-21, the THIRD preventive application, caught at exploration by a size check rather than after a cadence).
+2026-09-15 under R-crc-9; rc07b split from rc07 the same day under R-crc-9 applied PREVENTIVELY; rc04d split from rc04c on 2026-09-21, the THIRD preventive application, caught at exploration by a size check rather than after a cadence;
+rc13c declared 2026-09-25 from rc13a's archive proposal, and rc15 declared the same day taking up Q-crc-11 — rc14 stays reserved for the undeclared `rc14-delta-scope` recommendation).
 Every stage is sized under R-crc-1, names the capabilities it touches, and names its goal.
 Charters are settled under R-crc-3 until a citing change refines them; exit criteria are
 falsifiable and self-measured by the stage's own cadence (G0). Position is computed — see the
@@ -1371,7 +1380,7 @@ convention's own thesis applied honestly and grading it a MISS would reward faki
 exact behaviour D-bcs-1 exists to stop. Sal took the first case in the architect session the same
 afternoon; the mark above is that ratification.
 
-**PROPOSED FOLLOW-ON, for Sal to ratify as a stage or decline — NOT declared here:**
+**PROPOSED FOLLOW-ON — DECLARED 2026-09-25 (Sal) as `rc13c-propose-consumes-mechanism`, its own stage below rc13b; the proposal text is kept as written:**
 `rc13c-propose-consumes-mechanism`. `orbit-propose-modifications`' consume-mode mapping has no
 Mechanism row and its validation scenario names five sections; under D-bcs-3 a BOUNDED residual
 must TRAVEL at propose (spec row owns, design Risks points), and today that transfer is an
@@ -1445,6 +1454,43 @@ render; (2) the parse has instruments over the real format — an entry with a d
 without, each out-of-domain disposition, a fenced block that must not count, a file with no Mechanism
 section; (3) the requirement states what the engine judges (FORM) and what it cannot (whether an
 enumeration is TRUE, and whether a rule was declared at all).
+
+### Stage rc13c-propose-consumes-mechanism — what an exploration accounted for reaches the proposal
+
+Depends-on: rc13a-explore-mechanism-convention
+Complete: [ ]
+
+DECLARED 2026-09-25 (Sal), from the follow-on rc13a's archive proposed. rc13a made a rule's domain
+ACCOUNTED in the exploration; D-bcs-3 says an OPEN-DECLARED residual does not block and instead
+TRAVELS into the change's artifacts. Today that travel is an instruction the proposing AI follows
+from the authoritative file: `orbit-propose-modifications`' `Section-to-artifact mapping` has rows for
+Premise, Decisions, Considered & out and References and NO row for Mechanism, and its
+`Validate explore.md structure before consuming` scenario still counts FIVE sections against a
+convention that now has six. The residual either reaches the spec delta and the design's Risks
+because the author remembered, or it dies in the exploration — which is the outcome D-bcs-1 exists
+to forbid, one layer downstream of where rc13a forbade it.
+
+Charter: the consume-mode mapping gains a MECHANISM ROW stating where each closure outcome lands —
+a CLOSED entry informs the requirement it derives (the domain table is the requirement's scenario
+set, or points at what is); a BOUNDED entry's `Residual kind:` and `Residual method:` land in the
+owning spec delta's requirement text with the design's Risks section POINTING at it (spec owns,
+design points, per D-bcs-3 as settled) — and the structure check reads SIX sections, the Mechanism
+section's absence warning like any other missing section. The same stage owns the one transition
+the re-entry table cannot see: propose keys on `explore.md`'s PRESENCE and reads no header token, so
+a `concluded` name can be promoted without reopening. The stage specifies that seam — refuse,
+naming the conclusion and its `Re-entry:` trigger, or treat the invocation as the reopen on the
+user's word; the exploration chooses, and D-bcs-7's third row is the shape it must agree with.
+Propose consumes FORM, as rc13b renders form: whether an enumeration is true stays the reviewer's.
+
+Goal G3. Touches: orbit-propose-modifications — one capability, which is why this is a stage and
+not a fold into rc13a (three owners on one requirement) or rc13b (a third capability at its
+ceiling). Exit: (1) the mapping names a Mechanism row with a destination per closure token, and the
+validation scenario's section count matches `orbit-conventions`' format requirement by POINTER, not
+by a restated number; (2) a BOUNDED exemplar consumed at propose lands its two residual slots in a
+spec delta and its pointer in design Risks — measured on the stage's own proposal, whose exploration
+carries at least one BOUNDED entry; (3) `/orbit:propose <name>` against a concluded staging directory
+does NOT scaffold a change silently: the body's step is grep-tested for the refuse-or-reopen branch,
+and the re-entry requirement in `orbit-explore-modifications` is pointed at, not restated (R-crc-14).
 
 ### Stage rc02b-severity-ladder — a severity is a consequence, and CRITICAL pays for itself
 
@@ -2339,6 +2385,56 @@ changes: the engine command first, body adoption second. Goal G4. Touches: orbit
 the engine (change 1); propose/archive bodies (change 2). Exit: (1) the deterministic steps
 are engine-tested; (2) the three PR references shrink by more than half; (3) the consent
 properties (user-invoked, draft-only, merge never) hold unchanged.
+
+### Stage rc15-ended-stage-state — a stage that ended without meeting its criteria says so
+
+Depends-on: (none)
+Complete: [ ]
+
+DECLARED 2026-09-25 (Sal), taking up Q-crc-11 on its second reading — a third occurrence of the
+COST, not a third withdrawn stage. rc14 is not this stage: that id stays reserved for the standing
+`rc14-delta-scope` recommendation in the status log (2026-09-14), undeclared.
+
+The grammar has two states where the program has three. `orbit-architecture-engine`'s
+`Computed stage state with completion-as-ratification` composes `complete` from an observed
+`quiescent` and a ratified `Complete: [x] <date> (<who>)` slot; the only other slot value is `[ ]`.
+A stage whose citing work all archived WITHOUT meeting its exit criteria — rc03a, withdrawn after
+three passes; rc13a's first attempt, before its second shipped — has no honest mark, so it renders
+`quiescent — completion awaiting your ratification` at every architect session forever, and the
+WAITING band lists it as yours to ratify. Four firings for rc03a alone, four declines, each one
+re-derived from the charter. D-bcs-6 named the same gap from the exploration side: a stage cited
+only by a CONCLUDED exploration renders `exploring`, because the state reader keys on LOCATION
+(`orbit/explore/*/`) and never reads the `> **Status**: concluded <date>.` header rc13a shipped as
+the concluded record's pointer. WITHDRAWN and CONCLUDED are one missing state seen from two layers.
+
+Charter: the engine learns the third state, from both layers, as a PURE FUNCTION of on-disk
+artifacts like the other four. (1) The `Complete:` slot grammar gains a third production for a stage
+the user has declared ENDED without meeting its criteria — one mark, dated and attributed like the
+ratified one, with the parser's NEAR-MISS rule unchanged (a slot line that matches none of the three
+productions is MALFORMED naming the line). (2) The state reader reads the status-header production
+(`orbit-conventions` owns it; the reader points) on the `explore.md` in any citing staging
+directory, and a stage whose ONLY live citer is a concluded exploration observes as ended-from-explore
+rather than `exploring`. (3) The rendered vocabulary gains the state, the STATUS render and the
+`--json` bucket carry it, the WAITING band's closed set does NOT list it (nothing is yours to do),
+and the ratification offer in `orbit-architect`'s `Completion-ratification flow` fires on
+awaiting-ratification ONLY — a declared-ended stage is offered nothing. (4) The same inconsistency
+rule the ratified mark has: an ended mark on a stage with LIVE citing work renders INCONSISTENT and
+audit-drift's check (b) raises it — that check names the ratified mark today and consumes the
+engine's rule; if its text needs the second mark named, that is the one sentence this stage may add
+to `orbit-audit-drift`, by pointer. The mark is the USER's, written in an architect session on their
+word exactly as ratification is (the arc's rules of engagement); the engine never infers withdrawal
+from a trail.
+
+Goal G4. Touches: orbit-architecture-engine, orbit-architect (two capabilities; a third only if
+audit-drift's check text must name the mark, measured at exploration). Exit: (1) rc03a carries the
+ended mark, renders a state that is neither `complete` nor awaiting, and the next architect session
+on this doc fires NO ratification offer for it — Q-crc-11's firing count stops at four; (2) a stage
+cited only by a concluded exploration (a fixture, since none exists on disk today) observes as the
+ended-from-explore state and never as `exploring`, with the parity between the two layers stated in
+one requirement; (3) every new production is exercised by a test that EXECUTES it against a
+malformed near-miss as well as the well-formed line (the rc13a discipline: a production asserted
+present is not a production tested), and the WAITING-set requirement in `orbit-orientation` is
+unchanged, measured by its delta count being zero.
 
 ## Considered & out
 
@@ -3614,3 +3710,21 @@ rc13a's exit (2) had a sound instrument and a criterion whose term the stage its
 rc03a's offer was NOT re-fired — declined earlier today, its fourth — so Q-crc-11's count stands
 at four firings. Proposed and awaiting Sal's word: `rc13c-propose-consumes-mechanism` (in the rc13a
 section). Next uncovered stage in dependency order: rc13b, now unblocked.
+
+**2026-09-25 — TWO STAGES DECLARED (Sal): rc13c and rc15; 22 → 24.** In the architect session that
+followed rc13a's ratification by ten minutes, Sal took both scope calls the archive had left open.
+`rc13c-propose-consumes-mechanism` (Phase 1, depends on rc13a) is the follow-on rc13a's archive
+proposed: the consume-mode mapping gains a Mechanism row so a BOUNDED residual TRAVELS at propose as a
+checked mapping rather than a remembered instruction, the structure check reads six sections by
+pointer, and propose stops promoting a `concluded` name silently — one capability,
+`orbit-propose-modifications`, which is why it is a stage and not a fold. `rc15-ended-stage-state`
+(Phase 4, no dependencies) takes up Q-crc-11 on its second reading — the third occurrence of the
+COST, after rc03a's fourth ratification offer was declined this morning: the `Complete:` slot gains a
+third production for a user-declared ENDED stage, the state reader consults rc13a's concluded header
+in a citing staging directory, the ratification offer fires on awaiting-ratification only, and the
+WAITING set is unchanged. rc14 was NOT used: it stays reserved for the undeclared `rc14-delta-scope`
+standing recommendation of 2026-09-14. rc03a's offer was not re-fired in this session — the fourth
+firing and its decline stand as the day's record, and rc15's exit (1) is what ends the count. Both
+stage-count marks (this doc's preamble, CLAUDE.md) moved to 24 in the same edit. Eight stages
+complete; rc13b remains the next uncovered stage in dependency order, and rc13c now queues behind
+it; rc15 has no dependency and could be explored at any time.

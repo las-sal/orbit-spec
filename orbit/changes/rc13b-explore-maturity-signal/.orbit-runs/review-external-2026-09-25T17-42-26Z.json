@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-09-25T17:42:26Z",
+  "change": "rc13b-explore-maturity-signal",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "proposal",
+  "prompt_path": "orbit/changes/rc13b-explore-maturity-signal/.orbit-runs/external-prompt-proposal-2026-09-25T17-42-25Z.md",
+  "target": null,
+  "final_assessment": "External review prompt packaged for rc13b-explore-maturity-signal (iter 1, mode proposal); awaiting findings from the external AI Sal chooses (iteration 1: any model; a fresh session sets the independent baseline). Cycle context in the prompt: one fresh internal pass (2C/11W/5S) fully walked, zero open. The handoff PREFLIGHT FAILED — the working tree is dirty (CLAUDE.md, the program doc, the architect emit and the whole change directory are uncommitted; nothing from this session has been committed) though no commits are unpushed against origin/d-arc — so the pull invocation is WITHHELD in chat and the commit-and-push action leads. Invoked as `--external`, read as `--reviewer external` (the flag is not defined; the intent is unambiguous). This handoff covers the review-proposal gate while it is UNPASSED, so it is not a spend past a passed gate and carries no continuation record.",
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/rc13b-explore-maturity-signal/.orbit-runs/external-prompt-proposal-2026-09-25T17-42-25Z.md into the target AI, save the response as orbit/changes/rc13b-explore-maturity-signal/.orbit-runs/external-proposal-<TS>.md, then /orbit:address-reviews rc13b-explore-maturity-signal --from-file <path>"
+}
