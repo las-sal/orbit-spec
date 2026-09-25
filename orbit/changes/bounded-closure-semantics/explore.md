@@ -185,7 +185,7 @@ Moves:
 - FALSIFY: applied — Case 2's two moved homes each defeat the fifth rung; the in-place home is the only one the rung can render on
 - CONFORM: applied — D1 consent (conclude is user-declared), R-crc-10 (three tokens, all engine-observable: header token, `Re-entry:` slot, citation key), no new command (surface stays 15)
 - FEASIBILITY: not applied — a header edit, one entry, one key, one emit
-- CONSUME: applied — the final boundary emit fires BEFORE the header flip so the trail's last record is the author's conclusion; rc13b reads the header token and the `Re-entry:` slot
+- CONSUME: applied — the CONCLUDED entry, the header flip and the citation key land BEFORE the final boundary emit, because rc13b's rung is computed from the file at emit time and orientation renders that emit's next line; amended 2026-09-25 at propose (the first wording had the emit first and the rung would never have rendered — COHERE, caught by executing the sequence once); rc13b reads the header token and the `Re-entry:` slot
 - INVOKE: applied — fires on the user's word "conclude" inside explore; nothing else triggers it
 
 ### D-bcs-7 — re-entry resolves against three facts, as one table
@@ -324,8 +324,10 @@ Moves:
   <date>.`; the Decisions section gains ONE CONCLUDED entry — what was decided, why nothing is
   built, and a `Re-entry:` slot (the owner; the header is the pointer); `.openspec.yaml` gains
   `concluded: <date>` INSIDE the kept `architecture:` citation (the lenient reader ignores it today;
-  it is the engine-owned input Q-crc-11's stage keys on); the final boundary emit fires BEFORE the
-  flip; the verb is user-declared inside explore under D1 consent, with no new command. Case 2
+  it is the engine-owned input Q-crc-11's stage keys on); the header flips and the key lands BEFORE the final boundary
+  emit, so the emit's rung is computed from the concluded file (AMENDED 2026-09-25 at propose: the
+  first wording had the emit first, which would leave rc13b's rung unrendered on the last record — a
+  COHERE failure caught by executing the sequence once); the verb is user-declared inside explore under D1 consent, with no new command. Case 2
   shows why not a move: moving the directory defeats rc13b's fifth rung, and the analogy to the
   changes archive is wrong because a conclusion carries a standing trigger, which is Considered &
   out's shape at the program layer. KNOWN and assigned: stage state renders `exploring` for a
