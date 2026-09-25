@@ -686,7 +686,13 @@ never deleted.
   propose opens that window. So the answer to "run the lint at more seams" has a precondition this
   instance names — the lint's domain must survive an uncommitted move — and whoever wires the
   trigger should read the working tree's tracked set, not the index's paths, or tolerate the miss.
-
+  **2026-09-25 — a FOURTH instance, at the ARCHIVE seam.** rc13a's archive flow moved the change
+  directory with `mv` and ran the suite before staging: the lint's file domain is `git ls-files`,
+  which still listed the change at its old path, so the lint opened files that no longer existed
+  (ENOENT) and the suite went red on nothing wrong with the tree. Staging the move — not
+  committing — restored 2254/2254. Same failure mode as the third instance (a consume-mode
+  propose's uncommitted-move window), now on the other lifecycle move; the domain reads git's
+  index, and every workflow move is uncommitted at the moment the suite runs.
 - **Q-crc-15 — the engine carries TWO CommonMark fence grammars, and one of them is wrong.**
   Observed 2026-09-17 by the system-mode external pass. `src/core/markdown-fence.ts` is the strict
   shared tracker; `computeFenceMask` in `src/core/parsers/requirement-blocks.ts` is a depth
