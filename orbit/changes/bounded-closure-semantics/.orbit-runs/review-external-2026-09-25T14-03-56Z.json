@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-09-25T14:03:56Z",
+  "change": "bounded-closure-semantics",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "system",
+  "prompt_path": "orbit/changes/bounded-closure-semantics/.orbit-runs/external-prompt-system-2026-09-25T14-03-36Z.md",
+  "target": null,
+  "final_assessment": "External review prompt packaged for bounded-closure-semantics (iter 1, mode system) — the EXTERNAL half of the review-system blind pair, run after apply per design D4; awaiting findings. Handoff preflight FAILED at packaging: the apply work (explore.ts body, two test files, tasks.md, two apply emits) and this prompt are uncommitted on d-arc (0 unpushed commits) — commit and push before handing off, or the external AI reviews the proposal state.",
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/bounded-closure-semantics/.orbit-runs/external-prompt-system-2026-09-25T14-03-36Z.md into the target AI, save the response as orbit/changes/bounded-closure-semantics/.orbit-runs/external-system-<TS>.md, then /orbit:address-reviews bounded-closure-semantics --from-file <path>"
+}

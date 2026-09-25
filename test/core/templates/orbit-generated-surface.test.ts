@@ -249,6 +249,139 @@ describe('generated surface fidelity (real init, all workflows, claude + codex)'
     expect(log).toContain('architecture scope');
   });
 
+  describe('explore body carries the six-section convention (rc13a, bounded-closure-semantics)', () => {
+    // What IS asserted here is FORM on the generated surface: section list and order, the two
+    // status tokens and their production, the slot vocabularies, the closure tokens and the
+    // residual-slot rule, the nine move names, the re-entry table, the conclude order, the
+    // no-metadata sentence, and that the shipped exemplar's lines match the grammar's productions.
+    // What is NOT asserted, and cannot be from a body: that any enumeration is TRUE, that any
+    // residual is honest, or that an author wrote every rule down (R-crc-10 — a record, not a check).
+    let skill: string;
+    beforeAll(async () => {
+      skill = await fs.readFile(
+        path.join(testDir, '.claude', 'skills', 'orbit-explore', 'SKILL.md'),
+        'utf-8'
+      );
+    });
+
+    const ordered = (haystack: string, needles: string[]) => {
+      let cursor = -1;
+      for (const n of needles) {
+        const at = haystack.indexOf(n, cursor + 1);
+        expect(at, `expected '${n}' after position ${cursor}`).toBeGreaterThan(cursor);
+        cursor = at;
+      }
+    };
+
+    it('scaffolds six sections in the owned order and says six, never five', () => {
+      const scaffold = skill.slice(skill.indexOf('## explore.md six-section convention'));
+      ordered(scaffold, ['## Premise', '## Mechanism', '## Decisions', '## Open questions', '## Considered & out', '## References']);
+      expect(skill).toContain('all six sections are scaffolded');
+      expect(skill).not.toMatch(/five-section|five sections/);
+      expect(skill).not.toContain('illustrative');
+    });
+
+    it('documents both status tokens and the one status-header production', () => {
+      expect(skill).toContain('> **Status**: exploring.');
+      expect(skill).toContain('> **Status**: concluded <YYYY-MM-DD>.');
+      expect(skill).toContain('^> \\*\\*Status\\*\\*: (exploring\\b|concluded \\d{4}-\\d{2}-\\d{2}\\.)');
+      expect(skill).toContain('the ONLY other legal token');
+    });
+
+    it('states the Decisions entry production with its slot vocabularies and defaults', () => {
+      expect(skill).toContain('- **<YYYY-MM-DD> — <ID>: <title>**');
+      expect(skill).toContain('<ID> ::= D-[a-z0-9]+-[0-9]+');
+      expect(skill).toContain('Kind: rule | fact | scope');
+      expect(skill).toContain('^\\s*(?:[-*+]\\s+)?Kind:\\s*(rule|fact|scope)\\s*$');
+      expect(skill).toContain('Disposition: live | superseded <ID or pointer> | assigned <stage-id>');
+      expect(skill).toContain('Re-entry: <what would reopen it>');
+      expect(skill).toContain('**absent means `rule`.**');
+      expect(skill).toContain('absent means `live`');
+      expect(skill).toContain('One claim under obligation per entry');
+    });
+
+    it('states the Mechanism grammar once: closure tokens, residual-slot rule, MALFORMED', () => {
+      expect(skill).toContain('<TOKEN> ::= DERIVED | SOURCED | BOUNDED');
+      expect(skill.match(/required iff BOUNDED, forbidden otherwise/g)?.length).toBe(2);
+      expect(skill).toContain('nine lines, one per move, each move exactly once');
+      expect(skill).toContain('**A grammar failure is MALFORMED, naming the line**');
+      expect(skill).toContain('Closure is ACCOUNTED, not CLOSED');
+      expect(skill).toContain('"There may be others" discharges nothing');
+      expect(skill).toContain('VISIBILITY, never BLOCKING');
+    });
+
+    it('carries the nine-move table with every move named', () => {
+      const table = skill.slice(skill.indexOf('### The nine moves, applied per rule'), skill.indexOf('### Exemplar'));
+      for (const move of ['READ', 'ENUMERATE', 'COHERE', 'EXECUTE', 'FALSIFY', 'CONFORM', 'FEASIBILITY', 'CONSUME', 'INVOKE']) {
+        expect(table).toContain(`| **${move}** |`);
+      }
+      expect(table).toContain('The set is BOUNDED, declared in its own slots.');
+      expect(table).toContain('Residual kind:');
+      expect(table).toContain('Residual method:');
+      expect(table).toContain('RESOURCES');
+    });
+
+    it('carries the re-entry table: six cells in five rows, two refused', () => {
+      expect(skill).toContain('| no | — | no | Mode B new |');
+      expect(skill).toContain('| yes | no | no | Mode B resume |');
+      expect(skill).toMatch(/\| yes \| yes \| no \| state the conclusion/);
+      expect(skill).toMatch(/\| no \| — \| yes \| resume IN PLACE/);
+      expect(skill).toMatch(/\| yes \| either \| yes \| REFUSED/);
+    });
+
+    it('states the conclude order and that nothing is written to metadata', () => {
+      const section = skill.slice(skill.indexOf('### Concluding an exploration'));
+      ordered(section, ['residency sweep', 'CONCLUDED Decisions entry', 'status header flips', 'THEN the final boundary emit']);
+      expect(section).toContain('Nothing is written to `.openspec.yaml`');
+      expect(section).toContain('STAYS IN PLACE');
+      expect(section).toContain('Recommend, never infer');
+      expect(section).toContain('superseded <the reopening entry\'s ID>');
+    });
+
+    it('ships an exemplar whose lines match the grammar productions', () => {
+      const start = skill.indexOf('```markdown\n### D-bcs-3 — ');
+      expect(start).toBeGreaterThan(-1);
+      const end = skill.indexOf('```', start + 12);
+      const lines = skill.slice(start + '```markdown\n'.length, end).split('\n').filter((l) => l.length > 0);
+
+      // entry heading
+      expect(lines[0]).toMatch(/^### D-[a-z0-9]+-[0-9]+ — .+$/);
+      // Domain: line, then a two-column table with a separator row and ≥1 member row
+      expect(lines[1]).toMatch(/^Domain: .+$/);
+      expect(lines[2]).toBe('| member | covered by |');
+      expect(lines[3]).toBe('|---|---|');
+      let i = 4;
+      let members = 0;
+      while (lines[i].startsWith('|')) {
+        expect(lines[i]).toMatch(/^\| [^|]+ \| [^|]+ \|$/);
+        members++;
+        i++;
+      }
+      expect(members).toBeGreaterThan(0);
+      // Closure token, matched from line start to the first ' — '
+      const closure = lines[i].match(/^Closure: (DERIVED|SOURCED|BOUNDED)(?: — .+)?$/);
+      expect(closure).not.toBeNull();
+      i++;
+      // residual slots iff BOUNDED
+      if (closure![1] === 'BOUNDED') {
+        expect(lines[i++]).toMatch(/^Residual kind: .+$/);
+        expect(lines[i++]).toMatch(/^Residual method: .+$/);
+      } else {
+        expect(lines[i]).not.toMatch(/^Residual /);
+      }
+      // Moves: then nine lines, each move exactly once
+      expect(lines[i++]).toBe('Moves:');
+      const moves = lines.slice(i);
+      expect(moves).toHaveLength(9);
+      const seen = moves.map((l) => {
+        const m = l.match(/^- (READ|ENUMERATE|COHERE|EXECUTE|FALSIFY|CONFORM|FEASIBILITY|CONSUME|INVOKE): (applied|not applied) — .+$/);
+        expect(m, l).not.toBeNull();
+        return m![1];
+      });
+      expect(new Set(seen).size).toBe(9);
+    });
+  });
+
   it('review LAUNCHER surfaces advertise all three modes (not just the long body)', async () => {
     // Guards the discoverable layer: a future mode addition must update the
     // command mirror and the skill description, not only SKILL.md's body.

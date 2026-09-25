@@ -362,8 +362,22 @@ The four disciplines from \`orbit-conventions\`, embedded per body; detail lives
 | Mode | Trigger | What happens |
 |---|---|---|
 | **A — Bare** | \`/orbit:explore\` with no argument and no crystallization trigger | Upstream behavior. Conversational think-mode, no file created, no staging directory. |
-| **B — Named** | \`/orbit:explore <name>\` | Create or resume \`orbit/explore/<name>/explore.md\`. New: scaffold five sections AND the minimal \`.openspec.yaml\` (see below). Resume: read existing file for context; a pre-D2 staging directory lacking \`.openspec.yaml\` gains it on resume (add-only, citation still optional). |
+| **B — Named** | \`/orbit:explore <name>\` | Resolve the name by the re-entry table below (six cells, two refused). **New** — no staging directory AND no active change of that name: scaffold the six sections AND the minimal \`.openspec.yaml\` (see below). **Resume** — \`orbit/explore/<name>/explore.md\` exists with the \`exploring\` token AND no active change of that name: read the existing file as authoritative; a pre-D2 staging directory lacking \`.openspec.yaml\` gains it on resume (add-only, citation still optional); a file lacking a \`## Mechanism\` section gains one (add-only). |
 | **C — Crystallized** | Bare invocation that produces 2+ substantive decisions | Prompt the user: "We have enough material here to capture — what should we call this exploration?" On accept, transition to Mode B and back-fill what's been discussed (the minimal \`.openspec.yaml\` is written as in Mode B). On decline, continue Mode A and don't re-prompt this shape. |
+
+### Re-entry resolution (Mode B) — one table
+
+\`/orbit:explore <name>\` resolves the name against THREE facts — a staging directory exists; it is concluded (per the status-header production below; defined only when the directory exists); an active change of that name exists — as ONE table, six cells, two refused:
+
+| staging dir | concluded | active change | resolution |
+|---|---|---|---|
+| no | — | no | Mode B new |
+| yes | no | no | Mode B resume |
+| yes | yes | no | state the conclusion and its \`Re-entry:\` trigger, ask nothing else; REOPEN only on the user's word (see "Concluding an exploration") |
+| no | — | yes | resume IN PLACE against \`orbit/changes/<name>/explore.md\`, say so, scaffold nothing |
+| yes | either | yes | REFUSED — second claim on one truth; name both paths and stop (neither resume nor scaffold) |
+
+Two edges the table implies: an active change WITHOUT an \`explore.md\` is Mode B new IN the change directory (the file is created beside the artifacts; no staging directory is scaffolded). A staging directory WITHOUT \`explore.md\`, or whose header carries neither fixed token, resolves as not-concluded and resumes with the stub or header added (add-only) — never MALFORMED.
 
 ### Minimal explore metadata (\`.openspec.yaml\`, D-arc Stage D2)
 
@@ -390,9 +404,9 @@ A decision counts toward the 2+ threshold if it:
 
 Does NOT count: exploratory thinking, speculation, "let me think about X", or restating something already established.
 
-## explore.md five-section convention
+## explore.md six-section convention
 
-When a named exploration exists (Mode B/C), \`orbit/explore/<name>/explore.md\` follows this structure:
+When a named exploration exists (Mode B/C), \`orbit/explore/<name>/explore.md\` follows this structure — SIX sections in this order. The format is \`orbit-conventions\`' (its requirement keeps its historical title for delta identity; the format it specifies is six). Three productions are stated ONCE in this section — the status header, the Decisions entry, the Mechanism entry — and every other mention in this body points at them.
 
 \`\`\`markdown
 > **Status**: exploring. Promoted to proposal/design/specs via /orbit:propose when decisions firm up.
@@ -402,8 +416,11 @@ When a named exploration exists (Mode B/C), \`orbit/explore/<name>/explore.md\` 
 ## Premise
 <the problem space; why this exploration; what we're trying to figure out>
 
+## Mechanism
+<one entry per live rule in Decisions, keyed by the rule's ID, in the entry grammar below: the domain as a table, the closure token, the residual slots iff BOUNDED, nine move lines; \`### Case <n>\` blocks hold the evidence the move lines cite>
+
 ## Decisions
-<dated entries; each captures what was decided and a brief rationale>
+<dated entries in the entry format below; each captures ONE claim, a brief rationale, and its \`Kind:\`>
 
 ## Open questions
 <things we don't know yet; resolved later by moving to Decisions, deferred as @review: markers via /orbit:propose, or abandoned to Considered & out. EVERY entry carries the slot line \`Standing recommendation: <the current leaning verbatim>\` — or the literal \`Standing recommendation: none yet\` when no leaning exists; never an entry with the slot absent (D-arc Stage D5, leak-hardening layer 1)>
@@ -415,15 +432,154 @@ When a named exploration exists (Mode B/C), \`orbit/explore/<name>/explore.md\` 
 <files, URLs, prior changes, prior conversations worth reading during artifact generation>
 \`\`\`
 
-When creating a new file, all five sections are scaffolded (empty content under each heading). When resuming, read the existing file as authoritative.
+When creating a new file, all six sections are scaffolded (empty content under each heading). When resuming, read the existing file as authoritative; a file written before this format, with no \`## Mechanism\` section, is read and not rejected — the section is added on next touch (a format note, never a blocker).
+
+### The status header — one production
+
+The file's first non-blank line carries one of TWO fixed tokens, matched by this production:
+
+\`\`\`
+^> \\*\\*Status\\*\\*: (exploring\\b|concluded \\d{4}-\\d{2}-\\d{2}\\.)      the file's first non-blank line
+\`\`\`
+
+- \`> **Status**: exploring. …\` — the working token; the rest of the line is free prose.
+- \`> **Status**: concluded <YYYY-MM-DD>.\` — the ONLY other legal token, written by the conclude flow ("Concluding an exploration" below).
+
+Any other first line is NEITHER token: the file resolves as not-concluded and the header is added on next touch (add-only) — never MALFORMED. A status line is a pointer, not an entry.
+
+### Decisions entries — the ENTRY is the key
+
+Each Decisions entry is a top-level list item whose opener is the ID slot — the opener every exploration on record already writes, formalized rather than replaced (zero migration). One production. A slot is matched anywhere within the lines that belong to the entry's list item — a lazy-continuation line or a nested bullet both qualify, which is what the optional bullet prefix admits; the \` — \` in the opener is the literal em-dash:
+
+\`\`\`
+- **<YYYY-MM-DD> — <ID>: <title>** <prose…>            the opener; the ID slot; <ID> ::= D-[a-z0-9]+-[0-9]+, unique within the file
+  Kind: rule | fact | scope                               ^\\s*(?:[-*+]\\s+)?Kind:\\s*(rule|fact|scope)\\s*$
+  Disposition: live | superseded <ID or pointer> | assigned <stage-id>     same optional bullet prefix as Kind:
+  Re-entry: <what would reopen it>                        concluded entries only; exactly one LIVE entry carries it
+\`\`\`
+
+**One claim under obligation per entry.** A Decision is a RULE when it PRESCRIBES or CONSTRAINS how something must be done across a SET of situations — the test is "in which situations does this apply?", applied to the claim's NORMATIVE force, never to its grammar. A quantified EMPIRICAL claim ("heading count has never correlated with readiness under any conditions") has a logical domain and is a FACT: it describes one world and is falsifiable by evidence. A SCOPE choice (in / out / deferred) is one-off. The test applies PER CLAIM as an authoring rule: an entry carrying more than one claim under obligation is SPLIT by the author into entries with distinct IDs (the rule entry owes a Mechanism entry; the finding carries \`Kind: fact\`). There are no claim-level identifiers.
+
+- \`Kind: rule | fact | scope\` — **absent means \`rule\`.** The demanding default turns an omission into a rule that owes a Mechanism entry (rendered as open by ID once a reader parses it) rather than an invisible escape; opting out is WRITTEN. A rule the author never entered at all remains outside every reader's sight — the stated residual, owned by the maturity-signal stage.
+- \`Disposition: live | superseded <ID or pointer> | assigned <stage-id>\` — absent means \`live\`. ONE meaning for every entry: \`live\` says the claim STANDS; \`superseded\` and \`assigned\` say it does not, and point to what does. Two consequences: a RULE is IN the accounting obligation only while its Kind is rule (or absent) AND its Disposition is live (or absent); a CONCLUDED entry's \`Re-entry:\` slot is the live one only while its Disposition is live (or absent). Leaving the obligation is a NAMED act — an entry left \`live\` with a bare prose note ("overtaken", "moot") is still in it.
+
+A Decisions entry without a well-formed ID is a format violation corrected on next touch.
+
+### Mechanism entries — the grammar
+
+The Mechanism section carries one entry per LIVE rule (\`Kind:\` rule or absent AND \`Disposition:\` live or absent), keyed by the rule's ID. The grammar, stated normatively so a parser can be written from it alone:
+
+\`\`\`
+## Mechanism
+### <ID> — <rule title>              an entry; ends at the next heading of level 1–3, or EOF
+Domain: <the set, in one line>
+| member | covered by |              the enumeration, as a table (R-crc-7: decision tables); at least one member row
+Closure: <TOKEN>[ — <justification>]   <TOKEN> ::= DERIVED | SOURCED | BOUNDED, matched from line start to the first \` — \` or end of line
+Residual kind: <what lies outside>            required iff BOUNDED, forbidden otherwise
+Residual method: <how a member would be found> required iff BOUNDED, forbidden otherwise
+Moves:
+- <MOVE>: applied — <what it found>   |   - <MOVE>: not applied — <reason>     (\` — \` is the literal em-dash)
+                                      nine lines, one per move, each move exactly once
+### Case <n> — <title>               evidence, free-form, cited by move lines by name
+\`\`\`
+
+Three H3 kinds under Mechanism: a heading beginning \`D-\` is an ENTRY; one beginning \`Case\` is a CASE; any other H3 is prose and is neither. Fenced content is never structure. The container is H3 rather than a list item because domains are TABLES and a table inside a list item is fragile.
+
+**A grammar failure is MALFORMED, naming the line**: a malformed ID; a second entry with an ID already used (naming the second heading); an ORPHAN entry whose ID matches no Decisions entry (naming the heading — a key with no owner); a \`Domain:\` table with other than the two \`member | covered by\` columns, no separator row, or NO member rows — an enumeration of nothing is not an enumeration — (naming the table's first line); a missing or duplicated move line; an unknown \`Closure:\` token; a residual slot on a non-BOUNDED entry; a BOUNDED entry missing a slot. NOT malformed: an entry for a Decisions entry whose \`Kind:\` is fact or scope or whose \`Disposition:\` is superseded or assigned — history is permitted and sits outside the obligation. Nothing reads as legacy silently (the architecture parser's near-miss rule).
+
+The engine judges FORM only: whether a live rule has an entry, whether it declares a token, whether the slots the token requires are present. Whether an enumeration is TRUE, whether a residual is honest, and whether a rule was written down at all are a reader's judgement — the deliverable is a RECORD, not a check (R-crc-10).
+
+### Closure is ACCOUNTED, not CLOSED
+
+The obligation is that no domain be open SILENTLY, and two outcomes discharge it:
+
+| outcome | tokens | what it claims |
+|---|---|---|
+| **CLOSED** | DERIVED (generated by a structure whose parts are known, every part covered) · SOURCED (exhaustive over a set an authority defines — a type, a code branch set, a grep over a named file) | every member is covered, and the justification says why that is provable |
+| **OPEN-DECLARED** | BOUNDED | the named members are covered, a residual REMAINS, and its shape is stated |
+
+A BOUNDED residual names its KIND (what lies outside the named set) and its METHOD (how a member would be found), in the two slots. "There may be others" discharges nothing: it is the sentence the obligation exists to forbid, wearing the obligation's vocabulary. *"I can name no more"* is NOT a form — it is the state every failed enumeration on this program's record was in, and from the inside it is indistinguishable from closure. Classifying a record FALSIFIES an enumeration and never closes one.
+
+**The tier difference is VISIBILITY, never BLOCKING.** An OPEN-DECLARED domain does not block readiness; its residual is SURFACED and TRAVELS rather than dying in the exploration. The two slots are the ORIGIN every downstream reader reads. Where it travels: into the requirement's own text as a named limit (the OWNER, because only spec text survives archive) and into \`design.md\`'s Risks as a pointer — a residual carried in design alone is lost at archive. The mechanisms that move it are named elsewhere: the maturity-signal stage surfaces it beside its rung, and the propose-consumption follow-on carries it into spec text at promotion (see "Composition with /orbit:propose").
+
+### The nine moves, applied per rule
+
+A rule's Mechanism entry is the record of NINE MOVES applied to that rule, each a way a mechanism can be wrong:
+
+| part of the mechanism | the way it goes wrong | move |
+|---|---|---|
+| the facts it cites | the fact is not true | **READ** |
+| its input domain | a member it ranges over is unhandled | **ENUMERATE** |
+| its own parts | two of them assume incompatible things | **COHERE** |
+| its computation | wrong output on a member it does handle | **EXECUTE** |
+| its purpose | it is correct and still misses a class of defect | **FALSIFY** |
+| its context | it violates a standing ruling | **CONFORM** |
+| its resources | it does not terminate, or does not fit | **FEASIBILITY** |
+| its output's consumer | the output is correct and the mechanism consuming it breaks | **CONSUME** |
+| its trigger | it is correct, complete, and nothing ever causes it to run | **INVOKE** |
+
+**The set is BOUNDED, declared in its own slots.** Residual kind: a further way a mechanism is wrong that none of the nine names. Residual method: classifying another record's CRITICALs against the table — the only method that has ever grown it (five to six on rc03a's record; six to eight on rc02's; eight to nine when a review pass found INVOKE in the first attempt's own evidence). Confidence about closure was wrong three times and every correction came from a record, never from further thought.
+
+**How the set grows.** A defect that classifies to NO move is a finding about the SET: leave an \`@review:\` marker in the exploration that found it AND carry it into that change's review emit as a finding against \`orbit-explore-modifications\`' nine-moves requirement. Growing the set is a change to that requirement; nothing grows it silently.
+
+**The boundary test**, because a dismissal branch with no test is an invitation: a candidate is IN when it names a way the mechanism ITSELF fails — its facts, domain, parts, computation, purpose, context, RESOURCES, consumer, or trigger (the vocabulary is the table's rows, all nine). A candidate is OUT when it concerns how the rule is PRESENTED or AUTHORED — medium choice (prose versus a slot) is the standing example. When the test does not decide, the candidate is IN: over-covering costs one disposition line, under-covering costs a review cycle.
+
+READ is the read-before-reference discipline and ENUMERATE is the accounting obligation, both existing rulings made checkable where mechanism is AUTHORED. EXECUTE is NOT sufficient alone: an executed case demonstrates one path, and eleven of one stage's fifteen CRITICALs were READ, ENUMERATE or COHERE failures with zero EXECUTE failures.
+
+### Exemplar — one conforming entry
+
+D-bcs-3 of the \`bounded-closure-semantics\` change, verbatim, so the convention shows its shape rather than describing it (the generated-surface test asserts these lines against the grammar's productions; the maturity-signal stage parses the same entry as a fixture):
+
+\`\`\`markdown
+### D-bcs-3 — an open-declared domain is SURFACED, never BLOCKING
+Domain: every surface an OPEN-DECLARED residual must reach
+| member | covered by |
+|---|---|
+| the Mechanism entry (origin) | \`Residual kind:\` / \`Residual method:\` |
+| proposal.md | not a carrier — states scope, not limits |
+| design.md | a Risks entry naming the residual; POINTS to the spec row |
+| specs/<capability>/spec.md | a named limit in the requirement's own text — the OWNER, because only spec text survives archive |
+| tasks.md | not a carrier |
+| the explore readout | rc13b's rung names the residual, never withholds on it (D-bcs-10) |
+Closure: SOURCED — the change artifact set is the spec-driven schema's, plus the one readout that reads Mechanism
+Moves:
+- READ: applied — rc02's limit sits in \`orbit-engine-gates\`' requirement text, as the spec row says
+- ENUMERATE: applied — this table; the 2026-09-15 draft named no members
+- COHERE: applied — never-blocking here and never-withholding in rc13b are one predicate, not two
+- EXECUTE: not applied — no residual has yet travelled under this rule; rc02's predates it
+- FALSIFY: applied — a residual carried in design only would vanish at archive, because design is never synced; hence the spec row is the owner
+- CONFORM: applied — R-crc-10, R-crc-13, R-crc-14 (spec owns, design points)
+- FEASIBILITY: not applied — two lines per residual
+- CONSUME: applied — rc13b reads the two slots; propose carries them into design and spec
+- INVOKE: applied — fires at propose, when the Mechanism entry is consumed
+\`\`\`
 
 **Section-evolution rules**:
 
-- **Resolving an Open question** → move the entry to Decisions with a dated rationale; acknowledge in chat ("captured").
+- **Resolving an Open question** → move the entry to Decisions with a dated rationale, as an entry with an ID opener and its \`Kind:\`; acknowledge in chat ("captured").
 - **Rejecting a considered option** → move it to Considered & out with brief rationale + date.
-- **New decision emerges** → append to Decisions proactively (with brief chat acknowledgment).
+- **New decision emerges** → append to Decisions proactively (with brief chat acknowledgment), with its ID opener and \`Kind:\`.
+- **A rule is captured** → write its Mechanism entry IN THE SAME SITTING (domain table, closure token, residual slots iff BOUNDED, nine move lines) — or leave the entry with \`Kind: rule\` and no Mechanism entry as a VISIBLE open domain; never downgrade the Kind to escape the obligation. This is the one statement of that rule; the residency sweep points here.
+- **A rule is replaced or handed to another stage** → its entry gains \`Disposition: superseded <ID or pointer>\` or \`Disposition: assigned <stage-id>\`.
 - **A leaning emerges on an open question** (discussed but not yet a decision) → write it into that entry's \`Standing recommendation:\` slot verbatim — a pending leaning always has a file-resident home; \`none yet\` is only for questions with no leaning at all.
 - **Reference cited** → append to References (offer first when in doubt).
+
+### Concluding an exploration
+
+An exploration MAY conclude in nothing, and the record says so in TWO engine-observable tokens — both written ONLY on the USER'S declared word inside a named session. Recommend, never infer: when you judge an exploration should stop and the user has not said so, recommend concluding and write nothing. Conclude is NOT a consent-marked seam — no gate, no prompt, no \`consent\` field on the explore emit — and there is no new command; the surface stays as it is.
+
+The conclude verb, in this ORDER:
+
+1. the boundary residency sweep (below, under "Run-summary emit");
+2. ONE CONCLUDED Decisions entry — what was decided, WHY nothing is built — carrying \`Kind: scope\` and a \`Re-entry: <what would reopen it>\` slot (the owner of the trigger; exactly one LIVE entry carries the slot);
+3. the status header flips to \`> **Status**: concluded <YYYY-MM-DD>.\` (the pointer; per the status-header production);
+4. THEN the final boundary emit, whose \`final_assessment\` states the conclusion in the author's words — the emit is composed from the concluded file, so the maturity-signal rung reads it as concluded.
+
+Nothing is written to \`.openspec.yaml\`: the change-metadata helpers' schema STRIPS unknown keys at every level (measured, 2026-09-25), so a metadata token could not survive the body's own write path. The \`architecture:\` citation is KEPT unchanged — it is what locates the directory whose header a stage-state reader will read. The staging directory STAYS IN PLACE, trail and all: a conclusion carries a standing re-entry trigger (the program layer's Considered & out shape), and the orientation surface renders a workstream's next line from the trail in ITS directory — moving it would leave the conclusion with no surface to render on. Nothing relocates it to an archive directory or a dot-directory.
+
+**KNOWN, stated, owned** — three limits until their owners land: the stage-state reader keys on location and renders a stage cited only by a concluded exploration as \`exploring\` (Q-crc-11's stage reads the header token from the directory the kept citation locates); the orientation row keeps recommending propose (the maturity-signal stage reads the header token and the \`Re-entry:\` slot); and \`/orbit:propose <name>\` keys on \`explore.md\`'s presence, not the header token, so promoting a concluded name without reopening is possible today (the propose-consumption follow-on refuses it or treats it as the reopen — until then, REOPEN before promoting).
+
+**Reopening** is the inverse edit, on the user's word: the header returns to \`exploring\`; a dated Decisions entry records why (the trigger fired, or a new reason); the prior CONCLUDED entry gains \`Disposition: superseded <the reopening entry's ID>\`, so its \`Re-entry:\` slot is no longer the live one; then a boundary emit. **A second conclusion** writes a NEW CONCLUDED entry carrying the live \`Re-entry:\` slot; the earlier one stays as superseded history; the header token flips again — exactly one live entry carries the slot at every point in the cycle.
 
 ## Five capture types and where each lands
 
@@ -468,13 +624,15 @@ When the user runs \`/orbit:propose <name>\` and \`orbit/explore/<name>/explore.
 
 This means: durable capture in explore → seamless promotion to formal change. The user doesn't re-type what was already discussed; the AI doesn't paraphrase what was already decided.
 
+The Mechanism section travels with the file. A BOUNDED residual's two slots are carried at promotion into the requirement's own text (the owner) and into \`design.md\`'s Risks (a pointer) — until a propose-consumption stage lands, that transfer is an instruction the proposing AI follows from the authoritative file, not a checked mapping. A concluded exploration is REOPENED before it is promoted (see "Concluding an exploration").
+
 ## Run-summary emit (named-mode only)
 
 (Per \`orbit-run-summary-emit\`; composed and written via the engine emit surface, \`orbit-emit-composition\`.)
 
 Named-mode \`/orbit:explore <name>\` emits TWICE per session shape (D-arc Stage D3): once at BEGIN and once at each conversation boundary.
 
-**Boundary residency sweep — "no emit without sweep"** (D-arc Stage D5, leak-hardening layer 2; begin emits excepted — nothing has been discussed yet): before EVERY boundary emit, sweep the conversation since the last emit for decisions, leanings, rejections, and citations that are not yet file-resident, and write each into its slot (Decisions / an open question's \`Standing recommendation:\` / Considered & out / References) BEFORE invoking the emit. The sweep rides this existing boundary trigger — no new prompt, no user-facing step — so the engine-computed attestation counts describe the SWEPT file, and \`orbit-audit-drift\`'s cross-check closes the loop.
+**Boundary residency sweep — "no emit without sweep"** (D-arc Stage D5, leak-hardening layer 2; begin emits excepted — nothing has been discussed yet): before EVERY boundary emit, sweep the conversation since the last emit for decisions, leanings, rejections, and citations that are not yet file-resident, and write each into its slot — Decisions (with the entry's ID opener and \`Kind:\`) / a rule's Mechanism entry (its domain table, its closure token and residual slots, or a move's disposition) / an open question's \`Standing recommendation:\` / Considered & out / References — BEFORE invoking the emit. A rule whose domain, closure or a move disposition was settled in conversation and whose entry does not yet carry it is written into the entry before the emit; a rule left with no entry stays a visible open domain (per the "A rule is captured" section-evolution rule). The sweep rides this existing boundary trigger — no new prompt, no user-facing step — so the engine-computed attestation counts describe the SWEPT file, and \`orbit-audit-drift\`'s cross-check closes the loop.
 
 Both emits fire the same invocation — compose the narrative payload (\`final_assessment\` + the required nullable \`model\`) into a temp file, then:
 
@@ -514,7 +672,7 @@ When the user requests crystallization during a bare-mode explore (e.g., "save t
 1. A new directory \`orbit/explore/<name>/\` will be created with \`explore.md\` capturing decisions to date.
 2. The first run-summary JSON (\`orbit/explore/<name>/.orbit-runs/explore-<TS>.json\`) will start the change's audit trail.
 3. The change will become visible to any consumer that scans \`orbit/explore/\` (e.g., a downstream status reader). Note: upstream \`orbit list\` does NOT scan \`orbit/explore/\`; the change appears in \`orbit list\` only after \`/orbit:propose\` moves the staging directory to \`orbit/changes/<name>/\`.
-4. Abandonment after this point requires formal archive/discard, not just deleting the directory once it's been moved to \`orbit/changes/<name>/\` by \`/orbit:propose\`.
+4. Abandonment after this point requires formal archive/discard, not just deleting the directory once it's been moved to \`orbit/changes/<name>/\` by \`/orbit:propose\`; before promotion, an exploration that will build nothing is CONCLUDED in place (see "Concluding an exploration"), not deleted.
 
 **Confirmation gate**: the AI MUST wait for explicit user confirmation before proceeding with file creation. Examples of confirmation: "yes", "go ahead", "create it", "do it". If the user expresses any hesitation or asks a clarifying question, treat as not-yet-confirmed and answer the question rather than proceed.
 

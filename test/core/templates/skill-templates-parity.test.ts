@@ -49,7 +49,7 @@ import { generateSkillContent } from '../../../src/core/shared/skill-generation.
 // bodies and the shipped reference NAME the totality rule and point at its owner instead of
 // restating its predicate and set.
 const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
-  getExploreSkillTemplate: '1dfd25f63ce539fc14a418bd6f9c22efa9b54720a7cd5f2548653c6731fb0d87',
+  getExploreSkillTemplate: '544889b221f6495e35522d5e6676c5e0d2bc6854bd52da3769fa52625baf74f6',
   getNewChangeSkillTemplate: '8f68be94db91a147b93d492f6f32ab3c02725a20a001c87602ac8d9741587614',
   getContinueChangeSkillTemplate: '98c49b247140ba301964c1e5a825686485b74a525f65f31a365d19e0aa84923e',
   getApplyChangeSkillTemplate: 'b2f2d8bfdc7bfb5283af4cb45d3f82fa6a393ccb0cfaeb332427c088ca956ecd',
@@ -77,7 +77,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
 };
 
 const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
-  'orbit-explore': 'ee4acd730d76d5f6ee9b0f08f439f6b0be39d87886bf1a5dafdb430f262ceb62',
+  'orbit-explore': '2b8be1bd4b522d2b6fec88f2a01be15b7a3c2218e441b004159003fa72b81513',
   'orbit-new-change': '94c9d6377c6de0484f3a51923eba08214ca45cab5d87a55e46e032de2640b925',
   'orbit-continue-change': 'f61634ab5e96436b33fd30c210f84a57f55baf1716d6ef4679c1ed2a518cc3d3',
   'orbit-apply-change': '90e1e529f4a264b4cf2eac15cea9229d6d2c4c1e9c246b049a00d3f79cb2e574',
