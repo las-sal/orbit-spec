@@ -67,10 +67,11 @@ export const DECISION_ID: RegExp = /^D-[a-z0-9]+-[0-9]+$/;
 
 /**
  * The Decision opener as a FIRST-LINE PREFIX (`orbit-conventions`' Decision-entry requirement: the
- * closing `**` of the bold title may fall on a later line, so it is not part of the prefix).
- * Group 1 the date, group 2 the ID.
+ * closing `**` of the bold title may fall on a later line, so it is not part of the prefix). The
+ * colon may be followed by a space OR the line end — a title wrapped immediately after the colon
+ * keeps its ID (rc13b system walk). Group 1 the date, group 2 the ID.
  */
-export const DECISION_OPENER_PREFIX: RegExp = /^- \*\*(\d{4}-\d{2}-\d{2}) — (D-[a-z0-9]+-[0-9]+): /;
+export const DECISION_OPENER_PREFIX: RegExp = /^- \*\*(\d{4}-\d{2}-\d{2}) — (D-[a-z0-9]+-[0-9]+):(?: |$)/;
 
 /** `Kind:` — the fenced regex verbatim, derived from the production's second line. */
 export const KIND_SLOT: RegExp = new RegExp(
@@ -94,12 +95,51 @@ export const ENTRY_TERMINATOR: RegExp = /^#{1,3}\s/;
 
 /** `Domain: <the set, in one line>` — non-empty. */
 export const DOMAIN_LINE: RegExp = /^Domain: .*\S/;
-/** The table header, exactly the two named columns. */
-export const TABLE_HEADER: RegExp = /^\| member \| covered by \|\s*$/;
+/**
+ * Splits a GFM table row into its trimmed cells: leading/trailing whitespace ignored, one optional
+ * leading and one optional trailing pipe stripped, cells split on UNESCAPED pipes (`\|` is a literal
+ * pipe, never a separator — the grammar's clause). Returns null for a line that is not a row (no
+ * pipe at all). Padding is never significant (rc13b system walk: both halves of the blind pair found
+ * the earlier regex rejecting `|a|b|` and a trailing space as MALFORMED).
+ */
+export function splitTableRow(line: string): string[] | null {
+  let s = line.trim();
+  if (!s.includes('|')) return null;
+  if (s.startsWith('|')) s = s.slice(1);
+  if (s.endsWith('|') && !s.endsWith('\\|')) s = s.slice(0, -1);
+  const cells: string[] = [];
+  let cur = '';
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    if (c === '\\' && i + 1 < s.length) {
+      cur += c + s[i + 1];
+      i++;
+      continue;
+    }
+    if (c === '|') {
+      cells.push(cur.trim());
+      cur = '';
+    } else cur += c;
+  }
+  cells.push(cur.trim());
+  return cells;
+}
+/** A line that BEGINS a table row (GFM: up to three spaces of indent, then a pipe). */
+export const TABLE_ROW_START: RegExp = /^ {0,3}\|/;
+/** The table header: exactly the two named columns, GFM-split. */
+export function isTableHeader(line: string): boolean {
+  const c = splitTableRow(line);
+  return c !== null && c.length === 2 && c[0] === 'member' && c[1] === 'covered by';
+}
 /** A GFM separator row for a two-column table. */
-export const TABLE_SEPARATOR: RegExp = /^\|?\s*:?-+:?\s*\|\s*:?-+:?\s*\|?\s*$/;
-/** A member row: two cells; cells follow GFM — `\|` is a literal pipe, never a separator. */
-export const TABLE_CELL_ROW: RegExp = /^\| (?:[^|\\]|\\.)+ \| (?:[^|\\]|\\.)+ \|$/;
+export const TABLE_SEPARATOR: RegExp = /^\s*\|?\s*:?-+:?\s*\|\s*:?-+:?\s*\|?\s*$/;
+/** A member row: exactly two non-empty cells, GFM-split. */
+export function isMemberRow(line: string): boolean {
+  const c = splitTableRow(line);
+  return c !== null && c.length === 2 && c[0] !== '' && c[1] !== '';
+}
+/** The ID-shaped prefix of a heading that begins `D-` but is not a well-formed entry heading (rc13b system walk). */
+export const DECISION_ID_PREFIX: RegExp = /^D-[a-z0-9]+-[0-9]+/;
 
 /** The three closure tokens; DERIVED and SOURCED are CLOSED, BOUNDED is OPEN-DECLARED. */
 export const CLOSURE_TOKENS = ['DERIVED', 'SOURCED', 'BOUNDED'] as const;

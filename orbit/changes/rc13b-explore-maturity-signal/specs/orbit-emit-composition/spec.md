@@ -49,11 +49,12 @@ by line; never a member of `rules_open`, never counted in K, reported in its own
 rung), `residuals` (an array `{id, kind, method}`, one per ACCOUNTED BOUNDED entry, in the Decisions
 entries' file order — the residual named beside the rung), and `status` (`{token, date?, re_entry?}`
 — `token` is `exploring` or `concluded` per the status-header production and its neither-token rule;
-`date` present iff concluded; `re_entry` present iff concluded AND exactly one live entry carries a
-`Re-entry:` slot, carrying that slot's text — when NO live entry carries one the field is ABSENT and
-the rendered prose alone carries the fallback; when MORE than one live entry carries one the FIRST in
-file order wins and a stderr note names the second, per `orbit-conventions`' exactly-one-live-slot
-rule). The two arrays are DISJOINT by construction: a key defect is never a rule and a rule's own
+`date` present iff concluded; `re_entry` present iff concluded AND at least one live entry carries a
+`Re-entry:` slot, carrying the FIRST such entry's text in file order — when NO live entry carries one
+the field is ABSENT and the rendered prose alone carries the fallback; when MORE than one live entry
+carries one the first still wins and a stderr note names each further carrier's line, because the
+exactly-one-live-slot rule is `orbit-conventions`' AUTHORING obligation and this is the reader's
+recovery from a file that breaks it — the decoder reports, it never withholds). The two arrays are DISJOINT by construction: a key defect is never a rule and a rule's own
 entry defect is never a key defect, so no file state reaches two clauses of the rung through one entry.
 
 **What the parse adds beyond the owned productions** (stated here once; the Mechanism-side states

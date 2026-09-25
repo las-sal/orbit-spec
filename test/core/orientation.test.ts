@@ -320,6 +320,23 @@ describe('concluded explore row (rc13b)', () => {
     expect(o2.workstreams.find((w) => w.name === 'invalid-concluded')?.position).toBe('exploring');
   });
 
+  it('a degraded explore (broken metadata) keeps its trail-derived position, so a concluded row stays concluded', () => {
+    const dir = makeExplore('degraded-concluded');
+    fs.writeFileSync(path.join(dir, '.openspec.yaml'), 'schema: [broken\n');
+    writeEmit(path.join(dir, '.orbit-runs'), 'explore-2026-07-20T10-00-00Z.json', concludedEmit('degraded-concluded'));
+    const o = collectOrientation(root);
+    const ws = o.workstreams.find((w) => w.name === 'degraded-concluded');
+    expect(ws?.degraded).toBe(true);
+    expect(ws?.position).toBe('concluded');
+    expect(ws?.next).toBe('Concluded 2026-09-25. Reopens when: a third withdrawn stage.');
+    // and an exploring degraded row says so
+    const dir2 = makeExplore('degraded-exploring');
+    fs.writeFileSync(path.join(dir2, '.openspec.yaml'), 'schema: [broken\n');
+    writeEmit(path.join(dir2, '.orbit-runs'), 'explore-2026-07-20T10-00-00Z.json', spine('explore'));
+    const o2 = collectOrientation(root);
+    expect(o2.workstreams.find((w) => w.name === 'degraded-exploring')?.position).toBe('exploring');
+  });
+
   it('readValidEmits keeps only the string fields of a well-formed status object', () => {
     const dir = makeExplore('shape');
     writeEmit(path.join(dir, '.orbit-runs'), 'explore-2026-07-20T10-00-00Z.json', spine('explore', { status: { token: 'concluded', date: 5, re_entry: 'why', junk: true } }));

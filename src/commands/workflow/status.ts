@@ -368,7 +368,8 @@ function printSprintView(orientation: Orientation, json: boolean): void {
     (w) => !(w.kind === sprint.kind && w.name === sprint.name)
   );
   const alsoParts: string[] = others.map((w) =>
-    w.degraded ? `${w.name} (degraded)` : `${w.name} (${w.kind === 'explore' ? 'exploring' : phaseOf(w)})`
+    // An explore's phase word is its engine position (`exploring` / `concluded` — rc13b), never a literal.
+    w.degraded ? `${w.name} (degraded)` : `${w.name} (${w.kind === 'explore' ? (w.position ?? 'exploring') : phaseOf(w)})`
   );
   const waitingParts = orientation.waiting;
   const alsoLine =

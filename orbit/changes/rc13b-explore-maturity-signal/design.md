@@ -67,13 +67,15 @@ this document restates only what an implementer needs and cites the rest.
   the entry's FIRST line matches the prefix `- **<date> — <ID>: `, the closing `**` anywhere — is
   stated in `orbit-conventions`' Decision-entry requirement (this change's fourth capability, one
   sentence) and the parse points at it; the archived exemplar wraps three of twelve openers and none
-  was written carelessly. A prefix-less entry → `open` named by line; duplicate ID → MALFORMED naming the second; an unknown
+  was written carelessly. A prefix-less entry → `open` named by line; an unknown
   `Kind:`/`Disposition:` value is NO MATCH, so the slot is absent and the demanding default applies
   (a typo cannot escape the obligation — *alternative rejected*: MALFORMED, which would let it);
-  orphan Mechanism entry → MALFORMED naming the heading, reported in `rules_open` with
-  `key_defects` kind `orphan`; a duplicate ID → the first owns the key, the second a `key_defects`
-  entry by line and excluded from `rules_total`; `re_entry` absent when no live slot, first-in-file-order with a stderr
-  note when two; no `## Mechanism` section → every live rule ABSENT plus one stderr note. `rules_open` and
+  an orphan Mechanism entry → a `key_defects` entry of kind `orphan` naming the heading, never a
+  member of `rules_open`; a duplicate ID → the first owns the key, the second a `key_defects`
+  entry by line and excluded from `rules_total` (the two stale clauses that once said "reported in
+  `rules_open`" and "duplicate ID → MALFORMED" were removed at the system walk, 2026-09-25 — they
+  predated the disjoint model); `re_entry` absent when no live slot, first-in-file-order with a stderr
+  note naming each further carrier; no `## Mechanism` section → every live rule ABSENT plus one stderr note. `rules_open` and
   `residuals` are ordered by Decisions file order and `key_defects` by line, so every bounded render is
   deterministic; all three lists take the same three-plus-`+N more` bound and the one identifier rule
   (`<id> at line <n>` / `<id>` / `line <n>`). A live
@@ -88,8 +90,9 @@ this document restates only what an implementer needs and cites the rest.
   `{id?, state, line?}`, live rules only), `key_defects` (array of `{id, kind, line}` — added at the
   second proposal walk from the external pass's CRITICAL; `duplicate` covers a repeated Decisions ID
   and a repeated Mechanism heading alike), `residuals` (array of `{id, kind, method}`),
-  `status` (`{token, date?, re_entry?}` — `re_entry` present only when exactly one live entry carries
-  the slot). All five listed in `ENGINE_OWNED_EXTRA.explore` so a payload carrying one draws the
+  `status` (`{token, date?, re_entry?}` — `re_entry` present when at least one live entry carries
+  the slot — the first in file order; further carriers draw a stderr note, the exactly-one rule being
+  the author's obligation, not the reader's predicate). All five listed in `ENGINE_OWNED_EXTRA.explore` so a payload carrying one draws the
   engine-owned sentence rather than the unknown-key one (the test asserts the sentence). They are
   facts about a file and sit beside `decisions_captured`, not inside a `judgements` record — rc04a's
   vocabulary was read (R-crc-11) and not borrowed, because the genres differ. Their shapes are stated

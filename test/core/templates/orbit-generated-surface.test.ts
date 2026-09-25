@@ -7,9 +7,9 @@ import { UpdateCommand } from '../../../src/core/update.js';
 import {
   MECHANISM_ENTRY_HEADING,
   DOMAIN_LINE,
-  TABLE_HEADER,
+  isTableHeader,
   TABLE_SEPARATOR,
-  TABLE_CELL_ROW,
+  isMemberRow,
   CLOSURE_LINE,
   RESIDUAL_KIND_LINE,
   RESIDUAL_METHOD_LINE,
@@ -396,12 +396,10 @@ describe('generated surface fidelity (real init, all workflows, claude + codex)'
 
     // Cells follow GFM: `\|` is a literal pipe, never a separator (the grammar's clause; the
     // change's own D-bcs-8 Domain row is the fixture rc13b's parser must also accept). The
-    // expression is the grammar module's — imported, never restated (rc13b, D-rc13b-5).
-    const CELL_ROW = TABLE_CELL_ROW;
-
-    it('the cell pattern accepts a GFM-escaped pipe inside a cell (D-bcs-8 fixture row)', () => {
-      expect('| move dispositions | `Moves:` + nine lines `- <MOVE>: applied — … \\| not applied — …`, each move exactly once |').toMatch(CELL_ROW);
-      expect('| a | b | c |').not.toMatch(CELL_ROW);
+    // predicate is the grammar module's — imported, never restated (rc13b, D-rc13b-5).
+    it('the cell predicate accepts a GFM-escaped pipe inside a cell (D-bcs-8 fixture row)', () => {
+      expect(isMemberRow('| move dispositions | `Moves:` + nine lines `- <MOVE>: applied — … \\| not applied — …`, each move exactly once |')).toBe(true);
+      expect(isMemberRow('| a | b | c |')).toBe(false);
     });
 
     it('ships exemplars whose lines match the grammar productions — both closure branches', () => {
@@ -416,12 +414,12 @@ describe('generated surface fidelity (real init, all workflows, claude + codex)'
       for (const lines of entries) {
         expect(lines[0]).toMatch(MECHANISM_ENTRY_HEADING);
         expect(lines[1]).toMatch(DOMAIN_LINE);
-        expect(lines[2]).toMatch(TABLE_HEADER);
+        expect(isTableHeader(lines[2])).toBe(true);
         expect(lines[3]).toMatch(TABLE_SEPARATOR);
         let i = 4;
         let members = 0;
         while (lines[i].startsWith('|')) {
-          expect(lines[i]).toMatch(CELL_ROW);
+          expect(isMemberRow(lines[i]), lines[i]).toBe(true);
           members++;
           i++;
         }

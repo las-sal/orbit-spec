@@ -434,6 +434,125 @@ describe('parseExploreRules — the shipped exemplars', () => {
   });
 });
 
+describe('parseExploreRules — the system walk\'s fixtures (blind pair, 2026-09-25)', () => {
+  it('a repeated ## Mechanism heading MERGES: the first entry owns the key, later duplicates are key defects, and a note names the extra heading', () => {
+    // The external half: four live rules, a first Mechanism section with D-x-1 (no Closure) and orphan
+    // D-x-9, then a SECOND Mechanism section with complete entries D-x-1..D-x-4. Before the fix the
+    // second section REPLACED the first and the file rendered Accounted.
+    const c = [
+      '> **Status**: exploring.', '', '## Mechanism', '',
+      mech('D-x-1', { closure: null }), '', mech('D-x-9'), '',
+      '## Decisions', '', dec('D-x-1'), '', dec('D-x-2'), '', dec('D-x-3'), '', dec('D-x-4'), '',
+      '## Mechanism', '', mech('D-x-1'), '', mech('D-x-2'), '', mech('D-x-3'), '', mech('D-x-4'), '',
+      '## Open questions', '',
+    ].join('\n');
+    const r = parseExploreRules(c);
+    expect(r.rules_total).toBe(4);
+    expect(r.rules_open).toEqual([{ id: 'D-x-1', state: 'no-closure' }]);
+    expect(r.key_defects.map((k) => `${k.kind}:${k.id}`)).toEqual(['orphan:D-x-9', 'duplicate:D-x-1']);
+    expect(r.notes).toHaveLength(1);
+    expect(r.notes[0]).toContain("repeats the '## Mechanism' heading at line ");
+    const secondHeading = c.split('\n').map((l, i) => (l === '## Mechanism' ? i + 1 : 0)).filter(Boolean)[1];
+    expect(r.notes[0]).toContain(`at line ${secondHeading}`);
+  });
+
+  it('a repeated ## Decisions heading MERGES: the earlier live rule is kept, and the counter counts both sections', () => {
+    // The fresh half: before the fix, D-x-1 was dropped and its real entry reported as an orphan.
+    const c = [
+      '## Mechanism', '', mech('D-x-1'), '',
+      '## Decisions', '', dec('D-x-1'), '',
+      '## Open questions', '',
+      '## Decisions', '', dec('D-x-2'), '',
+    ].join('\n');
+    const r = parseExploreRules(c);
+    expect(countExplore(c).decisionsCaptured).toBe(2);
+    expect(r.rules_total).toBe(2);
+    expect(r.rules_open).toEqual([{ id: 'D-x-2', state: 'absent' }]);
+    expect(r.key_defects).toEqual([]);
+    expect(r.notes).toHaveLength(1);
+    expect(r.notes[0]).toContain("repeats the '## Decisions' heading");
+    // every section merges, and every merged section draws its note (in-context confirm, 2026-09-25)
+    const oq = parseExploreRules('## Mechanism\n\n## Decisions\n\n## Open questions\n\n- q1\n\n## Open questions\n\n- q2\n');
+    expect(oq.notes).toHaveLength(1);
+    expect(oq.notes[0]).toContain("repeats the '## Open questions' heading");
+  });
+
+  it('GFM-valid member rows are accepted: compact, padded, trailing whitespace, escaped pipe, no leading pipe', () => {
+    // A row is detected by its leading pipe (the grammar's fence writes every row pipe-led); within
+    // a row, padding and a trailing pipe are GFM-optional.
+    const rows = ['|a|b|', '|  a  |  b  |', '| a | b | ', '| a \\| still a | b |', '| a | b'];
+    for (const row of rows) {
+      const r = parseExploreRules(file({ decisions: [dec('D-x-1')], mechanism: [mech('D-x-1', { table: ['|member|covered by|', '| --- | --- |', row] })] }));
+      expect(r.rules_open, row).toEqual([]);
+    }
+    // and still MALFORMED: three cells, an empty cell
+    for (const row of ['| a | b | c |', '| a |  |']) {
+      const r = parseExploreRules(file({ decisions: [dec('D-x-1')], mechanism: [mech('D-x-1', { table: ['| member | covered by |', '|---|---|', row] })] }));
+      expect(r.rules_open[0]?.state, row).toBe('malformed-entry');
+    }
+  });
+
+  it('a leading BOM or trailing whitespace on the header line still reads concluded', () => {
+    const bom = '\uFEFF' + file({ header: '> **Status**: concluded 2026-09-25.', decisions: [] });
+    expect(parseExploreRules(bom).status).toEqual({ token: 'concluded', date: '2026-09-25' });
+    const trailing = file({ header: '> **Status**: concluded 2026-09-25.   ', decisions: [] });
+    expect(parseExploreRules(trailing).status).toEqual({ token: 'concluded', date: '2026-09-25' });
+    // prose after the concluded token is still NEITHER token, by the production
+    expect(parseExploreRules(file({ header: '> **Status**: concluded 2026-09-25. Reopens via rc15.', decisions: [] })).status).toEqual({ token: 'exploring' });
+  });
+
+  it('a D- heading that fails the entry grammar but carries an ID-shaped prefix joins its rule as malformed-entry naming the heading', () => {
+    const c = file({ decisions: [dec('D-x-1')], mechanism: [mech('D-x-1', { heading: '### D-x-1: a rule' })] });
+    const r = parseExploreRules(c);
+    expect(r.rules_open).toEqual([{ id: 'D-x-1', state: 'malformed-entry', line: lineOf(c, '### D-x-1: a rule') }]);
+    expect(r.key_defects).toEqual([]);
+    // no ID-shaped prefix at all (uppercase): an orphan keyed by the raw token
+    const c2 = file({ decisions: [dec('D-x-1')], mechanism: [mech('D-x-1'), mech('D-x-1', { heading: '### D-Foo-1 — shouted' })] });
+    const r2 = parseExploreRules(c2);
+    expect(r2.rules_open).toEqual([]);
+    expect(r2.key_defects).toEqual([{ id: 'D-Foo-1', kind: 'orphan', line: lineOf(c2, '### D-Foo-1') }]);
+  });
+
+  it('a title wrapped immediately after the colon keeps its ID (the prefix ends at a space OR the line end)', () => {
+    const c = file({ decisions: ['- **2026-09-25 — D-x-1:\n  a title that begins on the next line** prose.'], mechanism: [mech('D-x-1')] });
+    const r = parseExploreRules(c);
+    expect(r.rules_total).toBe(1);
+    expect(r.rules_open).toEqual([]);
+    expect(r.key_defects).toEqual([]);
+    // but a colon glued to the title is not the prefix
+    const glued = parseExploreRules(file({ decisions: ['- **2026-09-25 — D-x-1:title** prose.'] }));
+    expect(glued.rules_open).toEqual([{ state: 'open', line: lineOf(file({ decisions: ['- **2026-09-25 — D-x-1:title** prose.'] }), 'D-x-1:title') }]);
+  });
+});
+
+describe('parseExploreRules — list-item boundaries (external half, 2026-09-25)', () => {
+  it('a column-zero slot after an H3 (which ends the list item) cannot opt the preceding rule out', () => {
+    // Before the fix: D-x-1 read the stray `Kind: fact` as its own slot → rules_total 0 → Accounted.
+    const c = file({
+      decisions: [dec('D-x-1'), '### Example\n\nKind: fact', dec('D-x-2', { kind: 'fact' }), dec('D-x-3', { kind: 'fact' }), dec('D-x-4', { kind: 'fact' })],
+      mechanism: [],
+    });
+    const r = parseExploreRules(c);
+    expect(r.rules_total).toBe(1);
+    expect(r.rules_open).toEqual([{ id: 'D-x-1', state: 'absent' }]);
+  });
+
+  it('after a blank line, an unindented non-item line ends the entry; a lazy continuation and an indented slot still belong', () => {
+    // paragraph outside the list: the slot below it is NOT D-x-1's
+    const outside = parseExploreRules(file({ decisions: ['- **2026-09-25 — D-x-1: t** p.\n\nA paragraph outside the list.\nKind: fact'] }));
+    expect(outside.rules_total).toBe(1);
+    // lazy continuation (no blank line): still the entry's lines, so the slot matches
+    const lazy = parseExploreRules(file({ decisions: ['- **2026-09-25 — D-x-1: t** p.\nKind: fact'] }));
+    expect(lazy.rules_total).toBe(0);
+    // indented slot after a blank line: still the entry's
+    const indented = parseExploreRules(file({ decisions: ['- **2026-09-25 — D-x-1: t** p.\n\n  Kind: fact'] }));
+    expect(indented.rules_total).toBe(0);
+    // the counter's Standing recommendation attribution follows the same boundary
+    const q = '## Decisions\n\n## Open questions\n\n- **Q-1**\n\nStanding recommendation: not mine\n';
+    expect(countExplore(q).openQuestionsWithRecommendation).toBe(0);
+  });
+});
+
 describe('parseExploreRules — notes are not stderr writes', () => {
   it('the parser returns notes and never writes to stderr itself (the emit surface surfaces them)', () => {
     const spy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);

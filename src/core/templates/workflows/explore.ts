@@ -670,7 +670,7 @@ Both emits fire the same invocation — compose the narrative payload (\`final_a
 orbit emit explore --change <name> --payload <payload-file>
 \`\`\`
 
-The ENGINE owns everything else: the spine, the trail path (\`orbit/explore/<name>/.orbit-runs/explore-<TS>.json\`), timestamp + collision handling, the decisions/open-questions counts read fresh from \`explore.md\`, and the maturity-graded \`next_recommended\` (Early / Mid / Mature / Stalled from the counts). Never hand-compose the JSON. Bare-mode \`/orbit:explore\` does NOT emit — see "Crystallization to named change" below.
+The ENGINE owns everything else: the spine, the trail path (\`orbit/explore/<name>/.orbit-runs/explore-<TS>.json\`), timestamp + collision handling, the decisions/open-questions counts read fresh from \`explore.md\`, and the maturity-graded \`next_recommended\` (per \`orbit-run-summary-emit\`'s maturity requirement, which owns the rungs and their inputs). Never hand-compose the JSON. Bare-mode \`/orbit:explore\` does NOT emit — see "Crystallization to named change" below.
 
 ### BEGIN emit (D-arc Stage D3 — mode-aware)
 

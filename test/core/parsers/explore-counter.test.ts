@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   countExplore,
+  collectSections,
   maturityRecommendation,
   type MaturityFormInputs,
   type RungIdentifier,
@@ -80,6 +81,14 @@ describe('countExplore', () => {
     expect(c.openQuestionsCount).toBe(0);
     expect(c.attestation).toBe('0 of 0');
     expect(c.missingSections).toEqual([]);
+  });
+
+  it('a repeated section heading merges rather than replaces, and records every heading line', () => {
+    const repeated = `## Decisions\n\n- one\n\n## Open questions\n\n## Decisions\n\n- two\n- three\n`;
+    expect(countExplore(repeated).decisionsCaptured).toBe(3);
+    const sections = collectSections(repeated);
+    expect(sections.get('Decisions')?.headings).toEqual([1, 7]);
+    expect(sections.get('Open questions')?.headings).toEqual([5]);
   });
 
   it('an ordered-list entry counts as top-level', () => {

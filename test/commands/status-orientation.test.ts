@@ -371,6 +371,21 @@ describe('status orientation surface', () => {
     expect(payload.next).toBe('Concluded 2026-09-25. Reopens when: a third withdrawn stage.');
     expect(payload.waiting).toEqual([]);
 
+    // The bare tier's also: line names an explore by its POSITION, so a concluded one demoted below
+    // a newer workstream reads (concluded), never (exploring).
+    await makeExplore('idea-newer');
+    const newerDir = path.join(tempDir, 'orbit', 'explore', 'idea-newer', '.orbit-runs');
+    await fs.mkdir(newerDir, { recursive: true });
+    await fs.writeFile(
+      path.join(newerDir, 'explore-2026-07-21T10-00-00Z.json'),
+      JSON.stringify({ command: 'explore', timestamp: '2026-07-21T10:00:00Z', change: 'idea-newer', kind: 'workflow', final_assessment: 'x.', next_recommended: '/orbit:explore idea-newer — continue capturing thinking' })
+    );
+    const demoted = await runCLI(['status'], { cwd: tempDir });
+    const alsoLine = demoted.stdout.split('\n').find((l) => l.startsWith('also:'));
+    expect(alsoLine).toContain('idea-done (concluded)');
+    expect(alsoLine).not.toContain('idea-done (exploring)');
+    await fs.rm(path.join(tempDir, 'orbit', 'explore', 'idea-newer'), { recursive: true, force: true });
+
     // --full renders the same row bare, and an exploring explore beside it keeps its label.
     await makeExplore('idea-live');
     const full = await runCLI(['status', '--full'], { cwd: tempDir });
@@ -378,6 +393,18 @@ describe('status orientation surface', () => {
     expect(full.stdout).toContain('Ready when you are: /orbit:explore idea-live — continue capturing thinking');
     const fullLines = full.stdout.split('\n');
     expect(fullLines.some((l) => l.trim().startsWith('Ready when you are: Concluded'))).toBe(false);
+
+    // A broken .openspec.yaml degrades the row but never puts the eligibility label back on
+    // the concluded prose (external half of the rc13b blind pair).
+    await fs.writeFile(path.join(dir, '.openspec.yaml'), 'schema: [broken\n');
+    const degraded = await runCLI(['status', '--full'], { cwd: tempDir });
+    expect(degraded.exitCode).toBe(0);
+    expect(degraded.stdout).toContain('Concluded 2026-09-25. Reopens when: a third withdrawn stage.');
+    expect(degraded.stdout).not.toContain('Ready when you are: Concluded');
+    const degradedJson = JSON.parse((await runCLI(['status', '--full', '--json'], { cwd: tempDir })).stdout);
+    const row = degradedJson.workstreams.find((w: { name: string }) => w.name === 'idea-done');
+    expect(row.degraded).toBe(true);
+    expect(row.position).toBe('concluded');
   });
 
   it('degraded entries carry the degraded variant in both tiers; bare degraded sprint exits 0', async () => {

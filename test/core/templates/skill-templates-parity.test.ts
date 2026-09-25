@@ -48,8 +48,19 @@ import { generateSkillContent } from '../../../src/core/shared/skill-generation.
 // pinned here). And once more at the fresh half's walk: R-crc-14's first application — the
 // bodies and the shipped reference NAME the totality rule and point at its owner instead of
 // restating its predicate and set.
+//
+// rc13b (2026-09-25) — explore moved DELIBERATELY, as a SECOND act. Task 1.3 interpolated the grammar
+// module's production strings into the body and MEASURED the pin UNCHANGED (the interpolation changed
+// no byte; the regenerated SKILL.md was byte-identical to the pre-change snapshot) — that measurement
+// stood, and is recorded in the apply emit. THEN the system blind pair (both halves, independently)
+// found the persist step's prose still teaching the retired count-only grid (`Early / Mid / Mature /
+// Stalled from the counts`); the walk replaced that parenthetical with a pointer to the owning
+// maturity requirement (R-crc-14), option B ratified by Sal. Only this one sentence moved the pin;
+// the regenerated skill was diffed against the snapshot to confirm it. Moved once more at the
+// in-context confirm's walk, same act: the pointer's partial paraphrase of the grid's inputs was
+// trimmed to the bare pointer (a four-of-five restatement beside a pointer is the R-crc-14 pattern).
 const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
-  getExploreSkillTemplate: '7d4dec24b325fef05fb65c642b86e84eea6c91f29c17391cff1b9b565bb94b69',
+  getExploreSkillTemplate: '9fe8f3194dd26da5830797cd70e95cb53e5f9dc8daf404fce23edf042ed1e135',
   getNewChangeSkillTemplate: '8f68be94db91a147b93d492f6f32ab3c02725a20a001c87602ac8d9741587614',
   getContinueChangeSkillTemplate: '98c49b247140ba301964c1e5a825686485b74a525f65f31a365d19e0aa84923e',
   getApplyChangeSkillTemplate: 'b2f2d8bfdc7bfb5283af4cb45d3f82fa6a393ccb0cfaeb332427c088ca956ecd',
@@ -77,7 +88,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
 };
 
 const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
-  'orbit-explore': 'b43786b3946258805333204a081e986eac98cfe3bae08dc215b86a9cd689a843',
+  'orbit-explore': '2d2541eabdcfb09c49e5eb9286334bd6c67eae90fc47fdff4f9a7cb7496ff4e5',
   'orbit-new-change': '94c9d6377c6de0484f3a51923eba08214ca45cab5d87a55e46e032de2640b925',
   'orbit-continue-change': 'f61634ab5e96436b33fd30c210f84a57f55baf1716d6ef4679c1ed2a518cc3d3',
   'orbit-apply-change': '90e1e529f4a264b4cf2eac15cea9229d6d2c4c1e9c246b049a00d3f79cb2e574',

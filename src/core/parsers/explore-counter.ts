@@ -59,6 +59,14 @@ export interface Section {
   lines: SectionLine[];
   /** The top-level list items (the counter's entries). */
   entries: SectionEntry[];
+  /**
+   * The 1-based line of every `##` heading that opened this section. A same-named heading
+   * recurring later in the file MERGES into the section (lines and entries appended in file
+   * order) rather than replacing it — the rc13b system walk found a repeated `## Mechanism`
+   * silently discarding the first section's entries and rendering four unaccounted rules
+   * Accounted. More than one entry here is a format note for the caller to surface.
+   */
+  headings: number[];
 }
 
 const TOP_LEVEL_ITEM = /^(?:[-*+]|\d+[.)])\s+/;
@@ -66,7 +74,8 @@ const TOP_LEVEL_ITEM = /^(?:[-*+]|\d+[.)])\s+/;
 /**
  * Collects the `##` sections of an explore.md: every line keyed to its section, top-level
  * list items grouped into entries, fenced content marked (never structure). A `#` heading
- * ends the current section; an H3+ heading is section content.
+ * ends the current section; an H3+ heading is section content. A same-named `##` heading
+ * recurring later merges into the earlier section (see `Section.headings`).
  */
 export function collectSections(content: string): Map<string, Section> {
   const lines = content.split(/\r?\n/);
@@ -74,6 +83,7 @@ export function collectSections(content: string): Map<string, Section> {
   const tracker = createFenceTracker();
   let current: Section | null = null;
   let currentEntry: SectionEntry | null = null;
+  let prevBlank = false;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
@@ -88,14 +98,21 @@ export function collectSections(content: string): Map<string, Section> {
         current.lines.push(sl);
         if (currentEntry) currentEntry.lines.push(sl);
       }
+      prevBlank = false;
       continue;
     }
 
     const heading = line.match(/^##\s+(.*\S)\s*$/);
     if (heading) {
       const name = heading[1].trim();
-      current = { lines: [], entries: [] };
-      sections.set(name, current);
+      const existing = sections.get(name);
+      if (existing) {
+        existing.headings.push(n);
+        current = existing;
+      } else {
+        current = { lines: [], entries: [], headings: [n] };
+        sections.set(name, current);
+      }
       currentEntry = null;
       continue;
     }
@@ -108,12 +125,22 @@ export function collectSections(content: string): Map<string, Section> {
 
     const sl: SectionLine = { text: line, n, fenced: false };
     current.lines.push(sl);
+    const blank = line.trim() === '';
     if (TOP_LEVEL_ITEM.test(line)) {
       currentEntry = { line: n, lines: [sl] };
       current.entries.push(currentEntry);
+    } else if (currentEntry && (/^#{3,}\s/.test(line) || (prevBlank && !blank && !/^\s/.test(line)))) {
+      // The list item ENDS here (CommonMark): an ATX heading, or — after a blank line — an
+      // unindented line that is not itself an item (a paragraph outside the list). Lines that
+      // follow belong to the section, not the entry, so a column-zero `Kind:` after an H3 can
+      // never opt the preceding rule out (rc13b system walk, external half). A nested bullet or
+      // an indented continuation, and a lazy continuation with no blank line before it, still
+      // belong to the entry.
+      currentEntry = null;
     } else if (currentEntry) {
       currentEntry.lines.push(sl); // nested content / continuation belongs to the entry
     }
+    prevBlank = blank;
   }
   return sections;
 }

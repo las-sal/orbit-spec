@@ -459,7 +459,14 @@ export function composeWorkstreamEntry(
       // fields are kept; `next` is omitted only when ITS source failed — which
       // is the case for changes, whose next is the failed engine computation).
       ...(ws.kind === 'explore'
-        ? { next: newest ? newest.next_recommended : EXPLORE_EARLY_CANONICAL(ws.name) }
+        ? {
+            next: newest ? newest.next_recommended : EXPLORE_EARLY_CANONICAL(ws.name),
+            // The explore position is TRAIL-derived (the newest valid emit's status token), so
+            // it survives a metadata failure exactly like `next` — and the concluded rule's bare
+            // next line keys on it (rc13b system walk, external half: a broken .openspec.yaml
+            // must not put the eligibility label back on a concluded row).
+            position: newest?.status?.token === 'concluded' ? 'concluded' : 'exploring',
+          }
         : {}),
     };
     return entry;

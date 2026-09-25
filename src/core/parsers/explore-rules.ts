@@ -10,9 +10,11 @@ import {
   MECHANISM_ENTRY_HEADING,
   ENTRY_TERMINATOR,
   DOMAIN_LINE,
-  TABLE_HEADER,
+  TABLE_ROW_START,
+  isTableHeader,
   TABLE_SEPARATOR,
-  TABLE_CELL_ROW,
+  isMemberRow,
+  DECISION_ID_PREFIX,
   CLOSURE_PREFIX,
   CLOSURE_LINE,
   RESIDUAL_KIND_LINE,
@@ -170,7 +172,10 @@ function readMechanism(lines: SectionLine[]): MechanismEntry[] {
       const h3 = l.text.match(MECHANISM_H3);
       if (h3 && h3[1].startsWith('D-')) {
         const wf = l.text.match(MECHANISM_ENTRY_HEADING);
-        const id = wf ? wf[1] : h3[1].split(' — ')[0].trim();
+        // A heading that is not `### <ID> — <title>` is keyed by its ID-shaped prefix when it has
+        // one (so `### D-x-1: a rule` still joins D-x-1 as a MALFORMED entry naming the heading),
+        // else by the raw token before the first ` — ` (a malformed ID owns nothing: an orphan).
+        const id = wf ? wf[1] : (h3[1].match(DECISION_ID_PREFIX)?.[0] ?? h3[1].split(' — ')[0].trim());
         open = { id, line: l.n, wellFormedHeading: wf !== null, body: [] };
         entries.push(open);
       }
@@ -195,9 +200,9 @@ function judgeEntry(entry: MechanismEntry): EntryJudgement {
     let j = domainIdx + 1;
     while (j < body.length && body[j].text.trim() === '') j++;
     const header = body[j];
-    if (!header || !header.text.startsWith('|')) {
+    if (!header || !TABLE_ROW_START.test(header.text)) {
       defects.push({ line: body[domainIdx].n, what: 'no Domain: table' });
-    } else if (!TABLE_HEADER.test(header.text)) {
+    } else if (!isTableHeader(header.text)) {
       defects.push({ line: header.n, what: 'Domain: table columns are not `member | covered by`' });
     } else if (!body[j + 1] || !TABLE_SEPARATOR.test(body[j + 1].text)) {
       defects.push({ line: header.n, what: 'Domain: table has no separator row' });
@@ -205,8 +210,8 @@ function judgeEntry(entry: MechanismEntry): EntryJudgement {
       let k = j + 2;
       let members = 0;
       let bad = false;
-      while (k < body.length && body[k].text.startsWith('|')) {
-        if (!TABLE_CELL_ROW.test(body[k].text)) bad = true;
+      while (k < body.length && TABLE_ROW_START.test(body[k].text)) {
+        if (!isMemberRow(body[k].text)) bad = true;
         members++;
         k++;
       }
@@ -267,7 +272,9 @@ function judgeEntry(entry: MechanismEntry): EntryJudgement {
 // ---------------------------------------------------------------------------
 
 function readStatus(content: string): ExploreStatus {
-  const first = content.split(/\r?\n/).find((l) => l.trim() !== '') ?? '';
+  // A leading UTF-8 BOM and trailing whitespace are normalised away BEFORE the owned production
+  // matches (rc13b system walk: both were reading a concluded file as exploring, invisibly).
+  const first = (content.replace(/^\uFEFF/, '').split(/\r?\n/).find((l) => l.trim() !== '') ?? '').trimEnd();
   const m = first.match(STATUS_HEADER);
   if (m && m[3]) return { token: 'concluded', date: m[3] };
   return { token: 'exploring' }; // `exploring.` or NEITHER token: not-concluded, never MALFORMED
@@ -281,6 +288,17 @@ export function parseExploreRules(content: string): ExploreRules {
   const sections = collectSections(content);
   const notes: string[] = [];
   const keyDefects: KeyDefect[] = [];
+
+  // A repeated section heading merges (per the collector); each extra heading is a format note —
+  // for EVERY section, since the merge applies to every section (the in-context confirm executed
+  // a silently merged `## Open questions`).
+  for (const [name, section] of sections) {
+    for (const extra of section.headings.slice(1)) {
+      notes.push(
+        `note: explore.md repeats the '## ${name}' heading at line ${extra} — its content is merged into the first section in file order (a format violation per orbit-conventions' explore.md format requirement, to fix on next touch).`
+      );
+    }
+  }
 
   // Decisions: duplicates are key defects — the first owns the key; the second is excluded.
   const decisions: DecisionRecord[] = [];
