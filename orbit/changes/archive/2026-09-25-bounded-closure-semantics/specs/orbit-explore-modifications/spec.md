@@ -24,7 +24,7 @@ The body SHALL treat a rule's Mechanism entry as the record of NINE MOVES applie
 
 READ is the read-before-reference discipline and ENUMERATE is the accounting obligation, both existing rulings made checkable where mechanism is AUTHORED. EXECUTE is NOT sufficient alone: an executed case demonstrates one path, and eleven of one stage's fifteen CRITICALs were READ, ENUMERATE or COHERE failures with zero EXECUTE failures.
 
-The shipped body carries ONE conforming exemplar entry (D-bcs-3 of the archived `bounded-closure-semantics` change), so the convention shows its shape rather than describing it.
+The shipped body carries TWO conforming exemplar entries, one per closure outcome (D-bcs-3, CLOSED, and D-bcs-12, BOUNDED with both residual slots — of the archived `bounded-closure-semantics` change), so the convention shows both shapes rather than describing them.
 
 #### Scenario: A rule's entry records all nine moves
 
@@ -39,23 +39,24 @@ The shipped body carries ONE conforming exemplar entry (D-bcs-3 of the archived 
 #### Scenario: The exemplar conforms
 
 - **WHEN** the explore body is generated
-- **THEN** its exemplar entry's lines match the grammar's productions — the generated-surface test asserts it, and the maturity-signal stage parses the same exemplar as a fixture
+- **THEN** each exemplar entry's lines match the grammar's productions, the BOUNDED branch included — the generated-surface test asserts it, and the maturity-signal stage parses the same exemplars as fixtures
 
 ### Requirement: Re-entry resolution and the conclude verb
 
-`/orbit:explore <name>` SHALL resolve the name against three facts — a staging directory exists; it is concluded (defined only when it exists); an active change of that name exists — as ONE table, six cells, two refused:
+`/orbit:explore <name>` SHALL resolve the name against FOUR facts — a staging directory exists; it is concluded (per the status-header production; defined only when the directory exists); an active change of that name exists; that change carries an `explore.md` (defined only when the change exists) — as ONE table, nine cells, four refused:
 
-| staging dir | concluded | active change | resolution |
-|---|---|---|---|
-| no | — | no | Mode B new |
-| yes | no | no | Mode B resume |
-| yes | yes | no | state the conclusion and its `Re-entry:` trigger; REOPEN only on the user's word |
-| no | — | yes | resume IN PLACE against `orbit/changes/<name>/explore.md`, say so, scaffold nothing |
-| yes | either | yes | REFUSED — second claim on one truth; name both paths and stop |
+| staging dir | concluded | active change | change carries `explore.md` | resolution |
+|---|---|---|---|---|
+| no | — | no | — | Mode B new |
+| yes | no | no | — | Mode B resume |
+| yes | yes | no | — | state the conclusion and its `Re-entry:` trigger, ask nothing else; REOPEN only on the user's word |
+| no | — | yes | yes | resume IN PLACE against `orbit/changes/<name>/explore.md`, say so, scaffold nothing |
+| no | — | yes | no | Mode B new IN the change directory — the file is created beside the artifacts; no staging directory is scaffolded |
+| yes | either | yes | either | REFUSED — second claim on one truth; name both paths and stop (neither resume nor scaffold) |
 
-An active change WITHOUT an `explore.md` is Mode B new IN the change directory (the file is created beside the artifacts; no staging directory is scaffolded). A staging directory WITHOUT `explore.md`, or whose header carries neither fixed token, resolves as not-concluded and resumes with the stub or header added (add-only) — never as MALFORMED.
+A staging directory WITHOUT `explore.md`, or whose header carries neither fixed token, resolves as not-concluded and resumes with the stub or header added (add-only) — never as MALFORMED. The status-header production is read on the change-directory file too: a `concluded` header inside `orbit/changes/<name>/explore.md` (a name promoted without reopening) resolves as the third row — state the conclusion and its trigger, reopen only on the user's word — never as a silent resume.
 
-**The conclude verb** runs inside a named session on the user's declared word, in this order: the residency sweep; the CONCLUDED entry with its `Re-entry:` slot; the header token; THEN the final boundary emit (whose `final_assessment` states the conclusion in the author's words). The emit is composed from the concluded file, so the maturity-signal stage's rung reads it as concluded. Nothing is written to metadata. Reopening follows `orbit-conventions`' reopen scenario, then a boundary emit. The body never concludes on its own judgement: it recommends, and writes on the user's word (the arc's rules of engagement; conclude is not a consent-marked seam — no gate, no prompt, no `consent` field on the explore emit).
+**The conclude verb** runs inside a named session on the user's declared word, in this order: the residency sweep; the CONCLUDED entry with its `Re-entry:` slot; the header token; THEN the final boundary emit, whose `final_assessment` states the conclusion in the author's words and whose engine-computed counts and recommendation describe the concluded file (the interim behaviour of that recommendation is the concluded-outcome requirement's KNOWN limit, named there and not restated here). What the record IS — the two tokens, what is written and what is not, the kept citation, the directory staying in place, and that conclude is no consent-marked seam — is `orbit-conventions`' concluded-outcome requirement; this requirement names it and does not restate it. Reopening follows that requirement's reopen scenario, then a boundary emit. The body never concludes on its own judgement: it recommends, and writes on the user's word (the arc's rules of engagement).
 
 #### Scenario: A promoted name resumes against the change directory
 
@@ -129,8 +130,8 @@ The system SHALL support three invocation modes: (A) bare — no file; (B) named
 
 #### Scenario: Mode B — other cells
 
-- **WHEN** `/orbit:explore <name>` resolves to a concluded staging directory, an active change, or both a staging directory and an active change
-- **THEN** the re-entry table governs — re-entry stated, resume in place, or refusal naming both paths
+- **WHEN** `/orbit:explore <name>` resolves to any cell other than the two above — a concluded staging directory, an active change with or without `explore.md`, both a staging directory and an active change, or a concluded header inside the change directory
+- **THEN** the re-entry table and its edge paragraph govern (per the re-entry requirement); this scenario names no outcome of its own
 
 #### Scenario: Mode C — crystallization prompt
 

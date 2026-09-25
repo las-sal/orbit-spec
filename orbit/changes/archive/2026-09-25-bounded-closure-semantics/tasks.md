@@ -26,8 +26,9 @@
 
 - [x] 2.1 The nine-move table with its residual in the two slots, the growth path, the boundary
       test with RESOURCES in the IN list, the existing-obligation note, and EXECUTE-not-sufficient.
-- [x] 2.2 The exemplar: D-bcs-3's Mechanism entry, verbatim from `explore.md`, in the body.
-- [x] 2.3 The re-entry table (six cells, two refused; active change without `explore.md` = new in
+- [x] 2.2 The exemplar: D-bcs-3's Mechanism entry, verbatim from `explore.md`, in the body (+ D-bcs-12,
+      the BOUNDED entry, added on the system walk so both closure branches ship).
+- [x] 2.3 The re-entry table (six cells, two refused at apply — nine cells, four refused after the system walk; active change without `explore.md` = new in
       place; staging dir without `explore.md` or with neither header token = not-concluded, add-only)
       replaces the Mode B row's prose; Mode B's WHEN carries both guards; resume adds a missing
       Mechanism section (add-only).
@@ -39,10 +40,10 @@
 
 ## 3. Residue, SOURCED over a scoped grep
 
-- [x] 3.1 `grep -n 'five-section\|five sections' src/core/templates/workflows/explore.ts` returns
-      ZERO. Every other hit in `src/` is listed in the design as a justified exemption:
-      `propose.ts:154/156` (the propose follow-on), `emit-composition.ts:1127` and
-      `explore-counter.ts:12` (rc13b), `audit-drift.ts:302` (a pointer to the retained title).
+- [x] 3.1 `grep -nE '(five|5)[- ]sections?' src/core/templates/workflows/explore.ts` returns ZERO
+      (pattern widened on the system walk, 2026-09-25 — the narrower one missed `onboard.ts:79`, now
+      corrected). The exemption list for every other hit in `src/` lives in design.md Risks, the
+      retained-titles entry; this task points there and does not restate it.
 
 ## 4. Instruments
 

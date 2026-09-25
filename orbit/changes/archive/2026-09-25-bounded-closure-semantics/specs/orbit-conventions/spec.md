@@ -9,9 +9,9 @@ Each entry in `explore.md`'s Decisions section SHALL be a top-level list item wh
 Each entry carries slot LINES with FIXED vocabularies, stated as a production so a parser can be written from it (the counter's `Standing recommendation:` precedent: a slot is matched anywhere within the lines that belong to the entry's list item — a lazy-continuation line or a nested bullet both qualify; the ` — ` in the opener is the literal em-dash separator):
 
 ```
-- **<YYYY-MM-DD> — <ID>: <title>** <prose…>            the opener; the ID slot
+- **<YYYY-MM-DD> — <ID>: <title>** <prose…>            the opener; the ID slot; <ID> ::= D-[a-z0-9]+-[0-9]+, unique within the file
   Kind: rule | fact | scope                               ^\s*(?:[-*+]\s+)?Kind:\s*(rule|fact|scope)\s*$
-  Disposition: live | superseded <ID or pointer> | assigned <stage-id>
+  Disposition: live | superseded <ID or pointer> | assigned <stage-id>     same optional bullet prefix as Kind:
   Re-entry: <what would reopen it>                        concluded entries only; exactly one LIVE entry carries it
 ```
 
@@ -48,7 +48,7 @@ Each entry carries slot LINES with FIXED vocabularies, stated as a production so
 ## Mechanism
 ### <ID> — <rule title>              an entry; ends at the next heading of level 1–3, or EOF
 Domain: <the set, in one line>
-| member | covered by |              the enumeration, as a table (R-crc-7: decision tables)
+| member | covered by |              the enumeration, as a table (R-crc-7: decision tables); at least one member row; cells follow GFM — `\|` is a literal pipe, never a separator
 Closure: <TOKEN>[ — <justification>]   <TOKEN> ::= DERIVED | SOURCED | BOUNDED, matched from line start to the first ` — ` or end of line
 Residual kind: <what lies outside>            required iff BOUNDED, forbidden otherwise
 Residual method: <how a member would be found> required iff BOUNDED, forbidden otherwise
@@ -111,7 +111,7 @@ Nothing is written to `.openspec.yaml`: the change-metadata helpers' schema STRI
 
 Both land BEFORE the final boundary emit, so the emit's engine-computed recommendation is composed from the concluded file. The staging directory STAYS IN PLACE: a conclusion carries a standing re-entry trigger, which is the program layer's Considered & out shape, and the orientation surface renders a workstream's next line from the trail in ITS directory — moving it would leave the conclusion with no surface to render on.
 
-**KNOWN, stated, owned**: the stage-state reader keys on location and renders a stage cited only by a concluded exploration as `exploring` until Q-crc-11's stage reads the header token from the staging directory the kept citation locates; the orientation row keeps recommending propose until the maturity-signal stage reads the header token and the `Re-entry:` slot; and `/orbit:propose <name>` does NOT read the header token — it keys on `explore.md`'s presence — so promoting a concluded name without reopening is possible today, and refusing it (or treating it as the reopen) is the propose-consumption follow-on's to specify.
+**KNOWN, stated, owned**: the stage-state reader keys on location and renders a stage cited only by a concluded exploration as `exploring` until Q-crc-11's stage reads the header token from the staging directory the kept citation locates; the orientation row's next line stays COUNT-DERIVED — the maturity grid's explore-or-propose recommendation, never the conclusion — until the maturity-signal stage reads the header token and the `Re-entry:` slot; and `/orbit:propose <name>` does NOT read the header token — it keys on `explore.md`'s presence — so promoting a concluded name without reopening is possible today, and refusing it (or treating it as the reopen) is the propose-consumption follow-on's to specify.
 
 #### Scenario: The user concludes an exploration
 
@@ -140,7 +140,7 @@ Both land BEFORE the final boundary emit, so the emit's engine-computed recommen
 The system SHALL use a fixed SIX-section format for `explore.md`, in this order: Premise, **Mechanism**, Decisions, Open questions, Considered & out, References. (The requirement's TITLE is retained for delta identity and as the name other capabilities point to; the format it specifies is six sections.) The status header carries one of two fixed tokens on the file's first non-blank line — `> **Status**: exploring. …` or `> **Status**: concluded <YYYY-MM-DD>.` (per the concluded outcome requirement) — matched by ONE production:
 
 ```
-^> \*\*Status\*\*: (exploring\b|concluded \d{4}-\d{2}-\d{2}\.)      the file's first non-blank line
+^> \*\*Status\*\*: (exploring\.( .*)?|concluded \d{4}-\d{2}-\d{2}\.)$      the file's first non-blank line
 ```
 
 Any other first line is NEITHER token: the file resolves as not-concluded and the header is added on next touch (per `orbit-explore-modifications`' re-entry requirement), never MALFORMED — a status line is a pointer, not an entry. Decisions entries carry the ID opener and the `Kind:` / `Disposition:` slots (per the entry identity requirement); the Mechanism section carries one entry per live rule (per the Mechanism entry grammar). Open-question entries SHALL carry a `Standing recommendation:` slot — `Standing recommendation: <the current leaning>` or `Standing recommendation: none yet` — so a pending leaning discussed in conversation has a named, file-resident home (D-arc Stage D5, leak-hardening layer 1: AIs fill template slots far more reliably than they obey prose rules; the slot's RECORDED LEANING is what the emit surface's attestation counts — a `none yet` value attests an honestly empty slot, not a leaning, per `orbit-emit-composition`'s membership criterion).
@@ -153,7 +153,7 @@ Any other first line is NEITHER token: the file resolves as not-concluded and th
 #### Scenario: Status header
 
 - **WHEN** an `explore.md` file is created
-- **THEN** it includes the `> **Status**: exploring...` header; the only other legal status token is `concluded <YYYY-MM-DD>`
+- **THEN** it includes the `> **Status**: exploring.` header (prose may follow the period); the only other legal status token is `concluded <YYYY-MM-DD>.` — the final period is part of the token, and nothing follows it
 
 #### Scenario: Open questions carry the standing-recommendation slot
 

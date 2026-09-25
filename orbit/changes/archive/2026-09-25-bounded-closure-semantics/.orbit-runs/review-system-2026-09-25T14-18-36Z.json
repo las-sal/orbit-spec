@@ -1,0 +1,180 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-25T14:18:36Z",
+  "change": "bounded-closure-semantics",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 3
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/onboard.ts",
+      "line": 79,
+      "title": "The onboard body still teaches a 5-section explore.md, and the residue grep cannot see the numeral spelling",
+      "recommendation": "onboard.ts line 79 reads 'in a 5-section convention (Premise / Decisions / Open questions / Considered & out / References)' — the one orientation surface a new user reads first now states the retired format. Task 3.1's acceptance grep is `five-section\\|five sections`, which matches none of `5-section`; the exemption list names five hits in src/ and this sixth is unlisted, so the sweep reported zero over a pattern narrower than the residue (the first attempt's sweep defect, in a new coat). Edit the sentence to the six-section list with Mechanism, re-pin the two orbit-onboard hashes in skill-templates-parity.test.ts, and widen the residue pattern to `(five|5)[- ]sections?` so the acceptance grep and the exemption list describe the same set."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/explore.ts",
+      "line": 476,
+      "title": "The spec-owned grammar and the body's copy already diverge on two production lines, with no parity instrument between them",
+      "recommendation": "The fenced Mechanism grammar exists in full in both the orbit-conventions delta (spec.md line 51) and the body (line 476); a mechanical diff of the fences shows the body's table line carries '; at least one member row' the spec's does not, and the body's Decisions production inlines the ID grammar and a 'same optional bullet prefix as Kind:' note the spec keeps in prose. Semantically equal today, textually two extensions on day one — the R-crc-14 shape, and the exemplar-vs-explore.md byte check shows the repo already knows the remedy. Nothing asserts the spec's fence equals the body's.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Add a parity assertion to orbit-generated-surface.test.ts that extracts the three fenced productions (status header, Decisions entry, Mechanism grammar) from the rendered body and from the conventions spec and asserts byte-equality; align the two divergent lines now (move 'at least one member row' and the ID/bullet-prefix notes into the spec's fence, or drop them from the body's)."
+        },
+        {
+          "label": "B",
+          "body": "Keep one fence only: the body carries the spec's fence verbatim under a comment naming the owner ('per orbit-conventions, Mechanism entry grammar — do not edit here'), align the two lines now, and record the absent parity check as rc13b's obligation beside its shared-fixture line in design.md Risks."
+        }
+      ]
+    },
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "src/core/templates/workflows/explore.ts",
+      "line": 544,
+      "title": "The BOUNDED production — the change's headline — has no conforming instance anywhere, so the fixture seam never exercises the residual slots",
+      "recommendation": "The exemplar's Closure line is SOURCED; a conformance run over the change's own explore.md shows all eight live-rule entries are DERIVED or SOURCED; the nine-move set's BOUNDED declaration lives as a prose paragraph in the explore-modifications delta, not in the grammar's slot form. Consequently the surface test's `if (closure[1] === 'BOUNDED')` branch never executes on the shipped exemplar, and D-bcs-11's promise — one shared fixture keeps the test's regexes and rc13b's parser aligned — covers none of `Residual kind:`, `Residual method:`, 'required iff BOUNDED, forbidden otherwise' or the blank-cheque scenario. A parser built against the fixture alone could get the OPEN-DECLARED half wrong and pass.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Ship a second, minimal conforming entry in the same fenced exemplar block whose Closure is BOUNDED with both residual slots (the nine-move set itself is the natural candidate — its kind and method are already written), and extend the test to walk both entries so both branches of the production are asserted."
+        },
+        {
+          "label": "B",
+          "body": "Record in design.md Risks and the rc13b handoff that the BOUNDED production has no fixture and rc13b must construct one before its parser is trusted on that branch; leave the single exemplar as is."
+        }
+      ]
+    },
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/bounded-closure-semantics/specs/orbit-conventions/spec.md",
+      "line": 51,
+      "title": "The grammar is silent on GFM pipe escaping in Domain cells, the change's own artifact uses one, and the recorded edge lives only in an apply emit",
+      "recommendation": "The grammar states a parser can be written from it alone; explore.md D-bcs-8's Domain row (line 222) carries a GFM-escaped `\\|` inside a cell, and a parser reading the production literally splits it into three columns and reports the change's own conforming artifact MALFORMED. The surface test's row regex `^\\| [^|]+ \\| [^|]+ \\|$` (the grammar's first extension) rejects that row too — the two extensions D-bcs-11 says the fixture keeps aligned already disagree on a real row. The apply emit's final_assessment records this for rc13b, but a trail record is not a spec, a design risk, or a handoff. Add one clause to the table production ('cells follow GFM: `\\|` is a literal pipe, never a separator'), and name D-bcs-8's row as rc13b's fixture for it in design.md Risks."
+    },
+    {
+      "pass": "1",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/bounded-closure-semantics/specs/orbit-explore-modifications/spec.md",
+      "line": 58,
+      "title": "The conclude record's properties are stated in full in both capabilities — the restatement the in-context walk fixed for two other rules and left here",
+      "recommendation": "orbit-conventions' 'Concluded exploration outcome' (lines 105–112) states the record: the two tokens, 'conclude is NOT a consent-marked seam: no gate, no prompt, no `consent` field on the explore emit', 'Nothing is written to .openspec.yaml', and that both land BEFORE the final emit. orbit-explore-modifications' conclude-verb paragraph (line 58) restates every one of those — the order, 'Nothing is written to metadata', and 'not a consent-marked seam — no gate, no prompt, no `consent` field' — verbatim. Each could be wrong on its own, which is R-crc-14's test for a restatement rather than a pointer. Keep the verb requirement's ordered steps (the body's behaviour, which it owns) and replace the record clauses with a pointer: 'the record's properties — what is written, what is not, and that conclude is no consent seam — are orbit-conventions' concluded-outcome requirement'."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "src/core/templates/workflows/explore.ts",
+      "line": 377,
+      "title": "The resume-in-place cell never reads the header of the change-directory file, though the KNOWN limit says a concluded file can reach one",
+      "recommendation": "Row four of the re-entry table marks 'concluded' as '—' for a name with no staging directory and an active change, and the definition says the fact is defined only when the staging directory exists. The KNOWN paragraph (line 580) admits that /orbit:propose can promote a concluded name today without reopening, which puts a `> **Status**: concluded …` explore.md inside orbit/changes/<name>/ — and this cell then resumes it as live, silently. Say which it is: either the status-header production is read on the change-directory file too and a concluded header there behaves as row three (state the conclusion and its trigger, reopen only on the user's word), or the header is deliberately ignored inside a change directory. One sentence under 'Two edges the table implies'."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/explore.ts",
+      "line": 576,
+      "title": "Step 4 of the conclude verb speaks in the present tense about a rung that does not exist, while the emit it fires recommends propose",
+      "recommendation": "Measured in a scratch copy: `orbit emit explore` on a concluded staging directory (4 decisions, 0 open questions) writes `next_recommended: /orbit:propose <name> — substantial thinking captured; ready to formalize…`, `orbit status --full` renders that string as the workstream's `next`, and `architecture status` renders the cited stage `exploring`. All three are the KNOWN limits the body states — except that the KNOWN list names the orientation row and never the trail's own terminal record, and step 4 says 'so the maturity-signal rung reads it as concluded' as if something reads it now. Rephrase step 4 in present terms ('the emit's counts describe the concluded file; its `next_recommended` is the maturity grid's until the maturity-signal stage lands') and add the emit field to the KNOWN list so the last record on a concluded trail is not a surprise."
+    },
+    {
+      "pass": "0",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/bounded-closure-semantics/tasks.md",
+      "line": 43,
+      "title": "Task 3.1 says the residue exemptions are listed in the design; the design says they are listed at task 3.1",
+      "recommendation": "tasks.md line 43: 'Every other hit in `src/` is listed in the design as a justified exemption'. design.md lines 106–108: 'every other hit listed as a justified exemption (task 3.1)'. The list itself exists only in the task line. Put the five exemptions (and, after the onboard fix, any sixth) in the design.md Risks entry that owns the residue-grep decision, and have the task point there — the design is the artifact a later reader consults for why a hit was accepted."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/bounded-closure-semantics/design.md",
+      "line": 142,
+      "title": "Touchpoints omits the hash-pin file the apply emit says went red, and predicts a change-own path the engine excludes by rule",
+      "recommendation": "`orbit status --change bounded-closure-semantics --boot --json` reports `actual_unpredicted: [test/core/templates/skill-templates-parity.test.ts]` and `predicted_unsatisfied: [orbit/changes/bounded-closure-semantics/explore.md, orbit/architecture/clean-up-review-cycle.md]`. The first is the rc04c sizing lesson repeating one stage later ('a HASH PIN names nothing'): the apply emit itself says exactly the two pins went red, yet the plan never predicted the file. The change-own explore.md entry can never be satisfied — the engine excludes `orbit/changes/<name>/**` from the arithmetic by rule — so it is a permanent false gap; the architecture doc is the archive-tail edit and is expected to stay unsatisfied until then. Add the parity test file to Touchpoints and drop the change-own explore.md line."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "pass": "2",
+      "title": "Two inputs the re-entry table's facts do not define: a staging directory without explore.md, and a header carrying neither token",
+      "evidence": "Resolved on the walk (address-reviews-2026-09-25T13-41-16Z); explore.ts line 380 now states both edges ('resolves as not-concluded and resumes with the stub or header added (add-only) — never MALFORMED'), and the explore-modifications delta line 56 carries the same."
+    },
+    {
+      "pass": "0",
+      "title": "The Closure: production admits only a bare token, but every entry in the exploration writes Closure: <TOKEN> — <justification>",
+      "evidence": "Resolved on the walk; explore.ts line 477 and the conventions delta line 52 both read 'Closure: <TOKEN>[ — <justification>] … matched from line start to the first ` — ` or end of line', and the mutation probe confirms the test's closure regex accepts the justification slot."
+    },
+    {
+      "pass": "3",
+      "title": "`this change's D-bcs-3` will sit in the BASELINE spec after sync, where `this change` has no referent",
+      "evidence": "Resolved on the walk; the explore-modifications delta line 27 now reads 'D-bcs-3 of the archived `bounded-closure-semantics` change', which survives sync."
+    },
+    {
+      "pass": "0",
+      "title": "Two stale figures in the design: `D-bcs-1 through D-bcs-10` and `only one live exploration exists`",
+      "evidence": "Resolved; design.md line 10 lists the eight rule IDs and the three scope IDs explicitly, and orbit/explore/ is measured empty (ls) with design.md lines 80–83 stating the migration surface is zero staging directories."
+    },
+    {
+      "pass": "1",
+      "title": "The Kind: regex excludes the nested-bullet form the same sentence admits",
+      "evidence": "Resolved on the second walk (address-reviews-2026-09-25T13-47-56Z); the production at explore.ts line 456 and the conventions delta line 13 carry the optional bullet prefix `^\\s*(?:[-*+]\\s+)?Kind:…`, and the conformance script matched all eleven Kind: slot lines in explore.md with it."
+    }
+  ],
+  "commentary": "What I executed rather than read: the full test suite and strict validation on the applied tree (both clean, fingerprints verified); a conformance script over the change's own explore.md against the shipped productions (status header, six H2s in order, eleven ID openers with legal Kind: slots, eight live rules each with an entry of nine unique moves, no residual slot on any closed entry, no orphan); the metadata-helper strip claim measured at both the nested and the sibling level through the real dist helpers (true); a scratch copy with a concluded staging directory citing a stage, run through emit explore, status --full --json and architecture status --json; and a mutation probe that fed eleven non-conforming exemplars through the surface test's own regexes (every mutation the grammar calls MALFORMED was rejected). The residue grep was re-run with the numeral spelling. The pattern behind what I found is one the program already named: the shipped acceptance instrument was narrower than the thing it accepted — the residue grep cannot see '5-section', the exemplar covers only the CLOSED half of a grammar whose reason to exist is the OPEN-DECLARED half, the row regex rejects a legal cell the change's own artifact contains, and the grammar now has two textual statements with nothing holding them equal. None of these breaks a user path; each is a place where an implementer building rc13b from the artifacts as written would diverge from what the authors meant, which is where I set the severity line. I probed the counter and the three location-keyed readers hard for engine ripple and found none: H3 entries and slot lines perturb no count, the conclude flow's three KNOWN limits are exactly what the readouts render, and the emit surface resolves a change-directory explore.md correctly for the resume-in-place cell. I did not read the external prompt or return. Baseline compliance across the untouched capabilities holds; propose's five-section check still passes a six-section file, which is the declared follow-on's seam and not a defect here.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4",
+    "5"
+  ],
+  "final_assessment": "0 critical, 5 warning, 4 suggestion.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews bounded-closure-semantics --from-file orbit/changes/bounded-closure-semantics/.orbit-runs/review-system-2026-09-25T14-18-36Z.json"
+}

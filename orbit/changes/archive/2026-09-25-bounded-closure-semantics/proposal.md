@@ -20,8 +20,9 @@ first attempt was told it lacked, plus the outcome Sal added to the charter on 2
 exploration may CONCLUDE in nothing, and the workflow has the words for it.
 
 Every mechanism here was executed once in the exploration (R-crc-7), and the exploration
-CONFORMS to the grammar it proposes: eleven decisions carry `Kind:`, eight rules carry Mechanism
-entries with nine dispositions each. Writing the third entry found a defect in its own rule (a
+CONFORMS to the grammar it proposes: twelve decisions carry `Kind:`, nine rules carry Mechanism
+entries with nine dispositions each (the ninth, D-bcs-12, added on the system walk — the BOUNDED
+exemplar). Writing the third entry found a defect in its own rule (a
 residual carried only in `design.md` dies at archive), which is the argument for the format.
 
 ## What Changes
@@ -44,16 +45,18 @@ residual carried only in `design.md` dies at archive), which is the argument for
   domain (the first attempt's D-rc13-2 is the worked counter-example).
 - **Nine moves per rule, declared BOUNDED with a kind-and-method residual**, the growth path
   (`@review:` marker + a finding against the requirement), the boundary test with RESOURCES in its
-  IN list, and ONE conforming exemplar in the shipped body (D-bcs-3's entry).
+  IN list, and TWO conforming exemplars in the shipped body (D-bcs-3, closed; D-bcs-12, bounded).
 - **An exploration may CONCLUDE.** On the user's word, inside explore: a CONCLUDED entry with a
   `Re-entry:` slot and the header token `> **Status**: concluded <date>.`, THEN the final boundary
   emit. Nothing is written to metadata (the helpers strip unknown keys — measured); the citation
   is kept unchanged. The directory stays IN
   PLACE — moving it would defeat rc13b's fifth rung, which orientation renders from the trail in
   that directory. No new command; the surface stays at 15.
-- **Re-entry is one DERIVED table** over staging-dir × concluded × active-change: six cells, two
-  refused (a name resolving to BOTH is the second-claim-on-one-truth condition propose already
-  refuses). A concluded name REOPENS only on the user's word, by the inverse edit plus a dated entry.
+- **Re-entry is one DERIVED table** over staging-dir × concluded × active-change × change-carries-explore.md:
+  nine cells, four refused (a name resolving to BOTH a staging directory and an active change is the
+  second-claim-on-one-truth condition propose already refuses). The fourth fact was added on the
+  system walk (2026-09-25): without it, one input had two results. A concluded name REOPENS only on
+  the user's word, by the inverse edit plus a dated entry.
 - `explore.md` goes to SIX sections (Premise, **Mechanism**, Decisions, Open questions, Considered
   & out, References). The retained requirement titles say "five-section": a RENAMED delta exists,
   but renaming pulls three pointer sites in two other capabilities into scope, so the rename is
@@ -106,8 +109,13 @@ no readout notices. The interval, stated.
 - `src/core/templates/workflows/explore.ts` — the convention text, the grammar block, the nine
   moves, the exemplar, the re-entry table, the conclude flow, the sweep slots.
 - `test/core/templates/orbit-generated-surface.test.ts` — generated-surface assertions, including
-  that the shipped exemplar matches the grammar's productions.
+  that the shipped exemplars match the grammar's productions and that the body's mirrors are
+  byte-equal to the owning specs.
+- `test/core/templates/skill-templates-parity.test.ts` — the hash pins for orbit-explore and, after
+  the system walk, orbit-onboard.
+- `src/core/templates/workflows/onboard.ts` — the Phase 1 sentence's section list (system walk).
 - `orbit/changes/bounded-closure-semantics/explore.md` — this change's own artifact, conformed.
 - No engine change. No schema bump. No migration: the counter ignores unknown H2 sections and
   nested slot lines (verified); existing staging directories parse unchanged.
-- Size at proposal: 2 capabilities, 10 requirements (5 MODIFIED, 5 ADDED), 16 tasks.
+- Size at proposal: 2 capabilities, 10 requirements (5 MODIFIED, 5 ADDED), 16 tasks — 15 after
+  apply, where 6.2 became an at-archive note.

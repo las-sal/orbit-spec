@@ -277,14 +277,14 @@ describe('generated surface fidelity (real init, all workflows, claude + codex)'
       const scaffold = skill.slice(skill.indexOf('## explore.md six-section convention'));
       ordered(scaffold, ['## Premise', '## Mechanism', '## Decisions', '## Open questions', '## Considered & out', '## References']);
       expect(skill).toContain('all six sections are scaffolded');
-      expect(skill).not.toMatch(/five-section|five sections/);
+      expect(skill).not.toMatch(/(five|5)[- ]sections?/);
       expect(skill).not.toContain('illustrative');
     });
 
     it('documents both status tokens and the one status-header production', () => {
       expect(skill).toContain('> **Status**: exploring.');
       expect(skill).toContain('> **Status**: concluded <YYYY-MM-DD>.');
-      expect(skill).toContain('^> \\*\\*Status\\*\\*: (exploring\\b|concluded \\d{4}-\\d{2}-\\d{2}\\.)');
+      expect(skill).toContain('^> \\*\\*Status\\*\\*: (exploring\\.( .*)?|concluded \\d{4}-\\d{2}-\\d{2}\\.)$');
       expect(skill).toContain('the ONLY other legal token');
     });
 
@@ -321,12 +321,71 @@ describe('generated surface fidelity (real init, all workflows, claude + codex)'
       expect(table).toContain('RESOURCES');
     });
 
-    it('carries the re-entry table: six cells in five rows, two refused', () => {
-      expect(skill).toContain('| no | — | no | Mode B new |');
-      expect(skill).toContain('| yes | no | no | Mode B resume |');
-      expect(skill).toMatch(/\| yes \| yes \| no \| state the conclusion/);
-      expect(skill).toMatch(/\| no \| — \| yes \| resume IN PLACE/);
-      expect(skill).toMatch(/\| yes \| either \| yes \| REFUSED/);
+    it('carries the re-entry table: nine cells in six rows, four refused', () => {
+      expect(skill).toContain('| no | — | no | — | Mode B new |');
+      expect(skill).toContain('| yes | no | no | — | Mode B resume |');
+      expect(skill).toMatch(/\| yes \| yes \| no \| — \| state the conclusion/);
+      expect(skill).toMatch(/\| no \| — \| yes \| yes \| resume IN PLACE/);
+      expect(skill).toMatch(/\| no \| — \| yes \| no \| Mode B new IN the change directory/);
+      expect(skill).toMatch(/\| yes \| either \| yes \| either \| REFUSED/);
+    });
+
+    it('status-header production, executed: accepts both tokens, rejects the near-misses', () => {
+      const m = skill.match(/^(\^> \\\*\\\*Status\\\*\\\*: \(.+?\)\$)/m);
+      expect(m).not.toBeNull();
+      const production = new RegExp(m![1]);
+      expect(production.test('> **Status**: exploring. Promoted to proposal/design/specs via /orbit:propose when decisions firm up.')).toBe(true);
+      expect(production.test('> **Status**: exploring.')).toBe(true);
+      expect(production.test('> **Status**: concluded 2026-09-25.')).toBe(true);
+      expect(production.test('> **Status**: exploring-bad')).toBe(false);
+      expect(production.test('> **Status**: exploring')).toBe(false);
+      expect(production.test('> **Status**: concluded 2026-09-25')).toBe(false);
+      expect(production.test('> **Status**: concluded 2026-09-25. trailing')).toBe(false);
+    });
+
+    it('owned productions and tables: the body carries byte-equal MIRRORS of the spec (R-crc-14 corollary)', async () => {
+      // The owner is the spec. While a change is OPEN, its delta is the owner-to-be and the body
+      // mirror tracks it (a delta-plus-baseline pair is the normal mid-change state); once synced,
+      // the baseline owns it. Two ACTIVE deltas holding one block would be two owners; no holder
+      // at all would leave the mirror orphaned — both fail.
+      const repo = path.resolve(__dirname, '../../..');
+      const readIf = async (file: string, anchor: string) => {
+        try {
+          const t = await fs.readFile(file, 'utf-8');
+          return t.includes(anchor) ? t : null;
+        } catch { return null; }
+      };
+      const ownerText = async (capability: string, anchor: string) => {
+        const deltaHolders: string[] = [];
+        for (const d of await fs.readdir(path.join(repo, 'orbit', 'changes'))) {
+          const t = await readIf(path.join(repo, 'orbit', 'changes', d, 'specs', capability, 'spec.md'), anchor);
+          if (t) deltaHolders.push(t);
+        }
+        expect(deltaHolders.length, `at most one ACTIVE delta may own ${anchor}`).toBeLessThanOrEqual(1);
+        if (deltaHolders.length === 1) return deltaHolders[0];
+        const baseline = await readIf(path.join(repo, 'orbit', 'specs', capability, 'spec.md'), anchor);
+        expect(baseline, `no owner holds ${anchor}`).not.toBeNull();
+        return baseline!;
+      };
+      const fence = (text: string, firstLine: string) => {
+        const i = text.indexOf('```\n' + firstLine);
+        expect(i, `fence starting ${firstLine}`).toBeGreaterThan(-1);
+        return text.slice(i, text.indexOf('\n```', i + 4) + 4);
+      };
+      const table = (text: string, header: string) => {
+        const i = text.indexOf(header);
+        expect(i, `table ${header}`).toBeGreaterThan(-1);
+        return text.slice(i, text.indexOf('\n\n', i));
+      };
+      const conv = await ownerText('orbit-conventions', '```\n## Mechanism\n');
+      const mods = await ownerText('orbit-explore-modifications', '| staging dir | concluded | active change |');
+      expect(fence(skill, '^> \\*\\*Status')).toBe(fence(conv, '^> \\*\\*Status'));
+      expect(fence(skill, '- **<YYYY-MM-DD> — <ID>: <title>**')).toBe(fence(conv, '- **<YYYY-MM-DD> — <ID>: <title>**'));
+      expect(fence(skill, '## Mechanism\n')).toBe(fence(conv, '## Mechanism\n'));
+      expect(table(skill, '| staging dir | concluded | active change |')).toBe(table(mods, '| staging dir | concluded | active change |'));
+      expect(table(skill, '| part of the mechanism |')).toBe(table(mods, '| part of the mechanism |'));
+      // and each mirror says so, naming its owner
+      expect(skill.match(/\*Mirror of `orbit-(conventions|explore-modifications)`'/g)?.length).toBe(5);
     });
 
     it('states the conclude order and that nothing is written to metadata', () => {
@@ -338,47 +397,61 @@ describe('generated surface fidelity (real init, all workflows, claude + codex)'
       expect(section).toContain('superseded <the reopening entry\'s ID>');
     });
 
-    it('ships an exemplar whose lines match the grammar productions', () => {
+    // Cells follow GFM: `\|` is a literal pipe, never a separator (the grammar's clause; the
+    // change's own D-bcs-8 Domain row is the fixture rc13b's parser must also accept).
+    const CELL_ROW = /^\| (?:[^|\\]|\\.)+ \| (?:[^|\\]|\\.)+ \|$/;
+
+    it('the cell pattern accepts a GFM-escaped pipe inside a cell (D-bcs-8 fixture row)', () => {
+      expect('| move dispositions | `Moves:` + nine lines `- <MOVE>: applied — … \\| not applied — …`, each move exactly once |').toMatch(CELL_ROW);
+      expect('| a | b | c |').not.toMatch(CELL_ROW);
+    });
+
+    it('ships exemplars whose lines match the grammar productions — both closure branches', () => {
       const start = skill.indexOf('```markdown\n### D-bcs-3 — ');
       expect(start).toBeGreaterThan(-1);
-      const end = skill.indexOf('```', start + 12);
-      const lines = skill.slice(start + '```markdown\n'.length, end).split('\n').filter((l) => l.length > 0);
-
-      // entry heading
-      expect(lines[0]).toMatch(/^### D-[a-z0-9]+-[0-9]+ — .+$/);
-      // Domain: line, then a two-column table with a separator row and ≥1 member row
-      expect(lines[1]).toMatch(/^Domain: .+$/);
-      expect(lines[2]).toBe('| member | covered by |');
-      expect(lines[3]).toBe('|---|---|');
-      let i = 4;
-      let members = 0;
-      while (lines[i].startsWith('|')) {
-        expect(lines[i]).toMatch(/^\| [^|]+ \| [^|]+ \|$/);
-        members++;
+      const end = skill.indexOf('\n```', start + 12);
+      const block = skill.slice(start + '```markdown\n'.length, end);
+      // split into entries at each `### D-` heading
+      const entries = block.split(/\n(?=### D-)/).map((e) => e.split('\n').filter((l) => l.length > 0));
+      expect(entries.length).toBeGreaterThanOrEqual(2);
+      const tokens: string[] = [];
+      for (const lines of entries) {
+        expect(lines[0]).toMatch(/^### D-[a-z0-9]+-[0-9]+ — .+$/);
+        expect(lines[1]).toMatch(/^Domain: .+$/);
+        expect(lines[2]).toBe('| member | covered by |');
+        expect(lines[3]).toBe('|---|---|');
+        let i = 4;
+        let members = 0;
+        while (lines[i].startsWith('|')) {
+          expect(lines[i]).toMatch(CELL_ROW);
+          members++;
+          i++;
+        }
+        expect(members).toBeGreaterThan(0);
+        const closure = lines[i].match(/^Closure: (DERIVED|SOURCED|BOUNDED)(?: — .+)?$/);
+        expect(closure, lines[i]).not.toBeNull();
+        tokens.push(closure![1]);
         i++;
+        if (closure![1] === 'BOUNDED') {
+          expect(lines[i++]).toMatch(/^Residual kind: .+$/);
+          expect(lines[i++]).toMatch(/^Residual method: .+$/);
+        } else {
+          expect(lines[i]).not.toMatch(/^Residual /);
+        }
+        expect(lines[i++]).toBe('Moves:');
+        const moves = lines.slice(i);
+        expect(moves).toHaveLength(9);
+        const seen = moves.map((l) => {
+          const m = l.match(/^- (READ|ENUMERATE|COHERE|EXECUTE|FALSIFY|CONFORM|FEASIBILITY|CONSUME|INVOKE): (applied|not applied) — .+$/);
+          expect(m, l).not.toBeNull();
+          return m![1];
+        });
+        expect(new Set(seen).size).toBe(9);
       }
-      expect(members).toBeGreaterThan(0);
-      // Closure token, matched from line start to the first ' — '
-      const closure = lines[i].match(/^Closure: (DERIVED|SOURCED|BOUNDED)(?: — .+)?$/);
-      expect(closure).not.toBeNull();
-      i++;
-      // residual slots iff BOUNDED
-      if (closure![1] === 'BOUNDED') {
-        expect(lines[i++]).toMatch(/^Residual kind: .+$/);
-        expect(lines[i++]).toMatch(/^Residual method: .+$/);
-      } else {
-        expect(lines[i]).not.toMatch(/^Residual /);
-      }
-      // Moves: then nine lines, each move exactly once
-      expect(lines[i++]).toBe('Moves:');
-      const moves = lines.slice(i);
-      expect(moves).toHaveLength(9);
-      const seen = moves.map((l) => {
-        const m = l.match(/^- (READ|ENUMERATE|COHERE|EXECUTE|FALSIFY|CONFORM|FEASIBILITY|CONSUME|INVOKE): (applied|not applied) — .+$/);
-        expect(m, l).not.toBeNull();
-        return m![1];
-      });
-      expect(new Set(seen).size).toBe(9);
+      // one exemplar per closure OUTCOME: at least one CLOSED entry and at least one BOUNDED entry,
+      // so the residual-slot branch above is exercised by the shipped surface, not only by mutation.
+      expect(tokens).toContain('BOUNDED');
+      expect(tokens.some((t) => t === 'DERIVED' || t === 'SOURCED')).toBe(true);
     });
   });
 

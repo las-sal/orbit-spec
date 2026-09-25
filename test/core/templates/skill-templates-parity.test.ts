@@ -49,13 +49,13 @@ import { generateSkillContent } from '../../../src/core/shared/skill-generation.
 // bodies and the shipped reference NAME the totality rule and point at its owner instead of
 // restating its predicate and set.
 const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
-  getExploreSkillTemplate: '544889b221f6495e35522d5e6676c5e0d2bc6854bd52da3769fa52625baf74f6',
+  getExploreSkillTemplate: '7d4dec24b325fef05fb65c642b86e84eea6c91f29c17391cff1b9b565bb94b69',
   getNewChangeSkillTemplate: '8f68be94db91a147b93d492f6f32ab3c02725a20a001c87602ac8d9741587614',
   getContinueChangeSkillTemplate: '98c49b247140ba301964c1e5a825686485b74a525f65f31a365d19e0aa84923e',
   getApplyChangeSkillTemplate: 'b2f2d8bfdc7bfb5283af4cb45d3f82fa6a393ccb0cfaeb332427c088ca956ecd',
   getFfChangeSkillTemplate: 'b4411dbfa4c2fe0c02b5b5137006edf50f993d9187153b21e43de680b3f9b148',
   getSyncSpecsSkillTemplate: 'a9672b720eff36fb30f2229d835fd9a9e4cc88e81f1773bc74aff79247aa9809',
-  getOnboardSkillTemplate: '8125f0ed4b7b936689448473249ccf76f6e93fd253bd9c6e3726b912bfec9841',
+  getOnboardSkillTemplate: '54c11448f293ffafc95d2e2075d7149e4f18ac94590a90e79f47ac550412034d',
   getOrbitExploreCommandTemplate: '52892dbd4b5eb72264dc6eb54f8126a09fc903adc1c1654c58e0650df609bfb6',
   getOrbitNewCommandTemplate: '47d97305a2d3abca6eafa8f7ed5fe13fb83ea8ca0b71f007975b217135f5f5aa',
   getOrbitContinueCommandTemplate: 'e1ecd4fffee224e284453be717226824c7567041d7c1676b6b6bca4727e3a9dd',
@@ -77,7 +77,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
 };
 
 const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
-  'orbit-explore': '2b8be1bd4b522d2b6fec88f2a01be15b7a3c2218e441b004159003fa72b81513',
+  'orbit-explore': 'b43786b3946258805333204a081e986eac98cfe3bae08dc215b86a9cd689a843',
   'orbit-new-change': '94c9d6377c6de0484f3a51923eba08214ca45cab5d87a55e46e032de2640b925',
   'orbit-continue-change': 'f61634ab5e96436b33fd30c210f84a57f55baf1716d6ef4679c1ed2a518cc3d3',
   'orbit-apply-change': '90e1e529f4a264b4cf2eac15cea9229d6d2c4c1e9c246b049a00d3f79cb2e574',
@@ -86,7 +86,7 @@ const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
   'orbit-archive-change': '5338e4bc76f47e9294072101f48f9a0ffbabb8480d924955dbc275b0794a047b',
   'orbit-bulk-archive-change': '601dd7c74804c06a9818428f86030c8cef5311a9fc7c59f2dc14e490007a291d',
   'orbit-verify-change': '0d8f6b82d40bf95bd6b49f447fbd66d5414af79fa157872345668b9cb709ab6d',
-  'orbit-onboard': 'df4e90ff9d19df86ff6027c39f42e6f4c34a96410dd331980138eb508fd35a42',
+  'orbit-onboard': '4b227395bb70c36c643970d821ec8eb245fbfca090accdc38d5b3588f7620fa7',
   'orbit-propose': '2e7ec600c01feb8dc57877484048dbaff6bed63524485b386bb487611ec22d23',
   'orbit-architect': '5603821c28adfd35e108fad5ec226eb2839db0453f61e660a35489067b1686aa',
 };

@@ -1,0 +1,102 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-25T14:44:33Z",
+  "change": "bounded-closure-semantics",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/bounded-closure-semantics/.orbit-runs/review-system-2026-09-25T14-40-55Z.json",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 2
+  },
+  "pushback_verification": "All 5 findings re-verified against the working tree before acting (each had been read-verified in the producing pass minutes earlier and nothing changed between); 0 stale.",
+  "resolution_summary": {
+    "resolved": 5,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The 'Mode B — other cells' scenario enumerates three outcomes for a table that now has four, and never names the concluded-header edge",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/bounded-closure-semantics/specs/orbit-explore-modifications/spec.md",
+      "line": 134,
+      "classification": "trivial_fix",
+      "action": "The 'Mode B — other cells' scenario's WHEN now names every remaining cell (concluded staging dir; active change with or without explore.md; both; a concluded header inside the change directory) and its THEN points at the re-entry table and its edge paragraph, naming no outcome of its own — the R-crc-14 shape.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The parity test's 'exactly one owner' rule fails the suite for any future change that legitimately MODIFIES an owned block",
+      "marker_source": "internal-review",
+      "file": "test/core/templates/orbit-generated-surface.test.ts",
+      "line": 364,
+      "classification": "trivial_fix",
+      "action": "ownerText() now prefers an ACTIVE delta as owner-to-be (at most one; two fail), falling back to the baseline (must hold the block; none fails) — a delta-plus-baseline pair is the normal mid-change state and no longer fails the suite; rc13b's grammar delta will be tracked by the body mirror during that change.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The conclude-verb paragraph restates the count-derived KNOWN limit that orbit-conventions owns — reintroduced by the walk's own fix",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/bounded-closure-semantics/specs/orbit-explore-modifications/spec.md",
+      "line": 59,
+      "classification": "trivial_fix",
+      "action": "The conclude-verb paragraph's parenthetical is now a pointer: 'the interim behaviour of that recommendation is the concluded-outcome requirement's KNOWN limit, named there and not restated here'.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Walk residue in the exploration record: two titles still say 'three facts', two lines still say 'ONE exemplar', and task 2.3 still says 'six cells'",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/bounded-closure-semantics/explore.md",
+      "line": 192,
+      "classification": "trivial_fix",
+      "action": "D-bcs-7's Mechanism heading and decision title say four facts (title amendment dated); D-bcs-8's CONFORM line and decision text say 'checked-mirror exemplars — one per closure outcome since the system walk, amended 2026-09-25'; task 2.3 carries the after-walk count beside the at-apply one. Conformance checker: zero drift.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/bounded-closure-semantics/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Proposal Impact carries a stale task count and omits the two files the walk touched",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/bounded-closure-semantics/proposal.md",
+      "line": 116,
+      "classification": "trivial_fix",
+      "action": "Impact reads '16 tasks — 15 after apply, where 6.2 became an at-archive note' and lists skill-templates-parity.test.ts and onboard.ts beside the surface test.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "All 5 findings of the in-context confirm pass walked to zero, every one an obvious fix on prose or an instrument the walks themselves added: the other-cells scenario points instead of enumerating; the parity test prefers an active delta as owner and no longer fails a legitimate mid-change pair; the conclude-verb paragraph points at the KNOWN limit instead of restating it; the exploration's two titles and two lines and task 2.3 carry their dated amendments; the proposal's Impact states 15 tasks and the two files the walk touched. No hash pin moved (explore.ts and onboard.ts untouched this walk). 2254 tests green; validate --all --strict 26/26; fingerprints 5/5; explore.md conformance zero drift. The trail also carries, in the in-context review's commentary, the correction to the fresh-walk emit's false claim that the touchpoint divergence was clear: one prediction, the architecture doc, stays unsatisfied until the archive tail.",
+  "iteration": 5,
+  "next_recommended": "/orbit:archive bounded-closure-semantics — user-invoked"
+}

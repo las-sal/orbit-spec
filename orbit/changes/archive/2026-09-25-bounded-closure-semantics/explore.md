@@ -175,7 +175,7 @@ Domain: the readers of a staging directory that a conclusion must account for
 | member | covered by |
 |---|---|
 | stage-state scan (`state.ts`) | KNOWN LIMIT — renders `exploring` until Q-crc-11's stage reads the header token from the directory the kept citation locates |
-| orientation (`orientation.ts`) | the row stays; KNOWN LIMIT — its next line says propose until rc13b's fifth rung |
+| orientation (`orientation.ts`) | the row stays; KNOWN LIMIT — its next line stays count-derived (explore or propose by the maturity grid) until rc13b's fifth rung (amended 2026-09-25, system pair: measured, not propose alone) |
 | audit-drift explore cross-check | unchanged; the header token is not a count |
 Closure: SOURCED — grep over `src/core` and the audit-drift body for readers of `orbit/explore` (Case 2)
 Moves:
@@ -189,19 +189,20 @@ Moves:
 - CONSUME: applied — the CONCLUDED entry and the header flip land BEFORE the final boundary emit, because rc13b's rung is computed from the file at emit time and orientation renders that emit's next line; amended 2026-09-25 at propose (the first wording had the emit first and the rung would never have rendered — COHERE, caught by executing the sequence once); rc13b reads the header token and the `Re-entry:` slot
 - INVOKE: applied — fires on the user's word "conclude" inside explore; nothing else triggers it
 
-### D-bcs-7 — re-entry resolves against three facts, as one table
-Domain: the cells of (staging dir exists) × (concluded, defined only when a staging dir exists) × (active change exists)
+### D-bcs-7 — re-entry resolves against four facts, as one table
+Domain: the cells of (staging dir exists) × (concluded, defined only when a staging dir exists) × (active change exists) × (the change carries explore.md, defined only when a change exists)
 | member | covered by |
 |---|---|
 | no staging, no change | Mode B new |
 | staging, not concluded, no change | Mode B resume |
 | staging, concluded, no change | state the conclusion and its trigger; REOPEN only on the user's word — header back to exploring, a dated Decisions entry saying why, the prior CONCLUDED entry `Disposition: superseded <new ID>` so one LIVE `Re-entry:` slot remains, a boundary emit |
-| no staging, change | resume in place against `orbit/changes/<name>/explore.md`, say so, scaffold nothing |
+| no staging, change with explore.md | resume in place against `orbit/changes/<name>/explore.md`, say so, scaffold nothing |
+| no staging, change without explore.md | Mode B new IN the change directory; no staging dir scaffolded |
 | staging (either), change | REFUSED — second claim on one truth; name both paths |
-Closure: DERIVED — three facts, the middle one conditional on the first: six cells, two refused
+Closure: DERIVED — four facts, the second conditional on the first and the fourth on the third: nine cells, four refused (AMENDED 2026-09-25, system walk: the external pass found the change-without-explore.md case stated as an edge sentence outside the table — a fourth fact the three-fact derivation could not see)
 Moves:
 - READ: applied — propose's consume mode MOVES the staging dir, so a promoted name has no staging dir by construction (first attempt's re-entry requirement, read from the archive)
-- ENUMERATE: applied — this table; an earlier chat count of "eight cells, five refused" was wrong and is corrected here
+- ENUMERATE: applied — this table; an earlier chat count of "eight cells, five refused" was wrong and is corrected here; the six-cell version missed a fourth fact (amended 2026-09-25)
 - COHERE: applied — the refused row is the same condition propose's metadata merge refuses
 - EXECUTE: not applied — the concluded row has no instance yet
 - FALSIFY: applied — a name resolving to BOTH is not a tie to break silently; refusing names the defect
@@ -229,7 +230,7 @@ Moves:
 - COHERE: applied — the Decisions opener is the one every exploration on record already writes, `- **<date> — <ID>: <title>**`; formalized, not replaced, so there is no migration. AMENDED 2026-09-25 (in-context pass): the slot-line regex written at the walk rejected the nested-bullet form the same sentence admitted — an optional bullet prefix now reconciles them; the header token also gained a production
 - EXECUTE: applied — this section is the first conforming instance; D-bcs-3's entry was written first, and its FALSIFY line found the design-only carrier
 - FALSIFY: applied — the first attempt's grammar named slots without a container or boundary and no parser could be written; every production here answers a parser question
-- CONFORM: applied — R-crc-7 (tables), R-crc-10 (form only), R-crc-14 (the spec owns the grammar; the body carries ONE exemplar and points)
+- CONFORM: applied — R-crc-7 (tables), R-crc-10 (form only), R-crc-14 (the spec owns the grammar; the body carries checked-mirror exemplars — one per closure outcome since the system walk, amended 2026-09-25 — and points)
 - FEASIBILITY: applied — nine move lines per rule is the cost; `not applied — <reason>` keeps it to one line each
 - CONSUME: applied — rc13b's parser over the shared fence tracker (Q-crc-15 says the other grammar is wrong both ways); its fixtures MUST include the shipped exemplar
 - INVOKE: applied — fires whenever a rule's entry is written; the demanding default (D-bcs-9) is what makes it fire
@@ -276,6 +277,33 @@ Moves:
 - FEASIBILITY: not applied — a bounded render (first few IDs + count) is rc13b's exit (1)
 - CONSUME: applied — the fifth rung reads the header token `concluded` and the CONCLUDED entry's `Re-entry:` slot; recommends neither explore nor propose; header read FIRST — precedence over the withholding predicate, open rules rendered beside it as a record (added 2026-09-25)
 - INVOKE: applied — HANDOFF: the charter sentence in rc13b's section is an architect edit, carried by rc13a's archive tail or the next architect session, never by this exploration
+
+### D-bcs-12 — the move set is NINE, and it is BOUNDED in its own slots
+Domain: the ways a mechanism can be wrong, one per part of the mechanism
+| member | covered by |
+|---|---|
+| the facts it cites | READ |
+| its input domain | ENUMERATE |
+| its own parts | COHERE |
+| its computation | EXECUTE |
+| its purpose | FALSIFY |
+| its context | CONFORM |
+| its resources | FEASIBILITY |
+| its output's consumer | CONSUME |
+| its trigger | INVOKE |
+Closure: BOUNDED — the parts of a mechanism are not a closed structure; the set has grown three times and every growth came from a record
+Residual kind: a further way a mechanism is wrong that none of the nine names
+Residual method: classifying another record's CRITICALs against the table — the only method that has ever grown it (five to six on rc03a's record; six to eight on rc02's; eight to nine on the first attempt's own review trail)
+Moves:
+- READ: applied — the three growth events read from the archived first attempt (Cases 7 and 10) and its review trail
+- ENUMERATE: applied — this table; the boundary test admits a candidate that names a way the mechanism ITSELF fails
+- COHERE: applied — the residual's method is the boundary test run against a record, so the two slots and the growth path are one procedure
+- EXECUTE: applied — the nine were run against every rule in this file: eight entries before this one, no move left without a disposition
+- FALSIFY: applied — a defect that classifies to no move is a finding about the SET; the growth path exists for exactly that
+- CONFORM: applied — R-crc-7 (a decision table), R-crc-10 (a record), R-crc-14 (the spec owns the table; the body mirrors it)
+- FEASIBILITY: not applied — nine lines per rule, one each
+- CONSUME: applied — rc13b's parser reads move lines by name and must know all nine; this entry is the BOUNDED shape its fixture must also parse
+- INVOKE: applied — fires on every Mechanism entry, since each move line names a member
 
 ## Decisions
 
@@ -336,12 +364,14 @@ Moves:
   changes archive is wrong because a conclusion carries a standing trigger, which is Considered &
   out's shape at the program layer. KNOWN and assigned: stage state renders `exploring` for a
   concluded citer until Q-crc-11's stage (WITHDRAWN and CONCLUDED are one missing state seen from
-  two layers); the orientation row keeps recommending propose until rc13b.
+  two layers); the orientation row's next line stays count-derived until rc13b (amended 2026-09-25:
+  measured as explore-or-propose by the maturity grid, not propose alone).
   Kind: rule
 
-- **2026-09-25 — D-bcs-7: re-entry is one DERIVED table over three facts** (settled under
-  R-crc-3). Staging dir × concluded (defined only with a staging dir) × active change: six cells,
-  two refused. A promoted name resumes in place against the change directory and scaffolds nothing;
+- **2026-09-25 — D-bcs-7: re-entry is one DERIVED table over four facts** (title amended 2026-09-25 with the fourth fact; settled under
+  R-crc-3). Staging dir × concluded (defined only with a staging dir) × active change × change
+  carries explore.md (defined only with a change): nine cells, four refused (AMENDED 2026-09-25 on
+  the system walk — the fourth fact was an edge sentence, and one input had two results). A promoted name resumes in place against the change directory and scaffolds nothing;
   a concluded name states its conclusion and trigger and REOPENS only on the user's word, by the
   inverse edit plus a dated entry saying why; a name resolving to BOTH is refused naming both
   paths, because that is the second-claim-on-one-truth condition propose already refuses.
@@ -354,7 +384,8 @@ Moves:
   `- <MOVE>: applied — … | not applied — …`, each exactly once; Cases stay as `### Case <n>`
   siblings, told apart by the literal against the ID grammar; other H3s are prose. H3 rather than a
   list item because domains are TABLES (R-crc-7). The spec owns the grammar; the explore body
-  carries ONE exemplar and points (R-crc-14). The shipped counter is undisturbed — it ends a section
+  carries exemplars — one per closure outcome since the system walk (amended 2026-09-25) — and
+  points (R-crc-14). The shipped counter is undisturbed — it ends a section
   only on `## ` / `# ` — verified in `src/core/parsers/explore-counter.ts`.
   Kind: rule
 
@@ -388,6 +419,12 @@ Moves:
   shared fixture is what keeps them from diverging, and it is a stated seam, not a hope.
   Kind: scope
 
+- **2026-09-25 — D-bcs-12: the move set is NINE, and it is BOUNDED in its own slots** (added on
+  the system walk, settled under R-crc-3). The rule was written in design.md and the delta spec
+  without an entry here — the "rule never written down" residual, caught by the fresh pass because
+  no BOUNDED entry existed anywhere and the test's residual-slot branch never ran. The residual
+  names its kind and its method; growth is a change to the requirement, never silent.
+  Kind: rule
 
 ## Open questions
 

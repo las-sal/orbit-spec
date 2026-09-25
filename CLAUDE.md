@@ -209,7 +209,7 @@ file now carries a live mark. Do NOT read this paragraph as the program's full l
 only what rc07 produced. The authoritative list is the program doc's own Open questions section,
 which also carries Q-crc-11, Q-crc-12, Q-crc-20, Q-crc-21, Q-crc-22 and Q-crc-23.
 
-**Four more stages have shipped since, and the program is SEVEN stages complete** (rc04c ratified 2026-09-25).
+**Five more stages have shipped since, and the program is EIGHT stages complete** (rc13a ratified 2026-09-25).
 
 `rc02c-confirmation-semantics` is ARCHIVED (2026-09-21): **the budget stopped being a target.**
 R-crc-11(h) — effort is RECORDED, never TARGETED — retired `budgetExhausted`, the
@@ -277,6 +277,34 @@ stated at its real strength. One sizing lesson: the stage sized its red-test set
 field name, and a HASH PIN names nothing — the template parity pin went red on exactly the two bodies
 the stage names and had no line in the plan. Ratified task breach at 34, final count 36, both stated.
 **2243 tests green.**
+
+`rc13a-explore-mechanism-convention` is ARCHIVED and RATIFIED (2026-09-25, as the change
+`bounded-closure-semantics` — the second attempt; the first archived 2026-09-15 without shipping):
+**the explore convention has a Mechanism section, and a rule's domain is ACCOUNTED, never open
+silently.** `explore.md` is SIX sections (Premise, Mechanism, Decisions, Open questions, Considered &
+out, References) with TWO status tokens (`exploring.` / `concluded <date>.`, one end-anchored
+production a test EXECUTES). Decisions entries are keyed by the opener every file already wrote
+(`- **<date> — D-<tag>-<n>: <title>**`), with `Kind: rule | fact | scope` (absent = rule, so opting
+out is written) and `Disposition:`; every live rule owes a Mechanism entry — an H3 with a `Domain:`
+table, a `Closure:` token from a CLOSED three-token set (DERIVED and SOURCED mean CLOSED; BOUNDED
+means OPEN-DECLARED and REQUIRES `Residual kind:` + `Residual method:` — "there may be others"
+discharges nothing), and nine move lines (READ, ENUMERATE, COHERE, EXECUTE, FALSIFY, CONFORM,
+FEASIBILITY, CONSUME, INVOKE — a set declared BOUNDED in its own slots). An exploration may
+CONCLUDE in nothing on the user's word: a `Kind: scope` entry with a `Re-entry:` slot plus the header
+token, nothing written to metadata, the directory staying in place. Re-entry is one four-fact table
+(nine cells, four refused). The productions are stated ONCE in the owning specs and MIRRORED
+byte-equal into the explore body by a parity test — **R-crc-14's MIRROR COROLLARY**, ratified this
+cycle: a generated surface that cannot resolve its owner at runtime may carry a checked copy that
+says so (the rulings count stays 14; corollaries append inside their ruling). No engine code
+shipped; the format is proven by two exemplars in the body (D-bcs-3 closed, D-bcs-12 bounded) that
+the surface test parses against the grammar and rc13b will parse as fixtures. The cycle: one fresh
+proposal pass, apply 14/15 (6.1 the user-validation handoff to the NEXT stage explored under the
+convention; 6.2 converted to an at-archive note), then the **blind pair on the pushed apply commit**
+— external (GPT-6 Astra) 2C/2W/1S and fresh 0C/5W/4S, zero CRITICAL overlap, three shared — walked
+in two logs, an in-context confirm (0C/3W/2S, all in the walks' own additions) walked to zero, and
+a COMPUTED PASSED gate. Exit (2) was REVISED at ratification (R-crc-12's first case: the mechanism
+retired the criterion's word "closed"); the convention is ADVISORY until rc13b's readout lands.
+Proposed to Sal, not declared: `rc13c-propose-consumes-mechanism`. **2254 tests green.**
 
 Read that doc before any rc-stage work; the D-arc section below is the historical
 record of how the engine got here.

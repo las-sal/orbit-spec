@@ -473,6 +473,20 @@ One goal per phase, each falsifiable, each stage naming its goal (settled under 
   restate it. (d) A field NAME in a shipped reference is a POINTER, not a predicate; the schema
   references keep listing fields.
 
+  **MIRROR COROLLARY** (added 2026-09-25, ratified by Sal in chat on rc13a's system walk): where a
+  GENERATED surface cannot resolve the owning spec at runtime — a skill body installed into an
+  adopter's project, whose `orbit/specs/` are the adopter's, not orbit's — the surface MAY carry a
+  MIRROR of the owner's production, on three conditions: the mirror SAYS it is one and names the
+  owner; a test holds it BYTE-EQUAL to the owner, so divergence fails the build instead of waiting
+  for a fourth reviewer; and the mirror is a COPY, never an extension — nothing is added on the
+  mirror side. Earned by rc13a, whose system blind pair found the spec-owned Mechanism grammar and
+  the explore body's copy textually different on day one, with nothing holding them equal. The
+  remedy that held is rc01's shape — one authority, checked mirrors: the run-summary schema
+  reference is documented as "a MIRROR of the engine's authoritative table, never its definition"
+  and held there by the schema-table parity test. The fuller form — ONE engine constant that the
+  body template, the spec check, the surface test and the parser all read — is rc13b's, recorded
+  in that stage's handoff.
+
   **The boundary.** This does not forbid a body from telling its reader what will happen to them:
   an instruction needs its consequence in place. It forbids the body from carrying the rule's
   DEFINITION — the class list, the exclusion, the comparison — which is what turns a pointer into
@@ -494,6 +508,12 @@ One goal per phase, each falsifiable, each stage naming its goal (settled under 
   assigned, because assigning it is a scope call. NOTE the honest counter: a withdrawn stage that
   keeps asking for ratification is ANNOYING but not WRONG, and the two instances cost nothing but a
   confusing readout — this may be worth leaving until a third occurrence.
+  **2026-09-25 — the engine-readable INPUT this question was waiting for now exists.** rc13a shipped
+  the concluded outcome: `> **Status**: concluded <YYYY-MM-DD>.` as the first non-blank line of the
+  `explore.md` in the staging directory the stage's KEPT `architecture:` citation locates. A stage
+  cited only by a concluded exploration renders `exploring` until this question's stage teaches
+  `state.ts` to read that header — the third state, from the exploration side. Nothing is written to
+  metadata (the helpers strip unknown keys, measured), so the header IS the input.
   **2026-09-21 — the counter's own test, sharpened.** The ratification offer fired again for rc03a
   in an architect session and was again declined, which makes the cost RECURRING rather than
   one-time: the readout does not ask once, it asks at EVERY architect session on this doc, forever,
@@ -1224,12 +1244,14 @@ inherits it as its central evidence rather than as a rhetorical flourish.
 ### Stage rc13a-explore-mechanism-convention — the format that makes a rule checkable
 
 Depends-on: (none)
-Complete: [ ]
+Complete: [x] 2026-09-25 (Sal)
 
 Charter: the explore convention gains a **Mechanism** section whose unit is a CLOSED ENUMERATION per
 rule; the RULE test (a Decision is a rule iff it has a domain of situations, applied PER CLAIM since
-an entry may state a finding and embed a rule); the three DECLARED closure forms with the taxonomy
-itself declared BOUNDED; the move set with its residual and its growth path stated — including where
+an entry may state a finding and embed a rule — superseded by the archived change, see SETTLED: the
+test is NORMATIVE force, a quantified fact is not a rule); the three DECLARED closure forms with the
+taxonomy itself declared BOUNDED (superseded by the archived change, see SETTLED: closure is
+ACCOUNTED — two outcomes, three tokens); the move set with its residual and its growth path stated — including where
 a set-finding is RECORDED and what test distinguishes "a way a mechanism is wrong" from "outside the
 set's domain", which the first shape left to the classifier's word; and the explore RE-ENTRY case
 (a name resolving to an active change resumes in place, never scaffolding a second staging directory
@@ -1245,9 +1267,10 @@ The format is the prerequisite, not the leftover.
 Goal G3. Touches: orbit-conventions, orbit-explore-modifications. Exit: (1) a rule's domain
 enumeration, its declared closure form and each move's disposition have named slots a parser can key
 on, and the Decisions section carries a stable identifier per entry; (2) the convention's own
-artifact — this stage's exploration — conforms to it, with every live rule's domain closed and every
-out-of-domain entry carrying the disposition annotation ON THE ENTRY rather than in commentary about
-it; (3) the shipped body carries ONE conforming exemplar entry, so the convention shows its shape
+artifact — this stage's exploration — conforms to it, with every live rule's domain ACCOUNTED (REVISED
+at ratification 2026-09-25 from "closed", R-crc-12's first case — see the archive record below) and
+every out-of-domain entry carrying the disposition annotation ON THE ENTRY rather than in commentary
+about it; (3) the shipped body carries ONE conforming exemplar entry, so the convention shows its shape
 rather than describing it.
 
 **FIRST ATTEMPT ARCHIVED 2026-09-15 WITHOUT SHIPPING.** Three independent passes — two fresh, one
@@ -1267,8 +1290,10 @@ a closure form (an open domain is open, and the maturity signal says so), or "cl
 two tiers with different consequences. That question is one sitting's work and it is the hinge for
 both stages; it is settled BEFORE the next citing change, not inside it.
 
-**SETTLED 2026-09-15** in `orbit/explore/bounded-closure-semantics/` — the reasoning and its worked
-case live there and are consumed when the next attempt proposes. The answer: the obligation is
+**SETTLED 2026-09-15** in what is now
+`orbit/changes/archive/2026-09-25-bounded-closure-semantics/explore.md` (the exploration became the
+second attempt's vehicle and moved with it at propose; pointer corrected at the archive tail) — the
+reasoning and its worked cases live there and were consumed when the second attempt proposed. The answer: the obligation is
 **ACCOUNTED**, not CLOSED, because closure was never the point — **no domain may be open SILENTLY**.
 Two outcomes discharge it. **CLOSED** (DERIVED or SOURCED): every member covered, and the
 justification says why that is provable. **OPEN-DECLARED** (BOUNDED): members covered, a residual
@@ -1317,6 +1342,41 @@ there was no way to say so and have the workflow agree. Dropping at explore cost
 dropping at archive cost three passes, twice. R-crc-10 SHAPE: the author DECLARES the conclusion and
 the engine records it; nothing asks the engine to judge whether an exploration should stop.
 
+**SECOND ATTEMPT ARCHIVED 2026-09-25** as `bounded-closure-semantics` (`orbit/changes/archive/2026-09-25-bounded-closure-semantics/`),
+through a COMPUTED PASSED `review-system` gate — the blind pair (external GPT-6 Astra 2C/2W/1S;
+fresh 0C/5W/4S; zero CRITICAL overlap by title, three shared findings) walked in two logs, then an
+in-context confirm (0C/3W/2S, all on what the walks themselves added) walked to zero. The exit
+criteria, graded at the tail: **(1) MET** — the status-header, Decisions-entry and Mechanism-entry
+productions carry named slots, stated once in the owning specs and mirrored byte-equal into the
+body by a parity test (R-crc-14's MIRROR COROLLARY, ratified this cycle). **(3) MET** — the body
+carries TWO conforming exemplars where the criterion says ONE, one per closure outcome (the fresh
+pass found the BOUNDED branch had no fixture; the count word was the instrument, the intent "shows
+its shape" is met). **(2) — MET 9 of 9, RATIFIED BY SAL 2026-09-25 under R-crc-12's FIRST CASE; the criterion's
+wording revised to ACCOUNTED above, and the reasoning kept here as written before the call.** As
+written it said "every live rule's domain CLOSED"; the archived artifact has NINE live rules, EIGHT closed (DERIVED/SOURCED) and
+ONE OPEN-DECLARED — D-bcs-12, the nine-move set, BOUNDED with both residual slots, added on the
+system walk precisely so the OPEN-DECLARED production would have a real instance. The at-archive
+note written at apply pre-committed to grading "closed" as written while all eight were closed; the
+walk changed the facts. Two readings: R-crc-12's FIRST case (the shipped mechanism — ACCOUNTED —
+invalidates the criterion's own term, so the stage revises the criterion to "every live rule's
+domain ACCOUNTED" and records why: MET, 9 of 9), or a MISS as written (8 of 9 closed, the word
+still measures). The AI's recommendation is the first case, because the ninth entry is the
+convention's own thesis applied honestly and grading it a MISS would reward faking closure — the
+exact behaviour D-bcs-1 exists to stop. Sal took the first case in the architect session the same
+afternoon; the mark above is that ratification.
+
+**PROPOSED FOLLOW-ON, for Sal to ratify as a stage or decline — NOT declared here:**
+`rc13c-propose-consumes-mechanism`. `orbit-propose-modifications`' consume-mode mapping has no
+Mechanism row and its validation scenario names five sections; under D-bcs-3 a BOUNDED residual
+must TRAVEL at propose (spec row owns, design Risks points), and today that transfer is an
+instruction the proposing AI follows from the authoritative file, not a checked mapping. The same
+stage owns the one transition the re-entry table cannot see: propose keys on `explore.md`'s presence
+and reads no header token, so a concluded name can be promoted without reopening — the follow-on
+refuses it or treats it as the reopen. Touches: orbit-propose-modifications (a third capability,
+which is why it is a scope call and not folded in). rc13b's handoff (design.md Risks) additionally
+carries: the productions moved into ONE TypeScript constant read by body, spec check, test and
+parser; D-bcs-8's escaped-pipe Domain row as the GFM-cell fixture; and Q-crc-11's input below.
+
 KNOWN AND ACCEPTED: this stage is ADVISORY until rc13b lands. An author can ignore the convention and
 no readout notices. That is the dependency, stated rather than discovered — and it is the difference
 between this split and rc03a, which substituted a cheaper MECHANISM for the correct one three times.
@@ -1348,7 +1408,8 @@ Charter: the maturity grid's TOP RUNG loses its promotion. `next_recommended` is
 field whose value is a command, so the engine must point somewhere; what it must stop doing is
 ASSERTING readiness on evidence that cannot support it. Today confidence RISES with heading count —
 the floor and middle rungs already defer, and only Mature asserts, on four counted headings and at
-most one open question. Without a closed enumeration for every LIVE rule, the emit renders a
+most one open question. Without every live rule's domain ACCOUNTED (rc13a: CLOSED, or OPEN-DECLARED
+with both residual slots — corrected at rc13a's archive tail, 2026-09-25), the emit renders a
 deferring rung plus the named gap.
 
 ADDED 2026-09-15 (Sal) — **A FIFTH RUNG FOR AN EXPLORATION THAT CONCLUDES IN NOTHING.** Every rung
@@ -3511,3 +3572,39 @@ with the ruling figure inside it MARKED so the source lint checks it. The same a
 record of its own: the pre-archive sweep inside rc04c's archive emit claimed the boot JSON carries
 no `touchpoints` key; it does, nested under `boot` as `orbit-orientation` specifies — a reader error,
 corrected on the audit's record and not by editing the emit.
+
+**2026-09-25 — rc13a's SECOND ATTEMPT ARCHIVED (`bounded-closure-semantics`), through a computed
+PASSED gate; one exit grade left for Sal.** The cycle in one paragraph: apply landed 14/15 (6.1 the
+declared user-validation handoff; 6.2 converted from a checkbox to an at-archive note at apply, per
+the repo's convention); the external half of the blind pair ran on the pushed apply commit (GPT-6
+Astra, 2C/2W/1S) and the fresh half on the same tree (0C/5W/4S), blind to each other, zero CRITICAL
+overlap, three findings shared; both walked in two logs; the in-context confirm found 0C/3W/2S — all
+five in what the walks themselves had added, rc02's lesson one level down — and walked to zero.
+**What the cycle earned:** R-crc-14's MIRROR COROLLARY (a generated surface that cannot resolve its
+owner may carry a mirror a test holds byte-equal; ratified in chat; the rulings count stays 14) and
+its mechanism, a parity test over three fenced productions and two tables; the re-entry table's
+FOURTH fact (found by the external pass: an edge sentence gave one input two results); the status
+production end-anchored and EXECUTED by a test rather than asserted present; GFM cell escaping named
+in the grammar with the change's own D-bcs-8 row as fixture; D-bcs-12, the nine-move set as a real
+BOUNDED entry so the OPEN-DECLARED production has an instance; and a sixth residue hit the acceptance
+grep could not see (`5-section`, spelled with a numeral, in the onboard body). **Two records
+corrected on the trail rather than by editing emits:** the fresh-walk log claimed the boot
+touchpoint divergence was clear before the right key had been read (the same reader error rc04c's
+audit recorded on itself four days earlier — the key nests under `boot`), corrected in the
+in-context review's commentary; and the at-archive note's pre-committed grade for exit (2) no
+longer matches the artifact, recorded in the stage section and left to ratification. **Residual
+risk, carried in the archive emit's readiness record**: no independent pass stood on the FINAL tree
+(both halves read it before three walks landed), so PASSED here means resolution, the rc07
+distinction; and the parity test's owner rule was rewritten on the in-context pass alone.
+
+**2026-09-25 — rc13a RATIFIED (eight stages complete); exit (2) revised at ratification.** Sal
+ratified rc13a's completion in an architect session two hours after the archive, on the engine's
+readout (quiescent, both attempts archived) and the three exit criteria as graded at the archive
+tail — taking R-crc-12's first case on exit (2): the stage's shipped mechanism, ACCOUNTED closure,
+invalidates the criterion's own word "closed", so the criterion is revised to "every live rule's
+domain ACCOUNTED" and graded MET 9 of 9 rather than a MISS at 8 of 9. The distinction from the
+third case is worth one sentence: rc04d's exit (2) had a wrong INSTRUMENT and a sound criterion;
+rc13a's exit (2) had a sound instrument and a criterion whose term the stage itself retired.
+rc03a's offer was NOT re-fired — declined earlier today, its fourth — so Q-crc-11's count stands
+at four firings. Proposed and awaiting Sal's word: `rc13c-propose-consumes-mechanism` (in the rc13a
+section). Next uncovered stage in dependency order: rc13b, now unblocked.

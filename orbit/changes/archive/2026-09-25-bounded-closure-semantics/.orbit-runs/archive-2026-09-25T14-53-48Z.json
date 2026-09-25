@@ -1,0 +1,79 @@
+{
+  "command": "archive",
+  "timestamp": "2026-09-25T14:53:48Z",
+  "change": "bounded-closure-semantics",
+  "kind": "lifecycle",
+  "model": "claude-fable-5-1",
+  "final_assessment": "bounded-closure-semantics (rc13a's second attempt) archived through a COMPUTED PASSED review-system gate — the second rc-stage through the blind-pair cadence and the first whose in-context confirm found defects only in what the walks themselves added. 10 delta blocks (5 ADDED, 5 MODIFIED across orbit-conventions and orbit-explore-modifications) synced and byte-verified against the baseline; fingerprints 5/5 verified; validate --all --strict 25/25 post-move; 2254 tests green after staging the move (the source lint's git-ls-files domain threw ENOENT on the unstaged rename — Q-crc-14's uncommitted-move window, now seen at an archive as well as a propose). Baseline capabilities stay at 21. At-archive note 6.2 executed in flow: rc13b's charter sentence says ACCOUNTED; rc13c is PROPOSED to Sal in the rc13a section, not declared; Q-crc-11 names the concluded header token as its input; the SETTLED pointer names the archived path; the two superseded charter sentences point at SETTLED; exit (1) and (3) graded MET, exit (2) recorded with both readings and left for ratification because the walk's D-bcs-12 (BOUNDED) means 8 of 9 live domains are CLOSED as the criterion is worded and 9 of 9 ACCOUNTED under the stage's own mechanism. Task 6.1 (the next stage's first-pass CRITICAL classes) is the open user-validation handoff. Position is engine-computed: rc13a renders quiescent, completion awaiting ratification.",
+  "archive_path": "orbit/changes/archive/2026-09-25-bounded-closure-semantics/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-conventions",
+      "orbit-explore-modifications"
+    ],
+    "added": 5,
+    "modified": 5,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "PRE-ARCHIVE AUDIT (library mode, no separate emit), ONE WARNING: root CLAUDE.md's handoff narrative carries no rc13a archive paragraph — the customary paragraph is written at ratification per the rc04c precedent (commit fb8683f4), so this is the same drift the post-rc04c audit recorded and is expected to clear then. Clean otherwise: orbit/explore/ empty; no five-section residue in living docs; architecture doc validates; sources lint 22/14/21/4; rc13a renders quiescent post-archive.",
+    "UNRESOLVED-MARKER SCAN: 3 hits for '@review:' in the change directory, all prose mentions inside backticks describing the nine-move growth path (proposal.md:47; the explore-modifications spec at its growth-path paragraph and scenario) — not markers; unresolved_markers is empty by that reading.",
+    "TASK 6.1 (User-validation) is OPEN by design: the next stage explored under this convention reports its first-pass CRITICAL classes in its own emit. The apply gate computed passed-for-flow with 6.1 annotated.",
+    "AT-ARCHIVE RECORD (tasks.md note 6.2, formed against no pass): exit (2)'s grade is PENDING SAL'S RATIFICATION — the at-archive note pre-committed to grading 'closed' as written while all eight live domains were closed; the system walk added D-bcs-12 (BOUNDED, both residual slots) to give the OPEN-DECLARED production an instance, so the artifact now has nine live rules, eight CLOSED and one OPEN-DECLARED. Recorded in the rc13a stage section with both readings (R-crc-12 first case → revise to ACCOUNTED, MET 9/9; or MISS as written, 8/9) and the AI's recommendation (the first case).",
+    "SEAM CORRECTION (formed against no pass): the fresh-walk log (address-reviews-2026-09-25T14-36-32Z) claimed the boot touchpoint divergence was clear; the key nests under `boot` and had not been read — the same reader error rc04c's post-archive audit recorded on itself. After the walk the divergence was one unsatisfied prediction, the architecture doc, cleared by the at-archive edits. Corrected on the in-context review's commentary and here, never by editing the emit.",
+    "INSTRUMENT NOTE: the surface test's parity check resolves the OWNER of each mirrored block as the active delta when one exists, else the baseline; post-move it reads the baseline (81/81). The source lint's file domain is git-tracked paths, so an unstaged directory move makes it open files that no longer exist — staging the move (not committing) is what restored 2254/2254; recorded as a fourth Q-crc-14 instance for the walk that takes that question up.",
+    "OUTWARD ACTIONS: the change is not PR-attached (pr_attachment absent on the propose emit; no pr: in config); nothing was pushed by this archive. The working tree carries the staged archive move, the synced baselines, the program-doc edits and every emit of this cycle uncommitted — committing is the user's."
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "formed_against": [
+        "2026-09-25T13-32-50Z",
+        "2026-09-25T14-13-59Z",
+        "2026-09-25T14-18-36Z"
+      ],
+      "disposition": "ready",
+      "reasoning": "Three independent passes inform this belief: the fresh proposal pass (7 findings, walked before apply), and the system blind pair — external GPT-6 Astra (2C/2W/1S) and fresh (0C/5W/4S) — run blind on the pushed apply commit with zero CRITICAL overlap and three shared findings, all fourteen walked in two logs, then an in-context confirm whose five findings sat entirely in the walks' own additions and were walked to zero. Every substantive finding on the trail is resolved by the gate's key; the convention conforms to itself (nine live rules, nine entries, every move dispositioned, checker zero drift); the body's mirrors are byte-equal to the specs by test; 2254 green. The work is ready to be the format rc13b parses.",
+      "ratified_by": "ai",
+      "accepted": [
+        {
+          "claim": "No independent pass stood on the FINAL tree: both halves of the pair read the apply commit, and three walks (14 + 5 findings) landed after them; PASSED here means every finding resolved, not a clean independent read of what shipped.",
+          "why": "The rc07 distinction, and R-crc-11(h): effort is recorded, never targeted. Buying a fourth independent pass to stand on the walked tree would be spend for a verdict; the in-context confirm read exactly the walks' additions and found five things, all closed, and the residual is stated here rather than implied."
+        },
+        {
+          "claim": "The parity test's owner rule (active delta preferred, else baseline) was written on the in-context pass alone; no independent reviewer has read it, and it is the instrument holding R-crc-14's mirror corollary honest.",
+          "why": "The rule was found by the confirm pass against the version both independent reviewers implicitly relied on (one-holder), and the fix is eleven lines with its failure cases named; rc13b's grammar delta is the first change that will exercise it, and rc13b's proposal review is the pass that reads it."
+        },
+        {
+          "claim": "R-crc-14's MIRROR COROLLARY is a refinement of a Sal-ratified ruling, ratified in chat mid-cycle; its fuller form (one engine constant read by body, spec check, test and parser) is deferred to rc13b, so until then the body carries five checked copies.",
+          "why": "The external pass's remedy (delete the copy) is not available to a surface installed into adopters' projects, where the owning spec does not exist; a byte-equal copy the build refuses to let diverge is the rc01 shape the program already trusts (the schema-table parity test). Deferring the constant keeps rc13a inside R-crc-1 and gives rc13b, which needs the regexes in code anyway, the natural owner."
+        },
+        {
+          "claim": "The convention is ADVISORY until rc13b lands: nothing in the engine notices an author who ignores it, and a concluded exploration still renders `exploring` in architecture status and a count-derived recommendation in orientation.",
+          "why": "Declared in the proposal as the dependency rather than discovered; both independent passes executed the concluded-directory probes and measured exactly the stated limits and nothing beyond them; Q-crc-11 now names its input and rc13b its rung."
+        },
+        {
+          "claim": "Exit (2) as worded ('every live rule's domain closed') reads 8 of 9 after the walk added D-bcs-12 as a BOUNDED entry; the grade is recorded with both readings and left for ratification rather than asserted here.",
+          "why": "The ninth entry is the stage's thesis applied honestly — a domain open-declared with kind and method — and it was added because the fresh pass found the OPEN-DECLARED production had no instance; grading that a MISS would reward faking closure, which is the behaviour D-bcs-1 exists to stop. R-crc-13: a gate reports, an emit records; the criterion is the charter's and Sal's."
+        }
+      ]
+    }
+  ],
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."
+}

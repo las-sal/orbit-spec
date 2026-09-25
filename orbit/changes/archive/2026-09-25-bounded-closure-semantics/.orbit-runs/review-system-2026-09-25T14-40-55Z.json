@@ -1,0 +1,114 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-25T14:40:55Z",
+  "change": "bounded-closure-semantics",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/bounded-closure-semantics/specs/orbit-explore-modifications/spec.md",
+      "line": 134,
+      "title": "The 'Mode B — other cells' scenario enumerates three outcomes for a table that now has four, and never names the concluded-header edge",
+      "recommendation": "The re-entry table gained a row on the walk (no staging, active change WITHOUT explore.md → Mode B new IN the change directory) and the edge paragraph gained the concluded-header-in-change-directory case, but the scenario's THEN still reads 're-entry stated, resume in place, or refusal naming both paths'. A scenario that enumerates outcomes is a second statement of the table; either make the THEN point ('the re-entry table and its edge paragraph govern') without listing outcomes, or list all four (re-entry stated, resume in place, new in the change directory, refusal) plus the edge. Pointing is the R-crc-14 shape."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "test/core/templates/orbit-generated-surface.test.ts",
+      "line": 364,
+      "title": "The parity test's 'exactly one owner' rule fails the suite for any future change that legitimately MODIFIES an owned block",
+      "recommendation": "ownerText() requires exactly one file among the baseline and the active deltas to hold each block. After archive the baseline holds them; the moment a later change (rc13b is the obvious one — it touches the grammar) writes a MODIFIED delta carrying the fence, two files hold it and the test fails for that change's whole apply, even though a delta-plus-baseline pair is the normal mid-change state. Make the rule: if any ACTIVE delta holds the block it is the owner-to-be (require exactly one active delta), else the baseline; keep 'two active deltas' and 'no holder' as failures. The body mirror then tracks the delta during that change, which is the correct obligation."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/bounded-closure-semantics/specs/orbit-explore-modifications/spec.md",
+      "line": 59,
+      "title": "The conclude-verb paragraph restates the count-derived KNOWN limit that orbit-conventions owns — reintroduced by the walk's own fix",
+      "recommendation": "The walk replaced the record clauses with a pointer (fresh finding 5) and, in the same paragraph, the step-4 fix (fresh finding 7) added '(count-derived until the maturity-signal stage reads the header token — the last record on a concluded trail says explore or propose, and that is a named limit, not a defect)'. That is the KNOWN limit stated in orbit-conventions' concluded-outcome requirement (line 114), now stated twice across two capabilities — the shape the walk was deleting. Cut the parenthetical to a pointer: 'whose engine-computed counts and recommendation describe the concluded file (the interim limit is the concluded-outcome requirement's)'. The body may keep its reader-facing sentence."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/bounded-closure-semantics/explore.md",
+      "line": 192,
+      "title": "Walk residue in the exploration record: two titles still say 'three facts', two lines still say 'ONE exemplar', and task 2.3 still says 'six cells'",
+      "recommendation": "D-bcs-7's Mechanism heading (line 192) and Decisions title (line 371) still read 'three facts' while the entry's Domain, Closure and decision body now say four; D-bcs-8's CONFORM line (233) and decision text (387) say 'the body carries ONE exemplar and points' while the body ships two; tasks.md 2.3 says 'six cells, two refused'. Amend the two titles and the two D-bcs-8 lines dated 2026-09-25 (the record's established amendment idiom), and add '(nine cells, four refused after the system walk)' to 2.3. The conformance checker cannot see these — titles and prose are not productions."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/bounded-closure-semantics/proposal.md",
+      "line": 116,
+      "title": "Proposal Impact carries a stale task count and omits the two files the walk touched",
+      "recommendation": "'16 tasks' is 15 since 6.2 became an at-archive note at apply; the Impact list names explore.ts and the surface test but not skill-templates-parity.test.ts (four hash pins across explore and onboard) or onboard.ts (the Phase 1 sentence). Design Touchpoints was corrected on the walk; the proposal's Impact was not. State '15 tasks (16 at proposal; 6.2 converted at apply)' and add the two files."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "pass": "0",
+      "title": "The BOUNDED production — the change's headline — has no conforming instance anywhere, so the fixture seam never exercises the residual slots",
+      "evidence": "stale finding suppressed: D-bcs-12 exists in explore.md with Closure: BOUNDED and both residual slots; the body's exemplar block carries it verbatim; the surface test walks both entries and asserts a BOUNDED token (address-reviews-2026-09-25T14-36-32Z, 2254 green)."
+    },
+    {
+      "pass": "6",
+      "title": "The onboard body still teaches a 5-section explore.md, and the residue grep cannot see the numeral spelling",
+      "evidence": "stale finding suppressed: grep -rnE '(five|5)[- ]sections?' over explore.ts and onboard.ts returns nothing; the five remaining src/ hits are the exemptions listed in design.md Risks (address-reviews-2026-09-25T14-36-32Z)."
+    },
+    {
+      "pass": "2",
+      "title": "The owning specs and the shipped workflow body define the same rules twice",
+      "evidence": "stale finding suppressed: five mirror tags in explore.ts and the parity test 'owned productions and tables: the body carries byte-equal MIRRORS' passing; R-crc-14 mirror corollary in the program doc (address-reviews-2026-09-25T14-32-52Z)."
+    }
+  ],
+  "commentary": "This pass read only what the two walks wrote, because the pair had already read the rest: the mirror tags and parity test, D-bcs-12 and the two-entry exemplar, the four-fact table, the tightened status production, the GFM clause, the corollary, and every ripple. The pattern is rc02's, one level down: each walk answers a finding by adding a sentence, and the sentence is a new surface. The step-4 fix re-stated the very limit the neighbouring fix had just turned into a pointer; the fourth-fact fix widened the table but not the scenario that enumerates its outcomes; the parity instrument encodes today's state (one holder) rather than the invariant (one owner, delta preferred while a change is open), which the next change to touch the grammar would trip. None of these is a defect in the shipped behaviour and none breaks a user path — they are the same instrument-narrower-than-the-thing shape both halves of the pair named, now in the walk's additions rather than the apply's. I also corrected my own record on this pass: the fresh-walk emit claimed the boot touchpoint divergence was clear before I had read the right key; after the walk it shows one unsatisfied prediction, the architecture doc, which is the archive-tail edit. The residue sweep caught the exploration record's titles and the proposal's Impact, which no checker sees: titles and prose are not productions. What I did not do is re-execute the concluded-directory probes both independent reviewers ran; the walk changed prose around that behaviour, not the engine, and the two measurements stand.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4",
+    "5"
+  ],
+  "final_assessment": "0 critical, 3 warning, 2 suggestion.",
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews bounded-closure-semantics --from-file orbit/changes/bounded-closure-semantics/.orbit-runs/review-system-2026-09-25T14-40-55Z.json"
+}

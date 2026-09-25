@@ -362,22 +362,25 @@ The four disciplines from \`orbit-conventions\`, embedded per body; detail lives
 | Mode | Trigger | What happens |
 |---|---|---|
 | **A — Bare** | \`/orbit:explore\` with no argument and no crystallization trigger | Upstream behavior. Conversational think-mode, no file created, no staging directory. |
-| **B — Named** | \`/orbit:explore <name>\` | Resolve the name by the re-entry table below (six cells, two refused). **New** — no staging directory AND no active change of that name: scaffold the six sections AND the minimal \`.openspec.yaml\` (see below). **Resume** — \`orbit/explore/<name>/explore.md\` exists with the \`exploring\` token AND no active change of that name: read the existing file as authoritative; a pre-D2 staging directory lacking \`.openspec.yaml\` gains it on resume (add-only, citation still optional); a file lacking a \`## Mechanism\` section gains one (add-only). |
+| **B — Named** | \`/orbit:explore <name>\` | Resolve the name by the re-entry table below (nine cells, four refused). **New** — no staging directory AND no active change of that name: scaffold the six sections AND the minimal \`.openspec.yaml\` (see below). **Resume** — \`orbit/explore/<name>/explore.md\` exists with the \`exploring\` token AND no active change of that name: read the existing file as authoritative; a pre-D2 staging directory lacking \`.openspec.yaml\` gains it on resume (add-only, citation still optional); a file lacking a \`## Mechanism\` section gains one (add-only). |
 | **C — Crystallized** | Bare invocation that produces 2+ substantive decisions | Prompt the user: "We have enough material here to capture — what should we call this exploration?" On accept, transition to Mode B and back-fill what's been discussed (the minimal \`.openspec.yaml\` is written as in Mode B). On decline, continue Mode A and don't re-prompt this shape. |
 
 ### Re-entry resolution (Mode B) — one table
 
-\`/orbit:explore <name>\` resolves the name against THREE facts — a staging directory exists; it is concluded (per the status-header production below; defined only when the directory exists); an active change of that name exists — as ONE table, six cells, two refused:
+\`/orbit:explore <name>\` resolves the name against FOUR facts — a staging directory exists; it is concluded (per the status-header production below; defined only when the directory exists); an active change of that name exists; that change carries an \`explore.md\` (defined only when the change exists) — as ONE table, nine cells, four refused:
 
-| staging dir | concluded | active change | resolution |
-|---|---|---|---|
-| no | — | no | Mode B new |
-| yes | no | no | Mode B resume |
-| yes | yes | no | state the conclusion and its \`Re-entry:\` trigger, ask nothing else; REOPEN only on the user's word (see "Concluding an exploration") |
-| no | — | yes | resume IN PLACE against \`orbit/changes/<name>/explore.md\`, say so, scaffold nothing |
-| yes | either | yes | REFUSED — second claim on one truth; name both paths and stop (neither resume nor scaffold) |
+| staging dir | concluded | active change | change carries \`explore.md\` | resolution |
+|---|---|---|---|---|
+| no | — | no | — | Mode B new |
+| yes | no | no | — | Mode B resume |
+| yes | yes | no | — | state the conclusion and its \`Re-entry:\` trigger, ask nothing else; REOPEN only on the user's word |
+| no | — | yes | yes | resume IN PLACE against \`orbit/changes/<name>/explore.md\`, say so, scaffold nothing |
+| no | — | yes | no | Mode B new IN the change directory — the file is created beside the artifacts; no staging directory is scaffolded |
+| yes | either | yes | either | REFUSED — second claim on one truth; name both paths and stop (neither resume nor scaffold) |
 
-Two edges the table implies: an active change WITHOUT an \`explore.md\` is Mode B new IN the change directory (the file is created beside the artifacts; no staging directory is scaffolded). A staging directory WITHOUT \`explore.md\`, or whose header carries neither fixed token, resolves as not-concluded and resumes with the stub or header added (add-only) — never MALFORMED.
+*Mirror of \`orbit-explore-modifications\`' "Re-entry resolution and the conclude verb" — that requirement owns this table; the generated-surface parity test holds this copy byte-equal to it (R-crc-14's mirror corollary).*
+
+One edge the table's second fact implies: a staging directory WITHOUT \`explore.md\`, or whose header carries neither fixed token, resolves as not-concluded and resumes with the stub or header added (add-only) — never MALFORMED. The status-header production is read on the change-directory file too: a \`concluded\` header inside \`orbit/changes/<name>/explore.md\` (a name promoted without reopening) resolves as the third row — state the conclusion and its trigger, reopen only on the user's word — never as a silent resume.
 
 ### Minimal explore metadata (\`.openspec.yaml\`, D-arc Stage D2)
 
@@ -406,7 +409,7 @@ Does NOT count: exploratory thinking, speculation, "let me think about X", or re
 
 ## explore.md six-section convention
 
-When a named exploration exists (Mode B/C), \`orbit/explore/<name>/explore.md\` follows this structure — SIX sections in this order. The format is \`orbit-conventions\`' (its requirement keeps its historical title for delta identity; the format it specifies is six). Three productions are stated ONCE in this section — the status header, the Decisions entry, the Mechanism entry — and every other mention in this body points at them.
+When a named exploration exists (Mode B/C), \`orbit/explore/<name>/explore.md\` follows this structure — SIX sections in this order. The format is \`orbit-conventions\`' (its requirement keeps its historical title for delta identity; the format it specifies is six). The three productions in this section — the status header, the Decisions entry, the Mechanism entry — are MIRRORS of the productions \`orbit-conventions\` owns, carried here because a generated skill cannot resolve that spec at runtime; a parity test holds each byte-equal to its owner (R-crc-14's mirror corollary), and every other mention in this body points at them.
 
 \`\`\`markdown
 > **Status**: exploring. Promoted to proposal/design/specs via /orbit:propose when decisions firm up.
@@ -439,8 +442,10 @@ When creating a new file, all six sections are scaffolded (empty content under e
 The file's first non-blank line carries one of TWO fixed tokens, matched by this production:
 
 \`\`\`
-^> \\*\\*Status\\*\\*: (exploring\\b|concluded \\d{4}-\\d{2}-\\d{2}\\.)      the file's first non-blank line
+^> \\*\\*Status\\*\\*: (exploring\\.( .*)?|concluded \\d{4}-\\d{2}-\\d{2}\\.)$      the file's first non-blank line
 \`\`\`
+
+*Mirror of \`orbit-conventions\`' \`explore.md\` format requirement (its retained title names the old section count; the format is six sections) — the owner of this production.*
 
 - \`> **Status**: exploring. …\` — the working token; the rest of the line is free prose.
 - \`> **Status**: concluded <YYYY-MM-DD>.\` — the ONLY other legal token, written by the conclude flow ("Concluding an exploration" below).
@@ -458,6 +463,8 @@ Each Decisions entry is a top-level list item whose opener is the ID slot — th
   Re-entry: <what would reopen it>                        concluded entries only; exactly one LIVE entry carries it
 \`\`\`
 
+*Mirror of \`orbit-conventions\`' "Decision entry identity and classification" — the owner of this production.*
+
 **One claim under obligation per entry.** A Decision is a RULE when it PRESCRIBES or CONSTRAINS how something must be done across a SET of situations — the test is "in which situations does this apply?", applied to the claim's NORMATIVE force, never to its grammar. A quantified EMPIRICAL claim ("heading count has never correlated with readiness under any conditions") has a logical domain and is a FACT: it describes one world and is falsifiable by evidence. A SCOPE choice (in / out / deferred) is one-off. The test applies PER CLAIM as an authoring rule: an entry carrying more than one claim under obligation is SPLIT by the author into entries with distinct IDs (the rule entry owes a Mechanism entry; the finding carries \`Kind: fact\`). There are no claim-level identifiers.
 
 - \`Kind: rule | fact | scope\` — **absent means \`rule\`.** The demanding default turns an omission into a rule that owes a Mechanism entry (rendered as open by ID once a reader parses it) rather than an invisible escape; opting out is WRITTEN. A rule the author never entered at all remains outside every reader's sight — the stated residual, owned by the maturity-signal stage.
@@ -473,7 +480,7 @@ The Mechanism section carries one entry per LIVE rule (\`Kind:\` rule or absent 
 ## Mechanism
 ### <ID> — <rule title>              an entry; ends at the next heading of level 1–3, or EOF
 Domain: <the set, in one line>
-| member | covered by |              the enumeration, as a table (R-crc-7: decision tables); at least one member row
+| member | covered by |              the enumeration, as a table (R-crc-7: decision tables); at least one member row; cells follow GFM — \`\\|\` is a literal pipe, never a separator
 Closure: <TOKEN>[ — <justification>]   <TOKEN> ::= DERIVED | SOURCED | BOUNDED, matched from line start to the first \` — \` or end of line
 Residual kind: <what lies outside>            required iff BOUNDED, forbidden otherwise
 Residual method: <how a member would be found> required iff BOUNDED, forbidden otherwise
@@ -482,6 +489,8 @@ Moves:
                                       nine lines, one per move, each move exactly once
 ### Case <n> — <title>               evidence, free-form, cited by move lines by name
 \`\`\`
+
+*Mirror of \`orbit-conventions\`' "Mechanism entry grammar and accounted closure" — the owner of this grammar.*
 
 Three H3 kinds under Mechanism: a heading beginning \`D-\` is an ENTRY; one beginning \`Case\` is a CASE; any other H3 is prose and is neither. Fenced content is never structure. The container is H3 rather than a list item because domains are TABLES and a table inside a list item is fragile.
 
@@ -518,6 +527,8 @@ A rule's Mechanism entry is the record of NINE MOVES applied to that rule, each 
 | its output's consumer | the output is correct and the mechanism consuming it breaks | **CONSUME** |
 | its trigger | it is correct, complete, and nothing ever causes it to run | **INVOKE** |
 
+*Mirror of \`orbit-explore-modifications\`' "Nine moves applied per rule in the Mechanism section" — the owner of this table.*
+
 **The set is BOUNDED, declared in its own slots.** Residual kind: a further way a mechanism is wrong that none of the nine names. Residual method: classifying another record's CRITICALs against the table — the only method that has ever grown it (five to six on rc03a's record; six to eight on rc02's; eight to nine when a review pass found INVOKE in the first attempt's own evidence). Confidence about closure was wrong three times and every correction came from a record, never from further thought.
 
 **How the set grows.** A defect that classifies to NO move is a finding about the SET: leave an \`@review:\` marker in the exploration that found it AND carry it into that change's review emit as a finding against \`orbit-explore-modifications\`' nine-moves requirement. Growing the set is a change to that requirement; nothing grows it silently.
@@ -526,9 +537,9 @@ A rule's Mechanism entry is the record of NINE MOVES applied to that rule, each 
 
 READ is the read-before-reference discipline and ENUMERATE is the accounting obligation, both existing rulings made checkable where mechanism is AUTHORED. EXECUTE is NOT sufficient alone: an executed case demonstrates one path, and eleven of one stage's fifteen CRITICALs were READ, ENUMERATE or COHERE failures with zero EXECUTE failures.
 
-### Exemplar — one conforming entry
+### Exemplar — two conforming entries, one per closure outcome
 
-D-bcs-3 of the \`bounded-closure-semantics\` change, verbatim, so the convention shows its shape rather than describing it (the generated-surface test asserts these lines against the grammar's productions; the maturity-signal stage parses the same entry as a fixture):
+Two entries of the \`bounded-closure-semantics\` change, verbatim — D-bcs-3 (CLOSED: SOURCED) and D-bcs-12 (OPEN-DECLARED: BOUNDED, both residual slots) — so the convention shows both shapes rather than describing them (the generated-surface test asserts every line against the grammar's productions, both branches; the maturity-signal stage parses the same entries as fixtures):
 
 \`\`\`markdown
 ### D-bcs-3 — an open-declared domain is SURFACED, never BLOCKING
@@ -552,6 +563,33 @@ Moves:
 - FEASIBILITY: not applied — two lines per residual
 - CONSUME: applied — rc13b reads the two slots; propose carries them into design and spec
 - INVOKE: applied — fires at propose, when the Mechanism entry is consumed
+
+### D-bcs-12 — the move set is NINE, and it is BOUNDED in its own slots
+Domain: the ways a mechanism can be wrong, one per part of the mechanism
+| member | covered by |
+|---|---|
+| the facts it cites | READ |
+| its input domain | ENUMERATE |
+| its own parts | COHERE |
+| its computation | EXECUTE |
+| its purpose | FALSIFY |
+| its context | CONFORM |
+| its resources | FEASIBILITY |
+| its output's consumer | CONSUME |
+| its trigger | INVOKE |
+Closure: BOUNDED — the parts of a mechanism are not a closed structure; the set has grown three times and every growth came from a record
+Residual kind: a further way a mechanism is wrong that none of the nine names
+Residual method: classifying another record's CRITICALs against the table — the only method that has ever grown it (five to six on rc03a's record; six to eight on rc02's; eight to nine on the first attempt's own review trail)
+Moves:
+- READ: applied — the three growth events read from the archived first attempt (Cases 7 and 10) and its review trail
+- ENUMERATE: applied — this table; the boundary test admits a candidate that names a way the mechanism ITSELF fails
+- COHERE: applied — the residual's method is the boundary test run against a record, so the two slots and the growth path are one procedure
+- EXECUTE: applied — the nine were run against every rule in this file: eight entries before this one, no move left without a disposition
+- FALSIFY: applied — a defect that classifies to no move is a finding about the SET; the growth path exists for exactly that
+- CONFORM: applied — R-crc-7 (a decision table), R-crc-10 (a record), R-crc-14 (the spec owns the table; the body mirrors it)
+- FEASIBILITY: not applied — nine lines per rule, one each
+- CONSUME: applied — rc13b's parser reads move lines by name and must know all nine; this entry is the BOUNDED shape its fixture must also parse
+- INVOKE: applied — fires on every Mechanism entry, since each move line names a member
 \`\`\`
 
 **Section-evolution rules**:
@@ -573,11 +611,11 @@ The conclude verb, in this ORDER:
 1. the boundary residency sweep (below, under "Run-summary emit");
 2. ONE CONCLUDED Decisions entry — what was decided, WHY nothing is built — carrying \`Kind: scope\` and a \`Re-entry: <what would reopen it>\` slot (the owner of the trigger; exactly one LIVE entry carries the slot);
 3. the status header flips to \`> **Status**: concluded <YYYY-MM-DD>.\` (the pointer; per the status-header production);
-4. THEN the final boundary emit, whose \`final_assessment\` states the conclusion in the author's words — the emit is composed from the concluded file, so the maturity-signal rung reads it as concluded.
+4. THEN the final boundary emit, whose \`final_assessment\` states the conclusion in the author's words. The emit's engine-computed counts describe the concluded file; its \`next_recommended\` is the maturity grid's (explore or propose, count-derived) until the maturity-signal stage lands — so the LAST record on a concluded trail carries a count-derived recommendation, stated here so it is not a surprise.
 
 Nothing is written to \`.openspec.yaml\`: the change-metadata helpers' schema STRIPS unknown keys at every level (measured, 2026-09-25), so a metadata token could not survive the body's own write path. The \`architecture:\` citation is KEPT unchanged — it is what locates the directory whose header a stage-state reader will read. The staging directory STAYS IN PLACE, trail and all: a conclusion carries a standing re-entry trigger (the program layer's Considered & out shape), and the orientation surface renders a workstream's next line from the trail in ITS directory — moving it would leave the conclusion with no surface to render on. Nothing relocates it to an archive directory or a dot-directory.
 
-**KNOWN, stated, owned** — three limits until their owners land: the stage-state reader keys on location and renders a stage cited only by a concluded exploration as \`exploring\` (Q-crc-11's stage reads the header token from the directory the kept citation locates); the orientation row keeps recommending propose (the maturity-signal stage reads the header token and the \`Re-entry:\` slot); and \`/orbit:propose <name>\` keys on \`explore.md\`'s presence, not the header token, so promoting a concluded name without reopening is possible today (the propose-consumption follow-on refuses it or treats it as the reopen — until then, REOPEN before promoting).
+**KNOWN, stated, owned** — three limits until their owners land: the stage-state reader keys on location and renders a stage cited only by a concluded exploration as \`exploring\` (Q-crc-11's stage reads the header token from the directory the kept citation locates); the orientation row's next line — read from the trail's own terminal emit — stays COUNT-DERIVED — the maturity grid's explore-or-propose recommendation, never the conclusion (the maturity-signal stage reads the header token and the \`Re-entry:\` slot); and \`/orbit:propose <name>\` keys on \`explore.md\`'s presence, not the header token, so promoting a concluded name without reopening is possible today (the propose-consumption follow-on refuses it or treats it as the reopen — until then, REOPEN before promoting).
 
 **Reopening** is the inverse edit, on the user's word: the header returns to \`exploring\`; a dated Decisions entry records why (the trigger fired, or a new reason); the prior CONCLUDED entry gains \`Disposition: superseded <the reopening entry's ID>\`, so its \`Re-entry:\` slot is no longer the live one; then a boundary emit. **A second conclusion** writes a NEW CONCLUDED entry carrying the live \`Re-entry:\` slot; the earlier one stays as superseded history; the header token flips again — exactly one live entry carries the slot at every point in the cycle.
 
