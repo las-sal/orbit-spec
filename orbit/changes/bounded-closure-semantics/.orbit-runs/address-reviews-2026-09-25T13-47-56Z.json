@@ -1,0 +1,135 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-25T13:47:56Z",
+  "change": "bounded-closure-semantics",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/bounded-closure-semantics/.orbit-runs/review-proposal-2026-09-25T13-45-04Z.json",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 4,
+    "suggestion": 3
+  },
+  "pushback_verification": "7 findings verified against current state at the cited lines before editing; 0 stale suppressions.",
+  "resolution_summary": {
+    "resolved": 7,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The Kind: regex excludes the nested-bullet form the same sentence admits",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 13,
+      "classification": "trivial_fix",
+      "action": "Regex gains an optional bullet prefix `(?:[-*+]\\s+)?`; a sentence states Disposition: and Re-entry: match the same way. Ripple: D-bcs-8's COHERE line records the correction.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/bounded-closure-semantics/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The walk restated two rules in both capabilities — the R-crc-14 shape, introduced by the walk itself",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-explore-modifications/spec.md",
+      "line": 167,
+      "classification": "trivial_fix",
+      "action": "Deleted both copies, kept the owners: the sweep scenario now points at the capture scenario; the explore-mods reopen clause points at orbit-conventions' reopen scenario; task 2.5 names the capture scenario as owner (R-crc-14(b)).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/bounded-closure-semantics/specs/orbit-explore-modifications/spec.md",
+          "orbit/changes/bounded-closure-semantics/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The status header has two fixed tokens and no production — the one slot the fifth rung reads first",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 138,
+      "classification": "trivial_fix",
+      "action": "Added a one-line production for the status header on the first non-blank line; any other first line is neither token, resolves not-concluded, never MALFORMED.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Four clauses the walk added to the specs have no task line, and task 1.3 now says ONE fenced block where the delta has two",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 12,
+      "classification": "trivial_fix",
+      "action": "Tasks 1.2, 1.3, 2.3 and 4.1 now name the Decisions production, the second and third fenced productions, the add-only resume and neither-token clauses, and the no-metadata assertion. Count unchanged at 16.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Disposition: is used on scope entries (the CONCLUDED entry) but defined only by its consequence for rules",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 19,
+      "classification": "trivial_fix",
+      "action": "Disposition: stated once with one meaning (the claim stands / does not) and its two consequences (obligation membership for rules; slot liveness for concluded entries).",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "A Domain: table with a header and separator but zero member rows is neither MALFORMED nor accounted",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 72,
+      "classification": "trivial_fix",
+      "action": "MALFORMED list gains a Domain: table with no member rows. Ripple: D-bcs-8's failure row.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/bounded-closure-semantics/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "D-bcs-10 hands rc13b a fifth rung and a withholding predicate without saying which wins when both apply",
+      "marker_source": "internal-review",
+      "file": "explore.md",
+      "line": 376,
+      "classification": "trivial_fix",
+      "action": "D-bcs-10's decision text and its CONSUME line state that the header is read first; a concluded file renders the fifth rung regardless of open rules, with the open-rule list beside it as a record.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "All 7 findings of the in-context proposal pass walked to zero, every one obvious-fix. Three were defects the previous walk introduced (a regex beside prose it contradicted; two predicates copied instead of pointed; four spec clauses no task named) and are now closed the R-crc-14 way — delete the copy, keep the owner. The status header gained the one production the fifth rung reads first; Disposition: has one stated meaning; an empty Domain table is MALFORMED; D-bcs-10 records rung precedence for rc13b. Validate --strict green, 5/5 fingerprints verified, 16 tasks, eight entries x nine moves intact.",
+  "iteration": 2,
+  "next_recommended": "/orbit:apply bounded-closure-semantics — user-invoked"
+}

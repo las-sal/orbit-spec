@@ -1,0 +1,208 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-25T13:32:50Z",
+  "change": "bounded-closure-semantics",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 1,
+      "warning": 5,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 5
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "CRITICAL",
+      "dimension": "completeness",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 100,
+      "title": "The concluded: citation key is silently STRIPPED by the metadata helpers — at both the nested and the sibling level — so the third token cannot survive any helper round-trip",
+      "recommendation": "Measured, not inferred: `ChangeMetadataSchema` (src/core/artifact-graph/types.ts:123-172) is a default `z.object` with `architecture: z.object({doc, stage})`, and Zod's default object semantics STRIP unknown keys rather than reject them. Executed against the built helpers: a `.openspec.yaml` carrying `architecture: {doc, stage, concluded: 2026-09-25}` reads back as `{doc, stage}` with no error; a top-level `concluded:` (the design's fallback at design.md:80-83 and task 2.4's only alternative branch) reads back absent too; and `writeChangeMetadata` with `concluded` inside `architecture` writes a file WITHOUT it. So the spec prescribes a record token that (a) the explore body cannot write through the helpers the Mode B scenario says it uses (`mirroring change metadata so the reused change-metadata helpers' schema validation passes unchanged`), (b) is deleted the first time anything rewrites the file through them — including propose's field-level merge, which reads the staged file `via the change-metadata helpers` (propose.ts:206-214) — and (c) contradicts `orbit-architecture-engine`'s citation requirement that the field `round-trips through the metadata read/write helpers without loss` (a `concluded` key inside the citation does not). Task 2.4's decision table has two rows (lenient → keep; rejected → sibling level); the real outcome is a THIRD row, accepted-and-dropped, and the fallback row is dropped identically. This is the R-crc-7 class: the sequence was never executed against the helper. Fix by choosing one of the two honest homes and saying so in the requirement and task 2.4: (A) make the token durable — add `concluded: z.string().regex(YYYY-MM-DD).optional()` inside the `architecture` object schema (one line in types.ts, plus the round-trip scenario in `orbit-architecture-engine`), and then the proposal's `No engine change` and the capability count must both be corrected (a third capability is a scope call for Sal under R-crc-1, exactly as the proposal already handles rc13c); or (B) descope the key — the concluded record is TWO engine-observable tokens (the header token and the `Re-entry:` slot), the requirement's `three tokens` sentence becomes two, the `KNOWN, stated, owned` paragraph says Q-crc-11's input is the header token read from the staging directory the citation already locates, and D-bcs-6's `key` step, D-bcs-7's `key removed`, task 1.5's `key`, task 2.4, and the two conclude scenarios drop the key (R-crc-6 descope-sweep corollary: grep `citation key|concluded:` across the change afterwards). Either way, state the no-citation case explicitly (today the requirement says `three tokens` and then makes the third conditional on `when one exists`).",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Keep the key and make it durable: extend the `architecture` Zod object with optional `concluded`, add a round-trip scenario to `orbit-architecture-engine`, correct `No engine change` in the proposal, and take the third-capability question to Sal."
+        },
+        {
+          "label": "B",
+          "body": "Descope the key: the concluded record is two tokens (header + `Re-entry:` slot); Q-crc-11's stage reads the header token from the staging directory the kept citation locates; sweep every artifact that names the key."
+        }
+      ]
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 77,
+      "title": "The open-domain scenario's THEN prescribes behaviour at PROMOTION that no task, body edit or touched capability implements",
+      "recommendation": "Line 77 reads `the residual is surfaced beside any readiness readout and travels into the change's spec text at promotion`. Surfacing beside a readout is rc13b's (declared). Travelling into spec text at promotion is `/orbit:propose`'s act — and `orbit-propose-modifications` is untouched by design (proposal.md:85-91), its `Section-to-artifact mapping` has no Mechanism row, and no task edits propose.ts. The proposal's escape (`the transfer is an instruction, not a checked mapping`) points at an instruction that exists nowhere in this change. Two implementers diverge: one edits propose's body, one ships nothing. Reword the THEN to what this stage ships and hand the rest off by name: `the residual is ACCOUNTED as OPEN-DECLARED in its two slots — the origin every downstream reader reads (the maturity-signal stage's rung surfaces it; the propose-consumption stage carries it into spec text) — never withheld on, never blocking`. Same repair at line 63's `TRAVELS — into the requirement's own text` sentence: keep it as the AUTHORING rule (the spec row is the owner) and name the follow-on that mechanizes it."
+    },
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 96,
+      "title": "`a lifecycle transition under orbit-lifecycle-consent` claims a capability whose three mechanisms do not attach to conclude",
+      "recommendation": "`orbit-lifecycle-consent` defines its scope precisely: consent-marked seams are commands whose schema gate carries `consent: user-invoked` (in spec-driven, apply and archive); the provenance rule fires an AskUserQuestion on AI-mediated arrival at those seams; and consent is recorded as a flat `consent` field on lifecycle emits. Conclude has no gate, and explore emits accept only `final_assessment` (emit-composition.ts:54 — `consent` is a payload field on apply/archive only, line 74). Read literally, the pointer obliges an implementer to add a consent prompt and a `consent` field the explore emit table will refuse as an unknown key; read loosely it is decoration. The same phrase recurs at specs/orbit-explore-modifications/spec.md:58 (`the arc's rules of engagement; orbit-lifecycle-consent`). Replace both with what is actually meant and already scenario-tested at line 111-114: `on the USER's declared word — recommend, never infer (the arc's rules of engagement); conclude is not a consent-marked seam: no gate, no prompt, no consent field on the explore emit`."
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "design.md",
+      "line": 90,
+      "title": "`a MODIFIED delta cannot retitle` is true and beside the point — the delta format has RENAMED, so retaining a title that contradicts its body is a choice, not a constraint",
+      "recommendation": "The validator handles `## RENAMED Requirements` FROM/TO pairs and a RENAMED+MODIFIED combination (validator.ts:208-246: `MODIFIED references old name from RENAMED. Use new header`), and fingerprints.ts:81-106 maps a MODIFIED name back through the RENAMED pair to its live FROM name for the base-fingerprint check. Post-apply, `orbit/specs/orbit-conventions` would carry `### Requirement: \\`explore.md\\` five-section format` whose first sentence says SIX — a title that is wrong on its own, which is R-crc-14's test for a second extension. Either use RENAMED (FROM the two five-section titles TO `explore.md` format` / `explore.md convention`, with the MODIFIED blocks under the new headers; the three pointer sites — `orbit-audit-drift`, `orbit-emit-composition`, audit-drift.ts:302 — then need the new name, which is the honest size of the rename and may be the reason to defer it) or keep the titles and correct the justification here and at proposal.md:57 to say the rename is DEFERRED because of the pointer sites, not impossible."
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "tasks.md",
+      "line": 62,
+      "title": "The program doc points at `orbit/explore/bounded-closure-semantics/` for the settled reasoning; propose already moved it, and task 6.2's architect-tier list does not carry the correction",
+      "recommendation": "clean-up-review-cycle.md:1270 reads `SETTLED 2026-09-15 in \\`orbit/explore/bounded-closure-semantics/\\` — the reasoning and its worked case live there`. The directory is now `orbit/changes/bounded-closure-semantics/` and after this change archives it will be `orbit/changes/archive/<date>-bounded-closure-semantics/`. Add to 6.2: `correct the rc13a section's settled-in pointer to the archived change's path`. While there, the same section's charter still describes the superseded first-attempt semantics (`the three DECLARED closure forms with the taxonomy itself declared BOUNDED`; `a Decision is a RULE iff it has a domain of situations`); a one-line `superseded by the archived change, see SETTLED below` on each is cheaper than leaving a reader to reconcile them."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 43,
+      "title": "The `Closure:` production admits only a bare token, but every entry in the exploration — including the shipped exemplar D-bcs-3 — writes `Closure: <TOKEN> — <justification>`",
+      "recommendation": "Grammar line 43: `Closure: DERIVED | SOURCED | BOUNDED`. Exemplar (explore.md:160): `Closure: SOURCED — the change artifact set is the spec-driven schema's, plus the one readout that reads Mechanism`; all eight entries carry a trailing justification. The CLOSED row at line 58 REQUIRES one (`the justification says why that is provable`) yet the grammar gives it no slot, and the MALFORMED list names `an unknown Closure: token`. A parser written from the grammar alone rejects the exemplar; task 4.1 asserts the exemplar `matched against the grammar's productions`. Make the production `Closure: <TOKEN>[ — <justification>]` with `<TOKEN> ::= DERIVED | SOURCED | BOUNDED` and say the token is matched at line start up to the first ` — ` or end of line."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 9,
+      "title": "The Decisions-entry slots (`Kind:`, `Disposition:`, `Re-entry:`) have no production — `nested` is not a syntax",
+      "recommendation": "The Mechanism grammar is fenced and normative; the Decisions slots are described only as `two nested slots` (line 9) and `a Re-entry: slot` (line 98). The exploration writes them as a bare, two-space-indented lazy-continuation line (`  Kind: rule`, explore.md:288), which CommonMark folds into the preceding paragraph; a second author would write a nested bullet, a third would put `Kind: rule` inline after the opener. rc13b's parser keys on this, and the counter's precedent (`Standing recommendation:` matched anywhere on a line inside the entry, explore-counter.ts:92) is an existing convention worth reusing. Add a fenced production beside the opener: `- **<YYYY-MM-DD> — <ID>: <title>** <prose…>` followed, on lines belonging to the same list item, by `Kind: rule | fact | scope`, `Disposition: …`, `Re-entry: <text>` — each matched as `^\\s*Kind:\\s*(rule|fact|scope)\\s*$` anywhere within the entry's lines; and state that the ` — ` in the opener and the move lines is the em-dash literal (the exemplar's separators are never named as literals)."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 65,
+      "title": "The MALFORMED list has no row for a duplicated entry ID, an orphan Mechanism entry, an entry for a non-live rule, or a domain table of the wrong shape",
+      "recommendation": "`unique within the file` (line 5) is stated for Decisions IDs but the MALFORMED list (line 65) and D-bcs-8's failure row enumerate only `a malformed ID, a missing or duplicated move line, an unknown Closure: token, a residual slot on a non-BOUNDED entry, a BOUNDED entry missing a slot`. Unstated, and each is a cell rc13b's FORM predicate must fill (R-crc-7 — a blanket default does not substitute): (1) two `### D-x-1` entries under Mechanism; (2) a Mechanism entry whose ID matches no Decisions entry (orphan — ignored, counted, or MALFORMED?); (3) a Mechanism entry for a Decisions entry whose `Kind:` is fact/scope or `Disposition:` is superseded/assigned (allowed as history, or MALFORMED?); (4) a `Domain:` table with other than the two `member | covered by` columns, or no separator row. Add them to the list with a disposition each — the cheapest consistent set is: (1) MALFORMED naming the second heading; (2) MALFORMED naming the heading (an entry without a claim is a key with no owner); (3) permitted and outside the obligation (history is not an error); (4) MALFORMED naming the table's first line."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 119,
+      "title": "Conclude → reopen → conclude produces two `Re-entry:` slots, which line 98 forbids, and nothing says which one rc13b's fifth rung reads",
+      "recommendation": "The reopen scenario (lines 116-119) restores the header, removes the key and adds a dated entry — it leaves the prior CONCLUDED entry and its `Re-entry:` slot in place. A later conclude adds a second CONCLUDED entry with a second slot; line 98 says `exactly one entry in the file may carry the slot`, and the explore-modifications requirement says the rung reads `the CONCLUDED entry's Re-entry: slot` (singular). Specify the transition: on reopen the prior CONCLUDED entry gains `Disposition: superseded <the reopening entry's ID>`, and the uniqueness rule is `exactly one LIVE entry carries the slot`; on a second conclude the new entry is the live one. Add a scenario `A reopened exploration concludes again` so the cycle is a stated state machine rather than an inference."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-explore-modifications/spec.md",
+      "line": 52,
+      "title": "`/orbit:propose <name>` on a CONCLUDED staging directory consumes it as if live — the one transition the re-entry table cannot see",
+      "recommendation": "The table governs `/orbit:explore <name>`; propose's consume mode (`orbit-propose-modifications`: `detect the presence of orbit/explore/<name>/explore.md and switch to consume mode`) keys on file presence and reads no header token, so a concluded exploration is promoted, moved, and its CONCLUDED entry generated into artifacts with no word from the user about reopening — the exact `REOPEN only on the user's word` rule the row states, bypassed by the neighbouring verb. Propose is out of scope by charter, so the honest fix is a stated limit with an owner, not a new mechanism: add to the concluded requirement's KNOWN paragraph `propose does not read the header token; promoting a concluded name without reopening is possible today and is the propose-consumption follow-on's (rc13c) to refuse or treat as the reopen`, and add the same sentence to the proposal's rc13c handoff so the follow-on's charter carries it."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-explore-modifications/spec.md",
+      "line": 46,
+      "title": "Two inputs the re-entry table's facts do not define: a staging directory without `explore.md`, and a header carrying neither token",
+      "recommendation": "Fact one is `a staging directory exists`; the resume scenario keys on `explore.md` existing with the `exploring` token. A directory holding only `.orbit-runs/` (or a hand-made file with no status line) falls between them. One sentence closes both: `a staging directory without explore.md, or whose header carries neither fixed token, resolves as not-concluded and resumes with the stub/header added (add-only), never as MALFORMED`."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "design.md",
+      "line": 10,
+      "title": "Two stale figures in the design: `one Mechanism entry per rule, D-bcs-1 through D-bcs-10` (eight entries) and `only one live exploration exists` (orbit/explore/ is empty)",
+      "recommendation": "Line 10: D-bcs-4 and D-bcs-5 are `Kind: scope` and have no entries; the eight entries are D-bcs-1, 2, 3, 6, 7, 8, 9, 10 — say `eight entries, one per rule`. Line 35 (`Each is a Decisions entry … with a Mechanism entry`) is wrong for D-bcs-11, also scope. Line 78: since propose moved this exploration, `orbit/explore/` holds nothing, so the `Kind:` default's migration surface today is zero live staging directories and the change-directory `explore.md` files that propose leaves as records — state that, because it is stronger than the claim as written."
+    },
+    {
+      "pass": "7",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "specs/orbit-explore-modifications/spec.md",
+      "line": 84,
+      "title": "The requirement says it NAMES the format rather than restating it, then restates the six-section list — and the Mode B scenario restates it a third time",
+      "recommendation": "R-crc-14's test is whether the sentence could be wrong on its own: the parenthetical `(Premise, **Mechanism**, Decisions, Open questions, Considered & out, References)` at line 84 and again at line 123 can. Keep `SIX sections in the order orbit-conventions' format requirement states` and drop the two lists; the stub scenario at line 89 (`all six sections are present`) keeps the count as its consequence, which the ruling permits."
+    },
+    {
+      "pass": "7",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "explore.md",
+      "line": 68,
+      "title": "The exploration models visibility-never-blocking on `budgetExhausted`, a field rc02c retired",
+      "recommendation": "Lines 68 and 302 cite `rc02's budgetExhausted shape` as the pattern. The field, its trigger and its position tokens were retired by rc02c (R-crc-11(h)); the shape that survives is R-crc-10's `a RECORD reported beside the state, never a block` and `independentSpend` rendered alone. The deltas do not carry the retired name, so this is exploration-only residue — but it will be read at archive as the derivation. Rephrase to name the surviving shape (R-crc-10, and `independentSpend` rendered beside the gate) rather than the retired field."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "tasks.md",
+      "line": 62,
+      "title": "rc13a's OWN exit criterion (2) says `every live rule's domain closed`; 6.2 corrects rc13b's sentence but never says how rc13a's grades under the vocabulary it ships",
+      "recommendation": "Under D-bcs-1 `closed` is one of two accounted outcomes. This file's eight entries are all DERIVED/SOURCED, so the criterion is still measurable in the shipped vocabulary and grades MET — R-crc-12's boundary says that is a grade, not a revision. Say so in 6.2 (`rc13a exit (2) graded as written: all eight live-rule domains CLOSED; the ACCOUNTED wording is recorded for rc13b's sentence only`) so the archive tail does not look like a silent narrowing."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "specs/orbit-explore-modifications/spec.md",
+      "line": 27,
+      "title": "`this change's D-bcs-3` will sit in the BASELINE spec after sync, where `this change` has no referent",
+      "recommendation": "Baseline requirement text outlives the change. Write `the exemplar entry (D-bcs-3 of the archived bounded-closure-semantics change)` so a reader of `orbit/specs/` can find it; the same pattern is fine at conventions line 125 because that sentence names the requirement, not the change."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The change is well built where it was executed: the delta blocks are complete against their baselines, the fingerprints verify, the ten requirements each have a task, the eight Mechanism entries each carry nine unique move lines, the six carried repairs from the external pass are genuinely present, and the counter claim (H3 entries and slot lines perturb no count; sections end only on H2/H1) holds on a read of explore-counter.ts. Where the change was NOT executed it is wrong in the way its own program predicts. The load-bearing finding is a single helper read the design admits it skipped: the metadata schema neither keeps nor rejects an unknown key — it strips it, at both levels the change considered — so the concluded record's third token cannot survive the tool's own write path, and the fallback branch task 2.4 reserved is stripped identically. That was one node invocation away at exploration time, and R-crc-7 says the procedure is executed once before spec prose is written; D-bcs-6's READ line says the reader is lenient, which is true of state.ts and false of the helpers the body actually writes through. The second pattern is grammar-versus-instance: the fenced grammar is the change's best asset, and it disagrees with its own exemplar on the one line every entry writes (a justification after the Closure token), while the Decisions slots — the half rc13b must parse first — have no production at all. The third pattern is seams with neighbouring verbs: the re-entry table is exhaustive for explore and blind to propose, which consumes a concluded directory on file presence alone; the reopen scenario leaves a slot behind that the uniqueness rule then forbids. I probed the ACCOUNTED closure hard and found it sound as a RECORD (the forbidden-otherwise slots are checkable; vacuous residuals are the reader's by declaration); the nine-move boundary test does now list all nine rows; the re-entry cell count is six as claimed; no old vocabulary reaches a normative delta sentence; the three @review: appearances are protocol prose in inline code. Risk texture: one fix that touches an engine type or a descope sweep across seven sites, a handful of grammar productions that are cheap to add and expensive to leave for rc13b to guess, and a retained title whose stated justification ignores a delta operation the validator already supports.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "final_assessment": "1 critical, 9 warning, 6 suggestion.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews bounded-closure-semantics --from-file orbit/changes/bounded-closure-semantics/.orbit-runs/review-proposal-2026-09-25T13-32-50Z.json"
+}

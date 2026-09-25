@@ -24,7 +24,7 @@ The body SHALL treat a rule's Mechanism entry as the record of NINE MOVES applie
 
 READ is the read-before-reference discipline and ENUMERATE is the accounting obligation, both existing rulings made checkable where mechanism is AUTHORED. EXECUTE is NOT sufficient alone: an executed case demonstrates one path, and eleven of one stage's fifteen CRITICALs were READ, ENUMERATE or COHERE failures with zero EXECUTE failures.
 
-The shipped body carries ONE conforming exemplar entry (this change's D-bcs-3), so the convention shows its shape rather than describing it.
+The shipped body carries ONE conforming exemplar entry (D-bcs-3 of the archived `bounded-closure-semantics` change), so the convention shows its shape rather than describing it.
 
 #### Scenario: A rule's entry records all nine moves
 
@@ -53,9 +53,9 @@ The shipped body carries ONE conforming exemplar entry (this change's D-bcs-3), 
 | no | — | yes | resume IN PLACE against `orbit/changes/<name>/explore.md`, say so, scaffold nothing |
 | yes | either | yes | REFUSED — second claim on one truth; name both paths and stop |
 
-An active change WITHOUT an `explore.md` is Mode B new IN the change directory (the file is created beside the artifacts; no staging directory is scaffolded).
+An active change WITHOUT an `explore.md` is Mode B new IN the change directory (the file is created beside the artifacts; no staging directory is scaffolded). A staging directory WITHOUT `explore.md`, or whose header carries neither fixed token, resolves as not-concluded and resumes with the stub or header added (add-only) — never as MALFORMED.
 
-**The conclude verb** runs inside a named session on the user's declared word, in this order: the residency sweep; the CONCLUDED entry with its `Re-entry:` slot; the header token; the citation key; THEN the final boundary emit (whose `final_assessment` states the conclusion in the author's words). The emit is composed from the concluded file, so the maturity-signal stage's rung reads it as concluded. Reopening is the inverse edit plus a dated entry saying why, then a boundary emit. The body never concludes on its own judgement: it recommends, and writes on the user's word (the arc's rules of engagement; `orbit-lifecycle-consent`).
+**The conclude verb** runs inside a named session on the user's declared word, in this order: the residency sweep; the CONCLUDED entry with its `Re-entry:` slot; the header token; THEN the final boundary emit (whose `final_assessment` states the conclusion in the author's words). The emit is composed from the concluded file, so the maturity-signal stage's rung reads it as concluded. Nothing is written to metadata. Reopening follows `orbit-conventions`' reopen scenario, then a boundary emit. The body never concludes on its own judgement: it recommends, and writes on the user's word (the arc's rules of engagement; conclude is not a consent-marked seam — no gate, no prompt, no `consent` field on the explore emit).
 
 #### Scenario: A promoted name resumes against the change directory
 
@@ -75,13 +75,13 @@ An active change WITHOUT an `explore.md` is Mode B new IN the change directory (
 #### Scenario: The user concludes
 
 - **WHEN** the user declares, in a named session, that nothing will be built
-- **THEN** the body sweeps, writes the CONCLUDED entry, flips the header, annotates the citation, and fires the boundary emit — in that order — and leaves the directory where it is
+- **THEN** the body sweeps, writes the CONCLUDED entry, flips the header, and fires the boundary emit — in that order — and leaves the directory and its metadata where they are
 
 ## MODIFIED Requirements
 
 ### Requirement: explore.md five-section convention
 
-The system SHALL maintain `orbit/explore/<name>/explore.md` in the format `orbit-conventions` owns — SIX sections in fixed order (Premise, **Mechanism**, Decisions, Open questions, Considered & out, References), the Decisions entry slots, the Mechanism entry grammar, and the two status tokens — and this requirement NAMES that format rather than restating it (R-crc-14). (The TITLE is retained for delta identity; the format is six sections.) Open-question entries carry the `Standing recommendation:` slot per that format (D-arc Stage D5, leak-hardening layer 1): the current leaning verbatim, or the literal `none yet` — a pending leaning discussed in conversation always has a file-resident home.
+The system SHALL maintain `orbit/explore/<name>/explore.md` in the format `orbit-conventions` owns — SIX sections in the order that format states, the Decisions entry slots, the Mechanism entry grammar, and the two status tokens — and this requirement NAMES that format rather than restating it (R-crc-14). (The TITLE is retained for delta identity; the format is six sections.) Open-question entries carry the `Standing recommendation:` slot per that format (D-arc Stage D5, leak-hardening layer 1): the current leaning verbatim, or the literal `none yet` — a pending leaning discussed in conversation always has a file-resident home.
 
 #### Scenario: Initial stub structure
 
@@ -120,7 +120,7 @@ The system SHALL support three invocation modes: (A) bare — no file; (B) named
 #### Scenario: Mode B — new named exploration
 
 - **WHEN** `/orbit:explore <name>` is invoked, `orbit/explore/<name>/` does not exist, AND no active change of that name exists
-- **THEN** the command creates the staging directory and writes a stub `explore.md` with the six sections (Premise / Mechanism / Decisions / Open questions / Considered & out / References) AND a minimal `orbit/explore/<name>/.openspec.yaml` metadata file (D-arc Stage D2; same metadata genre as changes — base fields `schema: spec-driven` + `created: <ISO-8601>`, mirroring change metadata so the reused change-metadata helpers' schema validation passes unchanged; both are placeholders superseded at promotion, where propose's merge writes fresh `schema`/`created`/`schema_version` values) — carrying the optional `architecture: {doc, stage}` citation when the exploration serves a declared stage (offered when the name or conversation indicates a stage; omitted otherwise, with zero ceremony for standalone explores); the BEGIN emit fires immediately after scaffold + metadata are written (per `orbit-run-summary-emit`'s begin-emit scenario — D-arc Stage D3); ongoing conversation populates the file
+- **THEN** the command creates the staging directory and writes a stub `explore.md` with the six sections in the order `orbit-conventions`' format requirement states AND a minimal `orbit/explore/<name>/.openspec.yaml` metadata file (D-arc Stage D2; same metadata genre as changes — base fields `schema: spec-driven` + `created: <ISO-8601>`, mirroring change metadata so the reused change-metadata helpers' schema validation passes unchanged; both are placeholders superseded at promotion, where propose's merge writes fresh `schema`/`created`/`schema_version` values) — carrying the optional `architecture: {doc, stage}` citation when the exploration serves a declared stage (offered when the name or conversation indicates a stage; omitted otherwise, with zero ceremony for standalone explores); the BEGIN emit fires immediately after scaffold + metadata are written (per `orbit-run-summary-emit`'s begin-emit scenario — D-arc Stage D3); ongoing conversation populates the file
 
 #### Scenario: Mode B — resume
 
@@ -164,7 +164,7 @@ Before EVERY named-mode explore emit (begin emits excepted — nothing has been 
 #### Scenario: A rule discussed to a domain is swept into its Mechanism entry
 
 - **WHEN** a rule's domain, closure or a move disposition was settled in conversation and its Mechanism entry does not yet carry it
-- **THEN** the body writes it into the entry before the emit; a rule left with no entry is a visible open domain, never a downgraded `Kind:`
+- **THEN** the body writes it into the entry before the emit; a rule left with no entry stays a visible open domain (per the capture scenario of the five-section convention requirement)
 
 #### Scenario: Honest ceiling acknowledged
 

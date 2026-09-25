@@ -46,16 +46,18 @@ residual carried only in `design.md` dies at archive), which is the argument for
   (`@review:` marker + a finding against the requirement), the boundary test with RESOURCES in its
   IN list, and ONE conforming exemplar in the shipped body (D-bcs-3's entry).
 - **An exploration may CONCLUDE.** On the user's word, inside explore: a CONCLUDED entry with a
-  `Re-entry:` slot, the header token `> **Status**: concluded <date>.`, a `concluded: <date>` key
-  INSIDE the kept `architecture:` citation, THEN the final boundary emit. The directory stays IN
+  `Re-entry:` slot and the header token `> **Status**: concluded <date>.`, THEN the final boundary
+  emit. Nothing is written to metadata (the helpers strip unknown keys — measured); the citation
+  is kept unchanged. The directory stays IN
   PLACE — moving it would defeat rc13b's fifth rung, which orientation renders from the trail in
   that directory. No new command; the surface stays at 15.
 - **Re-entry is one DERIVED table** over staging-dir × concluded × active-change: six cells, two
   refused (a name resolving to BOTH is the second-claim-on-one-truth condition propose already
   refuses). A concluded name REOPENS only on the user's word, by the inverse edit plus a dated entry.
 - `explore.md` goes to SIX sections (Premise, **Mechanism**, Decisions, Open questions, Considered
-  & out, References). The retained requirement titles say "five-section" for delta identity; the
-  text says six.
+  & out, References). The retained requirement titles say "five-section": a RENAMED delta exists,
+  but renaming pulls three pointer sites in two other capabilities into scope, so the rename is
+  DEFERRED, not impossible; the text says six.
 
 ## Capabilities
 
@@ -88,9 +90,13 @@ residual carried only in `design.md` dies at archive), which is the argument for
   proposing AI reads the whole `explore.md` as authoritative and the transfer is an instruction,
   not a checked mapping. The charter's Touches is two capabilities; a third is a scope change for
   Sal, recorded as a proposed follow-on stage (`rc13c-propose-consumes-mechanism`) in the
-  architect handoff, never folded in silently.
-- **Q-crc-11** gains its engine-readable input: the `concluded:` citation key. Until that stage
-  teaches `state.ts`, a stage cited only by a concluded exploration renders `exploring`. KNOWN.
+  architect handoff, never folded in silently. That follow-on also owns the one transition the
+  re-entry table cannot see: propose keys on `explore.md`'s presence and reads no header token,
+  so a concluded name can be promoted without reopening today — the follow-on refuses it or
+  treats it as the reopen.
+- **Q-crc-11** gains its engine-readable input: the `concluded` header token in the staging
+  directory the kept citation locates. Until that stage teaches `state.ts`, a stage cited only by
+  a concluded exploration renders `exploring`. KNOWN.
 
 **KNOWN AND ACCEPTED**: until rc13b lands the convention is ADVISORY — an author can ignore it and
 no readout notices. The interval, stated.

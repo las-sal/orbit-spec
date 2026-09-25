@@ -65,8 +65,9 @@ An OPEN-DECLARED domain does not block readiness — if it did, rc02's same-stat
 have shipped, and the program would force authors to fake closure to proceed, which is worse than
 the contradiction being fixed. Instead the residual is SURFACED and TRAVELS: the readout names it,
 and it lands in the change's artifacts (a design risk, a named limit in the requirement) rather than
-dying in the exploration. That is the same shape rc02 chose for `budgetExhausted` — reported BESIDE
-the state, never as a block, with the decision and its record left to the human.
+dying in the exploration. That is R-crc-10's shape — a RECORD reported BESIDE the state, never as a block, with the
+decision and its record left to the human (rc02 first shipped it as `budgetExhausted`; rc02c retired
+that field, and the shape survives as `independentSpend` rendered alone — noted 2026-09-25).
 
 ### Case 1 — run the rule against every bounded claim on the record (2026-09-15)
 
@@ -173,19 +174,19 @@ Moves:
 Domain: the readers of a staging directory that a conclusion must account for
 | member | covered by |
 |---|---|
-| stage-state scan (`state.ts`) | KNOWN LIMIT — renders `exploring` until Q-crc-11's stage keys on the `concluded:` citation key |
+| stage-state scan (`state.ts`) | KNOWN LIMIT — renders `exploring` until Q-crc-11's stage reads the header token from the directory the kept citation locates |
 | orientation (`orientation.ts`) | the row stays; KNOWN LIMIT — its next line says propose until rc13b's fifth rung |
 | audit-drift explore cross-check | unchanged; the header token is not a count |
 Closure: SOURCED — grep over `src/core` and the audit-drift body for readers of `orbit/explore` (Case 2)
 Moves:
-- READ: applied — all three readers read; `readCitation` is lenient and ignores unknown keys inside `architecture:`
+- READ: applied — all three readers read; `readCitation` is lenient and ignores unknown keys inside `architecture:`. AMENDED 2026-09-25 (fresh proposal pass, ratified B): the change-metadata helpers the body WRITES through were not read — their schema STRIPS unknown keys at both the nested and the sibling level (measured), so no metadata token can survive; the record is TWO tokens
 - ENUMERATE: applied — Case 2
-- COHERE: applied — the citation is KEPT and annotated, because dropping it loses the evidence Q-crc-11's reader needs while annotation costs nothing today
+- COHERE: applied — the citation is KEPT, unannotated (annotation was stripped — see READ); it is what locates the directory whose header Q-crc-11's reader will read
 - EXECUTE: not applied — no exploration has concluded yet; this one is the rc13a vehicle and will be proposed
 - FALSIFY: applied — Case 2's two moved homes each defeat the fifth rung; the in-place home is the only one the rung can render on
-- CONFORM: applied — D1 consent (conclude is user-declared), R-crc-10 (three tokens, all engine-observable: header token, `Re-entry:` slot, citation key), no new command (surface stays 15)
+- CONFORM: applied — user-declared, recommend never infer (the arc's rules; NOT a consent-marked seam: no gate, no prompt, no `consent` field), R-crc-10 (two tokens, both engine-observable: header token, `Re-entry:` slot), no new command (surface stays 15)
 - FEASIBILITY: not applied — a header edit, one entry, one key, one emit
-- CONSUME: applied — the CONCLUDED entry, the header flip and the citation key land BEFORE the final boundary emit, because rc13b's rung is computed from the file at emit time and orientation renders that emit's next line; amended 2026-09-25 at propose (the first wording had the emit first and the rung would never have rendered — COHERE, caught by executing the sequence once); rc13b reads the header token and the `Re-entry:` slot
+- CONSUME: applied — the CONCLUDED entry and the header flip land BEFORE the final boundary emit, because rc13b's rung is computed from the file at emit time and orientation renders that emit's next line; amended 2026-09-25 at propose (the first wording had the emit first and the rung would never have rendered — COHERE, caught by executing the sequence once); rc13b reads the header token and the `Re-entry:` slot
 - INVOKE: applied — fires on the user's word "conclude" inside explore; nothing else triggers it
 
 ### D-bcs-7 — re-entry resolves against three facts, as one table
@@ -194,7 +195,7 @@ Domain: the cells of (staging dir exists) × (concluded, defined only when a sta
 |---|---|
 | no staging, no change | Mode B new |
 | staging, not concluded, no change | Mode B resume |
-| staging, concluded, no change | state the conclusion and its trigger; REOPEN only on the user's word — header back to exploring, key removed, a dated Decisions entry saying why, a boundary emit |
+| staging, concluded, no change | state the conclusion and its trigger; REOPEN only on the user's word — header back to exploring, a dated Decisions entry saying why, the prior CONCLUDED entry `Disposition: superseded <new ID>` so one LIVE `Re-entry:` slot remains, a boundary emit |
 | no staging, change | resume in place against `orbit/changes/<name>/explore.md`, say so, scaffold nothing |
 | staging (either), change | REFUSED — second claim on one truth; name both paths |
 Closure: DERIVED — three facts, the middle one conditional on the first: six cells, two refused
@@ -213,19 +214,19 @@ Moves:
 Domain: what a parser must key on, and the production that gives it
 | member | covered by |
 |---|---|
-| entry identity | `### <ID> — <title>`, `<ID> ::= D-[a-z0-9]+-[0-9]+`, unique in file |
+| entry identity | `### <ID> — <title>`, `<ID> ::= D-[a-z0-9]+-[0-9]+`, unique in file; ` — ` is the literal em-dash; the Decisions slots (`Kind:`/`Disposition:`/`Re-entry:`) have their own production, matched anywhere within the entry's lines (amended 2026-09-25) |
 | entry boundary | the next heading of level 1–3, or EOF; an H3 beginning `D-` is an entry, `Case` is a case, anything else is prose and not an entry |
 | the enumeration | `Domain:` line + a table |
-| closure | `Closure:` with one of three tokens |
+| closure | `Closure: <TOKEN>[ — <justification>]`, token matched from line start to the first ` — ` (amended 2026-09-25: the exemplar's own line carried a justification the first production had no slot for) |
 | the residual | `Residual kind:` + `Residual method:`, required iff BOUNDED, forbidden otherwise |
 | move dispositions | `Moves:` + nine lines `- <MOVE>: applied — … \| not applied — …`, each move exactly once |
 | evidence linkage | a move line cites `Case <n>` by name |
-| failure | MALFORMED naming the line: bad ID, missing/duplicate move, unknown token, residual on a non-BOUNDED entry (the architecture parser's near-miss rule) |
+| failure | MALFORMED naming the line: bad ID, duplicate entry ID, orphan entry (no Decisions owner), wrong-shaped or EMPTY Domain table, missing/duplicate move, unknown token, residual on a non-BOUNDED entry, BOUNDED missing a slot; an entry for a non-live rule is permitted history (amended 2026-09-25 with the four rows the fresh pass found missing) |
 Closure: DERIVED — from the questions a parser asks of an entry; the container is H3 because domains are TABLES (R-crc-7) and a table inside a list item is fragile
 Moves:
 - READ: applied — the shipped counter (`explore-counter.ts`) ends a section only on `## ` and `# `, so H3 entries and `Kind:` lines perturb no count
 - ENUMERATE: applied — this table
-- COHERE: applied — the Decisions opener is the one every exploration on record already writes, `- **<date> — <ID>: <title>**`; formalized, not replaced, so there is no migration
+- COHERE: applied — the Decisions opener is the one every exploration on record already writes, `- **<date> — <ID>: <title>**`; formalized, not replaced, so there is no migration. AMENDED 2026-09-25 (in-context pass): the slot-line regex written at the walk rejected the nested-bullet form the same sentence admitted — an optional bullet prefix now reconciles them; the header token also gained a production
 - EXECUTE: applied — this section is the first conforming instance; D-bcs-3's entry was written first, and its FALSIFY line found the design-only carrier
 - FALSIFY: applied — the first attempt's grammar named slots without a container or boundary and no parser could be written; every production here answers a parser question
 - CONFORM: applied — R-crc-7 (tables), R-crc-10 (form only), R-crc-14 (the spec owns the grammar; the body carries ONE exemplar and points)
@@ -273,7 +274,7 @@ Moves:
 - FALSIFY: applied — the top rung asserting readiness on heading count fired on THIS file (five decisions, zero questions → "ready to formalize") while the record held only the hinge
 - CONFORM: applied — R-crc-13: the top rung REPORTS (live-rule count, zero open, named residuals, D1's eligibility phrasing) and stops vouching; `next_recommended` still points at propose. R-crc-11: read with rc04a's `judgements` vocabulary before coining a word for the CONCLUDED record
 - FEASIBILITY: not applied — a bounded render (first few IDs + count) is rc13b's exit (1)
-- CONSUME: applied — the fifth rung reads the header token `concluded` and the CONCLUDED entry's `Re-entry:` slot; recommends neither explore nor propose
+- CONSUME: applied — the fifth rung reads the header token `concluded` and the CONCLUDED entry's `Re-entry:` slot; recommends neither explore nor propose; header read FIRST — precedence over the withholding predicate, open rules rendered beside it as a record (added 2026-09-25)
 - INVOKE: applied — HANDOFF: the charter sentence in rc13b's section is an architect edit, carried by rc13a's archive tail or the next architect session, never by this exploration
 
 ## Decisions
@@ -299,8 +300,9 @@ Moves:
   R-crc-3). An open-declared domain does not block readiness. If it did, rc02's same-state v1 limit
   could never have shipped, and authors would fake closure to proceed — worse than the contradiction
   being fixed. The residual is SURFACED and TRAVELS into the change's artifacts rather than dying in
-  the exploration. That is rc02's `budgetExhausted` shape: reported beside the state, the decision
-  and its record left to the human.
+  the exploration. That is R-crc-10's record-beside-the-state shape, the decision and its record
+  left to the human (first shipped as rc02's `budgetExhausted`, retired by rc02c; `independentSpend`
+  rendered alone is the surviving form — noted 2026-09-25).
   Kind: rule
 
 - **2026-09-15 — D-bcs-4: this is a RECORD, not a check, and that is why it is buildable**
@@ -322,12 +324,14 @@ Moves:
 - **2026-09-25 — D-bcs-6: a concluded exploration stays IN PLACE, and its conclusion is a RECORD**
   (settled under R-crc-3). The `explore.md` header flips to the fixed token `> **Status**: concluded
   <date>.`; the Decisions section gains ONE CONCLUDED entry — what was decided, why nothing is
-  built, and a `Re-entry:` slot (the owner; the header is the pointer); `.openspec.yaml` gains
-  `concluded: <date>` INSIDE the kept `architecture:` citation (the lenient reader ignores it today;
-  it is the engine-owned input Q-crc-11's stage keys on); the header flips and the key lands BEFORE the final boundary
+  built, and a `Re-entry:` slot (the owner; the header is the pointer); nothing is written to
+  `.openspec.yaml` (AMENDED 2026-09-25, fresh proposal pass, ratified B: a `concluded:` key inside the
+  kept citation was the first shape; the change-metadata helpers STRIP unknown keys at both levels,
+  measured, so the record is TWO tokens and the citation stays unchanged — Q-crc-11's stage reads the
+  header from the directory the citation locates); the header flips BEFORE the final boundary
   emit, so the emit's rung is computed from the concluded file (AMENDED 2026-09-25 at propose: the
   first wording had the emit first, which would leave rc13b's rung unrendered on the last record — a
-  COHERE failure caught by executing the sequence once); the verb is user-declared inside explore under D1 consent, with no new command. Case 2
+  COHERE failure caught by executing the sequence once); the verb is user-declared inside explore (recommend, never infer; not a consent-marked seam), with no new command. Case 2
   shows why not a move: moving the directory defeats rc13b's fifth rung, and the analogy to the
   changes archive is wrong because a conclusion carries a standing trigger, which is Considered &
   out's shape at the program layer. KNOWN and assigned: stage state renders `exploring` for a
@@ -369,7 +373,9 @@ Moves:
   complete BOUNDED is accounted and its residual is NAMED beside the rung, never withheld on. The
   top rung REPORTS — live-rule count, zero open, named residuals, D1's eligibility phrasing — and
   stops vouching (R-crc-13 applied to the grid; `next_recommended` still points at propose). The
-  fifth rung reads the header token and the `Re-entry:` slot and recommends neither verb. Evidence
+  fifth rung reads the header token and the `Re-entry:` slot and recommends neither verb; the
+  header is read FIRST, so a concluded file renders the fifth rung regardless of open rules, and any
+  open-rule list renders beside it as a record, never as a withholding (added 2026-09-25). Evidence
   the old rung is wrong: it fired Mature on THIS file at five decisions and zero questions while the
   record held only the hinge. rc13b's charter sentence "closed enumeration for every LIVE rule" is
   wrong by one word and is an architect edit, not this exploration's.
@@ -395,7 +401,8 @@ Moves:
 - **2026-09-25 — a dot-directory (`orbit/explore/.concluded/`) as the home.** Invisible to every
   reader; a hidden record with a standing re-entry trigger is the opposite of what the outcome is for.
 - **2026-09-25 — dropping the citation on conclude.** Makes the stage `premised` today but destroys
-  the input Q-crc-11's reader needs; annotating the kept citation costs nothing and keeps it.
+  the input Q-crc-11's reader needs (the directory the header lives in); annotation was then found
+  to be stripped by the helpers (2026-09-25), so the citation is kept UNCHANGED.
 - **2026-09-25 — claim-level IDs and dispositions.** Answers the collision with a second key space;
   one-claim-per-entry answers it with none (D-bcs-9).
 - **2026-09-25 — the `illustrative` disposition.** Its case is `Kind: fact` once the entry is the key.
