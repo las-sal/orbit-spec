@@ -749,6 +749,16 @@ never deleted.
   on-program, and a stage's cycle would cost an order of magnitude more than the work. Not done
   inside rc07's walk deliberately — the parser is shared by `architecture status`, `show` and
   `validate`, and inventing that mid-walk is what R-crc-6 forbids.
+  **2026-09-25 — the count is THREE, not two.** rc13b's external proposal pass (GPT-5 Codex) executed a
+  counterexample against `src/core/parsers/explore-counter.ts`'s LOCAL fence scanner: it remembers three
+  delimiter characters and closes on a prefix match, so a four-backtick fence closes on an inner
+  three-backtick line, and it accepts fences indented past CommonMark's three-space limit — a fenced
+  decoy was counted as a decision and the live entry after the real closer was hidden. rc13b's delta
+  makes both the counter and its new form parser import `createFenceTracker` from
+  `src/core/markdown-fence.ts`; that retires one of the three grammars in passing and leaves this
+  question's original two. The lesson for this entry's small change: grep for every local fence regex
+  (`{3,}` against a backtick or tilde) before declaring the count, because the third was found by a
+  reviewer executing a case, not by anyone counting.
 
 - **Q-crc-16 — RESOLVED 2026-09-20 (both halves applied together, as the entry required).** This doc stated its own stage count twice, unmarked, and once staler than the other.
   Observed 2026-09-17 while applying rc07's recommended amendments. The header blockquote
