@@ -17,51 +17,65 @@ measures RECORDED LEANINGS (the leak-hardening intent), so `none yet` entries an
 entries both fall outside `n`; slot-less entries are audit-drift's format finding, never the
 counter's concern.
 
-Also for `explore` emits — FOUR fields computed by the FORM parse of the same file, through the
+Also for `explore` emits — FIVE fields computed by the FORM parse of the same file, through the
 productions `orbit-conventions` owns (the status header, the Decision entry, the Mechanism entry —
-imported from the grammar module per the single-source requirement below, never restated):
+imported from the grammar module per the single-source requirement below, never restated) and
+through the engine's ONE CommonMark fence grammar (`createFenceTracker` in `src/core/markdown-fence.ts`,
+which the counter also adopts — a local fence scanner is the defect class Q-crc-15 records):
 `rules_total` (integer — the LIVE rules, as `orbit-conventions`' Decision-entry requirement defines
-membership in the accounting obligation), `rules_open` (an array with one entry per live rule whose
-domain is OPEN and one per MALFORMED entry: `{id?, state, line?}` — `state` is one of the four
-LIVE-RULE states `absent` (no Mechanism entry), `no-closure` (entry without a `Closure:` line),
-`bounded-incomplete` (BOUNDED missing a residual slot), `open` (a Decisions entry with no well-formed
-ID opener), or the one MALFORMED state `malformed` (any failure in the Mechanism grammar's MALFORMED
-list, a duplicate Decisions ID, or an orphan Mechanism entry whose ID matches no Decisions entry);
-`id` is present when the entry has one, `line` on `malformed` and `open` entries, so every entry is
-nameable. The array is ORDERED: Decisions entries in file order, then Mechanism-only `malformed`
-entries in heading order — so any bounded render of it is deterministic. The maturity rung's
-`K of R` counts ONLY the four live-rule states; `malformed` entries are reported in their own clause
-and are never counted as live rules, since an orphan or a duplicate is not a rule with an open domain
-but a key defect), `residuals` (an array `{id, kind, method}`, one per ACCOUNTED BOUNDED entry — the
-residual named beside the rung), and `status` (`{token, date?, re_entry?}` — `token` is `exploring`
-or `concluded` per the status-header production and its neither-token rule; `date` present iff
-concluded; `re_entry` present iff concluded AND exactly one live entry carries a `Re-entry:` slot,
-carrying that slot's text — when NO live entry carries one the field is ABSENT and the rendered prose
-alone carries the fallback; when MORE than one live entry carries one the FIRST in file order wins
-and a stderr note names the second, per `orbit-conventions`' exactly-one-live-slot rule).
+membership in the accounting obligation; a live rule is counted whether or not its ID is well-formed),
+`rules_open` (an array holding LIVE RULES ONLY — one entry per live rule whose domain is not
+ACCOUNTED, `{id?, state, line?}`, `state` exactly one of five DISJOINT values, tested in this order:
+`open` (a Decisions entry whose ID is not well-formed per `orbit-conventions`' Decision-entry
+requirement — it can be keyed to no Mechanism entry, so its domain is open by construction; `line`
+present, `id` absent), `absent` (no Mechanism entry keyed by its ID), `bounded-incomplete` (a BOUNDED
+entry missing `Residual kind:` or `Residual method:` — this state takes PRECEDENCE over the grammar's
+MALFORMED classification of the same defect, because the more specific name is the actionable one),
+`no-closure` (an entry without a `Closure:` line), or `malformed-entry` (any OTHER failure in the
+Mechanism grammar's MALFORMED list on that rule's own entry — a bad or empty `Domain:` table, a
+missing or duplicated move line, an unknown `Closure:` token, a residual slot on a non-BOUNDED entry —
+`line` naming the failing line); the array is ORDERED by the Decisions entries' file order, and its
+LENGTH is the maturity rung's K — an open live rule is exactly one entry here and nothing else is),
+`key_defects` (an array of defects that are NOT rules with open domains but defects in the KEY space
+itself: `{id, kind, line}` — `id` always present, since every kind names a key — with `kind` one of
+`orphan` (a Mechanism entry whose ID matches no Decisions entry — `id` the heading's ID, `line` its
+line) or `duplicate` (a key claimed twice on EITHER side: a Decisions entry whose ID repeats an earlier
+one — the FIRST occurrence in file order owns the key and joins its Mechanism entry; the second is this
+defect, `id` the repeated ID, `line` its line, EXCLUDED from `rules_total` — or a second Mechanism
+heading carrying an ID an earlier heading already used — the FIRST heading in file order is the
+rule's own entry and is judged normally; the second is this defect, `line` its heading's line, and it
+is never judged as the rule's entry); ordered
+by line; never a member of `rules_open`, never counted in K, reported in its own clause beside every
+rung), `residuals` (an array `{id, kind, method}`, one per ACCOUNTED BOUNDED entry, in the Decisions
+entries' file order — the residual named beside the rung), and `status` (`{token, date?, re_entry?}`
+— `token` is `exploring` or `concluded` per the status-header production and its neither-token rule;
+`date` present iff concluded; `re_entry` present iff concluded AND exactly one live entry carries a
+`Re-entry:` slot, carrying that slot's text — when NO live entry carries one the field is ABSENT and
+the rendered prose alone carries the fallback; when MORE than one live entry carries one the FIRST in
+file order wins and a stderr note names the second, per `orbit-conventions`' exactly-one-live-slot
+rule). The two arrays are DISJOINT by construction: a key defect is never a rule and a rule's own
+entry defect is never a key defect, so no file state reaches two clauses of the rung through one entry.
 
-**The Decisions-side rules the parse adds to the owned productions** (stated here once; the
-Mechanism-side states are `orbit-conventions`' six and are pointed at, not restated): a Decisions
-entry's ID is WELL-FORMED when the FIRST line of its list item matches the opener PREFIX
-`- **<YYYY-MM-DD> — <ID>: ` — the closing `**` of the bold title may fall on a later line, so
-ordinary line-wrapping of a long title is never a format defect; an entry whose first line carries
-no such prefix is `open`, named by line. A DUPLICATE ID: the first occurrence in file order owns the
-key and joins its Mechanism entry; the second appears in `rules_open` as `{id, state: "malformed",
-line}` and is EXCLUDED from `rules_total`. A `Kind:` or `Disposition:` line whose value is outside
-its production does not match, so the slot is ABSENT and the demanding default applies (a typo
-cannot escape the obligation). The parse judges FORM ONLY — the FORM-only clause of
-`orbit-conventions`' Mechanism-grammar requirement governs what it may and may not claim — and the
-form parse SHALL NOT claim more: a file whose every decision is `Kind: fact` yields `rules_total: 0`
-and `rules_open: []`, truthfully; a rule never written down is invisible to it. A missing
-`## Mechanism` section makes every live rule `absent` and adds ONE stderr note naming the section,
-like the counter's; a missing FILE yields `rules_total: 0`, `rules_open: []`, `residuals: []`,
-`status: {token: "exploring"}` and the counter's existing missing-section notes (no additional
-Mechanism note). Fenced content is never structure. A MALFORMED entry NEVER blocks the emit: the
-fields record it and the rung reports it.
+**What the parse adds beyond the owned productions** (stated here once; the Mechanism-side states
+are `orbit-conventions`' and the ID well-formedness rule — a first-line prefix match — is
+`orbit-conventions`' Decision-entry requirement's, both pointed at, not restated): a `Kind:` or
+`Disposition:` line whose value is outside its production does not match, so the slot is ABSENT and
+the demanding default applies (a typo cannot escape the obligation). The parse judges FORM ONLY — the
+FORM-only clause of `orbit-conventions`' Mechanism-grammar requirement governs what it may and may not
+claim — and the form parse SHALL NOT claim more: a file whose every decision is `Kind: fact` yields
+`rules_total: 0` and `rules_open: []`, truthfully; a rule never written down is invisible to it. A
+missing `## Mechanism` section makes every live rule `absent` and adds ONE stderr note naming the
+section, like the counter's; a missing FILE yields `rules_total: 0`, `rules_open: []`,
+`key_defects: []`, `residuals: []`, `status: {token: "exploring"}` and the counter's existing
+missing-section notes (no additional Mechanism note). Fenced content is never structure — including a
+four-backtick fence enclosing a three-backtick example, and a fence indented beyond CommonMark's
+three-space limit, both of which the shared tracker resolves and a local scanner did not. A defect of
+either array NEVER blocks the emit: the fields record it and the rung reports it.
 
 Also computed: the maturity-grid `next_recommended` (Concluded / Early / Mid / Stalled /
 Unaccounted / Accounted per `orbit-run-summary-emit`'s maturity requirement — the grid is engine
-data; the header token is read FIRST); for `apply` emits —
+data; the header token is read FIRST; K is `rules_open`'s length and key defects render in their own
+clause); for `apply` emits —
 `tasks_completed`/`tasks_remaining` from checkbox arithmetic, `user_validation_remaining` and
 the per-chunk user-validation subset from the payload's `user_validation_tasks` identifier
 list (the payload's ONE checkbox judgment — which tasks are user-validation; each named task
@@ -105,12 +119,42 @@ extension are rejected as engine-owned fields.
 #### Scenario: Rule fields computed from the form parse
 
 - **WHEN** `orbit emit explore --change foo` runs against a staging `explore.md` with six Decisions entries — four `Kind: rule` (one with a SOURCED entry, one with a complete BOUNDED entry, one with a BOUNDED entry missing `Residual method:`, one with no entry), one `Kind: fact`, one `Kind: scope` — and one Mechanism entry `D-foo-9` matching no Decisions entry
-- **THEN** the emit carries `rules_total: 4`, `rules_open` with three entries in file-then-heading order (`{id: "D-foo-3", state: "bounded-incomplete"}`, `{id: "D-foo-4", state: "absent"}`, `{id: "D-foo-9", state: "malformed", line: <its heading's line>}`), `residuals` with one entry naming the complete BOUNDED entry's kind and method, `status: {token: "exploring"}`, and the Unaccounted recommendation reading "2 of 4 live rules have open domains (D-foo-3, D-foo-4); 1 malformed (D-foo-9)" — K counts the two live-rule states, never the orphan — none supplied by the payload
+- **THEN** the emit carries `rules_total: 4`, `rules_open` with two entries in file order (`{id: "D-foo-3", state: "bounded-incomplete"}`, `{id: "D-foo-4", state: "absent"}`), `key_defects` with one entry (`{id: "D-foo-9", kind: "orphan", line: <its heading's line>}`), `residuals` with one entry naming the complete BOUNDED entry's kind and method, `status: {token: "exploring"}`, and the Unaccounted recommendation reading "2 of 4 live rules have open domains (D-foo-3, D-foo-4); 1 key defect (D-foo-9 at line <n>)" — none supplied by the payload
 
-#### Scenario: ID-less, wrapped, duplicate and unknown-Kind entries are each named, none dropped
+#### Scenario: A malformed entry on a unique live rule is an open live rule
 
-- **WHEN** a Decisions section holds an entry whose first line is `- **Decision:** we will …` (no date, no ID), an entry whose opener `- **2026-09-25 — D-foo-7: a long title` wraps so its closing `**` falls on the second line, two entries both opening with `D-foo-2`, and an entry carrying `Kind: banana`
-- **THEN** the prefix-less entry appears in `rules_open` as `{state: "open", line: <its first line>}` with no `id`; the wrapped entry is WELL-FORMED (`D-foo-7`, counted and joined like any other); the second `D-foo-2` appears as `{id: "D-foo-2", state: "malformed", line: <its line>}` and is excluded from `rules_total` while the first owns the key; and the `Kind: banana` entry is a live rule (the slot did not match, so it is absent and defaults to rule) that owes a Mechanism entry like any other
+- **WHEN** a file's only defect is a live rule `D-foo-2` whose Mechanism entry has a `Domain:` table with no member rows
+- **THEN** `rules_open` is `[{id: "D-foo-2", state: "malformed-entry", line: <the table's first line>}]`, `key_defects` is `[]`, and the rung reads "1 of R live rules has an open domain (D-foo-2 at line <n>)" — the rule counts in K, because its domain is not accounted
+
+#### Scenario: An orphan alone is a key defect, not an open rule
+
+- **WHEN** a file's only defect is a Mechanism entry `D-foo-9` matching no Decisions entry, every live rule accounted
+- **THEN** `rules_open` is `[]`, `key_defects` is `[{id: "D-foo-9", kind: "orphan", line: <n>}]`, and the rung is Accounted with the clause "; 1 key defect (D-foo-9 at line <n>)" appended — the verb does not change on a key defect
+
+#### Scenario: A duplicate ID alone is a key defect
+
+- **WHEN** a file's only defect is two Decisions entries opening with `D-foo-2`, the first's Mechanism entry accounted
+- **THEN** `rules_total` counts the first only, `rules_open` is `[]`, `key_defects` is `[{id: "D-foo-2", kind: "duplicate", line: <the second entry's line>}]`, and the rung is Accounted with the key-defect clause
+
+#### Scenario: A duplicate Mechanism heading is a key defect, and the first heading is the rule's entry
+
+- **WHEN** a file's only defect is two Mechanism headings `### D-foo-5 — …`, the first well-formed and SOURCED, the second missing its `Closure:` line
+- **THEN** `D-foo-5` is ACCOUNTED (judged on the first heading), `rules_open` is `[]`, and `key_defects` is `[{id: "D-foo-5", kind: "duplicate", line: <the second heading's line>}]` — the second heading is never judged as the rule's entry
+
+#### Scenario: BOUNDED missing a slot takes the specific state
+
+- **WHEN** a live rule's Mechanism entry reads `Closure: BOUNDED` with `Residual kind:` present and `Residual method:` absent
+- **THEN** its `rules_open` entry is `{id, state: "bounded-incomplete"}` — never `malformed-entry`, though the grammar's MALFORMED list names the same defect
+
+#### Scenario: ID-less, wrapped and unknown-Kind entries are each named, none dropped
+
+- **WHEN** a Decisions section holds an entry whose first line is `- **Decision:** we will …` (no date, no ID), an entry whose opener `- **2026-09-25 — D-foo-7: a long title` wraps so its closing `**` falls on the second line, and an entry carrying `Kind: banana`
+- **THEN** the prefix-less entry appears in `rules_open` as `{state: "open", line: <its first line>}` with no `id` and counts in `rules_total`; the wrapped entry is WELL-FORMED per `orbit-conventions` (`D-foo-7`, counted and joined like any other); and the `Kind: banana` entry is a live rule (the slot did not match, so it is absent and defaults to rule) that owes a Mechanism entry like any other
+
+#### Scenario: A nested fence hides nothing and reveals nothing
+
+- **WHEN** a Decisions section holds a real entry, then a four-backtick fence containing a three-backtick example that itself contains a decoy `- **2026-01-01 — D-foo-8: decoy**` line, then the fence's four-backtick closer, then a second real entry
+- **THEN** the decoy is never an entry and the second real entry IS counted — the shared fence tracker closes the outer fence only on its own delimiter; an indented fence beyond three spaces is likewise not a fence
 
 #### Scenario: Concluded with no live Re-entry slot, and with two
 
@@ -125,11 +169,11 @@ extension are rejected as engine-owned fields.
 #### Scenario: No Mechanism section is a format note, never a blocker
 
 - **WHEN** `orbit emit explore --change foo` runs against a staging `explore.md` with five ID'd decisions and no `## Mechanism` heading
-- **THEN** the emit writes, `rules_open` names all five as `absent`, and a single stderr note names the missing section
+- **THEN** the emit writes, `rules_open` names all five as `absent`, `key_defects` is `[]`, and a single stderr note names the missing section
 
 #### Scenario: Rule fields are engine-owned at the seam
 
-- **WHEN** an explore payload includes `rules_open: []` (or `rules_total`, `residuals`, or `status`)
+- **WHEN** an explore payload includes `rules_open: []` (or `rules_total`, `key_defects`, `residuals`, or `status`)
 - **THEN** the surface exits non-zero with the engine-owned error naming the field — the same sentence a payload `decisions_captured` draws — never the unknown-key error; no file is written
 
 #### Scenario: Apply chunk fields computed from tasks.md
@@ -156,11 +200,11 @@ extension are rejected as engine-owned fields.
 
 ### Requirement: The explore grammar has one source in code
 
-The three productions `orbit-conventions` owns for `explore.md` — the status header, the Decision entry (ID opener and slot lines), and the Mechanism entry (`Domain:` table, `Closure:` token, residual slots, move lines) — SHALL be carried in code by ONE module, `src/core/explore-grammar.ts`, exporting the productions as the strings the spec fences and the regular expressions that match them. Every engine extension of the grammar SHALL import that module: the form parse this capability computes, the generated-surface test's grammar assertions, and the explore body template, which interpolates the module's strings so that the rendered skill's mirrors are BYTE-IDENTICAL to the pre-module render (the skill's hash pin does not move). A parity test SHALL read the spec's three fenced productions and assert the module's strings equal them, so the spec remains the single stated source (R-crc-14) and the module is a checked extension of it, not a second statement. Matching rules the spec states in PROSE rather than in a fence (e.g. the `Closure:` token "matched from line start to the first ` — `") have no fenced text to compare and are covered instead by the parse's fixture tests over the two exemplar entries the explore body carries.
+The three productions `orbit-conventions` owns for `explore.md` — the status header, the Decision entry (ID opener and slot lines), and the Mechanism entry (`Domain:` table, `Closure:` token, residual slots, move lines) — SHALL be carried in code by ONE module, `src/core/explore-grammar.ts`, exporting the productions as the strings the spec fences and the regular expressions that match them. Every engine extension of the grammar SHALL import that module: the form parse this capability computes, the generated-surface test's grammar assertions, and the explore body template, which interpolates the module's strings so that the rendered skill's mirrors are BYTE-IDENTICAL to the pre-module render (the skill's hash pin does not move). A parity test SHALL read the OWNING spec text's three fenced productions — resolving the owner the way the generated-surface mirror test already does: ONE active change's delta holding the block when one exists, the baseline otherwise — and assert the module's strings equal them, so the spec remains the single stated source (R-crc-14), the module is a checked extension of it rather than a second statement, and parity stays enforceable while a later change is mid-flight on a production. Matching rules the spec states in PROSE rather than in a fence (e.g. the `Closure:` token "matched from line start to the first ` — `") have no fenced text to compare and are covered instead by the parse's fixture tests over the two exemplar entries the explore body carries.
 
 #### Scenario: Module and spec agree
 
-- **WHEN** the parity test reads `orbit/specs/orbit-conventions/spec.md`'s fenced status-header, Decision-entry and Mechanism-entry productions
+- **WHEN** the parity test reads the owning text's fenced status-header, Decision-entry and Mechanism-entry productions (an active delta's block first, `orbit/specs/orbit-conventions/spec.md` otherwise)
 - **THEN** each equals the corresponding string the grammar module exports; a divergence fails the test naming the production
 
 #### Scenario: Body interpolation changes no byte

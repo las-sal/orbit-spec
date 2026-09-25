@@ -18,7 +18,7 @@ the explore body by `test/core/templates/orbit-generated-surface.test.ts`, whose
 grammar's first extension. No engine code shipped. This stage is the consumer that makes the
 convention more than advisory.
 
-Constraints: R-crc-1 (three capabilities, this change sits exactly at it); R-crc-10 (the engine
+Constraints: R-crc-1 (the ceiling is three capabilities; this change touches FOUR — the fourth is a one-sentence delta to `orbit-conventions`, declared below as a measured breach ratified at the proposal walk); R-crc-10 (the engine
 judges FORM, never truth); R-crc-13 (a readout reports, never rules); R-crc-14 (a production is
 stated once; every extension points — here, imports); D3's orientation contract (read-only, closed
 data sources, fault-isolated, time-shifted); D-bcs-10 (what this stage inherits: the six entry
@@ -57,27 +57,39 @@ this document restates only what an implementer needs and cites the rest.
   "verbatim recommendation, suitable for best-effort parse"); the archive emit already does this.
   Orientation validates a string and renders it. *Alternative rejected*: `/orbit:architect <doc>` as
   the verb when cited — two shapes for one rung, and nothing for the uncited case.
-- **D-rc13b-8 — nine entry states, form only.** D-bcs-10's six Mechanism states joined to the
-  Decisions side: an entry is WELL-FORMED when its FIRST line matches the opener prefix
-  `- **<date> — <ID>: ` (the closing `**` may fall on a later line — settled at the proposal walk,
-  option A of the fresh pass's first CRITICAL: the archived exemplar wraps three of twelve openers and
-  none was written carelessly; `orbit-conventions` points at this rule on its next touch); a
-  prefix-less entry → OPEN named by line; duplicate ID → MALFORMED naming the second; an unknown
+- **D-rc13b-8 — two disjoint arrays, form only.** The external pass showed one array carrying two
+  semantic roles has no correct predicate: a live rule with a bad table dropped out of K while an orphan
+  alone fired the Unaccounted verb. The model is now DISCRIMINATED: `rules_open` holds LIVE RULES ONLY,
+  one of five disjoint states tested in order (`open`, `absent`, `bounded-incomplete` — taking
+  precedence over the grammar's MALFORMED naming of the same defect — `no-closure`, `malformed-entry`),
+  and its length IS K; `key_defects` holds orphans and duplicate IDs, never counted in K, rendered in
+  its own clause on every rung without changing the verb. The opener rule — an ID is well-formed when
+  the entry's FIRST line matches the prefix `- **<date> — <ID>: `, the closing `**` anywhere — is
+  stated in `orbit-conventions`' Decision-entry requirement (this change's fourth capability, one
+  sentence) and the parse points at it; the archived exemplar wraps three of twelve openers and none
+  was written carelessly. A prefix-less entry → `open` named by line; duplicate ID → MALFORMED naming the second; an unknown
   `Kind:`/`Disposition:` value is NO MATCH, so the slot is absent and the demanding default applies
   (a typo cannot escape the obligation — *alternative rejected*: MALFORMED, which would let it);
   orphan Mechanism entry → MALFORMED naming the heading, reported in `rules_open` with
-  `state: malformed`; a duplicate ID → the first owns the key, the second `malformed` by line and
-  excluded from `rules_total`; `re_entry` absent when no live slot, first-in-file-order with a stderr
-  note when two; no `## Mechanism` section → every live rule ABSENT plus one stderr note. `rules_open`
-  is ordered (Decisions in file order, then Mechanism-only malformed in heading order) so the bounded
-  render is deterministic, and the rung's K counts live-rule states only — a malformed entry is a key
-  defect, reported in its own clause, never a rule with an open domain. A live
+  `key_defects` kind `orphan`; a duplicate ID → the first owns the key, the second a `key_defects`
+  entry by line and excluded from `rules_total`; `re_entry` absent when no live slot, first-in-file-order with a stderr
+  note when two; no `## Mechanism` section → every live rule ABSENT plus one stderr note. `rules_open` and
+  `residuals` are ordered by Decisions file order and `key_defects` by line, so every bounded render is
+  deterministic; all three lists take the same three-plus-`+N more` bound and the one identifier rule
+  (`<id> at line <n>` / `<id>` / `line <n>`). A live
   rule is a Decisions entry whose `Kind:` is rule or absent AND whose `Disposition:` is live or
-  absent. The parser lives in a new `src/core/parsers/explore-rules.ts` beside the counter, sharing
-  its fence tracking; the counter module keeps the grid function and gains the two new inputs.
-- **D-rc13b-4 — four engine-owned fields.** `rules_total` (integer), `rules_open` (array of
-  `{id, state, line?}`), `residuals` (array of `{id, kind, method}`), `status` (`{token, date?,
-  re_entry?}`). Listed in `ENGINE_OWNED_EXTRA.explore` so a payload carrying one draws the
+  absent. The parser lives in a new `src/core/parsers/explore-rules.ts` beside the counter; BOTH import
+  `createFenceTracker` from `src/core/markdown-fence.ts` — the counter's local scanner closes a
+  four-backtick fence on an inner three-backtick line and accepts over-indented fences (the external
+  pass executed a counterexample), which is Q-crc-15's defect class and raises that question's count of
+  fence grammars from two to three; the counter module keeps the grid function and gains the header,
+  open-rule and key-defect inputs.
+- **D-rc13b-4 — five engine-owned fields.** `rules_total` (integer), `rules_open` (array of
+  `{id?, state, line?}`, live rules only), `key_defects` (array of `{id, kind, line}` — added at the
+  second proposal walk from the external pass's CRITICAL; `duplicate` covers a repeated Decisions ID
+  and a repeated Mechanism heading alike), `residuals` (array of `{id, kind, method}`),
+  `status` (`{token, date?, re_entry?}` — `re_entry` present only when exactly one live entry carries
+  the slot). All five listed in `ENGINE_OWNED_EXTRA.explore` so a payload carrying one draws the
   engine-owned sentence rather than the unknown-key one (the test asserts the sentence). They are
   facts about a file and sit beside `decisions_captured`, not inside a `judgements` record — rc04a's
   vocabulary was read (R-crc-11) and not borrowed, because the genres differ. Their shapes are stated
@@ -92,8 +104,9 @@ this document restates only what an implementer needs and cites the rest.
   the strings the spec fences plus the regexes that match them. The explore body template
   interpolates the strings — the rendered SKILL.md is byte-identical, so the `orbit-explore` pin in
   `test/core/templates/skill-templates-parity.test.ts` does not move. The generated-surface test and
-  the parser import the regexes. A new parity test reads `orbit/specs/orbit-conventions/spec.md`'s
-  three fenced productions and asserts the module's strings equal them — the ONE remaining seam, and
+  the parser import the regexes. A new parity test reads the OWNING text's three fenced productions — the
+  generated-surface mirror test's single-active-owner lookup, so parity holds mid-change too — and
+  asserts the module's strings equal them — the ONE remaining seam, and
   a check rather than a hope. The prose-stated matching rules (e.g. "matched from line start to the
   first ` — `") have no fenced form to compare; they are covered by the parser's fixture tests over
   the two body exemplars (D-bcs-11).
@@ -138,7 +151,7 @@ this document restates only what an implementer needs and cites the rest.
 - [The `Mature` scenario in `orbit-run-summary-emit` names 5 decisions / 0 questions with no
   Mechanism precondition] → re-cut into the two rows it now spans (UNACCOUNTED when a rule is open;
   Accounted when none is), both stated in the delta.
-- [Readers of prior-generation explore emits] → the four fields are absent on every emit before this
+- [Readers of prior-generation explore emits] → the five fields are absent on every emit before this
   change; the existing generation rule (readers tolerate absence) covers them; orientation's `status`
   extraction is optional.
 - [`concluded` is shared vocabulary with rc15] → whichever stage ships first names the third state;
@@ -150,25 +163,33 @@ this document restates only what an implementer needs and cites the rest.
   titles to — declared here so the system review does not rediscover it as drift.
 - [Wrapped openers] → under a strict same-line reading of the opener, an author who wraps a bold title
   loses the ID; it happened in this stage's own exploration and, the fresh pass found, in three of the
-  archived exemplar's twelve entries. The parse therefore matches the opener as a FIRST-LINE PREFIX;
-  wrapping is legal, and ID-less means no prefix at all. The strict reading is Considered & out.
-- [Size] → three capabilities (the ceiling), six requirement blocks (five MODIFIED, one ADDED — the
-  sourcing requirement joined at the proposal walk), seven rules, 18 tasks after the walk deleted 4.3
-  (19 before; the R-crc-1 task bound is 20, so any task a later walk adds must be paid for by merging
-  two). Measured before generation (R-crc-9's preventive application); recorded rather than hidden.
+  archived exemplar's twelve entries. The opener is a FIRST-LINE PREFIX match, stated in its owner
+  (`orbit-conventions`) as this change's fourth capability; wrapping is legal, and ID-less means no
+  prefix at all. The strict reading is Considered & out.
+- [R-crc-1 BREACH, declared] → four capabilities against a ceiling of three. The fourth is ONE
+  SENTENCE plus one scenario in `orbit-conventions`' Decision-entry requirement, because the external
+  pass found the rule stated in the consumer with no owner — the two-authorities interval R-crc-14
+  exists to forbid. R-crc-9 offers split or declare; a split had no home (rc13c touches propose, not
+  conventions) and would leave the parser shipping on an unowned rule. Declared here, ratified by Sal
+  at the proposal walk (option A). Fingerprint stamped on the owner's block.
+- [Size] → FOUR capabilities (one over the ceiling by a one-sentence delta, declared above), seven
+  requirement blocks (six MODIFIED, one ADDED — the sourcing requirement and the conventions sentence
+  joined at the two proposal walks), seven rules, 18 tasks after the first walk deleted 4.3 (19 before;
+  the R-crc-1 task bound is 20, so any task a later walk adds must be paid for by merging two). Measured before generation (R-crc-9's preventive application); recorded rather than hidden.
 
 ## Touchpoints
 
 - `src/core/explore-grammar.ts` — NEW: the three productions as strings and regexes; the single source.
-- `src/core/parsers/explore-rules.ts` — NEW: the form parse (Decisions side, Mechanism side, the join); nine states.
-- `src/core/parsers/explore-counter.ts` — the grid gains the header and open-rule inputs; the doc comment's "five-section" string retired.
-- `src/core/emit-composition.ts` — the `explore` case computes the four fields; `ENGINE_OWNED_EXTRA.explore`; the stderr note's string.
+- `src/core/parsers/explore-rules.ts` — NEW: the form parse (Decisions side, Mechanism side, the join); two disjoint arrays.
+- `src/core/markdown-fence.ts` — the shared fence tracker both parsers import (no edit expected; named because the counter switches to it).
+- `src/core/parsers/explore-counter.ts` — the grid gains the header, open-rule and key-defect inputs; the local fence scanner replaced by the shared tracker; the doc comment's "five-section" string retired.
+- `src/core/emit-composition.ts` — the `explore` case computes the five fields; `ENGINE_OWNED_EXTRA.explore`; the stderr note's string.
 - `src/core/orientation.ts` — `status` extracted from the newest explore emit; chip glyph and position literal.
 - `src/commands/workflow/status.ts` — `renderNextLine` renders a concluded explore's next line bare.
 - `src/core/templates/workflows/explore.ts` — interpolates the grammar module's strings (byte-identical render).
-- `test/core/parsers/explore-rules.test.ts` — NEW: the nine states, the two body exemplars as fixtures, a fenced decoy, no Mechanism section, the wrapped-opener case (well-formed), the prefix-less case, the duplicate-ID case.
+- `test/core/parsers/explore-rules.test.ts` — NEW: the five states and two defect kinds, the four isolated cases, the two body exemplars as fixtures, the nested-fence and over-indented-fence decoys, no Mechanism section, the wrapped-opener case (well-formed), the prefix-less case.
 - `test/core/parsers/explore-counter.test.ts` — the six rungs and the bounded render.
-- `test/core/emit-composition.test.ts` — the four fields computed; engine-owned refusal by sentence.
+- `test/core/emit-composition.test.ts` — the five fields computed; engine-owned refusal by sentence.
 - `test/core/orientation.test.ts` — the concluded chip and position from the trail; pre-capability emit reads `exploring`.
 - `test/core/templates/orbit-generated-surface.test.ts` — imports the module's regexes; the new spec-parity assertion.
 - `test/core/templates/skill-templates-parity.test.ts` — the `orbit-explore` pin, asserted UNCHANGED.

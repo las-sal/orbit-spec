@@ -1,0 +1,139 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-25T18:18:09Z",
+  "change": "rc13b-explore-maturity-signal",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc13b-explore-maturity-signal/.orbit-runs/review-proposal-2026-09-25T18-14-14Z.json",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 5
+  },
+  "pushback_verification": "All 7 findings verified against the current artifacts before edit (each cites text written at the two prior walks, re-read in place); 0 stale.",
+  "resolution_summary": {
+    "resolved": 7,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The open-domains record would duplicate the Unaccounted rung's inline list, and the scenarios show it does not",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc13b-explore-maturity-signal/specs/orbit-run-summary-emit/spec.md",
+      "line": 14,
+      "classification": "trivial_fix",
+      "action": "The record renders beside Early, Mid, Stalled and Concluded only — the rungs whose text does not name the open rules; Unaccounted carries no suffix (its inline list is the record); the Unaccounted scenario asserts the absence; task 3.1 and explore.md D-rc13b-2 COHERE move amended (dated, third walk).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13b-explore-maturity-signal/tasks.md",
+          "orbit/changes/rc13b-explore-maturity-signal/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "A duplicate Mechanism heading has no home in either array",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc13b-explore-maturity-signal/specs/orbit-emit-composition/spec.md",
+      "line": 39,
+      "classification": "trivial_fix",
+      "action": "`key_defects` kind `duplicate` now covers a key claimed twice on EITHER side — a repeated Decisions ID or a repeated Mechanism heading (first heading is the rule's entry, judged normally; the second is the defect by line). Fifth isolated scenario added; task 2.2 lists it; explore.md D-rc13b-8 domain row amended; design D-rc13b-4 says so.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13b-explore-maturity-signal/tasks.md",
+          "orbit/changes/rc13b-explore-maturity-signal/explore.md",
+          "orbit/changes/rc13b-explore-maturity-signal/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The requirement still says FOUR inputs after the key-defect clause made it five",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc13b-explore-maturity-signal/specs/orbit-run-summary-emit/spec.md",
+      "line": 5,
+      "classification": "trivial_fix",
+      "action": "\"FIVE inputs\", with `key_defects` named as the input that selects no rung and only adds a clause.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Accounted with B = 0: the rule omits the parenthetical, the scenario omits the whole residual clause",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc13b-explore-maturity-signal/specs/orbit-run-summary-emit/spec.md",
+      "line": 12,
+      "classification": "trivial_fix",
+      "action": "The entire `, B bounded residual(s) named (<IDs>)` clause is omitted when B = 0, with the resulting string shown.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "`key_defects` marks `id` optional though both kinds always carry one",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc13b-explore-maturity-signal/specs/orbit-emit-composition/spec.md",
+      "line": 40,
+      "classification": "trivial_fix",
+      "action": "`id` required in the `key_defects` shape (emit-composition delta, design D-rc13b-4, explore.md D-rc13b-4 row).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13b-explore-maturity-signal/design.md",
+          "orbit/changes/rc13b-explore-maturity-signal/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The Concluded 'exactly' scenario restricts `rules_open` but not `key_defects`",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc13b-explore-maturity-signal/specs/orbit-run-summary-emit/spec.md",
+      "line": 51,
+      "classification": "trivial_fix",
+      "action": "The Concluded \"exactly\" scenario's WHEN now requires both `rules_open` and `key_defects` empty.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The conventions sentence carries stage-attribution commentary inside requirement text",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc13b-explore-maturity-signal/specs/orbit-conventions/spec.md",
+      "line": 5,
+      "classification": "trivial_fix",
+      "action": "Parenthetical trimmed; the conventions sentence is the rule and its wrapped-title consequence only; provenance stays in design.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "walk all",
+  "final_assessment": "7 of 7 in-context findings (0C/2W/5S) resolved, 0 stale, all obvious-fix — no decision lane fired. The two WARNINGs were reconciliations of seams the second walk opened: the open-domains record now renders only beside rungs whose text does not name the open rules (Early, Mid, Stalled, Concluded), never beside Unaccounted whose inline list is the record — stated in the delta, the Unaccounted scenario, task 3.1 and the exploration's D-rc13b-2 COHERE move; and `key_defects` kind `duplicate` now covers a repeated Mechanism heading as well as a repeated Decisions ID (first heading judged as the rule's entry; second the defect), with a fifth isolated scenario, a task-2.2 fixture row and a dated D-rc13b-8 amendment. Five one-line reconciliations: FIVE inputs; the whole residual clause omitted at B = 0; `id` required on key defects; the Concluded exactly-scenario requires both arrays empty; the conventions sentence trimmed to the rule. `orbit validate --strict` passes; fingerprints 6 verified / 0 diverged; the exploration's grammar check is clean (9 decisions, 7 entries); 18 tasks, seven requirement blocks, four capabilities unchanged. Every edit in this walk was a sentence, not new mechanism.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply rc13b-explore-maturity-signal — user-invoked"
+}

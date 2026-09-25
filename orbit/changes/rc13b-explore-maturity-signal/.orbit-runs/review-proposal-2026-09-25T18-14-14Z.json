@@ -1,0 +1,117 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-25T18:14:14Z",
+  "change": "rc13b-explore-maturity-signal",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": [],
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 2
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 3
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "The open-domains record would duplicate the Unaccounted rung's inline list, and the scenarios show it does not",
+      "file": "orbit/changes/rc13b-explore-maturity-signal/specs/orbit-run-summary-emit/spec.md",
+      "line": 14,
+      "description": "Line 14 says the open-rule list renders as a record beside EVERY `exploring` rung whose `rules_open` is non-empty, appended as ` · open domains: <IDs>`. The Unaccounted rung already names the same IDs inline (`K of R live rules have open domains (<IDs>)`), so the rule as written renders them twice; yet every Unaccounted scenario (lines 24, 28, 36, 60) shows no suffix. Rule and scenarios disagree; an implementer must pick one.",
+      "recommendation": "State that the record renders beside Early, Mid and Stalled only (the rungs whose text does not name the IDs) and beside the Concluded rung, never beside Unaccounted, whose inline list IS the record; and update the exploration's D-rc13b-2 COHERE move, which says 'a RECORD beside every rung', to match."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "A duplicate Mechanism heading has no home in either array",
+      "file": "orbit/changes/rc13b-explore-maturity-signal/specs/orbit-emit-composition/spec.md",
+      "line": 39,
+      "description": "`key_defects` kind `duplicate` is defined only for a repeated DECISIONS ID (lines 41-43), and `malformed-entry` covers failures 'on that rule's own entry' (34-37). The owning grammar's MALFORMED list also names 'a second entry with an ID already used (naming the second heading)' — two Mechanism entries for one live rule. Which is 'the rule's own entry', and where does the second one land? Nothing says. It is not an orphan (the ID has an owner) and not a Decisions duplicate.",
+      "recommendation": "Extend `duplicate` to both cases: a repeated Decisions ID (the second entry, by line) OR a repeated Mechanism heading (the second heading, by line — the first heading in file order is the rule's own entry and is judged normally). Add it to the four isolated scenarios and to task 2.2's fixture list."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "The requirement still says FOUR inputs after the key-defect clause made it five",
+      "file": "orbit/changes/rc13b-explore-maturity-signal/specs/orbit-run-summary-emit/spec.md",
+      "line": 5,
+      "description": "Line 5 enumerates four inputs (header, decisions, open questions, `rules_open`) but line 14 renders a clause from a fifth, `key_defects`.",
+      "recommendation": "Say FIVE inputs and add `key_defects` to the list, noting it never selects a rung."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "title": "Accounted with B = 0: the rule omits the parenthetical, the scenario omits the whole residual clause",
+      "file": "orbit/changes/rc13b-explore-maturity-signal/specs/orbit-run-summary-emit/spec.md",
+      "line": 12,
+      "description": "Line 12 says only the parenthetical is omitted when B = 0, which would render `4 live rules accounted, 0 bounded residuals named;`; the key-defect-alone scenario (line 32) renders `4 live rules accounted; formalize when you are ready`, dropping the clause entirely. Two implementers would differ.",
+      "recommendation": "State that the entire `, B bounded residual(s) named (<IDs>)` clause is omitted when B = 0, matching the scenario."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "title": "`key_defects` marks `id` optional though both kinds always carry one",
+      "file": "orbit/changes/rc13b-explore-maturity-signal/specs/orbit-emit-composition/spec.md",
+      "line": 40,
+      "description": "The shape is `{id?, kind, line}`, but an orphan carries the heading's ID and a duplicate carries the repeated ID; no defined kind lacks one.",
+      "recommendation": "Make `id` required in the shape, so the identifier rule's `<id> at line <n>` form always applies to key defects."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "The Concluded 'exactly' scenario restricts `rules_open` but not `key_defects`",
+      "file": "orbit/changes/rc13b-explore-maturity-signal/specs/orbit-run-summary-emit/spec.md",
+      "line": 51,
+      "description": "Line 14 now appends the key-defect clause to the Concluded rung too, so the scenario's 'exactly' holds only when `key_defects` is also empty; the WHEN names only `rules_open`.",
+      "recommendation": "Add 'and `key_defects` is empty' to the WHEN, or a sibling scenario showing the clause after the prose."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "The conventions sentence carries stage-attribution commentary inside requirement text",
+      "file": "orbit/changes/rc13b-explore-maturity-signal/specs/orbit-conventions/spec.md",
+      "line": 5,
+      "description": "The added sentence ends '(added by the maturity-signal stage, whose form parse consumes this rule: the convention's own exemplar wraps three of twelve openers)'. The rule is the first clause; the parenthetical is provenance that belongs in the change's design, and the external pass already objected to baseline text naming stages.",
+      "recommendation": "Trim the parenthetical; keep the rule and the wrapped-title consequence."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Read as the confirm pass after two walks, weighted toward the text those walks wrote. The two WARNINGs are both seams the second walk opened while closing the external CRITICAL: the record-suffix rule was written before Unaccounted named its IDs inline and was never reconciled, and splitting one array into two left the owning grammar's duplicate-heading case with no destination. Every SUGGESTION is a count or an omission-rule that drifted by one edit. Probed: strict validation and fingerprints (6 verified, 0 diverged); scenario preservation diffed per MODIFIED block against baseline — every baseline scenario survives except the two in the maturity block that design declares re-cut (the 5/0 case split in two) or the first walk retitled (Stalled), both deliberate; @review residue none; retired vocabulary appears only as the two deliberate historical contrasts; count consistency across proposal/design/tasks (four capabilities, seven blocks, 18 tasks) agrees; the exploration's grammar check is clean. Not re-examined at depth: the orientation delta beyond its new sourcing block, which the external pass verified against source and which the second walk did not touch. The pattern to carry: each walk has closed the prior pass's findings by writing new mechanism, and each next pass has found its seams — the R-crc-6 cycle at small amplitude; the remaining findings are one-line reconciliations, not new mechanism.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "final_assessment": "0 critical, 2 warning, 5 suggestion.",
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc13b-explore-maturity-signal --from-file orbit/changes/rc13b-explore-maturity-signal/.orbit-runs/review-proposal-2026-09-25T18-14-14Z.json"
+}

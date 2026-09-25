@@ -34,19 +34,22 @@ entry with no date-and-ID prefix at all is ID-less.
   which REPORTS — live-rule count, zero open, each BOUNDED residual named — in eligibility phrasing
   and still points at propose. The open-rule list renders as a RECORD beside every rung; it changes
   the verb in exactly one cell.
-- **The parse judges FORM over nine entry states.** D-bcs-10's six Mechanism states, joined to the
-  Decisions side: an entry with no well-formed ID is OPEN named by line; a duplicate ID is MALFORMED
-  naming the second; a `Kind:` or `Disposition:` value outside its production is no match, so the
-  slot is absent and the demanding default applies; an orphan Mechanism entry is MALFORMED naming the
-  heading; no `## Mechanism` section makes every live rule ABSENT with one stderr note. MALFORMED
-  never blocks an emit. Whether an enumeration is TRUE, or a rule was written down at all, stays a
+- **The parse judges FORM over two DISJOINT arrays.** `rules_open` holds live rules only, each in
+  exactly one of five states (`open` for an entry with no well-formed ID, `absent`,
+  `bounded-incomplete`, `no-closure`, `malformed-entry`), and its length is the rung's K;
+  `key_defects` holds orphan Mechanism entries and duplicate Decisions IDs, which are defects in the key
+  space and never rules with open domains — reported in their own clause on every rung, never changing
+  the verb. A `Kind:` or `Disposition:` value outside its production is no match, so the slot is
+  absent and the demanding default applies; no `## Mechanism` section makes every live rule ABSENT with
+  one stderr note. No defect blocks an emit. Both parsers use the engine's ONE CommonMark fence tracker. Whether an enumeration is TRUE, or a rule was written down at all, stays a
   reader's judgement — the requirement says so.
-- **Four engine-computed fields join the explore emit** — `rules_total`, `rules_open` (the full list,
-  each entry an ID and its state, with the line on ID-less and MALFORMED entries), `residuals` (each
-  accounted BOUNDED entry's ID, kind and method) and `status` (the header token; date and the
-  `Re-entry:` text when concluded). A payload carrying any of them draws the engine-owned refusal,
-  the same sentence `decisions_captured` draws today. The prose render of the open list is bounded
-  to three IDs then `+N more`; the field is total.
+- **Five engine-computed fields join the explore emit** — `rules_total`, `rules_open` (open live
+  rules, each with its state and, where needed, its line), `key_defects` (orphans and duplicates by
+  line), `residuals` (each accounted BOUNDED entry's ID, kind and method) and `status` (the header
+  token; date, and the `Re-entry:` text when exactly one live entry carries it). A payload carrying any of them draws the engine-owned refusal,
+  the same sentence `decisions_captured` draws today. Every list the rung renders — open domains,
+  key defects, residuals — is bounded to three identifiers then `+N more`, under one identifier rule;
+  the fields are total.
 - **The three productions move into ONE module.** `orbit-conventions`' spec text stays the owner; a
   parity test compares the module's productions to the spec's fenced lines; the explore body template
   interpolates the module byte-identically (the `orbit-explore` hash pin is unchanged); the
@@ -72,17 +75,22 @@ entry with no date-and-ID prefix at all is ID-less.
 
 ### Modified Capabilities
 
+- `orbit-conventions`: `Decision entry identity and classification` — ONE sentence and one scenario:
+  an ID is well-formed when the entry's first line matches the opener prefix; a wrapped title keeps
+  its ID. The rule's owner; the parse points at it.
 - `orbit-run-summary-emit`: `Named-mode explore recommendation by maturity` — header-first
   precedence, the CONCLUDED and UNACCOUNTED rungs, the reporting top rung, the bounded open-rule
   render, the corrected parse sentence.
-- `orbit-emit-composition`: `Per-command computed extensions` — the Mechanism/Decisions parse and the
-  four explore fields, engine-owned; plus an ADDED requirement making the grammar module the single
+- `orbit-emit-composition`: `Per-command computed extensions` — the Mechanism/Decisions parse, the two
+  disjoint arrays and the five explore fields, engine-owned; plus an ADDED requirement making the grammar module the single
   imported source of the productions, held to the spec by a parity test.
 - `orbit-orientation`: `Sprint strip composition`, `JSON output for both tiers`, and
   `Next-recommendation sourcing is time-shifted, never live` — the concluded chip, position and
   bare next line, all sourced from the newest emit's `status.token`.
 
-Three capabilities — the R-crc-1 ceiling exactly. Six requirement blocks (five MODIFIED, one ADDED).
+FOUR capabilities — one over the R-crc-1 ceiling by a one-sentence delta, a breach declared in design
+and ratified at the proposal walk (the external pass found the opener rule stated in its consumer with
+no owner). Seven requirement blocks (six MODIFIED, one ADDED).
 
 ## Impact
 
@@ -95,7 +103,7 @@ Three capabilities — the R-crc-1 ceiling exactly. Six requirement blocks (five
 - **Tests**: `test/core/templates/orbit-generated-surface.test.ts` imports the module; new parser
   tests over the two body exemplars and the nine entry states; grid and orientation tests extended;
   a spec-parity test for the module.
-- **Readers**: every explore emit gains four fields; prior-generation emits lack them and every reader
+- **Readers**: every explore emit gains five fields; prior-generation emits lack them and every reader
   tolerates absence (the existing generation rule). The maturity strings for Early, Mid and Stalled
   are byte-identical prefixes (a record suffix may follow); the old Mature string survives as the Accounted rung's shape only with the
   report prefix, so a reader matching `/orbit:propose <name>` on it still matches.
