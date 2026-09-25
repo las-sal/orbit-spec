@@ -4,6 +4,20 @@ import path from 'path';
 import os from 'os';
 import { InitCommand } from '../../../src/core/init.js';
 import { UpdateCommand } from '../../../src/core/update.js';
+import {
+  MECHANISM_ENTRY_HEADING,
+  DOMAIN_LINE,
+  TABLE_HEADER,
+  TABLE_SEPARATOR,
+  TABLE_CELL_ROW,
+  CLOSURE_LINE,
+  RESIDUAL_KIND_LINE,
+  RESIDUAL_METHOD_LINE,
+  RESIDUAL_ANY_LINE,
+  MOVES_LINE,
+  MOVE_LINE,
+} from '../../../src/core/explore-grammar.js';
+import { ownerText } from '../../helpers/owner-text.js';
 
 vi.mock('@inquirer/prompts', () => ({
   confirm: vi.fn().mockResolvedValue(true),
@@ -348,25 +362,8 @@ describe('generated surface fidelity (real init, all workflows, claude + codex)'
       // mirror tracks it (a delta-plus-baseline pair is the normal mid-change state); once synced,
       // the baseline owns it. Two ACTIVE deltas holding one block would be two owners; no holder
       // at all would leave the mirror orphaned — both fail.
-      const repo = path.resolve(__dirname, '../../..');
-      const readIf = async (file: string, anchor: string) => {
-        try {
-          const t = await fs.readFile(file, 'utf-8');
-          return t.includes(anchor) ? t : null;
-        } catch { return null; }
-      };
-      const ownerText = async (capability: string, anchor: string) => {
-        const deltaHolders: string[] = [];
-        for (const d of await fs.readdir(path.join(repo, 'orbit', 'changes'))) {
-          const t = await readIf(path.join(repo, 'orbit', 'changes', d, 'specs', capability, 'spec.md'), anchor);
-          if (t) deltaHolders.push(t);
-        }
-        expect(deltaHolders.length, `at most one ACTIVE delta may own ${anchor}`).toBeLessThanOrEqual(1);
-        if (deltaHolders.length === 1) return deltaHolders[0];
-        const baseline = await readIf(path.join(repo, 'orbit', 'specs', capability, 'spec.md'), anchor);
-        expect(baseline, `no owner holds ${anchor}`).not.toBeNull();
-        return baseline!;
-      };
+      // The lookup is the shared helper (test/helpers/owner-text.ts) since rc13b, where the
+      // grammar-module parity test reuses it.
       const fence = (text: string, firstLine: string) => {
         const i = text.indexOf('```\n' + firstLine);
         expect(i, `fence starting ${firstLine}`).toBeGreaterThan(-1);
@@ -398,8 +395,9 @@ describe('generated surface fidelity (real init, all workflows, claude + codex)'
     });
 
     // Cells follow GFM: `\|` is a literal pipe, never a separator (the grammar's clause; the
-    // change's own D-bcs-8 Domain row is the fixture rc13b's parser must also accept).
-    const CELL_ROW = /^\| (?:[^|\\]|\\.)+ \| (?:[^|\\]|\\.)+ \|$/;
+    // change's own D-bcs-8 Domain row is the fixture rc13b's parser must also accept). The
+    // expression is the grammar module's — imported, never restated (rc13b, D-rc13b-5).
+    const CELL_ROW = TABLE_CELL_ROW;
 
     it('the cell pattern accepts a GFM-escaped pipe inside a cell (D-bcs-8 fixture row)', () => {
       expect('| move dispositions | `Moves:` + nine lines `- <MOVE>: applied — … \\| not applied — …`, each move exactly once |').toMatch(CELL_ROW);
@@ -416,10 +414,10 @@ describe('generated surface fidelity (real init, all workflows, claude + codex)'
       expect(entries.length).toBeGreaterThanOrEqual(2);
       const tokens: string[] = [];
       for (const lines of entries) {
-        expect(lines[0]).toMatch(/^### D-[a-z0-9]+-[0-9]+ — .+$/);
-        expect(lines[1]).toMatch(/^Domain: .+$/);
-        expect(lines[2]).toBe('| member | covered by |');
-        expect(lines[3]).toBe('|---|---|');
+        expect(lines[0]).toMatch(MECHANISM_ENTRY_HEADING);
+        expect(lines[1]).toMatch(DOMAIN_LINE);
+        expect(lines[2]).toMatch(TABLE_HEADER);
+        expect(lines[3]).toMatch(TABLE_SEPARATOR);
         let i = 4;
         let members = 0;
         while (lines[i].startsWith('|')) {
@@ -428,21 +426,21 @@ describe('generated surface fidelity (real init, all workflows, claude + codex)'
           i++;
         }
         expect(members).toBeGreaterThan(0);
-        const closure = lines[i].match(/^Closure: (DERIVED|SOURCED|BOUNDED)(?: — .+)?$/);
+        const closure = lines[i].match(CLOSURE_LINE);
         expect(closure, lines[i]).not.toBeNull();
         tokens.push(closure![1]);
         i++;
         if (closure![1] === 'BOUNDED') {
-          expect(lines[i++]).toMatch(/^Residual kind: .+$/);
-          expect(lines[i++]).toMatch(/^Residual method: .+$/);
+          expect(lines[i++]).toMatch(RESIDUAL_KIND_LINE);
+          expect(lines[i++]).toMatch(RESIDUAL_METHOD_LINE);
         } else {
-          expect(lines[i]).not.toMatch(/^Residual /);
+          expect(lines[i]).not.toMatch(RESIDUAL_ANY_LINE);
         }
-        expect(lines[i++]).toBe('Moves:');
+        expect(lines[i++]).toMatch(MOVES_LINE);
         const moves = lines.slice(i);
         expect(moves).toHaveLength(9);
         const seen = moves.map((l) => {
-          const m = l.match(/^- (READ|ENUMERATE|COHERE|EXECUTE|FALSIFY|CONFORM|FEASIBILITY|CONSUME|INVOKE): (applied|not applied) — .+$/);
+          const m = l.match(MOVE_LINE);
           expect(m, l).not.toBeNull();
           return m![1];
         });

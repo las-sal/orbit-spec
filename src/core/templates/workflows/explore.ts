@@ -5,6 +5,11 @@
  * templates file into workflow-focused modules.
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
+import {
+  EXPLORE_STATUS_HEADER_PRODUCTION,
+  EXPLORE_DECISION_ENTRY_PRODUCTION,
+  EXPLORE_MECHANISM_ENTRY_PRODUCTION,
+} from '../../explore-grammar.js';
 
 const EXPLORE_CAPTURE_FORMATS_REFERENCE = `# Reference: capture entry formats
 
@@ -442,7 +447,7 @@ When creating a new file, all six sections are scaffolded (empty content under e
 The file's first non-blank line carries one of TWO fixed tokens, matched by this production:
 
 \`\`\`
-^> \\*\\*Status\\*\\*: (exploring\\.( .*)?|concluded \\d{4}-\\d{2}-\\d{2}\\.)$      the file's first non-blank line
+${EXPLORE_STATUS_HEADER_PRODUCTION}
 \`\`\`
 
 *Mirror of \`orbit-conventions\`' \`explore.md\` format requirement (its retained title names the old section count; the format is six sections) — the owner of this production.*
@@ -457,10 +462,7 @@ Any other first line is NEITHER token: the file resolves as not-concluded and th
 Each Decisions entry is a top-level list item whose opener is the ID slot — the opener every exploration on record already writes, formalized rather than replaced (zero migration). One production. A slot is matched anywhere within the lines that belong to the entry's list item — a lazy-continuation line or a nested bullet both qualify, which is what the optional bullet prefix admits; the \` — \` in the opener is the literal em-dash:
 
 \`\`\`
-- **<YYYY-MM-DD> — <ID>: <title>** <prose…>            the opener; the ID slot; <ID> ::= D-[a-z0-9]+-[0-9]+, unique within the file
-  Kind: rule | fact | scope                               ^\\s*(?:[-*+]\\s+)?Kind:\\s*(rule|fact|scope)\\s*$
-  Disposition: live | superseded <ID or pointer> | assigned <stage-id>     same optional bullet prefix as Kind:
-  Re-entry: <what would reopen it>                        concluded entries only; exactly one LIVE entry carries it
+${EXPLORE_DECISION_ENTRY_PRODUCTION}
 \`\`\`
 
 *Mirror of \`orbit-conventions\`' "Decision entry identity and classification" — the owner of this production.*
@@ -477,17 +479,7 @@ A Decisions entry without a well-formed ID is a format violation corrected on ne
 The Mechanism section carries one entry per LIVE rule (\`Kind:\` rule or absent AND \`Disposition:\` live or absent), keyed by the rule's ID. The grammar, stated normatively so a parser can be written from it alone:
 
 \`\`\`
-## Mechanism
-### <ID> — <rule title>              an entry; ends at the next heading of level 1–3, or EOF
-Domain: <the set, in one line>
-| member | covered by |              the enumeration, as a table (R-crc-7: decision tables); at least one member row; cells follow GFM — \`\\|\` is a literal pipe, never a separator
-Closure: <TOKEN>[ — <justification>]   <TOKEN> ::= DERIVED | SOURCED | BOUNDED, matched from line start to the first \` — \` or end of line
-Residual kind: <what lies outside>            required iff BOUNDED, forbidden otherwise
-Residual method: <how a member would be found> required iff BOUNDED, forbidden otherwise
-Moves:
-- <MOVE>: applied — <what it found>   |   - <MOVE>: not applied — <reason>     (\` — \` is the literal em-dash)
-                                      nine lines, one per move, each move exactly once
-### Case <n> — <title>               evidence, free-form, cited by move lines by name
+${EXPLORE_MECHANISM_ENTRY_PRODUCTION}
 \`\`\`
 
 *Mirror of \`orbit-conventions\`' "Mechanism entry grammar and accounted closure" — the owner of this grammar.*

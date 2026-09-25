@@ -1,4 +1,5 @@
 import * as fs from 'node:fs';
+import { createFenceTracker } from '../markdown-fence.js';
 
 /**
  * Explore counter (D-arc Stage D5, orbit-emit-composition `Per-command computed
@@ -9,13 +10,23 @@ import * as fs from 'node:fs';
  * Counter grammar: each counter counts TOP-LEVEL list items directly under the
  * `## Decisions` / `## Open questions` heading — nested bullets, paragraphs, and fenced
  * content are never entries. A heading absent entirely yields count 0 for that section
- * ("0 of 0" for the attestation) plus a caller-surfaced format note (the five-section
- * format makes absence a format violation to surface, never an emit blocker).
+ * ("0 of 0" for the attestation) plus a caller-surfaced format note (the `explore.md`
+ * format `orbit-conventions` owns makes absence a format violation to surface, never an
+ * emit blocker).
  *
  * Attestation MEMBERSHIP: an entry counts toward `n` when its content carries a
  * `Standing recommendation:` line whose value is NOT the literal `none yet` — the
  * attestation measures RECORDED LEANINGS. Slot-less entries fall outside `n` (they are
  * audit-drift's format finding, never the counter's concern).
+ *
+ * Fences are tracked by the engine's ONE CommonMark fence grammar (`createFenceTracker`),
+ * adopted at rc13b: the local scanner this module carried before closed a four-backtick
+ * fence on an inner three-backtick line and accepted an over-indented fence — the defect
+ * class Q-crc-15 records. The section collector is shared with the form parse
+ * (`explore-rules.ts`), so the two parsers cannot disagree about what is fenced or which
+ * lines belong to which entry.
+ *
+ * The maturity grid (`maturityRecommendation`) also lives here — see its own doc comment.
  */
 
 export interface ExploreCounts {
@@ -29,42 +40,61 @@ export interface ExploreCounts {
   missingSections: string[];
 }
 
-interface Section {
-  entries: string[][]; // per top-level entry: its lines (the entry line + nested content)
+/** One line of a section, with its 1-based line number and whether it sits inside a fence (delimiters included). */
+export interface SectionLine {
+  text: string;
+  n: number;
+  fenced: boolean;
+}
+
+/** A top-level list item and the lines that belong to it (the item line first). */
+export interface SectionEntry {
+  /** The entry's first line (1-based). */
+  line: number;
+  lines: SectionLine[];
+}
+
+export interface Section {
+  /** Every line of the section after its `##` heading, in order. */
+  lines: SectionLine[];
+  /** The top-level list items (the counter's entries). */
+  entries: SectionEntry[];
 }
 
 const TOP_LEVEL_ITEM = /^(?:[-*+]|\d+[.)])\s+/;
 
-function collectSections(content: string): Map<string, Section> {
+/**
+ * Collects the `##` sections of an explore.md: every line keyed to its section, top-level
+ * list items grouped into entries, fenced content marked (never structure). A `#` heading
+ * ends the current section; an H3+ heading is section content.
+ */
+export function collectSections(content: string): Map<string, Section> {
   const lines = content.split(/\r?\n/);
   const sections = new Map<string, Section>();
-  let inFence = false;
-  let fenceMarker = '';
+  const tracker = createFenceTracker();
   let current: Section | null = null;
-  let currentEntry: string[] | null = null;
+  let currentEntry: SectionEntry | null = null;
 
-  for (const line of lines) {
-    // Fence tracking (``` or ~~~, any info string; fences close on a matching marker).
-    const fence = line.match(/^\s*(`{3,}|~{3,})/);
-    if (fence) {
-      if (!inFence) {
-        inFence = true;
-        fenceMarker = fence[1][0].repeat(3);
-      } else if (fence[1].startsWith(fenceMarker)) {
-        inFence = false;
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const n = i + 1;
+    const wasInFence = tracker.inFence;
+    const isDelimiter = tracker.handle(line);
+    if (wasInFence || isDelimiter) {
+      // Fenced content (delimiters included) is never structure; it still belongs to the
+      // enclosing section and entry as content.
+      if (current) {
+        const sl: SectionLine = { text: line, n, fenced: true };
+        current.lines.push(sl);
+        if (currentEntry) currentEntry.lines.push(sl);
       }
-      if (currentEntry) currentEntry.push(line);
       continue;
-    }
-    if (inFence) {
-      if (currentEntry) currentEntry.push(line);
-      continue; // fenced content is never structure
     }
 
     const heading = line.match(/^##\s+(.*\S)\s*$/);
     if (heading) {
       const name = heading[1].trim();
-      current = { entries: [] };
+      current = { lines: [], entries: [] };
       sections.set(name, current);
       currentEntry = null;
       continue;
@@ -76,20 +106,22 @@ function collectSections(content: string): Map<string, Section> {
     }
     if (!current) continue;
 
+    const sl: SectionLine = { text: line, n, fenced: false };
+    current.lines.push(sl);
     if (TOP_LEVEL_ITEM.test(line)) {
-      currentEntry = [line];
+      currentEntry = { line: n, lines: [sl] };
       current.entries.push(currentEntry);
     } else if (currentEntry) {
-      currentEntry.push(line); // nested content / continuation belongs to the entry
+      currentEntry.lines.push(sl); // nested content / continuation belongs to the entry
     }
   }
   return sections;
 }
 
 /** True when the entry's content carries a Standing recommendation with a real leaning. */
-function hasRecordedLeaning(entryLines: string[]): boolean {
-  for (const line of entryLines) {
-    const m = line.match(/Standing recommendation:\s*(.*\S)?\s*$/);
+function hasRecordedLeaning(entry: SectionEntry): boolean {
+  for (const { text } of entry.lines) {
+    const m = text.match(/Standing recommendation:\s*(.*\S)?\s*$/);
     if (m) {
       const value = (m[1] ?? '').replace(/\*+$/, '').trim();
       return value !== '' && value.toLowerCase() !== 'none yet';
@@ -139,25 +171,100 @@ export function countExploreFile(explorePath: string): ExploreCounts {
   return countExplore(content);
 }
 
+// ---------------------------------------------------------------------------
+// The maturity grid
+// ---------------------------------------------------------------------------
+
+/** An identifier the rung may render: `<id> at line <n>` / `<id>` / `line <n>` — the ONE identifier rule. */
+export interface RungIdentifier {
+  id?: string;
+  line?: number;
+}
+
+/**
+ * The FORM inputs the grid reads beside the two counts (rc13b; the fields are computed by
+ * `explore-rules.ts` and defined once in `orbit-emit-composition`'s computed-extensions requirement).
+ */
+export interface MaturityFormInputs {
+  /** The status-header token; `concluded` collapses every count to the Concluded rung. */
+  status: { token: 'exploring' | 'concluded'; date?: string; re_entry?: string };
+  /** The LIVE rules, as the Decision-entry requirement defines the obligation. R. */
+  rulesTotal: number;
+  /** Open live rules only, in Decisions file order; its LENGTH is K. */
+  rulesOpen: RungIdentifier[];
+  /** Orphans and duplicates, by line — a clause on every rung, never the verb. */
+  keyDefects: RungIdentifier[];
+  /** Each accounted BOUNDED entry, in Decisions file order — named beside the Accounted rung. */
+  residuals: RungIdentifier[];
+}
+
+/** The ONE identifier rule. */
+function renderIdentifier(e: RungIdentifier): string {
+  if (e.id !== undefined && e.line !== undefined) return `${e.id} at line ${e.line}`;
+  if (e.id !== undefined) return e.id;
+  return `line ${e.line}`;
+}
+
+/** At most THREE identifiers in the array's order, then ` +N more`. */
+function renderBounded(list: RungIdentifier[]): string {
+  const shown = list.slice(0, 3).map(renderIdentifier).join(', ');
+  const rest = list.length - 3;
+  return rest > 0 ? `${shown} +${rest} more` : shown;
+}
+
 /**
  * The maturity-grid `next_recommended` (orbit-run-summary-emit `Named-mode explore
- * recommendation by maturity`) — the grid is ENGINE data.
+ * recommendation by maturity`) — the grid is ENGINE data. Six rungs: the header token is read
+ * FIRST (Concluded); then Early / Mid / Stalled by the two counts, byte-identical to their
+ * pre-capability strings; at 4+ decisions and ≤1 open question the accounting splits the cell —
+ * UNACCOUNTED (K > 0, the ONE cell where the verb changes) or Accounted (K = 0, which REPORTS
+ * and does not vouch). The open-rule list renders as a RECORD (` · open domains: …`) beside the
+ * rungs whose own text does not name it; key defects append their own clause on EVERY rung.
  */
 export function maturityRecommendation(
   name: string,
   decisionsCaptured: number,
-  openQuestionsCount: number
+  openQuestionsCount: number,
+  form: MaturityFormInputs
 ): string {
+  const K = form.rulesOpen.length;
+  const R = form.rulesTotal;
+  const D = form.keyDefects.length;
+  const B = form.residuals.length;
+
+  const keyDefectClause = D > 0 ? `; ${D} key defect${D === 1 ? '' : 's'} (${renderBounded(form.keyDefects)})` : '';
+  const openRecord = K > 0 ? ` · open domains: ${renderBounded(form.rulesOpen)}` : '';
+
+  // Header FIRST: a concluded file collapses every count to prose naming no command.
+  if (form.status.token === 'concluded') {
+    const reopens = form.status.re_entry ?? '(no Re-entry: slot found)';
+    return `Concluded ${form.status.date}. Reopens when: ${reopens}.${keyDefectClause}${openRecord}`;
+  }
+
+  let text: string;
   if (decisionsCaptured <= 1) {
-    return decisionsCaptured === 0
-      ? `/orbit:explore ${name} — continue capturing thinking — no decisions captured yet`
-      : `/orbit:explore ${name} — continue capturing thinking`;
+    text =
+      decisionsCaptured === 0
+        ? `/orbit:explore ${name} — continue capturing thinking — no decisions captured yet`
+        : `/orbit:explore ${name} — continue capturing thinking`;
+    return `${text}${keyDefectClause}${openRecord}`;
   }
   if (decisionsCaptured <= 3) {
-    return `/orbit:explore ${name} — continue thinking, or /orbit:propose ${name} if ready to formalize`;
+    text = `/orbit:explore ${name} — continue thinking, or /orbit:propose ${name} if ready to formalize`;
+    return `${text}${keyDefectClause}${openRecord}`;
   }
-  if (openQuestionsCount <= 1) {
-    return `/orbit:propose ${name} — substantial thinking captured; ready to formalize the design (or /orbit:explore ${name} to keep refining)`;
+  if (openQuestionsCount > 1) {
+    text = `/orbit:explore ${name} — ${decisionsCaptured} decisions captured but ${openQuestionsCount} open questions remain; resolve open questions before formalizing`;
+    return `${text}${keyDefectClause}${openRecord}`;
   }
-  return `/orbit:explore ${name} — ${decisionsCaptured} decisions captured but ${openQuestionsCount} open questions remain; resolve open questions before formalizing`;
+  const rulesNoun = `live rule${R === 1 ? '' : 's'}`;
+  if (K > 0) {
+    // Unaccounted: the inline list IS the record — no suffix.
+    const verb = K === 1 ? 'has an open domain' : 'have open domains';
+    return `/orbit:explore ${name} — ${K} of ${R} ${rulesNoun} ${verb} (${renderBounded(form.rulesOpen)}); account for them before formalizing${keyDefectClause}`;
+  }
+  // Accounted: reports, never vouches.
+  const residualClause =
+    B > 0 ? `, ${B} bounded residual${B === 1 ? '' : 's'} named (${renderBounded(form.residuals)})` : '';
+  return `/orbit:propose ${name} — ${R} ${rulesNoun} accounted${residualClause}; formalize when you are ready (or /orbit:explore ${name} to keep refining)${keyDefectClause}`;
 }

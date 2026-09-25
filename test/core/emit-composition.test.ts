@@ -265,12 +265,110 @@ describe('deterministic facts', () => {
     expect(r.emit.open_questions_with_recommendation).toBe('2 of 3');
     // Stalled: 5 decisions, 3 open questions.
     expect(String(r.emit.next_recommended)).toContain('5 decisions captured but 3 open questions remain');
-    expect(r.warnings).toEqual([]);
+    // rc13b: no `## Mechanism` section is ONE format note (never a blocker); the five prefix-less
+    // entries are live rules with no well-formed ID, so the Stalled string carries the record suffix.
+    expect(r.warnings).toHaveLength(1);
+    expect(r.warnings[0]).toContain("no '## Mechanism' section");
+    expect(String(r.emit.next_recommended)).toMatch(/ · open domains: line \d+, line \d+, line \d+ \+2 more$/);
 
     write('orbit/explore/baz/explore.md', '## Decisions\n\n- only\n');
     const missing = composeAndWriteEmit('explore', { change: 'baz' }, { final_assessment: 'begin', model: null }, { projectRoot: root });
     expect(missing.emit.open_questions_with_recommendation).toBe('0 of 0');
     expect(missing.warnings.some(w => w.includes("Open questions"))).toBe(true);
+  });
+
+  // rc13b — the five FORM-parse fields (orbit-emit-composition "Per-command computed extensions").
+  it('explore: the five rule fields are computed from the file — the orphan lands in key_defects, not rules_open', () => {
+    const moves = ['READ', 'ENUMERATE', 'COHERE', 'EXECUTE', 'FALSIFY', 'CONFORM', 'FEASIBILITY', 'CONSUME', 'INVOKE']
+      .map((m) => `- ${m}: applied — x`)
+      .join('\n');
+    const entry = (id: string, closure: string, residual = '') =>
+      `### ${id} — t\nDomain: s\n| member | covered by |\n|---|---|\n| a | b |\nClosure: ${closure}\n${residual}Moves:\n${moves}\n`;
+    const content = [
+      '> **Status**: exploring.',
+      '',
+      '## Mechanism',
+      '',
+      entry('D-foo-1', 'SOURCED — why'),
+      entry('D-foo-2', 'BOUNDED', 'Residual kind: a kind\nResidual method: a method\n'),
+      entry('D-foo-3', 'BOUNDED', 'Residual kind: a kind\n'),
+      entry('D-foo-9', 'SOURCED'),
+      '## Decisions',
+      '',
+      '- **2026-09-25 — D-foo-1: one** p.',
+      '- **2026-09-25 — D-foo-2: two** p.\n  Kind: rule',
+      '- **2026-09-25 — D-foo-3: three** p.',
+      '- **2026-09-25 — D-foo-4: four** p.',
+      '- **2026-09-25 — D-foo-5: five** p.\n  Kind: fact',
+      '- **2026-09-25 — D-foo-6: six** p.\n  Kind: scope',
+      '',
+      '## Open questions',
+      '',
+    ].join('\n');
+    write('orbit/explore/rules/explore.md', content);
+    const r = composeAndWriteEmit('explore', { change: 'rules' }, { final_assessment: 'boundary', model: null }, { projectRoot: root });
+    expect(r.emit.decisions_captured).toBe(6);
+    expect(r.emit.rules_total).toBe(4);
+    expect(r.emit.rules_open).toEqual([
+      { id: 'D-foo-3', state: 'bounded-incomplete' },
+      { id: 'D-foo-4', state: 'absent' },
+    ]);
+    const orphanLine = content.split('\n').findIndex((l) => l.startsWith('### D-foo-9')) + 1;
+    expect(r.emit.key_defects).toEqual([{ id: 'D-foo-9', kind: 'orphan', line: orphanLine }]);
+    expect(r.emit.residuals).toEqual([{ id: 'D-foo-2', kind: 'a kind', method: 'a method' }]);
+    expect(r.emit.status).toEqual({ token: 'exploring' });
+    expect(r.emit.next_recommended).toBe(
+      `/orbit:explore rules — 2 of 4 live rules have open domains (D-foo-3, D-foo-4); account for them before formalizing; 1 key defect (D-foo-9 at line ${orphanLine})`
+    );
+    expect(r.warnings).toEqual([]);
+    // Persisted, not only returned.
+    const written = JSON.parse(fs.readFileSync(r.path, 'utf-8'));
+    expect(written.rules_open).toEqual(r.emit.rules_open);
+    expect(written.status).toEqual({ token: 'exploring' });
+  });
+
+  it('explore: concluded header → status with date and re_entry, the Concluded rung, and the no-Mechanism note beside the counter\'s', () => {
+    write(
+      'orbit/explore/done/explore.md',
+      '> **Status**: concluded 2026-09-25.\n\n## Decisions\n\n- **2026-09-25 — D-d-1: a rule** p.\n- **2026-09-25 — D-d-2: the conclusion** p.\n  Kind: scope\n  Re-entry: a third withdrawn stage\n'
+    );
+    const r = composeAndWriteEmit('explore', { change: 'done' }, { final_assessment: 'concluded', model: null }, { projectRoot: root });
+    expect(r.emit.status).toEqual({ token: 'concluded', date: '2026-09-25', re_entry: 'a third withdrawn stage' });
+    expect(r.emit.rules_open).toEqual([{ id: 'D-d-1', state: 'absent' }]);
+    expect(r.emit.next_recommended).toBe('Concluded 2026-09-25. Reopens when: a third withdrawn stage. · open domains: D-d-1');
+    // Two notes: the counter's (no Open questions) and the form parse's (no Mechanism) — neither blocks.
+    expect(r.warnings.some((w) => w.includes("no '## Open questions' section"))).toBe(true);
+    expect(r.warnings.some((w) => w.includes("no '## Mechanism' section"))).toBe(true);
+    expect(r.warnings.some((w) => /(five|5)[- ]sections?/.test(w))).toBe(false);
+  });
+
+  it('explore: the BEGIN-emit shape on an empty scaffold carries the five fields at their zero values', () => {
+    write('orbit/explore/blank/explore.md', '> **Status**: exploring.\n\n# Exploration: blank\n\n## Premise\n\n## Mechanism\n\n## Decisions\n\n## Open questions\n\n## Considered & out\n\n## References\n');
+    const r = composeAndWriteEmit('explore', { change: 'blank' }, { final_assessment: 'begin', model: null }, { projectRoot: root });
+    expect(r.emit.rules_total).toBe(0);
+    expect(r.emit.rules_open).toEqual([]);
+    expect(r.emit.key_defects).toEqual([]);
+    expect(r.emit.residuals).toEqual([]);
+    expect(r.emit.status).toEqual({ token: 'exploring' });
+    expect(r.emit.next_recommended).toBe('/orbit:explore blank — continue capturing thinking — no decisions captured yet');
+    expect(r.warnings).toEqual([]);
+  });
+
+  it('explore: a payload carrying any of the five fields is refused with the ENGINE-OWNED sentence, never the unknown-key one', () => {
+    write('orbit/explore/owned/explore.md', '## Decisions\n\n## Open questions\n');
+    for (const [key, value] of Object.entries({ rules_total: 0, rules_open: [], key_defects: [], residuals: [], status: { token: 'exploring' } })) {
+      expect(() =>
+        composeAndWriteEmit('explore', { change: 'owned' }, { final_assessment: 'x', model: null, [key]: value }, { projectRoot: root })
+      ).toThrow(`payload field '${key}' is engine-owned for 'explore' — a second voice on a computable fact is refused at the seam.`);
+    }
+    // The same sentence decisions_captured draws; the unknown-key sentence is a different one.
+    expect(() =>
+      composeAndWriteEmit('explore', { change: 'owned' }, { final_assessment: 'x', model: null, decisions_captured: 1 }, { projectRoot: root })
+    ).toThrow("payload field 'decisions_captured' is engine-owned for 'explore'");
+    expect(() =>
+      composeAndWriteEmit('explore', { change: 'owned' }, { final_assessment: 'x', model: null, rules_openn: [] }, { projectRoot: root })
+    ).toThrow("unknown payload key 'rules_openn' for 'explore' — not in the command's payload table and not engine-owned.");
+    expect(listRuns('orbit/explore/owned/.orbit-runs')).toEqual([]);
   });
 
   it('architect: spine next_recommended mirrors handoff.next_command verbatim', () => {

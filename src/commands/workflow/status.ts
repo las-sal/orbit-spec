@@ -299,6 +299,12 @@ function renderLastLine(last: EmitRecord): string {
  * and the line renders unchanged.
  */
 function renderNextLine(entry: WorkstreamEntry): string {
+  // rc13b: a CONCLUDED explore's recorded next is the Concluded rung's prose, which points at
+  // nothing — it renders BARE (no eligibility label, no model hint), because an eligibility
+  // label on a recommendation naming no command would assert an eligibility that does not
+  // exist (orbit-orientation's sourcing requirement, the concluded rule). The position literal
+  // is read from the same trail token the chip reads, so the two cannot disagree.
+  if (entry.kind === 'explore' && entry.position === 'concluded') return entry.next!;
   const hint = modelHintFor('.', entry.status?.next_hint_keys);
   return `Ready when you are: ${withModelHint(entry.next!, hint)}`;
 }

@@ -338,6 +338,48 @@ describe('status orientation surface', () => {
     expect(payload.sprint.next).toBe('/orbit:explore idea-x — continue capturing thinking');
   });
 
+  it('a concluded explore sprint: position concluded, chip ■, and the next line BARE in text; --json carries the same string (rc13b)', async () => {
+    const dir = await makeExplore('idea-done');
+    await fs.mkdir(path.join(dir, '.orbit-runs'), { recursive: true });
+    await fs.writeFile(
+      path.join(dir, '.orbit-runs', 'explore-2026-07-20T10-00-00Z.json'),
+      JSON.stringify({
+        command: 'explore',
+        timestamp: '2026-07-20T10:00:00Z',
+        change: 'idea-done',
+        kind: 'workflow',
+        final_assessment: 'Concluded on the user\'s word.',
+        next_recommended: 'Concluded 2026-09-25. Reopens when: a third withdrawn stage.',
+        status: { token: 'concluded', date: '2026-09-25', re_entry: 'a third withdrawn stage' },
+      })
+    );
+
+    const text = await runCLI(['status'], { cwd: tempDir });
+    expect(text.exitCode).toBe(0);
+    const lines = text.stdout.split('\n');
+    expect(lines.some((l) => l.includes('explore ■'))).toBe(true);
+    // The next line is the recorded prose, BARE: no eligibility label, no model hint.
+    expect(lines).toContain('Concluded 2026-09-25. Reopens when: a third withdrawn stage.');
+    expect(text.stdout).not.toContain('Ready when you are:');
+
+    const json = await runCLI(['status', '--json'], { cwd: tempDir });
+    const payload = JSON.parse(json.stdout);
+    expect(payload.sprint.kind).toBe('explore');
+    expect(payload.sprint.position).toBe('concluded');
+    expect(payload.sprint.strip[0]).toEqual({ phase: 'explore', glyph: '■' });
+    expect('status' in payload.sprint).toBe(false);
+    expect(payload.next).toBe('Concluded 2026-09-25. Reopens when: a third withdrawn stage.');
+    expect(payload.waiting).toEqual([]);
+
+    // --full renders the same row bare, and an exploring explore beside it keeps its label.
+    await makeExplore('idea-live');
+    const full = await runCLI(['status', '--full'], { cwd: tempDir });
+    expect(full.stdout).toContain('Concluded 2026-09-25. Reopens when: a third withdrawn stage.');
+    expect(full.stdout).toContain('Ready when you are: /orbit:explore idea-live — continue capturing thinking');
+    const fullLines = full.stdout.split('\n');
+    expect(fullLines.some((l) => l.trim().startsWith('Ready when you are: Concluded'))).toBe(false);
+  });
+
   it('degraded entries carry the degraded variant in both tiers; bare degraded sprint exits 0', async () => {
     const dir = await makeBrokenChange('busted');
     await fs.writeFile(

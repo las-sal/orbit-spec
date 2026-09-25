@@ -29,7 +29,7 @@ import { countConfidentExternalPasses } from './report-render.js';
 
 export interface OrientationChip {
   phase: string;
-  /** '✓' | '▶' | '' (pending/unmarked) — the closed glyph mapping. */
+  /** '✓' | '▶' | '■' (the explore chip only — a concluded staging exploration) | '' (pending/unmarked) — the closed glyph mapping. */
   glyph: string;
   /** Review iteration count (`⟲6`) or tracked progress (`12/20`). */
   detail?: string;
@@ -43,6 +43,13 @@ export interface EmitRecord {
   final_assessment: string;
   next_recommended: string;
   mode?: string;
+  /**
+   * rc13b: the explore emit's engine-computed header token (orbit-emit-composition's
+   * `status` field). OPTIONAL, not spine — present only when the emit carries an object with
+   * a string `token`; a prior-generation emit lacks it and reads as exploring. The concluded
+   * chip and position are read from THIS (the trail), never from the file.
+   */
+  status?: { token: string; date?: string; re_entry?: string };
 }
 
 export interface StageCitation {
@@ -129,6 +136,23 @@ export function isSpineValid(json: unknown): json is {
   return true;
 }
 
+/**
+ * The optional `status` object of an explore emit: kept only when it is an object carrying a
+ * string `token` (a malformed or absent field reads as no status — never a degraded row).
+ */
+function readEmitStatus(value: unknown): { status?: EmitRecord['status'] } {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) return {};
+  const s = value as Record<string, unknown>;
+  if (typeof s.token !== 'string') return {};
+  return {
+    status: {
+      token: s.token,
+      ...(typeof s.date === 'string' ? { date: s.date } : {}),
+      ...(typeof s.re_entry === 'string' ? { re_entry: s.re_entry } : {}),
+    },
+  };
+}
+
 /** Reads a trail directory's valid emits, ascending by token (then filename). */
 export function readValidEmits(runsDir: string): EmitRecord[] {
   if (!fs.existsSync(runsDir)) return [];
@@ -160,6 +184,7 @@ export function readValidEmits(runsDir: string): EmitRecord[] {
       final_assessment: j.final_assessment as string,
       next_recommended: j.next_recommended as string,
       ...(typeof j.mode === 'string' ? { mode: j.mode as string } : {}),
+      ...readEmitStatus(j.status),
     });
   }
   // Ascending recency: token first; on equal tokens the lexicographically-
@@ -336,9 +361,15 @@ function composeChangeStrip(
   return chips;
 }
 
-function composeExploreStrip(): OrientationChip[] {
+/**
+ * The explore strip. The chip is `▶` while exploring and `■` when the workstream's NEWEST
+ * spine-valid emit carries `status.token: "concluded"` (rc13b) — read from the trail, so a
+ * hand-flipped header with no emit afterward lags exactly as `next` does. Later phases
+ * render pending either way: a conclusion builds nothing.
+ */
+function composeExploreStrip(concluded: boolean): OrientationChip[] {
   return [
-    { phase: 'explore', glyph: '▶' },
+    { phase: 'explore', glyph: concluded ? '■' : '▶' },
     { phase: 'propose', glyph: '' },
     { phase: 'review', glyph: '' },
     { phase: 'apply', glyph: '' },
@@ -398,14 +429,17 @@ export function composeWorkstreamEntry(
       return entry;
     }
     // Explore workstream: no gate graph, no per-change payload; position is the
-    // stage-state vocabulary literal; next is the recorded trail recommendation
+    // stage-state vocabulary literal — `exploring`, or `concluded` when the newest
+    // spine-valid emit's engine-computed status token says so (rc13b; the same token the
+    // chip reads, so the two cannot disagree); next is the recorded trail recommendation
     // (time-shifted, never live judgment) with the Early-canonical emit-less fallback.
+    const concluded = newest?.status?.token === 'concluded';
     const entry: WorkstreamEntry = {
       name: ws.name,
       kind: 'explore',
       ...(stage ? { stage } : {}),
-      strip: composeExploreStrip(),
-      position: 'exploring',
+      strip: composeExploreStrip(concluded),
+      position: concluded ? 'concluded' : 'exploring',
       ...(newest ? { last: newest } : {}),
       next: newest ? newest.next_recommended : EXPLORE_EARLY_CANONICAL(ws.name),
       ...skipped,

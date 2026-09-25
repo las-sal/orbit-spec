@@ -6,6 +6,7 @@ import { normalizeInternalPass } from './report-render.js';
 import { readTrail } from './artifact-graph/trail.js';
 import { parseChunkPreamble, chunkForGroup, type ChunkDeclaration } from './parsers/chunk-preamble.js';
 import { countExploreFile, maturityRecommendation } from './parsers/explore-counter.js';
+import { parseExploreRulesFile } from './parsers/explore-rules.js';
 import {
   parseCheckboxes,
   captureDiffBase,
@@ -205,7 +206,17 @@ const ENGINE_OWNED_EXTRA: Record<string, string[]> = {
     'files_touched',
     'diff_base',
   ],
-  explore: ['decisions_captured', 'open_questions_count', 'open_questions_with_recommendation'],
+  explore: [
+    'decisions_captured',
+    'open_questions_count',
+    'open_questions_with_recommendation',
+    // rc13b: the five FORM-parse fields — facts about the file, engine-owned at the seam.
+    'rules_total',
+    'rules_open',
+    'key_defects',
+    'residuals',
+    'status',
+  ],
   'address-reviews': ['iteration'],
   'review-external': ['awaiting_findings'],
 };
@@ -1122,17 +1133,33 @@ export function composeAndWriteEmit(
         resolved.scope === 'explore'
           ? path.join(projectRoot, 'orbit', 'explore', resolved.change as string)
           : (resolved.changeDir as string);
-      const counts = countExploreFile(path.join(workstreamDir, 'explore.md'));
+      const explorePath = path.join(workstreamDir, 'explore.md');
+      const counts = countExploreFile(explorePath);
       for (const s of counts.missingSections) {
-        warnings.push(`note: explore.md has no '## ${s}' section — count recorded as 0 (five-section format violation to fix on next touch).`);
+        warnings.push(`note: explore.md has no '## ${s}' section — count recorded as 0 (a format violation per orbit-conventions' explore.md format requirement, to fix on next touch).`);
       }
+      // rc13b: the FORM parse — two disjoint arrays + residuals + the header token, beside the counts.
+      const form = parseExploreRulesFile(explorePath);
+      for (const n of form.notes) warnings.push(n);
       emit.decisions_captured = counts.decisionsCaptured;
       emit.open_questions_count = counts.openQuestionsCount;
       emit.open_questions_with_recommendation = counts.attestation;
+      emit.rules_total = form.rules_total;
+      emit.rules_open = form.rules_open;
+      emit.key_defects = form.key_defects;
+      emit.residuals = form.residuals;
+      emit.status = form.status;
       emit.next_recommended = maturityRecommendation(
         resolved.change as string,
         counts.decisionsCaptured,
-        counts.openQuestionsCount
+        counts.openQuestionsCount,
+        {
+          status: form.status,
+          rulesTotal: form.rules_total,
+          rulesOpen: form.rules_open,
+          keyDefects: form.key_defects,
+          residuals: form.residuals,
+        }
       );
       break;
     }

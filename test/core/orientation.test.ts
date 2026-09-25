@@ -240,6 +240,95 @@ describe('explore next sourcing', () => {
 });
 
 // ---------------------------------------------------------------------------
+// Concluded explores (rc13b): chip, position and next from the TRAIL's status token
+// ---------------------------------------------------------------------------
+
+describe('concluded explore row (rc13b)', () => {
+  const concludedEmit = (name: string, extra: Record<string, unknown> = {}) =>
+    spine('explore', {
+      next_recommended: 'Concluded 2026-09-25. Reopens when: a third withdrawn stage.',
+      status: { token: 'concluded', date: '2026-09-25', re_entry: 'a third withdrawn stage' },
+      ...extra,
+    });
+
+  it('newest emit with status.token concluded → chip ■, position concluded, next verbatim; waiting gains nothing', () => {
+    const dir = makeExplore('done-idea');
+    // The FILE says nothing to orientation: leave it exploring to prove the row reads the trail.
+    fs.writeFileSync(path.join(dir, 'explore.md'), '> **Status**: exploring.\n\n# Exploration');
+    writeEmit(path.join(dir, '.orbit-runs'), 'explore-2026-07-20T10-00-00Z.json', spine('explore', { status: { token: 'exploring' } }));
+    writeEmit(path.join(dir, '.orbit-runs'), 'explore-2026-07-21T10-00-00Z.json', concludedEmit('done-idea'));
+    const o = collectOrientation(root);
+    expect(o.sprint?.kind).toBe('explore');
+    expect(o.sprint?.position).toBe('concluded');
+    expect(o.sprint?.strip?.[0]).toEqual({ phase: 'explore', glyph: '■' });
+    expect(o.sprint?.strip?.slice(1).every((c) => c.glyph === '')).toBe(true);
+    expect(o.sprint?.next).toBe('Concluded 2026-09-25. Reopens when: a third withdrawn stage.');
+    expect(o.sprint?.status).toBeUndefined();
+    expect(o.sprint?.last?.status).toEqual({ token: 'concluded', date: '2026-09-25', re_entry: 'a third withdrawn stage' });
+    expect(o.waiting).toEqual([]);
+  });
+
+  it('a newest emit without status, with a non-object status, or with an object lacking a string token renders exploring', () => {
+    const cases: Array<[string, Record<string, unknown>]> = [
+      ['no-status', {}],
+      ['string-status', { status: 'concluded' }],
+      ['array-status', { status: ['concluded'] }],
+      ['null-status', { status: null }],
+      ['no-token', { status: { date: '2026-09-25' } }],
+      ['numeric-token', { status: { token: 7 } }],
+    ];
+    for (const [name, extra] of cases) {
+      const dir = makeExplore(name);
+      writeEmit(path.join(dir, '.orbit-runs'), 'explore-2026-07-20T10-00-00Z.json', spine('explore', extra));
+    }
+    const o = collectOrientation(root);
+    for (const [name] of cases) {
+      const ws = o.workstreams.find((w) => w.name === name);
+      expect(ws?.position, name).toBe('exploring');
+      expect(ws?.strip?.[0], name).toEqual({ phase: 'explore', glyph: '▶' });
+      expect(ws?.last, name).not.toHaveProperty('status');
+    }
+  });
+
+  it('a hand-flipped header without an emit lags: the file says concluded, the newest emit says exploring → ▶ and exploring', () => {
+    const dir = makeExplore('flipped');
+    fs.writeFileSync(path.join(dir, 'explore.md'), '> **Status**: concluded 2026-09-25.\n\n# Exploration');
+    writeEmit(path.join(dir, '.orbit-runs'), 'explore-2026-07-20T10-00-00Z.json', spine('explore', { status: { token: 'exploring' } }));
+    const o = collectOrientation(root);
+    expect(o.sprint?.position).toBe('exploring');
+    expect(o.sprint?.strip?.[0].glyph).toBe('▶');
+  });
+
+  it('a spine-invalid newest emit is skipped and the next-older emit\'s token governs', () => {
+    const dir = makeExplore('skipped-newest');
+    writeEmit(path.join(dir, '.orbit-runs'), 'explore-2026-07-20T10-00-00Z.json', concludedEmit('skipped-newest'));
+    // Newer but spine-invalid (no final_assessment): skipped everywhere, so the concluded emit stays newest.
+    writeEmit(path.join(dir, '.orbit-runs'), 'explore-2026-07-22T10-00-00Z.json', {
+      command: 'explore',
+      next_recommended: '/orbit:explore skipped-newest — x',
+      status: { token: 'exploring' },
+    });
+    const o = collectOrientation(root);
+    expect(o.sprint?.position).toBe('concluded');
+    expect(o.sprint?.strip?.[0].glyph).toBe('■');
+    expect(o.sprint?.next).toBe('Concluded 2026-09-25. Reopens when: a third withdrawn stage.');
+    // and the reverse: a concluded emit that is spine-invalid never flips the row
+    const dir2 = makeExplore('invalid-concluded');
+    writeEmit(path.join(dir2, '.orbit-runs'), 'explore-2026-07-20T10-00-00Z.json', spine('explore', { status: { token: 'exploring' } }));
+    writeEmit(path.join(dir2, '.orbit-runs'), 'explore-2026-07-23T10-00-00Z.json', { command: 'explore', status: { token: 'concluded', date: '2026-09-25' } });
+    const o2 = collectOrientation(root);
+    expect(o2.workstreams.find((w) => w.name === 'invalid-concluded')?.position).toBe('exploring');
+  });
+
+  it('readValidEmits keeps only the string fields of a well-formed status object', () => {
+    const dir = makeExplore('shape');
+    writeEmit(path.join(dir, '.orbit-runs'), 'explore-2026-07-20T10-00-00Z.json', spine('explore', { status: { token: 'concluded', date: 5, re_entry: 'why', junk: true } }));
+    const [e] = readValidEmits(path.join(dir, '.orbit-runs'));
+    expect(e.status).toEqual({ token: 'concluded', re_entry: 'why' });
+  });
+});
+
+// ---------------------------------------------------------------------------
 // WAITING derivation (count-based externals)
 // ---------------------------------------------------------------------------
 

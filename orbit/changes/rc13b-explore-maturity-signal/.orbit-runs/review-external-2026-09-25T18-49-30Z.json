@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-09-25T18:49:30Z",
+  "change": "rc13b-explore-maturity-signal",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "system",
+  "prompt_path": "orbit/changes/rc13b-explore-maturity-signal/.orbit-runs/external-prompt-system-2026-09-25T18-49-15Z.md",
+  "target": null,
+  "final_assessment": "External review prompt packaged for rc13b-explore-maturity-signal (iter 1, mode system) — the EXTERNAL half of the review-system blind pair, blind to the fresh half; awaiting findings from the external AI Sal chooses (iteration 1 in system mode: any model; the prior external reviewer on this change was GPT-5 Codex in proposal mode). Handoff preflight FAILED at packaging: the working tree is dirty (the apply's 11 modified files, 5 new source/test files and the apply emit are uncommitted; 0 unpushed commits), so the pull invocation is withheld until the apply work and this prompt are committed and pushed — design D4 runs the pair on the pushed apply commit. The prompt carries the task-6.4 handoff: the reviewer records its READ / ENUMERATE / COHERE CRITICAL count in Notes.",
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/rc13b-explore-maturity-signal/.orbit-runs/external-prompt-system-2026-09-25T18-49-15Z.md into the target AI, save the response as orbit/changes/rc13b-explore-maturity-signal/.orbit-runs/external-system-<TS>.md, then /orbit:address-reviews rc13b-explore-maturity-signal --from-file <path>"
+}
