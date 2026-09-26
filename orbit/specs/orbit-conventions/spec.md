@@ -905,7 +905,7 @@ off-script stays off-script.
 
 ### Requirement: Decision entry identity and classification
 
-Each entry in `explore.md`'s Decisions section SHALL be a top-level list item whose opener is the ID slot: `- **<YYYY-MM-DD> — <ID>: <title>**` with `<ID> ::= D-[a-z0-9]+-[0-9]+`, unique within the file. This is the opener every exploration on record already writes, formalized rather than replaced; a Decisions entry without a well-formed ID is a format violation the explore body corrects on next touch.
+Each entry in `explore.md`'s Decisions section SHALL be a top-level list item whose opener is the ID slot: `- **<YYYY-MM-DD> — <ID>: <title>**` with `<ID> ::= D-[a-z0-9]+-[0-9]+`, unique within the file. This is the opener every exploration on record already writes, formalized rather than replaced; a Decisions entry without a well-formed ID is a format violation the explore body corrects on next touch. An ID is WELL-FORMED when the FIRST line of the entry's list item matches the opener PREFIX `- **<YYYY-MM-DD> — <ID>:` followed by a space or the line end — the closing `**` of the bold title may fall on a later line, and the title itself may begin on the next line, so ordinary line-wrapping of a long title is never a format defect; an entry whose first line carries no such prefix has no well-formed ID.
 
 **The ENTRY is the key: one claim under obligation per entry.** A Decision is a RULE when it PRESCRIBES or CONSTRAINS how something must be done across a SET of situations — the test is "in which situations does this apply?", applied to the claim's NORMATIVE force, never to its grammar. A quantified EMPIRICAL claim ("heading count has never correlated with readiness under any conditions") has a logical domain and is a FACT: it describes one world and is falsifiable by evidence. A SCOPE choice (in / out / deferred) is one-off. The test applies PER CLAIM as an authoring rule: an entry that carries more than one claim under obligation is SPLIT by the author; there are no claim-level identifiers.
 
@@ -942,6 +942,11 @@ Each entry carries slot LINES with FIXED vocabularies, stated as a production so
 
 - **WHEN** a rule is replaced or handed to another stage
 - **THEN** its entry carries `Disposition: superseded <ID or pointer>` or `Disposition: assigned <stage-id>`; an entry left `live` with a bare prose note ("overtaken", "moot") is still in the obligation
+
+#### Scenario: A wrapped title keeps its ID
+
+- **WHEN** an entry opens `- **2026-09-25 — D-foo-7: a long title that` and the closing `**` falls on the next line
+- **THEN** its ID is well-formed (`D-foo-7`); an entry whose first line is `- **Decision:** …` has none
 
 ### Requirement: Mechanism entry grammar and accounted closure
 

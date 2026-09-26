@@ -209,7 +209,7 @@ file now carries a live mark. Do NOT read this paragraph as the program's full l
 only what rc07 produced. The authoritative list is the program doc's own Open questions section,
 which also carries Q-crc-11, Q-crc-12, Q-crc-20, Q-crc-21, Q-crc-22 and Q-crc-23.
 
-**Five more stages have shipped since, and the program is EIGHT stages complete** (rc13a ratified 2026-09-25).
+**Six more stages have shipped since, and the program is NINE stages complete** (rc13b ratified 2026-09-25).
 
 `rc02c-confirmation-semantics` is ARCHIVED (2026-09-21): **the budget stopped being a target.**
 R-crc-11(h) — effort is RECORDED, never TARGETED — retired `budgetExhausted`, the
@@ -303,8 +303,44 @@ convention; 6.2 converted to an at-archive note), then the **blind pair on the p
 — external (GPT-6 Astra) 2C/2W/1S and fresh 0C/5W/4S, zero CRITICAL overlap, three shared — walked
 in two logs, an in-context confirm (0C/3W/2S, all in the walks' own additions) walked to zero, and
 a COMPUTED PASSED gate. Exit (2) was REVISED at ratification (R-crc-12's first case: the mechanism
-retired the criterion's word "closed"); the convention is ADVISORY until rc13b's readout lands.
+retired the criterion's word "closed"); the convention was ADVISORY until rc13b's readout landed — it did, the same day (next paragraph).
 Proposed to Sal at the archive and DECLARED as a stage 2026-09-25 (with `rc15-ended-stage-state`, Q-crc-11 taken up): `rc13c-propose-consumes-mechanism`. **2254 tests green.**
+
+`rc13b-explore-maturity-signal` is ARCHIVED and RATIFIED (2026-09-25; all three exit criteria graded MET as written): **the explore
+readout reads the rc13a convention.** A FORM parse over `explore.md` (`src/core/parsers/explore-rules.ts`)
+computes five engine-owned explore emit fields — `rules_total`, `rules_open` (LIVE rules only, five
+disjoint states tested in order `open → absent → bounded-incomplete → no-closure → malformed-entry`,
+its length the rung's K), `key_defects` (orphans and duplicates by line, never in K, a clause on
+every rung), `residuals`, and `status` (the header token; `re_entry` a first-wins RECOVERY over the
+exactly-one AUTHORING rule) — through ONE grammar module (`src/core/explore-grammar.ts`) whose
+production strings a parity test holds byte-equal to the owning `orbit-conventions` fences and
+which the explore body interpolates. The grid is SIX rungs, header FIRST: Concluded (prose naming
+no command), Early/Mid/Stalled as byte-identical prefixes, Unaccounted (the ONE cell where the
+accounting changes the verb) and Accounted (REPORTS, never vouches), with a three-ID bound and one
+identifier rule. Orientation renders a concluded staging explore as chip `■`, position
+`concluded`, a BARE next line and a position-named `also:` word — read from the newest spine-valid
+emit's `status.token`, never the file, surviving metadata degradation. Both parsers share one
+section collector over the engine's CommonMark fence tracker (the counter's local scanner —
+Q-crc-15's third grammar — is retired): a same-named `##` section MERGES with a note per extra
+heading, a list item ends at an H3+ heading or a post-blank unindented line, Domain rows are
+GFM-split. FOUR capability deltas — one over R-crc-1's ceiling by a one-sentence
+`orbit-conventions` delta, the first-line-prefix opener rule moved to its OWNER at the external
+proposal pass, declared under R-crc-9 and ratified — seven blocks synced byte-verified; the
+capability count did not move. The cycle: fresh + external (GPT-5 Codex) + in-context on the
+proposal; apply 17/18 in one session (6.4 the user-validation handoff); then the **blind pair on
+the pushed apply commit** — fresh 0C/5W/4S and external GPT-5 Codex 1C/4W/1S, blind, converging
+on the same FOUR defects (the repeated-section collector — the external CRITICAL, an ENUMERATE
+failure — the GFM row regex, the retired Mature-rung prose, the field-shape contradictions) and
+each finding two more; two walk logs; an in-context confirm 0C/1W/2S over the walks' own additions
+walked to zero; a COMPUTED PASSED gate — the third rc-stage through one, the second through the
+pair. **Task 6.4's first measurement**: fresh 0 of 0, external 1 of 1 ENUMERATE — exploring the
+mechanism under the convention did not stop one enumeration failure in the parser's input domain.
+Two lessons: the `orbit-explore` hash pin moved TWICE as a SECOND act after task 1.3's
+unchanged-pin measurement stood (a pin that must not move and prose that must be repaired are two
+acts, recorded as such in the parity test and under the task); and Q-crc-14's fourth instance
+(the source lint's git-index domain at an unstaged archive move) fired again at this archive. The
+readiness record accepts five residuals, headlined by rc07's distinction: PASSED means every
+finding resolved, not that an independent pass stood clean on the final tree. **2322 tests green.**
 
 Read that doc before any rc-stage work; the D-arc section below is the historical
 record of how the engine got here.

@@ -1411,7 +1411,7 @@ Here the correct mechanism is kept whole and sequenced.
 
 Depends-on: rc13a-explore-mechanism-convention
 
-Complete: [ ]
+Complete: [x] 2026-09-25 (Sal)
 
 **R-crc-11 IMPACT (2026-09-21) — SAME DISEASE, DIFFERENT SURFACE.** This charter says the maturity
 grid must "stop ASSERTING readiness on evidence that cannot support it", because confidence today
@@ -1428,6 +1428,13 @@ until rc13a's format exists there is nothing for this stage to parse. Its own in
 ENGINE-COMPUTED relocates self-classification rather than removing it — is unaffected and still
 stands. Recorded here so the dependency is a stated block rather than an inferred one, per R-crc-9's
 declare-the-stage-blocked branch.
+
+**UNBLOCKED 2026-09-25, and ARCHIVED the same day.** rc13a shipped as `bounded-closure-semantics` and
+was ratified; this stage was then explored under the convention, proposed, applied (17/18, task 6.4
+the user-validation handoff), walked through the blind pair on the pushed apply commit (fresh +
+external GPT-5 Codex) and an in-context confirm, and archived through a COMPUTED PASSED
+`review-system` gate — `orbit architecture status` renders it quiescent, awaiting ratification. The
+block above is history; the status log carries the cycle.
 
 Charter: the maturity grid's TOP RUNG loses its promotion. `next_recommended` is a required spine
 field whose value is a command, so the engine must point somewhere; what it must stop doing is
@@ -3738,3 +3745,40 @@ firing and its decline stand as the day's record, and rc15's exit (1) is what en
 stage-count marks (this doc's preamble, CLAUDE.md) moved to 24 in the same edit. Eight stages
 complete; rc13b remains the next uncovered stage in dependency order, and rc13c now queues behind
 it; rc15 has no dependency and could be explored at any time.
+
+**2026-09-25 — rc13b ARCHIVED through a COMPUTED PASSED gate via the blind pair; the first
+D-rc13b-7 measurement is ONE ENUMERATE failure.** The cycle in one paragraph: explored under the
+rc13a convention (nine decisions, seven rules with Mechanism entries checked clean by an executed
+script), proposed in CONSUME mode; one fresh proposal pass (2C/11W/5S), one external (GPT-5 Codex,
+1C/4W/2S — one array carrying two semantic roles had no correct predicate, and the opener rule sat in
+its consumer with no owner, which made this a FOUR-capability change by a one-sentence
+`orbit-conventions` delta, declared under R-crc-9 and ratified), one in-context confirm; apply 17/18
+in one session (the grammar module interpolated with the `orbit-explore` pin MEASURED unchanged);
+then the blind pair on the pushed apply commit — fresh 0C/5W/4S and external GPT-5 Codex 1C/4W/1S,
+blind to each other, converging on four defects (the repeated-section collector — the external
+CRITICAL, an ENUMERATE failure of the parser's input domain — the GFM row regex, the retired
+Mature-rung prose, the field-shape contradictions) and each finding two more; walked in two logs; an
+in-context confirm 0C/1W/2S over the walks' own additions, walked to zero; gate PASSED, independent
+spend 2. The third rc-stage through a computed PASSED gate and the second through the pair. Two
+things to carry: the pin moved TWICE afterwards as a SECOND act (the pin that must not move and the
+prose that must be repaired are two acts, recorded as such in the parity test and under the task);
+and Q-crc-14's fourth instance fired again at this archive (the source lint reads the git index, and
+an unstaged archive move leaves paths that no longer exist). The readiness record accepts five
+residuals, headlined by rc07's distinction: PASSED means every finding resolved, not that an
+independent pass stood clean on the final tree. This corrects the entry above: rc13b is no longer
+the next uncovered stage — rc13c queues next in dependency order, rc15 stays free — and the count of
+ratified stages stays eight until Sal ratifies. **2322 tests green.**
+
+**2026-09-25 — rc13b RATIFIED (nine stages complete); all three exit criteria graded MET as
+written.** Sal ratified in the architect session on the archive's day. Exit (1): the Unaccounted
+rung withholds the propose verb when any live rule's domain is open and names the gap by identifier
+within the three-plus-`+N more` bound — the criterion's word "Mature" names a rung the mechanism
+retired, but the cell it occupied is exactly where the verb changes, so the criterion still measures
+and no R-crc-12 revision was needed. Exit (2): every named instrument is a fixture in the parser
+suite (a declared form, one without, each out-of-domain disposition, a fenced decoy, no Mechanism
+section), plus the archived exemplar and the two body exemplars; the blind pair added the cases the
+plan missed (repeated sections, GFM row padding, list-item boundaries, BOM, colon-wrap). Exit (3):
+the synced `orbit-emit-composition` requirement states the FORM-only claim and both holes — a file
+of `Kind: fact` entries yields zero truthfully; a rule never written is invisible. rc03a's offer was
+not re-fired (its fourth decline stands; rc15's exit (1) ends that count). Next in dependency order
+is rc13c-propose-consumes-mechanism; rc15-ended-stage-state remains free to explore at any time.

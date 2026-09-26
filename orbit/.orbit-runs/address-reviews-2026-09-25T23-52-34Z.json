@@ -1,0 +1,78 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-25T23:52:34Z",
+  "change": null,
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/.orbit-runs/audit-drift-2026-09-25T23-48-40Z.json",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 1
+  },
+  "pushback_verification": "All 3 findings verified against the tree before editing (the BLOCKED paragraph had no later dated line; CLAUDE.md line 306 still read ADVISORY-until and carried no rc13b paragraph; the status log ended at the two-stages-declared entry); 0 stale.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The rc13b stage section still reads 'BLOCKED 2026-09-15 on rc13a, which has not shipped' while the engine computes the stage quiescent (archived 2026-09-25) and rc13a complete-ratified",
+      "marker_source": "audit-drift",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 1393,
+      "classification": "trivial_fix",
+      "action": "Appended a dated UNBLOCKED paragraph directly under the BLOCKED one in the rc13b stage section: rc13a shipped and was ratified 2026-09-25; rc13b explored, proposed, applied, walked through the blind pair and an in-context confirm, archived through a COMPUTED PASSED gate, rendered quiescent awaiting ratification. Nothing deleted; the state line stays computed. `orbit architecture validate clean-up-review-cycle` still valid.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/architecture/clean-up-review-cycle.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "CLAUDE.md still says 'the convention is ADVISORY until rc13b's readout lands' and carries no rc13b paragraph — the governing doc lags the archived stage",
+      "marker_source": "audit-drift",
+      "file": "CLAUDE.md",
+      "line": 306,
+      "classification": "trivial_fix",
+      "action": "CLAUDE.md: the ADVISORY clause now reads past tense and points at the new paragraph; the stage-count sentence reads six more shipped, EIGHT complete, rc13b archived awaiting ratification; the customary per-stage rc13b paragraph added after rc13a's (the form parse and five fields, the six-rung grid, the concluded row, the shared collector and the three collector rules from the walks, the four-capability breach declared and ratified, the proposal and system cadences with counts, task 6.4's measurement, the two-acts pin record, Q-crc-14's repeat, the readiness residuals, 2322 tests). No src: marker touched; `orbit validate --sources` passes (stages 24, rulings 14, capabilities 21, schema version 4).",
+      "ripple_cascade": {
+        "applied": [
+          "CLAUDE.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The program doc's status log has no entry for rc13b's archive, where every prior stage's archive has one",
+      "marker_source": "audit-drift",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 3688,
+      "classification": "trivial_fix",
+      "action": "Appended a dated status-log entry at the end of the program doc recording rc13b's archive: the cycle in one paragraph (cadence counts, the four converged defects, the ENUMERATE measurement, the two-acts pin record, Q-crc-14's repeat, the accepted residuals), and a correction of the preceding entry's ordering line — rc13c queues next, rc15 stays free, ratified count stays eight until Sal ratifies.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/architecture/clean-up-review-cycle.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "3 of 3 project-wide audit findings (0C/2W/1S) resolved, 0 stale, all obvious-fix appends — the two governing narratives now record rc13b's archive: a dated UNBLOCKED line under the stage section's BLOCKED paragraph, the per-stage paragraph in CLAUDE.md with the ADVISORY clause closed, and a status-log entry that also corrects the previous entry's next-stage line. Nothing deleted; every src: marker unchanged and the source lint green; the architecture doc validates. State remains engine-computed: rc13b quiescent, awaiting ratification.",
+  "iteration": 4,
+  "next_recommended": "No markers remain in scope; the project trail records this walk."
+}
