@@ -1,0 +1,25 @@
+{
+  "command": "explore",
+  "timestamp": "2026-09-26T17:58:14Z",
+  "change": "rc13c-propose-consumes-mechanism",
+  "kind": "workflow",
+  "model": "claude-fable-5-1",
+  "final_assessment": "First session closes with the stage's mechanism explored under the rc13a convention: seven decisions, six of them live rules, every rule's Mechanism entry written in the same sitting and parsing clean under the engine (six accounted, zero open, zero key defects). Sal ruled the two scope calls: a concluded exploration is DONE — propose refuses it in Step 0 (before the PR layer's branch switch), offers nothing, reopens nothing, and naming inference skips it (D-rc13c-1); and the stage stays at ONE capability — the propose body's section list is a checked mirror held by a parity test, not a shared constant (D-rc13c-3). The method calls were settled and recorded under R-crc-3: propose reads the Mechanism section from the file and checks its reading against one consume-time explore emit rather than a new engine print (D-rc13c-2; the print stays with Q-crc-24); the Mechanism row is a decision table over closure token × owner state, with a `Mechanism → artifacts` record in design (D-rc13c-4); a CLOSED domain lands as one of four shapes read from the only two archives that carry Mechanism sections, declared BOUNDED with its residual kind and method — the stage's own exit-(2) exemplar (D-rc13c-5); Step 0a checks the sections by pointer to the conventions' format requirement, an absent Mechanism section warning like any other (D-rc13c-6); Step 0b's resolve-now writes a conforming entry and a rule answer is an open domain, never an entry authored at propose (D-rc13c-7). One open question with a standing recommendation (how to tell the consume-time emit from a boundary emit: prose, no field). Four alternatives in Considered & out. Ordering fact found by reading, not remembered: the PR layer's phase 1 sits between Step 0 and Step 0a, so the refuse must be a Step 0 outcome. Ready to formalize when Sal says so.",
+  "decisions_captured": 7,
+  "open_questions_count": 1,
+  "open_questions_with_recommendation": "1 of 1",
+  "rules_total": 6,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [
+    {
+      "id": "D-rc13c-5",
+      "kind": "a destination shape for a CLOSED domain table that none of the four names",
+      "method": "classify the spec deltas of the next archived change that consumed a Mechanism section (this stage's own is the first through the mapping) against the four; a delta whose domain landed in none is a fifth row and a revision of this table"
+    }
+  ],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose rc13c-propose-consumes-mechanism — 6 live rules accounted, 1 bounded residual named (D-rc13c-5); formalize when you are ready (or /orbit:explore rc13c-propose-consumes-mechanism to keep refining)"
+}

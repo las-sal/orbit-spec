@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-09-26T02:19:49Z",
+  "change": "rc13c-propose-consumes-mechanism",
+  "kind": "workflow",
+  "model": "claude-fable-5-1",
+  "final_assessment": "Staging scaffolded for rc13c-propose-consumes-mechanism, cited to the stage of the same name — declared 2026-09-25 with rc13a and rc13b both ratified, so it renders `exploring`, which is true; the citation was written because the invoked name IS the declared stage id, and it is removable on Sal's word. Mode B new (no staging directory, no active change — the re-entry table's first row). The premise states the seam: rc13a accounted domains and rc13b reads the form, but propose's consume-mode mapping has no Mechanism row, its structure check still counts five sections, and it keys on explore.md's presence so a concluded name promotes silently. It carries the charter's three asks (a Mechanism row with a destination per closure token and a pointer-not-number section count; the refuse-or-reopen branch at the concluded seam agreeing with D-bcs-7's third row; propose consumes FORM), the three exit criteria — including that THIS exploration must carry a BOUNDED entry, because exit (2) is measured on the stage's own proposal — and six things to settle. References carry the twelve reads. Nothing captured yet; Mechanism, Decisions, Open questions and Considered & out are empty by construction.",
+  "decisions_captured": 0,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 0,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:explore rc13c-propose-consumes-mechanism — continue capturing thinking — no decisions captured yet"
+}

@@ -1,0 +1,30 @@
+{
+  "command": "explore",
+  "timestamp": "2026-09-26T18:01:34Z",
+  "change": "rc13c-propose-consumes-mechanism",
+  "kind": "workflow",
+  "model": "claude-fable-5-1",
+  "final_assessment": "Fired by /orbit:propose at consume time — D-rc13c-2 executed by hand, since the mechanism it records is what this change proposes. Step 0b resolved the one open question (Q-rc13c-1 → D-rc13c-8, a rule, no Mechanism entry authored at propose per D-rc13c-7). The engine's parse of the file propose is about to consume: 8 decisions, 7 live rules, 6 accounted, 1 open (D-rc13c-8, absent), 1 BOUNDED residual (D-rc13c-5), 0 key defects. The proposing AI's own reading agrees on every count.",
+  "decisions_captured": 8,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 7,
+  "rules_open": [
+    {
+      "id": "D-rc13c-8",
+      "state": "absent"
+    }
+  ],
+  "key_defects": [],
+  "residuals": [
+    {
+      "id": "D-rc13c-5",
+      "kind": "a destination shape for a CLOSED domain table that none of the four names",
+      "method": "classify the spec deltas of the next archived change that consumed a Mechanism section (this stage's own is the first through the mapping) against the four; a delta whose domain landed in none is a fifth row and a revision of this table"
+    }
+  ],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:explore rc13c-propose-consumes-mechanism — 1 of 7 live rules has an open domain (D-rc13c-8); account for them before formalizing"
+}

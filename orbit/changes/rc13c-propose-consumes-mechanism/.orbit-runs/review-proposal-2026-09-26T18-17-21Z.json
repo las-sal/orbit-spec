@@ -1,0 +1,200 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-26T18:17:21Z",
+  "change": "rc13c-propose-consumes-mechanism",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 2
+    },
+    "correctness": {
+      "critical": 2,
+      "warning": 2,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 3
+    }
+  },
+  "findings": [
+    {
+      "pass": "4",
+      "severity": "CRITICAL",
+      "dimension": "correctness",
+      "file": "specs/orbit-propose-modifications/spec.md",
+      "line": 5,
+      "title": "The consume-time explore emit contradicts orbit-run-summary-emit's one-shot scenario, and no delta touches the owner",
+      "recommendation": "The ADDED requirement makes consume-mode propose write an `explore-<TS>.json` before generation. The baseline `orbit/specs/orbit-run-summary-emit/spec.md:121-123` (`One-shot command emits exactly once`) states: WHEN `/orbit:propose foo` runs and completes, THEN exactly one `propose-<TS>.json` is written at completion; **no additional emits**. Post-archive the two specs disagree, and the trigger list at lines 104-106 of that spec (explore emits fire at the explore body's BEGIN and conversation boundaries) gains an unlisted third writer. The change stays at one capability by charter, so the contradiction is unowned rather than resolved. Either repair the owner or descope the emit — not both, not neither.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Repair (a second capability, inside R-crc-1's ceiling of 3 but beyond the charter's stated one — record the charter reading in design per R-crc-12): add a MODIFIED block on `orbit-run-summary-emit`'s `One-shot command emits exactly once` scenario narrowing 'no additional emits' to name the consume-time `explore-<TS>.json` on the staging trail per `orbit-propose-modifications`' `Mechanism section consumption`, and one clause in the trigger list at lines 104-106 pointing there. Consider the same pointer in `orbit-explore-modifications`' sweep rule (spec.md:171, 'Before EVERY named-mode explore emit … the body SHALL run the residency sweep') so the 'READ, not a boundary' exception is named where the sweep rule lives."
+        },
+        {
+          "label": "B",
+          "body": "Descope (R-crc-6's cheap lane for mechanism): drop the consume-time emit from D-rc13c-2 — propose reads the Mechanism section from the file only, and the engine cross-check waits for the staging-aware print already parked at Q-crc-24. Remove the emit sentence and the `marked by prose only` / `engine's parse disagrees` scenarios from the ADDED requirement, task 2.2, design D-rc13c-2/D-rc13c-8 and the record's header; D-rc13c-8 then has no subject and is superseded in design (explore.md stays as history)."
+        }
+      ]
+    },
+    {
+      "pass": "2",
+      "severity": "CRITICAL",
+      "dimension": "correctness",
+      "file": "tasks.md",
+      "line": 10,
+      "title": "Task 2.2 fires the consume-time emit BEFORE Step 0b's writes, so the engine never sees a resolve-now rule — voiding D-rc13c-7's own falsification guard",
+      "recommendation": "Task 2.2 places the emit 'as Step 0a's last act', i.e. before Step 0b appends resolve-now Decisions entries to `explore.md`. But the delta's `Resolve now, and the answer is a rule` scenario (spec.md:180-183) and the `An unaccounted live rule is recorded` scenario (spec.md:39-42, keyed on 'the consume-time emit's `rules_open`') both require the engine to have parsed that entry; explore.md's D-rc13c-7 CONSUME line says 'the appended entry is what the consume-time emit counts' and its FALSIFY line relies on the emit reporting a malformed Step-0b entry as `open`. The exemplar this change cites (`explore-2026-09-26T18-01-34Z.json`) was in fact fired AFTER Step 0b — its counts include D-rc13c-8. As tasked, every propose that resolves a question into a rule produces a record the engine did not check, on exactly the entry most likely to be malformed; and a propose that fails between Step 0b and the move leaves a staging dir whose newest emit predates the file (audit-drift Category 6 then misreads it as an unswept session). Fix in one place: task 2.2 becomes the last act of Step 0b (after every `explore.md` write, before upstream Step 2/generation); align design D-rc13c-2's 'after Step 0a' wording and the delta's 'after the structure check' to 'after the last `explore.md` write'. The ADDED text's 'before generation' already permits this."
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "design.md",
+      "line": 53,
+      "title": "The refuse drops the `Re-entry:` trigger the charter and D-bcs-7's third row both name, while D-rc13c-1 claims agreement with that row",
+      "recommendation": "The charter (`orbit/architecture/clean-up-review-cycle.md:1497-1499`) frames the refuse as 'naming the conclusion and its `Re-entry:` trigger' and says 'D-bcs-7's third row is the shape it must agree with'; that row (`orbit/specs/orbit-explore-modifications/spec.md:237`) reads 'state the conclusion and its `Re-entry:` trigger, ask nothing else'. The delta's halt states the date only (spec.md:58, :68), and explore.md's D-rc13c-1 COHERE line misquotes the row as '(state the conclusion; nothing else)'. Stating the trigger is not offering the reopen — it is the standing Considered-&-out shape, and the engine already computes it (`status.re_entry`). Choose, and record the choice so ratification does not rediscover it.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "State the trigger too: the halt reads 'this exploration concluded on <date> — re-entry: <the live Re-entry: slot>' (one more read of the same file, per the entry-identity requirement's live-carrier rule; no reopen offered, no prompt). Update the delta's requirement text and refused scenario, task 1.1, and the fidelity marker."
+        },
+        {
+          "label": "B",
+          "body": "Keep date-only and record the deliberate narrowing: in design D-rc13c-1 and the delta's requirement text, state that propose's refuse narrows the third row on Sal's 'no avenue' ruling (the trigger is read by `/orbit:explore <name>`, which the halt may name as the place to see it), and correct the COHERE quotation in the design so the ratification grades exit (3) against the recorded reading (R-crc-12)."
+        }
+      ]
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "tasks.md",
+      "line": 10,
+      "title": "'(no other field)' in task 2.2 produces a payload the write gate refuses — `model` is required on every command",
+      "recommendation": "`src/core/emit-composition.ts:487-488` throws `payload is missing the required 'model' key (explicit null allowed)` for every command, and the explore table (`:55`) allows exactly `final_assessment` plus the implicit `model`. An implementer copying 'no other field' into the body writes `{final_assessment}` and the emit is refused at Step 0a. Reword task 2.2 (and the ADDED text's 'no payload field is added', spec.md:5, which means no ORIGIN field) to: 'a payload of `final_assessment` and the required nullable `model` — no field naming the origin'. The body's own Run-summary section already uses that phrasing for the propose emit."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-propose-modifications/spec.md",
+      "line": 14,
+      "title": "The 'no usable entry' row and its scenario name the rule by ID, but the `open` state has no ID",
+      "recommendation": "`rules_open`'s `open` state is the ID-less case — the parser records `{state: 'open', line}` with no `id` (`src/core/parsers/explore-rules.ts:55-59`; `orbit-emit-composition` spec.md:464). Row 4 ('naming the ID as UNACCOUNTED') and the scenario at spec.md:41-42 ('naming the ID and the state word') cannot be executed for it, and the record's column 'the entry ID' has nothing to hold. `orbit-run-summary-emit` already owns the identifier rule for this case (spec.md:203, and the `line 212` rendering at :249). Point at it: 'named as the readout names it — the ID, or `line N` for an ID-less entry, per `orbit-run-summary-emit`'s identifier rule' — in row 4, the scenario, and the record's column description (spec.md:22)."
+    },
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-propose-modifications/spec.md",
+      "line": 14,
+      "title": "Row 4 restates the five open-state names that orbit-emit-composition owns — a hand-enumerated computed set (R-crc-14, the Q-crc-24 shape)",
+      "recommendation": "The five states are defined once at `orbit/specs/orbit-emit-composition/spec.md:464`; row 4 re-lists them. The row's semantics do not depend on which states exist (any non-accounted state lands the same way), so a sixth state would leave this table silently stale — the exact pattern rc04c counted four times. Replace the parenthetical with 'any state `orbit-emit-composition`'s `rules_open` field defines' and keep 'the engine's state word' as the value carried. Design D-rc13c-4's DERIVED justification may still cite the parser's five for its own derivation — that is the exploration's record, not a spec statement."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "design.md",
+      "line": 112,
+      "title": "The `Mechanism → artifacts` record's shape column does not match what the delta actually carries for two CLOSED entries",
+      "recommendation": "This is the mapping's first execution under R-crc-7, so the record should be exact. D-rc13c-2 (design.md:113) claims 'a normative table of what is read from the file and what from the emit' — the ADDED requirement carries that domain as PROSE in its first paragraph (spec.md:5), i.e. the SENTENCE shape. D-rc13c-1 (design.md:112) claims 'the domain table as a scenario set', but the ADDED text defines that shape as 'one scenario per member' (spec.md:17) and explore.md's D-rc13c-1 table has five members: the refused case, the inference case and the neither-token case have scenarios; the conflict-first member is the unchanged baseline scenario; the fourth member (a concluded header inside `orbit/changes/<name>/explore.md` is not a propose input) has no scenario and no sentence in the requirement text. Correct the two rows (D-rc13c-2 → SENTENCE naming the source; D-rc13c-1 → scenario set for three members plus a pointer sentence for the fourth, or add that sentence to the requirement text so the shape claim holds)."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "tasks.md",
+      "line": 16,
+      "title": "Task 3.1's hand-written opener form is a mirror that is neither byte-equal to the owner's production nor test-held",
+      "recommendation": "`- **<YYYY-MM-DD> — D-<tag>-<n>: <title>**` is not the owner's text (`orbit-conventions` spec.md:915 writes `<ID>` with `<ID> ::= D-[a-z0-9]+-[0-9]+`), so it fails R-crc-14's mirror-corollary conditions (says it is a mirror, byte-equal, test-held) that this same change applies to the section list. The production already exists in code for exactly this purpose: `EXPLORE_DECISION_ENTRY_PRODUCTION` in `src/core/explore-grammar.ts:30-35`, which the explore body interpolates and a parity test holds equal to the spec fence. Interpolating it into the propose body adds no capability (it is a code constant, not `orbit-explore-modifications`), so D-rc13c-3's scope objection does not apply; alternatively point at the requirement with no copy at all. Either way, task 3.1 should not hand-write a variant."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "tasks.md",
+      "line": 12,
+      "title": "Task 2.4's 'byte-equal' parity needs its normalization stated — the owner writes `**Mechanism**` bolded and carries a second, unbolded copy of the list",
+      "recommendation": "`orbit/specs/orbit-conventions/spec.md:125` reads 'in this order: Premise, **Mechanism**, Decisions, …' while the `Section order` scenario at :136 lists the same six without emphasis. Two implementers would split on whether the body's mirror carries the asterisks and which line the test anchors on. State it in task 2.4: extract from the SHALL sentence, strip inline emphasis before comparing (or compare against the scenario line), and have the body's mirror carry plain names."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-propose-modifications/spec.md",
+      "line": 5,
+      "title": "'lands on the staging trail' is false on the conflict prompt's 'Regenerate from explore' path",
+      "recommendation": "When the user picks Regenerate at Step 0 sub-step 2, `orbit/changes/<name>/` exists at Step 0a, and the emit surface resolves an existing change directory BEFORE the staging directory (`src/core/emit-composition.ts:410-427`), so the consume-time emit lands on the change trail (and Step 0d's `mv … .orbit-runs` then nests one trail inside the other — a pre-existing hazard of that path). Harmless to the record, but the requirement text and the `marked by prose only` scenario (spec.md:52) assert the staging trail unconditionally. Scope the sentence ('on the workstream's trail — staging in the ordinary case') or note the regenerate path."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "design.md",
+      "line": 161,
+      "title": "A Touchpoints entry marked 'reused, not edited' will read as `predicted_unsatisfied`",
+      "recommendation": "The Touchpoints grammar treats every leading span as a predicted target; `test/helpers/owner-text.ts — reused, not edited` is a prediction the diff will never satisfy, so the divergence check reports it. Move the mention into prose (the Decisions section already names the helper) or drop the entry."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "design.md",
+      "line": 66,
+      "title": "The staging-aware engine print is parked at Q-crc-24, whose text is specifically about the citable-pass set",
+      "recommendation": "`orbit/architecture/clean-up-review-cycle.md:1105-1118` states Q-crc-24 as the hand-enumerated citable-pass set in four bodies; nothing there names a staging-aware parse print. Deferring to 'Q-crc-24's owner' (design.md:66-68, Considered & out) leaves the deferred shape untracked. Add an at-archive note (the program doc is outside propose's write set) to append one line under Q-crc-24 naming this second instance, or to open a Q of its own."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "design.md",
+      "line": 138,
+      "title": "'one `head -1` per directory' reads the first LINE; the production keys on the first NON-BLANK line",
+      "recommendation": "`orbit-conventions`' status-header production (spec.md:128) and the delta's own text (spec.md:58, 'first non-blank line') both say non-blank. A file with a leading blank line would be read as neither-token by `head -1` and promoted. Say 'the first non-blank line' in the Risks entry and make task 1.2 name it too, so the body does not teach `head -1`."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "tasks.md",
+      "line": 11,
+      "title": "The residue grep forbids the owner's TITLE in the body, so the pointer must be by description — say so before an implementer writes the title",
+      "recommendation": "Task 2.3's `grep -nE '(five|5)[- ]sections?'` must return zero lines, yet the owning requirement's retained title is `explore.md five-section format` — the natural way to point at it (and how the delta's `Validate` text points, spec.md:149). Task 2.1's mirror sentence avoids the title ('format requirement'); state in 2.1/2.3 that the body points by description because the title is a retained pointer target, or exclude the exact title from the grep pattern. Otherwise the first implementer to write the honest pointer fails the residue check and 'fixes' it by weakening the pointer."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The propose side of this change is in good order: all five MODIFIED blocks diff against their baselines as byte-complete copies with only the intended edits; strict validation and the five fingerprints are green; the exit-(2) greps return one hit each and the design's first Risks entry names the requirement; the `Mechanism → artifacts` record agrees with explore.md's Mechanism section and with the consume-time emit on every count (7 live, 6 accounted, D-rc13c-8 absent, D-rc13c-5 the one residual, no key defects); the re-entry table's header row appears in neither the delta nor the body; and every Step 0 path in the body as written (named, inferred, conflict-first, no-file, neither-token) does resolve before the Position paragraph's phase 1, so the refuse really is unreachable by the branch switch. Size is one capability, six blocks, fifteen tasks.\n\nThe defects cluster at the SEAMS with neighbouring specs and with the program doc, which is the texture I would expect of an exploration that settled the propose body carefully and read the emit surface for its output shape but not for its trigger rules. Of the two CRITICALs, the one-shot-scenario contradiction is a READ failure (a baseline scenario in `orbit-run-summary-emit` that says 'no additional emits' for propose was not read; D-rc13c-2's READ move names the emit surface, not the trigger owner); the emit-ordering defect is a COHERE failure (D-rc13c-2's INVOKE line and D-rc13c-7's CONSUME/FALSIFY lines disagree on whether the engine sees Step 0b's entry, and the task followed the one the exemplar did not). Neither is ENUMERATE. The warnings are mostly the same shape at smaller scale: the write gate's `model` rule, the identifier rule for ID-less rules, the five-state list and the Decision opener production each have an owner the delta or tasks restate or under-read. The `Re-entry:` trigger question is a genuine fork between Sal's ruling and the charter's stated shape and should be settled by a recorded choice rather than by the misquote the design currently carries.\n\nWhat I probed hardest: the refuse's reachability against every branch of Mode detection and the PR Position paragraph; the payload rules and target-resolution order in `emit-composition.ts`; every scenario in the delta against a task; the four CLOSED-shape claims in the record against what the delta text physically carries; and the fidelity, parity and generated-surface tests for anything the body edits would break (nothing beyond the deliberately moved `orbit-propose` pin — the PR-section `AskUserQuestion` prohibition, the `Next:` ban and the choreography byte-identity tests are all untouched by the tasked edits). What I could not verify: the actual order in which the exemplar emit was fired relative to Step 0b (inferred only from the emit's own final_assessment text); and the refuse itself, since no concluded staging directory exists on disk to exercise it. Pass 3's lens-driven cross-checks had nothing to read — no `orbit/project.md`, no `*_convention.md`, no `orbit/lenses/` — so only the CLAUDE.md checks ran, and CLAUDE.md stays accurate post-apply.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "final_assessment": "2 critical, 6 warning, 6 suggestion.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc13c-propose-consumes-mechanism --from-file orbit/changes/rc13c-propose-consumes-mechanism/.orbit-runs/review-proposal-2026-09-26T18-17-21Z.json"
+}

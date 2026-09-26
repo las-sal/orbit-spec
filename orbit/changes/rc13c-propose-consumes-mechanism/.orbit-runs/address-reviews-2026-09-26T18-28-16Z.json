@@ -1,0 +1,312 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-26T18:28:16Z",
+  "change": "rc13c-propose-consumes-mechanism",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc13c-propose-consumes-mechanism/.orbit-runs/review-proposal-2026-09-26T18-17-21Z.json",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 2,
+    "warning": 6,
+    "suggestion": 6
+  },
+  "pushback_verification": "All 14 findings verified against the current artifacts before any edit — every cited line read as described; 0 stale (all four artifacts were written earlier the same day and unchanged since the pass). The one-shot scenario in orbit-run-summary-emit and the PR Position paragraph were re-read to confirm #1 and the reachability claim the pass made.",
+  "resolution_summary": {
+    "resolved": 14,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "The consume-time explore emit contradicts orbit-run-summary-emit's one-shot scenario, and no delta touches the owner",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-propose-modifications/spec.md",
+      "line": 5,
+      "classification": "decision_required",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Repair (a second capability, inside R-crc-1's ceiling of 3 but beyond the charter's stated one — record the charter reading in design per R-crc-12): add a MODIFIED block on `orbit-run-summary-emit`'s `One-shot command emits exactly once` scenario narrowing 'no additional emits' to name the consume-time `explore-<TS>.json` on the staging trail per `orbit-propose-modifications`' `Mechanism section consumption`, and one clause in the trigger list at lines 104-106 pointing there. Consider the same pointer in `orbit-explore-modifications`' sweep rule (spec.md:171, 'Before EVERY named-mode explore emit … the body SHALL run the residency sweep') so the 'READ, not a boundary' exception is named where the sweep rule lives."
+          },
+          {
+            "label": "B",
+            "body": "Descope (R-crc-6's cheap lane for mechanism): drop the consume-time emit from D-rc13c-2 — propose reads the Mechanism section from the file only, and the engine cross-check waits for the staging-aware print already parked at Q-crc-24. Remove the emit sentence and the `marked by prose only` / `engine's parse disagrees` scenarios from the ADDED requirement, task 2.2, design D-rc13c-2/D-rc13c-8 and the record's header; D-rc13c-8 then has no subject and is superseded in design (explore.md stays as history)."
+          }
+        ],
+        "chosen": "B"
+      },
+      "action": "Option B ratified (Sal: \"b\") — the consume-time explore emit is DESCOPED (R-crc-6's cheap lane for mechanism). The ADDED requirement now states the file read by the grammar `orbit-conventions` owns, an OPTIONAL cross-check against the staging trail's NEWEST explore emit when it postdates the last file write, and that propose fires no emit before its one-shot completion emit (`orbit-run-summary-emit`'s rule untouched); the two emit scenarios replaced by 'newest emit disagrees' and 'no engine record'; the record's header names the source of its counts. Design D-rc13c-2 rewritten as REVISED at the walk with the rejected repair recorded; D-rc13c-8 SUPERSEDED (no subject); the record's header and D-rc13c-8 row updated; Risks rewritten. Tasks 2.2 rewritten; section-2 heading, 3.3, 3.4, 4.4 updated; task 4.5 added (at-archive note opening the read-only print as its own question). Proposal bullet, Capabilities line and Impact updated; every remaining 'consume-time' mention is a history note (swept).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/specs/orbit-propose-modifications/spec.md",
+          "orbit/changes/rc13c-propose-consumes-mechanism/design.md",
+          "orbit/changes/rc13c-propose-consumes-mechanism/tasks.md",
+          "orbit/changes/rc13c-propose-consumes-mechanism/proposal.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/changes/rc13c-propose-consumes-mechanism/explore.md",
+            "reason": "exploration record persists unchanged after the move (orbit-propose-modifications); the design carries the revision and names the file's D-rc13c-2 / D-rc13c-8 as history"
+          }
+        ]
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "Task 2.2 fires the consume-time emit BEFORE Step 0b's writes, so the engine never sees a resolve-now rule — voiding D-rc13c-7's own falsification guard",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 10,
+      "classification": "trivial_fix",
+      "action": "Resolved by #1's descope: there is no consume-time emit to order. The surviving cross-check reads the newest trail emit only when it postdates the last `explore.md` write, so a Step 0b entry is never checked against a stale record; task 2.2 places the read after Step 0b's last write.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/tasks.md",
+          "orbit/changes/rc13c-propose-consumes-mechanism/specs/orbit-propose-modifications/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The refuse drops the `Re-entry:` trigger the charter and D-bcs-7's third row both name, while D-rc13c-1 claims agreement with that row",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 53,
+      "classification": "decision_required",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "State the trigger too: the halt reads 'this exploration concluded on <date> — re-entry: <the live Re-entry: slot>' (one more read of the same file, per the entry-identity requirement's live-carrier rule; no reopen offered, no prompt). Update the delta's requirement text and refused scenario, task 1.1, and the fidelity marker."
+          },
+          {
+            "label": "B",
+            "body": "Keep date-only and record the deliberate narrowing: in design D-rc13c-1 and the delta's requirement text, state that propose's refuse narrows the third row on Sal's 'no avenue' ruling (the trigger is read by `/orbit:explore <name>`, which the halt may name as the place to see it), and correct the COHERE quotation in the design so the ratification grades exit (3) against the recorded reading (R-crc-12)."
+          }
+        ],
+        "chosen": "A"
+      },
+      "action": "Option A ratified (Sal: \"a\") — the refuse states the conclusion date AND the live `Re-entry:` slot verbatim (`(no Re-entry: slot found)` when none), read from the same file; no offer, no prompt, no write, so 'no avenue' holds and the explore-side third row is agreed with literally. Delta requirement text and the refused scenario updated (WHEN now carries a Re-entry slot); design D-rc13c-1 amended with the misquote corrected and dated; task 1.1's halt text updated; proposal bullet updated.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/specs/orbit-propose-modifications/spec.md",
+          "orbit/changes/rc13c-propose-consumes-mechanism/design.md",
+          "orbit/changes/rc13c-propose-consumes-mechanism/tasks.md",
+          "orbit/changes/rc13c-propose-consumes-mechanism/proposal.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/changes/rc13c-propose-consumes-mechanism/explore.md",
+            "reason": "exploration record persists unchanged after the move; the design records the amendment"
+          }
+        ]
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "'(no other field)' in task 2.2 produces a payload the write gate refuses — `model` is required on every command",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 10,
+      "classification": "trivial_fix",
+      "action": "Resolved by #1's descope: task 2.2 no longer composes an emit payload; the '(no other field)' phrase is gone.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The 'no usable entry' row and its scenario name the rule by ID, but the `open` state has no ID",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-propose-modifications/spec.md",
+      "line": 14,
+      "classification": "trivial_fix",
+      "action": "Row 4, the unaccounted scenario and the record's column now name the rule 'as the readout names it — the ID, or `line N` for an ID-less entry, per `orbit-run-summary-emit`'s identifier rule'; task 3.3 carries the pointer.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/specs/orbit-propose-modifications/spec.md",
+          "orbit/changes/rc13c-propose-consumes-mechanism/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Row 4 restates the five open-state names that orbit-emit-composition owns — a hand-enumerated computed set (R-crc-14, the Q-crc-24 shape)",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-propose-modifications/spec.md",
+      "line": 14,
+      "classification": "trivial_fix",
+      "action": "Row 4's parenthetical replaced by 'any state `orbit-emit-composition`'s `rules_open` field defines'; the unaccounted scenario's WHEN reads 'any `rules_open` state'. Design D-rc13c-4's DERIVED justification keeps the parser's five as the exploration's record.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/specs/orbit-propose-modifications/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The `Mechanism → artifacts` record's shape column does not match what the delta actually carries for two CLOSED entries",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 112,
+      "classification": "trivial_fix",
+      "action": "Record corrected: D-rc13c-2 → SENTENCE naming the source; D-rc13c-1 → scenario set for four members plus ONE SENTENCE for the fifth, which was ADDED to the consume-mode requirement text (a concluded header inside the change directory is not a propose input; the re-entry requirement owns that row) so the shape claim holds.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/design.md",
+          "orbit/changes/rc13c-propose-consumes-mechanism/specs/orbit-propose-modifications/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Task 3.1's hand-written opener form is a mirror that is neither byte-equal to the owner's production nor test-held",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 16,
+      "classification": "trivial_fix",
+      "action": "Task 3.1 now INTERPOLATES `EXPLORE_DECISION_ENTRY_PRODUCTION` from `src/core/explore-grammar.ts` (a code constant already held to the owning fence by the grammar parity test; a code import, not a capability) and never hand-writes a variant.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 2.4's 'byte-equal' parity needs its normalization stated — the owner writes `**Mechanism**` bolded and carries a second, unbolded copy of the list",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 12,
+      "classification": "trivial_fix",
+      "action": "Task 2.4 states the normalization: extract from the SHALL sentence's 'in this order:' clause, strip inline emphasis before comparing, plain names in the body's mirror.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "'lands on the staging trail' is false on the conflict prompt's 'Regenerate from explore' path",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-propose-modifications/spec.md",
+      "line": 5,
+      "classification": "trivial_fix",
+      "action": "Resolved by #1's descope: the requirement no longer asserts where a consume-time emit lands; the surviving text reads the staging trail's newest emit and fires none.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/specs/orbit-propose-modifications/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "A Touchpoints entry marked 'reused, not edited' will read as `predicted_unsatisfied`",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 161,
+      "classification": "trivial_fix",
+      "action": "Touchpoints entry for `test/helpers/owner-text.ts` removed; the helper stays named in Decisions.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The staging-aware engine print is parked at Q-crc-24, whose text is specifically about the citable-pass set",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 66,
+      "classification": "trivial_fix",
+      "action": "Design D-rc13c-2 (revised) and Risks no longer park the print under Q-crc-24; task 4.5 added — an at-archive note opening the READ-ONLY engine print of the parsed form as its own question, citing Q-crc-24 as the same shape without folding into it.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/design.md",
+          "orbit/changes/rc13c-propose-consumes-mechanism/tasks.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "reason": "outside propose's write set; the at-archive note (task 4.5) is the carrier"
+          }
+        ]
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "'one `head -1` per directory' reads the first LINE; the production keys on the first NON-BLANK line",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 138,
+      "classification": "trivial_fix",
+      "action": "Risks entry and task 1.2 now say 'first NON-BLANK line' and 'never `head -1`'.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/design.md",
+          "orbit/changes/rc13c-propose-consumes-mechanism/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The residue grep forbids the owner's TITLE in the body, so the pointer must be by description — say so before an implementer writes the title",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 11,
+      "classification": "trivial_fix",
+      "action": "Tasks 2.1 and 2.3 state that the body points at the owner BY DESCRIPTION because the retained title is what the residue grep forbids.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "14 of 14 resolved, 0 stale, 0 deferred. Two decision-lane findings ratified in chat: #1 → B (the consume-time explore emit DESCOPED — it contradicted orbit-run-summary-emit's one-shot rule and would have cost a second capability; propose now reads the file by the owned grammar with an optional cross-check against the trail's newest emit, and a read-only print is opened as its own question at archive), which also closed #2, #4 and #10; #3 → A (the refuse states the live Re-entry: slot verbatim — reading the record, not offering a reopen). The other nine were pointer-discipline fixes: the identifier rule and the rules_open state set pointed at their owners, the record's two shape rows corrected with one sentence added to the consume-mode requirement, the Decision opener interpolated from the grammar constant, parity normalization and non-blank-line reads stated, the stray Touchpoints entry dropped. Strict validation green, 5 fingerprints verified, exit (2) and (3) greps unchanged, 16 tasks. explore.md untouched by rule; its D-rc13c-2 and D-rc13c-8 read as history, which the design says.",
+  "iteration": 1,
+  "next_recommended": "/orbit:review --as proposal rc13c-propose-consumes-mechanism"
+}
