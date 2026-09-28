@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-09-28T22:45:25Z",
+  "change": "rc15-ended-stage-state",
+  "kind": "workflow",
+  "model": null,
+  "final_assessment": "Six threads walked, Sal agreed on every recommendation including the two scope calls (1: the ended mark is honoured on premised; 3: a third answer on the existing ratification offer plus unprompted on-your-word writes). Six Decisions captured (five rules, one fact), five Mechanism entries written in the same sitting with Case 1 holding the 5x3 composition table; every closure DERIVED or SOURCED; the form parse reports 5 rules, 0 open, 0 defects. Size measured at three capabilities (engine, architect, one audit-drift sentence). Exit (1) is a user act in the next architect session after apply; exit (2) is graded on a fixture.",
+  "decisions_captured": 6,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 5,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose rc15-ended-stage-state — 5 live rules accounted; formalize when you are ready (or /orbit:explore rc15-ended-stage-state to keep refining)"
+}

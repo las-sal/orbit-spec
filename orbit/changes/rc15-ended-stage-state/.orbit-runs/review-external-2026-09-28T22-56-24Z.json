@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-09-28T22:56:24Z",
+  "change": "rc15-ended-stage-state",
+  "kind": "editorial",
+  "model": null,
+  "mode": "proposal",
+  "prompt_path": "orbit/changes/rc15-ended-stage-state/.orbit-runs/external-prompt-proposal-2026-09-28T22-56-07Z.md",
+  "target": null,
+  "final_assessment": "External review prompt packaged for rc15-ended-stage-state (iter 1, mode proposal); awaiting findings. Handoff preflight: tree dirty (the change directory is untracked), 0 unpushed commits — the pull invocation is withheld until the change and this prompt are committed and pushed. This handoff covers the declared independent slot on review-proposal (spend 0); no spend record.",
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/rc15-ended-stage-state/.orbit-runs/external-prompt-proposal-2026-09-28T22-56-07Z.md into the target AI, save the response as orbit/changes/rc15-ended-stage-state/.orbit-runs/external-proposal-<TS>.md, then /orbit:address-reviews rc15-ended-stage-state --from-file <path>"
+}

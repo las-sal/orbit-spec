@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-09-28T20:45:04Z",
+  "change": "rc15-ended-stage-state",
+  "kind": "workflow",
+  "model": null,
+  "final_assessment": "Mode B new: scaffolded orbit/explore/rc15-ended-stage-state/ with the six sections, a Premise grounded in the rc15 charter, Q-crc-11's ledger, D-bcs-6 and a read of parser.ts/state.ts/buckets.ts/orientation.ts/explore-grammar.ts; architecture citation {clean-up-review-cycle, rc15-ended-stage-state} recorded (the name is the declared stage id). No decisions yet.",
+  "decisions_captured": 0,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 0,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:explore rc15-ended-stage-state — continue capturing thinking — no decisions captured yet"
+}
