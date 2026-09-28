@@ -6,7 +6,7 @@
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
 import { PR_CHOREOGRAPHY_REFERENCE } from './pr-choreography.js';
-import { EXPLORE_DECISION_ENTRY_PRODUCTION } from '../../explore-grammar.js';
+import { EXPLORE_DECISION_ENTRY_PRODUCTION, EXPLORE_MECHANISM_ENTRY_PRODUCTION } from '../../explore-grammar.js';
 
 export function getOrbitProposeSkillTemplate(): SkillTemplate {
   return {
@@ -137,12 +137,13 @@ Before any upstream step, detect whether to run in consume mode or fall through 
    - **If user provided no name and zero or multiple LIVE staging directories exist**: prompt user to specify a name (zero) or pick one (multiple).
 
 2. **Check for conflict**: do both \`orbit/explore/<name>/\` AND \`orbit/changes/<name>/\` exist?
-   - If yes, halt with a conflict report and prompt via \`AskUserQuestion\`:
-     - **Regenerate from explore** — overwrite the existing change directory with new artifacts. Then the resolve-mode check (sub-step 3) runs; a concluded staging file is refused here too.
+   - If yes AND the staging \`explore.md\`'s FIRST NON-BLANK line carries the \`concluded\` token → **REFUSED before any prompt**: print \`both <staging path> (concluded <YYYY-MM-DD>) and <change path> exist — a second claim on one truth; propose neither deletes nor overwrites a concluded record; resolve by hand\` and STOP. None of the three choices below is offered, nothing is deleted, overwritten or moved.
+   - If yes and the staging file is live, halt with a conflict report and prompt via \`AskUserQuestion\`:
+     - **Regenerate from explore** — overwrite the existing change directory with new artifacts.
      - **Continue from change** — discard the explore staging directory, proceed in standalone-like mode on the existing change.
      - **Abort** — do nothing; user decides next.
 
-3. **Resolve mode** (precedence: the conflict check above fires first; then, in this order):
+3. **Resolve mode** (precedence: the conflict check above fires first — its concluded refuse, then its prompt; then, in this order):
    - Staging exists, no unresolved conflict, and \`explore.md\`'s FIRST NON-BLANK line carries the \`concluded\` token (per \`orbit-conventions\`' status-header production — read that line, never \`head -1\`) → **REFUSED**. Print \`this exploration concluded on <YYYY-MM-DD>. Re-entry: <the live CONCLUDED entry's Re-entry: slot, verbatim — first in file order when two entries carry one, as the readout resolves it; (no Re-entry: slot found) when none>\` and STOP: no \`AskUserQuestion\`, no \`orbit new change\`, no metadata, no move. The PR layer's phase 1 (select + switch) is never reached, because it runs AFTER this step — a refused promotion cuts no branch. A concluded exploration is done: propose neither reopens it nor offers to (the reopen edit belongs to the explore body, per \`orbit-explore-modifications\`' re-entry requirement — pointed at, not restated here).
    - Staging exists, no unresolved conflict, header NOT \`concluded\` (the \`exploring\` token, or neither token) → **consume mode** (continue with consume-mode flow below; skip upstream Step 1).
    - No staging → **standalone mode** (skip the consume-mode flow; resume at upstream Step 1).
@@ -177,7 +178,13 @@ The entry form (a checked mirror of \`orbit-conventions\`' "Decision entry ident
 ${EXPLORE_DECISION_ENTRY_PRODUCTION}
 \`\`\`
 
-**The Mechanism read — after this step's LAST write to \`explore.md\`, before generation.** Read the \`## Mechanism\` section by the grammar \`orbit-conventions\`' Mechanism-entry requirement owns (point at it; do not restate it): the entry set, each entry's \`Closure:\` token, and a BOUNDED entry's two residual lines VERBATIM. Read NO prior explore emit as a source or cross-check — git keeps no modification time, so no trail record can be shown to describe the file's current bytes — and fire none: propose's one emit is its completion emit (\`orbit-run-summary-emit\`'s one-shot rule, untouched). Your reading of the file is the SOLE source of the Step 0c.6 record, whose header always says so.
+**The Mechanism read — after this step's LAST write to \`explore.md\`, before generation.** Read the \`## Mechanism\` section by the grammar \`orbit-conventions\`' Mechanism-entry requirement owns — carried here as a checked mirror, because your repository may not hold that spec (the grammar module supplies it; a parity test holds it equal to the owner):
+
+\`\`\`
+${EXPLORE_MECHANISM_ENTRY_PRODUCTION}
+\`\`\`
+
+Take from it the entry set, each entry's \`Closure:\` token, and a BOUNDED entry's two residual lines VERBATIM; Step 0c.6 says what conformance to it decides. Read NO prior explore emit as a source or cross-check — git keeps no modification time, so no trail record can be shown to describe the file's current bytes — and fire none: propose's one emit is its completion emit (\`orbit-run-summary-emit\`'s one-shot rule, untouched). Your reading of the file is the SOLE source of the Step 0c.6 record, whose header always says so.
 
 ### Step 0c — Section-to-artifact mapping
 
@@ -215,19 +222,19 @@ The generated \`design.md\` carries a \`## Touchpoints\` section: the PREDICTED 
 
 ### Step 0c.6 — Carry the Mechanism section (the \`Mechanism section consumption\` requirement)
 
-Every Mechanism entry, and every live rule with none, is disposed of by ONE row of this table — rows tested IN ORDER, first match wins. A live rule is ACCOUNTED when it is counted in \`rules_total\` AND not in \`rules_open\` (\`orbit-emit-composition\` owns those fields; the readout's parser is the judge of FORM). The table is a checked mirror of the requirement's; a parity test holds it byte-equal:
+Every Mechanism entry, and every live rule with none, is disposed of by ONE row of this table — rows tested IN ORDER, first match wins. A live rule is ACCOUNTED when it is counted in \`rules_total\` AND not in \`rules_open\` (\`orbit-emit-composition\` owns those fields; the readout's parser is the judge of FORM) — and you decide that from the FILE, by the grammar mirrored under Step 0b: the rule is accounted when its entry CONFORMS in FULL (a heading whose ID matches its Decisions entry; a \`Domain:\` line and a table with at least one member row; a \`Closure:\` token from the closed set; the two residual slots present exactly when BOUNDED; nine move lines, each exactly once). An entry failing ANY clause, or no entry, is OPEN; name the failing clause in the record's state column (the readout's state word when one is at hand). A key defect is an entry whose heading ID matches no Decisions entry (an orphan) or a second entry or heading under an already-used ID (a duplicate). The table is a checked mirror of the requirement's; a parity test holds it byte-equal:
 
 | row | owner's Decisions state | accounting state | lands in |
 |---|---|---|---|
-| 1 | any — tested FIRST | in \`key_defects\` (an orphan entry with no owner; a second entry under an already-used ID) | reported in chat at the structure check; no carrier — a key with no owner has nowhere to land, and a duplicate is excluded from \`rules_total\` |
+| 1 | any, or none — tested FIRST | in \`key_defects\` (an orphan entry whose heading ID matches no Decisions entry; a second entry or heading under an already-used ID) | reported in chat at the Mechanism read (after Step 0b's last write, before generation); no carrier — a key with no owner has nowhere to land, and a duplicate is excluded from \`rules_total\`. Its record row: the heading's ID plus \`line N\`, the defect kind (\`orphan\` / \`duplicate\`) in the state column, owner \`none\` (orphan) or \`duplicate\` (a second claim on an owned ID), destination \`none\` |
 | 2 | NOT a live rule (\`Kind: fact\` / \`scope\`, or \`Disposition: superseded\` / \`assigned\`) | any — an entry or none, well-formed or not | nowhere — permitted history; \`explore.md\` travels unchanged; the record lists it as not carried with NO state word (the engine assigns none to a non-live owner) |
-| 3 | live rule | in \`rules_open\` (any state that field defines, whatever \`Closure:\` token the entry carries) | UNACCOUNTED: ONE \`design.md\` Risks entry naming the rule as the readout names it — the ID, or \`line N\` for an ID-less entry, per \`orbit-run-summary-emit\`'s identifier rule — with the engine's state word; the spec delta carries nothing for it; never blocking |
+| 3 | live rule | OPEN — in \`rules_open\` (any state that field defines, whatever \`Closure:\` token the entry carries); from the file alone: no entry, or an entry failing any clause of the Mechanism grammar | UNACCOUNTED: ONE \`design.md\` Risks entry naming the rule as the readout names it — the ID, or \`line N\` for an ID-less entry, per \`orbit-run-summary-emit\`'s identifier rule — with the state word (the readout's when one is at hand; else the failing grammar clause, in the grammar's vocabulary); the spec delta carries nothing for it; never blocking |
 | 4 | live rule | accounted, \`Closure: DERIVED\` or \`SOURCED\` | the spec delta requirement the rule derives: the domain table as one of the CLOSED shapes below, the \`Closure:\` justification as the sentence naming the source |
 | 5 | live rule | accounted, \`Closure: BOUNDED\` (both residual slots present, by construction) | \`Residual kind:\` and \`Residual method:\` VERBATIM in that requirement's text as a named limit (the OWNER — only spec text survives archive); ONE \`design.md\` Risks entry naming the rule ID and POINTING at the requirement, restating nothing |
 
 **The CLOSED shapes** (a checked mirror of the requirement's list): a normative TABLE (the re-entry table in \`orbit-explore-modifications\`), a GRAMMAR or production block (the Mechanism grammar's fences in \`orbit-conventions\`), a SCENARIO SET — one scenario per member (the maturity rungs in \`orbit-run-summary-emit\`), or a SENTENCE naming the source with the members in prose (the concluded outcome's reader sentence in \`orbit-conventions\`). Which shape fits is your judgement; the record says which was chosen. The set is BOUNDED and its named limit is stated ONCE, in the requirement — point at it; never restate the two residual lines here.
 
-**The record.** \`design.md\` carries a \`## Mechanism → artifacts\` section: a header line reading "the proposing AI's reading of the file; no engine record" — always that sentence — then one table row per Mechanism entry (and per live rule with none): the rule as the readout names it (ID, or \`line N\` for an ID-less entry), its closure token or the engine's state word, its owner's state, and its destination as a requirement title (plus the shape, for CLOSED entries).
+**The record.** \`design.md\` carries a \`## Mechanism → artifacts\` section: a header line reading "the proposing AI's reading of the file; no engine record" — always that sentence — then one table row per Mechanism entry (and per live rule with none): the rule as the readout names it (ID, or \`line N\` for an ID-less entry; a key defect by ID plus \`line N\`), its closure token or its state word (the readout's when one is at hand; else the failing grammar clause; the defect kind for a key defect), its owner's state (\`none\` for an orphan; \`duplicate\` for a second claim), and its destination as a requirement title (plus the shape, for CLOSED entries; \`none\` for a key defect).
 
 **Before Step 0d**: for every BOUNDED entry the table sent to row 5 (a live, accounted rule — never a history row), grep the change's \`specs/\` for both residual lines; a miss is reported and fixed before the move. Propose consumes FORM, as the readout renders form: whether an enumeration is TRUE, a residual honest, or a rule written down at all stays the reviewer's judgement.
 

@@ -37,6 +37,7 @@ import {
   type SkillTemplate,
 } from '../../../src/core/templates/skill-templates.js';
 import { ownerText } from '../../helpers/owner-text.js';
+import { EXPLORE_MECHANISM_ENTRY_PRODUCTION } from '../../../src/core/explore-grammar.js';
 
 /**
  * Fidelity guard for B1 (relocate-modified-upstream-workflows): asserts orbit's
@@ -69,7 +70,7 @@ const RELOCATED: Array<[string, () => SkillTemplate, string[]]> = [
   // section-list mirror, the Mechanism read after the last file write, the Step 0c.6 record and its
   // no-engine-record header, the rule-answer note at Step 0b. Position and parity assertions live in
   // the `rc13c propose consume-mode integrity` block below.
-  ['propose', getOrbitProposeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override', 'this exploration concluded on', 'is never reached', 'LIVE staging director', 'Mechanism → artifacts', 'no engine record', 'Residual kind:', 'no Mechanism entry is authored at propose', 'refused here too']],
+  ['propose', getOrbitProposeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override', 'this exploration concluded on', 'is never reached', 'LIVE staging director', 'Mechanism → artifacts', 'no engine record', 'Residual kind:', 'no Mechanism entry is authored at propose', 'second claim on one truth']],
   ['new-change', getNewChangeSkillTemplate, ['execution disciplines', 'Run-summary emit']],
   ['continue-change', getContinueChangeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
   ['apply-change', getApplyChangeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override', 'blocked-by-gate', 'continuation', 'formed_against: []', 'ACCEPTED as a pass', 'Consent at entry', 'consent_era_from', '"user-invoked" | "prompted"', 'orbit emit apply']],
@@ -180,12 +181,17 @@ describe('rc13c propose consume-mode integrity (Mechanism section consumption)',
     const refuse = mode.indexOf('this exploration concluded on');
     expect(conflict).toBeGreaterThan(-1);
     expect(refuse).toBeGreaterThan(conflict);
-    // The Regenerate option itself reaches the concluded check (precedence 1 then 2).
+    // The concluded-plus-conflict refuse sits INSIDE the conflict sub-step, before its prompt (precedence 1).
+    const bothRefuse = mode.indexOf('second claim on one truth');
     const regen = mode.indexOf('**Regenerate from explore**');
-    expect(regen).toBeGreaterThan(conflict);
-    expect(mode.slice(regen, refuse)).toContain('refused here too');
-    // Nothing in the consume-mode flow re-teaches the refuse.
-    expect(sec['Consume-mode flow']).not.toContain('this exploration concluded on');
+    expect(bothRefuse).toBeGreaterThan(conflict);
+    expect(regen).toBeGreaterThan(bothRefuse);
+    expect(mode).not.toContain('refused here too');
+    // The refuse is taught ONCE in the whole body — and the positional checks above prove that one
+    // occurrence sits in Mode detection. (A section-slice negative assertion was retired at the system
+    // blind-pair walk: the slicer is fence-blind and a fenced `## Touchpoints` example truncated the
+    // consume-mode slice, so it reported coverage it did not have.)
+    expect(body.split('this exploration concluded on').length - 1).toBe(1);
   });
 
   it('points at the re-entry rule and never restates it (exit 3)', () => {
@@ -227,12 +233,20 @@ describe('rc13c propose consume-mode integrity (Mechanism section consumption)',
     const owner = await ownerText('orbit-propose-modifications', 'a PARTITION of the entries and live rules');
     const m = owner.match(/lands in requirement text as one of four shapes, each observed on the record: ([\s\S]+?)\. Which shape fits/);
     expect(m, 'the owner states the four shapes in one clause').toBeTruthy();
-    expect(stripTrailing(body)).toContain(stripTrailing(m![1]));
+    const bm = body.match(/\*\*The CLOSED shapes\*\* \(a checked mirror of the requirement's list\): ([\s\S]+?)\. Which shape fits/);
+    expect(bm, 'the body states its four shapes in one clause').toBeTruthy();
+    expect(stripTrailing(bm![1])).toBe(stripTrailing(m![1]));
+    expect(body.split(stripTrailing(m![1])).length - 1, 'exactly one occurrence in the body').toBe(1);
   });
 
   it('the Step 0b entry form interpolates the grammar constant (no hand-written variant)', () => {
     expect(body).toContain('- **<YYYY-MM-DD> — <ID>: <title>** <prose…>');
     expect(body).not.toContain('D-<tag>-<n>');
+  });
+
+  it('the Step 0b Mechanism grammar mirror is the grammar module\'s production (adopter-safe, one source)', () => {
+    expect(body).toContain('```\n' + EXPLORE_MECHANISM_ENTRY_PRODUCTION + '\n```');
+    expect(body.split(EXPLORE_MECHANISM_ENTRY_PRODUCTION).length - 1).toBe(1);
   });
 });
 

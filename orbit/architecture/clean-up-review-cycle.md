@@ -1156,6 +1156,40 @@ never deleted.
   active first, then `orbit/changes/archive/<date>-<name>`. Owner: whichever stage next touches
   `orbit-orientation` or `orbit-report-rendering`.
 
+- **Q-crc-27 — no READ-ONLY surface prints the engine's parse of an exploration's Mechanism form,
+  so a body that consumes it reads the file by eye.** Opened 2026-09-28 at rc13c's archive (its
+  at-archive note 4.5). rc13c's exploration settled a consume-time explore emit so propose could read
+  the engine's `rules_open` / `key_defects` / `residuals` beside its own reading; the fresh proposal
+  pass found it contradicted `orbit-run-summary-emit`'s one-shot rule (propose writes exactly one
+  emit) and it was DESCOPED; the mtime-keyed cross-check that replaced it was removed at the external
+  proposal walk (git keeps no modification time, so no trail record can be shown to describe the
+  current bytes). The external SYSTEM pass then found the adopter blind spot: an installed skill has
+  neither this repository's specs nor its parser, so rc13c shipped the Mechanism grammar in the
+  propose body and defined "accounted" as full conformance to it — decidable from the file, with the
+  FAILING CLAUSE named in the record where the readout would name a state word. What remains is the
+  Q-crc-24 shape one layer over: the parse IS engine-computed on every explore emit, but no surface
+  PRINTS it without writing, so every consumer re-derives form from the grammar. Standing
+  recommendation: a read-only print of `parseExploreRules` for a staging name — no emit, the
+  one-shot rule untouched — most naturally a flag on the change-scoped status once it resolves staging
+  names (Q-crc-26's fallback pattern); the propose body then reads the state word instead of naming
+  the clause. Owner: whichever stage next touches `orbit-emit-composition` or `orbit-orientation`.
+
+- **Q-crc-28 — the retirement-class sweep has a list and no owner.** Opened 2026-09-28 at rc13c's
+  archive (its at-archive note 4.6). Three stages have each deferred living text that a later stage
+  made false, to "a retirement-class sweep" nobody has declared: rc13a deferred the retained
+  "five-section" TITLES and their pointer sites (`orbit-conventions`' format requirement title;
+  `audit-drift.ts:302`); rc13b's design deferred the "until the maturity-signal stage lands" clauses
+  (`orbit-conventions`' concluded-outcome requirement; the explore body's KNOWN paragraph); rc13c adds
+  FIVE sites that still call it a pending follow-on — `orbit/specs/orbit-conventions/spec.md` lines 980,
+  994 and 1022, and `src/core/templates/workflows/explore.ts` lines 610 and 657 ("until then, REOPEN
+  before promoting"; "until a propose-consumption stage lands, that transfer is an instruction … not a
+  checked mapping"). Each deferral was correct under R-crc-1 at the time; together they are a
+  baseline spec asserting three facts the shipped tree contradicts. Standing recommendation: ONE small
+  change touching `orbit-conventions` and `orbit-explore-modifications` (two capabilities), pointer-only
+  edits and the title rename with its pointer sites, no mechanism — declared as a stage or taken as a
+  rider on the next stage that touches either capability. Until then the stale sentences are an
+  accepted residual on rc13c's readiness record.
+
 ## Program stages
 
 <!-- src:stages -->24<!-- /src:stages --> small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
@@ -3782,3 +3816,31 @@ the synced `orbit-emit-composition` requirement states the FORM-only claim and b
 of `Kind: fact` entries yields zero truthfully; a rule never written is invisible. rc03a's offer was
 not re-fired (its fourth decline stands; rc15's exit (1) ends that count). Next in dependency order
 is rc13c-propose-consumes-mechanism; rc15-ended-stage-state remains free to explore at any time.
+
+**2026-09-28 — rc13c ARCHIVED through a COMPUTED PASSED gate via the blind pair; the fourth
+rc-stage through one, the third through the pair; Q-crc-27 and Q-crc-28 opened.** Explored 2026-09-25/26
+under the rc13a convention (eight decisions, seven live rules, six accounted, one BOUNDED — D-rc13c-5,
+the exit-(2) exemplar); Sal ruled the two scope calls in chat (a concluded exploration is DONE, propose
+refuses it and offers no reopen; one capability). Proposal cadence: fresh 2C/6W/6S (the consume-time
+explore emit contradicted `orbit-run-summary-emit`'s one-shot rule — DESCOPED, option B; the refuse
+carries the `Re-entry:` slot, option A), external GPT-5 Codex 2C/4W/2S (the decision table was not a
+PARTITION — ENUMERATE, on a table the exploration marked DERIVED; the concluded path overlapped two
+inherited scenarios — COHERE; the mtime cross-check removed), in-context 0C/4W/6S (the duplicate-ID
+second entry still reached a carrier row — the key-defects row moved FIRST and "accounted" became
+"counted in `rules_total` AND not in `rules_open`"); 32 findings walked to zero in three logs; gate
+PASSED. Apply 14/15 in one session (4.4 the user-validation handoff to the next propose; 4.5 an
+at-archive note). System cadence on the pushed apply commit: the blind pair — fresh 0C/4W/3S (executed
+the partition against the parser with every edge case: it held) and external GPT-5 Codex 2C/2W/0S
+(Continue would have DELETED a concluded record beside an active change — COHERE, now refused before any
+prompt naming both paths; an adopter's installed skill cannot derive parser-owned states — READ, now the
+Mechanism grammar ships in the propose body as the grammar module's mirror and "accounted" is decidable
+from the file as full conformance), zero CRITICAL overlap, two walk logs; an in-context confirm 0C/0W/2S
+applied in flow; gate PASSED on resolution. Exit (1)–(3) measured as met on the archived tree. Two
+process facts recorded on the trail rather than hidden: a walk script wrote three task lines with a
+literal backreference (rebuilt from the committed file), and the regenerated local skill lagged the
+template between two walk commands (a chained build never ran; caught by re-diffing the render). Specs
+synced 6/6 byte-verified; fingerprints 5/5; audit 0C/1W/1S; 2330 tests green. Q-crc-27 (a read-only
+print of the parsed Mechanism form) and Q-crc-28 (the retirement-class sweep's list — five new sites
+from this stage) opened from the at-archive notes; the five stale follow-on sentences are an accepted
+residual on the readiness record. rc13c renders quiescent, awaiting ratification. Next in dependency
+order: rc15-ended-stage-state (free), or rc02b / rc03 / rc04b in Phase 2.

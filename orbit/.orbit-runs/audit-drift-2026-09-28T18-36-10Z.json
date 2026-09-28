@@ -1,0 +1,35 @@
+{
+  "command": "audit-drift",
+  "timestamp": "2026-09-28T18:36:10Z",
+  "change": null,
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "final_assessment": "No critical issues. 1 warning to consider. Project-wide standalone sweep after rc13c's archive: Category 1 has NO residue patterns (no archived delta has ever carried a REMOVED or RENAMED section — measured across all 30 archives); Category 2 skipped (orbit/lenses absent); Category 3 — sources lint green (stages 24, rulings 14, capabilities 21, schema-version 4), architecture status shows no INCONSISTENT or MALFORMED stage, no dangling citations (zero active changes, zero staging explorations), the skill surface counts 15 as CLAUDE.md states, and ONE spec-vs-spec disagreement (the finding above, tracked as Q-crc-28); Category 4 — the last five archives' ADDED requirements are all present in baseline and every consent-scoped emit in the window carries `consent`; Categories 5 and 6 skipped (no active changes, no staging explorations).",
+  "categories_run": [
+    1,
+    3,
+    4
+  ],
+  "findings_by_category": {
+    "1": 0,
+    "2": 0,
+    "3": 1,
+    "4": 0,
+    "5": 0,
+    "6": 0
+  },
+  "findings_total": 1,
+  "findings": [
+    {
+      "category": 3,
+      "dimension": "coherence",
+      "severity": "WARNING",
+      "title": "orbit-conventions still asserts that /orbit:propose does not read the header token and that the residual transfer is a pending follow-on — three sentences the synced orbit-propose-modifications baseline now contradicts",
+      "file": "orbit/specs/orbit-conventions/spec.md",
+      "line": 1022,
+      "recommendation": "Two baseline specs disagree on one fact: `orbit-conventions` lines 980, 994 and 1022 (the accounted-closure text and the concluded-outcome KNOWN paragraph) describe propose as blind to the header and the Mechanism transfer as 'the propose-consumption follow-on's to specify', while `orbit-propose-modifications` (synced 2026-09-28 from rc13c) now states the refuse and the consumption requirement. The explore body carries the same clauses at `src/core/templates/workflows/explore.ts` lines 610 and 657. Already tracked: Q-crc-28 in the program doc carries the full list (with rc13a's retained 'five-section' titles and rc13b's 'until the maturity-signal stage lands' clauses) and a standing recommendation — one pointer-only change over `orbit-conventions` and `orbit-explore-modifications`. Take it as a stage or as a rider on the next stage touching either capability; until then it is an accepted residual on rc13c's readiness record."
+    }
+  ],
+  "stale_suppressed": [],
+  "next_recommended": "/orbit:address-reviews --from-file orbit/.orbit-runs/audit-drift-2026-09-28T18-36-10Z.json — 1 drift(s) detected project-wide; resolve before next workflow step"
+}

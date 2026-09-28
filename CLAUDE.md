@@ -209,7 +209,7 @@ file now carries a live mark. Do NOT read this paragraph as the program's full l
 only what rc07 produced. The authoritative list is the program doc's own Open questions section,
 which also carries Q-crc-11, Q-crc-12, Q-crc-20, Q-crc-21, Q-crc-22 and Q-crc-23.
 
-**Six more stages have shipped since, and the program is NINE stages complete** (rc13b ratified 2026-09-25).
+**Seven more stages have shipped since, and the program is NINE stages complete** (rc13b ratified 2026-09-25; rc13c archived 2026-09-28, awaiting ratification).
 
 `rc02c-confirmation-semantics` is ARCHIVED (2026-09-21): **the budget stopped being a target.**
 R-crc-11(h) — effort is RECORDED, never TARGETED — retired `budgetExhausted`, the
@@ -341,6 +341,33 @@ acts, recorded as such in the parity test and under the task); and Q-crc-14's fo
 (the source lint's git-index domain at an unstaged archive move) fired again at this archive. The
 readiness record accepts five residuals, headlined by rc07's distinction: PASSED means every
 finding resolved, not that an independent pass stood clean on the final tree. **2322 tests green.**
+
+`rc13c-propose-consumes-mechanism` is ARCHIVED (2026-09-28): **what an exploration accounted for
+reaches the proposal, and a concluded exploration cannot be promoted.** Propose's Step 0 REFUSES a
+concluded staging directory — naming the conclusion date and the live `Re-entry:` slot, offering no
+reopen (Sal: a concluded exploration is DONE) — and refuses one beside an active change BEFORE the
+conflict prompt (the external system pass found Continue would have deleted the record); naming
+inference counts LIVE directories only. Step 0a checks the six sections by a CHECKED MIRROR held to
+`orbit-conventions` by a parity test (rc13a's declared "five-section" exemption closed). Step 0b
+interpolates BOTH grammar productions from the grammar module — the Decision entry for resolve-now
+answers, the Mechanism entry because an adopter's installed skill has neither our specs nor our parser
+— and a rule answered at propose stands as a visible open domain. NEW Step 0c.6 carries a five-row
+PARTITION over owner state × accounting state (`key_defects` first; "accounted" = counted in
+`rules_total` AND not in `rules_open`, decidable from the file as full conformance to the grammar), the
+four CLOSED shapes with their residual stated ONCE in the ADDED requirement (D-rc13c-5, the stage's own
+BOUNDED exemplar — exit (2) measured on it), and the `Mechanism → artifacts` record whose header always
+reads "the proposing AI's reading of the file; no engine record" — propose fires NO emit and reads NO
+prior one (the consume-time emit the exploration settled was DESCOPED at the first walk: it contradicted
+the one-shot rule; its mtime cross-check went at the second: git keeps no mtime). ONE capability,
+`orbit-propose-modifications` (1 ADDED, 5 MODIFIED), no engine code. The cycle: fresh + external (GPT-5
+Codex) + in-context on the proposal (32 findings, two descopes, the partition repaired twice); apply
+14/15; then the **blind pair on the pushed apply commit** — fresh 0C/4W/3S (the partition EXECUTED
+against the parser with every edge case: it held) and external GPT-5 Codex 2C/2W/0S (the Continue
+deletion; the adopter blind spot), zero CRITICAL overlap, two walk logs, an in-context confirm applied
+in flow; a COMPUTED PASSED gate — the fourth rc-stage through one, the third through the pair. Q-crc-27
+(a read-only print of the parsed Mechanism form) and Q-crc-28 (the retirement-class sweep's list) opened
+at archive; the readiness record accepts five residuals, headlined again by rc07's distinction. **2330
+tests green.**
 
 Read that doc before any rc-stage work; the D-arc section below is the historical
 record of how the engine got here.

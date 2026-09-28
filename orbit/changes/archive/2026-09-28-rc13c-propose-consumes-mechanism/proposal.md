@@ -28,10 +28,14 @@ and offers no way back (D-rc13c-1); and the stage stays at ONE capability (D-rc1
   conclusion date and the recorded `Re-entry:` trigger, verbatim, and stops: no prompt, nothing written, nothing moved — and no branch cut, because the
   PR layer's phase 1 (select + switch) runs between Step 0 and Step 0a and a refused promotion must
   never reach it. Naming inference (`/orbit:propose` with no name) never offers a concluded directory as
-  a candidate. The reopen path stays where rc13a put it — `orbit-conventions`' reopen scenario, executed
+  a candidate. Beside an active change of the same name, a concluded staging directory is refused
+  BEFORE the conflict prompt, naming both paths — no Step 0 path deletes or overwrites a concluded
+  record (the system blind pair's external half found the prompt's Continue choice would have). The reopen path stays where rc13a put it — `orbit-conventions`' reopen scenario, executed
   by the explore body — and propose does not mention it. (D-rc13c-1)
 - **Consume mode reads the Mechanism section from the file; propose fires no emit of its own.** The
-  proposing AI reads entries, tokens and residual slots by the grammar `orbit-conventions` owns, and
+  proposing AI reads entries, tokens and residual slots by the grammar `orbit-conventions` owns — carried
+  in the body as a checked mirror of the grammar module's production, so an adopter's skill can decide
+  "accounted" (full conformance to the grammar) without this repository's specs or parser — and
   reads no prior emit as a cross-check (git keeps no modification time, so no trail record can be
   shown to describe the current bytes); the record's header says the AI's reading is its source. `orbit-run-summary-emit`'s
   one-shot rule is untouched. A read-only engine print of the parsed form is the proper cross-check and
@@ -88,7 +92,8 @@ one by descoping rather than repairing a neighbour (R-crc-6).
   naming-inference exclusion), Step 0a (the mirrored section list), Step 0b (the entry format; the Mechanism read after the last
   file write), Step 0c (the Mechanism row), a new Step 0c.6 (the `Mechanism → artifacts` record and
   the residual travel), Graceful degradation. The `orbit-propose` hash pin in
-  `test/core/templates/skill-templates-parity.test.ts` MOVES, deliberately, once.
+  `test/core/templates/skill-templates-parity.test.ts` MOVED at apply and once more at the system
+  blind-pair walk, each re-record carrying its dated reason.
 - **Tests**: `test/core/templates/orbit-content-fidelity.test.ts` — the propose marker set gains the
   refuse branch, the mirror, the no-engine-record header and the record; a parity assertion holding the
   body's section list byte-equal to `orbit-conventions`' format requirement, and the Step 0c.6

@@ -85,7 +85,10 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // six-section mirror), Step 0b (the interpolated entry form; the Mechanism read after the last file write),
   // Step 0c (the Mechanism row), NEW Step 0c.6 (the partition table, the four shapes, the record, the
   // pre-move grep), Graceful degradation. Re-recorded in the same task that edited the body (tasks 3.4).
-  getOrbitProposeSkillTemplate: '0d24a033fa68096294af2a41c46778674c40f438d523a14b479dc3185f27d967',
+  // Moved a second time at the system blind-pair walk (2026-09-28): the both-exist concluded refuse in
+  // Step 0's conflict sub-step, the Mechanism grammar mirror under Step 0b, row 1's record shape and
+  // conformance-defined 'accounted' in Step 0c.6 — one re-record for the walk's body edits.
+  getOrbitProposeSkillTemplate: '51a8dcb5464b9aac1ecb743a0a1c9b78529d82714f346e093dbf1a7ec6d54aab',
   getOrbitProposeCommandTemplate: 'b91222654d5050d7ae7f2f49b5d6c4b34e65638bd8c5ae3e622550eb1329c168',
   getFeedbackSkillTemplate: 'ded61ad85c5050f7bf241870b14bfcdd929f0be68a028c1130fd30a66efbda3b',
   getArchitectSkillTemplate: '343ad958d4fdb6092bbcf2e7a8283df51da65711a6f30043c0938122b7152ace',
@@ -103,7 +106,7 @@ const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
   'orbit-bulk-archive-change': '601dd7c74804c06a9818428f86030c8cef5311a9fc7c59f2dc14e490007a291d',
   'orbit-verify-change': '0d8f6b82d40bf95bd6b49f447fbd66d5414af79fa157872345668b9cb709ab6d',
   'orbit-onboard': '4b227395bb70c36c643970d821ec8eb245fbfca090accdc38d5b3588f7620fa7',
-  'orbit-propose': '44b725e46f4eee5acd65f23ca03aca91ee8fd8c3b1bc54f0da3a8e6a75ce4ebe', // rc13c: moved once with the body (see the function-hash note above)
+  'orbit-propose': 'ce16a6fe9fdc7ad3846cc99e002173125c795b2379a9239b888b6a4a5b16efb1', // rc13c: moved once with the body (see the function-hash note above)
   'orbit-architect': '5603821c28adfd35e108fad5ec226eb2839db0453f61e660a35489067b1686aa',
 };
 

@@ -58,7 +58,12 @@ This document's Decisions section is the live statement; `explore.md` is history
   Position paragraph, not the charter. The halt states the conclusion date AND the live `Re-entry:`
   slot verbatim, then stops (AMENDED at the first walk, 2026-09-26, Sal: "a" — the exploration's
   entry quoted the explore-side row without its trigger; stating the trigger is reading the record,
-  not offering a reopen, so "no avenue" holds). Naming inference counts LIVE directories only. *Alternatives rejected*: offering the reopen inside propose (a second
+  not offering a reopen, so "no avenue" holds). Naming inference counts LIVE directories only.
+  AMENDED at the external system walk (2026-09-28, Sal: "b"): a concluded staging directory BESIDE an
+  active change is REFUSED before the conflict prompt, naming both paths — the external pass found the
+  prompt's Continue choice would have discarded the concluded record (COHERE); the shape is the explore
+  body's own both-exist row, and propose does not become a two-claim resolver. *Alternative rejected*:
+  a status-aware Continue that preserves the directory — leaves the two-claim state unnamed. *Alternatives rejected*: offering the reopen inside propose (a second
   executor of the reopen edit; the "why" written from a prompt); treating the invocation as the reopen
   word (the charter allowed it; it makes a "build nothing" record reversible by the command the
   conclusion guards against).
@@ -102,7 +107,15 @@ This document's Decisions section is the live statement; `explore.md` is history
   with DERIVED/SOURCED → the requirement it derives; live rule accounted with BOUNDED → the two slots
   verbatim in spec text and a Risks pointer. "Accounted" is defined by pointer as "counted in
   `rules_total` AND not in `rules_open`", so the table stays a partition when either field's set changes. The design
-  carries a `Mechanism → artifacts` record.
+  carries a `Mechanism → artifacts` record. AMENDED a third time at the external system walk
+  (2026-09-28, Sal: "a"): an adopter's generated skill has neither this repository's specs nor its
+  parser (READ — the shipped skill was never read from an adopter's seat), so the body now carries the
+  Mechanism grammar as a checked mirror (the grammar module's constant, the same import the explore body
+  makes) and "accounted" is defined from the FILE as full conformance to it — the failing clause named
+  in the record when no readout is at hand. Row 1 gained its record-row shape (ID plus `line N`, defect
+  kind, owner `none`/`duplicate`, destination `none`) and now reports at the Mechanism read, not the
+  structure check. *Alternatives rejected*: the read-only engine print (a second capability, reopening
+  the size question twice settled); narrowing the claim to eyeballed form.
 - **D-rc13c-5 — a CLOSED domain lands as one of four shapes, and the set is BOUNDED.** A normative
   table (D-bcs-7 → the re-entry table), a grammar block (D-bcs-8 → the grammar fences), a scenario set
   (rc13b's grid → the maturity scenarios), a sentence naming the source (D-bcs-6 → the concluded
@@ -132,7 +145,7 @@ so the live figure is 6 live rules, 6 accounted.
 |---|---|---|---|
 | D-rc13c-1 | SOURCED | live rule | `Consume mode when staging directory exists` (MODIFIED) — a SCENARIO SET for four members (the refuse before the switch; the neither-token case; the conflict-first row, unchanged baseline; the inference exclusion in `Naming inference fallback`) plus ONE SENTENCE for the fifth (a concluded header in the change directory is not a propose input — points at the re-entry requirement); source sentence: the body's Step 0 sub-steps |
 | D-rc13c-2 (as revised) | SOURCED | live rule | `Mechanism section consumption` (ADDED) — a SENTENCE naming the source (what is read from the file, by whose grammar; that no prior emit is read); source sentence: the parser's output shape |
-| D-rc13c-3 | — | `Kind: scope` | not carried (a scope choice; its test is task 3.2) |
+| D-rc13c-3 | — | `Kind: scope` | not carried (a scope choice; its test is task 2.4) |
 | D-rc13c-4 | DERIVED (derivation amended twice) | live rule | `Mechanism section consumption` (ADDED) — the decision table as REVISED at the external and in-context walks, a normative TABLE shape; the exploration's own table was superseded by the partition (see the amended D-rc13c-4 above) |
 | D-rc13c-5 | BOUNDED | live rule | `Mechanism section consumption` (ADDED) — the four shapes as a table AND the two residual slots verbatim as the requirement's named limit; Risks below points at it |
 | D-rc13c-6 | SOURCED | live rule | `Validate explore.md structure before consuming` (MODIFIED) — a scenario set (present / absent incl. Mechanism / unreadable); source sentence: the existing three scenarios |
@@ -154,8 +167,8 @@ so the live figure is 6 live rules, 6 accounted.
   the live statement (this document's Decisions), and the record above names the revision. A reader
   parsing the archived `explore.md` will count D-rc13c-8 as `absent`; that count describes the
   exploration as it closed, not the change as it shipped.
-- [The `orbit-propose` hash pin moves] → deliberately, once, for a body edit in five steps; the pin
-  is re-recorded in the same task that edits the body, with the reason (rc04c's sizing lesson: a hash
+- [The `orbit-propose` hash pin moves] → deliberately — at apply for the body edit in five steps, and once
+  more at the system blind-pair walk for its body edits — each re-record carrying its dated reason (rc04c's sizing lesson: a hash
   pin names nothing — this plan names it).
 - [Naming inference now reads a header per staging directory] → one read of the first NON-BLANK line
   per directory (the status-header production keys on the first non-blank line, never the first
@@ -168,6 +181,13 @@ so the live figure is 6 live rules, 6 accounted.
 - [Body prose teaches a mapping the engine does not check] → CLOSED destinations are judgment and
   the deliverable is the RECORD (R-crc-10); the one mechanical check is BOUNDED's verbatim landing,
   which the body performs by grep before Step 0d and the fidelity test pins as a step.
+- [Five living surfaces still describe this stage as a pending follow-on] → `orbit/specs/orbit-conventions/spec.md`
+  lines 980, 994 and 1022 (the concluded-outcome KNOWN paragraph and the accounted-closure text) and
+  `src/core/templates/workflows/explore.ts` lines 610 and 657 say propose does not read the header token and
+  that the residual transfer is "the propose-consumption follow-on's to specify". This change made them
+  false. DESCOPED at the system blind-pair walk (Sal: "a"): none is in this change's one capability, and
+  the class is the one rc13a deferred — the at-archive note 4.6 hands the five sites to the retirement-class
+  sweep, and the stale baseline sentence is an ACCEPTED RESIDUAL for the archive's readiness record.
 - [Size] → ONE capability, six requirement blocks (five MODIFIED, one ADDED), eight decisions at promotion; six live rules after
   two walks (D-rc13c-2 revised, D-rc13c-4 amended, D-rc13c-8 superseded), and the task count is held under R-crc-1's bound of 20. Measured before generation.
 
