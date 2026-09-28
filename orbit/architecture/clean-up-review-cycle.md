@@ -1509,7 +1509,7 @@ enumeration is TRUE, and whether a rule was declared at all).
 ### Stage rc13c-propose-consumes-mechanism — what an exploration accounted for reaches the proposal
 
 Depends-on: rc13a-explore-mechanism-convention
-Complete: [ ]
+Complete: [x] 2026-09-28 (Sal)
 
 DECLARED 2026-09-25 (Sal), from the follow-on rc13a's archive proposed. rc13a made a rule's domain
 ACCOUNTED in the exploration; D-bcs-3 says an OPEN-DECLARED residual does not block and instead
@@ -3844,3 +3844,18 @@ print of the parsed Mechanism form) and Q-crc-28 (the retirement-class sweep's l
 from this stage) opened from the at-archive notes; the five stale follow-on sentences are an accepted
 residual on the readiness record. rc13c renders quiescent, awaiting ratification. Next in dependency
 order: rc15-ended-stage-state (free), or rc02b / rc03 / rc04b in Phase 2.
+
+**2026-09-28 — rc13c RATIFIED (ten stages complete); all three exit criteria graded MET as
+written.** Sal ratified in the architect session on the archive's day. Exit (1): the mapping
+carries a Mechanism row (the pointer row in `Section-to-artifact mapping`; the partition in the ADDED
+`Mechanism section consumption`) and the structure-check scenario counts sections by POINTER to
+`orbit-conventions`' format requirement — the walks removed the one restated number the in-context
+pass found. Exit (2): D-rc13c-5's two residual lines sit verbatim in the ADDED requirement and the
+design's first Risks entry points at it (measured 1/1/1 at apply, at the confirm and at archive).
+Exit (3): the refuse is position-tested inside Mode detection (the both-exist refuse inside the
+conflict sub-step before its prompt; the phrase taught once body-wide), and `orbit-explore-
+modifications`' re-entry requirement is named with zero occurrences of its table row or its
+predicate. The charter's "refuse-or-reopen branch" left the choice to the exploration; the exploration
+chose refuse on Sal's word and the criterion still measured, so no R-crc-12 revision. rc03a's offer
+was not re-fired (its fourth decline stands; rc15's exit (1) ends that count). Next in dependency
+order: rc15-ended-stage-state is free; Phase 2's rc02b, rc03 and rc04b are open.

@@ -209,7 +209,7 @@ file now carries a live mark. Do NOT read this paragraph as the program's full l
 only what rc07 produced. The authoritative list is the program doc's own Open questions section,
 which also carries Q-crc-11, Q-crc-12, Q-crc-20, Q-crc-21, Q-crc-22 and Q-crc-23.
 
-**Seven more stages have shipped since, and the program is NINE stages complete** (rc13b ratified 2026-09-25; rc13c archived 2026-09-28, awaiting ratification).
+**Seven more stages have shipped since, and the program is TEN stages complete** (rc13c ratified 2026-09-28).
 
 `rc02c-confirmation-semantics` is ARCHIVED (2026-09-21): **the budget stopped being a target.**
 R-crc-11(h) — effort is RECORDED, never TARGETED — retired `budgetExhausted`, the
@@ -342,7 +342,7 @@ acts, recorded as such in the parity test and under the task); and Q-crc-14's fo
 readiness record accepts five residuals, headlined by rc07's distinction: PASSED means every
 finding resolved, not that an independent pass stood clean on the final tree. **2322 tests green.**
 
-`rc13c-propose-consumes-mechanism` is ARCHIVED (2026-09-28): **what an exploration accounted for
+`rc13c-propose-consumes-mechanism` is ARCHIVED and RATIFIED (2026-09-28; all three exit criteria graded MET as written): **what an exploration accounted for
 reaches the proposal, and a concluded exploration cannot be promoted.** Propose's Step 0 REFUSES a
 concluded staging directory — naming the conclusion date and the live `Re-entry:` slot, offering no
 reopen (Sal: a concluded exploration is DONE) — and refuses one beside an active change BEFORE the
