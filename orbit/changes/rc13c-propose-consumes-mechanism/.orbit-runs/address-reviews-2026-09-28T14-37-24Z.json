@@ -1,0 +1,175 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-28T14:37:24Z",
+  "change": "rc13c-propose-consumes-mechanism",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc13c-propose-consumes-mechanism/.orbit-runs/external-proposal-2026-09-27T01-49-30Z.md",
+  "external_reviewer": "GPT-5 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 2,
+    "warning": 4,
+    "suggestion": 2
+  },
+  "pushback_verification": "All 8 findings verified against the current artifacts before any edit — every cited line read as described; 0 stale. The partition defect was confirmed against the parser's state list (a BOUNDED entry missing a slot is `bounded-incomplete` AND carries the token); the mtime claim is accepted on the reviewer's measurement and git's known behaviour.",
+  "resolution_summary": {
+    "resolved": 8,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "The closure-token rows overlap the open-state row, giving one malformed live rule opposite destinations",
+      "marker_source": "external",
+      "file": "orbit/changes/rc13c-propose-consumes-mechanism/specs/orbit-propose-modifications/spec.md",
+      "line": 7,
+      "classification": "trivial_fix",
+      "action": "The ADDED requirement's table is rewritten as a PARTITION over (owner's live-rule status) × (the readout's accounting state), five rows tested in order, first match wins: non-live owner → history with no state word (the missing cell, now a row); live rule in `rules_open` (any state, whatever `Closure:` token) → UNACCOUNTED; accounted DERIVED/SOURCED → the requirement it derives; accounted BOUNDED → the two slots verbatim + Risks pointer; `key_defects` → reported, no carrier. 'Accounted' is defined by pointer as 'not in `rules_open`'. Two scenarios added (a BOUNDED entry missing a slot is unaccounted, not a residual; a malformed entry on a non-live owner is history); the unaccounted scenario's WHEN now says 'whatever `Closure:` token its entry carries'. Design D-rc13c-4 amended and dated, naming the ENUMERATE failure on a table marked DERIVED; proposal bullet updated.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/specs/orbit-propose-modifications/spec.md",
+          "orbit/changes/rc13c-propose-consumes-mechanism/design.md",
+          "orbit/changes/rc13c-propose-consumes-mechanism/proposal.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/changes/rc13c-propose-consumes-mechanism/explore.md",
+            "reason": "exploration record persists unchanged after the move; the design records the amendment"
+          }
+        ]
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "The concluded path is not disjoint from the inherited consume and conflict scenarios",
+      "marker_source": "external",
+      "file": "orbit/changes/rc13c-propose-consumes-mechanism/specs/orbit-propose-modifications/spec.md",
+      "line": 60,
+      "classification": "trivial_fix",
+      "action": "The consume-mode requirement now states PRECEDENCE within Step 0, first match wins: (1) both directories exist → the conflict prompt (the no-prompt promise applies only past it; after 'Regenerate from explore' the concluded check runs and refuses); (2) header `concluded` → REFUSED; (3) otherwise consume mode, entered ONLY for a non-concluded file with no unresolved conflict. 'Consume mode activated' WHEN scoped to a non-concluded file with no change directory; the refuse scenario WHEN scoped to no change directory; a new scenario covers a concluded staging directory beside an active change.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/specs/orbit-propose-modifications/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Filesystem modification time cannot establish that an emit was written against the current file",
+      "marker_source": "external",
+      "file": "orbit/changes/rc13c-propose-consumes-mechanism/tasks.md",
+      "line": 10,
+      "classification": "trivial_fix",
+      "action": "The optional trail cross-check is REMOVED entirely (completing the descope Sal ratified at walk 1): the requirement states that propose reads NO prior emit (git preserves no mtime, so no observable a body has can establish a record describes the current bytes), the AI's file read is the SOLE source, and the record's header always reads 'the proposing AI's reading of the file; no engine record'; the two cross-check scenarios replaced by one ('No prior emit is read as a cross-check'). Design D-rc13c-2 amended and dated with the reviewer's measurement; the record's header rewritten (the by-hand emit cited as interest only, not source); the Risks entry rewritten; Goals line replaced. Tasks 2.2, 3.3 and 4.4 rewritten. Proposal bullet and Capabilities line updated.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/specs/orbit-propose-modifications/spec.md",
+          "orbit/changes/rc13c-propose-consumes-mechanism/design.md",
+          "orbit/changes/rc13c-propose-consumes-mechanism/tasks.md",
+          "orbit/changes/rc13c-propose-consumes-mechanism/proposal.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/changes/rc13c-propose-consumes-mechanism/explore.md",
+            "reason": "exploration record persists unchanged after the move; the design records the amendment"
+          }
+        ]
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The delta restates the neighboring re-entry row that exit criterion 3 says to point at",
+      "marker_source": "external",
+      "file": "orbit/changes/rc13c-propose-consumes-mechanism/specs/orbit-propose-modifications/spec.md",
+      "line": 58,
+      "classification": "trivial_fix",
+      "action": "The parenthetical restating the third row is replaced by a bare pointer to `orbit-explore-modifications`' `Re-entry resolution and the conclude verb`; task 4.1's residue assertion now rejects both the table's header row and the phrase `ask nothing else`. Measured after the edit: zero occurrences of either in the delta.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/specs/orbit-propose-modifications/spec.md",
+          "orbit/changes/rc13c-propose-consumes-mechanism/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The main generated-body copies are not covered by the mirror parity plan",
+      "marker_source": "external",
+      "file": "orbit/changes/rc13c-propose-consumes-mechanism/tasks.md",
+      "line": 18,
+      "classification": "trivial_fix",
+      "action": "Task 2.4 gains an `ownerText('orbit-propose-modifications', …)` parity assertion holding the body's Step 0c.6 decision-table rows and four-shape list byte-equal to the ADDED requirement's (the single-active-owner lookup resolves the delta until archive), normalization stated as trailing-whitespace trim only.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "User-validation expects emit prose that no requirement or implementation task produces",
+      "marker_source": "external",
+      "file": "orbit/changes/rc13c-propose-consumes-mechanism/tasks.md",
+      "line": 26,
+      "classification": "trivial_fix",
+      "action": "Task 4.4 narrowed to what the change specifies: the next propose produces a `Mechanism → artifacts` record whose header reads 'the proposing AI's reading of the file; no engine record', validated by reading that design.md; no emit prose is expected.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Current-state prose still says all eight exploration decisions settled the live mechanism",
+      "marker_source": "external",
+      "file": "orbit/changes/rc13c-propose-consumes-mechanism/proposal.md",
+      "line": 16,
+      "classification": "trivial_fix",
+      "action": "Proposal 'Why' and design Context now qualify the eight-decision figure as the state AT PROMOTION and state the post-walk live figure up front: six rules — D-rc13c-2 revised twice, D-rc13c-4 amended to a partition, D-rc13c-8 superseded; the design's Decisions section named as the live statement.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/proposal.md",
+          "orbit/changes/rc13c-propose-consumes-mechanism/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The refusal test plan pins words but not their behaviorally significant location",
+      "marker_source": "external",
+      "file": "orbit/changes/rc13c-propose-consumes-mechanism/tasks.md",
+      "line": 5,
+      "classification": "trivial_fix",
+      "action": "Task 1.3 gains a POSITION assertion: slice the generated body by `## ` headings and assert the concluded-refuse text sits inside `## Mode detection`, after the conflict sub-step and before `## Consume-mode flow`; the whole-body markers stay as secondary pins.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "8 of 8 resolved, 0 stale, 0 deferred; all obvious-fix lane (Sal: 'walk all'), no decision fork. Both CRITICALs were repairs in place: the decision table is now a PARTITION with 'accounted' defined by pointer as not-in-`rules_open` and rows tested in order (the ENUMERATE failure named in design D-rc13c-4), and Step 0 has a stated precedence — conflict, then concluded refuse, then consume — with the three scenarios' WHEN clauses scoped disjointly (the COHERE failure). The mtime warning finished the descope: no prior emit is read at all, the AI's file read is the sole source, and the record's header says so. The third-row restatement became a bare pointer with a residue check that rejects the predicate; the body's decision table and shape list join the section list under the parity test; task 4.4 validates the record header the change actually specifies; the opening summaries state the post-walk live figure; the refuse test asserts position, not just words. Strict validation green, fingerprints 5/5, exit (2) greps 1/1, exit (3) zero occurrences of the header row or `ask nothing else`, 16 tasks, 31 scenarios. One process defect in the walk itself, corrected before persisting: a replacement script wrote three task lines with a literal backreference, dropping their checkboxes; rebuilt from the committed file. explore.md untouched by rule.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal rc13c-propose-consumes-mechanism"
+}

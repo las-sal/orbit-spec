@@ -22,9 +22,11 @@ Constraints: R-crc-1 (one capability, as chartered); R-crc-7 (decision tables; e
 once — this proposal is the first run through the mapping, and the record below is that execution);
 R-crc-10 (propose consumes FORM; truth is the reviewer's); R-crc-14 and its mirror corollary (the
 section list and the re-entry rule are pointed at; the body carries a checked mirror only where it
-cannot resolve the owner); the no-chaining contract (propose invokes no explore act). The mechanism is
-settled in `explore.md` (D-rc13c-1 … D-rc13c-8 and their Mechanism entries); this document restates
-what an implementer needs and cites the rest.
+cannot resolve the owner); the no-chaining contract (propose invokes no explore act). The mechanism was
+settled in `explore.md` at promotion (D-rc13c-1 … D-rc13c-8 and their Mechanism entries) and REVISED
+by two review walks: the live figure is SIX rules — D-rc13c-2 revised twice (the consume-time emit
+descoped, then its optional cross-check), D-rc13c-4 amended to a true partition, D-rc13c-8 superseded.
+This document's Decisions section is the live statement; `explore.md` is history by rule.
 
 ## Goals / Non-Goals
 
@@ -36,7 +38,7 @@ what an implementer needs and cites the rest.
   unaccounted rules are visible in the record.
 - The structure check reads the format's owner by pointer, and the body's copy of the list is held to
   it by a test.
-- The engine's parse stands beside the AI's reading at consume time, through an existing surface.
+- The record says what its source was — the AI's reading of the file — and claims no engine check it cannot show.
 
 **Non-Goals:**
 - Reopening a concluded exploration from propose, or removing explore's reopen path (Sal's "no
@@ -66,10 +68,12 @@ what an implementer needs and cites the rest.
   propose writes exactly one emit and no additional ones, and its trigger list names the explore body
   as the only writer of explore emits. The consume-time emit the exploration settled would have shipped
   a third writer with no delta on the owning spec, at a second capability. Descoped: propose reads
-  entries, tokens and residual slots off `explore.md` by the grammar `orbit-conventions` owns; when the
-  staging trail's NEWEST explore emit was written against the file as it stands, its arrays are read as
-  a cross-check and a disagreement is reported; otherwise the AI's reading stands alone and the record
-  says so. The engine check proper waits for a READ-ONLY print of the parsed form, which has no home
+  entries, tokens and residual slots off `explore.md` by the grammar `orbit-conventions` owns, and
+  reads NO prior emit as a cross-check (AMENDED at the external walk, 2026-09-28: the first descope
+  kept an optional check keyed on the newest emit postdating the file's last write; the external pass
+  measured that git preserves no mtime — a fresh checkout made the file newer than the emit by under
+  a millisecond — so the observable is not provenance and the check is gone). The AI's reading of the
+  file is the sole source and the record's header says so. The engine check proper waits for a READ-ONLY print of the parsed form, which has no home
   yet (see Risks; an at-archive note opens it as its own question rather than parking it under
   Q-crc-24, whose text is about the citable-pass set). `explore.md`'s D-rc13c-2 entry is history as
   written; this paragraph is the live statement. *Alternative rejected at the walk*: repairing the
@@ -85,13 +89,20 @@ what an implementer needs and cites the rest.
   single-active-owner lookup (`test/helpers/owner-text.ts`) and asserts the body's list equals it.
   *Alternative rejected*: one shared constant interpolated into both bodies (rc13b's one-grammar
   pattern) — pulls `orbit-explore-modifications` into scope.
-- **D-rc13c-4 — the Mechanism row is a decision table over (closure token × owner state).** Five
-  rows: CLOSED · live rule → the requirement it derives; BOUNDED · live rule → the two slots verbatim
-  in that requirement's text (OWNER) and a Risks pointer; any token · non-live owner → not carried;
-  no usable entry · live rule → a Risks entry naming the ID as UNACCOUNTED with the engine's state
-  word; key defects → reported at Step 0a, no carrier. The design carries a `Mechanism → artifacts`
-  record. DERIVED from `CLOSURE_TOKENS`, the parser's five open states, the entry-identity requirement's
-  live predicate and the parser's third array.
+- **D-rc13c-4 — the Mechanism row is a decision table, and it is a PARTITION** (AMENDED at the
+  external walk, 2026-09-28: the external pass found the first table was NOT one — "has a `Closure:`
+  token" and "no usable entry" overlap, since a BOUNDED entry missing a slot carries the token AND
+  sits in `rules_open` as `bounded-incomplete`, and the no-entry × non-live cell had no row. An
+  ENUMERATE failure in a table the exploration marked DERIVED; recorded as such). Five rows tested in
+  order: `key_defects` (orphan or duplicate) → reported, no carrier — FIRST, because a duplicate-ID
+  second entry is excluded from `rules_total` and would otherwise read as accounted (AMENDED again at
+  the in-context walk, 2026-09-28: the external-walk repair defined "accounted" as not-in-`rules_open`
+  and let that entry through to the carrier rows); non-live owner → history, no state word; live rule
+  in `rules_open` (any state, whatever token) → UNACCOUNTED with the state word; live rule accounted
+  with DERIVED/SOURCED → the requirement it derives; live rule accounted with BOUNDED → the two slots
+  verbatim in spec text and a Risks pointer. "Accounted" is defined by pointer as "counted in
+  `rules_total` AND not in `rules_open`", so the table stays a partition when either field's set changes. The design
+  carries a `Mechanism → artifacts` record.
 - **D-rc13c-5 — a CLOSED domain lands as one of four shapes, and the set is BOUNDED.** A normative
   table (D-bcs-7 → the re-entry table), a grammar block (D-bcs-8 → the grammar fences), a scenario set
   (rc13b's grid → the maturity scenarios), a sentence naming the source (D-bcs-6 → the concluded
@@ -105,26 +116,24 @@ what an implementer needs and cites the rest.
   change.
 - **D-rc13c-7 — a Step 0b resolve-now writes a conforming Decisions entry; a rule answer is an open
   domain.** An entry appended without the opener has no ID, parses as `open` (line-only), and the
-  readout (and any trail cross-check) would report an open rule nobody can name. Propose does not author nine-move
+  readout would report an open rule nobody can name. Propose does not author nine-move
   entries; the user is told at the prompt that a rule answer stays unaccounted.
 
 ## Mechanism → artifacts
 
 The record D-rc13c-4 requires, authored here for the first time by the mapping it specifies (R-crc-7:
-execute the procedure once). Source of the counts: the staging trail's newest explore emit
-(`explore-2026-09-26T18-01-34Z.json`, written against the file as it stood after Step 0b: 7 live
-rules, 6 accounted, 1 open, 1 residual, 0 key defects), read as the cross-check; the proposing AI's
-reading of the file agreed on every count. (That emit was fired by hand at this propose under the
-exploration's original D-rc13c-2; the mechanism is descoped and it stands as a one-off measurement,
-not a step.) Rows revised at the first walk: D-rc13c-8 is superseded and no longer an open domain,
+execute the procedure once). Source: the proposing AI's reading of the file; no engine record. (For the reader's interest only,
+not as a source: `explore-2026-09-26T18-01-34Z.json`, fired by hand at this propose under the
+exploration's original D-rc13c-2 before that step was descoped, reported 7 live rules, 6 accounted, 1
+open, 1 residual, 0 key defects, and the AI's reading agreed on every count.) Rows revised at the first walk: D-rc13c-8 is superseded and no longer an open domain,
 so the live figure is 6 live rules, 6 accounted.
 
 | entry | token | owner | destination |
 |---|---|---|---|
 | D-rc13c-1 | SOURCED | live rule | `Consume mode when staging directory exists` (MODIFIED) — a SCENARIO SET for four members (the refuse before the switch; the neither-token case; the conflict-first row, unchanged baseline; the inference exclusion in `Naming inference fallback`) plus ONE SENTENCE for the fifth (a concluded header in the change directory is not a propose input — points at the re-entry requirement); source sentence: the body's Step 0 sub-steps |
-| D-rc13c-2 (as revised) | SOURCED | live rule | `Mechanism section consumption` (ADDED) — a SENTENCE naming the source (what is read from the file, by whose grammar; what may be read from the newest emit); source sentence: the parser's output shape |
+| D-rc13c-2 (as revised) | SOURCED | live rule | `Mechanism section consumption` (ADDED) — a SENTENCE naming the source (what is read from the file, by whose grammar; that no prior emit is read); source sentence: the parser's output shape |
 | D-rc13c-3 | — | `Kind: scope` | not carried (a scope choice; its test is task 3.2) |
-| D-rc13c-4 | DERIVED | live rule | `Mechanism section consumption` (ADDED) — the decision table verbatim |
+| D-rc13c-4 | DERIVED (derivation amended twice) | live rule | `Mechanism section consumption` (ADDED) — the decision table as REVISED at the external and in-context walks, a normative TABLE shape; the exploration's own table was superseded by the partition (see the amended D-rc13c-4 above) |
 | D-rc13c-5 | BOUNDED | live rule | `Mechanism section consumption` (ADDED) — the four shapes as a table AND the two residual slots verbatim as the requirement's named limit; Risks below points at it |
 | D-rc13c-6 | SOURCED | live rule | `Validate explore.md structure before consuming` (MODIFIED) — a scenario set (present / absent incl. Mechanism / unreadable); source sentence: the existing three scenarios |
 | D-rc13c-7 | SOURCED | live rule | `Open question handling` (MODIFIED) — the resolve-now scenario, split for the rule case |
@@ -136,12 +145,10 @@ so the live figure is 6 live rules, 6 accounted.
   `specs/orbit-propose-modifications/spec.md`, requirement `Mechanism section consumption`, as its
   named limit (the OWNER); this entry POINTS there and restates nothing. Exit criterion (2) is measured
   on exactly these two carriers.
-- [Two readers of one grammar, and the engine's may be absent] → the AI's reading and the engine's
-  parse can disagree on a malformed entry; the newest staging explore emit is read as a cross-check
-  when it was written against the current file, and a disagreement is reported before generation.
-  When Step 0b wrote to the file, or no emit exists, the AI reads alone and the record's header says
-  so. The proper fix is a READ-ONLY engine print of the parsed form for a staging name (no emit, so the
-  one-shot rule is untouched) — it has no owning question yet; an at-archive note opens one (task 4.5).
+- [One reader of the grammar at propose — the AI] → no engine record is consulted, because none can be
+  shown to describe the current bytes (git keeps no mtime; the external pass measured a fresh checkout
+  flipping the order). The engine's parse stays the REVIEWER's cross-check after the fact, and a
+  READ-ONLY print of it for a staging name is the follow-on task 4.5 opens as its own question.
 - [`explore.md`'s D-rc13c-2 and D-rc13c-8 entries read as live rules a reader of the archived file
   would take at face value] → the file is history by the persists-unchanged requirement; the design is
   the live statement (this document's Decisions), and the record above names the revision. A reader
@@ -161,8 +168,8 @@ so the live figure is 6 live rules, 6 accounted.
 - [Body prose teaches a mapping the engine does not check] → CLOSED destinations are judgment and
   the deliverable is the RECORD (R-crc-10); the one mechanical check is BOUNDED's verbatim landing,
   which the body performs by grep before Step 0d and the fidelity test pins as a step.
-- [Size] → ONE capability, six requirement blocks (five MODIFIED, one ADDED), eight decisions (seven
-  rules), and the task count is held under R-crc-1's bound of 20. Measured before generation.
+- [Size] → ONE capability, six requirement blocks (five MODIFIED, one ADDED), eight decisions at promotion; six live rules after
+  two walks (D-rc13c-2 revised, D-rc13c-4 amended, D-rc13c-8 superseded), and the task count is held under R-crc-1's bound of 20. Measured before generation.
 
 ## Touchpoints
 

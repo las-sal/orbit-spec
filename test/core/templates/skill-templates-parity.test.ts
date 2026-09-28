@@ -80,7 +80,12 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   getOrbitOnboardCommandTemplate: '3a3e98c6a01517896dfdccaba4fa4477edea62fd69dc4189df1dd105bbedcc5b',
   getOrbitBulkArchiveCommandTemplate: '6bc94ce2a406ceb934f461665bdd1e96f5a7149c798172c04f50d83c3630819a',
   getOrbitVerifyCommandTemplate: 'b98377960f7416452e77f6042ffbb037df4c6461619aebe9b595a6883a752a9a',
-  getOrbitProposeSkillTemplate: 'ffe5d059d58919304a815b85e3945dbd0fb6e9f108929718cb71127ffd6a79a5',
+  // rc13c (propose-consumes-mechanism, 2026-09-28): the orbit-propose body moved ONCE, deliberately — Step 0
+  // (the concluded refuse; live-only naming inference; the Regenerate option's refuse sentence), Step 0a (the
+  // six-section mirror), Step 0b (the interpolated entry form; the Mechanism read after the last file write),
+  // Step 0c (the Mechanism row), NEW Step 0c.6 (the partition table, the four shapes, the record, the
+  // pre-move grep), Graceful degradation. Re-recorded in the same task that edited the body (tasks 3.4).
+  getOrbitProposeSkillTemplate: '0d24a033fa68096294af2a41c46778674c40f438d523a14b479dc3185f27d967',
   getOrbitProposeCommandTemplate: 'b91222654d5050d7ae7f2f49b5d6c4b34e65638bd8c5ae3e622550eb1329c168',
   getFeedbackSkillTemplate: 'ded61ad85c5050f7bf241870b14bfcdd929f0be68a028c1130fd30a66efbda3b',
   getArchitectSkillTemplate: '343ad958d4fdb6092bbcf2e7a8283df51da65711a6f30043c0938122b7152ace',
@@ -98,7 +103,7 @@ const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
   'orbit-bulk-archive-change': '601dd7c74804c06a9818428f86030c8cef5311a9fc7c59f2dc14e490007a291d',
   'orbit-verify-change': '0d8f6b82d40bf95bd6b49f447fbd66d5414af79fa157872345668b9cb709ab6d',
   'orbit-onboard': '4b227395bb70c36c643970d821ec8eb245fbfca090accdc38d5b3588f7620fa7',
-  'orbit-propose': '2e7ec600c01feb8dc57877484048dbaff6bed63524485b386bb487611ec22d23',
+  'orbit-propose': '44b725e46f4eee5acd65f23ca03aca91ee8fd8c3b1bc54f0da3a8e6a75ce4ebe', // rc13c: moved once with the body (see the function-hash note above)
   'orbit-architect': '5603821c28adfd35e108fad5ec226eb2839db0453f61e660a35489067b1686aa',
 };
 

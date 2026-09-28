@@ -36,6 +36,7 @@ import {
   getOrbitAuditDriftCommandTemplate,
   type SkillTemplate,
 } from '../../../src/core/templates/skill-templates.js';
+import { ownerText } from '../../helpers/owner-text.js';
 
 /**
  * Fidelity guard for B1 (relocate-modified-upstream-workflows): asserts orbit's
@@ -64,7 +65,11 @@ import {
 // qualifier from dropping out of one of them silently.
 const RELOCATED: Array<[string, () => SkillTemplate, string[]]> = [
   ['explore', getExploreSkillTemplate, ['execution disciplines', 'Run-summary emit', 'BEGIN emit', 'orbit emit explore', 'No retro-fire', 'BACK-FILLED counts']],
-  ['propose', getOrbitProposeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
+  // rc13c (propose-consumes-mechanism): the concluded refuse in Step 0, live-only naming inference, the
+  // section-list mirror, the Mechanism read after the last file write, the Step 0c.6 record and its
+  // no-engine-record header, the rule-answer note at Step 0b. Position and parity assertions live in
+  // the `rc13c propose consume-mode integrity` block below.
+  ['propose', getOrbitProposeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override', 'this exploration concluded on', 'is never reached', 'LIVE staging director', 'Mechanism → artifacts', 'no engine record', 'Residual kind:', 'no Mechanism entry is authored at propose', 'refused here too']],
   ['new-change', getNewChangeSkillTemplate, ['execution disciplines', 'Run-summary emit']],
   ['continue-change', getContinueChangeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
   ['apply-change', getApplyChangeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override', 'blocked-by-gate', 'continuation', 'formed_against: []', 'ACCEPTED as a pass', 'Consent at entry', 'consent_era_from', '"user-invoked" | "prompted"', 'orbit emit apply']],
@@ -151,6 +156,83 @@ describe('D4 external prompt output-format block: delta <-> shipped template byt
     const ref = getReviewSkillTemplate().references.find((r) => r.name === 'external-handoff.md')!.content;
     expect(ref).toContain('ACCEPTED as a pass');
     expect(ref).not.toContain('cannot be unresolvable');
+  });
+});
+
+describe('rc13c propose consume-mode integrity (Mechanism section consumption)', () => {
+  const body = getOrbitProposeSkillTemplate().instructions;
+  const sections = (text: string): Record<string, string> => {
+    const out: Record<string, string> = {};
+    const parts = text.split(/\n(?=## )/);
+    for (const part of parts) {
+      const m = part.match(/^## (.+)$/m);
+      if (m) out[m[1].trim()] = part;
+    }
+    return out;
+  };
+  const stripTrailing = (t: string) => t.split('\n').map((l) => l.replace(/\s+$/, '')).join('\n');
+
+  it('the concluded refuse sits inside Mode detection, after the conflict sub-step and before the consume-mode flow (exit 3)', () => {
+    const sec = sections(body);
+    const mode = sec['Mode detection (NEW Step 0 — runs before upstream Step 1)'];
+    expect(mode, 'Mode detection section present').toBeTruthy();
+    const conflict = mode.indexOf('**Check for conflict**');
+    const refuse = mode.indexOf('this exploration concluded on');
+    expect(conflict).toBeGreaterThan(-1);
+    expect(refuse).toBeGreaterThan(conflict);
+    // The Regenerate option itself reaches the concluded check (precedence 1 then 2).
+    const regen = mode.indexOf('**Regenerate from explore**');
+    expect(regen).toBeGreaterThan(conflict);
+    expect(mode.slice(regen, refuse)).toContain('refused here too');
+    // Nothing in the consume-mode flow re-teaches the refuse.
+    expect(sec['Consume-mode flow']).not.toContain('this exploration concluded on');
+  });
+
+  it('points at the re-entry rule and never restates it (exit 3)', () => {
+    expect(body).not.toContain('| staging dir | concluded |');
+    expect(body).not.toContain('ask nothing else');
+  });
+
+  it("carries no 'five-section' residue (rc13a's declared exemption closed)", () => {
+    expect(body).not.toMatch(/(five|5)[- ]sections?/);
+  });
+
+  it("the section-list mirror is byte-equal to orbit-conventions' format requirement (emphasis stripped)", async () => {
+    const owner = await ownerText('orbit-conventions', 'fixed SIX-section format');
+    const m = owner.match(/fixed SIX-section format for `explore\.md`, in this order: ([^.]+)\./);
+    expect(m, 'the owner states the list in one "in this order:" clause').toBeTruthy();
+    const ownerList = m![1].replace(/\*\*/g, '').trim();
+    expect(body).toContain(`in its order — ${ownerList}.`);
+  });
+
+  it("the Step 0c.6 decision table is byte-equal to the ADDED requirement's (trailing whitespace trimmed)", async () => {
+    const owner = await ownerText('orbit-propose-modifications', 'a PARTITION of the entries and live rules');
+    const rows = (text: string) => {
+      const start = text.indexOf('| row | owner\'s Decisions state | accounting state | lands in |');
+      expect(start, 'table header present').toBeGreaterThan(-1);
+      const lines = text.slice(start).split('\n');
+      const table: string[] = [];
+      for (const l of lines) {
+        if (!l.startsWith('|')) break;
+        table.push(l.replace(/\s+$/, ''));
+      }
+      return table;
+    };
+    const ownerRows = rows(owner);
+    expect(ownerRows.length).toBe(7); // header + separator + five rows
+    expect(rows(body)).toEqual(ownerRows);
+  });
+
+  it("the four-shape list is byte-equal to the ADDED requirement's clause", async () => {
+    const owner = await ownerText('orbit-propose-modifications', 'a PARTITION of the entries and live rules');
+    const m = owner.match(/lands in requirement text as one of four shapes, each observed on the record: ([\s\S]+?)\. Which shape fits/);
+    expect(m, 'the owner states the four shapes in one clause').toBeTruthy();
+    expect(stripTrailing(body)).toContain(stripTrailing(m![1]));
+  });
+
+  it('the Step 0b entry form interpolates the grammar constant (no hand-written variant)', () => {
+    expect(body).toContain('- **<YYYY-MM-DD> — <ID>: <title>** <prose…>');
+    expect(body).not.toContain('D-<tag>-<n>');
   });
 });
 

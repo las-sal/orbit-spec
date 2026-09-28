@@ -13,9 +13,12 @@ nothing — is promoted into a live change like any other. The failure D-bcs-1 f
 exploration, a domain left open silently, reappears one layer down: the account dies at the seam
 where the work becomes a change.
 
-Every mechanism here was settled in the exploration (`explore.md`: eight decisions, seven live rules,
-six with Mechanism entries parsing clean under the engine, one BOUNDED residual — this stage's own
-exit-(2) exemplar). Sal ruled the two scope calls: a concluded exploration is DONE, propose refuses it
+Every mechanism here was settled in the exploration at promotion (`explore.md`: eight decisions,
+seven live rules, six with Mechanism entries parsing clean under the engine, one BOUNDED residual —
+this stage's own exit-(2) exemplar) and then REVISED by two review walks, so the live figure is SIX
+rules: D-rc13c-2 revised (the consume-time emit descoped, then its optional trail cross-check),
+D-rc13c-4 amended to a true partition, D-rc13c-8 superseded. The design's Decisions section is the
+live statement; `explore.md` is history by rule. Sal ruled the two scope calls: a concluded exploration is DONE, propose refuses it
 and offers no way back (D-rc13c-1); and the stage stays at ONE capability (D-rc13c-3).
 
 ## What Changes
@@ -28,16 +31,16 @@ and offers no way back (D-rc13c-1); and the stage stays at ONE capability (D-rc1
   a candidate. The reopen path stays where rc13a put it — `orbit-conventions`' reopen scenario, executed
   by the explore body — and propose does not mention it. (D-rc13c-1)
 - **Consume mode reads the Mechanism section from the file; propose fires no emit of its own.** The
-  proposing AI reads entries, tokens and residual slots by the grammar `orbit-conventions` owns. When
-  the staging trail's newest explore emit was written against the file as it stands, its `rules_open`,
-  `key_defects` and `residuals` are read as a cross-check and a disagreement is reported before
-  generation; otherwise the AI's reading stands alone and the record says so. `orbit-run-summary-emit`'s
+  proposing AI reads entries, tokens and residual slots by the grammar `orbit-conventions` owns, and
+  reads no prior emit as a cross-check (git keeps no modification time, so no trail record can be
+  shown to describe the current bytes); the record's header says the AI's reading is its source. `orbit-run-summary-emit`'s
   one-shot rule is untouched. A read-only engine print of the parsed form is the proper cross-check and
   is opened as its own question at archive. (D-rc13c-2 as revised at the first walk; the consume-time
   emit the exploration settled was descoped there — it contradicted the one-shot rule and would have
   needed a second capability)
-- **The mapping gains a MECHANISM ROW, stated as a decision table over closure token × owner
-  state.** A CLOSED entry (DERIVED / SOURCED) on a live rule lands in the spec delta requirement the
+- **The mapping gains a MECHANISM ROW, stated as a decision table that PARTITIONS what propose
+  meets** — owner's live-rule status × the readout's accounting state, rows tested in order, "accounted"
+  defined by pointer as not in `rules_open`. A CLOSED entry (DERIVED / SOURCED) on an accounted live rule lands in the spec delta requirement the
   rule derives — its domain table as one of the four shapes on record (a normative table, a grammar
   block, a scenario set, a sentence naming the source; a BOUNDED set), its `Closure:` justification as
   the sentence naming the source. A BOUNDED entry lands its `Residual kind:` and `Residual method:`
@@ -72,8 +75,8 @@ and offers no way back (D-rc13c-1); and the stage stays at ONE capability (D-rc1
   ADDED requirement below); `Validate explore.md structure before consuming` (six sections by pointer,
   the Mechanism-absent case); `Open question handling` (the conforming entry; a rule answer as an open
   domain); `Naming inference fallback` (concluded directories are not candidates); plus ONE ADDED
-  requirement, `Mechanism section consumption`, carrying the decision table, the file read with its
-  optional trail cross-check, the four CLOSED shapes with their declared residual, and the design record.
+  requirement, `Mechanism section consumption`, carrying the partitioned decision table, the file read
+  as sole source, the four CLOSED shapes with their declared residual, and the design record.
 
 ONE capability, six requirement blocks (five MODIFIED, one ADDED) — inside R-crc-1's ceiling, as
 chartered ("one capability, which is why this is a stage and not a fold"). The first walk kept it at
@@ -82,14 +85,15 @@ one by descoping rather than repairing a neighbour (R-crc-6).
 ## Impact
 
 - **Templates**: `src/core/templates/workflows/propose.ts` — Step 0 (the concluded branch and the
-  naming-inference exclusion), Step 0a (the mirrored section list), Step 0b (the Mechanism read after the last file write), (the
-  entry format), Step 0c (the Mechanism row), a new Step 0c.6 (the `Mechanism → artifacts` record and
+  naming-inference exclusion), Step 0a (the mirrored section list), Step 0b (the entry format; the Mechanism read after the last
+  file write), Step 0c (the Mechanism row), a new Step 0c.6 (the `Mechanism → artifacts` record and
   the residual travel), Graceful degradation. The `orbit-propose` hash pin in
   `test/core/templates/skill-templates-parity.test.ts` MOVES, deliberately, once.
 - **Tests**: `test/core/templates/orbit-content-fidelity.test.ts` — the propose marker set gains the
   refuse branch, the mirror, the no-engine-record header and the record; a parity assertion holding the
-  body's section list byte-equal to `orbit-conventions`' format requirement through the existing
-  single-active-owner lookup (`test/helpers/owner-text.ts`); a residue grep proving
+  body's section list byte-equal to `orbit-conventions`' format requirement, and the Step 0c.6
+  decision table and four-shape list byte-equal to this change's `Mechanism section consumption`
+  requirement, through the existing single-active-owner lookup (`test/helpers/owner-text.ts`); a residue grep proving
   `(five|5)[- ]sections?` no longer matches in the propose body (rc13a's declared exemption closed).
 - **Engine**: none. No new command, no new field, no parser change, no new emit.
 - **Specs**: six blocks in `orbit-propose-modifications`; fingerprints stamped on the five MODIFIED
