@@ -9,6 +9,7 @@ import {
   isSpineValid,
   listLiveWorkstreams,
 } from '../../src/core/orientation.js';
+import { buildArchitectureBuckets, renderStageLine } from '../../src/core/architecture/buckets.js';
 
 /**
  * Orientation module tests (D-arc Stage D3, task 1.4): continuity predicate
@@ -558,6 +559,48 @@ describe('strip and recency fidelity', () => {
 
     const o = collectOrientation(root);
     expect(o.waiting).toContain('good-stage completion — yours to ratify');
+  });
+
+  it('ended and ended-from-explore stages contribute NOTHING to WAITING; the PROGRAM band renders both through the shared builder (rc15)', () => {
+    const archDir = path.join(root, 'orbit', 'architecture');
+    fs.mkdirSync(archDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(archDir, 'prog.md'),
+      '# P\n\n### Stage s1-ended — declared ended\n\nDepends-on: (none)\nComplete: [~] 2026-09-28 (Sal)\n\n### Stage s2-concluded — only a concluded exploration cites it\n\nComplete: [ ]\n\n### Stage s3-awaiting — a real awaiting one\n\nComplete: [ ]\n'
+    );
+    const archived = makeArchivedChange('2026-09-01-s1-work');
+    fs.writeFileSync(
+      path.join(archived, '.openspec.yaml'),
+      'schema: spec-driven\ncreated: "2026-09-01"\narchitecture:\n  doc: prog\n  stage: s1-ended\n'
+    );
+    const concluded = makeExplore('s2-think');
+    fs.writeFileSync(
+      path.join(concluded, '.openspec.yaml'),
+      'schema: spec-driven\ncreated: "2026-09-01"\narchitecture:\n  doc: prog\n  stage: s2-concluded\n'
+    );
+    fs.writeFileSync(path.join(concluded, 'explore.md'), '> **Status**: concluded 2026-09-25.\n\n# Exploration\n');
+    const awaiting = makeArchivedChange('2026-09-02-s3-work');
+    fs.writeFileSync(
+      path.join(awaiting, '.openspec.yaml'),
+      'schema: spec-driven\ncreated: "2026-09-02"\narchitecture:\n  doc: prog\n  stage: s3-awaiting\n'
+    );
+    makeChange('live-one'); // keep a live workstream so the view has a sprint
+
+    const o = collectOrientation(root);
+    // The closed set keys on the exact awaiting string: only s3 reaches WAITING.
+    expect(o.waiting.filter((w) => w.includes('completion — yours to ratify'))).toEqual(['s3-awaiting completion — yours to ratify']);
+    expect(o.waiting.some((w) => w.includes('s1-ended') || w.includes('s2-concluded'))).toBe(false);
+
+    // The PROGRAM band is the shared builder's output — byte-identical to `orbit architecture status`.
+    const direct = buildArchitectureBuckets(root);
+    expect(o.program).toEqual(direct);
+    const strip = (t: string) => t.replace(/\u001b\[[0-9;]*m/g, '');
+    const lines = o.program.parseable[0].stages.map((st) => strip(renderStageLine(st)));
+    expect(lines).toEqual(direct.parseable[0].stages.map((st) => strip(renderStageLine(st))));
+    expect(lines[0]).toBe('  s1-ended — ended (declared 2026-09-28 by Sal) [archived-change:2026-09-01-s1-work]');
+    expect(lines[1]).toBe('  s2-concluded — ended-from-explore [explore:s2-think (concluded)]');
+    // The concluded explore is still a live-listed workstream (orientation reads its trail, not the file — D3).
+    expect(o.workstreams.some((w) => w.kind === 'explore' && w.name === 's2-think')).toBe(true);
   });
 
   it('WAITING renders the singular literal at one packaged handoff', () => {

@@ -57,9 +57,15 @@ export function renderStageLine(s: StageState): string {
         ? chalk.red(`INCONSISTENT — ${s.inconsistency}`)
         : s.rendered === 'quiescent-awaiting-ratification'
           ? chalk.yellow('quiescent — completion awaiting your ratification')
-          : s.rendered;
+          : s.rendered === 'ended'
+            ? chalk.magenta(`ended (declared ${s.endedDate} by ${s.endedWho})`) // neither complete (green) nor waiting (yellow)
+            : s.rendered === 'ended-from-explore'
+              ? chalk.magenta('ended-from-explore')
+              : s.rendered;
   const citing =
-    s.citing.length > 0 ? chalk.gray(` [${s.citing.map((c) => `${c.kind}:${c.name}`).join(', ')}]`) : '';
+    s.citing.length > 0
+      ? chalk.gray(` [${s.citing.map((c) => `${c.kind}:${c.name}${c.concluded ? ' (concluded)' : ''}`).join(', ')}]`)
+      : '';
   return `  ${s.id} — ${mark}${citing}`;
 }
 

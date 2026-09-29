@@ -271,7 +271,7 @@ function judgeEntry(entry: MechanismEntry): EntryJudgement {
 // The status header
 // ---------------------------------------------------------------------------
 
-function readStatus(content: string): ExploreStatus {
+export function readStatus(content: string): ExploreStatus {
   // A leading UTF-8 BOM and trailing whitespace are normalised away BEFORE the owned production
   // matches (rc13b system walk: both were reading a concluded file as exploring, invisibly).
   const first = (content.replace(/^\uFEFF/, '').split(/\r?\n/).find((l) => l.trim() !== '') ?? '').trimEnd();

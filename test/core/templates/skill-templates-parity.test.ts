@@ -91,7 +91,12 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   getOrbitProposeSkillTemplate: '51a8dcb5464b9aac1ecb743a0a1c9b78529d82714f346e093dbf1a7ec6d54aab',
   getOrbitProposeCommandTemplate: 'b91222654d5050d7ae7f2f49b5d6c4b34e65638bd8c5ae3e622550eb1329c168',
   getFeedbackSkillTemplate: 'ded61ad85c5050f7bf241870b14bfcdd929f0be68a028c1130fd30a66efbda3b',
-  getArchitectSkillTemplate: '343ad958d4fdb6092bbcf2e7a8283df51da65711a6f30043c0938122b7152ace',
+  // rc15 (ended-stage-state, 2026-09-29): the orbit-architect body moved ONCE, deliberately — §5 (the
+  // ratify / not yet / ended offer; the ended write to `stages_ended`; an ended stage offered nothing; the
+  // unprompted route, written on premised/quiescent/concluded + an undated slot and DECLINED on live work or
+  // a dated mark; the closing parenthetical naming the engine's table), the §2 scaffold sentence's grammar
+  // mirror (the third production), and the emit compose step (`stages_ended`). Re-recorded in task 3.3.
+  getArchitectSkillTemplate: 'd28d0d13040b2a62c47e3ba6baebb01cc1b4f6fc3c894529b58c17fdfefbd777',
   getOrbitArchitectCommandTemplate: 'b65b8cca6431bb45aa8587d3bfc1e9458981e2e1bc925ae45cd57414143cb3db',
 };
 
@@ -107,7 +112,7 @@ const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
   'orbit-verify-change': '0d8f6b82d40bf95bd6b49f447fbd66d5414af79fa157872345668b9cb709ab6d',
   'orbit-onboard': '4b227395bb70c36c643970d821ec8eb245fbfca090accdc38d5b3588f7620fa7',
   'orbit-propose': 'ce16a6fe9fdc7ad3846cc99e002173125c795b2379a9239b888b6a4a5b16efb1', // rc13c: moved once with the body (see the function-hash note above)
-  'orbit-architect': '5603821c28adfd35e108fad5ec226eb2839db0453f61e660a35489067b1686aa',
+  'orbit-architect': '146a0f1ae07fba132e6d0eda4a47fc28949e6a3e5ba844d0905925df33080d6b', // rc15: moved once with the body (see the function-hash note above)
 };
 
 function stableStringify(value: unknown): string {

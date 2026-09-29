@@ -250,6 +250,64 @@ describe('rc13c propose consume-mode integrity (Mechanism section consumption)',
   });
 });
 
+describe('rc15 ended-stage-state: the architect §5 offer, the unprompted route, audit-drift check (b) by pointer', () => {
+  const architect = getArchitectSkillTemplate().instructions;
+  const auditDrift = getAuditDriftSkillTemplate().instructions;
+  const h3 = (text: string, prefix: string): string => {
+    const parts = text.split(/\n(?=### )/);
+    const part = parts.find((p) => p.startsWith(`### ${prefix}`));
+    expect(part, `section '### ${prefix}' present`).toBeTruthy();
+    return part!;
+  };
+
+  it('§5 carries the third answer, the ended write, stages_ended, and offers an ended stage nothing', () => {
+    const s5 = h3(architect, '5. Completion-ratification flow');
+    expect(s5).toContain('**ratify** / **not yet** / **ended**');
+    expect(s5).toContain('the stage\'s exit criteria will not be met, the stage renders `ended`, and the mark is a slot edit that can be reversed by hand');
+    expect(s5).toContain('write `Complete: [~] <YYYY-MM-DD> (<who>)` into that stage\'s slot with the same insert rule');
+    expect(s5).toContain('under `stages_ended` — never under `completions_ratified`');
+    expect(s5).toContain('a stage rendering `ended`, `ended-from-explore` or `complete` is offered nothing');
+  });
+
+  it('§5 carries the unprompted route, written on premised/quiescent/concluded + an undated slot, declined on live work and on a dated mark', () => {
+    const s5 = h3(architect, '5. Completion-ratification flow');
+    expect(s5).toContain('**The unprompted route**');
+    expect(s5).toContain('the only route for a `premised` stage');
+    expect(s5).toContain('is `premised`, `quiescent` or `concluded` AND its `Complete:` slot is UNDATED (absent, or `[ ]`)');
+    expect(s5).toContain('name the live citing artifact and the act that would make the mark supportable — archive the change, or conclude the exploration');
+    expect(s5).toContain('name the existing mark and point at the hand edit as the way to reverse or re-date it');
+    expect(s5).toContain('the ended mark is supported wherever no live work contradicts it, `premised` included');
+    // R-crc-14: the composition table is named, never restated, in this body.
+    expect(s5).toContain('this body names it and restates none of it');
+    expect(architect).not.toContain('| observed');
+  });
+
+  it('§5 contains exactly ONE AskUserQuestion prompt', () => {
+    const s5 = h3(architect, '5. Completion-ratification flow');
+    expect(s5.split('**AskUserQuestion**').length - 1).toBe(1);
+  });
+
+  it('the §2 scaffold sentence mirrors all three slot productions; the emit step names stages_ended', () => {
+    // Body-level: the h3 slicer is fence-blind and §2's scaffold fence carries a `### Stage` line
+    // that would truncate the slice (the rc13c lesson above). The sentence is stated once.
+    const grammarMirror = '`Complete: [ ]` / `Complete: [x] <YYYY-MM-DD> (<who>)` / `Complete: [~] <YYYY-MM-DD> (<who>)`';
+    expect(architect.split(grammarMirror).length - 1).toBe(1);
+    expect(architect.indexOf(grammarMirror)).toBeLessThan(architect.indexOf('### 3. Resume'));
+    expect(architect).toContain('`stages_ended` (the stage ids this session declared ended');
+  });
+
+  it('audit-drift check (b) names both marks and points at the composition rule, enumerating no observations', () => {
+    expect(auditDrift).toContain('ratified `[x]` or ended `[~]` — on a stage whose observed state the engine\'s composition rule renders INCONSISTENT');
+    expect(auditDrift).toContain('this check consumes that rule and enumerates none of its observations');
+    expect(auditDrift).toContain('the ended claim is contradicted by live work');
+    // The dropped enumerations, and the table itself, are absent.
+    expect(auditDrift).not.toContain('no citing artifacts at all (`premised`)');
+    expect(auditDrift).not.toContain('live citing work OR');
+    expect(auditDrift).not.toContain('| observed');
+    expect(auditDrift).not.toContain('ended-from-explore');
+  });
+});
+
 describe('D4 decision-lane protocol integrity (address-reviews body)', () => {
   const body = getAddressReviewsSkillTemplate().instructions;
 

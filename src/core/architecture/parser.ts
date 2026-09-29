@@ -3,7 +3,8 @@
  *
  * An architecture doc declares engine-readable structure via heading conventions while
  * staying a judgment-dense prose document. This parser INTERPRETS only: stage ids/titles, the
- * two optional slot lines (`Depends-on:` / `Complete:`), and section boundaries; `docClass` and
+ * two optional slot lines (`Depends-on:` / `Complete:` — the latter with three exact productions),
+ * and section boundaries; `docClass` and
  * the violation list derive from that grammar alone. All other content — charter prose, exit
  * criteria, premise, rulings, status log — carries no meaning this parser assigns.
  *
@@ -31,12 +32,18 @@ const STAGE_HEADING_PREFIX = '### Stage ';
 // `### Stage <kebab-id> — <title>` (em-dash required; kebab-case id)
 const STAGE_HEADING_REGEX = /^### Stage ([a-z0-9]+(?:-[a-z0-9]+)*) — (.+?)\s*$/;
 const DEPENDS_ON_REGEX = /^Depends-on:\s*(\(none\)|[a-z0-9]+(?:-[a-z0-9]+)*(?:\s*,\s*[a-z0-9]+(?:-[a-z0-9]+)*)*)\s*$/;
-const COMPLETE_REGEX = /^Complete:\s*(?:\[ \]|\[x\] (\d{4}-\d{2}-\d{2}) \((.+?)\))\s*$/;
+// Three EXACT productions: unratified `[ ]`, ratified `[x] <date> (<who>)`, ended `[~] <date> (<who>)`.
+// The dated productions are LEXICAL — the date is shape-only and the attribution is opaque up to
+// the final closing paren (a declared limit shared by both; rc15 D-rc15-4).
+const COMPLETE_REGEX =
+  /^Complete:\s*(?:\[ \]|\[x\] (\d{4}-\d{2}-\d{2}) \((.+?)\)|\[~\] (\d{4}-\d{2}-\d{2}) \((.+?)\))\s*$/;
 
 export interface StageCompletion {
   ratified: boolean;
-  date?: string; // YYYY-MM-DD, present when ratified
-  who?: string; // attribution, present when ratified
+  /** The user's declaration that the stage ended without meeting its exit criteria (`[~]`). Never true beside `ratified`. */
+  ended: boolean;
+  date?: string; // YYYY-MM-DD, present when ratified or ended
+  who?: string; // attribution, present when ratified or ended
 }
 
 export interface ParsedStage {
@@ -130,7 +137,7 @@ export function parseArchitectureDoc(content: string, name: string, docPath = ''
       sectionEnd,
       dependsOn: [],
       hasDependsOnSlot: false,
-      complete: { ratified: false },
+      complete: { ratified: false, ended: false },
       hasCompleteSlot: false,
     };
 
@@ -158,14 +165,18 @@ export function parseArchitectureDoc(content: string, name: string, docPath = ''
           violations.push({
             line: i,
             text: line,
-            reason: `Complete slot fails the grammar \`Complete: [ ]\` or \`Complete: [x] <YYYY-MM-DD> (<who>)\``,
+            reason: `Complete slot fails the grammar \`Complete: [ ]\`, \`Complete: [x] <YYYY-MM-DD> (<who>)\` or \`Complete: [~] <YYYY-MM-DD> (<who>)\``,
           });
         } else if (stage.hasCompleteSlot) {
           violations.push({ line: i, text: line, reason: `duplicate Complete slot in stage '${stage.id}'` });
         } else {
           stage.hasCompleteSlot = true;
           stage.completeLine = i;
-          stage.complete = m[1] ? { ratified: true, date: m[1], who: m[2] } : { ratified: false };
+          stage.complete = m[1]
+            ? { ratified: true, ended: false, date: m[1], who: m[2] }
+            : m[3]
+              ? { ratified: false, ended: true, date: m[3], who: m[4] }
+              : { ratified: false, ended: false };
         }
       }
     }

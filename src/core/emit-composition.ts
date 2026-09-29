@@ -94,6 +94,7 @@ const COMMANDS: Record<string, CommandSpec> = {
       'stages_touched',
       'rulings_captured',
       'completions_ratified',
+      'stages_ended', // rc15 (D-rc15-5): the ids a session declared ended — optional like its sibling
       'handoff',
     ],
   },

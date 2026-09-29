@@ -382,6 +382,25 @@ describe('deterministic facts', () => {
     expect(r.emit.next_recommended).toBe('/orbit:architect prog — resume stage d6');
   });
 
+  it('architect: stages_ended is an accepted payload field beside completions_ratified; an unknown key is still refused (rc15)', () => {
+    write('orbit/architecture/prog.md', '# prog\n');
+    const handoff = { boot_sequence: ['CLAUDE.md'], next_command: '/orbit:architect prog', model_hint: null, seam: 'post-session' };
+    const r = composeAndWriteEmit(
+      'architect',
+      { doc: 'prog' },
+      { final_assessment: 's', completions_ratified: [], stages_ended: ['rc03a-blind-prompt'], handoff, model: null },
+      { projectRoot: root }
+    );
+    expect((r.emit as any).stages_ended).toEqual(['rc03a-blind-prompt']);
+    expect((r.emit as any).completions_ratified).toEqual([]);
+    // Optional: an emit without it is still valid (every earlier architect emit stays valid).
+    const older = composeAndWriteEmit('architect', { doc: 'prog' }, { final_assessment: 's', handoff, model: null }, { projectRoot: root });
+    expect('stages_ended' in older.emit).toBe(false);
+    expect(() =>
+      composeAndWriteEmit('architect', { doc: 'prog' }, { final_assessment: 's', stages_endedd: ['x'], handoff, model: null }, { projectRoot: root })
+    ).toThrow(/unknown payload key 'stages_endedd'/);
+  });
+
   it('verify: pass and fail-mode recommendations per the baseline rules', () => {
     makeChange('foo');
     const pass = composeAndWriteEmit('verify', { change: 'foo' }, { final_assessment: 'clean', verdict: 'pass', model: null }, { projectRoot: root });
