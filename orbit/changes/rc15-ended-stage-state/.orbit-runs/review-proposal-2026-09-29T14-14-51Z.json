@@ -1,0 +1,126 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-29T14:14:51Z",
+  "change": "rc15-ended-stage-state",
+  "kind": "editorial",
+  "model": null,
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "proposal.md",
+      "line": 85,
+      "title": "The audit-drift capability label still describes the first draft: 'one sentence in (b) for the ended mark; two scenarios'",
+      "recommendation": "After the fresh iter-2 walk (W3) the delta's (b) clause is rewritten for BOTH marks — pointing at the engine's table and enumerating no observations — and the block carries THREE added scenarios (ended contradicted by live work; ratified mark with only a concluded exploration; ended mark on a premised stage), as specs/orbit-audit-drift/spec.md:8-12 and :28-41 read. proposal.md:85-86 still says 'one sentence in (b) for the ended mark, by pointer; two scenarios', and design.md:123's record row says 'ONE sentence in Architecture staleness check'. Relabel both to what shipped: '(b) rewritten to point at the composition table for both marks; three scenarios'. The 'one sentence the charter permits' phrasing at proposal.md:69 can stay — (b) is still one clause — but the scenario count is a plain disagreement."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "proposal.md",
+      "line": 32,
+      "title": "'a bad date' no longer names a near-miss: the declared lexical limit makes a well-shaped impossible date PARSE",
+      "recommendation": "Since 6A, `Complete: [~] 2026-99-99 (Sal)` parses as ended (specs/orbit-architecture-engine/spec.md:12-14 and the scenario 'The lexical limit is shared and declared'). The near-miss is a MALFORMED date (`soon`), which is the word the delta uses at line 12. Change proposal.md:32 'a bad date' to 'a malformed date' so the proposal's near-miss list matches the spec's and does not read as if calendar validity were checked."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "tasks.md",
+      "line": 9,
+      "title": "The ended mark's inconsistency detail is specified only as 'naming the live citer' — the string's shape is left to the implementer",
+      "recommendation": "Task 2.2 says the `[~]` column's INCONSISTENT cells carry 'a detail naming the live citer', and task 2.4 pins that 'on an active change the detail names the change'. The existing `[x]` detail (src/core/architecture/state.ts, compose()) names the OBSERVED STATE, not a citer, so this is a new shape compose() must build from `citing`. Two implementers would converge on the observable the test pins, so this is polish: state the form once in task 2.2 — e.g. `Complete: mark is ended but <kind>:<name> is live — the mark is not honored` — so the render, the test and the audit-drift finding text read the same words."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "design.md",
+      "line": 168,
+      "title": "The size figure is one walk stale",
+      "recommendation": "design.md:168 says '~25.5 KB after two walks'; `wc -c` over the three delta files reads 27,075 bytes after the fresh iter-2 walk's edits. Immaterial to R-crc-1's ~40 KB, so update the figure at the next touch of that line rather than as its own edit."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "pass": "6",
+      "title": "An ended stage has no stated treatment in the arc-done predicate, and a premised-ended stage can never satisfy it",
+      "evidence": "proposal.md:118-124 declares it a non-goal with the consequence; design.md:44-46 (Non-Goals) and :163-167 (Risks, accepted residual); tasks.md:32 AT-ARCHIVE NOTE 5.5 opens the program question; walk address-reviews-2026-09-29T14-09-02Z.json resolution 1 (Sal: 1B)."
+    },
+    {
+      "pass": "6",
+      "title": "The unprompted route keys on OBSERVED state, so it reaches a `complete` stage — what happens to an existing `[x]` or `[~]` in the slot is unstated",
+      "evidence": "specs/orbit-architect/spec.md:18-25 now requires an UNDATED slot and declines on a present `[x]`/`[~]` naming the mark; scenario at :59-62; design.md:81-85 records 2A; tasks.md:16 carries it; walk resolution 2."
+    },
+    {
+      "pass": "6",
+      "title": "Check (b)'s ratified-mark enumeration omits the new `concluded` observation the delta's own table makes INCONSISTENT",
+      "evidence": "specs/orbit-audit-drift/spec.md:8-12 now points at the composition table for both marks and enumerates no observations; scenario at :33-36; tasks.md:22 (4.1) drops the body's list with a negative marker; walk resolution 3."
+    },
+    {
+      "pass": "2",
+      "title": "The proposal says the state reader imports the grammar module's regex; design, spec and task 2.1 say it calls the explore parser's exported `readStatus`",
+      "evidence": "proposal.md:37-38 and :96-97 now say the explore parser's exported status reader, no 'or'; walk resolution 4."
+    },
+    {
+      "pass": "2",
+      "title": "'The five existing state tests stay byte-unchanged' — the `computed stage state` describe holds six, and the first one's title names the four-rung precedence",
+      "evidence": "tasks.md:11 says SIX tests keep their ASSERTIONS byte-unchanged with the retitle as a named second act; design.md:146-149 matches; walk resolution 5."
+    },
+    {
+      "pass": "5",
+      "title": "The citing suffix renders a concluded explore identically to a live one, so the `quiescent`-beside-`concluded` cell reads as 'archived + live explore'",
+      "evidence": "tasks.md:10 renders `explore:<name> (concluded)`; tasks.md:9 notes the boolean is what the suffix reads; design.md:175; walk resolution 6."
+    },
+    {
+      "pass": "9",
+      "title": "D-rc15-4 attributes the production to 'Q-crc-11's ledger spelling', but the ledger spelled it WITH the suffix this production rejects",
+      "evidence": "design.md:90-92 now reads 'the ledger's `[~]` mark … with its `— withdrawn` suffix DROPPED'; walk resolution 7."
+    }
+  ],
+  "commentary": "This is the in-context confirm over two walks' additions, read against artifacts every one of which was edited since the last pass. Probed hardest: the two walks' ripples — whether each ratified direction (3A, 6A, 1B, 2A) landed in EVERY artifact that states it, since the walks edited five files by scripted replacement and one script failed its last anchor before being re-run. They did: the architect delta's unprompted route now carries both declines with a scenario each; the audit delta's (b) points at the table for both marks; the engine delta's format SHALL declares the shared lexical limit with an executing scenario; the design records every amendment against its decision. What was found is the residue that pattern predicts: the proposal's capability LABEL for audit-drift still describes the draft the walks replaced, and one near-miss word ('bad date') was made ambiguous by 6A's own declaration. Baseline survival checked by title: all five state scenarios, all four audit scenarios, and the format block's eight are present in the deltas; `ls specs/` shows no orbit-orientation directory; zero @review markers. Not verified by execution: the composition table itself — the fresh pass walked all fifteen cells against compose()/observe() and I did not repeat that walk, so this pass vouches for the ARTIFACTS agreeing with each other and with the ratified directions, not for the table a second time. The one place two implementers could still diverge is the ended-mark inconsistency detail's wording, pinned only by what the test asserts.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "final_assessment": "0 critical, 1 warning, 3 suggestion.",
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc15-ended-stage-state --from-file orbit/changes/rc15-ended-stage-state/.orbit-runs/review-proposal-2026-09-29T14-14-51Z.json"
+}

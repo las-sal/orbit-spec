@@ -11,7 +11,9 @@ EXACT productions: unratified, ratified, and ENDED (the user's declaration that 
 meeting its exit criteria — dated and attributed like the ratified mark, with no free-text suffix; the
 reason lives in the status log, never in the slot). The slot's domain is CLOSED: the three productions,
 absence (unratified, below), duplication (a violation), and every other `Complete:`-prefixed line a
-near-miss under the rule below — a bare `[~]`, a bad date, a trailing suffix. Both slots are OPTIONAL with defined
+near-miss under the rule below — a bare `[~]`, a malformed date, a trailing suffix. The dated productions
+are LEXICAL, and the limit is shared by both: the date is shape-only (`\d{4}-\d{2}-\d{2}`; calendar
+validity is not checked) and the attribution is opaque up to the final closing paren. Both slots are OPTIONAL with defined
 omission semantics: an absent `Depends-on:` parses as no dependencies; an absent `Complete:`
 parses as unratified; validation accepts either omission; the architect ratification flow INSERTS
 a missing `Complete:` line when writing a mark (per `orbit-architect`). The parser INTERPRETS only:
@@ -80,6 +82,11 @@ outside fences (genuinely opaque prose). Architecture docs live at
 - **WHEN** a stage's slot reads a bare `Complete: [~]`, or `Complete: [~] soon (someone)`, or `Complete: [~] 2026-09-28 (Sal) — withdrawn`
 - **THEN** each FAILS `orbit architecture validate` naming its line and the slot grammar's three productions, `status` lists the doc as malformed, and no ended mark is parsed from any of them — the mark is dated and attributed like the ratified one, and the slot carries no suffix
 
+#### Scenario: The lexical limit is shared and declared
+
+- **WHEN** a stage's slot reads `Complete: [~] 2026-99-99 (Sal)` or `Complete: [~] 2026-09-28 (Sal))`
+- **THEN** each parses as ENDED — the first because the date is shape-only, the second with attribution `Sal)` because attribution is opaque — exactly as the same two lines with `[x]` parse as ratified today; the limit is declared, not hidden
+
 #### Scenario: Near-miss heading is a validation error, not silent legacy
 
 - **WHEN** a doc's only stage heading is mistyped (e.g. `### Stage d2_architect architect` — bad id form, missing em-dash)
@@ -128,7 +135,7 @@ grammar's `Complete:` slot per the format requirement; the exploration's header 
 | `concluded` | `ended-from-explore` | INCONSISTENT | `ended` |
 | `premised` | `premised` | INCONSISTENT | `ended` |
 
-The `[x]` column is the pre-rc15 rule unchanged: the engine renders `complete` ONLY when the
+The `[x]` column's OUTCOMES are the pre-rc15 rule unchanged: the engine renders `complete` ONLY when the
 observed state is `quiescent` AND the stage's `Complete:` slot is ratified (`[x]` with date); a
 quiescent stage with an unratified slot renders as quiescent-awaiting-ratification; a ratified
 `Complete:` mark on a stage whose OBSERVED state is not quiescent — live citing work (active change
@@ -216,5 +223,5 @@ architect's mark writes are the state transitions — no additional bookkeeping 
 #### Scenario: Ratified mark with only a concluded exploration is an inconsistency
 
 - **WHEN** a stage's slot is `[x]` and its only citer is a concluded exploration
-- **THEN** it renders the inconsistency (a conclusion is not evidence that criteria were met) — the `[x]` column is unchanged by the fifth observed state
+- **THEN** it renders the inconsistency with a detail naming the conclusion ("a concluded exploration is not evidence that the exit criteria were met") and never the words "live citing work" — the `[x]` column's outcomes are unchanged by the fifth observed state; only its detail learns the new observation's name
 

@@ -14,8 +14,15 @@ per the emit requirement). The offer's text states what ended means: the stage's
 not be met, the stage renders `ended`, and the mark is a slot edit that can be reversed by hand. The
 offer fires on the awaiting state ONLY — a stage rendering `ended`, `ended-from-explore` or
 `complete` is offered nothing. The mark is the USER's word: unprompted, inside an architect session,
-the user may declare ANY stage ended — the only route for a `premised` stage, which no offer
-reaches — and the body writes the same production with the same insert rule. The three ways a mark
+the user may declare a stage ended — the only route for a `premised` stage, which no offer
+reaches — and the body writes the same production with the same insert rule when the stage's
+observed state is `premised`, `quiescent` or `concluded` AND its slot is UNDATED (absent, or
+`[ ]`). On a LIVE stage (`in-change`, or a live `exploring`) the body DECLINES the write, naming
+the live citer and the act that would make the mark supportable (archive the change; conclude the
+exploration) — the two observations the engine's composition table refuses are never written by
+this flow. On a slot that already carries a DATED mark (`[x]` or `[~]`) the body also DECLINES,
+naming the existing mark and pointing at the hand edit as the reversal path — this flow never
+authors a reversal of a recorded mark. The three ways a mark
 is written are the prompted answer, the unprompted word inside a session, and a hand edit outside
 any session (the flow-entry ruling: first-class; the engine reads the token the same). The body never
 checks or ends a stage on its own judgment, and never nags: the offer fires when the user opens the
@@ -43,6 +50,16 @@ work contradicts it, `premised` included.)
 
 - **WHEN** the user opens an architect session on a doc whose stage renders `ended` or `ended-from-explore`
 - **THEN** no ratification offer fires for that stage — the offer keys on the awaiting state only
+
+#### Scenario: Unprompted ended on a live stage is declined
+
+- **WHEN** the user declares, inside an architect session, that a stage cited by an active change (or a live explore) has ended
+- **THEN** the body writes nothing, names the live citing artifact, and states the act that would make the mark supportable — archiving the change, or concluding the exploration
+
+#### Scenario: Unprompted ended on a slot that already carries a dated mark is declined
+
+- **WHEN** the user declares, inside an architect session, that a stage whose slot reads `Complete: [x] <date> (<who>)` (or an existing `[~]` mark) has ended
+- **THEN** the body writes nothing, names the existing mark, and points at the hand edit as the way to reverse or re-date it
 
 #### Scenario: Unprompted ended on a premised stage
 

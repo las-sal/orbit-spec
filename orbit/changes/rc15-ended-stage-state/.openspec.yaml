@@ -1,6 +1,9 @@
 schema: spec-driven
 created: 2026-09-28
 schema_version: 4
+architecture:
+  doc: clean-up-review-cycle
+  stage: rc15-ended-stage-state
 base_fingerprints:
   orbit-architect:
     Completion-ratification flow: sha256:3be1167e56811c02925b0a813b699e2c362bef0f89bbb2a7beca202ca542af58
@@ -10,6 +13,3 @@ base_fingerprints:
     Computed stage state with completion-as-ratification: sha256:92a1ff9b64f38a21aae386af1983dcdca860ca3d754de9a8ca3040600484338a
   orbit-audit-drift:
     Architecture staleness check: sha256:6e1945f3e6b3bbceb118d9f36db9cd2b67db75167d3194fc822708872b3fbac3
-architecture:
-  doc: clean-up-review-cycle
-  stage: rc15-ended-stage-state

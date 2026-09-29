@@ -1,0 +1,99 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-29T14:16:09Z",
+  "change": "rc15-ended-stage-state",
+  "kind": "editorial",
+  "model": null,
+  "source": "from-file",
+  "source_path": "orbit/changes/rc15-ended-stage-state/.orbit-runs/review-proposal-2026-09-29T14-14-51Z.json",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 3
+  },
+  "pushback_verification": "All 4 findings verified against HEAD by asserted string match at edit time (each cited phrase present exactly once); 0 stale.",
+  "resolution_summary": {
+    "resolved": 4,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The audit-drift capability label still describes the first draft: 'one sentence in (b) for the ended mark; two scenarios'",
+      "marker_source": "internal-review",
+      "file": "proposal.md",
+      "line": 85,
+      "classification": "trivial_fix",
+      "action": "Relabelled: '(the (b) clause rewritten to point at the composition table for both marks, enumerating no observations; three scenarios)'.",
+      "ratified_via": "chat",
+      "resolution": "relabel to what shipped",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc15-ended-stage-state/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "'a bad date' no longer names a near-miss: the declared lexical limit makes a well-shaped impossible date PARSE",
+      "marker_source": "internal-review",
+      "file": "proposal.md",
+      "line": 32,
+      "classification": "trivial_fix",
+      "action": "'a bad date' → 'a malformed date', matching the delta's word.",
+      "ratified_via": "chat",
+      "resolution": "malformed date",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The ended mark's inconsistency detail is specified only as 'naming the live citer' — the string's shape is left to the implementer",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 9,
+      "classification": "trivial_fix",
+      "action": "Task 2.2 states the detail form once: `Complete: mark is ended but <kind>:<name> is live — the mark is not honored`, built from `citing` (first live citer in precedence order).",
+      "ratified_via": "chat",
+      "resolution": "state the form in 2.2",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The size figure is one walk stale",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 168,
+      "classification": "trivial_fix",
+      "action": "Size line now reads 27.1 KB after three walks, re-measured at each walk.",
+      "ratified_via": "chat",
+      "resolution": "update the figure",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "4 of 4 in-context iter-3 findings resolved (1 WARNING, 3 SUGGESTION; 0 stale), all obvious-fix lane: the audit-drift capability label relabelled to what shipped (design record row rippled), 'bad date' → 'malformed date', the ended-mark inconsistency detail's form stated once in task 2.2, the size figure re-measured. Change validates --strict; fingerprints unchanged (5 kept); 14 tasks. No decision was taken; nothing in the mechanism moved.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply rc15-ended-stage-state — user-invoked"
+}
