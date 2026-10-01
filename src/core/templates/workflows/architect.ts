@@ -97,7 +97,7 @@ During the session, capture program-level material into the doc as it is ratifie
 
 **R-d-8 residency sweep at every conversation boundary**: pending recommendations, leanings, and open items discussed but not yet ratified must be file-resident BEFORE the emit writes — written into the owning section (e.g. an open question's standing-recommendation slot). Chat is never the store of record.
 
-### 5. Completion-ratification flow (the body's one AskUserQuestion)
+### 5. Completion-ratification flow (the completion flow's one AskUserQuestion — the doc selector in Step 1 is the body's other prompt)
 
 When \`orbit architecture status\` shows a stage quiescent-awaiting-ratification (all citing work archived, \`Complete:\` slot unratified), SURFACE it and ask via **AskUserQuestion** — **ratify** / **not yet** / **ended**. The offer's text states what ended means: the stage's exit criteria will not be met, the stage renders \`ended\`, and the mark is a slot edit that can be reversed by hand.
 

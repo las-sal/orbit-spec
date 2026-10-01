@@ -101,7 +101,11 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // of `orbit-architecture-engine`'s format requirement; fresh S1 — §5's unprompted route states its
   // UNDATED and live-citer tests in the status JSON's own field names. One re-record for the walk's two
   // body edits, a second act recorded as such (rc13b's lesson).
-  getArchitectSkillTemplate: '7382cf0cd66791d682a4871e83264990fe7bf5155b23c719801596559f8ce3e6',
+  // Moved a THIRD time at the project-wide audit-drift walk after rc15's archive (2026-10-01, category 3
+  // SUGGESTION): the §5 heading's parenthetical now scopes its one-prompt claim to the completion flow
+  // and names the Step 1 doc selector as the body's other prompt — a wording fix outside any change,
+  // one re-record, recorded here and in orbit/.orbit-runs/address-reviews-<TS>.json.
+  getArchitectSkillTemplate: '1c5506bade5358a8cb03c22f617c9e2043ad4f932f46f17e5c7278e586f4ad2f',
   getOrbitArchitectCommandTemplate: 'b65b8cca6431bb45aa8587d3bfc1e9458981e2e1bc925ae45cd57414143cb3db',
 };
 
@@ -117,7 +121,7 @@ const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
   'orbit-verify-change': '0d8f6b82d40bf95bd6b49f447fbd66d5414af79fa157872345668b9cb709ab6d',
   'orbit-onboard': '4b227395bb70c36c643970d821ec8eb245fbfca090accdc38d5b3588f7620fa7',
   'orbit-propose': 'ce16a6fe9fdc7ad3846cc99e002173125c795b2379a9239b888b6a4a5b16efb1', // rc13c: moved once with the body (see the function-hash note above)
-  'orbit-architect': 'da6f01cce9b84b6a194b6e2441ff91710dc479af69bf0d3b8972dfe55c6c519b', // rc15: moved twice with the body — apply, then the system walk (see the function-hash note above)
+  'orbit-architect': 'ad06e7eac6e4177eb5a7e0e07976fee6a956314b561f73ff64200fcff27fa24f', // rc15: moved twice with the body — apply, then the system walk; a third time at the post-archive audit walk (see the function-hash note above)
 };
 
 function stableStringify(value: unknown): string {

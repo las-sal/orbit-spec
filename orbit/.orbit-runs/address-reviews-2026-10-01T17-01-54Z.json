@@ -1,0 +1,82 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-01T17:01:54Z",
+  "change": null,
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/.orbit-runs/audit-drift-2026-10-01T16-53-35Z.json",
+  "source_command": "audit-drift",
+  "source_token": "2026-10-01T16-53-35Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 1
+  },
+  "pushback_verification": "Both findings verified against HEAD a2b69f4c: the nine sentences read at their lines (orbit-conventions 980/994/1022; explore.ts 610/657; orbit-orientation 44/94-95 — all present as the audit described); architect.ts:100 read, three **AskUserQuestion** tokens counted in the body (lines 22, 40, 101). 0 stale.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 0,
+    "deferred": 1,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Nine living sentences across three capabilities and the explore body still describe reader limits the shipped tree has retired — the Q-crc-28 retirement-class set, grown from three sites to nine",
+      "marker_source": "audit-drift",
+      "file": "orbit/specs/orbit-conventions/spec.md",
+      "line": 1022,
+      "classification": "decision_required",
+      "action": "Option A ratified by chat (Sal: 'a', 2026-10-01): the retirement-class sweep runs as its OWN small change on Sal's word — Q-crc-28's standing recommendation, now three capabilities (orbit-conventions, orbit-explore-modifications, orbit-orientation) at R-crc-1's ceiling, pointer-only, no mechanism, the repairs already written in the question. This walk edited NO baseline (OUT of cascade by rule, and no active change exists to carry a delta) and did not edit the explore body alone (option C declined: the body and its owning spec would say different things until the sweep landed — the R-crc-14 pattern). The ratification is recorded on Q-crc-28 itself so the question carries the direction; no TODO.md was written (a second record of one fact). Option B (a rider on the next stage touching any of the three capabilities) declined: rc02b/rc03/rc04b touch other capabilities and the list has grown at every stage since rc13a.",
+      "ratified_via": "chat",
+      "resolution": "A — the sweep as its own small change on Sal's word; Q-crc-28 owns it; deferred here, nothing edited",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/architecture/clean-up-review-cycle.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/specs/orbit-conventions/spec.md",
+            "reason": "baseline spec; add a delta to your current change's specs/<capability>/spec.md to capture this ripple — no active change; owned by the ratified sweep (Q-crc-28)"
+          },
+          {
+            "path": "orbit/specs/orbit-orientation/spec.md",
+            "reason": "baseline spec; add a delta to your current change's specs/<capability>/spec.md to capture this ripple — no active change; owned by the ratified sweep (Q-crc-28)"
+          },
+          {
+            "path": "src/core/templates/workflows/explore.ts",
+            "reason": "IN-set but deliberately not edited alone: its KNOWN paragraph paraphrases the orbit-conventions sentence, and fixing one side would state the rule twice in two forms (R-crc-14); the sweep edits both together"
+          }
+        ]
+      },
+      "outcome": "deferred"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The architect body's §5 heading says 'the body's one AskUserQuestion' while the body carries three AskUserQuestion prompts",
+      "marker_source": "audit-drift",
+      "file": "src/core/templates/workflows/architect.ts",
+      "line": 100,
+      "classification": "trivial_fix",
+      "action": "The §5 heading's parenthetical now reads '(the completion flow's one AskUserQuestion — the doc selector in Step 1 is the body's other prompt)', scoping the claim to the section the fidelity test counts and naming the second prompt. Both orbit-architect pins (function hash, generated-content hash) moved a THIRD time overall and were re-recorded once with a dated note naming this walk; surface regenerated (`update --force`); npm test 2376 green.",
+      "ratified_via": "chat",
+      "resolution": "heading scoped to the flow; pin re-recorded once",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "1 of 2 audit-drift findings resolved, 1 deferred by ratified scope call (1 WARNING, 1 SUGGESTION; 0 stale). The WARNING — the nine-sentence retirement-class set across three capabilities — is deferred to its owner Q-crc-28 under Sal's A: the sweep runs as its own small change on Sal's word, and the ratification is written on the question itself; no baseline edited. The SUGGESTION — the architect §5 heading's one-prompt claim — is fixed in the body, the pin re-recorded once. npm test 2376 green; the program doc validates.",
+  "iteration": 5,
+  "next_recommended": "No markers remain in scope; the project trail records this walk."
+}

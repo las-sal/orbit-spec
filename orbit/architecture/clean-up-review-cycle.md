@@ -1209,6 +1209,9 @@ never deleted.
   no-orientation-delta measure. The sweep now spans THREE capabilities (`orbit-conventions`,
   `orbit-explore-modifications`, `orbit-orientation`) — at R-crc-1's ceiling, still pointer-only and
   mechanism-free; the standing recommendation stands, with `orbit-orientation` added to its touch list.
+  RATIFIED 2026-10-01 (Sal: A, at the project-wide audit-drift walk after rc15's archive — the fourth
+  surface to raise the set): the sweep runs as its OWN small change on Sal's word, not as a rider; the
+  walk recorded the finding as deferred with this question as its owner and edited no baseline.
 - **Q-crc-29 — the ARC-DONE predicate has no treatment for a stage rendering `ended` or
   `ended-from-explore`.** Opened 2026-10-01 at rc15's archive (its at-archive note 5.5; raised by the
   fresh proposal pass, iter 2, W1; Sal: 1B — a declared non-goal and an accepted residual on rc15's

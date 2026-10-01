@@ -1,0 +1,44 @@
+{
+  "command": "audit-drift",
+  "timestamp": "2026-10-01T16:53:35Z",
+  "change": null,
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "final_assessment": "No critical issues. 1 warning(s) to consider.",
+  "categories_run": [
+    "1",
+    "3",
+    "4"
+  ],
+  "findings_by_category": {
+    "1": 0,
+    "2": 0,
+    "3": 2,
+    "4": 0,
+    "5": 0,
+    "6": 0
+  },
+  "findings_total": 2,
+  "findings": [
+    {
+      "category": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/specs/orbit-conventions/spec.md",
+      "line": 1022,
+      "title": "Nine living sentences across three capabilities and the explore body still describe reader limits the shipped tree has retired — the Q-crc-28 retirement-class set, grown from three sites to nine",
+      "recommendation": "Run the retirement-class sweep Q-crc-28 already specifies, as its own small change (pointer-only edits, no mechanism, now THREE capabilities — at R-crc-1's ceiling): orbit-conventions lines 980/994/1022 and explore.ts lines 610/657 (the 'until a propose-consumption stage lands' / 'keys on location' sentences — rc13c and rc15 shipped both), and orbit-orientation lines 44 and 94-95 (the 'never artifact-content parsing' THEN clause and the chip parenthetical, false in letter since rc15's header read; the one-clause repairs are written in Q-crc-28). Each sentence is history-shaped rather than a rule a reader would execute, so WARNING, not CRITICAL — but the baseline now asserts facts the tree contradicts in three capabilities, and every stage since rc13a has added to the list rather than retired it."
+    },
+    {
+      "category": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/architect.ts",
+      "line": 100,
+      "title": "The architect body's §5 heading says 'the body's one AskUserQuestion' while the body carries three AskUserQuestion prompts",
+      "recommendation": "The §1 bare-mode doc selector (architect.ts:40) and the input line (architect.ts:22) are a second and third **AskUserQuestion** in the same body; the fidelity test counts §5 alone, so the heading's claim is true of the section and false of the body. Reword the heading to name the section's scope — e.g. '(the completion flow's one AskUserQuestion)' — or move the count claim into the fidelity test's own comment. Inherited from D2, unchanged by rc15; a wording fix on the next stage that touches the architect body, with the pin moving once."
+    }
+  ],
+  "stale_suppressed": [],
+  "next_recommended": "/orbit:address-reviews --from-file orbit/.orbit-runs/audit-drift-2026-10-01T16-53-35Z.json — 2 drift(s) detected project-wide; resolve before next workflow step"
+}
