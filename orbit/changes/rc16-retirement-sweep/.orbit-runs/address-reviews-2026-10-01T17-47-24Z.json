@@ -1,0 +1,87 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-01T17:47:24Z",
+  "change": "rc16-retirement-sweep",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc16-retirement-sweep/.orbit-runs/review-proposal-2026-10-01T17-44-36Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-01T17-44-36Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 0
+  },
+  "pushback_verification": "All 3 findings verified against the working tree (the two repaired pointers re-read in the deltas; the record paragraph re-read in design.md). 0 stale. Sal's directive 'walk all' settled scoping; every finding was obvious-fix lane.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "A4 points the never-entered-rule limit at orbit-run-summary-emit's maturity requirement, which does not state it; the limit is stated in orbit-conventions' own grammar requirement",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc16-retirement-sweep/specs/orbit-conventions/spec.md",
+      "line": 113,
+      "classification": "trivial_fix",
+      "action": "A4 now points INTERNALLY at the one sentence in any spec that states the limit — `orbit-conventions`' `Mechanism entry grammar and accounted closure` ('whether a rule was written down at all is a reader's judgement', R-crc-10) — 'the stated residual: whether a rule was written down at all is a reader's judgement, per `Mechanism entry grammar and accounted closure` (R-crc-10) — never a check.' Task 1.5's body sentence and the design's A4 row carry the same form and record the correction.",
+      "ratified_via": "chat",
+      "resolution": "internal pointer at the grammar requirement",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc16-retirement-sweep/tasks.md",
+          "orbit/changes/rc16-retirement-sweep/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "A5 names the grammar-module requirement as owner of 'parses the same exemplars as fixtures'; it owns the grammar's single source, and no requirement states the fixture parse",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc16-retirement-sweep/specs/orbit-explore-modifications/spec.md",
+      "line": 42,
+      "classification": "trivial_fix",
+      "action": "A5's THEN now names what the grammar-module requirement OWNS: '…the generated-surface test asserts it, and the engine's form parse accepts the same entries under the grammar `orbit-emit-composition`'s `The explore grammar has one source in code` carries' — 'as fixtures' dropped (a test fact, `test/core/parsers/explore-rules.test.ts`, not a requirement's claim). Task 1.6 and the design's A5 row carry the same form and record the correction.",
+      "ratified_via": "chat",
+      "resolution": "pointer names the owned claim; fixture clause dropped",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc16-retirement-sweep/tasks.md",
+          "orbit/changes/rc16-retirement-sweep/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The Mechanism record attributes the widened grep to the walk ('executed at the walk on HEAD f3bfd0e2 … 20 + 1 hits'); the walk did not run it — the fresh pass did",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc16-retirement-sweep/design.md",
+      "line": 94,
+      "classification": "trivial_fix",
+      "action": "The Mechanism record's correction paragraph now names the two ACTS that produced the widened grep — the fresh pass (review-proposal-2026-10-01T17-31-53Z: fourteen patterns + unanchored `maturity-signal`, 20 + 1 hits, three sites found) and the in-context pass (review-proposal-2026-10-01T17-44-36Z: the same grep re-run, 30 hit lines, 14 in / 16 out, every row partitioned) — and states that the walk ran no grep and its first record said otherwise. The in-context run is the live closure; exit (1)'s archive grep is the next measurement.",
+      "ratified_via": "chat",
+      "resolution": "grep attributed to the passes that ran it; the walk's false claim corrected on the record",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "3 of 3 in-context findings resolved (3 WARNING; 0 stale), all obvious-fix lane. Two were the sweep's own disease introduced by the previous walk — pointers at owners chosen from titles, not read bodies — now pointing at the sentences that actually state the claims (an internal pointer for A4; the owned grammar claim for A5, the fixture clause dropped); the third was record truth — the widened grep is now attributed to the two passes that ran it, with the walk's false claim corrected on the record. validate --strict valid; fingerprints 6/6; no residue in any delta.",
+  "iteration": 2,
+  "next_recommended": "/orbit:apply rc16-retirement-sweep — user-invoked"
+}

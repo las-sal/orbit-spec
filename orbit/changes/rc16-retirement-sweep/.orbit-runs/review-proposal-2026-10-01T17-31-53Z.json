@@ -1,0 +1,144 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-01T17:31:53Z",
+  "change": "rc16-retirement-sweep",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 1,
+      "warning": 0,
+      "suggestion": 2
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 3
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "CRITICAL",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc16-retirement-sweep/design.md",
+      "line": 91,
+      "title": "Enumeration misses three in-set sites: orbit-explore-modifications:227, orbit-conventions:923 and explore.ts lines 472/534",
+      "recommendation": "The widened grep (`maturity-signal` unanchored, across tracked specs/templates/docs minus archives, trails and this change) returns three members the set does not list, each exactly D-rc16-2's class — a stage named in living prose. (a) `orbit/specs/orbit-explore-modifications/spec.md:227` (requirement `Nine moves applied per rule in the Mechanism section`, scenario `The exemplar conforms`): \"the maturity-signal stage parses the same exemplars as fixtures\" — rc13b shipped it (`test/core/parsers/explore-rules.test.ts:394-401` parses D-bcs-3/D-bcs-12); its body copy is `src/core/templates/workflows/explore.ts:534`. (b) `orbit/specs/orbit-conventions/spec.md:923` (requirement `Decision entry identity and classification`, a FIFTH block outside the four fingerprinted): \"the stated residual, owned by `orbit-explore-modifications`' maturity-signal successor\"; its body copy is `explore.ts:472` (\"owned by the maturity-signal stage\"). Two consequences: the proposal's \"three measured as two — explore-modifications has no sentence of its own to delta\" (proposal.md:59-61) is false; and task 1.5's `maturity-signal stage` grep demands zero hits in `explore.ts` while tasks 1.1-1.4 leave 472 and 534 standing, so the task list either fails its own measure or edits the body ahead of its owners — the exact thing D-rc16-3 forbids. Repair: add a third delta (`orbit-explore-modifications`, one MODIFIED block pointing at the parser requirement that owns the fixture parse) and a fifth MODIFIED block in `orbit-conventions` (`Decision entry identity and classification`, pointer to `orbit-run-summary-emit`'s maturity requirement or the readout's `rules_open` owner), stamp both fingerprints, add the two (body, owner) pairs 472↔923 and 534↔227 as tasks, and re-measure: three capabilities is AT R-crc-1's ceiling, which the charter already budgets, and exit (2)'s \"three directories\" then grades as written. Naming them out on Q-crc-28 instead would contradict D-rc16-2 on its own terms."
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc16-retirement-sweep/tasks.md",
+      "line": 16,
+      "title": "Exit (2) narrowed from the charter's three directories to two without an R-crc-12 revision record",
+      "recommendation": "The charter's exit (2) (`clean-up-review-cycle.md:2497-2499`) reads \"`ls specs/` on the change shows the three directories\"; task 3.1 measures \"exactly `orbit-conventions orbit-orientation`\" and proposal.md:73 restates exit (2) as \"two directories\". R-crc-12 says a criterion the mechanism can still measure and does not meet is a MISS, and a task may not silently narrow the bar its stage is graded against; a revision must be recorded in the charter with its reason. Either the third delta from the CRITICAL above makes the bar measurable as written (preferred — the measured count was wrong, not the charter), or record the R-crc-12 revision in the stage section before task 3.1 grades it, and say in the proposal which of the two it is."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc16-retirement-sweep/design.md",
+      "line": 73,
+      "title": "Design repair table's A3 text differs from the delta's A3 sentence it claims to source",
+      "recommendation": "The table calls itself \"the task list's source of truth\", but the delta (`specs/orbit-conventions/spec.md:74`) carries text the A3 row does not: the clause \"and observes a stage cited only by a concluded exploration as `concluded`\" and a closing sentence \"None of the three is a limit of this requirement; each is named here so a reader of the conclude flow knows who owns the behaviour the conclusion depends on.\" The A3' row (line 75) likewise ends at \"the Concluded rung's prose.\" while task 1.2 appends a parenthetical pointer. Task 1.3 derives the body text from \"the delta's A3 sentence\", so two implementers reading table vs delta diverge. Quote the delta verbatim in the table (or state that the table abbreviates and the delta is canonical), and make A3' match task 1.2."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc16-retirement-sweep/design.md",
+      "line": 120,
+      "title": "Design cites the pin and skill-read tasks as 3.1/3.2; tasks.md holds them at 2.1/2.2, and 'tasks under ten' is false",
+      "recommendation": "design.md:95 (\"task 3.1's pin rule\"), :113 (\"read once as a user would (task 3.2)\") and :120-121 (\"re-recorded ONCE in task 3.1\") name task ids that in tasks.md are validate (3.1) and the exit-(1) grep (3.2); the pins are 2.1 and the skill read is 2.2. design.md:123 says \"tasks under ten\" while the list holds exactly ten (engine: 0/10). Renumber the three references and correct the count (the propose emit's \"Eight tasks\" is a record and stays; the design is living)."
+    },
+    {
+      "pass": "4",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc16-retirement-sweep/specs/orbit-orientation/spec.md",
+      "line": 78,
+      "title": "B3's 'PROGRAM band beside it' holds only under --full",
+      "recommendation": "The sentence is consistent with `orbit-architecture-engine`'s composition table (observed `concluded` + `[ ]` renders `ended-from-explore`; `may` covers the archived-citer and `[~]` cases), but the strip renders in both tiers and the baseline says bare has \"no PROGRAM band\" (`orbit-orientation/spec.md:193`, :215). Say \"under `--full`, the PROGRAM band may already render …\" so the scenario does not imply a band the bare view never shows."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc16-retirement-sweep/proposal.md",
+      "line": 71,
+      "title": "Proposal cites CLAUDE.md:414 for the rc15 parenthetical; it sits at line 398",
+      "recommendation": "CLAUDE.md:398 is the sentence that hands the two `orbit-orientation` sentences to Q-crc-28; line 413-414 is D3-era prose (\"answers position / last / next per workstream with no artifact reads\") in the section headed historical. Cite 398, and consider whether the D3 sentence at 413 is worth a one-word qualifier or is left as the historical record it sits in — either way say which."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc16-retirement-sweep/specs/orbit-conventions/spec.md",
+      "line": 46,
+      "title": "A2 names orbit-run-summary-emit by capability only while A1 names the requirement",
+      "recommendation": "A1 (line 32) points at `orbit-run-summary-emit`'s `Named-mode explore recommendation by maturity`; A2 says \"the maturity rung surfaces it, per `orbit-run-summary-emit`\" — no such rung is named in that requirement (the residual surfaces as the ` · open domains:` record and in the Accounted rung's bounded count). Either name the requirement as A1 does or say \"the maturity grid's record\"; one pointer form across both clauses reads as one rule."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc16-retirement-sweep/design.md",
+      "line": 84,
+      "title": "The Mechanism record keeps D-rc16-2's closure as SOURCED on a source now known wrong by four members",
+      "recommendation": "The record says \"the SOURCED closure's phrase set was incomplete, recorded here\" after one miss (B3); with three more (the CRITICAL above) the exploration's grep on HEAD 84f5d67b is not the source the set derives from. A SOURCED entry is accounted by its source sentence; when the source is replaced, say so: name the widened grep executed at propose (its patterns, its HEAD, its hit count and partition) as the source, and state that the exploration's entry is superseded history, not the closure the deltas rest on."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc16-retirement-sweep/tasks.md",
+      "line": 5,
+      "title": "Task 1.3's 'in the body's voice' leaves the body paragraph's text to codegen",
+      "recommendation": "Tasks 1.1, 1.2 and 1.4 quote their target text; 1.3 licenses an unquoted paraphrase. Either state that the body takes the delta's A3 paragraph verbatim (backtick-escaped, bold opener kept), or quote the body sentence here so two implementers produce the same `explore.ts:610`."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc16-retirement-sweep/proposal.md",
+      "line": 76,
+      "title": "Named-out orientation.ts comment set disagrees across proposal, design and task 3.3",
+      "recommendation": "proposal.md:76 names out line 50 only; design.md:32 and task 3.3 name lines 22 and 50 (both read: 22 cites the no-live-inference scenario this change requalifies and stays true of the module; 50 is true of the chip). Name both in the proposal so the Q-crc-28 closing line task 3.3 writes matches the record it cites."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The pattern behind the one CRITICAL is the same one the stage's own preamble names: an enumeration closed on a phrase grep whose patterns were anchored to the sentences the author remembered (\"until the maturity-signal stage\", \"propose-consumption follow-on\"), so the paraphrases the same stages wrote in other voices (\"maturity-signal successor\", \"the maturity-signal stage parses\") fell outside the source. The design's D-rc16-4 amendment already shows the shape — one widening found B3 — and a second widening finds three more, two of them in a third capability and a fifth block. Probes executed: `orbit validate --strict` (valid) and `orbit fingerprint --check` (4 verified, 0 diverged); a fence-aware extraction of all four requirement blocks from baseline and delta (the grammar block's fenced `## Mechanism` lookalike handled) and a `diff -u` of each — six hunks, every one a row of the design's table (A1, A2, A3, B1, B2, B3), nothing else moved, block line counts 60/33/31/57→56; a tree-wide `git ls-files` grep over fourteen paraphrase patterns excluding archives, trails and this change — 20 hits classified: the program doc's Q-crc-28 ledger and charter (records), rc13a's own stage section at 1482 (history), `orbit-conventions:720` and `orbit-engine-gates:922` (unrelated \"until … lands\"), `orientation.ts:22/50` (module-true, the design's reasoning holds: 22 describes the module's reads and still cites a scenario that survives), CLAUDE.md:413 (D3 prose in the historical section), the six listed sites, and three unlisted in-set sites; a second grep on `maturity-signal` unanchored, which is what surfaced `conventions:923`; direct reads confirming each pointer target exists under its exact title (`Named-mode explore recommendation by maturity` at run-summary-emit:192, `Mechanism section consumption` at propose-modifications:546, `Consume mode when staging directory exists` at :15 — and it is that requirement, not another, that carries the concluded refuse, so A3's pointer is right; `Computed stage state with completion-as-ratification` at architecture-engine:122); the composition table check that A3's observed `concluded` and B3's rendered `ended-from-explore` are the same cell seen from two sides; a grep of the fidelity test for any marker on the touched sentences (none — the proposal's claim holds); the two section headings the body points at (`### Concluding an exploration` 597, `## Composition with /orbit:propose` 651) exist; no `@review:` marker in the change; `orbit/project.md`, `*_convention.md` and `orbit/lenses/` are absent, so the lens-driven checks did not run. Risk texture: the shipped text is sound where it exists — every pointer resolves, no stage id or \"follow-on\" survives inside the deltas, the orientation SHALL (\"SHALL NOT infer state from artifact contents\") stays consistent with B1's qualification because the header read lives in the engine-computed source the SHALL already admits. The risk is coverage, not correctness: as written the change ships three stage-naming sentences and refutes its own size claim, and the charter's exit (2) would read as a MISS on a count the proposal silently narrowed. The repair is cheap and inside the ceiling the charter already budgets. Minor record noise not raised as findings: `explore.md:126` writes `Q-rc16-1` for D-rc16-1 (history by rule), and the propose emit counts eight tasks against ten on disk (a record).",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "final_assessment": "1 critical, 3 warning, 6 suggestion.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc16-retirement-sweep --from-file orbit/changes/rc16-retirement-sweep/.orbit-runs/review-proposal-2026-10-01T17-31-53Z.json"
+}
