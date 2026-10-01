@@ -4,7 +4,7 @@
 
 Three stages in a row — rc13a, rc13b, rc13c — and then rc15 each deferred living prose that a later
 stage made false, to "a retirement-class sweep" that Q-crc-28 ledgered and nobody ran. The deferrals
-were correct under R-crc-1 when taken; together they leave the baseline asserting, in two capabilities
+were correct under R-crc-1 when taken; together they leave the baseline asserting, in three capabilities
 and the generated explore skill, that mechanisms are still pending which shipped weeks ago: the
 maturity signal (rc13b), propose's Mechanism consumption and its refuse of a concluded exploration
 (rc13c), and the state reader's header read (rc15). The project-wide audit after rc15's archive was
