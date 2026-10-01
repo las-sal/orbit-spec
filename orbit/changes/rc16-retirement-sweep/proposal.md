@@ -23,10 +23,11 @@ drifted — and Sal ruled the retained "five-section" requirement titles OUT (D-
   requirement and `orbit-propose-modifications`' Mechanism-consumption requirement — by capability, not
   by stage. In `Concluded exploration outcome`, the KNOWN paragraph's three "until …" limits are
   DELETED and replaced by one sentence naming the three owners that closed them
-  (`orbit-architecture-engine`'s state requirement; `orbit-run-summary-emit`'s maturity requirement;
-  `orbit-propose-modifications`' Step 0 refuse). In `Decision entry identity and classification`, the `Kind:` bullet's "owned by
-  `orbit-explore-modifications`' maturity-signal successor" names the readout whose limit it is
-  (`orbit-run-summary-emit`'s maturity requirement). Repair by POINTER or deletion, never a restatement,
+  (`orbit-architecture-engine`'s state requirement; `orbit-orientation`'s sourcing requirement — the
+  row's render of the concluded rung; `orbit-propose-modifications`' Step 0 refuse). In `Decision entry
+  identity and classification`, the `Kind:` bullet's "owned by `orbit-explore-modifications`'
+  maturity-signal successor" points INTERNALLY at the grammar requirement that states the limit
+  (`Mechanism entry grammar and accounted closure`, R-crc-10), no longer at a readout. Repair by POINTER or deletion, never a restatement,
   never a stage id (D-rc16-2).
 - **`orbit-orientation`: two sentences rc15's header read made false in letter are qualified.** The
   bare-status requirement's `No live inference` THEN clause gains "orientation itself parses no artifact
@@ -59,8 +60,8 @@ drifted — and Sal ruled the retained "five-section" requirement titles OUT (D-
 - `orbit-conventions`: `Mechanism entry grammar and accounted closure` (the VISIBILITY clause and the
   OPEN-DECLARED scenario's parenthetical point at the owning requirements); `Concluded exploration
   outcome` (the KNOWN paragraph's three retired limits replaced by one owner-naming paragraph);
-  `Decision entry identity and classification` (the `Kind:` bullet's "maturity-signal successor" names
-  the readout's requirement).
+  `Decision entry identity and classification` (the `Kind:` bullet's "maturity-signal successor" replaced
+  by a bare internal pointer at the grammar requirement).
 - `orbit-explore-modifications`: `Nine moves applied per rule in the Mechanism section` (the exemplar
   scenario names the fixture parse's owner, not a stage).
 - `orbit-orientation`: `Bare orbit status renders the current sprint` (the `No live inference`

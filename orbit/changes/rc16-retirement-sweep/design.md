@@ -40,8 +40,10 @@ zero; MODIFIED-only; the post-archive audit raises nothing and Q-crc-28 closes o
   in Alternatives.
 - **D-rc16-2 — repair by POINTER or delete, never restate, never name a stage.** Each repaired sentence
   names the capability and requirement that now owns the behaviour: `orbit-run-summary-emit`'s
-  `Named-mode explore recommendation by maturity` (the rung that surfaces a residual; the concluded
-  rung), `orbit-propose-modifications`' `Mechanism section consumption` (the transfer into spec text)
+  `Named-mode explore recommendation by maturity` (the rung that surfaces a residual; the Concluded
+  rung's text), `orbit-orientation`'s `Next-recommendation sourcing is time-shifted, never live` (the
+  row's render of the concluded rung — the fifth owner, named since the system blind-pair walk),
+  `orbit-propose-modifications`' `Mechanism section consumption` (the transfer into spec text)
   and `Consume mode when staging directory exists` (the Step 0 refuse of a concluded exploration), and
   `orbit-architecture-engine`'s `Computed stage state with completion-as-ratification` (the header
   read). A stage id in living prose is how every member of this class was born, so none survives.

@@ -1,0 +1,112 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-01T18:38:25Z",
+  "change": "rc16-retirement-sweep",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc16-retirement-sweep/proposal.md",
+      "line": 26,
+      "title": "The proposal's Concluded-outcome bullet still names orbit-run-summary-emit's maturity requirement as the row-render owner the walk re-pointed to orbit-orientation",
+      "recommendation": "proposal.md:24-27 says the KNOWN paragraph is 'replaced by one sentence naming the three owners that closed them (`orbit-architecture-engine`'s state requirement; `orbit-run-summary-emit`'s maturity requirement; `orbit-propose-modifications`' Step 0 refuse)'. Since walk log 1 (fresh W1, address-reviews-2026-10-01T18-29-42Z) the delta's paragraph (specs/orbit-conventions/spec.md:74, read) names `orbit-orientation`'s `Next-recommendation sourcing is time-shifted, never live` as the second owner — the row's render rule — and the body is byte-equal to it. The walk's cascade reached design row A3, task 1.3's note and the parity note but not the proposal's What Changes bullet, so the living proposal now names an owner the delta no longer points at — the external pass's W1 class (a living artifact carrying a superseded claim), introduced by the walk. Replace the middle owner with `orbit-orientation`'s sourcing requirement; the maturity requirement stays named in the SAME bullet's grammar-requirement sentence (lines 22-23), where A1/A2 still point at it correctly."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc16-retirement-sweep/proposal.md",
+      "line": 28,
+      "title": "The proposal says A4's Kind: bullet points at the readout's maturity requirement; the delta has pointed internally at the grammar requirement since the proposal walk and now carries the bare pointer",
+      "recommendation": "proposal.md:27-29 reads 'the `Kind:` bullet's \"owned by `orbit-explore-modifications`' maturity-signal successor\" names the readout whose limit it is (`orbit-run-summary-emit`'s maturity requirement)', and the Capabilities section repeats it at line 62-63 ('names the readout's requirement'). The delta (specs/orbit-conventions/spec.md:113, read) has pointed INTERNALLY at `Mechanism entry grammar and accounted closure` since the in-context proposal walk (iter 2 W1, address-reviews-2026-10-01T17-47-24Z — which edited the delta, design row A4 and task 1.5, not the proposal), and walk log 1 trimmed it to the bare pointer. Two proposal passes, two system passes and two walks all missed the proposal's two sentences — a pre-existing residue, not walk-introduced. Rewrite both sites to say the bullet points internally at the grammar requirement (R-crc-10) — the one sentence that states the limit — and no longer at a readout."
+    },
+    {
+      "pass": "1",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc16-retirement-sweep/design.md",
+      "line": 42,
+      "title": "D-rc16-2's owner list is one owner short after walk 1, and its 'the concluded rung' parenthetical now reads as the row's render",
+      "recommendation": "design.md:41-47 (read) enumerates the owners every repaired sentence names: the maturity requirement '(the rung that surfaces a residual; the concluded rung)', propose's two requirements, and the architecture-engine state requirement. Since walk log 1 a fifth owner exists — `orbit-orientation`'s `Next-recommendation sourcing is time-shifted, never live`, named by A3's middle clause for the ROW's render — and the maturity requirement's parenthetical 'the concluded rung' is true only of the rung's TEXT (A3' at explore.ts:606 still points there for the emit's `next_recommended`, correctly). The decision is the rule the repairs follow (D-rc16-2 is a live rule with a Mechanism entry), so its owner list should be complete: add the orientation sourcing requirement '(the row's render of the concluded rung)' and narrow the maturity parenthetical to '(the rung that surfaces a residual; the Concluded rung's text)'. Low stakes: the deltas and body already point correctly; only the decision's enumeration lags."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "pass": "1",
+      "title": "A4 restates the grammar requirement's reader's-judgement clause beside the pointer to it",
+      "evidence": "fresh S1 and external C1, resolved at walk log 1. Re-read this pass: specs/orbit-conventions/spec.md:113 and explore.ts:472 both end '— the stated residual, per `Mechanism entry grammar and accounted closure` (R-crc-10).'; the regenerated SKILL.md carries it (grep count 1)."
+    },
+    {
+      "pass": "1",
+      "title": "A3's second clause attributes the row's concluded-rung render to orbit-run-summary-emit; orbit-orientation's sourcing requirement owns it",
+      "evidence": "fresh W1, resolved at walk log 1. Re-read: delta line 74 names `orbit-orientation`'s `Next-recommendation sourcing is time-shifted, never live`; body 610 byte-equal after unescaping (node comparison this pass: IDENTICAL); design row A3's quote byte-equal to the delta (IDENTICAL)."
+    },
+    {
+      "pass": "0",
+      "title": "Repair-table row A3'' says 'in the body's voice'; the tree carries the delta paragraph verbatim, so the skill says 'this requirement' to a reader who has none",
+      "evidence": "fresh W2, Sal: C, resolved at walk log 1. Re-read: the delta's closing sentence reads 'None of the three is a limit of concluding'; SKILL.md carries it (grep 'limit of concluding' = 1); design.md:82 row A3'' reads 'the delta's paragraph VERBATIM, backtick-escaped (task 1.3)'."
+    },
+    {
+      "pass": "6",
+      "title": "Living design text still carries the superseded two-capability/four-pair scope",
+      "evidence": "external W1, resolved at walk log 2. Re-run this pass: grep -nE 'two capabilities|four paraphrases|Four \\(body line' over proposal.md/design.md/tasks.md → only design.md:15, the class-C RENAMED-block sentence, which is correct as written."
+    },
+    {
+      "pass": "0",
+      "title": "The SOURCED widened-grep measurement is not exactly reproducible from the trail",
+      "evidence": "external W2, resolved at walk log 2. Re-read: design.md:111-131 carries the exact command as a fenced block and the 24-line / 8-IN / 16-OUT partition; this pass re-ran the body half (widened grep over explore.ts → 0) and the eleven-sentence grep over the three deltas and the body → 0/0/0/0."
+    }
+  ],
+  "commentary": "This is the confirm pass over the two walks' own additions, and the three things it found are all one shape: a pointer moved in the OWNING text and the cascade stopped one artifact short. Walk 1 re-pointed A3's middle clause and its cascade reached the body, the design's repair table, the task note and the parity note — but not the proposal's What Changes bullet, which still names the owner the delta left. The older of the two proposal defects is the same shape a walk earlier: the in-context proposal walk moved A4's pointer from the maturity requirement to the grammar requirement in the delta, the design row and the task, and the proposal's two sentences about A4 were never touched — six passes have now read past them. The decision record D-rc16-2 lags for the same reason: its owner list was written when four owners existed. None of the three touches a delta, the body, a test or a baseline; the deltas, the body and the generated skill agree with each other everywhere I compared them.\n\nProbed and re-run rather than trusted: `npm test` on the walked tree (100 files, 2376 passed); `orbit validate rc16-retirement-sweep --strict` (valid); `orbit fingerprint --check` (6 verified); `orbit validate --sources` (stages 25, rulings 14, capabilities 21, schema-version 4 — unmoved after the design gained a fenced block and a paragraph); body line 610 against delta line 74 after unescaping (IDENTICAL) and the design's A3 row quote against the same line (IDENTICAL); the eleven quoted sentences over the three deltas and the body (0/0/0/0) and the widened grep over the body (0); the regenerated `.claude/skills/orbit-explore/SKILL.md` for both walk-1 sentences (present once each); and a grep for every 'maturity' mention across proposal, design and tasks, which is how the two proposal sentences surfaced. Body line 606 was checked deliberately because it ALSO points the Concluded rung at the maturity requirement: that sentence is about the EMIT's recorded `next_recommended`, which the maturity requirement does own (the rung's text), so it is correct and distinct from line 610's row-render claim — the distinction walk 1 drew holds.\n\nPasses 4 and 5 were skipped: `orbit/lenses/` is absent, per the body's degradation rule; the fresh pass ran substitutes for both and the external covered the adopter perspective, so this pass did not repeat them. Pass 6 ran the audit-drift categories by hand over the change's own artifacts rather than through the skill, to keep one emit on the trail; the project-wide run is exit (3)'s at-archive act and was not pre-empted. Risk texture: the walk-2 fenced grep block inside design.md is the first fenced shell command in a design artifact on this program — `orbit validate --strict` and the source lint read past it cleanly, and nothing parses design.md, so it carries no engine risk; it is worth knowing it is there. The explore.md's superseded D-rc16-2 entry still names the exploration's six-phrase grep as its source — by rule, unchanged history, and I did not raise it.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    {
+      "pass": "4",
+      "reason": "no perspectives defined; skip Pass 4 (orbit/lenses/ absent)"
+    },
+    {
+      "pass": "5",
+      "reason": "no critical paths defined; skip Pass 5 (orbit/lenses/ absent)"
+    }
+  ],
+  "final_assessment": "0 critical, 2 warning, 1 suggestion.",
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc16-retirement-sweep --from-file orbit/changes/rc16-retirement-sweep/.orbit-runs/review-system-2026-10-01T18-38-25Z.json"
+}
