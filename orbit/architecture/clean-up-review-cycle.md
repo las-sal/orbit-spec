@@ -540,7 +540,12 @@ One goal per phase, each falsifiable, each stage naming its goal (settled under 
   standing recommendation above is the stage's starting shape, not its specification; the mark's
   spelling is the exploration's. This question CLOSES when rc03a carries the mark and the next architect
   session offers it nothing (rc15's exit (1)).
-
+  CLOSED 2026-10-01 — rc15's exit (1) observed in the architect session on the archive's day: Sal
+  answered the three-answer offer with ENDED, the body wrote `Complete: [~] 2026-10-01 (Sal)` into
+  rc03a's slot, `orbit architecture status` renders `ended (declared 2026-10-01 by Sal)`, the WAITING
+  band dropped it, and the offer did not fire for it again. The firing count stopped at four. The
+  second stage this question named (rc13a's first attempt) shipped on its second attempt and is
+  ratified complete, so nothing else is owed here.
 - **Q-crc-12 — the archive seam is silent when the gate that is exhausted is not the gate archive
   watches.** Observed 2026-09-15, twice in one day. Both rc03a and rc13a archived with
   `review-proposal` reading `budget spent: 3 of 3` and NO inflection prompt, because Step 3.4 is
@@ -1230,11 +1235,11 @@ never deleted.
 
 ## Program stages
 
-<!-- src:stages -->24<!-- /src:stages --> small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
+<!-- src:stages -->25<!-- /src:stages --> small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
 split into rc02 + rc02b on 2026-09-12; rc13 added 2026-09-14 and moved to phase 1 the same day;
 rc03a split from rc03 on 2026-09-15 and WITHDRAWN the same day; rc13 split into rc13a + rc13b on
 2026-09-15 under R-crc-9; rc07b split from rc07 the same day under R-crc-9 applied PREVENTIVELY; rc04d split from rc04c on 2026-09-21, the THIRD preventive application, caught at exploration by a size check rather than after a cadence;
-rc13c declared 2026-09-25 from rc13a's archive proposal, and rc15 declared the same day taking up Q-crc-11 — rc14 stays reserved for the undeclared `rc14-delta-scope` recommendation).
+rc13c declared 2026-09-25 from rc13a's archive proposal, and rc15 declared the same day taking up Q-crc-11; rc16 declared 2026-10-01 from Q-crc-28's ratified direction — rc14 stays reserved for the undeclared `rc14-delta-scope` recommendation).
 Every stage is sized under R-crc-1, names the capabilities it touches, and names its goal.
 Charters are settled under R-crc-3 until a citing change refines them; exit criteria are
 falsifiable and self-measured by the stage's own cadence (G0). Position is computed — see the
@@ -1683,7 +1688,7 @@ were met at apply — (2') by the 19-change, 57-gate diff recorded in the status
 ### Stage rc03a-blind-prompt — a blind reviewer is told nothing
 
 Depends-on: rc02-gate-semantics
-Complete: [ ]
+Complete: [~] 2026-10-01 (Sal)
 
 **R-crc-11 IMPACT (2026-09-21) — the withdrawn stage's UNRESOLVED CONFLICT is now load-bearing.**
 This stage was withdrawn with its content folded into rc03, and the conflict it could not solve was
@@ -2455,6 +2460,45 @@ decide whether the seam speaks. Exit (3) restated: an archive past a non-passing
 fires the inflection prompt and records the override. Found by rc02c's system blind pair, which
 read the plan and not only the diff.
 
+### Stage rc16-retirement-sweep — living prose retires with the limit it described
+
+Depends-on: (none)
+Complete: [ ]
+
+DECLARED 2026-10-01 (Sal), in the architect session on rc15's archive day, from Q-crc-28's ratified
+direction (Sal: A at the project-wide audit-drift walk the same day — "its own small change, not a
+rider"). rc14 stays reserved for the undeclared `rc14-delta-scope` recommendation.
+
+Three stages in a row — rc13a, rc13b, rc13c — each deferred living prose that a later stage made
+false, to "a retirement-class sweep" nobody had declared, and rc15 added four more sentences, two of
+them FALSE rather than pending. Q-crc-28 is the ledger: nine sites across three capabilities and the
+explore body that describe reader limits the shipped tree has retired — the "five-section" titles and
+their pointer sites, the "until the maturity-signal stage lands" clauses, the "until a
+propose-consumption stage lands" sentences, the concluded-outcome KNOWN paragraph (keys on location,
+renders `exploring`), and `orbit-orientation`'s "never artifact-content parsing" clause with its chip
+parenthetical. Each deferral was correct under R-crc-1 when taken; together they are a baseline
+asserting facts the tree contradicts in three capabilities, and every stage since rc13a has lengthened
+the list rather than shortened it. The project-wide audit after rc15's archive was the fourth surface
+to raise the set.
+
+Charter: retire the set, by POINTER, in one change. (1) Every site Q-crc-28 lists is edited to its
+written one-clause repair or deleted — a sentence describing a retired limit either points at the
+requirement that now owns the behaviour or goes; no site gains a restatement of the rule it pointed
+at (R-crc-14). (2) The explore body's copies move WITH their owning `orbit-conventions` sentences, in
+the same change, so the body and the spec never say different things (the reason the audit walk
+declined to fix the body alone). (3) No mechanism: the change ships no engine code, no new test
+beyond the existing fidelity and parity pins moving once each, and no new requirement — MODIFIED
+blocks only. The site list is owned by Q-crc-28 and is NOT restated here; the exploration reads it
+from the question and counts it at exploration, under R-crc-1's ceiling.
+
+Goal G4. Touches: orbit-conventions, orbit-explore-modifications, orbit-orientation (three
+capabilities — at the ceiling, pointer-only, measured at exploration; a fourth site class found at
+exploration splits under R-crc-9 rather than exceeds). Exit: (1) every site Q-crc-28 names at the
+stage's exploration greps to zero on the archived tree, measured by the exact sentences the question
+quotes; (2) the deltas are MODIFIED-only and add no requirement — `ls specs/` on the change shows the
+three directories and `orbit validate --strict` passes; (3) the project-wide audit-drift run after
+the archive raises no Category 3 finding on the retired set, and Q-crc-28 closes on that run.
+
 ### Phase 4 — engine changes last
 
 ### Stage rc12-engine-owned-choreography — deterministic git steps become an engine command
@@ -2478,7 +2522,7 @@ properties (user-invoked, draft-only, merge never) hold unchanged.
 ### Stage rc15-ended-stage-state — a stage that ended without meeting its criteria says so
 
 Depends-on: (none)
-Complete: [ ]
+Complete: [x] 2026-10-01 (Sal)
 
 DECLARED 2026-09-25 (Sal), taking up Q-crc-11 on its second reading — a third occurrence of the
 COST, not a third withdrawn stage. rc14 is not this stage: that id stays reserved for the standing
@@ -3940,3 +3984,34 @@ byte-verified (five MODIFIED blocks across three capabilities); fingerprints 5/5
 2376 tests green. rc15 renders quiescent, awaiting ratification. Next in dependency order: Phase 2's
 rc02b, rc03 and rc04b are open; the retirement-class sweep (Q-crc-28, now three capabilities) is the
 cheapest standing recommendation on the board.
+
+**2026-10-01 — rc03a-blind-prompt declared ENDED (the first real ended mark); rc15's exit (1) observed;
+Q-crc-11 CLOSED.** In the architect session on rc15's archive day the offer fired for rc03a with three
+answers; Sal answered ended, and the body wrote `Complete: [~] 2026-10-01 (Sal)` after the stage's
+`Depends-on:` line. The engine renders `ended (declared 2026-10-01 by Sal)` with its archived citer, the
+awaiting set and the WAITING band no longer carry it, and the offer did not fire for it again in the
+same session. Four firings, four declines, one mark — the cost Q-crc-11 ledgered is paid. The reason
+for the ending lives where it always did: the 2026-09-15 withdrawal entry below, folded into rc03.
+
+**2026-10-01 — rc15 RATIFIED (eleven stages complete); all three exit criteria graded MET as written,
+exit (1) on this session's observation.** Sal ratified in the same architect session, directly after
+rc03a's mark landed. Exit (1): rc03a carries the ended mark, renders a state that is neither `complete`
+nor awaiting, is listed in no WAITING band, and the offer did not fire for it after the mark — the
+charter said "the next architect session"; the observation is the same engine read, taken minutes
+later rather than days, and Sal took it as meeting the criterion (no R-crc-12 revision: the criterion
+measured as written and was met). Exit (2): the concluded-only fixture renders `ended-from-explore`,
+never `exploring`, in the engine suite's fifteen-cell table and the real-CLI probe the fresh system
+pass ran. Exit (3): every production executed against its near-misses (bare `[~]`, malformed date,
+trailing suffix, the duplicate slot, the shared lexical limit), and `orbit-orientation` carried no
+delta — three directories under the change's `specs/`. Next in dependency order: Phase 2's rc02b,
+rc03 and rc04b are open; the retirement-class sweep runs as its own small change on Sal's word
+(Q-crc-28, ratified 2026-10-01).
+
+**2026-10-01 — rc16-retirement-sweep DECLARED (the stage count moves to 25).** In the same architect
+session, on Sal's word, Q-crc-28's ratified direction became a stage rather than a standalone change:
+the program keeps the record of why nine living sentences across three capabilities outlived the
+limits they described, and the exit criteria are plain measurements (the sites grep to zero; MODIFIED
+blocks only; the next project-wide audit raises nothing on the set, and Q-crc-28 closes on that run).
+Pointer-only, no mechanism, three capabilities at R-crc-1's ceiling. Next in dependency order: rc16 is
+free (no dependencies) and is the cheapest open stage on the board; Phase 2's rc02b, rc03 and rc04b
+remain open.
