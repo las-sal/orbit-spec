@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-01T17:18:16Z",
+  "change": "rc16-retirement-sweep",
+  "kind": "workflow",
+  "model": "claude-fable-5-1",
+  "final_assessment": "The set is enumerated by sentence at HEAD 84f5d67b and partitioned into three classes; Sal ruled class C (the retained five-section titles, five capabilities once pointer sites and title anchors count) OUT — Considered & out with a re-entry trigger. Five decisions: the scope call, two rules (repair by pointer or delete, never restate and never name a stage; the body's copies move with their owners) each with a Mechanism entry closed SOURCED over the phrase grep, one fact (enumerate by sentence — Q-crc-28's line numbers drifted), one scope (MODIFIED-only, two capabilities, two pins once). No open question remains; the mechanism is Q-crc-28's written repairs plus the owner-not-stage corollary. I have captured everything; type /orbit:propose rc16-retirement-sweep when ready.",
+  "decisions_captured": 5,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 2,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose rc16-retirement-sweep — 2 live rules accounted; formalize when you are ready (or /orbit:explore rc16-retirement-sweep to keep refining)"
+}
