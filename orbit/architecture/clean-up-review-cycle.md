@@ -1217,6 +1217,21 @@ never deleted.
   RATIFIED 2026-10-01 (Sal: A, at the project-wide audit-drift walk after rc15's archive — the fourth
   surface to raise the set): the sweep runs as its OWN small change on Sal's word, not as a rider; the
   walk recorded the finding as deferred with this question as its owner and edited no baseline.
+  CLOSED 2026-10-01 at rc16-retirement-sweep's archive (its at-archive note 3.3), on the post-archive
+  project-wide audit-drift run `orbit/.orbit-runs/audit-drift-2026-10-01T19-22-49Z.json` — no drift
+  detected; Category 3 raised nothing on the retired set, and this question's own finding from the prior
+  run (2026-10-01T16-53-35Z) is suppressed there as stale with the archive as evidence. The nine sites are
+  retired in baseline by pointer or deletion (six MODIFIED blocks across the three capabilities, synced
+  byte-verified; the explore body's six copies moved with their owners; the eleven quoted sentences grep
+  to zero over the synced baselines and the body). Named here as TRUE OF THE MODULE and deliberately
+  untouched: the two `src/core/orientation.ts` comments at lines 22 and 50 (orientation itself parses no
+  artifact content; the row chip is trail-read) — D-rc16-2's named-out rows. Carried in this CLOSED
+  record, not as an open item: the class C re-entry trigger (D-rc16-1 — the retained "five-section"
+  requirement titles and their pointer sites, five capabilities once the `ownerText` anchors count): the
+  question REOPENS only if the next change touching both `orbit-conventions` and
+  `orbit-explore-modifications` for another reason declines the rename as a rider, or a reader is actually
+  misled by a title. Outside the set and left as the record it is: CLAUDE.md's D3 line in the section
+  headed historical ("with no artifact reads"), an accepted residual on rc16's readiness record.
 - **Q-crc-29 — the ARC-DONE predicate has no treatment for a stage rendering `ended` or
   `ended-from-explore`.** Opened 2026-10-01 at rc15's archive (its at-archive note 5.5; raised by the
   fresh proposal pass, iter 2, W1; Sal: 1B — a declared non-goal and an accepted residual on rc15's
@@ -2463,7 +2478,7 @@ read the plan and not only the diff.
 ### Stage rc16-retirement-sweep — living prose retires with the limit it described
 
 Depends-on: (none)
-Complete: [ ]
+Complete: [x] 2026-10-01 (Sal)
 
 DECLARED 2026-10-01 (Sal), in the architect session on rc15's archive day, from Q-crc-28's ratified
 direction (Sal: A at the project-wide audit-drift walk the same day — "its own small change, not a
@@ -4031,3 +4046,13 @@ a COMPUTED PASSED gate, the sixth rc-stage through one and the fifth through the
 shape across the cycle — a pointer chosen from a title rather than a read body — which is the class this stage
 exists to retire. Next in dependency order: rc16 awaits ratification after the audit; Phase 2's rc02b, rc03 and
 rc04b remain open.
+
+**2026-10-01 — Architect session: rc16-retirement-sweep RATIFIED (twelve stages complete); Q-crc-28 CLOSED.**
+The post-archive project-wide audit (`orbit/.orbit-runs/audit-drift-2026-10-01T19-22-49Z.json`) detected no
+drift — exit (3) MET — so all three of rc16's exit criteria graded MET as written and Sal ratified completion
+through the offer. Q-crc-28 closed on that run with its dated line: the two `orientation.ts` comments named as
+module-true and untouched, the class C trigger (D-rc16-1) carried in the closed record, CLAUDE.md's historical
+D3 line left outside the set. One day, declaration to ratification: the shortest cycle on the program, and the
+one whose finding class — a pointer chosen from a title rather than a read body — appeared four times inside
+the change built to retire it. Next in dependency order: rc13 (premised; rc13a/b/c complete) and rc04 (premised;
+rc04a/c/d complete) are parent stages whose children have shipped; Phase 2's rc02b, rc03 and rc04b remain open.

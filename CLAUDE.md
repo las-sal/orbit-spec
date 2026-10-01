@@ -209,7 +209,7 @@ file now carries a live mark. Do NOT read this paragraph as the program's full l
 only what rc07 produced. The authoritative list is the program doc's own Open questions section,
 which also carries Q-crc-11, Q-crc-12, Q-crc-20, Q-crc-21, Q-crc-22 and Q-crc-23.
 
-**Nine more stages have shipped since, and the program is ELEVEN stages complete** (rc15 ratified 2026-10-01; rc03a carries the program's first ENDED mark, declared the same day; rc16 archived 2026-10-01 and awaiting ratification).
+**Nine more stages have shipped since, and the program is TWELVE stages complete** (rc15 and rc16 ratified 2026-10-01; rc03a carries the program's first ENDED mark, declared the same day).
 
 `rc02c-confirmation-semantics` is ARCHIVED (2026-09-21): **the budget stopped being a target.**
 R-crc-11(h) — effort is RECORDED, never TARGETED — retired `budgetExhausted`, the
@@ -400,8 +400,8 @@ Q-crc-28, a fourth capability declined under R-crc-1); an in-context confirm 0C/
 PASSED gate — the fifth rc-stage through one, the fourth through the pair. Q-crc-28 widened to three
 capabilities and Q-crc-29 (arc-done over an ended stage) opened at archive. **2376 tests green.**
 
-`rc16-retirement-sweep` is ARCHIVED (2026-10-01, the same day it was declared; exits (1) and (2) graded MET, exit (3)
-pending the post-archive project-wide audit on which Q-crc-28 closes): **living prose retired with the limit it
+`rc16-retirement-sweep` is ARCHIVED and RATIFIED (2026-10-01, the same day it was declared; all three exit criteria
+graded MET as written — exit (3) on the post-archive project-wide audit, no drift detected, on which Q-crc-28 CLOSED): **living prose retired with the limit it
 described.** Nine sentences across THREE capabilities (`orbit-conventions`, `orbit-explore-modifications`,
 `orbit-orientation` — at R-crc-1's ceiling, which the charter budgeted) and their six copies in the explore body
 stopped naming "the maturity-signal stage", "the propose-consumption follow-on" and three "until … lands" limits
