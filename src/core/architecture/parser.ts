@@ -38,6 +38,18 @@ const DEPENDS_ON_REGEX = /^Depends-on:\s*(\(none\)|[a-z0-9]+(?:-[a-z0-9]+)*(?:\s
 const COMPLETE_REGEX =
   /^Complete:\s*(?:\[ \]|\[x\] (\d{4}-\d{2}-\d{2}) \((.+?)\)|\[~\] (\d{4}-\d{2}-\d{2}) \((.+?)\))\s*$/;
 
+/**
+ * The `Complete:` slot's three productions AS THE OWNING SPEC STATES THEM — one string,
+ * byte-equal to the inline production in `orbit-architecture-engine`'s `Parseable
+ * architecture-doc format` requirement (a parity test reads the owner through the
+ * single-active-owner lookup and asserts equality). The architect body interpolates this
+ * constant so its scaffold sentence is a CHECKED MIRROR of the owner, never a second
+ * statement of the grammar (R-crc-14's mirror corollary; rc15 external system pass W1).
+ * `COMPLETE_REGEX` above is the executable form of the same three productions.
+ */
+export const COMPLETE_SLOT_PRODUCTIONS =
+  '`Complete: [ ]` / `Complete: [x] <YYYY-MM-DD> (<who>)` / `Complete: [~] <YYYY-MM-DD> (<who>)`';
+
 export interface StageCompletion {
   ratified: boolean;
   /** The user's declaration that the stage ended without meeting its exit criteria (`[~]`). Never true beside `ratified`. */

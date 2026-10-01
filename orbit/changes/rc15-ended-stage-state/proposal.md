@@ -101,7 +101,7 @@ ended mark's consistency condition differs from the ratified mark's (D-rc15-1).
   is NOT touched.
 - **Templates**: `src/core/templates/workflows/architect.ts` (§5, the §2 scaffold sentence's grammar copy, and the emit
   compose step);
-  `src/core/templates/workflows/audit-drift.ts` (check (b)). Two hash pins move, each once, named in
+  `src/core/templates/workflows/audit-drift.ts` (check (b)). Two hash pins move, each once, named in CORRECTED at apply 2026-09-29 (task 4.1): no `orbit-audit-drift` hash pin exists — only the `orbit-architect` pin moves (two lines, a function hash and a generated-content hash); it moved again at the system blind-pair walk (2026-09-30) for the grammar mirror.
   tasks.
 - **Tests**: `test/core/architecture/engine.test.ts` — every new production EXECUTED against the
   well-formed line AND each near-miss (exit 3); every cell of the composition table, with a
@@ -109,7 +109,9 @@ ended mark's consistency condition differs from the ratified mark's (D-rc15-1).
   `test/core/orientation.test.ts` — an ended or ended-from-explore stage contributes nothing to
   WAITING; fidelity markers for both bodies; the emit table accepts `stages_ended`.
   `test/core/architecture/live-arc.test.ts` is unchanged and passes through rc03a's mark once written
-  (it asserts no inconsistent stage).
+  (it asserts no inconsistent stage). CORRECTED at apply 2026-09-29 (task 2.5): that test reads
+  `d-arc-arbitered-flow` only, so rc03a's mark cannot reach its assertion — it passes through 5.3
+  trivially; the pin the plan wanted is the engine suite's fifteen-cell table and 5.3's own observation.
 - **Specs**: five blocks across three capabilities; fingerprints stamped on all five.
 - **Exit criteria, measured on this change**: (1) is a USER act after apply — rc03a's mark is written
   in an architect session on Sal's word; the tasks carry it as a user-validation handoff, and Q-crc-11

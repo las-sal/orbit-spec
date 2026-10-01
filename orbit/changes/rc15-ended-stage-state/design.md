@@ -105,7 +105,8 @@ was settled in `explore.md` at promotion — D-rc15-1 … D-rc15-6 with five Mec
   Its only spec home is `orbit-architect`'s emit requirement (measured by grep, 2026-09-28: the spec,
   the body, the code table), so no fourth capability.
 - **D-rc15-6 — what stays untouched, by construction** (`Kind: fact`). WAITING (a) matches the exact
-  awaiting string; `live-arc.test.ts` asserts no inconsistent stage; `status --json` carries the new
+  awaiting string; `live-arc.test.ts` asserts no inconsistent stage (over `d-arc-arbitered-flow` only —
+  corrected at apply 2026-09-29, task 2.5: it never sees rc03a); `status --json` carries the new
   fields for free (`show --json` returns an index or a section slice and computes no state — corrected at
   the external iter-1 walk); `validate` stays structure-only; the source lint's stage count is unaffected. Each
   is pinned by a test or a measurement in tasks, never asserted.
@@ -136,6 +137,12 @@ verbatim as a named limit and the pre-move grep has nothing to check.
   FILE's header; `orbit status` reads the newest emit's `status.token` (D3, by design: no file reads).
   They can disagree between the conclude verb's header flip and its final emit — a window the verb
   closes in its next step. Stated, not mechanised; an ACCEPTED residual for the readiness record.
+  NAMED at the system blind-pair walk (fresh W1, Sal: B, 2026-10-01): the residual carries the two
+  `orbit-orientation` sentences the window makes false in letter — the `No live inference beyond
+  engine and trail` THEN clause's "never artifact-content parsing" (its source list already names
+  stage-state computation, which now reads the header) and the explore-chip parenthetical "never from
+  the file (per the bare-status requirement's closed data-source scenario)" — both handed to the
+  retirement-class sweep by at-archive note 5.4; a fourth capability was declined (R-crc-1; exit (3)).
 - [`ended-from-explore` reads as a state that wants a mark] → it is an observation, not a claim: the
   render carries the citing directory, and the requirement says a mark is optional there (the ended
   mark on a concluded observation renders `ended` — agreement, not contradiction).
@@ -146,13 +153,16 @@ verbatim as a named limit and the pre-move grep has nothing to check.
 - [The `[x]` column must not move] → its OUTCOMES do not: the table-driven test executes all fifteen cells,
   and the six existing tests under `computed stage state` keep their ASSERTIONS byte-unchanged (the first
   one's four-rung title is retitled to five rungs as a named second act — fresh iter 2, S2);
-  `live-arc.test.ts` is the live pin. Its
+  `live-arc.test.ts` is the live pin (CORRECTED at apply 2026-09-29: it pins the D-arc doc only, not
+  rc03a — the fifteen-cell table is the pin). Its
   inconsistency DETAIL does move by one branch: `[x]` + `concluded` names the conclusion ("not evidence
   that the criteria were met") rather than the pre-existing "live citing work observed" string, which
   would have called the new observation live (external iter 1, W1).
 - [Two hash pins move] → `orbit-architect` (§5, the emit step) and `orbit-audit-drift` (check (b)),
   each re-recorded ONCE in the task that edits the body, with a dated reason (rc04c's sizing lesson:
-  the plan names the pins).
+  the plan names the pins). CORRECTED at apply 2026-09-29 (task 4.1): there is no `orbit-audit-drift`
+  pin; the `orbit-architect` pin is two lines and moved once at apply and once more at the
+  system blind-pair walk (2026-09-30, the grammar mirror).
 - [`StageState` JSON gains three fields] → additive; orientation's `program` array passes the payload
   through the shared builder; no consumer tests key-set equality (measured at 2.4).
 - [Two living sentences say the reader keys on location] → `orbit/specs/orbit-conventions/spec.md`

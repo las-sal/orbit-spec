@@ -10,6 +10,7 @@
  * checks; justified by explore D-d2-6 and arc ruling R-d-1.
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
+import { COMPLETE_SLOT_PRODUCTIONS } from '../../architecture/parser.js';
 import { PR_RESOLUTION_REFERENCE } from './pr-choreography.js';
 
 export function getArchitectSkillTemplate(): SkillTemplate {
@@ -78,7 +79,7 @@ Complete: [ ]
 <append-only ledger; the engine never reads it>
 \`\`\`
 
-The stage-heading grammar is \`### Stage <kebab-id> — <title>\` (kebab-case id unique in the doc, em-dash separator). The two slot lines are OPTIONAL with omission semantics (absent \`Depends-on:\` = no dependencies; absent \`Complete:\` = unratified); when present they follow the exact grammar \`Depends-on: (none)\` / \`Depends-on: <id>[, <id>…]\` and \`Complete: [ ]\` / \`Complete: [x] <YYYY-MM-DD> (<who>)\` / \`Complete: [~] <YYYY-MM-DD> (<who>)\` — unratified, ratified, ENDED (the user's declaration that the stage ended without meeting its exit criteria; no free-text suffix — the reason lives in the status log). Everything else — charter prose, exit criteria, rulings, status log — is engine-opaque judgment text.
+The stage-heading grammar is \`### Stage <kebab-id> — <title>\` (kebab-case id unique in the doc, em-dash separator). The two slot lines are OPTIONAL with omission semantics (absent \`Depends-on:\` = no dependencies; absent \`Complete:\` = unratified); when present they follow the exact grammar \`Depends-on: (none)\` / \`Depends-on: <id>[, <id>…]\` and ${COMPLETE_SLOT_PRODUCTIONS} — unratified, ratified, ENDED (the user's declaration that the stage ended without meeting its exit criteria; no free-text suffix — the reason lives in the status log). The \`Complete:\` productions in that sentence are a CHECKED MIRROR of \`orbit-architecture-engine\`'s \`Parseable architecture-doc format\` requirement, which OWNS the slot grammar — this body cannot resolve the owner at runtime, so it carries the copy and says so (held byte-equal by a parity test). Everything else — charter prose, exit criteria, rulings, status log — is engine-opaque judgment text.
 
 ### 3. Resume (doc exists) — the doc is authoritative
 
@@ -106,7 +107,7 @@ When \`orbit architecture status\` shows a stage quiescent-awaiting-ratification
 
 The offer fires on the awaiting state ONLY: a stage rendering \`ended\`, \`ended-from-explore\` or \`complete\` is offered nothing.
 
-**The unprompted route** — the mark is the USER's word. Inside an architect session the user may declare a stage ended with no offer having fired — the only route for a \`premised\` stage, which no offer reaches. Write the same \`[~]\` production with the same insert rule, and record the id under \`stages_ended\`, when the stage's observed state (read from \`orbit architecture status --json\`) is \`premised\`, \`quiescent\` or \`concluded\` AND its \`Complete:\` slot is UNDATED (absent, or \`[ ]\`). Otherwise DECLINE and write nothing:
+**The unprompted route** — the mark is the USER's word. Inside an architect session the user may declare a stage ended with no offer having fired — the only route for a \`premised\` stage, which no offer reaches. Write the same \`[~]\` production with the same insert rule, and record the id under \`stages_ended\`, when the stage's observed state (read from \`orbit architecture status --json\`) is \`premised\`, \`quiescent\` or \`concluded\` AND its \`Complete:\` slot is UNDATED (absent, or \`[ ]\`). Both tests read off that payload alone, no doc re-read: the stage is UNDATED when its \`ratified\` and \`ended\` fields are both \`false\` (absent and \`[ ]\` are indistinguishable there and need not be told apart); the LIVE citer to name is the \`citing[]\` entry of kind \`active-change\`, else the \`explore\` entry that lacks \`concluded: true\` (a concluded explore citer carries that flag). Otherwise DECLINE and write nothing:
 
 - on a LIVE stage (\`in-change\`, or a live \`exploring\`): name the live citing artifact and the act that would make the mark supportable — archive the change, or conclude the exploration. These are the two observations the engine's composition table refuses, and this flow never writes them.
 - on a slot that already carries a DATED mark (\`[x]\` or \`[~]\`): name the existing mark and point at the hand edit as the way to reverse or re-date it — this flow never authors a reversal of a recorded mark.

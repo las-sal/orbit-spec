@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import { COMPLETE_SLOT_PRODUCTIONS } from '../../../src/core/architecture/parser.js';
+import { ownerText } from '../../helpers/owner-text.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
@@ -275,6 +277,9 @@ describe('rc15 ended-stage-state: the architect §5 offer, the unprompted route,
     expect(s5).toContain('the only route for a `premised` stage');
     expect(s5).toContain('is `premised`, `quiescent` or `concluded` AND its `Complete:` slot is UNDATED (absent, or `[ ]`)');
     expect(s5).toContain('name the live citing artifact and the act that would make the mark supportable — archive the change, or conclude the exploration');
+    // fresh system pass S1: both tests are stated in the status JSON's own field names (adopter-safe).
+    expect(s5).toContain('the stage is UNDATED when its `ratified` and `ended` fields are both `false`');
+    expect(s5).toContain('the `citing[]` entry of kind `active-change`, else the `explore` entry that lacks `concluded: true`');
     expect(s5).toContain('name the existing mark and point at the hand edit as the way to reverse or re-date it');
     expect(s5).toContain('the ended mark is supported wherever no live work contradicts it, `premised` included');
     // R-crc-14: the composition table is named, never restated, in this body.
@@ -287,12 +292,17 @@ describe('rc15 ended-stage-state: the architect §5 offer, the unprompted route,
     expect(s5.split('**AskUserQuestion**').length - 1).toBe(1);
   });
 
-  it('the §2 scaffold sentence mirrors all three slot productions; the emit step names stages_ended', () => {
+  it('the §2 scaffold sentence is a CHECKED MIRROR of the owner: the parser constant equals the owning spec\'s inline production, and the body interpolates it once (external system pass W1)', async () => {
     // Body-level: the h3 slicer is fence-blind and §2's scaffold fence carries a `### Stage` line
     // that would truncate the slice (the rc13c lesson above). The sentence is stated once.
-    const grammarMirror = '`Complete: [ ]` / `Complete: [x] <YYYY-MM-DD> (<who>)` / `Complete: [~] <YYYY-MM-DD> (<who>)`';
-    expect(architect.split(grammarMirror).length - 1).toBe(1);
-    expect(architect.indexOf(grammarMirror)).toBeLessThan(architect.indexOf('### 3. Resume'));
+    // The owner is read through the single-active-owner lookup (an active delta holding the
+    // production, else the baseline) so parity is enforceable mid-change and after sync alike.
+    const owner = await ownerText('orbit-architecture-engine', COMPLETE_SLOT_PRODUCTIONS);
+    expect(owner).toContain(COMPLETE_SLOT_PRODUCTIONS);
+    expect(architect.split(COMPLETE_SLOT_PRODUCTIONS).length - 1).toBe(1);
+    expect(architect.indexOf(COMPLETE_SLOT_PRODUCTIONS)).toBeLessThan(architect.indexOf('### 3. Resume'));
+    // The mirror says it is one, and names its owner.
+    expect(architect).toContain("are a CHECKED MIRROR of `orbit-architecture-engine`'s `Parseable architecture-doc format` requirement");
     expect(architect).toContain('`stages_ended` (the stage ids this session declared ended');
   });
 

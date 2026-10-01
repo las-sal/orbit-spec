@@ -473,6 +473,15 @@ describe('computed stage state', () => {
       expect(stateOf(SLOT.blank).observed).toBe('exploring');
     });
 
+    it('an UNREADABLE explore.md (a directory — EISDIR on read) observes exploring, never throws (external system pass S1)', () => {
+      writeCiting('explore', 's1-dir', 'arc', 's1');
+      fs.mkdirSync(path.join(tmpDir, 'orbit', 'explore', 's1-dir', 'explore.md'));
+      const s = stateOf(SLOT.blank);
+      expect(s.observed).toBe('exploring');
+      expect(s.rendered).toBe('exploring');
+      expect(s.citing[0].concluded).toBe(false);
+    });
+
     it('a missing explore.md observes exploring (lenient, like readCitation)', () => {
       writeCiting('explore', 's1-bare', 'arc', 's1');
       expect(fs.existsSync(path.join(tmpDir, 'orbit', 'explore', 's1-bare', 'explore.md'))).toBe(false);

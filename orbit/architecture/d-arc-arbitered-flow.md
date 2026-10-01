@@ -100,9 +100,14 @@ belong to a single stage live in that stage's explore, not here.
 
 **Stage state vocabulary** (controlled; COMPUTED from disk since D2 — per R-d-1, state is never
 hand-authored now that the engine owns it):
-`premised → exploring → in-change → quiescent (+ ratified `complete`)` — vocabulary
-superseded by D-d2-1 (the d2-architect explore): `archived` was renamed `quiescent` because it
-must not read as "complete"; completion is a user ratification composed with quiescence.
+`premised → exploring → in-change → quiescent (+ ratified `complete`)` — the vocabulary AS D2
+SHIPPED IT, superseded by D-d2-1 (the d2-architect explore): `archived` was renamed `quiescent`
+because it must not read as "complete"; completion is a user ratification composed with
+quiescence. The CURRENT vocabulary is OWNED by `orbit-architecture-engine`'s `Computed stage
+state with completion-as-ratification` requirement and is not restated here — rc15
+(clean-up-review-cycle, 2026-09-29) added the `concluded` observation between `quiescent` and
+`premised` and the ended mark's `ended` / `ended-from-explore` renders; read the owner, not this
+line.
 
 ### Stage d1-explicit-lifecycle-consent — explicit-lifecycle-consent
 

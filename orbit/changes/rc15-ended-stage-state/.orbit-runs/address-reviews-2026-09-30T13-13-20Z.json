@@ -1,0 +1,87 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-30T13:13:20Z",
+  "change": "rc15-ended-stage-state",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc15-ended-stage-state/.orbit-runs/external-system-2026-09-29T17-40-41Z.md",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": "2026-09-29T17-11-18Z",
+  "external_reviewer": "GPT-5 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 1
+  },
+  "pushback_verification": "All 3 findings verified against HEAD dd011bd7 (each cited line read: architect.ts:81 carried a hard-coded copy with no owner named and orbit-content-fidelity pinned a literal string; d-arc-arbitered-flow.md:101-104 and CLAUDE.md:414 stated the four-rung set; engine.test.ts:476 covered the missing-file branch only). 0 stale. Log 1 of the blind pair's two walks; the fresh emit review-system-2026-09-29T17-45-34Z shares CLAUDE.md:414 and is walked next.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The generated architect grammar copy is not governed as a mirror",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/architect.ts",
+      "line": 81,
+      "classification": "trivial_fix",
+      "action": "Method settled by the AI under R-crc-3 and recorded: the three productions live ONCE in code as `COMPLETE_SLOT_PRODUCTIONS` (parser.ts, beside COMPLETE_REGEX — the executable form of the same grammar); the architect §2 sentence INTERPOLATES the constant and names itself a CHECKED MIRROR of `orbit-architecture-engine`'s `Parseable architecture-doc format` requirement (a generated surface that cannot resolve its owner at runtime carries the copy and says so — R-crc-14's mirror corollary); the fidelity test reads the owner through the single-active-owner lookup (`ownerText`, rc13b's helper: the active delta now, the baseline after sync) and asserts the owner CONTAINS the constant byte-for-byte, the body carries it exactly once before §3, and the mirror sentence names its owner. The rc13b fence helper does not apply — the owner states the production INLINE, so containment of the exact string is the parity assertion. Both orbit-architect hash pins moved a SECOND time, re-recorded once with a dated note naming this walk. Surface regenerated; the rendered SKILL.md carries the mirror sentence.",
+      "ratified_via": "chat",
+      "resolution": "one owner-controlled constant interpolated into the body; parity held to the owner by containment through ownerText",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/architecture/parser.ts",
+          "test/core/templates/orbit-content-fidelity.test.ts",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Living orientation surfaces still publish the retired state vocabulary",
+      "marker_source": "external",
+      "file": "orbit/architecture/d-arc-arbitered-flow.md",
+      "line": 103,
+      "classification": "trivial_fix",
+      "action": "Both living surfaces now POINT at the owner instead of restating the set: the D-arc doc's vocabulary line reads as the vocabulary AS D2 SHIPPED IT and names `orbit-architecture-engine`'s `Computed stage state with completion-as-ratification` requirement as the owner of the CURRENT set (rc15's `concluded` observation and the `ended` / `ended-from-explore` renders named once, dated); CLAUDE.md's D2 paragraph gains the parenthetical 'the four rungs THEN; rc15 inserted `concluded` between quiescent and premised and the owner is the state requirement'. The D-arc doc is a COMPLETE program's record: the line was rewritten as history plus pointer, not as a fresh enumeration (a second enumeration would be the R-crc-14 pattern the finding names). The two declared residue sentences (orbit-conventions' concluded-outcome KNOWN paragraph; the explore body) stay with at-archive note 5.4. `orbit validate --sources` clean after the edit (no marked figure touched).",
+      "ratified_via": "chat",
+      "resolution": "pointer to the owner on both surfaces; CLAUDE.md parenthetical",
+      "ripple_cascade": {
+        "applied": [
+          "CLAUDE.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The unreadable-explore fallback has no executing test",
+      "marker_source": "external",
+      "file": "test/core/architecture/engine.test.ts",
+      "line": 476,
+      "classification": "trivial_fix",
+      "action": "Added `an UNREADABLE explore.md (a directory — EISDIR on read) observes exploring, never throws` beside the missing-file test: the fixture makes `explore.md` a DIRECTORY, so readFileSync throws EISDIR without stubbing or permission bits (reliable under privileged and cross-platform runners — the finding's own concern, met by a filesystem shape rather than a stub); asserts observed and rendered `exploring` and `citing[0].concluded === false`. 2376 tests green (+1).",
+      "ratified_via": "chat",
+      "resolution": "directory-named explore.md fixture",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "3 of 3 external findings resolved (2 WARNING, 1 SUGGESTION; 0 stale), all obvious-fix lane: the architect §2 grammar copy is now a CHECKED MIRROR interpolating one parser-owned constant, held to the owner by a parity test through the single-active-owner lookup (both architect pins moved a second time, recorded as such); the D-arc doc and CLAUDE.md point at the owning state requirement instead of restating the four-rung set; an EISDIR fixture executes the unreadable-file leniency. Pattern: the external half found the ONE seam where this change had stated a grammar twice and left the copy ungoverned — the exact R-crc-14 pattern rc04c counted four instances of. Log 1 of 2: the fresh pass's shared CLAUDE.md finding is walked next as stale naming this log. npm test 2376 green; validate --sources clean; the surface regenerated.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews rc15-ended-stage-state --from-file orbit/changes/rc15-ended-stage-state/.orbit-runs/review-system-2026-09-29T17-45-34Z.json"
+}

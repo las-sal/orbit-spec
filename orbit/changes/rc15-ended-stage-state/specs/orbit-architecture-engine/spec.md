@@ -159,7 +159,10 @@ ratification or withdrawal from a trail.
 The rendered vocabulary is `in-change`, `exploring`, `quiescent-awaiting-ratification`, `complete`,
 `ended`, `ended-from-explore`, `premised` and `inconsistent`; the status render prints the ended
 mark as `ended (declared <date> by <who>)`, and the `--json` stage payload carries `ended`,
-`endedDate` and `endedWho` beside the ratified fields. Orientation's WAITING band (owned by
+`endedDate` and `endedWho` beside the ratified fields, with each `explore` entry of `citing[]`
+carrying `concluded: true | false` (the header read, so a reader can tell a concluded explore citer
+from a live one without opening the file; the text render prints ` (concluded)` after such a
+citer). Orientation's WAITING band (owned by
 `orbit-orientation` as a closed set naming the awaiting state only) lists neither ended state —
 that requirement is unchanged. `orbit architecture validate` stays structure-only and does not run
 the citation scan. The propose staging-move, the archive move, the explore conclude flow and the

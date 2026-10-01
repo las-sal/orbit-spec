@@ -411,7 +411,9 @@ architecture** (cross-change program) above schema (per-change flow). Parseable 
 (`### Stage <id> — <title>` + optional `Depends-on:`/`Complete:` slots; fence-aware; the
 NEAR-MISS rule — grammar failures are MALFORMED naming the line, never silently legacy; doc
 identity is a contained filename stem, traversal rejected); stage state COMPUTED from disk
-(in-change > exploring > quiescent > premised; `complete` ONLY when quiescent AND user-ratified;
+(in-change > exploring > quiescent > premised — the four rungs THEN; rc15 inserted `concluded`
+between quiescent and premised and the owner is `orbit-architecture-engine`'s state requirement;
+`complete` ONLY when quiescent AND user-ratified;
 ratified marks on any other observation render INCONSISTENT); `architecture: {doc, stage}`
 metadata citations with two-level dangling validation owned by `orbit validate <change>`;
 `orbit architecture status|show|validate` (bucketed `--json`; `show` slices ONE stage). The arc
