@@ -224,7 +224,7 @@ The shipped body carries TWO conforming exemplar entries, one per closure outcom
 #### Scenario: The exemplar conforms
 
 - **WHEN** the explore body is generated
-- **THEN** each exemplar entry's lines match the grammar's productions, the BOUNDED branch included — the generated-surface test asserts it, and the maturity-signal stage parses the same exemplars as fixtures
+- **THEN** each exemplar entry's lines match the grammar's productions, the BOUNDED branch included — the generated-surface test asserts it, and the engine's form parse accepts the same entries under the grammar `orbit-emit-composition`'s `The explore grammar has one source in code` carries
 
 ### Requirement: Re-entry resolution and the conclude verb
 

@@ -4015,3 +4015,19 @@ blocks only; the next project-wide audit raises nothing on the set, and Q-crc-28
 Pointer-only, no mechanism, three capabilities at R-crc-1's ceiling. Next in dependency order: rc16 is
 free (no dependencies) and is the cheapest open stage on the board; Phase 2's rc02b, rc03 and rc04b
 remain open.
+
+**2026-10-01 — rc16-retirement-sweep ARCHIVED (declared, explored, proposed, applied, reviewed and archived
+in one day).** The nine living sentences Q-crc-28 ledgered are retired in baseline: six MODIFIED blocks across
+the three capabilities synced byte-verified, the explore body's six copies moved with their owners, and the
+eleven quoted sentences grep to zero over the synced baselines and the body — exit (1) MET; three directories,
+MODIFIED only — exit (2) MET as written (the proposal's first "two capabilities" count was wrong, not the
+charter). Exit (3) waits on the post-archive project-wide audit, its own invocation; Q-crc-28 closes on that
+run with the two `orientation.ts` comments named as module-true and the class C trigger carried in its closed
+record. The cycle: fresh + in-context on the proposal (the enumeration short by three sites — the stage's own
+thesis turned on itself); apply 11/11 with 3.3 an at-archive note and one instrument correction; the blind pair
+on the pushed apply commit (fresh 0C/2W/1S, external GPT-5 Codex 1C/2W/2S, zero CRITICAL overlap, one converged
+defect at two severities) walked in two logs; an in-context confirm 0C/2W/1S walked to zero in the record layer;
+a COMPUTED PASSED gate, the sixth rc-stage through one and the fifth through the pair. Four findings in one
+shape across the cycle — a pointer chosen from a title rather than a read body — which is the class this stage
+exists to retire. Next in dependency order: rc16 awaits ratification after the audit; Phase 2's rc02b, rc03 and
+rc04b remain open.

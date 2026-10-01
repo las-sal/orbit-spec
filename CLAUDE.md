@@ -209,7 +209,7 @@ file now carries a live mark. Do NOT read this paragraph as the program's full l
 only what rc07 produced. The authoritative list is the program doc's own Open questions section,
 which also carries Q-crc-11, Q-crc-12, Q-crc-20, Q-crc-21, Q-crc-22 and Q-crc-23.
 
-**Eight more stages have shipped since, and the program is ELEVEN stages complete** (rc15 ratified 2026-10-01; rc03a carries the program's first ENDED mark, declared the same day).
+**Nine more stages have shipped since, and the program is ELEVEN stages complete** (rc15 ratified 2026-10-01; rc03a carries the program's first ENDED mark, declared the same day; rc16 archived 2026-10-01 and awaiting ratification).
 
 `rc02c-confirmation-semantics` is ARCHIVED (2026-09-21): **the budget stopped being a target.**
 R-crc-11(h) — effort is RECORDED, never TARGETED — retired `budgetExhausted`, the
@@ -399,6 +399,27 @@ about the engine and none in it; two walk logs (Sal: B on the one scope call —
 Q-crc-28, a fourth capability declined under R-crc-1); an in-context confirm 0C/0W/1S; a COMPUTED
 PASSED gate — the fifth rc-stage through one, the fourth through the pair. Q-crc-28 widened to three
 capabilities and Q-crc-29 (arc-done over an ended stage) opened at archive. **2376 tests green.**
+
+`rc16-retirement-sweep` is ARCHIVED (2026-10-01, the same day it was declared; exits (1) and (2) graded MET, exit (3)
+pending the post-archive project-wide audit on which Q-crc-28 closes): **living prose retired with the limit it
+described.** Nine sentences across THREE capabilities (`orbit-conventions`, `orbit-explore-modifications`,
+`orbit-orientation` — at R-crc-1's ceiling, which the charter budgeted) and their six copies in the explore body
+stopped naming "the maturity-signal stage", "the propose-consumption follow-on" and three "until … lands" limits
+as pending mechanisms, and either NAME THE OWNING REQUIREMENT by capability or are deleted (D-rc16-2: by pointer
+or delete, never restate, never a stage id); the body's copies moved WITH their owners in the same tasks
+(D-rc16-3), the KNOWN paragraph byte-equal to the delta's "Owned, since shipped" paragraph. Six MODIFIED blocks
+synced byte-verified on two independent reads; no engine code; the explore pins moved twice, each a recorded act.
+The cycle's lesson is the sweep's own disease found FOUR times — a pointer chosen from a requirement's TITLE, not
+its read body: the fresh proposal pass found the enumeration short by three sites; the in-context pass found A4
+and A5 pointed at owners that did not state the claim; the fresh system half found A3's middle clause attributed
+to the rung-TEXT owner where the ROW's render rule lives in orientation's sourcing requirement; and the in-context
+confirm found walk 1's own re-point had stopped one artifact short of the proposal (plus an older A4 residue six
+passes read past). The blind pair on the pushed apply commit — fresh 0C/2W/1S, external GPT-5 Codex 1C/2W/2S,
+zero CRITICAL overlap, ONE converged defect at two severities (A4's restatement beside its pointer) — walked in
+two logs; one instrument correction at apply (the generated-surface mirror test resolved every conventions fence
+through one anchor, and rc16's delta was the first to hold the Mechanism block without the status-header block).
+A COMPUTED PASSED gate — the sixth rc-stage through one, the fifth through the pair. The readiness record accepts
+five residuals, headlined by rc07's distinction. **2376 tests green.**
 
 Read that doc before any rc-stage work; the D-arc section below is the historical
 record of how the engine got here.

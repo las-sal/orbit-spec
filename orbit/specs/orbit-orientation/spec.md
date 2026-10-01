@@ -41,7 +41,7 @@ with new flags — e.g. `--report`, D-arc Stage D4 — without touching its pre-
 #### Scenario: No live inference beyond engine and trail
 
 - **WHEN** the orientation surface composes any view
-- **THEN** its data sources are limited to: the change-status computation (`position`/`next_command`/gates/task counts), architecture stage-state computation, workstream directory presence, metadata citations, and `.orbit-runs/` emit files — never artifact-content parsing; and the surface is READ-ONLY — it creates and modifies no files
+- **THEN** its data sources are limited to: the change-status computation (`position`/`next_command`/gates/task counts), architecture stage-state computation, workstream directory presence, metadata citations, and `.orbit-runs/` emit files — orientation itself parses no artifact content; the stage-state source it consumes reads the concluded header of citing staging directories, per `orbit-architecture-engine`'s `Computed stage state with completion-as-ratification`; and the surface is READ-ONLY — it creates and modifies no files
 
 ### Requirement: Continuity predicate and degradation ladder
 
@@ -91,8 +91,7 @@ NEWEST spine-valid emit carries `status.token: "concluded"` (the engine-computed
 `orbit-emit-composition`; a concluded exploration stays in place per `orbit-conventions`, and this
 chip is how its row stops reading as active work — later phases still render pending, because a
 conclusion builds nothing), and the chip absent when the change has no `explore.md`
-(standalone-mode propose). The concluded glyph is read from the TRAIL, never from the file (per the bare-status
-requirement's closed data-source scenario), so the header token reaches the row only through the
+(standalone-mode propose). The ROW's chip is read from the trail, so the header token reaches the row only through the
 emit the conclude verb writes AFTER flipping it; a header flipped by hand with no emit afterward leaves the
 chip `▶` until the next emit, the same time-shifted rule `next` has always had. A newest emit
 lacking `status` (a prior-generation record), or carrying a `status` that is not an object with a
@@ -125,7 +124,7 @@ the workstream name and, when its metadata cites a stage, `stage <id> · <doc>`.
 #### Scenario: Hand-flipped header without an emit lags like next
 
 - **WHEN** a staging explore's `explore.md` header reads `concluded` but its newest emit predates the flip and carries `status.token: "exploring"` (or no `status` at all, or a `status` that is not an object carrying a string `token`)
-- **THEN** the chip renders `▶` and the position `exploring` until the next emit — the surface reads no file content
+- **THEN** the chip renders `▶` and the position `exploring` until the next emit — the row reads no file content; under `--full`, the PROGRAM band beside it may already render the cited stage `ended-from-explore`, because stage state reads the header (`orbit-architecture-engine`'s `Computed stage state with completion-as-ratification`)
 
 #### Scenario: Strip mid-apply with review history
 
