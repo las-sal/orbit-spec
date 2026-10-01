@@ -1,0 +1,98 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-01T12:50:43Z",
+  "change": "rc15-ended-stage-state",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "0",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc15-ended-stage-state/tasks.md",
+      "line": 21,
+      "title": "Task 3.3 records the orbit-architect pin as re-recorded ONCE; the walk moved it a second time and recorded that only in the parity note and the logs",
+      "recommendation": "Append a dated note under task 3.3 (the same form the apply used for its measurements): the pin moved a SECOND time at the system blind-pair walk (2026-09-30/10-01) for the §2 mirror interpolation and the §5 payload-terms sentence, re-recorded once for the walk's two body edits — so the task record carries both acts, as rc13b's lesson (two acts, recorded in the parity test AND under the task) asks. The proposal and design corrections from log 2 already say it; the task line is the one record that still reads as a single act."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "pass": "3",
+      "title": "The generated architect grammar copy is not governed as a mirror",
+      "evidence": "log 1 (address-reviews-2026-09-30T13-13-20Z): parser.ts exports COMPLETE_SLOT_PRODUCTIONS; architect.ts §2 interpolates it and names the owner; the rendered SKILL.md carries the three-production string exactly once with 'CHECKED MIRROR of `orbit-architecture-engine`' (grep -c → 1 and 1); the fidelity test holds it to the owner through ownerText — the delta is the sole holder today (grep over orbit/changes/*/specs and the baseline → one file)."
+    },
+    {
+      "pass": "6",
+      "title": "Living orientation surfaces still publish the retired state vocabulary",
+      "evidence": "log 1: d-arc-arbitered-flow.md:101-108 now reads 'the vocabulary AS D2 SHIPPED IT … The CURRENT vocabulary is OWNED by `orbit-architecture-engine`'; CLAUDE.md:414-416 carries 'the four rungs THEN; rc15 inserted `concluded`'; `orbit validate --sources` clean; live-arc.test.ts green."
+    },
+    {
+      "pass": "0",
+      "title": "The unreadable-explore fallback has no executing test",
+      "evidence": "log 1: engine.test.ts test 'an UNREADABLE explore.md (a directory — EISDIR on read) observes exploring, never throws' present; npm test 2376 (+1)."
+    },
+    {
+      "pass": "1",
+      "title": "Orientation's closed data-source scenario says 'never artifact-content parsing' while the PROGRAM band now reads explore.md headers through stage-state computation",
+      "evidence": "log 2 (address-reviews-2026-10-01T12-47-08Z), Sal: B — both sentences named by requirement and line in design.md's two-source residual and in at-archive note 5.4; orbit/specs/ untouched by the walks (git diff d864ed1c..HEAD -- orbit/specs/ → empty); a fourth capability declined."
+    },
+    {
+      "pass": "4",
+      "title": "The unprompted route's UNDATED and live-citer tests are not stated in the status JSON's own field names, and the `concluded` flag on `citing[]` entries has no spec home",
+      "evidence": "log 2: architect.ts §5 states UNDATED as `ratified` and `ended` both `false` and the live citer as the `citing[]` active-change entry else the explore entry lacking `concluded: true`; the delta's JSON sentence now gives `concluded` its owner; fidelity markers pin both; the live `architecture status --json` carries both booleans on all 30 stages."
+    },
+    {
+      "pass": "0",
+      "title": "proposal.md and design.md still state two plan facts the apply corrected only in tasks.md (the audit-drift hash pin; live-arc.test.ts as rc03a's pin)",
+      "evidence": "log 2: dated CORRECTED notes at proposal.md:104, :111-113 and design.md:108, :149, :153 (read at this pass)."
+    },
+    {
+      "pass": "6",
+      "title": "CLAUDE.md's D2 paragraph still states the four-rung precedence in-change > exploring > quiescent > premised",
+      "evidence": "stale in log 2 naming log 1; CLAUDE.md:414-416 read at this pass."
+    }
+  ],
+  "commentary": "The confirm slot over the walks' own additions (commit 598f0c5a: 17 files, +594/-19 against the apply commit). Probed, not reasoned: the regenerated orbit-architect SKILL.md carries the three-production string exactly once and names its owner once; the production string has exactly one holder today (the rc15 delta — the baseline inherits it at sync, which is the single-active-owner lookup's whole point); the live `architecture status --json` carries `ended` and `ratified` as booleans on all 30 stages of both parseable docs (zero explore citers exist on the live docs, so the `concluded` flag's presence was confirmed through the engine suite's CLI test rather than the live tree); parser.ts imports no template module, so the new architect→parser import introduces no cycle; the baseline specs are untouched by both walks (the orientation sentences stayed OUT of cascade by rule, as option B requires). Every prior finding of the pair is resolved on the tree with its evidence listed. The one residual is record-truth, not mechanism: the walk's second pin move is written in the parity test and both logs but not under the task that recorded the first — the same class the walk itself just repaired in proposal and design. Lenses remain absent, so passes 4 and 5 are skipped by the degradation rule; pass 4's adopter perspective was exercised through the §5 probe above. Risk texture: the pair's two WARNINGs were disjoint and both prose-side; nothing in the composition logic, the parser, or the render moved during the walks except the exported constant, and the fifteen-cell table plus the full suite (2376) stood green throughout.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4",
+    "5"
+  ],
+  "final_assessment": "0 critical, 0 warning, 1 suggestion.",
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc15-ended-stage-state --from-file orbit/changes/rc15-ended-stage-state/.orbit-runs/review-system-2026-10-01T12-50-43Z.json"
+}
