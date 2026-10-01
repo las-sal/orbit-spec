@@ -374,13 +374,21 @@ describe('generated surface fidelity (real init, all workflows, claude + codex)'
         expect(i, `table ${header}`).toBeGreaterThan(-1);
         return text.slice(i, text.indexOf('\n\n', i));
       };
-      const conv = await ownerText('orbit-conventions', '```\n## Mechanism\n');
-      const mods = await ownerText('orbit-explore-modifications', '| staging dir | concluded | active change |');
-      expect(fence(skill, '^> \\*\\*Status')).toBe(fence(conv, '^> \\*\\*Status'));
-      expect(fence(skill, '- **<YYYY-MM-DD> — <ID>: <title>**')).toBe(fence(conv, '- **<YYYY-MM-DD> — <ID>: <title>**'));
-      expect(fence(skill, '## Mechanism\n')).toBe(fence(conv, '## Mechanism\n'));
-      expect(table(skill, '| staging dir | concluded | active change |')).toBe(table(mods, '| staging dir | concluded | active change |'));
-      expect(table(skill, '| part of the mechanism |')).toBe(table(mods, '| part of the mechanism |'));
+      // Each mirror resolves its owner by its OWN anchor (rc16-retirement-sweep, 2026-10-01): until then
+      // one lookup per capability — keyed on the Mechanism fence and the re-entry table — stood in for
+      // every block of that capability, which held only while one text carried them all. rc16's
+      // conventions delta is the first ACTIVE delta to hold the Mechanism-grammar block WITHOUT the
+      // status-header block, so the shared lookup returned a text the status fence is not in. The
+      // single-active-owner rule is unchanged; it is now applied per block, as the helper documents.
+      const ownedFence = async (capability: string, firstLine: string) =>
+        fence(await ownerText(capability, '```\n' + firstLine), firstLine);
+      const ownedTable = async (capability: string, header: string) =>
+        table(await ownerText(capability, header), header);
+      expect(fence(skill, '^> \\*\\*Status')).toBe(await ownedFence('orbit-conventions', '^> \\*\\*Status'));
+      expect(fence(skill, '- **<YYYY-MM-DD> — <ID>: <title>**')).toBe(await ownedFence('orbit-conventions', '- **<YYYY-MM-DD> — <ID>: <title>**'));
+      expect(fence(skill, '## Mechanism\n')).toBe(await ownedFence('orbit-conventions', '## Mechanism\n'));
+      expect(table(skill, '| staging dir | concluded | active change |')).toBe(await ownedTable('orbit-explore-modifications', '| staging dir | concluded | active change |'));
+      expect(table(skill, '| part of the mechanism |')).toBe(await ownedTable('orbit-explore-modifications', '| part of the mechanism |'));
       // and each mirror says so, naming its owner
       expect(skill.match(/\*Mirror of `orbit-(conventions|explore-modifications)`'/g)?.length).toBe(5);
     });

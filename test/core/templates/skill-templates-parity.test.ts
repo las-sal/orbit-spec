@@ -59,8 +59,20 @@ import { generateSkillContent } from '../../../src/core/shared/skill-generation.
 // the regenerated skill was diffed against the snapshot to confirm it. Moved once more at the
 // in-context confirm's walk, same act: the pointer's partial paraphrase of the grid's inputs was
 // trimmed to the bare pointer (a four-of-five restatement beside a pointer is the R-crc-14 pattern).
+//
+// rc16-retirement-sweep (2026-10-01) — explore moved ONCE, in task 2.1, for the retirement sweep: six
+// body sentences that named a pending stage ("the maturity-signal stage", "the propose-consumption
+// follow-on", three "until … lands" limits) now NAME THE OWNING REQUIREMENT by capability or are
+// deleted, in the same tasks as their owning spec sentences (D-rc16-2, D-rc16-3; R-crc-14). The sites,
+// by line at HEAD f3bfd0e2: 472 (the `Kind:` bullet's residual → the grammar requirement, R-crc-10),
+// 504 (the VISIBILITY clause → run-summary-emit's maturity requirement + propose's Mechanism
+// consumption), 534 (the exemplar preamble → emit-composition's one-source grammar requirement), 606
+// (the conclude verb's step 4 → the Concluded rung's prose), 610 (the KNOWN paragraph → the delta's
+// "Owned, since shipped" paragraph, byte-equal), 657 (the composition section → propose's Step 0c.6
+// consumption + the REFUSED-at-propose rule). No fidelity marker pins any of these sentences; the
+// task list carries the pairing. Only this hash and the `orbit-explore` generated-content hash moved.
 const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
-  getExploreSkillTemplate: '9fe8f3194dd26da5830797cd70e95cb53e5f9dc8daf404fce23edf042ed1e135',
+  getExploreSkillTemplate: '57df2a780434168ad0dbef3b2cb2f3f1e92192c250fd90f09a277f7305c334f7',
   getNewChangeSkillTemplate: '8f68be94db91a147b93d492f6f32ab3c02725a20a001c87602ac8d9741587614',
   getContinueChangeSkillTemplate: '98c49b247140ba301964c1e5a825686485b74a525f65f31a365d19e0aa84923e',
   getApplyChangeSkillTemplate: 'b2f2d8bfdc7bfb5283af4cb45d3f82fa6a393ccb0cfaeb332427c088ca956ecd',
@@ -110,7 +122,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
 };
 
 const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
-  'orbit-explore': '2d2541eabdcfb09c49e5eb9286334bd6c67eae90fc47fdff4f9a7cb7496ff4e5',
+  'orbit-explore': 'a9df89f86e38df8cf87b3c7e49a600afb9cd4e49324e885f31264fbb545f0f3f', // rc16-retirement-sweep: moved once with the body (see the function-hash note above)
   'orbit-new-change': '94c9d6377c6de0484f3a51923eba08214ca45cab5d87a55e46e032de2640b925',
   'orbit-continue-change': 'f61634ab5e96436b33fd30c210f84a57f55baf1716d6ef4679c1ed2a518cc3d3',
   'orbit-apply-change': '90e1e529f4a264b4cf2eac15cea9229d6d2c4c1e9c246b049a00d3f79cb2e574',
