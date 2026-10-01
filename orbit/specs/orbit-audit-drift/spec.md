@@ -335,10 +335,11 @@ NAME to the current built-in definition would misclassify old archives as v3.
 The Category 3 (cross-doc consistency) scan SHALL additionally check parseable architecture docs
 against engine-computed reality — "a stale architecture doc is the most expensive drift there is"
 (D-arc Stage D2): (a) prose in a stage section that contradicts the stage's computed state (e.g.
-"awaits the user's propose" while a citing change is active) → WARNING; (b) a ratified
-`Complete: [x]` mark on a stage whose observed state is not quiescent — live citing work OR no
-citing artifacts at all (`premised`) → CRITICAL (the completion claim is falsified, or
-unsupported, by observation); (c) a hand-written state line (`*State:*`
+"awaits the user's propose" while a citing change is active) → WARNING; (b) a `Complete:` mark — ratified `[x]` or ended `[~]` — on a stage whose observed state the
+engine's composition rule renders INCONSISTENT (the table in `orbit-architecture-engine`'s
+`Computed stage state with completion-as-ratification`; this check consumes that rule and
+enumerates none of its observations) → CRITICAL (the completion claim is falsified or unsupported
+by observation; the ended claim is contradicted by live work); (c) a hand-written state line (`*State:*`
 form) in a parseable doc → WARNING (state is computed, never stored — flag for deletion);
 (d) dangling `architecture:` citations in change/explore metadata (either level) → CRITICAL
 (change citations also fail `orbit validate <change>`; explore citations have no validating
@@ -353,6 +354,21 @@ outside an architect session (flow-entry ruling).
 
 - **WHEN** the audit scans a doc whose stage carries `Complete: [x]` while an active change cites that stage
 - **THEN** a CRITICAL finding names the stage, the mark, and the citing change
+
+#### Scenario: Ended mark contradicted by live work flagged
+
+- **WHEN** the audit scans a doc whose stage carries `Complete: [~]` while an active change or a live explore cites that stage
+- **THEN** a CRITICAL finding names the stage, the mark, and the live citing artifact
+
+#### Scenario: Ratified mark with only a concluded exploration is flagged as a conclusion
+
+- **WHEN** the audit scans a doc whose stage carries `Complete: [x]` and the stage's only citer is a concluded exploration
+- **THEN** a CRITICAL finding names the stage, the mark, and the concluded exploration — described as a conclusion that is not evidence the criteria were met, never as live work
+
+#### Scenario: Ended mark on a premised stage is not flagged
+
+- **WHEN** the audit scans a doc whose stage carries `Complete: [~]` and no artifact cites it
+- **THEN** no finding is raised — the engine renders `ended`, and the check consumes that rule
 
 #### Scenario: Hand-written state line flagged
 

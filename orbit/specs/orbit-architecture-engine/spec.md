@@ -17,7 +17,14 @@ Architecture docs SHALL declare engine-readable structure via markdown heading c
 remaining judgment-dense prose documents: a stage is declared by a heading of the form
 `### Stage <id> — <title>` (kebab-case `<id>`, unique within the doc), and a stage section MAY
 carry two labeled slot lines — `Depends-on: <id>[, <id>…]` (or `Depends-on: (none)`) and
-`Complete: [ ]` / `Complete: [x] <YYYY-MM-DD> (<who>)`. Both slots are OPTIONAL with defined
+`Complete: [ ]` / `Complete: [x] <YYYY-MM-DD> (<who>)` / `Complete: [~] <YYYY-MM-DD> (<who>)` — three
+EXACT productions: unratified, ratified, and ENDED (the user's declaration that the stage ended without
+meeting its exit criteria — dated and attributed like the ratified mark, with no free-text suffix; the
+reason lives in the status log, never in the slot). The slot's domain is CLOSED: the three productions,
+absence (unratified, below), duplication (a violation), and every other `Complete:`-prefixed line a
+near-miss under the rule below — a bare `[~]`, a malformed date, a trailing suffix. The dated productions
+are LEXICAL, and the limit is shared by both: the date is shape-only (`\d{4}-\d{2}-\d{2}`; calendar
+validity is not checked) and the attribution is opaque up to the final closing paren. Both slots are OPTIONAL with defined
 omission semantics: an absent `Depends-on:` parses as no dependencies; an absent `Complete:`
 parses as unratified; validation accepts either omission; the architect ratification flow INSERTS
 a missing `Complete:` line when writing a mark (per `orbit-architect`). The parser INTERPRETS only:
@@ -76,6 +83,21 @@ outside fences (genuinely opaque prose). Architecture docs live at
 - **WHEN** a parseable stage carries neither slot line
 - **THEN** it parses as no-dependencies + unratified; `validate` passes; ratifying its completion later inserts the `Complete:` line
 
+#### Scenario: Ended mark parses
+
+- **WHEN** a stage carries `Complete: [~] 2026-09-28 (Sal)`
+- **THEN** it parses as ENDED with date `2026-09-28` and attribution `Sal` — neither ratified nor unratified — and `validate` passes
+
+#### Scenario: Ended near-misses are validation errors, executed one by one
+
+- **WHEN** a stage's slot reads a bare `Complete: [~]`, or `Complete: [~] soon (someone)`, or `Complete: [~] 2026-09-28 (Sal) — withdrawn`
+- **THEN** each FAILS `orbit architecture validate` naming its line and the slot grammar's three productions, `status` lists the doc as malformed, and no ended mark is parsed from any of them — the mark is dated and attributed like the ratified one, and the slot carries no suffix
+
+#### Scenario: The lexical limit is shared and declared
+
+- **WHEN** a stage's slot reads `Complete: [~] 2026-99-99 (Sal)` or `Complete: [~] 2026-09-28 (Sal))`
+- **THEN** each parses as ENDED — the first because the date is shape-only, the second with attribution `Sal)` because attribution is opaque — exactly as the same two lines with `[x]` parse as ratified today; the limit is declared, not hidden
+
 #### Scenario: Near-miss heading is a validation error, not silent legacy
 
 - **WHEN** a doc's only stage heading is mistyped (e.g. `### Stage d2_architect architect` — bad id form, missing em-dash)
@@ -101,18 +123,61 @@ outside fences (genuinely opaque prose). Architecture docs live at
 
 Stage state SHALL be a pure function of on-disk artifacts — never stored, never hand-authored.
 For a stage `<id>` in doc `<doc>`, the observed state is computed with this precedence: (1) any
-ACTIVE change whose metadata cites `{doc, stage: <id>}` → `in-change`; (2) else any live explore
+ACTIVE change whose metadata cites `{doc, stage: <id>}` → `in-change`; (2) else any LIVE explore
 (`orbit/explore/*/`) whose metadata cites it → `exploring`; (3) else ≥1 ARCHIVED change citing it
-→ `quiescent`; (4) else → `premised`. **Completion is a composition of observation and
-ratification**: the engine renders `complete` ONLY when the observed state is `quiescent` AND the
-stage's `Complete:` slot is ratified (`[x]` with date); a quiescent stage with an unratified slot
-renders as quiescent-awaiting-ratification. A ratified `Complete:` mark on a stage whose OBSERVED
-state is not quiescent — live citing work (active change or live explore) OR no citing artifacts
-at all (`premised`, e.g. a pre-D2 archived stage whose archive was never backfilled with its
-citation) — is an inconsistency surfaced by the STATUS RENDER (which never shows a silent
-`complete`) and raised as a finding by the audit-drift staleness check; `orbit architecture
-validate` stays structure-only and does not run the citation scan. The propose staging-move and the archive move
-are the state transitions — no additional bookkeeping exists.
+→ `quiescent`; (4) else any CONCLUDED explore citing it → `concluded`; (5) else → `premised`. A
+citing staging directory is CONCLUDED iff the first non-blank line of its `explore.md` carries the
+`concluded` token of the status-header production `orbit-conventions` owns — the reader consumes
+the engine's ONE reader of that production (the explore parser's) and states no second grammar; a
+missing or unreadable `explore.md`, the `exploring` token, or neither token observe as LIVE
+`exploring` (the convention's rule: not-concluded, never MALFORMED). Archived work outranks a
+conclusion: the archive is evidence to grade, the conclusion only a decision to build no more. The
+`.openspec.yaml` citation is the only thing that makes a directory a citer; the header decides only
+which of the two explore observations it is.
+
+**Completion is a composition of observation and mark — ONE table for both layers** (the stage
+grammar's `Complete:` slot per the format requirement; the exploration's header per the rule above):
+
+| observed \ mark | `[ ]` | `[x]` ratified | `[~]` ended |
+|---|---|---|---|
+| `in-change` | `in-change` | INCONSISTENT | INCONSISTENT |
+| `exploring` (live) | `exploring` | INCONSISTENT | INCONSISTENT |
+| `quiescent` | quiescent-awaiting-ratification | `complete` | `ended` |
+| `concluded` | `ended-from-explore` | INCONSISTENT | `ended` |
+| `premised` | `premised` | INCONSISTENT | `ended` |
+
+The `[x]` column's OUTCOMES are the pre-rc15 rule unchanged: the engine renders `complete` ONLY when the
+observed state is `quiescent` AND the stage's `Complete:` slot is ratified (`[x]` with date); a
+quiescent stage with an unratified slot renders as quiescent-awaiting-ratification; a ratified
+`Complete:` mark on a stage whose OBSERVED state is not quiescent — live citing work (active change
+or live explore), a concluded exploration only, OR no citing artifacts at all (`premised`, e.g. a
+pre-D2 archived stage whose archive was never backfilled with its citation) — is an inconsistency
+surfaced by the STATUS RENDER (which never shows a silent `complete`) and raised as a finding by
+the audit-drift staleness check. The `[~]` column is the ended mark's rule: ending ASSERTS NOTHING
+ABOUT THE WORK, so the mark is honoured on `quiescent` (the work archived without meeting its
+criteria), on `concluded` (the mark and the header agree) and on `premised` (declared and withdrawn
+before any work — the doc-layer twin of Considered & out), and is INCONSISTENT only where LIVE
+citing work contradicts it — surfaced by the status render naming the live citer and raised by
+audit-drift's check (b), which consumes this rule and restates none of it. `ended-from-explore` is
+the ONE cell where the exploration layer alone decides: a stage whose only citers are concluded
+explorations and whose slot is `[ ]` renders it — an observation, never `exploring`, and never a
+claim that a mark is owed (a mark there renders `ended`: agreement, not contradiction). Re-entry
+falls out of the table: a new live change or live explore citing an ended stage renders
+INCONSISTENT, and clearing the slot by hand is the user's re-entry act. Every mark is the USER's,
+written in an architect session on their word (per `orbit-architect`); the engine never infers
+ratification or withdrawal from a trail.
+
+The rendered vocabulary is `in-change`, `exploring`, `quiescent-awaiting-ratification`, `complete`,
+`ended`, `ended-from-explore`, `premised` and `inconsistent`; the status render prints the ended
+mark as `ended (declared <date> by <who>)`, and the `--json` stage payload carries `ended`,
+`endedDate` and `endedWho` beside the ratified fields, with each `explore` entry of `citing[]`
+carrying `concluded: true | false` (the header read, so a reader can tell a concluded explore citer
+from a live one without opening the file; the text render prints ` (concluded)` after such a
+citer). Orientation's WAITING band (owned by
+`orbit-orientation` as a closed set naming the awaiting state only) lists neither ended state —
+that requirement is unchanged. `orbit architecture validate` stays structure-only and does not run
+the citation scan. The propose staging-move, the archive move, the explore conclude flow and the
+architect's mark writes are the state transitions — no additional bookkeeping exists.
 
 #### Scenario: Precedence over multiple citations
 
@@ -138,6 +203,41 @@ are the state transitions — no additional bookkeeping exists.
 
 - **WHEN** a quiescent stage gains a new live explore citing it
 - **THEN** its observed state returns to `exploring`
+
+#### Scenario: A concluded exploration is not live activity
+
+- **WHEN** a stage's only citing artifact is a staging directory whose `explore.md` first non-blank line reads `> **Status**: concluded 2026-09-25.` and the stage's `Complete:` slot is `[ ]`
+- **THEN** its observed state is `concluded` and it renders `ended-from-explore` naming the directory — never `exploring` — and orientation's WAITING band gains nothing for it
+
+#### Scenario: Archived work outranks a conclusion
+
+- **WHEN** a stage is cited by one archived change AND one concluded exploration, with an unratified slot
+- **THEN** its observed state is `quiescent` and it renders quiescent-awaiting-ratification — the archive is evidence to grade
+
+#### Scenario: Live header tokens observe as exploring
+
+- **WHEN** a citing staging directory's `explore.md` is missing, or its first non-blank line carries the `exploring` token, or carries neither token
+- **THEN** the stage observes `exploring` in every case — never MALFORMED, never `concluded`
+
+#### Scenario: Ended mark honoured on a quiescent stage
+
+- **WHEN** all changes citing a stage are archived and its slot is `Complete: [~] 2026-09-28 (Sal)`
+- **THEN** the engine renders `ended (declared 2026-09-28 by Sal)`, the state is neither `complete` nor awaiting, and the WAITING band does not list it
+
+#### Scenario: Ended mark honoured on a premised stage
+
+- **WHEN** a stage has no citing artifact at all and its slot carries the ended mark
+- **THEN** it renders `ended` — ending asserts nothing about the work, so no evidence is owed
+
+#### Scenario: Ended mark contradicted by live work is an inconsistency
+
+- **WHEN** a stage's slot carries the ended mark and an active change (or a live explore) cites it
+- **THEN** the status render shows the inconsistency naming the live citer (never a silent `ended`), and audit-drift's check (b) raises it; clearing the slot by hand is the re-entry
+
+#### Scenario: Ratified mark with only a concluded exploration is an inconsistency
+
+- **WHEN** a stage's slot is `[x]` and its only citer is a concluded exploration
+- **THEN** it renders the inconsistency with a detail naming the conclusion ("a concluded exploration is not evidence that the exit criteria were met") and never the words "live citing work" — the `[x]` column's outcomes are unchanged by the fifth observed state; only its detail learns the new observation's name
 
 ### Requirement: Architecture citation in change and explore metadata
 

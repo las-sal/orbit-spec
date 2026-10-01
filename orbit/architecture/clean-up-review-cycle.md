@@ -1188,7 +1188,42 @@ never deleted.
   change touching `orbit-conventions` and `orbit-explore-modifications` (two capabilities), pointer-only
   edits and the title rename with its pointer sites, no mechanism — declared as a stage or taken as a
   rider on the next stage that touches either capability. Until then the stale sentences are an
-  accepted residual on rc13c's readiness record.
+  accepted residual on rc13c's readiness record. ADDED 2026-10-01 at rc15's archive (its at-archive
+  note 5.4, widened at the system blind-pair walk — fresh W1, Sal: B): FOUR more sentences of the
+  same class, two of them now FALSE rather than pending. The concluded-outcome KNOWN paragraph in
+  `orbit-conventions` (line 1022 at rc15's archive) and its copy in the explore body
+  (`src/core/templates/workflows/explore.ts` line 610) say the stage-state reader keys on LOCATION and
+  renders a stage cited only by a concluded exploration as `exploring` — rc15 shipped the header read,
+  so both describe a limit that no longer exists (delete the KNOWN sentence; point at
+  `orbit-architecture-engine`'s state requirement). And two `orbit-orientation` sentences the new read
+  makes false in letter: the `No live inference beyond engine and trail` THEN clause's closing "never
+  artifact-content parsing" (line 44 — its source list already names architecture stage-state
+  computation, which now reads the concluded header of citing staging directories, so the clause is
+  true of orientation's module and false of the composed view), and the explore-chip parenthetical
+  "never from the file (per the bare-status requirement's closed data-source scenario)" (lines 94-95
+  — true of the chip, which stays trail-read; the cited rationale no longer forbids a file read
+  transitively). The one-clause repairs: qualify the THEN clause as "orientation itself parses no
+  artifact content; the stage-state source it consumes reads the concluded header per
+  `orbit-architecture-engine`", and soften the chip parenthetical to "the ROW's chip is read from the
+  trail". A fourth capability inside rc15 was declined under R-crc-1 and exit (3)'s recorded
+  no-orientation-delta measure. The sweep now spans THREE capabilities (`orbit-conventions`,
+  `orbit-explore-modifications`, `orbit-orientation`) — at R-crc-1's ceiling, still pointer-only and
+  mechanism-free; the standing recommendation stands, with `orbit-orientation` added to its touch list.
+- **Q-crc-29 — the ARC-DONE predicate has no treatment for a stage rendering `ended` or
+  `ended-from-explore`.** Opened 2026-10-01 at rc15's archive (its at-archive note 5.5; raised by the
+  fresh proposal pass, iter 2, W1; Sal: 1B — a declared non-goal and an accepted residual on rc15's
+  readiness record). `orbit-pr-lifecycle` owns arc-done as "every declared stage archived AND the
+  closing architecture review recorded", consumed by the architect body's arc-done readout. rc15's
+  D-rc15-1 honours the ended mark on `premised` — a stage declared and withdrawn before any work — so
+  `ended` is now reachable with NO archive at all, and a program carrying such a stage cannot observe
+  arc-done until that owner says an ended stage does not hold the program open. The consequence is
+  bounded: arc-done is surfaced for a human act, never taken by the engine, and no live doc carries an
+  ended stage without an archive today (rc03a's archive exists; its mark is exit (1)'s pending act).
+  Standing recommendation: ONE sentence in `orbit-pr-lifecycle`'s predicate — "archived OR ended" for
+  the per-stage clause, with `ended-from-explore` counted the same way, since a concluded exploration
+  is the same decision to build no more — plus the architect readout's one line; a rider on the next
+  stage that touches `orbit-pr-lifecycle`, or its own small change. Until then the open predicate is
+  rc15's accepted residual.
 
 ## Program stages
 
@@ -3859,3 +3894,46 @@ predicate. The charter's "refuse-or-reopen branch" left the choice to the explor
 chose refuse on Sal's word and the criterion still measured, so no R-crc-12 revision. rc03a's offer
 was not re-fired (its fourth decline stands; rc15's exit (1) ends that count). Next in dependency
 order: rc15-ended-stage-state is free; Phase 2's rc02b, rc03 and rc04b are open.
+
+**2026-10-01 — rc15 ARCHIVED through a COMPUTED PASSED gate via the blind pair (the fifth
+rc-stage through one, the fourth through the pair); specs synced 5/5; Q-crc-28 widened and Q-crc-29
+opened; exit (1) pending on Sal's act.** Proposed 2026-09-28 in consume mode over the exploration
+(six decisions, five live rules, five Mechanism entries all CLOSED — none open, no key defects, no
+BOUNDED residual); Sal ruled the two scope calls in chat (an ended mark asserts nothing about the
+work, so it is honoured on `premised`; the mark reaches the doc as a third answer on the existing
+offer or unprompted on the user's word). Proposal cadence: external GPT-5 Codex 4W/2S (the unprompted
+route on a LIVE stage declined — 3A; the lexical limit DECLARED and shared with the ratified
+production, not hardened — 6A), fresh 0C/3W/4S (arc-done over ended stages a declared non-goal —
+1B, now Q-crc-29; the unprompted route closed over the SLOT's content too — 2A; audit-drift's two
+enumerations dropped so "consumes the rule and enumerates none of its observations" is literally
+true), in-context 0C/1W/3S; 17 findings walked to zero in three logs; gate PASSED. Apply 13/14 in
+one session (5.3 the user-validation handoff: rc03a's mark is Sal's act): the third production
+`Complete: [~] <date> (<who>)` beside the ratified one, `StageCompletion` gaining `ended`;
+`concluded` the FIFTH observed state read through the explore parser's exported `readStatus` — ONE
+reader of the header production in the engine, proven by grep; `compose()` the five-by-three table
+cell for cell, the `[x]` column's outcomes byte-unchanged while its detail learned the conclusion's
+name; `ended (declared <date> by <who>)` and `ended-from-explore` renders with `ended`/`endedDate`/
+`endedWho` on the JSON payload and `concluded` on explore citers; the architect offer ratify / not yet
+/ ended, firing on awaiting ONLY, with the unprompted route written on `premised`/`quiescent`/
+`concluded` + an UNDATED slot and declined on live work or a dated mark; `stages_ended` in the emit
+table; audit-drift's check (b) by POINTER. Two plan facts corrected on the record at apply: no
+`orbit-audit-drift` hash pin exists, and `live-arc.test.ts` reads the D-arc doc only. System cadence
+on the pushed apply commit d864ed1c: the blind pair — fresh 0C/1W/3S (the `orbit-orientation` closed
+data-source scenario and its chip parenthetical made false in letter by the header read — the one
+scope call, Sal: B, named as residual and handed to Q-crc-28; the unprompted route restated in the
+status JSON's own field names, `concluded` given its owner sentence) and external GPT-5 Codex
+0C/2W/1S (the architect §2 grammar copy UNGOVERNED as a mirror — the fifth instance of the rule-stated-
+twice pattern rc04c counted, now ONE parser constant `COMPLETE_SLOT_PRODUCTIONS` interpolated into the
+body and held to the owner by a parity test through the single-active-owner lookup; the D-arc doc and
+CLAUDE.md pointing at the owning state requirement; an EISDIR fixture executing the unreadable-file
+leniency), zero CRITICAL overlap, one shared SUGGESTION, two walk logs; an in-context confirm
+0C/0W/1S (the task record's second pin move, applied in flow); gate PASSED on resolution. Every
+finding of the pair sat in prose describing the engine; none in the engine. Exit (2) and (3) measured
+MET on the archived tree (the concluded fixture renders `ended-from-explore` in the fifteen-cell
+table; every production executed against its near-misses; `orbit-orientation` carries no delta —
+`ls specs/` three directories). Exit (1) PENDING: rc03a's mark is written on Sal's word in the next
+architect session on this doc, and Q-crc-11 closes on that observation. Specs synced 5/5
+byte-verified (five MODIFIED blocks across three capabilities); fingerprints 5/5; audit 0C/1W/1S;
+2376 tests green. rc15 renders quiescent, awaiting ratification. Next in dependency order: Phase 2's
+rc02b, rc03 and rc04b are open; the retirement-class sweep (Q-crc-28, now three capabilities) is the
+cheapest standing recommendation on the board.

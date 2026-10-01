@@ -209,7 +209,7 @@ file now carries a live mark. Do NOT read this paragraph as the program's full l
 only what rc07 produced. The authoritative list is the program doc's own Open questions section,
 which also carries Q-crc-11, Q-crc-12, Q-crc-20, Q-crc-21, Q-crc-22 and Q-crc-23.
 
-**Seven more stages have shipped since, and the program is TEN stages complete** (rc13c ratified 2026-09-28).
+**Eight more stages have shipped since, and the program is TEN stages complete** (rc13c ratified 2026-09-28; rc15 archived 2026-10-01, awaiting ratification).
 
 `rc02c-confirmation-semantics` is ARCHIVED (2026-09-21): **the budget stopped being a target.**
 R-crc-11(h) — effort is RECORDED, never TARGETED — retired `budgetExhausted`, the
@@ -368,6 +368,37 @@ in flow; a COMPUTED PASSED gate — the fourth rc-stage through one, the third t
 (a read-only print of the parsed Mechanism form) and Q-crc-28 (the retirement-class sweep's list) opened
 at archive; the readiness record accepts five residuals, headlined again by rc07's distinction. **2330
 tests green.**
+
+`rc15-ended-stage-state` is ARCHIVED (2026-10-01; exit (1) pending on Sal's act): **a stage that
+ended without meeting its criteria can say so, from both layers.** The `Complete:` slot has a THIRD
+exact production, `[~] <YYYY-MM-DD> (<who>)` — dated and attributed like the ratified mark, no suffix,
+the same near-miss and duplicate-slot rules, and the SAME declared lexical limit (dates shape-only,
+attribution opaque to the last paren — Sal: declare, do not harden). `concluded` is the FIFTH observed
+state (`in-change > exploring > quiescent > concluded > premised`), read from a citing staging
+directory's `explore.md` header through the explore parser's exported `readStatus` — the engine's ONE
+reader of that production; a missing, unreadable or token-less header observes live `exploring`.
+Completion is ONE five-by-three table for both layers: the `[x]` column's outcomes byte-unchanged
+(its detail now names a concluded citer as a conclusion, never live work); the `[~]` mark honoured on
+`quiescent`, `concluded` and `premised` (ending asserts nothing about the work) and INCONSISTENT only
+on live work, naming the first live citer; a stage whose only citers are concluded explorations
+renders `ended-from-explore`, never `exploring`. The WAITING band's closed set lists neither ended
+state BY CONSTRUCTION — `orbit-orientation` carries no delta, exit (3)'s measure. The architect offer
+is ratify / not yet / ended, fires on awaiting ONLY; the unprompted route writes the mark on
+`premised`/`quiescent`/`concluded` with an UNDATED slot and DECLINES on live work or a dated mark,
+both tests stated in the status JSON's own field names for an adopter's skill; `stages_ended` sits
+beside `completions_ratified` in the architect emit; audit-drift's check (b) names both marks and
+POINTS at the table. The architect body's grammar copy is a CHECKED MIRROR of one parser constant
+(`COMPLETE_SLOT_PRODUCTIONS`), held to its owner by a parity test through the single-active-owner
+lookup — the external system pass found it ungoverned, the fifth instance of the rule-stated-twice
+pattern. The cycle: external GPT-5 Codex + fresh + in-context on the proposal (17 findings, two scope
+calls ruled in chat); apply 13/14 (5.3 the handoff: Sal declares rc03a ended in the next architect
+session, closing Q-crc-11 — the stage's exit (1)); the **blind pair on the pushed apply commit** —
+fresh 0C/1W/3S and external GPT-5 Codex 0C/2W/1S, zero CRITICAL overlap, every finding in prose
+about the engine and none in it; two walk logs (Sal: B on the one scope call — the two
+`orbit-orientation` sentences the header read falsifies in letter are a NAMED residual handed to
+Q-crc-28, a fourth capability declined under R-crc-1); an in-context confirm 0C/0W/1S; a COMPUTED
+PASSED gate — the fifth rc-stage through one, the fourth through the pair. Q-crc-28 widened to three
+capabilities and Q-crc-29 (arc-done over an ended stage) opened at archive. **2376 tests green.**
 
 Read that doc before any rc-stage work; the D-arc section below is the historical
 record of how the engine got here.
