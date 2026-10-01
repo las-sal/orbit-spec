@@ -1,0 +1,30 @@
+{
+  "command": "architect",
+  "timestamp": "2026-10-01T20:59:57Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": null,
+  "final_assessment": "Architect session on clean-up-review-cycle: nothing awaited ratification and the doc is not arc-done (no program PR; twelve stages premised at open). The board question from the prior handoff — the split parents rc13-explore-mechanism and rc04-readiness-record, premised forever because every exit criterion moved to a child under R-crc-9 — was settled by Sal: ENDED for both, through the unprompted route (observed state premised, undated slots, no citers, no Depends-on references). `Complete: [~] 2026-10-01 (Sal)` written into both slots; `orbit architecture status` renders `ended (declared 2026-10-01 by Sal)` for each; rc04b stays premised with its own charter. The demotion alternative (rewriting the headings out of the stage grammar, 25 → 23) was briefed, withdrawn and recorded in Considered & out with a re-entry trigger. Status log appended; CLAUDE.md's narrative sentence names the second and third ended marks. The doc validates; the source lint is clean (25/14/21/4 — no count moved).",
+  "stages_touched": [
+    "rc13-explore-mechanism",
+    "rc04-readiness-record"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "stages_ended": [
+    "rc13-explore-mechanism",
+    "rc04-readiness-record"
+  ],
+  "handoff": {
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md — the last 2026-10-01 status-log entry (rc13 and rc04 declared ended as split parents) and the new Considered & out entry (demoting split-parent headings)",
+      "CLAUDE.md — the ACTIVE program section (25 stages; twelve complete; three ended marks: rc03a, rc13, rc04)",
+      "orbit architecture status — nothing awaiting on this doc; open stages are Phase 2's rc02b, rc03, rc04b and the premised rc05–rc10, rc07b, rc12"
+    ],
+    "next_command": "/orbit:explore — user-invoked (the next open stage in dependency order; rc02b, rc03 and rc04b are Phase 2's open stages, all depending only on shipped work)",
+    "model_hint": null,
+    "seam": "post-declaration; twelve complete, three ended; no stage awaiting"
+  },
+  "next_recommended": "/orbit:explore — user-invoked (the next open stage in dependency order; rc02b, rc03 and rc04b are Phase 2's open stages, all depending only on shipped work)"
+}

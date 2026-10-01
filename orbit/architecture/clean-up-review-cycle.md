@@ -1324,7 +1324,7 @@ a `gate_overridden` for "no clean pass yet".
 ### Stage rc13-explore-mechanism — invention happens in explore, or it happens in review
 
 Depends-on: (none)
-Complete: [ ]
+Complete: [~] 2026-10-01 (Sal)
 
 **SPLIT 2026-09-15 (Sal) into rc13a + rc13b, under R-crc-9 — its first application.** This heading
 is retained as the program's record of the problem and the evidence; the WORK is declared in the two
@@ -1869,7 +1869,7 @@ embarrassment.
 
 Depends-on: rc02-gate-semantics
 
-Complete: [ ]
+Complete: [~] 2026-10-01 (Sal)
 
 **SPLIT 2026-09-21 (Sal) into rc04a + rc04b + rc04c, under R-crc-9 — its second application, and
 the first taken PREVENTIVELY from a size check rather than from a post-mortem.** This heading is
@@ -2611,6 +2611,12 @@ unchanged, measured by its delta count being zero.
   scope. Splitting would move the same criterion into a smaller change where it would still be
   specified in the same medium, and R-crc-1 itself says capabilities predict cost better than bytes.
   The overage is recorded in the change's design rather than hidden.
+- **Demoting the split-parent headings (rc13, rc04) out of the stage grammar** (2026-10-01) — rewriting
+  `### Stage` to a non-stage record heading so the count moved 25 → 23 and the two headings stopped rendering
+  `premised`. Rejected the same session in favour of the ended mark: `[~]` on `premised` is DEFINED by
+  `orbit-architecture-engine` as declared-and-withdrawn-before-any-work, which is what a split parent is, and
+  it costs no grammar edit, no count move and no marked-figure update. Re-entry trigger: a program that needs
+  arc-done while Q-crc-29's "archived OR ended" sentence is still unlanded.
 - **Fixing the cycle by adding reviewer classes or passes** (2026-09-11) — rejected on the
   data: findings per change grew as the machinery matured; the lever is what a pass is asked
   to do and when it stops, not how many there are.
@@ -4056,3 +4062,16 @@ D3 line left outside the set. One day, declaration to ratification: the shortest
 one whose finding class — a pointer chosen from a title rather than a read body — appeared four times inside
 the change built to retire it. Next in dependency order: rc13 (premised; rc13a/b/c complete) and rc04 (premised;
 rc04a/c/d complete) are parent stages whose children have shipped; Phase 2's rc02b, rc03 and rc04b remain open.
+
+**2026-10-01 — Architect session: rc13-explore-mechanism and rc04-readiness-record declared ENDED (Sal), through
+the unprompted route.** Both are split parents under R-crc-9 — rc13 into rc13a/b/c (2026-09-15, the ruling's first
+application), rc04 into rc04a/b/c and later rc04d (2026-09-21) — whose headings were retained as the program's record
+of the problem and the evidence while every exit criterion moved to a child. As declared stages they could never cite
+work and would render `premised` forever. The ended mark fits by its owner's own rule: ending asserts nothing about
+the work, and on `premised` it means declared and withdrawn before any work, the doc-layer twin of Considered & out.
+rc13's criteria are all owned by ratified children; rc04's exit (1) is still owned by rc04b, which keeps its own
+charter and renders `premised` — ending the parent heading ends nothing of the child. The stage count does not move
+(25); the headings and their prose stay byte-unchanged below the slot. Arc-done is unaffected either way: Q-crc-29
+already records that an ended stage holds the predicate open until `orbit-pr-lifecycle` says "archived OR ended", and
+this doc has no program PR. Next in dependency order: Phase 2's rc02b, rc03 and rc04b remain open; the remaining
+premised stages are rc05–rc10, rc07b and rc12.
