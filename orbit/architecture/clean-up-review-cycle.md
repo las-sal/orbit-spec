@@ -1657,7 +1657,8 @@ LEAVES the scorecard, so "0 CRITICAL" means what the ladder says — Sal: leave;
 severity assignment (`orbit-audit-drift`, preserved by system Pass 6) is a sixth statement site OUTSIDE the
 five and travels as a named residual, not a sixth capability. The exit criteria stand as written.
 Exploration: `orbit/explore/rc02b-severity-ladder/` — six decisions, three live rules with Mechanism
-entries, the engine's parse 3 accounted / 0 open.
+entries, the engine's parse 3 accounted / 0 open (consumed at propose 2026-10-03; the file now travels at
+`orbit/changes/archive/2026-10-03-rc02b-severity-ladder/explore.md`).
 
 ### Stage rc02c-confirmation-semantics — what counts as having been confirmed
 

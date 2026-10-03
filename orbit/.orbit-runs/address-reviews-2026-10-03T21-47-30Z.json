@@ -1,0 +1,68 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-03T21:47:30Z",
+  "change": null,
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/.orbit-runs/audit-drift-2026-10-03T21-46-06Z.json",
+  "source_command": "audit-drift",
+  "source_token": "2026-10-03T21-46-06Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 2
+  },
+  "pushback_verification": "Both sites re-read at HEAD ecef3c77 before editing: the program doc's line 1659 named orbit/explore/rc02b-severity-ladder/ (ls: absent; the file is at the archived change) and the conventions baseline's line 842 carried '(measured 2026-10-03)' inside the requirement sentence. 0 stale. Both obvious-fix lane as previewed; the second is a direct baseline edit outside any change — a hotfix, as the finding's recommendation named, safe because no active change holds a fingerprint on that requirement. Titles and files taken from the audit emit's JSON, never retyped.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "rc02b's stage section names a staging directory that no longer exists (`orbit/explore/rc02b-severity-ladder/`)",
+      "marker_source": "audit-drift",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 1659,
+      "provenance_detail": "3",
+      "classification": "trivial_fix",
+      "action": "Appended the pointer to the dated sentence: '(consumed at propose 2026-10-03; the file now travels at orbit/changes/archive/2026-10-03-rc02b-severity-ladder/explore.md)'. The sentence stays a record of what the exploration measured; the path it names now resolves. orbit architecture status still parses the doc with rc02b quiescent-awaiting-ratification.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "`Review mode decision framework` carries a dated measurement ('measured 2026-10-03') inside its normative sentence",
+      "marker_source": "audit-drift",
+      "file": "orbit/specs/orbit-conventions/spec.md",
+      "line": 842,
+      "provenance_detail": "3",
+      "classification": "trivial_fix",
+      "action": "Trimmed the requirement's sentence to the rule: 'The framework is stated HERE; a user-facing counterpart belongs to the deferred user-docs rewrite (issue #1), and any user doc that states it is held to this requirement, never the reverse.' The measurement remains in the trail (rc02b tasks.md 5.2; address-reviews-2026-10-03T20-59-44Z). A HOTFIX to baseline outside any change: the archived rc02b delta keeps the dated wording as the record of what was synced; grep for 'measured 2026-10-03' over orbit/specs now reads 0; validate --sources green; the ladder parity tests (which read a different requirement) green. This closes the archive emit's accepted residual (b) on the dated measurement; the fenced-label residual (a) stands.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/changes/archive/2026-10-03-rc02b-severity-ladder/specs/orbit-conventions/spec.md",
+            "reason": "cross-change ripple; cascade scope is current change only"
+          }
+        ]
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Project-wide walk of the post-archive audit: 2 of 2 resolved, 0 stale — one pointer appended in the program doc, one dated measurement trimmed out of a baseline requirement as a hotfix. The tree now carries no drift the audit found; the audit emit and this log are uncommitted.",
+  "iteration": 6,
+  "next_recommended": "No markers remain in scope; the project trail records this walk."
+}
