@@ -58,7 +58,7 @@ field-line discipline, as for `**Reproduction**:` after Description.
 R-crc-11(f): the in-context pass is a reaction, so its direction would be a view formed knowing the
 independent ones — the readiness record's job, a third voice otherwise. The rule keys on
 `reviewer_class`, never on mode: an architecture-mode fresh pass owes it at the write gate even though
-no render surface covers that trail (the body's interim hand-rendered shape prints a `Direction:` line).
+no render surface covers that trail (the body's interim hand-rendered shape prints `Direction: <disposition>` and then every reasoning line under blockquote containment, as the change-mode renderer does — walk 2, external W3: an uncontained second line could forge the report's next action).
 ONE predicate defines "owed": `gates.ts`'s `isIndependent` (today module-private) is exported and
 called from the write gate and the renderer — never restated. The external normalizer sets `reviewerClass: "external"` on the normalized pass (today it carries only `reviewerName`/`reviewerDate`), so the renderer's single `isIndependent` call covers both genres; the field narrows from `string` to `ReviewerClass` (walk 1, fresh W5).
 
@@ -81,17 +81,18 @@ a test pins that `## Direction` moves no count in the trail reader, the trend co
 Fixed order becomes: header → trend → scorecard → Blocks → Findings → Suppressed → **Direction** →
 Commentary → engine tail LAST. The section's first line is `Disposition: forward` / `Disposition: hold`
 (a plain label line the engine prints — record-sourced text never sits at column 0); the reasoning
-follows under blockquote containment. Content contract, stated at both sources (Step 8 and the prompt
-template): the direction says WHICH WAY and WHY; it never states finding counts, the gate's state or a
+follows under blockquote containment. Content contract — owned by `orbit-report-rendering`'s ADDED
+Direction requirement, carried at both authoring sources (Step 8 and the prompt template): the direction says WHICH WAY and WHY; it never states finding counts, the gate's state or a
 command token — those stay the engine's. Commentary's contract is unchanged. OWNERSHIP (walk 1, fresh W4): the content contract is OWNED by `orbit-report-rendering`'s ADDED Direction requirement, where Commentary's contract already lives; the shape is OWNED by `orbit-emit-composition`'s ADDED requirement; every other spec site names the owner and states only its local consequence (R-crc-14) — the prompt template's one-sentence instruction is the reviewer-facing form of the contract, carried because an external reviewer has no specs to resolve. A violation can mislead
 but never be the report's final word — the same structural backstop commentary has. A near-miss golden
 pins the delimiter as D4's did for commentary.
 
 ### D5. No migration; absence marked, never dated (explore D-rc04b-5)
 
-Every prior-generation independent pass renders `[no direction]`, which is true of it. On internal
-passes absence is EXACTLY the prior-generation set, because the write gate refuses new ones; on
-external passes the file could not be refused. The 124 archived returns render nowhere (`--report`
+Every RENDERABLE (D4-generation) prior-generation independent pass renders `[no direction]`, which is
+true of it; a pre-D4 emit still fails at the `pre-capability emit` boundary, which the mark never relaxes
+(walk 3). On internal passes absence is EXACTLY the prior-generation set, because the write gate refuses
+new ones; on external passes the file could not be refused. The 124 archived returns render nowhere (`--report`
 cannot address an archived change, Q-crc-26).
 
 ### D6. The walk's format copy moves with its owner; no triage behaviour; no `orbit-address-reviews` delta (explore D-rc04b-6)
@@ -136,7 +137,7 @@ table, a closure token from the set, no residual slots, and nine move lines each
 - `src/core/templates/workflows/review.ts` — Step 8 authors the direction under the contract; Step 9's field enumeration; `references/run-summary-schema.md`'s block and field note; the prompt template's `## Direction` section between `## Blocks` and `## Notes`; the architecture-mode interim shape's `Direction:` line.
 - `src/core/templates/workflows/address-reviews.ts` — the expected-file-format block gains `## Direction` (never walked).
 - `test/core/emit-composition*.test.ts` + `test/core/report-render*.test.ts` + `test/core/trail-rc02b.test.ts` — the red tests of tasks 1.1–1.4.
-- `test/core/emit-schema-parity.test.ts` — the nested allowlist learns `direction` (`disposition`, `reasoning`).
+- `test/core/emit-schema-parity.test.ts` — `direction` is documented TOP-LEVEL in the review schema block so the derivation finds it; it is NEVER added to the `nested` allowlist (the `blocks` rationale — a top-level key there disarms the orphan check); `disposition`/`reasoning` join `nested` only if a field note makes them bullet subjects (walk 2, external W1).
 - `test/core/severity-ladder-parity.test.ts` — unchanged in code; its byte-equality of the two output-format blocks binds task 3.2 to the review-external delta's `Prompt written…` fence (install the template's `## Direction` section FROM the delta's text, as rc02b's 5.1 did).
 - `test/core/templates/orbit-content-fidelity.test.ts` — Step 8/9, the template section, the walk copy.
 - `test/fixtures/report-golden/*.golden.md` — the goldens whose pass is independent gain the section; one new near-miss fixture.
@@ -152,7 +153,8 @@ table, a closure token from the set, no residual slots, and nine move lines each
 - [The token and the prose can disagree — `forward` over hold-shaped reasons] → the slot does not
   police it (R-crc-10); the in-context reaction reads both and the readiness record is where the
   disagreement is resolved (D-rc04b-1, FALSIFY).
-- [Gate vocabulary smuggled into the reasoning] → the contract is stated at both sources; the renderer
+- [Gate vocabulary smuggled into the reasoning] → the contract is owned by `orbit-report-rendering`'s
+  Direction requirement and carried at both authoring sources; the renderer
   places the slot verbatim and the engine tail renders last; a near-miss golden pins the delimiter.
 - [The address-reviews format copy is unchecked by any parity test] → named residual (D6); it moves
   with its owner in the same task; a parity pin over that copy is a rider for whichever stage next

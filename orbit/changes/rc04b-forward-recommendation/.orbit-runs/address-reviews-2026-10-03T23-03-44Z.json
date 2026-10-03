@@ -1,0 +1,99 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-03T23:03:44Z",
+  "change": "rc04b-forward-recommendation",
+  "kind": "editorial",
+  "model": null,
+  "source": "from-file",
+  "source_path": "orbit/changes/rc04b-forward-recommendation/.orbit-runs/review-proposal-2026-10-03T23-02-17Z.json",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 2
+  },
+  "pushback_verification": "4 of 4 verified against the current tree before edit (each cited line re-read); 0 stale; 0 CRITICAL",
+  "resolution_summary": {
+    "resolved": 4,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The ADDED Direction requirement's text says 'an internal emit of a prior generation' is marked; its own scenario (walk 2) says only a renderable D4-generation one is",
+      "file": "orbit/changes/rc04b-forward-recommendation/specs/orbit-report-rendering/spec.md",
+      "line": 5,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "The ADDED Direction requirement's sentence now reads 'a RENDERABLE (D4-generation) internal emit of a prior generation; a pre-D4 emit still fails at the pre-capability emit boundary, which the mark never relaxes' — text and scenario agree.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc04b-forward-recommendation/specs/orbit-report-rendering/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Walk 2's D4-boundary qualification stopped at the specs and tasks — the proposal's and design's 'Every prior-generation independent pass renders [no direction]' still overclaim",
+      "file": "orbit/changes/rc04b-forward-recommendation/proposal.md",
+      "line": 49,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "proposal.md's No-migration bullet and design D5 qualified to renderable D4-generation passes with the pre-D4 boundary stated — walk 2's cascade now reaches every artifact that states the claim.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc04b-forward-recommendation/proposal.md",
+          "orbit/changes/rc04b-forward-recommendation/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "'stated at both sources' survives walk 1's ownership move at three sites",
+      "file": "orbit/changes/rc04b-forward-recommendation/design.md",
+      "line": 155,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "'stated at both sources' reworded at design.md Risks, design D4's opening and proposal.md's render bullet to 'owned by orbit-report-rendering's Direction requirement and carried at both authoring sources'; the exploration's D-rc04b-4 line stands as the record.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc04b-forward-recommendation/design.md",
+          "orbit/changes/rc04b-forward-recommendation/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The Report grammar's new element (4) carries an awkward self-referential clause",
+      "file": "orbit/changes/rc04b-forward-recommendation/specs/orbit-report-rendering/spec.md",
+      "line": 44,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Element (4) of the Report grammar now reads '(per `Reproduction renders beside the recommendation and its absence is marked`, which owns it)'.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc04b-forward-recommendation/specs/orbit-report-rendering/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Walk 3 of the proposal cadence (the in-context pass): 4 of 4 resolved, 0 stale — every finding the earlier walks' own residue, repaired as sentences; the retired phrases grep to zero across the change outside the exploration record. After the walk: `orbit validate --strict` valid, fingerprints 8 verified.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply rc04b-forward-recommendation — user-invoked"
+}

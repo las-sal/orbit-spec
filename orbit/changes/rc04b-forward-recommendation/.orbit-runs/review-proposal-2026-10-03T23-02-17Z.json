@@ -1,0 +1,83 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-03T23:02:17Z",
+  "change": "rc04b-forward-recommendation",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {},
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc04b-forward-recommendation/specs/orbit-report-rendering/spec.md",
+      "line": 5,
+      "title": "The ADDED Direction requirement's text says 'an internal emit of a prior generation' is marked; its own scenario (walk 2) says only a renderable D4-generation one is",
+      "recommendation": "Walk 2 qualified the absence scenario — 'a renderable (D4-generation) fresh emit of a prior generation … a pre-D4 emit still fails at the pre-capability emit boundary' — but the requirement's own sentence still reads 'an external file without the section, or an internal emit of a prior generation — the section renders with the single line `[no direction]`'. The text and the scenario now disagree on the mark's scope, and the text is what an implementer reads first; built to the text, the only way a pre-D4 emit renders anything is by relaxing the D4 boundary the Strict-validation requirement defends. Qualify the sentence to match the scenario: 'or a renderable (D4-generation) internal emit of a prior generation — a pre-D4 emit still fails at the boundary, which the mark never relaxes'."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc04b-forward-recommendation/proposal.md",
+      "line": 49,
+      "title": "Walk 2's D4-boundary qualification stopped at the specs and tasks — the proposal's and design's 'Every prior-generation independent pass renders [no direction]' still overclaim",
+      "recommendation": "proposal.md:49 ('No migration. Every prior-generation independent pass renders `[no direction]`') and design.md:92 (D5, the same sentence) state the scope the external pass's W2 corrected in the emit-composition and report-rendering deltas and in task 1.3. A pre-D4 fresh emit renders nothing — it fails as `pre-capability emit`. Qualify both to 'every renderable (D4-generation) prior-generation independent pass renders `[no direction]`; pre-D4 emits still fail at the existing render boundary' — the cascade lesson rc16 recorded (a repair that moves a claim must reach the proposal), here one walk later."
+    },
+    {
+      "pass": "7",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc04b-forward-recommendation/design.md",
+      "line": 155,
+      "title": "'stated at both sources' survives walk 1's ownership move at three sites",
+      "recommendation": "Walk 1 (fresh W4) named ONE owner for the content contract and reduced the other spec sites to pointers, and design D4 gained an OWNERSHIP paragraph saying so — but design.md:155 (the Risks entry 'the contract is stated at both sources'), design.md:84 (D4's opening 'Content contract, stated at both sources') and proposal.md:41 ('The content contract at both sources moves D4's prohibition') keep the pre-walk phrasing. Both sources are the two authoring surfaces, which is still true, but beside the ownership paragraph the phrase reads as a second theory of where the contract lives. Reword to 'owned by `orbit-report-rendering`'s Direction requirement and carried at both authoring sources (Step 8, the prompt)'. The exploration's D-rc04b-4 line 195 carries the same words as the record of what was decided that day and may stand."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc04b-forward-recommendation/specs/orbit-report-rendering/spec.md",
+      "line": 44,
+      "title": "The Report grammar's new element (4) carries an awkward self-referential clause",
+      "recommendation": "'(owned by `Reproduction renders beside the recommendation and its absence is marked`, which this list now names in its place)' — 'which this list now names in its place' is walk-time narration inside normative text. Shorten to '(4) the `### Blocks` section when the pass carries blocks (per `Reproduction renders beside the recommendation and its absence is marked`, which owns it)'."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The in-context slot as R-crc-11(f) defines it: a reaction to the two independent passes and to what the two walks did, not a second search. I re-read every region the walks edited — the report-rendering grammar list and its renumbering, the Strict-validation rewrite, the ADDED Direction requirement whole, the conventions format sentence, the review and review-external sentences, the emit-composition ADDED requirement whole, all nineteen task lines, design D2–D5, the Risks, the Mechanism rows and the exploration's three dated corrections — and ran the Pass 7 drift grep over the change for every phrase the walks retired (zero live hits: the three remaining occurrences are the restated measurements themselves) and the Pass 8 marker grep (two hits, both inside the review-external delta's fenced prompt — documentation, not markers). Validate --strict is valid, fingerprints 8 verified, 41 baseline scenarios retained. What I found is entirely the walks' own residue, and it is the same shape twice: a repair that moved a claim stopped before the last artifact that states it. Walk 2 qualified the D4-boundary promise in the scenario and the task but left the requirement's own sentence and the proposal's and design's 'every prior-generation pass renders' unqualified; walk 1 named an owner for the content contract and left 'stated at both sources' standing in the design twice and the proposal once. rc16 recorded this cascade lesson and the fresh half's W4 and the external half's W1 each caught one instance of it in this change already — it is the program's cheapest, most repeatable defect, and it is why the proposal cadence ends in-context rather than independent: the context that knows what the walks did is the one that can see where they stopped. Nothing I found changes mechanism; the mechanism — refuse where produced, mark where you cannot, gate reads nothing, one predicate, owners named — has now been read by three classes and survived each. Risk texture: all four findings are sentences, and an implementer who read the specs and tasks alone (where walk 2's qualification did land) would build the right thing; the proposal and design are where a reader of the record, not the implementer, would be misled.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "final_assessment": "0 critical, 2 warning, 2 suggestion.",
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc04b-forward-recommendation --from-file orbit/changes/rc04b-forward-recommendation/.orbit-runs/review-proposal-2026-10-03T23-02-17Z.json"
+}

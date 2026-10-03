@@ -38,16 +38,18 @@ verdict, which stays the engine's alone.
   gate ruling on prose, R-crc-13).
 - **It renders as its own section, inside the quarantine, under a narrowed contract.** The report gains
   `### Direction` between `### Suppressed` and `### Commentary`: first line `Disposition: <token>`,
-  the reasoning blockquote-contained, the engine tail still LAST. The content contract at both
-  sources moves D4's prohibition onto the axis Q-rc04-c named — JUDGEMENT versus COMPUTATION: the
+  the reasoning blockquote-contained, the engine tail still LAST. The content contract — owned by
+  `orbit-report-rendering`'s Direction requirement and carried at both authoring sources — moves D4's
+  prohibition onto the axis Q-rc04-c named — JUDGEMENT versus COMPUTATION: the
   direction says WHICH WAY and WHY; it never states finding counts, the gate's state or a command
   token. Commentary's own contract is unchanged (D-rc04b-4).
 - **The external prompt carries it as a named field.** The reference prompt template asks for
   `## Direction` with its opener, stating that a return without it renders marked; the walk's
   `--from-file` copy of the format moves WITH its owner and says the section is never walked (no triage
   behaviour added; D-rc04b-6).
-- **No migration.** Every prior-generation independent pass renders `[no direction]` — by absence,
-  never by date (rc02b's `[unreproduced]` precedent). `--report` cannot address an archived change
+- **No migration.** Every renderable (D4-generation) prior-generation independent pass renders
+  `[no direction]` — by absence, never by date (rc02b's `[unreproduced]` precedent); a pre-D4 emit still
+  fails at the existing render boundary, which the mark never relaxes. `--report` cannot address an archived change
   (Q-crc-26), so the 124 archived returns render nowhere (D-rc04b-5).
 
 **Size, measured at exploration and DECLARED (D-rc04b-7, Sal: "declare at five").** FIVE capabilities

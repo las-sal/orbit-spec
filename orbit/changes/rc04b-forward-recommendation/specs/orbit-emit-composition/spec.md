@@ -37,7 +37,7 @@ The `review` command's payload table SHALL admit a `direction` field — an obje
 #### Scenario: Prior-generation emits are untouched
 
 - **WHEN** the trail holds a fresh review emit written before this requirement with no `direction`
-- **THEN** every reader (trail, render, gate) accepts it as before — the check runs at write time only; the report marks the pass `[no direction]` per `orbit-report-rendering`, by absence, never by date
+- **THEN** the trail reader and the gate accept it as before — the check runs at write time only — and the render is unchanged in kind: a D4-generation (renderable) emit renders marked `[no direction]` per `orbit-report-rendering`, by absence, never by date, while a pre-D4 emit still fails as `pre-capability emit` at the existing render boundary, which this requirement does not relax
 
 ## MODIFIED Requirements
 
