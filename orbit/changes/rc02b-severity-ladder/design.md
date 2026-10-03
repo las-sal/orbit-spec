@@ -80,7 +80,9 @@ against ~12; the two over are carried-bytes blocks whose changed bytes are one l
   non-empty when `severity` is CRITICAL, optional otherwise. `validatePayload` gains the first check that
   REFUSES on a finding entry's narrative field (the scorecard rollup already reads each entry's dimension
   and severity): a CRITICAL whose `reproduction` is absent, non-string or blank is refused naming the
-  finding's title and index, in EVERY mode — the check reads one field of one severity and never reads
+  finding's title and index, in EVERY mode; a PRESENT non-string `reproduction` on any severity is refused
+  too (type is every entry's requirement, content is CRITICAL's — the gate never persists what the
+  normalizer refuses; external walk 1) — the check reads one field of one severity and never reads
   `mode` (the architecture-mode exemption is the renderer's, not this check's); unknown finding keys stay
   unchecked (the gap is named, not closed — closing
   it would refuse `recommendation_options`-style forward-compat). The rule lands as an ADDED requirement
@@ -135,7 +137,7 @@ accounted, 0 open, which my reading of the three entries against the grammar agr
 - `src/core/emit-composition.ts` — the finding-level CRITICAL/reproduction check in `validatePayload` (every mode); `blocks` added to the review payload table with its shape check.
 - `src/core/report-render.ts` — `normalizeExternalPass` learns `**Reproduction**:` as a body opener and collects `## Blocks` items; the internal normalizer passes `reproduction` and `blocks` through; `renderReport` prints the reproduction blockquote, the `[unreproduced]` prefix and the `### Blocks` slot.
 - `src/core/templates/workflows/apply-change.ts` — NOT touched: no precondition is added here (the known limit; rc10's territory).
-- `src/core/artifact-graph/trail.ts` — no edit; a new test pins that the label and a `## Blocks` section leave the counter untouched.
+- `src/core/artifact-graph/trail.ts` — `parseExternalMarkdown` stops reading `**File**:`/`**Description**:` once a finding's Description body has opened (conforming to the conventions format rule the render parser already follows — external walk 1); a test pins the finding KEY (title, file) through both readers and that `## Blocks` leaves the counter untouched.
 - `src/core/templates/workflows/review.ts` — the seventeen per-pass sites and the report example re-pointed; Step 9's field list; the prompt template's ladder paragraph, Reproduction body and Blocks section; `references/run-summary-schema.md`.
 - `src/core/templates/workflows/address-reviews.ts` — both virtual-marker tables; the expected-file-format block; Step 3a step (0); triage lists blocks first.
 - `test/core/emit-schema-parity.test.ts` — the nested allowlist learns `reproduction`, `blocks`, `reproduction_rerun`; a new parity test holds the template's `## Severity` paragraph byte-equal to the conventions fence.
@@ -158,8 +160,12 @@ accounted, 0 open, which my reading of the three entries against the grammar agr
 - [Nothing stops on a block mechanically] → stated in the ladder as a known limit; the report's `### Blocks`
   section and triage-first listing are what the human reads before apply; the precondition is
   rc10-apply-closure's.
-- [Two parsers, one contract (Q-crc-15)] → the external body is parsed in `report-render.ts` only; the
-  trail counter is untouched and pinned by a test to ignore both the label and `## Blocks`.
+- [Two parsers, one contract (Q-crc-15)] → the external pass found the third instance inside this change:
+  the trail reader took ANY later `**File**:` line as the finding's file, so a path quoted in a Reproduction
+  body re-filed the finding at the gate. The rule is now stated ONCE in the conventions format requirement
+  (field lines are recognised only before the Description body opens) and both readers conform; the key
+  (title, file) is pinned through both by a test. The pre-existing hole — a Description body quoting a path —
+  closes with it.
 - [Fourteen blocks over ~12] → the two over are carried-bytes copies with one changed line each; the
   reviewer reads the diff, not the carriage.
 

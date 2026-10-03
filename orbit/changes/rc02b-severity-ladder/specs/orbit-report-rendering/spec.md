@@ -33,7 +33,9 @@ from their PARSED form, NORMALIZED to the render shape: the trail reader's exter
 parse is EXTENDED (fence-aware — heading and field lines inside code fences never count) to carry, per finding, the full `**Description**` body as the recommendation (verbatim, the
 `**File**` line reference RETAINED un-stripped), the `**Reproduction**` body when present (a labelled
 body opened AFTER the Description and ended by the next `###` or `##` heading — per
-`orbit-conventions`' External-review findings markdown format), plus the header's reviewer and date; a
+`orbit-conventions`' External-review findings markdown format, whose field-line rule — a field-shaped
+line inside any body is content, in BOTH readers — the trail reader is brought to conform with so the
+gate's finding key and this render's file reference never diverge), plus the header's reviewer and date; a
 `## Blocks` section is collected — its `- ` items become the pass's blocks, rendered above the findings — and
 is never a severity section, so it changes no count (the trail counter ignores it entirely); the
 `## Notes` section (when present) supplies the report's Commentary slot — the external
@@ -57,6 +59,11 @@ determinism applies from ingest onward). An external file the parser rejects (ma
 
 - **WHEN** an external finding carries `**Description**:` then `**Reproduction**:` bodies
 - **THEN** the recommendation is the Description body alone and the reproduction is the Reproduction body (both verbatim, blank edges trimmed); a file without the label normalizes byte-identically to before this requirement
+
+#### Scenario: A path quoted inside a body does not re-file the finding
+
+- **WHEN** an external CRITICAL's Reproduction body contains the line `**File**: specs/b/spec.md:99` while its own `**File**:` line names `specs/a/spec.md:7`
+- **THEN** the render shows `specs/a/spec.md:7` AND the trail reader's finding key carries `specs/a/spec.md` — a walk record resolving (title, `specs/a/spec.md`) resolves it at the gate; the test asserts the key through both readers (per `orbit-conventions`' field-line rule)
 
 #### Scenario: Blocks section is collected, never counted
 

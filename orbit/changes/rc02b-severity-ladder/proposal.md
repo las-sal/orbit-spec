@@ -49,7 +49,10 @@ makes the evidence tax enforceable where evidence is produced and visible where 
   in the template by a parity test (R-crc-14's mirror corollary) — and asks for a `**Reproduction**:`
   body after `**Description**:`; the renderer's external
   parser learns the label; a CRITICAL without one is counted, rendered `unreproduced`, and NEVER
-  re-graded by any consumer. The trail counter is untouched and tested to stay so.
+  re-graded by any consumer. The trail reader is brought to the format's field-line rule — a `**File**:` line inside any body is content,
+  so a path quoted in a reproduction cannot re-file the finding at the gate (the external pass found the
+  trail reader took the LAST File line; the render parser already stopped at Description) — and a test pins
+  the (title, file) key through both readers.
 - **The tax has a reader.** Both address-reviews virtual-marker mappings carry `reproduction`; Step 3a's
   pushback for a CRITICAL opens by re-running it and records the result in a new closed-value entry field
   `reproduction_rerun`; triage lists blocks before findings.
@@ -99,7 +102,7 @@ R-crc-4 prescribes at the ceiling runs. Fifteen requirement blocks (12 MODIFIED,
 ~12. MEASURED on the written deltas: 65 KB of delta in total, of which the CHANGED lines across the
 twelve MODIFIED blocks number 110 (ndiff +/−) — the 150-line canonical-example requirement changes 2
 lines and the 172-line prompt template 14; R-crc-1's changed-bytes clarification applies and the byte
-axis is under the ceiling; the task axis reads 24 against "under 20" — over by four after the first walk added the block carrier, DECLARED rather
+axis is under the ceiling; the task axis reads 25 against "under 20" — over by five after the two proposal walks added the block carrier and the trail-reader conformance, DECLARED rather
 than merged away (rc04c's precedent: a stage arguing its way under a ceiling should expect the
 argument read as evidence it is over). Two axes breached, both stated; the capability axis is the one
 that predicts cost.
@@ -108,8 +111,8 @@ that predicts cost.
 
 - **Engine**: `src/core/emit-composition.ts` (the finding-level check in `validatePayload`; the `blocks`
   payload field), `src/core/report-render.ts` (external `**Reproduction**:` body; internal `reproduction`
-  pass-through; the `[unreproduced]` prefix; `## Blocks` items collected; the `### Blocks` slot), `src/core/artifact-graph/trail.ts` (no change; a test
-  pins that the label and the Blocks section are invisible to the counter).
+  pass-through; the `[unreproduced]` prefix; `## Blocks` items collected; the `### Blocks` slot), `src/core/artifact-graph/trail.ts` (field lines recognised only before the Description body opens; a
+  test pins the finding key through both readers and that the Blocks section is invisible to the counter).
 - **Generated surface** (`src/core/templates/workflows/`): `review.ts` (seventeen per-pass sites, the
   report example, Step 9's field list, the prompt template's output block and ladder paragraph,
   `references/run-summary-schema.md`), `address-reviews.ts` (both mapping tables, the expected-file-format

@@ -16,7 +16,7 @@ The `review` command's payload table SHALL admit an OPTIONAL `blocks` field: an 
 
 ### Requirement: An internal CRITICAL carries its reproduction at the write gate
 
-`orbit emit review` SHALL refuse a review payload in ANY mode (proposal, system, architecture — the check reads one field of one severity and never reads `mode`) whose `findings[]` holds an entry with `severity: "CRITICAL"` and no non-empty string `reproduction` — absent, non-string, or blank after trimming — exiting non-zero, naming the finding's title and index, writing no file, with empty stdout. This is the first gate check that REFUSES on a finding entry's narrative field (the scorecard rollup already reads every entry's `dimension` and `severity`, as a rollup); `validatePayload`'s unknown-KEY check stays at the top level (unknown finding keys remain unchecked, so `recommendation_options`-style forward-compat is untouched), and the new check reads exactly one field of exactly one severity. The engine judges PRESENCE only (R-crc-10): whether the reproduction reproduces is the walk's judgement, per `orbit-address-reviews`. The rule the check enforces is `orbit-conventions`' Severity ladder; this requirement names it and defines nothing of its own.
+`orbit emit review` SHALL refuse a review payload in ANY mode (proposal, system, architecture — the check reads one field of one severity and never reads `mode`) whose `findings[]` holds an entry with `severity: "CRITICAL"` and no non-empty string `reproduction` — absent, non-string, or blank after trimming — exiting non-zero, naming the finding's title and index, writing no file, with empty stdout. On EVERY finding of any severity, a PRESENT `reproduction` that is not a string is refused the same way: the content requirement is CRITICAL's alone, the type requirement is every entry's, so the write gate never persists a record the read-side normalizer (`orbit-report-rendering`) refuses. This is the first gate check that REFUSES on a finding entry's narrative field (the scorecard rollup already reads every entry's `dimension` and `severity`, as a rollup); `validatePayload`'s unknown-KEY check stays at the top level (unknown finding keys remain unchecked, so `recommendation_options`-style forward-compat is untouched), and the new check reads exactly one field of exactly one severity. The engine judges PRESENCE only (R-crc-10): whether the reproduction reproduces is the walk's judgement, per `orbit-address-reviews`. The rule the check enforces is `orbit-conventions`' Severity ladder; this requirement names it and defines nothing of its own.
 
 #### Scenario: CRITICAL without reproduction refused
 
@@ -28,10 +28,15 @@ The `review` command's payload table SHALL admit an OPTIONAL `blocks` field: an 
 - **WHEN** a CRITICAL entry's `reproduction` is a non-empty string containing newlines
 - **THEN** the emit writes — the field is not a single-line slot and the single-line helper is not applied to it
 
-#### Scenario: WARNING and SUGGESTION are not checked
+#### Scenario: WARNING and SUGGESTION need no reproduction, but a present one must be a string
 
 - **WHEN** a WARNING or SUGGESTION entry carries no `reproduction`
-- **THEN** the emit writes; the field is optional below CRITICAL and its presence there is passed through verbatim
+- **THEN** the emit writes; the field is optional below CRITICAL and a present string is passed through verbatim
+
+#### Scenario: A mistyped reproduction is refused at any severity
+
+- **WHEN** a WARNING entry carries `"reproduction": 42`
+- **THEN** the surface exits non-zero naming `findings[<i>].reproduction`; no file is written — the gate and the normalizer agree, so no persisted record is unrenderable
 
 #### Scenario: Architecture mode is checked the same way
 

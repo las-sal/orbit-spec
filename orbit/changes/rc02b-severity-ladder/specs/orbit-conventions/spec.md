@@ -59,6 +59,11 @@ The system SHALL use a consistent markdown shape for external-review findings fi
 - **WHEN** `/orbit:address-reviews --from-file <path>` reads this format
 - **THEN** the parser extracts per-finding severity, title, file:line, description, and — when present — the reproduction body; `## Blocks` entries are listed at triage and never walked as findings
 
+#### Scenario: Field lines are recognised only before the Description body opens — in BOTH readers
+
+- **WHEN** a finding's `**Description**:` body (and any `**Reproduction**:` body after it, or a `## Blocks` item) contains a line that looks like a field — `**File**: other/path.md:99`, `**Description**: …` — because a reproduction quotes a path or a reviewer pastes a snippet
+- **THEN** that line is CONTENT: the finding's file is the `**File**:` line read BEFORE its Description body opened, and both the renderer's parser (`orbit-report-rendering`) and the trail reader that feeds the gate (`orbit-engine-gates`' shape validation) read it the same way, so the gate's finding key (title, repo-relative file) and the report's file reference never diverge; a test pins the KEY across both readers, not only the per-severity counts
+
 #### Scenario: Reproduction body is the fourth field, never the first
 
 - **WHEN** an external findings file carries `**Reproduction**:` on a finding

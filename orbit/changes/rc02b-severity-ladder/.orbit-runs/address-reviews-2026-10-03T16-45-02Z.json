@@ -1,0 +1,77 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-03T16:45:02Z",
+  "change": "rc02b-severity-ladder",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc02b-severity-ladder/.orbit-runs/external-proposal-2026-10-03T16-35-00Z.md",
+  "source_command": "review-external",
+  "source_token": "2026-10-03T16-35-00Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6 (Codex)",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 2,
+    "warning": 0,
+    "suggestion": 0
+  },
+  "pushback_verification": "Both findings verified at the pull against HEAD ee7b991a (the external's own commit) and re-read before editing: trail.ts:404–408 overwrites the finding's file on ANY later `**File**:` line (the reproduction's claim holds; the render parser stops at Description); gates.ts:197–205 keys resolution on (title, file) from the trail reader. The second finding is a contradiction between two of this change's own deltas (emit-composition type-checks only CRITICAL; the report-rendering scenario rejects a non-string on any finding) — true by reading both. 0 stale. Sal's single letter 'a' settled finding 1 (A); finding 2 was obvious-fix lane as previewed. Titles and files are taken from normalizeExternalPass over the source file, never retyped.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "A reproduction can change the gate's finding identity",
+      "marker_source": "external",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-report-rendering/spec.md",
+      "line": 33,
+      "classification": "decision_required",
+      "action": "Option A ratified (Sal: a). The field-line rule is stated ONCE in the format owner: a new scenario in orbit-conventions' `External-review findings markdown format` — fields are recognised only before the Description body opens; a field-shaped line inside a Description, Reproduction or Blocks body is content, in BOTH readers; a test pins the (title, file) KEY through both. orbit-report-rendering's `One grammar` names the rule and gains the scenario `A path quoted inside a body does not re-file the finding` (specs/a vs specs/b, asserting the key via readTrail and normalizeExternalPass). trail.ts is now an EDITED touchpoint (design Touchpoints; new task 2.4: field lines recognised only until the Description body opens) and task 1.4 carries the red key test. Design's Q-crc-15 risk records the third instance inside this change and the pre-existing hole (a Description body quoting a path) that closes with it. Option B (a seventh capability via orbit-engine-gates) rejected: the format owns what a line means; a second statement in engine-gates is what R-crc-14 forbids.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02b-severity-ladder/design.md",
+          "orbit/changes/rc02b-severity-ladder/tasks.md",
+          "orbit/changes/rc02b-severity-ladder/proposal.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "src/core/artifact-graph/trail.ts",
+            "reason": "engine code edit is apply's work (task 2.4), not a proposal-walk ripple; the delta and design now name it"
+          }
+        ]
+      },
+      "outcome": "resolved",
+      "resolution": "A — the rule stated once in orbit-conventions' format requirement; both readers conform; trail.ts edited; six capabilities"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "The write gate can persist a review the new normalizer refuses",
+      "marker_source": "external",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-report-rendering/spec.md",
+      "line": 24,
+      "classification": "trivial_fix",
+      "action": "The ADDED gate requirement now reads: on EVERY finding of any severity a PRESENT `reproduction` that is not a string is refused (type is every entry's requirement; content is CRITICAL's), with the scenario `A mistyped reproduction is refused at any severity` (a WARNING with `\"reproduction\": 42` → exit non-zero naming findings[<i>].reproduction) and the WARNING/SUGGESTION scenario reworded; design D4, tasks 1.1 and 2.1 updated. The gate and the normalizer now agree, so no persisted record is unrenderable.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02b-severity-ladder/design.md",
+          "orbit/changes/rc02b-severity-ladder/tasks.md",
+          "orbit/changes/rc02b-severity-ladder/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Walk 2 (the external proposal pass, GPT-6 Codex): 2 of 2 resolved, 0 stale. The reproduction-re-files-the-finding CRITICAL took option A — the field-line rule stated once in orbit-conventions' format requirement (fields recognised only before the Description body opens; a field-shaped line inside any body is content, in BOTH readers), report-rendering naming it with a key-pinning scenario, trail.ts now an edited touchpoint with task 2.4 and the red key test in 1.4 — six capabilities kept; the pre-existing hole (a Description body quoting a path) closes with it, the third Q-crc-15 instance inside this change. The gate/normalizer disagreement on a mistyped non-CRITICAL reproduction closed by type-checking every present reproduction at the gate. The change reads 6 capabilities / 15 blocks / 25 tasks (task axis restated). Strict validation passes; 12 fingerprints verified. The pair's two halves found disjoint defects: the fresh pass a missing carrier, the external the carrier's body breaking a reader nobody had named.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal rc02b-severity-ladder"
+}
