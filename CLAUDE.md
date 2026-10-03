@@ -209,7 +209,7 @@ file now carries a live mark. Do NOT read this paragraph as the program's full l
 only what rc07 produced. The authoritative list is the program doc's own Open questions section,
 which also carries Q-crc-11, Q-crc-12, Q-crc-20, Q-crc-21, Q-crc-22 and Q-crc-23.
 
-**Nine more stages have shipped since, and the program is TWELVE stages complete** (rc15 and rc16 ratified 2026-10-01; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening).
+**Ten more stages have shipped since, and the program is THIRTEEN stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening).
 
 `rc02c-confirmation-semantics` is ARCHIVED (2026-09-21): **the budget stopped being a target.**
 R-crc-11(h) — effort is RECORDED, never TARGETED — retired `budgetExhausted`, the
@@ -421,7 +421,7 @@ through one anchor, and rc16's delta was the first to hold the Mechanism block w
 A COMPUTED PASSED gate — the sixth rc-stage through one, the fifth through the pair. The readiness record accepts
 five residuals, headlined by rc07's distinction. **2376 tests green.**
 
-`rc02b-severity-ladder` is ARCHIVED (2026-10-03; awaiting ratification): **the
+`rc02b-severity-ladder` is ARCHIVED and RATIFIED (2026-10-03; all three exit criteria graded MET as written): **the
 ladder is defined by CONSEQUENCE, once, and a CRITICAL carries its reproduction.** `orbit-conventions`'
 Severity ladder now says what each name costs — CRITICAL: a user path breaks or data is lost AND the finding
 carries its REPRODUCTION (defined there, not here); WARNING: an implementation built to the artifact

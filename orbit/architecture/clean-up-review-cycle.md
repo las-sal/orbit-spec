@@ -765,6 +765,22 @@ never deleted.
   (`{3,}` against a backtick or tilde) before declaring the count, because the third was found by a
   reviewer executing a case, not by anyone counting.
 
+  **WIDENED 2026-10-03 at rc02b-severity-ladder's system blind pair — the same disease, one grammar over.**
+  rc02b framed the EXTERNAL FINDINGS format as "two readers, one contract" (`parseExternalMarkdown` in
+  `trail.ts`, `normalizeExternalPass` in `report-render.ts`) and brought the second to the first; the fresh
+  half found a THIRD copy in the same file the change edited — `lenientExternalCounts`, the trend counter —
+  carrying the retired last-`**File**:`-wins bug verbatim, and both halves found the two reconciled readers
+  disagreeing a second time, on where a Description body OPENS (the renderer on the label, the gate's
+  reader only on same-line text — a renderable pass was a rejected return). All three were patched in
+  place under R-crc-6's repair lane and the rules stated once in `orbit-conventions`' format requirement,
+  with the (title, file) key pinned through the two gate-facing readers by test; the COLLAPSE was declined
+  as redesign and is this question's. Standing recommendation unchanged in direction, revised in size:
+  when this question is taken up, its stage owns THREE external-format readers plus the two fence
+  grammars, not two and two — re-measure before sizing. One carried residual belongs here too: the trail
+  reader's has-a-body test reads a `**Reproduction**:` line inside a code fence as the label while the
+  renderer reads it as content (no input constructed makes the difference observable; rc02b's archive emit,
+  readiness accepted (a)) — a one-line symmetry fix for whichever change next touches `trail.ts`.
+
 - **Q-crc-16 — RESOLVED 2026-09-20 (both halves applied together, as the entry required).** This doc stated its own stage count twice, unmarked, and once staler than the other.
   Observed 2026-09-17 while applying rc07's recommended amendments. The header blockquote
   (`Status (2026-09-11)`) says the program was "re-cut into twelve small stages", and the Program
@@ -1604,7 +1620,7 @@ and the re-entry requirement in `orbit-explore-modifications` is pointed at, not
 ### Stage rc02b-severity-ladder — a severity is a consequence, and CRITICAL pays for itself
 
 Depends-on: (none)
-Complete: [ ]
+Complete: [x] 2026-10-03 (Sal)
 
 **R-crc-11 IMPACT (2026-09-21) — this stage becomes load-bearing for a rule it did not know about.**
 R-crc-11(b) says a review must not GROW the proposal: findings that are common-sense and tightly
@@ -4135,3 +4151,18 @@ stays Q-crc-15's. One instrument lesson for every later stage: the engine's user
 the literal `(User-validation` marker on the task LINE, and a line without it leaves apply `ready` at N-1/N
 and the graph pointing at a stale proposal review. 2429 tests green (2376 → 2429). Next in dependency order:
 rc02b awaits ratification; Phase 2's rc03 and rc04b remain open.
+
+**2026-10-03 — Architect session: rc02b-severity-ladder RATIFIED (thirteen stages complete).** All three exit
+criteria graded MET as written on the cycle's record — (1) the write-gate refusal, executed by both halves of the
+blind pair under `--change` and `--doc`; (2) the unreproduced mark on a parsed, still-CRITICAL external finding,
+pinned by test, executed by the fresh half, and observed on the first live external return under the new prompt;
+(3) walk 1's step (0) re-run of the external CRITICAL's own reproduction, recorded as `reproduction_rerun` —
+none revised, none an instrument correction. The post-archive project-wide audit (`orbit/.orbit-runs/audit-drift-
+2026-10-03T21-46-06Z.json`) detected no drift beyond two prose suggestions written during the stage's own cycle,
+both walked to zero the same hour (`address-reviews-2026-10-03T21-47-30Z.json`): the stage section's exploration
+sentence now points at the archived file, and the `Review mode decision framework` requirement's dated measurement
+was trimmed out of baseline as a hotfix. Q-crc-15 WIDENED in the same session: the external-format grammar has
+three readers, not two, and the standing recommendation now says re-measure before sizing. Two days, exploration to
+ratification. Next in dependency order: Phase 2's rc03-review-genres and rc04b-forward-recommendation are both
+premised and both depend only on rc02 (complete) — either is eligible for exploration; the remaining premised
+stages are rc05–rc10, rc07b and rc12.
