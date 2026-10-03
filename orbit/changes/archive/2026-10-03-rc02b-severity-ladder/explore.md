@@ -110,7 +110,7 @@ Moves:
 
 - **2026-10-03 — D-rc02b-1: the stage is explored as ONE change over FIVE capabilities; the R-crc-1 breach is declared for ratification, not split away.** Sal: hold. The
   charter named `orbit-conventions`, `orbit-emit-composition`, `orbit-address-reviews`; the code reads two more — `orbit-review` owns the finding entry shape (the
-  `recommendation_options` precedent), the external prompt template and the sixteen per-pass severity rules; `orbit-report-rendering` owns the external parser, the
+  `recommendation_options` precedent), the external prompt template and the sixteen per-pass severity rules (CORRECTED 2026-10-03 at walk 1: fourteen — see D-rc02b-2); `orbit-report-rendering` owns the external parser, the
   only reader that could see a `**Reproduction**:` line as structure. The rule-before-enforcement split (conventions + review, then emit-composition +
   report-rendering + address-reviews) was briefed and declined: the five surfaces are one mechanism — a field born in the prompt and the entry shape, refused at
   the gate, marked at the parser, re-run at the walk — and splitting it would ship a rule nothing checks for the gap's duration. Under R-crc-1's own text the
@@ -126,7 +126,7 @@ Moves:
   WARNING; P5 and S5 are the ladder's own definitions and stay; P3, P9, S1, S2, S4 survive as written with the tax on their CRITICALs. Settled under R-crc-3.
   Kind: rule
   Disposition: live
-- **2026-10-03 — D-rc02b-3: a lifecycle BLOCK is not a severity; it is reported in the body and leaves the scorecard.** Two of the sixteen rules name no
+- **2026-10-03 — D-rc02b-3: a lifecycle BLOCK is not a severity; it is reported in the body and leaves the scorecard.** Two of the sixteen rules (CORRECTED 2026-10-03 at walk 1: fourteen — see D-rc02b-2) name no
   consequence: P1's validate failure and P8's unresolved `@review:` marker stop apply whatever they would cost a user, and P8 had to invert the false-positive
   bias ("when ambiguous, classify as CRITICAL") to make the count carry that second meaning. Both become "report and block" — the pass names the block, apply's
   precondition owns stopping on it — with zero effect on the review's CRITICAL count, so "0 CRITICAL" on a report means exactly what the ladder says. Sal: leave.

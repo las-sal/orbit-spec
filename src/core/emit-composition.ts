@@ -535,7 +535,7 @@ function validateReviewEvidence(command: string, payload: Record<string, unknown
         // CONTENT is CRITICAL's requirement: a non-empty string after trimming.
         if (typeof f.reproduction !== 'string' || f.reproduction.trim() === '') {
           throw new EmitError(
-            `write gate: ${at} '${String(f.title ?? '')}' is CRITICAL and carries no reproduction — per \`orbit-conventions\`' Severity ladder a CRITICAL is a consequence plus the case that re-executes it (inputs, rule or command, expected, observed); supply \`reproduction\` or grade it WARNING at most.`
+            `write gate: ${at} '${String(f.title ?? '')}' is CRITICAL and carries no reproduction — per \`orbit-conventions\`' Severity ladder; supply \`reproduction\` or grade it WARNING at most.`
           );
         }
       } else if ('reproduction' in f && typeof f.reproduction !== 'string') {

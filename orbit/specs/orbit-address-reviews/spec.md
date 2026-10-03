@@ -3,9 +3,7 @@
 ## Purpose
 
 The `/orbit:address-reviews` command — resolves `@review:` markers anywhere in the repo (or review findings ingested via `--from-file` external markdown / internal JSON, or auto-discovered from a change's `.orbit-runs/`) by walking each through pushback → classify → fix → ripple-cascade → remove-marker. Walk-mode is the default (`--batch` opts in); cascade-by-default auto-applies ripple edits to IN-set files (`--no-cascade` opts out). Pushback is the primary discipline: verify against current state before fixing, suppress stale findings with evidence. Output is a resolution log (NOT a scorecard) with ✓ Resolved / ⚠ Stale / ⏸ Deferred / ✗ Escalated counts. Marker-removal invariant ensures markers don't leak into canonical artifacts.
-
 ## Requirements
-
 ### Requirement: Address-reviews command available
 
 The system SHALL expose a `/orbit:address-reviews` command that scans for `@review:` markers in the repo (or ingests review findings via `--from-file`) AND walks each through resolution with pushback discipline. When invoked with a change-name positional argument and no markers are found in the change directory, the system SHALL ALSO attempt to auto-discover the most recent internal review JSON OR audit-drift JSON in the change's `.orbit-runs/` directory and walk it as if it had been passed via `--from-file` — closing the "review → address-reviews" convenience loop so users don't need to type `--from-file <path>` or pre-run `/orbit:review --as proposal --mark`.
@@ -78,12 +76,12 @@ The system SHALL accept a `--from-file <path>` flag and parse the file's content
 #### Scenario: Parse external findings markdown
 
 - **WHEN** the command runs with `--from-file <path>` and the file's first non-whitespace prefix is `# External Review:` (markdown header) and the body follows the orbit external-review markdown format
-- **THEN** the parser extracts each finding (severity, title, file:line, description) as a virtual marker with `source: "external"` and walks it through the same lifecycle as inline markers, except no source-file marker text exists to remove
+- **THEN** the parser extracts each finding (severity, title, file:line, description, and — when present — reproduction) as a virtual marker with `source: "external"` and walks it through the same lifecycle as inline markers, except no source-file marker text exists to remove; entries under a `## Blocks` section are listed FIRST in the triage table as blocks and are never walked as virtual markers
 
 #### Scenario: Parse internal review JSON
 
 - **WHEN** the command runs with `--from-file <path>` and the file's first non-whitespace character is `{` AND the file parses as valid JSON AND the top-level `command` field is `"review"` AND the JSON shape matches the orbit internal-run review summary (per orbit-conventions `Internal-run JSON summary format` + the review-specific extensions documented in the `orbit-review` skill's `references/run-summary-schema.md` (shipped alongside the generated skill))
-- **THEN** the parser extracts each entry in the JSON's `findings[]` array as a virtual marker — mapping `severity` directly, `title` directly, `file:line` from `file` + `line` fields, `description` from the entry's `recommendation` field — tags `source: "internal-review"` on each, and walks each through the same lifecycle as inline markers, with marker-removal as a no-op
+- **THEN** the parser extracts each entry in the JSON's `findings[]` array as a virtual marker — mapping `severity` directly, `title` directly, `file:line` from `file` + `line` fields, `description` from the entry's `recommendation` field, `reproduction` from the entry's `reproduction` field when present — tags `source: "internal-review"`; the JSON's optional `blocks[]` entries are listed FIRST in the triage table as blocks and never become virtual markers on each, and walks each through the same lifecycle as inline markers, with marker-removal as a no-op
 
 #### Scenario: Parse internal audit-drift JSON
 
@@ -124,6 +122,11 @@ The system SHALL accept a `--from-file <path>` flag and parse the file's content
 
 - **WHEN** the `--from-file` path looks like markdown (leading `# External Review:`) but is missing required sections OR has broken field labels OR otherwise can't be parsed cleanly per the external-findings parser contract
 - **THEN** the command reports a parse error with format guidance (referencing `references/external-findings-format.md`) and exits without acting on partial input
+
+#### Scenario: Reproduction travels into the virtual marker
+
+- **WHEN** a finding (markdown or JSON) carries a reproduction
+- **THEN** the virtual marker carries it in a `reproduction` field and the Step 3a pushback re-runs it first (per `Pushback discipline applied per marker`); a CRITICAL marker without one is tagged `unreproduced` in the triage table and in the resolution log's entry field `reproduction_rerun` (owned by `Resolution-log JSON shape extensions for walk-mode / decision-forks / cascade`, which states its closed values)
 
 ### Requirement: Discover → triage → walk → ripple flag → report lifecycle
 
@@ -172,12 +175,17 @@ The system SHALL verify each marker against current state before fixing — rega
 #### Scenario: Pushback decision procedure
 
 - **WHEN** the AI verifies a marker against current state
-- **THEN** it follows this procedure in order: (1) identify the marker's referenced symbol, name, or concept; (2) `grep -rn` for current presence in expected locations (the file the marker is in, related files, baseline specs); (3) if the symbol is absent where the marker expects it, run `git log -S "<symbol>" --since=<reasonable-window>` (default: since the marker file was last modified) to confirm intentional removal; (4) read the relevant file's current content; (5) compare to the marker's claim and decide: still applies / already fixed / partially applies; (6) on already-fixed, report the commit hash or current-content evidence as part of suppression
+- **THEN** it follows this procedure in order: (0) for a CRITICAL marker that carries a reproduction, RE-RUN it — execute the command, or re-derive the constructed case against the current artifact — and record the result as the first evidence — the entry's `reproduction_rerun` value (`reproduced` / `not-reproduced` / `cannot-run`) plus the output or derivation in `evidence`; a CRITICAL carrying none is noted `unreproduced` and pushback proceeds on the claim alone, never re-grading it (per `orbit-conventions`' Severity ladder); (1) identify the marker's referenced symbol, name, or concept; (2) `grep -rn` for current presence in expected locations (the file the marker is in, related files, baseline specs); (3) if the symbol is absent where the marker expects it, run `git log -S "<symbol>" --since=<reasonable-window>` (default: since the marker file was last modified) to confirm intentional removal; (4) read the relevant file's current content; (5) compare to the marker's claim and decide: still applies / already fixed / partially applies; (6) on already-fixed, report the commit hash or current-content evidence as part of suppression
 
 #### Scenario: Internal JSON virtual markers receive fresh pushback
 
 - **WHEN** the command ingests an internal review JSON OR audit-drift JSON via `--from-file` and walks its `findings[]` entries as virtual markers
 - **THEN** each entry receives fresh pushback against current state — the source command (`/orbit:review` or `/orbit:audit-drift`) that produced the JSON already filtered findings into its own `stale_suppressed[]` array at source-run time, BUT pushback is re-applied at address-reviews time because state may have changed between the source run and the resolve (e.g., user fixed an issue ad-hoc; another commit landed). The lifecycle does NOT skip pushback for any JSON-virtual marker regardless of source `command`.
+
+#### Scenario: A reproduction that no longer reproduces
+
+- **WHEN** step (0) re-runs a CRITICAL's reproduction and the observed result now matches the expected one
+- **THEN** the marker is classified stale-with-evidence, the evidence being the re-run's output (command + result, or the case and the derived answer), and no further edit is made
 
 ### Requirement: Classification of each marker
 
@@ -470,6 +478,7 @@ The system SHALL extend the `address-reviews-<TS>.json` resolution-log shape wit
 - **`walk_mode_source`** (top-level, required when `walk_mode == "batch"`): `"flag"` (via `--batch`), `"verbal"` (via verbal trigger in invocation message), or `"command-shape-interruption"` (via mid-walk command-shaped message). Omitted when `walk_mode == "per_finding"`.
 - **`walk_mode_shifted_at_finding`** (top-level, present only when `walk_mode_source == "command-shape-interruption"`): the 1-indexed finding number at which the mode shifted.
 - **`delegation_directive`** (top-level, optional): the user's verbatim mid-walk delegation ("handle the rest, only brief me on real decisions"), present when one was issued (per the decision-lane protocol's batch-delegation rule).
+- **`reproduction_rerun`** (per-resolution, REQUIRED on every CRITICAL entry, absent below CRITICAL — rc02b): the Step 3a step-(0) result, one of the CLOSED values `reproduced` / `not-reproduced` / `cannot-run` (the marker carried a reproduction and it was re-run) or `unreproduced` (the marker carried none); the output or derivation rides `evidence`. Named in `references/run-summary-schema.md` and derived by the schema-table parity test; a reader that does not know the field ignores it (the `recommendation_options` precedent).
 - **`ratified_via`** (per-resolution, required for EVERY decision-lane resolution — forked or not): `"chat"` (a user-typed directive ratified the resolution) or `"prompt"` (the optional closure `AskUserQuestion` did). Absent on non-decision-lane resolutions (stale, trivial fix, unresolvable).
 - **`resolution`** (per-resolution, conditionally required): the ratified direction verbatim — required when no fork was detected (the briefing's options were AI-derived prose) OR when the ratified direction is off-menu; optional when `recommendation_fork.chosen` names a presented option (the label suffices).
 - **`recommendation_fork`** (per-resolution, optional): present only when a fork was detected and the finding entered the decision lane; carries the DETECTION data (the ratification channel lives at the entry level, above). Object shape:
@@ -522,6 +531,11 @@ The system SHALL extend the `address-reviews-<TS>.json` resolution-log shape wit
 - **WHEN** address-reviews walks 5 findings: 1 stale, 2 trivial fix, 1 decision-required-with-fork, 1 decision-required-without-fork
 - **THEN** only the 1 fork-triggered finding's resolution entry contains `recommendation_fork`; the other 4 entries omit the field entirely (consumers MUST treat absence as "no fork")
 
+#### Scenario: A CRITICAL entry carries its re-run result
+
+- **WHEN** the walk resolves a CRITICAL virtual marker
+- **THEN** its resolution entry carries `reproduction_rerun` with one of the four closed values, and a WARNING or SUGGESTION entry carries no such field
+
 ### Requirement: Architecture-scoped resolution logs
 
 The resolution log SHALL land in the architecture trail when the walked findings are
@@ -535,3 +549,4 @@ standing depends on — D-arc Stage D2).
 
 - **WHEN** `/orbit:address-reviews --from-file orbit/architecture/.orbit-runs/review-architecture-<TS>.json` completes its walk
 - **THEN** the resolution log lands at `orbit/architecture/.orbit-runs/address-reviews-<TS>.json` with `change: null` and the `doc` carried from the source emit
+

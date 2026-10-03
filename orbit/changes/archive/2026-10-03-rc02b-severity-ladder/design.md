@@ -138,13 +138,18 @@ accounted, 0 open, which my reading of the three entries against the grammar agr
 
 - `src/core/emit-composition.ts` — the finding-level CRITICAL/reproduction check in `validatePayload` (every mode); `blocks` added to the review payload table with its shape check.
 - `src/core/report-render.ts` — `normalizeExternalPass` learns `**Reproduction**:` as a body opener and collects `## Blocks` items; the internal normalizer passes `reproduction` and `blocks` through; `renderReport` prints the reproduction blockquote, the `[unreproduced]` prefix and the `### Blocks` slot.
-- `src/core/templates/workflows/apply-change.ts` — NOT touched: no precondition is added here (the known limit; rc10's territory).
 - `src/core/artifact-graph/trail.ts` — `parseExternalMarkdown` stops reading `**File**:`/`**Description**:` once a finding's Description body has opened (conforming to the conventions format rule the render parser already follows — external walk 1); a test pins the finding KEY (title, file) through both readers and that `## Blocks` leaves the counter untouched.
 - `src/core/templates/workflows/review.ts` — the fourteen per-pass sites, the report example and the bias line re-pointed; Pass 0's fold rule; Step 9's field list; the prompt template's ladder paragraph, Reproduction body and Blocks section; `references/run-summary-schema.md`.
 - `src/core/templates/workflows/address-reviews.ts` — both virtual-marker tables; the expected-file-format block; Step 3a step (0); triage lists blocks first.
 - `test/core/emit-schema-parity.test.ts` — the nested allowlist learns `reproduction`, `blocks`, `reproduction_rerun`; a new parity test holds the template's `## Severity` paragraph byte-equal to the conventions fence.
-- `test/core/*.test.ts` — gate refusal, external body parse, unreproduced mark, counter blindness, internal pass-through; the generated-surface fidelity tests for the re-pointed sites.
+- `test/core/*.test.ts` — gate refusal, external body parse, unreproduced mark, counter blindness, internal pass-through (the two new files: `trail-rc02b.test.ts`, `severity-ladder-parity.test.ts`).
+- `test/core/templates/orbit-content-fidelity.test.ts` — the generated-surface fidelity tests for the re-pointed sites.
+- `test/fixtures/report-golden/proposal-pass.golden.md` — one `[unreproduced]` prefix (a prior-generation CRITICAL, D8).
+- `test/fixtures/report-golden/external-pass.golden.md` — one `[unreproduced]` prefix (the same, external genre).
+- `CLAUDE.md` — the ACTIVE program section's rc02b paragraph.
 - `orbit/specs/*/spec.md` — six capabilities, synced at archive.
+
+`src/core/templates/workflows/apply-change.ts` is deliberately NOT a touchpoint: no precondition is added there (the known limit; rc10's territory — Decisions D3).
 
 ## Risks / Trade-offs
 
@@ -167,7 +172,7 @@ accounted, 0 open, which my reading of the three entries against the grammar agr
   body re-filed the finding at the gate. The rule is now stated ONCE in the conventions format requirement
   (field lines are recognised only before the Description body opens) and both readers conform; the key
   (title, file) is pinned through both by a test. The pre-existing hole — a Description body quoting a path —
-  closes with it.
+  closes with it. The system blind pair found the SECOND divergence between the same two readers inside this change's promise: the trail reader opened a Description only on same-line text while the renderer opened it on the label, so a next-line body rendered as a pass the gate rejected (external CRITICAL, reproduced; fresh WARNING). Closed at walk 1: the label opens the body in both, a non-blank body line makes it present in both, stated once in the format owner and pinned by three two-reader tests.
 - [Sixteen blocks over ~12] → the three walks each added a carried block; changed lines stay small and the
   reviewer reads the diff, not the carriage.
 

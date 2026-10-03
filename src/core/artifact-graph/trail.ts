@@ -381,9 +381,24 @@ function parseExternalMarkdown(file: string, token: string, mode: ReviewMode): T
   // re-filed the finding at the gate while the report showed the right file — two readers, one
   // contract, two answers (the external proposal pass, rc02b). `descOpen` is per finding.
   let descOpen = false;
+  // Inside an open Description body, the Reproduction label ends the DESCRIPTION for the
+  // has-a-body test (the renderer opens its reproduction body there and its recommendation is
+  // the lines before it); a fenced line is body content in both readers.
+  let reproOpen = false;
+  const markDescriptionBody = (line: string): void => {
+    if (!descOpen || reproOpen || findings.length === 0) return;
+    if (/^\*\*Reproduction\*\*:/i.test(line)) {
+      reproOpen = true;
+      return;
+    }
+    if (line.trim() !== '') findings[findings.length - 1].hasDescription = true;
+  };
   for (const line of lines) {
     const wasInFence = fence.inFence;
-    if (fence.handle(line) || wasInFence) continue;
+    if (fence.handle(line) || wasInFence) {
+      markDescriptionBody(line);
+      continue;
+    }
     if (/^#\s+External Review\b/i.test(line)) hasHeader = true;
     if (/^\*\*Reviewer\*\*:/i.test(line)) hasReviewer = true;
     const sec = line.match(/^##\s+(CRITICAL|WARNING|SUGGESTION)\s*$/);
@@ -392,12 +407,14 @@ function parseExternalMarkdown(file: string, token: string, mode: ReviewMode): T
       sawSections.add(sec[1]);
       pendingTitle = null;
       descOpen = false;
+      reproOpen = false;
       continue;
     }
     if (/^##\s+/.test(line)) {
       section = null; // left the severity sections (e.g. ## Blocks, ## Notes) — never counted
       pendingTitle = null;
       descOpen = false;
+      reproOpen = false;
       continue;
     }
     if (!section) continue;
@@ -407,20 +424,31 @@ function parseExternalMarkdown(file: string, token: string, mode: ReviewMode): T
       counts[section]++;
       pendingTitle = title[1].trim();
       descOpen = false;
+      reproOpen = false;
       // External findings take their severity from SECTION MEMBERSHIP, which is structural.
       findings.push({ title: pendingTitle, file: '', severity: section, hasFile: false, hasDescription: false });
       continue;
     }
-    if (descOpen) continue; // inside a Description (or Reproduction) body: content, not fields
+    if (descOpen) {
+      // Inside a Description (or Reproduction) body: content, not fields — and the content is
+      // what makes the Description PRESENT, exactly as the renderer's blank-body rejection reads it.
+      markDescriptionBody(line);
+      continue;
+    }
     const fileField = line.match(/^\*\*File\*\*:\s*(.*\S)\s*$/i);
     if (fileField && findings.length > 0) {
       findings[findings.length - 1].file = stripLineSuffix(toRepoRelative(fileField[1]));
       findings[findings.length - 1].hasFile = true;
     }
-    const descField = line.match(/^\*\*Description\*\*:\s*(.*\S)\s*$/i);
+    // The label OPENS the body whether or not text follows on the same line (rc02b system blind
+    // pair — both halves found this reader demanding same-line text while the renderer accepted a
+    // next-line body, so a renderable pass was a rejected return at the gate). `hasDescription`
+    // is set by a non-blank body line, same-line or later, never by the bare label.
+    const descField = line.match(/^\*\*Description\*\*:\s?(.*)$/i);
     if (descField && findings.length > 0) {
-      findings[findings.length - 1].hasDescription = true;
       descOpen = true;
+      reproOpen = false;
+      if (descField[1].trim() !== '') findings[findings.length - 1].hasDescription = true;
     }
   }
 

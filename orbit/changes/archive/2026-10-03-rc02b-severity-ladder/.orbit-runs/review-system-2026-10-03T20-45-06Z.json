@@ -1,0 +1,163 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-03T20:45:06Z",
+  "change": "rc02b-severity-ladder",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 4
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "A third external-format reader (lenientExternalCounts) still takes the LAST **File**: line, so the trend's repeat/new count re-files a finding whose Reproduction quotes a path",
+      "file": "src/core/report-render.ts",
+      "line": 902,
+      "recommendation": "The change brought trail.ts to the field-line rule and pinned the (title, file) key through 'both readers', but report-render.ts carries a THIRD copy of the external grammar — `lenientExternalCounts` (line 873), the trend/ordinal counter whose `findings[].matchFile` feeds `buildReportContext`'s repeat/new set (lines 1003–1005). It has no `descOpen` and overwrites `matchFile` on every `**File**:` line (line 902–904). Under `orbit-conventions`' Severity ladder this is WARNING: no gate input moves (the repeat count is the trend line only), but the artifact says the field-line rule holds in every reader and a reader built to it does not. Apply the rule here too — or better, derive this reader's (title, matchFile) from the shared trail reader / `normalizeExternalPass` so the grammar is stated once (Q-crc-15 counted two external grammars; this is a fourth site of the same rule) — and add a case to test/core/trail-rc02b.test.ts that pins the key through this reader as well. Record the ENUMERATE miss where it happened: explore.md's D-rc02b-5 closure line says the five modules were 'read file by file' and the design's Risks say 'both readers conform'; report-render.ts held a third reader the read did not surface.",
+      "reproduction": "In a scratch copy of the change (no repo edits): write `.orbit-runs/external-system-2026-10-03T19-00-00Z.md` with ONE CRITICAL `### Guard bypassed` / `**File**: specs/a/spec.md:7` / `**Description**: …` / `**Reproduction**: compare with the sibling requirement:` / `**File**: specs/b/spec.md:99` / `observed: …` (WARNING and SUGGESTION `None.`), then `orbit emit review --change rc02b-severity-ladder --payload p.json --render` where p.json holds one CRITICAL with title `Guard bypassed`, file `specs/a/spec.md`, line 7 and a reproduction.\nExpected: the trend line reads `1C/0W/0S → 1C/0W/0S (1 repeat, 0 new)` — same title, same file.\nObserved: `Trend: 1C/0W/0S → 1C/0W/0S (0 repeat, 1 new)`.\nControl: delete the inner `**File**: specs/b/spec.md:99` line from the external file, re-emit → `(1 repeat, 0 new)`. The report body for the external pass itself shows `specs/a/spec.md:7` (normalizeExternalPass is right); only the lenient counter re-files."
+    },
+    {
+      "pass": "1",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "The two readers still disagree on WHERE a Description body opens: an external file with `**Description**:` and the body on the next line renders as a valid pass but is rejected by the gate's reader",
+      "file": "src/core/artifact-graph/trail.ts",
+      "line": 420,
+      "recommendation": "trail.ts:420 opens the Description only on `/^\\*\\*Description\\*\\*:\\s*(.*\\S)\\s*$/` (inline text required), while report-render.ts:539 opens it on `/^\\*\\*Description\\*\\*:\\s?(.*)$/` (empty tail allowed, body collected from the following lines). For a file whose Description body starts on the next line the render parser produces a normal finding with the right file and reproduction, while the trail reader never sets `hasDescription`/`descOpen`, re-files on any later `**File**:` line, and then rejects the WHOLE file at line 442 as lacking a Description — the gate reports `1 external return rejected as malformed` and the blind pair cannot form from it. That contradicts the new conventions scenario 'Field lines are recognised only before the Description body opens — in BOTH readers' (delta line 65: 'both … read it the same way') as written. Graded WARNING, not CRITICAL, per `orbit-conventions`' Severity ladder: 0 of the 62 real external files on the trail use the next-line shape (measured: `grep -lE '^\\*\\*Description\\*\\*:\\s*$'` over every external-*.md → none; 565 inline), the gate names the rejection rather than dropping it silently, and the format text shows `**Description**: <text>` inline — so this is divergence risk, not a path a user has yet hit. Fix: choose ONE reading and state it in the owning format requirement — either the trail reader opens the body on a bare label too (make line 420's regex `\\s?(.*)$` and set `hasDescription`/`descOpen` on it, leaving the blank-body rejection to the renderer), or the render parser requires inline text — and pin the next-line shape through both readers in test/core/trail-rc02b.test.ts.",
+      "reproduction": "Scratch copy of the change; write `.orbit-runs/external-system-2026-10-03T21-01-00Z.md`:\n`## CRITICAL` / `### Empty-tail description` / `**File**: specs/a/spec.md:7` / `**Description**:` (nothing after the colon) / `the body starts on the next line` / `**File**: specs/b/spec.md:99` / `**Reproduction**: run Y; expected A; observed B` / WARNING and SUGGESTION `None.`.\nRun `orbit status --change rc02b-severity-ladder --report 2026-10-03T21-01-00Z` and `orbit status --change rc02b-severity-ladder --json`.\nExpected (per the delta's BOTH-readers scenario): the same answer from both — a finding keyed (Empty-tail description, specs/a/spec.md) in the report AND in the gate.\nObserved: the report renders `- **specs/a/spec.md:7** — Empty-tail description` with the body and `> Reproduction:`; the gate's reason reads `blind pair open: no independent pass stands on this state … (1 external return rejected as malformed — external-system-2026-10-03T21-01-00Z.md)`."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "title": "The reproduction's four-tuple definition is restated beside its pointer at six sites, and one copy already diverges from the owner's wording (R-crc-14; design D2's own pointer test)",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 97,
+      "recommendation": "Design D2 states the pointer test — 'names the ladder, states the condition, states no definition; a pointer that restates the definition beside itself is the rc16 disease' — and the conventions delta's one-statement clause says every other surface names the ladder 'never a second definition'. The predicate of what a reproduction IS (inputs, rule or command, expected, observed) is restated at: review.ts:97 (the schema reference's field note — names the ladder AND defines in the parenthetical), review.ts:68 (the schema example's placeholder), review.ts:624 (the prompt's CRITICAL placeholder `<a command you ran, or a constructed case — inputs, rule, expected, observed>` — mirrored into the orbit-review-external delta at line 126 and held byte-equal between the two templates, but NOT against the owning fence, and already diverged: 'rule' where the owner says 'the rule or command'), address-reviews.ts:31 (the expected-format block's placeholder), emit-composition.ts:538 (the write gate's error message), and CLAUDE.md:427 (the full ladder in the rc02b paragraph). Graded WARNING per audit-drift Category 3 (two docs stating one rule, one already different) and the ladder's divergence test — an external reviewer builds to the placeholder in front of them, not to the fence three screens up. Lane per R-crc-14(b): delete the copies, keep the owner. At review.ts:97/:68 and address-reviews.ts:31 say 'a reproduction, per `orbit-conventions`' Severity ladder' and drop the tuple; at review.ts:624 shorten the placeholder to point at `## Severity` above (or quote the fence's words verbatim so the mirror test covers it); at emit-composition.ts:538 name the ladder and drop the tuple; CLAUDE.md may name the rule and its consequence — trim the parenthetical. The checked `## Severity` mirror is the one copy that should carry the words.",
+      "reproduction": "`grep -rn \"expected, observed\\|expected result, the observed\" src/core/templates/workflows/*.ts src/core/*.ts CLAUDE.md orbit/changes/rc02b-severity-ladder/specs` → owner fence (conventions delta :5 and :35), the two checked mirrors (review.ts:602, review-external delta :104), plus review.ts:68, :97, :624, address-reviews.ts:31, emit-composition.ts:538, review-external delta :126, CLAUDE.md:427. Owner: 'the inputs, the rule or command, the expected result, the observed result'. review.ts:624: 'inputs, rule, expected, observed'."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "title": "`Review mode decision framework` (carried MODIFIED in this change) names a README 'Choosing a review mode' section that does not exist, so its own drift-detection scenario can never fire",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-conventions/spec.md",
+      "line": 224,
+      "recommendation": "Audit-drift Category 3 (cross-doc consistency), raised here because the apply's task 5.2 measured it and left it for exactly this pass: the requirement text (delta line 224) calls itself 'the normative-force complement to README's \"Choosing a review mode\" section', and the scenario at line 249 says audit-drift SHALL surface drift between that section and the spec. `grep -n \"Choosing a review mode\" README.md docs/*.md` returns nothing; the only hits are this requirement and its baseline. Two docs disagree on a fact — WARNING by audit-drift's own rule, preserved per Pass 6 — and the requirement is already a MODIFIED block in this change (the external-slot residue sentence), so the repair costs no ceiling headroom. A: edit the two sentences in the delta now — drop the README-complement claim and rewrite the README-drift scenario to name the user doc that actually exists (or to say the framework is spec-only until a user-docs change lands, pointing at issue #1). B: leave the delta as is and record the falsified claim as an accepted residual in the readiness record with the user-docs rewrite (issue #1) as its owner.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Repair the two sentences inside the already-carried MODIFIED block (delta lines 224 and 249): remove the README complement claim; make the drift scenario name a doc that exists or state the framework is spec-only pending the user-docs rewrite."
+        },
+        {
+          "label": "B",
+          "body": "Leave the text; record 'the framework requirement names a README section that does not exist' as an accepted residual in the archive's readiness record, owner: the deferred user-docs rewrite (issue #1)."
+        }
+      ]
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "The corrected measurements (fourteen sites, six capabilities) did not reach the charter's MEASURED paragraph or two explore Decision entries, which still say SIXTEEN and FIVE",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 1643,
+      "recommendation": "Walk 1 corrected the site count from sixteen/seventeen to fourteen in proposal, design and explore's D-rc02b-2 (explore.md:122 carries the CORRECTED parenthetical), and propose moved the capability count from five to six. The stage section's 'MEASURED 2026-10-03 at exploration' paragraph still reads 'the SIXTEEN per-pass severity rules' (line 1643) and '(1) the sixteen per-pass rules are the SIXTH instance' (line 1652) and is headed 'FIVE capabilities'; explore.md's D-rc02b-1 (line 113: 'the sixteen per-pass severity rules') and D-rc02b-3 (line 129: 'Two of the sixteen rules') were left while the sibling entry was corrected in place. CLAUDE.md:430 says fourteen and six. SUGGESTION rather than audit-drift's WARNING: the charter paragraph is a dated record of what the exploration measured that day, and the right fix is the at-archive status entry stating the corrected figures (fourteen sites; six capabilities, breach declared at six) — not an edit to the dated prose; give D-rc02b-1 and D-rc02b-3 the same 'CORRECTED 2026-10-03 at walk 1' parenthetical D-rc02b-2 already carries."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "Touchpoints divergence (Category 5): four unpredicted paths and a 'NOT touched' entry the engine reads as a prediction",
+      "file": "orbit/changes/rc02b-severity-ladder/design.md",
+      "line": 137,
+      "recommendation": "`orbit status --change rc02b-severity-ladder --boot --json` → `touchpoints.actual_unpredicted`: CLAUDE.md, test/core/templates/orbit-content-fidelity.test.ts, test/fixtures/report-golden/external-pass.golden.md, test/fixtures/report-golden/proposal-pass.golden.md (the `test/core/*.test.ts` entry does not descend into `templates/`; the goldens and CLAUDE.md were named in tasks 2.5/5.2 but not in Touchpoints); `predicted_unsatisfied`: src/core/templates/workflows/apply-change.ts — the entry says 'NOT touched', which the engine's entry grammar cannot read as a negation — and `orbit/specs/*/spec.md` (archive-time, expected). Docs and tests riding along → SUGGESTION per audit-drift's Category 5 rule. Add the two test paths/goldens and CLAUDE.md to Touchpoints, and move the apply-change.ts 'not touched' sentence into prose (Decisions D3 already says it) so the section holds only predictions."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "title": "A blank-string `reproduction` is 'present' on an internal pass (renders an empty `> Reproduction:` blockquote) but 'absent' on an external one",
+      "file": "src/core/report-render.ts",
+      "line": 300,
+      "recommendation": "`normalizeInternalPass` passes any string through (line 300) and the render prints `> Reproduction:` followed by an empty quoted line, while `normalizeExternalPass` (line 603) treats a present-but-blank body as no reproduction ('the mark is by absence'). The write gate refuses blank only on CRITICAL, so on new emits the empty blockquote reaches WARNING/SUGGESTION entries (observed: a WARNING with `\"reproduction\": \"\"` wrote and rendered `  > Reproduction:` / `  > `); on a prior-generation CRITICAL carrying `\"\"` the `[unreproduced]` mark would not render (none exists on the trail today — grep found only the spec's example). Mirror the external rule: treat a trimmed-blank internal string as absent at line 300 (and in the mark predicate), one test beside the existing 'internal reproduction mistyped' case."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "`- None.` under `## Blocks` is collected as a block named 'None.'",
+      "file": "src/core/report-render.ts",
+      "line": 528,
+      "recommendation": "The format text says Blocks items are `- <what>` lines and 'Use `None.` if none', and every severity section primes the reviewer to write `None.`; a reviewer who bullets it produces a phantom block that renders under `### Blocks` and would be listed first at triage as 'not walked' (observed in a scratch file: `### Blocks` / `- orbit validate fails…` / `- None.`). Cheapest closure: at line 528 skip an item whose text is exactly `None.` (case-insensitive), state it in the format requirement's Blocks sentence, and add the case to the existing 'Blocks section is collected, never counted' test; alternatively reword the prompt's Blocks placeholder to 'write `None.` on its own line, not as a bullet'."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "address-reviews' external-findings-format reference names the prompt template as the format's 'source of truth' while this change's deltas make `orbit-conventions` the owner",
+      "file": "src/core/templates/workflows/address-reviews.ts",
+      "line": 51,
+      "recommendation": "Line 51 (the Notes placeholder in the expected-file-format block this change edited — Reproduction and Blocks were added at lines 31 and 45–47) ends: 'The prompt template in the `orbit-review` skill (`references/prompt-template.md`) is this format's source of truth.' The report-rendering delta (line 45–46) says the contract's additions 'are `orbit-conventions`' External-review findings markdown format's', and the trail reader's comment names the same requirement. Two owner claims for one format is R-crc-14's shape (the seventh instance by the stage's own count). Pre-existing sentence, touched block → SUGGESTION: replace the clause with 'owned by `orbit-conventions`' External-review findings markdown format; the prompt template is its checked copy'."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "pass": "1",
+      "title": "Architecture-mode review emits are exempt from the reproduction check (fresh proposal pass, walked 1)",
+      "evidence": "Executed in a scratch copy: `orbit emit review --doc clean-up-review-cycle --payload crit-norepro.json` → exit 1, empty stdout, no file under orbit/architecture/.orbit-runs; message `write gate: findings[0] 'No repro' is CRITICAL and carries no reproduction`."
+    },
+    {
+      "pass": "2",
+      "title": "The write gate can persist a review the new normalizer refuses (external proposal pass, walked 2)",
+      "evidence": "Executed: a WARNING with `\"reproduction\": 42` → exit 1, `findings[0].reproduction must be a string when present (got number)`; `blocks: [\"a\\nb\"]` → `blocks[0] must be single-line`; `requireSingleLine` (report-render.ts:155–159) tests exactly the gate's `\\n`/`\\r`; no accepted shape for rc02b's two fields is refused by normalizeInternalPass."
+    },
+    {
+      "pass": "2",
+      "title": "A reproduction can change the gate's finding identity (external proposal CRITICAL, walked 2)",
+      "evidence": "Executed: an external CRITICAL with `**File**: specs/b/spec.md:99` inside its Reproduction body renders `**specs/a/spec.md:7**` and the gate keys the same pass with one unresolved substantive finding (readTrail and normalizeExternalPass agree — test/core/trail-rc02b.test.ts:50); the residue in the THIRD reader is reported separately above."
+    }
+  ],
+  "commentary": "The pattern is Q-crc-15 again, one layer wider than the change drew it. rc02b framed the external format as 'two readers, one contract' and brought the second reader to the first — and that work holds: the key is pinned through readTrail and normalizeExternalPass, I executed the re-filing case and both answered specs/a. But the same source file the change edited carries a third copy of the grammar (the trend counter), where the retired bug survives verbatim, and the two readers it did reconcile still disagree about where a Description body opens — the render accepts a bare label, the gate's reader rejects the whole file. Neither is a gate-moving defect today (the trend line is informational; no real external file on the trail uses the next-line shape — I measured all 62), which is why both sit at WARNING under the ladder rather than above it; both are one regex each, and both argue for the fix the change itself gestured at — one external grammar, imported, never restated.\n\nWhat I executed rather than read: every refusal the gate requirement names, under --change and --doc (refused, empty stdout, no file); a WARNING with a numeric reproduction; a multi-line block; a multi-line CRITICAL reproduction (accepted); an internal emit with blocks plus a blank-string reproduction, rendered; three constructed external files through `orbit status --report` and `--json` (blocks for both genres, the [unreproduced] prefix, a Reproduction before Description dropped as specified, `- None.` collected as a block, the empty-tail Description split between the readers); the trend-repeat case with a control; validate --strict, --sources and fingerprint --check (13/13); npm test (all green at the stated count); a scenario-set diff of all thirteen MODIFIED blocks against their baselines (nothing dropped — the C2 failure mode is absent); gates.ts and isSubstantive untouched and the mark predicate present only in the render, so never-re-grade holds everywhere I looked. The R-crc-14 probe found the four-tuple definition copied beside its pointer at six sites, one already differently worded — the checked mirror is doing its job and the unchecked placeholders around it are not.\n\nPass 0 folded in-line: 24 of 25 tasks, 5.4 the declared user-validation handoff that the tracked gate already reads as pending — I declined to grade it, because an implementation built to the artifact does not diverge from a handoff the artifact names; the design decisions D1–D9 are all visible in the shipped code and bodies, and spec coverage traces requirement by requirement to a test. Passes 4 and 5 skipped: no perspectives defined; no critical paths defined. Pass 6 ran scoped to what the change touched (vocabulary, cross-doc, touchpoints; archive window and explore attestation had nothing in scope). Risk texture: everything found is in prose consistency or in a reader the change did not enumerate; the mechanism the exit criteria name — refuse at write, mark at render, carry to the walk — behaved exactly as specified under every input I could construct.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4",
+    "5"
+  ],
+  "final_assessment": "0 critical, 4 warning, 5 suggestion.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc02b-severity-ladder --from-file orbit/changes/rc02b-severity-ladder/.orbit-runs/review-system-2026-10-03T20-45-06Z.json"
+}

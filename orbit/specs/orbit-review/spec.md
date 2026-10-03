@@ -70,7 +70,17 @@ The system SHALL execute 9 distinct review passes in proposal mode: (1) Structur
 #### Scenario: Pass 8 marker residue detection (operational)
 
 - **WHEN** Pass 8 runs
-- **THEN** the AI greps the change directory for `@review:` markers and distinguishes two cases: (a) **actual unresolved markers** — markers in proposal/design/spec/tasks/explore.md content that represent unaddressed review notes (these are CRITICAL findings and MUST be addressed before applying); (b) **documentation appearances of the marker syntax** — `@review:` text inside code blocks, examples, or scenarios that document the marker convention itself (these are NOT findings). The distinction is whether the marker is inside a fenced code block / inline-code span / explicit "example" prose context (documentation) vs. sitting bare in artifact content (unresolved). When ambiguous, classify as CRITICAL and let the user decide during `/orbit:address-reviews`.
+- **THEN** the AI greps the change directory for `@review:` markers and distinguishes two cases: (a) **actual unresolved markers** — markers in proposal/design/spec/tasks/explore.md content that represent unaddressed review notes (these are BLOCKS, per `orbit-conventions`' Severity ladder — carried in the emit's `blocks` array, rendered above the findings, in no scorecard cell — and they MUST be addressed before applying; nothing stops on them mechanically, which the ladder names as a known limit); (b) **documentation appearances of the marker syntax** — `@review:` text inside code blocks, examples, or scenarios that document the marker convention itself (these are NOT findings). The distinction is whether the marker is inside a fenced code block / inline-code span / explicit "example" prose context (documentation) vs. sitting bare in artifact content (unresolved). When ambiguous, the marker is listed as a block, never graded, and the user decides during `/orbit:address-reviews`.
+
+#### Scenario: `--strict` and `--mark` on a block
+
+- **WHEN** `--strict` is set and a pass reports a block, or `--mark` is set in proposal mode
+- **THEN** `--strict` stops on the first BLOCK exactly as on the first CRITICAL (the CI-like intent is "stop on what must be addressed"); `--mark` writes no marker for a block — a block is already a condition the artifact carries, and a marker would be a second record of it
+
+#### Scenario: Pass severities name the ladder
+
+- **WHEN** a proposal-mode pass assigns a severity
+- **THEN** it names `orbit-conventions`' Severity ladder and states the condition with its consequence, defining nothing of its own: a validate failure (Pass 1) is a BLOCK; a requirement with no task (Pass 2) and old vocabulary in a delta (Pass 7) are WARNING — an implementation built to the artifact would diverge; a direct contradiction of baseline (Pass 4) is CRITICAL only with a reproduction naming the baseline behaviour that breaks, else WARNING; ambiguity that could split implementations (Pass 5) is the ladder's WARNING definition
 
 ### Requirement: System mode runs verify-change + six system-wide passes
 
@@ -79,7 +89,7 @@ The system SHALL execute 7 review passes in system mode: Pass 0 delegates to ups
 #### Scenario: Pass 0 delegates to upstream verify-change
 
 - **WHEN** the command runs as `--as system` and `--skip-verify` is not specified
-- **THEN** Pass 0 invokes `/orbit:verify <change-name>` (via the upstream `orbit-verify-change` skill) and folds its CRITICAL/WARNING/SUGGESTION findings into the report under the appropriate scorecard dimensions
+- **THEN** Pass 0 invokes `/orbit:verify <change-name>` (via the upstream `orbit-verify-change` skill) and folds its findings into the report under the appropriate scorecard dimensions — GRADED BY `orbit-conventions`' Severity ladder as the folding body's own findings, not by verify-change's rules (the composing body is their AUTHOR here, so this is not a reader's re-grade): an incomplete task or an uncovered scenario is WARNING (an implementation built to the artifact would diverge); a violated requirement is CRITICAL ONLY when the violation breaks a user path or loses data, with the requirement and the observed behaviour as its reproduction — a violated formatting or documentation requirement with neither consequence is WARNING; a CRITICAL the body cannot reproduce is folded as WARNING. verify-change's own emit is untouched
 
 #### Scenario: System mode default depth runs all passes
 
@@ -94,22 +104,22 @@ The system SHALL execute 7 review passes in system mode: Pass 0 delegates to ups
 #### Scenario: Pass 1 — Baseline Compliance
 
 - **WHEN** Pass 1 runs in system mode
-- **THEN** the command reads every requirement in archived `orbit/specs/*/spec.md` (not just the change's deltas) and reports CRITICAL when a baseline requirement appears violated; WARNING when a baseline scenario looks regressed
+- **THEN** the command reads every requirement in archived `orbit/specs/*/spec.md` (not just the change's deltas) and reports CRITICAL when a baseline requirement is violated AND the violation breaks a user path or loses data — per `orbit-conventions`' Severity ladder, with the violated requirement and the observed behaviour as the reproduction — WARNING when a requirement is violated with neither consequence (a formatting or documentation rule: the artifact and the product diverge), and WARNING when a baseline scenario looks regressed (regression RISK: a divergence an implementation could make)
 
 #### Scenario: Pass 2 — Cohesion walk
 
 - **WHEN** Pass 2 runs in system mode
-- **THEN** the command identifies files the change touched (from `git diff` and the tasks list) and walks callers/dependents not in the change's tasks for signature drift, semantic shifts, or side effects; flags WARNING for caller-side contract drift, CRITICAL when a downstream is clearly broken
+- **THEN** the command identifies files the change touched (from `git diff` and the tasks list) and walks callers/dependents not in the change's tasks for signature drift, semantic shifts, or side effects; flags WARNING for caller-side contract drift, CRITICAL when a downstream is clearly broken (per the ladder: broken is a reproducible user path, drift is divergence risk)
 
 #### Scenario: Pass 3 — Surface walk derives surfaces from specs
 
 - **WHEN** Pass 3 runs in system mode
-- **THEN** the command enumerates surfaces from `orbit/specs/<capability>/spec.md` (capabilities ARE surfaces) and checks each entry remains coherent after the change; flags WARNING for inconsistencies, CRITICAL when a surface was removed unintentionally
+- **THEN** the command enumerates surfaces from `orbit/specs/<capability>/spec.md` (capabilities ARE surfaces) and checks each entry remains coherent after the change; flags WARNING for inconsistencies, CRITICAL when a surface was removed unintentionally and the removal is shown as the reproduction (per the ladder; else WARNING)
 
 #### Scenario: Pass 4 — Perspective reviews from lenses
 
 - **WHEN** Pass 4 runs in system mode and `orbit/lenses/perspectives.md` exists
-- **THEN** for each named perspective, the command simulates typical call patterns; flags SUGGESTION/WARNING when interactions are awkward, inconsistent, or surprising from a registered caller's POV
+- **THEN** for each named perspective, the command simulates typical call patterns; flags WARNING when interactions are awkward, inconsistent, or surprising from a registered caller's POV (per `orbit-conventions`' Severity ladder: a caller built against the artifact would diverge — divergence risk), SUGGESTION below that
 
 #### Scenario: Pass 4 — No perspectives defined
 
@@ -119,7 +129,7 @@ The system SHALL execute 7 review passes in system mode: Pass 0 delegates to ups
 #### Scenario: Pass 5 — Critical-path scan from lenses
 
 - **WHEN** Pass 5 runs in system mode and `orbit/lenses/critical-paths.md` exists
-- **THEN** for each named flow, the command walks the code end-to-end checking for breakage, regression, or drift; flags CRITICAL for path breakage, WARNING for regression risk
+- **THEN** for each named flow, the command walks the code end-to-end checking for breakage, regression, or drift; flags CRITICAL for path breakage, WARNING for regression risk — the ladder's own two definitions, per `orbit-conventions`
 
 #### Scenario: Pass 5 — No critical paths defined
 
@@ -266,6 +276,16 @@ The system SHALL persist a JSON run summary after each invocation VIA THE ENGINE
 
 - **WHEN** a proposal-mode pass with 1 warning and 3 suggestions persists its emit
 - **THEN** `final_assessment` reads `0 critical, 1 warning, 3 suggestion.` and `next_recommended` is the `/orbit:address-reviews <change> --from-file <own path>` pointer — no gate verdict, no eligibility judgment; a clean pass instead points `next_recommended` at the `orbit status --change <change> --report` render — both COMPOSED by the emit surface, rejected if supplied in the payload
+
+#### Scenario: Blocks ride the payload beside the findings
+
+- **WHEN** a proposal- or system-mode pass finds a BLOCK (Pass 1's validate failure, Pass 8's unresolved marker)
+- **THEN** the body composes it into the payload's `blocks` array — one single-line string per block naming the condition and its location — never into `findings[]` and never into the scorecard; the array is optional and absent when no block was found
+
+#### Scenario: A finding entry carries its reproduction
+
+- **WHEN** the body composes a finding entry for the payload
+- **THEN** the entry carries `reproduction` — a string, multi-line allowed, never a single-line slot — beside `recommendation`: REQUIRED non-empty when `severity` is `CRITICAL` (per `orbit-conventions`' Severity ladder; refused otherwise by `orbit emit review`, per `orbit-emit-composition`), optional on WARNING and SUGGESTION; the body's field enumeration and `references/run-summary-schema.md` name it. Prior-generation emits lack the field and remain valid on the trail
 
 ### Requirement: Iteration note when prior runs exist
 
@@ -431,3 +451,4 @@ unchanged).
 
 - **WHEN** the generated review body is inspected
 - **THEN** it contains the explicit prohibition on hand-rendering the structured report sections (grep-testable), alongside the run-and-paste instruction
+

@@ -297,7 +297,9 @@ export function normalizeInternalPass(filePath: string, json: unknown): Normaliz
       matchFile: stripLineSuffix(String(f.file)),
       recommendation: f.recommendation as string,
       ...(recommendationOptions ? { recommendationOptions } : {}),
-      ...(typeof f.reproduction === 'string' ? { reproduction: f.reproduction } : {}),
+      // A blank string is ABSENCE, exactly as the external parser reads a blank body (the mark
+      // is by absence on both genres; the write gate refuses blank only on CRITICAL).
+      ...(typeof f.reproduction === 'string' && f.reproduction.trim() !== '' ? { reproduction: f.reproduction } : {}),
     };
   });
 
@@ -524,9 +526,11 @@ export function normalizeExternalPass(filePath: string, content: string): Normal
         structural = true;
       } else if (section === 'blocks') {
         // A Blocks item is a `- ` line; anything else here — a heading-shaped line, a
-        // field-shaped line, `None.` — is content of no finding and no block.
+        // field-shaped line, `None.` — is content of no finding and no block. A BULLETED
+        // `- None.` is the empty-section sentinel the severity sections prime a reviewer to
+        // write, not a block (rc02b system blind pair, fresh S4).
         const item = line.match(/^-\s+(.*\S)\s*$/);
-        if (item) blockItems.push(item[1]);
+        if (item && !/^none\.?$/i.test(item[1])) blockItems.push(item[1]);
         structural = true;
       } else if (section && section !== 'notes' && section !== 'other') {
         const title = line.match(/^###\s+(.*\S)\s*$/);
@@ -869,7 +873,17 @@ function sumScorecardSeverity(scorecard: Record<string, unknown>, sev: string): 
   return sawAny ? sum : null;
 }
 
-/** Lenient external severity-section counter (best-effort; trail.ts-shaped gate). */
+/**
+ * Lenient external severity-section counter (best-effort; trail.ts-shaped gate).
+ *
+ * rc02b system blind pair (fresh W1): this is a THIRD copy of the external grammar — the trend/
+ * ordinal counter whose `findings[].matchFile` feeds the repeat/new set — and it kept taking the
+ * LAST `**File**:` line after the other two readers were brought to `orbit-conventions`' field-line
+ * rule, so a path quoted inside a Reproduction body re-filed the finding in the trend line alone.
+ * It now follows the rule (fields are read only until a Description body opens). The three copies
+ * are Q-crc-15's shape, one wider than it counted; collapsing them is that question's, not this
+ * patch's.
+ */
 function lenientExternalCounts(content: string): TrailOrderPass['counts'] & { findings: { title: string; matchFile: string }[] } | null {
   const lines = content.split(/\r?\n/);
   let hasHeader = false;
@@ -878,6 +892,7 @@ function lenientExternalCounts(content: string): TrailOrderPass['counts'] & { fi
   const counts: ScorecardCells = { critical: 0, warning: 0, suggestion: 0 };
   const findings: { title: string; matchFile: string }[] = [];
   const fence = createFenceTracker(); // the SAME tracker as the strict parser (S1)
+  let descOpen = false;
   for (const line of lines) {
     const wasInFence = fence.inFence;
     if (fence.handle(line) || wasInFence) continue;
@@ -886,10 +901,12 @@ function lenientExternalCounts(content: string): TrailOrderPass['counts'] & { fi
     if (sec) {
       section = sec[1] as Severity;
       sawSections.add(sec[1]);
+      descOpen = false;
       continue;
     }
     if (/^##\s+/.test(line)) {
       section = null;
+      descOpen = false;
       continue;
     }
     if (!section) continue;
@@ -897,6 +914,12 @@ function lenientExternalCounts(content: string): TrailOrderPass['counts'] & { fi
     if (title) {
       counts[section.toLowerCase() as keyof ScorecardCells]++;
       findings.push({ title: title[1].trim(), matchFile: '' });
+      descOpen = false;
+      continue;
+    }
+    if (descOpen) continue; // inside a Description/Reproduction body: content, never a field
+    if (/^\*\*Description\*\*:/i.test(line)) {
+      descOpen = true;
       continue;
     }
     const fileField = line.match(/^\*\*File\*\*:\s*(.*\S)\s*$/i);

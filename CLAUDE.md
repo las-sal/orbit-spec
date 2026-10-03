@@ -421,11 +421,10 @@ through one anchor, and rc16's delta was the first to hold the Mechanism block w
 A COMPUTED PASSED gate — the sixth rc-stage through one, the fifth through the pair. The readiness record accepts
 five residuals, headlined by rc07's distinction. **2376 tests green.**
 
-`rc02b-severity-ladder` is APPLIED (2026-10-03; in the system-review cadence, not yet archived): **the
+`rc02b-severity-ladder` is ARCHIVED (2026-10-03; awaiting ratification): **the
 ladder is defined by CONSEQUENCE, once, and a CRITICAL carries its reproduction.** `orbit-conventions`'
 Severity ladder now says what each name costs — CRITICAL: a user path breaks or data is lost AND the finding
-carries its REPRODUCTION (a case the reader can re-execute: inputs, rule or command, expected, observed — a
-command in system mode, a constructed case in proposal mode); WARNING: an implementation built to the artifact
+carries its REPRODUCTION (defined there, not here); WARNING: an implementation built to the artifact
 as written could diverge from what it intends; SUGGESTION: everything else — and every other surface NAMES it
 and points (R-crc-14): the review body's fourteen per-pass sites, its bias line and five `orbit-review`
 scenarios became pointers with their reading (P2's missing task and P7's delta vocabulary went to WARNING;
@@ -447,9 +446,21 @@ recorded as `reproduction_rerun` with four closed values). SIX capabilities DECL
 three (the charter named three, the exploration five, propose found the sixth — `orbit-review-external` owns the
 prompt's output format), 16 blocks (13 MODIFIED, 3 ADDED), 25 tasks; no migration — 99 prior-generation
 CRITICALs stay valid and render marked by absence, never by date. The proposal cycle: fresh → external (GPT-6
-Codex, 2C) → in-context confirm (0C/5W/4S), all walked to zero. Apply shipped 24 of 25 tasks (5.4 is the
-user-validation handoff: the first real external return under the new prompt). **2423 tests green** (2376 → 2423;
-two goldens moved by one `[unreproduced]` prefix each).
+Codex, 2C) → in-context confirm (0C/5W/4S), all walked to zero. Apply shipped 24 of 25 in one session; 5.4
+(the user-validation handoff) CLOSED AT ARCHIVE BY OBSERVATION — the first external return under the new prompt
+wrote its `**Reproduction**:` body and the render marked none. Then the **blind pair on the pushed apply commit
+`245a8879`** — external GPT-6 Codex 1C/2W/0S and fresh 0C/4W/5S, zero CRITICAL overlap, ONE defect converged at
+two severities (where a Description body OPENS: the renderer on the label, the gate's reader only on same-line
+text — the external's CRITICAL, reproduced by script, the fresh half's WARNING) and one more converged (the
+four-tuple restated beside its pointer at six sites) — walked in two logs (Sal: A on the one scope call: the
+`Review mode decision framework` requirement named a README section that does not exist, repaired in the carried
+block); an in-context confirm 0C/0W/2S whose two SUGGESTIONs ride the readiness record as residuals; a **COMPUTED
+PASSED gate** — the seventh rc-stage through one, the sixth through the pair. The pair's lesson: the external
+grammar lived in THREE readers, not two — `lenientExternalCounts`, the trend counter, was the third — and all
+three now follow the field-line and Description-opening rules; collapsing them stays Q-crc-15's. Sync 3 ADDED +
+13 MODIFIED blocks, 16/16 byte-verified through the engine's `applySpecs`; fingerprints 13/13. **2429 tests green**
+(2376 → 2429; two goldens moved by one `[unreproduced]` prefix each). One instrument lesson: the user-validation
+subset rule reads the literal `(User-validation` marker on the task line.
 
 Read that doc before any rc-stage work; the D-arc section below is the historical
 record of how the engine got here.

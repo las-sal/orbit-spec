@@ -28,7 +28,7 @@ This format MUST match what \`/orbit:review --as <mode> --reviewer external\` in
 ### <Finding title>
 **File**: <path>:<line>
 **Description**: <what's wrong + specific recommendation>
-**Reproduction**: <the case a reader can re-execute — inputs, rule or command, expected, observed; a CRITICAL without one is counted and marked unreproduced, never re-graded>
+**Reproduction**: <the re-executable case, per \`orbit-conventions\`' Severity ladder; a CRITICAL without one is counted and marked unreproduced, never re-graded>
 
 ## WARNING
 
@@ -48,7 +48,7 @@ This format MUST match what \`/orbit:review --as <mode> --reviewer external\` in
 
 ## Notes
 
-<Optional — the Notes body renders VERBATIM into the report's Commentary slot; it carries pattern/probing/risk texture and never finding counts, gate verdicts, or next commands. The prompt template in the \`orbit-review\` skill (\`references/prompt-template.md\`) is this format's source of truth.>
+<Optional — the Notes body renders VERBATIM into the report's Commentary slot; it carries pattern/probing/risk texture and never finding counts, gate verdicts, or next commands. The format is owned by \`orbit-conventions\`' External-review findings markdown format; the prompt template in the \`orbit-review\` skill (\`references/prompt-template.md\`) is its checked copy.>
 \`\`\`
 
 The \`**Reproduction**:\` body follows the \`**Description**:\` body and runs to the next \`###\` or \`##\` heading; a \`**Reproduction**:\` line placed BEFORE \`**Description**:\` is not recognised. Inside any body, a field-shaped line (\`**File**: other.md:9\`) is CONTENT — the finding's file is the \`**File**:\` line read before its Description opened (per \`orbit-conventions\`' External-review findings markdown format, the field-line rule).

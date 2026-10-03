@@ -285,7 +285,7 @@ Editorial-kind example — `review-proposal-2026-05-21T00-18-14Z.json` written b
     "coherence": { "critical": 0, "warning": 0, "suggestion": 0 }
   },
   "findings": [
-    { "severity": "CRITICAL", "dimension": "completeness", "title": "Emit timing undefined for bare-mode explore", "file": "specs/emit/spec.md", "line": 12, "recommendation": "…" },
+    { "severity": "CRITICAL", "dimension": "completeness", "title": "Emit timing undefined for bare-mode explore", "file": "specs/emit/spec.md", "line": 12, "recommendation": "…", "reproduction": "run /orbit:explore with no name, speak two decisions, stop: no explore-<TS>.json is written and the spec names no rule for it" },
     { "severity": "WARNING", "dimension": "correctness", "title": "Apply chunk-preamble format unspecified", "file": "specs/apply/spec.md", "line": 40, "recommendation": "…" }
   ]
 }
@@ -368,12 +368,22 @@ The system SHALL use a consistent markdown shape for external-review findings fi
 #### Scenario: Required structure
 
 - **WHEN** an external-review findings file is written
-- **THEN** it contains: `# External Review: <change> (iteration N)` title, `**Reviewer**:` and `**Date**:` fields, severity sections (`## CRITICAL`, `## WARNING`, `## SUGGESTION`), each containing `### <Title>` entries with `**File**: <path>:<line>` and `**Description**: <text>` fields; optional `## Notes` section
+- **THEN** it contains: `# External Review: <change> (iteration N)` title, `**Reviewer**:` and `**Date**:` fields, severity sections (`## CRITICAL`, `## WARNING`, `## SUGGESTION`), each containing `### <Title>` entries with `**File**: <path>:<line>` and `**Description**: <text>` fields; optional `## Notes` section. The `**Description**:` label OPENS the body whether its text begins on the same line or on the following lines; the body runs to the `**Reproduction**:` label, the next `###` or the next `##` heading, and a Description with no non-blank body (fenced lines count as body) is MALFORMED in both readers — the renderer rejects the file naming the finding, the trail reader records a rejected return — never a present-but-empty field in one and absent in the other. A CRITICAL entry additionally carries a `**Reproduction**: <text>` body AFTER its `**Description**:` body (ended by the next `###` or `##` heading); a CRITICAL without one is counted as authored and marked `unreproduced` by the renderer, never re-graded. An optional `## Blocks` section (before `## Notes`) lists must-address-before-apply conditions that are not severities (per the Severity ladder requirement) as `- <what>` items; the renderer's parser collects those items for the report's Blocks section (a bulleted `- None.` is the empty-section sentinel, not a block) and the trail counter ignores the section, so it changes no count.
 
 #### Scenario: Parseable by --from-file
 
 - **WHEN** `/orbit:address-reviews --from-file <path>` reads this format
-- **THEN** the parser extracts per-finding severity, title, file:line, and description
+- **THEN** the parser extracts per-finding severity, title, file:line, description, and — when present — the reproduction body; `## Blocks` entries are listed at triage and never walked as findings
+
+#### Scenario: Field lines are recognised only before the Description body opens — in BOTH readers
+
+- **WHEN** a finding's `**Description**:` body — opened by the label, with its text on the same line or the next — (and any `**Reproduction**:` body after it, or a `## Blocks` item) contains a line that looks like a field — `**File**: other/path.md:99`, `**Description**: …` — because a reproduction quotes a path or a reviewer pastes a snippet
+- **THEN** that line is CONTENT, with ONE exception: `**Reproduction**:` is the sole field label recognised AFTER a Description body opens — it ENDS the Description body and opens the Reproduction body, which runs to the next `###` or `##` heading. Every other field-shaped line inside a Description, Reproduction or Blocks body is content: the finding's file is the `**File**:` line read BEFORE its Description body opened, and both the renderer's parser (`orbit-report-rendering`) and the trail reader that feeds the gate (`orbit-engine-gates`' shape validation) read it the same way, so the gate's finding key (title, repo-relative file) and the report's file reference never diverge; a test pins the KEY across both readers, not only the per-severity counts
+
+#### Scenario: Reproduction body is the fourth field, never the first
+
+- **WHEN** an external findings file carries `**Reproduction**:` on a finding
+- **THEN** it follows the `**Description**:` body; a `**Reproduction**:` line placed before `**Description**:` is not recognised (the parser contract opens the recommendation body at Description, and a file without the label parses exactly as before this requirement)
 
 ### Requirement: 3-dimension scorecard reporting convention
 
@@ -396,7 +406,7 @@ The system SHALL use a consistent 3-dimension scorecard for review and audit rep
 
 ### Requirement: Severity ladder
 
-The system SHALL use a consistent severity ladder across reports.
+The system SHALL use a consistent severity ladder across reports, and SHALL define each severity by its CONSEQUENCE — stated ONCE, here. CRITICAL: a user path breaks or data is lost, AND the finding carries its REPRODUCTION. WARNING: an implementation built to the artifact as written could diverge from what it intends. SUGGESTION: everything else. A REPRODUCTION is a case the reader can re-execute — the inputs, the rule or command, the expected result, the observed result; a command in system mode, a CONSTRUCTED CASE in proposal mode, where nothing runs (a named trail, the rule applied by hand, the wrong answer it yields). Every other surface that assigns a severity — a review pass's rule, a prompt's guidance, a parser's section — SHALL NAME this ladder and state the condition and its consequence, never a second definition (the one-statement rule). A lifecycle BLOCK — a condition that stops apply whatever it would cost a user, such as an `orbit validate` failure or an unresolved `@review:` marker — is NOT a severity: it is reported, named as a block, and carried in no scorecard cell — on an internal pass in the review emit's `blocks` array (per `orbit-review` and `orbit-emit-composition`), on an external file under `## Blocks`, rendered in the report's Blocks section above the findings (per `orbit-report-rendering`), and listed before any finding at the walk's triage (per `orbit-address-reviews`). Known limit: no lifecycle seam STOPS on a block today — the apply flow carries no validate or marker precondition, and the only lifecycle reader of markers is the archive flow's Step 1.5 warning; a block is a report with a name, and the stop is the human's until a stage gives apply a precondition. The engine checks the PRESENCE of a reproduction where it writes the record (per `orbit-emit-composition`) and marks its absence where it cannot refuse (per `orbit-report-rendering`); whether a reproduction reproduces is the walk's judgement (per `orbit-address-reviews`), never a reader's re-grade. Known limits: `orbit-audit-drift` assigns its own severities, which system review preserves, and upstream `verify-change` grades by its own rules (an incomplete task is its CRITICAL) — two statement sites this ladder does not yet reach; a system review folding verify-change's findings into its own emit is their AUTHOR and grades them by this ladder (per `orbit-review`'s Pass 0 scenario).
 
 #### Scenario: Three severities
 
@@ -406,7 +416,38 @@ The system SHALL use a consistent severity ladder across reports.
 #### Scenario: False-positive bias
 
 - **WHEN** a command is uncertain whether a finding rises to a given severity
-- **THEN** it picks the lower severity (SUGGESTION over WARNING; WARNING over CRITICAL)
+- **THEN** it picks the lower severity (SUGGESTION over WARNING; WARNING over CRITICAL); no surface inverts this bias for any condition — a condition that must stop apply regardless is a BLOCK, not an ambiguous CRITICAL
+
+#### Scenario: CRITICAL is a consequence plus its reproduction
+
+- **WHEN** a finding is graded CRITICAL
+- **THEN** it names a user path that breaks or data that is lost AND carries a reproduction the reader can re-execute; a finding that names the consequence and carries no reproduction is REFUSED at the internal write gate until its author supplies the reproduction or grades it WARNING at most, and is counted as authored but marked unreproduced where no gate can refuse it (an external file)
+
+#### Scenario: WARNING is divergence risk
+
+- **WHEN** a finding shows that an implementation built to the artifact as written could diverge from what the artifact intends — a requirement with no task, old vocabulary in a delta, an ambiguity that could split implementations
+- **THEN** it is WARNING: it gates (the substantive set is CRITICAL + WARNING per `orbit-engine-gates`) and it buys no further independent pass
+
+#### Scenario: A block leaves the scorecard
+
+- **WHEN** a review pass finds a condition that stops apply regardless of consequence — an `orbit validate` failure, an unresolved `@review:` marker in artifact content
+- **THEN** the pass reports it as a BLOCK — an entry in the emit's `blocks` array on an internal pass, an item under `## Blocks` on an external file — rendered above the findings, listed first at triage, and no scorecard cell changes; nothing stops on it mechanically (the known limit above), so the report is what the human reads before apply
+
+The external prompt's severity guidance is ONE paragraph, stated here as a production and carried into `orbit-review-external`'s reference template as a CHECKED MIRROR held byte-equal by a parity test (R-crc-14's mirror corollary — an external reviewer has no access to this spec, so the copy must exist and must say what it is):
+
+```
+Grade by `orbit-conventions`' Severity ladder. CRITICAL: a user path breaks or data is lost, AND the finding carries its reproduction — a case the reader can re-execute: the inputs, the rule or command, the expected result, the observed result (a command in system mode; a constructed case in proposal mode). WARNING: an implementation built to the artifact as written could diverge from what it intends. SUGGESTION: everything else. When unsure, grade lower. A condition that must stop apply regardless of consequence — an `orbit validate` failure, an unresolved `@review:` marker — is a BLOCK, not a severity: list it under `## Blocks`.
+```
+
+#### Scenario: The ladder paragraph is mirrored, never restated
+
+- **WHEN** the external prompt template carries its `## Severity` paragraph
+- **THEN** the paragraph is byte-equal to the fenced production above and a parity test holds it so; any other surface that would define a severity points here instead
+
+#### Scenario: Every other surface points at the ladder
+
+- **WHEN** a review pass rule, a prompt, or a reference states which severity a condition takes
+- **THEN** it names this requirement and states the condition and its consequence ("a requirement with no task: WARNING, per the ladder — an implementation built to the artifact would omit it"), and states no definition of its own
 
 ### Requirement: Actionable findings
 
@@ -798,7 +839,7 @@ The README's installation, update, and uninstall sections SHALL describe the act
 
 ### Requirement: Review mode decision framework
 
-The system SHALL codify the decision criteria for choosing among orbit's three reviewer classes (in-context, fresh, external — the `--reviewer` axis on the merged `/orbit:review` surface, D-arc Stage D5; "mode" belongs to `--as proposal|system|architecture`). This is the normative-force complement to README's "Choosing a review mode" section, which documents the same framework as user-facing guidance. The framework exists because empirical evidence (notably `bootstrap-orbit-status-cli`'s 3-of-3 finding — in-context system review missed all 3 real implementation bugs that external review caught) demonstrates that mode choice materially affects review-finding completeness. As of C1 the framework's recommendations are BACKED BY the engine's `reviewed` gates (per `orbit-engine-gates`): the gate computes convergence and surfaces the canonical next mode, but enforcement is apply-parity — the gate surfaces and records, never hard-blocks. The framework remains advisory in the sense that the user can always proceed past an unpassed gate at the inflection prompt (the override is recorded); it is no longer purely advisory in the sense that the recommendation is now an engine-computed gate state rather than free-form prose.
+The system SHALL codify the decision criteria for choosing among orbit's three reviewer classes (in-context, fresh, external — the `--reviewer` axis on the merged `/orbit:review` surface, D-arc Stage D5; "mode" belongs to `--as proposal|system|architecture`). The framework is stated HERE and nowhere else today — no README or `docs/` section states review-mode guidance (measured 2026-10-03); a user-facing counterpart belongs to the deferred user-docs rewrite (issue #1), and when one lands it is held to this requirement, never the reverse. The framework exists because empirical evidence (notably `bootstrap-orbit-status-cli`'s 3-of-3 finding — in-context system review missed all 3 real implementation bugs that external review caught) demonstrates that mode choice materially affects review-finding completeness. As of C1 the framework's recommendations are BACKED BY the engine's `reviewed` gates (per `orbit-engine-gates`): the gate computes convergence and surfaces the canonical next mode, but enforcement is apply-parity — the gate surfaces and records, never hard-blocks. The framework remains advisory in the sense that the user can always proceed past an unpassed gate at the inflection prompt (the override is recorded); it is no longer purely advisory in the sense that the recommendation is now an engine-computed gate state rather than free-form prose.
 
 The three classes:
 
@@ -819,12 +860,12 @@ The three classes:
 #### Scenario: External for system-mode + substantive cross-AI verification
 
 - **WHEN** running system-mode review (verifying code-vs-spec coherence where the AI may have authored the code in a recent session — high anchoring risk per `bootstrap-orbit-status-cli` evidence) OR the change is substantive enough that cross-AI cross-check pays for itself (e.g., breaking changes, security-sensitive code, multi-capability changes)
-- **THEN** `/orbit:review --reviewer external` is the appropriate mode. The cross-AI round-trip cost is justified by the independence — a different model + different session has no anchoring to the code the original AI wrote. The `review-system` cadence's external slot encodes this default (per `orbit-engine-gates`), and the engine-rendered report tail surfaces the resulting canonical next command (per `orbit-report-rendering` — D-arc Stage D4). In C1+ this recommendation is realized as the `review-system` gate (per `orbit-engine-gates`), whose `external` cadence slot must be covered for convergence; the gate surfaces the canonical next command but NEVER hard-blocks — the user may proceed past it at the archive inflection prompt, and the override is recorded. The recommendation is gate-surfaced, not gate-enforced.
+- **THEN** `/orbit:review --reviewer external` is the appropriate mode. The cross-AI round-trip cost is justified by the independence — a different model + different session has no anchoring to the code the original AI wrote. The `review-system` cadence's external slot encodes this default (per `orbit-engine-gates`), and the engine-rendered report tail surfaces the resulting canonical next command (per `orbit-report-rendering` — D-arc Stage D4). In C1+ this recommendation is realized as the `review-system` gate (per `orbit-engine-gates`), whose `blind-pair` slot the external return half-covers (one `external` and one `fresh`, per rc02's version-4 cadence); the gate surfaces the canonical next command but NEVER hard-blocks — the user may proceed past it at the archive inflection prompt, and the override is recorded. The recommendation is gate-surfaced, not gate-enforced.
 
-#### Scenario: Framework is documented in README + spec; drift between the two is caught
+#### Scenario: A user doc stating the framework is held to this requirement
 
-- **WHEN** the README's "Choosing a review mode" section drifts from this requirement's normative criteria (e.g., README claims `--fresh` is appropriate for X but the spec scenarios don't reflect that)
-- **THEN** `/orbit:audit-drift` Category 3 (cross-doc consistency) SHALL surface the drift on next run; orbit's docs and spec stay aligned via the audit-drift discipline rather than ad-hoc reconciliation.
+- **WHEN** a user doc (README or `docs/`) states review-mode guidance that drifts from this requirement's normative criteria (e.g., it claims `--fresh` is appropriate for X but the spec scenarios don't reflect that)
+- **THEN** `/orbit:audit-drift` Category 3 (cross-doc consistency) SHALL surface the drift on next run; until such a doc exists the framework is spec-only and there is no second statement to drift — orbit's docs and spec stay aligned via the audit-drift discipline rather than ad-hoc reconciliation.
 
 #### Scenario: Framework guidance is gate-surfaced, never gate-enforced
 
@@ -1040,3 +1081,4 @@ Both land BEFORE the final boundary emit, so the emit's engine-computed recommen
 
 - **WHEN** an exploration that was concluded and reopened is concluded a second time
 - **THEN** a NEW CONCLUDED entry carries the live `Re-entry:` slot; the earlier one stays as superseded history; the header token flips again; exactly one live entry carries the slot at every point in the cycle
+

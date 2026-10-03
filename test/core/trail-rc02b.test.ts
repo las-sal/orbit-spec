@@ -88,6 +88,67 @@ describe('rc02b: the trail reader and the render parser agree on the finding key
   });
 });
 
+describe('rc02b system blind pair: WHERE a Description body opens is read the same way by both readers', () => {
+  it('a bare `**Description**:` label with the body on the next lines is a present Description in BOTH readers, keyed the same', () => {
+    const content = external([
+      '## CRITICAL', '',
+      '### Real finding',
+      '**File**: specs/a/spec.md:7',
+      '**Description**:',
+      'The user path fails.',
+      '**Reproduction**: inputs: x; expected: stop; observed: pass',
+      '**File**: specs/b/spec.md:99', '',
+      '## WARNING', '', 'None.', '',
+      '## SUGGESTION', '', 'None.', '',
+    ]);
+    const trail = readTrail(dir);
+    expect(trail.rejectedExternals).toHaveLength(0);
+    const pass = trail.passes.find(p => p.source === 'external')!;
+    const render = normalizeExternalPass(path.join(runs, NAME), content);
+    expect(pass.findings.map(f => [f.title, f.file])).toEqual([['Real finding', 'specs/a/spec.md']]);
+    expect(render.findings.map(f => [f.title, f.matchFile])).toEqual([['Real finding', 'specs/a/spec.md']]);
+    expect(render.findings[0].recommendation).toBe('The user path fails.');
+    expect(render.findings[0].reproduction).toBe('inputs: x; expected: stop; observed: pass\n**File**: specs/b/spec.md:99');
+  });
+
+  it('a Description with NO non-blank body (bare label, then the Reproduction) is malformed in BOTH readers', () => {
+    const content = external([
+      '## CRITICAL', '',
+      '### Blank body',
+      '**File**: specs/a/spec.md:7',
+      '**Description**:',
+      '',
+      '**Reproduction**: run it', '',
+      '## WARNING', '', 'None.', '',
+      '## SUGGESTION', '', 'None.', '',
+    ]);
+    const trail = readTrail(dir);
+    expect(trail.passes.filter(p => p.source === 'external')).toHaveLength(0);
+    expect(trail.rejectedExternals).toHaveLength(1);
+    expect(() => normalizeExternalPass(path.join(runs, NAME), content)).toThrow(/blank '\*\*Description\*\*:' body/);
+  });
+
+  it('a Description whose only body is a fenced block is present in BOTH readers', () => {
+    const content = external([
+      '## WARNING', '',
+      '### Fenced body',
+      '**File**: specs/a/spec.md:7',
+      '**Description**:',
+      '```',
+      '## CRITICAL',
+      '```', '',
+      '## CRITICAL', '', 'None.', '',
+      '## SUGGESTION', '', 'None.', '',
+    ]);
+    const trail = readTrail(dir);
+    const pass = trail.passes.find(p => p.source === 'external')!;
+    expect(pass).toBeDefined();
+    expect([pass.critical, pass.warning, pass.suggestion]).toEqual([0, 1, 0]);
+    const render = normalizeExternalPass(path.join(runs, NAME), content);
+    expect(render.findings[0].recommendation).toBe('```\n## CRITICAL\n```');
+  });
+});
+
 describe('rc02b: neither a Reproduction body nor a Blocks section is structure to the counter', () => {
   it('counts are unchanged by a Reproduction body', () => {
     external(BASE);

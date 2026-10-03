@@ -123,7 +123,7 @@ Use this exact markdown structure:
 ### <Finding title>
 **File**: <path>:<line>
 **Description**: <what's wrong + specific recommendation>
-**Reproduction**: <a command you ran, or a constructed case — inputs, rule, expected, observed>
+**Reproduction**: <the re-executable case the `## Severity` paragraph above defines>
 
 (For each additional CRITICAL finding, repeat the `### <Title>` + `**File**:` + `**Description**:` + `**Reproduction**:` quadruple — a CRITICAL without a Reproduction is counted and marked unreproduced. Use `None.` as a single-word body if there are no findings at this severity.)
 

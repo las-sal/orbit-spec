@@ -4105,3 +4105,32 @@ surfaces between the ladder, the gate and the walk that the charter did not coun
 (the split declined, recorded in the exploration's Considered & out), a ratified exception in rc04c's shape.
 Six decisions, three live rules accounted. Next in dependency order: rc02b is eligible for propose; Phase 2's
 rc03 and rc04b remain open.
+
+**2026-10-03 — rc02b-severity-ladder ARCHIVED through a COMPUTED PASSED gate via the blind pair (the seventh
+rc-stage through one, the sixth through the pair).** The ladder is defined by CONSEQUENCE, once, in
+`orbit-conventions`, and a CRITICAL carries its reproduction: refused at `orbit emit review` without a non-empty
+one in every mode, requested of external reviewers by a `## Severity` paragraph that is a checked mirror of the
+conventions fence, marked `[unreproduced]` by the renderer as a prefix outside the title token, re-run first at
+the walk (`reproduction_rerun`). A lifecycle BLOCK left the scorecard (`blocks` / `## Blocks`, rendered above the
+findings, listed first at triage) and P8's ambiguity clause is gone. Exit (1) MET: both halves of the pair
+executed the refusal under `--change` and `--doc` (exit 1, empty stdout, no file). Exit (2) MET: an external
+CRITICAL without a body parses, counts, renders marked — pinned by test, executed by the fresh half. Exit (3)
+MET: walk 1 opened the external CRITICAL by re-running its reproduction (reproduced; then not, after the fix)
+and recorded it. CORRECTED FIGURES for the dated MEASURED paragraph above: FOURTEEN per-pass sites, not
+sixteen (walk 1's grep); SIX capabilities, not five (propose found `orbit-review-external` owns the prompt's
+output format) — the breach declared at six and the pair run at the ceiling. The cycle: fresh + external
+(GPT-6 Codex, 2C) + in-context on the proposal, three walks; apply 24/25 in one session (5.4 the handoff,
+CLOSED AT ARCHIVE BY OBSERVATION — the first external return under the new prompt wrote its Reproduction
+body and the render marked none); the blind pair on the pushed apply commit `245a8879` — external GPT-6
+Codex 1C/2W/0S, fresh 0C/4W/5S, zero CRITICAL overlap, one defect converged at two severities (where a
+Description body OPENS: the renderer on the label, the gate's reader only on same-line text) and one more
+(the four-tuple restated beside its pointer at six sites) — walked in two logs (Sal: A on the one scope call,
+the framework requirement's phantom README section); an in-context confirm 0C/0W/2S, its two SUGGESTIONs
+carried as residuals; a COMPUTED PASSED gate. The pair's lesson is Q-crc-15 one layer wider than it was drawn:
+the external grammar lived in THREE readers — the trend counter was the third — and the exploration's
+"read file by file" closure surfaced two; all three now follow the field-line rule and the Description-opening
+rule, stated once in the format owner and pinned through both gate-facing readers by test; collapsing them
+stays Q-crc-15's. One instrument lesson for every later stage: the engine's user-validation subset rule reads
+the literal `(User-validation` marker on the task LINE, and a line without it leaves apply `ready` at N-1/N
+and the graph pointing at a stale proposal review. 2429 tests green (2376 → 2429). Next in dependency order:
+rc02b awaits ratification; Phase 2's rc03 and rc04b remain open.

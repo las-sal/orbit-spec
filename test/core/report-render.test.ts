@@ -704,6 +704,14 @@ describe('rc02b: the render prints the reproduction, marks its absence, and lift
     expect(renderReport(root, 'ext-noblocks')).not.toContain('### Blocks');
   });
 
+  it('a blank-string internal reproduction is ABSENCE: no empty blockquote on a WARNING, the mark on a CRITICAL (fresh S3)', () => {
+    const dir = makeChange('blank-repro');
+    writeTrail(dir, 'review-proposal-2026-10-03T10-00-00Z.json', critEmit('blank-repro', '   '));
+    const report = renderReport(root, 'blank-repro');
+    expect(report).toContain('- [unreproduced] **src/x.ts:3** — Guard bypassed');
+    expect(report).not.toContain('Reproduction:');
+  });
+
   it('an internal `"reproduction": 42` fails the strict normalizer naming findings[<i>].reproduction', () => {
     expect(() => normalizeInternalPass('/x/review-proposal-2026-10-03T10-00-00Z.json', JSON.parse(critEmit('c', 42)))).toThrow(
       /missing or mistyped field 'findings\[0\]\.reproduction'/
@@ -744,6 +752,38 @@ describe('rc02b: the external parser collects Blocks and never counts them (rend
     expect(normalizeExternalPass('/x/external-proposal-2026-10-03T10-00-00Z.md', file(['None.'])).blocks ?? []).toEqual([]);
     const pass = normalizeExternalPass('/x/external-proposal-2026-07-25T12-00-00Z.md', fixture('external-pass.md'));
     expect(pass.blocks ?? []).toEqual([]);
+  });
+
+  it('a bulleted `- None.` under Blocks is the empty sentinel, not a block (fresh S4)', () => {
+    expect(normalizeExternalPass('/x/external-proposal-2026-10-03T10-00-00Z.md', file(['- None.'])).blocks ?? []).toEqual([]);
+    expect(normalizeExternalPass('/x/external-proposal-2026-10-03T10-00-00Z.md', file(['- none'])).blocks ?? []).toEqual([]);
+    expect(normalizeExternalPass('/x/external-proposal-2026-10-03T10-00-00Z.md', file(['- None of the validators ran'])).blocks).toEqual(['None of the validators ran']);
+  });
+
+  it('the trend counter follows the field-line rule too: a path quoted inside a Reproduction body does not break the repeat match (fresh W1)', () => {
+    const dir = makeChange('third-reader');
+    writeTrail(dir, 'external-proposal-2026-10-03T09-00-00Z.md', [
+      '# External Review: third-reader (iteration 1)', '', '**Reviewer**: M', '**Date**: 2026-10-03', '',
+      '## CRITICAL', '',
+      '### Guard bypassed',
+      '**File**: specs/a/spec.md:7',
+      '**Description**: broken',
+      '**Reproduction**: compare with the sibling:',
+      '**File**: specs/b/spec.md:99',
+      'observed: wrong', '',
+      '## WARNING', '', 'None.', '',
+      '## SUGGESTION', '', 'None.', '',
+    ].join('\n') + '\n');
+    const zero = { critical: 0, warning: 0, suggestion: 0 };
+    writeTrail(dir, 'review-proposal-2026-10-03T10-00-00Z.json', JSON.stringify({
+      command: 'review', timestamp: '2026-10-03T10:00:00Z', change: 'third-reader',
+      final_assessment: '1 critical, 0 warning, 0 suggestion.',
+      next_recommended: '/orbit:address-reviews third-reader --from-file orbit/changes/third-reader/.orbit-runs/review-proposal-2026-10-03T10-00-00Z.json',
+      kind: 'editorial', mode: 'proposal', reviewer_class: 'in-context', depth: 'full',
+      scorecard: { completeness: { ...zero }, correctness: { critical: 1, warning: 0, suggestion: 0 }, coherence: { ...zero } },
+      findings: [{ severity: 'CRITICAL', dimension: 'correctness', title: 'Guard bypassed', file: 'specs/a/spec.md', line: 7, recommendation: 'fix', reproduction: 'case' }],
+    }));
+    expect(renderReport(root, 'third-reader')).toContain('(1 repeat, 0 new)');
   });
 
   it('a `**File**:` line inside a Reproduction body does not re-file the finding in the render parser', () => {

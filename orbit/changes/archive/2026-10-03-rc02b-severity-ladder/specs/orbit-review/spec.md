@@ -41,7 +41,7 @@ The system SHALL execute 7 review passes in system mode: Pass 0 delegates to ups
 #### Scenario: Pass 0 delegates to upstream verify-change
 
 - **WHEN** the command runs as `--as system` and `--skip-verify` is not specified
-- **THEN** Pass 0 invokes `/orbit:verify <change-name>` (via the upstream `orbit-verify-change` skill) and folds its findings into the report under the appropriate scorecard dimensions — GRADED BY `orbit-conventions`' Severity ladder as the folding body's own findings, not by verify-change's rules (the composing body is their AUTHOR here, so this is not a reader's re-grade): an incomplete task or an uncovered scenario is WARNING (an implementation built to the artifact would diverge); a violated requirement is CRITICAL with the requirement and the observed behaviour as its reproduction; a CRITICAL the body cannot reproduce is folded as WARNING. verify-change's own emit is untouched
+- **THEN** Pass 0 invokes `/orbit:verify <change-name>` (via the upstream `orbit-verify-change` skill) and folds its findings into the report under the appropriate scorecard dimensions — GRADED BY `orbit-conventions`' Severity ladder as the folding body's own findings, not by verify-change's rules (the composing body is their AUTHOR here, so this is not a reader's re-grade): an incomplete task or an uncovered scenario is WARNING (an implementation built to the artifact would diverge); a violated requirement is CRITICAL ONLY when the violation breaks a user path or loses data, with the requirement and the observed behaviour as its reproduction — a violated formatting or documentation requirement with neither consequence is WARNING; a CRITICAL the body cannot reproduce is folded as WARNING. verify-change's own emit is untouched
 
 #### Scenario: System mode default depth runs all passes
 
@@ -56,7 +56,7 @@ The system SHALL execute 7 review passes in system mode: Pass 0 delegates to ups
 #### Scenario: Pass 1 — Baseline Compliance
 
 - **WHEN** Pass 1 runs in system mode
-- **THEN** the command reads every requirement in archived `orbit/specs/*/spec.md` (not just the change's deltas) and reports CRITICAL when a baseline requirement is violated — per `orbit-conventions`' Severity ladder, with the violated requirement and the observed behaviour as the reproduction — and WARNING when a baseline scenario looks regressed (regression RISK: a divergence an implementation could make)
+- **THEN** the command reads every requirement in archived `orbit/specs/*/spec.md` (not just the change's deltas) and reports CRITICAL when a baseline requirement is violated AND the violation breaks a user path or loses data — per `orbit-conventions`' Severity ladder, with the violated requirement and the observed behaviour as the reproduction — WARNING when a requirement is violated with neither consequence (a formatting or documentation rule: the artifact and the product diverge), and WARNING when a baseline scenario looks regressed (regression RISK: a divergence an implementation could make)
 
 #### Scenario: Pass 2 — Cohesion walk
 
