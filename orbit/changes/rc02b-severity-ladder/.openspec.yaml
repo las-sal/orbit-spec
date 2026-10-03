@@ -1,0 +1,24 @@
+schema: spec-driven
+created: 2026-10-03
+schema_version: 4
+base_fingerprints:
+  orbit-address-reviews:
+    "`--from-file` ingest of review findings file": sha256:d81b6ffe530d5595b84a461c35b180402f3c846081dbdf493732866715875116
+    Pushback discipline applied per marker: sha256:0f5053fa0b4602c6bcbdeb5f467522aa742281577c0d847605ea2c8c1aa93ffb
+  orbit-conventions:
+    Severity ladder: sha256:9c465a9c4fa124032d3d33cca1a2682b7340eda04035ab8bb468ee5c23f4a33b
+    External-review findings markdown format: sha256:f00397214cf982cbe80704772450c67952d434aaf1a933490008aa1b4aaf8eeb
+    Internal-run JSON summary format: sha256:eded1fac2d2ff13878c990b4cf7e19b733e1cbaaad6d0f6a48396469e0bb57c0
+    Review mode decision framework: sha256:cbe24f50dff22b95595ddf4cceefe68ca1d80d8d773dcbfd99e7d2f1f76c4b20
+  orbit-report-rendering:
+    One grammar for internal and external passes: sha256:989777ed05915979214fb3f2fcf7a489e0dd6dd4f49d3e2d0dd5184434ab3203
+  orbit-review:
+    Proposal mode runs nine passes: sha256:d577612d8f56fb74a7f24cb16c52a0f1456327367186ff1119c8048ee053f1c8
+    System mode runs verify-change + six system-wide passes: sha256:4fd7dbe655176d1ffc66960dbd7be53312124e58792fdbef8f2c4bd111d2c1b8
+    Internal run summary persisted per mode: sha256:6d73e045dfdbe7d6126973af6833e373b3d811ca1b71ef0dfdc280cd924a58ff
+  orbit-review-external:
+    Output format specification in prompt: sha256:5f9dbcaf879fd2d760f64e58c22587665dfe8124ae744ae0b414fe1d56e6d26b
+    Prompt written to versioned file with chat invocation snippet: sha256:846c7f9ae9443b68886ca36ec476021e5cc0c4a5730a581f55852e2b1eb141cb
+architecture:
+  doc: clean-up-review-cycle
+  stage: rc02b-severity-ladder

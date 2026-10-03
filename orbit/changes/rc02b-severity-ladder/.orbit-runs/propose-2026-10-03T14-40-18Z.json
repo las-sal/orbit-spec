@@ -1,0 +1,9 @@
+{
+  "command": "propose",
+  "timestamp": "2026-10-03T14:40:18Z",
+  "change": "rc02b-severity-ladder",
+  "kind": "workflow",
+  "model": null,
+  "final_assessment": "Consume mode on rc02b-severity-ladder (six sections present, zero open questions, three Mechanism entries all SOURCED — 3 accounted / 0 open on my reading, agreeing with the exploration's last engine parse). Generated proposal, design (Touchpoints; the Mechanism → artifacts record with three row-4 entries landing as sentence + scenario-set shapes; the declined split and the parse-time demotion in Alternatives), six delta spec files (12 MODIFIED blocks built by script from the baselines with asserted edits, 2 ADDED — the write-gate reproduction check in orbit-emit-composition and the render/mark requirement in orbit-report-rendering) and 22 tasks. SIZE, measured and declared: the stage charter named three capabilities, the exploration five, and propose found a SIXTH — orbit-review-external owns the prompt's output format and its reference template; the exploration attributed them to orbit-review, a READ miss recorded in design. Fourteen blocks, 65 KB of delta of which 110 changed lines (R-crc-1's changed-bytes rule), 22 tasks against under-20: the capability and task axes are both over and both stated; Sal held the stage as one change at exploration (D-rc02b-1). Strict validation passes; 12 base fingerprints stamped and verified; the staged metadata merged (architecture citation carried) and the exploration moved into the change with its two emits. PR regime is never; no choreography ran.",
+  "next_recommended": "/orbit:review rc02b-severity-ladder — proposal artifacts ready; review before apply"
+}
