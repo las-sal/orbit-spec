@@ -22,7 +22,12 @@ The system SHALL execute 9 distinct review passes in proposal mode: (1) Structur
 #### Scenario: Pass 8 marker residue detection (operational)
 
 - **WHEN** Pass 8 runs
-- **THEN** the AI greps the change directory for `@review:` markers and distinguishes two cases: (a) **actual unresolved markers** — markers in proposal/design/spec/tasks/explore.md content that represent unaddressed review notes (these are BLOCKS, per `orbit-conventions`' Severity ladder — reported as a named block line in the report body, carried in no scorecard cell, and they MUST be addressed before applying; apply's own precondition is what stops on them); (b) **documentation appearances of the marker syntax** — `@review:` text inside code blocks, examples, or scenarios that document the marker convention itself (these are NOT findings). The distinction is whether the marker is inside a fenced code block / inline-code span / explicit "example" prose context (documentation) vs. sitting bare in artifact content (unresolved). When ambiguous, the marker is listed as a block — never graded. and let the user decide during `/orbit:address-reviews`.
+- **THEN** the AI greps the change directory for `@review:` markers and distinguishes two cases: (a) **actual unresolved markers** — markers in proposal/design/spec/tasks/explore.md content that represent unaddressed review notes (these are BLOCKS, per `orbit-conventions`' Severity ladder — carried in the emit's `blocks` array, rendered above the findings, in no scorecard cell — and they MUST be addressed before applying; nothing stops on them mechanically, which the ladder names as a known limit); (b) **documentation appearances of the marker syntax** — `@review:` text inside code blocks, examples, or scenarios that document the marker convention itself (these are NOT findings). The distinction is whether the marker is inside a fenced code block / inline-code span / explicit "example" prose context (documentation) vs. sitting bare in artifact content (unresolved). When ambiguous, the marker is listed as a block, never graded, and the user decides during `/orbit:address-reviews`.
+
+#### Scenario: `--strict` and `--mark` on a block
+
+- **WHEN** `--strict` is set and a pass reports a block, or `--mark` is set in proposal mode
+- **THEN** `--strict` stops on the first BLOCK exactly as on the first CRITICAL (the CI-like intent is "stop on what must be addressed"); `--mark` writes no marker for a block — a block is already a condition the artifact carries, and a marker would be a second record of it
 
 #### Scenario: Pass severities name the ladder
 
@@ -66,7 +71,7 @@ The system SHALL execute 7 review passes in system mode: Pass 0 delegates to ups
 #### Scenario: Pass 4 — Perspective reviews from lenses
 
 - **WHEN** Pass 4 runs in system mode and `orbit/lenses/perspectives.md` exists
-- **THEN** for each named perspective, the command simulates typical call patterns; flags SUGGESTION/WARNING when interactions are awkward, inconsistent, or surprising from a registered caller's POV
+- **THEN** for each named perspective, the command simulates typical call patterns; flags WARNING when interactions are awkward, inconsistent, or surprising from a registered caller's POV (per `orbit-conventions`' Severity ladder: a caller built against the artifact would diverge — divergence risk), SUGGESTION below that
 
 #### Scenario: Pass 4 — No perspectives defined
 
@@ -111,6 +116,11 @@ The system SHALL persist a JSON run summary after each invocation VIA THE ENGINE
 
 - **WHEN** a proposal-mode pass with 1 warning and 3 suggestions persists its emit
 - **THEN** `final_assessment` reads `0 critical, 1 warning, 3 suggestion.` and `next_recommended` is the `/orbit:address-reviews <change> --from-file <own path>` pointer — no gate verdict, no eligibility judgment; a clean pass instead points `next_recommended` at the `orbit status --change <change> --report` render — both COMPOSED by the emit surface, rejected if supplied in the payload
+
+#### Scenario: Blocks ride the payload beside the findings
+
+- **WHEN** a proposal- or system-mode pass finds a BLOCK (Pass 1's validate failure, Pass 8's unresolved marker)
+- **THEN** the body composes it into the payload's `blocks` array — one single-line string per block naming the condition and its location — never into `findings[]` and never into the scorecard; the array is optional and absent when no block was found
 
 #### Scenario: A finding entry carries its reproduction
 

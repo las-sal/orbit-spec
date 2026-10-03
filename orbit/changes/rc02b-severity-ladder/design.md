@@ -4,7 +4,8 @@ The severity labels are the one vocabulary every mechanism in the review cycle c
 defines. `trail.ts` reads them from section membership or the `severity` field and never re-grades;
 `isSubstantive` makes CRITICAL + WARNING the gating set; R-crc-4 lets a CRITICAL buy a further blind
 pass; R-crc-11(b) asks the AI to route findings on them. The producers grade by habit: the review
-body carries seventeen per-pass rules written before the ladder existed (two of them lifecycle blocks
+body carries fourteen per-pass rules written before the ladder existed (measured by grep on 2026-10-03;
+the exploration said sixteen and seventeen in different places — corrected at walk 1) (two of them lifecycle blocks
 named CRITICAL so the count would carry a second meaning), the external prompt carries no severity
 guidance at all, and `orbit-conventions`' Severity ladder says three names and a bias. The evidence
 that would make a CRITICAL checkable already appears on the trail unprompted — eleven internal
@@ -51,28 +52,37 @@ against ~12; the two over are carried-bytes blocks whose changed bytes are one l
   stays and now has one direction only. *Alternative*: executed-only reproductions — rejected, because
   proposal mode runs nothing and the constructed cases on record were what made rc02's CRITICALs
   settle in one walk.
-- **D2 — per-pass rules are pointers with their reading (D-rc02b-2).** Each of the seventeen body sites
-  and the five `orbit-review` scenarios that state a severity becomes "<condition>: <severity>, per the
+- **D2 — per-pass rules are pointers with their reading (D-rc02b-2).** Each of the fourteen body sites,
+  the body's general bias line (review.ts:873), and the five `orbit-review` scenarios that state a severity becomes "<condition>: <severity>, per the
   ladder, because <consequence>". Grades that change: P2's missing task and P7's delta vocabulary →
   WARNING (divergence risk; still gating, no longer buying a pass); P4's contradiction and S3's removal →
   CRITICAL only with the reproduction. The pointer test for the delta's wording is "names the ladder,
   states the condition, states no definition" — a pointer that restates the definition beside itself is
   the rc16 disease. *Alternative*: keep the per-pass rules as the ladder's worked examples in
   `orbit-review` — rejected as a second statement site (R-crc-14).
-- **D3 — blocks are reported, never counted (D-rc02b-3).** A validate failure (P1) and an unresolved
-  `@review:` marker (P8) are BLOCKS: the pass reports them in the body under a block line; apply's
-  existing precondition (`orbit validate --strict`, the marker grep) owns stopping on them; no scorecard
-  cell changes. P8's "when ambiguous, classify as CRITICAL" is deleted. External reviewers get a
-  `## Blocks` section in the output format; BOTH parsers already treat an unknown `##` section as
-  non-structural (`trail.ts` sets `section = null`; `report-render.ts` routes it to `other`), so the
-  count and the render are unchanged by construction and a test pins it. The walk's triage reads the
-  section from the file and lists blocks before findings. *Alternative*: keep blocks as a special-cased
-  CRITICAL stated in the ladder — rejected (Sal: leave) because "0 CRITICAL" would keep two meanings.
+- **D3 — blocks are reported with a carrier, never counted (D-rc02b-3).** A validate failure (P1) and an
+  unresolved `@review:` marker (P8) are BLOCKS. Carrier: an optional `blocks` array on the review payload
+  (single-line strings, gate-checked for shape, never rolled up) on internal passes; a `## Blocks` section
+  whose `- ` items the renderer's parser COLLECTS on external files (the trail counter ignores the section —
+  pinned by a test). The report renders `### Blocks` above `### Findings` for both genres; the walk lists
+  blocks first at triage; `--strict` stops on a block as on a CRITICAL; `--mark` writes none. P8's "when
+  ambiguous, classify as CRITICAL" is deleted. **The stopper, honestly:** the exploration's Mechanism entry
+  named "apply's existing precondition" as the owner that stops on a block. It does not exist — the fresh
+  proposal pass grepped `apply-change.ts` for validate and marker checks and found none; the only
+  lifecycle marker reader is archive Step 1.5's warning. The ladder states this as a KNOWN LIMIT: a block
+  is a report with a name, the stop is the human's, and giving apply a precondition belongs to
+  rc10-apply-closure (which owns pre-archive conditions). *Alternatives*: keep blocks as a special-cased
+  CRITICAL (rejected — Sal: leave); descope blocks to the external genre (rejected at walk 1 — "0 CRITICAL"
+  would keep two meanings on internal passes); add an apply Step 0 precondition here as a seventh capability
+  (rejected at walk 1 — rc10's territory, and the stage is already two axes over).
 - **D4 — the field and its gate (D-rc02b-5).** `reproduction` is a string on the internal finding entry:
   multi-line allowed (never a single-line slot — the trail shape is three lines on a good day), required
-  non-empty when `severity` is CRITICAL, optional otherwise. `validatePayload` gains its first check
-  INSIDE a finding entry: a CRITICAL whose `reproduction` is absent, non-string or blank is refused
-  naming the finding's title; unknown finding keys stay unchecked (the gap is named, not closed — closing
+  non-empty when `severity` is CRITICAL, optional otherwise. `validatePayload` gains the first check that
+  REFUSES on a finding entry's narrative field (the scorecard rollup already reads each entry's dimension
+  and severity): a CRITICAL whose `reproduction` is absent, non-string or blank is refused naming the
+  finding's title and index, in EVERY mode — the check reads one field of one severity and never reads
+  `mode` (the architecture-mode exemption is the renderer's, not this check's); unknown finding keys stay
+  unchecked (the gap is named, not closed — closing
   it would refuse `recommendation_options`-style forward-compat). The rule lands as an ADDED requirement
   in `orbit-emit-composition` rather than a MODIFIED copy of the 145-line write-gate block: it is a new
   check with its own trigger, and R-crc-1's carried-bytes clarification says the copy would measure the
@@ -81,20 +91,28 @@ against ~12; the two over are carried-bytes blocks whose changed bytes are one l
   body AFTER `**Description**:`, ended by the next `###` or `##` heading, so a file without it parses
   exactly as today. `normalizeExternalPass` learns the label; the internal normalizer passes the string
   through; the renderer prints the reproduction as a second blockquote under the recommendation; a
-  CRITICAL with none renders `unreproduced` beside its title. Nothing re-grades: the counts, the gate and
+  CRITICAL with none renders the mark `[unreproduced]` as a PREFIX before the bold file reference — outside
+  the title token, so a copied line still yields the gate's exact title (Q-crc-17). Nothing re-grades: the counts, the gate and
   R-crc-4's extra-pass rule read the authored severity. *Alternative*: demote on absence at parse —
   rejected (explore.md, Considered & out).
 - **D6 — the walk reads it first.** Both virtual-marker tables carry `reproduction`; Step 3a's procedure
-  gains step (0): for a CRITICAL, re-run the reproduction and record the result as the first evidence;
-  a CRITICAL carrying none is noted `unreproduced` and pushback proceeds on the claim alone.
+  gains step (0): for a CRITICAL, re-run the reproduction and record the result as the first evidence in a
+  new closed-value entry field `reproduction_rerun` (`reproduced` / `not-reproduced` / `cannot-run` /
+  `unreproduced`; absent below CRITICAL) with the output or derivation in `evidence`; a CRITICAL carrying
+  none is `unreproduced` and pushback proceeds on the claim alone.
 - **D7 — the two contradictions and the residue close in the same change.** The conventions' canonical
   review-emit example gains `"reproduction": "…"` on its CRITICAL; the review body's Step 9 enumeration
   and `references/run-summary-schema.md` name the field (the rc01 parity test's nested allowlist learns
   it); the conventions' external-slot sentence becomes "whose `blind-pair` slot the external return
   half-covers".
 - **D8 — no migration.** The gate applies to new writes. The 99 CRITICALs on record without the field are
-  a prior generation; the renderer marks nothing on them (the mark is for external files; internal
-  prior-generation emits render as today).
+  a prior generation and stay valid; the renderer marks them `[unreproduced]` BY ABSENCE, never by date —
+  on internal passes absence is exactly the prior-generation set, because the gate refuses new ones.
+- **D9 — the ladder paragraph is a checked mirror.** The external prompt's `## Severity` paragraph is
+  stated once as a fenced production in the conventions ladder requirement and held byte-equal in
+  `orbit-review-external`'s reference template (and the generated body) by a parity test — R-crc-14's
+  mirror corollary, the rc13a/rc15 shape. *Alternative*: pointer-only — rejected, an adopter's external
+  reviewer has none of our specs.
 
 ## Mechanism → artifacts
 
@@ -103,7 +121,7 @@ The proposing AI's reading of the file; no engine record.
 | rule | closure / state | owner's state | destination (shape) |
 |---|---|---|---|
 | D-rc02b-2 | SOURCED | live rule | `orbit-conventions` › `Severity ladder` — the one-statement clause (SENTENCE naming the source: the review body's pass lists, grep-enumerated); the seventeen members land as the re-pointed scenarios in `orbit-review` › `Proposal mode runs nine passes` and `System mode runs verify-change + six system-wide passes` (SCENARIO SET) |
-| D-rc02b-3 | SOURCED | live rule | `orbit-conventions` › `Severity ladder` — the block clause (SENTENCE naming the four sites); `orbit-conventions` › `External-review findings markdown format` — the `## Blocks` section; `orbit-review` › `Proposal mode runs nine passes` — the Pass 8 scenario |
+| D-rc02b-3 | SOURCED | live rule | `orbit-conventions` › `Severity ladder` — the block clause (SENTENCE naming the four sites and the known limit); `orbit-conventions` › `External-review findings markdown format` — the `## Blocks` section; `orbit-review` › `Proposal mode runs nine passes` — the Pass 8, `--strict`/`--mark` and `blocks`-payload scenarios; `orbit-emit-composition` › ADDED `The review payload carries blocks`; `orbit-report-rendering` › the `### Blocks` slot; `orbit-address-reviews` › blocks first at triage (SCENARIO SET — the carrier rows added at walk 1 after the fresh pass found the entry's CONFORM claim false) |
 | D-rc02b-5 | SOURCED | live rule | `orbit-conventions` › `Severity ladder` — the reproduction definition (SENTENCE); the ten surfaces land one each as scenarios across `orbit-emit-composition` (ADDED gate requirement), `orbit-report-rendering` (`One grammar…` + ADDED render requirement), `orbit-address-reviews` (`--from-file ingest`, `Pushback discipline`), `orbit-review` (`Internal run summary persisted per mode`), `orbit-review-external` (`Output format specification in prompt`, the reference template) (SCENARIO SET) |
 | D-rc02b-1 | — | `Kind: scope` | not carried — history; stated in proposal.md's size paragraph |
 | D-rc02b-4 | — | `Kind: scope` | not carried — history; the residual is a Risk below and a named limit in the ladder's text |
@@ -114,12 +132,13 @@ accounted, 0 open, which my reading of the three entries against the grammar agr
 
 ## Touchpoints
 
-- `src/core/emit-composition.ts` — the finding-level CRITICAL/reproduction check in `validatePayload`; the review payload table unchanged.
-- `src/core/report-render.ts` — `normalizeExternalPass` learns `**Reproduction**:` as a body opener; the internal normalizer passes `reproduction` through; `renderReport` prints it and the `unreproduced` mark.
+- `src/core/emit-composition.ts` — the finding-level CRITICAL/reproduction check in `validatePayload` (every mode); `blocks` added to the review payload table with its shape check.
+- `src/core/report-render.ts` — `normalizeExternalPass` learns `**Reproduction**:` as a body opener and collects `## Blocks` items; the internal normalizer passes `reproduction` and `blocks` through; `renderReport` prints the reproduction blockquote, the `[unreproduced]` prefix and the `### Blocks` slot.
+- `src/core/templates/workflows/apply-change.ts` — NOT touched: no precondition is added here (the known limit; rc10's territory).
 - `src/core/artifact-graph/trail.ts` — no edit; a new test pins that the label and a `## Blocks` section leave the counter untouched.
 - `src/core/templates/workflows/review.ts` — the seventeen per-pass sites and the report example re-pointed; Step 9's field list; the prompt template's ladder paragraph, Reproduction body and Blocks section; `references/run-summary-schema.md`.
 - `src/core/templates/workflows/address-reviews.ts` — both virtual-marker tables; the expected-file-format block; Step 3a step (0); triage lists blocks first.
-- `test/core/emit-schema-parity.test.ts` — the nested allowlist learns `reproduction`.
+- `test/core/emit-schema-parity.test.ts` — the nested allowlist learns `reproduction`, `blocks`, `reproduction_rerun`; a new parity test holds the template's `## Severity` paragraph byte-equal to the conventions fence.
 - `test/core/*.test.ts` — gate refusal, external body parse, unreproduced mark, counter blindness, internal pass-through; the generated-surface fidelity tests for the re-pointed sites.
 - `orbit/specs/*/spec.md` — six capabilities, synced at archive.
 
@@ -136,6 +155,9 @@ accounted, 0 open, which my reading of the three entries against the grammar agr
   blind pair reviews the measurement as well as the mechanism; the breach is declared at six.
 - [Prior-generation emits lack the field] → readers tolerate absence; the gate applies to new writes
   only; no re-grade, no migration.
+- [Nothing stops on a block mechanically] → stated in the ladder as a known limit; the report's `### Blocks`
+  section and triage-first listing are what the human reads before apply; the precondition is
+  rc10-apply-closure's.
 - [Two parsers, one contract (Q-crc-15)] → the external body is parsed in `report-render.ts` only; the
   trail counter is untouched and pinned by a test to ignore both the label and `## Blocks`.
 - [Fourteen blocks over ~12] → the two over are carried-bytes copies with one changed line each; the
@@ -151,3 +173,5 @@ accounted, 0 open, which my reading of the three entries against the grammar agr
 - **Per-pass rules as the ladder's worked examples in `orbit-review`** — a second statement site;
   rejected under R-crc-14 (D2).
 - **Modifying the 145-line write-gate requirement** — rejected for an ADDED requirement (D4).
+- **An apply Step 0 precondition as a seventh capability** (walk 1, finding 1 option A′) — rejected: rc10-apply-closure owns pre-archive conditions and the stage is already over on two axes; the limit is stated instead.
+- **Descoping blocks to the external genre** (walk 1, finding 1 option B) — rejected: "0 CRITICAL" would keep two meanings on internal passes, undoing the reason for D-rc02b-3.

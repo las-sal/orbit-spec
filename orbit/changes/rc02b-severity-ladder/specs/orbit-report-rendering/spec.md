@@ -2,7 +2,7 @@
 
 ### Requirement: Reproduction renders beside the recommendation and its absence is marked
 
-The report SHALL render a finding's reproduction, when present, as a second blockquote directly under its recommendation, labelled `Reproduction:`, verbatim; and SHALL render `unreproduced` beside the title of any CRITICAL that carries none — on external passes, where the file could not be refused, and on internal passes of a prior generation. The mark changes no count, no scorecard cell, and no gate input: severity is the author's and is NEVER re-graded (per `orbit-conventions`' Severity ladder and `orbit-engine-gates`). The internal normalizer passes a string `reproduction` through and rejects a non-string one as a mistyped field.
+The report SHALL render a finding's reproduction, when present, as a second blockquote directly under its recommendation, labelled `Reproduction:`, verbatim; and SHALL render the mark `[unreproduced]` as a PREFIX before the bold file reference of any CRITICAL that carries none — outside the title token, so a copied line still yields the gate's exact title (Q-crc-17) — on external passes, where the file could not be refused, and on internal passes of a prior generation. The mark changes no count, no scorecard cell, and no gate input: severity is the author's and is NEVER re-graded (per `orbit-conventions`' Severity ladder and `orbit-engine-gates`). The internal normalizer passes a string `reproduction` through and rejects a non-string one as a mistyped field. The report SHALL also render a `### Blocks` section ABOVE `### Findings` whenever the pass carries blocks (an internal emit's `blocks` array; an external file's `## Blocks` items), one `- ` line each, verbatim; the section is omitted when there are none, and it feeds no scorecard cell and no gate input.
 
 #### Scenario: Reproduction rendered under the recommendation
 
@@ -12,7 +12,12 @@ The report SHALL render a finding's reproduction, when present, as a second bloc
 #### Scenario: Unreproduced CRITICAL marked, not re-graded
 
 - **WHEN** an external CRITICAL carries no `**Reproduction**:` body
-- **THEN** its title line renders with the trailing mark ` — unreproduced`, it remains under `## CRITICAL`, and the engine tail's gate computation is byte-identical to the same file with the mark's cause absent
+- **THEN** its finding line renders as `- [unreproduced] **<file>** — <title>`, it remains under `## CRITICAL`, and the engine tail's gate computation is byte-identical with and without a Reproduction body
+
+#### Scenario: Blocks render above the findings for both genres
+
+- **WHEN** an internal emit carries `blocks: ["…"]` or an external file carries `## Blocks` items
+- **THEN** the report prints `### Blocks` with one line per entry between the scorecard table (internal) or header (external) and `### Findings`; the scorecard, counts and engine tail are unchanged
 
 #### Scenario: Internal reproduction mistyped
 
@@ -29,7 +34,8 @@ parse is EXTENDED (fence-aware — heading and field lines inside code fences ne
 `**File**` line reference RETAINED un-stripped), the `**Reproduction**` body when present (a labelled
 body opened AFTER the Description and ended by the next `###` or `##` heading — per
 `orbit-conventions`' External-review findings markdown format), plus the header's reviewer and date; a
-`## Blocks` section is non-structural (routed like any unknown `##` section) and changes no count; the
+`## Blocks` section is collected — its `- ` items become the pass's blocks, rendered above the findings — and
+is never a severity section, so it changes no count (the trail counter ignores it entirely); the
 `## Notes` section (when present) supplies the report's Commentary slot — the external
 reviewer's voice, quarantined exactly like an internal `commentary` field. An external pass
 and an internal pass of the same trail thus read identically framed. The external
@@ -52,7 +58,7 @@ determinism applies from ingest onward). An external file the parser rejects (ma
 - **WHEN** an external finding carries `**Description**:` then `**Reproduction**:` bodies
 - **THEN** the recommendation is the Description body alone and the reproduction is the Reproduction body (both verbatim, blank edges trimmed); a file without the label normalizes byte-identically to before this requirement
 
-#### Scenario: Blocks section is invisible to the counts
+#### Scenario: Blocks section is collected, never counted
 
-- **WHEN** an external file carries a `## Blocks` section with entries
-- **THEN** the trail counter's per-severity counts and the renderer's findings are unchanged by it — the section is read as non-structural by both parsers, which a test pins
+- **WHEN** an external file carries a `## Blocks` section with `- ` items (or `None.`)
+- **THEN** the renderer's parser carries the items as the pass's blocks, its findings are unchanged by them, and the trail counter's per-severity counts are unchanged — a test pins both; a heading-shaped line inside `## Blocks` is content, never a finding

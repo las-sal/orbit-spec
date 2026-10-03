@@ -2,7 +2,7 @@
 
 ### Requirement: Severity ladder
 
-The system SHALL use a consistent severity ladder across reports, and SHALL define each severity by its CONSEQUENCE — stated ONCE, here. CRITICAL: a user path breaks or data is lost, AND the finding carries its REPRODUCTION. WARNING: an implementation built to the artifact as written could diverge from what it intends. SUGGESTION: everything else. A REPRODUCTION is a case the reader can re-execute — the inputs, the rule or command, the expected result, the observed result; a command in system mode, a CONSTRUCTED CASE in proposal mode, where nothing runs (a named trail, the rule applied by hand, the wrong answer it yields). Every other surface that assigns a severity — a review pass's rule, a prompt's guidance, a parser's section — SHALL NAME this ladder and state the condition and its consequence, never a second definition (the one-statement rule). A lifecycle BLOCK — a condition that stops apply whatever it would cost a user, such as an `orbit validate` failure or an unresolved `@review:` marker — is NOT a severity: it is reported, named as a block, and carried in no scorecard cell. The engine checks the PRESENCE of a reproduction where it writes the record (per `orbit-emit-composition`) and marks its absence where it cannot refuse (per `orbit-report-rendering`); whether a reproduction reproduces is the walk's judgement (per `orbit-address-reviews`), never a reader's re-grade. Known limit: `orbit-audit-drift` assigns its own severities, which system review preserves — a statement site this ladder does not yet reach.
+The system SHALL use a consistent severity ladder across reports, and SHALL define each severity by its CONSEQUENCE — stated ONCE, here. CRITICAL: a user path breaks or data is lost, AND the finding carries its REPRODUCTION. WARNING: an implementation built to the artifact as written could diverge from what it intends. SUGGESTION: everything else. A REPRODUCTION is a case the reader can re-execute — the inputs, the rule or command, the expected result, the observed result; a command in system mode, a CONSTRUCTED CASE in proposal mode, where nothing runs (a named trail, the rule applied by hand, the wrong answer it yields). Every other surface that assigns a severity — a review pass's rule, a prompt's guidance, a parser's section — SHALL NAME this ladder and state the condition and its consequence, never a second definition (the one-statement rule). A lifecycle BLOCK — a condition that stops apply whatever it would cost a user, such as an `orbit validate` failure or an unresolved `@review:` marker — is NOT a severity: it is reported, named as a block, and carried in no scorecard cell — on an internal pass in the review emit's `blocks` array (per `orbit-review` and `orbit-emit-composition`), on an external file under `## Blocks`, rendered in the report's Blocks section above the findings (per `orbit-report-rendering`), and listed before any finding at the walk's triage (per `orbit-address-reviews`). Known limit: no lifecycle seam STOPS on a block today — the apply flow carries no validate or marker precondition, and the only lifecycle reader of markers is the archive flow's Step 1.5 warning; a block is a report with a name, and the stop is the human's until a stage gives apply a precondition. The engine checks the PRESENCE of a reproduction where it writes the record (per `orbit-emit-composition`) and marks its absence where it cannot refuse (per `orbit-report-rendering`); whether a reproduction reproduces is the walk's judgement (per `orbit-address-reviews`), never a reader's re-grade. Known limit: `orbit-audit-drift` assigns its own severities, which system review preserves — a statement site this ladder does not yet reach.
 
 #### Scenario: Three severities
 
@@ -17,7 +17,7 @@ The system SHALL use a consistent severity ladder across reports, and SHALL defi
 #### Scenario: CRITICAL is a consequence plus its reproduction
 
 - **WHEN** a finding is graded CRITICAL
-- **THEN** it names a user path that breaks or data that is lost AND carries a reproduction the reader can re-execute; a finding that names the consequence and carries no reproduction is WARNING at most where the author can be refused (the internal write gate), and is counted as authored but marked unreproduced where it cannot be (an external file)
+- **THEN** it names a user path that breaks or data that is lost AND carries a reproduction the reader can re-execute; a finding that names the consequence and carries no reproduction is REFUSED at the internal write gate until its author supplies the reproduction or grades it WARNING at most, and is counted as authored but marked unreproduced where no gate can refuse it (an external file)
 
 #### Scenario: WARNING is divergence risk
 
@@ -27,7 +27,18 @@ The system SHALL use a consistent severity ladder across reports, and SHALL defi
 #### Scenario: A block leaves the scorecard
 
 - **WHEN** a review pass finds a condition that stops apply regardless of consequence — an `orbit validate` failure, an unresolved `@review:` marker in artifact content
-- **THEN** the pass reports it as a BLOCK (a named line in the report body; the `## Blocks` section of an external file), no scorecard cell changes, and apply's own precondition is what stops on it
+- **THEN** the pass reports it as a BLOCK — an entry in the emit's `blocks` array on an internal pass, an item under `## Blocks` on an external file — rendered above the findings, listed first at triage, and no scorecard cell changes; nothing stops on it mechanically (the known limit above), so the report is what the human reads before apply
+
+The external prompt's severity guidance is ONE paragraph, stated here as a production and carried into `orbit-review-external`'s reference template as a CHECKED MIRROR held byte-equal by a parity test (R-crc-14's mirror corollary — an external reviewer has no access to this spec, so the copy must exist and must say what it is):
+
+```
+Grade by `orbit-conventions`' Severity ladder. CRITICAL: a user path breaks or data is lost, AND the finding carries its reproduction — a case the reader can re-execute: the inputs, the rule or command, the expected result, the observed result (a command in system mode; a constructed case in proposal mode). WARNING: an implementation built to the artifact as written could diverge from what it intends. SUGGESTION: everything else. When unsure, grade lower. A condition that must stop apply regardless of consequence — an `orbit validate` failure, an unresolved `@review:` marker — is a BLOCK, not a severity: list it under `## Blocks`.
+```
+
+#### Scenario: The ladder paragraph is mirrored, never restated
+
+- **WHEN** the external prompt template carries its `## Severity` paragraph
+- **THEN** the paragraph is byte-equal to the fenced production above and a parity test holds it so; any other surface that would define a severity points here instead
 
 #### Scenario: Every other surface points at the ladder
 
@@ -41,7 +52,7 @@ The system SHALL use a consistent markdown shape for external-review findings fi
 #### Scenario: Required structure
 
 - **WHEN** an external-review findings file is written
-- **THEN** it contains: `# External Review: <change> (iteration N)` title, `**Reviewer**:` and `**Date**:` fields, severity sections (`## CRITICAL`, `## WARNING`, `## SUGGESTION`), each containing `### <Title>` entries with `**File**: <path>:<line>` and `**Description**: <text>` fields; optional `## Notes` section A CRITICAL entry additionally carries a `**Reproduction**: <text>` body AFTER its `**Description**:` body (ended by the next `###` or `##` heading); a CRITICAL without one is counted as authored and marked `unreproduced` by the renderer, never re-graded. An optional `## Blocks` section (before `## Notes`) lists must-address-before-apply conditions that are not severities (per the Severity ladder requirement); both parsers treat it as non-structural, so it changes no count.
+- **THEN** it contains: `# External Review: <change> (iteration N)` title, `**Reviewer**:` and `**Date**:` fields, severity sections (`## CRITICAL`, `## WARNING`, `## SUGGESTION`), each containing `### <Title>` entries with `**File**: <path>:<line>` and `**Description**: <text>` fields; optional `## Notes` section. A CRITICAL entry additionally carries a `**Reproduction**: <text>` body AFTER its `**Description**:` body (ended by the next `###` or `##` heading); a CRITICAL without one is counted as authored and marked `unreproduced` by the renderer, never re-graded. An optional `## Blocks` section (before `## Notes`) lists must-address-before-apply conditions that are not severities (per the Severity ladder requirement) as `- <what>` items; the renderer's parser collects those items for the report's Blocks section and the trail counter ignores the section, so it changes no count.
 
 #### Scenario: Parseable by --from-file
 

@@ -7,7 +7,7 @@ The system SHALL instruct the external AI to write findings using a defined mark
 #### Scenario: Required format
 
 - **WHEN** the prompt is generated
-- **THEN** it specifies a markdown structure with `# External Review: <change> (iteration N)` header, `**Reviewer**:` and `**Date**:` fields, and severity sections `## CRITICAL` / `## WARNING` / `## SUGGESTION`, each containing `### <Title>` entries with `**File**: <path>:<line>` and `**Description**: <text>` fields and — on every CRITICAL — a `**Reproduction**: <text>` body after the Description, plus an optional `## Blocks` section (must-address-before-apply conditions that are not severities, listed before `## Notes`) and an optional `## Notes` section; immediately before the output-format block the prompt carries `orbit-conventions`' Severity ladder as ONE paragraph — the three consequences and what a reproduction is — so the external reviewer grades by the same rule the internal passes name
+- **THEN** it specifies a markdown structure with `# External Review: <change> (iteration N)` header, `**Reviewer**:` and `**Date**:` fields, and severity sections `## CRITICAL` / `## WARNING` / `## SUGGESTION`, each containing `### <Title>` entries with `**File**: <path>:<line>` and `**Description**: <text>` fields and — on every CRITICAL — a `**Reproduction**: <text>` body after the Description, plus an optional `## Blocks` section (must-address-before-apply conditions that are not severities, listed before `## Notes`) and an optional `## Notes` section; immediately before the output-format block the prompt carries `orbit-conventions`' Severity ladder as ONE paragraph under `## Severity` — a CHECKED MIRROR of the ladder requirement's fenced production, held byte-equal by a parity test (R-crc-14's mirror corollary) — so the external reviewer grades by the same rule the internal passes name
 
 #### Scenario: Output file path specified
 
@@ -22,7 +22,7 @@ The system SHALL instruct the external AI to write findings using a defined mark
 #### Scenario: The ladder paragraph names its owner
 
 - **WHEN** the prompt states the severity guidance
-- **THEN** it is one paragraph that names `orbit-conventions`' Severity ladder, states CRITICAL / WARNING / SUGGESTION by consequence and the reproduction rule (a command you ran or a case you constructed: inputs, rule, expected, observed), and defines nothing the ladder does not — a CRITICAL written without a `**Reproduction**:` body is counted as authored and marked `unreproduced` on render, never re-graded
+- **THEN** it is the ladder requirement's fenced paragraph, byte-equal (a checked mirror, not a restatement; a parity test fails when the two diverge) — a CRITICAL written without a `**Reproduction**:` body is counted as authored and marked `unreproduced` on render, never re-graded
 
 ### Requirement: Prompt written to versioned file with chat invocation snippet
 
@@ -101,7 +101,7 @@ resolution, not review. Just flag what you observe.
 
 ## Severity
 
-Grade by `orbit-conventions`' Severity ladder. CRITICAL: a user path breaks or data is lost, AND you carry the reproduction (a command you ran, or a constructed case — inputs, rule, expected, observed). WARNING: an implementation built to the artifact as written could diverge from what it intends. SUGGESTION: everything else. When unsure, grade lower. A condition that must stop apply regardless of consequence is a BLOCK, not a severity — list it under `## Blocks`.
+Grade by `orbit-conventions`' Severity ladder. CRITICAL: a user path breaks or data is lost, AND the finding carries its reproduction — a case the reader can re-execute: the inputs, the rule or command, the expected result, the observed result (a command in system mode; a constructed case in proposal mode). WARNING: an implementation built to the artifact as written could diverge from what it intends. SUGGESTION: everything else. When unsure, grade lower. A condition that must stop apply regardless of consequence — an `orbit validate` failure, an unresolved `@review:` marker — is a BLOCK, not a severity: list it under `## Blocks`.
 
 ## Output format — write to:
 
@@ -160,8 +160,8 @@ the markdown directly and the user will save it.
 1. **Output the full findings markdown in chat** — in addition to writing the
    findings file, output the COMPLETE findings markdown in this chat. Same
    content as the file: every severity section (`## CRITICAL` / `## WARNING`
-   / `## SUGGESTION`), every `### Title` entry, every `**File**:` and
-   `**Description**:` field. Do NOT abbreviate or summarize — the chat output
+   / `## SUGGESTION`), every `### Title` entry, every `**File**:`, `**Description**:` and
+   `**Reproduction**:` field, and every `## Blocks` item. Do NOT abbreviate or summarize — the chat output
    is the immediately-visible read for the user (they should be able to
    evaluate every finding without opening the file). The file remains the
    canonical record for `--from-file` parsing.
@@ -188,7 +188,7 @@ the user will commit it manually.
 #### Scenario: Output-format block must be verbatim
 
 - **WHEN** the prompt is generated
-- **THEN** the "Output format" block (the inner markdown showing the expected findings structure) is included verbatim, including section headers `## CRITICAL` / `## WARNING` / `## SUGGESTION` and the `**File**:` / `**Description**:` field labels; deviations would break `--from-file` parsing
+- **THEN** the "Output format" block (the inner markdown showing the expected findings structure) is included verbatim, including section headers `## CRITICAL` / `## WARNING` / `## SUGGESTION` / `## Blocks` and the `**File**:` / `**Description**:` / `**Reproduction**:` field labels; deviations would break `--from-file` parsing
 
 #### Scenario: Commit / push instructions in prompt
 
@@ -203,4 +203,4 @@ the user will commit it manually.
 #### Scenario: Full findings output to chat in prompt
 
 - **WHEN** the prompt is generated
-- **THEN** the "After completing the review" section instructs the external AI to output the FULL findings markdown in chat (every finding's severity section + `### Title` + `**File**:` + `**Description**:`, identical content to the findings file — no abbreviation, no summarization) in addition to writing the findings file; the chat output is the immediately-visible read for the user, the file is the canonical record for parsing by `--from-file`
+- **THEN** the "After completing the review" section instructs the external AI to output the FULL findings markdown in chat (every finding's severity section + `### Title` + `**File**:` + `**Description**:` + `**Reproduction**:` where present, every `## Blocks` item, identical content to the findings file — no abbreviation, no summarization) in addition to writing the findings file; the chat output is the immediately-visible read for the user, the file is the canonical record for parsing by `--from-file`

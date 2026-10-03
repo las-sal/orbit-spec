@@ -7,12 +7,12 @@ The system SHALL accept a `--from-file <path>` flag and parse the file's content
 #### Scenario: Parse external findings markdown
 
 - **WHEN** the command runs with `--from-file <path>` and the file's first non-whitespace prefix is `# External Review:` (markdown header) and the body follows the orbit external-review markdown format
-- **THEN** the parser extracts each finding (severity, title, file:line, description, and — when present — reproduction) as a virtual marker with `source: "external"`; entries under a `## Blocks` section are listed FIRST in the triage table as blocks and are never walked as virtual markers and walks it through the same lifecycle as inline markers, except no source-file marker text exists to remove
+- **THEN** the parser extracts each finding (severity, title, file:line, description, and — when present — reproduction) as a virtual marker with `source: "external"` and walks it through the same lifecycle as inline markers, except no source-file marker text exists to remove; entries under a `## Blocks` section are listed FIRST in the triage table as blocks and are never walked as virtual markers
 
 #### Scenario: Parse internal review JSON
 
 - **WHEN** the command runs with `--from-file <path>` and the file's first non-whitespace character is `{` AND the file parses as valid JSON AND the top-level `command` field is `"review"` AND the JSON shape matches the orbit internal-run review summary (per orbit-conventions `Internal-run JSON summary format` + the review-specific extensions documented in the `orbit-review` skill's `references/run-summary-schema.md` (shipped alongside the generated skill))
-- **THEN** the parser extracts each entry in the JSON's `findings[]` array as a virtual marker — mapping `severity` directly, `title` directly, `file:line` from `file` + `line` fields, `description` from the entry's `recommendation` field, `reproduction` from the entry's `reproduction` field when present — tags `source: "internal-review"` on each, and walks each through the same lifecycle as inline markers, with marker-removal as a no-op
+- **THEN** the parser extracts each entry in the JSON's `findings[]` array as a virtual marker — mapping `severity` directly, `title` directly, `file:line` from `file` + `line` fields, `description` from the entry's `recommendation` field, `reproduction` from the entry's `reproduction` field when present — tags `source: "internal-review"`; the JSON's optional `blocks[]` entries are listed FIRST in the triage table as blocks and never become virtual markers on each, and walks each through the same lifecycle as inline markers, with marker-removal as a no-op
 
 #### Scenario: Parse internal audit-drift JSON
 
@@ -57,7 +57,7 @@ The system SHALL accept a `--from-file <path>` flag and parse the file's content
 #### Scenario: Reproduction travels into the virtual marker
 
 - **WHEN** a finding (markdown or JSON) carries a reproduction
-- **THEN** the virtual marker carries it in a `reproduction` field and the Step 3a pushback re-runs it first (per `Pushback discipline applied per marker`); a CRITICAL marker without one is tagged `unreproduced` in the triage table and the resolution log
+- **THEN** the virtual marker carries it in a `reproduction` field and the Step 3a pushback re-runs it first (per `Pushback discipline applied per marker`); a CRITICAL marker without one is tagged `unreproduced` in the triage table and in the resolution log's entry field `reproduction_rerun`, whose closed values are `reproduced` / `not-reproduced` / `cannot-run` / `unreproduced` (absent on WARNING and SUGGESTION entries; named in `references/run-summary-schema.md` and derived by the schema-table parity test)
 
 ### Requirement: Pushback discipline applied per marker
 
@@ -76,7 +76,7 @@ The system SHALL verify each marker against current state before fixing — rega
 #### Scenario: Pushback decision procedure
 
 - **WHEN** the AI verifies a marker against current state
-- **THEN** it follows this procedure in order: (0) for a CRITICAL marker that carries a reproduction, RE-RUN it — execute the command, or re-derive the constructed case against the current artifact — and record the result as the first evidence (reproduced / not reproduced / cannot run, with why); a CRITICAL carrying none is noted `unreproduced` and pushback proceeds on the claim alone, never re-grading it (per `orbit-conventions`' Severity ladder); (1) identify the marker's referenced symbol, name, or concept; (2) `grep -rn` for current presence in expected locations (the file the marker is in, related files, baseline specs); (3) if the symbol is absent where the marker expects it, run `git log -S "<symbol>" --since=<reasonable-window>` (default: since the marker file was last modified) to confirm intentional removal; (4) read the relevant file's current content; (5) compare to the marker's claim and decide: still applies / already fixed / partially applies; (6) on already-fixed, report the commit hash or current-content evidence as part of suppression
+- **THEN** it follows this procedure in order: (0) for a CRITICAL marker that carries a reproduction, RE-RUN it — execute the command, or re-derive the constructed case against the current artifact — and record the result as the first evidence — the entry's `reproduction_rerun` value (`reproduced` / `not-reproduced` / `cannot-run`) plus the output or derivation in `evidence`; a CRITICAL carrying none is noted `unreproduced` and pushback proceeds on the claim alone, never re-grading it (per `orbit-conventions`' Severity ladder); (1) identify the marker's referenced symbol, name, or concept; (2) `grep -rn` for current presence in expected locations (the file the marker is in, related files, baseline specs); (3) if the symbol is absent where the marker expects it, run `git log -S "<symbol>" --since=<reasonable-window>` (default: since the marker file was last modified) to confirm intentional removal; (4) read the relevant file's current content; (5) compare to the marker's claim and decide: still applies / already fixed / partially applies; (6) on already-fixed, report the commit hash or current-content evidence as part of suppression
 
 #### Scenario: Internal JSON virtual markers receive fresh pushback
 

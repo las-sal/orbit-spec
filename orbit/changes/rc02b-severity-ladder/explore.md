@@ -51,7 +51,7 @@ Domain: every site in the generated review surface that states a severity by pas
 Closure: SOURCED — `grep -n "CRITICAL\|WARNING\|SUGGESTION" src/core/templates/workflows/review.ts` on 2026-10-03, every hit classified; the external pass lists (lines 505–545) read in full and found severity-free
 Moves:
 - READ: applied — each rule quoted from review.ts lines 161–177 and 220–230, not from the charter's summary
-- ENUMERATE: applied — the table; the charter counted none of these, which is how three capabilities became five
+- ENUMERATE: applied — the table; the charter counted none of these, which is how three capabilities became five. CORRECTED 2026-10-03 at walk 1: the table has seventeen rows but FOURTEEN are rule sites (P6, S6 and the prompt lists are non-members); the body's general bias line at review.ts:873 was missing and is a fifteenth site
 - COHERE: applied — the two BLOCK rows are D-rc02b-3's and the audit-drift row is D-rc02b-4's; no row is graded by two rules
 - EXECUTE: applied — every row carries its consequence reading; the two downgrades (P2, P7) and the two conditionals (P4, S3) are the only grade changes
 - FALSIFY: applied — a pointer that restates the ladder beside itself is the rc16 disease (A4); the delta's wording test is "names the ladder, states the condition, states no definition"
@@ -64,7 +64,7 @@ Moves:
 Domain: every site where the review surface names something that must be addressed before apply
 | member | covered by |
 |---|---|
-| P1 — `orbit validate` failure (body line 161) | reported in the body as a block; apply's precondition owns stopping; not counted |
+| P1 — `orbit validate` failure (body line 161) | reported as a block in the emit's `blocks` array; not counted; NOTHING stops on it mechanically (corrected at walk 1 — apply has no precondition) |
 | P8 — unresolved `@review:` marker (body line 175) | same; the "when ambiguous, classify as CRITICAL" clause deleted with it |
 | the report example's P8 line (body line 157) | wording follows P8 |
 | the external pass list's P8 line (body line 523, "must be addressed before apply") | wording follows P8; an external reviewer REPORTS the marker under a block line, not under `## CRITICAL` |
@@ -72,12 +72,12 @@ Closure: SOURCED — `grep -n -i "before apply\|must address\|block" src/core/te
 Moves:
 - READ: applied — all four lines read; P1's rule is "CRITICAL on validate failure", P8's carries the inverted bias clause
 - ENUMERATE: applied — the table; the system pass list names no block
-- COHERE: applied — one open seam: where does an external reviewer PUT a block? The prompt's output format has three severity sections and no block slot — the delta adds a `## Blocks` section the parser reads as non-structural prose (counts untouched) and the walk reads by eye
+- COHERE: applied — one open seam: where does an external reviewer PUT a block? The prompt's output format has three severity sections and no block slot — the delta adds a `## Blocks` section. CORRECTED 2026-10-03 at walk 1: the INTERNAL pass had no carrier either (a `blocks` payload key is refused by the live gate — executed by the fresh pass) and the render had no slot for either genre; the change now adds `blocks` to the review payload, collects `## Blocks` items in the render parser, and renders a `### Blocks` section
 - EXECUTE: applied — on today's record, P8 fired as CRITICAL in rc02's proposal pass 3 (a marker left in design.md); under this rule the same pass reports it under the block line and its CRITICAL count drops by one
 - FALSIFY: applied — a block that leaves the count could be MISSED by a walk that reads only findings; the walk body's triage table must list blocks first, which is a one-line edit in `orbit-address-reviews` (already in the five)
-- CONFORM: applied — the false-positive bias in `orbit-conventions` is restored to one direction; apply's existing precondition (`orbit validate --strict`, the marker grep) is the owner and gains nothing
+- CONFORM: applied — the false-positive bias in `orbit-conventions` is restored to one direction. CORRECTED 2026-10-03 at walk 1: the claim that "apply's existing precondition is the owner" was FALSE — the fresh proposal pass grepped `apply-change.ts` for validate and marker checks and found none; the only lifecycle marker reader is archive Step 1.5's warning. A READ failure written inside a CONFORM line; the ladder now states the absent stopper as a known limit and names rc10-apply-closure
 - FEASIBILITY: applied — four line edits plus one prompt section
-- CONSUME: applied — `scorecardRollupCheck` never sees a block; the gate's counts fall by exactly the blocks that used to be CRITICAL
+- CONSUME: applied — `scorecardRollupCheck` never sees a block; the gate's counts fall by exactly the blocks that used to be CRITICAL; the render gains a `### Blocks` slot and the walk lists `blocks[]` first (walk 1)
 - INVOKE: applied — P1 and P8 run on every proposal review; the external section is in every prompt
 
 ### D-rc02b-5 — a REPRODUCTION is a case the reader can re-execute, carried as a named field or body
@@ -94,9 +94,9 @@ Domain: every surface that produces, checks, carries, documents or consumes a fi
 | `references/run-summary-schema.md` (documentation mirror) | names the field; the rc01 parity test's nested allowlist (test line 157) learns it |
 | `orbit-conventions`' canonical review-emit example (documentation) | its CRITICAL gains a reproduction — the known contradiction the charter named |
 | `orbit-review`'s finding-entry shape (owner of the field) | the `recommendation_options` precedent: one requirement, "Optional … field on finding entries", mirrored as REQUIRED-when-CRITICAL |
-Closure: SOURCED — the readers of a finding entry are the five modules that import the finding shape (`emit-composition`, `report-render`, `trail`, the two bodies) plus the two documentation sites the charter named; enumerated by grep for `recommendation_options` across `src/` and `orbit/specs/` on 2026-10-03
+Closure: SOURCED — the readers of a finding entry are the five modules whose finding-entry access was read file by file on 2026-10-03 (emit-composition's rollup and `validatePayload`; report-render's two normalizers; trail's `parseExternalMarkdown`; the two bodies' mapping tables) plus the two documentation sites the charter named. CORRECTED at walk 1: an earlier wording named a grep for `recommendation_options` as the act; that grep returns four files including `audit-drift.ts` and was not what was run — audit-drift's reference documents finding entries too and is a documentation mirror OUTSIDE the stage (D-rc02b-4)
 Moves:
-- READ: applied — the eleven on record carry the field as a free string (rc02's cycle); the write gate checks top-level keys only (emit-composition 474–490); the external parser drops a non-structural line before the Description body opens (report-render 470–500)
+- READ: applied — the eleven on record carry the field as a free string (rc02's cycle); the write gate's unknown-KEY check is top-level only (emit-composition 474–490) while the scorecard rollup already reads each entry's dimension and severity (901–920 — corrected at walk 1: "first check inside an entry" was false); the external parser drops a non-structural line before the Description body opens (report-render 470–500)
 - ENUMERATE: applied — the table; the counter row is the one a naive edit would miss (Q-crc-15's two grammars)
 - COHERE: applied — a body AFTER Description keeps today's parser contract intact for files that lack it; a label BEFORE Description would change where the body opens
 - EXECUTE: applied — on the 110 CRITICALs on record, 11 pass the gate as-is, 99 would be refused; the 99 predate the rule and are history, not a migration
@@ -119,7 +119,7 @@ Moves:
   Disposition: live
 
 - **2026-10-03 — D-rc02b-2: the ladder is stated ONCE, in `orbit-conventions`; every per-pass severity rule in the review body becomes a POINTER with its
-  consequence reading.** Sixteen sites today (proposal P1–P9, system S1–S5) each state a severity by pass — "CRITICAL when a spec requirement has no task" — which
+  consequence reading.** Fourteen sites today — eight proposal-pass rules, five system-pass rules, the report example (CORRECTED 2026-10-03 at walk 1 from "sixteen": measured by `grep -n "CRITICAL\|WARNING\|SUGGESTION" src/core/templates/workflows/review.ts`; the domain table's extra rows are non-members listed for completeness) — each state a severity by pass — "CRITICAL when a spec requirement has no task" — which
   is a second statement of what CRITICAL means (R-crc-14; the sixth instance of the rule-stated-twice pattern, counted at exploration this time). Each becomes
   "<condition>: <severity>, per the ladder, because <the consequence>": P2's missing task and P7's delta vocabulary read as divergence risk and DOWNGRADE to
   WARNING (still gating; no longer buying an extra blind pass under R-crc-4); P4's contradiction and S3's removal are CRITICAL only with the reproduction, else
