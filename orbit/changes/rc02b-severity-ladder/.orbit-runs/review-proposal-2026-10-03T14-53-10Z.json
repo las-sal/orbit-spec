@@ -1,0 +1,222 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-03T14:53:10Z",
+  "change": "rc02b-severity-ladder",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": [
+    "--fresh"
+  ],
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 3
+    },
+    "correctness": {
+      "critical": 1,
+      "warning": 4,
+      "suggestion": 2
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 5
+    }
+  },
+  "findings": [
+    {
+      "severity": "CRITICAL",
+      "dimension": "correctness",
+      "pass": "2",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-conventions/spec.md",
+      "line": 30,
+      "title": "A BLOCK has no carrier on the internal trail, no render slot, and the stopper every delta names does not exist in the apply body",
+      "recommendation": "The block clause (D-rc02b-3) says an internal pass reports a block \"as a named line in the report body ... no scorecard cell changes, and apply's own precondition is what stops on it\". Three facts of today's engine make that unimplementable as written. (1) The report body is ENGINE-rendered from the emit (review Step 10 prohibits hand-rendering the structured sections; the body pastes `--render` verbatim), and the review emit's payload table is CLOSED. (2) The render has no block slot: report-render.ts pushes header/trend/scorecard/Findings/Suppressed/Commentary/tail (lines 603–665) and the external parser routes `## Blocks` to `other` and drops it (executed below), so the engine report never shows a block for EITHER genre. (3) No apply precondition exists: `grep -n -i \"orbit validate\\|@review\\|validat\" src/core/templates/workflows/apply-change.ts` returns only line 185 (the authoring-time read-before-reference discipline) and line 203 (`user_validation_tasks`); the ONLY marker grep in any lifecycle body is archive-change.ts Step 1.5 (lines 253–272, a warning with a convert-to-@todo option, not a stop). Today an unresolved marker found by an internal proposal pass is a CRITICAL on the trail that the reviewed gate counts as substantive and the walk lists; under the deltas the same marker has nowhere to be recorded, is never listed by the walk's internal-JSON triage (it reads `findings[]`), and nothing stops at apply — the protection is removed and its named replacement is fictional. design.md:64 and explore.md:67/78/132 assert the precondition as fact (a READ miss).\n\nREPRODUCTION (all executed on this tree, 2026-10-03):\n(a) Payload carrier — a review payload with every table key plus `\"blocks\": [\"unresolved @review: marker in design.md:5\"]`:\n    node bin/orbit.js emit review --change rc02b-severity-ladder --payload /private/tmp/.../bad-blocks.json\n    expected (per the delta): a persisted block line; observed: exit 1, stdout empty, stderr \"Error: unknown payload key 'blocks' for 'review' — not in the command's payload table and not engine-owned.\" — .orbit-runs count 3 before and after.\n(b) Render slot, external genre — a file whose `## Blocks` section holds \"- orbit validate fails\" AND a heading-shaped entry (`### A heading-shaped block entry` + File + Description), run through dist/core/report-render.js normalizeExternalPass and dist/core/artifact-graph/trail.js readTrail: findings=2 with the section and 2 without; commentary = the Notes body only; the block text appears in NO output field. Expected per the ADDED render requirement and the block clause: a named block line; observed: nothing.\n(c) Stopper — the grep above; expected per design.md:64 \"apply's existing precondition (`orbit validate --strict`, the marker grep)\"; observed: neither string occurs in apply-change.ts.\n\nFix it inside the stage or descope it honestly — see the options; whichever is taken, design.md:64, explore.md:67/78/132, the conventions block scenario (line 30) and the orbit-review Pass 8 scenario (line 25) must stop naming an apply precondition that does not exist.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Give the block a carrier and an owner. Add `blocks` (array of single-line strings) to the review payload table in emit-composition (+ the run-summary-schema mirror + the parity test), render a `### Blocks` slot above Findings for both genres (the external parser collects `## Blocks` `- ` lines instead of routing the section to `other`; the trail counter stays blind), and have address-reviews' internal-JSON ingest list `blocks[]` first at triage. For the stopper, EITHER add an apply Step 0 precondition (`orbit validate --strict` + `grep -rn \"@review:\"` → stop naming the block) — a seventh capability, declared under R-crc-1 — OR re-point the sentence at the owner that exists today (archive Step 1.5's marker warning) and say plainly that apply does not stop."
+        },
+        {
+          "label": "B",
+          "body": "Descope D-rc02b-3 to the external genre, where `## Blocks` already has a carrier the walk reads by eye: on internal passes P1/P8 stay COUNTED findings (the only record the trail can hold) and the conventions clause states the asymmetry — \"reported under `## Blocks` on an external file; carried as a finding on an internal pass until the emit has a block carrier\" — with the internal carrier canonized as an open question. Cheapest; \"0 CRITICAL\" keeps two meanings on internal passes, which the stage must then say."
+        }
+      ]
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "pass": "2",
+      "file": "orbit/changes/rc02b-severity-ladder/design.md",
+      "line": 96,
+      "title": "Design D8 says the renderer marks nothing on internal prior-generation emits; the report-rendering delta and task 2.3 say it does",
+      "recommendation": "design.md:95–97 (D8): \"the renderer marks nothing on them (the mark is for external files; internal prior-generation emits render as today)\". specs/orbit-report-rendering/spec.md:5 (ADDED requirement): render `unreproduced` beside any CRITICAL that carries none \"on external passes ... and on internal passes of a prior generation\". tasks.md:14 (2.3): \"internal only when the emit predates the field — detect by absence, never by date\". Two implementers reading design vs spec build opposite renders for the 99 internal CRITICALs on record. Pick one and align all three; if the spec/tasks reading stands, D8 should say the internal mark is derived from absence (which, given the gate, is exactly the prior-generation set) and the proposal's \"readers tolerate absence\" line (proposal.md:49) should note that tolerance now includes a visible mark."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "pass": "2",
+      "file": "orbit/changes/rc02b-severity-ladder/proposal.md",
+      "line": 24,
+      "title": "The re-pointed site count is stated as seventeen (and SIXTEEN at line 7) but measures fourteen",
+      "recommendation": "Measured on review.ts (`grep -n \"CRITICAL\\|WARNING\\|SUGGESTION\" src/core/templates/workflows/review.ts`): per-pass severity rules at lines 161, 163, 165, 167, 169, 173, 175, 177 (eight — P6 at line 171 states none, as the exploration's own table says), 220, 222, 224, 226, 228 (five), plus the report example at 157 = FOURTEEN. The exploration's Domain table reaches seventeen rows only by counting P6 (no rule), S6 (declared OUT by D-rc02b-4) and the external prompt pass lists (which the same row says carry no severity words and get a paragraph ADDED, not substituted). proposal.md:7 says SIXTEEN, proposal.md:24 and tasks.md:19 say seventeen, design.md:7 says seventeen, explore.md:122 says sixteen. Task 3.1's own enumeration \"(P1–P9 lines 161–177, S1–S5 lines 220–230, the report example at line 157)\" cannot reach seventeen. State one measured figure everywhere, with the grep as its act."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "pass": "2",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-review-external/spec.md",
+      "line": 104,
+      "title": "The prompt's `## Severity` paragraph is a second, unchecked statement of the ladder — the pattern R-crc-14 exists to stop",
+      "recommendation": "The conventions delta (line 5) rules that \"a prompt's guidance ... SHALL NAME this ladder and state the condition and its consequence, never a second definition\". The reference template at line 104 then DEFINES all three severities and the reproduction in its own words (\"a command you ran, or a constructed case — inputs, rule, expected, observed\" vs the owner's \"the inputs, the rule or command, the expected result, the observed result; a command in system mode, a CONSTRUCTED CASE in proposal mode\"), already not byte-equal on the day it was written, and the scenario at line 25 licenses it as \"defines nothing the ladder does not\". Task 1.6 pins only PRESENCE of the paragraph, not equality. rc04c watched exactly this shape diverge four times. The adopter blind spot (an adopter's external reviewer has none of our specs) is a real reason the paragraph must exist — which is the MIRROR COROLLARY's case, not an exemption.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Make it a CHECKED MIRROR per R-crc-14's corollary: put the ladder paragraph in a fenced block in the conventions requirement (one production), hold the template's `## Severity` paragraph byte-equal to it by a parity test (the rc13a/rc15 shape), and have the scenario at line 25 say \"a checked mirror of\" rather than \"defines nothing the ladder does not\"."
+        },
+        {
+          "label": "B",
+          "body": "Reduce the paragraph to the pointer plus the two things an external reviewer cannot infer — \"grade by `orbit-conventions`' Severity ladder (read `orbit/specs/orbit-conventions/spec.md` in the repo you pulled); every CRITICAL carries a `**Reproduction**:` body; blocks go under `## Blocks`\" — accepting that an adopter without that spec grades by habit. Weaker for adopters; honest under R-crc-14."
+        }
+      ]
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "pass": "2",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-review/spec.md",
+      "line": 69,
+      "title": "System Pass 4 (Perspective reviews) still assigns SUGGESTION/WARNING with no pointer, while the exploration and task 3.1 re-point S4 in the body",
+      "recommendation": "explore.md:46 (\"S4 Perspective — survives, pointer added\") and tasks.md:19 (re-point S1–S5 at review.ts lines 220–230, which includes S4 at 226) both re-point the body's S4; the orbit-review delta re-points S1, S2, S3, S5 (lines 54, 59, 64, 79) and leaves the Pass 4 scenario (line 69) byte-equal to baseline: \"flags SUGGESTION/WARNING when interactions are awkward, inconsistent, or surprising\". After apply the generated body and its owning spec disagree on S4, and the spec's own new scenario \"Pass severities name the ladder\" (line 30) covers proposal passes only. Add the pointer to the Pass 4 scenario (awkward/surprising from a caller's POV is divergence risk → WARNING per the ladder; SUGGESTION below it), or record in design D2 why S4 is exempt in the spec but not the body."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "pass": "6",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-review/spec.md",
+      "line": 30,
+      "title": "`--strict` fails fast on the first CRITICAL; a validate failure is now a BLOCK — whether `--strict` stops on a block is unstated",
+      "recommendation": "review.ts:753 (the flags table): \"`--strict` | off | Fail-fast on first CRITICAL. Useful for CI-like runs.\" Today a validate failure is P1's CRITICAL, so `--strict` stops a CI-like run on it. Under the delta P1 is a BLOCK carried in no scorecard cell; nothing in the six deltas or tasks says whether `--strict` treats a block as a stop. One implementer keeps fail-fast on blocks (the CI intent), another fails only on ladder-CRITICALs — divergence. State it in the orbit-review delta (one clause: \"`--strict` stops on a BLOCK as it does on a CRITICAL\") and add the flags-table line to task 3.1's site list; the same question applies to `--mark` (review.ts:859 writes markers at CRITICAL/WARNING sites — does a block get a marker?)."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "pass": "6",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-emit-composition/spec.md",
+      "line": 5,
+      "title": "Architecture-mode review emits are exempt from the reproduction check with no stated reason, falsifying the ladder's \"checks presence where it writes the record\"",
+      "recommendation": "The ADDED requirement scopes the check to \"a proposal- or system-mode payload\"; tasks.md:3 (1.1) adds \"architecture mode is not checked (its normalizer path is unchanged)\" — a fact about the RENDERER, which is irrelevant to a write-time presence check that reads one field of one severity. Architecture-mode reviews write CRITICALs through the same `orbit emit review` surface (COMMANDS.review scopes {change, doc}); the conventions delta (line 5) says \"The engine checks the PRESENCE of a reproduction where it writes the record\", which is false for that mode, and architecture mode has no render surface, so an unreproduced architecture CRITICAL is neither refused nor marked anywhere. Either drop the mode scope (the check costs the same in all three modes; `payload.mode` need not be read) or state the exemption and its reason in the ladder's known-limit sentence beside audit-drift. Also unstated: what the check does when `mode` is absent or not a string."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "pass": "2",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-emit-composition/spec.md",
+      "line": 5,
+      "title": "\"The first check the gate performs INSIDE a finding entry\" is false — `scorecardRollupCheck` already reads every finding's `dimension` and `severity`",
+      "recommendation": "emit-composition.ts:901–920 `scorecardRollupCheck` filters `findings` by `f?.dimension === d && f?.severity === sev` and throws `write gate: scorecard cell ...` — a write-gate check inside finding entries, live since D4. The true statement is narrower: this is the first check that reads a finding's NARRATIVE field (and the first that refuses on a per-entry value rather than a rollup); `validatePayload`'s unknown-KEY check is what stays top-level. Repair the sentence in the requirement (line 5), proposal.md:37 (\"today it checks top-level keys only\") and explore.md:99 (READ move) — a false claim about today's gate in a normative text is what a later reader cites."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "pass": "2",
+      "file": "orbit/changes/rc02b-severity-ladder/explore.md",
+      "line": 97,
+      "title": "D-rc02b-5's closure names a method that does not yield the set it claims",
+      "recommendation": "The Closure line says the readers are \"the five modules that import the finding shape (`emit-composition`, `report-render`, `trail`, the two bodies) ... enumerated by grep for `recommendation_options` across `src/`\". Executed: `grep -rln \"recommendation_options\" src/` returns FOUR files — report-render.ts, address-reviews.ts, audit-drift.ts, review.ts — not emit-composition or trail, and audit-drift.ts (a reader the stage declares OUT) appears. The set itself may be right (trail and emit-composition do read entries); the stated act does not produce it (measurements name their act). Re-state the method that was actually run, or run this one and reconcile the row set — audit-drift's reference documenting finding entries is a sixth documentation mirror the table does not list."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "pass": "5",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-conventions/spec.md",
+      "line": 20,
+      "title": "\"WARNING at most where the author can be refused (the internal write gate)\" reads as a gate-side downgrade; the gate refuses",
+      "recommendation": "The emit-composition delta refuses the payload outright and never re-grades; this scenario can be read as the gate turning an unreproduced CRITICAL into a WARNING, which is the move D-rc02b-6 forbids. Reword to the author's obligation: \"is refused at the internal write gate until the author supplies the reproduction or grades it WARNING at most\"."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "pass": "6",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-address-reviews/spec.md",
+      "line": 60,
+      "title": "The `unreproduced` tag and the step-(0) re-run result have no named carrier in the address-reviews emit",
+      "recommendation": "The scenario says a CRITICAL without a reproduction \"is tagged `unreproduced` in the triage table and the resolution log\", and the pushback procedure (line 79) says the re-run result is \"recorded as the first evidence\". The resolution log is `orbit emit address-reviews`; its entry shape is documented in the walk's `references/run-summary-schema.md` and pinned by the parity test's nested-key set, and neither task 4.x nor the delta names which entry field carries the tag or the re-run result (a new key? the existing `evidence` string? prose?). Name the field (e.g., `reproduction_rerun: reproduced | not-reproduced | cannot-run | unreproduced` on the resolution entry) and add it to tasks 1.5/4.1, or state that both ride the existing `evidence` text."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "pass": "5",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-report-rendering/spec.md",
+      "line": 15,
+      "title": "Appending ` — unreproduced` to the title line puts a mark inside the (title, file) key surface the walk matches on",
+      "recommendation": "The render's finding line is `- **<fileRef>** — <title>` (report-render.ts:629); with the mark it reads `- **f:1** — Title — unreproduced`, indistinguishable from a title that itself contains \" — \", and the render is the surface AIs paste and retype from (Q-crc-17: hand-retyped titles matched zero findings). Render the mark OUTSIDE the title token — e.g., a bracketed prefix `[unreproduced]` before the bold file ref, or the first blockquote line `> Reproduction: none` — so a copy of the line still yields the gate's exact title. Also \"byte-identical to the same file with the mark's cause absent\" (line 15) inverts the sense: the cause is the ABSENCE of a body; say \"with and without a Reproduction body\"."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "9",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-review/spec.md",
+      "line": 25,
+      "title": "Pass 8 scenario sentence is broken at the splice: \"never graded. and let the user decide during `/orbit:address-reviews`\"",
+      "recommendation": "The baseline clause \"When ambiguous, classify as CRITICAL and let the user decide ...\" was edited to \"When ambiguous, the marker is listed as a block — never graded. and let the user decide during `/orbit:address-reviews`.\" Finish the sentence: \"... listed as a block, never graded, and the user decides during `/orbit:address-reviews`.\""
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "9",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-conventions/spec.md",
+      "line": 44,
+      "title": "Run-on at the splice: \"optional `## Notes` section A CRITICAL entry additionally carries\"",
+      "recommendation": "The Required-structure THEN clause has no separator between the baseline list's last item and the inserted sentence. Add a period (or move the Reproduction/Blocks sentences to their own THEN bullet)."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "9",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-address-reviews/spec.md",
+      "line": 10,
+      "title": "Broken grammar at the splice: \"are never walked as virtual markers and walks it through the same lifecycle\"",
+      "recommendation": "The inserted Blocks clause was spliced before the baseline's predicate \"and walks it through the same lifecycle as inline markers\", which now has no subject. Reorder: \"... as a virtual marker with `source: \\\"external\\\"` and walks it through the same lifecycle as inline markers (no source-file marker text exists to remove); entries under a `## Blocks` section are listed FIRST in the triage table as blocks and are never walked.\""
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "9",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-review-external/spec.md",
+      "line": 191,
+      "title": "The verbatim-block scenario and the chat-output scenario still name only the `**File**:`/`**Description**:` labels",
+      "recommendation": "Line 191 (\"Output-format block must be verbatim\") and line 206 (\"Full findings output to chat\") — and the template's own step 1 at lines 163–164, plus review.ts:375/551 — enumerate `**File**:` and `**Description**:` as the parsed labels. `**Reproduction**:` is now a parsed label and `## Blocks` a recognised section; an external reviewer told to echo \"every `**File**:` and `**Description**:` field\" in chat will drop the reproductions. Add both to each enumeration (and to task 3.3)."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "7",
+      "file": "orbit/changes/rc02b-severity-ladder/tasks.md",
+      "line": 19,
+      "title": "The body's general severity guidance at review.ts:873 restates the ladder's bias clause and is outside the re-point list",
+      "recommendation": "review.ts:873: \"When uncertain, prefer the lower severity. SUGGESTION beats WARNING beats CRITICAL.\" — the False-positive-bias scenario restated with no owner named, and it survives task 3.1 (which lists only the per-pass sites). Under the delta's own \"Every other surface points at the ladder\" scenario it should read \"per `orbit-conventions`' Severity ladder\". One-line addition to 3.1 and to 1.6's grep."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Fresh read, nothing of the authoring in context. Every claim the deltas make about today's PARSERS held under execution: I ran dist/core/report-render.js and the trail reader over constructed external files — a `**Reproduction**:` body after Description lands inside the recommendation verbatim, one before Description is dropped, and a `## Blocks` section with a heading-shaped entry is invisible to both parsers. What did not hold were the claims about today's BODIES and about where a record LIVES: the apply precondition every delta names as the block's owner is not in the apply body (the only marker grep in a lifecycle body is archive Step 1.5), the review emit's closed table refuses a `blocks` key on the live gate, the render has no block slot for either genre, the \"first check inside a finding entry\" is not first, and the seventeen-site count is fourteen on the grep the exploration itself names. The deltas themselves are careful — all twelve MODIFIED blocks keep every baseline scenario (diffed by heading), validate --strict passes, fingerprints verify — and the two parsers' blindness is exactly as designed. The texture of the rest is the program's own disease: a ladder stated a second time in the prompt with only presence pinned, a design decision (D8) contradicting its spec, three sentences broken at the splice where new clauses were inserted into baseline text, and two carriers (the block, the unreproduced tag) named by effect but not by field.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "final_assessment": "1 critical, 6 warning, 10 suggestion.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc02b-severity-ladder --from-file orbit/changes/rc02b-severity-ladder/.orbit-runs/review-proposal-2026-10-03T14-53-10Z.json"
+}
