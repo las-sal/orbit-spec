@@ -1,0 +1,128 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-03T16:50:41Z",
+  "change": "rc02b-severity-ladder",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": [],
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 4,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "pass": "2",
+      "title": "The field-line rule as written makes `**Reproduction**:` content, contradicting the body-opener scenario beside it",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-conventions/spec.md",
+      "line": 62,
+      "recommendation": "The walk-2 scenario says fields are recognised ONLY before the Description body opens and 'a field-shaped line inside a Description, Reproduction or Blocks body is content'. `**Reproduction**:` is field-shaped and, by the Required-structure clause two scenarios up, sits AFTER the Description body — so under this sentence it is content, and the report-rendering scenario `Reproduction body parsed after Description` is unimplementable. CONSTRUCTED CASE: file with `### T` / `**File**: a.md:1` / `**Description**: x` / `**Reproduction**: y`; rule as written → recommendation = 'x\\n**Reproduction**: y', reproduction undefined, every external CRITICAL rendered `[unreproduced]`; rule as intended → recommendation 'x', reproduction 'y'. Two implementers diverge on the one label the whole external half depends on. Fix in the owner: state the exception once — 'the Description body is ended by `**Reproduction**:` (the ONE field label recognised after Description opens) or by the next `###`/`##` heading; every other field-shaped line inside any body is content' — and let report-rendering's sentence point at it."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "pass": "2",
+      "title": "The report-rendering delta still asserts the external prompt template's markdown contract is UNCHANGED, which this change falsifies",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-report-rendering/spec.md",
+      "line": 44,
+      "recommendation": "Baseline text carried into the MODIFIED block: 'The external prompt template's markdown contract is UNCHANGED (external AIs keep writing markdown; determinism applies from ingest onward)'. The same change adds `**Reproduction**:` and `## Blocks` to that contract (orbit-review-external delta lines 10, 126, 146). A reader of the synced baseline would be told the contract did not move in the very requirement that parses the new labels. Reword to what stays true: 'external AIs keep writing markdown (the contract's additions — the Reproduction body and the Blocks section — are `orbit-conventions`' External-review findings markdown format's); determinism applies from ingest onward'."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "pass": "2",
+      "title": "System Pass 0 folds verify-change's CRITICALs into the review emit the gate now refuses without a reproduction, and nothing says what the body does",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-review/spec.md",
+      "line": 41,
+      "recommendation": "Pass 0 'folds its CRITICAL/WARNING/SUGGESTION findings into the report under the appropriate scorecard dimensions' — into `findings[]`. verify-change grades by its own rules (src/core/templates/workflows/verify-change.ts:61 'CRITICAL issue for each incomplete task'; :71 'Requirement not found'), none of which carry a reproduction, and an incomplete task is WARNING under the ladder. After this change `orbit emit review` refuses the system emit until the body either (a) writes a reproduction for each folded verify CRITICAL, (b) re-grades it — the move D-rc02b-6 forbids a READER to make, though the composing body is the AUTHOR here — or (c) folds verify findings outside `findings[]`. The delta chooses none, and verify-change is a statement site D-rc02b-4 does not name (it names audit-drift only). State the fold rule in the Pass 0 scenario (recommend: the body re-grades folded verify findings BY THE LADDER as their author — an incomplete task is WARNING; a violated requirement is CRITICAL with the task/requirement as reproduction) and add verify-change beside audit-drift in the ladder's known-limit sentence."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "pass": "2",
+      "title": "Walk-1 and walk-2 counts did not reach every site: 'seventeen' survives at three places, 'fourteen blocks' at two, and the Tests line names one of three allowlist fields",
+      "file": "orbit/changes/rc02b-severity-ladder/proposal.md",
+      "line": 116,
+      "recommendation": "Measured against the walks' own resolutions: proposal.md:116 'seventeen per-pass sites'; design.md:125 (Mechanism → artifacts, D-rc02b-2 row) 'the seventeen members'; design.md:141 (Touchpoints) 'the seventeen per-pass sites' — the figure is FOURTEEN plus the bias line everywhere else. design.md:22 'Fourteen requirement blocks against ~12' and design.md:169 '[Fourteen blocks over ~12]' — the proposal says fifteen (12 MODIFIED, 3 ADDED). proposal.md:120 'nested allowlist learns `reproduction`' — tasks 1.5 and design Touchpoints say `reproduction`, `blocks`, `reproduction_rerun`. One figure per fact; the grep is the act (measurements name their act)."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "pass": "6",
+      "title": "`reproduction_rerun` is defined in the ingest scenario while the resolution-log shape's owning requirement stays silent",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-address-reviews/spec.md",
+      "line": 60,
+      "recommendation": "The entry field and its four closed values are stated inside `--from-file ingest`'s scenario, but the resolution-log entry shape is owned by `Resolution-log JSON shape extensions for walk-mode / decision-forks / cascade` (baseline orbit-address-reviews spec line 463), which enumerates `ratified_via`, `resolution`, `recommendation_fork`, `ripple_cascade` and will not name the new field after sync — the parity test (task 1.5) derives it from the reference, and the spec owner contradicts the reference by omission. Either MODIFY that requirement to carry the field (one bullet, carried bytes only) or move the definition there and have the ingest scenario point at it; stating it where it is now is the pattern rc16 retired."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "pass": "6",
+      "title": "Task 3.4 documents only `reproduction` in the review schema reference; task 1.5 expects the reference to name `blocks` too",
+      "file": "orbit/changes/rc02b-severity-ladder/tasks.md",
+      "line": 26,
+      "recommendation": "1.5 derives `blocks` (review payload) from the review reference's field-note prose; 3.4 says the finding entry documents `reproduction` and nothing about the payload-level `blocks` field. Add `blocks` (optional array of single-line strings; what a block is, by pointer) to 3.4 so 1.5 can go green."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "9",
+      "title": "Task 1.1's opener still scopes the gate test to 'a proposal/system payload' while its tail says architecture mode is checked identically",
+      "file": "orbit/changes/rc02b-severity-ladder/tasks.md",
+      "line": 3,
+      "recommendation": "Walk 1 repaired the tail clause and left the opener; read quickly it says two things. Open with 'a review payload in any mode'."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "9",
+      "title": "Design's Non-Goals still say the engine checks 'presence of a non-empty value, nothing more'",
+      "file": "orbit/changes/rc02b-severity-ladder/design.md",
+      "line": 37,
+      "recommendation": "After walk 2 the gate also checks the TYPE of a present reproduction at any severity and the shape of `blocks`. Say 'presence and shape, never truth' so the Non-Goal matches D4."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "pass": "2",
+      "title": "Design's Context keeps the 'checks top-level payload keys only' framing the fresh pass corrected elsewhere",
+      "file": "orbit/changes/rc02b-severity-ladder/design.md",
+      "line": 12,
+      "recommendation": "'the write gate never inspected (it checks top-level payload keys only)' — the rollup already reads entries' severity and dimension; walk 1 narrowed the claim in the requirement, proposal and explore but not here. 'never inspected `reproduction` (its unknown-KEY check is top-level only)' is the true sentence."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "In-context confirm over the two walks' diff, read against the current artifacts, the six baselines and the engine. Every repair the pair asked for landed where it was asked: the blocks carrier is stated in all four of its homes, the field-line rule is in the format owner, the type check is at the gate, the Severity paragraph is byte-equal in both places (checked), and the explore file still parses three rules accounted. What this pass found is the texture of two fast walks: one new contradiction created by walk 2's own rule (the field-line sentence swallows the one label it was written to protect), one baseline sentence the change carries while falsifying it, one seam neither walk looked at (verify-change's CRITICALs folded into a system emit the gate now refuses), and a handful of counts and one-liners the walks' ripples did not reach. No mechanism is missing; nothing here needs an independent reader — each is a sentence with one obvious correction, and three are inside tasks or design prose. Strict validation, fingerprints and the marker grep are clean; the three ADDED titles collide with nothing in baseline.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "final_assessment": "0 critical, 5 warning, 4 suggestion.",
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc02b-severity-ladder --from-file orbit/changes/rc02b-severity-ladder/.orbit-runs/review-proposal-2026-10-03T16-50-41Z.json"
+}
