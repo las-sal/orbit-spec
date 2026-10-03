@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-03T14:20:25Z",
+  "change": "rc02b-severity-ladder",
+  "kind": "workflow",
+  "model": null,
+  "final_assessment": "Boundary after the walk of the four open questions. Sal held the stage as ONE change over FIVE capabilities (D-rc02b-1, scope; the rule-before-enforcement split declined and recorded in Considered & out). Three live rules captured with Mechanism entries in the same sitting: D-rc02b-2 (the ladder stated once in orbit-conventions; seventeen per-pass sites in the review body become pointers with their consequence reading — P2 and P7 downgrade to WARNING, P4 and S3 become conditional on a reproduction; SOURCED by grep over review.ts), D-rc02b-3 (a lifecycle block is not a severity — validate failure and unresolved markers leave the scorecard, four sites SOURCED; Sal: leave), D-rc02b-5 (a reproduction is a re-executable case — a command in system mode, a constructed case in proposal mode; internal field required-when-CRITICAL at the write gate, external labelled body after Description, render-only unreproduced mark; ten surfaces SOURCED). D-rc02b-4 (scope) names audit-drift's own severity site as out of the stage; D-rc02b-6 (fact) states that an unreproduced CRITICAL still counts and is settled at the walk. Open questions: none. Evidence on record read for every claim: 133 internal emits (110 CRITICAL, 11 already carrying reproduction), 120 external files, 59 prompts (one with a hand-written ladder), the external pass lists found severity-free.",
+  "decisions_captured": 6,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 3,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose rc02b-severity-ladder — 3 live rules accounted; formalize when you are ready (or /orbit:explore rc02b-severity-ladder to keep refining)"
+}
