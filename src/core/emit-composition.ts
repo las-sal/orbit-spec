@@ -113,6 +113,9 @@ const COMMANDS: Record<string, CommandSpec> = {
       'passes_run',
       'passes_skipped',
       'handoff',
+      // rc02b: lifecycle BLOCKS (a validate failure, an unresolved marker) ride beside the
+      // findings, never in them — single-line strings, shape-checked, never rolled up.
+      'blocks',
     ],
   },
   'address-reviews': {
@@ -496,10 +499,68 @@ function validatePayload(command: string, payload: Record<string, unknown>): voi
   // seam advertised as fail-loud and be read back at archive as truth.
   validatePrFields(command, payload);
 
+  // rc02b: the review payload's finding-level evidence check and the blocks shape.
+  validateReviewEvidence(command, payload);
+
   // rc04a: the judgement record's STRUCTURE — shape, kind/disposition agreement, the
   // required kind-specific extras. Its ORDERING is checked at the write gate instead,
   // because that check needs the emit's resolved <TS> token, which does not exist yet here.
   validateJudgements(command, payload);
+}
+
+// ---------------------------------------------------------------------------------------
+// rc02b: THE EVIDENCE TAX, ENFORCED WHERE EVIDENCE IS PRODUCED.
+//
+// `orbit-conventions`' Severity ladder says a CRITICAL is a consequence PLUS its reproduction; this
+// is the one place the engine can refuse the record (`orbit-emit-composition`, "An internal CRITICAL
+// carries its reproduction at the write gate"). It is the first check that refuses on a finding
+// entry's NARRATIVE field — the scorecard rollup reads every entry's `dimension` and `severity`, but
+// as a rollup. The check reads exactly one field of exactly one severity and never reads `mode`:
+// the architecture-mode exemption is the strict normalizer's, not this check's. Unknown FINDING keys
+// stay unchecked on purpose — closing that gap would refuse `recommendation_options`-style
+// forward-compat, and the top-level unknown-key check above is the seam that was designed closed.
+// Presence and shape only (R-crc-10): whether the reproduction REPRODUCES is the walk's judgement.
+// ---------------------------------------------------------------------------------------
+
+function validateReviewEvidence(command: string, payload: Record<string, unknown>): void {
+  if (command !== 'review') return;
+
+  const findings = payload.findings;
+  if (Array.isArray(findings)) {
+    findings.forEach((raw, i) => {
+      if (raw === null || typeof raw !== 'object' || Array.isArray(raw)) return; // entry SHAPE is the normalizer's
+      const f = raw as Record<string, unknown>;
+      const at = `findings[${i}]`;
+      if (f.severity === 'CRITICAL') {
+        // CONTENT is CRITICAL's requirement: a non-empty string after trimming.
+        if (typeof f.reproduction !== 'string' || f.reproduction.trim() === '') {
+          throw new EmitError(
+            `write gate: ${at} '${String(f.title ?? '')}' is CRITICAL and carries no reproduction — per \`orbit-conventions\`' Severity ladder a CRITICAL is a consequence plus the case that re-executes it (inputs, rule or command, expected, observed); supply \`reproduction\` or grade it WARNING at most.`
+          );
+        }
+      } else if ('reproduction' in f && typeof f.reproduction !== 'string') {
+        // TYPE is every entry's requirement: the gate never persists what the read-side normalizer refuses.
+        throw new EmitError(
+          `write gate: ${at}.reproduction must be a string when present (got ${Array.isArray(f.reproduction) ? 'an array' : typeof f.reproduction}).`
+        );
+      }
+    });
+  }
+
+  if ('blocks' in payload) {
+    const blocks = payload.blocks;
+    if (!Array.isArray(blocks)) {
+      throw new EmitError(`write gate: 'blocks' must be an array of single-line strings (got ${blocks === null ? 'null' : typeof blocks}) — one entry per lifecycle block, never a finding.`);
+    }
+    blocks.forEach((b, i) => {
+      if (typeof b !== 'string') {
+        throw new EmitError(`write gate: blocks[${i}] must be a string (got ${Array.isArray(b) ? 'an array' : typeof b}).`);
+      }
+      if (b.includes('\n') || b.includes('\r')) {
+        throw new EmitError(`write gate: blocks[${i}] must be single-line (embedded newline) — a block names a condition and its location; it is not a document.`);
+      }
+    });
+  }
 }
 
 // ---------------------------------------------------------------------------------------

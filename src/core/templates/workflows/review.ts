@@ -25,7 +25,7 @@ This schema inherits the 6-field **universal spine** from \`orbit-conventions\`'
 - \`next_recommended\` (the DETERMINISTIC pointer for change modes: the \`/orbit:address-reviews <name> --from-file <this emit's own path>\` invocation when the pass has findings, the \`orbit status --change <name> --report\` render pointer when clean — the engine-computed canonical next rides the rendered tail, never the emit)
 - \`kind: "editorial"\` (review is an editorial command per the kind taxonomy)
 
-The schema below documents per-command extensions ADDED to that spine (\`mode\`, \`iteration\`, \`depth\`, \`reviewer_class\`, \`flags\`, \`passes_run\`, \`passes_skipped\`, \`scorecard\`, \`findings\`, \`stale_suppressed\`, \`commentary\`). The former \`findings_summary\` and \`iteration_note\` fields are RETIRED in CHANGE MODES (D-arc Stage D4): \`scorecard\` supersedes the counts (readers tolerate both generations), and the iteration note is RENDERER-computed from the trail — a stored copy would be a second stale voice. (Architecture-mode emits carry the same \`scorecard\` shape; the interim hand-rendered report path documented below reads it — no render surface covers the architecture trail yet.) Per-command extensions are review-specific state; they supplement, not replace, the spine.
+The schema below documents per-command extensions ADDED to that spine (\`mode\`, \`iteration\`, \`depth\`, \`reviewer_class\`, \`flags\`, \`passes_run\`, \`passes_skipped\`, \`scorecard\`, \`findings\`, \`blocks\`, \`stale_suppressed\`, \`commentary\`). The former \`findings_summary\` and \`iteration_note\` fields are RETIRED in CHANGE MODES (D-arc Stage D4): \`scorecard\` supersedes the counts (readers tolerate both generations), and the iteration note is RENDERER-computed from the trail — a stored copy would be a second stale voice. (Architecture-mode emits carry the same \`scorecard\` shape; the interim hand-rendered report path documented below reads it — no render surface covers the architecture trail yet.) Per-command extensions are review-specific state; they supplement, not replace, the spine.
 
 ## Schema
 
@@ -65,12 +65,14 @@ The schema below documents per-command extensions ADDED to that spine (\`mode\`,
       "line": 159,
       "title": "<finding title>",
       "recommendation": "<actionable recommendation>",
+      "reproduction": "<the case a reader can re-execute: inputs, rule or command, expected, observed — REQUIRED non-empty on CRITICAL, optional otherwise; multi-line allowed>",
       "recommendation_options": [
         { "label": "A", "body": "<option A body>" },
         { "label": "B", "body": "<option B body>" }
       ]
     }
   ],
+  "blocks": ["<optional: one single-line entry per lifecycle block with its location — a validate failure, an unresolved @review: marker; absent when none>"],
   "stale_suppressed": [
     {
       "pass": "<pass id>",
@@ -92,6 +94,8 @@ The schema below documents per-command extensions ADDED to that spine (\`mode\`,
 - **\`stale_suppressed\`** captures findings that pushback removed; they are excluded from the scorecard and active findings, and render in the report's dedicated Suppressed section (first-class, with evidence).
 - **\`final_assessment\` / \`next_recommended\`** carry the deterministic facts contract above — no verdicts, no eligibility judgments (the engine-rendered tail owns those).
 - **\`commentary\`** is OPTIONAL: the reviewer's voice for the report's delimited Commentary slot — the pattern behind the findings, what was probed, risk texture; NEVER finding counts, gate verdicts, or next commands (those exist only in the report's engine-computed sections).
+- **\`reproduction\`** (rc02b) is a string on each finding — multi-line allowed, never a single-line slot — REQUIRED non-empty when \`severity\` is \`CRITICAL\` and optional otherwise, per \`orbit-conventions\`' Severity ladder (a CRITICAL is a consequence PLUS the case that re-executes it: inputs, rule or command, expected, observed — a command in system mode, a constructed case in proposal mode). \`orbit emit review\` REFUSES a CRITICAL without one in every mode, naming the finding, and refuses a present non-string one at any severity (per \`orbit-emit-composition\`); the engine checks presence, never truth — whether it reproduces is the walk's call. Prior-generation emits lack the field and remain valid; the report renders such a CRITICAL \`[unreproduced]\`.
+- **\`blocks\`** (rc02b) is an OPTIONAL array of single-line strings, one per lifecycle BLOCK the pass found — a condition that must be addressed before apply and is not a severity, per \`orbit-conventions\`' Severity ladder (by pointer; this reference defines no block of its own) — each naming the condition and its location. Never counted in the scorecard, never a finding, never a gate input; the report renders them above the findings. The surface refuses a non-array or a multi-line entry naming \`blocks[<i>]\`.
 - **\`recommendation_options\`** is OPTIONAL on each finding. Present only when the finding's recommendation is genuinely disjunctive — multiple defensible paths the user must choose between. Producer-side contract (per \`orbit-review\` spec's \`Optional recommendation_options field on finding entries\`): MUST contain ≥ 2 entries; each entry MUST have non-empty \`label\` (typically \`"A"\`, \`"B"\`, \`"C"\`, … or \`"1"\`, \`"2"\`, …) and non-empty \`body\`. The prose \`recommendation\` field still summarizes the disjunction for human readers. Consumer (address-reviews) uses this for the structured decision-fork detection path; absence triggers heuristic fallback. Omit the field for single-recommendation findings.
 
 ## Architecture-mode extensions (D-arc Stage D2)
@@ -154,27 +158,27 @@ PASS                                  WHAT IT CHECKS
 7. Drift Hunt                         old vocabulary lingering; consistency
                                        with *_convention.md
 8. Inline Review Marker Residue       any @review: markers still present?
-                                       (CRITICAL — must address before apply)
+                                       (a BLOCK — must address before apply)
 9. Pre-Handoff Sweep                  small things missed on first read
 \`\`\`
 
-**Pass 1 — Structure & Delta Integrity**. Run \`orbit validate "<name>"\`; confirm required artifacts present; check delta sections (ADDED/MODIFIED/REMOVED/RENAMED Requirements) follow the delta-spec format. CRITICAL on validate failure; WARNING on delta-section anomalies; SUGGESTION on cosmetic issues.
+**Pass 1 — Structure & Delta Integrity**. Run \`orbit validate "<name>"\`; confirm required artifacts present; check delta sections (ADDED/MODIFIED/REMOVED/RENAMED Requirements) follow the delta-spec format. A validate failure is a BLOCK, per \`orbit-conventions\`' Severity ladder — it stops apply whatever it would cost a user, so it is composed into the emit's \`blocks\` array, never into \`findings[]\` and never a scorecard cell; a delta-section anomaly: WARNING, per the ladder — an implementation built to a malformed delta would diverge; a cosmetic issue: SUGGESTION.
 
-**Pass 2 — Internal Coherence**. Compare proposal / design / specs / tasks: scope alignment, design-to-requirement mapping, requirement-to-task coverage, count consistency, no scope creep. CRITICAL when a spec requirement has no task; WARNING on count/label disagreement.
+**Pass 2 — Internal Coherence**. Compare proposal / design / specs / tasks: scope alignment, design-to-requirement mapping, requirement-to-task coverage, count consistency, no scope creep. A spec requirement with no task: WARNING, per \`orbit-conventions\`' Severity ladder — an implementation built to the artifact would omit it (it gates; it buys no further independent pass); count/label disagreement: WARNING, per the ladder — the same divergence risk.
 
-**Pass 3 — Cross-Doc Coherence**. Will \`CLAUDE.md\`, \`orbit/project.md\`, \`*_convention.md\` files still be accurate post-apply? Look for renamed concepts referenced under old names, new capabilities missing from project context, conventions contradicting deltas. WARNING for stale post-apply context; SUGGESTION for enrichment.
+**Pass 3 — Cross-Doc Coherence**. Will \`CLAUDE.md\`, \`orbit/project.md\`, \`*_convention.md\` files still be accurate post-apply? Look for renamed concepts referenced under old names, new capabilities missing from project context, conventions contradicting deltas. Stale post-apply context: WARNING, per \`orbit-conventions\`' Severity ladder — a reader built to the stale doc would diverge; enrichment: SUGGESTION.
 
-**Pass 4 — Archive Consistency**. ADDED requirements don't conflict with archived baseline; RENAMED FROM names exist in archive; REMOVED requirements aren't still referenced. CRITICAL on direct contradiction; WARNING on dangling references.
+**Pass 4 — Archive Consistency**. ADDED requirements don't conflict with archived baseline; RENAMED FROM names exist in archive; REMOVED requirements aren't still referenced. A direct contradiction of baseline: CRITICAL only with a reproduction naming the baseline behaviour that breaks, per \`orbit-conventions\`' Severity ladder — else WARNING; a dangling reference: WARNING, per the ladder.
 
-**Pass 5 — Codegen Readiness**. Per requirement: precise enough that two implementers produce the same code? Inputs/outputs/side effects stated? Hidden assumptions ("the obvious path", "the usual default") made explicit? WARNING for ambiguity that could split implementations.
+**Pass 5 — Codegen Readiness**. Per requirement: precise enough that two implementers produce the same code? Inputs/outputs/side effects stated? Hidden assumptions ("the obvious path", "the usual default") made explicit? Ambiguity that could split implementations: WARNING, per \`orbit-conventions\`' Severity ladder — this is the ladder's WARNING definition itself.
 
 **Pass 6 — Gap Hunt (generative completeness)**. Per requirement in spec deltas, probe: (a) unstated assumptions an implementer would have to invent? (b) error/edge-case paths specified, not just happy paths? (c) state transitions explicit, including invalid ones? (d) "X SHALL do Y" — Y precise enough? Cite file:line + the specific gap; suggest concrete spec additions.
 
-**Pass 7 — Drift Hunt**. Search artifacts for old vocabulary the change is replacing. Grep change directory AND project docs (\`*_convention.md\`, \`project.md\`, \`CLAUDE.md\`). CRITICAL when a delta itself uses old vocab; WARNING when project docs do.
+**Pass 7 — Drift Hunt**. Search artifacts for old vocabulary the change is replacing. Grep change directory AND project docs (\`*_convention.md\`, \`project.md\`, \`CLAUDE.md\`). Old vocabulary in a delta itself: WARNING, per \`orbit-conventions\`' Severity ladder — an implementation built to the delta would carry the old name; old vocabulary in project docs: WARNING, per the ladder — the same divergence, one layer out.
 
-**Pass 8 — Inline Review Marker Residue**. Grep change directory for \`@review:\` markers. **Actual unresolved markers** in artifact content → CRITICAL (must address before applying). **Documentation appearances** inside fenced code blocks, inline-code spans, or explicit "example" prose contexts → NOT findings. When ambiguous, classify as CRITICAL.
+**Pass 8 — Inline Review Marker Residue**. Grep change directory for \`@review:\` markers. **Actual unresolved markers** in artifact content → a BLOCK, per \`orbit-conventions\`' Severity ladder (must address before applying): composed into the emit's \`blocks\` array — one single-line entry naming the marker and its file:line — never into \`findings[]\`, never a scorecard cell; nothing stops on it mechanically (the ladder's known limit), so the report's Blocks section is what the human reads before apply. **Documentation appearances** inside fenced code blocks, inline-code spans, or explicit "example" prose contexts → NOT findings. When ambiguous, list the marker as a block and grade nothing — the user decides during \`/orbit:address-reviews\`.
 
-**Pass 9 — Pre-Handoff Sweep**. Final read asking "what would I be embarrassed to ship?" — awkward wording, stale TODO/FIXMEs in artifacts, inconsistent capitalization, examples that don't match prose. Almost always SUGGESTION.
+**Pass 9 — Pre-Handoff Sweep**. Final read asking "what would I be embarrassed to ship?" — awkward wording, stale TODO/FIXMEs in artifacts, inconsistent capitalization, examples that don't match prose. Almost always SUGGESTION, per \`orbit-conventions\`' Severity ladder — nothing here breaks a path or splits an implementation.
 
 ##### \`--fast\` subset (proposal mode)
 
@@ -215,19 +219,19 @@ PASS                                  WHAT IT CHECKS
 6. Drift / Residue                    calls /orbit:audit-drift as a library
 \`\`\`
 
-**Pass 0 — verify-change delegation**. Invoke the \`orbit-verify-change\` skill via \`/orbit:verify <change-name>\`. Fold its findings into the scorecard: task-completion + spec-coverage → Completeness; requirement-implementation-mapping + scenario-coverage → Correctness; design-adherence + code-pattern-consistency → Coherence. If \`--skip-verify\` set, omit Pass 0 with note \`Pass 0: skipped per --skip-verify\`.
+**Pass 0 — verify-change delegation**. Invoke the \`orbit-verify-change\` skill via \`/orbit:verify <change-name>\`. Fold its findings into the scorecard: task-completion + spec-coverage → Completeness; requirement-implementation-mapping + scenario-coverage → Correctness; design-adherence + code-pattern-consistency → Coherence. GRADE the folded findings per \`orbit-conventions\`' Severity ladder as this body's own (the composing body is their AUTHOR here — not a reader re-grading verify-change, whose own emit is untouched): an incomplete task or an uncovered scenario is WARNING — an implementation built to the artifact would diverge; a violated requirement is CRITICAL with the requirement and the observed behaviour as its \`reproduction\`; a CRITICAL this body cannot reproduce folds as WARNING. If \`--skip-verify\` set, omit Pass 0 with note \`Pass 0: skipped per --skip-verify\`.
 
-**Pass 1 — Baseline Compliance**. Read every requirement in archived \`orbit/specs/*/spec.md\` (not just deltas). Does the change break any baseline behavior? CRITICAL on violation; WARNING on regression risk.
+**Pass 1 — Baseline Compliance**. Read every requirement in archived \`orbit/specs/*/spec.md\` (not just deltas). Does the change break any baseline behavior? A violated baseline requirement: CRITICAL, per \`orbit-conventions\`' Severity ladder — with the violated requirement and the observed behaviour as the reproduction; a regressed-looking scenario: WARNING, per the ladder — regression RISK is a divergence an implementation could make.
 
-**Pass 2 — Cohesion**. Files the change touched (from \`git diff\` + tasks list). Walk callers/dependents not in the change's tasks for signature drift, semantic shifts, new side effects. CRITICAL when downstream clearly broken; WARNING for contract drift.
+**Pass 2 — Cohesion**. Files the change touched (from \`git diff\` + tasks list). Walk callers/dependents not in the change's tasks for signature drift, semantic shifts, new side effects. A downstream clearly broken: CRITICAL, per \`orbit-conventions\`' Severity ladder — a reproducible user path, with the break as the reproduction; caller-side contract drift: WARNING, per the ladder — divergence risk.
 
-**Pass 3 — Surface Walk**. Enumerate surfaces from \`orbit/specs/<capability>/spec.md\` — **capabilities ARE surfaces**; do not redefine them in lenses. Check each (CLI flags / subcommand names, HTTP routes, MCP tool names, public function signatures) remains coherent after the change. CRITICAL when a surface was removed unintentionally; WARNING for inconsistencies.
+**Pass 3 — Surface Walk**. Enumerate surfaces from \`orbit/specs/<capability>/spec.md\` — **capabilities ARE surfaces**; do not redefine them in lenses. Check each (CLI flags / subcommand names, HTTP routes, MCP tool names, public function signatures) remains coherent after the change. A surface removed unintentionally: CRITICAL only with the removal shown as the reproduction, per \`orbit-conventions\`' Severity ladder — else WARNING; an inconsistency: WARNING, per the ladder.
 
-**Pass 4 — Perspective Reviews**. If \`orbit/lenses/perspectives.md\` exists and is non-empty: for each named perspective, simulate typical call patterns from that caller's POV. Flag SUGGESTION/WARNING when interactions are awkward, inconsistent, or surprising from that POV. If the file is empty or absent, skip Pass 4 with the note \`no perspectives defined; skip Pass 4\`.
+**Pass 4 — Perspective Reviews**. If \`orbit/lenses/perspectives.md\` exists and is non-empty: for each named perspective, simulate typical call patterns from that caller's POV. Awkward, inconsistent, or surprising interactions from that POV: WARNING, per \`orbit-conventions\`' Severity ladder — a caller built against the artifact would diverge; SUGGESTION below that. If the file is empty or absent, skip Pass 4 with the note \`no perspectives defined; skip Pass 4\`.
 
-**Pass 5 — Critical-Path Scan**. If \`orbit/lenses/critical-paths.md\` exists and is non-empty: for each named flow, walk the code end-to-end checking for breakage, regression, or drift. CRITICAL for path breakage; WARNING for regression risk. If absent, skip with \`no critical paths defined; skip Pass 5\`.
+**Pass 5 — Critical-Path Scan**. If \`orbit/lenses/critical-paths.md\` exists and is non-empty: for each named flow, walk the code end-to-end checking for breakage, regression, or drift. Path breakage: CRITICAL, per \`orbit-conventions\`' Severity ladder — with the walk that breaks as the reproduction; regression risk: WARNING, per the ladder — the ladder's own two definitions. If absent, skip with \`no critical paths defined; skip Pass 5\`.
 
-**Pass 6 — Drift / Residue**. Invoke \`/orbit:audit-drift\` as a library function (via the orbit-audit-drift skill). Fold its findings into the report under the Coherence dimension. Audit-drift handles its own scorecard and severity assignment; preserve those.
+**Pass 6 — Drift / Residue**. Invoke \`/orbit:audit-drift\` as a library function (via the orbit-audit-drift skill). Fold its findings into the report under the Coherence dimension. Audit-drift handles its own scorecard and severity assignment; preserve those (a statement site the Severity ladder names as a known limit — not this body's to re-grade).
 
 ##### \`--fast\` subset (system mode)
 
@@ -372,7 +376,7 @@ Mode-specific content:
 - **"What to read for THIS review"** lists files appropriate to the mode (proposal mode emphasizes the change directory artifacts; system mode adds \`git diff\`, codebase paths, lens files).
 - **"What to look for"** enumerates the 9 proposal-mode passes or the 7 system-mode passes (see below).
 
-The **"Output format"** block inside the prompt MUST appear verbatim — the section headers (\`## CRITICAL\` / \`## WARNING\` / \`## SUGGESTION\`) and the field labels (\`**File**:\`, \`**Description**:\`) are what \`/orbit:address-reviews --from-file\` parses. Deviating breaks ingestion.
+The **"Output format"** block inside the prompt MUST appear verbatim — the section headers (\`## CRITICAL\` / \`## WARNING\` / \`## SUGGESTION\` / \`## Blocks\`) and the field labels (\`**File**:\`, \`**Description**:\`, \`**Reproduction**:\`) are what \`/orbit:address-reviews --from-file\` and the report renderer parse. Deviating breaks ingestion. The \`## Severity\` paragraph before it is \`orbit-conventions\`' Severity ladder, mirrored byte-equal (a parity test holds it) — carry it as written.
 
 ### 8. Emit the chat invocation snippet
 
@@ -548,7 +552,7 @@ const REVIEW_EXTERNAL_PROMPT_TEMPLATE_REFERENCE = `# Reference: external-review 
 
 This is the canonical template for the file written to \`orbit/changes/<change-name>/.orbit-runs/external-prompt-<as>-<TS>.md\` by the external-handoff branch of \`/orbit:review --as <mode> --reviewer external\`.
 
-**The implementer may adjust phrasing for clarity but MUST preserve the named sections and the "Output format" block verbatim** — the section headers (\`## CRITICAL\` / \`## WARNING\` / \`## SUGGESTION\`) and the field labels (\`**File**:\`, \`**Description**:\`) are what \`/orbit:address-reviews --from-file\` parses. Deviating breaks ingestion.
+**The implementer may adjust phrasing for clarity but MUST preserve the named sections and the "Output format" block verbatim** — the section headers (\`## CRITICAL\` / \`## WARNING\` / \`## SUGGESTION\` / \`## Blocks\`) and the field labels (\`**File**:\`, \`**Description**:\`, \`**Reproduction**:\`) are what \`/orbit:address-reviews --from-file\` and the report renderer parse. Deviating breaks ingestion. The \`## Severity\` paragraph is a CHECKED MIRROR of \`orbit-conventions\`' Severity ladder (its fenced production), held byte-equal by a parity test — an external reviewer has none of our specs, so the copy must exist and must say what it is; never reword it here.
 
 Mode-specific content (the "What to read for THIS review" file list and the "What to look for" pass list) is substituted from \`references/mode-sections.md\`.
 
@@ -593,6 +597,10 @@ resolution, not review. Just flag what you observe.
 
 <mode-specific pass list — see references/mode-sections.md (9 passes for proposal mode, 7 for system mode)>
 
+## Severity
+
+Grade by \`orbit-conventions\`' Severity ladder. CRITICAL: a user path breaks or data is lost, AND the finding carries its reproduction — a case the reader can re-execute: the inputs, the rule or command, the expected result, the observed result (a command in system mode; a constructed case in proposal mode). WARNING: an implementation built to the artifact as written could diverge from what it intends. SUGGESTION: everything else. When unsure, grade lower. A condition that must stop apply regardless of consequence — an \`orbit validate\` failure, an unresolved \`@review:\` marker — is a BLOCK, not a severity: list it under \`## Blocks\`.
+
 ## Output format — write to:
 
 \`orbit/changes/<change-name>/.orbit-runs/external-<as>-<TS>.md\`
@@ -613,8 +621,9 @@ Use this exact markdown structure:
 ### <Finding title>
 **File**: <path>:<line>
 **Description**: <what's wrong + specific recommendation>
+**Reproduction**: <a command you ran, or a constructed case — inputs, rule, expected, observed>
 
-(For each additional CRITICAL finding, repeat the \`### <Title>\` + \`**File**:\` + \`**Description**:\` triple. Use \`None.\` as a single-word body if there are no findings at this severity.)
+(For each additional CRITICAL finding, repeat the \`### <Title>\` + \`**File**:\` + \`**Description**:\` + \`**Reproduction**:\` quadruple — a CRITICAL without a Reproduction is counted and marked unreproduced. Use \`None.\` as a single-word body if there are no findings at this severity.)
 
 ## WARNING
 
@@ -632,11 +641,14 @@ Use this exact markdown structure:
 
 (Same shape. Use \`None.\` if no findings.)
 
+## Blocks
+
+<Optional — conditions that must be addressed before apply but name no consequence (an \`orbit validate\` failure, an unresolved \`@review:\` marker): one \`- <what>\` line each. Not severities; never counted. Use \`None.\` if none.>
+
 ## Notes
 
 <Optional — rendered VERBATIM into the report's delimited Commentary slot: carry the pattern behind the findings, what you probed, and risk texture; do NOT state finding counts, gate verdicts, or next commands — those exist only in the report's engine-computed sections. Omit the whole \`## Notes\` section if you have nothing to add.>
 \`\`\`
-
 If your environment doesn't support file writes (chat-only interface), output
 the markdown directly and the user will save it.
 
@@ -645,8 +657,8 @@ the markdown directly and the user will save it.
 1. **Output the full findings markdown in chat** — in addition to writing the
    findings file, output the COMPLETE findings markdown in this chat. Same
    content as the file: every severity section (\`## CRITICAL\` / \`## WARNING\` /
-   \`## SUGGESTION\`), every \`### Title\` entry, every \`**File**:\` and
-   \`**Description**:\` field. Do NOT abbreviate or summarize — the chat output
+   \`## SUGGESTION\`), every \`### Title\` entry, every \`**File**:\`, \`**Description**:\` and
+   \`**Reproduction**:\` field, and every \`## Blocks\` item. Do NOT abbreviate or summarize — the chat output
    is the immediately-visible read for the user (they should be able to
    evaluate every finding without opening the file). The file remains the
    canonical record for \`--from-file\` parsing.
@@ -679,7 +691,7 @@ Loaded only when one of these flags is set (D5 body-economy pass; content moved 
 
 If \`--mark\` is set and the mode is \`proposal\`:
 
-For each finding with severity CRITICAL or WARNING (skip SUGGESTION by default):
+For each finding with severity CRITICAL or WARNING (skip SUGGESTION by default; a BLOCK is not a finding and gets no marker):
 - Locate the finding's \`file:line\`.
 - Insert a \`@review: <finding title — recommendation>\` marker at that line.
   - In markdown: append after existing content on the line, or as a sibling line if structure prevents inline insertion.
@@ -716,7 +728,7 @@ export function getReviewSkillTemplate(): SkillTemplate {
   return {
     name: 'orbit-review',
     description: "Editorial review of an OpenSpec change or an architecture doc: proposal mode (pre-apply, 9 passes over artifacts), system mode (post-apply, verify-change + 6 system-wide passes), or architecture mode (a doc under orbit/architecture/, 6 passes, no gate). Use when the user wants a second-pair-of-eyes pass before applying or archiving, or a graded pass over a program architecture doc.",
-    instructions: `Run an editorial review of an OpenSpec change or an architecture doc. Three modes: \`--as proposal\` reviews a change's pre-implementation artifacts (9 passes); \`--as system\` reviews the whole product state after apply (verify-change as Pass 0 + 6 system-wide passes); \`--as architecture\` reviews an architecture DOC under \`orbit/architecture/\` (6 passes, NO gate — D-arc Stage D2). All modes share the 3-dimension scorecard (Completeness / Correctness / Coherence), the severity ladder (CRITICAL / WARNING / SUGGESTION), pushback discipline, and \`.orbit-runs/\` persistence. They differ on which passes run, what the final-assessment references (the \`review-proposal\` / \`review-system\` gates for the change modes; NO gate in architecture mode), and a few mode-specific flags (\`--mark\` for proposal, \`--skip-verify\` for system). The command additionally carries the REVIEWER-CLASS axis (D-arc Stage D5): \`--reviewer in-context|fresh|external\` (default \`in-context\`; \`--fresh\` remains as shorthand for \`--reviewer fresh\` — supplying BOTH \`--fresh\` and an explicit \`--reviewer\` value is a clean usage error naming the shorthand equivalence). \`--reviewer external\` REQUIRES \`--as proposal|system\` (architecture mode supports in-context and fresh only; the combination is a clean usage error) and dispatches to the EXTERNAL-HANDOFF BRANCH: load \`references/external-handoff.md\` and follow it — the packaging flow (prompt file + T0 emit + chat snippet); no review passes run in that invocation, and the internal-class branches never load that reference.
+    instructions: `Run an editorial review of an OpenSpec change or an architecture doc. Three modes: \`--as proposal\` reviews a change's pre-implementation artifacts (9 passes); \`--as system\` reviews the whole product state after apply (verify-change as Pass 0 + 6 system-wide passes); \`--as architecture\` reviews an architecture DOC under \`orbit/architecture/\` (6 passes, NO gate — D-arc Stage D2). All modes share the 3-dimension scorecard (Completeness / Correctness / Coherence), the severity ladder (CRITICAL / WARNING / SUGGESTION — defined ONCE, by consequence, in \`orbit-conventions\`' Severity ladder; every pass rule NAMES it and defines nothing of its own), pushback discipline, and \`.orbit-runs/\` persistence. They differ on which passes run, what the final-assessment references (the \`review-proposal\` / \`review-system\` gates for the change modes; NO gate in architecture mode), and a few mode-specific flags (\`--mark\` for proposal, \`--skip-verify\` for system). The command additionally carries the REVIEWER-CLASS axis (D-arc Stage D5): \`--reviewer in-context|fresh|external\` (default \`in-context\`; \`--fresh\` remains as shorthand for \`--reviewer fresh\` — supplying BOTH \`--fresh\` and an explicit \`--reviewer\` value is a clean usage error naming the shorthand equivalence). \`--reviewer external\` REQUIRES \`--as proposal|system\` (architecture mode supports in-context and fresh only; the combination is a clean usage error) and dispatches to the EXTERNAL-HANDOFF BRANCH: load \`references/external-handoff.md\` and follow it — the packaging flow (prompt file + T0 emit + chat snippet); no review passes run in that invocation, and the internal-class branches never load that reference.
 
 **Generates findings; does not resolve them.** Resolution flows through \`/orbit:address-reviews\` (inline \`@review:\` markers, OR \`--from-file\` ingesting external-review markdown OR internal review JSON OR audit-drift JSON) or by the user replying directly to the report.
 
@@ -750,7 +762,7 @@ Resolve the MODE first — it decides what the positional even IS. Mode comes fr
 | \`--fast\` / \`--full\` / \`--thorough\` | \`--full\` | Depth. Mutually exclusive. \`--thorough\` is partially specified; fall back to \`--full\` if unclear. |
 | \`--parallel\` | off | Spawn subagents for heavy passes. Proposal: parallelize Passes 2, 4, 6. System: parallelize Passes 2, 3, 4, 5. |
 | \`--focus <lens>\` | none | Emphasize specific passes (additive — does not skip others). See \`references/flags-detail.md\`. |
-| \`--strict\` | off | Fail-fast on first CRITICAL. Useful for CI-like runs. |
+| \`--strict\` | off | Fail-fast on the first CRITICAL or the first BLOCK — stop on what must be addressed. Useful for CI-like runs. |
 | \`--reviewer <class>\` | \`in-context\` | Reviewer class: \`in-context\` / \`fresh\` (clean-context subagent) / \`external\` (the handoff branch — \`references/external-handoff.md\`). |
 | \`--fresh\` | off | Shorthand for \`--reviewer fresh\`. Never combined with an explicit \`--reviewer\` value (clean usage error). |
 | \`--mark\` | off, proposal only | After report, write \`@review: <text>\` markers at each finding's file:line. See \`references/flags-detail.md\`. |
@@ -790,7 +802,7 @@ Load \`references/passes-<mode>.md\` for the RESOLVED mode — proposal (9 passe
 
 1. Apply the read-before-reference discipline to every cited construct.
 2. Apply the pushback discipline against current state.
-3. Emit findings tagged CRITICAL / WARNING / SUGGESTION with file:line + actionable recommendation.
+3. Emit findings tagged CRITICAL / WARNING / SUGGESTION with file:line + actionable recommendation, graded by \`orbit-conventions\`' Severity ladder as each pass rule names it: a CRITICAL carries its \`reproduction\` (the surface refuses one without it); a lifecycle BLOCK (Pass 1's validate failure, Pass 8's unresolved marker) goes to the payload's \`blocks\`, never to a finding.
 
 ### Disjunctive recommendations: emit structured \`recommendation_options\`
 
@@ -813,7 +825,7 @@ run.\` / \`First architecture review for this doc.\`
 
 ### 9. Persist via the emit surface (persist-first)
 
-Compose the NARRATIVE payload only — \`mode\`, \`reviewer_class\` (\`"fresh"\` under \`--reviewer fresh\`, else \`"in-context"\`), \`depth\`, \`flags\`, \`scorecard\`, \`findings\` (each with its owning \`dimension\`, \`title\`, \`file\`, \`line\`, \`recommendation\`, plus \`recommendation_options\` when disjunctive), \`stale_suppressed\`, \`commentary\`, \`passes_run\`/\`passes_skipped\`, and the required nullable \`model\` — and invoke:
+Compose the NARRATIVE payload only — \`mode\`, \`reviewer_class\` (\`"fresh"\` under \`--reviewer fresh\`, else \`"in-context"\`), \`depth\`, \`flags\`, \`scorecard\`, \`findings\` (each with its owning \`dimension\`, \`title\`, \`file\`, \`line\`, \`recommendation\`, \`reproduction\` — a string, multi-line allowed, never a single-line slot; REQUIRED non-empty when \`severity\` is CRITICAL per \`orbit-conventions\`' Severity ladder and refused by the surface otherwise, optional below — plus \`recommendation_options\` when disjunctive), \`blocks\` (optional array of single-line strings — Pass 1's validate failure and Pass 8's unresolved markers compose into it, never into \`findings[]\`; absent when none), \`stale_suppressed\`, \`commentary\`, \`passes_run\`/\`passes_skipped\`, and the required nullable \`model\` — and invoke:
 
 \`\`\`bash
 orbit emit review --change <name> --payload <payload.json> --render   # proposal/system
@@ -856,7 +868,7 @@ ends at the readout.
 
 ### 11. Rarely-used flags: \`--mark\`, \`--parallel\`, \`--focus\`
 
-Full procedures live in \`references/flags-detail.md\` — load it ONLY when one of these flags is set. Gist: \`--mark\` (proposal mode only) writes \`@review:\` markers at CRITICAL/WARNING finding sites then sweeps for residue per change completeness (system mode: accepted but ignored with a note); \`--parallel\` spawns subagents for the heavy passes and merges their findings (subagents inherit the four disciplines); \`--focus <lens>\` applies elevated rigor to the lens's pass set without skipping any pass.
+Full procedures live in \`references/flags-detail.md\` — load it ONLY when one of these flags is set. Gist: \`--mark\` (proposal mode only) writes \`@review:\` markers at CRITICAL/WARNING finding sites — and no marker for a block, which is already a condition the artifact carries (a marker would be a second record of it) — then sweeps for residue per change completeness (system mode: accepted but ignored with a note); \`--parallel\` spawns subagents for the heavy passes and merges their findings (subagents inherit the four disciplines); \`--focus <lens>\` applies elevated rigor to the lens's pass set without skipping any pass.
 
 ## Special cases
 
@@ -870,7 +882,7 @@ Full procedures live in \`references/flags-detail.md\` — load it ONLY when one
 
 ### Pushback bias
 
-When uncertain, prefer the lower severity. SUGGESTION beats WARNING beats CRITICAL. Pushback against the bias to over-flag — the goal is signal, not volume.
+When uncertain, prefer the lower severity — \`orbit-conventions\`' Severity ladder's false-positive bias (SUGGESTION over WARNING over CRITICAL), and it runs in ONE direction only: a condition that must stop apply regardless is a BLOCK, never an ambiguous CRITICAL. Pushback against the bias to over-flag — the goal is signal, not volume.
 
 ### Read-before-reference enforcement
 

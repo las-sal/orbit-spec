@@ -1487,3 +1487,123 @@ describe('rc04a judgement record', () => {
     ).toThrow(/unknown payload key 'judgements' for 'explore'/);
   });
 });
+
+// ---------------------------------------------------------------------------
+// rc02b-severity-ladder: the write gate's finding-level checks (tasks 1.1, 1.7)
+// ---------------------------------------------------------------------------
+
+describe('rc02b: an internal CRITICAL carries its reproduction at the write gate', () => {
+  const critical = (reproduction?: unknown) => ({
+    severity: 'CRITICAL',
+    dimension: 'correctness',
+    title: 'Guard bypassed',
+    file: 'src/x.ts',
+    line: 3,
+    recommendation: 'fix',
+    ...(reproduction === undefined ? {} : { reproduction }),
+  });
+  const criticalCard = {
+    completeness: { critical: 0, warning: 0, suggestion: 0 },
+    correctness: { critical: 1, warning: 0, suggestion: 0 },
+    coherence: { critical: 0, warning: 0, suggestion: 0 },
+  };
+
+  it('a CRITICAL with no reproduction is refused naming the index and the title; no file is written', () => {
+    makeChange('foo');
+    expect(() =>
+      composeAndWriteEmit('review', { change: 'foo' }, validReviewPayload({ scorecard: criticalCard, findings: [critical()] }), { projectRoot: root })
+    ).toThrow(/write gate: findings\[0\] 'Guard bypassed' is CRITICAL and carries no reproduction/);
+    expect(listRuns('orbit/changes/foo/.orbit-runs')).toEqual([]);
+  });
+
+  it('an empty reproduction and a non-string reproduction on a CRITICAL are refused the same way', () => {
+    makeChange('foo');
+    for (const bad of ['', '   \n', 42, null, ['x']]) {
+      expect(() =>
+        composeAndWriteEmit('review', { change: 'foo' }, validReviewPayload({ scorecard: criticalCard, findings: [critical(bad)] }), { projectRoot: root })
+      ).toThrow(/findings\[0\] 'Guard bypassed' is CRITICAL and carries no reproduction/);
+    }
+    expect(listRuns('orbit/changes/foo/.orbit-runs')).toEqual([]);
+  });
+
+  it('a multi-line reproduction on a CRITICAL is accepted and written verbatim (not a single-line slot)', () => {
+    makeChange('foo');
+    const body = 'inputs: a trail with one external pass\nrule: clause (b)\nexpected: unpassed\nobserved: passed';
+    const r = composeAndWriteEmit('review', { change: 'foo' }, validReviewPayload({ scorecard: criticalCard, findings: [critical(body)] }), { projectRoot: root });
+    expect((r.emit as any).findings[0].reproduction).toBe(body);
+    expect(listRuns('orbit/changes/foo/.orbit-runs')).toHaveLength(1);
+  });
+
+  it('WARNING and SUGGESTION need no reproduction; a present string passes through', () => {
+    makeChange('foo');
+    const ok = composeAndWriteEmit('review', { change: 'foo' }, validReviewPayload(), { projectRoot: root });
+    expect((ok.emit as any).findings[0].reproduction).toBeUndefined();
+    const withRepro = validReviewPayload();
+    (withRepro.findings[0] as any).reproduction = 'constructed case';
+    const r2 = composeAndWriteEmit('review', { change: 'foo' }, withRepro, { projectRoot: root });
+    expect((r2.emit as any).findings[0].reproduction).toBe('constructed case');
+  });
+
+  it('a mistyped reproduction on a WARNING is refused naming findings[<i>].reproduction', () => {
+    makeChange('foo');
+    const p = validReviewPayload();
+    (p.findings[0] as any).reproduction = 42;
+    expect(() => composeAndWriteEmit('review', { change: 'foo' }, p, { projectRoot: root })).toThrow(
+      /findings\[0\]\.reproduction/
+    );
+    expect(listRuns('orbit/changes/foo/.orbit-runs')).toEqual([]);
+  });
+
+  it('architecture mode (--doc) is checked identically — the check never reads mode', () => {
+    write('orbit/architecture/prog.md', '# prog\n');
+    const handoff = { boot_sequence: ['CLAUDE.md'], next_command: '/orbit:architect prog', model_hint: null, seam: 'post-review' };
+    expect(() =>
+      composeAndWriteEmit(
+        'review',
+        { doc: 'prog' },
+        validReviewPayload({ mode: 'architecture', handoff, scorecard: criticalCard, findings: [critical()] }),
+        { projectRoot: root }
+      )
+    ).toThrow(/findings\[0\] 'Guard bypassed' is CRITICAL and carries no reproduction/);
+    expect(listRuns('orbit/architecture/.orbit-runs')).toEqual([]);
+    const ok = composeAndWriteEmit(
+      'review',
+      { doc: 'prog' },
+      validReviewPayload({ mode: 'architecture', handoff, scorecard: criticalCard, findings: [critical('the case')] }),
+      { projectRoot: root }
+    );
+    expect(ok.emit.doc).toBe('prog');
+  });
+});
+
+describe('rc02b: the review payload carries blocks', () => {
+  it('blocks: [single-line strings] is accepted and written verbatim; the scorecard rollup is unchanged by it', () => {
+    makeChange('foo');
+    const blocks = ['Pass 1: orbit validate fails — specs/x/spec.md:12 scenario has 3 hashtags', 'Pass 8: unresolved @review: marker at design.md:40'];
+    const r = composeAndWriteEmit('review', { change: 'foo' }, validReviewPayload({ blocks }), { projectRoot: root });
+    expect((r.emit as any).blocks).toEqual(blocks);
+    const written = JSON.parse(fs.readFileSync(r.path, 'utf-8'));
+    expect(written.blocks).toEqual(blocks);
+    expect(written.scorecard).toEqual(validReviewPayload().scorecard);
+    expect(written.final_assessment).toBe('0 critical, 1 warning, 0 suggestion.');
+  });
+
+  it('absent blocks is accepted and the key is not composed', () => {
+    makeChange('foo');
+    const r = composeAndWriteEmit('review', { change: 'foo' }, validReviewPayload(), { projectRoot: root });
+    expect('blocks' in r.emit).toBe(false);
+  });
+
+  it('a non-array is refused naming blocks; a non-string or multi-line entry is refused naming blocks[<i>]; nothing is written', () => {
+    makeChange('foo');
+    expect(() => composeAndWriteEmit('review', { change: 'foo' }, validReviewPayload({ blocks: 'validate failed' }), { projectRoot: root })).toThrow(/'blocks' must be an array/);
+    expect(() => composeAndWriteEmit('review', { change: 'foo' }, validReviewPayload({ blocks: ['ok', 42] }), { projectRoot: root })).toThrow(/blocks\[1\]/);
+    expect(() => composeAndWriteEmit('review', { change: 'foo' }, validReviewPayload({ blocks: ['line one\nline two'] }), { projectRoot: root })).toThrow(/blocks\[0\]/);
+    expect(listRuns('orbit/changes/foo/.orbit-runs')).toEqual([]);
+  });
+
+  it('blocks is refused on a command whose table does not name it (the key check is per command)', () => {
+    makeChange('foo');
+    expect(() => composeAndWriteEmit('verify', { change: 'foo' }, { final_assessment: 'ok', model: null, blocks: ['x'] }, { projectRoot: root })).toThrow(/unknown payload key 'blocks'/);
+  });
+});

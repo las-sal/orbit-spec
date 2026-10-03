@@ -154,7 +154,10 @@ describe('schema-table parity: every AI-supplied field a schema reference docume
       const owned = new Set([...ENGINE_OWNED, ...(ENGINE_OWNED_PER_COMMAND[command] ?? [])]);
       // Finding-level and nested keys documented inside a block's sub-objects are legitimate
       // note subjects; the check is on TOP-LEVEL emit keys the notes claim.
-      const nested = new Set(['recommendation_options', 'severity', 'dimension', 'title', 'file', 'line', 'recommendation', 'evidence', 'ratified_via', 'resolution', 'recommendation_fork', 'ripple_cascade', 'outcome', 'marker_source', 'classification', 'action', 'by_pass', 'by_category', 'reviewer_class', 'walk_mode_shifted_at_finding']);
+      // rc02b: `reproduction` is a finding-entry field (review), `reproduction_rerun` a resolution-entry
+      // field (address-reviews) — nested subjects both; `blocks` is TOP-LEVEL on the review payload and
+      // is therefore NOT listed here: its note must be matched by a key the schema block carries.
+      const nested = new Set(['recommendation_options', 'severity', 'dimension', 'title', 'file', 'line', 'recommendation', 'reproduction', 'reproduction_rerun', 'evidence', 'ratified_via', 'resolution', 'recommendation_fork', 'ripple_cascade', 'outcome', 'marker_source', 'classification', 'action', 'by_pass', 'by_category', 'reviewer_class', 'walk_mode_shifted_at_finding']);
       const orphaned = [...fieldNoteKeys(ref.content)].filter(
         (k) => !keys.has(k) && !owned.has(k) && !nested.has(k) && !(KNOWN_DIVERGENCE[command] ?? []).includes(k)
       );
@@ -208,6 +211,36 @@ describe('schema-table parity: every AI-supplied field a schema reference docume
     // The audit-drift set is the ratified rc07 follow-up (option B); nothing else may diverge.
     expect(Object.keys(KNOWN_DIVERGENCE)).toEqual(['audit-drift']);
     expect(KNOWN_DIVERGENCE['audit-drift'].length).toBe(6);
+  });
+
+  describe('rc02b-severity-ladder: the three new fields are documented AND accepted (task 1.5)', () => {
+    it("review: the schema block carries top-level `blocks`, the table accepts it, and the field notes name `blocks` and `reproduction`", () => {
+      const ref = (getReviewSkillTemplate().references ?? []).find((r) => r.name === 'run-summary-schema.md')!;
+      const { keys } = documentedKeys(ref.content);
+      expect([...keys]).toContain('blocks');
+      expect(payloadFieldsFor('review')).toContain('blocks');
+      const notes = fieldNoteKeys(ref.content);
+      expect(notes.has('blocks')).toBe(true);
+      expect(notes.has('reproduction')).toBe(true);
+      // The finding-entry documentation names the field inside the block, not only in prose.
+      expect(ref.content).toMatch(/"reproduction":/);
+    });
+
+    it('address-reviews: the resolution entry documents `reproduction_rerun` in the block and the field notes', () => {
+      const ref = (getAddressReviewsSkillTemplate().references ?? []).find((r) => r.name === 'run-summary-schema.md')!;
+      expect(ref.content).toMatch(/"reproduction_rerun":/);
+      expect(fieldNoteKeys(ref.content).has('reproduction_rerun')).toBe(true);
+      // The closed value set is stated where the field is documented.
+      for (const v of ['reproduced', 'not-reproduced', 'cannot-run', 'unreproduced']) expect(ref.content).toContain(v);
+    });
+
+    it('the nested allowlist names exactly the two entry-level subjects (so a top-level `blocks` note cannot hide behind it)', () => {
+      const ref = (getReviewSkillTemplate().references ?? []).find((r) => r.name === 'run-summary-schema.md')!;
+      const { keys } = documentedKeys(ref.content);
+      // If `blocks` were ever dropped from the block while its note stayed, the orphan check above
+      // must catch it — which it only can if `blocks` is NOT in the nested set.
+      expect(keys.has('blocks')).toBe(true);
+    });
   });
 
   it('negative: a documented-but-missing field fails naming the field', () => {

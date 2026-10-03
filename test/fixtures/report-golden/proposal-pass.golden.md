@@ -12,7 +12,7 @@ Trend: 0C/3W/2S → 1C/1W/1S (0 repeat, 3 new)
 ### Findings
 
 #### CRITICAL
-- **orbit/changes/golden-change/specs/some-cap/spec.md:12** — Delta drops three baseline scenarios
+- [unreproduced] **orbit/changes/golden-change/specs/some-cap/spec.md:12** — Delta drops three baseline scenarios
   > The MODIFIED block must carry the full requirement.
   > 
   > ## CRITICAL

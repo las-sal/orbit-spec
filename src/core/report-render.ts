@@ -69,6 +69,12 @@ export interface NormalizedFinding {
   /** Verbatim recommendation (internal field / external Description body). */
   recommendation: string;
   recommendationOptions?: { label: string; body: string }[];
+  /**
+   * rc02b: the finding's REPRODUCTION — internal `reproduction` field / external
+   * `**Reproduction**:` body — verbatim, multi-line allowed. Absent on a CRITICAL
+   * renders the `[unreproduced]` mark; the severity itself is NEVER re-graded here.
+   */
+  reproduction?: string;
 }
 
 export interface NormalizedReviewPass {
@@ -92,6 +98,11 @@ export interface NormalizedReviewPass {
   suppressed: { title: string; evidence: string }[];
   /** Internal `commentary` field / external `## Notes` body. Absent = section omitted. */
   commentary?: string;
+  /**
+   * rc02b: lifecycle BLOCKS — internal `blocks` array / external `## Blocks` items —
+   * rendered above the findings, in no scorecard cell, never a gate input.
+   */
+  blocks?: string[];
 }
 
 /** Render-time computed context — never stored, never read from the record. */
@@ -257,6 +268,12 @@ export function normalizeInternalPass(filePath: string, json: unknown): Normaliz
     if (typeof f.recommendation !== 'string') {
       fail(`missing or mistyped field '${at}.recommendation'`, filePath);
     }
+    // rc02b: a PRESENT reproduction must be a string (the write gate's read-side twin);
+    // its content requirement — non-empty on CRITICAL — is the gate's, enforced at write
+    // time only, so prior-generation emits without the field still render (marked).
+    if (f.reproduction !== undefined && typeof f.reproduction !== 'string') {
+      fail(`missing or mistyped field '${at}.reproduction'`, filePath);
+    }
     let recommendationOptions: { label: string; body: string }[] | undefined;
     if (f.recommendation_options !== undefined) {
       if (!Array.isArray(f.recommendation_options)) {
@@ -280,12 +297,24 @@ export function normalizeInternalPass(filePath: string, json: unknown): Normaliz
       matchFile: stripLineSuffix(String(f.file)),
       recommendation: f.recommendation as string,
       ...(recommendationOptions ? { recommendationOptions } : {}),
+      ...(typeof f.reproduction === 'string' ? { reproduction: f.reproduction } : {}),
     };
   });
 
   // Optional absent-safe fields — validated for shape only when present.
   if (j.commentary !== undefined && typeof j.commentary !== 'string') {
     fail(`mistyped field 'commentary'`, filePath);
+  }
+  // rc02b: `blocks` — an array of single-line strings, each a `- ` line at column 0 in the
+  // report's Blocks section, so the single-line slot rule applies (a newline could forge grammar).
+  let blocks: string[] | undefined;
+  if (j.blocks !== undefined) {
+    if (!Array.isArray(j.blocks)) fail(`mistyped field 'blocks'`, filePath);
+    blocks = j.blocks.map((b, i) => {
+      if (typeof b !== 'string') fail(`missing or mistyped field 'blocks[${i}]'`, filePath);
+      requireSingleLine(b as string, `blocks[${i}]`, filePath);
+      return b as string;
+    });
   }
   const suppressed: { title: string; evidence: string }[] = [];
   if (j.stale_suppressed !== undefined) {
@@ -357,6 +386,7 @@ export function normalizeInternalPass(filePath: string, json: unknown): Normaliz
     findings,
     suppressed,
     ...(typeof j.commentary === 'string' ? { commentary: j.commentary } : {}),
+    ...(blocks !== undefined ? { blocks } : {}),
   };
 }
 
@@ -401,6 +431,15 @@ function trimBlankEdges(lines: string[]): string[] {
  * `**Description**:` body (the verbatim recommendation). `## Notes` (when
  * present) supplies the Commentary slot. A shape the parser cannot confidently
  * parse is a REJECTION naming the field and file — non-renderable, no partial.
+ *
+ * rc02b additions, per `orbit-conventions`' External-review findings markdown
+ * format: `**Reproduction**:` is the ONE field label recognised AFTER a finding's
+ * Description body opens — it ENDS that body and opens the reproduction body,
+ * which runs to the next `###`/`##` heading; every other field-shaped line inside
+ * a Description or Reproduction body is content (the field-line rule, which the
+ * gate's trail reader also follows so the finding key never diverges). A
+ * `## Blocks` section's `- ` items are COLLECTED as the pass's blocks — never
+ * findings, never counted; `None.` (or any non-item line) is no block.
  */
 export function normalizeExternalPass(filePath: string, content: string): NormalizedReviewPass {
   const name = path.basename(filePath);
@@ -414,6 +453,8 @@ export function normalizeExternalPass(filePath: string, content: string): Normal
     fileRef?: string;
     /** null until the `**Description**:` line opens the body. */
     descLines: string[] | null;
+    /** null until a `**Reproduction**:` line (after Description) opens the body. */
+    reproLines: string[] | null;
   }
 
   const lines = content.split(/\r?\n/);
@@ -426,10 +467,11 @@ export function normalizeExternalPass(filePath: string, content: string): Normal
   // header-shaped lines (`# External Review`, `**Reviewer**:`) inside an open
   // body are verbatim content, never structure or duplicate metadata.
   let headerRegion = true;
-  let section: Severity | 'notes' | 'other' | null = null;
+  let section: Severity | 'notes' | 'blocks' | 'other' | null = null;
   let current: DraftFinding | null = null;
   const drafts: DraftFinding[] = [];
   let notesLines: string[] | null = null;
+  const blockItems: string[] = [];
 
   const closeCurrent = (): void => {
     if (current) drafts.push(current);
@@ -460,6 +502,11 @@ export function normalizeExternalPass(filePath: string, content: string): Normal
         section = 'notes';
         notesLines = [];
         structural = true;
+      } else if (/^##\s+Blocks\s*$/i.test(line)) {
+        headerRegion = false;
+        closeCurrent();
+        section = 'blocks';
+        structural = true;
       } else if (/^##\s+/.test(line)) {
         headerRegion = false;
         closeCurrent();
@@ -475,11 +522,17 @@ export function normalizeExternalPass(filePath: string, content: string): Normal
       } else if (headerRegion && /^\*\*Date\*\*:/.test(line)) {
         dateValues.push(line.replace(/^\*\*Date\*\*:/, '').trim());
         structural = true;
+      } else if (section === 'blocks') {
+        // A Blocks item is a `- ` line; anything else here — a heading-shaped line, a
+        // field-shaped line, `None.` — is content of no finding and no block.
+        const item = line.match(/^-\s+(.*\S)\s*$/);
+        if (item) blockItems.push(item[1]);
+        structural = true;
       } else if (section && section !== 'notes' && section !== 'other') {
         const title = line.match(/^###\s+(.*\S)\s*$/);
         if (title) {
           closeCurrent();
-          current = { severity: section, title: title[1].trim(), descLines: null };
+          current = { severity: section, title: title[1].trim(), descLines: null, reproLines: null };
           structural = true;
         } else if (current && current.descLines === null) {
           const fileField = line.match(/^\*\*File\*\*:\s*(.*\S)\s*$/i);
@@ -491,12 +544,20 @@ export function normalizeExternalPass(filePath: string, content: string): Normal
             current.descLines = descField[1] === '' ? [] : [descField[1]];
             structural = true;
           }
+        } else if (current && current.reproLines === null) {
+          // The ONE field label recognised after Description opens (the field-line rule).
+          const reproField = line.match(/^\*\*Reproduction\*\*:\s?(.*)$/i);
+          if (reproField) {
+            current.reproLines = reproField[1] === '' ? [] : [reproField[1]];
+            structural = true;
+          }
         }
       }
     }
 
     if (!structural) {
-      if (current && current.descLines !== null) current.descLines.push(line);
+      if (current && current.reproLines !== null) current.reproLines.push(line);
+      else if (current && current.descLines !== null) current.descLines.push(line);
       else if (section === 'notes' && notesLines) notesLines.push(line);
     }
   }
@@ -538,12 +599,15 @@ export function normalizeExternalPass(filePath: string, content: string): Normal
     if (recommendation === '') {
       reject(`finding '${d.title}' has a blank '**Description**:' body`, filePath);
     }
+    // A present-but-blank Reproduction body is no reproduction: the mark is by absence.
+    const reproduction = d.reproLines ? trimBlankEdges(d.reproLines).join('\n') : '';
     return {
       severity: d.severity,
       title: d.title,
       fileRef: d.fileRef!,
       matchFile: stripLineSuffix(d.fileRef!),
       recommendation,
+      ...(reproduction !== '' ? { reproduction } : {}),
     };
   });
 
@@ -558,6 +622,7 @@ export function normalizeExternalPass(filePath: string, content: string): Normal
     findings,
     suppressed: [],
     ...(notesBody !== '' ? { commentary: notesBody } : {}),
+    ...(blockItems.length > 0 ? { blocks: blockItems } : {}),
   };
 }
 
@@ -581,8 +646,8 @@ function renderScorecard(sc: Scorecard): string {
 /**
  * Renders a normalized review pass with its computed context into the report.
  * PURE and byte-deterministic; the fixed section order is: header → trend →
- * scorecard (internal only) → findings by severity → suppressed → the ONE
- * delimited Commentary slot → the engine tail LAST. Empty sections are omitted
+ * scorecard (internal only) → Blocks (when any) → findings by severity →
+ * suppressed → the ONE delimited Commentary slot → the engine tail LAST. Empty sections are omitted
  * whole. Verbatim multi-line bodies render under BLOCKQUOTE CONTAINMENT so no
  * source line sits at column 0 (forged headings/rules/fences impossible).
  */
@@ -619,6 +684,13 @@ export function renderReviewReport(pass: NormalizedReviewPass, ctx: ReportContex
     blocks.push(renderScorecard(pass.scorecard));
   }
 
+  // rc02b: lifecycle BLOCKS render ABOVE the findings, one `- ` line each (single-line
+  // slots, checked at normalization), for both genres; omitted whole when none. They feed
+  // no scorecard cell and no gate input — `orbit-report-rendering`'s Blocks slot.
+  if (pass.blocks && pass.blocks.length > 0) {
+    blocks.push(['### Blocks', ...pass.blocks.map(b => `- ${b}`)].join('\n'));
+  }
+
   if (pass.findings.length > 0) {
     blocks.push('### Findings');
     for (const sev of SEVERITIES) {
@@ -626,10 +698,22 @@ export function renderReviewReport(pass: NormalizedReviewPass, ctx: ReportContex
       if (group.length === 0) continue; // empty severity subsection omitted
       const lines: string[] = [`#### ${sev}`];
       for (const f of group) {
-        lines.push(`- **${f.fileRef}** — ${f.title}`);
+        // rc02b: a CRITICAL carrying no reproduction is MARKED — a PREFIX before the bold
+        // file ref, OUTSIDE the title token, so a copied line still yields the gate's exact
+        // title (Q-crc-17). By absence, never by date: on internal passes absence is exactly
+        // the prior-generation set (the write gate refuses new ones); on external passes the
+        // file could not be refused. The severity is the author's and is never re-graded.
+        const mark = f.severity === 'CRITICAL' && f.reproduction === undefined ? '[unreproduced] ' : '';
+        lines.push(`- ${mark}**${f.fileRef}** — ${f.title}`);
         // Blockquote containment at two-space indent: every source line
         // prefixed verbatim — none can forge report grammar at column 0.
         for (const l of f.recommendation.split('\n')) lines.push(`  > ${l}`);
+        // rc02b: the reproduction, labelled, directly under the recommendation and under the
+        // same containment — before the options, which are labels for choices, not evidence.
+        if (f.reproduction !== undefined) {
+          lines.push('  > Reproduction:');
+          for (const l of f.reproduction.split('\n')) lines.push(`  > ${l}`);
+        }
         for (const o of f.recommendationOptions ?? []) {
           // Option bodies are labels for choices, not documents: single-line,
           // embedded newlines collapsed to one space.

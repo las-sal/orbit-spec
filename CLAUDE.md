@@ -421,6 +421,36 @@ through one anchor, and rc16's delta was the first to hold the Mechanism block w
 A COMPUTED PASSED gate — the sixth rc-stage through one, the fifth through the pair. The readiness record accepts
 five residuals, headlined by rc07's distinction. **2376 tests green.**
 
+`rc02b-severity-ladder` is APPLIED (2026-10-03; in the system-review cadence, not yet archived): **the
+ladder is defined by CONSEQUENCE, once, and a CRITICAL carries its reproduction.** `orbit-conventions`'
+Severity ladder now says what each name costs — CRITICAL: a user path breaks or data is lost AND the finding
+carries its REPRODUCTION (a case the reader can re-execute: inputs, rule or command, expected, observed — a
+command in system mode, a constructed case in proposal mode); WARNING: an implementation built to the artifact
+as written could diverge from what it intends; SUGGESTION: everything else — and every other surface NAMES it
+and points (R-crc-14): the review body's fourteen per-pass sites, its bias line and five `orbit-review`
+scenarios became pointers with their reading (P2's missing task and P7's delta vocabulary went to WARNING;
+P4's contradiction and S3's removal are CRITICAL only with the reproduction). A lifecycle BLOCK (a validate
+failure, an unresolved `@review:` marker) is NOT a severity: it rides an optional `blocks` array on the review
+payload / a `## Blocks` section on an external file, renders as `### Blocks` above the findings for both genres,
+lists first at triage, and P8's "when ambiguous, classify as CRITICAL" is gone — the false-positive bias runs one
+way. KNOWN LIMIT, stated in the ladder: nothing STOPS on a block mechanically (apply carries no precondition;
+rc10's territory). The evidence tax is ENFORCED where evidence is produced — `orbit emit review` refuses a
+CRITICAL without a non-empty `reproduction` in every mode, and a present non-string one at any severity, the
+first gate check on a finding's narrative field — and SURFACED where it cannot be: the external prompt carries
+the ladder as ONE paragraph under `## Severity`, a CHECKED MIRROR of the conventions fence held byte-equal by
+`test/core/severity-ladder-parity.test.ts`, asks for a `**Reproduction**:` body after Description, and the
+renderer marks a CRITICAL without one `[unreproduced]` as a PREFIX outside the title token, never re-grading.
+Both external readers now follow the format's FIELD-LINE RULE (a `**File**:` line inside a body is content —
+the trail reader had taken the LAST one, so a path quoted in a reproduction re-filed the finding at the gate),
+pinned through both by `test/core/trail-rc02b.test.ts`. The walk reads the reproduction FIRST (Step 3a step (0),
+recorded as `reproduction_rerun` with four closed values). SIX capabilities DECLARED against R-crc-1's ceiling of
+three (the charter named three, the exploration five, propose found the sixth — `orbit-review-external` owns the
+prompt's output format), 16 blocks (13 MODIFIED, 3 ADDED), 25 tasks; no migration — 99 prior-generation
+CRITICALs stay valid and render marked by absence, never by date. The proposal cycle: fresh → external (GPT-6
+Codex, 2C) → in-context confirm (0C/5W/4S), all walked to zero. Apply shipped 24 of 25 tasks (5.4 is the
+user-validation handoff: the first real external return under the new prompt). **2423 tests green** (2376 → 2423;
+two goldens moved by one `[unreproduced]` prefix each).
+
 Read that doc before any rc-stage work; the D-arc section below is the historical
 record of how the engine got here.
 

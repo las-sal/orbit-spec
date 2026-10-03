@@ -28,6 +28,7 @@ This format MUST match what \`/orbit:review --as <mode> --reviewer external\` in
 ### <Finding title>
 **File**: <path>:<line>
 **Description**: <what's wrong + specific recommendation>
+**Reproduction**: <the case a reader can re-execute — inputs, rule or command, expected, observed; a CRITICAL without one is counted and marked unreproduced, never re-graded>
 
 ## WARNING
 
@@ -41,10 +42,16 @@ This format MUST match what \`/orbit:review --as <mode> --reviewer external\` in
 **File**: <path>:<line>
 **Description**: <text>
 
+## Blocks
+
+<Optional — conditions that must be addressed before apply but are not severities (an \`orbit validate\` failure, an unresolved \`@review:\` marker), one \`- <what>\` line each; \`None.\` if none. Listed FIRST at triage and never walked as findings.>
+
 ## Notes
 
 <Optional — the Notes body renders VERBATIM into the report's Commentary slot; it carries pattern/probing/risk texture and never finding counts, gate verdicts, or next commands. The prompt template in the \`orbit-review\` skill (\`references/prompt-template.md\`) is this format's source of truth.>
 \`\`\`
+
+The \`**Reproduction**:\` body follows the \`**Description**:\` body and runs to the next \`###\` or \`##\` heading; a \`**Reproduction**:\` line placed BEFORE \`**Description**:\` is not recognised. Inside any body, a field-shaped line (\`**File**: other.md:9\`) is CONTENT — the finding's file is the \`**File**:\` line read before its Description opened (per \`orbit-conventions\`' External-review findings markdown format, the field-line rule).
 
 ## Parser contract
 
@@ -54,9 +61,12 @@ For each finding under each severity section, construct a virtual marker with:
 |---|---|
 | \`severity\` | The \`## <SEVERITY>\` section header (CRITICAL / WARNING / SUGGESTION) |
 | \`title\` | The \`### <Finding title>\` line |
-| \`file:line\` | The \`**File**: <path>:<line>\` field |
-| \`description\` | The \`**Description**: <text>\` field |
+| \`file:line\` | The \`**File**: <path>:<line>\` field (read BEFORE the Description body opens — a path quoted inside a body never re-files the finding) |
+| \`description\` | The \`**Description**: <text>\` body (ended by \`**Reproduction**:\`, the next \`###\`, or the next \`##\`) |
+| \`reproduction\` | The \`**Reproduction**: <text>\` body when present; absent otherwise — a CRITICAL marker without one is tagged \`unreproduced\` at triage and in its resolution entry's \`reproduction_rerun\` |
 | \`source\` | Always \`external\` (vs \`inline\` for grep-found markers) |
+
+Entries under \`## Blocks\` (\`- <what>\` lines) are NOT virtual markers: they are listed FIRST in the triage table as blocks and never walked (per \`orbit-conventions\`' Severity ladder, a block is a report with a name; nothing stops on it mechanically and the stop is the human's).
 
 Virtual markers walk the same lifecycle as inline markers, with one exception: **the marker-removal step (Step 3e in the SKILL.md walk) is a no-op for virtual markers** — there's no source-file marker text to delete.
 
@@ -81,7 +91,7 @@ The parser MUST be strict on:
 
 - Severity section headers (\`## CRITICAL\`, \`## WARNING\`, \`## SUGGESTION\` — exact case)
 - Finding titles use \`### \` prefix
-- \`**File**:\` and \`**Description**:\` field labels (exact)
+- \`**File**:\`, \`**Description**:\` and \`**Reproduction**:\` field labels (exact)
 
 The reason for the strict/lenient split: the strict items are what the orbit format guarantees and what allows cross-AI loops to work; the lenient items vary across reviewers without breaking semantics.
 
@@ -154,12 +164,14 @@ This format MUST match what \`/orbit:review\` writes to \`orbit/changes/<name>/.
       "line": <integer>,
       "title": "<finding title>",
       "recommendation": "<actionable recommendation>",
+      "reproduction": "<present on every CRITICAL written since rc02b; optional below; multi-line allowed>",
       "recommendation_options": [
         { "label": "A", "body": "..." },
         { "label": "B", "body": "..." }
       ]
     }
-  ]
+  ],
+  "blocks": ["<optional: lifecycle blocks the pass found — listed FIRST at triage, never virtual markers>"]
 }
 \`\`\`
 
@@ -220,9 +232,12 @@ For each entry in the JSON's \`findings[]\` array, construct a virtual marker wi
 | \`title\` | The entry's \`title\` field |
 | \`file:line\` | The entry's \`file\` + \`line\` fields joined as \`<file>:<line>\` |
 | \`description\` | The entry's \`recommendation\` field |
+| \`reproduction\` | The entry's \`reproduction\` field when present (review JSON; required on a CRITICAL written since rc02b, absent on prior-generation emits) — a CRITICAL marker without one is tagged \`unreproduced\` at triage and in its resolution entry's \`reproduction_rerun\` |
 | \`source\` | \`internal-review\` for \`command: "review"\` JSON; \`audit-drift\` for \`command: "audit-drift"\` JSON (vs \`external\` for markdown, \`inline\` for grep-found) |
 | \`provenance_detail\` | The entry's \`pass\` field (for review JSON) OR \`category\` field (for audit-drift JSON) — preserved verbatim in the resolution log |
 | \`recommendation_options\` (optional) | The entry's \`recommendation_options[]\` array if present and well-formed. Drives the structured decision-fork detection path in Step 3b.5 of the SKILL.md walk. Malformed input (< 2 entries, missing label/body) triggers heuristic fallback with a stderr warning + \`structured_path_skipped_reason\` field in the resolution log. |
+
+The review JSON's optional top-level \`blocks[]\` entries are listed FIRST in the triage table as blocks and never become virtual markers (the same rule as the markdown format's \`## Blocks\` section).
 
 Virtual markers walk the same lifecycle as inline markers, with one exception: **the marker-removal step (Step 3e in the SKILL.md walk) is a no-op** — there's no source-file marker text to delete. (Same behavior as external-markdown virtual markers; the no-op is shared across all virtual-marker provenance.)
 
@@ -575,6 +590,7 @@ The schema below documents per-command extensions ADDED to that spine (\`source\
       "line": 41,
       "classification": "trivial_fix" | "decision_required" | "stale" | "unresolvable",
       "action": "<what was done — applied edit, filed as task, converted to @todo:, escalated, etc.>",
+      "reproduction_rerun": "reproduced" | "not-reproduced" | "cannot-run" | "unreproduced",
       "ratified_via": "chat" | "prompt",
       "resolution": "<the ratified direction verbatim — required when no fork was detected or the direction is off-menu>",
       "recommendation_fork": {
@@ -626,6 +642,7 @@ The v2 shape is a **structural change** from v1, not a rename. Readers handling 
 - **\`walk_mode\`** records the lifecycle mode the run used (per #11): \`per_finding\` (default — each marker walked sequentially with its own pushback → classify → fix → cascade → remove cycle) or \`batch\` (all markers complete pushback + classify + fix in one pass, then cascade as a single aggregated step).
 - **\`walk_mode_source\`** distinguishes how batch-mode was entered: \`flag\` (\`--batch\` argv), \`verbal\` (recognized batch-intent phrase in the invocation message — "fix them all", "batch them", "go ahead with all", or equivalent), \`command-shape-interruption\` (bare unambiguous mid-walk mode-switch message — "go batch", "switch to batch", "batch the rest"). Omitted when \`walk_mode == "per_finding"\`.
 - **\`walk_mode_shifted_at_finding\`** is the 1-indexed finding number at which the mode shifted; present ONLY when \`walk_mode_source == "command-shape-interruption"\`; omitted otherwise.
+- **\`reproduction_rerun\`** (per-resolution, REQUIRED on every CRITICAL entry, absent below CRITICAL — rc02b): the Step 3a step-(0) result, one of the CLOSED values \`reproduced\` / \`not-reproduced\` / \`cannot-run\` (the marker carried a reproduction and it was re-run) or \`unreproduced\` (the marker carried none); the output or derivation rides \`evidence\`. A reader that does not know the field ignores it (the \`recommendation_options\` precedent). Owned by \`orbit-address-reviews\`' resolution-log shape requirement.
 - **\`ratified_via\`** (per-resolution, REQUIRED for every decision-lane resolution — forked or not): \`"chat"\` (a user-typed directive ratified the resolution) or \`"prompt"\` (the optional closure \`AskUserQuestion\` did). Absent on non-decision-lane resolutions.
 - **\`resolution\`** (per-resolution, conditionally required): the ratified direction verbatim — required when no fork was detected (AI-derived prose options) OR when the direction is off-menu; optional when \`recommendation_fork.chosen\` names a presented option.
 - **\`delegation_directive\`** (top-level, optional): the user's verbatim mid-walk delegation, present when one was issued.
@@ -746,7 +763,7 @@ The four disciplines from \`orbit-conventions\`, embedded per body; detail lives
 
 **Positional \`<scope>\`** resolves active change → archived change (lexicographically-latest date on collision) → path/pattern fallback; \`--mark\` on the producing review is a stylistic choice, never a prerequisite — auto-discovery finds the just-written review JSON without it. (Details: \`references/resolution-detail.md\`.)
 
-**\`--from-file\` ingest** auto-detects format by content sniff (content only — never extension): leading \`{\` → internal JSON, accepting \`command: "review"\` or \`"audit-drift"\` only (\`"address-reviews"\` rejected on purpose — cycle prevention; contract at \`references/internal-findings-format.md\`); leading \`# External Review:\` → external markdown (\`references/external-findings-format.md\`); neither → clean format-mismatch error naming both. Each finding becomes a virtual marker (\`severity\` / \`title\` / \`file:line\` / \`description\` / \`source\` tagged \`external\` / \`internal-review\` / \`audit-drift\`) walking the same lifecycle as inline markers, except Step 3e marker-removal is a no-op — the source file is an audit artifact that travels with the change into archive.
+**\`--from-file\` ingest** auto-detects format by content sniff (content only — never extension): leading \`{\` → internal JSON, accepting \`command: "review"\` or \`"audit-drift"\` only (\`"address-reviews"\` rejected on purpose — cycle prevention; contract at \`references/internal-findings-format.md\`); leading \`# External Review:\` → external markdown (\`references/external-findings-format.md\`); neither → clean format-mismatch error naming both. Each finding becomes a virtual marker (\`severity\` / \`title\` / \`file:line\` / \`description\` / \`reproduction\` when present / \`source\` tagged \`external\` / \`internal-review\` / \`audit-drift\`) walking the same lifecycle as inline markers, except Step 3e marker-removal is a no-op — the source file is an audit artifact that travels with the change into archive.
 
 **Fresh pushback applies to every virtual marker**: the source's own \`stale_suppressed[]\` filtered at source-run time, but state may have changed since; Step 3a runs regardless of provenance.
 
@@ -764,7 +781,7 @@ Found 12 markers in scope:
  12. (external) proposal.md:33            — [CRITICAL] orbit-conventions bullet omits three disciplines
 \`\`\`
 
-Mark external-sourced entries explicitly (\`(external)\` prefix). The triage OPENS with the **obvious-fix lane preview** (D-arc Stage D4): every finding provisionally headed for the obvious-fix lane is listed compactly — finding + its one-line resolution — BEFORE any fix lands, so the user can pull any item into the decision lane with a word ("discuss the import one"). The preview derives from a PROVISIONAL classification (per-finding pushback has not yet run); walk-time pushback may reclassify, and a reclassified item is announced before its fix lands. Scoping (walk all — the default — / a subset / only-critical / cancel) is settled by the user's response to the preview; an \`AskUserQuestion\` is optional closure when the response doesn't settle it.
+Mark external-sourced entries explicitly (\`(external)\` prefix). **Blocks come first**: when the source carries lifecycle blocks (markdown \`## Blocks\` items; the review JSON's \`blocks[]\`), list them at the TOP of the triage table under a \`Blocks (not walked)\` heading — one line each, verbatim — before any numbered finding; they are never virtual markers, never walked, and never counted (per \`orbit-conventions\`' Severity ladder; the stop is the human's). A CRITICAL marker that carries no reproduction is tagged \`unreproduced\` in its triage line. The triage OPENS with the **obvious-fix lane preview** (D-arc Stage D4): every finding provisionally headed for the obvious-fix lane is listed compactly — finding + its one-line resolution — BEFORE any fix lands, so the user can pull any item into the decision lane with a word ("discuss the import one"). The preview derives from a PROVISIONAL classification (per-finding pushback has not yet run); walk-time pushback may reclassify, and a reclassified item is announced before its fix lands. Scoping (walk all — the default — / a subset / only-critical / cancel) is settled by the user's response to the preview; an \`AskUserQuestion\` is optional closure when the response doesn't settle it.
 
 ### 3. Walk each marker
 
@@ -778,6 +795,7 @@ For every marker in the chosen scope, execute the lifecycle below sequentially.
 
 Run the verification procedure:
 
+0. For a CRITICAL marker that carries a \`reproduction\`, RE-RUN it FIRST — execute the command, or re-derive the constructed case against the current artifact — and record the result as the entry's first evidence: \`reproduction_rerun\` is \`reproduced\` / \`not-reproduced\` / \`cannot-run\`, with the output or derivation in \`evidence\`. A CRITICAL carrying none is noted \`unreproduced\` and pushback proceeds on the claim alone — never re-grading it (per \`orbit-conventions\`' Severity ladder, severity is the author's). When the re-run's observed result now matches the expected one, the marker is **stale-with-evidence** (the re-run's output IS the evidence) and no further edit is made. Below CRITICAL the field is absent.
 1. Identify the marker's referenced symbol, name, or concept.
 2. \`grep -rn\` for current presence in expected locations (the marker's file, related files, baseline specs).
 3. If the symbol is absent where the marker expects it, \`git log -S "<symbol>" --since=<window>\` (default: since the marker file's last modification) to confirm intentional removal.

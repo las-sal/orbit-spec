@@ -20,6 +20,13 @@ const FIXTURES = path.resolve(__dirname, '..', 'fixtures', 'report-golden');
  * TRANSCRIBED from design D2b's canonical rendered example — grammar text is
  * fixed; the tail lines carry the engine's computed strings verbatim. Every
  * golden case asserts BYTE equality (`toBe`), which is arc exit criterion 1.
+ *
+ * rc02b-severity-ladder (2026-10-03): the two goldens with a CRITICAL moved by ONE
+ * prefix each — `- [unreproduced] **<file>** — <title>`. Their fixtures are
+ * prior-generation records (no `reproduction` field; the write gate did not yet
+ * require one), and `orbit-report-rendering` renders that absence MARKED, never
+ * re-graded — by absence, not by date. Every other byte of both goldens is
+ * unchanged; the determinism test below asserts against the same golden.
  */
 
 let root: string;
@@ -480,3 +487,280 @@ describe('the pure render is deterministic over its inputs', () => {
 function fixtureJsonAt(changeDir: string, name: string): unknown {
   return JSON.parse(fs.readFileSync(path.join(changeDir, '.orbit-runs', name), 'utf-8'));
 }
+
+// -----------------------------------------------------------------------------
+// rc02b-severity-ladder: the Reproduction body, the unreproduced mark, Blocks
+// (tasks 1.2, 1.3 and the render half of 1.4)
+// -----------------------------------------------------------------------------
+
+describe('rc02b: external Reproduction body parsed after Description (1.2)', () => {
+  const header = ['# External Review: c (iteration 1)', '', '**Reviewer**: M', '**Date**: 2026-10-03', ''];
+  const ext = (body: string[]) => [...header, ...body].join('\n') + '\n';
+
+  it('carries the Reproduction body as `reproduction` and keeps the recommendation to the Description body alone', () => {
+    const pass = normalizeExternalPass(
+      '/x/external-proposal-2026-10-03T10-00-00Z.md',
+      ext([
+        '## CRITICAL', '',
+        '### Guard bypassed',
+        '**File**: specs/a/spec.md:7',
+        '**Description**: The guard only fires on the CLI path.',
+        'Second description line.',
+        '**Reproduction**: run `orbit archive x` from a script',
+        'expected: refused',
+        'observed: merged', '',
+        '## WARNING', '', 'None.', '',
+        '## SUGGESTION', '', 'None.', '',
+      ])
+    );
+    expect(pass.findings).toHaveLength(1);
+    expect(pass.findings[0].recommendation).toBe('The guard only fires on the CLI path.\nSecond description line.');
+    expect(pass.findings[0].reproduction).toBe('run `orbit archive x` from a script\nexpected: refused\nobserved: merged');
+  });
+
+  it('a file WITHOUT the label normalizes byte-identically to today (golden, transcribed from the fixture)', () => {
+    const pass = normalizeExternalPass('/x/external-proposal-2026-07-25T12-00-00Z.md', fixture('external-pass.md'));
+    expect(JSON.parse(JSON.stringify(pass))).toEqual({
+      genre: 'external',
+      filePath: '/x/external-proposal-2026-07-25T12-00-00Z.md',
+      mode: 'proposal',
+      reviewerName: 'GPT-5 Codex',
+      reviewerDate: '2026-07-25',
+      findings: [
+        {
+          severity: 'CRITICAL',
+          title: 'The guard can be bypassed programmatically',
+          fileRef: 'src/core/example.ts:42',
+          matchFile: 'src/core/example.ts',
+          recommendation:
+            'The divergence guard only fires on the CLI path.\n\n```\n## CRITICAL\n**Reviewer**: forged\n```\n\nThe fenced block above must stay body content.',
+        },
+        {
+          severity: 'SUGGESTION',
+          title: 'Tighten the rename report',
+          fileRef: 'src/core/example.ts',
+          matchFile: 'src/core/example.ts',
+          recommendation: 'Include both names.',
+        },
+      ],
+      suppressed: [],
+      commentary: 'Probed the archive seam hardest; the engine guard held. Risk texture: low.',
+    });
+    expect(pass.findings.every(f => f.reproduction === undefined)).toBe(true);
+  });
+
+  it('a `**Reproduction**:` line BEFORE Description is not recognised', () => {
+    const pass = normalizeExternalPass(
+      '/x/external-proposal-2026-10-03T10-00-00Z.md',
+      ext([
+        '## CRITICAL', '',
+        '### Guard bypassed',
+        '**File**: specs/a/spec.md:7',
+        '**Reproduction**: too early',
+        '**Description**: The guard only fires on the CLI path.', '',
+        '## WARNING', '', 'None.', '',
+        '## SUGGESTION', '', 'None.', '',
+      ])
+    );
+    expect(pass.findings[0].reproduction).toBeUndefined();
+    expect(pass.findings[0].recommendation).toBe('The guard only fires on the CLI path.');
+  });
+
+  it('a `**Reproduction**:` line AFTER Description ENDS the Description body — the one field label recognised there', () => {
+    const pass = normalizeExternalPass(
+      '/x/external-proposal-2026-10-03T10-00-00Z.md',
+      ext([
+        '## WARNING', '',
+        '### Drift',
+        '**File**: design.md:3',
+        '**Description**:',
+        'line one',
+        '**Reproduction**:',
+        'the case', '',
+        '## CRITICAL', '', 'None.', '',
+        '## SUGGESTION', '', 'None.', '',
+      ])
+    );
+    expect(pass.findings[0].recommendation).toBe('line one');
+    expect(pass.findings[0].reproduction).toBe('the case');
+  });
+});
+
+describe('rc02b: the render prints the reproduction, marks its absence, and lifts blocks above the findings (1.3)', () => {
+  const critEmit = (change: string, reproduction?: unknown, extra: Record<string, unknown> = {}) => {
+    const zero = { critical: 0, warning: 0, suggestion: 0 };
+    return JSON.stringify({
+      command: 'review',
+      timestamp: '2026-10-03T10:00:00Z',
+      change,
+      final_assessment: '1 critical, 0 warning, 0 suggestion.',
+      next_recommended: `/orbit:address-reviews ${change} --from-file orbit/changes/${change}/.orbit-runs/review-proposal-2026-10-03T10-00-00Z.json`,
+      kind: 'editorial',
+      mode: 'proposal',
+      reviewer_class: 'in-context',
+      depth: 'full',
+      scorecard: { completeness: { ...zero }, correctness: { critical: 1, warning: 0, suggestion: 0 }, coherence: { ...zero } },
+      findings: [
+        {
+          severity: 'CRITICAL', dimension: 'correctness', title: 'Guard bypassed', file: 'src/x.ts', line: 3,
+          recommendation: 'Fix the guard.',
+          ...(reproduction === undefined ? {} : { reproduction }),
+          recommendation_options: [{ label: 'A', body: 'patch' }, { label: 'B', body: 'redesign' }],
+        },
+      ],
+      ...extra,
+    });
+  };
+  const extFile = (withRepro: boolean, blocks?: string[]) =>
+    [
+      '# External Review: c (iteration 1)', '', '**Reviewer**: M', '**Date**: 2026-10-03', '',
+      '## CRITICAL', '',
+      '### Guard bypassed',
+      '**File**: src/x.ts:3',
+      '**Description**: Fix the guard.',
+      ...(withRepro ? ['**Reproduction**: run it', 'observed: merged'] : []),
+      '',
+      '## WARNING', '', 'None.', '',
+      '## SUGGESTION', '', 'None.', '',
+      ...(blocks ? ['## Blocks', '', ...blocks.map(b => `- ${b}`), ''] : []),
+    ].join('\n') + '\n';
+
+  it('internal: `> Reproduction:` + blockquoted body directly under the recommendation, before the options', () => {
+    const dir = makeChange('int-repro');
+    writeTrail(dir, 'review-proposal-2026-10-03T10-00-00Z.json', critEmit('int-repro', 'inputs: x\nexpected: y\nobserved: z'));
+    const report = renderReport(root, 'int-repro');
+    expect(report).toContain(
+      '- **src/x.ts:3** — Guard bypassed\n  > Fix the guard.\n  > Reproduction:\n  > inputs: x\n  > expected: y\n  > observed: z\n  - (A) patch\n  - (B) redesign'
+    );
+    expect(report).not.toContain('[unreproduced]');
+  });
+
+  it('internal prior-generation CRITICAL with no reproduction renders the [unreproduced] prefix before the bold file ref', () => {
+    const dir = makeChange('int-none');
+    writeTrail(dir, 'review-proposal-2026-10-03T10-00-00Z.json', critEmit('int-none'));
+    const report = renderReport(root, 'int-none');
+    expect(report).toContain('- [unreproduced] **src/x.ts:3** — Guard bypassed\n  > Fix the guard.\n  - (A) patch');
+    expect(report).not.toContain('Reproduction:');
+  });
+
+  it('external: the mark by absence, the body when present, and a byte-identical engine tail either way', () => {
+    const a = fs.mkdtempSync(path.join(root, 'a-'));
+    const b = fs.mkdtempSync(path.join(root, 'b-'));
+    const saved = root;
+    try {
+      root = a; const da = makeChange('c');
+      root = b; const db = makeChange('c');
+    } finally { root = saved; }
+    fs.writeFileSync(path.join(a, 'orbit/changes/c/.orbit-runs/external-proposal-2026-10-03T10-00-00Z.md'), extFile(false));
+    fs.writeFileSync(path.join(b, 'orbit/changes/c/.orbit-runs/external-proposal-2026-10-03T10-00-00Z.md'), extFile(true));
+    const without = renderReport(a, 'c');
+    const withBody = renderReport(b, 'c');
+    expect(without).toContain('- [unreproduced] **src/x.ts:3** — Guard bypassed\n  > Fix the guard.');
+    expect(withBody).toContain('- **src/x.ts:3** — Guard bypassed\n  > Fix the guard.\n  > Reproduction:\n  > run it\n  > observed: merged');
+    const tail = (r: string) => r.slice(r.lastIndexOf('\n---\n'));
+    expect(tail(without)).toBe(tail(withBody));
+    expect(tail(without)).toContain('Gate review-proposal: unpassed');
+    // The title token is untouched by the prefix: a copied line still yields the gate's exact title.
+    expect(without).toMatch(/\*\* — Guard bypassed$/m);
+  });
+
+  it('a WARNING without a reproduction carries no mark (the mark is CRITICAL\'s alone)', () => {
+    const dir = makeChange('warn-only');
+    writeTrail(dir, 'review-proposal-2026-10-03T10-00-00Z.json', d4Emit('warn-only', 'proposal', {
+      final_assessment: '0 critical, 1 warning, 0 suggestion.',
+      next_recommended: '/orbit:address-reviews warn-only --from-file orbit/changes/warn-only/.orbit-runs/review-proposal-2026-10-03T10-00-00Z.json',
+      scorecard: { completeness: { critical: 0, warning: 1, suggestion: 0 }, correctness: { critical: 0, warning: 0, suggestion: 0 }, coherence: { critical: 0, warning: 0, suggestion: 0 } },
+      findings: [{ severity: 'WARNING', dimension: 'completeness', title: 'No task', file: 'tasks.md', line: 1, recommendation: 'add one' }],
+    }));
+    expect(renderReport(root, 'warn-only')).toContain('- **tasks.md:1** — No task');
+    expect(renderReport(root, 'warn-only')).not.toContain('[unreproduced]');
+  });
+
+  it('`### Blocks` renders above `### Findings` for an internal emit with blocks, and is omitted when there are none', () => {
+    const dir = makeChange('int-blocks');
+    writeTrail(dir, 'review-proposal-2026-10-03T10-00-00Z.json', critEmit('int-blocks', 'case', {
+      blocks: ['Pass 1: orbit validate fails — specs/x/spec.md:12', 'Pass 8: unresolved @review: marker at design.md:40'],
+    }));
+    const report = renderReport(root, 'int-blocks');
+    const blocksAt = report.indexOf('### Blocks\n- Pass 1: orbit validate fails — specs/x/spec.md:12\n- Pass 8: unresolved @review: marker at design.md:40\n');
+    expect(blocksAt).toBeGreaterThan(report.indexOf('| Coherence'));
+    expect(blocksAt).toBeLessThan(report.indexOf('### Findings'));
+
+    const dir2 = makeChange('int-noblocks');
+    writeTrail(dir2, 'review-proposal-2026-10-03T10-00-00Z.json', critEmit('int-noblocks', 'case'));
+    expect(renderReport(root, 'int-noblocks')).not.toContain('### Blocks');
+  });
+
+  it('`### Blocks` renders above `### Findings` for an external file with `## Blocks` items; the counts and tail are unchanged', () => {
+    const dir = makeChange('ext-blocks');
+    writeTrail(dir, 'external-proposal-2026-10-03T10-00-00Z.md', extFile(true, ['orbit validate fails on specs/x/spec.md:12', 'unresolved @review: marker at design.md:40']));
+    const report = renderReport(root, 'ext-blocks');
+    const blocksAt = report.indexOf('### Blocks\n- orbit validate fails on specs/x/spec.md:12\n- unresolved @review: marker at design.md:40\n');
+    expect(blocksAt).toBeGreaterThan(report.indexOf('First proposal-mode review'));
+    expect(blocksAt).toBeLessThan(report.indexOf('### Findings'));
+    expect(report).toContain('Gate review-proposal: unpassed');
+    const dir2 = makeChange('ext-noblocks');
+    writeTrail(dir2, 'external-proposal-2026-10-03T10-00-00Z.md', extFile(true));
+    expect(renderReport(root, 'ext-noblocks')).not.toContain('### Blocks');
+  });
+
+  it('an internal `"reproduction": 42` fails the strict normalizer naming findings[<i>].reproduction', () => {
+    expect(() => normalizeInternalPass('/x/review-proposal-2026-10-03T10-00-00Z.json', JSON.parse(critEmit('c', 42)))).toThrow(
+      /missing or mistyped field 'findings\[0\]\.reproduction'/
+    );
+  });
+
+  it('an internal `blocks` that is not an array of single-line strings fails the strict normalizer naming the entry', () => {
+    expect(() => normalizeInternalPass('/x/r.json', JSON.parse(critEmit('c', 'case', { blocks: 'x' })))).toThrow(/mistyped field 'blocks'/);
+    expect(() => normalizeInternalPass('/x/r.json', JSON.parse(critEmit('c', 'case', { blocks: ['ok', 7] })))).toThrow(/blocks\[1\]/);
+    expect(() => normalizeInternalPass('/x/r.json', JSON.parse(critEmit('c', 'case', { blocks: ['a\n### Findings'] })))).toThrow(/blocks\[0\]/);
+  });
+});
+
+describe('rc02b: the external parser collects Blocks and never counts them (render half of 1.4)', () => {
+  const file = (blocksBody: string[]) =>
+    [
+      '# External Review: c (iteration 1)', '', '**Reviewer**: M', '**Date**: 2026-10-03', '',
+      '## CRITICAL', '', 'None.', '',
+      '## WARNING', '', '### Drift', '**File**: design.md:3', '**Description**: fix', '',
+      '## SUGGESTION', '', 'None.', '',
+      '## Blocks', '', ...blocksBody, '',
+      '## Notes', '', 'texture', '',
+    ].join('\n') + '\n';
+
+  it('collects the `- ` items as the pass\'s blocks; findings are unchanged; a heading-shaped line inside is content, never a finding', () => {
+    const pass = normalizeExternalPass('/x/external-proposal-2026-10-03T10-00-00Z.md', file([
+      '- orbit validate fails on specs/x/spec.md:12',
+      '### Not a finding',
+      '- unresolved @review: marker at design.md:40',
+      '**File**: not/a/field.md:1',
+    ]));
+    expect(pass.blocks).toEqual(['orbit validate fails on specs/x/spec.md:12', 'unresolved @review: marker at design.md:40']);
+    expect(pass.findings.map(f => f.title)).toEqual(['Drift']);
+    expect(pass.commentary).toBe('texture');
+  });
+
+  it('`None.` under Blocks is no blocks; an absent section is no blocks', () => {
+    expect(normalizeExternalPass('/x/external-proposal-2026-10-03T10-00-00Z.md', file(['None.'])).blocks ?? []).toEqual([]);
+    const pass = normalizeExternalPass('/x/external-proposal-2026-07-25T12-00-00Z.md', fixture('external-pass.md'));
+    expect(pass.blocks ?? []).toEqual([]);
+  });
+
+  it('a `**File**:` line inside a Reproduction body does not re-file the finding in the render parser', () => {
+    const pass = normalizeExternalPass('/x/external-proposal-2026-10-03T10-00-00Z.md', [
+      '# External Review: c (iteration 1)', '', '**Reviewer**: M', '**Date**: 2026-10-03', '',
+      '## CRITICAL', '',
+      '### Guard bypassed',
+      '**File**: specs/a/spec.md:7',
+      '**Description**: broken',
+      '**Reproduction**: see the sibling:',
+      '**File**: specs/b/spec.md:99',
+      'observed: wrong', '',
+      '## WARNING', '', 'None.', '',
+      '## SUGGESTION', '', 'None.', '',
+    ].join('\n') + '\n');
+    expect(pass.findings[0].fileRef).toBe('specs/a/spec.md:7');
+    expect(pass.findings[0].matchFile).toBe('specs/a/spec.md');
+    expect(pass.findings[0].reproduction).toBe('see the sibling:\n**File**: specs/b/spec.md:99\nobserved: wrong');
+  });
+});

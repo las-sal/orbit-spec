@@ -6,7 +6,7 @@ First proposal-mode review of this change.
 ### Findings
 
 #### CRITICAL
-- **src/core/example.ts:42** — The guard can be bypassed programmatically
+- [unreproduced] **src/core/example.ts:42** — The guard can be bypassed programmatically
   > The divergence guard only fires on the CLI path.
   > 
   > ```

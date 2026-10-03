@@ -730,3 +730,106 @@ describe('D6 PR lifecycle surface', () => {
     }
   });
 });
+
+describe('rc02b severity ladder: the generated bodies NAME the ladder and define nothing of their own (task 1.6)', () => {
+  const review = getReviewSkillTemplate();
+  const walk = getAddressReviewsSkillTemplate();
+  const ref = (t: SkillTemplate, name: string) => t.references!.find(r => r.name === name)!.content;
+  const LADDER = /per the ladder|Severity ladder/;
+
+  it('every per-pass severity site in the two pass references points at the ladder (no `CRITICAL on|when|for` line without it)', () => {
+    for (const name of ['passes-proposal.md', 'passes-system.md']) {
+      const lines = ref(review, name).split('\n');
+      const offenders = lines.filter(l => /\bCRITICAL (on|when|for)\b/.test(l) && !LADDER.test(l));
+      expect(offenders, `${name}: severity sites defining a grade without naming the ladder`).toEqual([]);
+      // Every pass paragraph that assigns a severity names the ladder on that line.
+      const assigning = lines.filter(l => /^\*\*Pass \d+ — /.test(l) && /\b(CRITICAL|WARNING|SUGGESTION)\b/.test(l));
+      expect(assigning.filter(l => !LADDER.test(l)), `${name}: pass paragraphs assigning a severity without the pointer`).toEqual([]);
+    }
+  });
+
+  it('the proposal pass table and Pass 8 report a BLOCK, not a CRITICAL; the ambiguity-inverts-the-bias clause is gone', () => {
+    const p = ref(review, 'passes-proposal.md');
+    expect(p).not.toContain('(CRITICAL — must address before apply)');
+    expect(p).not.toContain('classify as CRITICAL');
+    const pass8 = p.split('**Pass 8 — ')[1].split('**Pass 9 — ')[0];
+    expect(pass8).toMatch(/BLOCK/);
+    expect(pass8).toContain('blocks');
+    const pass1 = p.split('**Pass 1 — ')[1].split('**Pass 2 — ')[0];
+    expect(pass1).toMatch(/BLOCK/);
+  });
+
+  it("the system Pass 0 fold rule grades verify-change's findings by the ladder as the body's own", () => {
+    const s = ref(review, 'passes-system.md');
+    const pass0 = s.split('**Pass 0 — ')[1].split('**Pass 1 — ')[0];
+    expect(pass0).toMatch(LADDER);
+    expect(pass0).toContain('WARNING');
+    expect(pass0).toContain('reproduction');
+  });
+
+  it('the body\'s general bias line names the ladder; the flags table says --strict stops on a block and --mark writes none', () => {
+    const body = review.instructions;
+    const bias = body.split('### Pushback bias')[1].split('###')[0];
+    expect(bias).toMatch(LADDER);
+    const strictRow = body.split('\n').find(l => l.startsWith('| `--strict`'))!;
+    expect(strictRow).toMatch(/block/i);
+    const markGist = body.split('### 11. Rarely-used flags')[1].split('## Special cases')[0];
+    expect(markGist).toMatch(/no marker for a block|never for a block/i);
+  });
+
+  it('Step 9\'s field enumeration names `reproduction` (required on CRITICAL) and `blocks`', () => {
+    const step9 = review.instructions.split('### 9. Persist via the emit surface')[1].split('### 10.')[0];
+    expect(step9).toContain('`reproduction`');
+    expect(step9).toMatch(/required.*CRITICAL|CRITICAL.*required/i);
+    expect(step9).toContain('`blocks`');
+  });
+
+  it('the prompt template carries `## Severity`, the Reproduction line in the CRITICAL quadruple, and `## Blocks`', () => {
+    const t = ref(review, 'prompt-template.md');
+    expect(t).toContain('## Severity\n\n');
+    expect(t).toContain('**Reproduction**: <');
+    expect(t).toContain('quadruple');
+    expect(t).toContain('## Blocks');
+    // The two enumerations of what the parser reads — the handoff reference's Step 7 and the
+    // template reference's preamble — name both additions beside File/Description.
+    const handoff = ref(review, 'external-handoff.md');
+    const stepSeven = handoff.split('### 7.')[1].split('### 8.')[0];
+    expect(stepSeven).toContain('**Reproduction**:');
+    expect(stepSeven).toContain('## Blocks');
+    expect(t.split('## Template')[0]).toContain('**Reproduction**:');
+    expect(t.split('## Template')[0]).toContain('## Blocks');
+  });
+
+  it('`references/run-summary-schema.md` names `reproduction` on the finding entry and `blocks` on the payload', () => {
+    const schema = ref(review, 'run-summary-schema.md');
+    expect(schema).toMatch(/"reproduction":/);
+    expect(schema).toMatch(/"blocks":/);
+    expect(schema).toContain('- **`reproduction`**');
+    expect(schema).toContain('- **`blocks`**');
+  });
+
+  it('both address-reviews mapping tables carry a `reproduction` row; the JSON path lists blocks[] first at triage', () => {
+    const ext = ref(walk, 'external-findings-format.md');
+    const int = ref(walk, 'internal-findings-format.md');
+    expect(ext.split('\n').some(l => l.startsWith('| `reproduction`'))).toBe(true);
+    expect(int.split('\n').some(l => l.startsWith('| `reproduction`'))).toBe(true);
+    expect(ext).toContain('**Reproduction**:');
+    expect(ext).toContain('## Blocks');
+    expect(int).toContain('blocks[]');
+    expect(int).toMatch(/"blocks":/);
+  });
+
+  it('Step 3a carries step (0): re-run the reproduction first and record `reproduction_rerun`; the triage lists blocks first', () => {
+    const body = walk.instructions;
+    const step3a = body.split('#### 3a. Apply pushback')[1].split('#### 3b.')[0];
+    expect(step3a).toMatch(/^0\. /m);
+    expect(step3a).toContain('reproduction_rerun');
+    for (const v of ['reproduced', 'not-reproduced', 'cannot-run', 'unreproduced']) expect(step3a).toContain(v);
+    const triage = body.split('### 2. Triage')[1].split('### 3. Walk each marker')[0];
+    expect(triage).toMatch(/blocks/i);
+    expect(triage).toContain('## Blocks');
+    expect(triage).toContain('blocks[]');
+    const schema = ref(walk, 'run-summary-schema.md');
+    expect(schema).toMatch(/"reproduction_rerun":/);
+  });
+});

@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-10-03T20:24:39Z",
+  "change": "rc02b-severity-ladder",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "system",
+  "prompt_path": "orbit/changes/rc02b-severity-ladder/.orbit-runs/external-prompt-system-2026-10-03T20-21-36Z.md",
+  "target": null,
+  "final_assessment": "External review prompt packaged for rc02b-severity-ladder (iter 1, mode system) — the external half of the blind pair on the apply; awaiting findings. HANDOFF BLOCKED at packaging: the working tree is dirty (the apply is uncommitted — 13 modified files, 2 new tests, 2 apply emits, and this prompt), 0 unpushed commits; the pull invocation is withheld until the apply commit lands and is pushed, and the prompt names the apply commit as the first commit after a8ad6c97 rather than by sha for that reason. This handoff covers the DECLARED, still-uncovered external member of the blind-pair slot (review-system reads unpassed, spend 0), not a spend past a passed gate — no continuation record is carried. The prompt is the first one issued in the shape this change ships (the ## Severity mirror and the **Reproduction**: field, both verified byte-equal to the regenerated template at write time), so the return is also task 5.4's first live measurement; it points the reviewer hardest at the two-reader agreement on the finding key, the gate/normalizer agreement on reproduction and blocks shapes, the Blocks slot's position in the render, and the never-re-grade invariant across every reader.",
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/rc02b-severity-ladder/.orbit-runs/external-prompt-system-2026-10-03T20-21-36Z.md into the target AI, save the response as orbit/changes/rc02b-severity-ladder/.orbit-runs/external-system-<TS>.md, then /orbit:address-reviews rc02b-severity-ladder --from-file <path>"
+}

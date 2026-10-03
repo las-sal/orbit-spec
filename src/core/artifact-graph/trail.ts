@@ -374,6 +374,13 @@ function parseExternalMarkdown(file: string, token: string, mode: ReviewMode): T
   // imported, never restated.
   const fence = createFenceTracker();
   let hasReviewer = false;
+  // rc02b — the FIELD-LINE RULE (`orbit-conventions`' External-review findings markdown format):
+  // `**File**:` / `**Description**:` are recognised only until the current finding's Description
+  // body OPENS; after that, a field-shaped line is CONTENT. The render parser already read it this
+  // way; this reader took the LAST `**File**:` line, so a path quoted inside a Reproduction body
+  // re-filed the finding at the gate while the report showed the right file — two readers, one
+  // contract, two answers (the external proposal pass, rc02b). `descOpen` is per finding.
+  let descOpen = false;
   for (const line of lines) {
     const wasInFence = fence.inFence;
     if (fence.handle(line) || wasInFence) continue;
@@ -384,11 +391,13 @@ function parseExternalMarkdown(file: string, token: string, mode: ReviewMode): T
       section = sec[1] as 'CRITICAL' | 'WARNING' | 'SUGGESTION';
       sawSections.add(sec[1]);
       pendingTitle = null;
+      descOpen = false;
       continue;
     }
     if (/^##\s+/.test(line)) {
-      section = null; // left the severity sections (e.g. ## Notes)
+      section = null; // left the severity sections (e.g. ## Blocks, ## Notes) — never counted
       pendingTitle = null;
+      descOpen = false;
       continue;
     }
     if (!section) continue;
@@ -397,10 +406,12 @@ function parseExternalMarkdown(file: string, token: string, mode: ReviewMode): T
     if (title) {
       counts[section]++;
       pendingTitle = title[1].trim();
+      descOpen = false;
       // External findings take their severity from SECTION MEMBERSHIP, which is structural.
       findings.push({ title: pendingTitle, file: '', severity: section, hasFile: false, hasDescription: false });
       continue;
     }
+    if (descOpen) continue; // inside a Description (or Reproduction) body: content, not fields
     const fileField = line.match(/^\*\*File\*\*:\s*(.*\S)\s*$/i);
     if (fileField && findings.length > 0) {
       findings[findings.length - 1].file = stripLineSuffix(toRepoRelative(fileField[1]));
@@ -409,6 +420,7 @@ function parseExternalMarkdown(file: string, token: string, mode: ReviewMode): T
     const descField = line.match(/^\*\*Description\*\*:\s*(.*\S)\s*$/i);
     if (descField && findings.length > 0) {
       findings[findings.length - 1].hasDescription = true;
+      descOpen = true;
     }
   }
 
