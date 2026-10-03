@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-03T22:00:37Z",
+  "change": "rc04b-forward-recommendation",
+  "kind": "workflow",
+  "model": null,
+  "final_assessment": "BEGIN: rc04b-forward-recommendation scaffolded in Mode B (new) — six sections; Premise drawn from the stage charter, R-crc-11(g)/(f), the rc04 shared exploration's D-rc04-8 and Q-rc04-c, and a read of emit-composition.ts, report-render.ts, trail.ts, the review template and the five owning specs; three code-read constraints stated (the per-finding `recommendation` name is taken; rc02b moved external-format ownership to orbit-conventions so an R-crc-1 size check is due here; all three external readers already ignore an unknown `##` section). Measured: 124 external returns, all with Notes, 33 carrying a direction-bearing sentence. Mechanism/Decisions/Open questions/Considered & out empty; References populated. Architecture citation {clean-up-review-cycle, rc04b-forward-recommendation} written, as every rc-stage exploration on record has carried it; Sal may drop it on a word.",
+  "decisions_captured": 0,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 0,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:explore rc04b-forward-recommendation — continue capturing thinking — no decisions captured yet"
+}

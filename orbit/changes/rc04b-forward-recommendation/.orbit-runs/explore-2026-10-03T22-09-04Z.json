@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-03T22:09:04Z",
+  "change": "rc04b-forward-recommendation",
+  "kind": "workflow",
+  "model": null,
+  "final_assessment": "Boundary: the exploration has its mechanism. Seven decisions — four rules (D-rc04b-1 the `direction: {disposition, reasoning}` slot with `forward|hold`, adopting rc04a's judgement vocabulary; D-rc04b-2 owed by the independent classes in every mode, optional in-context, one predicate; D-rc04b-3 two-tier incompleteness — write gate refuses, renderer marks `[no direction]`/`[direction malformed]`, gate reads nothing; D-rc04b-4 renders as `### Direction` between Suppressed and Commentary under the judgement-versus-computation contract), each with a Mechanism entry (three SOURCED, one DERIVED; EXECUTE unapplied on all four — the proposal's red tests are the first execution) — and three scope entries (no migration; the address-reviews format copy moves with its owner, unchecked copy a named residual; D-rc04b-7 the stage DECLARED at FIVE capabilities under R-crc-9, Sal: 'declare at five', resolving Q-rc04b-a). Six rejected options recorded. Zero open questions. Residency sweep done before this emit; the engine's parse reads 4 rules, 0 open, 0 key defects.",
+  "decisions_captured": 7,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 4,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose rc04b-forward-recommendation — 4 live rules accounted; formalize when you are ready (or /orbit:explore rc04b-forward-recommendation to keep refining)"
+}

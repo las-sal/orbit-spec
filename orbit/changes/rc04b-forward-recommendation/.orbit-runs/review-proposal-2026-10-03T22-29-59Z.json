@@ -1,0 +1,175 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-03T22:29:59Z",
+  "change": "rc04b-forward-recommendation",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 4,
+      "suggestion": 3
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc04b-forward-recommendation/tasks.md",
+      "line": 6,
+      "title": "Exporting isIndependent from gates.ts contradicts the three 'gates.ts shows no diff' measurements",
+      "recommendation": "Task 2.1 edits gates.ts (adds `export` to `isIndependent`, line 95, module-private today — confirmed), yet task 1.4 (\"`trail.ts` and `gates.ts` show no diff in the stage — `git diff --stat` over the apply commits names neither\"), task 4.3 exit (1) (\"`trail.ts`/`gates.ts` absent from the stage's diff\") and design D3 line 75 (\"`trail.ts` and `gates.ts` change by zero bytes\") all assert gates.ts is untouched. Built as written, 2.1 makes 1.4 and 4.3 red; built to 1.4, an implementer copies the two-class predicate into emit-composition/report-render — the R-crc-14 restatement D2 line 62–63 exists to prevent. Pick one and make the four sites agree.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Keep the export (R-crc-14): restate the measurement in 1.4, 4.3 and D3 as 'trail.ts zero diff; gates.ts diff is exactly the `export` keyword on `isIndependent` and nothing else' — the \"gate reads nothing\" half is then carried by 1.4's three-readers test, not by diff-stat."
+        },
+        {
+          "label": "B",
+          "body": "Keep gates.ts at zero diff: move `isIndependent` to a module both sides already import (e.g. beside `ReviewerClass` — but trail.ts is also pinned at zero diff, so this would need a new tiny module or `types.ts`) and have gates.ts import it; record that gates.ts then DOES change (the import line), or accept a one-line gates.ts change and drop the zero-diff claim for it."
+        }
+      ],
+      "reproduction": "Inputs: tasks.md 2.1 ('EXPORT `isIndependent`') and 1.4/4.3 ('gates.ts ... no diff'). Rule: `git diff --stat <pre-apply>..<post-apply> -- src/core/artifact-graph/gates.ts`. Expected by 1.4/4.3: no output. Observed if 2.1 is executed: `src/core/artifact-graph/gates.ts | 2 +-` — the two task lines cannot both be green."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc04b-forward-recommendation/tasks.md",
+      "line": 28,
+      "title": "Exit (2)'s grep → 0 is falsified by the near-miss golden task 1.3 adds",
+      "recommendation": "Task 1.3 / the ADDED render requirement's near-miss scenario put the lines `Gate: review-system PASSED` and `Ready when you are: /orbit:archive x` INSIDE a Direction section's blockquote (that is the fixture's purpose). Task 4.3 then measures exit (2) as \"grep the goldens' Direction sections for `PASSED|UNPASSED|Ready when you are` → 0\" — on the near-miss golden that grep returns 2 by construction. Restate the measure so it asserts what exit (2) means: no COLUMN-0 gate line inside the section — e.g. grep `^(Gate:|Position:|Ready when you are:)` between `### Direction` and the next `###`/`---`, which is 0 on every golden including the near-miss (its hits are `> `-prefixed) — or exclude the near-miss fixture by name and say why.",
+      "reproduction": "Inputs: the near-miss golden 1.3 specifies (reasoning carrying `Gate: review-system PASSED`). Rule: 4.3's `grep -E 'PASSED|UNPASSED|Ready when you are'` over its `### Direction` section. Expected by 4.3: 0. Observed: ≥2 (`> Gate: review-system PASSED`, `> Ready when you are: /orbit:archive x`)."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc04b-forward-recommendation/specs/orbit-review-external/spec.md",
+      "line": 175,
+      "title": "The prompt's 'After completing' chat-echo step and two verbatim-block scenarios do not name `## Direction`",
+      "recommendation": "The delta's fence (held byte-equal to the shipped template by `test/core/severity-ladder-parity.test.ts`, so this IS what the external AI reads) tells the reviewer at step 1 to echo in chat 'the COMPLETE findings markdown ... Same content as the file: every severity section ..., every `**Reproduction**:` field, and every `## Blocks` item' — no `## Direction`. The requirement makes the section REQUIRED, so the chat copy the user reads first will lack the direction while the file carries it. Likewise the `Output-format block must be verbatim` scenario (line 202) lists the headers whose deviation 'would break parsing' without `## Direction`, and `Full findings output to chat in prompt` (line 217) enumerates the chat content without it. Add `## Direction` (its opener and body) to step 1 inside the fence and to both scenarios; task 3.2 then installs the corrected fence."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc04b-forward-recommendation/specs/orbit-report-rendering/spec.md",
+      "line": 5,
+      "title": "R-crc-14: the direction's content contract is stated as a predicate in five capabilities, the shape predicate in three",
+      "recommendation": "'Never finding counts, the gate's state or a command token' (the predicate, not a consequence) appears in: this ADDED requirement; `orbit-conventions` line 10; `orbit-review-external` line 10; `orbit-review` line 5; and `orbit-emit-composition` line 5 states only the 'which way and why' half — the five copies already differ in wording ('gate state' vs 'the gate's state'; one omits the prohibition). The shape predicate ('object; disposition forward|hold; reasoning non-empty string') is stated in full in `orbit-emit-composition` (its owner), `orbit-report-rendering`'s Strict validation (lines 107–112) and `orbit-review` line 5. R-crc-14 (and its fourth instance in rc04c — one paragraph in four bodies) says: one owner, pointers everywhere else. Name an owner for the content contract (this ADDED requirement already frames the judgement-versus-computation axis and says the renderer enforces nothing — it is the natural owner; or `orbit-conventions` if you want the external reviewer's copy to be the mirror), then reduce the other four to 'per <owner>' plus the local consequence; do the same for the shape predicate (owner `orbit-emit-composition`), leaving `orbit-report-rendering` to say 'the read-side twin of the owner's check' without re-listing the set."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc04b-forward-recommendation/tasks.md",
+      "line": 14,
+      "title": "'[no direction] by isIndependent on the normalized class' has no class to read on an external pass",
+      "recommendation": "`NormalizedReviewPass.reviewerClass?: string` is an INTERNAL-genre field (report-render.ts line 92; `normalizeExternalPass` returns `reviewerName`/`reviewerDate` and no class — confirmed by executing it). Task 2.3 and design D2 (line 62–63) say the renderer decides 'owed' by `isIndependent` on the normalized class; for every external file that call sees `undefined` and the mark never renders — the exact pass the mark exists for. Two implementers will split: one branches on `genre === 'external'`, one adds `reviewerClass: 'external'` to the external normalization (a shape change touching the header guard). State which: e.g. 'the external normalizer sets `reviewerClass: \"external\"` so one call `isIndependent(pass.reviewerClass as ReviewerClass)` covers both genres', and note the `string` → `ReviewerClass` narrowing.",
+      "reproduction": "Inputs: `normalizeExternalPass('/x/external-proposal-2026-10-03T00-00-00Z.md', <any confident file>)`. Rule: task 2.3 — `isIndependent(pass.reviewerClass)`. Expected: true (external is independent). Observed: `Object.keys(pass)` = genre, filePath, mode, reviewerName, reviewerDate, findings, suppressed[, commentary] — `reviewerClass` is undefined, so the predicate returns false and no `[no direction]` renders."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc04b-forward-recommendation/tasks.md",
+      "line": 7,
+      "title": "Task 1.5 says the nested allowlist 'gains `direction`' — `direction` is a TOP-LEVEL key, and listing it there disarms the orphan check",
+      "recommendation": "`test/core/emit-schema-parity.test.ts` lines 155–160 explain why `blocks` is deliberately NOT in `nested`: the orphan check can only catch a top-level field dropped from the schema block while its note remains if the field is absent from the allowlist. `direction` is top-level on the review payload exactly like `blocks`. Read literally, 1.5 adds `direction` to `nested`, which silently weakens the instrument; read charitably it adds only `disposition`/`reasoning` (the sub-object's subjects — needed only if the field notes give them their own bullets). Rewrite 1.5: '`direction` appears top-level in the schema block (so `documentedKeys` derives it and the table accepts it); `disposition`/`reasoning` join `nested` ONLY if the field note names them as bullet subjects; `direction` itself is never added to `nested` (the `blocks` rationale at lines 157–159)'."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc04b-forward-recommendation/specs/orbit-conventions/spec.md",
+      "line": 10,
+      "title": "The external `## Direction` grammar leaves five edge cases to the implementer",
+      "recommendation": "Stated: absent → `[no direction]`; opener not the production → `[direction malformed]`. Unstated, and each splits implementations: (a) a conforming opener followed by NO body — `normalizeExternalPass` would yield `{disposition, reasoning: ''}`, which the internal twin REFUSES (reasoning non-empty), breaking the 'gate and renderer agree' symmetry and rendering `Disposition: hold` with no reasoning; (b) a `## Direction` heading with no non-blank line at all — 'first non-blank line' does not exist (malformed? absent?); (c) two `## Direction` sections (Notes today: last wins, `notesLines = []` resets); (d) the section placed AFTER `## Notes` or before the severity sections — the format says 'AFTER Blocks, BEFORE Notes' but a section-state parser reads it anywhere, so is an out-of-order section read, marked, or refused?; (e) heading case — `## Notes`/`## Blocks` match `/i`, task 2.2 is silent for Direction. Decide each in the owner (suggest: (a) and (b) are MALFORMED — a direction with no reasoning is not one; (c) first wins or malformed, say which; (d) position-agnostic read, the order is advisory; (e) case-insensitive like its siblings) and have the ADDED render requirement and task 1.2 carry the cases as tests."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc04b-forward-recommendation/specs/orbit-emit-composition/spec.md",
+      "line": 5,
+      "title": "In architecture mode nothing validates `reviewer_class`, so a class typo bypasses the owed check",
+      "recommendation": "`writeGate` for `mode: architecture` runs `scorecardRollupCheck` + `handoffShapeCheck` only (emit-composition.ts 1091–1100); `reviewer_class` is never checked against the three values anywhere in emit-composition.ts (the strict normalizer that does is proposal/system-only). A `--doc` fresh payload with `reviewer_class: \"Fresh\"` or `\"fressh\"` and no `direction` writes cleanly — `isIndependent` sees a non-member. Cheap closure inside this requirement: the direction check refuses an unrecognised `reviewer_class` naming the three values (or task 1.1 adds the case as a stated non-goal)."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc04b-forward-recommendation/proposal.md",
+      "line": 93,
+      "title": "'14 goldens move by one section' — one golden is independent",
+      "recommendation": "`test/fixtures/report-golden/` holds 14 FILES but 5 `.golden.md` goldens, and every internal fixture is `reviewer_class: in-context` (checked all 8 JSON fixtures); only `external-pass.golden.md` is an independent pass. So one existing golden gains `[no direction]`, plus the new near-miss fixture — not 14. Correct the count in proposal.md line 93, design Risks line 160 and explore D-rc04b-4 FEASIBILITY (line 153, 'applied — 14 goldens move by one section each', a Mechanism move line that is false as measured)."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc04b-forward-recommendation/design.md",
+      "line": 118,
+      "title": "Mechanism → artifacts promises a pointer scenario for the foreclosed external × architecture cell that the ADDED requirement lacks",
+      "recommendation": "The D-rc04b-2 row says the class × mode table lands in `orbit-emit-composition`'s ADDED requirement as a scenario set including 'the foreclosed external × architecture cell by pointer to the review body's usage rule'. The ADDED requirement's six scenarios carry no such pointer. Either add one clause ('`external` × `architecture` cannot reach this gate — `--reviewer external` requires `--as proposal|system`, per `orbit-review`') or drop it from the row."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc04b-forward-recommendation/specs/orbit-report-rendering/spec.md",
+      "line": 40,
+      "title": "The renumbered fixed order still omits `### Blocks`, which design D4 lists",
+      "recommendation": "Design D4 line 81 gives the order 'header → trend → scorecard → Blocks → Findings → Suppressed → Direction → Commentary → tail'. The Report grammar requirement's numbered list (now (1)–(8)) carries no Blocks entry — `### Blocks` is specified only inside the Reproduction requirement (baseline line 299). The omission predates this change, but this change rewrites the sentence; name Blocks as its own numbered element while the list is open so the spec's order and D4's agree."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc04b-forward-recommendation/explore.md",
+      "line": 96,
+      "title": "`ReviewerClass` is defined at trail.ts line 13, not 238",
+      "recommendation": "D-rc04b-2's Closure line cites '`ReviewerClass` (three values, trail.ts line 238)'; line 238 is `parseInternalReview`'s inference branch, the type is `export type ReviewerClass = ...` at line 13. Cosmetic, but the closure claim's citation should point at the enum it counts."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Fresh pass, all nine proposal passes in one context, no prior proposal-mode review on this trail. I read every artifact, the five baselines and the code each one names, and diffed each MODIFIED block against its baseline by requirement: every baseline scenario survives in every block (the C2 failure mode is absent), fingerprints 8/8, validate --strict clean, no @review: markers in artifact content (the two grep hits sit inside the prompt's fenced block). I executed the design's load-bearing code claims rather than trusting them: a constructed external file with a `## Direction` section containing a field-shaped line went through `normalizeExternalPass` and `readTrail` byte-identical to the same file without it (findings and counts equal, Notes still feeds commentary), `isIndependent` is module-private at gates.ts:95 and gates.ts imports nothing from report-render so the export introduces no cycle, and the severity-ladder parity test is ALREADY red on this tree because the single-active-owner lookup resolves the delta's fence — the design says so (1.6, 'red until 3.2'), so npm test fails from propose until apply by construction; worth saying out loud for anyone reading CI between now and then.\n\nThe pattern behind the findings is a plan that is internally sound at the level of mechanism and inconsistent at the level of its own measurements and copies. The mechanism — refuse where produced, mark where you cannot, gate reads nothing — holds under every input I constructed. What does not hold is the stage's description of itself: it both exports a function from gates.ts and promises gates.ts has no diff; it builds a golden whose purpose is to carry gate vocabulary inside the section and then grades exit (2) by grepping that vocabulary to zero; it counts fourteen goldens where one is independent. None of these change what ships, all of them make the exit record wrong on the day it is written. The second pattern is the one the program has been counting: the direction's content contract is a predicate written five times across five capabilities, already in three wordings, with no named owner — the ADDED render requirement says 'stated at the sources' and the sources each restate it. rc04c paid for this four times; here it arrives pre-paid in the proposal.\n\nThe codegen gaps cluster on the external side, where a reviewer who writes a conforming opener and nothing else, two sections, or the section after Notes gets no stated answer, and where the renderer's 'owed' predicate is told to read a class the external normalization never sets. The near-miss containment, the write-gate shape check and the no-migration stance are well-specified and I could not break them. Risk texture: nothing here reaches a user path or loses data — every finding is divergence between two implementers or between the plan and its own test — and the fixes are small sentences, not mechanism, so R-crc-6's walk lanes should be repair throughout.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "final_assessment": "0 critical, 7 warning, 5 suggestion.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc04b-forward-recommendation --from-file orbit/changes/rc04b-forward-recommendation/.orbit-runs/review-proposal-2026-10-03T22-29-59Z.json"
+}
