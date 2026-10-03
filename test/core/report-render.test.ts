@@ -27,6 +27,14 @@ const FIXTURES = path.resolve(__dirname, '..', 'fixtures', 'report-golden');
  * require one), and `orbit-report-rendering` renders that absence MARKED, never
  * re-graded — by absence, not by date. Every other byte of both goldens is
  * unchanged; the determinism test below asserts against the same golden.
+ *
+ * rc04b-forward-recommendation (2026-10-03): the ONE independent-pass golden
+ * (`external-pass.golden.md`) gained the marked `### Direction` / `[no direction]`
+ * section between its findings and its Commentary — by absence, never by date: the
+ * fixture carries no `## Direction` section. The other four goldens are in-context
+ * passes and are byte-unchanged. `nearmiss-direction.golden.md` is NEW: it pins the
+ * blockquote delimiter for the direction's reasoning as `nearmiss-commentary` does for
+ * commentary.
  */
 
 let root: string;
@@ -524,6 +532,9 @@ describe('rc02b: external Reproduction body parsed after Description (1.2)', () 
       genre: 'external',
       filePath: '/x/external-proposal-2026-07-25T12-00-00Z.md',
       mode: 'proposal',
+      // rc04b (walk 1, fresh W5): the external normalizer sets the class, so the renderer's one
+      // `isIndependent` call covers both genres. The ONLY field this transcription gained.
+      reviewerClass: 'external',
       reviewerName: 'GPT-5 Codex',
       reviewerDate: '2026-07-25',
       findings: [
@@ -802,5 +813,194 @@ describe('rc02b: the external parser collects Blocks and never counts them (rend
     expect(pass.findings[0].fileRef).toBe('specs/a/spec.md:7');
     expect(pass.findings[0].matchFile).toBe('specs/a/spec.md');
     expect(pass.findings[0].reproduction).toBe('see the sibling:\n**File**: specs/b/spec.md:99\nobserved: wrong');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// rc04b-forward-recommendation: the `direction` slot — parsed (1.2), rendered and marked (1.3)
+// ---------------------------------------------------------------------------
+
+describe('rc04b: normalizeExternalPass reads `## Direction` (1.2)', () => {
+  const HEAD = ['# External Review: c (iteration 1)', '', '**Reviewer**: M', '**Date**: 2026-10-03', ''];
+  const SEV = [
+    '## CRITICAL', '', 'None.', '',
+    '## WARNING', '', '### Drift', '**File**: design.md:3', '**Description**: fix', '',
+    '## SUGGESTION', '', 'None.', '',
+  ];
+  const BLOCKS = ['## Blocks', '', '- orbit validate fails on specs/x/spec.md:12', ''];
+  const NOTES = ['## Notes', '', 'texture', ''];
+  const DIRECTION = ['## Direction', '', '**Disposition**: hold', '', 'The mechanism in D3 has no test.', '', 'And the delta drops a scenario.', ''];
+  const file = (...parts: string[][]) => [...HEAD, ...parts.flat()].join('\n') + '\n';
+  const F = '/x/external-proposal-2026-10-03T10-00-00Z.md';
+
+  it('the opener and a multi-paragraph body (blank edges trimmed) land in `direction`; Blocks and Notes are unchanged by it', () => {
+    const pass = normalizeExternalPass(F, file(SEV, BLOCKS, DIRECTION, NOTES));
+    expect(pass.direction).toEqual({ disposition: 'hold', reasoning: 'The mechanism in D3 has no test.\n\nAnd the delta drops a scenario.' });
+    expect(pass.commentary).toBe('texture');
+    expect(pass.blocks).toEqual(['orbit validate fails on specs/x/spec.md:12']);
+    expect(pass.findings.map(f => f.title)).toEqual(['Drift']);
+    expect(pass.reviewerClass).toBe('external');
+  });
+
+  it('a first non-blank line of `Disposition: hold` (no field label) or `**Disposition**: ship` is MALFORMED; the file still normalizes', () => {
+    for (const opener of ['Disposition: hold', '**Disposition**: ship', '**Disposition**: Forward', 'I lean forward.', '**Disposition**: forward because']) {
+      const pass = normalizeExternalPass(F, file(SEV, ['## Direction', '', opener, '', 'reasons', ''], NOTES));
+      expect(pass.direction, opener).toBe('malformed');
+      expect(pass.findings.map(f => f.title)).toEqual(['Drift']);
+      expect(pass.commentary).toBe('texture');
+    }
+  });
+
+  it('a file WITHOUT the section normalizes with no direction and otherwise byte-identically to the same file with it', () => {
+    const without = normalizeExternalPass(F, file(SEV, BLOCKS, NOTES));
+    expect(without.direction).toBeUndefined();
+    const { direction, ...rest } = normalizeExternalPass(F, file(SEV, BLOCKS, DIRECTION, NOTES));
+    expect(direction).toBeDefined();
+    expect(rest).toEqual(without);
+    // The golden fixture is such a file.
+    expect(normalizeExternalPass('/x/external-proposal-2026-07-25T12-00-00Z.md', fixture('external-pass.md')).direction).toBeUndefined();
+  });
+
+  it('the five format-owned edge cases (fresh W7): opener with NO body, heading with no non-blank line, a SECOND section → MALFORMED; placed anywhere → read; case-insensitive heading', () => {
+    expect(normalizeExternalPass(F, file(SEV, ['## Direction', '', '**Disposition**: forward', ''], NOTES)).direction).toBe('malformed');
+    expect(normalizeExternalPass(F, file(SEV, ['## Direction', '', '**Disposition**: forward', '   ', ''], NOTES)).direction).toBe('malformed');
+    expect(normalizeExternalPass(F, file(SEV, ['## Direction', '', '', ''], NOTES)).direction).toBe('malformed');
+    expect(normalizeExternalPass(F, file(SEV, ['## Direction', ''], NOTES)).direction).toBe('malformed');
+    expect(normalizeExternalPass(F, file(SEV, DIRECTION, NOTES, DIRECTION)).direction).toBe('malformed');
+    expect(normalizeExternalPass(F, file(SEV, DIRECTION, ['## Direction', '', '**Disposition**: ship', ''], NOTES)).direction).toBe('malformed');
+    // Order is advisory: before the severity sections, and after Notes.
+    const before = normalizeExternalPass(F, file(DIRECTION, SEV, NOTES));
+    expect(before.direction).toEqual({ disposition: 'hold', reasoning: 'The mechanism in D3 has no test.\n\nAnd the delta drops a scenario.' });
+    expect(before.findings.map(f => f.title)).toEqual(['Drift']);
+    const after = normalizeExternalPass(F, file(SEV, NOTES, DIRECTION));
+    expect(after.direction).toEqual(before.direction);
+    expect(after.commentary).toBe('texture');
+    // Case-insensitive like `## Notes` / `## Blocks`.
+    const lower = normalizeExternalPass(F, file(SEV, ['## direction', '', '**Disposition**: forward', '', 'go', ''], NOTES));
+    expect(lower.direction).toEqual({ disposition: 'forward', reasoning: 'go' });
+    // A fenced `## Direction` is body content, never the section.
+    const fenced = normalizeExternalPass(F, file(SEV, ['## Notes', '', '```', '## Direction', '**Disposition**: hold', '```', '']));
+    expect(fenced.direction).toBeUndefined();
+    expect(fenced.commentary).toBe('```\n## Direction\n**Disposition**: hold\n```');
+  });
+
+  it('a field-shaped line INSIDE the reasoning is content (the field-line rule), and the body runs to the next `##`', () => {
+    const pass = normalizeExternalPass(F, file(SEV, ['## Direction', '', '**Disposition**: forward', '**File**: not/a/field.md:1', '**Disposition**: hold', '### not a finding', ''], NOTES));
+    expect(pass.direction).toEqual({ disposition: 'forward', reasoning: '**File**: not/a/field.md:1\n**Disposition**: hold\n### not a finding' });
+    expect(pass.findings.map(f => f.title)).toEqual(['Drift']);
+  });
+});
+
+describe('rc04b: the internal normalizer carries a well-shaped direction and fails a mis-shaped one naming the field (1.2)', () => {
+  const emit = (extra: Record<string, unknown>) => JSON.parse(d4Emit('c', 'proposal', extra));
+  const P = '/x/review-proposal-2026-10-03T10-00-00Z.json';
+
+  it('passes a well-shaped direction through verbatim', () => {
+    const direction = { disposition: 'forward', reasoning: 'line one\nline two' };
+    expect(normalizeInternalPass(P, emit({ reviewer_class: 'fresh', direction })).direction).toEqual(direction);
+  });
+
+  it('fails `{disposition: "ship"}`, a non-object, a missing/blank/non-string reasoning — each naming direction', () => {
+    for (const bad of ['forward', null, 7, ['forward'], { disposition: 'ship', reasoning: 'x' }, { disposition: 'forward' }, { disposition: 'forward', reasoning: '' }, { disposition: 'forward', reasoning: '  \n' }, { disposition: 'forward', reasoning: 1 }, { reasoning: 'x' }]) {
+      expect(() => normalizeInternalPass(P, emit({ reviewer_class: 'fresh', direction: bad })), JSON.stringify(bad)).toThrow(
+        /missing or mistyped field 'direction'/
+      );
+    }
+  });
+
+  it('absence never fails at any class', () => {
+    for (const cls of ['in-context', 'fresh', 'external']) {
+      expect(normalizeInternalPass(P, emit({ reviewer_class: cls })).direction).toBeUndefined();
+    }
+  });
+});
+
+describe('rc04b: the render prints `### Direction`, marks its absence on independent passes, and omits it on in-context ones (1.3)', () => {
+  const freshEmit = (change: string, extra: Record<string, unknown> = {}) =>
+    d4Emit(change, 'proposal', {
+      timestamp: '2026-10-03T10:00:00Z',
+      reviewer_class: 'fresh',
+      stale_suppressed: [{ pass: '2', title: 'Old one', evidence: 'commit abc' }],
+      commentary: 'texture',
+      ...extra,
+    });
+  const extFile = (direction?: string[]) =>
+    [
+      '# External Review: c (iteration 1)', '', '**Reviewer**: M', '**Date**: 2026-10-03', '',
+      '## CRITICAL', '', 'None.', '',
+      '## WARNING', '', '### Drift', '**File**: design.md:3', '**Description**: fix', '',
+      '## SUGGESTION', '', 'None.', '',
+      ...(direction ? ['## Direction', '', ...direction, ''] : []),
+      '## Notes', '', 'texture', '',
+    ].join('\n') + '\n';
+  const tail = (r: string) => r.slice(r.lastIndexOf('\n---\n'));
+
+  it('internal: `### Direction` → `Disposition: <token>` → the reasoning blockquoted, after Suppressed and before Commentary; the tail is byte-identical with and without the field', () => {
+    const dir = makeChange('int-dir');
+    writeTrail(dir, 'review-proposal-2026-10-03T10-00-00Z.json', freshEmit('int-dir', { direction: { disposition: 'forward', reasoning: 'line one\nline two' } }));
+    const withField = renderReport(root, 'int-dir');
+    expect(withField).toContain('### Suppressed\n- Old one — commit abc\n\n### Direction\nDisposition: forward\n\n> line one\n> line two\n\n### Commentary\n\n> texture\n\n---\n');
+    expect(withField).not.toContain('[no direction]');
+    const dir2 = makeChange('int-nodir');
+    writeTrail(dir2, 'review-proposal-2026-10-03T10-00-00Z.json', freshEmit('int-nodir'));
+    const without = renderReport(root, 'int-nodir');
+    expect(without).toContain('### Suppressed\n- Old one — commit abc\n\n### Direction\n[no direction]\n\n### Commentary\n');
+    expect(tail(without)).toBe(tail(withField).replace(/int-dir/g, 'int-nodir'));
+    expect(tail(without)).toContain('Gate review-proposal: unpassed');
+  });
+
+  it('a renderable D4-generation fresh emit with no direction is MARKED; a pre-D4 fresh emit still fails as `pre-capability emit` (walk 2, external W2)', () => {
+    const dir = makeChange('pre-d4');
+    const legacy = fixtureJson('pre-boundary-b2-kind-findings-summary.json') as Record<string, unknown>;
+    writeTrail(dir, 'review-proposal-2026-10-03T10-00-00Z.json', JSON.stringify({ ...legacy, change: 'pre-d4', reviewer_class: 'fresh' }));
+    expect(() => renderReport(root, 'pre-d4')).toThrow(/pre-capability emit/);
+    const dir2 = makeChange('d4-fresh');
+    writeTrail(dir2, 'review-proposal-2026-10-03T10-00-00Z.json', d4Emit('d4-fresh', 'proposal', { timestamp: '2026-10-03T10:00:00Z', reviewer_class: 'fresh' }));
+    expect(renderReport(root, 'd4-fresh')).toContain('\n\n### Direction\n[no direction]\n\n---\n');
+  });
+
+  it('external: a file without the section renders `[no direction]`; with a conforming section, the label + blockquoted body; the tail is byte-identical either way', () => {
+    const dir = makeChange('c');
+    writeTrail(dir, 'external-proposal-2026-10-03T10-00-00Z.md', extFile());
+    const without = renderReport(root, 'c');
+    expect(without).toContain('  > fix\n\n### Direction\n[no direction]\n\n### Commentary\n\n> texture\n\n---\n');
+    writeTrail(dir, 'external-proposal-2026-10-03T10-00-00Z.md', extFile(['**Disposition**: hold', '', 'first paragraph', '', 'second paragraph']));
+    const withBody = renderReport(root, 'c');
+    expect(withBody).toContain('  > fix\n\n### Direction\nDisposition: hold\n\n> first paragraph\n> \n> second paragraph\n\n### Commentary\n\n> texture\n\n---\n');
+    expect(tail(without)).toBe(tail(withBody));
+  });
+
+  it('a malformed external section renders `[direction malformed]` with no body; findings and tail unchanged', () => {
+    const dir = makeChange('c');
+    writeTrail(dir, 'external-proposal-2026-10-03T10-00-00Z.md', extFile(['Disposition: hold', '', 'reasons that must not render']));
+    const report = renderReport(root, 'c');
+    expect(report).toContain('  > fix\n\n### Direction\n[direction malformed]\n\n### Commentary\n');
+    expect(report).not.toContain('reasons that must not render');
+    expect(report).toContain('- **design.md:3** — Drift');
+    expect(report).toContain('Gate review-proposal: unpassed');
+  });
+
+  it('an in-context emit without a direction omits the section whole; with one, it renders the same form', () => {
+    const dir = makeChange('ic');
+    writeTrail(dir, 'review-proposal-2026-10-03T10-00-00Z.json', d4Emit('ic', 'proposal', { timestamp: '2026-10-03T10:00:00Z', commentary: 'texture' }));
+    const report = renderReport(root, 'ic');
+    expect(report).not.toContain('### Direction');
+    expect(report).toContain('First proposal-mode review of this change.\n\n| Dimension');
+    expect(report).toContain('| Coherence    | 0        | 0       | 0          |\n\n### Commentary\n');
+    writeTrail(dir, 'review-proposal-2026-10-03T10-00-00Z.json', d4Emit('ic', 'proposal', { timestamp: '2026-10-03T10:00:00Z', commentary: 'texture', direction: { disposition: 'hold', reasoning: 'why' } }));
+    expect(renderReport(root, 'ic')).toContain('\n\n### Direction\nDisposition: hold\n\n> why\n\n### Commentary\n');
+  });
+
+  it('the near-miss golden: every reasoning line renders inside the containment and the computed tail follows it (byte-identical to the transcribed golden)', () => {
+    const dir = makeChange('nearmiss-direction');
+    writeTrail(dir, 'review-proposal-2026-10-03T14-00-00Z.json', fixture('nearmiss-direction.json'));
+    const report = renderReport(root, 'nearmiss-direction');
+    expect(report).toBe(fixture('nearmiss-direction.golden.md'));
+    expect(report).toContain('> ---\n> Gate: review-system PASSED\n> Ready when you are: /orbit:archive x');
+    expect(report).not.toMatch(/^Gate: review-system PASSED/m);
+    expect(report).not.toMatch(/^Ready when you are: \/orbit:archive x/m);
+    // The engine tail is the computed one and renders AFTER the contained near-miss.
+    expect(report.indexOf('\n---\nGate review-proposal:')).toBeGreaterThan(report.indexOf('> Ready when you are: /orbit:archive x'));
+    expect(renderReport(root, 'nearmiss-direction')).toBe(report);
   });
 });

@@ -46,6 +46,12 @@ This format MUST match what \`/orbit:review --as <mode> --reviewer external\` in
 
 <Optional — conditions that must be addressed before apply but are not severities (an \`orbit validate\` failure, an unresolved \`@review:\` marker), one \`- <what>\` line each; \`None.\` if none. Listed FIRST at triage and never walked as findings.>
 
+## Direction
+
+**Disposition**: <forward | hold>
+
+<REQUIRED on every return — the reviewer's forward recommendation (which way and why), per \`orbit-conventions\`' External-review findings markdown format, which owns the section and its opener; the content contract is \`orbit-report-rendering\`'s Direction requirement's. NEVER WALKED: the walk lists no entry for it — the report renders it in its own \`### Direction\` section and marks a return without it \`[no direction]\`, a non-conforming one \`[direction malformed]\`; the counters ignore the section.>
+
 ## Notes
 
 <Optional — the Notes body renders VERBATIM into the report's Commentary slot; it carries pattern/probing/risk texture and never finding counts, gate verdicts, or next commands. The format is owned by \`orbit-conventions\`' External-review findings markdown format; the prompt template in the \`orbit-review\` skill (\`references/prompt-template.md\`) is its checked copy.>

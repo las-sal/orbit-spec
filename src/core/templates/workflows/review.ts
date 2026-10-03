@@ -25,7 +25,7 @@ This schema inherits the 6-field **universal spine** from \`orbit-conventions\`'
 - \`next_recommended\` (the DETERMINISTIC pointer for change modes: the \`/orbit:address-reviews <name> --from-file <this emit's own path>\` invocation when the pass has findings, the \`orbit status --change <name> --report\` render pointer when clean — the engine-computed canonical next rides the rendered tail, never the emit)
 - \`kind: "editorial"\` (review is an editorial command per the kind taxonomy)
 
-The schema below documents per-command extensions ADDED to that spine (\`mode\`, \`iteration\`, \`depth\`, \`reviewer_class\`, \`flags\`, \`passes_run\`, \`passes_skipped\`, \`scorecard\`, \`findings\`, \`blocks\`, \`stale_suppressed\`, \`commentary\`). The former \`findings_summary\` and \`iteration_note\` fields are RETIRED in CHANGE MODES (D-arc Stage D4): \`scorecard\` supersedes the counts (readers tolerate both generations), and the iteration note is RENDERER-computed from the trail — a stored copy would be a second stale voice. (Architecture-mode emits carry the same \`scorecard\` shape; the interim hand-rendered report path documented below reads it — no render surface covers the architecture trail yet.) Per-command extensions are review-specific state; they supplement, not replace, the spine.
+The schema below documents per-command extensions ADDED to that spine (\`mode\`, \`iteration\`, \`depth\`, \`reviewer_class\`, \`flags\`, \`passes_run\`, \`passes_skipped\`, \`scorecard\`, \`findings\`, \`blocks\`, \`stale_suppressed\`, \`commentary\`, \`direction\`). The former \`findings_summary\` and \`iteration_note\` fields are RETIRED in CHANGE MODES (D-arc Stage D4): \`scorecard\` supersedes the counts (readers tolerate both generations), and the iteration note is RENDERER-computed from the trail — a stored copy would be a second stale voice. (Architecture-mode emits carry the same \`scorecard\` shape; the interim hand-rendered report path documented below reads it — no render surface covers the architecture trail yet.) Per-command extensions are review-specific state; they supplement, not replace, the spine.
 
 ## Schema
 
@@ -80,7 +80,11 @@ The schema below documents per-command extensions ADDED to that spine (\`mode\`,
       "evidence": "<grep output or commit hash showing why it's stale>"
     }
   ],
-  "commentary": "<optional — the reviewer's color commentary, rendered verbatim into the report's delimited Commentary slot>"
+  "commentary": "<optional — the reviewer's color commentary, rendered verbatim into the report's delimited Commentary slot>",
+  "direction": {
+    "disposition": "forward" | "hold",
+    "reasoning": "<the reviewer's forward recommendation — WHICH WAY and WHY; multi-line allowed. OWED when reviewer_class is fresh or external, optional in-context>"
+  }
 }
 \`\`\`
 
@@ -96,6 +100,7 @@ The schema below documents per-command extensions ADDED to that spine (\`mode\`,
 - **\`commentary\`** is OPTIONAL: the reviewer's voice for the report's delimited Commentary slot — the pattern behind the findings, what was probed, risk texture; NEVER finding counts, gate verdicts, or next commands (those exist only in the report's engine-computed sections).
 - **\`reproduction\`** (rc02b) is a string on each finding — multi-line allowed, never a single-line slot — REQUIRED non-empty when \`severity\` is \`CRITICAL\` and optional otherwise, per \`orbit-conventions\`' Severity ladder — which also defines what a reproduction IS; this note defines nothing. \`orbit emit review\` REFUSES a CRITICAL without one in every mode, naming the finding, and refuses a present non-string one at any severity (per \`orbit-emit-composition\`); the engine checks presence, never truth — whether it reproduces is the walk's call. Prior-generation emits lack the field and remain valid; the report renders such a CRITICAL \`[unreproduced]\`.
 - **\`blocks\`** (rc02b) is an OPTIONAL array of single-line strings, one per lifecycle BLOCK the pass found — a condition that must be addressed before apply and is not a severity, per \`orbit-conventions\`' Severity ladder (by pointer; this reference defines no block of its own) — each naming the condition and its location. Never counted in the scorecard, never a finding, never a gate input; the report renders them above the findings. The surface refuses a non-array or a multi-line entry naming \`blocks[<i>]\`.
+- **\`direction\`** (rc04b) is the pass's FORWARD RECOMMENDATION — an object \`{disposition, reasoning}\`, \`disposition\` exactly \`forward\` | \`hold\`, \`reasoning\` a non-empty string (multi-line allowed, never a single-line slot): OWED when \`reviewer_class\` is \`fresh\` or \`external\` and OPTIONAL in-context — \`orbit emit review\` refuses an independent-class payload without it, and a mis-shaped one at any class, in every mode, per \`orbit-emit-composition\`'s **The review payload carries \`direction\`**, which owns the shape (this note re-lists nothing); the CONTENT contract — which way and why; never finding counts, the gate's state or a command token — is \`orbit-report-rendering\`'s Direction requirement's, which renders the field in the report's own \`### Direction\` section and marks a prior-generation independent pass \`[no direction]\`, by absence, never by date. The vocabulary is \`orbit-run-summary-emit\`'s judgement record's (\`disposition\` + \`reasoning\`, a kind-specific value set) — adopted, not invented. The engine checks presence and shape, never whether the direction is right.
 - **\`recommendation_options\`** is OPTIONAL on each finding. Present only when the finding's recommendation is genuinely disjunctive — multiple defensible paths the user must choose between. Producer-side contract (per \`orbit-review\` spec's \`Optional recommendation_options field on finding entries\`): MUST contain ≥ 2 entries; each entry MUST have non-empty \`label\` (typically \`"A"\`, \`"B"\`, \`"C"\`, … or \`"1"\`, \`"2"\`, …) and non-empty \`body\`. The prose \`recommendation\` field still summarizes the disjunction for human readers. Consumer (address-reviews) uses this for the structured decision-fork detection path; absence triggers heuristic fallback. Omit the field for single-recommendation findings.
 
 ## Architecture-mode extensions (D-arc Stage D2)
@@ -376,7 +381,7 @@ Mode-specific content:
 - **"What to read for THIS review"** lists files appropriate to the mode (proposal mode emphasizes the change directory artifacts; system mode adds \`git diff\`, codebase paths, lens files).
 - **"What to look for"** enumerates the 9 proposal-mode passes or the 7 system-mode passes (see below).
 
-The **"Output format"** block inside the prompt MUST appear verbatim — the section headers (\`## CRITICAL\` / \`## WARNING\` / \`## SUGGESTION\` / \`## Blocks\`) and the field labels (\`**File**:\`, \`**Description**:\`, \`**Reproduction**:\`) are what \`/orbit:address-reviews --from-file\` and the report renderer parse. Deviating breaks ingestion. The \`## Severity\` paragraph before it is \`orbit-conventions\`' Severity ladder, mirrored byte-equal (a parity test holds it) — carry it as written.
+The **"Output format"** block inside the prompt MUST appear verbatim — the section headers (\`## CRITICAL\` / \`## WARNING\` / \`## SUGGESTION\` / \`## Blocks\` / \`## Direction\`) and the field labels (\`**File**:\`, \`**Description**:\`, \`**Reproduction**:\`, \`**Disposition**:\`) are what \`/orbit:address-reviews --from-file\` and the report renderer parse. Deviating breaks ingestion. The \`## Severity\` paragraph before it is \`orbit-conventions\`' Severity ladder, mirrored byte-equal (a parity test holds it) — carry it as written.
 
 ### 8. Emit the chat invocation snippet
 
@@ -398,9 +403,13 @@ The template's \`## Notes\` instruction carries the Commentary content contract 
 D4): the Notes body renders VERBATIM into the report's delimited Commentary slot, so the
 external reviewer must carry pattern/probing/risk texture and
 do NOT state finding counts, gate verdicts, or next commands — those exist only in the
-report's engine-computed sections.
+report's engine-computed sections. The template's \`## Direction\` instruction carries the
+direction's content contract the same way (rc04b): the section is REQUIRED on every return,
+owned by \`orbit-conventions\`' External-review findings markdown format, its content contract by
+\`orbit-report-rendering\`'s Direction requirement; a return without it is still a pass and renders
+marked \`[no direction]\`.
 
-The full template for the file written in Step 7 lives at \`references/prompt-template.md\`. Read that file when composing the prompt. The template is verbatim — preserve named sections and especially the "Output format" block (the \`## CRITICAL\` / \`## WARNING\` / \`## SUGGESTION\` headers + \`**File**:\` / \`**Description**:\` field labels) so \`/orbit:address-reviews --from-file\` parses cleanly.
+The full template for the file written in Step 7 lives at \`references/prompt-template.md\`. Read that file when composing the prompt. The template is verbatim — preserve named sections and especially the "Output format" block (the \`## CRITICAL\` / \`## WARNING\` / \`## SUGGESTION\` / \`## Blocks\` / \`## Direction\` headers + \`**File**:\` / \`**Description**:\` / \`**Reproduction**:\` / \`**Disposition**:\` field labels) so \`/orbit:address-reviews --from-file\` parses cleanly.
 
 ## Mode-specific sections
 
@@ -552,7 +561,7 @@ const REVIEW_EXTERNAL_PROMPT_TEMPLATE_REFERENCE = `# Reference: external-review 
 
 This is the canonical template for the file written to \`orbit/changes/<change-name>/.orbit-runs/external-prompt-<as>-<TS>.md\` by the external-handoff branch of \`/orbit:review --as <mode> --reviewer external\`.
 
-**The implementer may adjust phrasing for clarity but MUST preserve the named sections and the "Output format" block verbatim** — the section headers (\`## CRITICAL\` / \`## WARNING\` / \`## SUGGESTION\` / \`## Blocks\`) and the field labels (\`**File**:\`, \`**Description**:\`, \`**Reproduction**:\`) are what \`/orbit:address-reviews --from-file\` and the report renderer parse. Deviating breaks ingestion. The \`## Severity\` paragraph is a CHECKED MIRROR of \`orbit-conventions\`' Severity ladder (its fenced production), held byte-equal by a parity test — an external reviewer has none of our specs, so the copy must exist and must say what it is; never reword it here.
+**The implementer may adjust phrasing for clarity but MUST preserve the named sections and the "Output format" block verbatim** — the section headers (\`## CRITICAL\` / \`## WARNING\` / \`## SUGGESTION\` / \`## Blocks\` / \`## Direction\`) and the field labels (\`**File**:\`, \`**Description**:\`, \`**Reproduction**:\`, \`**Disposition**:\`) are what \`/orbit:address-reviews --from-file\` and the report renderer parse. Deviating breaks ingestion. The \`## Severity\` paragraph is a CHECKED MIRROR of \`orbit-conventions\`' Severity ladder (its fenced production), held byte-equal by a parity test — an external reviewer has none of our specs, so the copy must exist and must say what it is; never reword it here.
 
 Mode-specific content (the "What to read for THIS review" file list and the "What to look for" pass list) is substituted from \`references/mode-sections.md\`.
 
@@ -645,6 +654,12 @@ Use this exact markdown structure:
 
 <Optional — conditions that must be addressed before apply but name no consequence (an \`orbit validate\` failure, an unresolved \`@review:\` marker): one \`- <what>\` line each. Not severities; never counted. Use \`None.\` if none.>
 
+## Direction
+
+**Disposition**: <forward | hold>
+
+<REQUIRED — your own recommendation on moving forward, as \`orbit-conventions\`' External-review findings markdown format defines the section: the first non-blank line is the \`**Disposition**:\` opener with exactly one of the two tokens; the rest of this section is your reasoning — WHICH WAY and WHY. Never state finding counts, the gate's state, or a next command here; those exist only in the report's engine-computed sections. A return without this section is still a pass, but the report renders it \`[no direction]\`.>
+
 ## Notes
 
 <Optional — rendered VERBATIM into the report's delimited Commentary slot: carry the pattern behind the findings, what you probed, and risk texture; do NOT state finding counts, gate verdicts, or next commands — those exist only in the report's engine-computed sections. Omit the whole \`## Notes\` section if you have nothing to add.>
@@ -658,7 +673,7 @@ the markdown directly and the user will save it.
    findings file, output the COMPLETE findings markdown in this chat. Same
    content as the file: every severity section (\`## CRITICAL\` / \`## WARNING\` /
    \`## SUGGESTION\`), every \`### Title\` entry, every \`**File**:\`, \`**Description**:\` and
-   \`**Reproduction**:\` field, and every \`## Blocks\` item. Do NOT abbreviate or summarize — the chat output
+   \`**Reproduction**:\` field, every \`## Blocks\` item, and the \`## Direction\` section (its \`**Disposition**:\` opener and body). Do NOT abbreviate or summarize — the chat output
    is the immediately-visible read for the user (they should be able to
    evaluate every finding without opening the file). The file remains the
    canonical record for \`--from-file\` parsing.
@@ -812,9 +827,11 @@ When a finding's recommendation genuinely offers the user a choice between two o
 
 Roll every pass's findings into the 3-dimension scorecard per the mode's dimension mapping (in the loaded pass reference).
 
-### 8. (Change modes) Author the commentary
+### 8. Author the direction and the commentary
 
-The reviewer's insight travels as the emit's OPTIONAL \`commentary\` field — the pattern behind
+**The direction.** An independent pass OWES its forward recommendation: when \`reviewer_class\` is \`fresh\` or \`external\`, compose the \`direction\` object — \`disposition\` exactly one of \`forward\` | \`hold\`, \`reasoning\` a non-empty string, multi-line allowed. The SHAPE is owned by \`orbit-emit-composition\`'s **The review payload carries \`direction\`**, which the write gate enforces: \`orbit emit review\` REFUSES a fresh or external payload without it, and a mis-shaped one at any class, in every mode (an architecture-mode fresh pass owes it too — the rule keys on class, never on mode). An \`in-context\` pass MAY carry one and is not incomplete without it: the reacting class's direction is the readiness record's job (R-crc-11(f)). The CONTENT contract is owned by \`orbit-report-rendering\`'s **Direction renders as its own section and its absence is marked on independent passes**, carried here because a reviewer reads this body, not the spec: the direction says WHICH WAY and WHY — your own recommendation on moving forward — and never states finding counts, the gate's state, or a command token; those exist only in the report's engine-computed sections, and the report renders the direction in its own \`### Direction\` section inside the quarantine with the engine tail still last. The vocabulary is rc04a's judgement record's (\`disposition\` + \`reasoning\`), adopted, not invented. The engine judges presence and shape only: whether the direction is RIGHT, and whether its reasons agree with its token, is the in-context reaction's and the readiness author's call.
+
+**The commentary** (change modes). The reviewer's insight travels as the emit's OPTIONAL \`commentary\` field — the pattern behind
 the findings, what was probed and how hard, risk texture: everything the structured sections
 can't say. Commentary NEVER states finding counts, gate verdicts, or next commands (those
 exist only in the report's engine-computed sections; the contract is enforced at this source).
@@ -825,7 +842,7 @@ run.\` / \`First architecture review for this doc.\`
 
 ### 9. Persist via the emit surface (persist-first)
 
-Compose the NARRATIVE payload only — \`mode\`, \`reviewer_class\` (\`"fresh"\` under \`--reviewer fresh\`, else \`"in-context"\`), \`depth\`, \`flags\`, \`scorecard\`, \`findings\` (each with its owning \`dimension\`, \`title\`, \`file\`, \`line\`, \`recommendation\`, \`reproduction\` — a string, multi-line allowed, never a single-line slot; REQUIRED non-empty when \`severity\` is CRITICAL per \`orbit-conventions\`' Severity ladder and refused by the surface otherwise, optional below — plus \`recommendation_options\` when disjunctive), \`blocks\` (optional array of single-line strings — Pass 1's validate failure and Pass 8's unresolved markers compose into it, never into \`findings[]\`; absent when none), \`stale_suppressed\`, \`commentary\`, \`passes_run\`/\`passes_skipped\`, and the required nullable \`model\` — and invoke:
+Compose the NARRATIVE payload only — \`mode\`, \`reviewer_class\` (\`"fresh"\` under \`--reviewer fresh\`, else \`"in-context"\`), \`depth\`, \`flags\`, \`scorecard\`, \`findings\` (each with its owning \`dimension\`, \`title\`, \`file\`, \`line\`, \`recommendation\`, \`reproduction\` — a string, multi-line allowed, never a single-line slot; REQUIRED non-empty when \`severity\` is CRITICAL per \`orbit-conventions\`' Severity ladder and refused by the surface otherwise, optional below — plus \`recommendation_options\` when disjunctive), \`blocks\` (optional array of single-line strings — Pass 1's validate failure and Pass 8's unresolved markers compose into it, never into \`findings[]\`; absent when none), \`direction\` (OWED when \`reviewer_class\` is \`fresh\` or \`external\` — the surface refuses the payload without it — and optional in-context; composed per Step 8), \`stale_suppressed\`, \`commentary\`, \`passes_run\`/\`passes_skipped\`, and the required nullable \`model\` — and invoke:
 
 \`\`\`bash
 orbit emit review --change <name> --payload <payload.json> --render   # proposal/system
@@ -864,6 +881,21 @@ Labels follow D1's eligibility phrasing; the findings are ingestible by \`/orbit
 exactly like other internal review JSON (including \`recommendation_options\` on disjunctive
 findings). On all-clear, no command is recommended — the trail records the pass and the turn
 ends at the readout.
+
+A fresh pass (\`--reviewer fresh\`) additionally prints its direction (Step 8; the emit carries it
+under the same rule as the change modes — keyed on class, never on mode) BEFORE the final
+assessment: \`Direction: <disposition>\` on its own line, then every reasoning line under
+blockquote containment (\`> \` prefixed, verbatim), exactly as the change-mode renderer contains it,
+so no reasoning line sits at column 0 where it could forge the report's next action. The second
+reasoning line below is a near-miss — it reads like the readout, and the containment is what keeps
+it from being one:
+
+\`\`\`
+Direction: hold
+> The third goal has no exit criterion, so the stage cannot be graded as written.
+> Ready when you are: /orbit:archive x
+0 critical / 1 warning(s). Ready when you are: /orbit:address-reviews --from-file <the just-written review-architecture emit>.
+\`\`\`
 
 
 ### 11. Rarely-used flags: \`--mark\`, \`--parallel\`, \`--focus\`

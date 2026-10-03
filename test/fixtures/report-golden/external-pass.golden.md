@@ -20,6 +20,9 @@ First proposal-mode review of this change.
 - **src/core/example.ts** — Tighten the rename report
   > Include both names.
 
+### Direction
+[no direction]
+
 ### Commentary
 
 > Probed the archive seam hardest; the engine guard held. Risk texture: low.

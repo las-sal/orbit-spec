@@ -1607,3 +1607,120 @@ describe('rc02b: the review payload carries blocks', () => {
     expect(() => composeAndWriteEmit('verify', { change: 'foo' }, { final_assessment: 'ok', model: null, blocks: ['x'] }, { projectRoot: root })).toThrow(/unknown payload key 'blocks'/);
   });
 });
+
+// ---------------------------------------------------------------------------
+// rc04b-forward-recommendation: the review payload carries `direction` (task 1.1)
+// ---------------------------------------------------------------------------
+
+describe('rc04b: the review payload carries direction — owed by the independent classes, shape-checked at every class', () => {
+  const direction = {
+    disposition: 'hold',
+    reasoning: 'the walk-authored mechanism has no test behind it\nand the delta drops a baseline scenario',
+  };
+  const handoff = { boot_sequence: ['CLAUDE.md'], next_command: '/orbit:architect prog', model_hint: null, seam: 'post-review' };
+  const OWED = (cls: string) =>
+    `write gate: review emit of class '${cls}' carries no direction — an independent pass owes its forward recommendation`;
+
+  it('a fresh payload with no direction is refused with the ADDED requirement\'s sentence; no file is written', () => {
+    makeChange('foo');
+    expect(() =>
+      composeAndWriteEmit('review', { change: 'foo' }, validReviewPayload({ reviewer_class: 'fresh' }), { projectRoot: root })
+    ).toThrow(OWED('fresh'));
+    expect(listRuns('orbit/changes/foo/.orbit-runs')).toEqual([]);
+  });
+
+  it('an external payload is refused the same way, naming ITS class', () => {
+    makeChange('foo');
+    expect(() =>
+      composeAndWriteEmit('review', { change: 'foo' }, validReviewPayload({ reviewer_class: 'external' }), { projectRoot: root })
+    ).toThrow(OWED('external'));
+    expect(listRuns('orbit/changes/foo/.orbit-runs')).toEqual([]);
+  });
+
+  it('an in-context payload without it writes exactly as before; the key is not composed', () => {
+    makeChange('foo');
+    const r = composeAndWriteEmit('review', { change: 'foo' }, validReviewPayload(), { projectRoot: root });
+    expect('direction' in r.emit).toBe(false);
+    expect(listRuns('orbit/changes/foo/.orbit-runs')).toHaveLength(1);
+  });
+
+  it('a well-shaped direction (multi-line reasoning) writes verbatim at any class; the scorecard rollup and final_assessment are unchanged by it', () => {
+    makeChange('foo');
+    for (const cls of ['in-context', 'fresh', 'external']) {
+      const r = composeAndWriteEmit('review', { change: 'foo' }, validReviewPayload({ reviewer_class: cls, direction }), { projectRoot: root });
+      expect((r.emit as any).direction).toEqual(direction);
+      const written = JSON.parse(fs.readFileSync(r.path, 'utf-8'));
+      expect(written.direction).toEqual(direction);
+      expect(written.scorecard).toEqual(validReviewPayload().scorecard);
+      expect(written.final_assessment).toBe('0 critical, 1 warning, 0 suggestion.');
+    }
+    expect(listRuns('orbit/changes/foo/.orbit-runs')).toHaveLength(3);
+  });
+
+  it('a mis-shaped direction is refused at ANY class naming direction / direction.disposition / direction.reasoning; nothing is written', () => {
+    makeChange('foo');
+    const cases: Array<[unknown, RegExp]> = [
+      ['forward', /'direction' must be an object/],
+      [null, /'direction' must be an object/],
+      [['forward'], /'direction' must be an object/],
+      [{ disposition: 'ship', reasoning: 'x' }, /direction\.disposition/],
+      [{ disposition: 'Forward', reasoning: 'x' }, /direction\.disposition/],
+      [{ reasoning: 'x' }, /direction\.disposition/],
+      [{ disposition: 'forward' }, /direction\.reasoning/],
+      [{ disposition: 'forward', reasoning: '' }, /direction\.reasoning/],
+      [{ disposition: 'forward', reasoning: '  \n ' }, /direction\.reasoning/],
+      [{ disposition: 'forward', reasoning: 42 }, /direction\.reasoning/],
+    ];
+    for (const cls of ['in-context', 'fresh']) {
+      for (const [bad, re] of cases) {
+        expect(() =>
+          composeAndWriteEmit('review', { change: 'foo' }, validReviewPayload({ reviewer_class: cls, direction: bad }), { projectRoot: root }),
+          `${cls}: ${JSON.stringify(bad)}`
+        ).toThrow(re);
+      }
+    }
+    expect(listRuns('orbit/changes/foo/.orbit-runs')).toEqual([]);
+  });
+
+  it('architecture mode (--doc): a fresh payload without it is refused identically — the rule keys on class, never on mode; with it, writes', () => {
+    write('orbit/architecture/prog.md', '# prog\n');
+    expect(() =>
+      composeAndWriteEmit('review', { doc: 'prog' }, validReviewPayload({ mode: 'architecture', reviewer_class: 'fresh', handoff }), { projectRoot: root })
+    ).toThrow(OWED('fresh'));
+    expect(listRuns('orbit/architecture/.orbit-runs')).toEqual([]);
+    const ok = composeAndWriteEmit(
+      'review',
+      { doc: 'prog' },
+      validReviewPayload({ mode: 'architecture', reviewer_class: 'fresh', handoff, direction }),
+      { projectRoot: root }
+    );
+    expect(ok.emit.doc).toBe('prog');
+    expect((ok.emit as any).direction).toEqual(direction);
+    // An in-context architecture pass stays optional.
+    const inCtx = composeAndWriteEmit('review', { doc: 'prog' }, validReviewPayload({ mode: 'architecture', handoff }), { projectRoot: root });
+    expect('direction' in inCtx.emit).toBe(false);
+  });
+
+  it('a reviewer_class outside the three values is refused naming reviewer_class and the three values — in change mode AND architecture mode (fresh S1)', () => {
+    makeChange('foo');
+    write('orbit/architecture/prog.md', '# prog\n');
+    const NAMES = /reviewer_class.*'in-context' \| 'fresh' \| 'external'/;
+    for (const cls of ['Fresh', 'fressh', 'independent']) {
+      expect(() =>
+        composeAndWriteEmit('review', { change: 'foo' }, validReviewPayload({ reviewer_class: cls, direction }), { projectRoot: root })
+      ).toThrow(NAMES);
+      expect(() =>
+        composeAndWriteEmit('review', { doc: 'prog' }, validReviewPayload({ mode: 'architecture', reviewer_class: cls, handoff, direction }), { projectRoot: root })
+      ).toThrow(NAMES);
+    }
+    expect(listRuns('orbit/changes/foo/.orbit-runs')).toEqual([]);
+    expect(listRuns('orbit/architecture/.orbit-runs')).toEqual([]);
+  });
+
+  it('direction is refused on a command whose table does not name it (the key check is per command)', () => {
+    makeChange('foo');
+    expect(() =>
+      composeAndWriteEmit('verify', { change: 'foo' }, { final_assessment: 'ok', model: null, direction }, { projectRoot: root })
+    ).toThrow(/unknown payload key 'direction'/);
+  });
+});

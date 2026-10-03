@@ -92,7 +92,7 @@ function passSatisfiesSlot(slot: CadenceEntry, cls: ReviewerClass): boolean {
   return slot === cls;
 }
 
-function isIndependent(cls: ReviewerClass): boolean {
+export function isIndependent(cls: ReviewerClass): boolean {
   return cls === 'fresh' || cls === 'external';
 }
 

@@ -3,7 +3,8 @@ import * as path from 'node:path';
 import { loadChangeContext, formatChangeStatus } from './artifact-graph/instruction-loader.js';
 import { collectSameModePasses } from './report-render.js';
 import { normalizeInternalPass } from './report-render.js';
-import { readTrail } from './artifact-graph/trail.js';
+import { readTrail, type ReviewerClass } from './artifact-graph/trail.js';
+import { isIndependent } from './artifact-graph/gates.js';
 import { parseChunkPreamble, chunkForGroup, type ChunkDeclaration } from './parsers/chunk-preamble.js';
 import { countExploreFile, maturityRecommendation } from './parsers/explore-counter.js';
 import { parseExploreRulesFile } from './parsers/explore-rules.js';
@@ -116,6 +117,9 @@ const COMMANDS: Record<string, CommandSpec> = {
       // rc02b: lifecycle BLOCKS (a validate failure, an unresolved marker) ride beside the
       // findings, never in them — single-line strings, shape-checked, never rolled up.
       'blocks',
+      // rc04b: the reviewer's FORWARD RECOMMENDATION — `{disposition, reasoning}`, OWED by the
+      // independent classes (fresh/external), optional in-context; shape-checked at every class.
+      'direction',
     ],
   },
   'address-reviews': {
@@ -502,6 +506,9 @@ function validatePayload(command: string, payload: Record<string, unknown>): voi
   // rc02b: the review payload's finding-level evidence check and the blocks shape.
   validateReviewEvidence(command, payload);
 
+  // rc04b: the direction slot — presence by class, shape at every class, mode never read.
+  validateReviewDirection(command, payload);
+
   // rc04a: the judgement record's STRUCTURE — shape, kind/disposition agreement, the
   // required kind-specific extras. Its ORDERING is checked at the write gate instead,
   // because that check needs the emit's resolved <TS> token, which does not exist yet here.
@@ -560,6 +567,68 @@ function validateReviewEvidence(command: string, payload: Record<string, unknown
         throw new EmitError(`write gate: blocks[${i}] must be single-line (embedded newline) — a block names a condition and its location; it is not a document.`);
       }
     });
+  }
+}
+
+// ---------------------------------------------------------------------------------------
+// rc04b: THE FORWARD RECOMMENDATION, OWED WHERE THE RECORD IS PRODUCED.
+//
+// `orbit-emit-composition`'s "The review payload carries `direction`" owns the SHAPE:
+// `{disposition, reasoning}`, `disposition` exactly `forward` | `hold`, `reasoning` a non-empty
+// string (multi-line allowed). PRESENCE is owed BY CLASS — the gate model's one predicate
+// `isIndependent` (`orbit-engine-gates`' cadence vocabulary, exported rather than restated) —
+// and SHAPE is checked at every class, in every mode: the check never reads `mode`, so an
+// architecture-mode fresh pass owes it exactly as a change-mode one does. The class itself is
+// checked here against the three values, because the architecture-mode write gate validates it
+// nowhere else and an unrecognised class would otherwise read as not-owed (rc04b fresh S1).
+// Presence and shape only (R-crc-10): whether the direction is RIGHT, and whether its reasoning
+// agrees with its token, is the in-context reaction's and the readiness author's judgement.
+// Where the record cannot be refused — an external file that already exists — the renderer MARKS
+// instead (`orbit-report-rendering`); the gate graph reads neither (R-crc-13).
+// ---------------------------------------------------------------------------------------
+
+const REVIEWER_CLASS_VALUES: readonly ReviewerClass[] = ['in-context', 'fresh', 'external'];
+const DIRECTION_DISPOSITIONS = new Set(['forward', 'hold']);
+
+function describeType(v: unknown): string {
+  return v === null ? 'null' : Array.isArray(v) ? 'an array' : typeof v;
+}
+
+function validateReviewDirection(command: string, payload: Record<string, unknown>): void {
+  if (command !== 'review') return;
+
+  const cls = payload.reviewer_class;
+  if (typeof cls !== 'string' || !REVIEWER_CLASS_VALUES.includes(cls as ReviewerClass)) {
+    throw new EmitError(
+      `write gate: reviewer_class must be one of 'in-context' | 'fresh' | 'external' (got ${JSON.stringify(cls)}) — the owed check never reads an unrecognised class as not-owed.`
+    );
+  }
+
+  if (!('direction' in payload)) {
+    if (isIndependent(cls as ReviewerClass)) {
+      throw new EmitError(
+        `write gate: review emit of class '${cls}' carries no direction — an independent pass owes its forward recommendation`
+      );
+    }
+    return; // optional on the reacting class
+  }
+
+  const d = payload.direction;
+  if (d === null || typeof d !== 'object' || Array.isArray(d)) {
+    throw new EmitError(
+      `write gate: 'direction' must be an object {disposition, reasoning} (got ${describeType(d)}) — the forward recommendation is a token and its reasons, never a bare word.`
+    );
+  }
+  const { disposition, reasoning } = d as Record<string, unknown>;
+  if (typeof disposition !== 'string' || !DIRECTION_DISPOSITIONS.has(disposition)) {
+    throw new EmitError(
+      `write gate: direction.disposition must be 'forward' or 'hold' (got ${JSON.stringify(disposition)}).`
+    );
+  }
+  if (typeof reasoning !== 'string' || reasoning.trim() === '') {
+    throw new EmitError(
+      `write gate: direction.reasoning must be a non-empty string (got ${typeof reasoning === 'string' ? 'a blank string' : describeType(reasoning)}) — a direction without its reasons is not one.`
+    );
   }
 }
 

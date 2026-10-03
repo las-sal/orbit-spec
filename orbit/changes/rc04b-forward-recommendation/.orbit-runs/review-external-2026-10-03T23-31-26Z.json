@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-10-03T23:31:26Z",
+  "change": "rc04b-forward-recommendation",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "system",
+  "prompt_path": "orbit/changes/rc04b-forward-recommendation/.orbit-runs/external-prompt-system-2026-10-03T23-31-10Z.md",
+  "target": null,
+  "final_assessment": "External review prompt packaged for rc04b-forward-recommendation (iter 1, mode system — the external half of the review-system blind pair, covering a DECLARED uncovered slot: no spend record); awaiting findings. Handoff preflight NOT satisfied at packaging: the apply (18 files) and this prompt file are uncommitted (0 unpushed commits) — the pull invocation is withheld until Sal commits and pushes; the prompt names the apply commit as the first after 0e183d93. The prompt's output-format block is byte-equal to the shipped template's (checked at write time) and carries the `## Direction` section this change ships — the return is task 4.5's first live measurement.",
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/rc04b-forward-recommendation/.orbit-runs/external-prompt-system-2026-10-03T23-31-10Z.md into the target AI, save the response as orbit/changes/rc04b-forward-recommendation/.orbit-runs/external-system-<TS>.md, then /orbit:address-reviews rc04b-forward-recommendation --from-file <path>"
+}

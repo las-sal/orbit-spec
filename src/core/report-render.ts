@@ -8,6 +8,8 @@ import {
 } from './artifact-graph/index.js';
 import { modelHintFor, withModelHint } from './model-hints.js';
 import { createFenceTracker } from './markdown-fence.js';
+import type { ReviewerClass } from './artifact-graph/trail.js';
+import { isIndependent } from './artifact-graph/gates.js';
 
 /**
  * Review-report renderer (D-arc Stage D4, per orbit-report-rendering). The
@@ -77,6 +79,15 @@ export interface NormalizedFinding {
   reproduction?: string;
 }
 
+/**
+ * rc04b: the reviewer's FORWARD RECOMMENDATION — the shape `orbit-emit-composition`'s
+ * "The review payload carries `direction`" owns; this is its read-side twin.
+ */
+export interface ReviewDirection {
+  disposition: 'forward' | 'hold';
+  reasoning: string;
+}
+
 export interface NormalizedReviewPass {
   genre: 'internal' | 'external';
   filePath: string;
@@ -87,8 +98,12 @@ export interface NormalizedReviewPass {
    * relabel — and the internal header then renders this emit-sourced value.
    */
   change?: string;
-  /** Internal genre fields. */
-  reviewerClass?: string;
+  /**
+   * The reviewer class — set on BOTH genres (the external normalizer sets `external`, rc04b), so
+   * the renderer decides "owed" for either with the gate model's one predicate.
+   */
+  reviewerClass?: ReviewerClass;
+  /** Internal genre field. */
   depth?: string;
   scorecard?: Scorecard;
   /** External genre fields (parsed header). */
@@ -103,6 +118,13 @@ export interface NormalizedReviewPass {
    * rendered above the findings, in no scorecard cell, never a gate input.
    */
   blocks?: string[];
+  /**
+   * rc04b: internal `direction` object / external `## Direction` section. Absent = no direction
+   * (MARKED `[no direction]` on an independent pass, section omitted on an in-context one);
+   * `'malformed'` = an external section the format owner reads as malformed (MARKED
+   * `[direction malformed]`, never a rejection). An internal mis-shaped one fails normalization.
+   */
+  direction?: ReviewDirection | 'malformed';
 }
 
 /** Render-time computed context — never stored, never read from the record. */
@@ -307,6 +329,22 @@ export function normalizeInternalPass(filePath: string, json: unknown): Normaliz
   if (j.commentary !== undefined && typeof j.commentary !== 'string') {
     fail(`mistyped field 'commentary'`, filePath);
   }
+  // rc04b: `direction` — absent-safe at every class (absence is a MARK, never a validation
+  // failure); a PRESENT one is the write gate's shape, read-side: an object whose `disposition`
+  // is in the closed set and whose `reasoning` is a non-empty string.
+  let direction: ReviewDirection | undefined;
+  if (j.direction !== undefined) {
+    const d = j.direction;
+    if (
+      !isPlainObject(d) ||
+      (d.disposition !== 'forward' && d.disposition !== 'hold') ||
+      typeof d.reasoning !== 'string' ||
+      d.reasoning.trim() === ''
+    ) {
+      fail(`missing or mistyped field 'direction'`, filePath);
+    }
+    direction = { disposition: d.disposition as 'forward' | 'hold', reasoning: d.reasoning as string };
+  }
   // rc02b: `blocks` — an array of single-line strings, each a `- ` line at column 0 in the
   // report's Blocks section, so the single-line slot rule applies (a newline could forge grammar).
   let blocks: string[] | undefined;
@@ -382,13 +420,14 @@ export function normalizeInternalPass(filePath: string, json: unknown): Normaliz
     filePath,
     change: j.change as string,
     mode: j.mode as ReviewMode,
-    reviewerClass: j.reviewer_class as string,
+    reviewerClass: j.reviewer_class as ReviewerClass,
     depth: j.depth as string,
     scorecard,
     findings,
     suppressed,
     ...(typeof j.commentary === 'string' ? { commentary: j.commentary } : {}),
     ...(blocks !== undefined ? { blocks } : {}),
+    ...(direction !== undefined ? { direction } : {}),
   };
 }
 
@@ -442,6 +481,18 @@ function trimBlankEdges(lines: string[]): string[] {
  * gate's trail reader also follows so the finding key never diverges). A
  * `## Blocks` section's `- ` items are COLLECTED as the pass's blocks — never
  * findings, never counted; `None.` (or any non-item line) is no block.
+ *
+ * rc04b, per the same format: a `## Direction` section (matched case-insensitively,
+ * read wherever it sits — the Blocks-then-Notes order is the prompt's instruction,
+ * never a parse condition) is the pass's direction: its first non-blank line must be
+ * the opener `**Disposition**: forward` | `**Disposition**: hold`, and the remaining
+ * body (to the next `##`, blank edges trimmed) is the reasoning. A non-conforming
+ * opener, a conforming opener with NO body, a heading with no non-blank line, or a
+ * SECOND `## Direction` section normalizes as `'malformed'`; no section at all as
+ * absent. In NEITHER case is the file rejected — the confidence gate is unchanged, and
+ * the normalizer sets `reviewerClass: 'external'` so the renderer's one `isIndependent`
+ * call decides "owed" for both genres. Inside the section, every line — field-shaped,
+ * heading-shaped — is content (the field-line rule).
  */
 export function normalizeExternalPass(filePath: string, content: string): NormalizedReviewPass {
   const name = path.basename(filePath);
@@ -469,11 +520,14 @@ export function normalizeExternalPass(filePath: string, content: string): Normal
   // header-shaped lines (`# External Review`, `**Reviewer**:`) inside an open
   // body are verbatim content, never structure or duplicate metadata.
   let headerRegion = true;
-  let section: Severity | 'notes' | 'blocks' | 'other' | null = null;
+  let section: Severity | 'notes' | 'blocks' | 'direction' | 'other' | null = null;
   let current: DraftFinding | null = null;
   const drafts: DraftFinding[] = [];
   let notesLines: string[] | null = null;
   const blockItems: string[] = [];
+  // rc04b: the FIRST `## Direction` section's lines; the count decides MALFORMED on a second.
+  let directionLines: string[] | null = null;
+  let directionSections = 0;
 
   const closeCurrent = (): void => {
     if (current) drafts.push(current);
@@ -509,6 +563,13 @@ export function normalizeExternalPass(filePath: string, content: string): Normal
         closeCurrent();
         section = 'blocks';
         structural = true;
+      } else if (/^##\s+Direction\s*$/i.test(line)) {
+        headerRegion = false;
+        closeCurrent();
+        section = 'direction';
+        directionSections += 1;
+        if (directionLines === null) directionLines = [];
+        structural = true;
       } else if (/^##\s+/.test(line)) {
         headerRegion = false;
         closeCurrent();
@@ -532,7 +593,7 @@ export function normalizeExternalPass(filePath: string, content: string): Normal
         const item = line.match(/^-\s+(.*\S)\s*$/);
         if (item && !/^none\.?$/i.test(item[1])) blockItems.push(item[1]);
         structural = true;
-      } else if (section && section !== 'notes' && section !== 'other') {
+      } else if (section && section !== 'notes' && section !== 'other' && section !== 'direction') {
         const title = line.match(/^###\s+(.*\S)\s*$/);
         if (title) {
           closeCurrent();
@@ -563,6 +624,8 @@ export function normalizeExternalPass(filePath: string, content: string): Normal
       if (current && current.reproLines !== null) current.reproLines.push(line);
       else if (current && current.descLines !== null) current.descLines.push(line);
       else if (section === 'notes' && notesLines) notesLines.push(line);
+      // Only the FIRST section's lines are kept: a second one is malformed whatever it says.
+      else if (section === 'direction' && directionSections === 1 && directionLines) directionLines.push(line);
     }
   }
   closeCurrent();
@@ -617,16 +680,30 @@ export function normalizeExternalPass(filePath: string, content: string): Normal
 
   const notesBody = notesLines ? trimBlankEdges(notesLines).join('\n') : '';
 
+  // rc04b: the direction — the format owner's four MALFORMED cases, else the opener's token
+  // and the trimmed reasoning body. Never a rejection.
+  let direction: ReviewDirection | 'malformed' | undefined;
+  if (directionSections > 1) {
+    direction = 'malformed';
+  } else if (directionLines !== null) {
+    const body = trimBlankEdges(directionLines);
+    const opener = body.length > 0 ? body[0].match(/^\*\*Disposition\*\*:\s*(forward|hold)\s*$/) : null;
+    const reasoning = trimBlankEdges(body.slice(1)).join('\n');
+    direction = opener && reasoning !== '' ? { disposition: opener[1] as 'forward' | 'hold', reasoning } : 'malformed';
+  }
+
   return {
     genre: 'external',
     filePath,
     mode,
+    reviewerClass: 'external',
     reviewerName: reviewerValues[0],
     reviewerDate: dateValues[0],
     findings,
     suppressed: [],
     ...(notesBody !== '' ? { commentary: notesBody } : {}),
     ...(blockItems.length > 0 ? { blocks: blockItems } : {}),
+    ...(direction !== undefined ? { direction } : {}),
   };
 }
 
@@ -651,7 +728,9 @@ function renderScorecard(sc: Scorecard): string {
  * Renders a normalized review pass with its computed context into the report.
  * PURE and byte-deterministic; the fixed section order is: header → trend →
  * scorecard (internal only) → Blocks (when any) → findings by severity →
- * suppressed → the ONE delimited Commentary slot → the engine tail LAST. Empty sections are omitted
+ * suppressed → Direction (rc04b: the reviewer's forward recommendation — present for every
+ * independent pass, marked when the record has none; omitted for an in-context pass without
+ * one) → the ONE delimited Commentary slot → the engine tail LAST. Empty sections are omitted
  * whole. Verbatim multi-line bodies render under BLOCKQUOTE CONTAINMENT so no
  * source line sits at column 0 (forged headings/rules/fences impossible).
  */
@@ -732,6 +811,27 @@ export function renderReviewReport(pass: NormalizedReviewPass, ctx: ReportContex
     blocks.push(
       ['### Suppressed', ...pass.suppressed.map(s => `- ${s.title} — ${s.evidence}`)].join('\n')
     );
+  }
+
+  // rc04b: the Direction section — `Disposition: <token>` is a label the ENGINE prints from the
+  // closed set (no record-sourced text at column 0), the reasoning under blockquote containment.
+  // The two MARKS are by absence, never by date, and change no count and no gate input: an
+  // independent pass (the gate model's one predicate, on both genres) with no direction renders
+  // `[no direction]`; an external section the format owner reads as malformed renders
+  // `[direction malformed]` with NO body (it cannot be trusted to have marked where the reasoning
+  // begins); an in-context pass without one omits the section whole.
+  if (pass.direction === 'malformed') {
+    blocks.push('### Direction\n[direction malformed]');
+  } else if (pass.direction !== undefined) {
+    blocks.push(`### Direction\nDisposition: ${pass.direction.disposition}`);
+    blocks.push(
+      pass.direction.reasoning
+        .split('\n')
+        .map(l => `> ${l}`)
+        .join('\n')
+    );
+  } else if (pass.reviewerClass !== undefined && isIndependent(pass.reviewerClass)) {
+    blocks.push('### Direction\n[no direction]');
   }
 
   if (pass.commentary !== undefined) {

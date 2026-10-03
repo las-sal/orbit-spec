@@ -41,6 +41,14 @@ const KNOWN_DIVERGENCE: Record<string, string[]> = {
   'audit-drift': ['context', 'caller', 'depth', 'flags', 'categories_skipped', 'findings_summary'],
 };
 
+/**
+ * Finding-level and nested keys documented inside a block's sub-objects — legitimate field-note
+ * subjects that no TOP-LEVEL emit key carries. A TOP-LEVEL key must NEVER be listed here: the
+ * orphan check only fires for keys outside this set, so listing `blocks` or `direction` would
+ * disarm it for exactly the note whose block key could be dropped (rc02b; rc04b walk 1, fresh W6).
+ */
+const NESTED_NOTE_SUBJECTS = new Set(['recommendation_options', 'severity', 'dimension', 'title', 'file', 'line', 'recommendation', 'reproduction', 'reproduction_rerun', 'evidence', 'ratified_via', 'resolution', 'recommendation_fork', 'ripple_cascade', 'outcome', 'marker_source', 'classification', 'action', 'by_pass', 'by_category', 'reviewer_class', 'walk_mode_shifted_at_finding']);
+
 const REFERENCES: Array<[command: string, template: () => { references?: Array<{ name: string; content: string }> }, refName: string]> = [
   ['review', getReviewSkillTemplate, 'run-summary-schema.md'],
   // rc04a system walk: the `review-external` T0 block lives in a DIFFERENT reference of the same
@@ -157,7 +165,7 @@ describe('schema-table parity: every AI-supplied field a schema reference docume
       // rc02b: `reproduction` is a finding-entry field (review), `reproduction_rerun` a resolution-entry
       // field (address-reviews) — nested subjects both; `blocks` is TOP-LEVEL on the review payload and
       // is therefore NOT listed here: its note must be matched by a key the schema block carries.
-      const nested = new Set(['recommendation_options', 'severity', 'dimension', 'title', 'file', 'line', 'recommendation', 'reproduction', 'reproduction_rerun', 'evidence', 'ratified_via', 'resolution', 'recommendation_fork', 'ripple_cascade', 'outcome', 'marker_source', 'classification', 'action', 'by_pass', 'by_category', 'reviewer_class', 'walk_mode_shifted_at_finding']);
+      const nested = NESTED_NOTE_SUBJECTS;
       const orphaned = [...fieldNoteKeys(ref.content)].filter(
         (k) => !keys.has(k) && !owned.has(k) && !nested.has(k) && !(KNOWN_DIVERGENCE[command] ?? []).includes(k)
       );
@@ -240,6 +248,33 @@ describe('schema-table parity: every AI-supplied field a schema reference docume
       // If `blocks` were ever dropped from the block while its note stayed, the orphan check above
       // must catch it — which it only can if `blocks` is NOT in the nested set.
       expect(keys.has('blocks')).toBe(true);
+    });
+  });
+
+  describe('rc04b-forward-recommendation: `direction` is documented TOP-LEVEL and accepted (task 1.5)', () => {
+    it('review: the schema block carries top-level `direction`, the table accepts it, and a field note names it', () => {
+      const ref = (getReviewSkillTemplate().references ?? []).find((r) => r.name === 'run-summary-schema.md')!;
+      const { keys } = documentedKeys(ref.content);
+      expect([...keys]).toContain('direction');
+      expect(payloadFieldsFor('review')).toContain('direction');
+      expect(fieldNoteKeys(ref.content).has('direction')).toBe(true);
+      // The closed set and both sub-keys are stated where the field is documented.
+      expect(ref.content).toMatch(/"direction":\s*\{/);
+      expect(ref.content).toMatch(/"disposition":/);
+      expect(ref.content).toMatch(/"reasoning":/);
+    });
+
+    it('`direction` is NEVER in the nested allowlist (a top-level key there disarms the orphan check — walk 1, fresh W6)', () => {
+      expect(NESTED_NOTE_SUBJECTS.has('direction')).toBe(false);
+      expect(NESTED_NOTE_SUBJECTS.has('blocks')).toBe(false);
+    });
+
+    it('`disposition` / `reasoning` join the nested set ONLY if a field note makes them bullet subjects', () => {
+      const ref = (getReviewSkillTemplate().references ?? []).find((r) => r.name === 'run-summary-schema.md')!;
+      const notes = fieldNoteKeys(ref.content);
+      for (const k of ['disposition', 'reasoning']) {
+        expect(notes.has(k) === NESTED_NOTE_SUBJECTS.has(k), `${k}: a bullet subject iff nested-listed`).toBe(true);
+      }
     });
   });
 

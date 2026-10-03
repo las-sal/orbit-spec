@@ -83,3 +83,21 @@ describe('EmitCommand (CLI surface)', () => {
     expect(errs.some(e => e.includes('Open questions'))).toBe(true);
   });
 });
+
+describe('rc04b: the direction refusal at the CLI surface (task 1.1 — exit non-zero, empty stdout, no file)', () => {
+  it('a fresh review payload with no direction rejects naming direction and the class; stdout is empty; no file lands', async () => {
+    const zero = { critical: 0, warning: 0, suggestion: 0 };
+    write('payload.json', JSON.stringify({
+      mode: 'proposal', reviewer_class: 'fresh', depth: 'full', passes_run: ['1'], passes_skipped: [],
+      scorecard: { completeness: { ...zero }, correctness: { ...zero }, coherence: { ...zero } },
+      findings: [], stale_suppressed: [], model: null,
+    }));
+    const logs: string[] = [];
+    vi.spyOn(console, 'log').mockImplementation((m: any) => logs.push(String(m)));
+    await expect(
+      new EmitCommand().execute('review', { payload: 'payload.json', change: 'foo' })
+    ).rejects.toThrow(/review emit of class 'fresh' carries no direction/);
+    expect(logs).toHaveLength(0);
+    expect(fs.existsSync('orbit/changes/foo/.orbit-runs')).toBe(false);
+  });
+});

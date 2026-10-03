@@ -462,6 +462,46 @@ three now follow the field-line and Description-opening rules; collapsing them s
 (2376 → 2429; two goldens moved by one `[unreproduced]` prefix each). One instrument lesson: the user-validation
 subset rule reads the literal `(User-validation` marker on the task line.
 
+`rc04b-forward-recommendation` is APPLIED (2026-10-03; 18 of 19 tasks in one session, 4.5 the
+user-validation handoff), awaiting its system cadence: **every independent pass has a NAMED SLOT
+for its forward recommendation — a `direction`, distinct from the gate's verdict, which stays the
+engine's alone.** Internal: a top-level `direction: {disposition, reasoning}` object on the `review`
+payload, `disposition` exactly `forward` | `hold`, `reasoning` a non-empty string (multi-line);
+external: a `## Direction` section between `## Blocks` and `## Notes` whose first non-blank line is
+`**Disposition**: forward` or `**Disposition**: hold`. The shape adopts rc04a's judgement vocabulary
+(`recommendation` is every finding's fix body; `verdict` is the gate's word). OWED by `fresh` and
+`external` in every mode — keyed on `reviewer_class`, never on mode; the gate model's `isIndependent`
+is EXPORTED and is the ONE predicate at both the write gate and the renderer — and optional
+in-context (R-crc-11(f): the reacting class's direction is the readiness record's job).
+Incompleteness is TWO-TIER and the gate never reads it (R-crc-13): where the record is produced,
+`orbit emit review` REFUSES an independent-class payload without it and a mis-shaped one at ANY
+class — and refuses an unrecognised `reviewer_class` naming the three values, in every mode, because
+the architecture-mode write gate validated the class nowhere and a typo would have read as not-owed
+(fresh S1); where it already exists, the renderer MARKS — `### Direction` between `### Suppressed`
+and `### Commentary`, `Disposition: <token>` an ENGINE-printed label so no record text sits at
+column 0, the reasoning blockquote-contained, `[no direction]` on an independent pass without one
+(by absence, never by date — every renderable prior-generation independent pass, while a pre-D4
+emit still fails at the boundary), `[direction malformed]` with NO body on an external section the
+format owner reads as malformed (a non-conforming opener, a conforming opener with no body, a
+heading with no non-blank line, a SECOND section; the heading matches case-insensitively and the
+section is read wherever it sits), omitted whole on an in-context pass without one. The file is
+never rejected for it: a three-readers test pins the trail reader, the trend counter and the
+confident-pass count byte-identical with and without the section, `trail.ts` carries no diff and
+`gates.ts`'s diff is exactly the `export` keyword. The external normalizer now sets `reviewerClass:
+'external'`, so the renderer decides "owed" for both genres by one call. The prompt template's
+`## Direction` was installed byte-equal FROM the review-external delta's fence (the severity-ladder
+parity test holds the two output-format blocks); Step 8 of the review body — now "Author the
+direction and the commentary" — carries the content contract `orbit-report-rendering`'s Direction
+requirement OWNS (which way and why; never counts, gate state or a command token); the
+architecture-mode interim shape prints `Direction: <disposition>` with every reasoning line
+contained; the walk's format copy says the section is never walked. No migration. FIVE
+capabilities DECLARED against R-crc-1's ceiling (D-rc04b-7, Sal: "declare at five"); the
+proposal cadence ran fresh → external (GPT-6 Codex) → in-context, nineteen findings, zero
+CRITICAL, zero repeats, three walks, a COMPUTED PASSED review-proposal gate. **2463 tests green**
+(2429 → 2463; the one independent-pass golden gained the marked section, one near-miss direction
+golden was added, and two prior tests moved by design: a transcription gained the one new
+`reviewerClass` field, and the cross-genre equivalence test's internal half became `fresh`).
+
 Read that doc before any rc-stage work; the D-arc section below is the historical
 record of how the engine got here.
 

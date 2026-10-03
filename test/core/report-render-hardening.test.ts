@@ -96,6 +96,10 @@ describe('cross-source equivalence (one grammar for both genres)', () => {
   it('an internal emit and an external file with equivalent findings share the section sequence and tail', () => {
     const dir = makeChange('xsource');
     const emit = d4Emit('xsource');
+    // rc04b: an external pass is INDEPENDENT and owes a direction, so its render carries the
+    // `### Direction` section (marked `[no direction]` here); the internal half must be an
+    // independent class too for the two genres to share the section sequence.
+    emit.reviewer_class = 'fresh';
     emit.findings = [
       { pass: '2', severity: 'WARNING', dimension: 'correctness', file: 'design.md', line: 12,
         title: 'Equivalent finding', recommendation: 'Do the fix.' },

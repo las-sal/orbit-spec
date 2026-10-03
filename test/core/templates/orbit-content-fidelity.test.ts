@@ -833,3 +833,99 @@ describe('rc02b severity ladder: the generated bodies NAME the ladder and define
     expect(schema).toMatch(/"reproduction_rerun":/);
   });
 });
+
+describe('rc04b-forward-recommendation: the generated surface carries the direction (task 1.6)', () => {
+  const review = getReviewSkillTemplate();
+  const walk = getAddressReviewsSkillTemplate();
+  const ref = (t: SkillTemplate, name: string) => t.references!.find(r => r.name === name)!.content;
+  const RENDER_OWNER = 'Direction renders as its own section and its absence is marked on independent passes';
+  const SHAPE_OWNER = 'The review payload carries `direction`';
+
+  it('Step 8 authors the direction under the owner\'s contract: which way and why, never counts / gate state / a command token; owed on fresh and external, optional in-context, refused by the surface otherwise', () => {
+    const body = review.instructions;
+    expect(body).toContain('### 8. Author the direction and the commentary');
+    const step8 = body.split('### 8. Author the direction and the commentary')[1].split('### 9. Persist via the emit surface')[0];
+    expect(step8).toContain('`direction`');
+    expect(step8).toMatch(/`forward`.*`hold`|`forward` \| `hold`/);
+    expect(step8).toMatch(/WHICH WAY and WHY|which way and why/);
+    expect(step8).toMatch(/never states? finding counts, the gate's state,? or a command token/i);
+    expect(step8).toMatch(/`fresh`.*`external`/);
+    expect(step8).toMatch(/optional/i);
+    expect(step8).toContain(RENDER_OWNER);
+    expect(step8).toContain(SHAPE_OWNER);
+    expect(step8).toContain('`orbit-report-rendering`');
+    expect(step8).toContain('`orbit-emit-composition`');
+  });
+
+  it('Step 9\'s field enumeration names `direction` with the owed/optional rule', () => {
+    const step9 = review.instructions.split('### 9. Persist via the emit surface')[1].split('### 10.')[0];
+    expect(step9).toContain('`direction`');
+    expect(step9).toMatch(/OWED|owed/);
+    expect(step9).toMatch(/optional/i);
+  });
+
+  it('the prompt template carries `## Direction` between `## Blocks` and `## Notes` with the `**Disposition**:` opener (exit (3)); the preamble and the handoff\'s Step 7 name it', () => {
+    const t = ref(review, 'prompt-template.md');
+    const i = t.indexOf('Use this exact markdown structure:');
+    const a = t.indexOf('```markdown', i);
+    const b = t.indexOf('\n```\n', a);
+    const block = t.slice(a, b);
+    expect(block.indexOf('## Direction')).toBeGreaterThan(block.indexOf('## Blocks'));
+    expect(block.indexOf('## Direction')).toBeLessThan(block.indexOf('## Notes'));
+    expect(block).toContain('## Direction\n\n**Disposition**: <forward | hold>\n');
+    expect(block.split('## Direction').length - 1).toBe(1);
+    const section = block.split('## Direction')[1].split('## Notes')[0];
+    expect(section).toMatch(/WHICH WAY and WHY/);
+    expect(section).toMatch(/Never state finding counts, the gate's state, or a next command/);
+    expect(section).toContain('`[no direction]`');
+    expect(section).toContain("`orbit-conventions`' External-review findings markdown format");
+    // The preamble's "preserve the Output format block" sentence and the handoff's Step 7 enumeration.
+    expect(t.split('## Template')[0]).toContain('`## Direction`');
+    expect(t.split('## Template')[0]).toContain('`**Disposition**:`');
+    const handoff = ref(review, 'external-handoff.md');
+    const stepSeven = handoff.split('### 7.')[1].split('### 8.')[0];
+    expect(stepSeven).toContain('`## Direction`');
+    expect(stepSeven).toContain('`**Disposition**:`');
+    // The chat-output instruction after the block enumerates the section.
+    expect(t.split('## After completing the review')[1]).toContain('`## Direction`');
+  });
+
+  it('`references/run-summary-schema.md` documents `direction` in the block, in the field notes (by pointer to the judgement record\'s vocabulary), and in the schema-intro field list', () => {
+    const schema = ref(review, 'run-summary-schema.md');
+    expect(schema).toMatch(/"direction":\s*\{/);
+    expect(schema).toContain('- **`direction`**');
+    const note = schema.split('- **`direction`**')[1].split('\n')[0];
+    expect(note).toMatch(/`fresh`.*`external`/);
+    expect(note).toMatch(/`forward`.*`hold`/);
+    expect(note).toContain('`orbit-emit-composition`');
+    expect(note).toContain('`orbit-report-rendering`');
+    expect(note).toMatch(/judgement record|`orbit-run-summary-emit`/);
+    const intro = schema.split('## Field notes')[0].split('```json')[0];
+    expect(intro).toContain('`direction`');
+  });
+
+  it('the address-reviews expected-file-format block carries `## Direction`, says it is never walked, and names the owner (D6)', () => {
+    const ext = ref(walk, 'external-findings-format.md');
+    const fmt = ext.split('## Expected file format')[1].split('## Parser contract')[0];
+    expect(fmt.indexOf('## Direction')).toBeGreaterThan(fmt.indexOf('## Blocks'));
+    expect(fmt.indexOf('## Direction')).toBeLessThan(fmt.indexOf('## Notes'));
+    expect(fmt).toContain('**Disposition**: <forward | hold>');
+    const section = fmt.split('## Direction')[1].split('## Notes')[0];
+    expect(section).toMatch(/never walked/i);
+    expect(section).toContain("`orbit-conventions`' External-review findings markdown format");
+  });
+
+  it('the architecture interim shape prints `Direction: <disposition>` and contains every reasoning line under `> `; a multiline near-miss with `Ready when you are:` on its second line is pinned contained (walk 2, external W3)', () => {
+    const body = review.instructions;
+    const interim = body.split('#### Architecture mode — NO gate')[1].split('### 11.')[0];
+    expect(interim).toContain('Direction: <disposition>');
+    expect(interim).toMatch(/every reasoning line/i);
+    expect(interim).toMatch(/^> Ready when you are: /m);
+    // Inside the interim shape's example, no reasoning line sits at column 0.
+    const example = interim.split('```')[1] ?? '';
+    expect(example).toContain('Direction: ');
+    expect(example).toMatch(/^> Ready when you are: /m);
+    expect(example.split('\n').filter(l => /^Ready when you are: /.test(l))).toEqual([]);
+    expect(example.split('\n').filter(l => /^Gate /.test(l))).toEqual([]);
+  });
+});
