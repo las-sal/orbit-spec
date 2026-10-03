@@ -1,10 +1,14 @@
 schema: spec-driven
 created: 2026-10-03
 schema_version: 4
+architecture:
+  doc: clean-up-review-cycle
+  stage: rc02b-severity-ladder
 base_fingerprints:
   orbit-address-reviews:
     "`--from-file` ingest of review findings file": sha256:d81b6ffe530d5595b84a461c35b180402f3c846081dbdf493732866715875116
     Pushback discipline applied per marker: sha256:0f5053fa0b4602c6bcbdeb5f467522aa742281577c0d847605ea2c8c1aa93ffb
+    Resolution-log JSON shape extensions for walk-mode / decision-forks / cascade: sha256:6246fd433c365f085118079744a86caaf0fde4354a7d1c4973973bc9486adac4
   orbit-conventions:
     Severity ladder: sha256:9c465a9c4fa124032d3d33cca1a2682b7340eda04035ab8bb468ee5c23f4a33b
     External-review findings markdown format: sha256:f00397214cf982cbe80704772450c67952d434aaf1a933490008aa1b4aaf8eeb
@@ -19,6 +23,3 @@ base_fingerprints:
   orbit-review-external:
     Output format specification in prompt: sha256:5f9dbcaf879fd2d760f64e58c22587665dfe8124ae744ae0b414fe1d56e6d26b
     Prompt written to versioned file with chat invocation snippet: sha256:846c7f9ae9443b68886ca36ec476021e5cc0c4a5730a581f55852e2b1eb141cb
-architecture:
-  doc: clean-up-review-cycle
-  stage: rc02b-severity-ladder

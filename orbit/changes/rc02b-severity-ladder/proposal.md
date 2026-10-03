@@ -78,7 +78,7 @@ makes the evidence tax enforceable where evidence is produced and visible where 
   carries a reproduction); `Review mode decision framework` (the external-slot residue sentence).
 - `orbit-review`: `Proposal mode runs nine passes` (Pass 8 reports a block, not a CRITICAL; `--strict`/`--mark`
   on a block; pass severities name the ladder); `System mode runs verify-change + six system-wide passes`
-  (Passes 1, 2, 3, 4, 5 name the ladder); `Internal run summary persisted per mode` (the finding entry's
+  (Passes 1, 2, 3, 4, 5 name the ladder; Pass 0 grades folded verify-change findings by it); `Internal run summary persisted per mode` (the finding entry's
   `reproduction` field; the payload's `blocks` array).
 - `orbit-review-external`: `Output format specification in prompt` (the ladder paragraph, the
   Reproduction body, the Blocks section); `Prompt written to versioned file with chat invocation snippet`
@@ -89,18 +89,19 @@ makes the evidence tax enforceable where evidence is produced and visible where 
   `## Blocks` items collected, never counted); ADDED `Reproduction renders beside the recommendation and
   its absence is marked` (the `[unreproduced]` prefix outside the title token; the `### Blocks` slot).
 - `orbit-address-reviews`: `--from-file ingest of review findings file` (both mappings carry
-  `reproduction`; `## Blocks` items and the JSON's `blocks[]` listed first at triage, never walked; the
-  `reproduction_rerun` entry field); `Pushback discipline applied per marker` (a CRITICAL's pushback opens
-  by re-running its reproduction).
+  `reproduction`; `## Blocks` items and the JSON's `blocks[]` listed first at triage, never walked);
+  `Pushback discipline applied per marker` (a CRITICAL's pushback opens by re-running its reproduction);
+  `Resolution-log JSON shape extensions for walk-mode / decision-forks / cascade` (the `reproduction_rerun`
+  entry field with its closed values).
 
 **Size, measured at propose (R-crc-1):** SIX capabilities against a ceiling of three — the charter
 named three, the exploration measured five, and this proposal found the sixth (`orbit-review-external`
 owns the prompt's output format; the exploration attributed it to `orbit-review`, a READ miss recorded
 in design). Sal held the stage as one change (D-rc02b-1; the split is in the exploration's Considered
 & out); the breach is DECLARED here for ratification at review, and the proposal-mode blind pair
-R-crc-4 prescribes at the ceiling runs. Fifteen requirement blocks (12 MODIFIED, 3 ADDED) against
+R-crc-4 prescribes at the ceiling runs. Sixteen requirement blocks (13 MODIFIED, 3 ADDED) against
 ~12. MEASURED on the written deltas: 65 KB of delta in total, of which the CHANGED lines across the
-twelve MODIFIED blocks number 110 (ndiff +/−) — the 150-line canonical-example requirement changes 2
+MODIFIED blocks numbered 110 at propose (ndiff +/−; the three walks added one carried block and a few dozen lines) — the 150-line canonical-example requirement changes 2
 lines and the 172-line prompt template 14; R-crc-1's changed-bytes clarification applies and the byte
 axis is under the ceiling; the task axis reads 25 against "under 20" — over by five after the two proposal walks added the block carrier and the trail-reader conformance, DECLARED rather
 than merged away (rc04c's precedent: a stage arguing its way under a ceiling should expect the
@@ -113,15 +114,16 @@ that predicts cost.
   payload field), `src/core/report-render.ts` (external `**Reproduction**:` body; internal `reproduction`
   pass-through; the `[unreproduced]` prefix; `## Blocks` items collected; the `### Blocks` slot), `src/core/artifact-graph/trail.ts` (field lines recognised only before the Description body opens; a
   test pins the finding key through both readers and that the Blocks section is invisible to the counter).
-- **Generated surface** (`src/core/templates/workflows/`): `review.ts` (seventeen per-pass sites, the
-  report example, Step 9's field list, the prompt template's output block and ladder paragraph,
+- **Generated surface** (`src/core/templates/workflows/`): `review.ts` (fourteen per-pass sites, the
+  report example, the bias line at 873, Step 9's field list, the prompt template's output block and ladder paragraph,
   `references/run-summary-schema.md`), `address-reviews.ts` (both mapping tables, the expected-file-format
   block, Step 3a, triage). Refresh with `npm run build && node bin/orbit.js update --force`.
-- **Tests**: `test/core/emit-schema-parity.test.ts` (nested allowlist learns `reproduction`); new unit
+- **Tests**: `test/core/emit-schema-parity.test.ts` (nested allowlist learns `reproduction`, `blocks`, `reproduction_rerun`); new unit
   tests for the gate refusal, the external body parse, the unreproduced mark, the counter's blindness;
   the generated-surface marker-fidelity tests for the re-pointed sites.
 - **Trail**: no migration. Prior-generation emits lack the field and stay valid; the gate applies to new
   writes only.
-- **Out of scope, named**: `orbit-audit-drift`'s own severity assignment (system Pass 6 preserves it) is
-  a seventh statement site outside this change — D-rc02b-4; it reaches the ladder by a later pointer
-  touch.
+- **Out of scope, named**: `orbit-audit-drift`'s own severity assignment (system Pass 6 preserves it) and
+  upstream `verify-change`'s rules are statement sites outside this change — D-rc02b-4; the ladder names
+  both as known limits, and a system review folding verify-change's findings grades them by the ladder as
+  their author (Pass 0 scenario).

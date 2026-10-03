@@ -9,8 +9,8 @@ the exploration said sixteen and seventeen in different places — corrected at 
 named CRITICAL so the count would carry a second meaning), the external prompt carries no severity
 guidance at all, and `orbit-conventions`' Severity ladder says three names and a bias. The evidence
 that would make a CRITICAL checkable already appears on the trail unprompted — eleven internal
-CRITICALs with a `reproduction` key the write gate never inspected (it checks top-level payload keys
-only), three recent external files writing `Reproduction:` inline where `normalizeExternalPass` buries
+CRITICALs with a `reproduction` key the write gate never inspected (its unknown-KEY check is top-level only; the rollup reads
+severity and dimension), three recent external files writing `Reproduction:` inline where `normalizeExternalPass` buries
 it in the recommendation (after `**Description**:`) or drops it (before). See `explore.md` for the
 measurements and the walk that settled the six decisions this design implements.
 
@@ -19,8 +19,8 @@ measures SIX. The sixth, `orbit-review-external`, owns the prompt's output forma
 specification in prompt`) and the reference template that restates it — the exploration read the
 template in `review.ts` and attributed its ownership to `orbit-review`, a READ failure of the kind
 D-rc02b-2's own Mechanism entry claims to have applied. It is recorded here rather than absorbed,
-because the R-crc-1 breach Sal ratified at five is being declared at six. Fourteen requirement blocks
-against ~12; the two over are carried-bytes blocks whose changed bytes are one line each.
+because the R-crc-1 breach Sal ratified at five is being declared at six. Sixteen requirement blocks
+after three walks (13 MODIFIED, 3 ADDED) against ~12; the carried-bytes blocks change a line or two each.
 
 ## Goals / Non-Goals
 
@@ -34,10 +34,12 @@ against ~12; the two over are carried-bytes blocks whose changed bytes are one l
 
 **Non-Goals:**
 - Re-grading any finding on the trail, or any external CRITICAL at parse (D-rc02b-6).
-- Judging whether a reproduction reproduces — the engine checks presence of a non-empty value, nothing
-  more (R-crc-10); truth is the walk's.
-- `orbit-audit-drift`'s own severity assignment (D-rc02b-4) — a seventh statement site, reached by a
-  later pointer touch.
+- Judging whether a reproduction reproduces — the engine checks presence and shape (a non-empty string on
+  a CRITICAL; a string wherever present; single-line `blocks` entries), never truth (R-crc-10); truth is the
+  walk's.
+- `orbit-audit-drift`'s own severity assignment and upstream `verify-change`'s rules (D-rc02b-4) — statement
+  sites outside the six, named in the ladder as known limits; a system review folding verify-change's
+  findings grades them by the ladder as their author (Pass 0 scenario).
 - Migrating prior-generation emits. Readers tolerate absence as they do for `model` and `consent`.
 - Changing the gate's counting rule, the cadence, or `isSubstantive`.
 
@@ -122,9 +124,9 @@ The proposing AI's reading of the file; no engine record.
 
 | rule | closure / state | owner's state | destination (shape) |
 |---|---|---|---|
-| D-rc02b-2 | SOURCED | live rule | `orbit-conventions` › `Severity ladder` — the one-statement clause (SENTENCE naming the source: the review body's pass lists, grep-enumerated); the seventeen members land as the re-pointed scenarios in `orbit-review` › `Proposal mode runs nine passes` and `System mode runs verify-change + six system-wide passes` (SCENARIO SET) |
+| D-rc02b-2 | SOURCED | live rule | `orbit-conventions` › `Severity ladder` — the one-statement clause (SENTENCE naming the source: the review body's pass lists, grep-enumerated); the fourteen members (plus the bias line) land as the re-pointed scenarios in `orbit-review` › `Proposal mode runs nine passes` and `System mode runs verify-change + six system-wide passes` (SCENARIO SET) |
 | D-rc02b-3 | SOURCED | live rule | `orbit-conventions` › `Severity ladder` — the block clause (SENTENCE naming the four sites and the known limit); `orbit-conventions` › `External-review findings markdown format` — the `## Blocks` section; `orbit-review` › `Proposal mode runs nine passes` — the Pass 8, `--strict`/`--mark` and `blocks`-payload scenarios; `orbit-emit-composition` › ADDED `The review payload carries blocks`; `orbit-report-rendering` › the `### Blocks` slot; `orbit-address-reviews` › blocks first at triage (SCENARIO SET — the carrier rows added at walk 1 after the fresh pass found the entry's CONFORM claim false) |
-| D-rc02b-5 | SOURCED | live rule | `orbit-conventions` › `Severity ladder` — the reproduction definition (SENTENCE); the ten surfaces land one each as scenarios across `orbit-emit-composition` (ADDED gate requirement), `orbit-report-rendering` (`One grammar…` + ADDED render requirement), `orbit-address-reviews` (`--from-file ingest`, `Pushback discipline`), `orbit-review` (`Internal run summary persisted per mode`), `orbit-review-external` (`Output format specification in prompt`, the reference template) (SCENARIO SET) |
+| D-rc02b-5 | SOURCED | live rule — the resolution-log field `reproduction_rerun` lands in `orbit-address-reviews` › `Resolution-log JSON shape extensions…` (walk 3) | `orbit-conventions` › `Severity ladder` — the reproduction definition (SENTENCE); the ten surfaces land one each as scenarios across `orbit-emit-composition` (ADDED gate requirement), `orbit-report-rendering` (`One grammar…` + ADDED render requirement), `orbit-address-reviews` (`--from-file ingest`, `Pushback discipline`), `orbit-review` (`Internal run summary persisted per mode`), `orbit-review-external` (`Output format specification in prompt`, the reference template) (SCENARIO SET) |
 | D-rc02b-1 | — | `Kind: scope` | not carried — history; stated in proposal.md's size paragraph |
 | D-rc02b-4 | — | `Kind: scope` | not carried — history; the residual is a Risk below and a named limit in the ladder's text |
 | D-rc02b-6 | — | `Kind: fact` | not carried — history; its consequence is D5's never-re-grade clause |
@@ -138,7 +140,7 @@ accounted, 0 open, which my reading of the three entries against the grammar agr
 - `src/core/report-render.ts` — `normalizeExternalPass` learns `**Reproduction**:` as a body opener and collects `## Blocks` items; the internal normalizer passes `reproduction` and `blocks` through; `renderReport` prints the reproduction blockquote, the `[unreproduced]` prefix and the `### Blocks` slot.
 - `src/core/templates/workflows/apply-change.ts` — NOT touched: no precondition is added here (the known limit; rc10's territory).
 - `src/core/artifact-graph/trail.ts` — `parseExternalMarkdown` stops reading `**File**:`/`**Description**:` once a finding's Description body has opened (conforming to the conventions format rule the render parser already follows — external walk 1); a test pins the finding KEY (title, file) through both readers and that `## Blocks` leaves the counter untouched.
-- `src/core/templates/workflows/review.ts` — the seventeen per-pass sites and the report example re-pointed; Step 9's field list; the prompt template's ladder paragraph, Reproduction body and Blocks section; `references/run-summary-schema.md`.
+- `src/core/templates/workflows/review.ts` — the fourteen per-pass sites, the report example and the bias line re-pointed; Pass 0's fold rule; Step 9's field list; the prompt template's ladder paragraph, Reproduction body and Blocks section; `references/run-summary-schema.md`.
 - `src/core/templates/workflows/address-reviews.ts` — both virtual-marker tables; the expected-file-format block; Step 3a step (0); triage lists blocks first.
 - `test/core/emit-schema-parity.test.ts` — the nested allowlist learns `reproduction`, `blocks`, `reproduction_rerun`; a new parity test holds the template's `## Severity` paragraph byte-equal to the conventions fence.
 - `test/core/*.test.ts` — gate refusal, external body parse, unreproduced mark, counter blindness, internal pass-through; the generated-surface fidelity tests for the re-pointed sites.
@@ -166,7 +168,7 @@ accounted, 0 open, which my reading of the three entries against the grammar agr
   (field lines are recognised only before the Description body opens) and both readers conform; the key
   (title, file) is pinned through both by a test. The pre-existing hole — a Description body quoting a path —
   closes with it.
-- [Fourteen blocks over ~12] → the two over are carried-bytes copies with one changed line each; the
+- [Sixteen blocks over ~12] → the three walks each added a carried block; changed lines stay small and the
   reviewer reads the diff, not the carriage.
 
 ## Alternatives considered

@@ -41,7 +41,7 @@ The system SHALL execute 7 review passes in system mode: Pass 0 delegates to ups
 #### Scenario: Pass 0 delegates to upstream verify-change
 
 - **WHEN** the command runs as `--as system` and `--skip-verify` is not specified
-- **THEN** Pass 0 invokes `/orbit:verify <change-name>` (via the upstream `orbit-verify-change` skill) and folds its CRITICAL/WARNING/SUGGESTION findings into the report under the appropriate scorecard dimensions
+- **THEN** Pass 0 invokes `/orbit:verify <change-name>` (via the upstream `orbit-verify-change` skill) and folds its findings into the report under the appropriate scorecard dimensions — GRADED BY `orbit-conventions`' Severity ladder as the folding body's own findings, not by verify-change's rules (the composing body is their AUTHOR here, so this is not a reader's re-grade): an incomplete task or an uncovered scenario is WARNING (an implementation built to the artifact would diverge); a violated requirement is CRITICAL with the requirement and the observed behaviour as its reproduction; a CRITICAL the body cannot reproduce is folded as WARNING. verify-change's own emit is untouched
 
 #### Scenario: System mode default depth runs all passes
 

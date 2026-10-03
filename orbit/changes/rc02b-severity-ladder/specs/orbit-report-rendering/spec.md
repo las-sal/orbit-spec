@@ -33,16 +33,18 @@ from their PARSED form, NORMALIZED to the render shape: the trail reader's exter
 parse is EXTENDED (fence-aware — heading and field lines inside code fences never count) to carry, per finding, the full `**Description**` body as the recommendation (verbatim, the
 `**File**` line reference RETAINED un-stripped), the `**Reproduction**` body when present (a labelled
 body opened AFTER the Description and ended by the next `###` or `##` heading — per
-`orbit-conventions`' External-review findings markdown format, whose field-line rule — a field-shaped
-line inside any body is content, in BOTH readers — the trail reader is brought to conform with so the
-gate's finding key and this render's file reference never diverge), plus the header's reviewer and date; a
+`orbit-conventions`' External-review findings markdown format, whose field-line rule — the Reproduction label is the one
+field recognised after Description opens; every other field-shaped line inside any body is content, in BOTH
+readers — the trail reader is brought to conform with so the gate's finding key and this render's file
+reference never diverge), plus the header's reviewer and date; a
 `## Blocks` section is collected — its `- ` items become the pass's blocks, rendered above the findings — and
 is never a severity section, so it changes no count (the trail counter ignores it entirely); the
 `## Notes` section (when present) supplies the report's Commentary slot — the external
 reviewer's voice, quarantined exactly like an internal `commentary` field. An external pass
-and an internal pass of the same trail thus read identically framed. The external
-prompt template's markdown contract is UNCHANGED (external AIs keep writing markdown;
-determinism applies from ingest onward). An external file the parser rejects (malformed shape
+and an internal pass of the same trail thus read identically framed. External AIs
+keep writing markdown — the contract's additions (the Reproduction body, the Blocks section) are
+`orbit-conventions`' External-review findings markdown format's, not this requirement's — and
+determinism applies from ingest onward. An external file the parser rejects (malformed shape
 → the parser's null) is non-renderable and fails with the clean error naming the file.
 
 #### Scenario: External pass renders through the shared grammar

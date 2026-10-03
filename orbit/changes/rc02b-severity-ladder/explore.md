@@ -134,7 +134,10 @@ Moves:
   Disposition: live
 - **2026-10-03 — D-rc02b-4: audit-drift's own severity assignment (system Pass 6 preserves it) is a SIXTH statement site, OUT of this stage.** It lives in
   `orbit-audit-drift`, a capability outside the five; the ladder's one-statement rule reaches it by a later pointer touch, not by this change. Named here so the
-  residual travels: the proposal's design Risks and the conventions delta carry it as a known limit.
+  residual travels: the proposal's design Risks and the conventions delta carry it as a known limit. ADDED
+  2026-10-03 at walk 3: upstream `verify-change` is a second such site (its own CRITICAL/WARNING rules); a
+  system review folding its findings grades them by the ladder as their AUTHOR (Pass 0), which is not the
+  reader's re-grade D-rc02b-6 forbids.
   Kind: scope
   Disposition: live
 
