@@ -1637,6 +1637,28 @@ Exit: (1) a CRITICAL payload without a reproduction is refused at write
 time naming the finding; (2) an external CRITICAL without one parses, stays CRITICAL, and is
 marked unreproduced; (3) the walk that ingests it can see the reproduction it must settle.
 
+**MEASURED 2026-10-03 at exploration — FIVE capabilities, not three; held as ONE change on Sal's word.**
+Read against the code, the mechanism the charter describes touches `orbit-review` (it owns the finding
+entry shape — the `recommendation_options` requirement is the precedent for a finding-level field — the
+external prompt template, and the SIXTEEN per-pass severity rules the review body states today) and
+`orbit-report-rendering` (its external parser is the only reader that could see a `**Reproduction**:`
+line as structure, so the unreproduced mark lands there). The rule-before-enforcement split (conventions +
+review, then emit-composition + report-rendering + address-reviews) was briefed and DECLINED: the five
+surfaces are one mechanism — a field born in the prompt and the entry shape, refused at the gate, marked
+at the parser, re-run at the walk — and a rule nothing checks for the gap's duration is the shape rc03a's
+deferrals took. This is a declared exception to R-crc-1's "never reviewed as one" clause, ratified by Sal
+as rc04c's task overage was (R-crc-1's own text: left standing as a breach to be ratified under R-crc-9,
+never defined away); the proposal runs the blind pair R-crc-4 prescribes at the ceiling. Three further
+things the exploration settled, recorded here because the charter is graded on them: (1) the sixteen
+per-pass rules are the SIXTH instance of the rule-stated-twice pattern (R-crc-14), counted at exploration
+this time, and become POINTERS with their consequence reading — P2's missing task and P7's delta vocabulary
+downgrade to WARNING; (2) a lifecycle BLOCK (validate failure, an unresolved marker) is not a severity and
+LEAVES the scorecard, so "0 CRITICAL" means what the ladder says — Sal: leave; (3) audit-drift's own
+severity assignment (`orbit-audit-drift`, preserved by system Pass 6) is a sixth statement site OUTSIDE the
+five and travels as a named residual, not a sixth capability. The exit criteria stand as written.
+Exploration: `orbit/explore/rc02b-severity-ladder/` — six decisions, three live rules with Mechanism
+entries, the engine's parse 3 accounted / 0 open.
+
 ### Stage rc02c-confirmation-semantics — what counts as having been confirmed
 
 Depends-on: rc02-gate-semantics
@@ -4075,3 +4097,11 @@ charter and renders `premised` — ending the parent heading ends nothing of the
 already records that an ended stage holds the predicate open until `orbit-pr-lifecycle` says "archived OR ended", and
 this doc has no program PR. Next in dependency order: Phase 2's rc02b, rc03 and rc04b remain open; the remaining
 premised stages are rc05–rc10, rc07b and rc12.
+
+**2026-10-03 — Architect session: rc02b-severity-ladder EXPLORED and its ceiling breach DECLARED.** The
+exploration (opened 2026-10-01 on the architect session's recommendation; walked 2026-10-03) measured the
+stage at FIVE capabilities against R-crc-1's three — `orbit-review` and `orbit-report-rendering` own the
+surfaces between the ladder, the gate and the walk that the charter did not count. Sal held it as one change
+(the split declined, recorded in the exploration's Considered & out), a ratified exception in rc04c's shape.
+Six decisions, three live rules accounted. Next in dependency order: rc02b is eligible for propose; Phase 2's
+rc03 and rc04b remain open.
