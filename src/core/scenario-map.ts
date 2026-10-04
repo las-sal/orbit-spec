@@ -102,7 +102,8 @@ export function joinKey(capability: string, requirement: string, scenario: strin
   return [capability, requirement, scenario].join(KEY_SEPARATOR);
 }
 
-/** A title that itself contains the separator cannot be keyed by any tag or ledger entry. */
+/** A title that itself contains the separator cannot be keyed by any tag or ledger entry (the
+ *  other unkeyable case — a title repeated within its requirement — is decided in key resolution). */
 export function isUnkeyableTitle(title: string): boolean {
   return title.includes(KEY_SEPARATOR);
 }
@@ -364,11 +365,14 @@ export function resolveScenarioKeys(projectRoot: string, changeDir: string): Res
     }
 
     for (const req of reqs.values()) {
-      const seen = new Set<string>();
+      // A key must name EXACTLY ONE scenario. In the delta, a title repeated within its requirement
+      // cannot: every occurrence is UNKEYABLE, never collapsed into one entry one tag could satisfy
+      // (external system pass, C1). Outside the delta each occurrence is simply counted.
+      const occurrences = new Map<string, number>();
+      for (const s of req.scenarios) occurrences.set(s, (occurrences.get(s) ?? 0) + 1);
       for (const scenario of req.scenarios) {
-        if (seen.has(scenario)) continue;
-        seen.add(scenario);
-        if (req.operation && (isUnkeyableTitle(req.name) || isUnkeyableTitle(scenario))) {
+        const repeated = (occurrences.get(scenario) ?? 0) > 1;
+        if (req.operation && (repeated || isUnkeyableTitle(req.name) || isUnkeyableTitle(scenario))) {
           result.unkeyable.push({ capability, requirement: req.name, scenario });
           continue;
         }
@@ -471,7 +475,7 @@ export function renderScenarioMap(map: ScenarioMap): string {
   out.push(
     map.check === 'on'
       ? `Check: ON — scanning ${map.tests.join(', ')}`
-      : `Check: OFF (no scenario_map key in orbit/config.yaml) — scanning ${map.tests.join(', ')}`
+      : `Check: OFF (scenario_map absent or inert in orbit/config.yaml) — scanning ${map.tests.join(', ')}`
   );
   out.push('');
   out.push(`Delta scenarios (${map.scenarios.length}):`);
@@ -518,7 +522,7 @@ export function renderScenarioMap(map: ScenarioMap): string {
           break;
         case 'spec':
           out.push(
-            `MALFORMED spec ${m.capability}: requirement "${m.requirement}", scenario "${m.scenario}" — unkeyable (a title containing " :: " cannot be keyed)`
+            `MALFORMED spec ${m.capability}: requirement "${m.requirement}", scenario "${m.scenario}" — unkeyable (the key cannot name exactly one scenario: a title contains " :: " or repeats within its requirement)`
           );
           break;
       }

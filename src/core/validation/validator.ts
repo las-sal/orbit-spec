@@ -311,7 +311,7 @@ export class Validator {
       issues.push({
         level: 'ERROR',
         path: 'scenario-map',
-        message: `unkeyable delta scenario in ${m.capability}: requirement "${m.requirement}", scenario "${m.scenario}" — a title containing " :: " cannot be keyed by any tag or ledger entry; rename it`,
+        message: `unkeyable delta scenario in ${m.capability}: requirement "${m.requirement}", scenario "${m.scenario}" — its key cannot name exactly one scenario (a title contains " :: ", or the scenario title repeats within its requirement), so no tag or ledger entry can declare it; rename it`,
       });
     }
     const undeclared = map.scenarios.filter((s) => s.uncovered);

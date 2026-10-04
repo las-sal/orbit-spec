@@ -26,7 +26,7 @@
 ## 5. Opt in and grade the stage
 
 - [x] 5.1 Add `scenario_map: { tests: ['test/**/*.test.ts'] }` to `orbit/config.yaml`, with a comment naming the capability.
-- [x] 5.2 Tag every scenario of this change's delta (34) at the test that exercises it, `behaviour` or `text` as the test establishes; run `orbit status --change rc06a-scenario-map --scenarios` and confirm zero UNCOVERED, zero ORPHAN, zero MALFORMED.
+- [x] 5.2 Tag every scenario of this change's delta (34 at apply; the 35th, `A repeated scenario title is unkeyable`, added and tagged at system walk 2) at the test that exercises it, `behaviour` or `text` as the test establishes; run `orbit status --change rc06a-scenario-map --scenarios` and confirm zero UNCOVERED, zero ORPHAN, zero MALFORMED.
 - [x] 5.3 Corroborate 5.2 (exit (3)'s measure — zero UNCOVERED on the surface): run `orbit validate rc06a-scenario-map --json` and assert it carries NO `scenario-map` issue at ANY level. A `--strict` run cannot observe ERROR here, because the apply gate is still `ready` while this task is open. Exit (1)'s post-apply ERROR is measured at archive, when every task is checked.
 - [x] 5.4 Run `orbit status --change rc06a-scenario-map --scenarios --json` over this repo and record the baseline-undeclared count in the apply emit's narrative (the D-rc06-7 residue, stated rather than implied).
 

@@ -760,6 +760,20 @@ describe('scenario-map declaration check (rc06a)', () => {
     expect(report.valid).toBe(false);
   });
 
+  // @scenario behaviour orbit-scenario-map :: A declaration is owed by every scenario in the change's delta blocks :: A repeated scenario title is unkeyable
+  it('a scenario title repeated within its requirement is UNKEYABLE at ERROR at each occurrence, even with every task checked and a tag naming it', async () => {
+    const dir = change({
+      delta: '## ADDED Requirements\n\n' + req('Req A', ['Same', 'Same']),
+      tasks: '## 1. W\n\n- [x] 1.1 t\n',
+    });
+    write('test/a.test.ts', `${AT} behaviour orbit-x :: Req A :: Same\nit('only first', () => {});\n`);
+    const report = await new Validator(true).validateChangeDeltaSpecs(dir);
+    const issues = mapIssues(report);
+    expect(issues).toHaveLength(2);
+    expect(issues.every((i) => i.level === 'ERROR' && /unkeyable/i.test(i.message) && i.message.includes('Same'))).toBe(true);
+    expect(report.valid).toBe(false);
+  });
+
   it('check OFF with a malformed scenario_map: exactly the one warning, no issue', async () => {
     const dir = change({ delta: '## ADDED Requirements\n\n' + req('Req A', ['S1']), config: 'schema: spec-driven\nscenario_map: true\n' });
     const report = await new Validator().validateChangeDeltaSpecs(dir);
@@ -799,6 +813,16 @@ describe('scenario-map declaration check (rc06a)', () => {
         expect.stringMatching(/^ℹ \[INFO\] scenario-map: undeclared delta scenario: orbit-x :: Req A :: S1/),
         expect.stringMatching(/^ℹ \[INFO\] scenario-map: undeclared delta scenario: orbit-x :: Req A :: S2/),
       ]);
+    });
+
+    it('the legacy orbit change validate labels an INFO issue [INFO], never [WARNING]', async () => {
+      // An unkeyable title (ERROR) makes the report invalid, so the undeclared S1 (INFO) is printed.
+      change({ delta: '## ADDED Requirements\n\n' + req('Req A', ['S1', 'A :: B']) });
+      write('orbit/changes/c1/proposal.md', PROPOSAL);
+      const r = await runCLI(['change', 'validate', 'c1'], { cwd: root });
+      expect(r.exitCode).not.toBe(0);
+      expect(r.stderr).toMatch(/ℹ \[INFO\] scenario-map: undeclared delta scenario: orbit-x :: Req A :: S1/);
+      expect(r.stderr).not.toMatch(/\[WARNING\] scenario-map/);
     });
 
     it('a report with no scenario-map issue prints exactly the is-valid line', async () => {

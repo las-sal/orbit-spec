@@ -1,0 +1,121 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-04T20:57:06Z",
+  "change": "rc06a-scenario-map",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "--from-file",
+  "source_path": "orbit/changes/rc06a-scenario-map/.orbit-runs/review-system-2026-10-04T20-46-31Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-04T20-46-31Z",
+  "latest_apply_token": "2026-10-04T20-22-41Z",
+  "tie_break_rationale": null,
+  "external_reviewer": null,
+  "walk_mode": "walk",
+  "walk_mode_source": null,
+  "walk_mode_shifted_at_finding": null,
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 3
+  },
+  "pushback_verification": "All four verified against HEAD 04d17d02 before any edit: spec.md:196 read the archived-only wording while scenario-map.test.ts:329 asserts the ORPHAN on the unarchived change; the OFF header string was the single literal at scenario-map.ts:474; change.ts mapped every non-ERROR level to WARNING; the bulk printer prints no issue detail for any change. None stale.",
+  "resolution_summary": {
+    "resolved": 4,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "REMOVED row says its tags go ORPHAN once the change is archived; the map makes them ORPHAN in the change's own view now",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc06a-scenario-map/specs/orbit-scenario-map/spec.md",
+      "line": 196,
+      "classification": "trivial_fix",
+      "action": "reworded the REMOVED row: tags on its scenarios render ORPHAN in the change's resolved view, as the RENAMED row's old-key tags do",
+      "evidence": "grep of the change for \"once the change is archived\" found only this row; the engine and its test already behave as reworded",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "OFF header always says 'no scenario_map key', also when the key is present but inert",
+      "marker_source": "internal-review",
+      "file": "src/core/scenario-map.ts",
+      "line": 474,
+      "classification": "trivial_fix",
+      "action": "OFF header now reads 'Check: OFF (scenario_map absent or inert in orbit/config.yaml)'",
+      "evidence": "the surface test asserts the Check: OFF prefix only; 105 suite tests green after the edit",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Legacy 'orbit change validate' prints the new scenario-map INFO issues as '[WARNING]' on an invalid report and drops them on a valid one",
+      "marker_source": "internal-review",
+      "file": "src/commands/change.ts",
+      "line": 229,
+      "classification": "decision_required",
+      "action": "applied the ratified direction A: change.ts labels each issue at its own level (ℹ [INFO]), pinned by a new test in validation.test.ts; the INFO requirement names the single-item orbit validate printer as the only one it binds",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Give change.ts's printer the three-level labelling, and name the bulk and legacy printers as outside the INFO-beneath-valid contract in the requirement."
+          },
+          {
+            "label": "B",
+            "body": "Name both printers as outside the contract in the requirement; leave the mislabel as a named residual."
+          },
+          {
+            "label": "C",
+            "body": "Give both printers full INFO-beneath-valid printing."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc06a-scenario-map/specs/orbit-scenario-map/spec.md",
+          "test/core/validation.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Bulk human-mode 'orbit validate --changes/--all' never shows the scenario-map INFO lines",
+      "marker_source": "internal-review",
+      "file": "src/commands/validate.ts",
+      "line": 343,
+      "classification": "decision_required",
+      "action": "resolved by the same ratified direction A: the INFO requirement now states the bulk printer prints no INFO under a valid report and every --json form carries every issue — a named limit, no new printing (the walk authors no mechanism)",
+      "ratified_via": "chat",
+      "resolution": "A — the bulk printer is named outside the INFO-beneath-valid contract in the requirement; it prints no issue detail for any change by design",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc06a-scenario-map/specs/orbit-scenario-map/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Four of four resolved: two obvious fixes as previewed, and the two printer findings by the ratified direction A — the legacy printer labels INFO as INFO, and the INFO requirement names the single-item printer as the only one it binds.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews rc06a-scenario-map --from-file orbit/changes/rc06a-scenario-map/.orbit-runs/external-system-2026-10-04T20-48-27Z.md"
+}

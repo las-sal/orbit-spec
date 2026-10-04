@@ -418,6 +418,23 @@ describe('cover kinds and the render', () => {
     expect(m.counts.delta_scenarios).toBe(1);
   });
 
+  it('a scenario title repeated within its requirement is unkeyable at every occurrence; one tag satisfies neither', () => {
+    delta('orbit-x', { ADDED: [req('Req A', ['Scen 1', 'Same', 'Same'])] });
+    testFile([tag('behaviour', 'orbit-x :: Req A :: Same'), "it('only first', () => {});"]);
+    const m = map();
+    expect(m.scenarios.map((s) => s.scenario)).toEqual(['Scen 1']);
+    const dup = { source: 'spec', capability: 'orbit-x', requirement: 'Req A', scenario: 'Same', reason: 'unkeyable' };
+    expect(m.malformed).toEqual([dup, dup]);
+    expect(m.counts).toMatchObject({ delta_scenarios: 1, behaviour: 0, uncovered: 1, malformed: 2 });
+  });
+
+  it('a repeated title OUTSIDE the delta is counted per occurrence, never refused', () => {
+    baseline('orbit-z', [req('Req Z', ['Z', 'Z'])]);
+    const m = map();
+    expect(m.malformed).toEqual([]);
+    expect(m.counts.baseline_undeclared).toBe(2);
+  });
+
   it('per-kind counts count delta scenarios carrying at least one declaration of the kind', () => {
     testFile([tag('behaviour', K1), "it('x', () => {});", tag('behaviour', K1), "it('y', () => {});", tag('text', K2), "it('z', () => {});"]);
     expect(map().counts).toEqual({
