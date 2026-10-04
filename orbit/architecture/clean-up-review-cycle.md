@@ -1963,7 +1963,7 @@ embarrassment.
 ### Stage rc03b-pass-genres — a brief that carries nothing, and a genre the trail decides
 
 Depends-on: rc02-gate-semantics
-Complete: [ ]
+Complete: [x] 2026-10-04 (Sal)
 
 Declared 2026-10-04 (Sal) from the rc03 exploration's split (D-rc03-8). Charter: a pass's GENRE —
 REVIEW or VERIFICATION — is COMPUTED from reviewer class, mode and trail position and never declared:
@@ -4416,3 +4416,16 @@ its four findings were all the walks' cascade stopping one site short (Step 1's 
 parenthetical), closed at walk 3. Task 3.5 (exit (3)) closed at archive by observation. The readiness record accepts five
 residuals, headlined by rc07's distinction. **2507 tests green.** Position is engine-computed: rc03b
 quiescent-awaiting-ratification; rc03c-verification-record premised, its dependency now met.
+
+**2026-10-04 — Architect session: rc03b-pass-genres RATIFIED (fifteen stages complete).** All three exit criteria graded
+MET as written, each measured on the final tree: (1) the class-to-genre table is stated once in `orbit/specs/`
+(`orbit-conventions`' `Review mode decision framework`), present elsewhere only as the review body's named, fence-pinned
+mirror (R-crc-14's mirror corollary — the exception the owner's own sentence states) with every other surface pointing;
+(2) zero hits under the PHRASE and REGION rules across all fifteen generated skills, the planted pointers red — the rule
+as the system walks left it, by-line output exemption and the five read references; (3) the first committed external
+prompt under the new surface (`external-prompt-system-2026-10-04T03-49-33Z.md`) carried the iteration line alone, observed
+at the walk and confirmed by the external half. Ratified by Sal through the offer, after the post-archive project-wide
+audit came back clean. Carried, not captured as rulings or questions this session: the readiness record's five accepted
+residuals (`archive-2026-10-04T04-20-29Z.json`) — among them the output channels (commit subjects carrying per-pass
+counts, the status gate reason) named as a rider for a later owner, and the acceptance blind spot of the in-context
+probe, which is rc03c-verification-record's to close with the engine function its dependency now permits.

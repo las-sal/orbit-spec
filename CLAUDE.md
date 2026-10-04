@@ -209,7 +209,7 @@ file now carries a live mark. Do NOT read this paragraph as the program's full l
 only what rc07 produced. The authoritative list is the program doc's own Open questions section,
 which also carries Q-crc-11, Q-crc-12, Q-crc-20, Q-crc-21, Q-crc-22 and Q-crc-23.
 
-**Twelve more stages have shipped since, and the program is FOURTEEN stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b ratified 2026-10-04; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening).
+**Twelve more stages have shipped since, and the program is FIFTEEN stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b and rc03b ratified 2026-10-04; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening).
 
 `rc02c-confirmation-semantics` is ARCHIVED (2026-09-21): **the budget stopped being a target.**
 R-crc-11(h) — effort is RECORDED, never TARGETED — retired `budgetExhausted`, the
@@ -508,7 +508,7 @@ before there was prose. Q-crc-30 (`files_touched` is tracked-only) and Q-crc-31 
 is silently last-wins while a second `## Direction` is malformed) opened at archive; the readiness
 record accepts seven residuals, headlined by rc07's distinction. **2465 tests green** (2429 → 2465).
 
-`rc03b-pass-genres` is ARCHIVED (2026-10-04; the first child of the split parent `rc03-review-genres`, R-crc-9's fourth
+`rc03b-pass-genres` is ARCHIVED and RATIFIED (2026-10-04; all three exit criteria graded MET as written; the first child of the split parent `rc03-review-genres`, R-crc-9's fourth
 preventive application): **a pass has a PASS GENRE the trail decides, and a REVIEW-genre brief carries nothing from
 the trail.** `orbit-conventions`' `Review mode decision framework` states ONCE, as a fenced six-row table, how a pass's
 genre is COMPUTED from reviewer class, mode, and whether a QUALIFYING walk of its mode precedes it (a walk whose source
