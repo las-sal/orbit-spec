@@ -1,0 +1,78 @@
+{
+  "command": "archive",
+  "timestamp": "2026-10-04T19:11:53Z",
+  "change": "rc07b-reference-roundtrip",
+  "kind": "lifecycle",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Archived rc07b-reference-roundtrip to orbit/changes/archive/2026-10-04-rc07b-reference-roundtrip/. Payload schema references are proven by execution: six schema blocks across five references carry json example blocks a round-trip suite submits through the real write gate in every scope they name; audit-drift's two counts are engine-computed and refused in the payload; KNOWN_DIVERGENCE is retired. review-system computed PASSED through the blind pair (fresh + external GPT-6 Astra, converging on the counts accumulator), two walk logs, and an in-context VERIFICATION confirm grading six entries landed.",
+  "archive_path": "orbit/changes/archive/2026-10-04-rc07b-reference-roundtrip/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-audit-drift",
+      "orbit-conventions",
+      "orbit-emit-composition",
+      "orbit-run-summary-emit"
+    ],
+    "added": 2,
+    "modified": 4,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "Correction to the apply emit apply-2026-10-04T18-36-36Z: its assessment_suffix says 'The four review/address-reviews/audit-drift/archive examples were accepted by the write gate on first submission' — the count was six examples across five references (review change-mode, review architecture-mode, review-external T0, address-reviews, audit-drift, archive); all six were accepted on first submission. (Walk 1 later split the address-reviews example into three, so the shipped tree carries eight.)",
+    "The emit-composition.ts hash pin in rc03b-untouched-modules.test.ts moved three times in this stage, each a dated recorded act: apply task 1.3 (the computed counts), system walk 1 (the null-prototype accumulator), system walk 2 (the type-only refusal message).",
+    "Design D2 named only REFERENCES for the shared helper; apply moved the engine-owned lists and topLevelKeys there too (one subtraction list, not two), and walk 1 added the block grammar — test/helpers/schema-references.ts is the single home of every schema-reference reader."
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "formed_against": [
+        "2026-10-04T18-05-13Z",
+        "2026-10-04T18-15-35Z",
+        "2026-10-04T18-44-00Z",
+        "2026-10-04T18-44-13Z"
+      ],
+      "disposition": "ready",
+      "reasoning": "Both blind halves found the one real mechanism defect (the counts accumulator on a plain object) independently and by execution; it is fixed, tested on the written file, and the external half's own script now prints the expected result. Every other finding was template prose or instrument tidiness, walked and graded landed on the committed tree. All three exit criteria were measured, not asserted: exit (1) by mutating the real audit-drift example (the suite failed with the gate's own unknown-key error), exit (2) by the retired exemption and the no-divergence negative test, exit (3) against the built CLI in both scopes.",
+      "ratified_by": "ai",
+      "accepted": [
+        {
+          "claim": "PASSED means every finding was resolved and the walks verified landed; no independent pass stands clean on the final tree — both system halves predate the walks.",
+          "why": "rc07's distinction, recorded rather than implied; the walk edits were local (one engine function, template prose, test helpers) and the in-context VERIFICATION confirm graded each over its sweep scope with an empty residual check."
+        },
+        {
+          "claim": "The round trip is exactly as strong as the write gate's validators: values are unproven — the audit-drift category range \"1\"–\"6\" (ruled B at walk 2: the gate checks type only) and the provenance values inside examples.",
+          "why": "D-rc07b-1 is BOUNDED by design and its residual is stated in orbit-emit-composition's requirement; walk 1's ruling A made every example's values truthful for its own scopes, so the gap is a reviewer's claim, not a known falsehood."
+        },
+        {
+          "claim": "The genre-dependent `verification` key is exempt from joint coverage and no example executes it.",
+          "why": "Exempt by name in the requirement; its acceptance is proven by rc03c's own write-gate tests, and a seeded walk-and-pass fixture would be new mechanism (R-crc-6)."
+        },
+        {
+          "claim": "The exploration counted four voices on audit-drift's shape; apply's residue sweep found a fifth (address-reviews' internal-findings-format.md) and the external system pass found the review block beside it. Both are repaired, but no spec owns that consumer-side description, so it can drift again unseen.",
+          "why": "It sits outside the round trip's domain by name (a findings format), and the stage's ceiling was already breached by one; the residual is named here for the next stage that touches the address-reviews input formats."
+        },
+        {
+          "claim": "The archive schema's audit.summary_path still points at an audit-drift summary that the pre-archive sweep never writes (design Risks, out of scope).",
+          "why": "Reconciling it needs a fifth capability (orbit-archive-modifications); recorded at design and carried here for the next stage that touches the archive emit."
+        }
+      ]
+    }
+  ],
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."
+}

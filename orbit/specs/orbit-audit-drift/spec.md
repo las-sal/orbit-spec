@@ -3,9 +3,7 @@
 ## Purpose
 
 The `/orbit:audit-drift` command — project-wide scan for drift between captured knowledge and reality across four categories: (1) vocabulary residue (renamed/removed terms in non-delta'd docs), (2) lens staleness (perspectives/critical-paths referencing missing capabilities), (3) cross-doc consistency (`CLAUDE.md` / `project.md` / `*_convention.md` claims vs current state), (4) archive coherence (sync-specs propagation failures). Three invocation paths: standalone (user runs when "something feels off"), library call (system-mode review Pass 6), pre-archive (auto-invoked by `/orbit:archive`). Findings roll into the 3-dimension scorecard; final-assessment phrasing varies by invocation context.
-
 ## Requirements
-
 ### Requirement: Audit-drift command available
 
 The system SHALL expose a `/orbit:audit-drift` command that performs a project-wide scan for drift between captured knowledge and reality.
@@ -217,7 +215,7 @@ The system SHALL write a JSON run summary for **standalone** invocations only, p
 #### Scenario: Change-scoped standalone summary written
 
 - **WHEN** `/orbit:audit-drift <change-name>` completes
-- **THEN** a JSON summary is created at `orbit/changes/<change-name>/.orbit-runs/audit-drift-<TS>.json` with command name, timestamp, findings summary by category and severity, and finding titles
+- **THEN** a JSON summary is created at `orbit/changes/<change-name>/.orbit-runs/audit-drift-<TS>.json` carrying the payload `orbit-run-summary-emit`'s `Audit-drift standalone recommendations` owns, composed by `orbit emit audit-drift`
 
 #### Scenario: Project-wide standalone summary written
 
@@ -384,3 +382,4 @@ outside an architect session (flow-entry ruling).
 
 - **WHEN** the repo has no parseable architecture docs BUT a change's metadata cites `architecture: {doc: missing-doc, stage: x}`
 - **THEN** check (d) still runs and raises the CRITICAL dangling-citation finding (the skip never suppresses citation scanning)
+

@@ -2533,7 +2533,7 @@ CLOSED table, so adding one is a code change with a test rather than a line of Y
 ### Stage rc07b-reference-roundtrip — a shipped reference is proven by running it
 
 Depends-on: (none)
-Complete: [ ]
+Complete: [x] 2026-10-04 (Sal)
 
 SPLIT 2026-09-15 from rc07-artifact-lint under R-crc-9, preventively (see rc07's note). The two
 halves share a charter sentence and nothing else.
@@ -2562,6 +2562,18 @@ Goal G2. Touches: orbit-audit-drift, orbit-emit-composition. Exit: (1) a referen
 shape the surface refuses fails a test, BY EXECUTION; (2) the `KNOWN_DIVERGENCE` exemption is
 retired or re-stated as a refusal rather than a divergence; (3) the audit-drift reference and its
 emit surface agree, so the command's own Step 10 is followable from its own shipped reference.
+
+Shipped as (2026-10-04; the charter above stays as declared — the departures are recorded in the archived design,
+`orbit/changes/archive/2026-10-04-rc07b-reference-roundtrip/design.md`): examples are per SCHEMA BLOCK, not per
+reference — six blocks across five references, each example attached to its nearest preceding block, a block's examples
+jointly carrying its AI-supplied keys with `verification` exempt by name (D1); the closed scope words are `change`,
+`archived`, `project`, `doc` — `archived` added because the archive emit resolves only against an archived directory
+(D1); the address-reviews reference carries three examples, one per provenance (system walk 1);
+`test/helpers/schema-references.ts` holds the reference table, the engine-owned subtraction list and the one block
+grammar both suites read (D2, widened at apply and walk 1); audit-drift's counts are keyed over the union of
+`categories_run` and the categories findings carry, on a null-prototype accumulator (D4, system walk 1), and the gate
+checks the category TYPE only — the `"1"`–`"6"` range stays the body's (system walk 2). Exit (2) took its first branch:
+the exemption is retired, not re-stated.
 
 ### Stage rc08-walk-completeness — walks sweep requirements, not examples
 
@@ -4490,3 +4502,48 @@ probe/engine divergence (a walk naming a pass file absent from this trail), unna
 and handed to the next stage that touches that capability, and Q-crc-20, which rc03c names a proxy for and does not
 close. With rc03b and rc03c both ratified, the split parent `rc03-review-genres` (ended 2026-10-04) has every exit
 criterion owned by a ratified child.
+
+**2026-10-04 — rc07b-reference-roundtrip ARCHIVED through a COMPUTED PASSED gate via the blind pair (the eleventh rc-stage
+through one, the tenth through the pair).** A payload schema reference is now PROVEN BY EXECUTION: every one of the six
+schema blocks across five references carries `json example <scope>…` blocks — real JSON, exactly a payload the body tells
+the AI to write — and `test/core/reference-roundtrip.test.ts` submits each, unchanged, through `composeAndWriteEmit` in a
+fresh disposable project per (example, scope) pair, with no engine-owned strip, seeding the trail only with the passes a
+`formed_against` names; an example attaches to its NEAREST PRECEDING schema block and a block's examples jointly carry its
+AI-supplied keys (`verification` exempt by name, the one genre-dependent key). audit-drift's `findings_total` /
+`findings_by_category` are ENGINE-COMPUTED from `findings` and refused in the payload, over refused malformed inputs, so
+the clean-recommendation branch can no longer disagree with the findings; the reference was rewritten to its owner's shape
+and `KNOWN_DIVERGENCE` is RETIRED (exit (2)). FOUR capabilities against R-crc-1's ceiling of three (D-rc07b-7, declared and
+ratified at exploration), 2 ADDED + 4 MODIFIED synced 6/6 byte-verified through the engine's merge. The cycle: proposal
+fresh → external (GPT-6 Astra) → in-context VERIFICATION; apply 19/19 in one session; the **blind pair on the pushed apply
+commit `d949639e`** — fresh 0C/1W/3S and external GPT-6 Astra 1C/2W/1S — **converging, by execution on both halves, on
+the stage's own new mechanism**: the counts accumulator was a plain object, so a category named `__proto__` vanished and
+`constructor` / `toString` concatenated onto inherited functions (fresh WARNING, external CRITICAL with its script) — now
+null-prototype, pinned by an engine test on the written file. They converged a second time on the address-reviews example
+submitted to scopes its provenance cannot occur in (Sal: A — three examples, one per provenance). Each half found what the
+other missed: the fresh half two block grammars across the two suites (now one, in the shared helper) and a non-stock
+example phrasing; the external half the consumer reference's retired review shape beside the audit-drift block apply had
+repaired, and a refusal message promising a range the gate never checked (Sal: B — the message states the type-only check;
+the range stays the body's). Two walk logs; an in-context VERIFICATION confirm graded six entries `landed` with an empty
+residual check from `b5897ca2`. Exits (1) and (3) were MEASURED at apply: (1) by mutating the real audit-drift example
+(the suite failed with the gate's own `unknown payload key 'depth'`), (3) against the built CLI in both scopes
+(`findings_total: 2`). Two sizing lessons: the exploration counted four voices on audit-drift's shape and apply's residue
+sweep found a fifth (address-reviews' `internal-findings-format.md`), the external half the block beside it; and the
+`emit-composition.ts` hash pin moved three times, each recorded. The readiness record (`archive-2026-10-04T19-11-53Z.json`)
+accepts five residuals, headlined by rc07's distinction. **2583 tests green** (2559 → 2583). Position is engine-computed:
+rc07b quiescent-awaiting-ratification.
+
+**2026-10-04 — Architect session: rc07b-reference-roundtrip RATIFIED (seventeen stages complete).** All three exit
+criteria graded MET as written, each measured on the final tree: (1) a reference whose documented shape the surface
+refuses fails a test BY EXECUTION — re-measured in this session after the walks, by re-adding `depth` to the real
+audit-drift example: `reference-roundtrip.test.ts` failed carrying the write gate's own `unknown payload key 'depth' for
+'audit-drift'`, and passed again on revert; (2) the `KNOWN_DIVERGENCE` exemption is RETIRED, the charter's first branch —
+named nowhere in either suite, with a `no divergence is tolerated` negative test in its place; (3) the audit-drift
+reference and its emit surface agree — measured at apply against the built CLI in both scopes, and observed in use by the
+post-archive project-wide audit, whose payload followed Step 10 to the reference's example and whose counts the engine
+computed (`audit-drift-2026-10-04T19-14-51Z.json`, `findings_total: 1`). Ratified by Sal through the offer, after that
+audit was walked to zero (its one SUGGESTION added the stage section's `Shipped as:` paragraph). Carried, not captured as
+rulings or questions this session: the readiness record's five accepted residuals
+(`archive-2026-10-04T19-11-53Z.json`) — among them the consumer-side description of the audit-drift and review JSON in
+address-reviews' `internal-findings-format.md`, which no spec owns and which the exploration's four-voice count missed,
+handed to the next stage that touches the address-reviews input formats; and the archive schema's `audit.summary_path`,
+recorded at design for the next stage that touches the archive emit.

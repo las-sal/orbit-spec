@@ -1,0 +1,48 @@
+{
+  "command": "audit-drift",
+  "timestamp": "2026-10-04T19:14:51Z",
+  "change": null,
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "final_assessment": "No critical issues. 0 warning(s) to consider.",
+  "categories_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6"
+  ],
+  "findings": [
+    {
+      "category": "3",
+      "severity": "SUGGESTION",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 2545,
+      "title": "rc07b's stage section has no Shipped as line, so its present-tense origin paragraph reads as the live tree",
+      "recommendation": "Add a `Shipped as (2026-10-04; …)` paragraph after the exit criteria, the form rc03c's section carries at line 2044: the charter stays as declared, and the paragraph names where the shipped mechanism departs from it — examples are per SCHEMA BLOCK (six across five references), not per reference; the closed scope words gained `archived`; the address-reviews reference carries three examples, one per provenance; the shared test helper holds the reference table, the engine-owned list and the block grammar; the counts are keyed over the union on a null-prototype accumulator; the category range is the body's, the gate checking type only — pointing at orbit/changes/archive/2026-10-04-rc07b-reference-roundtrip/design.md for the decisions. The origin paragraph ('documents six … REJECTS every one … records the gap as a KNOWN_DIVERGENCE exemption') then reads as the origin it is."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "category": "3",
+      "title": "KNOWN_DIVERGENCE named at clean-up-review-cycle.md:3303",
+      "evidence": "a dated 2026-09-15 ruling bullet in the decision record — history, true when written; not living prose"
+    },
+    {
+      "category": "1",
+      "title": "findings_summary / finding_titles in orbit-conventions' Internal-run JSON summary format",
+      "evidence": "orbit/specs/orbit-conventions/spec.md:239 names them as RETIRED for review emits — the synced rc07b MODIFIED block; a retirement record, not residue"
+    }
+  ],
+  "findings_total": 1,
+  "findings_by_category": {
+    "1": 0,
+    "2": 0,
+    "3": 1,
+    "4": 0,
+    "5": 0,
+    "6": 0
+  },
+  "next_recommended": "/orbit:address-reviews --from-file orbit/.orbit-runs/audit-drift-2026-10-04T19-14-51Z.json — 1 drift(s) detected project-wide; resolve before next workflow step"
+}

@@ -418,6 +418,7 @@ invocation into `command`/`args`; the class qualifier travels in `args` alongsid
 #### Scenario: Status reader parses verify-pass recommendation
 - **WHEN** a downstream status reader reads the verify-pass JSON and best-effort parses
 - **THEN** `command` is `"/orbit:review --as system"`, `args` carries the class qualifier and the change name as the graph composed them, `reason` is the full verbatim string
+
 ### Requirement: Verify fail-mode recommendations
 
 When standalone `/orbit:verify <name>` fails, the emit-layer SHALL classify the failure mode based on verify-change's output and write `next_recommended` accordingly:
@@ -491,7 +492,7 @@ T1 (findings returned, `/orbit:address-reviews --from-file` invoked) is the exis
 
 ### Requirement: Audit-drift standalone recommendations
 
-Standalone `/orbit:audit-drift` already emits `audit-drift-<TS>.json` per the `orbit-audit-drift` skill's `references/run-summary-schema.md` (shipped alongside the generated skill). The emit SHALL include the universal spine from `orbit-conventions`'s `Internal-run JSON summary format` (with `kind: "editorial"`). The emit-layer recognizes TWO standalone invocation modes — **change-scoped** (`/orbit:audit-drift <name>`) and **project-wide** (`/orbit:audit-drift` with no argument) — each with distinct emit path, `change` value, and recommendation logic:
+Standalone `/orbit:audit-drift` emits `audit-drift-<TS>.json`, and THIS requirement owns that emit's payload: the `orbit-audit-drift` skill's `references/run-summary-schema.md` (shipped alongside the generated skill) MIRRORS it, never defines it, per `orbit-emit-composition`'s `Payload tables agree with their schema references`. The emit SHALL include the universal spine from `orbit-conventions`'s `Internal-run JSON summary format` (with `kind: "editorial"`). The emit-layer recognizes TWO standalone invocation modes — **change-scoped** (`/orbit:audit-drift <name>`) and **project-wide** (`/orbit:audit-drift` with no argument) — each with distinct emit path, `change` value, and recommendation logic:
 
 **Change-scoped standalone** (`/orbit:audit-drift <name>`):
 - Emit path: `orbit/changes/<name>/.orbit-runs/audit-drift-<TS>.json`
@@ -510,10 +511,14 @@ Standalone `/orbit:audit-drift` already emits `audit-drift-<TS>.json` per the `o
 Per-command extensions for audit-drift SHALL include:
 
 ```
-categories_run        object   { vocab_residue, lens_staleness, cross_doc_consistency, archive_coherence } — bools
-findings_by_category  object   counts per category
-findings_total        int
+categories_run        array    category-id strings, "1".."6" — the categories that ran; skip reasons belong in the report body
+findings              array    the finding entries, each carrying its own `category`, `severity`, `file`, `line`, `title`, `recommendation`, optional `recommendation_options`
+stale_suppressed      array    suppressed-finding entries ({category, title, evidence})
+findings_total        int      ENGINE-COMPUTED, refused in the payload — per orbit-emit-composition's `Audit-drift counts are engine-computed`
+findings_by_category  object   ENGINE-COMPUTED, refused in the payload — per the same requirement
 ```
+
+No other per-command extension is part of the payload; the write gate refuses any field outside the engine's audit-drift payload table.
 
 This requirement applies only to **standalone** `/orbit:audit-drift` invocations (both change-scoped and project-wide). Inline audit-drift during `/orbit:archive` is captured in `archive-<TS>.json` per the existing archive emit convention (unchanged).
 
@@ -541,6 +546,11 @@ This requirement applies only to **standalone** `/orbit:audit-drift` invocations
 
 - **WHEN** `/orbit:archive foo` runs and the inline audit-drift step produces findings
 - **THEN** the findings are captured in `archive-<TS>.json` per existing archive emit behavior; no separate `audit-drift-<TS>.json` is written for the inline pass
+
+#### Scenario: The payload is the owner's shape
+
+- **WHEN** a standalone audit-drift payload carries `categories_run: ["1", "3", "4"]`, `findings`, `stale_suppressed` and `final_assessment`
+- **THEN** the write gate accepts it; the same payload with `context`, `depth`, `flags`, `categories_skipped` or `findings_summary` added is refused naming the field
 
 ### Requirement: No forward-look at planned future behavior changes
 
@@ -656,7 +666,6 @@ it back to discover which PR to act on and which granularity governs (per
 `orbit-archive-modifications`), and it is what FREEZES the change's granularity for its life
 (per `orbit-pr-lifecycle`) — later seams consult this record, never a fresh read of the
 mutable `architecture:` citation.
-
 
 #### Scenario: Malformed attachment structure is rejected at the gate
 
@@ -899,3 +908,4 @@ condemns. Its carrier belongs with whatever surface reads it, which no stage has
 - **WHEN** an emit carries no cadence judgement
 - **THEN** `judgements` is absent entirely rather than present-and-empty, so key presence means a
   judgement was taken
+

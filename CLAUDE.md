@@ -209,7 +209,7 @@ file now carries a live mark. Do NOT read this paragraph as the program's full l
 only what rc07 produced. The authoritative list is the program doc's own Open questions section,
 which also carries Q-crc-11, Q-crc-12, Q-crc-20, Q-crc-21, Q-crc-22 and Q-crc-23.
 
-**Thirteen more stages have shipped since, and the program is SIXTEEN stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b and rc03c ratified 2026-10-04; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening).
+**Fourteen more stages have shipped since, and the program is SEVENTEEN stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b, rc03c and rc07b ratified 2026-10-04; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening).
 
 `rc02c-confirmation-semantics` is ARCHIVED (2026-09-21): **the budget stopped being a target.**
 R-crc-11(h) — effort is RECORDED, never TARGETED — retired `budgetExhausted`, the
@@ -571,6 +571,28 @@ confirm's residual check saw both walks; the in-context confirm, the first pass 
 graded nine owed verdicts `landed` and its record MET exit (3); a COMPUTED PASSED gate — the tenth rc-stage through one,
 the ninth through the pair. Sync 4 ADDED + 6 MODIFIED, 10/10 byte-verified. Q-crc-20 names `verified_walks` plus the
 sweep scope as its nearest proxy, not a closure. **2559 tests green** (2507 → 2559).
+
+`rc07b-reference-roundtrip` is ARCHIVED and RATIFIED (2026-10-04; all three exit criteria graded MET as written, exit (1) re-measured on the final tree): **a shipped payload reference is proven by running it.** Every
+one of the six schema blocks across five references (review change-mode and architecture-mode, review-external T0,
+address-reviews, audit-drift, archive) carries `json example <scope>…` blocks — real JSON, exactly a payload the body tells
+the AI to write — and `test/core/reference-roundtrip.test.ts` submits each, unchanged, through the real write gate in a
+fresh disposable project per (example, scope) pair: scope words are a CLOSED set (`change`, `archived`, `project`, `doc`),
+nothing engine-owned is stripped, and the trail is seeded only with the passes a `formed_against` names. An example
+attaches to its NEAREST PRECEDING schema block, and a block's examples jointly carry its AI-supplied keys (`model` asserted
+separately; `verification`, the one genre-dependent key, exempt by name). The round trip is exactly as strong as the write
+gate's validators — the BOUNDED rule's named limit. `test/helpers/schema-references.ts` is the ONE home of the reference
+table, the engine-owned subtraction list and the block grammar both suites read through the engine's fence tracker.
+audit-drift's `findings_total` / `findings_by_category` are ENGINE-COMPUTED from `findings` (keyed over the union of
+`categories_run` and the categories findings carry, on a null-prototype accumulator) and refused in the payload, over
+refused malformed inputs; the reference was rewritten to its owner's shape (`orbit-run-summary-emit`) and the
+`KNOWN_DIVERGENCE` exemption is RETIRED. Four capabilities, declared one over R-crc-1's ceiling at exploration; 2 ADDED + 4
+MODIFIED synced 6/6 byte-verified. The cycle: proposal fresh → external (GPT-6 Astra) → in-context; apply 19/19; the
+**blind pair on the pushed apply commit `d949639e`** — fresh 0C/1W/3S and external GPT-6 Astra 1C/2W/1S, converging BY
+EXECUTION on the stage's own new mechanism (the counts accumulator, a plain object that dropped `__proto__`) and on an
+example tagged for scopes its provenance cannot occur in (Sal: A, one example per provenance); Sal: B on the category range
+(the gate checks type; the range stays the body's); an in-context VERIFICATION confirm graded six entries `landed`; a
+**COMPUTED PASSED gate** — the eleventh rc-stage through one, the tenth through the pair. The readiness record accepts five
+residuals, headlined by rc07's distinction. **2583 tests green** (2559 → 2583).
 
 Read that doc before any rc-stage work; the D-arc section below is the historical
 record of how the engine got here.
