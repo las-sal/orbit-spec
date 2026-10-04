@@ -1,0 +1,271 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-04T19:57:42Z",
+  "change": "rc06a-scenario-map",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc06a-scenario-map/.orbit-runs/review-proposal-2026-10-04T19-53-43Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-04T19-53-43Z",
+  "latest_apply_token": null,
+  "tie_break_rationale": null,
+  "external_reviewer": null,
+  "walk_mode": "walk",
+  "walk_mode_source": "default",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 7,
+    "suggestion": 6
+  },
+  "pushback_verification": "All thirteen verified against current state; none stale. #1 confirmed by reading printReport (src/commands/validate.ts:161 prints only the valid line).",
+  "resolution_summary": {
+    "resolved": 13,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "INFO-level undeclared scenarios are never printed by human-mode orbit validate",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-scenario-map/spec.md",
+      "line": 205,
+      "classification": "decision_required",
+      "action": "applied ratified option A: map issues carry path `scenario-map`; human-mode validate prints their INFO lines beneath the valid line, byte-identical otherwise; spec requirement + scenario reworded, design D4 + Touchpoints, new task 4.3 editing printReport",
+      "evidence": "verified against current state before the edit; each edit re-grepped after (11 spec anchors, 4 design anchors, 1 proposal anchor)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc06a-scenario-map/proposal.md",
+          "orbit/changes/rc06a-scenario-map/design.md",
+          "orbit/changes/rc06a-scenario-map/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Print INFO issues under a valid report when the map check contributes them (state it in the requirement, add a task editing printReport, and keep the OFF path byte-identical)."
+          },
+          {
+            "label": "B",
+            "body": "Narrow the requirement and scenario to say the INFO lines are carried by `orbit validate --json` and the human form shows only the valid line; reword design D8 to match."
+          }
+        ],
+        "chosen": "A"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Task 5.3's exit-(3) measurement cannot observe ERROR",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 29,
+      "classification": "trivial_fix",
+      "action": "task 5.3 reworded: a --json corroboration asserting no `scenario-map` issue at any level, 5.2's zero-UNCOVERED surface check named as exit (3)'s measure, and exit (1)'s post-apply ERROR moved to archive",
+      "evidence": "verified against current state before the edit; each edit re-grepped after (11 spec anchors, 4 design anchors, 1 proposal anchor)",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The config table's 'tests matching zero files' row has no owner in the design and no task",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-scenario-map/spec.md",
+      "line": 230,
+      "classification": "trivial_fix",
+      "action": "zero-match row now says the scan raises the warning once per run; design D6 places it in scenario-map.ts (the only globber); a scenario and a 2.3 case added",
+      "evidence": "verified against current state before the edit; each edit re-grepped after (11 spec anchors, 4 design anchors, 1 proposal anchor)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc06a-scenario-map/design.md",
+          "orbit/changes/rc06a-scenario-map/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Reading the key through readProjectConfig breaks the byte-identical validate claim",
+      "marker_source": "internal-review",
+      "file": "proposal.md",
+      "line": 32,
+      "classification": "trivial_fix",
+      "action": "the key is read ON ITS OWN by a dedicated resolver, never through readProjectConfig; spec sentence + scenario (`pr: sometimes` prints nothing), design D6, proposal claim, task 1.1 case and 1.2 wording",
+      "evidence": "verified against current state before the edit; each edit re-grepped after (11 spec anchors, 4 design anchors, 1 proposal anchor)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc06a-scenario-map/specs/orbit-scenario-map/spec.md",
+          "orbit/changes/rc06a-scenario-map/design.md",
+          "orbit/changes/rc06a-scenario-map/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "RENAMED plus MODIFIED of one requirement is unspecified",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-scenario-map/spec.md",
+      "line": 167,
+      "classification": "trivial_fix",
+      "action": "key set applies operations in the archive's order (RENAMED, REMOVED, MODIFIED, ADDED); the RENAMED row yields to MODIFIED under the new name; a renamed-then-modified scenario added and a 2.3 case",
+      "evidence": "verified against current state before the edit; each edit re-grepped after (11 spec anchors, 4 design anchors, 1 proposal anchor)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc06a-scenario-map/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The --json shape leaves element shapes and counts keys open",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-scenario-map/spec.md",
+      "line": 125,
+      "classification": "trivial_fix",
+      "action": "the --json object's full shape spelled out in a fenced block: declarations per kind, orphans, malformed, operation values, counts keys; task 3.1 asserts every element shape",
+      "evidence": "verified against current state before the edit; each edit re-grepped after (11 spec anchors, 4 design anchors, 1 proposal anchor)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc06a-scenario-map/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Exit (1) 'fails validate' is restated unqualified after D-rc06-10 and D-rc06-12 qualified it",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 3,
+      "classification": "trivial_fix",
+      "action": "design Context: exit (1) graded AS WRITTEN on the post-apply ERROR with the check ON — measurable, so not an R-crc-12 revision",
+      "evidence": "verified against current state before the edit; each edit re-grepped after (11 spec anchors, 4 design anchors, 1 proposal anchor)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc06a-scenario-map/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "'next line begins with' does not say after leading whitespace",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-scenario-map/spec.md",
+      "line": 15,
+      "classification": "trivial_fix",
+      "action": "table header reads 'begins, after leading whitespace, with'; a 2.1 case for an indented it( inside describe",
+      "evidence": "verified against current state before the edit; each edit re-grepped after (11 spec anchors, 4 design anchors, 1 proposal anchor)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc06a-scenario-map/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The validate check's error path when the change context cannot load is unstated",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 38,
+      "classification": "trivial_fix",
+      "action": "a load failure is a row of the INFO table (never throws); a scenario, design D4 sentence and a 4.1 case added",
+      "evidence": "verified against current state before the edit; each edit re-grepped after (11 spec anchors, 4 design anchors, 1 proposal anchor)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc06a-scenario-map/design.md",
+          "orbit/changes/rc06a-scenario-map/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "A tag on it( inside describe.skip attaches although the test never runs",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-scenario-map/spec.md",
+      "line": 25,
+      "classification": "trivial_fix",
+      "action": "the enclosing-group blind spot (describe.skip / skipIf / todo) named as a limit beside the language limit",
+      "evidence": "verified against current state before the edit; each edit re-grepped after (11 spec anchors, 4 design anchors, 1 proposal anchor)",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "D1 calls createFenceTracker 'the one fence grammar' while requirement blocks come from computeFenceMask",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 32,
+      "classification": "trivial_fix",
+      "action": "D1 now says the read path composes computeFenceMask (requirement blocks) and createFenceTracker (scenario headings) and names Q-crc-15 as the limit",
+      "evidence": "verified against current state before the edit; each edit re-grepped after (11 spec anchors, 4 design anchors, 1 proposal anchor)",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The charter's 'owner of the status command's flags' measurement is not recorded",
+      "marker_source": "internal-review",
+      "file": "proposal.md",
+      "line": 24,
+      "classification": "trivial_fix",
+      "action": "proposal cites orbit-orientation's 'Bare `orbit status` renders the current sprint' clause licensing new --change flags as the flag-owner measurement",
+      "evidence": "verified against current state before the edit; each edit re-grepped after (11 spec anchors, 4 design anchors, 1 proposal anchor)",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The key's split rule is implicit",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-scenario-map/spec.md",
+      "line": 11,
+      "classification": "trivial_fix",
+      "action": "split on the literal ` :: `, exactly three non-empty parts after trimming (`a ::b :: c` is MALFORMED); a title containing ` :: ` named as unkeyable; a 2.1 case",
+      "evidence": "verified against current state before the edit; each edit re-grepped after (11 spec anchors, 4 design anchors, 1 proposal anchor)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc06a-scenario-map/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "a, walk all",
+  "final_assessment": "Thirteen of thirteen resolved: twelve obvious fixes previewed at triage and one decision (INFO visibility) ratified in chat as A. Scenarios 29 to 33, tasks 18 to 19; validate --strict clean.",
+  "iteration": 1,
+  "next_recommended": "/orbit:review --as proposal rc06a-scenario-map"
+}

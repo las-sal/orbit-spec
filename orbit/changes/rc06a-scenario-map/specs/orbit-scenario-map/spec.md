@@ -8,11 +8,11 @@ A scenario's coverage SHALL be declared on the TEST side, never in the spec. A s
 ^\s*//\s*@scenario\s+(behaviour|text)\s+<capability> :: <requirement title> :: <scenario title>\s*$
 ```
 
-The KEY is the triple — the capability's directory name under `orbit/specs/`, the requirement title as written after `### Requirement:`, and the scenario title as written after `#### Scenario:`, each trimmed — joined by the literal ` :: `. The kind word records what the test establishes: `behaviour` (the test runs the behaviour the scenario states) or `text` (the test shows an artifact CARRIES the instruction the scenario states; it says nothing about whether an AI follows it). Any line matching `^\s*//\s*@scenario\b` that fails the production — an unknown kind word, a key without exactly three non-empty parts — is MALFORMED, naming the file and line.
+The KEY is the triple — the capability's directory name under `orbit/specs/`, the requirement title as written after `### Requirement:`, and the scenario title as written after `#### Scenario:`, each trimmed — joined by the literal ` :: `. A tag's key is SPLIT on the literal ` :: ` (space, two colons, space) and MUST yield exactly three parts, each non-empty after trimming; so `a ::b :: c` splits into two parts and is MALFORMED. A title that itself contains ` :: ` cannot be keyed — a named limit (no baseline title contains `::` today). The kind word records what the test establishes: `behaviour` (the test runs the behaviour the scenario states) or `text` (the test shows an artifact CARRIES the instruction the scenario states; it says nothing about whether an AI follows it). Any line matching `^\s*//\s*@scenario\b` that fails the production — an unknown kind word, a key without exactly three non-empty parts — is MALFORMED, naming the file and line.
 
 A tag ATTACHES to the next line that is neither blank, nor a `//` comment that is not itself a tag; consecutive tags STACK and all attach to that line. The next line is classified by this table, and a tag whose next line is refused is MALFORMED, naming the tag's line:
 
-| next line begins with | outcome |
+| next line begins, after leading whitespace, with | outcome |
 |---|---|
 | `it(` / `test(` | attaches |
 | `it.each` / `test.each` | attaches; one tag covers every row |
@@ -22,7 +22,7 @@ A tag ATTACHES to the next line that is neither blank, nor a `//` comment that i
 | `describe` | REFUSED — a tag names a test, never a group |
 | anything else, or end of file | REFUSED |
 
-The table is CLOSED: the call forms are listed and every other next line is refused by name, so no line passes unclassified. The scan reads text and never parses the language, so a tag-shaped line inside a string literal is classified like any other line — it attaches or is refused VISIBLY, never silently. Only files in the scanned set (per `The scenario map is opt-in by the scenario_map config key`) are read; v1 recognises the JS/TS (vitest/jest) call forms above and no other language's — a named limit.
+The table is CLOSED: the call forms are listed and every other next line is refused by name, so no line passes unclassified. The scan reads text and never parses the language, so a tag-shaped line inside a string literal is classified like any other line — it attaches or is refused VISIBLY, never silently. Only files in the scanned set (per `The scenario map is opt-in by the scenario_map config key`) are read; Two named limits: v1 recognises the JS/TS (vitest/jest) call forms above and no other language's; and a line classifier cannot see an ENCLOSING group, so a tag on an `it(` inside a `describe.skip(` / `describe.skipIf(` / `describe.todo(` block attaches although that test may never run.
 
 #### Scenario: A behaviour tag attaches to the next test
 
@@ -122,7 +122,34 @@ A tag or ledger entry whose key resolves to no scenario is reported as ORPHAN ag
 
 ### Requirement: The scenario map is engine-computed at one read surface
 
-The map SHALL be computed at read time by `orbit status --change <name> --scenarios` and SHALL be stored in no emit and no file. It resolves keys against the RESOLVED specs — the baseline under `orbit/specs/` with the change's delta operations applied to the key set (ADDED adds a requirement's scenarios; MODIFIED replaces its scenario set; REMOVED drops it; RENAMED re-keys it) — reading `#### Scenario:` headings fence-aware through the engine's shared CommonMark fence tracker. The human render opens with a header naming the change, whether the check is ON or OFF, and the scanned globs; then the change's DELTA scenarios with one column per cover kind and UNCOVERED marked; then ORPHAN and MALFORMED lines; then the counts, including the number of baseline scenarios outside the delta that carry no declaration. `--json` carries the same facts as an object with `change`, `check` (`"on"` or `"off"`), `tests` (the scanned globs), `scenarios` (one entry per delta scenario: `capability`, `requirement`, `scenario`, `operation`, `declarations` with one list per kind, `uncovered`), `orphans`, `malformed`, and `counts`. `--scenarios` requires `--change`, and cannot be combined with `--report` or `--boot`.
+The map SHALL be computed at read time by `orbit status --change <name> --scenarios` and SHALL be stored in no emit and no file. It resolves keys against the RESOLVED specs — the baseline under `orbit/specs/` with the change's delta operations applied to the key set IN THE ARCHIVE'S ORDER — RENAMED (re-keys a requirement's scenarios), then REMOVED (drops them), then MODIFIED (replaces the scenario set of the requirement named by the block, under its new name when it was renamed), then ADDED (adds the block's scenarios) — reading `#### Scenario:` headings fence-aware through the engine's shared CommonMark fence tracker. The human render opens with a header naming the change, whether the check is ON or OFF, and the scanned globs; then the change's DELTA scenarios with one column per cover kind and UNCOVERED marked; then ORPHAN and MALFORMED lines; then the counts, including the number of baseline scenarios outside the delta that carry no declaration. `--json` carries the same facts as ONE object of this shape:
+
+```
+{
+  change:    <name>,
+  check:     "on" | "off",
+  tests:     [<glob>, …],                      the scanned globs
+  scenarios: [{                                one entry per delta scenario
+    capability, requirement, scenario,         the key's three parts
+    operation:    "ADDED" | "MODIFIED" | "RENAMED",
+    declarations: {
+      behaviour:  [{file, line}],              the attached test line
+      text:       [{file, line}],
+      observed:   [{record}],
+      untestable: [{why}]
+    },
+    uncovered: <boolean>                       true iff all four lists are empty
+  }],
+  orphans:   [{source: "tag", file, line, key} | {source: "ledger", index, key}],
+  malformed: [{source: "tag", file, line, reason} | {source: "ledger", index, reason} | {source: "ledger-file", reason}],
+  counts: {
+    delta_scenarios, behaviour, text, observed, untestable, uncovered,
+    orphans, malformed, baseline_undeclared     each a count; no ratio
+  }
+}
+```
+
+`operation` names the delta block that put the scenario in the delta (a renamed-then-modified requirement's scenarios read `MODIFIED`); a per-kind count is the number of delta scenarios carrying at least one declaration of that kind. `--scenarios` requires `--change`, and cannot be combined with `--report` or `--boot`.
 
 The surface's consumers are exactly those the program names — `orbit validate <change>` (per `A declaration is owed by every scenario in the change's delta blocks`), verify-change's Scenario Coverage step, and system review Pass 0 through verify — sourced from the rc06 and rc10 charters and the verify-change body; each READS the surface and none records a copy.
 
@@ -164,7 +191,7 @@ When the check is ON, `orbit validate <change>` SHALL report every scenario in t
 |---|---|
 | ADDED | every scenario in the block |
 | MODIFIED | every scenario in the block, unchanged scenarios included — the block replaces the whole requirement |
-| RENAMED | every baseline scenario under the OLD title, under its NEW key; tags on the old key render ORPHAN |
+| RENAMED | every baseline scenario under the OLD title, under its NEW key; tags on the old key render ORPHAN — unless the change also MODIFIES the requirement under its new name, when the MODIFIED row governs (the archive's order applies RENAMED first) |
 | REMOVED | nothing; tags on its scenarios render ORPHAN once the change is archived |
 | (outside every delta block) | nothing — reported on the surface, never by validate |
 
@@ -185,6 +212,11 @@ ORPHAN and MALFORMED lines are reported on the surface only; validate reports un
 - **WHEN** the check is ON, a change RENAMES `Req A` to `Req B`, and the only tags for its scenarios name `Req A`
 - **THEN** `orbit validate <change>` reports each scenario under `Req B` as undeclared, and the surface reports the `Req A` tags as ORPHAN
 
+#### Scenario: A renamed-then-modified requirement owes its MODIFIED block
+
+- **WHEN** the check is ON and a change RENAMES `Req A` to `Req B` and MODIFIES `Req B` with a block of three scenarios
+- **THEN** exactly those three scenarios owe declarations, keyed under `Req B`, each with `operation` `MODIFIED`
+
 #### Scenario: A baseline scenario outside the delta never fails validate
 
 - **WHEN** the check is ON and a baseline scenario the change does not touch carries no declaration
@@ -201,18 +233,24 @@ Tests and their tags are written at apply, so the level at which `orbit validate
 | `passed` (every task checked) | ERROR |
 | `passed` for flow (only declared user-validation handoffs remain unchecked) | ERROR |
 | no `apply` gate (a schema declaring neither an `apply` gate nor `apply:`) | INFO, always |
+| the change context cannot load (an unknown schema, an unreadable metadata file) | INFO, always — the check never throws |
 
-INFO never fails `orbit validate --strict`, so a proposal review's structure pass never blocks on a scenario whose test cannot exist yet. The level REPORTS the scenario's state; no gate reads it.
+INFO never fails `orbit validate --strict`, so a proposal review's structure pass never blocks on a scenario whose test cannot exist yet. Every issue the map contributes carries the path `scenario-map`, and human-mode `orbit validate` SHALL print each such INFO issue beneath the `is valid` line when the report is valid; a report carrying no `scenario-map` issue prints exactly as before. The level REPORTS the scenario's state; no gate reads it.
 
 #### Scenario: Before apply, an undeclared scenario is INFO
 
 - **WHEN** the check is ON, a change's tasks are unchecked, and an ADDED scenario carries no declaration
-- **THEN** `orbit validate <change> --strict` reports it at INFO and passes
+- **THEN** `orbit validate <change> --strict` passes and prints the scenario's key beneath the `is valid` line as an INFO line
 
 #### Scenario: After apply, an undeclared scenario is an ERROR
 
 - **WHEN** the check is ON, every task of the change is checked, and an ADDED scenario carries no declaration
 - **THEN** `orbit validate <change>` reports it at ERROR and fails
+
+#### Scenario: A change whose context cannot load reports INFO
+
+- **WHEN** the check is ON and the change's metadata names a schema that does not resolve
+- **THEN** the check reports its undeclared scenarios at INFO and validate does not throw
 
 #### Scenario: Pending user-validation handoffs count as applied
 
@@ -227,10 +265,12 @@ The check SHALL be ON only when `orbit/config.yaml` carries a well-formed `scena
 |---|---|
 | absent, or no config file | check OFF; the surface scans `test/**/*.test.ts` and its header says the check is off |
 | `{tests: [<glob>, …]}` with at least one string glob | check ON; the globs, matched from the project root, are the scanned file set |
-| `tests` matching zero files | check ON; one warning naming the globs |
+| `tests` matching zero files | check ON; the scan raises one warning naming the globs, once per run |
 | `{tests: []}`, `tests` absent, or `tests` not a list of strings | INERT — treated as absent, with one warning naming the shape |
 | not a mapping (a scalar, a list, `null`) | INERT — treated as absent, with one warning naming the shape |
 | an unknown sub-key beside a valid `tests` | ignored, with one warning naming it |
+
+The key is read ON ITS OWN: validate and the surface read only `scenario_map` from `orbit/config.yaml` and SHALL NOT print a warning about any other field, so a repo whose config carries a malformed `pr:` or `rules:` sees no new line from `orbit validate`.
 
 #### Scenario: An absent key leaves validate unchanged
 
@@ -241,6 +281,16 @@ The check SHALL be ON only when `orbit/config.yaml` carries a well-formed `scena
 
 - **WHEN** `orbit/config.yaml` carries `scenario_map: { tests: ['spec/**/*.test.ts'] }`
 - **THEN** only files matching `spec/**/*.test.ts` are scanned for tags and the check is ON
+
+#### Scenario: Another field's malformed value does not reach validate
+
+- **WHEN** `orbit/config.yaml` carries `pr: sometimes` and no `scenario_map` key
+- **THEN** `orbit validate <change>` prints no warning about `pr` and its output is unchanged
+
+#### Scenario: Globs matching nothing warn once
+
+- **WHEN** `scenario_map.tests` is `['nothing/**/*.test.ts']` and no file matches
+- **THEN** the check is ON and one warning naming the globs is printed per run
 
 #### Scenario: A malformed key is inert with a warning
 
