@@ -1306,11 +1306,11 @@ never deleted.
 
 ## Program stages
 
-<!-- src:stages -->27<!-- /src:stages --> small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
+<!-- src:stages -->29<!-- /src:stages --> small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
 split into rc02 + rc02b on 2026-09-12; rc13 added 2026-09-14 and moved to phase 1 the same day;
 rc03a split from rc03 on 2026-09-15 and WITHDRAWN the same day; rc13 split into rc13a + rc13b on
 2026-09-15 under R-crc-9; rc07b split from rc07 the same day under R-crc-9 applied PREVENTIVELY; rc04d split from rc04c on 2026-09-21, the THIRD preventive application, caught at exploration by a size check rather than after a cadence;
-rc13c declared 2026-09-25 from rc13a's archive proposal, and rc15 declared the same day taking up Q-crc-11; rc16 declared 2026-10-01 from Q-crc-28's ratified direction; rc03 split into rc03b + rc03c on 2026-10-04 under R-crc-9, the FOURTH preventive application, again caught at exploration by a size check — rc14 stays reserved for the undeclared `rc14-delta-scope` recommendation).
+rc13c declared 2026-09-25 from rc13a's archive proposal, and rc15 declared the same day taking up Q-crc-11; rc16 declared 2026-10-01 from Q-crc-28's ratified direction; rc03 split into rc03b + rc03c on 2026-10-04 under R-crc-9, the FOURTH preventive application, again caught at exploration by a size check; rc06 split into rc06a + rc06b the same day, the FIFTH, caught at exploration — rc14 stays reserved for the undeclared `rc14-delta-scope` recommendation).
 Every stage is sized under R-crc-1, names the capabilities it touches, and names its goal.
 Charters are settled under R-crc-3 until a citing change refines them; exit criteria are
 falsifiable and self-measured by the stage's own cadence (G0). Position is computed — see the
@@ -2439,6 +2439,25 @@ reference fails the suite; (3) the next blind pair finds zero grammar or selecto
 Depends-on: (none)
 Complete: [ ]
 
+**SPLIT 2026-10-04 (Sal) into rc06a + rc06b, under R-crc-9 — its fifth preventive application, the
+third caught at exploration before anything was proposed.** This heading is retained as the program's
+record of the problem and the charter; the WORK is declared in the two stages that follow. The
+exploration (`orbit/explore/rc06-scenario-test-map/`, one sitting on 2026-10-04) measured the ground —
+1090 baseline scenarios, 25–101 per change; today's link is tasks.md prose at requirement grain naming
+test FILES (1 of rc07b's 34 scenario titles appears under `test/`); ZERO `verify-*.json` emits on any
+archived trail, because verify runs only as system Pass 0, which writes none; roughly 400 scenarios
+describe AI behaviour no test can run; and no baseline capability owns verify-change — and captured
+four rules with accounted Mechanism entries: D-rc06-1 (coverage is declared on the TEST side by a
+`@scenario` tag keyed by the capability / requirement / scenario title triple, unique over all 1090),
+D-rc06-2 (a CLOSED set of cover kinds — behaviour, text, observed, untestable — rendered separately and
+never summed; only an undeclared scenario is UNCOVERED), D-rc06-3 (the map is ENGINE-COMPUTED by one
+read surface and stored in no emit), D-rc06-4 (every scenario in a change's delta blocks owes a
+declaration). Four scope calls (Sal): the split; no backfill of the baseline; the surface is `orbit
+status --change <name> --scenarios`; the ledger is `orbit/scenario-ledger.yaml` (the last two settled
+under R-crc-3). The charter below is SUPERSEDED in three terms and kept as written: "names the test id"
+(the link points the other way), "verify-change's emit carries the map" (no emit carries it), and
+"Touches: orbit-verify-change" (no such capability exists).
+
 Charter: every delta scenario names the test id (or harness case) that exercises it, in a
 grammar `orbit validate` checks; verify-change reports the scenario → test map mechanically
 (covered / uncovered / test missing) instead of prose tracing, and the first review reads the
@@ -2447,6 +2466,41 @@ ONLY owner: the apply emit points at the latest verify emit rather than re-recor
 G2. Touches: orbit-verify-change, orbit-conventions (scenario grammar), the validator. Exit:
 (1) `orbit validate <change>` fails a scenario without a test id; (2) verify-change's emit
 carries the map; (3) a system review's Pass 0 consumes the map rather than rebuilding it.
+
+### Stage rc06a-scenario-map — a scenario's coverage is declared, and the engine computes the map
+
+Depends-on: (none)
+Complete: [ ]
+
+Declared 2026-10-04 (Sal) from the rc06 exploration's split (D-rc06-6). Charter: a test declares the
+scenario it exercises with a `@scenario` tag naming its kind (`behaviour` or `text`) and the scenario's
+capability / requirement / scenario title triple; `orbit/scenario-ledger.yaml` declares the scenarios no
+test can run (`observed`, citing a record; `untestable`, with a why), keyed by the same triple. The
+engine computes the map from both sources at read time — `orbit status --change <name> --scenarios`,
+human and `--json` — with each cover kind its own column, ORPHAN tags and entries and MALFORMED lines
+reported by name, and nothing stored in any emit. `orbit validate <change>` fails naming every scenario
+in the change's ADDED or MODIFIED blocks (and every baseline scenario a RENAMED requirement re-keys) that
+carries no declaration; baseline scenarios outside the delta are reported, never failing, and the
+baseline is not backfilled. The grammar and the four mechanisms are the exploration's D-rc06-1..4, each
+with its Mechanism entry. Goal G2. Touches: a NEW capability owning the map, its grammar and the check;
+the owner of the status command's flags — measured at propose against R-crc-1. Exit: (1) `orbit validate
+<change>` fails a delta scenario with no declaration, naming its key; (2) the surface renders the map
+with the four kinds as separate columns and reports orphans — REVISED at declaration from "verify-change's
+emit carries the map" (R-crc-12's first case: the mechanism retires the emit, D-rc06-3); (3) every
+scenario in rc06a's own delta is declared when it archives.
+
+### Stage rc06b-map-readers — verify and the first review read the map
+
+Depends-on: rc06a-scenario-map
+Complete: [ ]
+
+Declared 2026-10-04 (Sal) from the rc06 exploration's split (D-rc06-6). Charter: verify-change's
+Scenario Coverage step stops tracing scenarios to tests by prose and reads rc06a's surface, reporting
+UNCOVERED scenarios as verify findings; system review's Pass 0, which runs verify-change, therefore
+consumes the map rather than rebuilding it. Neither records a copy. Goal G2. Touches: orbit-review
+(Pass 0); verify-change has no orbit capability and either gains one or rides orbit-review — measured
+at propose. Exit: (1) the verify body's coverage step names the surface and carries no prose-tracing
+instruction; (2) a system review's Pass 0 consumes the map rather than rebuilding it (rc06's exit (3)).
 
 ### Stage rc07-artifact-lint — consistency is a lint, not a review
 
@@ -2648,7 +2702,7 @@ the validator. Exit: (1) the size check fires on a fixture over the ceiling and 
 
 ### Stage rc10-apply-closure — the end-to-end run precedes the archive
 
-Depends-on: rc06-scenario-test-map
+Depends-on: rc06a-scenario-map
 Complete: [ ]
 
 Charter: a change's user-validation tasks are a PRE-ARCHIVE condition rather than a deferred
@@ -2688,6 +2742,13 @@ withdrawn stage) is ever wanted, it is one `case` label in `commandForClass` (`g
 sentence in `orbit-engine-gates`' single-voiced canonical-next requirement — a spec this stage already
 touches. Its blindness value is gone under rc03b's no-findings brief; what remains is ergonomic
 (the human carries the prompt while the fresh subagent runs). Take it or leave it at exploration.
+
+RIDER 2026-10-04 (from the rc06 exploration, D-rc06-3). The dependency moved from rc06 to
+rc06a-scenario-map, the child that ships the map. This charter's "the scenario map is rc06's; the apply
+emit points at it" names a record that will never exist: the map is computed at read time by `orbit
+status --change <name> --scenarios` and stored in no emit, so there is nothing for the apply emit to
+point at. rc10's exploration decides whether its pre-archive condition reads the surface directly (the
+`observed` column is the natural evidence for a user-validation task).
 
 ### Stage rc16-retirement-sweep — living prose retires with the limit it described
 
@@ -4402,7 +4463,7 @@ conventions, review, review-external; no engine code) and `rc03c-verification-re
 emit-composition, report-rendering, review). Exit criteria partitioned across the children in their mechanism's terms;
 the parent heading retained as record with a SPLIT note, its `Complete:` slot left `[ ]` for Sal's word. The exploration
 RENAMED to `orbit/explore/rc03b-pass-genres/` and repointed at the first child (the rc04 precedent, commit `5565d8d0`).
-Stage count 25 → <!-- src:stages -->27<!-- /src:stages --> at both marked sites. Q-crc-22 gained a 2026-10-04 note
+Stage count 25 → 27 at both marked sites. Q-crc-22 gained a 2026-10-04 note
 narrowing its producer side. Position is engine-computed: `orbit architecture status` renders rc03 premised, rc03b
 exploring, rc03c premised.
 
@@ -4555,3 +4616,16 @@ unfinished work. The dependency the charter actually carries — "the R-crc-4 ve
 precedes any further review" — is the verification record rc03c shipped, and rc03c depends on rc03b, so the edge
 subsumes both children. The charter's prose references to rc03 (the DISAGREEMENT class's name staying with rc03's
 record) are unchanged: they cite rc03's record, not a dependency.
+
+**2026-10-04 — Architect session: the rc06 split DECLARED (Sal).** The rc06 exploration
+(`orbit/explore/rc06-scenario-test-map/`, boundary emit `explore-2026-10-04T19-29-45Z.json`) ratified
+the split (D-rc06-6) and this session declares it: `rc06a-scenario-map` (the tag and ledger grammar, the
+engine-computed map at `orbit status --change <name> --scenarios`, the `orbit validate` check — rc06's
+exits (1) and (2), (2) revised under R-crc-12's first case, plus a self-measured exit (3)) and
+`rc06b-map-readers` (verify-change and system Pass 0 read the map — rc06's exit (3)), rc06b depending on
+rc06a. rc06's heading is retained as the record with a SPLIT paragraph; its charter is kept as written and
+named superseded in three terms. rc10's `Depends-on:` moved from rc06 to rc06a, with a RIDER naming the
+apply-emit pointer its charter assumed and D-rc06-3 retired. Stage count 27 → <!-- src:stages -->29<!-- /src:stages --> at both
+marked sites (this entry's mark is the third; the previous entry's was unmarked as history). rc06 stays
+`exploring` while the exploration cites it; it takes its ENDED mark once both children have shipped, as
+rc03 did. Next: propose rc06a from the exploration.

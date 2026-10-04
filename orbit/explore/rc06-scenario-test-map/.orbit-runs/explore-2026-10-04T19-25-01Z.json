@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-04T19:25:01Z",
+  "change": "rc06-scenario-test-map",
+  "kind": "workflow",
+  "model": null,
+  "final_assessment": "Begin: scaffolded the six-section explore.md and minimal .openspec.yaml for rc06-scenario-test-map; architecture citation recorded on Sal's accept (clean-up-review-cycle / rc06-scenario-test-map).",
+  "decisions_captured": 0,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 0,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:explore rc06-scenario-test-map — continue capturing thinking — no decisions captured yet"
+}

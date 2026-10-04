@@ -1,0 +1,28 @@
+{
+  "command": "architect",
+  "timestamp": "2026-10-04T19:31:05Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": null,
+  "final_assessment": "Declared the rc06 split ratified at exploration (D-rc06-6): rc06a-scenario-map (tag + ledger grammar, engine-computed map at `orbit status --change <name> --scenarios`, the validate check; exit (2) revised under R-crc-12's first case) and rc06b-map-readers (verify-change and system Pass 0 read the map), rc06b depending on rc06a. rc06's heading retained with a SPLIT paragraph; rc10's Depends-on moved to rc06a with a rider on the apply-emit pointer D-rc06-3 retired. Stage count 27 → 29 at the doc and CLAUDE.md marks; source lint clean.",
+  "stages_touched": [
+    "rc06-scenario-test-map",
+    "rc06a-scenario-map",
+    "rc06b-map-readers",
+    "rc10-apply-closure"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md — Stage rc06a-scenario-map and rc06b-map-readers charters, rc06's SPLIT paragraph, the latest status-log entry",
+      "orbit/explore/rc06-scenario-test-map/explore.md — the four rules (D-rc06-1..4) with Mechanism entries and the scope calls (D-rc06-6..9) rc06a's proposal consumes"
+    ],
+    "next_command": "/orbit:propose rc06-scenario-test-map",
+    "model_hint": null,
+    "seam": "split declared → propose rc06a from the exploration, citing rc06a-scenario-map"
+  },
+  "next_recommended": "/orbit:propose rc06-scenario-test-map"
+}
