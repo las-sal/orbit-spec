@@ -1,0 +1,112 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-04T19:04:51Z",
+  "change": "rc07b-reference-roundtrip",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc07b-reference-roundtrip/.orbit-runs/external-system-2026-10-04T18-44-13Z.md",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6 Astra",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 2,
+    "suggestion": 1
+  },
+  "pushback_verification": "All four verified against current state after walk log 1: the CRITICAL's reproduction re-run no longer reproduces and the scope WARNING is already fixed (both stale); the consumer-reference WARNING and the message SUGGESTION still applied.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 2,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "A valid category can disappear from the computed counts",
+      "marker_source": "external",
+      "file": "src/core/emit-composition.ts",
+      "line": 577,
+      "classification": "stale",
+      "action": "none — fixed by walk log 1 (the same defect as the fresh half's W1, converged)",
+      "reproduction_rerun": "not-reproduced",
+      "evidence": "re-ran the finding's script against dist after npm run build: {\"total\":1,\"byCategory\":{\"1\":0,\"__proto__\":1}} — the expected result. Fixed in orbit/changes/rc07b-reference-roundtrip/.orbit-runs/address-reviews-2026-10-04T18-59-52Z.json: computeAuditDriftCounts builds on Object.create(null) with an own-property check; pinned by the engine test 'counts a prototype-named category like any other id' (__proto__ / constructor / toString)",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The address-reviews example claims scopes its source cannot occur in",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/address-reviews.ts",
+      "line": 618,
+      "classification": "stale",
+      "action": "none — fixed by walk log 1 (the same defect as the fresh half's S1, converged; ruled A there)",
+      "evidence": "orbit/changes/rc07b-reference-roundtrip/.orbit-runs/address-reviews-2026-10-04T18-59-52Z.json: the auto-discovered example is tagged `json example change archived` (address-reviews.ts:618), with `json example project` (a whole-repo walk) and `json example doc` (an architecture from-file walk) beside it, each carrying only values its scope produces; reference-roundtrip.test.ts accepts all three",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The touched consumer reference still documents the retired review counts shape",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/address-reviews.ts",
+      "line": 160,
+      "classification": "trivial_fix",
+      "action": "internal-findings-format.md: the review JSON block shows the 3x3 scorecard as the current counts shape; one line names findings_summary as the pre-D4 legacy field (read, never written now; this parser consumes neither); the spine list names model (absent on pre-capability emits)",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The category-id error promises a narrower check than the gate performs",
+      "marker_source": "external",
+      "file": "src/core/emit-composition.ts",
+      "line": 553,
+      "classification": "decision_required",
+      "action": "option B: the categories_run refusal message names the type-only check (\"must be an array of strings (the category ids) … The gate checks the TYPE; which ids exist is the audit-drift body's\"); the audit-drift reference field note says an id outside \"1\"–\"6\" is accepted and counted, so the range is the body's to keep; emit-composition.ts hash pin moved a third time, dated",
+      "ratified_via": "chat",
+      "resolution": "B — make the message and the note match the type-only check; the range stays the body's (no second statement of the category set in the engine)",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Enforce the \"1\"..\"6\" grammar at the write gate"
+          },
+          {
+            "label": "B",
+            "body": "State the type-only check in the message and the field note"
+          }
+        ],
+        "chosen": "B"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/audit-drift.ts",
+          "test/core/rc03b-untouched-modules.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Four of four walked: two stale-with-evidence (both converged with the fresh half and fixed by walk log 1), the consumer reference's review shape repaired (scorecard current, findings_summary named legacy, model in the spine list), and the categories_run refusal message and field note now state the type-only check the gate performs (Sal: B). Full npm test 2583 green.",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system rc07b-reference-roundtrip"
+}

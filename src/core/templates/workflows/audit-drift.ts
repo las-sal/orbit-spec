@@ -61,7 +61,7 @@ The payload file Step 10 writes — real JSON, accepted by \`orbit emit audit-dr
 
 \`\`\`json example change project
 {
-  "final_assessment": "2 drift(s) detected: 1 warning, 1 suggestion.",
+  "final_assessment": "No critical issues. 1 warning(s) to consider.",
   "categories_run": ["1", "2", "3", "4", "5", "6"],
   "findings": [
     {
@@ -94,7 +94,7 @@ The payload file Step 10 writes — real JSON, accepted by \`orbit emit audit-dr
 
 ## Field notes
 
-- **\`categories_run\`** is an array of category-id strings, \`"1"\` through \`"6"\` (5 = Touchpoints divergence, 6 = Emit attestation cross-check — D-arc Stage D5) — the categories that ran; skip reasons belong in the report body, not the array. The write gate refuses any other shape (an object of booleans, numbers), never coerces it.
+- **\`categories_run\`** is an array of category-id strings, \`"1"\` through \`"6"\` (5 = Touchpoints divergence, 6 = Emit attestation cross-check — D-arc Stage D5) — the categories that ran; skip reasons belong in the report body, not the array. The write gate refuses any other shape (an object of booleans, numbers), never coerces it — and checks the TYPE only: an id outside \`"1"\`–\`"6"\` is accepted and counted like any other, so the range is this body's to keep.
 - **\`category\`** on each finding is REQUIRED, a non-empty category-id string — \`findings_by_category\` counts it.
 - **\`findings_total\` / \`findings_by_category\`** are ENGINE-COMPUTED and refused in the payload: the length of \`findings\`, and one key per id in \`categories_run\` plus one per category a finding carries, each the number of findings carrying it — per \`orbit-emit-composition\`'s \`Audit-drift counts are engine-computed\`. \`stale_suppressed\` entries are not counted.
 - **\`recommendation_options\`** is OPTIONAL on each finding. Present only when the finding's recommendation is genuinely disjunctive — multiple defensible remediation paths the user must choose between. Producer-side contract (per \`orbit-audit-drift\` spec's \`Optional recommendation_options field on audit-drift finding entries\`): MUST contain ≥ 2 entries; each entry MUST have non-empty \`label\` (typically \`"A"\`, \`"B"\`, \`"C"\`, …) and non-empty \`body\`. Per-category emit guidance: Category 1 (vocabulary residue) typically single-recommendation; Category 2 (lens staleness) often disjunctive (rename-vs-remove); Category 3 (cross-doc consistency) often disjunctive (which side is canonical); Category 4 (archive coherence) typically single. The prose \`recommendation\` field still summarizes the disjunction for human readers. Field shape is identical to \`orbit-review\`'s \`recommendation_options\`; consumer (address-reviews) parses both producers uniformly. Omit for single-recommendation findings.

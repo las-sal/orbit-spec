@@ -30,6 +30,12 @@ import { fileURLToPath } from "node:url";
  * only — audit-drift's `findings_total` / `findings_by_category` are now computed from `findings` and refused
  * in the payload, over refused malformed inputs (`orbit-emit-composition`'s `Audit-drift counts are
  * engine-computed`). Every other hash here is unchanged.
+ * MOVED AGAIN at rc07b's system walk 1 (2026-10-04): `emit-composition.ts` only — the counts accumulator is a
+ * null-prototype object, so a category named `__proto__` / `constructor` / `toString` counts like any other id
+ * (fresh W1; the external half's C1 is the same defect).
+ * MOVED a THIRD time at rc07b's system walk 2 (2026-10-04): `emit-composition.ts` only — the `categories_run`
+ * refusal message stopped promising the "1".."6" range the gate never checked; it now names the type-only
+ * check (external S1, Sal: B).
  */
 const PINNED: Record<string, string> = {
   "schemas/spec-driven/schema.yaml": "be6cda5fa604f105c14c2d5e2fd52ad04ca266ba22e7e438ffec8442641e345d",
@@ -48,7 +54,7 @@ const PINNED: Record<string, string> = {
   "src/core/artifact-graph/state.ts": "f59f748b94cd94ca2fe022ec5aa66b3251dd1b2c00bddb9a17cbd9273a04d0f2",
   "src/core/artifact-graph/trail.ts": "a8566c80c599097acb39146010a7aa2ab5b47cf707958f85fd243e05567cbaf1",
   "src/core/artifact-graph/types.ts": "246feb06872594a744233904bc0d3902c90545e23cdf8a38f2b42b80c4a4d10a",
-  "src/core/emit-composition.ts": "cc92e2aa745a3dc6e6a7742defc3f85170f21f5bab7e6f451bcfb48b06cc691e",
+  "src/core/emit-composition.ts": "e6053d4c6ad30d70a984544a34574a9f3f72980c1021735eaaf8faa04adbe0a2",
   "src/core/report-render.ts": "b40046bc8059ca73744de33dd25ebf1e978a8dd3b0a5b0a33490298f161904a5",
 };
 

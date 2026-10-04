@@ -20,7 +20,7 @@ import {
 // declares the two counts rc07b made engine-computed (the `A new engine-owned key must be declared`
 // scenario). There is NO tolerated-divergence list: rc07b retired the one this file carried
 // (`Payload tables agree with their schema references` admits no exemption).
-import { REFERENCES, ENGINE_OWNED, engineOwnedFor, topLevelKeys } from '../helpers/schema-references.js';
+import { REFERENCES, ENGINE_OWNED, engineOwnedFor, fences, schemaBlockKeys } from '../helpers/schema-references.js';
 
 /**
  * Finding-level and nested keys documented inside a block's sub-objects — legitimate field-note
@@ -30,13 +30,13 @@ import { REFERENCES, ENGINE_OWNED, engineOwnedFor, topLevelKeys } from '../helpe
  */
 const NESTED_NOTE_SUBJECTS = new Set(['recommendation_options', 'category', 'severity', 'dimension', 'title', 'file', 'line', 'recommendation', 'reproduction', 'reproduction_rerun', 'evidence', 'ratified_via', 'resolution', 'recommendation_fork', 'ripple_cascade', 'outcome', 'marker_source', 'classification', 'action', 'by_pass', 'by_category', 'reviewer_class', 'walk_mode_shifted_at_finding', 'walk_entry']);
 
-/** Top-level keys of every JSON block whose keys include `command` (a full-record block). */
+/** Top-level keys of every full-record schema block — the helper's ONE block grammar (rc07b walk 1). */
 function documentedKeys(content: string): { keys: Set<string>; blocks: number } {
   const keys = new Set<string>();
   let blocks = 0;
-  for (const m of content.matchAll(/```json\n([\s\S]*?)```/g)) {
-    const top = topLevelKeys(m[1]);
-    if (!top.includes('command')) continue;
+  for (const f of fences(content)) {
+    const top = schemaBlockKeys(f);
+    if (!top) continue;
     blocks += 1;
     for (const k of top) keys.add(k);
   }
@@ -146,6 +146,15 @@ describe('schema-table parity: every AI-supplied field a schema reference docume
     expect(blocks).toBe(1);
     expect([...keys].sort()).toEqual(['command', 'nested', 'unexpected_one', 'unexpected_two']);
     expect([...keys]).not.toContain('inner'); // depth-1 only
+  });
+
+  it('one block grammar (rc07b walk 1, fresh S3): a tilde fence and a trailing-space info string are schema blocks here exactly as in the round trip; a `json example` block never is', () => {
+    const tilde = '~~~json\n{ "command": "x", "a": 1 }\n~~~\n';
+    const spaced = '```json \n{ "command": "x", "b": 1 }\n```\n';
+    const example = '```json example change\n{ "command": "x", "c": 1 }\n```\n';
+    expect([...documentedKeys(tilde).keys].sort()).toEqual(['a', 'command']);
+    expect([...documentedKeys(spaced).keys].sort()).toEqual(['b', 'command']);
+    expect(documentedKeys(example).blocks).toBe(0);
   });
 
   it('negative: a grouped field-note bullet contributes EVERY subject it names', () => {

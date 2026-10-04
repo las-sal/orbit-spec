@@ -20,8 +20,7 @@ import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import { composeAndWriteEmit, type ComposeResult } from '../../src/core/emit-composition.js';
-import { createFenceTracker } from '../../src/core/markdown-fence.js';
-import { REFERENCES, referenceContent, engineOwnedFor, topLevelKeys } from '../helpers/schema-references.js';
+import { REFERENCES, referenceContent, engineOwnedFor, fences, schemaBlockKeys, type Fence } from '../helpers/schema-references.js';
 
 /** The requirement's closed scope-word table; any other word (or none) fails naming the line. */
 const SCOPE_WORDS = ['change', 'archived', 'project', 'doc'] as const;
@@ -37,13 +36,6 @@ const GENRE_DEPENDENT = ['verification'];
 const CHANGE = 'example-change';
 const DOC = 'example-doc';
 
-interface Fence {
-  line: number; // 1-indexed opening line
-  opening: string;
-  info: string;
-  body: string;
-}
-
 interface SchemaBlock extends Fence {
   keys: string[];
 }
@@ -57,30 +49,6 @@ interface Example extends Fence {
 interface Analysis {
   schemaBlocks: SchemaBlock[];
   examples: Example[];
-}
-
-/** Every fenced block, read through the engine's ONE fence grammar (design D2). */
-function fences(content: string): Fence[] {
-  const out: Fence[] = [];
-  const tracker = createFenceTracker();
-  let current: { line: number; opening: string; info: string; lines: string[] } | null = null;
-  content.split('\n').forEach((raw, i) => {
-    const line = raw.replace(/\r$/, '');
-    const wasIn = tracker.inFence;
-    const delimiter = tracker.handle(line);
-    if (delimiter && !wasIn) {
-      const info = line.replace(/^ {0,3}(`{3,}|~{3,})/, '').trim();
-      current = { line: i + 1, opening: line, info, lines: [] };
-      return;
-    }
-    if (delimiter && wasIn && current) {
-      out.push({ line: current.line, opening: current.opening, info: current.info, body: current.lines.join('\n') });
-      current = null;
-      return;
-    }
-    if (current) current.lines.push(line);
-  });
-  return out;
 }
 
 const blockName = (b: Fence) => `block at line ${b.line} (\`${b.opening.trim()}\`)`;
@@ -114,10 +82,8 @@ function analyze(refLabel: string, content: string): Analysis {
       examples.push({ ...f, scopes: scopeWords as Scope[], payload, block });
       continue;
     }
-    if (words.length === 1) {
-      const keys = topLevelKeys(f.body);
-      if (keys.includes('command')) schemaBlocks.push({ ...f, keys });
-    }
+    const keys = schemaBlockKeys(f);
+    if (keys) schemaBlocks.push({ ...f, keys });
   }
   for (const b of schemaBlocks) {
     if (!examples.some((e) => e.block === b)) {

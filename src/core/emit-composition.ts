@@ -550,7 +550,7 @@ function validateAuditDriftCountInputs(command: string, payload: Record<string, 
   const run = payload.categories_run;
   if (run !== undefined && (!Array.isArray(run) || run.some(c => typeof c !== 'string'))) {
     throw new EmitError(
-      `audit-drift 'categories_run' must be an array of category-id strings ("1".."6") — the counts are keyed by it, and a malformed input is refused, never coerced.`
+      `audit-drift 'categories_run' must be an array of strings (the category ids) — the counts are keyed by it, and a malformed input is refused, never coerced. The gate checks the TYPE; which ids exist is the audit-drift body's.`
     );
   }
   const findings = payload.findings;
@@ -574,9 +574,14 @@ function computeAuditDriftCounts(payload: Record<string, unknown>): {
   findings_by_category: Record<string, number>;
 } {
   const findings = (Array.isArray(payload.findings) ? payload.findings : []) as Array<{ category: string }>;
-  const byCategory: Record<string, number> = {};
+  // A NULL-PROTOTYPE accumulator (rc07b system walk 1): on a plain `{}` a category named
+  // `__proto__` vanished and `constructor` / `toString` concatenated onto the inherited function,
+  // so the two counts disagreed for strings the gate accepts. Own keys only, every id.
+  const byCategory: Record<string, number> = Object.create(null);
   for (const c of (payload.categories_run as string[] | undefined) ?? []) byCategory[c] = 0;
-  for (const f of findings) byCategory[f.category] = (byCategory[f.category] ?? 0) + 1;
+  for (const f of findings) {
+    byCategory[f.category] = (Object.prototype.hasOwnProperty.call(byCategory, f.category) ? byCategory[f.category] : 0) + 1;
+  }
   return { findings_total: findings.length, findings_by_category: byCategory };
 }
 

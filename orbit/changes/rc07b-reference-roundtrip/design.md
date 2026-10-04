@@ -55,7 +55,7 @@ No data migration. Archived audit-drift emits keep their supplied counts (no src
 - `src/core/emit-composition.ts` — audit-drift payload table loses the two counts; compose case computes them and reads the computed total.
 - `src/core/templates/workflows/audit-drift.ts` — schema reference rewritten; example block; Step 10 pointer.
 - `src/core/templates/workflows/review.ts` — two examples in `run-summary-schema.md`; one in `external-handoff.md`.
-- `src/core/templates/workflows/address-reviews.ts` — example in `run-summary-schema.md`.
+- `src/core/templates/workflows/address-reviews.ts` — three examples in `run-summary-schema.md`, one per provenance (auto-discovered `change archived`, whole-repo `project`, architecture `from-file` `doc` — system walk 1, Sal: A); the consumer-side shapes in `internal-findings-format.md`.
 - `src/core/templates/workflows/archive-change.ts` — example in `archive-summary-schema.md`; the `audit.findings_summary` note (D6).
 - `test/core/emit-schema-parity.test.ts` — `KNOWN_DIVERGENCE` and its two pinning tests removed.
 - `test/core/reference-roundtrip.test.ts` — the new round-trip suite.

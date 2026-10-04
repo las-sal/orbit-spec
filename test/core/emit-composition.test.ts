@@ -2009,6 +2009,24 @@ describe('audit-drift counts are engine-computed (rc07b)', () => {
     expect(r.emit.findings_total).toBe(1);
   });
 
+  it('counts a prototype-named category like any other id (system walk 1, fresh W1): the counts agree by construction', () => {
+    for (const name of ['__proto__', 'constructor', 'toString']) {
+      const r = composeAndWriteEmit(
+        'audit-drift',
+        {},
+        { final_assessment: '1 drift.', categories_run: ['1'], findings: [driftFinding(name)], model: null },
+        { projectRoot: root }
+      );
+      const written = JSON.parse(fs.readFileSync(r.path, 'utf-8'));
+      expect(written.findings_total, name).toBe(1);
+      expect(Object.keys(written.findings_by_category).sort(), name).toEqual(['1', name].sort());
+      expect(written.findings_by_category[name], name).toBe(1);
+      expect(written.findings_by_category['1'], name).toBe(0);
+      const sum = Object.values(written.findings_by_category as Record<string, number>).reduce((a, b) => a + b, 0);
+      expect(sum, name).toBe(written.findings_total);
+    }
+  });
+
   it('absent findings counts as empty; stale_suppressed entries are not counted', () => {
     const r = composeAndWriteEmit(
       'audit-drift',

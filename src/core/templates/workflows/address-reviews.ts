@@ -157,10 +157,10 @@ This format MUST match what \`/orbit:review\` writes to \`orbit/changes/<name>/.
   "doc": "<doc-name, architecture mode only>",
   "mode": "proposal" | "system" | "architecture",
   "iteration": <integer>,
-  "findings_summary": {
-    "critical": <int>,
-    "warning": <int>,
-    "suggestion": <int>
+  "scorecard": {
+    "completeness": { "critical": <int>, "warning": <int>, "suggestion": <int> },
+    "correctness": { "critical": <int>, "warning": <int>, "suggestion": <int> },
+    "coherence": { "critical": <int>, "warning": <int>, "suggestion": <int> }
   },
   "findings": [
     {
@@ -180,6 +180,8 @@ This format MUST match what \`/orbit:review\` writes to \`orbit/changes/<name>/.
   "blocks": ["<optional: lifecycle blocks the pass found — listed FIRST at triage, never virtual markers>"]
 }
 \`\`\`
+
+Review emits written before D-arc Stage D4 carry \`findings_summary\` (flat severity counts) instead of \`scorecard\`; that legacy field is still READ — this parser consumes neither, only \`findings[]\` — but no current review emit writes it.
 
 ### Audit-drift JSON (\`command: "audit-drift"\`)
 
@@ -223,7 +225,7 @@ The two shapes are identical at the universal-spine + \`findings[]\` level. They
 
 ### Universal-spine field requirements (BOTH formats)
 
-The universal-spine fields (\`command\`, \`timestamp\`, \`change\`, \`final_assessment\`, \`next_recommended\`, \`kind\`) are REQUIRED in every real orbit-emitted JSON per \`orbit-conventions\`'s \`Internal-run JSON summary format\` requirement; downstream tools rely on them being present. The address-reviews \`--from-file\` parser does NOT consume them when constructing virtual markers — it only reads \`command\` (as the discriminator) and \`findings[]\` (for marker construction). Other top-level fields (\`final_assessment\`, \`next_recommended\`, \`kind\`, \`depth\`, \`flags\`, \`passes_run\`, \`passes_skipped\`, \`stale_suppressed\`, \`iteration_note\`, \`categories_run\`, \`findings_total\`, \`findings_by_category\`, etc.) are present in real JSON and IGNORED by this parser — they're consumed by other tooling (e.g., a downstream status reader).
+The universal-spine fields (\`command\`, \`timestamp\`, \`change\`, \`final_assessment\`, \`next_recommended\`, \`kind\`, \`model\` — \`model\` absent on pre-capability emits) are REQUIRED in every real orbit-emitted JSON per \`orbit-conventions\`'s \`Internal-run JSON summary format\` requirement; downstream tools rely on them being present. The address-reviews \`--from-file\` parser does NOT consume them when constructing virtual markers — it only reads \`command\` (as the discriminator) and \`findings[]\` (for marker construction). Other top-level fields (\`final_assessment\`, \`next_recommended\`, \`kind\`, \`depth\`, \`flags\`, \`passes_run\`, \`passes_skipped\`, \`stale_suppressed\`, \`iteration_note\`, \`categories_run\`, \`findings_total\`, \`findings_by_category\`, etc.) are present in real JSON and IGNORED by this parser — they're consumed by other tooling (e.g., a downstream status reader).
 
 ## Parser contract
 
@@ -611,11 +613,11 @@ The schema below documents per-command extensions ADDED to that spine (\`source\
 }
 \`\`\`
 
-## Example payload
+## Example payloads
 
-A payload file the walk writes — here an auto-discovered change-scoped walk that switched to batch mid-walk — real JSON, carrying no engine-owned key. The keys are the same in every scope the surface resolves (change, the archived fallback, an architecture doc, bare whole-repo); only the values differ, and a bare whole-repo walk must carry \`remaining_markers_in_scope\`, which drives its recommendation. A test submits this block, unchanged, through the write gate in all four scopes (\`orbit-emit-composition\`'s \`Payload schema references are proven by execution\`). The worked-example snippets further down are ILLUSTRATIONS of single fields, not payloads: they omit \`command\` so the test never reads them as schema blocks.
+Three payload files the walk writes, ONE PER PROVENANCE, because the fields that record where the findings came from cannot appear together: an auto-discovered change-scoped walk that switched to batch mid-walk (resolved against an active change, or through the archived fallback), a bare whole-repo marker walk, and a \`--from-file\` walk of an architecture review. Each is real JSON carrying no engine-owned key, and each is tagged with the scopes its own values describe — a bare whole-repo walk must carry \`remaining_markers_in_scope\`, which drives its recommendation. A test submits each block, unchanged, through the write gate in every scope its tag names, and checks that together they carry every key the schema documents (\`orbit-emit-composition\`'s \`Payload schema references are proven by execution\`). The worked-example snippets further down are ILLUSTRATIONS of single fields, not payloads: they omit \`command\` so the test never reads them as schema blocks.
 
-\`\`\`json example change archived doc project
+\`\`\`json example change archived
 {
   "final_assessment": "Two of two resolved: the CRITICAL by a reordered step, the WARNING by the ratified direction B.",
   "source": "auto-discovered",
@@ -665,6 +667,72 @@ A payload file the walk writes — here an auto-discovered change-scoped walk th
     }
   ],
   "delegation_directive": "batch the rest",
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "model": "claude-opus-5-5"
+}
+\`\`\`
+
+\`\`\`json example project
+{
+  "final_assessment": "One inline marker resolved; none remain in the repo.",
+  "source": "whole-repo",
+  "source_path": null,
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": { "critical": 0, "warning": 0, "suggestion": 1 },
+  "pushback_verification": "The one marker verified against current state; not stale.",
+  "resolution_summary": { "resolved": 1, "stale_suppressed": 0, "deferred": 0, "escalated": 0 },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "should this be five or four?",
+      "marker_source": "inline",
+      "file": "README.md",
+      "line": 41,
+      "classification": "trivial_fix",
+      "action": "five → four, with the explicit list added",
+      "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "model": "claude-opus-5-5"
+}
+\`\`\`
+
+\`\`\`json example doc
+{
+  "final_assessment": "One of one resolved: the dependency cycle broken by dropping s5's edge.",
+  "source": "from-file",
+  "source_path": "orbit/architecture/.orbit-runs/review-architecture-2026-10-02T11-00-00Z.json",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": { "critical": 0, "warning": 1, "suggestion": 0 },
+  "pushback_verification": "The finding verified against the doc's current Depends-on slots.",
+  "resolution_summary": { "resolved": 1, "stale_suppressed": 0, "deferred": 0, "escalated": 0 },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Stage s4 depends on s5, which depends on s4",
+      "marker_source": "internal-review",
+      "file": "program.md",
+      "line": 88,
+      "classification": "decision_required",
+      "action": "dropped s5's Depends-on edge, as ratified",
+      "ratified_via": "chat",
+      "resolution": "s5 does not need s4; drop its edge",
+      "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+      "outcome": "resolved"
+    }
+  ],
   "remaining_markers_in_scope": 0,
   "persisted_escalations": [],
   "model": "claude-opus-5-5"

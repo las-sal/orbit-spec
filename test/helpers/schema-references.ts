@@ -11,6 +11,7 @@ import {
   getAuditDriftSkillTemplate,
   getArchiveChangeSkillTemplate,
 } from '../../src/core/templates/skill-templates.js';
+import { createFenceTracker } from '../../src/core/markdown-fence.js';
 
 export type ReferenceTemplate = () => { references?: Array<{ name: string; content: string }> };
 
@@ -84,4 +85,51 @@ export function topLevelKeys(block: string): string[] {
     else if (ch === '}' || ch === ']') depth -= 1;
   }
   return keys;
+}
+
+/** One fenced block, as the engine's fence grammar reads it. */
+export interface Fence {
+  line: number; // 1-indexed opening line
+  opening: string;
+  info: string;
+  body: string;
+}
+
+/**
+ * Every fenced block in a reference, read through the engine's ONE fence grammar (design D2;
+ * `src/core/markdown-fence.ts`). Both suites read blocks through this — rc07b system walk 1
+ * (fresh S3) retired the parity test's local regex, which agreed with this reader only by the
+ * references' current formatting (a `~~~json` block, or a trailing space after `json`, split them).
+ */
+export function fences(content: string): Fence[] {
+  const out: Fence[] = [];
+  const tracker = createFenceTracker();
+  let current: { line: number; opening: string; info: string; lines: string[] } | null = null;
+  content.split('\n').forEach((raw, i) => {
+    const line = raw.replace(/\r$/, '');
+    const wasIn = tracker.inFence;
+    const delimiter = tracker.handle(line);
+    if (delimiter && !wasIn) {
+      current = { line: i + 1, opening: line, info: line.replace(/^ {0,3}(`{3,}|~{3,})/, '').trim(), lines: [] };
+      return;
+    }
+    if (delimiter && wasIn && current) {
+      out.push({ line: current.line, opening: current.opening, info: current.info, body: current.lines.join('\n') });
+      current = null;
+      return;
+    }
+    if (current) current.lines.push(line);
+  });
+  return out;
+}
+
+/**
+ * The ONE definition of a full-record SCHEMA BLOCK: info string exactly `json` (so a
+ * `json example …` block never qualifies) and top-level keys including `command`. Returns the
+ * block's top-level keys, or null when the block is not a schema block.
+ */
+export function schemaBlockKeys(f: Fence): string[] | null {
+  if (f.info !== 'json') return null;
+  const keys = topLevelKeys(f.body);
+  return keys.includes('command') ? keys : null;
 }
