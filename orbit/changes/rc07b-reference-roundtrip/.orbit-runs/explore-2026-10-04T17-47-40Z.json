@@ -1,0 +1,25 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-04T17:47:40Z",
+  "change": "rc07b-reference-roundtrip",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Seven decisions captured, three live rules each with a Mechanism entry (D-rc07b-1 BOUNDED: the round trip is exactly as strong as the write gate's validators; D-rc07b-2 and D-rc07b-3 SOURCED). Settled under R-crc-3: the instrument is acceptance-by-execution through composeAndWriteEmit over one verbatim real-JSON example per reference; findings_total and findings_by_category become engine-computed (13 of 13 recorded emits agree), removing the silent clean-recommendation path by construction; the audit-drift payload reconciles to the engine and practice under orbit-run-summary-emit; the KNOWN_DIVERGENCE exemption retires because its own owning requirement admits none. Ratified by Sal: the domain is the six payload schema blocks (findings formats and in-reference orbit invocations named residuals), and the four-capability ceiling breach is declared by one. No open questions remain.",
+  "decisions_captured": 7,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 3,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [
+    {
+      "id": "D-rc07b-1",
+      "kind": "a documented field type or value the write gate does not validate (today every audit-drift field, and most fields of every other command)",
+      "method": "read each command's validators in `emit-composition.ts`; a documented constraint with no validator is outside the round trip and stays a reviewer's claim"
+    }
+  ],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose rc07b-reference-roundtrip — 3 live rules accounted, 1 bounded residual named (D-rc07b-1); formalize when you are ready (or /orbit:explore rc07b-reference-roundtrip to keep refining)"
+}

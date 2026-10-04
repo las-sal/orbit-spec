@@ -1,0 +1,275 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-04T18:09:31Z",
+  "change": "rc07b-reference-roundtrip",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc07b-reference-roundtrip/.orbit-runs/review-proposal-2026-10-04T18-05-13Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-04T18-05-13Z",
+  "latest_apply_token": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 7,
+    "suggestion": 5
+  },
+  "pushback_verification": "12 of 12 verified against current state before acting: W1 against resolveTarget (emit-composition.ts:418 'no archived directory matching'); W2 against judgementOrderingCheck (:1293 'resolves to no readable pass'); W4 by reading orbit/.orbit-runs/audit-drift-2026-09-14T14-18-48Z.json (categories_run an object of booleans); W3, W5-W7 and S1-S5 against the cited artifact lines. 0 stale.",
+  "resolution_summary": {
+    "resolved": 12,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The scope table has no archived target, but the archive surface resolves only an archived directory",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "line": 11,
+      "marker_source": "internal-review",
+      "classification": "decision_required",
+      "action": "Settled under R-crc-3 (Sal delegated in chat: 'can you resolve any of these with looking at best practices for ai development?'): option A — a closed fourth scope word `archived` (an archived change directory; the archive command's only target and address-reviews' archived fallback) added to the requirement's table; design D3 and task 3.3/3.4 follow.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07b-reference-roundtrip/specs/orbit-emit-composition/spec.md",
+          "orbit/changes/rc07b-reference-roundtrip/design.md",
+          "orbit/changes/rc07b-reference-roundtrip/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "source": "structured",
+        "options": [
+          "A",
+          "B"
+        ],
+        "selected": "A"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "An empty disposable trail refuses the archive judgements the body tells the AI to write, so 'EXACTLY the payload' and D3 cannot both hold",
+      "file": "design.md",
+      "line": 24,
+      "marker_source": "internal-review",
+      "classification": "decision_required",
+      "action": "Settled under R-crc-3 (same delegation): option A — the requirement gains a Trail seeding paragraph: ONE minimal independent pass file at every token an example names in a `formed_against` array, nothing else; the residual names trail-reading checks no example cites; a scenario runs the archive example against an archived target with a seeded trail; design D3 states the rule.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07b-reference-roundtrip/specs/orbit-emit-composition/spec.md",
+          "orbit/changes/rc07b-reference-roundtrip/design.md",
+          "orbit/changes/rc07b-reference-roundtrip/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "source": "structured",
+        "options": [
+          "A",
+          "B"
+        ],
+        "selected": "A"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "'no spine field' forbids `model` and `final_assessment`, which the gate requires in the payload",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "line": 5,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Reworded to 'NO ENGINE-OWNED field — no spine field the engine composes and no engine-computed extension; `model` is always present, and `final_assessment` is present wherever the command's payload table carries it'.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07b-reference-roundtrip/specs/orbit-emit-composition/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The count computation's input domain is open: a non-array `categories_run`, numeric ids, or a finding without a string `category`",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "line": 49,
+      "marker_source": "internal-review",
+      "classification": "decision_required",
+      "action": "Settled under R-crc-3 (same delegation): option A — the write gate refuses, naming the field, a present `categories_run` that is not an array of strings, a present `findings` that is not an array, and a finding `category` that is not a non-empty string; a scenario covers the object shape, numeric ids and a category-less finding; the named limit narrows; design D4 records the ENUMERATE miss; a Risks entry names the adopter refusal.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07b-reference-roundtrip/specs/orbit-emit-composition/spec.md",
+          "orbit/changes/rc07b-reference-roundtrip/design.md",
+          "orbit/changes/rc07b-reference-roundtrip/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "source": "structured",
+        "options": [
+          "A",
+          "B"
+        ],
+        "selected": "A"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "No task declares the two now-engine-owned counts in the field-set test's subtraction list",
+      "file": "tasks.md",
+      "line": 25,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Task 4.3 sets `ENGINE_OWNED_PER_COMMAND['audit-drift'] = ['findings_total', 'findings_by_category']` with a comment naming this change.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07b-reference-roundtrip/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The proposal and the explore Mechanism row still state the pre-D4 keying that the design says is the defect",
+      "file": "proposal.md",
+      "line": 9,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "proposal.md and explore.md's D-rc07b-3 Domain row repointed to `orbit-emit-composition`'s `Audit-drift counts are engine-computed` by name (the union over refused malformed inputs); the explore row notes the correction.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07b-reference-roundtrip/proposal.md",
+          "orbit/changes/rc07b-reference-roundtrip/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Exit (1) is met by executing the EXAMPLE; the schema block's documented shape is still proven only by comparison",
+      "file": "design.md",
+      "line": 45,
+      "marker_source": "internal-review",
+      "classification": "decision_required",
+      "action": "Settled under R-crc-3 (same delegation): option B, refined — a block's examples JOINTLY carry every AI-supplied key the block documents (one example the norm, a second only for mutually exclusive fields), so a documented field is executed, never only compared; a scenario fails a documented key absent from every example; design D1 states this as how exit (1) is graded; tasks 2.2, 3.x, 4.1, 4.2 follow.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07b-reference-roundtrip/specs/orbit-emit-composition/spec.md",
+          "orbit/changes/rc07b-reference-roundtrip/design.md",
+          "orbit/changes/rc07b-reference-roundtrip/tasks.md",
+          "orbit/changes/rc07b-reference-roundtrip/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "source": "structured",
+        "options": [
+          "A",
+          "B"
+        ],
+        "selected": "B"
+      },
+      "resolution": "Option B refined: a block's examples jointly carry every AI-supplied key (one example the norm; a second only for mutually exclusive fields)."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The proposal says two orbit-audit-drift scenarios change; the delta changes one",
+      "file": "proposal.md",
+      "line": 24,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "'two summary scenarios' corrected to one in proposal.md and explore.md (D-rc07b-4, D-rc07b-7's capability list, References).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07b-reference-roundtrip/proposal.md",
+          "orbit/changes/rc07b-reference-roundtrip/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "'matches the computation on every one that records it flat' holds for values, not key sets",
+      "file": "proposal.md",
+      "line": 9,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Claim restated at its real strength in proposal.md: recorded VALUES match on every flat emit (10 of 13); five carry KEY sets the union rule would not compose; nothing is migrated.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07b-reference-roundtrip/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 4.5 measures 'against the BUILT CLI' before any task builds",
+      "file": "tasks.md",
+      "line": 27,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Task 4.5 now runs `npm run build` first and copies the example from the SOURCE template.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07b-reference-roundtrip/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The rewritten references keep a '6-field universal spine' that omits `model`, next to an example that must carry it",
+      "file": "tasks.md",
+      "line": 9,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Tasks 2.1 and 3.4 replace the '6-field universal spine' lists with a pointer to `orbit-conventions`' `Internal-run JSON summary format` by name.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07b-reference-roundtrip/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "D2's 'the same REFERENCES table' is a module-local constant in another test file",
+      "file": "design.md",
+      "line": 22,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Design D2 and task 4.1 extract `REFERENCES` into `test/helpers/schema-references.ts`, imported by both suites; Touchpoints lists the helper.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07b-reference-roundtrip/design.md",
+          "orbit/changes/rc07b-reference-roundtrip/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "can you resolve any of these with looking at best practices for ai development?",
+  "final_assessment": "Twelve of twelve resolved in one walk, all edits applied atomically and swept. The four decision findings were settled under R-crc-3 on Sal's delegation: an `archived` scope word (W1), one trail-seeding rule for cited pass tokens (W2), malformed count inputs refused at the seam (W4 — the exploration's ENUMERATE miss, recorded in design D4), and examples that jointly carry every documented key so exit (1) executes rather than compares (W7, refined to allow a second example only for mutually exclusive fields). Eight obvious fixes repaired wording, a missing engine-owned declaration, the build order, the spine pointer and the shared REFERENCES table. Validates --strict; the exploration still parses three rules, none open.",
+  "iteration": 1,
+  "next_recommended": "/orbit:review --as proposal rc07b-reference-roundtrip"
+}
