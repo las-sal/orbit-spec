@@ -2015,7 +2015,7 @@ next blind pair's COMMITTED external prompt carries no findings and no trail poi
 ### Stage rc03c-verification-record — a verification says what landed and what regressed
 
 Depends-on: rc03b-pass-genres
-Complete: [ ]
+Complete: [x] 2026-10-04 (Sal)
 
 Declared 2026-10-04 (Sal) from the rc03 exploration's split (D-rc03-8). Charter: the review emit
 gains `verification: {walks: [<tokens>], resolutions: [{title, file, verdict}]}`, OWED when the genre
@@ -4475,3 +4475,18 @@ listed). **Exit (3) MET** by design D9's instrument, run verbatim — task 4.5 c
 entry now names `verified_walks` plus the sweep scope as its nearest proxy, NOT a closure. The readiness record accepts four
 residuals, headlined by rc07's distinction. **2559 tests green.** Position is engine-computed: rc03c
 quiescent-awaiting-ratification.
+
+**2026-10-04 — Architect session: rc03c-verification-record RATIFIED (sixteen stages complete).** All three exit criteria
+graded MET as written, each measured on the final tree: (1) the pass genre is a COMPUTED field — `computePassGenre` in
+`src/core/artifact-graph/pass-genre.ts`, stored as `pass_genre` / `verified_walks` on every review emit — with its own
+body section (Step 5's VERIFICATION branch) and its owed record; `gates.ts`, `trail.ts` and the schema's cadence tokens
+carry no diff, held by rc03b's hash pin; (2) VERIFICATION-genre emits carry per-resolution `landed` / `regressed`, written
+by 1.2's fixtures and by the stage's own confirm (nine verdicts); (3) MET by design D9's instrument, fixed at propose and
+run verbatim on `review-system-2026-10-04T17-09-30Z` — zero findings at WARNING or above outside the walk record — the
+rendered cross-check agreeing. Ratified by Sal through the offer, after the post-archive project-wide audit was walked to
+zero (its one SUGGESTION added the stage section's `Shipped as:` line). Carried, not captured as rulings or questions this
+session: the readiness record's four accepted residuals (`archive-2026-10-04T17-12-45Z.json`) — among them the second
+probe/engine divergence (a walk naming a pass file absent from this trail), unnamed in `orbit-conventions`' KNOWN LIMIT
+and handed to the next stage that touches that capability, and Q-crc-20, which rc03c names a proxy for and does not
+close. With rc03b and rc03c both ratified, the split parent `rc03-review-genres` (ended 2026-10-04) has every exit
+criterion owned by a ratified child.

@@ -209,7 +209,7 @@ file now carries a live mark. Do NOT read this paragraph as the program's full l
 only what rc07 produced. The authoritative list is the program doc's own Open questions section,
 which also carries Q-crc-11, Q-crc-12, Q-crc-20, Q-crc-21, Q-crc-22 and Q-crc-23.
 
-**Thirteen more stages have shipped since, and the program is FIFTEEN stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b and rc03b ratified 2026-10-04; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening).
+**Thirteen more stages have shipped since, and the program is SIXTEEN stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b and rc03c ratified 2026-10-04; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening).
 
 `rc02c-confirmation-semantics` is ARCHIVED (2026-09-21): **the budget stopped being a target.**
 R-crc-11(h) — effort is RECORDED, never TARGETED — retired `budgetExhausted`, the
@@ -539,7 +539,7 @@ reworded the line), and a filtered test run reported green while one suite faile
 measure). Task 3.5 (exit (3)) closed at archive by observation; the readiness record accepts five residuals, headlined by
 rc07's distinction. **2507 tests green** (2465 → 2507).
 
-`rc03c-verification-record` is ARCHIVED (2026-10-04; the second child of the split parent `rc03-review-genres`;
+`rc03c-verification-record` is ARCHIVED and RATIFIED (2026-10-04; the second child of the split parent `rc03-review-genres`;
 all three exit criteria MET, exit (3) by design D9's instrument on its own in-context confirm): **a verification pass is a COMPUTED pass genre with its own owed
 record.** ONE exported function in a new module beside the trail reader (`src/core/artifact-graph/pass-genre.ts`,
 never `gates.ts`) implements `orbit-conventions`' genre table over the trail reader's ACCEPTED pass set — a walk's
