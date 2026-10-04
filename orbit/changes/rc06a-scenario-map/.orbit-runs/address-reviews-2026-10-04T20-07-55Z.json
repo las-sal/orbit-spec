@@ -1,0 +1,123 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-04T20:07:55Z",
+  "change": "rc06a-scenario-map",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc06a-scenario-map/.orbit-runs/external-proposal-2026-10-04T20-03-52Z.md",
+  "source_token": "2026-10-04T20-03-52Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6 Codex",
+  "walk_mode": "walk",
+  "walk_mode_source": "default",
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 3,
+    "suggestion": 1
+  },
+  "pushback_verification": "All five verified against current state at 1a483c09; none stale. The CRITICAL's reproduction re-derived and reproduced.",
+  "resolution_summary": {
+    "resolved": 5,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "A valid scenario title can make archive impossible",
+      "marker_source": "external",
+      "file": "orbit/changes/rc06a-scenario-map/specs/orbit-scenario-map/spec.md",
+      "line": 11,
+      "classification": "decision_required",
+      "action": "applied ratified option A: a delta requirement or scenario title containing ` :: ` is UNKEYABLE and validate reports it at ERROR at every apply-gate state, naming the capability and both titles; tag requirement's limit sentence now points at the owner; scenario added; JSON malformed gains {source: spec}; design D5; proposal; task 4.1 and 2.4 cases",
+      "evidence": "re-derived the constructed case against spec.md:11 at 1a483c09: `orbit-x :: Req A :: A :: B` splits on ` :: ` into four parts -> MALFORMED; no ledger key can carry it -> UNCOVERED; ERROR once apply passes; archive.ts:133 validateChangeDeltaSpecs refuses short of --no-validate",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc06a-scenario-map/specs/orbit-scenario-map/spec.md",
+          "orbit/changes/rc06a-scenario-map/design.md",
+          "orbit/changes/rc06a-scenario-map/proposal.md",
+          "orbit/changes/rc06a-scenario-map/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "reproduction_rerun": "reproduced",
+      "ratified_via": "chat",
+      "resolution": "A — refuse early: UNKEYABLE at ERROR at every gate state"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Baseline scenarios are promised in the map but absent from its output shape",
+      "marker_source": "external",
+      "file": "orbit/changes/rc06a-scenario-map/specs/orbit-scenario-map/spec.md",
+      "line": 125,
+      "classification": "trivial_fix",
+      "action": "the outside-delta row now says COUNTED (`counts.baseline_undeclared`), never listed, never by validate; the cover-kind requirement opens 'Every DELTA scenario the map lists'; a 2.4 case (a baseline tag counted, not listed)",
+      "evidence": "verified against spec.md at 1a483c09 before the edit; re-grepped after",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc06a-scenario-map/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The attachment rule classifies a stacked tag as a refused next line",
+      "marker_source": "external",
+      "file": "orbit/changes/rc06a-scenario-map/specs/orbit-scenario-map/spec.md",
+      "line": 13,
+      "classification": "trivial_fix",
+      "action": "attachment restated as a PENDING STACK: tag lines join it and are skipped while seeking the call; a malformed tag is MALFORMED by name, joins nothing, and leaves the stack intact; a 2.1 case",
+      "evidence": "verified against spec.md at 1a483c09 before the edit; re-grepped after",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc06a-scenario-map/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "A fixture string can create a silent false declaration",
+      "marker_source": "external",
+      "file": "orbit/changes/rc06a-scenario-map/specs/orbit-scenario-map/spec.md",
+      "line": 25,
+      "classification": "trivial_fix",
+      "action": "dropped 'never silently'; a string-literal tag followed by a call line attaching indistinguishably is now the first of three named limits; also fixed walk 1's 'are read; Two named limits' residue in the same sentence",
+      "evidence": "verified against spec.md at 1a483c09 before the edit; re-grepped after",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The malformed-config byte-identity claim conflicts with its warning",
+      "marker_source": "external",
+      "file": "orbit/changes/rc06a-scenario-map/specs/orbit-scenario-map/spec.md",
+      "line": 262,
+      "classification": "trivial_fix",
+      "action": "only an ABSENT key leaves validate unchanged; a malformed key turns the check off and adds its one warning; proposal's opt-in bullet narrowed to match",
+      "evidence": "verified against spec.md at 1a483c09 before the edit; re-grepped after",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc06a-scenario-map/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "a",
+  "final_assessment": "Five of five resolved: four obvious fixes previewed at triage, and the CRITICAL (an unkeyable title dead-ends archive) ratified in chat as A, refuse early. Scenarios 33 to 34; validate --strict clean.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal rc06a-scenario-map"
+}

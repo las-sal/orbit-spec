@@ -8,9 +8,9 @@ A scenario's coverage SHALL be declared on the TEST side, never in the spec. A s
 ^\s*//\s*@scenario\s+(behaviour|text)\s+<capability> :: <requirement title> :: <scenario title>\s*$
 ```
 
-The KEY is the triple — the capability's directory name under `orbit/specs/`, the requirement title as written after `### Requirement:`, and the scenario title as written after `#### Scenario:`, each trimmed — joined by the literal ` :: `. A tag's key is SPLIT on the literal ` :: ` (space, two colons, space) and MUST yield exactly three parts, each non-empty after trimming; so `a ::b :: c` splits into two parts and is MALFORMED. A title that itself contains ` :: ` cannot be keyed — a named limit (no baseline title contains `::` today). The kind word records what the test establishes: `behaviour` (the test runs the behaviour the scenario states) or `text` (the test shows an artifact CARRIES the instruction the scenario states; it says nothing about whether an AI follows it). Any line matching `^\s*//\s*@scenario\b` that fails the production — an unknown kind word, a key without exactly three non-empty parts — is MALFORMED, naming the file and line.
+The KEY is the triple — the capability's directory name under `orbit/specs/`, the requirement title as written after `### Requirement:`, and the scenario title as written after `#### Scenario:`, each trimmed — joined by the literal ` :: `. A tag's key is SPLIT on the literal ` :: ` (space, two colons, space) and MUST yield exactly three parts, each non-empty after trimming; so `a ::b :: c` splits into two parts and is MALFORMED. A requirement or scenario title that itself contains ` :: ` cannot be keyed; such a title in a change's delta is UNKEYABLE and is refused early, per `A declaration is owed by every scenario in the change's delta blocks` (no baseline title contains `::` today). The kind word records what the test establishes: `behaviour` (the test runs the behaviour the scenario states) or `text` (the test shows an artifact CARRIES the instruction the scenario states; it says nothing about whether an AI follows it). Any line matching `^\s*//\s*@scenario\b` that fails the production — an unknown kind word, a key without exactly three non-empty parts — is MALFORMED, naming the file and line.
 
-A tag ATTACHES to the next line that is neither blank, nor a `//` comment that is not itself a tag; consecutive tags STACK and all attach to that line. The next line is classified by this table, and a tag whose next line is refused is MALFORMED, naming the tag's line:
+A well-formed tag joins a PENDING STACK. While the stack is non-empty, the scan skips blank lines, `//` comments, and further tag lines (each well-formed one joining the stack; a malformed one is MALFORMED by name, joins nothing, and leaves the stack intact), and classifies the FIRST line that is none of those: every tag in the stack attaches to it, or every tag in the stack is refused with it. The next line is classified by this table, and a tag whose next line is refused is MALFORMED, naming the tag's line:
 
 | next line begins, after leading whitespace, with | outcome |
 |---|---|
@@ -22,7 +22,7 @@ A tag ATTACHES to the next line that is neither blank, nor a `//` comment that i
 | `describe` | REFUSED — a tag names a test, never a group |
 | anything else, or end of file | REFUSED |
 
-The table is CLOSED: the call forms are listed and every other next line is refused by name, so no line passes unclassified. The scan reads text and never parses the language, so a tag-shaped line inside a string literal is classified like any other line — it attaches or is refused VISIBLY, never silently. Only files in the scanned set (per `The scenario map is opt-in by the scenario_map config key`) are read; Two named limits: v1 recognises the JS/TS (vitest/jest) call forms above and no other language's; and a line classifier cannot see an ENCLOSING group, so a tag on an `it(` inside a `describe.skip(` / `describe.skipIf(` / `describe.todo(` block attaches although that test may never run.
+The table is CLOSED: the call forms are listed and every other next line is refused by name, so no line passes unclassified. The scan reads text and never parses the language, so a tag-shaped line inside a string literal is classified like any other line. Only files in the scanned set (per `The scenario map is opt-in by the scenario_map config key`) are read. Three named limits: a tag-shaped line inside a string literal that is followed by a call line ATTACHES exactly as a real tag does, and the map cannot tell the two apart — a false declaration a reader sees only as an ordinary entry naming that file and line; v1 recognises the JS/TS (vitest/jest) call forms above and no other language's; and a line classifier cannot see an ENCLOSING group, so a tag on an `it(` inside a `describe.skip(` / `describe.skipIf(` / `describe.todo(` block attaches although that test may never run.
 
 #### Scenario: A behaviour tag attaches to the next test
 
@@ -87,7 +87,7 @@ scenarios:
 
 ### Requirement: Cover kinds are reported separately and never summed
 
-Every scenario the map reports SHALL be in exactly the states this table derives — the product of the two declaration sources (tags by kind, ledger by kind) plus their two failure forms — and the map SHALL render each kind as its own column, never folding them into one covered figure:
+Every DELTA scenario the map lists SHALL be in exactly the states this table derives — the product of the two declaration sources (tags by kind, ledger by kind) plus their two failure forms — and the map SHALL render each kind as its own column, never folding them into one covered figure:
 
 | the scenario has | reported as |
 |---|---|
@@ -141,7 +141,8 @@ The map SHALL be computed at read time by `orbit status --change <name> --scenar
     uncovered: <boolean>                       true iff all four lists are empty
   }],
   orphans:   [{source: "tag", file, line, key} | {source: "ledger", index, key}],
-  malformed: [{source: "tag", file, line, reason} | {source: "ledger", index, reason} | {source: "ledger-file", reason}],
+  malformed: [{source: "tag", file, line, reason} | {source: "ledger", index, reason} | {source: "ledger-file", reason}
+             | {source: "spec", capability, requirement, scenario, reason: "unkeyable"}],
   counts: {
     delta_scenarios, behaviour, text, observed, untestable, uncovered,
     orphans, malformed, baseline_undeclared     each a count; no ratio
@@ -185,7 +186,7 @@ The surface's consumers are exactly those the program names — `orbit validate 
 
 ### Requirement: A declaration is owed by every scenario in the change's delta blocks
 
-When the check is ON, `orbit validate <change>` SHALL report every scenario in the change's delta that carries no declaration, naming its key, at the level `An undeclared delta scenario is INFO until the apply gate passes` assigns. Which scenarios owe a declaration is decided per delta operation, over the set `DeltaOperationType` defines (`ADDED`, `MODIFIED`, `REMOVED`, `RENAMED`):
+When the check is ON, `orbit validate <change>` SHALL report every scenario in the change's delta that carries no declaration, naming its key, at the level `An undeclared delta scenario is INFO until the apply gate passes` assigns. A delta scenario whose requirement title or scenario title contains ` :: ` cannot be keyed by any tag or ledger entry; validate SHALL report it as UNKEYABLE at ERROR whatever the apply gate's state, naming the capability and both titles — so a proposal review's structure pass blocks while renaming it is still free, before any test is written, and the scenario never reaches apply undeclarable. Which scenarios owe a declaration is decided per delta operation, over the set `DeltaOperationType` defines (`ADDED`, `MODIFIED`, `REMOVED`, `RENAMED`):
 
 | delta operation | owes a declaration |
 |---|---|
@@ -193,9 +194,9 @@ When the check is ON, `orbit validate <change>` SHALL report every scenario in t
 | MODIFIED | every scenario in the block, unchanged scenarios included — the block replaces the whole requirement |
 | RENAMED | every baseline scenario under the OLD title, under its NEW key; tags on the old key render ORPHAN — unless the change also MODIFIES the requirement under its new name, when the MODIFIED row governs (the archive's order applies RENAMED first) |
 | REMOVED | nothing; tags on its scenarios render ORPHAN once the change is archived |
-| (outside every delta block) | nothing — reported on the surface, never by validate |
+| (outside every delta block) | nothing — COUNTED on the surface (`counts.baseline_undeclared`), never listed, never reported by validate |
 
-ORPHAN and MALFORMED lines are reported on the surface only; validate reports undeclared delta scenarios and nothing else from the map. When the check is OFF, validate reports nothing from the map and its output is byte-identical to its output without this capability.
+ORPHAN and MALFORMED lines are reported on the surface only; validate reports undeclared and UNKEYABLE delta scenarios and nothing else from the map. When the check is OFF, validate reports nothing from the map and its output is byte-identical to its output without this capability.
 
 #### Scenario: An undeclared ADDED scenario is reported
 
@@ -216,6 +217,11 @@ ORPHAN and MALFORMED lines are reported on the surface only; validate reports un
 
 - **WHEN** the check is ON and a change RENAMES `Req A` to `Req B` and MODIFIES `Req B` with a block of three scenarios
 - **THEN** exactly those three scenarios owe declarations, keyed under `Req B`, each with `operation` `MODIFIED`
+
+#### Scenario: An unkeyable title is refused before apply
+
+- **WHEN** the check is ON, a change's tasks are all unchecked, and an ADDED requirement carries `#### Scenario: A :: B`
+- **THEN** `orbit validate <change>` reports that scenario as UNKEYABLE at ERROR, naming its capability and both titles, and `--strict` fails
 
 #### Scenario: A baseline scenario outside the delta never fails validate
 
@@ -259,7 +265,7 @@ INFO never fails `orbit validate --strict`, so a proposal review's structure pas
 
 ### Requirement: The scenario map is opt-in by the scenario_map config key
 
-The check SHALL be ON only when `orbit/config.yaml` carries a well-formed `scenario_map` key, and every other shape SHALL leave `orbit validate` exactly as it behaves without this capability. The shapes form this table — a value is absent, a mapping, or not a mapping; a mapping's `tests` is valid, empty, absent or mis-typed:
+The check SHALL be ON only when `orbit/config.yaml` carries a well-formed `scenario_map` key. An ABSENT key SHALL leave `orbit validate` exactly as it behaves without this capability; a MALFORMED key turns the check off and adds only its one warning. The shapes form this table — a value is absent, a mapping, or not a mapping; a mapping's `tests` is valid, empty, absent or mis-typed:
 
 | `scenario_map` | outcome |
 |---|---|
