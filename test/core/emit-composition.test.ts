@@ -56,6 +56,16 @@ const validReviewPayload = (overrides: Record<string, unknown> = {}) => ({
   ...overrides,
 });
 
+/** A minimal audit-drift finding carrying the given category (rc07b). */
+const driftFinding = (category: unknown) => ({
+  category,
+  severity: 'WARNING',
+  file: 'a.md',
+  line: 1,
+  title: `drift in ${String(category)}`,
+  recommendation: 'fix it',
+});
+
 beforeEach(() => {
   root = fs.mkdtempSync(path.join(os.tmpdir(), 'orbit-emit-'));
 });
@@ -131,7 +141,7 @@ describe('target resolution and spine composition', () => {
     expect(doc.emit.change).toBeNull();
     expect(doc.emit.doc).toBe('prog');
 
-    const project = composeAndWriteEmit('audit-drift', {}, { final_assessment: 'clean project-wide.', findings_total: 0, model: null }, { projectRoot: root });
+    const project = composeAndWriteEmit('audit-drift', {}, { final_assessment: 'clean project-wide.', findings: [], model: null }, { projectRoot: root });
     expect(project.path).toContain(path.join('orbit', '.orbit-runs', 'audit-drift-'));
     expect(project.emit.change).toBeNull();
     expect(project.emit.kind).toBe('editorial');
@@ -464,10 +474,10 @@ describe('deterministic facts', () => {
       'orbit/changes/foo/.orbit-runs/apply-2026-08-01T10-00-00Z.json',
       JSON.stringify({ command: 'apply', next_recommended: '/orbit:apply foo — chunk 3 of 5 done' })
     );
-    const dirty = composeAndWriteEmit('audit-drift', { change: 'foo' }, { final_assessment: '3 drifts.', findings_total: 3, model: null }, { projectRoot: root });
+    const dirty = composeAndWriteEmit('audit-drift', { change: 'foo' }, { final_assessment: '3 drifts.', categories_run: ['1'], findings: [driftFinding('1'), driftFinding('1'), driftFinding('1')], model: null }, { projectRoot: root });
     expect(String(dirty.emit.next_recommended)).toMatch(/^\/orbit:address-reviews foo — 3 drift\(s\) detected/);
 
-    const clean = composeAndWriteEmit('audit-drift', { change: 'foo' }, { final_assessment: 'drift check clean; deferring to prior workflow state.', findings_total: 0, model: null }, { projectRoot: root });
+    const clean = composeAndWriteEmit('audit-drift', { change: 'foo' }, { final_assessment: 'drift check clean; deferring to prior workflow state.', categories_run: ['1'], findings: [], model: null }, { projectRoot: root });
     // Defers to the most recent prior emit (the just-written dirty audit-drift is prior now).
     expect(String(clean.emit.next_recommended)).toMatch(/^\/orbit:address-reviews foo — 3 drift/);
   });
@@ -1939,5 +1949,75 @@ describe('rc03c: pass genre, verified walks and the verification record', () => 
       refuses(sys([], { verification: [{ title: 'T\nU', file: 'F', verdict: 'landed' }] }), /verification\[0\]\.title/);
       refuses(sys([{ title: 'x', walk_entry: 'T' }], { verification: [{ title: 'T', file: 'F', verdict: 'landed' }] }), /findings\[0\]\.walk_entry/);
     }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// rc07b: Audit-drift counts are engine-computed (orbit-emit-composition)
+// ---------------------------------------------------------------------------
+
+describe('audit-drift counts are engine-computed (rc07b)', () => {
+  it('refuses a supplied findings_total (and findings_by_category) naming the field as engine-owned; writes nothing', () => {
+    makeChange('foo');
+    expect(() =>
+      composeAndWriteEmit('audit-drift', { change: 'foo' }, { final_assessment: 'x', findings: [], findings_total: 0, model: null }, { projectRoot: root })
+    ).toThrow(/findings_total.*engine-owned/);
+    expect(() =>
+      composeAndWriteEmit('audit-drift', { change: 'foo' }, { final_assessment: 'x', findings: [], findings_by_category: {}, model: null }, { projectRoot: root })
+    ).toThrow(/findings_by_category.*engine-owned/);
+    expect(listRuns('orbit/changes/foo/.orbit-runs')).toEqual([]);
+  });
+
+  it('computes both counts from findings with categories_run; next_recommended takes the findings branch', () => {
+    makeChange('foo');
+    const r = composeAndWriteEmit(
+      'audit-drift',
+      { change: 'foo' },
+      { final_assessment: '2 drifts.', categories_run: ['1', '3', '4'], findings: [driftFinding('3'), driftFinding('3')], stale_suppressed: [], model: null },
+      { projectRoot: root }
+    );
+    expect(r.emit.findings_total).toBe(2);
+    expect(r.emit.findings_by_category).toEqual({ '1': 0, '3': 2, '4': 0 });
+    expect(String(r.emit.next_recommended)).toMatch(/^\/orbit:address-reviews foo — 2 drift\(s\) detected/);
+  });
+
+  it('refuses each malformed count input separately, never coercing; writes nothing', () => {
+    makeChange('foo');
+    const cases: Array<[Record<string, unknown>, RegExp]> = [
+      [{ categories_run: { '1': true, '3': true }, findings: [] }, /categories_run/],
+      [{ categories_run: [1, 3], findings: [] }, /categories_run/],
+      [{ categories_run: ['1'], findings: [{ severity: 'WARNING', file: 'a.md', title: 't', recommendation: 'r' }] }, /category/],
+      [{ categories_run: ['1'], findings: [driftFinding('')] }, /category/],
+      [{ categories_run: ['1'], findings: 'none' }, /findings/],
+    ];
+    for (const [extra, re] of cases) {
+      expect(() =>
+        composeAndWriteEmit('audit-drift', { change: 'foo' }, { final_assessment: 'x', ...extra, model: null }, { projectRoot: root })
+      ).toThrow(re);
+    }
+    expect(listRuns('orbit/changes/foo/.orbit-runs')).toEqual([]);
+  });
+
+  it('counts a finding outside categories_run (the union rule): the two counts agree by construction', () => {
+    const r = composeAndWriteEmit(
+      'audit-drift',
+      {},
+      { final_assessment: '1 drift.', categories_run: ['1'], findings: [driftFinding('4')], model: null },
+      { projectRoot: root }
+    );
+    expect(r.emit.findings_by_category).toEqual({ '1': 0, '4': 1 });
+    expect(r.emit.findings_total).toBe(1);
+  });
+
+  it('absent findings counts as empty; stale_suppressed entries are not counted', () => {
+    const r = composeAndWriteEmit(
+      'audit-drift',
+      {},
+      { final_assessment: 'clean.', categories_run: ['2'], stale_suppressed: [{ category: '2', title: 't', evidence: 'e' }], model: null },
+      { projectRoot: root }
+    );
+    expect(r.emit.findings_total).toBe(0);
+    expect(r.emit.findings_by_category).toEqual({ '2': 0 });
+    expect(String(r.emit.next_recommended)).toMatch(/^No project-wide drifts detected/);
   });
 });

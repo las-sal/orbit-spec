@@ -78,6 +78,10 @@ import { generateSkillContent } from '../../../src/core/shared/skill-generation.
 // on both surfaces (fresh W2, Sal: C); fresh S1 and the external CRITICAL converged on the `Kind:`
 // bullet (line 472) restating the grammar requirement's clause beside its pointer — trimmed to the bare
 // pointer. Both body sentences moved WITH their delta sentences (D-rc16-3); byte-equality re-checked.
+// rc07b-reference-roundtrip (2026-10-04) — archive moved ONCE, a PLANNED act (design D7): its
+// `archive-summary-schema.md` reference gained a `json example archived` block, its spine list became a
+// pointer to `orbit-conventions`, and the `audit.findings_summary` note was repointed (design D6). The
+// skill BODY did not change; the generated-content hashes below did not move.
 const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   getExploreSkillTemplate: 'a0befe149a57596b0bc65a682403c165d8fb5326314f23151d70d7daa074bb52',
   getNewChangeSkillTemplate: '8f68be94db91a147b93d492f6f32ab3c02725a20a001c87602ac8d9741587614',
@@ -91,7 +95,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   getOrbitContinueCommandTemplate: 'e1ecd4fffee224e284453be717226824c7567041d7c1676b6b6bca4727e3a9dd',
   getOrbitApplyCommandTemplate: 'e5a4f72b65777d13fdd9d968e3ba50ec3c9d49c890a604a64e8dbb472bf130f8',
   getOrbitFfCommandTemplate: '57607811009ca5ece844affae130fa47efc8e64f2c14c181113f581c81978405',
-  getArchiveChangeSkillTemplate: 'c7d452291f6f82b7e0081ccda894f865e07b1427e07bea0fcc51614da9afc387',
+  getArchiveChangeSkillTemplate: 'b608420ac5dfacb19c98cf2ec026b818cf5f533e80b33f850079cc4a05928a62',
   getBulkArchiveChangeSkillTemplate: 'd95ac9d5b2317736ac8395e44ff8eae1ce8d063b6eaa5fe16c225b41eeaa597d',
   getOrbitSyncCommandTemplate: '1067039e869d8dedf7922da46230b53a88253cf3fe27c7a5d60c96bc9a43453f',
   getVerifyChangeSkillTemplate: '13736310b7089e7ae108df25d6c3dc75ff923dbd9f52f02cfc322837f8e6ac4c',

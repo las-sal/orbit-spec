@@ -26,6 +26,10 @@ import { fileURLToPath } from "node:url";
  * the trail carries (external S1). `gates.ts`, `trail.ts`, `pass-genre.ts` and the schema stay unchanged.
  * MOVED a THIRD time at system walk 2 (2026-10-04): `emit-composition.ts` only — the REVIEW-genre refusal
  * now states what the pass owes (fresh W2, Sal: A). `report-render.ts` did not move.
+ * MOVED at rc07b-reference-roundtrip apply (2026-10-04) — a PLANNED act (its design D7): `emit-composition.ts`
+ * only — audit-drift's `findings_total` / `findings_by_category` are now computed from `findings` and refused
+ * in the payload, over refused malformed inputs (`orbit-emit-composition`'s `Audit-drift counts are
+ * engine-computed`). Every other hash here is unchanged.
  */
 const PINNED: Record<string, string> = {
   "schemas/spec-driven/schema.yaml": "be6cda5fa604f105c14c2d5e2fd52ad04ca266ba22e7e438ffec8442641e345d",
@@ -44,7 +48,7 @@ const PINNED: Record<string, string> = {
   "src/core/artifact-graph/state.ts": "f59f748b94cd94ca2fe022ec5aa66b3251dd1b2c00bddb9a17cbd9273a04d0f2",
   "src/core/artifact-graph/trail.ts": "a8566c80c599097acb39146010a7aa2ab5b47cf707958f85fd243e05567cbaf1",
   "src/core/artifact-graph/types.ts": "246feb06872594a744233904bc0d3902c90545e23cdf8a38f2b42b80c4a4d10a",
-  "src/core/emit-composition.ts": "2b1401ae3255c581a6c9cca357422b4ae9ec1ee37109d9e11581eaf1ff08f30e",
+  "src/core/emit-composition.ts": "cc92e2aa745a3dc6e6a7742defc3f85170f21f5bab7e6f451bcfb48b06cc691e",
   "src/core/report-render.ts": "b40046bc8059ca73744de33dd25ebf1e978a8dd3b0a5b0a33490298f161904a5",
 };
 

@@ -13,33 +13,14 @@ import { payloadFieldsFor } from '../../src/core/emit-composition.js';
 import {
   getReviewSkillTemplate,
   getAddressReviewsSkillTemplate,
-  getAuditDriftSkillTemplate,
   getArchiveChangeSkillTemplate,
 } from '../../src/core/templates/skill-templates.js';
-
-/** Universal spine + computed keys the engine composes on every command. */
-const ENGINE_OWNED = ['command', 'timestamp', 'change', 'doc', 'kind', 'model', 'next_recommended', 'iteration'];
-/** Per-command computed keys the reference marks engine-owned. */
-const ENGINE_OWNED_PER_COMMAND: Record<string, string[]> = {
-  // review: the counts sentence is engine-composed from the scorecard (D4).
-  review: ['final_assessment', 'pass_genre', 'verified_walks'],
-  // review-external: the T0 handoff flag is composed by the engine, never supplied.
-  'review-external': ['awaiting_findings'],
-};
-
-/**
- * KNOWN DIVERGENCE (option B, ratified 2026-09-12). The audit-drift reference documents the
- * shape two ARCHIVED requirements mandate (`orbit-conventions`' editorial-emit extensions and
- * scenario keep `findings_summary`/`finding_titles`; `orbit-run-summary-emit` types
- * `categories_run` as an object of named booleans), and the engine's payload table accepts a
- * third shape. Reconciling three voices needs MODIFIED deltas against two more capabilities —
- * past this stage's size ceiling (R-crc-1) — so it is a DATED follow-up owned by rc07
- * (artifact lint, one-voice-for-facts), not an exception this stage may quietly keep. The set
- * is asserted EXACT below, so any NEW divergence still fails loudly.
- */
-const KNOWN_DIVERGENCE: Record<string, string[]> = {
-  'audit-drift': ['context', 'caller', 'depth', 'flags', 'categories_skipped', 'findings_summary'],
-};
+// rc07b (design D2): the references, the engine-owned subtraction and the key reader live in ONE
+// shared helper the round-trip suite imports too. `ENGINE_OWNED_PER_COMMAND['audit-drift']` there
+// declares the two counts rc07b made engine-computed (the `A new engine-owned key must be declared`
+// scenario). There is NO tolerated-divergence list: rc07b retired the one this file carried
+// (`Payload tables agree with their schema references` admits no exemption).
+import { REFERENCES, ENGINE_OWNED, engineOwnedFor, topLevelKeys } from '../helpers/schema-references.js';
 
 /**
  * Finding-level and nested keys documented inside a block's sub-objects — legitimate field-note
@@ -47,56 +28,7 @@ const KNOWN_DIVERGENCE: Record<string, string[]> = {
  * orphan check only fires for keys outside this set, so listing `blocks` or `direction` would
  * disarm it for exactly the note whose block key could be dropped (rc02b; rc04b walk 1, fresh W6).
  */
-const NESTED_NOTE_SUBJECTS = new Set(['recommendation_options', 'severity', 'dimension', 'title', 'file', 'line', 'recommendation', 'reproduction', 'reproduction_rerun', 'evidence', 'ratified_via', 'resolution', 'recommendation_fork', 'ripple_cascade', 'outcome', 'marker_source', 'classification', 'action', 'by_pass', 'by_category', 'reviewer_class', 'walk_mode_shifted_at_finding', 'walk_entry']);
-
-const REFERENCES: Array<[command: string, template: () => { references?: Array<{ name: string; content: string }> }, refName: string]> = [
-  ['review', getReviewSkillTemplate, 'run-summary-schema.md'],
-  // rc04a system walk: the `review-external` T0 block lives in a DIFFERENT reference of the same
-  // skill, and was unread here — so rc04a added `judgements` to a block no instrument checked, and
-  // a pre-existing divergence sat undetected: the block documented `reviewer_class`, which the
-  // payload table REFUSES as an unknown key and the engine never composes, so an author following
-  // the schema would have written a refused emit.
-  ['review-external', getReviewSkillTemplate, 'external-handoff.md'],
-  ['address-reviews', getAddressReviewsSkillTemplate, 'run-summary-schema.md'],
-  ['audit-drift', getAuditDriftSkillTemplate, 'run-summary-schema.md'],
-  ['archive', getArchiveChangeSkillTemplate, 'archive-summary-schema.md'],
-];
-
-/**
- * Top-level keys of a schema block, found STRUCTURALLY — by brace/bracket depth, not by
- * indentation (external iter 1, 2026-09-12: a two-space regex silently dropped a second key
- * on the same line, and a four-space-indented key, so a documented field could bypass the
- * parity check by formatting alone). String contents are skipped so a `"` inside a value
- * never shifts depth.
- */
-function topLevelKeys(block: string): string[] {
-  const keys: string[] = [];
-  let depth = 0;
-  let inString = false;
-  let escaped = false;
-  let current = '';
-  for (let i = 0; i < block.length; i++) {
-    const ch = block[i];
-    if (inString) {
-      if (escaped) escaped = false;
-      else if (ch === '\\') escaped = true;
-      else if (ch === '"') {
-        inString = false;
-        // A key is a string at depth 1 followed (after spaces) by a colon.
-        if (depth === 1) {
-          const after = block.slice(i + 1).match(/^\s*:/);
-          if (after) keys.push(current);
-        }
-        current = '';
-      } else current += ch;
-      continue;
-    }
-    if (ch === '"') { inString = true; current = ''; continue; }
-    if (ch === '{' || ch === '[') depth += 1;
-    else if (ch === '}' || ch === ']') depth -= 1;
-  }
-  return keys;
-}
+const NESTED_NOTE_SUBJECTS = new Set(['recommendation_options', 'category', 'severity', 'dimension', 'title', 'file', 'line', 'recommendation', 'reproduction', 'reproduction_rerun', 'evidence', 'ratified_via', 'resolution', 'recommendation_fork', 'ripple_cascade', 'outcome', 'marker_source', 'classification', 'action', 'by_pass', 'by_category', 'reviewer_class', 'walk_mode_shifted_at_finding', 'walk_entry']);
 
 /** Top-level keys of every JSON block whose keys include `command` (a full-record block). */
 function documentedKeys(content: string): { keys: Set<string>; blocks: number } {
@@ -109,6 +41,14 @@ function documentedKeys(content: string): { keys: Set<string>; blocks: number } 
     for (const k of top) keys.add(k);
   }
   return { keys, blocks };
+}
+
+/** The AI-supplied fields a reference documents that the command's payload table refuses — sorted. */
+function rejectedFields(command: string, content: string): string[] {
+  const { keys } = documentedKeys(content);
+  const owned = engineOwnedFor(command);
+  const table = payloadFieldsFor(command) ?? [];
+  return [...keys].filter((k) => !owned.has(k) && !table.includes(k)).sort();
 }
 
 /**
@@ -141,17 +81,14 @@ describe('schema-table parity: every AI-supplied field a schema reference docume
     it(`${command}: ${refName} ⊆ payloadFields (all full-record blocks)`, () => {
       const ref = (template().references ?? []).find((r) => r.name === refName);
       expect(ref, `${command} is missing references/${refName}`).toBeDefined();
-      const { keys, blocks } = documentedKeys(ref!.content);
+      const { blocks } = documentedKeys(ref!.content);
       expect(blocks, `${command}: no full-record JSON block found`).toBeGreaterThan(0);
-      const table = payloadFieldsFor(command);
-      expect(table, `no payload table for ${command}`).toBeDefined();
-      const owned = new Set([...ENGINE_OWNED, ...(ENGINE_OWNED_PER_COMMAND[command] ?? [])]);
-      const aiSupplied = [...keys].filter((k) => !owned.has(k));
-      const rejected = aiSupplied.filter((k) => !table!.includes(k));
+      expect(payloadFieldsFor(command), `no payload table for ${command}`).toBeDefined();
+      // NO exemption (rc07b): a documented field the table refuses fails, always.
       expect(
-        rejected.sort(),
+        rejectedFields(command, ref!.content),
         `${command}: ${refName} documents AI-supplied field(s) the table rejects`
-      ).toEqual((KNOWN_DIVERGENCE[command] ?? []).slice().sort());
+      ).toEqual([]);
     });
   }
 
@@ -159,7 +96,7 @@ describe('schema-table parity: every AI-supplied field a schema reference docume
     it(`${command}: every field note names a key the schema block carries`, () => {
       const ref = (template().references ?? []).find((r) => r.name === refName)!;
       const { keys } = documentedKeys(ref.content);
-      const owned = new Set([...ENGINE_OWNED, ...(ENGINE_OWNED_PER_COMMAND[command] ?? [])]);
+      const owned = engineOwnedFor(command);
       // Finding-level and nested keys documented inside a block's sub-objects are legitimate
       // note subjects; the check is on TOP-LEVEL emit keys the notes claim.
       // rc02b: `reproduction` is a finding-entry field (review), `reproduction_rerun` a resolution-entry
@@ -167,7 +104,7 @@ describe('schema-table parity: every AI-supplied field a schema reference docume
       // is therefore NOT listed here: its note must be matched by a key the schema block carries.
       const nested = NESTED_NOTE_SUBJECTS;
       const orphaned = [...fieldNoteKeys(ref.content)].filter(
-        (k) => !keys.has(k) && !owned.has(k) && !nested.has(k) && !(KNOWN_DIVERGENCE[command] ?? []).includes(k)
+        (k) => !keys.has(k) && !owned.has(k) && !nested.has(k)
       );
       expect(orphaned, `${command}: ${refName} field notes name key(s) no schema block carries`).toEqual([]);
     });
@@ -194,19 +131,6 @@ describe('schema-table parity: every AI-supplied field a schema reference docume
     }
   });
 
-  it('regression: the audit-drift divergence is EXACTLY the ratified rc07 follow-up set', () => {
-    // Option B (2026-09-12): the reference documents the shape two ARCHIVED requirements
-    // mandate; the engine's table accepts a third. Reconciling three voices needs MODIFIED
-    // deltas past this stage's ceiling, so the divergence is dated and owned by rc07 — and
-    // pinned here, so it can neither grow nor be forgotten.
-    const ref = (getAuditDriftSkillTemplate().references ?? []).find((r) => r.name === 'run-summary-schema.md')!;
-    const { keys } = documentedKeys(ref.content);
-    const table = payloadFieldsFor('audit-drift')!;
-    const owned = new Set(ENGINE_OWNED);
-    const diverged = [...keys].filter((k) => !owned.has(k) && !table.includes(k)).sort();
-    expect(diverged).toEqual(KNOWN_DIVERGENCE['audit-drift'].slice().sort());
-  });
-
   it('regression: the review reference reads BOTH blocks, and the architecture block carries scorecard, not findings_summary', () => {
     const ref = (getReviewSkillTemplate().references ?? []).find((r) => r.name === 'run-summary-schema.md')!;
     const { keys, blocks } = documentedKeys(ref.content);
@@ -229,10 +153,16 @@ describe('schema-table parity: every AI-supplied field a schema reference docume
     expect([...fieldNoteKeys(content)].sort()).toEqual(['categories_run', 'categories_skipped', 'findings_total']);
   });
 
-  it('known divergence is EXACT, so a new one still fails', () => {
-    // The audit-drift set is the ratified rc07 follow-up (option B); nothing else may diverge.
-    expect(Object.keys(KNOWN_DIVERGENCE)).toEqual(['audit-drift']);
-    expect(KNOWN_DIVERGENCE['audit-drift'].length).toBe(6);
+  it('negative (rc07b): no divergence is tolerated — a documented field the table refuses fails naming the field and the reference', () => {
+    // A mutated copy of the REAL audit-drift reference re-documents one field rc07b retired.
+    const [, template, refName] = REFERENCES.find(([c]) => c === 'audit-drift')!;
+    const content = (template().references ?? []).find((r) => r.name === refName)!.content;
+    const anchor = '  "categories_run": ["1", "2", "3", "4", "5", "6"],\n  "findings_total"';
+    expect(content.split(anchor).length - 1, 'mutation anchor').toBe(1);
+    const mutated = content.replace(anchor, '  "categories_run": ["1", "2", "3", "4", "5", "6"],\n  "depth": "full",\n  "findings_total"');
+    expect(rejectedFields('audit-drift', mutated)).toEqual(['depth']);
+    // And the real reference documents none.
+    expect(rejectedFields('audit-drift', content)).toEqual([]);
   });
 
   describe('rc02b-severity-ladder: the three new fields are documented AND accepted (task 1.5)', () => {

@@ -188,15 +188,12 @@ This format MUST match what \`/orbit:review\` writes to \`orbit/changes/<name>/.
   "command": "audit-drift",
   "timestamp": "<ISO-8601>",
   "change": "<change-name string OR null for project-wide standalone>",
-  "context": "standalone" | "library" | "pre-archive",
-  "findings_summary": {
-    "critical": <int>,
-    "warning": <int>,
-    "suggestion": <int>
-  },
+  "categories_run": ["1", "2", "3", "4", "5", "6"],
+  "findings_total": <int>,
+  "findings_by_category": { "<category id>": <int> },
   "findings": [
     {
-      "category": "1" | "2" | "3" | "4",
+      "category": "1" | "2" | "3" | "4" | "5" | "6",
       "severity": "CRITICAL" | "WARNING" | "SUGGESTION",
       "file": "<path>",
       "line": <integer>,
@@ -222,11 +219,11 @@ Producer-side contract (enforced by orbit-review and orbit-audit-drift specs):
 - The prose \`recommendation\` field still summarizes the disjunction for human readers; the structured field complements it, doesn't replace.
 - OPTIONAL on every finding — single-recommendation findings omit it.
 
-The two shapes are identical at the universal-spine + \`findings[]\` level. They differ only in the provenance slot per finding: review JSON carries \`pass\` (string pass-id), audit-drift JSON carries \`category\` (one of \`"1"\`–\`"4"\` per the 4 audit-drift categories: vocabulary-residue, lens-staleness, cross-doc-consistency, archive-coherence).
+The two shapes are identical at the universal-spine + \`findings[]\` level. They differ only in the provenance slot per finding: review JSON carries \`pass\` (string pass-id), audit-drift JSON carries \`category\` (one of \`"1"\`–\`"6"\`, the audit-drift category ids; the emit's shape is owned by \`orbit-run-summary-emit\`'s \`Audit-drift standalone recommendations\`).
 
 ### Universal-spine field requirements (BOTH formats)
 
-The universal-spine fields (\`command\`, \`timestamp\`, \`change\`, \`final_assessment\`, \`next_recommended\`, \`kind\`) are REQUIRED in every real orbit-emitted JSON per \`orbit-conventions\`'s \`Internal-run JSON summary format\` requirement; downstream tools rely on them being present. The address-reviews \`--from-file\` parser does NOT consume them when constructing virtual markers — it only reads \`command\` (as the discriminator) and \`findings[]\` (for marker construction). Other top-level fields (\`final_assessment\`, \`next_recommended\`, \`kind\`, \`depth\`, \`flags\`, \`passes_run\`, \`passes_skipped\`, \`stale_suppressed\`, \`iteration_note\`, \`categories_run\`, \`categories_skipped\`, \`caller\`, etc.) are present in real JSON and IGNORED by this parser — they're consumed by other tooling (e.g., a downstream status reader).
+The universal-spine fields (\`command\`, \`timestamp\`, \`change\`, \`final_assessment\`, \`next_recommended\`, \`kind\`) are REQUIRED in every real orbit-emitted JSON per \`orbit-conventions\`'s \`Internal-run JSON summary format\` requirement; downstream tools rely on them being present. The address-reviews \`--from-file\` parser does NOT consume them when constructing virtual markers — it only reads \`command\` (as the discriminator) and \`findings[]\` (for marker construction). Other top-level fields (\`final_assessment\`, \`next_recommended\`, \`kind\`, \`depth\`, \`flags\`, \`passes_run\`, \`passes_skipped\`, \`stale_suppressed\`, \`iteration_note\`, \`categories_run\`, \`findings_total\`, \`findings_by_category\`, etc.) are present in real JSON and IGNORED by this parser — they're consumed by other tooling (e.g., a downstream status reader).
 
 ## Parser contract
 
@@ -543,14 +540,7 @@ Every location is written by the emit surface — no scope hand-writes its log.
 
 ## Universal spine inheritance
 
-This schema inherits the 6-field **universal spine** from \`orbit-conventions\`'s \`Internal-run JSON summary format\` requirement (see \`orbit/specs/orbit-conventions/spec.md\`):
-
-- \`command\` (here: \`"address-reviews"\`)
-- \`timestamp\` (ISO-8601 UTC; JSON field \`YYYY-MM-DDTHH:MM:SSZ\`; filename \`<TS>\` token \`YYYY-MM-DDTHH-MM-SSZ\` with colons replaced by hyphens for filesystem safety)
-- \`change\` (change name string for change-scoped; \`null\` for whole-repo / cross-change scope AND for architecture scope — the architecture-scoped log additionally carries a \`doc\` field carried from the source \`review-architecture-*.json\` emit)
-- \`final_assessment\` (narrative)
-- \`next_recommended\` (verbatim recommendation, e.g., \`"re-run /orbit:review --as proposal to confirm convergence"\`)
-- \`kind: "editorial"\` (address-reviews is an editorial command per the kind taxonomy)
+The spine every emit carries is owned by \`orbit-conventions\`' \`Internal-run JSON summary format\` requirement, and is not restated here; the write gate refuses every field the engine composes (\`next_recommended\` and the \`iteration\` ordinal among them). For address-reviews, \`final_assessment\` is the payload's own narrative of the resolution outcome, and \`change\` is \`null\` for whole-repo / cross-change and architecture scope, where an architecture-scoped log carries a \`doc\` field instead.
 
 The schema below documents per-command extensions ADDED to that spine (\`source\`, \`source_path\`, \`external_reviewer\`, \`walk_mode\`, \`walk_mode_source\`, \`walk_mode_shifted_at_finding\`, \`input_findings_summary\`, \`pushback_verification\`, \`resolution_summary\`, \`delegation_directive\`, \`resolutions\` with entry-level \`ratified_via\`/\`resolution\` plus \`recommendation_fork\` and \`ripple_cascade\` sub-objects, \`remaining_markers_in_scope\`, \`persisted_escalations\`). Per-command extensions are address-reviews-specific state.
 
@@ -621,6 +611,66 @@ The schema below documents per-command extensions ADDED to that spine (\`source\
 }
 \`\`\`
 
+## Example payload
+
+A payload file the walk writes — here an auto-discovered change-scoped walk that switched to batch mid-walk — real JSON, carrying no engine-owned key. The keys are the same in every scope the surface resolves (change, the archived fallback, an architecture doc, bare whole-repo); only the values differ, and a bare whole-repo walk must carry \`remaining_markers_in_scope\`, which drives its recommendation. A test submits this block, unchanged, through the write gate in all four scopes (\`orbit-emit-composition\`'s \`Payload schema references are proven by execution\`). The worked-example snippets further down are ILLUSTRATIONS of single fields, not payloads: they omit \`command\` so the test never reads them as schema blocks.
+
+\`\`\`json example change archived doc project
+{
+  "final_assessment": "Two of two resolved: the CRITICAL by a reordered step, the WARNING by the ratified direction B.",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/add-detail-flag/.orbit-runs/review-proposal-2026-10-02T09-00-00Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-02T09-00-00Z",
+  "latest_apply_token": null,
+  "tie_break_rationale": null,
+  "external_reviewer": null,
+  "walk_mode": "batch",
+  "walk_mode_source": "command-shape-interruption",
+  "walk_mode_shifted_at_finding": 2,
+  "input_findings_summary": { "critical": 1, "warning": 1, "suggestion": 0 },
+  "pushback_verification": "Both findings verified against current state; none stale.",
+  "resolution_summary": { "resolved": 2, "stale_suppressed": 0, "deferred": 0, "escalated": 0 },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "Archive step deletes the staging directory before the copy is verified",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 40,
+      "classification": "trivial_fix",
+      "action": "reordered design.md step 3 after step 4's copy check",
+      "reproduction_rerun": "reproduced",
+      "evidence": "re-read design.md steps 3-4: the delete preceded the check",
+      "ripple_cascade": { "applied": ["orbit/changes/add-detail-flag/tasks.md"], "flagged_not_applied": [] },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "No task updates the generated surface after the template edit",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 12,
+      "classification": "decision_required",
+      "action": "applied the ratified direction B — folded the update into task 2.3",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [{ "label": "A", "body": "Add the task to group 5." }, { "label": "B", "body": "Fold it into task 2.3." }],
+        "chosen": "B"
+      },
+      "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+      "outcome": "resolved"
+    }
+  ],
+  "delegation_directive": "batch the rest",
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "model": "claude-opus-5-5"
+}
+\`\`\`
+
 ## v1 → v2 format migration (reader guidance)
 
 The v2 shape is a **structural change** from v1, not a rename. Readers handling archived JSONs from both eras MUST detect which version they're reading:
@@ -663,7 +713,6 @@ The v2 shape is a **structural change** from v1, not a rename. Readers handling 
 
 \`\`\`json
 {
-  "command": "address-reviews",
   "walk_mode": "per_finding",
   "resolutions": [
     {
@@ -684,7 +733,6 @@ The v2 shape is a **structural change** from v1, not a rename. Readers handling 
 
 \`\`\`json
 {
-  "command": "address-reviews",
   "walk_mode": "batch",
   "walk_mode_source": "verbal",
   "resolutions": [/* ... */]

@@ -19,14 +19,7 @@ The orbit additions to \`/orbit:archive\` write a JSON summary to \`orbit/change
 
 ## Universal spine inheritance
 
-This schema inherits the 6-field **universal spine** from \`orbit-conventions\`'s \`Internal-run JSON summary format\` requirement (see \`orbit/specs/orbit-conventions/spec.md\`):
-
-- \`command\` (here: \`"archive"\`)
-- \`timestamp\` (ISO-8601 UTC; JSON field \`YYYY-MM-DDTHH:MM:SSZ\`; filename \`<TS>\` token \`YYYY-MM-DDTHH-MM-SSZ\` with colons replaced by hyphens for filesystem safety)
-- \`change\` (change name string)
-- \`final_assessment\` (narrative of what was archived, e.g., \`"Archived <change-name> to <archive_path>."\`)
-- \`next_recommended\` (verbatim recommendation, e.g., \`"Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."\`)
-- \`kind: "lifecycle"\` (archive is THE lifecycle command per the kind taxonomy — transitions a change out of the active set)
+The spine every emit carries is owned by \`orbit-conventions\`' \`Internal-run JSON summary format\` requirement, and is not restated here; the write gate refuses every field the engine composes. For archive, \`final_assessment\` is the payload's narrative of what was archived (e.g. \`"Archived <change-name> to <archive_path>."\`), and \`next_recommended\` is the engine's fixed post-archive line shown in the block below.
 
 The schema below documents the per-command extensions ADDED to that spine (\`archive_path\`, \`audit\`, \`sync_specs\`, \`unresolved_markers\`, \`user_decision\`, \`warnings\`), per the \`kind: "lifecycle"\` extensions in \`orbit-conventions\`, plus the \`consent\` field (D1), the conditional \`fingerprint_overridden\` / \`fingerprints_unverified\` (C2) fields, and the conditional \`judgements\` array (rc04a). The \`continuation\`/\`proceed\` entry of that array is the SOLE record of a proceed-anyway past the \`review-system\` gate: the C1-era field it once accompanied is RETIRED (rc04c), and emits written before that retirement carry it as a PRIOR GENERATION that readers continue to accept.
 
@@ -80,10 +73,65 @@ The schema below documents the per-command extensions ADDED to that spine (\`arc
 }
 \`\`\`
 
+## Example payload
+
+A payload file the archive writes after the move — here an archive that took every conditional branch at once (\`--skip-audit\`, a proceed-anyway past an unpassed \`review-system\` gate, a fingerprint override, an unverified requirement, an attached draft PR), so one payload carries every key the block documents. Real JSON, accepted by \`orbit emit archive --change <name>\` against the ARCHIVED directory, carrying no engine-owned key. An archive that took none of those branches simply omits the conditional keys. A test submits this block, unchanged, through the write gate, with the archived trail seeded with the pass its \`formed_against\` arrays name (\`orbit-emit-composition\`'s \`Payload schema references are proven by execution\`).
+
+\`\`\`json example archived
+{
+  "final_assessment": "Archived add-detail-flag to orbit/changes/archive/2026-10-04-add-detail-flag/.",
+  "archive_path": "orbit/changes/archive/2026-10-04-add-detail-flag/",
+  "audit": { "ran": false, "failure_reason": null, "findings_summary": { "critical": 0, "warning": 0, "suggestion": 0 }, "summary_path": null },
+  "audit_skipped_via_flag": true,
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": ["orbit-status-output"],
+    "added": 1,
+    "modified": 2,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "audit_skipped_via_flag",
+  "consent": "user-invoked",
+  "pr_url": "https://github.com/example/repo/pull/42",
+  "pr_state": "draft",
+  "judgements": [
+    {
+      "kind": "continuation",
+      "disposition": "proceed",
+      "formed_against": ["2026-10-03T14-20-00Z"],
+      "reasoning": "The one unresolved WARNING is a scenario title's wording; another pass would not change what the archive syncs.",
+      "ratified_by": "user",
+      "gate": "review-system",
+      "gate_state": "unpassed",
+      "gate_reason": "one WARNING unresolved on the external pass"
+    },
+    {
+      "kind": "readiness",
+      "formed_against": ["2026-10-03T14-20-00Z"],
+      "disposition": "ready",
+      "reasoning": "The external pass found nothing the walk left open beyond the accepted residual.",
+      "ratified_by": "ai",
+      "accepted": [{ "claim": "The --detail flag is untested on Windows paths", "why": "No Windows runner exists here; recorded for the first adopter report." }]
+    }
+  ],
+  "fingerprint_overridden": [
+    { "capability": "orbit-status-output", "requirement": "Detail flag", "base_hash": "sha256:1111111111111111111111111111111111111111111111111111111111111111", "live_hash": "sha256:2222222222222222222222222222222222222222222222222222222222222222" }
+  ],
+  "fingerprints_unverified": [
+    { "capability": "orbit-status-output", "requirement": "Compact flag" }
+  ],
+  "warnings": ["Archived with 1 incomplete task (5.3, a user-validation handoff)"],
+  "model": "claude-opus-5-5"
+}
+\`\`\`
+
 ## Field notes
 
 - **\`audit.ran\`** = \`false\` either because \`--skip-audit\` was set (then the top-level \`audit_skipped_via_flag: true\` is recorded) or because audit-drift failed (then \`failure_reason\` is set). The two cases are disambiguated by those flags.
-- **\`audit.findings_summary\`** mirrors the audit-drift run summary's counts; the full audit detail lives at the path in \`audit.summary_path\`.
+- **\`audit.findings_summary\`** is the severity count (\`critical\` / \`warning\` / \`suggestion\`) of the pre-archive sweep's findings — the archive's own record; the standalone audit-drift emit carries no severity summary.
 - **\`audit_skipped_via_flag\`** (top-level boolean): recorded as \`true\` only when \`/orbit:archive --skip-audit\` was used; omit the field otherwise. This is the flat field the skill body and the \`orbit-archive-modifications\` baseline require — it is NOT nested inside \`audit\`.
 - **\`sync_specs.capabilities_updated\`** lists capability names whose \`orbit/specs/<capability>/spec.md\` was edited; the delta counts (\`added\`/\`modified\`/\`removed\`/\`renamed\`) sit DIRECTLY under \`sync_specs\`, mirroring \`orbit-conventions\`' canonical lifecycle example.
 - **\`unresolved_markers\`** is an ARRAY of the \`@review:\` markers still present when the archive proceeded (empty array when none) — one \`"<file>:<line> — <marker text>"\` entry per marker. Marker-prompt outcomes that halt the archive write no summary at all.

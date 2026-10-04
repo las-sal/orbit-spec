@@ -164,14 +164,9 @@ const COMMANDS: Record<string, CommandSpec> = {
   'audit-drift': {
     kind: 'editorial',
     scopes: { change: true, project: true },
-    payloadFields: [
-      'final_assessment',
-      'categories_run',
-      'findings_by_category',
-      'findings_total',
-      'findings',
-      'stale_suppressed',
-    ],
+    // rc07b: `findings_total` / `findings_by_category` left this row — they are COMPUTED from
+    // `findings` at write and refused in the payload (ENGINE_OWNED_EXTRA below).
+    payloadFields: ['final_assessment', 'categories_run', 'findings', 'stale_suppressed'],
   },
   'review-external': {
     kind: 'editorial',
@@ -241,6 +236,9 @@ const ENGINE_OWNED_EXTRA: Record<string, string[]> = {
   ],
   'address-reviews': ['iteration'],
   'review-external': ['awaiting_findings'],
+  // rc07b (`orbit-emit-composition`'s `Audit-drift counts are engine-computed`): a supplied count
+  // was a second voice on `findings.length` — and the only input the clean branch read.
+  'audit-drift': ['findings_total', 'findings_by_category'],
 };
 
 /**
@@ -527,10 +525,59 @@ function validatePayload(command: string, payload: Record<string, unknown>): voi
   // need the computed genre, which needs the emit's own token — they run at composition.
   validateReviewVerification(command, payload);
 
+  // rc07b: the audit-drift count INPUTS — refused when malformed, never coerced, because the
+  // computed counts read them.
+  validateAuditDriftCountInputs(command, payload);
+
   // rc04a: the judgement record's STRUCTURE — shape, kind/disposition agreement, the
   // required kind-specific extras. Its ORDERING is checked at the write gate instead,
   // because that check needs the emit's resolved <TS> token, which does not exist yet here.
   validateJudgements(command, payload);
+}
+
+// ---------------------------------------------------------------------------------------
+// rc07b: AUDIT-DRIFT COUNTS ARE ENGINE-COMPUTED.
+//
+// `findings_total` and `findings_by_category` are computed from `findings` (and keyed over the
+// UNION of `categories_run` and the categories findings carry), so the two counts and the
+// findings-versus-clean branch of `next_recommended` cannot disagree with the record. The inputs
+// are refused when malformed — the trail holds `categories_run` as an object of booleans and as
+// numbers, and coercing either would mint meaningless keys silently.
+// ---------------------------------------------------------------------------------------
+
+function validateAuditDriftCountInputs(command: string, payload: Record<string, unknown>): void {
+  if (command !== 'audit-drift') return;
+  const run = payload.categories_run;
+  if (run !== undefined && (!Array.isArray(run) || run.some(c => typeof c !== 'string'))) {
+    throw new EmitError(
+      `audit-drift 'categories_run' must be an array of category-id strings ("1".."6") — the counts are keyed by it, and a malformed input is refused, never coerced.`
+    );
+  }
+  const findings = payload.findings;
+  if (findings === undefined) return;
+  if (!Array.isArray(findings)) {
+    throw new EmitError(`audit-drift 'findings' must be an array — the counts are computed from it.`);
+  }
+  findings.forEach((raw, i) => {
+    const category = raw !== null && typeof raw === 'object' && !Array.isArray(raw) ? (raw as Record<string, unknown>).category : undefined;
+    if (typeof category !== 'string' || category.trim() === '') {
+      throw new EmitError(
+        `audit-drift findings[${i}].category must be a non-empty string — findings_by_category counts it.`
+      );
+    }
+  });
+}
+
+/** The two computed counts, over inputs `validateAuditDriftCountInputs` already accepted. */
+function computeAuditDriftCounts(payload: Record<string, unknown>): {
+  findings_total: number;
+  findings_by_category: Record<string, number>;
+} {
+  const findings = (Array.isArray(payload.findings) ? payload.findings : []) as Array<{ category: string }>;
+  const byCategory: Record<string, number> = {};
+  for (const c of (payload.categories_run as string[] | undefined) ?? []) byCategory[c] = 0;
+  for (const f of findings) byCategory[f.category] = (byCategory[f.category] ?? 0) + 1;
+  return { findings_total: findings.length, findings_by_category: byCategory };
 }
 
 // ---------------------------------------------------------------------------------------
@@ -1615,7 +1662,10 @@ export function composeAndWriteEmit(
       break;
     }
     case 'audit-drift': {
-      const total = Number((payload as any).findings_total ?? 0);
+      const counts = computeAuditDriftCounts(payload);
+      emit.findings_total = counts.findings_total;
+      emit.findings_by_category = counts.findings_by_category;
+      const total = counts.findings_total;
       if (resolved.scope === 'project') {
         emit.next_recommended =
           total > 0

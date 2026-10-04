@@ -17,16 +17,9 @@ Each \`/orbit:audit-drift\` invocation persists a JSON summary. Path varies by i
 
 ## Universal spine inheritance
 
-This schema inherits the 6-field **universal spine** from \`orbit-conventions\`'s \`Internal-run JSON summary format\` requirement (see \`orbit/specs/orbit-conventions/spec.md\`):
+The spine every emit carries — its fields, their types and which of them the engine composes — is owned by \`orbit-conventions\`' \`Internal-run JSON summary format\` requirement, and is not restated here; the write gate refuses every field the engine composes. The example below carries exactly what a payload supplies, \`model\` included.
 
-- \`command\` (here: \`"audit-drift"\`)
-- \`timestamp\` (ISO-8601 UTC; JSON field \`YYYY-MM-DDTHH:MM:SSZ\`; filename \`<TS>\` token \`YYYY-MM-DDTHH-MM-SSZ\` with colons replaced by hyphens for filesystem safety)
-- \`change\` (change name string for change-scoped standalone; \`null\` for project-wide standalone)
-- \`final_assessment\` (narrative)
-- \`next_recommended\` (verbatim recommendation; varies by findings-vs-clean per \`orbit-run-summary-emit\`'s \`Audit-drift standalone recommendations\` requirement)
-- \`kind: "editorial"\` (audit-drift is an editorial command per the kind taxonomy)
-
-The schema below documents per-command extensions ADDED to that spine (\`context\`, \`caller\`, \`depth\`, \`flags\`, \`categories_run\`, \`categories_skipped\`, \`findings_summary\`, \`findings\`, \`stale_suppressed\`). Per-command extensions are audit-drift-specific state. (RESTORED 2026-09-12: \`orbit-conventions\`' editorial-emit requirement preserves audit-drift's own \`findings_summary\`/\`finding_titles\` shapes, and \`orbit-run-summary-emit\` types \`categories_run\` as an object of named booleans — the engine's payload table disagrees with BOTH. The three-way divergence is a known, dated follow-up owned by the artifact-lint stage rc07, not a defect this stage resolves; the parity test records it as a named exception.)
+The payload this command writes is OWNED by \`orbit-run-summary-emit\`'s \`Audit-drift standalone recommendations\` requirement, which this reference MIRRORS and never defines: the per-command extensions are \`categories_run\`, \`findings\` and \`stale_suppressed\`, plus \`final_assessment\`. The two counts — \`findings_total\` and \`findings_by_category\` — are ENGINE-COMPUTED from \`findings\` and refused in the payload, per \`orbit-emit-composition\`'s \`Audit-drift counts are engine-computed\`. The write gate refuses any other key.
 
 ## Schema
 
@@ -36,32 +29,12 @@ The schema below documents per-command extensions ADDED to that spine (\`context
   "timestamp": "<ISO-8601>",
   "change": "<change-name string for change-scoped standalone; null for project-wide standalone>",
   "final_assessment": "<stock phrasing per invocation mode>",
-  "next_recommended": "<on findings — change-scoped: '/orbit:address-reviews <name>' WITHOUT --from-file (auto-discovery selects this just-written JSON); project-wide: '/orbit:address-reviews --from-file <this-json>' (no change-directory anchor, so --from-file IS required). On clean — change-scoped: verbatim copy from the prior latest JSON; project-wide: the periodic-re-run phrasing. Per orbit-run-summary-emit's Audit-drift standalone recommendations.>",
+  "next_recommended": "<engine-composed, per orbit-run-summary-emit's Audit-drift standalone recommendations — never supplied>",
   "kind": "editorial",
-  "context": "standalone",
-  "caller": null,
-  "depth": "fast" | "full" | "thorough",
-  "flags": {
-    "parallel": false,
-    "focus": null,
-    "since": null,
-    "strict": false
-  },
+  "model": "<the emitting AI's model identity, or null>",
   "categories_run": ["1", "2", "3", "4", "5", "6"],
-  "categories_skipped": [],
-  "findings_summary": {
-    "critical": 0,
-    "warning": 0,
-    "suggestion": 0,
-    "by_category": {
-      "1": { "critical": 0, "warning": 0, "suggestion": 0 },
-      "2": { "critical": 0, "warning": 0, "suggestion": 0 },
-      "3": { "critical": 0, "warning": 0, "suggestion": 0 },
-      "4": { "critical": 0, "warning": 0, "suggestion": 0 },
-      "5": { "critical": 0, "warning": 0, "suggestion": 0 },
-      "6": { "critical": 0, "warning": 0, "suggestion": 0 }
-    }
-  },
+  "findings_total": <integer>,                     // engine-computed; refused in the payload
+  "findings_by_category": { "<category id>": <integer> }, // engine-computed; refused in the payload
   "findings": [
     {
       "category": "1",
@@ -82,12 +55,48 @@ The schema below documents per-command extensions ADDED to that spine (\`context
 }
 \`\`\`
 
+## Example payload
+
+The payload file Step 10 writes — real JSON, accepted by \`orbit emit audit-drift\` with \`--change <name>\` and bare. It carries no engine-owned key. A test submits this block, unchanged, through the write gate in both scopes (\`orbit-emit-composition\`'s \`Payload schema references are proven by execution\`).
+
+\`\`\`json example change project
+{
+  "final_assessment": "2 drift(s) detected: 1 warning, 1 suggestion.",
+  "categories_run": ["1", "2", "3", "4", "5", "6"],
+  "findings": [
+    {
+      "category": "1",
+      "severity": "WARNING",
+      "file": "orbit/specs/orbit-status/spec.md",
+      "line": 42,
+      "title": "Stale 'BridgeServer' reference (renamed to HostLifecycle)",
+      "recommendation": "Replace the name in the next change that touches orbit-status."
+    },
+    {
+      "category": "3",
+      "severity": "SUGGESTION",
+      "file": "README.md",
+      "line": 12,
+      "title": "README and orbit-onboard disagree on the command count",
+      "recommendation": "Make one side canonical and point the other at it.",
+      "recommendation_options": [
+        { "label": "A", "body": "README is canonical; orbit-onboard points at it." },
+        { "label": "B", "body": "orbit-onboard is canonical; README points at it." }
+      ]
+    }
+  ],
+  "stale_suppressed": [
+    { "category": "2", "title": "Lens 'verify-first' names a retired command", "evidence": "grep finds no 'verify-first' in orbit/ since 1a2b3c4d" }
+  ],
+  "model": "claude-opus-5-5"
+}
+\`\`\`
+
 ## Field notes
 
-- **\`context\`** is \`"standalone"\` in every audit-drift-<TS>.json — library and pre-archive contexts write no separate file (their findings travel in the caller's emit), so the \`"library"\` / \`"pre-archive"\` values appear only when a caller chooses to embed this shape inside its own emit. Project-wide vs change-scoped standalone is distinguished by the \`change\` field (\`null\` = project-wide; \`<name>\` = change-scoped).
-- **\`caller\`** is \`null\` for standalone emits (the only contexts that write this file).
-- **\`categories_run\` / \`categories_skipped\`** are strings (category IDs); skip reasons in the report body, not the array.
-- **\`findings_summary.by_category\`** keys are category IDs \`"1"\` through \`"6"\` (5 = Touchpoints divergence, 6 = Emit attestation cross-check — D-arc Stage D5; include keys only for categories that ran).
+- **\`categories_run\`** is an array of category-id strings, \`"1"\` through \`"6"\` (5 = Touchpoints divergence, 6 = Emit attestation cross-check — D-arc Stage D5) — the categories that ran; skip reasons belong in the report body, not the array. The write gate refuses any other shape (an object of booleans, numbers), never coerces it.
+- **\`category\`** on each finding is REQUIRED, a non-empty category-id string — \`findings_by_category\` counts it.
+- **\`findings_total\` / \`findings_by_category\`** are ENGINE-COMPUTED and refused in the payload: the length of \`findings\`, and one key per id in \`categories_run\` plus one per category a finding carries, each the number of findings carrying it — per \`orbit-emit-composition\`'s \`Audit-drift counts are engine-computed\`. \`stale_suppressed\` entries are not counted.
 - **\`recommendation_options\`** is OPTIONAL on each finding. Present only when the finding's recommendation is genuinely disjunctive — multiple defensible remediation paths the user must choose between. Producer-side contract (per \`orbit-audit-drift\` spec's \`Optional recommendation_options field on audit-drift finding entries\`): MUST contain ≥ 2 entries; each entry MUST have non-empty \`label\` (typically \`"A"\`, \`"B"\`, \`"C"\`, …) and non-empty \`body\`. Per-category emit guidance: Category 1 (vocabulary residue) typically single-recommendation; Category 2 (lens staleness) often disjunctive (rename-vs-remove); Category 3 (cross-doc consistency) often disjunctive (which side is canonical); Category 4 (archive coherence) typically single. The prose \`recommendation\` field still summarizes the disjunction for human readers. Field shape is identical to \`orbit-review\`'s \`recommendation_options\`; consumer (address-reviews) parses both producers uniformly. Omit for single-recommendation findings.
 `;
 
@@ -329,7 +338,7 @@ Stock phrasings, context-specific:
 
 ### 10. Persist the run summary
 
-**Standalone invocations only** — library / pre-archive contexts write no separate JSON (findings fold into the caller's emit: the review's \`review-system-<TS>.json\` or the archive's \`archive-<TS>.json\` \`audit.*\` fields). Compose the payload — narrative + the per-command extension fields \`references/run-summary-schema.md\` lists (\`categories_run\`, \`findings_by_category\`, \`findings_total\`, findings, \`stale_suppressed\`) — write it to a temp file, and invoke:
+**Standalone invocations only** — library / pre-archive contexts write no separate JSON (findings fold into the caller's emit: the review's \`review-system-<TS>.json\` or the archive's \`archive-<TS>.json\` \`audit.*\` fields). Compose the payload in the shape of the **Example payload** in \`references/run-summary-schema.md\` — the only keys it may carry are the ones that example carries; the two counts are engine-computed and refused — write it to a temp file, and invoke:
 
 \`\`\`bash
 orbit emit audit-drift --change <name> --payload <payload-file>   # change-scoped standalone
