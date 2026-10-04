@@ -1,0 +1,86 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-04T21:30:05Z",
+  "change": "rc06a-scenario-map",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {},
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "A tag naming a repeated title's key renders ORPHAN, and no sentence or test states it",
+      "file": "orbit/changes/rc06a-scenario-map/specs/orbit-scenario-map/spec.md",
+      "line": 189,
+      "recommendation": "The behaviour is defensible — the key resolves to no single scenario, which is what ORPHAN means — but a reader of the surface sees the tag ORPHAN beside two MALFORMED spec lines for the scenario it plainly names. Either add one clause to the owner sentence (a tag or ledger entry naming an UNKEYABLE key renders ORPHAN) with a test, or carry it to rc06b, whose readers interpret the surface."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Verified both walks against the committed diff from the external return's commit (d99d2c16) to 6c0ea98a. The residual check listed nine files; every one sits inside a walk entry's sweep scope, so the record has no gap. Walk 1's four edits are each present and match their claims: the REMOVED row now agrees with the engine and its test, the OFF header string covers absent and inert, the legacy printer labels at the issue's own level (no baseline spec pinned the old label; the only [WARNING] hit in tests is the new assertion of its absence), and the single-item printer sentence is accurate for the bulk and legacy printers and for every --json form. Walk 2's widening was probed against the built map beyond its own tests: a repeat inside a MODIFIED block and through a RENAMED-only requirement is refused, the same title under two different requirements stays keyable, and titles differing only in surrounding whitespace collide after trimming, as keys are trimmed. Every restatement of the unkeyable rule moved with it — the tag requirement now points at the owner, and the proposal, design D5 and D8, both engine messages and task 5.2's count agree. The one gap is the ORPHAN rendering of a tag on an unkeyable key, unpinned. Passes 4 and 5 skipped: orbit/lenses/ does not exist.",
+  "passes_run": [
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    "0 — VERIFICATION genre: verify-change covers the whole change, not the walks' sweep scopes",
+    "4 — no perspectives defined (orbit/lenses/ absent)",
+    "5 — no critical paths defined (orbit/lenses/ absent)",
+    "6 — VERIFICATION genre: audit-drift covers the whole project, not the walks' sweep scopes"
+  ],
+  "verification": [
+    {
+      "title": "REMOVED row says its tags go ORPHAN once the change is archived; the map makes them ORPHAN in the change's own view now",
+      "file": "orbit/changes/rc06a-scenario-map/specs/orbit-scenario-map/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "OFF header always says 'no scenario_map key', also when the key is present but inert",
+      "file": "src/core/scenario-map.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Legacy 'orbit change validate' prints the new scenario-map INFO issues as '[WARNING]' on an invalid report and drops them on a valid one",
+      "file": "src/commands/change.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Bulk human-mode 'orbit validate --changes/--all' never shows the scenario-map INFO lines",
+      "file": "src/commands/validate.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Duplicate scenario titles silently share one declaration",
+      "file": "src/core/scenario-map.ts",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 0 warning, 1 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-04T20-57-06Z",
+    "2026-10-04T21-28-11Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc06a-scenario-map --from-file orbit/changes/rc06a-scenario-map/.orbit-runs/review-system-2026-10-04T21-30-05Z.json"
+}

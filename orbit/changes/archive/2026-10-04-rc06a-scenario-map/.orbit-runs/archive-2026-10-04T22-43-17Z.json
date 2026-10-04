@@ -1,0 +1,74 @@
+{
+  "command": "archive",
+  "timestamp": "2026-10-04T22:43:17Z",
+  "change": "rc06a-scenario-map",
+  "kind": "lifecycle",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Archived rc06a-scenario-map to orbit/changes/archive/2026-10-04-rc06a-scenario-map/ through a computed PASSED review-system gate; orbit-scenario-map ADDED (7 requirements, 35 scenarios, every one declared).",
+  "archive_path": "orbit/changes/archive/2026-10-04-rc06a-scenario-map/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-scenario-map"
+    ],
+    "added": 7,
+    "modified": 0,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_clean",
+  "consent": "user-invoked",
+  "warnings": [
+    "Pre-archive audit-drift (Category 5): src/commands/change.ts is an unpredicted touchpoint — walk 1 (ratified A) repaired its INFO label after design.md's Touchpoints were written.",
+    "The engine's sync wrote a TBD Purpose for the new baseline; replaced in flow with a real Purpose.",
+    "Baseline capabilities 21 -> 22: CLAUDE.md's current-state capabilities mark moved to 22; the second marked span sat in rc04b's historical paragraph ('stays at 21', true then), so it became unmarked prose ('stayed at 21') rather than a falsified history — capabilities now carries 1 marker.",
+    "Exit (1) measured at archive as written: with every task checked, orbit validate rc06a-scenario-map reports no scenario-map issue because every delta scenario is declared; the failing direction is pinned by the validation suite's 'every task checked: ERROR, and validate fails' case."
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "formed_against": [
+        "2026-10-04T20-46-31Z",
+        "2026-10-04T20-48-27Z"
+      ],
+      "disposition": "ready",
+      "reasoning": "The blind pair found one real mechanism defect (the external CRITICAL: repeated titles collapsing into one declaration) and four prose or printer gaps; all five were walked, and the in-context VERIFICATION pass graded every one landed against the committed diff, with the widened unkeyable rule probed on five edge cases beyond its tests. The stage grades itself on its own surface: 35 of 35 delta scenarios declared, zero orphan, zero malformed, and validate after apply reports no scenario-map issue.",
+      "ratified_by": "ai",
+      "accepted": [
+        {
+          "claim": "PASSED means every finding is resolved, not that an independent pass stood clean on the final tree: walk 2 widened the owner requirement's unkeyable rule after both independent passes ran, and that widening has been read only in-context.",
+          "why": "rc07's distinction, stated rather than implied; the widening reuses the reviewed unkeyable path end to end and was probed on five cases beyond its tests."
+        },
+        {
+          "claim": "A tag naming a repeated title's key renders ORPHAN, and no sentence or test pins it (the in-context confirm's one SUGGESTION).",
+          "why": "The behaviour matches what ORPHAN means — the key resolves to no single scenario; how a reader interprets the surface is rc06b's charter, carried there."
+        },
+        {
+          "claim": "The bulk orbit validate printer and the legacy orbit change validate print no scenario-map INFO under a valid report (fresh pass SUGGESTIONs 3 and 4, walked to a named limit).",
+          "why": "Named in the INFO requirement as the single-item printer being the only one it binds; every --json form carries every issue."
+        },
+        {
+          "claim": "validator.ts counts scenarios with an unfenced '^####' match while the map reads '#### Scenario:' fence-aware — a third heading grammar beside the two design D1 composes (the fresh pass's commentary).",
+          "why": "The counter is upstream's and predates this change; collapsing the engine's heading grammars is Q-crc-15's."
+        },
+        {
+          "claim": "The line classifier's three named limits stand: a tag-shaped line inside a string literal attaches like a real tag, only JS/TS call forms are recognised, and an enclosing describe.skip is invisible.",
+          "why": "Stated in the owning requirement; this repo's own scan reads zero orphan and zero malformed, and design D3 keeps fixtures from carrying literal tags."
+        }
+      ]
+    }
+  ],
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."
+}

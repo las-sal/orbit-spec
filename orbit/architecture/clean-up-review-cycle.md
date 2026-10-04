@@ -2470,7 +2470,7 @@ carries the map; (3) a system review's Pass 0 consumes the map rather than rebui
 ### Stage rc06a-scenario-map — a scenario's coverage is declared, and the engine computes the map
 
 Depends-on: (none)
-Complete: [ ]
+Complete: [x] 2026-10-04 (Sal)
 
 Declared 2026-10-04 (Sal) from the rc06 exploration's split (D-rc06-6). Charter: a test declares the
 scenario it exercises with a `@scenario` tag naming its kind (`behaviour` or `text`) and the scenario's
@@ -2489,6 +2489,17 @@ with the four kinds as separate columns and reports orphans — REVISED at decla
 emit carries the map" (R-crc-12's first case: the mechanism retires the emit, D-rc06-3); (3) every
 scenario in rc06a's own delta is declared when it archives.
 
+Shipped as (2026-10-04; the charter above stays as declared — the departures are recorded in the archived design,
+`orbit/changes/archive/2026-10-04-rc06a-scenario-map/design.md`): the check is OPT-IN by `scenario_map: {tests: [globs]}`
+in `orbit/config.yaml`, absent or inert leaving `orbit validate` byte-identical (D-rc06-10), and this repo opts in; an
+undeclared delta scenario "fails" validate only once the change's `apply` gate passes — INFO before, ERROR after, read from
+the same gate computation `orbit status --change` renders, with an unresolvable schema reading INFO (D-rc06-12, design D4;
+the metadata's schema passed explicitly at apply); a delta title whose key cannot name exactly one scenario — it contains
+` :: `, or (system walk 2, the external CRITICAL) it repeats within its requirement — is UNKEYABLE, an ERROR at every gate
+state; the charter's "owner of the status command's flags" needed no delta (`orbit-orientation` already licenses new
+`--change` flags), so ONE capability, `orbit-scenario-map`, shipped. Exit (1) graded on the post-apply ERROR the
+validation suite pins; exit (3) on 35 of 35 delta scenarios declared.
+
 ### Stage rc06b-map-readers — verify and the first review read the map
 
 Depends-on: rc06a-scenario-map
@@ -2501,6 +2512,12 @@ consumes the map rather than rebuilding it. Neither records a copy. Goal G2. Tou
 (Pass 0); verify-change has no orbit capability and either gains one or rides orbit-review — measured
 at propose. Exit: (1) the verify body's coverage step names the surface and carries no prose-tracing
 instruction; (2) a system review's Pass 0 consumes the map rather than rebuilding it (rc06's exit (3)).
+
+RIDER 2026-10-04 (from rc06a's archive readiness record, `archive-2026-10-04T22-43-17Z.json`). A tag or ledger
+entry naming an UNKEYABLE key — a delta title containing ` :: ` or repeated within its requirement — renders ORPHAN on
+rc06a's surface, and no sentence or test pins that. The behaviour fits ORPHAN's definition (the key resolves to no
+single scenario); whether a reader should present it beside the two MALFORMED spec lines as one problem is this
+stage's to decide, since its readers are the ones that interpret the surface.
 
 ### Stage rc07-artifact-lint — consistency is a lint, not a review
 
@@ -4629,3 +4646,13 @@ apply-emit pointer its charter assumed and D-rc06-3 retired. Stage count 27 → 
 marked sites (this entry's mark is the third; the previous entry's was unmarked as history). rc06 stays
 `exploring` while the exploration cites it; it takes its ENDED mark once both children have shipped, as
 rc03 did. Next: propose rc06a from the exploration.
+
+**2026-10-04 — Architect session: rc06a-scenario-map RATIFIED (Sal).** Offered on its quiescent-awaiting state and
+ratified; all three exit criteria graded MET as written — (1) on the post-apply ERROR the validation suite pins (an
+undeclared ADDED scenario with every task checked fails validate naming its key; INFO before apply is design D4's
+refinement of WHEN, not a revision of the criterion), (2) on `orbit status --change <name> --scenarios` rendering the
+four cover kinds as separate columns with ORPHAN and MALFORMED by name, (3) on 35 of 35 delta scenarios declared at
+archive. Archived through a COMPUTED PASSED gate (`archive-2026-10-04T22-43-17Z.json`); its readiness record carries
+five accepted residuals, one of which — a tag naming a repeated title's key renders ORPHAN, unpinned — is handed to
+rc06b-map-readers, whose readers interpret the surface. rc06 keeps its heading as the split record and takes its ENDED
+mark once rc06b ships, as rc03 did.

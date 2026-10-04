@@ -1,0 +1,38 @@
+{
+  "command": "architect",
+  "timestamp": "2026-10-04T22:46:52Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Ratified rc06a-scenario-map (all three exit criteria MET as written) and carried its one reader-facing residual to rc06b-map-readers as a rider; the program is eighteen stages complete.",
+  "stages_touched": [
+    "rc06a-scenario-map",
+    "rc06b-map-readers"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [
+    "rc06a-scenario-map"
+  ],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/clean-up-review-cycle.md",
+        "why": "the live program; rc06b's section carries its charter and the new rider"
+      },
+      {
+        "path": "orbit/changes/archive/2026-10-04-rc06a-scenario-map/.orbit-runs/archive-2026-10-04T22-43-17Z.json",
+        "why": "rc06a's readiness record — the residuals rc06b inherits"
+      },
+      {
+        "path": "orbit/specs/orbit-scenario-map/spec.md",
+        "why": "the surface rc06b's readers consume"
+      }
+    ],
+    "next_command": "/orbit:explore rc06b-map-readers",
+    "model_hint": null,
+    "seam": "rc06a ratified; rc06b (its only dependent) is premised and unblocked"
+  },
+  "next_recommended": "/orbit:explore rc06b-map-readers"
+}

@@ -106,7 +106,7 @@ The full plan and design decisions live in the docs below — **read them before
 
 ## The ACTIVE program: clean-up-review-cycle (the D-arc is quiescent)
 
-**Current state, engine-checked:** the program's rulings index holds <!-- src:rulings -->14<!-- /src:rulings --> rulings, and `orbit/specs/` holds <!-- src:capabilities -->21<!-- /src:capabilities --> baseline capabilities. Every marked figure in this file is checked against `orbit/sources.yaml` by `orbit validate --sources`; an UNMARKED figure is invisible to that check.
+**Current state, engine-checked:** the program's rulings index holds <!-- src:rulings -->14<!-- /src:rulings --> rulings, and `orbit/specs/` holds <!-- src:capabilities -->22<!-- /src:capabilities --> baseline capabilities. Every marked figure in this file is checked against `orbit/sources.yaml` by `orbit validate --sources`; an UNMARKED figure is invisible to that check.
 
 As of 2026-09-11 the D-arc's six stages are all archived (d1 complete-ratified; d2–d6
 quiescent, awaiting ratification) and the live program is
@@ -209,7 +209,7 @@ file now carries a live mark. Do NOT read this paragraph as the program's full l
 only what rc07 produced. The authoritative list is the program doc's own Open questions section,
 which also carries Q-crc-11, Q-crc-12, Q-crc-20, Q-crc-21, Q-crc-22 and Q-crc-23.
 
-**Fourteen more stages have shipped since, and the program is SEVENTEEN stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b, rc03c and rc07b ratified 2026-10-04; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening).
+**Fifteen more stages have shipped since, and the program is EIGHTEEN stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b, rc03c, rc07b and rc06a ratified 2026-10-04; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening).
 
 `rc02c-confirmation-semantics` is ARCHIVED (2026-09-21): **the budget stopped being a target.**
 R-crc-11(h) — effort is RECORDED, never TARGETED — retired `budgetExhausted`, the
@@ -491,7 +491,7 @@ Direction requirement OWNS (which way and why; never counts, gate state or a com
 schema field note names the owners and re-lists nothing (walk 1). FIVE capabilities DECLARED against
 R-crc-1's ceiling (D-rc04b-7), eleven blocks (9 MODIFIED, 2 ADDED — the ninth MODIFIED is the
 Commentary requirement's wording, added at walk 2 so the two quarantined slots read as one zone);
-synced 11/11 byte-verified; the capability count stays at <!-- src:capabilities -->21<!-- /src:capabilities -->. The cycle: fresh → external (GPT-6 Codex) →
+synced 11/11 byte-verified; the capability count stayed at 21. The cycle: fresh → external (GPT-6 Codex) →
 in-context on the proposal (nineteen findings, zero CRITICAL); apply 18/19 in one session; then the
 **blind pair on the pushed apply commit `2f482e65`** — external GPT-6 Codex 0C/2W/1S and fresh
 0C/1W/5S, blind, **zero CRITICAL on either half (the program's first system pair with none)**, zero
@@ -593,6 +593,28 @@ example tagged for scopes its provenance cannot occur in (Sal: A, one example pe
 (the gate checks type; the range stays the body's); an in-context VERIFICATION confirm graded six entries `landed`; a
 **COMPUTED PASSED gate** — the eleventh rc-stage through one, the tenth through the pair. The readiness record accepts five
 residuals, headlined by rc07's distinction. **2583 tests green** (2559 → 2583).
+
+`rc06a-scenario-map` is ARCHIVED (2026-10-04; the first child of the split parent `rc06`, R-crc-9's fifth preventive
+application): **a scenario's coverage is declared where the test is, and the engine computes the map.** A test carries
+`// @scenario <behaviour|text> <capability> :: <requirement> :: <scenario>` above the call it exercises — a line classifier,
+never a language parse, over a CLOSED next-line table (`it(`/`test(`/`.each`/`.skipIf(`/`.only(` attach; skip, todo,
+`describe` and every other line are refused by name), with stacked tags and near-misses MALFORMED by line;
+`orbit/scenario-ledger.yaml` declares what no test can run (`observed` citing a record, `untestable` with a why). NEW
+`src/core/scenario-map.ts` resolves keys over the baseline with the change's delta applied KEY-WISE in the archive's order
+(never through `buildUpdatedSpec`'s write guard), and `orbit status --change <name> --scenarios` (human and `--json`)
+renders the four cover kinds as separate columns, ORPHAN and MALFORMED by name, and counts — never a ratio; nothing is
+stored. `orbit validate <change>` reports each undeclared delta scenario at INFO until the change's `apply` gate passes and
+ERROR after (read through the same status computation; an unresolvable schema reads INFO), and an UNKEYABLE title — one
+containing ` :: ` or repeated within its requirement — at ERROR always. The check is OPT-IN by `scenario_map:` in
+`orbit/config.yaml`, read on its own so no other field's warning reaches validate; this repo opts in. Baseline capabilities
+**21 → 22** (`orbit-scenario-map` ADDED, 7 requirements). The cycle: proposal external (GPT-6 Codex) and in-context
+VERIFICATION; apply 19/19; the **blind pair on the pushed apply commit `2f32dca8`** — fresh 0C/1W/3S (forward) and external
+GPT-6 Codex 1C/0W/0S (hold), zero overlap: the external half found the one mechanism defect, a silent dedupe that let one
+tag satisfy two same-titled scenarios — an exploration FACT (every baseline triple is unique) implemented as an unenforced
+RULE; two walk logs (Sal: A on both); an in-context VERIFICATION confirm graded five entries `landed`; a **COMPUTED PASSED
+gate**. The stage grades itself: 35 of 35 delta scenarios declared on its own surface, 1090 baseline scenarios undeclared
+and counted, never backfilled. The readiness record accepts five residuals, headlined by rc07's distinction. **2679 tests
+green** (2583 → 2679).
 
 Read that doc before any rc-stage work; the D-arc section below is the historical
 record of how the engine got here.
