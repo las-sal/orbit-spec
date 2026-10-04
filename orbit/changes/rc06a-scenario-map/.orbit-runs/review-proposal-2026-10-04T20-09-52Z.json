@@ -1,0 +1,102 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-04T20:09:52Z",
+  "change": "rc06a-scenario-map",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {},
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "The INFO-level requirement still assigns an UNKEYABLE scenario the gate-following level",
+      "file": "orbit/changes/rc06a-scenario-map/specs/orbit-scenario-map/spec.md",
+      "line": 233,
+      "recommendation": "`An undeclared delta scenario is INFO until the apply gate passes` states the level rule for every undeclared delta scenario without the UNKEYABLE exception the walk added to `A declaration is owed…` (line 189). An unkeyable scenario is also undeclared, so the two requirements assign it INFO and ERROR at once before apply, and nothing says whether validate prints one line or two, whether the surface lists it in `scenarios` (with `uncovered: true`) as well as in `malformed`, or whether `counts.uncovered` includes it. Add one sentence to the INFO requirement naming the exception and pointing at its owner (R-crc-14), and state in the owner that an UNKEYABLE scenario is reported ONLY as UNKEYABLE — not also as undeclared, not in `scenarios`, not in `counts.uncovered`.",
+      "walk_entry": {
+        "title": "A valid scenario title can make archive impossible",
+        "file": "orbit/changes/rc06a-scenario-map/specs/orbit-scenario-map/spec.md"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "The OFF clause still promises byte-identical validate output for a malformed key",
+      "file": "orbit/changes/rc06a-scenario-map/specs/orbit-scenario-map/spec.md",
+      "line": 199,
+      "recommendation": "The walk narrowed `The scenario map is opt-in…` (line 268) to 'only an ABSENT key leaves validate unchanged; a malformed key adds its one warning', but `A declaration is owed…` still reads 'When the check is OFF, validate reports nothing from the map and its output is byte-identical to its output without this capability' — and a malformed key turns the check OFF. Narrow line 199 to the absent key (or to 'reports nothing from the map; a malformed key's one warning is the opt-in requirement's'), so the two statements agree.",
+      "walk_entry": {
+        "title": "The malformed-config byte-identity claim conflicts with its warning",
+        "file": "orbit/changes/rc06a-scenario-map/specs/orbit-scenario-map/spec.md"
+      }
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Three of the five landed cleanly: the pending-stack rule reads as one procedure with its table, the string-literal limit is now honest, and baseline scenarios are counted rather than promised. The two that did not land share a shape — each edited the sentence the finding named and left a sibling sentence elsewhere in the same spec still stating the old rule. That is the R-crc-14 pattern at file scale: a rule stated in two requirements needs both edited, or one of them reduced to a pointer. The UNKEYABLE rule itself is sound as mechanism; it is under-integrated, not wrong. Residual check from 1a483c09 named only the four files in the sweep scopes. A carried correction: the propose record's 'Tasks: 19' was written when tasks.md held 18; the file holds 19 now because the first walk added task 4.3.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "verification": [
+    {
+      "title": "A valid scenario title can make archive impossible",
+      "file": "orbit/changes/rc06a-scenario-map/specs/orbit-scenario-map/spec.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "Baseline scenarios are promised in the map but absent from its output shape",
+      "file": "orbit/changes/rc06a-scenario-map/specs/orbit-scenario-map/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The attachment rule classifies a stacked tag as a refused next line",
+      "file": "orbit/changes/rc06a-scenario-map/specs/orbit-scenario-map/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "A fixture string can create a silent false declaration",
+      "file": "orbit/changes/rc06a-scenario-map/specs/orbit-scenario-map/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The malformed-config byte-identity claim conflicts with its warning",
+      "file": "orbit/changes/rc06a-scenario-map/specs/orbit-scenario-map/spec.md",
+      "verdict": "regressed"
+    }
+  ],
+  "final_assessment": "0 critical, 2 warning, 0 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-04T20-07-55Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc06a-scenario-map --from-file orbit/changes/rc06a-scenario-map/.orbit-runs/review-proposal-2026-10-04T20-09-52Z.json"
+}
