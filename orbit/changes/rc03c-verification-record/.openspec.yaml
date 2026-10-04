@@ -1,0 +1,15 @@
+schema: spec-driven
+created: 2026-10-04
+schema_version: 4
+architecture:
+  doc: clean-up-review-cycle
+  stage: rc03c-verification-record
+base_fingerprints:
+  orbit-emit-composition:
+    Generic emit surface with a narrative-only payload contract: sha256:5a63bb62db298aebd1ca630480b30ce29f14fa581f3da5724c17538fd7b30560
+  orbit-report-rendering:
+    Report grammar — the frame sandwiches the commentary: sha256:158a48bacb86d28e3471f2c5f2d4f113a0137013229a29c15f84357de0d358e9
+    Render-time computed context — never stored, never authored: sha256:be317b1216d81b13b0cc33784f836b4641a69d5e0d5dd4ac31e49a98a912e24e
+    Strict input validation — fail loud, no partial render: sha256:bd65dd0524446ab30c39a32372a568b4091c9911b95bdd21b5da992e73ae0986
+  orbit-review:
+    Internal run summary persisted per mode: sha256:a7645d9601b3e5f61e19ec83426fcb1c649a33c09bd93d74e3023e647e2871e6

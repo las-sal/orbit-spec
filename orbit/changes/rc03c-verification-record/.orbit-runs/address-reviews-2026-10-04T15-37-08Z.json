@@ -1,0 +1,198 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-04T15:37:08Z",
+  "change": "rc03c-verification-record",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc03c-verification-record/.orbit-runs/review-proposal-2026-10-04T15-33-28Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-04T15-33-28Z",
+  "latest_apply_token": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 5,
+    "suggestion": 4
+  },
+  "pushback_verification": "9 of 9 verified against the current artifacts before acting (W1 against the orbit-review ADDED step (d) and Residual method; W2 against the emit-composition refusal list and tasks 1.2; W3 against report-render.ts:764-767's two header forms; W4 against the owed-set sentence; W5 reproduced live — require() throws on the repo-relative rc03b emit, readFileSync reads it; S1-S4 against the cited lines). 0 stale.",
+  "resolution_summary": {
+    "resolved": 9,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The git-diff residual check sweeps the trail and gives its findings no severity",
+      "file": "orbit/changes/rc03c-verification-record/specs/orbit-review/spec.md",
+      "line": 5,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Residual range named (<C> = commit adding the latest accepted independent pass's file, hash-only, else HEAD; plus untracked files), trail excluded by pathspec, unlisted edit filed as SUGGESTION (a record gap) in step (d), the Residual method line and the scenario.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03c-verification-record/specs/orbit-review/spec.md",
+          "orbit/changes/rc03c-verification-record/design.md",
+          "orbit/changes/rc03c-verification-record/tasks.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/changes/rc03c-verification-record/explore.md",
+            "reason": "the exploration's record: D-rc03c-6 keeps the propose-time residual wording; design D6 carries a dated note that the owner widened it"
+          }
+        ]
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "A VERIFICATION-genre pass with zero owed entries, and an empty verification array, are unspecified",
+      "file": "orbit/changes/rc03c-verification-record/specs/orbit-emit-composition/spec.md",
+      "line": 40,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "verification: [] REQUIRED on a VERIFICATION genre with zero owed entries; any verification ([] included) refused on REVIEW genre; empty record renders one row '- no verdicts owed — …'; scenarios added in both specs.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03c-verification-record/specs/orbit-emit-composition/spec.md",
+          "orbit/changes/rc03c-verification-record/specs/orbit-report-rendering/spec.md",
+          "orbit/changes/rc03c-verification-record/design.md",
+          "orbit/changes/rc03c-verification-record/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The header's pass-genre word has no rendered form, and its external-pass variant is unstated",
+      "file": "orbit/changes/rc03c-verification-record/specs/orbit-report-rendering/spec.md",
+      "line": 37,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Internal header line ends '· Pass genre: REVIEW|VERIFICATION'; external header omits the field (every external pass is REVIEW); design D8 gains the canonical rendered example the goldens transcribe.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03c-verification-record/specs/orbit-report-rendering/spec.md",
+          "orbit/changes/rc03c-verification-record/design.md",
+          "orbit/changes/rc03c-verification-record/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Whether the payload's verification and walk_entry keys are normalized before matching is unstated",
+      "file": "orbit/changes/rc03c-verification-record/specs/orbit-emit-composition/spec.md",
+      "line": 36,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Payload verification[] and walk_entry keys normalized by the gate's rule before every check; refusals print the normalized form; scenario and task case added.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03c-verification-record/specs/orbit-emit-composition/spec.md",
+          "orbit/changes/rc03c-verification-record/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Exit (3)'s instrument fails on a repo-relative emit path",
+      "file": "orbit/changes/rc03c-verification-record/design.md",
+      "line": 67,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Reproduction re-run: require(argv[1]) throws MODULE_NOT_FOUND on the repo-relative rc03b emit; JSON.parse(fs.readFileSync(...)) prints 'review'. Instrument fixed in design D9; cross-check restated by #### CRITICAL/WARNING subsection; task 4.5 aligned.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03c-verification-record/design.md",
+          "orbit/changes/rc03c-verification-record/tasks.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/changes/rc03c-verification-record/explore.md",
+            "reason": "the exploration's record: D-rc03c-10's EXECUTE move keeps the first instrument; design D9 records the correction"
+          }
+        ]
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "\"Judged against the latest walk that carries it\" is ambiguous when dispositions differ across walks",
+      "file": "orbit/changes/rc03c-verification-record/specs/orbit-emit-composition/spec.md",
+      "line": 36,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "A key is owed when ANY walk of verified_walks carries it resolved, judged against the latest walk carrying it resolved; a later stale call does not lift it; render row's walk token aligned; scenario and task case added.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03c-verification-record/specs/orbit-emit-composition/spec.md",
+          "orbit/changes/rc03c-verification-record/specs/orbit-report-rendering/spec.md",
+          "orbit/changes/rc03c-verification-record/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 4.1's retired-name grep exempts too little",
+      "file": "orbit/changes/rc03c-verification-record/tasks.md",
+      "line": 24,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Task 4.1's grep scoped to the change's specs/, src/, test/ and the generated review skill; the recording artifacts are out of scope.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03c-verification-record/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The VERIFICATION branch's placement is not checked against the review-genre grep test",
+      "file": "orbit/changes/rc03c-verification-record/tasks.md",
+      "line": 18,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Task 3.1 places the branch in the skill body's Step 5 VERIFICATION bullet, never a brief-region reference, free of phrase-rule terms; 1.5 asserts review-genre-brief.test.ts stays green.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03c-verification-record/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The consumed conventions row says \"per resolution\"; the owed set is resolved entries only",
+      "file": "orbit/changes/rc03c-verification-record/proposal.md",
+      "line": 27,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "One sentence in the emit-composition requirement: the conventions row's 'per resolution' reads as per owed (resolved) entry, by that requirement.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03c-verification-record/specs/orbit-emit-composition/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Proposal walk 1 (the fresh pass): 9 of 9 resolved, 0 stale — all nine previewed in the obvious-fix lane and walked on Sal's word ('walk all nine'). Headline: the residual check's diff now names its range and excludes the trail, and files an unlisted edit as a SUGGESTION record gap, so bookkeeping can never fail exit (3); the exit instrument reads repo-relative paths. Empty records, the header's exact form (internal only), key normalization and the latest-resolved rule are now stated. explore.md flagged twice as the exploration's record; design carries the dated corrections. Validates --strict.",
+  "iteration": 1,
+  "next_recommended": "/orbit:review --as proposal rc03c-verification-record"
+}

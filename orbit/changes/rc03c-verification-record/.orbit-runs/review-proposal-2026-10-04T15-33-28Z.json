@@ -1,0 +1,131 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-04T15:33:28Z",
+  "change": "rc03c-verification-record",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 4,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 3
+    }
+  },
+  "findings": [
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "The git-diff residual check sweeps the trail and gives its findings no severity",
+      "file": "orbit/changes/rc03c-verification-record/specs/orbit-review/spec.md",
+      "line": 5,
+      "recommendation": "Steps (d) and the Residual method compare the sweep scope against `git diff --name-only` of the working tree and of \"the commits since the latest accepted independent pass's token\", and REQUIRE each file in the diff but outside the scope to be named as a finding without `walk_entry`. Three things are unstated: (1) the trail is not excluded — walk logs, the walked pass records and the external return are committed in exactly that range, so every verification would be required to file findings about its own trail (rc03b's walk commit 0dfca127 carries two `address-reviews-*.json` and `review-system-2026-10-04T03-55-35Z.json`, none in either walk's `file` ∪ `ripple_cascade.applied`, and 489d3834 carries the external return); (2) how a filename token maps to a commit range (author date? the commit that added the pass file?); (3) the severity of the mandated finding — if WARNING, exit (3)'s instrument MISSes mechanically on bookkeeping files. Add the rc03b pathspec exclusion `':!orbit/changes/<name>/.orbit-runs'` to both the (d) step and the Residual method line, state the range as `<commit that added the latest accepted independent pass's file>..HEAD` (or another stated rule), and state the mandated finding's severity (or that the ladder grades it by consequence like any other)."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "A VERIFICATION-genre pass with zero owed entries, and an empty verification array, are unspecified",
+      "file": "orbit/changes/rc03c-verification-record/specs/orbit-emit-composition/spec.md",
+      "line": 40,
+      "recommendation": "The write gate refuses a VERIFICATION-genre payload \"which carries no `verification` (naming the field and the owed count)\" — but W can be non-empty with an owed count of 0 (every entry `stale`/`deferred`/`escalated`, or every walk unreadable). State whether `verification: []` is then required, accepted or refused; and say what the renderer prints for a present-but-empty record (the grammar omits an empty section whole, which would make it indistinguishable from a REVIEW-genre pass, while every finding still carries `[outside the walk record]`). Separately, the refusal on a REVIEW-genre pass is worded for a NON-EMPTY `verification`, implying `[]` is accepted there, while tasks.md 1.2 says `verification` on a REVIEW-genre pass is refused without qualification — align the two and add a scenario for each empty case."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "The header's pass-genre word has no rendered form, and its external-pass variant is unstated",
+      "file": "orbit/changes/rc03c-verification-record/specs/orbit-report-rendering/spec.md",
+      "line": 37,
+      "recommendation": "The grammar requirement adds `pass genre` to the header field list and says goldens transcribe \"the CANONICAL RENDERED EXAMPLE in the change's design\", but this design carries no example: the header line today is `Mode: … · Iteration: … · Reviewer: … · Depth: …` (src/core/report-render.ts:766) and two implementers will choose different labels (`Genre:` collides with the renderer's own internal/external `genre`, which rc03b qualified the term to avoid). The external header variant in the same requirement still lists only change, mode, iteration and reviewer — does an external pass print `REVIEW`, or omit the field whole? Add the exact header line for both genres (e.g. `… · Depth: full · Pass genre: VERIFICATION`, and the external form or its omission) and one rendered `### Verification` example to design D8, so tasks 1.3's goldens transcribe it."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "Whether the payload's verification and walk_entry keys are normalized before matching is unstated",
+      "file": "orbit/changes/rc03c-verification-record/specs/orbit-emit-composition/spec.md",
+      "line": 36,
+      "recommendation": "The owed set is keyed by the gate's tuple (trimmed title, repo-relative file, `:line` stripped), but the requirement does not say whether the AI-supplied `verification[].title`/`file` and `walk_entry.title`/`file` pass through the same normalization before matching. One implementation will accept `{\"file\": \"design.md:42\"}` or a padded title as the owed key; another will refuse it as a stray plus a missing key. State it once: e.g. \"the payload's keys are normalized by the trail reader's rule before every check\" (or \"must match the normalized key byte-for-byte; the refusal prints the normalized form\"), and add the scenario to tasks.md 1.2."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "Exit (3)'s instrument fails on a repo-relative emit path",
+      "file": "orbit/changes/rc03c-verification-record/design.md",
+      "line": 67,
+      "recommendation": "`require(process.argv[1])` resolves a path without `./` or `/` as a MODULE name, so the instrument throws MODULE_NOT_FOUND on the repo-relative paths the trail and the report cite. Since D9 fixes the instrument \"so it cannot be bent at archive\", fix it now: read with `JSON.parse(require('fs').readFileSync(process.argv[1], 'utf8'))`, or `require(require('path').resolve(process.argv[1]))`. The cross-check's \"WARNING+ lines of its rendered report\" also needs restating: a rendered finding line carries no severity — it sits under a `#### CRITICAL` / `#### WARNING` subsection.",
+      "reproduction": "cd /Users/sal/code/orbit-spec; node -e 'const j=require(process.argv[1]); console.log(j.command)' orbit/changes/archive/2026-10-04-rc03b-pass-genres/.orbit-runs/review-system-2026-10-04T04-16-02Z.json  → node:internal/modules/cjs/loader throws (MODULE_NOT_FOUND); the same command with $PWD/ prefixed prints `review`."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "title": "\"Judged against the latest walk that carries it\" is ambiguous when dispositions differ across walks",
+      "file": "orbit/changes/rc03c-verification-record/specs/orbit-emit-composition/spec.md",
+      "line": 36,
+      "recommendation": "When a key is `resolved` in W1 and `stale` in a later W3, is it owed (some walk resolved it) or not (the latest walk carrying the key does not)? And the row's walk token — \"the latest walk in `verified_walks` carrying the key\" — would then name a walk where the entry is not `resolved`. State whether \"carries it\" means carries the key at any disposition or carries a `resolved` entry for it, and add the case to tasks.md 1.2."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "Task 4.1's retired-name grep exempts too little",
+      "file": "orbit/changes/rc03c-verification-record/tasks.md",
+      "line": 24,
+      "recommendation": "The grep for `regresses` and `verification.walks` exempts only explore.md and design's departure notes, but proposal.md:10 records the same rename legitimately, and tasks.md:24 names both terms itself. Either list proposal.md's departure sentence and the task line as exemptions, or scope the grep to specs/ and the shipped source/surface."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "The VERIFICATION branch's placement is not checked against the review-genre grep test",
+      "file": "orbit/changes/rc03c-verification-record/tasks.md",
+      "line": 18,
+      "recommendation": "The branch must name walk records (`address-reviews-*.json`, i.e. `.orbit-runs/` paths), but `orbit-review`'s `Review-genre passes read the artifacts and the code, never the trail's findings` grep test treats any `.orbit-runs/` mention inside passes-proposal.md, passes-system.md, mode-sections.md or flags-detail.md as a hit, and \"still open\" / \"Resolved since\" as hits ANYWHERE in the skill. Task 3.1 says only `review.ts`. State that the branch lives in the SKILL body (or another non-brief reference) and avoids the phrase rule, and have 1.5 assert the review-genre-brief test stays green — rc03b's apply hit exactly this phrase rule."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "The consumed conventions row says \"per resolution\"; the owed set is resolved entries only",
+      "file": "orbit/changes/rc03c-verification-record/proposal.md",
+      "line": 27,
+      "recommendation": "`orbit-conventions`' VERIFICATION row reads \"answers landed / regressed per resolution\", and the review body's mirror carries it byte-equal; this change owes verdicts only for `resolved` entries, and `stale`/`deferred`/`escalated` entries are also \"resolutions\" in the walk record. The table is consumed unchanged, by charter. Name the reading in the emit-composition requirement (\"per resolution\" = per `resolved` entry) so a reader of the mirror is not misled, or record it as a known wording residual for the next conventions touch."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Probed hardest where an implementation meets real data: the rc03b archived trail as the fixture. Re-derived W, the owed count, the cascade-less count and the walk-commit file lists from disk, and executed the exit-(3) instrument against a real emit. The design's internal numbers all reproduced. The defects sit where a rule touches something the design did not run: git history (which carries the trail), an empty array, the header string, and a Node module-resolution rule. The basename-matching mode resolution agrees with `recordsFor` in gates.ts, so the archived trail's pre-archive `source_path`s still resolve.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The mechanism holds. It reuses the gate's key and latest-record read. The walk set stays engine-owned and the refusal names the owed keys, which is a clean way to keep a hand-typed copy of W out of the payload. The baseline deltas carry every scenario, and the worked rc03b figures (nine owed of ten, 126 of 986 cascade-less entries) re-measure exactly. What needs repair before apply is all at the edges. The residual method's diff check will flag the trail's own files on every run. Nothing says what an empty record is or what the header word looks like. The exit instrument breaks on the paths the trail actually prints. Each is a sentence-sized repair inside the existing artifacts, and none needs a new mechanism."
+  },
+  "final_assessment": "0 critical, 5 warning, 4 suggestion.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc03c-verification-record --from-file orbit/changes/rc03c-verification-record/.orbit-runs/review-proposal-2026-10-04T15-33-28Z.json"
+}
