@@ -1825,7 +1825,7 @@ R-d-11's house rule (detection, not prevention). It was deferred three times on 
 ### Stage rc03-review-genres — review is not verification
 
 Depends-on: rc02-gate-semantics
-Complete: [ ]
+Complete: [~] 2026-10-04 (Sal)
 
 **SPLIT 2026-10-04 (Sal) into rc03b + rc03c, under R-crc-9 — its fourth preventive application, the
 second caught at exploration by a size check before anything was proposed.** This heading is retained
@@ -1969,17 +1969,23 @@ Declared 2026-10-04 (Sal) from the rc03 exploration's split (D-rc03-8). Charter:
 REVIEW or VERIFICATION — is COMPUTED from reviewer class, mode and trail position and never declared:
 the independent classes are reviews; an in-context pass that follows a READABLE walk of its mode on the
 trail is a verification; every other in-context pass (none before it, only mode-less marker-scan walks
-before it, or architecture mode) is a review the cadence does not count toward its `in-context` slot.
+before it, or architecture mode) is a review — and the cadence's slot arithmetic is unchanged by the genre
+(corrected 2026-10-04 at walk 1 of the proposal cadence: an earlier wording said such a pass is "not counted"
+toward the `in-context` slot, which is false when it follows the pair and precedes the walk; a VERIFICATION's
+qualifying walk is bounded to walks after the latest independent pass of the mode, the same set rc03c names).
 The table is stated ONCE, in `orbit-conventions`, REPLACING the `Review mode decision framework`
 requirement's scenarios (whose "in-context is the right first pass for a small change" R-crc-4
 contradicts); every other surface names it and points (R-crc-14). A REVIEW-genre brief carries NO
 findings and NO trail pointer: the external prompt's Cycle context keeps the iteration number only;
 the project-context bullet pointing the reviewer at `.orbit-runs/` goes; both halves' system-mode
 `git diff` excludes the trail by pathspec; review-genre passes skip Step 5 ("Inspect prior runs" —
-pushback is a resolution-time discipline the walk owns); the fresh brief names artifacts and the apply
+pushback is a resolution-time discipline the walk owns); the recommended-session note's iteration-3+
+option (a) — "carry context from a same-AI prior session" so it can verify its earlier findings — is
+DELETED with its trade-off sentence, a TWELFTH channel found on the exploration's resume by reading the
+owning spec rather than the body (D-rc03-10: an external is always REVIEW genre, and a continued session
+carries prior findings in its own head); the fresh brief names artifacts and the apply
 commit and nothing else — the one member with no artifact, carried as a rule with its residual declared
-(D-rc03-3, BOUNDED). The review body gains one sentence: when the pair is empty, package the external
-and spawn the fresh in the same turn. Two repairs ride: `orbit-review`'s `--fresh` requirement
+(D-rc03-3, BOUNDED). The review body gains NO launch sentence (corrected 2026-10-04 on the exploration's resume, D-rc03-5 amended): the eligibility line at the end of the packaging turn already renders `--fresh` for an empty pair, and a spawn inside a `--reviewer external` invocation would breach the no-chaining contract. Two repairs ride: `orbit-review`'s `--fresh` requirement
 describes `--reviewer external` with `fresh`'s definition ("same model, fresh context, no cross-AI
 handoff") — the parenthetical moves to the right noun; and the framework rewrite above. The engine's
 genre FUNCTION ships in rc03c; this stage ships the table it implements. Inputs named (R-crc-10):
@@ -1987,8 +1993,9 @@ genre FUNCTION ships in rc03c; this stage ships the table it implements. Inputs 
 facts. Goal G1. Touches: orbit-conventions, orbit-review, orbit-review-external — at R-crc-1's ceiling,
 no engine code, ~7 MODIFIED blocks. Exit: (1) the genre table is the single statement — a grep of
 `orbit/specs/` and the generated surface finds the class-to-genre mapping stated once and pointed at
-elsewhere; (2) the generated surface carries none of the three finding-list phrasings ("still open",
-"Resolved since") and no `.orbit-runs/` read pointer in any review-genre brief, grep-tested; (3) the
+elsewhere; (2) the generated surface carries none of the finding-list phrasings ("still open",
+"Resolved since", "carry context", and "iteration history" beside a trail path — four, the fourth added at
+walk 1) and no `.orbit-runs/` read pointer in any review-genre brief, grep-tested under a decidable rule; (3) the
 next blind pair's COMMITTED external prompt carries no findings and no trail pointer, read at the walk.
 
 ### Stage rc03c-verification-record — a verification says what landed and what regressed
@@ -2571,6 +2578,18 @@ ripple-miss findings; (4) the walk body implements R-crc-6's THREE LANES, and a 
 routes back to `/orbit:explore` rather than being fixed in place — the log records the routing so a
 change that keeps generating them is visible on the trail.
 
+ADDED 2026-10-04 (from the rc03 exploration, Sal: A). This stage also owns the DISAGREEMENT class's
+HANDLING RULE (D-rc03-6): a disagreement is the two halves of one pair returning contradictory claims
+on one site; it is observed at the merged walk, so its rule — settle by one cheap empirical test,
+record the test on the walk log — lives in `orbit-address-reviews`, which this stage touches and
+rc03b could not add under R-crc-1. The NAME stays with rc03's record. And it owns Q-rc03-5 from the
+same exploration: the review-external T0 emit's `next_recommended` (`orbit-run-summary-emit`'s
+`Review-external T0 multi-step recommendation`) ends "then `/orbit:address-reviews <name>
+--from-file <path>`" — on a blind pair that is Q-crc-22's silent single-half walk written into a
+record, while the gate's eligibility line on the same turn names the missing member. Standing
+recommendation carried from the exploration: the T0 prose ends at "save the response as …" and the
+eligibility line owns what follows. Both are the walk CONSUMER's business, which is why they land here.
+
 ### Stage rc09-propose-hygiene — spike before spec, size before review
 
 Depends-on: (none)
@@ -2630,6 +2649,13 @@ effort is recorded, never targeted, so a cost figure may inform the human at the
 decide whether the seam speaks. Exit (3) restated: an archive past a non-passing gate of ANY phase
 fires the inflection prompt and records the override. Found by rc02c's system blind pair, which
 read the plan and not only the diff.
+
+RIDER 2026-10-04 (from the rc03 exploration, D-rc03-7, Sal: A — not carried in rc03b). If the
+EXTERNAL-FIRST canonical next for an empty `blind-pair` slot (rc03a's D-rc03a-9, ratified in the
+withdrawn stage) is ever wanted, it is one `case` label in `commandForClass` (`gates.ts`) and one
+sentence in `orbit-engine-gates`' single-voiced canonical-next requirement — a spec this stage already
+touches. Its blindness value is gone under rc03b's no-findings brief; what remains is ergonomic
+(the human carries the prompt while the fresh subagent runs). Take it or leave it at exploration.
 
 ### Stage rc16-retirement-sweep — living prose retires with the limit it described
 
@@ -4347,3 +4373,21 @@ RENAMED to `orbit/explore/rc03b-pass-genres/` and repointed at the first child (
 Stage count 25 → <!-- src:stages -->27<!-- /src:stages --> at both marked sites. Q-crc-22 gained a 2026-10-04 note
 narrowing its producer side. Position is engine-computed: `orbit architecture status` renders rc03 premised, rc03b
 exploring, rc03c premised.
+
+**2026-10-04 — Architect session: the rc03 split RECONCILED into the doc after the exploration's resume.** The resume
+sitting (same evening, under the renamed `rc03b-pass-genres`) changed four things the doc had to follow. (1) rc03b's
+charter lost its "gains one sentence" launch line — a spawn inside a `--reviewer external` invocation would breach the
+no-chaining contract and the eligibility line already renders `--fresh` for an empty pair (D-rc03-5 amended; corrected in
+the charter the same sitting). (2) A TWELFTH anchoring channel, in a SPEC rather than the body: `orbit-review-external`'s
+recommended-session note tells an iteration-3+ external to continue a same-AI session so it can verify its earlier
+findings — found by D-rc03-3's own residual method; rc03b's charter now names it. (3) rc08's charter gains what the split
+assigned to it and the resume found for it — the disagreement class's handling rule (D-rc03-6) and Q-rc03-5, the T0
+emit's `next_recommended` naming a single-half walk. (4) rc10's charter carries the external-first ordering as a RIDER
+(D-rc03-7), not an obligation. The exploration's D-rc03-4 (the verification record) is `Disposition: assigned
+rc03c-verification-record`, so rc03b's propose consumes two live rules. Nothing else in the two sessions is outside the
+doc: the stage declarations, both stage-count markers, the Q-crc-22 note and the rename are in the previous entry.
+Position is engine-computed: rc03 premised (parent, undated), rc03b exploring, rc03c premised.
+
+**2026-10-04 — rc03-review-genres declared ENDED (Sal), through the unprompted route.** The retained split parent observed
+`premised` with an undated slot; every exit criterion it carried is owned by rc03b or rc03c, so the mark asserts nothing
+about the work and matches rc13's and rc04's. Fourth ended mark in the program.

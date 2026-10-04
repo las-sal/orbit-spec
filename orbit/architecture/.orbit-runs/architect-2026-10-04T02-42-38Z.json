@@ -1,0 +1,31 @@
+{
+  "command": "architect",
+  "timestamp": "2026-10-04T02:42:38Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": null,
+  "final_assessment": "Architect session on clean-up-review-cycle: reconciliation after the rc03b exploration's resume, and rc03-review-genres declared ENDED (Sal, unprompted route). Four gaps closed in the doc: rc08's charter gains the disagreement handling rule (D-rc03-6) and Q-rc03-5 (the T0 emit's next_recommended names a single-half walk); rc10's charter carries the external-first ordering as a RIDER (D-rc03-7); rc03b's charter names the twelfth anchoring channel (the recommended-session note's same-AI continuation, found in the spec by the exploration's residual method); a status-log entry records the resume's four corrections including the withdrawn launch sentence. The retained split parent rc03 marked Complete: [~] 2026-10-04 (Sal) — premised, undated, every exit criterion owned by a child; fourth ended mark in the program. Doc valid; stage markers 27 at three sites. No rulings captured, no completions ratified.",
+  "stages_touched": [
+    "rc03-review-genres",
+    "rc03b-pass-genres",
+    "rc08-walk-completeness",
+    "rc10-apply-closure"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "stages_ended": [
+    "rc03-review-genres"
+  ],
+  "handoff": {
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md — the two newest status-log entries (RECONCILED; rc03 ENDED), the ADDED paragraph at the end of `### Stage rc08-walk-completeness`, the RIDER at the end of `### Stage rc10-apply-closure`, the twelfth-channel clause in `### Stage rc03b-pass-genres`",
+      "orbit/explore/rc03b-pass-genres/explore.md — the exploration propose will consume: two live rules (D-rc03-2, D-rc03-3), D-rc03-4 assigned to rc03c, D-rc03-12 the edit table, four open questions with standing recommendations",
+      "orbit architecture status — rc03 ended, rc03b exploring, rc03c premised; rc05–rc10, rc07b, rc12 premised"
+    ],
+    "next_command": "/orbit:propose rc03b-pass-genres",
+    "model_hint": null,
+    "seam": "post-reconciliation"
+  },
+  "next_recommended": "/orbit:propose rc03b-pass-genres"
+}

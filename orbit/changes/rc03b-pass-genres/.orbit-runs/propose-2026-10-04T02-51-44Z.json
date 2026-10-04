@@ -1,0 +1,9 @@
+{
+  "command": "propose",
+  "timestamp": "2026-10-04T02:51:44Z",
+  "change": "rc03b-pass-genres",
+  "kind": "workflow",
+  "model": null,
+  "final_assessment": "Proposed rc03b-pass-genres in consume mode from the exploration (two live rules, both accounted: D-rc03-2 DERIVED, D-rc03-3 BOUNDED; D-rc03-4 assigned to rc03c; no key defects). Four open questions resolved at propose as assignments (Sal) — rc03c, rc10, rc03c, rc08 — and moved to Decisions D-rc03-13..16. Artifacts: proposal, design (Mechanism → artifacts record, Touchpoints, six decisions, eight alternatives), three delta specs — orbit-conventions (1 MODIFIED: the genre table as a six-row TABLE plus scenario set, the repaired class descriptions, the review-genre brief rule with its BOUNDED residual stated once), orbit-review (1 ADDED: the review-genre read rule — fresh brief contents, skipped prior-run step, trail-excluding diff pathspec, grep test; 1 MODIFIED: the --fresh parenthetical on the right noun), orbit-review-external (3 MODIFIED: cycle context iteration-only, the 186-line prompt requirement edited in six lines, recommended-session iteration 3+ without the same-AI continuation) — and tasks (16, 3.5 the user-validation handoff for exit (3)). Three capabilities at R-crc-1's ceiling; no engine code. Validate --strict clean; fingerprints stamped 5/5; the BOUNDED entry's two residual lines grepped present in the owning delta before the move. The exploration's genre-table row 3 was corrected at propose (the slot arithmetic is unchanged by genre). Staged metadata merged (architecture citation carried, placeholders superseded); staging directory moved with its three emits. PR regime never: silent.",
+  "next_recommended": "/orbit:review rc03b-pass-genres — proposal artifacts ready; review before apply"
+}

@@ -1,0 +1,298 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-04T03:12:36Z",
+  "change": "rc03b-pass-genres",
+  "kind": "editorial",
+  "model": null,
+  "source": "from-file",
+  "source_path": "orbit/changes/rc03b-pass-genres/.orbit-runs/review-proposal-2026-10-04T03-01-32Z.json",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 11,
+    "suggestion": 3
+  },
+  "pushback_verification": "14 of 14 verified against the current tree before classification: the reviewer executed its claims and the walk re-read the four cited sites (review.ts:423 worked example, :756 epitome bullet, run-summary-schema.md:5, the baseline Iteration-note requirement which already reads \"of EITHER genre\") plus test/helpers/owner-text.ts fencedProduction; 0 stale; 0 CRITICAL so no reproduction re-runs",
+  "resolution_summary": {
+    "resolved": 14,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The generated-surface grep test has no rule that partitions the real surface; 'expected seven' does not follow from the stated rule",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc03b-pass-genres/tasks.md",
+      "line": 3,
+      "classification": "trivial_fix",
+      "action": "Rewrote the grep test as two decidable rules in orbit-review's ADDED requirement (new scenario 'Generated surface grep-tested by a decidable rule'): PHRASE — 'still open', 'Resolved since', 'carry context' anywhere; 'iteration history' only beside .orbit-runs/ on the same line; REGION — .orbit-runs/ is a hit only inside prompt-template.md (whole) or the fresh-dispatch step's fenced brief. Task 1.1 computes the red count FROM the rules at apply; the 'expected seven' is gone from tasks, proposal and design.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03b-pass-genres/specs/orbit-review/spec.md",
+          "orbit/changes/rc03b-pass-genres/tasks.md",
+          "orbit/changes/rc03b-pass-genres/proposal.md",
+          "orbit/changes/rc03b-pass-genres/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The genre-table mirror has no fenced production to pin against, and the artifacts name three different shapes for it",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc03b-pass-genres/design.md",
+      "line": 84,
+      "classification": "trivial_fix",
+      "action": "One shape everywhere: the six-row table is now a bare ``` fence in the conventions delta with header row '| reviewer class | mode | trail position | pass genre |'; design D5 and task 1.2 anchor the parity pin through ownerText + fencedProduction (test/helpers/owner-text.ts); task 2.6 says the body carries the fence verbatim under a 'Pass genre' heading.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03b-pass-genres/specs/orbit-conventions/spec.md",
+          "orbit/changes/rc03b-pass-genres/design.md",
+          "orbit/changes/rc03b-pass-genres/tasks.md",
+          "orbit/changes/rc03b-pass-genres/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "An in-context pass cannot learn its own genre without reading the trail the brief rule forbids it to name",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc03b-pass-genres/specs/orbit-review/spec.md",
+      "line": 14,
+      "classification": "trivial_fix",
+      "action": "Named the single input in both the owner and orbit-review's ADDED requirement (clause (d) + new scenario 'In-context pass decides its own genre from the walk listing'): the token-ordered listing of address-reviews-*.json and each record's source_path, read as a listing, never as findings; unreadable → REVIEW (the mode-less row); stated not to be a trail pointer under the brief rule. Task 2.5 carries it.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03b-pass-genres/specs/orbit-conventions/spec.md",
+          "orbit/changes/rc03b-pass-genres/specs/orbit-review/spec.md",
+          "orbit/changes/rc03b-pass-genres/tasks.md",
+          "orbit/changes/rc03b-pass-genres/design.md",
+          "orbit/changes/rc03b-pass-genres/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The VERIFICATION row's 'a readable walk of this mode precedes the pass' is unbounded in time and disagrees with rc03c's declared walk set",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc03b-pass-genres/specs/orbit-conventions/spec.md",
+      "line": 18,
+      "classification": "trivial_fix",
+      "action": "Bounded the VERIFICATION row as a QUALIFYING WALK — an address-reviews record of the mode with a token after the latest independent pass of the mode (any such walk when none exists) and before the pass — in the owner's table and both scenarios; row 3 reads 'no qualifying walk'; design D1 records the bound and names the exploration's unbounded wording as corrected here, not in the record.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03b-pass-genres/specs/orbit-conventions/spec.md",
+          "orbit/changes/rc03b-pass-genres/design.md",
+          "orbit/changes/rc03b-pass-genres/proposal.md",
+          "orbit/architecture/clean-up-review-cycle.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The body has no fresh-dispatch procedure for the 'fresh dispatch note' to amend",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc03b-pass-genres/tasks.md",
+      "line": 15,
+      "classification": "trivial_fix",
+      "action": "Task 2.6 now ADDS a 'Dispatching a fresh pass' step to the body (spawn the clean-context subagent with the review contract; hand it the brief; it persists via orbit emit review); the ADDED requirement's clause (a) and its scenario name the step; proposal Impact and design Touchpoints list it.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03b-pass-genres/tasks.md",
+          "orbit/changes/rc03b-pass-genres/specs/orbit-review/spec.md",
+          "orbit/changes/rc03b-pass-genres/proposal.md",
+          "orbit/changes/rc03b-pass-genres/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "A git-diff-based 'no engine code' pin is fragile; prefer the existing hash-pin pattern",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc03b-pass-genres/tasks.md",
+      "line": 6,
+      "classification": "trivial_fix",
+      "action": "Took the task's own option B: task 1.4 is an untouched-modules HASH pin over src/core/artifact-graph/*.ts, src/core/emit-composition.ts, src/core/report-render.ts and schemas/** recorded at the proposal commit; the git-diff wording is gone.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03b-pass-genres/tasks.md",
+          "orbit/changes/rc03b-pass-genres/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "'least-recently-used' AI has no stated ordering input",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc03b-pass-genres/specs/orbit-review-external/spec.md",
+      "line": 214,
+      "classification": "trivial_fix",
+      "action": "Added the ordering input to the Recommended-session scenario: least-recently-used is decided by each reviewer's latest external-<as>-*.md token in this mode, oldest latest token wins; task 2.2 carries it.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03b-pass-genres/specs/orbit-review-external/spec.md",
+          "orbit/changes/rc03b-pass-genres/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Architecture mode as REVIEW genre makes the baseline's architecture-mode iteration note unproducible, and nothing in the change addresses it",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc03b-pass-genres/specs/orbit-conventions/spec.md",
+      "line": 21,
+      "classification": "decision_required",
+      "action": "EXEMPT, not retire (method call under R-crc-3, stated in the triage, Sal: 'walk all'): the architecture body's hand-computed per-doc iteration note is read as a COUNT over the architecture trail — the ONE exemption from the brief rule, stated once in the owner (brief paragraph + architecture scenario), because the mode has no pair and no gate and no render surface computes the note; retiring it would remove architecture mode's only iteration signal. Task 2.5 names it; design D5 and a Risk record the rationale.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03b-pass-genres/specs/orbit-conventions/spec.md",
+          "orbit/changes/rc03b-pass-genres/tasks.md",
+          "orbit/changes/rc03b-pass-genres/design.md",
+          "orbit/changes/rc03b-pass-genres/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "Exempt the architecture body's per-doc iteration note from the brief rule as a count the body reads; do not MODIFY 'Iteration note when prior runs exist'."
+    },
+    {
+      "severity": "WARNING",
+      "title": "The requirement forbids the very mirror the design and tasks prescribe ('none restates the table')",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc03b-pass-genres/specs/orbit-conventions/spec.md",
+      "line": 5,
+      "classification": "trivial_fix",
+      "action": "Amended the owner's opening sentence to the Severity ladder's shape: every other surface names and points; the ONE exception is the review body's CHECKED MIRROR of the fenced table, held byte-equal by a parity test (R-crc-14's mirror corollary); added the scenario 'The review body carries the table as a checked mirror'.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03b-pass-genres/specs/orbit-conventions/spec.md",
+          "orbit/changes/rc03b-pass-genres/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The brief's positive content list is stated three times and already diverges on one qualifier",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc03b-pass-genres/specs/orbit-conventions/spec.md",
+      "line": 26,
+      "classification": "trivial_fix",
+      "action": "The positive content list now lives ONCE in the owner (with the system-mode qualifier and 'explore.md when present'); orbit-review's clause (a) and its fresh-brief scenario say 'carries what the owner's list names and nothing from the trail'; design and proposal name the owner rather than re-listing.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03b-pass-genres/specs/orbit-conventions/spec.md",
+          "orbit/changes/rc03b-pass-genres/specs/orbit-review/spec.md",
+          "orbit/changes/rc03b-pass-genres/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The external-handoff worked example still recommends option (a) — same-AI continuation — and no task touches it",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 423,
+      "classification": "trivial_fix",
+      "action": "Task 2.2 now rewrites the external-handoff reference's worked example ('Recommended session: Iter 5 — either (a) carry context …') to the new iteration-3+ wording, and 'carry context' joined the PHRASE rule so the channel is grep-visible; proposal Impact and design Touchpoints name the worked example.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03b-pass-genres/tasks.md",
+          "orbit/changes/rc03b-pass-genres/specs/orbit-review/spec.md",
+          "orbit/changes/rc03b-pass-genres/proposal.md",
+          "orbit/changes/rc03b-pass-genres/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The body's pushback epitome instructs every pass to compare against prior `.orbit-runs/review-<mode>-*.json`; not in the task list",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 756,
+      "classification": "trivial_fix",
+      "action": "Task 2.5 rewrites the body's pushback EPITOME bullet to the requirement's content (verify against current state; suppress with an evidence note), naming no prior-run comparison and pointing at Step 5 for the VERIFICATION case; the ADDED requirement's clause (b) states it; proposal and design name it.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03b-pass-genres/tasks.md",
+          "orbit/changes/rc03b-pass-genres/specs/orbit-review/spec.md",
+          "orbit/changes/rc03b-pass-genres/proposal.md",
+          "orbit/changes/rc03b-pass-genres/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The stage charter states the slot-arithmetic rule the delta corrected, and the charter is not in the change's touchpoints",
+      "marker_source": "internal-review",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 1972,
+      "classification": "trivial_fix",
+      "action": "CASCADE IN (the architecture doc is not an OUT category): amended the rc03b charter paragraph in place, dated 2026-10-04 walk 1 — the slot arithmetic is unchanged by genre (the 'does not count' sentence corrected), the qualifying-walk bound named, and exit (2)'s phrase list is four with the fourth attributed to the walk; the arc doc is in design Touchpoints and proposal Impact; task 3.3 confirms the amendment at closure.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/architecture/clean-up-review-cycle.md",
+          "orbit/changes/rc03b-pass-genres/design.md",
+          "orbit/changes/rc03b-pass-genres/proposal.md",
+          "orbit/changes/rc03b-pass-genres/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "'Genre' is already an engine and spec term for internal-vs-external; the change overloads it without saying so",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc03b-pass-genres/specs/orbit-conventions/spec.md",
+      "line": 5,
+      "classification": "decision_required",
+      "action": "QUALIFY, not rename (method call under R-crc-3, stated in the triage, Sal: 'walk all'): every new use reads 'pass genre'; the owner's opening sentence names the RENDER genre (internal/external) by pointer to orbit-report-rendering's 'One grammar for internal and external passes' and orbit-review's 'Iteration note when prior runs exist', and fixes the stored field name as pass_genre for rc03c. R-crc-4 and the stage id already say 'pass genres'; renaming a ruling's word to dodge a renderer field is the wrong trade. Design D1 records it.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03b-pass-genres/specs/orbit-conventions/spec.md",
+          "orbit/changes/rc03b-pass-genres/specs/orbit-review/spec.md",
+          "orbit/changes/rc03b-pass-genres/specs/orbit-review-external/spec.md",
+          "orbit/changes/rc03b-pass-genres/design.md",
+          "orbit/changes/rc03b-pass-genres/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "Qualify as 'pass genre' everywhere; acknowledge the render-genre axis by pointer in the owner; rc03c stores the field as pass_genre."
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Walk 1 of the fresh proposal pass: 14 of 14 resolved (11 WARNING, 3 SUGGESTION), 0 stale, every finding a repair of how the two rules are stated or instrumented (R-crc-6 repair lane). Two method calls recorded under R-crc-3 and ratified by the walk-all directive: the architecture iteration note is EXEMPTED (not retired) and \"genre\" is QUALIFIED as \"pass genre\" (not renamed), with the render-genre axis acknowledged by pointer. The pass-genre table is now a fenced production in the owner; the VERIFICATION row is bounded to qualifying walks (after the latest independent pass of the mode); the in-context body's one directory read is named; the grep test is two decidable rules; the brief's content list is stated once; the owner's sentence permits the body's one mirror. One cascade reached the architecture doc (rc03b's charter paragraph, dated). After the walk: orbit validate --strict valid, architecture validate valid, fingerprints 5 verified, both BOUNDED residual lines still present verbatim in the owner (the residual method still says \"three finding-list phrasings\" — the exploration's wording, carried verbatim by rule; the test is rule-based and the fourth phrase is in the requirement).",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc03b-pass-genres --from-file orbit/changes/rc03b-pass-genres/.orbit-runs/review-proposal-2026-10-04T03-01-32Z.json"
+}
