@@ -1,0 +1,96 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-04T20:46:31Z",
+  "change": "rc06a-scenario-map",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 3
+    }
+  },
+  "findings": [
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc06a-scenario-map/specs/orbit-scenario-map/spec.md",
+      "line": 196,
+      "title": "REMOVED row says its tags go ORPHAN once the change is archived; the map makes them ORPHAN in the change's own view now",
+      "recommendation": "Align the REMOVED row with the shipped behaviour and with the RENAMED row beside it: tags on a removed requirement's scenarios render ORPHAN in the change's resolved view (and in every view once the change is archived). The test 'a REMOVED requirement owes nothing, and its tags are ORPHAN' already pins the shipped behaviour; only the requirement text diverges.",
+      "reproduction": "test/core/scenario-map.test.ts:329 writes a baseline 'Req Gone' with a tagged scenario, a change delta '## REMOVED Requirements / ### Requirement: Req Gone', and asserts m.orphans has length 1 from computeScenarioMap on the UNARCHIVED change. resolveScenarioKeys (src/core/scenario-map.ts:357) deletes the requirement from the key set before the orphan test, so the tag is ORPHAN before archive. A reader built to spec.md:196 (rc06b's verify step) would expect no ORPHAN until archive."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/scenario-map.ts",
+      "line": 474,
+      "title": "OFF header always says 'no scenario_map key', also when the key is present but inert",
+      "recommendation": "Word the OFF header so it is true in both OFF cases (absent and inert), e.g. 'Check: OFF (scenario_map absent or inert in orbit/config.yaml)', or carry the reason on ScenarioMapConfig and render it."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/commands/change.ts",
+      "line": 229,
+      "title": "Legacy 'orbit change validate' prints the new scenario-map INFO issues as '[WARNING]' on an invalid report and drops them on a valid one",
+      "recommendation": "Either give change.ts's printer the same three-level labelling and valid-report INFO lines validate.ts now has, or record the legacy command as outside the capability's print contract (the requirement binds only 'orbit validate'). Pre-apply, an UNKEYABLE ERROR beside undeclared INFO lines makes the report invalid, and each INFO line is then labelled '⚠ [WARNING]'."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/commands/validate.ts",
+      "line": 343,
+      "title": "Bulk human-mode 'orbit validate --changes/--all' never shows the scenario-map INFO lines",
+      "recommendation": "The requirement binds the single-item 'is valid' line, so this conforms; but D4's own reason (an INFO level nobody sees is a level in name only) applies to the bulk path too, which prints only '✓ change/<id>'. Consider printing scenario-map INFO lines under each passing change, or name the bulk path as a limit in the requirement."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Probed the engine against the six requirement texts rather than the tests: read scenario-map.ts end to end (tag classifier, stack, ledger, key resolution in the archive's order), the validator hook and its gate read, the config resolver against readProjectConfig (confirmed field-by-field, so the schema addition cannot leak a second warning), and every caller of validateChangeDeltaSpecs (archive CLI, change.ts, bulk and single validate). Ran the surface on this change (34 delta scenarios, all behaviour-declared, 0 orphan / 0 malformed, 1090 baseline undeclared), the three CLI refusal paths, single and bulk validate, and the full suite (112 files, 2675 tests green). The implementation is tight; the one divergence is spec prose that predates the change-view orphan rule for REMOVED. Passes 4 and 5 skipped: orbit/lenses/ does not exist. Pass 6 not invoked as a library from this subagent (it would write a project-wide emit onto the trail mid-pair); in its place the source lint (orbit validate --sources) was run and reports all four sources consistent. Pass 0 ran inline: tasks 19/19, every delta scenario tagged at a test that exercises it (sampled the glob, zero-match, user-validation and rename cases). Noted but not raised: validator.ts counts scenarios with an unfenced '^####' match while the map reads '#### Scenario:' fence-aware, a third grammar beside the two design D1 names under Q-crc-15.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    "4",
+    "5",
+    "6"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The mechanism does what its requirements say on every path I exercised, the opt-out is genuinely inert, and the stage grades itself on its own surface. The one divergence is a sentence in the REMOVED row that the shipped tests already contradict; repair the sentence, not the engine, and the rest are polish that can ride or be named as limits."
+  },
+  "final_assessment": "0 critical, 1 warning, 3 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc06a-scenario-map --from-file orbit/changes/rc06a-scenario-map/.orbit-runs/review-system-2026-10-04T20-46-31Z.json"
+}
