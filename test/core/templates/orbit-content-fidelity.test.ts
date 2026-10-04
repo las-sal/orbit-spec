@@ -971,19 +971,26 @@ describe('rc03b-pass-genres: the review-genre brief carries nothing from the tra
 
   it('the system-mode read list (mode-sections) and the body\'s Step 4 carry the trail-excluding pathspec', () => {
     const sys = ref(review, 'mode-sections.md').split('## System mode — "What to read for THIS review"')[1].split('## System mode — "What to look for"')[0];
-    expect(sys).toContain(`git diff <change-start>..HEAD -- . ${PATHSPEC}`);
+    // Each block carries its own change placeholder (system walk 1, fresh W3): mode-sections is
+    // substituted into the prompt under `<change-name>`; the body's Step 4 uses `<name>`.
+    expect(sys).toContain("git diff <change-start>..HEAD -- . ':!orbit/changes/<change-name>/.orbit-runs'");
+    expect(sys).not.toMatch(/<name>/);
+    // The start commit is found by a hash-only read, never from commit subjects (fresh W1).
+    expect(sys).toContain('git log --diff-filter=A --format=%h -- orbit/changes/<change-name>/proposal.md | tail -1');
     const step4 = review.instructions.split('### 4. Load context')[1].split('### 5.')[0];
     expect(step4).toContain(`git diff <change-start>..HEAD -- . ${PATHSPEC}`);
+    expect(step4).toContain('git log --diff-filter=A --format=%h -- orbit/changes/<name>/proposal.md | tail -1');
+    expect(step4).not.toMatch(/estimate `<change-start>` from `git log`/);
   });
 
-  it('Step 5 is scoped to VERIFICATION pass genre; the REVIEW-genre branch names the bounded metadata probe as its only trail read', () => {
+  it("Step 5 is scoped to VERIFICATION pass genre; the REVIEW-genre branch names the bounded metadata probe as its only read of the trail's pass and walk records", () => {
     const step5 = review.instructions.split('### 5. Inspect prior runs')[1].split('### 6.')[0];
     expect(step5).toContain('VERIFICATION');
     expect(step5).toContain('REVIEW');
     expect(step5).toContain('`reviewer_class`');
     expect(step5).toContain('`source_path`');
     expect(step5).toMatch(/filenames?/);
-    expect(step5).toMatch(/ONLY trail read/i);
+    expect(step5).toMatch(/ONLY read of the trail's pass and walk records/i);
     expect(step5).toMatch(/unreadable/i);
     expect(step5).toMatch(/exemption/i);
     // The pushback epitome names no prior-run comparison.

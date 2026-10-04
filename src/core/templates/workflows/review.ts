@@ -531,7 +531,7 @@ Substitute these into the \`## What to read for THIS review\` and \`## What to l
 
 \`\`\`
 - orbit/changes/<change-name>/proposal.md, design.md, tasks.md, specs/
-- The change's commit range: git diff <change-start>..HEAD -- . ':!orbit/changes/<name>/.orbit-runs' (estimate <change-start> from git log)
+- The change's commit range: git diff <change-start>..HEAD -- . ':!orbit/changes/<change-name>/.orbit-runs' (<change-start> is the commit that first added the change's proposal.md — find it by hash alone: git log --diff-filter=A --format=%h -- orbit/changes/<change-name>/proposal.md | tail -1; commit subjects can carry prior passes' counts, so do not read them)
 - orbit/specs/<capability>/spec.md (archived baselines — for baseline-compliance check)
 - orbit/lenses/perspectives.md, orbit/lenses/critical-paths.md (judgment layer)
 - Code paths touched by the change (cohesion + surface walk)
@@ -805,26 +805,28 @@ From the returned \`contextFiles\`, read every artifact: \`proposal\`, \`design\
 - Orbit lenses: \`orbit/lenses/perspectives.md\`, \`orbit/lenses/critical-paths.md\` (system mode primarily; proposal mode uses for cross-doc checks)
 
 System mode also reads:
-- \`git diff <change-start>..HEAD -- . ':!orbit/changes/<name>/.orbit-runs'\` (estimate \`<change-start>\` from \`git log\` against \`orbit/changes/<name>/\`) — the pathspec keeps the trail's pass records and walk logs out of what the pass reads
+- \`git diff <change-start>..HEAD -- . ':!orbit/changes/<name>/.orbit-runs'\` — \`<change-start>\` is the commit that first added the change's \`proposal.md\`, found by hash alone (\`git log --diff-filter=A --format=%h -- orbit/changes/<name>/proposal.md | tail -1\`); commit subjects can carry prior passes' counts, so a REVIEW-genre pass never reads them. The pathspec keeps the trail's pass records and walk logs out of what the pass reads
 - Code paths around the change (cohesion + surface walks)
 
 ### 5. Inspect prior runs (VERIFICATION pass genre only)
 
-Decide this pass's PASS GENRE first, by the table under **Pass genre** above. A \`fresh\` pass and any architecture-mode pass are REVIEW. An in-context pass in a change mode decides from ONE bounded metadata probe — the token-ordered listing of the change's \`.orbit-runs/\` pass and walk records: \`review-<mode>-*.json\` reading each record's \`reviewer_class\` field, \`external-<mode>-*.md\` by filename, and \`address-reviews-*.json\` reading each record's \`source_path\` — to find the latest independent pass of this mode and any walk of this mode after it. Open no record's findings, suppressed list or resolutions to decide; a walk whose \`source_path\` resolves to no mode is MODE-LESS and qualifies for none; an unreadable listing is REVIEW.
+Decide this pass's PASS GENRE first, by the table under **Pass genre** above. A \`fresh\` pass and any architecture-mode pass are REVIEW. An in-context pass in a change mode decides from ONE bounded metadata probe — the token-ordered listing of the change's \`.orbit-runs/\` pass and walk records: \`review-<mode>-*.json\` reading each record's \`reviewer_class\` field (or \`flags.fresh\` when that field is absent — a legacy fresh pass), \`external-<mode>-*.md\` by filename, and \`address-reviews-*.json\` reading each record's \`source_path\` — to find the latest ACCEPTED independent pass of this mode and any walk of this mode after it. Open no record's findings, suppressed list or resolutions to decide; a walk whose \`source_path\` resolves to no mode is MODE-LESS and qualifies for none; an unreadable listing is REVIEW. Every \`external-<mode>-*.md\` file counts as a pass here — whether the engine ACCEPTS a return cannot be read from metadata; the owner names that limit, and where the two differ the engine's computation is authoritative.
 
-- **REVIEW pass genre** — SKIP the rest of this step: the metadata probe above is the ONLY trail read a REVIEW-genre pass makes. Pushback is current-state verification and needs no prior list, and the iteration ordinal and trend are ENGINE-computed at render time from the trail — never authored here. The owner's ONE exemption: architecture mode keeps its hand-computed per-doc iteration note (Step 8), counted over \`review-architecture-*.json\` emits in \`orbit/architecture/.orbit-runs/\` whose \`doc\` field equals the doc under review — the trail is shared across docs, and a review of doc B must never treat doc A's run as its previous iteration.
+- **REVIEW pass genre** — SKIP the rest of this step: the metadata probe above is the ONLY read of the trail's pass and walk records a REVIEW-genre pass makes. Pushback is current-state verification and needs no prior list, and the iteration ordinal and trend are ENGINE-computed at render time from the trail — never authored here. The owner's ONE exemption: architecture mode keeps its hand-computed per-doc iteration note (Step 8), counted over \`review-architecture-*.json\` emits in \`orbit/architecture/.orbit-runs/\` whose \`doc\` field equals the doc under review — the trail is shared across docs, and a review of doc B must never treat doc A's run as its previous iteration.
 - **VERIFICATION pass genre** — read the qualifying walk record(s) and the pass records they walked, and answer per resolution: landed or regressed. Then run the passes over what the walks added.
 
 ### Dispatching a fresh pass (\`--reviewer fresh\`)
 
-A fresh pass is REVIEW pass genre. Spawn a clean-context subagent (the **Task tool**, general-purpose — never a fork of this conversation, which would carry its context) with the review contract, and hand it the brief below. What the brief may carry is \`orbit-conventions\`' \`Review mode decision framework\`'s rule, stated there once; the brief adds nothing beyond it and nothing from the trail. The subagent persists through \`orbit emit review\` with \`reviewer_class: "fresh"\` and its owed \`direction\` (Step 8); this conversation then renders the report from the engine (Step 10) and pastes it.
+A fresh pass is REVIEW pass genre. Spawn a clean-context subagent (the **Task tool**, general-purpose — never a fork of this conversation, which would carry its context) with the review contract, and hand it the brief below. What the brief may carry is \`orbit-conventions\`' \`Review mode decision framework\`'s rule, stated there once; the brief adds nothing beyond it and nothing from the trail. The subagent persists through \`orbit emit review\` with \`reviewer_class: "fresh"\` and its owed \`direction\` (Step 8); this conversation then renders the report from the engine (Step 10) and pastes it. Dispatch is the INVOKING session's act alone: a subagent holding this brief is the worker, skips this step, and never dispatches again.
 
 \`\`\`
-You are a fresh-context reviewer. Run /orbit:review --as <mode> --reviewer fresh on <target> in this
-repository: load the orbit-review skill and follow its steps for that mode as a REVIEW-genre pass.
-Read what the skill's read list names for the mode — the change's artifacts, the baseline specs, the
-lens files and, in system mode, the commit range with the trail excluded by the pathspec it gives.
-Persist through orbit emit review with reviewer_class "fresh" and a direction.
+You are the fresh-context reviewer this session dispatched for /orbit:review --as <mode> --reviewer
+fresh on <target> in this repository: the WORKER, not a dispatcher. Load the orbit-review skill and run
+its steps for that mode as a REVIEW-genre pass, SKIPPING its "Dispatching a fresh pass" step: that step
+is the invoking session's and is already done; you never dispatch again. Read what the skill's read list
+names for the mode — the change's artifacts, the baseline specs, the lens files and, in system mode, the
+commit range with the trail excluded by the pathspec it gives. Persist through orbit emit review with
+reviewer_class "fresh" and a direction.
 \`\`\`
 
 ### 6. Run passes (load the resolved mode's reference ONLY)

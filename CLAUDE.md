@@ -513,7 +513,7 @@ parent `rc03-review-genres`, R-crc-9's fourth preventive application): **a pass 
 REVIEW-genre brief carries nothing from the trail.** `orbit-conventions`' `Review mode decision framework`
 now states ONCE, as a fenced six-row table, how a pass's genre is COMPUTED from three trail facts — reviewer
 class, mode, and whether a QUALIFYING walk of its mode precedes it (a walk whose source resolves to the mode,
-after the latest independent pass of the mode and before the pass): `fresh`/`external` are REVIEW; an
+after the latest ACCEPTED independent pass of the mode and before the pass): `fresh`/`external` are REVIEW; an
 `in-context` pass after a qualifying walk is VERIFICATION; every other in-context pass (none, only mode-less
 walks, architecture mode) is REVIEW. "Pass genre" is QUALIFIED throughout — "genre" already names the
 renderer's internal-versus-external axis — and the gate reads nothing of it (R-crc-13). The same requirement

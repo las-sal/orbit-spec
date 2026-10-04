@@ -35,7 +35,7 @@ and carries no engine code; its one load-bearing choice is WHERE the rule is sta
 
 Six cells: independent classes → REVIEW; `in-context` after a QUALIFYING walk of its mode → VERIFICATION;
 `in-context` with no such walk, or only MODE-LESS walks (a record whose source resolves to no mode) →
-REVIEW; a QUALIFYING walk is one whose token lies after the latest independent pass of the mode (any walk when
+REVIEW; a QUALIFYING walk is one whose token lies after the latest ACCEPTED independent pass of the mode (any walk when
 none exists) and before the pass — the bound the fresh pass asked for, which is also rc03c's walk set
 (the exploration's table said "a readable walk precedes", unbounded; corrected here, not in the record); architecture mode → REVIEW; `external` × architecture → not a member (refused upstream). The
 inputs are `TrailPass.reviewerClass`, `TrailPass.mode`, `TrailResolution.sourcePath` and token order —
@@ -134,7 +134,7 @@ No `key_defects`. My reading of the file against the grammar after the last prop
 live rules, both with ID-matched owners, a `Domain:` line and table, a closure token from the set,
 residual slots exactly on the BOUNDED one, nine move lines each once — both ACCOUNTED (the engine's
 parse at the last boundary emit agreed: 2 rules, 0 open, 1 residual). The BOUNDED entry's two residual
-lines were grepped in `specs/orbit-conventions/spec.md` before the move: both present, verbatim.
+lines were grepped in `specs/orbit-conventions/spec.md` before the move: both present, verbatim. (Widened at the system cadence's first walk, 2026-10-04: the owner's residual kind now also names prior-pass content reaching a reviewer through what a brief legitimately names — commit messages, the `orbit status` gate reason, project-context narrative — and its method adds a walk-time check; `explore.md`'s entry keeps the propose-time wording as the exploration's record.)
 
 ## Touchpoints
 
@@ -163,9 +163,12 @@ lines were grepped in `specs/orbit-conventions/spec.md` before the move: both pr
   exemption, stated once in the owner: no pair and no gate exist in architecture mode, and no render
   surface computes the note; retiring it would remove the mode's only iteration signal.
 - [The REGION rule must let the prompt keep its three required output paths] → the rule exempts the
-  prompt template's output sections by SECTION (`## Output format — write to:`, `## After completing the
-  review`, and the reference's own header line) — decidable, and task 1.1 plants a read pointer and
-  asserts the three output paths pass (walk 2, the external's first finding).
+  prompt template's output destinations BY LINE: inside `## Output format — write to:` and `## After
+  completing the review`, a line whose every trail path is the findings destination, and the reference's
+  own header line whose every trail path is the prompt file — decidable, and task 1.1 plants a read pointer
+  and asserts the three output paths pass (walk 2, the external's first finding). Narrowed from a
+  section-level exemption at the system cadence's first walk (2026-10-04, fresh S3, Sal: A): a read
+  instruction planted inside an output section had stayed green.
 - [The pass-genre table has no engine reader until rc03c] → by design of the split: the table is a spec
   statement the bodies point at; rc03c's function is held to it by a test when it ships. Until then the
   word is a reader's, as every rc-stage's "in-context confirm" already was.

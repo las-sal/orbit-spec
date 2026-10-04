@@ -20,7 +20,7 @@ carry nothing — which dissolves the channel problem on every launch order inst
   trail facts (reviewer class, mode, whether a QUALIFYING walk of its mode precedes it), never
   declared: `fresh`/`external` are REVIEW; an `in-context` pass after a qualifying walk of its mode is
   VERIFICATION — a qualifying walk being one whose source resolves to the mode, with a token after the
-  latest independent pass of the mode and before the pass; every other `in-context` pass (none before it, only mode-less walks,
+  latest ACCEPTED independent pass of the mode and before the pass; every other `in-context` pass (none before it, only mode-less walks,
   architecture mode) is REVIEW. "Pass genre" is qualified throughout: "genre" already means
   internal-versus-external in the renderer and two baseline requirements, and the owner says so by
   pointer rather than renaming a ruling's word. The table lives in `orbit-conventions`' `Review mode decision framework`, whose

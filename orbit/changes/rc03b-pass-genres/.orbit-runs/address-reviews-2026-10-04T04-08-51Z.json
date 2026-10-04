@@ -1,0 +1,197 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-04T04:08:51Z",
+  "change": "rc03b-pass-genres",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc03b-pass-genres/.orbit-runs/review-system-2026-10-04T03-55-35Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-04T03-55-35Z",
+  "latest_apply_token": "2026-10-04T03-47-51Z",
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 4,
+    "suggestion": 3
+  },
+  "pushback_verification": "7 of 7 verified against the current tree before acting (W1 reproduced live — git log subjects and 1c175fb7's body carry pass counts; W2 against trail.ts:196-201 and :237-244; W3 at review.ts:534; W4 at the owner's list sentence; S1 against design.md's Touchpoints; S2 at review.ts:815; S3 by planting a read sentence inside ## Output format, green before the fix). 0 stale.",
+  "resolution_summary": {
+    "resolved": 7,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The REVIEW-genre brief's own mandated reads still surface prior passes: git log commit messages and the status gate reason",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 808,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Reproduced at walk time: `git log --format='%h %s' -- orbit/changes/rc03b-pass-genres/` lists 1c175fb7 'External review (proposal, iter 1)' whose body carries '0 critical, 3 warnings, 2 suggestions' — and 46a43e00's subject carries the proposal cadence's per-pass counts. Repair, no new mechanism: the body's Step 4 and the mode-sections system read line stop estimating <change-start> from `git log` and find it by a HASH-ONLY read (`git log --diff-filter=A --format=%h -- orbit/changes/<name>/proposal.md | tail -1` — the commit that first added proposal.md), saying commit subjects can carry prior passes' counts. The owner's BOUNDED residual widened: Residual kind now also names prior-pass content reaching a reviewer through what a brief legitimately names — commit messages it reads on its own, the gate reason `orbit status` prints once one half of a pair has landed, project-context narrative such as CLAUDE.md — and Residual method adds a walk-time check whether either half's findings cite a prior pass. Fidelity test pins the hash-only command in both blocks and forbids the old estimate wording.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/review.ts",
+          "orbit/changes/rc03b-pass-genres/specs/orbit-conventions/spec.md",
+          "orbit/changes/rc03b-pass-genres/specs/orbit-review/spec.md",
+          "orbit/changes/rc03b-pass-genres/design.md",
+          "test/core/templates/orbit-content-fidelity.test.ts"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/changes/rc03b-pass-genres/explore.md",
+            "reason": "the exploration's record: its D-rc03-3 Mechanism entry keeps the propose-time residual wording; design.md's Mechanism record carries a dated note that the owner widened it"
+          }
+        ]
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The genre probe counts external returns by filename, while design D1 names the trail reader's accepted passes; a rejected return decides differently",
+      "file": "orbit/changes/rc03b-pass-genres/specs/orbit-conventions/spec.md",
+      "line": 27,
+      "marker_source": "internal-review",
+      "classification": "decision_required",
+      "recommendation_fork": {
+        "source": "structured",
+        "options": [
+          {
+            "label": "A",
+            "body": "Owner, ADDED (d), Step 5 and D1 all say an ACCEPTED external return; the body cannot see acceptance from a filename, so one sentence names it: a body-side probe that cannot tell acceptance treats the file as a pass, a named residual until the engine's function prints it."
+          },
+          {
+            "label": "B",
+            "body": "Declare the filename reading normative (a rejected return still bounds the walk set) and amend design D1's inputs so the engine builds to the same rule."
+          }
+        ],
+        "selected": "A"
+      },
+      "ratified_via": "chat",
+      "resolution": "A — Sal, in chat: \"a on both\". Widened at the briefing to carry the external half's converged second case (legacy `flags.fresh: true` with no reviewer_class).",
+      "action": "Verified at trail.ts:196-201 (a shape-rejected external goes to rejectedExternals, not passes) and :237-244 (reviewer_class absent + flags.fresh true → fresh). The bound now reads 'latest ACCEPTED independent pass' everywhere it is stated (owner ×4, orbit-review ×1, body Step 5, proposal, design, CLAUDE.md, the rc03b charter's two lines). The owner defines it as the trail reader's pass set and class rule (reviewer_class, else flags.fresh: true; a rejected external return is not a pass); the probe reads `flags.fresh` when reviewer_class is absent (owner, ADDED (d) and its scenario, body Step 5); and the owner states ONE KNOWN LIMIT — acceptance cannot be read from metadata, so the body counts every external-<mode>-*.md file as a pass and the engine's computation over the trail reader is authoritative where they differ (the body names it). NEW test/core/pass-genre-probe.test.ts: a six-row decision table running the probe as the owner states it beside readTrail on constructed trails — agreement on no-walk, walk-after-fresh, accepted-external-bounds, LEGACY flags.fresh bounds (the external's case), mode-less/other-mode; the named divergence pinned exactly on the rejected-return case (probe REVIEW, trail VERIFICATION). The pass-genre table's fence is unchanged, so the parity pin did not move.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03b-pass-genres/specs/orbit-conventions/spec.md",
+          "orbit/changes/rc03b-pass-genres/specs/orbit-review/spec.md",
+          "src/core/templates/workflows/review.ts",
+          "orbit/changes/rc03b-pass-genres/proposal.md",
+          "orbit/changes/rc03b-pass-genres/design.md",
+          "CLAUDE.md",
+          "orbit/architecture/clean-up-review-cycle.md",
+          "test/core/pass-genre-probe.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The external prompt's system-mode pathspec uses `<name>` where every other line of the substituted block uses `<change-name>`",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 534,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Verified at review.ts:534. The mode-sections line now reads `':!orbit/changes/<change-name>/.orbit-runs'` (the block's own placeholder); the body's Step 4 keeps `<name>` (its own convention). orbit-review's ADDED (c) and its system-diff scenario now say the same pathspec is written with each block's own placeholder. Fidelity test asserts the mode-sections block carries `<change-name>` and no `<name>`.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/review.ts",
+          "orbit/changes/rc03b-pass-genres/specs/orbit-review/spec.md",
+          "test/core/templates/orbit-content-fidelity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The owner's list of what a brief names omits the project-context files the shipped prompt and Step 4 hand every reviewer",
+      "file": "orbit/changes/rc03b-pass-genres/specs/orbit-conventions/spec.md",
+      "line": 29,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Verified at the owner's brief-rule sentence. The list now names `explore.md` and `sketches/` when present, the project-context files (`CLAUDE.md`, `orbit/project.md`, `*_convention.md` at the root, when present), the baseline specs, the lens files and — in system mode — the apply commit range with its start found by a hash-only read; CLAUDE.md's narrative is named in the widened residual kind (see the first resolution).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03b-pass-genres/specs/orbit-conventions/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Touchpoints omit the propose body and the two new tests under test/core/",
+      "file": "orbit/changes/rc03b-pass-genres/design.md",
+      "line": 139,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Verified: design.md's Touchpoints name only test/core/templates/*.test.ts. No edit — the predicted Touchpoints are FROZEN at apply (the boot readout labels them 'the plan, frozen at apply') and the engine computes the divergence. propose.ts is recorded under task 1.1; the two new test/core/ files (and this walk's pass-genre-probe.test.ts) are carried to the archive record as a named actual-unpredicted divergence.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "'the ONLY trail read a REVIEW-genre pass makes' is literally false in system mode",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 815,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Verified at review.ts:815. Narrowed to 'the ONLY read of the trail's pass and walk records' in the body's Step 5, orbit-review's ADDED (d) and its prior-run scenario ('the one read of the trail's pass and walk records it makes'). Fidelity regex and test title moved with it.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/review.ts",
+          "orbit/changes/rc03b-pass-genres/specs/orbit-review/spec.md",
+          "test/core/templates/orbit-content-fidelity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The REGION rule exempts whole output sections, so a read instruction inside them passes",
+      "file": "test/core/templates/review-genre-brief.test.ts",
+      "line": 58,
+      "marker_source": "internal-review",
+      "classification": "decision_required",
+      "recommendation_fork": {
+        "source": "heuristic",
+        "options": [
+          {
+            "label": "A",
+            "body": "Exempt BY LINE: inside the two output sections, a `.orbit-runs/` line is exempt only when every trail path on it is the findings destination `external-<as>-<TS>.md`; the header line only when every trail path is the prompt file. Rewrite the ADDED grep scenario's exemption sentence and add the planted-in-section case as a red test."
+          },
+          {
+            "label": "B",
+            "body": "Keep the section exemption, add a test documenting the blind spot, and name it in the residual."
+          }
+        ],
+        "selected": "A"
+      },
+      "ratified_via": "chat",
+      "resolution": "A — Sal, in chat: \"a on both\".",
+      "action": "Verified at review-genre-brief.test.ts:58: a planted 'compare against the prior .orbit-runs/external-*.md files' inside ## Output format was green. orbit-review's grep scenario now exempts BY LINE (destination lines only; any other trail mention, in those sections or anywhere in the brief, is a hit); design.md's Risks entry carries a dated narrowing note; the test's REGION helper checks each line's trail targets, and two new red cases pin a read instruction planted inside the output section and a destination line carrying a second, non-destination path. The three real output paths stay green; the shipped surface stays at zero hits. This sets the direction log 2 inherits for the external half's broader W3.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03b-pass-genres/specs/orbit-review/spec.md",
+          "orbit/changes/rc03b-pass-genres/design.md",
+          "test/core/templates/review-genre-brief.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Walk 1 of 2 on the system blind pair (the fresh half, the earlier token): 7 of 7 resolved, 0 stale — five obvious fixes previewed at triage and two decisions ratified in chat (Sal: 'a on both'). The headline repair: the commands a REVIEW-genre brief tells a reviewer to run no longer surface prior passes (hash-only start commit), and the owner's residual names the output channels that remain. The genre probe is now bounded by the trail reader's ACCEPTED pass set with the legacy flags.fresh rule, its one metadata blind spot (acceptance) named in the owner and pinned by a decision-table test; the brief grep exempts output destinations by line. One instrument slip caught in flow: a test title gained an apostrophe inside single quotes and the fidelity suite stopped compiling — an earlier filtered run reported green without it; the full suite is the measure. 2505 tests green (2498 → 2505); validate --strict valid; fingerprints 5/5; validate --sources green.",
+  "iteration": 5,
+  "next_recommended": "/orbit:address-reviews rc03b-pass-genres --from-file orbit/changes/rc03b-pass-genres/.orbit-runs/external-system-2026-10-04T03-57-21Z.md"
+}
