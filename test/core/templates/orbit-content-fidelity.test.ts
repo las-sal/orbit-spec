@@ -936,3 +936,68 @@ describe('rc04b-forward-recommendation: the generated surface carries the direct
     expect(example.split('\n').filter(l => /^Gate /.test(l))).toEqual([]);
   });
 });
+
+describe('rc03b-pass-genres: the review-genre brief carries nothing from the trail (task 1.3)', () => {
+  const review = getReviewSkillTemplate();
+  const ref = (t: SkillTemplate, name: string) => t.references!.find(r => r.name === name)!.content;
+  const PATHSPEC = "':!orbit/changes/<name>/.orbit-runs'";
+
+  it('the external-handoff Step 5 gathers the iteration number ONLY', () => {
+    const step5 = ref(review, 'external-handoff.md').split('### 5.')[1].split('### 6.')[0];
+    expect(step5).toMatch(/iteration number ONLY/i);
+    expect(step5).not.toMatch(/still open|Resolved since|resolved-finding titles/);
+    expect(step5).toContain('iteration 1');
+    expect(step5).toContain("`orbit-conventions`' `Review mode decision framework`");
+  });
+
+  it("Step 6's iteration-3+ line reads \"previously-unused AI\"; option (a) and the trade-off sentence are gone; the worked example carries the new wording", () => {
+    const handoff = ref(review, 'external-handoff.md');
+    const step6 = handoff.split('### 6.')[1].split('### 7.')[0];
+    expect(step6).toContain('**Iteration 3+**: `Fresh session in a previously-unused AI recommended (maximum independence); when every available AI has reviewed this change in this mode, a fresh session of the least-recently-used.`');
+    expect(step6).toMatch(/oldest/);
+    expect(handoff).not.toContain('Same-vs-fresh trade-off');
+    expect(handoff).not.toMatch(/carry context|same-AI continuation/);
+    const example = handoff.split('## Worked example')[1].split('## Out of scope')[0];
+    expect(example).toContain('previously-unused AI');
+  });
+
+  it('the prompt template\'s `## Cycle context` is exactly the iteration line, and its project-context list carries no trail entry', () => {
+    const t = ref(review, 'prompt-template.md');
+    const cycle = t.split('## Cycle context\n')[1].split('\nDo not push back')[0];
+    expect(cycle.trim()).toBe('- Iteration: <N>');
+    const project = t.split('## Project context (read first)')[1].split('## Cycle context')[0];
+    expect(project).not.toContain('.orbit-runs');
+  });
+
+  it('the system-mode read list (mode-sections) and the body\'s Step 4 carry the trail-excluding pathspec', () => {
+    const sys = ref(review, 'mode-sections.md').split('## System mode — "What to read for THIS review"')[1].split('## System mode — "What to look for"')[0];
+    expect(sys).toContain(`git diff <change-start>..HEAD -- . ${PATHSPEC}`);
+    const step4 = review.instructions.split('### 4. Load context')[1].split('### 5.')[0];
+    expect(step4).toContain(`git diff <change-start>..HEAD -- . ${PATHSPEC}`);
+  });
+
+  it('Step 5 is scoped to VERIFICATION pass genre; the REVIEW-genre branch names the bounded metadata probe as its only trail read', () => {
+    const step5 = review.instructions.split('### 5. Inspect prior runs')[1].split('### 6.')[0];
+    expect(step5).toContain('VERIFICATION');
+    expect(step5).toContain('REVIEW');
+    expect(step5).toContain('`reviewer_class`');
+    expect(step5).toContain('`source_path`');
+    expect(step5).toMatch(/filenames?/);
+    expect(step5).toMatch(/ONLY trail read/i);
+    expect(step5).toMatch(/unreadable/i);
+    expect(step5).toMatch(/exemption/i);
+    // The pushback epitome names no prior-run comparison.
+    const epitome = review.instructions.split('- **Pushback (review-time)')[1].split('\n')[0];
+    expect(epitome).not.toMatch(/comparing against prior|\.orbit-runs/);
+    expect(epitome).toMatch(/current state/);
+  });
+
+  it('the `--reviewer`/`--fresh` prose carries the repaired class words, and the fresh dispatch step points at the owner\'s brief rule', () => {
+    const body = review.instructions;
+    expect(body).toContain('same model, clean context');
+    expect(body).toContain('different AI in a separate session');
+    const dispatch = body.split('### Dispatching a fresh pass')[1].split(/\n### /)[0];
+    expect(dispatch).toContain("`orbit-conventions`' `Review mode decision framework`");
+    expect(dispatch).toContain('orbit emit review');
+  });
+});

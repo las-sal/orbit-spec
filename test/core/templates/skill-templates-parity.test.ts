@@ -107,7 +107,12 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // Moved a second time at the system blind-pair walk (2026-09-28): the both-exist concluded refuse in
   // Step 0's conflict sub-step, the Mechanism grammar mirror under Step 0b, row 1's record shape and
   // conformance-defined 'accounted' in Step 0c.6 — one re-record for the walk's body edits.
-  getOrbitProposeSkillTemplate: '51a8dcb5464b9aac1ecb743a0a1c9b78529d82714f346e093dbf1a7ec6d54aab',
+  // rc03b-pass-genres (2026-10-04): moved ONCE, deliberately, by ONE phrase — Step 0's staging-move note said
+  // "the `.orbit-runs/` iteration history", a line the review-genre brief test's PHRASE rule (`orbit-review`'s
+  // grep scenario: "iteration history" on a line naming the trail path) reads as a hit over EVERY generated
+  // skill. The line describes moving files, not a brief; it now says "run trail". Keeping the rule as written
+  // beat narrowing it; the hit was measured at task 1.1 (one of the eleven pre-apply reds).
+  getOrbitProposeSkillTemplate: 'bfa22c620d98981058070a8bd0447c92b3e3cc6b32e6a136fa14b35f3a622896',
   getOrbitProposeCommandTemplate: 'b91222654d5050d7ae7f2f49b5d6c4b34e65638bd8c5ae3e622550eb1329c168',
   getFeedbackSkillTemplate: 'ded61ad85c5050f7bf241870b14bfcdd929f0be68a028c1130fd30a66efbda3b',
   // rc15 (ended-stage-state, 2026-09-29): the orbit-architect body moved ONCE, deliberately — §5 (the
@@ -139,7 +144,7 @@ const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
   'orbit-bulk-archive-change': '601dd7c74804c06a9818428f86030c8cef5311a9fc7c59f2dc14e490007a291d',
   'orbit-verify-change': '0d8f6b82d40bf95bd6b49f447fbd66d5414af79fa157872345668b9cb709ab6d',
   'orbit-onboard': '4b227395bb70c36c643970d821ec8eb245fbfca090accdc38d5b3588f7620fa7',
-  'orbit-propose': 'ce16a6fe9fdc7ad3846cc99e002173125c795b2379a9239b888b6a4a5b16efb1', // rc13c: moved once with the body (see the function-hash note above)
+  'orbit-propose': '97643dfd343dd2a797a65f0e853221d45fcaedc14f6a1d2b53966630da71d3d7', // rc13c, then rc03b: moved with the body (see the function-hash notes above)
   'orbit-architect': 'ad06e7eac6e4177eb5a7e0e07976fee6a956314b561f73ff64200fcff27fa24f', // rc15: moved twice with the body — apply, then the system walk; a third time at the post-archive audit walk (see the function-hash note above)
 };
 

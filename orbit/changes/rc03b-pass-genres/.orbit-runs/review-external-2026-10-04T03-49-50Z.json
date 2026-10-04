@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-10-04T03:49:50Z",
+  "change": "rc03b-pass-genres",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "prompt_path": "orbit/changes/rc03b-pass-genres/.orbit-runs/external-prompt-system-2026-10-04T03-49-33Z.md",
+  "target": null,
+  "final_assessment": "External review prompt packaged for rc03b-pass-genres (iter 1, mode system — the external half of the review-system blind pair, a DECLARED and still-uncovered cadence slot, so no spend record); the FIRST prompt composed under this change's own surface: Cycle context is the iteration line alone and the brief names no finding, no prior pass and no trail path to read (the system diff excludes the trail by pathspec) — task 3.5 reads it at the walk. Awaiting findings; the handoff is blocked until the apply and this prompt are committed and pushed.",
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/rc03b-pass-genres/.orbit-runs/external-prompt-system-2026-10-04T03-49-33Z.md into the target AI, save the response as orbit/changes/rc03b-pass-genres/.orbit-runs/external-system-<TS>.md, then /orbit:address-reviews rc03b-pass-genres --from-file <path>"
+}

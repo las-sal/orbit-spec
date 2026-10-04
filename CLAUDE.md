@@ -508,6 +508,32 @@ before there was prose. Q-crc-30 (`files_touched` is tracked-only) and Q-crc-31 
 is silently last-wins while a second `## Direction` is malformed) opened at archive; the readiness
 record accepts seven residuals, headlined by rc07's distinction. **2465 tests green** (2429 → 2465).
 
+`rc03b-pass-genres` is APPLIED (2026-10-04; the system cadence is next — the first child of the split
+parent `rc03-review-genres`, R-crc-9's fourth preventive application): **a pass has a PASS GENRE, and a
+REVIEW-genre brief carries nothing from the trail.** `orbit-conventions`' `Review mode decision framework`
+now states ONCE, as a fenced six-row table, how a pass's genre is COMPUTED from three trail facts — reviewer
+class, mode, and whether a QUALIFYING walk of its mode precedes it (a walk whose source resolves to the mode,
+after the latest independent pass of the mode and before the pass): `fresh`/`external` are REVIEW; an
+`in-context` pass after a qualifying walk is VERIFICATION; every other in-context pass (none, only mode-less
+walks, architecture mode) is REVIEW. "Pass genre" is QUALIFIED throughout — "genre" already names the
+renderer's internal-versus-external axis — and the gate reads nothing of it (R-crc-13). The same requirement
+owns the BRIEF RULE: a REVIEW-genre brief names the artifacts, baselines, lenses and (system mode) the commit
+range with the trail excluded by pathspec, and NO finding, NO prior pass, NO `.orbit-runs/` path to READ
+(write destinations exempt), with its BOUNDED residual stated there once — which dissolves rc03a's eleven
+channels on every launch order instead of deny-listing them. The TWELFTH channel, found by reading the
+OWNING SPEC rather than the body, was the recommended-session note's iteration-3+ "carry context from a
+same-AI session so it can verify its earlier findings" — verification asked of a review-genre reviewer
+through its own memory — now deleted. The external prompt's Cycle context is the iteration line alone; the
+review body skips prior-run inspection for REVIEW genre (an in-context pass decides its genre from ONE
+bounded metadata probe: filenames, `reviewer_class`, `source_path`), gains a "Dispatching a fresh pass" step
+and carries the table as a CHECKED MIRROR under "Pass genre", fence-pinned by
+`test/core/pass-genre-parity.test.ts`; `--fresh`'s parenthetical moved to the right noun (same model, clean
+context; external is a different AI in a separate session). Nothing launches or orders the pair (the engine
+already outranks the walk while a pair is open). THREE capabilities, at R-crc-1's ceiling (6 blocks: 1 ADDED,
+5 MODIFIED); no engine code, held by a hash pin. One instrument lesson: the brief grep's PHRASE rule flagged
+a line in the PROPOSE body ("the `.orbit-runs/` iteration history", about moving files) — the rule was kept
+as written and the line reworded, one of eleven pre-apply reds. **2498 tests green** (2465 → 2498).
+
 Read that doc before any rc-stage work; the D-arc section below is the historical
 record of how the engine got here.
 

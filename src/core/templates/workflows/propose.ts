@@ -265,7 +265,7 @@ mv orbit/explore/<name>/* orbit/changes/<name>/
 rmdir orbit/explore/<name>
 \`\`\`
 
-(Or equivalent — preserve \`explore.md\` AND any sibling files like \`sketches/\` AND any draft convention files AND the \`.orbit-runs/\` iteration history. The \`.orbit-runs/\` directory is dot-prefixed, so a bare \`*\` glob does NOT match it — move it explicitly first (as above) or use a dotfile-aware move; otherwise it is left behind and the \`rmdir\` fails. The \`rm\` of the staged \`.openspec.yaml\` is conditional on its existence. The staging directory should no longer exist; its contents land alongside the generated artifacts in the change directory.)
+(Or equivalent — preserve \`explore.md\` AND any sibling files like \`sketches/\` AND any draft convention files AND the \`.orbit-runs/\` run trail. The \`.orbit-runs/\` directory is dot-prefixed, so a bare \`*\` glob does NOT match it — move it explicitly first (as above) or use a dotfile-aware move; otherwise it is left behind and the \`rmdir\` fails. The \`rm\` of the staged \`.openspec.yaml\` is conditional on its existence. The staging directory should no longer exist; its contents land alongside the generated artifacts in the change directory.)
 
 After the move, \`orbit/changes/<name>/\` contains both:
 - The moved exploration files (\`explore.md\`, \`sketches/\`, draft conventions)

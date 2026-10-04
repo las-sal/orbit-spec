@@ -347,14 +347,9 @@ In \`orbit/changes/<name>/.orbit-runs/\`, count files matching \`external-<as>-*
 
 ### 5. Load cycle context
 
-For the "Cycle context" section of the prompt, gather:
+The "Cycle context" section of the prompt carries the **iteration number ONLY** (Step 4) — no finding, open or resolved, internal or external, and no pointer at the trail for the reviewer to read. An external pass is REVIEW pass genre, and what a REVIEW-genre brief may carry is \`orbit-conventions\`' \`Review mode decision framework\`'s rule, stated there once. This branch still READS the trail to count iterations (Step 4) and to pick the recommended session (Step 6); the reviewer never does.
 
-- **Iteration N** (Step 4).
-- **Prior internal review findings** still open: read the most-recent \`review-<mode>-*.json\` summary in \`.orbit-runs/\`; list count + short titles of unresolved findings.
-- **Prior external review findings** still open: read existing \`external-<as>-*.md\` files in \`.orbit-runs/\`; cross-reference any prior \`address-reviews-*.json\` to mark resolved-or-not.
-- **Resolved since last external review**: if a prior \`address-reviews-*.json\` exists, list its resolved-finding titles.
-
-If \`.orbit-runs/\` is absent or has no prior content: omit the "open findings" sublists; the cycle-context section just shows iteration 1.
+If \`.orbit-runs/\` is absent or holds no prior external file for this mode: iteration 1.
 
 ### 6. Compute the recommended-session note
 
@@ -362,9 +357,9 @@ Read the \`**Reviewer**:\` field from existing \`external-<as>-*.md\` files in \
 
 - **Iteration 1**: \`Fresh session recommended — first external pass; sets independent baseline. Pick any AI (codex / fresh Claude / GPT / etc.).\`
 - **Iteration 2**: \`Fresh session in a DIFFERENT AI than iter 1's reviewer recommended (model diversity catches different blind spots). If iter 1 was <prior reviewer>, try <suggest different model>.\`
-- **Iteration 3+**: \`Either (a) carry context from a same-AI prior session — lets that reviewer verify its earlier findings were actually addressed (ideal when concerns from that reviewer dominated prior iterations); or (b) fresh session in a previously-unused AI — maximum independence (ideal when looking for net-new issues). For this iter, consider <specific suggestion based on prior-reviewer pattern>.\`
+- **Iteration 3+**: \`Fresh session in a previously-unused AI recommended (maximum independence); when every available AI has reviewed this change in this mode, a fresh session of the least-recently-used.\`
 
-Same-vs-fresh trade-off (mention briefly in the recommendation when relevant): **fresh sessions maximize independence (better at finding net-new issues); same-AI continuation sessions maximize verification (better at checking whether prior findings were actually addressed).**
+Least-recently-used is decided by ONE ordering input: each reviewer's latest \`external-<as>-*.md\` token in this mode; the reviewer whose latest token is oldest is least-recently-used. A continued same-AI session is never recommended: it would carry its prior findings in its own head into a REVIEW-genre pass (the owner's brief rule, above).
 
 ### 7. Write the prompt file
 
@@ -420,11 +415,8 @@ Mode-specific content (the "What to read for THIS review" file list and the "Wha
 \`\`\`
 Generating external-review prompt as \`proposal\` (inferred from tasks state).
 
-Recommended session: Iter 5 — either (a) carry context from your iter-3 codex
-chat (codex verifies whether its iter-3 findings actually landed after the most recent
-substantive edits), or (b) fresh Claude session for maximum independence
-(better at catching cleanup-residue from the most recent substantive edits).
-For this iter, (b) is the higher-signal choice given how much changed after iter 4.
+Recommended session: Iter 5 — Fresh session in a previously-unused AI recommended
+(maximum independence); iters 1–4 were codex and Claude, so try GPT.
 
 Prompt: orbit/changes/add-review-workflows/.orbit-runs/external-prompt-proposal-2026-05-18T14-35-23Z.md
 
@@ -447,8 +439,7 @@ The command does not run the review and does not ingest findings:
 ## Graceful degradation
 
 - **No \`.orbit-runs/\`** → create it as part of writing the prompt file; iteration is 1.
-- **No prior internal review summary** → cycle-context section omits the "open internal findings" sublist.
-- **No prior external review** → recommended-session note uses iter 1 phrasing; cycle context omits "open external findings".
+- **No prior external review** → recommended-session note uses iter 1 phrasing; cycle context reads \`- Iteration: 1\`.
 - **No lenses files** → "Project context (read first)" line for those still appears (the \`(if present)\` qualifier handles the absence); external AI will see they're absent when it pulls the repo.
 - **No git remote / repo URL unknown** → emit the local path instead of a URL and add a note: \`If you don't have access to this repo, copy it to a shared location and update the invocation.\`
 
@@ -540,7 +531,7 @@ Substitute these into the \`## What to read for THIS review\` and \`## What to l
 
 \`\`\`
 - orbit/changes/<change-name>/proposal.md, design.md, tasks.md, specs/
-- The change's commit range: git diff <change-start>..HEAD (estimate <change-start> from git log)
+- The change's commit range: git diff <change-start>..HEAD -- . ':!orbit/changes/<name>/.orbit-runs' (estimate <change-start> from git log)
 - orbit/specs/<capability>/spec.md (archived baselines — for baseline-compliance check)
 - orbit/lenses/perspectives.md, orbit/lenses/critical-paths.md (judgment layer)
 - Code paths touched by the change (cohesion + surface walk)
@@ -585,15 +576,10 @@ inconsistent, or unclear. Don't be charitable to the authoring AI's reasoning.
 - \`*_convention.md\` at repo root — naming, error handling, etc. (if present)
 - \`orbit/lenses/perspectives.md\` — named callers worth validating from (if present)
 - \`orbit/lenses/critical-paths.md\` — user flows worth walking end-to-end (if present)
-- \`orbit/changes/<change-name>/.orbit-runs/\` — iteration history; see what's
-  already been addressed in prior cycles
 
 ## Cycle context
 
 - Iteration: <N>
-- Prior internal findings still open: <count + brief list>
-- Prior external findings still open: <count + brief list>
-- Resolved since last review: <brief list>
 
 Do not push back on stale findings — pushback discipline is enforced on
 resolution, not review. Just flag what you observe.
@@ -753,10 +739,25 @@ export function getReviewSkillTemplate(): SkillTemplate {
 
 The four disciplines from \`orbit-conventions\`, embedded per body; detail lives in the step where each fires.
 
-- **Pushback (review-time) — primary here**: verify every finding against current state before reporting; suppress stale findings with an evidence note (\`stale finding suppressed: <evidence>\`), comparing against prior \`.orbit-runs/review-<mode>-*.json\` to surface only what's new or unresolved.
+- **Pushback (review-time) — primary here**: verify every finding against current state before reporting; suppress a stale finding with an evidence note (\`stale finding suppressed: <evidence>\`) whose evidence is what the current state shows. A VERIFICATION-genre pass additionally reads its walk (Step 5).
 - **Read-before-reference (authoring-time)**: every construct a finding names is backed by an actual read (enforcement rule under Special cases); unverifiable → downgrade or omit.
 - **Change completeness (modification-time)**: \`--mark\` insertions land fully in one pass, then sweep for residue (Step 11); stale or partial prior \`.orbit-runs/\` files are cleaned before persisting.
 - **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — review-cycle COUNT is the user's call; gate \`passed\` means *eligible*, not *commanded*.
+
+## Pass genre
+
+The table below is a CHECKED MIRROR of \`orbit-conventions\`' \`Review mode decision framework\` — the owner of how a pass's genre is determined and of what a REVIEW-genre brief may carry. An installed skill has no specs to point at, so the copy exists here; a parity test holds it byte-equal to the owner's fence. Never edit it here. The pass genre is a record and a header word; the gate reads nothing of it.
+
+\`\`\`
+| reviewer class | mode | trail position | pass genre |
+|---|---|---|---|
+| \`fresh\` or \`external\` | proposal or system | any | REVIEW — reads the whole artifact and the thesis |
+| \`in-context\` | proposal or system | a qualifying walk of this mode precedes the pass | VERIFICATION — reads that walk and answers landed / regressed per resolution |
+| \`in-context\` | proposal or system | no qualifying walk of this mode precedes it | REVIEW — a reaction with nothing yet to verify; the cadence's slot arithmetic is unchanged by pass genre |
+| \`in-context\` | proposal or system | only MODE-LESS walks precede it | REVIEW — a walk whose mode cannot be read is not evidence of a qualifying walk of this mode |
+| \`in-context\` or \`fresh\` | architecture | — | REVIEW — the architecture trail carries no change-mode walk records and the mode has no gate |
+| \`external\` | architecture | — | not a member — refused by \`orbit-review\`'s mode constraint |
+\`\`\`
 
 ## Steps
 
@@ -778,8 +779,8 @@ Resolve the MODE first — it decides what the positional even IS. Mode comes fr
 | \`--parallel\` | off | Spawn subagents for heavy passes. Proposal: parallelize Passes 2, 4, 6. System: parallelize Passes 2, 3, 4, 5. |
 | \`--focus <lens>\` | none | Emphasize specific passes (additive — does not skip others). See \`references/flags-detail.md\`. |
 | \`--strict\` | off | Fail-fast on the first CRITICAL or the first BLOCK — stop on what must be addressed. Useful for CI-like runs. |
-| \`--reviewer <class>\` | \`in-context\` | Reviewer class: \`in-context\` / \`fresh\` (clean-context subagent) / \`external\` (the handoff branch — \`references/external-handoff.md\`). |
-| \`--fresh\` | off | Shorthand for \`--reviewer fresh\`. Never combined with an explicit \`--reviewer\` value (clean usage error). |
+| \`--reviewer <class>\` | \`in-context\` | Reviewer class: \`in-context\` (this session — the reacting class) / \`fresh\` (same model, clean context — a clean-context subagent; see Dispatching a fresh pass) / \`external\` (a different AI in a separate session — the handoff branch, \`references/external-handoff.md\`). |
+| \`--fresh\` | off | Shorthand for \`--reviewer fresh\` (same model, clean context). Never combined with an explicit \`--reviewer\` value (clean usage error). |
 | \`--mark\` | off, proposal only | After report, write \`@review: <text>\` markers at each finding's file:line. See \`references/flags-detail.md\`. |
 | \`--skip-verify\` | off, system only | Skip Pass 0 (verify-change). Use when verify-change was run separately. |
 
@@ -804,12 +805,27 @@ From the returned \`contextFiles\`, read every artifact: \`proposal\`, \`design\
 - Orbit lenses: \`orbit/lenses/perspectives.md\`, \`orbit/lenses/critical-paths.md\` (system mode primarily; proposal mode uses for cross-doc checks)
 
 System mode also reads:
-- \`git diff <change-start>..HEAD\` (estimate \`<change-start>\` from \`git log\` against \`orbit/changes/<name>/\`)
+- \`git diff <change-start>..HEAD -- . ':!orbit/changes/<name>/.orbit-runs'\` (estimate \`<change-start>\` from \`git log\` against \`orbit/changes/<name>/\`) — the pathspec keeps the trail's pass records and walk logs out of what the pass reads
 - Code paths around the change (cohesion + surface walks)
 
-### 5. Inspect prior runs
+### 5. Inspect prior runs (VERIFICATION pass genre only)
 
-The iteration ordinal and iteration note are ENGINE-computed at render time from the trail — never authored here. Read the most-recent matching prior summary anyway to fuel the pushback discipline (suppress findings already resolved): change modes match \`review-<mode>-*.json\` in the change's \`.orbit-runs/\`; architecture mode matches \`review-architecture-*.json\` emits in \`orbit/architecture/.orbit-runs/\` whose \`doc\` field equals the doc under review — the trail is shared across docs, and a review of doc B must never treat doc A's run as its previous iteration.
+Decide this pass's PASS GENRE first, by the table under **Pass genre** above. A \`fresh\` pass and any architecture-mode pass are REVIEW. An in-context pass in a change mode decides from ONE bounded metadata probe — the token-ordered listing of the change's \`.orbit-runs/\` pass and walk records: \`review-<mode>-*.json\` reading each record's \`reviewer_class\` field, \`external-<mode>-*.md\` by filename, and \`address-reviews-*.json\` reading each record's \`source_path\` — to find the latest independent pass of this mode and any walk of this mode after it. Open no record's findings, suppressed list or resolutions to decide; a walk whose \`source_path\` resolves to no mode is MODE-LESS and qualifies for none; an unreadable listing is REVIEW.
+
+- **REVIEW pass genre** — SKIP the rest of this step: the metadata probe above is the ONLY trail read a REVIEW-genre pass makes. Pushback is current-state verification and needs no prior list, and the iteration ordinal and trend are ENGINE-computed at render time from the trail — never authored here. The owner's ONE exemption: architecture mode keeps its hand-computed per-doc iteration note (Step 8), counted over \`review-architecture-*.json\` emits in \`orbit/architecture/.orbit-runs/\` whose \`doc\` field equals the doc under review — the trail is shared across docs, and a review of doc B must never treat doc A's run as its previous iteration.
+- **VERIFICATION pass genre** — read the qualifying walk record(s) and the pass records they walked, and answer per resolution: landed or regressed. Then run the passes over what the walks added.
+
+### Dispatching a fresh pass (\`--reviewer fresh\`)
+
+A fresh pass is REVIEW pass genre. Spawn a clean-context subagent (the **Task tool**, general-purpose — never a fork of this conversation, which would carry its context) with the review contract, and hand it the brief below. What the brief may carry is \`orbit-conventions\`' \`Review mode decision framework\`'s rule, stated there once; the brief adds nothing beyond it and nothing from the trail. The subagent persists through \`orbit emit review\` with \`reviewer_class: "fresh"\` and its owed \`direction\` (Step 8); this conversation then renders the report from the engine (Step 10) and pastes it.
+
+\`\`\`
+You are a fresh-context reviewer. Run /orbit:review --as <mode> --reviewer fresh on <target> in this
+repository: load the orbit-review skill and follow its steps for that mode as a REVIEW-genre pass.
+Read what the skill's read list names for the mode — the change's artifacts, the baseline specs, the
+lens files and, in system mode, the commit range with the trail excluded by the pathspec it gives.
+Persist through orbit emit review with reviewer_class "fresh" and a direction.
+\`\`\`
 
 ### 6. Run passes (load the resolved mode's reference ONLY)
 
