@@ -35,7 +35,7 @@ Measured 2026-10-04, before any decision:
 ## Mechanism
 
 ### D-rc06-1 — coverage is declared on the TEST side, keyed by the scenario's title triple
-Domain: every line a `@scenario` tag can be followed by in a scanned test file (`test/**/*.test.ts`, vitest's include)
+Domain: every line a `@scenario` tag can be followed by in a scanned test file (the `scenario_map.tests` globs, D-rc06-10; this repo's is vitest's include, `test/**/*.test.ts`)
 | member | covered by |
 |---|---|
 | `it(` / `test(` | attaches to that call |
@@ -48,7 +48,7 @@ Domain: every line a `@scenario` tag can be followed by in a scanned test file (
 | `describe(` / `describe.each(` | REFUSED, naming the tag's line — a tag names a test, never a group |
 | any other line, or EOF | REFUSED, naming the tag's line — no silent member |
 | a tag-shaped line inside a fixture string | matched like any line, so it attaches or is refused VISIBLY (Case 3) |
-| a file outside `test/**/*.test.ts` | not scanned — it is not a test vitest runs |
+| a file outside the scanned globs | not scanned — the configured set is the declared test domain (D-rc06-10) |
 Closure: DERIVED — the call forms are listed and every other next line is refused by name, so no line passes unclassified
 Moves:
 - READ: applied — vitest's include is `test/**/*.test.ts` (`vitest.config.ts`); the suite's skip forms are `.skipIf` only today, nine sites, all platform guards (Case 2)
@@ -123,8 +123,52 @@ Moves:
 - FALSIFY: applied — failing only on ADDED would let a MODIFIED requirement's rewritten scenarios through untagged, and MODIFIED is the common case on this program's record
 - CONFORM: applied — R-crc-1 (legacy scenarios are never a migration this stage owes)
 - FEASIBILITY: applied — at most 101 delta scenarios per change on the record
-- CONSUME: applied — `orbit validate <change>` fails naming each UNCOVERED key (exit (1))
-- INVOKE: applied — `orbit validate <change>` already runs at propose, apply and archive
+- CONSUME: applied — `orbit validate <change>` reports each UNCOVERED key, at the level D-rc06-12 assigns (exit (1))
+- INVOKE: applied — CORRECTED 2026-10-04 at propose: `orbit validate <change>` is run by proposal review's Pass 1 and by the CLI `orbit archive` only; the propose, apply and archive BODIES never call it, and the agent-driven archive moves with `mv` (Case 4). The post-apply moment has no trigger in rc06a; it is rc06b's, whose readers (verify, system Pass 0) read the surface. The first draft of this line claimed a trigger that does not exist
+
+### D-rc06-10 — the validate check is OPT-IN by a `scenario_map:` config key
+Domain: every shape the `scenario_map` key can take in `orbit/config.yaml`
+| member | covered by |
+|---|---|
+| key absent (or no config file) | check OFF; the surface scans `test/**/*.test.ts` and says the check is off; validate reports nothing from the map |
+| `{tests: [<string>, …]}`, at least one glob | check ON; the globs are the scanned file set |
+| `tests` matching zero files | check ON; one warning naming the globs, every delta scenario without a ledger entry reports UNCOVERED |
+| `{tests: []}`, `tests` absent, or `tests` not a list of strings | INERT — treated as absent, with one warning naming the shape (the `pr:` key's inert rule) |
+| `scenario_map` not a mapping (a scalar, a list, `null`) | INERT — treated as absent, with one warning naming the shape |
+| an unknown sub-key beside a valid `tests` | ignored, with one warning naming it |
+Closure: DERIVED — a value is absent, a mapping, or not a mapping; a mapping's `tests` is valid, empty, absent or mis-typed; every other key is unknown
+Moves:
+- READ: applied — `src/core/project-config.ts` parses `pr:` with a zod schema and resolves every inert path to the default with one `console.warn` line; `fast-glob` is a dependency (`package.json`)
+- ENUMERATE: applied — this table
+- COHERE: applied — the check's ON/OFF is read once and serves D-rc06-4 (whether it fires) and D-rc06-12 (at what level); the scanned set serves D-rc06-1
+- EXECUTE: not applied — no parser exists
+- FALSIFY: applied — an on-by-default check would fail every delta scenario in an adopter repo arriving from OpenSpec on its first `orbit validate`; opt-in leaves that repo's behaviour byte-identical
+- CONFORM: applied — the `pr:` precedent (absent is the pre-capability behaviour, inert values warn); the adopter-blindspot memory (triage by what breaks arriving from OpenSpec)
+- FEASIBILITY: applied — one optional key in an existing schema
+- CONSUME: applied — the surface prints the check's state in its header; validate reads the same resolution
+- INVOKE: applied — read whenever the surface or validate runs; this repo opts in in the change that ships it
+
+### D-rc06-12 — an undeclared delta scenario is INFO until the `apply` gate passes, ERROR after
+Domain: the states of the change's `apply` gate, as `computeGateStates` returns them
+| member | covered by |
+|---|---|
+| `blocked` (tasks.md absent) | INFO |
+| `ready` (tasks unchecked, or zero tasks) | INFO |
+| `passed` (every box checked) | ERROR |
+| `passed` for flow (only declared user-validation handoffs remain unchecked) | ERROR — the AI-doable work, tests included, is done |
+| no `apply` gate (a schema declaring neither `gates: apply` nor `apply:`) | INFO, always — nothing says the work is done |
+| check OFF (D-rc06-10) | nothing reported |
+Closure: SOURCED — `GateState` in `src/core/artifact-graph/gates.ts` is `blocked`, `ready`, `passed`, `stale`, `unpassed`; a `tracked` gate computes only the first three, and `normalizeGates` adds `apply` only from the schema's sugar or a declared gate
+Moves:
+- READ: applied — `gates.ts`: a tracked gate is `blocked` on unmet requires, else `passed` when every box is checked (zero boxes is NOT passed) or the user-validation subset holds, else `ready`; `validator.ts`: `--strict` fails on ERROR and WARNING, never INFO
+- ENUMERATE: applied — this table
+- COHERE: applied — proposal review's Pass 1 runs before apply, so it always sees INFO and never BLOCKs on this check; the CLI `orbit archive` runs after apply and sees ERROR
+- EXECUTE: not applied — no check exists
+- FALSIFY: applied — WARNING before apply was rejected: `--strict` fails on WARNING, so Pass 1 would still block
+- CONFORM: applied — R-crc-13 (the level REPORTS the scenario's state; no gate reads it); R-crc-10 (the gate state is engine-observable)
+- FEASIBILITY: applied — one gate computation per validate call, the same one `orbit status` makes
+- CONSUME: applied — Pass 1 composes an ERROR into `blocks`; INFO lines are printed and never composed; rc06b's verify step reads the surface, not the level
+- INVOKE: applied — fires inside `orbit validate <change>` when the check is ON
 
 ### Case 1 — the title triple is a unique key
 Measured 2026-10-04 over all 21 baseline specs: 1090 scenarios, 0 duplicate requirement titles within a capability, 0 duplicate scenario titles within a requirement. Separator candidates in titles: `::` 0, `|` 0, `/` 65, `>` 7, `#` 1 — `::` is the separator.
@@ -134,6 +178,9 @@ Measured 2026-10-04 over all 21 baseline specs: 1090 scenarios, 0 duplicate requ
 
 ### Case 3 — a tag inside a fixture string
 Test files embed markdown and code as fixtures, so a `// @scenario` line can sit inside a template literal. The scan does not parse TypeScript; such a line is classified by D-rc06-1's next-line table like any other — it attaches if a call follows, else it is refused by name. Never silent; possibly a false attachment, which the reader of the map sees named with file and line.
+
+### Case 4 — who runs `orbit validate`
+Measured 2026-10-04: `orbit validate` appears 0 times in the generated propose, apply-change and archive-change skills; proposal review's Pass 1 runs `orbit validate "<name>"` and composes a failure into `blocks`; `src/core/archive.ts:133` runs `validateChangeDeltaSpecs` inside the CLI `orbit archive` (skipped by `--no-validate`); the archive body moves with `mv` and never reaches it.
 
 ## Decisions
 
@@ -177,6 +224,25 @@ Test files embed markdown and code as fixtures, so a `// @scenario` line can sit
 - **2026-10-04 — D-rc06-9: the ledger is `orbit/scenario-ledger.yaml`** *(settled under R-crc-3; Sal: settle)*.
   It is a judgement RECORD about specs, not test code, so it sits beside `orbit/specs/`; entries keyed by
   D-rc06-1's triple carry `kind: observed` with `record:` or `kind: untestable` with `why:`.
+  Kind: scope
+- **2026-10-04 — D-rc06-10: the validate check is OPT-IN by a `scenario_map:` config key** (Sal, at propose: the adopter gate).
+  orbit is a published package; D-rc06-4's check would fail every delta scenario in an adopter repo whose
+  tests carry no tags. `orbit/config.yaml` gains `scenario_map: { tests: [<glob>, …] }`; absent, the map
+  still renders — scanning the default `test/**/*.test.ts` and saying the check is OFF — and `orbit
+  validate` reports nothing from it; present, the globs REPLACE the default as the scanned file set and
+  the check is ON. v1 recognises JS/TS (vitest/jest) call forms only, a
+  named limit. This repo opts in with `test/**/*.test.ts`. Found at propose — an ENUMERATE gap in
+  D-rc06-1's input domain (adopter repos) — and returned to explore (Sal: A) for its Mechanism entry.
+  Kind: rule
+- **2026-10-04 — D-rc06-12: an undeclared delta scenario is INFO until the change's `apply` gate passes, ERROR after** (Sal: A — back to explore; settled under R-crc-3).
+  Tests and their tags are written at apply, so the check cannot demand them earlier: proposal review's
+  Pass 1 runs `orbit validate <name>` and treats a failure as a BLOCK, which would block every proposal
+  for scenarios that cannot have tests yet. INFO never fails `--strict` (`validator.ts`: strict counts
+  ERROR and WARNING only). Found at propose — a COHERE defect between D-rc06-4 and Pass 1.
+  Kind: rule
+- **2026-10-04 — D-rc06-11: the change is named for the child stage** (Sal, at propose; rc03b's precedent).
+  The staging directory moved from `rc06-scenario-test-map` to `rc06a-scenario-map` and its citation
+  re-pointed to `rc06a-scenario-map` before consumption.
   Kind: scope
 
 ## Open questions

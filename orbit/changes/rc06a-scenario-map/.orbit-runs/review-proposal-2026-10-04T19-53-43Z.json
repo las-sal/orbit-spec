@@ -1,0 +1,187 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-04T19:53:43Z",
+  "change": "rc06a-scenario-map",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 4,
+      "suggestion": 4
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-scenario-map/spec.md",
+      "line": 205,
+      "title": "INFO-level undeclared scenarios are never printed by human-mode orbit validate",
+      "recommendation": "src/commands/validate.ts printReport prints only \"Change '<id>' is valid\" when report.valid is true and lists issues only on an invalid report, so an INFO-only report shows nothing outside --json. The requirement says validate 'reports' each undeclared scenario at INFO, the scenario 'Before apply, an undeclared scenario is INFO' says it 'reports it at INFO and passes', and design D8 says validate 'reports this change's 29 delta scenarios at INFO' - none of which a human run would show. No task touches src/commands/validate.ts. Decide which surface carries the INFO lines and add the task.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Print INFO issues under a valid report when the map check contributes them (state it in the requirement, add a task editing printReport, and keep the OFF path byte-identical)."
+        },
+        {
+          "label": "B",
+          "body": "Narrow the requirement and scenario to say the INFO lines are carried by `orbit validate --json` and the human form shows only the valid line; reword design D8 to match."
+        }
+      ]
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "tasks.md",
+      "line": 29,
+      "title": "Task 5.3's exit-(3) measurement cannot observe ERROR",
+      "recommendation": "5.3 runs `orbit validate rc06a-scenario-map --strict` 'after every task above is checked' - but 5.3, 5.4, 6.1 and 6.2 are still unchecked then, so the apply gate is `ready`, every undeclared scenario is INFO, and `--strict` passes whatever the declarations are (and human mode prints nothing for INFO, per the finding above). The check reads green by construction. Either let 5.2's surface check (zero UNCOVERED) stand as exit (3)'s measure and reword 5.3 as a corroboration, or make 5.3 run `orbit validate rc06a-scenario-map --json` and assert no map-originated issue at ANY level."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-scenario-map/spec.md",
+      "line": 230,
+      "title": "The config table's 'tests matching zero files' row has no owner in the design and no task",
+      "recommendation": "Design D6's resolver returns {check, tests} from config alone and cannot know whether the globs match files; task 1.1 enumerates every other row of the table but not this one, and no 2.x case covers it. State where the warning is raised (the scan in scenario-map.ts is the only place that globs), whether bulk `orbit validate` repeats it per change, and add the test case."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "proposal.md",
+      "line": 32,
+      "title": "Reading the key through readProjectConfig breaks the byte-identical validate claim",
+      "recommendation": "`orbit validate` does not read orbit/config.yaml today (its only readers are model-hints, orientation, instruction-loader's instruction path, change-utils and change-metadata). readProjectConfig console.warns on every malformed field - schema, context, rules, pr. Resolving scenario_map through it inside validate makes a repo whose config carries, say, `pr: sometimes` print the pr warning on every `orbit validate` run, with no scenario_map key at all - contradicting the proposal's 'byte-identical without the key' and the requirement's 'exactly as it behaves without this capability'. Specify that the validate path reads only the scenario_map key (silent on other fields), or narrow the claim to stdout and name the stderr exception."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-scenario-map/spec.md",
+      "line": 167,
+      "title": "RENAMED plus MODIFIED of one requirement is unspecified",
+      "recommendation": "The ownership table says a RENAMED requirement owes 'every baseline scenario under the OLD title, under its NEW key', while MODIFIED replaces the scenario set. When one change renames a requirement and modifies it under its new name (specs-apply.ts applies RENAMED -> REMOVED -> MODIFIED -> ADDED, the MODIFIED block keyed on the new name), the two rows disagree on which scenarios are owed and which `operation` the JSON entry carries. State the application order (the archive's) for the key set and the operation label for that case, and add a 2.3 case."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-scenario-map/spec.md",
+      "line": 125,
+      "title": "The --json shape leaves element shapes and counts keys open",
+      "recommendation": "The requirement names the top-level keys but not what a `declarations` list element carries per kind (file/line for tags, record for observed, why for untestable), the shape of an `orphans` or `malformed` element (file+line vs ledger index, the reason), the `operation` values, or the keys of `counts` (per kind, uncovered, baseline-undeclared). rc06b's readers consume this object; two implementers would produce two shapes. Spell the element shapes and the counts keys out in the requirement, as the D7 design object."
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "design.md",
+      "line": 3,
+      "title": "Exit (1) 'fails validate' is restated unqualified after D-rc06-10 and D-rc06-12 qualified it",
+      "recommendation": "The stage charter's exit (1) reads '`orbit validate <change>` fails a delta scenario with no declaration, naming its key', and the charter body says validate 'fails naming every scenario'. The mechanism settled at propose makes it fail only when the repo has opted in AND the change's apply gate has passed; before that it is INFO and passes. design.md's Context restates exit (1) unqualified and nothing records how the stage will be graded against it. Under R-crc-12, state in design (and carry to the architecture doc at ratification) whether exit (1) is graded as written on the post-apply ERROR - measurable and so not a revision - or revised, with why."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-scenario-map/spec.md",
+      "line": 15,
+      "title": "'next line begins with' does not say after leading whitespace",
+      "recommendation": "The tag production allows leading whitespace (`^\\s*`), but the next-line table says 'begins with `it(`'. Almost every test sits indented inside a describe; a literal reading refuses them all. Say 'begins, after leading whitespace, with'."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "design.md",
+      "line": 38,
+      "title": "The validate check's error path when the change context cannot load is unstated",
+      "recommendation": "D4 calls loadChangeContext + formatChangeStatus from inside validateChangeDeltaSpecs; loadChangeContext resolves the schema from metadata and can throw (unknown schema, uncanonicalizable path). validate today reports such a change without throwing. State the outcome - an ERROR issue naming the load failure, or INFO as for the no-apply-gate row - and add a 4.1 case."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-scenario-map/spec.md",
+      "line": 25,
+      "title": "A tag on it( inside describe.skip attaches although the test never runs",
+      "recommendation": "The table refuses `it.skip(` because 'a test that never runs covers nothing', but a line classifier cannot see an enclosing `describe.skip(` / `describe.skipIf(` / `describe.todo(`, so an `it(` inside one attaches. The repo has none today. Add it to the requirement's named limits beside the language limit."
+    },
+    {
+      "pass": "7",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "design.md",
+      "line": 32,
+      "title": "D1 calls createFenceTracker 'the one fence grammar' while requirement blocks come from computeFenceMask",
+      "recommendation": "parseDeltaSpec and extractRequirementsSection find requirement blocks with computeFenceMask (requirement-blocks.ts:31), the second fence grammar Q-crc-15 names; D1 then reads scenario headings inside each block with createFenceTracker. The read path composes both grammars. Say so and name Q-crc-15 as the limit rather than claiming one grammar."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "proposal.md",
+      "line": 24,
+      "title": "The charter's 'owner of the status command's flags' measurement is not recorded",
+      "recommendation": "The rc06a charter says the stage touches 'the owner of the status command's flags - measured at propose against R-crc-1'. The capabilities paragraph accounts for orbit-conventions and verify-change but not this. orbit-orientation's bare-invocation requirement already licenses it ('later capabilities may EXTEND the `--change` form with new flags ... without touching its pre-existing outputs'); cite that as the measurement."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-scenario-map/spec.md",
+      "line": 11,
+      "title": "The key's split rule is implicit",
+      "recommendation": "The key is 'joined by the literal ` :: `' and each part 'trimmed', which leaves open whether a tag is split on ` :: ` or on `::` then trimmed (`a ::b :: c` parses differently). State the split, and say what a future requirement or scenario title containing `::` does (today none does, per explore Case 1)."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The core design holds up: the title-triple key, the closed next-line table, compute-at-read with nothing stored, and the apply-gated level each answer a measured problem, and the scenario count matches its own delta (29). Where it is thin is the edges of the two surfaces it touches. On validate, the INFO level was chosen so a proposal review does not block, but human-mode validate hides INFO, the exit-(3) task cannot see ERROR, and resolving the key would bring config warnings into a command that never printed them. On the JSON surface, rc06b will read element shapes this spec does not yet fix. I checked: validate.ts printReport, archive.ts's use of validateChangeDeltaSpecs, the validator's citation hook, loadChangeContext and formatChangeStatus, GateState, parseDeltaSpec and specs-apply's operation order, both fence grammars, project-config's pr warnings, orbit-orientation's flag-extension clause, the rc06/rc06a charters, the vitest include, fast-glob in package.json, and the absence of describe.skip in test/.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "Walk these and then apply. Nothing here needs a redesign. The validate-visibility finding needs a scope choice between two cheap options, and the rest are repairs or descopes inside the artifacts: name the exit-(1) reading, fix the instrument in 5.3, and spell out the JSON element shapes before rc06b depends on them."
+  },
+  "final_assessment": "0 critical, 7 warning, 6 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc06a-scenario-map --from-file orbit/changes/rc06a-scenario-map/.orbit-runs/review-proposal-2026-10-04T19-53-43Z.json"
+}

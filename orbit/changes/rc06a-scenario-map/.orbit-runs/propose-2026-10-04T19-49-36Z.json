@@ -1,0 +1,9 @@
+{
+  "command": "propose",
+  "timestamp": "2026-10-04T19:49:36Z",
+  "change": "rc06a-scenario-map",
+  "kind": "workflow",
+  "model": null,
+  "final_assessment": "Proposed rc06a-scenario-map in consume mode from the exploration (six live rules, all accounted: D-rc06-1, -2, -10 DERIVED; D-rc06-3, -4, -12 SOURCED; no BOUNDED entry, no key defects; zero open questions). One ADDED capability, orbit-scenario-map, seven requirements and 29 scenarios: the @scenario tag (a grammar plus the closed next-line table), the ledger, cover kinds as separate columns never summed, the engine-computed map at `orbit status --change <name> --scenarios`, the delta-operation table for owed declarations, the INFO-until-apply-passes level table, and the opt-in config table. Design: eight decisions (key resolution over keys, not merged text; a line classifier; runtime-assembled fixture tags; the apply gate read through the status computation; validate reports UNCOVERED only; the pr: key's inert rule; one JSON shape; this repo opts in and grades itself), six alternatives, five risks, Touchpoints, and the Mechanism → artifacts record. Tasks: 19 across six groups, no user-validation handoff. Under R-crc-1's ceiling. An earlier propose attempt the same day stopped before generation and returned to explore (Sal: A) for the opt-in and timing rules. Validate --strict clean; no fingerprints (ADDED only). Staged metadata merged (architecture citation carried); exploration and its three emits moved in. PR regime never: silent.",
+  "next_recommended": "/orbit:review rc06a-scenario-map — proposal artifacts ready; review before apply"
+}

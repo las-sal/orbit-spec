@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-04T19:45:36Z",
+  "change": "rc06a-scenario-map",
+  "kind": "workflow",
+  "model": null,
+  "final_assessment": "Returned from an aborted propose (Sal: A) with two defects the propose-time read found, now settled as mechanism: D-rc06-10 (the validate check is OPT-IN by `scenario_map: {tests: [globs]}` in orbit/config.yaml; absent or inert = check off, the surface still renders over the default glob) and D-rc06-12 (an undeclared delta scenario is INFO until the change's `apply` gate passes, ERROR after — so proposal review's Pass 1 never BLOCKs on scenarios that cannot have tests yet). D-rc06-4's INVOKE line corrected: only proposal review's Pass 1 and the CLI `orbit archive` run validate (Case 4); the post-apply trigger is rc06b's. D-rc06-11: staging directory renamed to rc06a-scenario-map, citation re-pointed. Six live rules, all accounted (four DERIVED, two SOURCED); no key defects.",
+  "decisions_captured": 12,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 6,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose rc06a-scenario-map — 6 live rules accounted; formalize when you are ready (or /orbit:explore rc06a-scenario-map to keep refining)"
+}
