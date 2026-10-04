@@ -186,7 +186,7 @@ The surface's consumers are exactly those the program names — `orbit validate 
 
 ### Requirement: A declaration is owed by every scenario in the change's delta blocks
 
-When the check is ON, `orbit validate <change>` SHALL report every scenario in the change's delta that carries no declaration, naming its key, at the level `An undeclared delta scenario is INFO until the apply gate passes` assigns. A delta scenario whose requirement title or scenario title contains ` :: ` cannot be keyed by any tag or ledger entry; validate SHALL report it as UNKEYABLE at ERROR whatever the apply gate's state, naming the capability and both titles — so a proposal review's structure pass blocks while renaming it is still free, before any test is written, and the scenario never reaches apply undeclarable. Which scenarios owe a declaration is decided per delta operation, over the set `DeltaOperationType` defines (`ADDED`, `MODIFIED`, `REMOVED`, `RENAMED`):
+When the check is ON, `orbit validate <change>` SHALL report every scenario in the change's delta that carries no declaration, naming its key, at the level `An undeclared delta scenario is INFO until the apply gate passes` assigns. A delta scenario whose requirement title or scenario title contains ` :: ` cannot be keyed by any tag or ledger entry; validate SHALL report it as UNKEYABLE at ERROR whatever the apply gate's state and whether or not the change context loads, naming the capability and both titles, and SHALL report it ONLY so: an UNKEYABLE scenario is not also reported as undeclared, is not listed in the surface's `scenarios`, and is not counted in `counts.uncovered` — it appears on the surface only in `malformed` with `source: "spec"` — so a proposal review's structure pass blocks while renaming it is still free, before any test is written, and the scenario never reaches apply undeclarable. Which scenarios owe a declaration is decided per delta operation, over the set `DeltaOperationType` defines (`ADDED`, `MODIFIED`, `REMOVED`, `RENAMED`):
 
 | delta operation | owes a declaration |
 |---|---|
@@ -196,7 +196,7 @@ When the check is ON, `orbit validate <change>` SHALL report every scenario in t
 | REMOVED | nothing; tags on its scenarios render ORPHAN once the change is archived |
 | (outside every delta block) | nothing — COUNTED on the surface (`counts.baseline_undeclared`), never listed, never reported by validate |
 
-ORPHAN and MALFORMED lines are reported on the surface only; validate reports undeclared and UNKEYABLE delta scenarios and nothing else from the map. When the check is OFF, validate reports nothing from the map and its output is byte-identical to its output without this capability.
+ORPHAN and MALFORMED lines are reported on the surface only; validate reports undeclared and UNKEYABLE delta scenarios and nothing else from the map. When the check is OFF, validate reports nothing from the map; with the key ABSENT its output is byte-identical to its output without this capability, and with the key malformed it adds only the one warning `The scenario map is opt-in by the scenario_map config key` assigns.
 
 #### Scenario: An undeclared ADDED scenario is reported
 
@@ -241,7 +241,7 @@ Tests and their tags are written at apply, so the level at which `orbit validate
 | no `apply` gate (a schema declaring neither an `apply` gate nor `apply:`) | INFO, always |
 | the change context cannot load (an unknown schema, an unreadable metadata file) | INFO, always — the check never throws |
 
-INFO never fails `orbit validate --strict`, so a proposal review's structure pass never blocks on a scenario whose test cannot exist yet. Every issue the map contributes carries the path `scenario-map`, and human-mode `orbit validate` SHALL print each such INFO issue beneath the `is valid` line when the report is valid; a report carrying no `scenario-map` issue prints exactly as before. The level REPORTS the scenario's state; no gate reads it.
+This table governs undeclared scenarios that CAN be keyed; an UNKEYABLE scenario is an ERROR at every state, per `A declaration is owed by every scenario in the change's delta blocks`, which owns that exception. INFO never fails `orbit validate --strict`, so a proposal review's structure pass never blocks on a scenario whose test cannot exist yet. Every issue the map contributes carries the path `scenario-map`, and human-mode `orbit validate` SHALL print each such INFO issue beneath the `is valid` line when the report is valid; a report carrying no `scenario-map` issue prints exactly as before. The level REPORTS the scenario's state; no gate reads it.
 
 #### Scenario: Before apply, an undeclared scenario is INFO
 
