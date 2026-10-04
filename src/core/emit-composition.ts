@@ -3,8 +3,17 @@ import * as path from 'node:path';
 import { loadChangeContext, formatChangeStatus } from './artifact-graph/instruction-loader.js';
 import { collectSameModePasses } from './report-render.js';
 import { normalizeInternalPass } from './report-render.js';
-import { readTrail, type ReviewerClass } from './artifact-graph/trail.js';
+import { readTrail, type ReviewerClass, type Trail } from './artifact-graph/trail.js';
 import { isIndependent } from './artifact-graph/gates.js';
+import {
+  computePassGenre,
+  verificationLedger,
+  normalizeKey,
+  keyString,
+  verificationShapeError,
+  walkEntryShapeError,
+  type PassGenreResult,
+} from './artifact-graph/pass-genre.js';
 import { parseChunkPreamble, chunkForGroup, type ChunkDeclaration } from './parsers/chunk-preamble.js';
 import { countExploreFile, maturityRecommendation } from './parsers/explore-counter.js';
 import { parseExploreRulesFile } from './parsers/explore-rules.js';
@@ -120,6 +129,10 @@ const COMMANDS: Record<string, CommandSpec> = {
       // rc04b: the reviewer's FORWARD RECOMMENDATION — `{disposition, reasoning}`, OWED by the
       // independent classes (fresh/external), optional in-context; shape-checked at every class.
       'direction',
+      // rc03c: the VERIFICATION RECORD — `[{title, file, verdict}]`, OWED when the computed
+      // `pass_genre` is VERIFICATION and refused on a REVIEW-genre pass; shape-checked at every genre.
+      // Each finding may carry `walk_entry` (a finding-level key, so not listed in this table).
+      'verification',
     ],
   },
   'address-reviews': {
@@ -201,7 +214,8 @@ const COMMANDS: Record<string, CommandSpec> = {
 /** Spine + deterministic facts + computed extensions per command — REJECTED in payloads. */
 const SPINE_FIELDS = ['command', 'timestamp', 'change', 'kind', 'next_recommended', 'doc'];
 const ENGINE_OWNED_EXTRA: Record<string, string[]> = {
-  review: ['final_assessment', 'iteration'],
+  // rc03c: `pass_genre` / `verified_walks` are computed at write beside `iteration`.
+  review: ['final_assessment', 'iteration', 'pass_genre', 'verified_walks'],
   apply: [
     'final_assessment',
     'tasks_completed',
@@ -509,6 +523,10 @@ function validatePayload(command: string, payload: Record<string, unknown>): voi
   // rc04b: the direction slot — presence by class, shape at every class, mode never read.
   validateReviewDirection(command, payload);
 
+  // rc03c: the verification record's and the walk link's SHAPE, at every genre. The OWED checks
+  // need the computed genre, which needs the emit's own token — they run at composition.
+  validateReviewVerification(command, payload);
+
   // rc04a: the judgement record's STRUCTURE — shape, kind/disposition agreement, the
   // required kind-specific extras. Its ORDERING is checked at the write gate instead,
   // because that check needs the emit's resolved <TS> token, which does not exist yet here.
@@ -629,6 +647,125 @@ function validateReviewDirection(command: string, payload: Record<string, unknow
     throw new EmitError(
       `write gate: direction.reasoning must be a non-empty string (got ${typeof reasoning === 'string' ? 'a blank string' : describeType(reasoning)}) — a direction without its reasons is not one.`
     );
+  }
+}
+
+// ---------------------------------------------------------------------------------------
+// rc03c: THE VERIFICATION RECORD, OWED WHERE THE GENRE IS COMPUTED.
+//
+// `orbit-emit-composition`'s `A VERIFICATION-genre payload carries its verdicts and its findings
+// link to the walk record` OWNS both shapes, the owed set and the verdicts' meaning; this is its
+// write gate. SHAPE first, at every genre (here, before the token exists); then — once the pass
+// genre and its walk set are computed at composition — the OWED set: presence, completeness,
+// strays, duplicates, `walk_entry` existence, and the `landed`/`regressed` pairing. The engine
+// judges shape, presence, completeness and existence only (R-crc-10): whether a verdict is TRUE,
+// and whether a link is RELEVANT, is the verifying pass's recorded judgement. The gate graph reads
+// none of it (R-crc-13).
+// ---------------------------------------------------------------------------------------
+
+function shapeRefusal(e: { field: string; detail: string }): never {
+  throw new EmitError(`write gate: '${e.field}' ${e.detail}.`);
+}
+
+function validateReviewVerification(command: string, payload: Record<string, unknown>): void {
+  if (command !== 'review') return;
+  if ('verification' in payload) {
+    const e = verificationShapeError(payload.verification);
+    if (e) shapeRefusal(e);
+  }
+  const findings = payload.findings;
+  if (Array.isArray(findings)) {
+    findings.forEach((f, i) => {
+      if (f === null || typeof f !== 'object' || Array.isArray(f) || !('walk_entry' in f)) return;
+      const e = walkEntryShapeError((f as Record<string, unknown>).walk_entry, i);
+      if (e) shapeRefusal(e);
+    });
+  }
+}
+
+const describeKey = (k: { title: string; file: string }): string => `(${k.title}, ${k.file})`;
+
+function verificationOwedCheck(payload: Record<string, unknown>, genre: PassGenreResult, changeDir: string | null): void {
+  const findings = Array.isArray(payload.findings) ? (payload.findings as Record<string, unknown>[]) : [];
+  const links: Array<{ i: number; key: { title: string; file: string } }> = [];
+  findings.forEach((f, i) => {
+    const w = f?.walk_entry as { title: string; file: string } | undefined;
+    if (w !== undefined) links.push({ i, key: normalizeKey(w.title, w.file) });
+  });
+
+  if (genre.passGenre === 'REVIEW') {
+    if ('verification' in payload) {
+      throw new EmitError(
+        `write gate: 'verification' is refused on a REVIEW-genre pass (in any form, [] included) — this pass computes REVIEW, so it verifies no walk.`
+      );
+    }
+    if (links.length > 0) {
+      const { i, key } = links[0];
+      throw new EmitError(
+        `write gate: findings[${i}].walk_entry names ${describeKey(key)}, which no readable walk of verified_walks carries — this pass computes REVIEW genre, so every walk_entry names nothing.`
+      );
+    }
+    return;
+  }
+
+  const ledger = verificationLedger(readTrail(changeDir as string), genre.verifiedWalks);
+  const owedList = [...ledger.owed.values()];
+  const owedLines = (list: typeof owedList): string => list.map(o => `walk ${o.walk}: ${describeKey(o)}`).join('; ');
+
+  if (!('verification' in payload)) {
+    throw new EmitError(
+      `write gate: this pass computes VERIFICATION genre and owes 'verification' — ${owedList.length} owed entr${owedList.length === 1 ? 'y' : 'ies'}` +
+        (owedList.length > 0 ? `: ${owedLines(owedList)}` : ` (supply "verification": [] — the pass checked and found nothing to grade)`) +
+        `.`
+    );
+  }
+
+  const verdicts = new Map<string, { i: number; verdict: string; key: { title: string; file: string } }>();
+  (payload.verification as Array<{ title: string; file: string; verdict: string }>).forEach((v, i) => {
+    const key = normalizeKey(v.title, v.file);
+    const k = keyString(key);
+    if (!ledger.owed.has(k)) {
+      throw new EmitError(
+        `write gate: verification[${i}] names ${describeKey(key)}, which is not owed — only a 'resolved' entry of a readable walk in verified_walks owes a verdict.`
+      );
+    }
+    if (verdicts.has(k)) {
+      throw new EmitError(`write gate: verification[${i}] is a second verdict for ${describeKey(key)} — a key owes one verdict, judged against its latest resolved walk.`);
+    }
+    verdicts.set(k, { i, verdict: v.verdict, key });
+  });
+
+  const missing = owedList.filter(o => !verdicts.has(keyString(o)));
+  if (missing.length > 0) {
+    throw new EmitError(
+      `write gate: 'verification' omits ${missing.length} owed entr${missing.length === 1 ? 'y' : 'ies'}: ${owedLines(missing)}.`
+    );
+  }
+
+  const linked = new Set<string>();
+  for (const { i, key } of links) {
+    const k = keyString(key);
+    const carried = ledger.carried.get(k);
+    if (carried === undefined) {
+      throw new EmitError(
+        `write gate: findings[${i}].walk_entry names ${describeKey(key)}, which no readable walk of verified_walks carries.`
+      );
+    }
+    linked.add(k);
+    // A DECLARED gap: under a key shared with a stale/deferred/escalated entry the link may concern
+    // that entry, so a landed-plus-linked pair is accepted there and shown by the rendered link.
+    if (verdicts.get(k)?.verdict === 'landed' && carried.every(d => d === 'resolved')) {
+      throw new EmitError(
+        `write gate: findings[${i}].walk_entry names ${describeKey(key)}, whose verdict is 'landed' — a finding against a landed entry is a contradiction; grade it 'regressed' or drop the link.`
+      );
+    }
+  }
+  for (const [k, v] of verdicts) {
+    if (v.verdict === 'regressed' && !linked.has(k)) {
+      throw new EmitError(
+        `write gate: verification[${v.i}] grades ${describeKey(v.key)} 'regressed' but no finding's walk_entry names it — a regression's cause is stated by its finding.`
+      );
+    }
   }
 }
 
@@ -1299,6 +1436,17 @@ export function composeAndWriteEmit(
     case 'review': {
       const mode = (emit as any).mode;
       emit.final_assessment = countsSentence((payload as any).scorecard);
+      // rc03c: the pass genre and its walk set — ONE computation over the records preceding this
+      // emit's own (collision-bumped) token, written once like `iteration` and refused in the payload.
+      // Architecture mode has no change trail to read; the function still decides its genre.
+      const trail: Trail =
+        mode === 'architecture'
+          ? { changeDir: '', runsDir: resolved.runsDir, passes: [], resolutions: [], applyTokens: [], rejectedExternals: [] }
+          : readTrail(resolved.changeDir as string);
+      const genre = computePassGenre(trail, (payload as any).reviewer_class, mode, token);
+      verificationOwedCheck(payload, genre, resolved.changeDir);
+      emit.pass_genre = genre.passGenre;
+      emit.verified_walks = genre.verifiedWalks;
       if (mode === 'architecture') {
         // Per-doc ordinal + the handoff mirror (no change-report surface exists).
         const runs = fs.existsSync(resolved.runsDir) ? fs.readdirSync(resolved.runsDir) : [];

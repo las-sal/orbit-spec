@@ -1,6 +1,6 @@
 ## Review: sys-change --as system
 
-Mode: system · Iteration: 1 · Reviewer: in-context · Depth: full
+Mode: system · Iteration: 1 · Reviewer: in-context · Depth: full · Pass genre: REVIEW
 First system-mode review of this change.
 
 | Dimension    | Critical | Warning | Suggestion |

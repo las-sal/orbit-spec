@@ -478,6 +478,9 @@ describe('the pure render is deterministic over its inputs', () => {
       ],
       repeatCount: 0,
       newCount: 3,
+      // rc03c: the pass genre is render-time context, computed by buildReportContext; a
+      // hand-built context supplies it as the computation would.
+      passGenre: 'REVIEW' as const,
       gateLine: 'Gate review-proposal: unpassed — pass 2026-07-25T10-00-00Z has unresolved substantive findings',
       position:
         'propose ✓ → review(proposal) unpassed → apply ready → review(system) blocked-by-gate → archive blocked-by-gate',
@@ -1024,5 +1027,161 @@ describe('rc04b: the render prints `### Direction`, marks its absence on indepen
     // The engine tail is the computed one and renders AFTER the contained near-miss.
     expect(report.indexOf('\n---\nGate review-proposal:')).toBeGreaterThan(report.indexOf('> Ready when you are: /orbit:archive x'));
     expect(renderReport(root, 'nearmiss-direction')).toBe(report);
+  });
+});
+
+// ---------------------------------------------------------------------------------------
+// rc03c-verification-record, task 1.3 — the pass genre is a header word computed at render time,
+// and a VERIFICATION-genre internal pass renders `### Verification` with two marks by absence.
+// Owner: `orbit-report-rendering`'s `Verification renders as its own section and its absence is
+// marked`. The five internal goldens above moved by ONE header suffix each (` · Pass genre:
+// REVIEW`); `verification-pass.golden.md` is NEW, transcribed from design D8's canonical example.
+// ---------------------------------------------------------------------------------------
+
+describe('rc03c: pass genre header and the Verification section (1.3)', () => {
+  const zero = () => ({ critical: 0, warning: 0, suggestion: 0 });
+  type Fi = Record<string, unknown> & { severity: string; title: string; file: string };
+
+  /** A boundary-conformant internal emit with a correct rollup and deterministic spine. */
+  function emit(change: string, mode: 'proposal' | 'system', name: string, cls: string, findings: Fi[], extra: Record<string, unknown> = {}): string {
+    const sc = { completeness: zero(), correctness: zero(), coherence: zero() };
+    const full = findings.map(f => ({ dimension: 'correctness', line: 1, recommendation: 'r', ...f }));
+    for (const f of full) (sc as any)[f.dimension as string][f.severity.toLowerCase()] += 1;
+    const t = { critical: 0, warning: 0, suggestion: 0 };
+    for (const f of full) (t as any)[f.severity.toLowerCase()] += 1;
+    return JSON.stringify({
+      command: 'review',
+      timestamp: '2026-10-04T00:00:00Z',
+      change,
+      final_assessment:
+        full.length === 0 ? 'No findings.' : `${t.critical} critical, ${t.warning} warning, ${t.suggestion} suggestion.`,
+      next_recommended:
+        full.length === 0
+          ? `orbit status --change ${change} --report`
+          : `/orbit:address-reviews ${change} --from-file orbit/changes/${change}/.orbit-runs/${name}`,
+      kind: 'editorial',
+      mode,
+      reviewer_class: cls,
+      depth: 'full',
+      scorecard: sc,
+      findings: full,
+      ...extra,
+    });
+  }
+  const walkJson = (source: string, resolutions: unknown) =>
+    JSON.stringify({ command: 'address-reviews', source_path: source, resolutions });
+  const res = (title: string, file: string, outcome = 'resolved') => ({ severity: 'WARNING', outcome, title, file });
+
+  /** fresh pass at T1 → walk W1 of it → the in-context confirm at T9 carrying `findings`/`extra`. */
+  function verifyingChange(name: string, findings: Fi[], extra: Record<string, unknown>, walk: unknown = [res('A', 'a.md'), res('B', 'b.md')]): string {
+    const dir = makeChange(name, { tasksDone: true });
+    const fresh = 'review-system-2026-10-04T01-00-00Z.json';
+    writeTrail(dir, fresh, emit(name, 'system', fresh, 'fresh', []));
+    writeTrail(dir, 'address-reviews-2026-10-04T02-00-00Z.json', walkJson(`orbit/changes/${name}/.orbit-runs/${fresh}`, walk));
+    const own = 'review-system-2026-10-04T09-00-00Z.json';
+    writeTrail(dir, own, emit(name, 'system', own, 'in-context', findings, extra));
+    return dir;
+  }
+
+  it('the D8 canonical example renders byte-identical to verification-pass.golden.md', () => {
+    const dir = makeChange('example-change', { tasksDone: true });
+    const p = (n: string) => `orbit/changes/example-change/.orbit-runs/${n}`;
+    const P1 = 'review-system-2026-10-04T03-55-35Z.json';
+    const P2 = 'review-system-2026-10-04T03-57-21Z.json';
+    const P3 = 'review-system-2026-10-04T03-58-00Z.json';
+    const W = (sev: string, i: number): Fi => ({ severity: sev, title: `f${i}`, file: 'p.md' });
+    writeTrail(dir, P1, emit('example-change', 'system', P1, 'fresh', [W('CRITICAL', 1), W('WARNING', 2), W('WARNING', 3)].map(f => ({ ...f, reproduction: 'r' })), { direction: { disposition: 'hold', reasoning: 'r' } }));
+    writeTrail(dir, P2, emit('example-change', 'system', P2, 'fresh', [W('WARNING', 4), W('WARNING', 5), W('WARNING', 6), W('WARNING', 7), ...[8, 9, 10, 11, 12].map(i => W('SUGGESTION', i))], { direction: { disposition: 'hold', reasoning: 'r' } }));
+    writeTrail(dir, P3, emit('example-change', 'system', P3, 'in-context', []));
+    writeTrail(dir, 'address-reviews-2026-10-04T04-08-51Z.json', walkJson(p(P1), [res('Field note restates the owner', 'specs/orbit-review/spec.md')]));
+    writeTrail(dir, 'address-reviews-2026-10-04T04-12-35Z.json', walkJson(p(P2), [res('Pointer names the wrong owner', 'design.md')]));
+    writeTrail(
+      dir,
+      'review-system-2026-10-04T04-16-02Z.json',
+      fixture('verification-pass.json')
+    );
+    const report = renderReport(root, 'example-change');
+    expect(report).toBe(fixture('verification-pass.golden.md'));
+    // The section sits after Suppressed (absent here) and before Direction/Commentary.
+    expect(report.indexOf('### Verification')).toBeGreaterThan(report.indexOf('### Findings'));
+    expect(report.indexOf('### Verification')).toBeLessThan(report.indexOf('### Commentary'));
+  });
+
+  it('a linked finding shows its walk entry; an unlinked one is marked; counts, scorecard and tail are unchanged by the record', () => {
+    const findings: Fi[] = [
+      { severity: 'WARNING', title: 'B stops one file short', file: 'b.md', walk_entry: { title: 'B', file: 'b.md' } },
+      { severity: 'WARNING', title: 'Unrelated', file: 'c.md' },
+    ];
+    const verification = [
+      { title: 'A', file: 'a.md', verdict: 'landed' },
+      { title: 'B', file: 'b.md', verdict: 'regressed' },
+    ];
+    verifyingChange('v-change', findings, { verification });
+    const report = renderReport(root, 'v-change');
+    expect(report).toContain('Pass genre: VERIFICATION');
+    expect(report).toContain('- **b.md:1** — B stops one file short\n  walk entry: B (`b.md`)\n');
+    expect(report).toContain('- [outside the walk record] **c.md:1** — Unrelated');
+    expect(report).toContain(
+      '### Verification\n- landed — A (`a.md`) · walk 2026-10-04T02-00-00Z\n- regressed — B (`b.md`) · walk 2026-10-04T02-00-00Z · see: B stops one file short'
+    );
+
+    // The same emit with no record: the scorecard and the engine tail are byte-identical.
+    fs.rmSync(root, { recursive: true, force: true });
+    root = fs.mkdtempSync(path.join(os.tmpdir(), 'orbit-report-render-'));
+    verifyingChange('v-change', findings.map(({ walk_entry, ...f }) => f), {});
+    const bare = renderReport(root, 'v-change');
+    const slice = (r: string, from: string, to: string) => r.slice(r.indexOf(from), r.indexOf(to));
+    expect(slice(bare, '| Dimension', '### Findings')).toBe(slice(report, '| Dimension', '### Findings'));
+    expect(bare.slice(bare.indexOf('\n---\n'))).toBe(report.slice(report.indexOf('\n---\n')));
+  });
+
+  it('[outside the walk record] follows [unreproduced] when both apply', () => {
+    verifyingChange('v-crit', [{ severity: 'CRITICAL', title: 'Breaks', file: 'x.md' }], {
+      verification: [
+        { title: 'A', file: 'a.md', verdict: 'landed' },
+        { title: 'B', file: 'b.md', verdict: 'landed' },
+      ],
+    });
+    expect(renderReport(root, 'v-crit')).toContain('- [unreproduced] [outside the walk record] **x.md:1** — Breaks');
+  });
+
+  it('a prior-generation VERIFICATION-genre emit renders [no verification record] once and marks no finding; its genre is recomputed (no stored pass_genre)', () => {
+    verifyingChange('v-old', [{ severity: 'WARNING', title: 'Old finding', file: 'x.md' }], {});
+    const report = renderReport(root, 'v-old');
+    expect(report).toContain('· Pass genre: VERIFICATION');
+    expect(report).toContain('### Verification\n[no verification record]');
+    expect(report).not.toContain('[outside the walk record]');
+    expect(report.match(/\[no verification record\]/g)).toHaveLength(1);
+  });
+
+  it('an unreadable walk gets its own row; an empty record over walks owing nothing renders the one row', () => {
+    verifyingChange('v-unread', [], { verification: [] }, 'not-an-array');
+    expect(renderReport(root, 'v-unread')).toContain('### Verification\n- walk 2026-10-04T02-00-00Z — unreadable; nothing owed\n');
+    verifyingChange('v-empty', [], { verification: [] }, [res('S', 's.md', 'stale')]);
+    expect(renderReport(root, 'v-empty')).toContain(
+      '### Verification\n- no verdicts owed — every entry of the verified walks claims no edit\n'
+    );
+  });
+
+  it('REVIEW-genre and external passes render no Verification section and no mark', () => {
+    const dir = makeChange('r-change');
+    writeTrail(dir, 'review-proposal-2026-10-04T01-00-00Z.json', emit('r-change', 'proposal', 'review-proposal-2026-10-04T01-00-00Z.json', 'in-context', [{ severity: 'WARNING', title: 'w', file: 'x.md' }]));
+    const r = renderReport(root, 'r-change');
+    expect(r).toContain('· Pass genre: REVIEW');
+    expect(r).not.toContain('### Verification');
+    expect(r).not.toContain('[outside the walk record]');
+    writeTrail(dir, 'external-proposal-2026-10-04T02-00-00Z.md', fixture('external-pass.md'));
+    const ext = renderReport(root, 'r-change');
+    expect(ext).not.toContain('Pass genre');
+    expect(ext).not.toContain('### Verification');
+  });
+
+  it('a mis-shaped verification or a newline in a walk_entry slot fails the render naming the field', () => {
+    const base = JSON.parse(emit('m', 'system', 'review-system-2026-10-04T09-00-00Z.json', 'in-context', [{ severity: 'WARNING', title: 't', file: 'x.md' }]));
+    expect(() => normalizeInternalPass('/f.json', { ...base, verification: [{ title: 'T', file: 'F', verdict: 'fixed' }] })).toThrow(
+      /verification\[0\]\.verdict/
+    );
+    const nl = { ...base, findings: [{ ...base.findings[0], walk_entry: { title: 'T\nU', file: 'F' } }] };
+    expect(() => normalizeInternalPass('/f.json', nl)).toThrow(/findings\[0\]\.walk_entry\.title.*single-line/);
   });
 });

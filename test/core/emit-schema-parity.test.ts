@@ -22,7 +22,7 @@ const ENGINE_OWNED = ['command', 'timestamp', 'change', 'doc', 'kind', 'model', 
 /** Per-command computed keys the reference marks engine-owned. */
 const ENGINE_OWNED_PER_COMMAND: Record<string, string[]> = {
   // review: the counts sentence is engine-composed from the scorecard (D4).
-  review: ['final_assessment'],
+  review: ['final_assessment', 'pass_genre', 'verified_walks'],
   // review-external: the T0 handoff flag is composed by the engine, never supplied.
   'review-external': ['awaiting_findings'],
 };
@@ -47,7 +47,7 @@ const KNOWN_DIVERGENCE: Record<string, string[]> = {
  * orphan check only fires for keys outside this set, so listing `blocks` or `direction` would
  * disarm it for exactly the note whose block key could be dropped (rc02b; rc04b walk 1, fresh W6).
  */
-const NESTED_NOTE_SUBJECTS = new Set(['recommendation_options', 'severity', 'dimension', 'title', 'file', 'line', 'recommendation', 'reproduction', 'reproduction_rerun', 'evidence', 'ratified_via', 'resolution', 'recommendation_fork', 'ripple_cascade', 'outcome', 'marker_source', 'classification', 'action', 'by_pass', 'by_category', 'reviewer_class', 'walk_mode_shifted_at_finding']);
+const NESTED_NOTE_SUBJECTS = new Set(['recommendation_options', 'severity', 'dimension', 'title', 'file', 'line', 'recommendation', 'reproduction', 'reproduction_rerun', 'evidence', 'ratified_via', 'resolution', 'recommendation_fork', 'ripple_cascade', 'outcome', 'marker_source', 'classification', 'action', 'by_pass', 'by_category', 'reviewer_class', 'walk_mode_shifted_at_finding', 'walk_entry']);
 
 const REFERENCES: Array<[command: string, template: () => { references?: Array<{ name: string; content: string }> }, refName: string]> = [
   ['review', getReviewSkillTemplate, 'run-summary-schema.md'],
@@ -172,6 +172,20 @@ describe('schema-table parity: every AI-supplied field a schema reference docume
       expect(orphaned, `${command}: ${refName} field notes name key(s) no schema block carries`).toEqual([]);
     });
   }
+
+  it('rc03c (1.4): verification is a top-level review key the table accepts; walk_entry sits in the finding shape; pass_genre / verified_walks are documented engine-owned and never accepted', () => {
+    const ref = (getReviewSkillTemplate().references ?? []).find((r) => r.name === 'run-summary-schema.md')!;
+    const { keys } = documentedKeys(ref.content);
+    const table = payloadFieldsFor('review')!;
+    expect([...keys]).toContain('verification');
+    expect(table).toContain('verification');
+    expect(ref.content).toMatch(/"findings": \[[\s\S]*"walk_entry": \{ "title"[\s\S]*\n  \],/);
+    for (const k of ['pass_genre', 'verified_walks']) {
+      expect([...keys]).toContain(k);
+      expect(table).not.toContain(k);
+      expect(ref.content).toMatch(new RegExp(`"${k}": [^\n]*engine-computed`));
+    }
+  });
 
   it('regression: the archive table accepts the three conditional fields its schema defines (four until rc04c retired the gate-override field)', () => {
     const table = payloadFieldsFor('archive')!;

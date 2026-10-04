@@ -1,6 +1,6 @@
 ## Review: golden-change --as proposal
 
-Mode: proposal · Iteration: 2 · Reviewer: in-context · Depth: full
+Mode: proposal · Iteration: 2 · Reviewer: in-context · Depth: full · Pass genre: REVIEW
 Trend: 0C/3W/2S → 1C/1W/1S (0 repeat, 3 new)
 
 | Dimension    | Critical | Warning | Suggestion |

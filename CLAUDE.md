@@ -539,6 +539,29 @@ reworded the line), and a filtered test run reported green while one suite faile
 measure). Task 3.5 (exit (3)) closed at archive by observation; the readiness record accepts five residuals, headlined by
 rc07's distinction. **2507 tests green** (2465 → 2507).
 
+`rc03c-verification-record` is APPLIED (2026-10-04; the second child of the split parent `rc03-review-genres`;
+its system cadence and archive are still ahead): **a verification pass is a COMPUTED pass genre with its own owed
+record.** ONE exported function in a new module beside the trail reader (`src/core/artifact-graph/pass-genre.ts`,
+never `gates.ts`) implements `orbit-conventions`' genre table over the trail reader's ACCEPTED pass set — a walk's
+mode resolves by source basename THROUGH that set, so the walk of a rejected external return is mode-less — and
+every review emit stores its result as two computed extensions, `pass_genre` and `verified_walks` (the qualifying
+walks, UNNARROWED, so a second confirm re-grades earlier walks), refused in the payload. A VERIFICATION-genre payload
+OWES `verification: [{title, file, verdict}]`, `verdict` exactly `landed` | `regressed`, one per `resolved` entry
+of the readable walks at every severity, keyed and normalized as the gate keys resolutions and judged against the
+latest walk carrying the key `resolved`; the write gate refuses it absent (naming each owed key as
+`walk <token>: (<title>, <file>)` — the channel that reconciles rc03b's metadata probe with the engine), incomplete,
+stray, duplicated, or present in any form on a REVIEW-genre pass. A finding may carry `walk_entry: {title, file}`
+naming ANY entry of the walk set; a `regressed` verdict needs one, and a link on a `landed` key is refused unless
+the key is shared with a non-`resolved` entry (the declared gap). The report prints `· Pass genre: <REVIEW|VERIFICATION>`
+on the internal header (recomputed at render time — every internal golden moved by that one suffix), a FRAME
+`### Verification` section between Suppressed and Direction with engine-derived walk tokens and `see:` links, a
+`walk entry:` line under a linked finding, `[outside the walk record]` on an unlinked finding of a pass carrying a
+record, and `[no verification record]` once on a prior-generation confirm. The review body's Step 5 VERIFICATION
+branch grades over each entry's SWEEP SCOPE (`file` plus `ripple_cascade.applied`) and runs a git-diff residual check
+from the commit that added the latest accepted independent pass's file, naming unlisted files as SUGGESTIONs. Three
+capabilities at R-crc-1's ceiling; `gates.ts`, `trail.ts` and the schema carry no diff, held by rc03b's hash pin
+(two hashes MOVED and the new module ADDED, recorded in the pin). **2552 tests green** (2507 → 2552).
+
 Read that doc before any rc-stage work; the D-arc section below is the historical
 record of how the engine got here.
 

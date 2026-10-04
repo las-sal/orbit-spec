@@ -1,6 +1,6 @@
 ## Review: nearmiss-direction --as proposal
 
-Mode: proposal · Iteration: 1 · Reviewer: fresh · Depth: quick
+Mode: proposal · Iteration: 1 · Reviewer: fresh · Depth: quick · Pass genre: REVIEW
 First proposal-mode review of this change.
 
 | Dimension    | Critical | Warning | Suggestion |

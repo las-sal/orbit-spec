@@ -1732,3 +1732,184 @@ describe('rc04b: the review payload carries direction — owed by the independen
     ).toThrow(/unknown payload key 'direction'/);
   });
 });
+
+// ---------------------------------------------------------------------------------------
+// rc03c-verification-record, task 1.2 — the pass genre and its walk set are COMPUTED and stored;
+// a VERIFICATION-genre payload owes its verdicts, and its findings link to the walk record.
+// Owners: `orbit-emit-composition`'s `The review emit records its pass genre and the walks it
+// verifies` and `A VERIFICATION-genre payload carries its verdicts and its findings link to the
+// walk record`. Every refusal leaves the trail exactly as it was (no file written).
+// ---------------------------------------------------------------------------------------
+
+describe('rc03c: pass genre, verified walks and the verification record', () => {
+  const RUNS = 'orbit/changes/foo/.orbit-runs';
+  const FRESH = 'review-system-2026-10-01T01-00-00Z.json';
+  const W1 = '2026-10-01T02-00-00Z';
+  const W2 = '2026-10-01T03-00-00Z';
+  type Entry = { severity?: string; outcome?: string; title?: string; file?: string };
+  const res = (title: string, file: string, outcome = 'resolved', severity = 'WARNING'): Entry => ({ severity, outcome, title, file });
+
+  /** A system trail: one fresh pass, then the given walks of it. */
+  function seed(walks: Array<[token: string, entries: Entry[] | null]>): void {
+    makeChange('foo');
+    write(`${RUNS}/${FRESH}`, JSON.stringify({ command: 'review', mode: 'system', reviewer_class: 'fresh', findings: [] }));
+    for (const [token, entries] of walks) {
+      write(
+        `${RUNS}/address-reviews-${token}.json`,
+        JSON.stringify({ command: 'address-reviews', source_path: `${RUNS}/${FRESH}`, resolutions: entries ?? 'unreadable' })
+      );
+    }
+  }
+
+  type F = { title: string; file?: string; severity?: string; walk_entry?: unknown };
+  /** An in-context system payload whose scorecard is the rollup of its findings. */
+  function sys(findings: F[] = [], extra: Record<string, unknown> = {}) {
+    const full = findings.map(f => ({ severity: 'WARNING', dimension: 'correctness', file: 'x.md', line: 1, recommendation: 'r', ...f }));
+    const sc: any = {
+      completeness: { critical: 0, warning: 0, suggestion: 0 },
+      correctness: { critical: 0, warning: 0, suggestion: 0 },
+      coherence: { critical: 0, warning: 0, suggestion: 0 },
+    };
+    for (const f of full) sc.correctness[f.severity.toLowerCase()] += 1;
+    return validReviewPayload({ mode: 'system', findings: full, scorecard: sc, ...extra });
+  }
+  const before = () => listRuns(RUNS);
+  const refuses = (payload: Record<string, unknown>, re: RegExp | string) => {
+    const was = before();
+    expect(() => composeAndWriteEmit('review', { change: 'foo' }, payload, { projectRoot: root })).toThrow(re);
+    expect(before()).toEqual(was);
+  };
+  const writes = (payload: Record<string, unknown>) =>
+    composeAndWriteEmit('review', { change: 'foo' }, payload, { projectRoot: root });
+
+  it('every review emit carries the computed pass_genre and verified_walks — REVIEW/[] with no walk, VERIFICATION over the walks after the fresh pass', () => {
+    seed([]);
+    const r1 = writes(sys());
+    expect((r1.emit as any).pass_genre).toBe('REVIEW');
+    expect((r1.emit as any).verified_walks).toEqual([]);
+    seed([[W1, [res('A', 'a.md')]]]);
+    const r2 = writes(sys([], { verification: [{ title: 'A', file: 'a.md', verdict: 'landed' }] }));
+    expect((r2.emit as any).pass_genre).toBe('VERIFICATION');
+    expect((r2.emit as any).verified_walks).toEqual([W1]);
+    const onDisk = JSON.parse(fs.readFileSync(r2.path, 'utf-8'));
+    expect(onDisk.pass_genre).toBe('VERIFICATION');
+    expect(onDisk.verification).toEqual([{ title: 'A', file: 'a.md', verdict: 'landed' }]);
+  });
+
+  it('architecture-mode emits carry REVIEW/[]', () => {
+    write('orbit/architecture/prog.md', '# prog\n');
+    const handoff = { boot_sequence: ['CLAUDE.md'], next_command: '/orbit:architect prog', model_hint: null, seam: 'post-review' };
+    const r = composeAndWriteEmit('review', { doc: 'prog' }, validReviewPayload({ mode: 'architecture', handoff }), { projectRoot: root });
+    expect((r.emit as any).pass_genre).toBe('REVIEW');
+    expect((r.emit as any).verified_walks).toEqual([]);
+  });
+
+  it('payload-supplied pass_genre or verified_walks is refused as engine-owned', () => {
+    seed([]);
+    refuses(sys([], { pass_genre: 'REVIEW' }), /'pass_genre' is engine-owned/);
+    refuses(sys([], { verified_walks: [] }), /'verified_walks' is engine-owned/);
+  });
+
+  it('an owed record that is absent is refused naming the field, the owed count and each owed key with its walk', () => {
+    seed([[W1, [res('A', 'a.md'), res('B', 'b.md')]]]);
+    const was = before();
+    let msg = '';
+    try { writes(sys()); } catch (e) { msg = (e as Error).message; }
+    expect(msg).toMatch(/'verification'/);
+    expect(msg).toMatch(/2 owed/);
+    expect(msg).toContain(`walk ${W1}: (A, a.md)`);
+    expect(msg).toContain(`walk ${W1}: (B, b.md)`);
+    expect(before()).toEqual(was);
+  });
+
+  it('a complete record writes; a missing key is refused as walk <token>: (<title>, <file>)', () => {
+    seed([[W1, [res('A', 'a.md'), res('B', 'b.md')]]]);
+    refuses(sys([], { verification: [{ title: 'A', file: 'a.md', verdict: 'landed' }] }), `walk ${W1}: (B, b.md)`);
+    const r = writes(sys([], { verification: [{ title: 'A', file: 'a.md', verdict: 'landed' }, { title: 'B', file: 'b.md', verdict: 'landed' }] }));
+    expect((r.emit as any).verification).toHaveLength(2);
+  });
+
+  it('a stray verdict, a duplicate verdict, and a verdict for a stale entry are refused', () => {
+    seed([[W1, [res('A', 'a.md'), res('S', 's.md', 'stale')]]]);
+    const A = { title: 'A', file: 'a.md', verdict: 'landed' };
+    refuses(sys([], { verification: [A, { title: 'Z', file: 'z.md', verdict: 'landed' }] }), /\(Z, z\.md\).*not owed/);
+    refuses(sys([], { verification: [A, A] }), /second verdict for \(A, a\.md\)/);
+    refuses(sys([], { verification: [A, { title: 'S', file: 's.md', verdict: 'landed' }] }), /\(S, s\.md\).*not owed/);
+  });
+
+  it('a key in two walks owes ONE verdict judged against the latest resolved walk; a later stale call does not lift it', () => {
+    seed([
+      [W1, [res('A', 'a.md'), res('B', 'b.md')]],
+      [W2, [res('A', 'a.md'), res('B', 'b.md', 'stale')]],
+    ]);
+    let msg = '';
+    try { writes(sys()); } catch (e) { msg = (e as Error).message; }
+    expect(msg).toMatch(/2 owed/);
+    expect(msg).toContain(`walk ${W2}: (A, a.md)`);
+    expect(msg).toContain(`walk ${W1}: (B, b.md)`);
+    const A = { title: 'A', file: 'a.md', verdict: 'landed' };
+    refuses(sys([], { verification: [A, A, { title: 'B', file: 'b.md', verdict: 'landed' }] }), /second verdict/);
+    writes(sys([], { verification: [A, { title: 'B', file: 'b.md', verdict: 'landed' }] }));
+  });
+
+  it('payload keys are normalized (trimmed title, :line stripped) before matching; refusals print the normalized form', () => {
+    seed([[W1, [res('T', 'design.md')]]]);
+    writes(sys([], { verification: [{ title: ' T ', file: 'design.md:42', verdict: 'landed' }] }));
+    refuses(sys([], { verification: [{ title: ' T ', file: 'design.md:42', verdict: 'landed' }, { title: ' U ', file: 'u.md:3', verdict: 'landed' }] }), /\(U, u\.md\)/);
+  });
+
+  it('zero owed entries still owe [] — absent refused with an owed count of 0, [] writes', () => {
+    seed([[W1, [res('S', 's.md', 'stale'), res('D', 'd.md', 'deferred')]]]);
+    refuses(sys(), /'verification'.*0 owed/);
+    const r = writes(sys([], { verification: [] }));
+    expect((r.emit as any).verification).toEqual([]);
+  });
+
+  it('an unreadable walk, or one with an entry carrying no title, owes nothing and stays listed', () => {
+    seed([[W1, null], [W2, [{ severity: 'WARNING', outcome: 'resolved', file: 'a.md' }]]]);
+    const r = writes(sys([], { verification: [] }));
+    expect((r.emit as any).verified_walks).toEqual([W1, W2]);
+  });
+
+  it('a regressed verdict needs a finding naming it', () => {
+    seed([[W1, [res('T', 'F')]]]);
+    refuses(sys([], { verification: [{ title: 'T', file: 'F', verdict: 'regressed' }] }), /\(T, F\) 'regressed' but no finding/);
+    writes(sys([{ title: 'The edit stops short', walk_entry: { title: 'T', file: 'F' } }], { verification: [{ title: 'T', file: 'F', verdict: 'regressed' }] }));
+  });
+
+  it('a walk_entry on a landed key is a contradiction when every entry carrying the key is resolved', () => {
+    seed([[W1, [res('T', 'F')]]]);
+    refuses(sys([{ title: 'x', walk_entry: { title: 'T', file: 'F' } }], { verification: [{ title: 'T', file: 'F', verdict: 'landed' }] }), /'landed'.*contradiction/);
+  });
+
+  it('a shared key (W1 resolved, W2 stale) accepts a landed verdict beside a linked finding', () => {
+    seed([[W1, [res('T', 'F')]], [W2, [res('T', 'F', 'stale')]]]);
+    writes(sys([{ title: 'W2 dismissed a real finding', walk_entry: { title: 'T', file: 'F' } }], { verification: [{ title: 'T', file: 'F', verdict: 'landed' }] }));
+  });
+
+  it('a walk_entry naming a stale entry is accepted; one outside the walk set is refused', () => {
+    seed([[W1, [res('A', 'a.md'), res('S', 's.md', 'stale')]]]);
+    const v = { verification: [{ title: 'A', file: 'a.md', verdict: 'landed' }] };
+    writes(sys([{ title: 'the stale call was wrong', walk_entry: { title: 'S', file: 's.md' } }], v));
+    refuses(sys([{ title: 'x', walk_entry: { title: 'Q', file: 'q.md' } }], v), /findings\[0\]\.walk_entry.*\(Q, q\.md\).*no readable walk/);
+  });
+
+  it('on a REVIEW-genre pass, verification in any form ([] included) and any walk_entry are refused', () => {
+    seed([]);
+    refuses(sys([], { verification: [] }), /'verification'.*REVIEW/);
+    refuses(sys([], { verification: [{ title: 'A', file: 'a.md', verdict: 'landed' }] }), /'verification'.*REVIEW/);
+    refuses(sys([{ title: 'x', walk_entry: { title: 'A', file: 'a.md' } }]), /findings\[0\]\.walk_entry.*REVIEW/);
+  });
+
+  it('mis-shaped verdicts, extra keys and a string walk_entry are refused at ANY genre', () => {
+    for (const walks of [[], [[W1, [res('T', 'F')]]]] as Array<Array<[string, Entry[]]>>) {
+      fs.rmSync(path.join(root, 'orbit'), { recursive: true, force: true });
+      seed(walks);
+      refuses(sys([], { verification: [{ title: 'T', file: 'F', verdict: 'fixed' }] }), /verification\[0\]\.verdict/);
+      refuses(sys([], { verification: [{ title: 'T', file: 'F', verdict: 'landed', walk: W1 }] }), /verification\[0\]\.walk/);
+      refuses(sys([], { verification: { walks: [], resolutions: [] } }), /'verification' must be an array/);
+      refuses(sys([], { verification: [{ title: 'T\nU', file: 'F', verdict: 'landed' }] }), /verification\[0\]\.title/);
+      refuses(sys([{ title: 'x', walk_entry: 'T' }], { verification: [{ title: 'T', file: 'F', verdict: 'landed' }] }), /findings\[0\]\.walk_entry/);
+    }
+  });
+});

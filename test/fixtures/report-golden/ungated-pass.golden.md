@@ -1,6 +1,6 @@
 ## Review: ungated-change --as proposal
 
-Mode: proposal · Iteration: 1 · Reviewer: in-context · Depth: quick
+Mode: proposal · Iteration: 1 · Reviewer: in-context · Depth: quick · Pass genre: REVIEW
 First proposal-mode review of this change.
 
 | Dimension    | Critical | Warning | Suggestion |

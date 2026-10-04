@@ -8,8 +8,18 @@ import {
 } from './artifact-graph/index.js';
 import { modelHintFor, withModelHint } from './model-hints.js';
 import { createFenceTracker } from './markdown-fence.js';
-import type { ReviewerClass } from './artifact-graph/trail.js';
+import { readTrail, type ReviewerClass } from './artifact-graph/trail.js';
 import { isIndependent } from './artifact-graph/gates.js';
+import {
+  computePassGenre,
+  verificationLedger,
+  verificationShapeError,
+  walkEntryShapeError,
+  normalizeKey,
+  keyString,
+  type PassGenre,
+  type ShapeError,
+} from './artifact-graph/pass-genre.js';
 
 /**
  * Review-report renderer (D-arc Stage D4, per orbit-report-rendering). The
@@ -77,6 +87,11 @@ export interface NormalizedFinding {
    * renders the `[unreproduced]` mark; the severity itself is NEVER re-graded here.
    */
   reproduction?: string;
+  /**
+   * rc03c: the walk entry this finding is about (internal only) — the shape
+   * `orbit-emit-composition`'s verification requirement owns, key-normalized.
+   */
+  walkEntry?: { title: string; file: string };
 }
 
 /**
@@ -125,6 +140,11 @@ export interface NormalizedReviewPass {
    * `[direction malformed]`, never a rejection). An internal mis-shaped one fails normalization.
    */
   direction?: ReviewDirection | 'malformed';
+  /**
+   * rc03c: internal `verification` record, key-normalized. Absent on a VERIFICATION-genre pass =
+   * a prior-generation emit, rendered `[no verification record]` — by absence, never by date.
+   */
+  verification?: { title: string; file: string; verdict: 'landed' | 'regressed' }[];
 }
 
 /** Render-time computed context — never stored, never read from the record. */
@@ -137,6 +157,17 @@ export interface ReportContext {
   /** Repeat/new vs the immediately-prior same-mode pass (first run: undefined). */
   repeatCount?: number;
   newCount?: number;
+  /**
+   * rc03c: the PASS GENRE, recomputed at render time by the function `orbit-emit-composition`'s
+   * genre requirement exports (internal passes only — every external pass is REVIEW and its header
+   * omits the field). Never read from the record's stored `pass_genre`.
+   */
+  passGenre?: PassGenre;
+  /**
+   * rc03c: on a VERIFICATION-genre pass, the engine-derived facts its section prints — per owed key,
+   * the latest walk carrying it `resolved`; and the walks that owe nothing because they are unreadable.
+   */
+  verification?: { latestWalk: Map<string, string>; unreadable: string[] };
   /** Engine tail — each line renders only when computed. */
   gateLine?: string;
   position?: string;
@@ -178,6 +209,13 @@ function requireSingleLine(value: string, field: string, file: string): void {
   if (value.includes('\n') || value.includes('\r')) {
     fail(`field '${field}' must be single-line (embedded newline)`, file);
   }
+}
+
+/** rc03c: a shape report from the verification record's ONE shape statement, failed read-side. */
+function failShape(e: ShapeError, file: string): never {
+  if (e.kind === 'newline') fail(`field '${e.field}' must be single-line (embedded newline)`, file);
+  if (e.kind === 'unknown-key') fail(`unknown field '${e.field}'`, file);
+  fail(`missing or mistyped field '${e.field}'`, file);
 }
 
 /**
@@ -296,6 +334,14 @@ export function normalizeInternalPass(filePath: string, json: unknown): Normaliz
     if (f.reproduction !== undefined && typeof f.reproduction !== 'string') {
       fail(`missing or mistyped field '${at}.reproduction'`, filePath);
     }
+    // rc03c: a PRESENT walk_entry is the write gate's shape, read-side (shape only).
+    let walkEntry: { title: string; file: string } | undefined;
+    if (f.walk_entry !== undefined) {
+      const e = walkEntryShapeError(f.walk_entry, i);
+      if (e) failShape(e, filePath);
+      const w = f.walk_entry as { title: string; file: string };
+      walkEntry = normalizeKey(w.title, w.file);
+    }
     let recommendationOptions: { label: string; body: string }[] | undefined;
     if (f.recommendation_options !== undefined) {
       if (!Array.isArray(f.recommendation_options)) {
@@ -322,8 +368,21 @@ export function normalizeInternalPass(filePath: string, json: unknown): Normaliz
       // A blank string is ABSENCE, exactly as the external parser reads a blank body (the mark
       // is by absence on both genres; the write gate refuses blank only on CRITICAL).
       ...(typeof f.reproduction === 'string' && f.reproduction.trim() !== '' ? { reproduction: f.reproduction } : {}),
+      ...(walkEntry !== undefined ? { walkEntry } : {}),
     };
   });
+
+  // rc03c: a PRESENT `verification` is the write gate's shape, read-side — SHAPE only; the owed-set,
+  // completeness and pairing checks are the write gate's and are not repeated here. Absence is a MARK.
+  let verification: NormalizedReviewPass['verification'];
+  if (j.verification !== undefined) {
+    const e = verificationShapeError(j.verification);
+    if (e) failShape(e, filePath);
+    verification = (j.verification as Array<{ title: string; file: string; verdict: 'landed' | 'regressed' }>).map(v => ({
+      ...normalizeKey(v.title, v.file),
+      verdict: v.verdict,
+    }));
+  }
 
   // Optional absent-safe fields — validated for shape only when present.
   if (j.commentary !== undefined && typeof j.commentary !== 'string') {
@@ -428,6 +487,7 @@ export function normalizeInternalPass(filePath: string, json: unknown): Normaliz
     ...(typeof j.commentary === 'string' ? { commentary: j.commentary } : {}),
     ...(blocks !== undefined ? { blocks } : {}),
     ...(direction !== undefined ? { direction } : {}),
+    ...(verification !== undefined ? { verification } : {}),
   };
 }
 
@@ -763,7 +823,8 @@ export function renderReviewReport(pass: NormalizedReviewPass, ctx: ReportContex
 
   const modeLine =
     pass.genre === 'internal'
-      ? `Mode: ${pass.mode} · Iteration: ${ctx.iteration} · Reviewer: ${pass.reviewerClass} · Depth: ${pass.depth}`
+      ? `Mode: ${pass.mode} · Iteration: ${ctx.iteration} · Reviewer: ${pass.reviewerClass} · Depth: ${pass.depth}` +
+        (ctx.passGenre !== undefined ? ` · Pass genre: ${ctx.passGenre}` : '')
       : `Mode: ${pass.mode} · Iteration: ${ctx.iteration} · Reviewer: external (${pass.reviewerName}, ${pass.reviewerDate})`;
   const trendLine =
     ctx.trend.length <= 1
@@ -785,6 +846,11 @@ export function renderReviewReport(pass: NormalizedReviewPass, ctx: ReportContex
     blocks.push(['### Blocks', ...pass.blocks.map(b => `- ${b}`)].join('\n'));
   }
 
+  // rc03c: a VERIFICATION-genre internal pass renders its walk links and, when it CARRIES a record,
+  // marks every finding outside it; REVIEW-genre and external passes render neither.
+  const verifying = pass.genre === 'internal' && ctx.passGenre === 'VERIFICATION';
+  const carrying = verifying && pass.verification !== undefined;
+
   if (pass.findings.length > 0) {
     blocks.push('### Findings');
     for (const sev of SEVERITIES) {
@@ -798,7 +864,13 @@ export function renderReviewReport(pass: NormalizedReviewPass, ctx: ReportContex
         // the prior-generation set (the write gate refuses new ones); on external passes the
         // file could not be refused. The severity is the author's and is never re-graded.
         const mark = f.severity === 'CRITICAL' && f.reproduction === undefined ? '[unreproduced] ' : '';
-        lines.push(`- ${mark}**${f.fileRef}** — ${f.title}`);
+        // rc03c: `[outside the walk record]` — a PREFIX outside the title token, after
+        // `[unreproduced]` when both apply; only on a pass CARRYING a verification record.
+        const outside = carrying && f.walkEntry === undefined ? '[outside the walk record] ' : '';
+        lines.push(`- ${mark}${outside}**${f.fileRef}** — ${f.title}`);
+        if (verifying && f.walkEntry !== undefined) {
+          lines.push(`  walk entry: ${f.walkEntry.title} (\`${f.walkEntry.file}\`)`);
+        }
         // Blockquote containment at two-space indent: every source line
         // prefixed verbatim — none can forge report grammar at column 0.
         for (const l of containedLines(f.recommendation)) lines.push(`  > ${l}`);
@@ -822,6 +894,31 @@ export function renderReviewReport(pass: NormalizedReviewPass, ctx: ReportContex
     blocks.push(
       ['### Suppressed', ...pass.suppressed.map(s => `- ${s.title} — ${s.evidence}`)].join('\n')
     );
+  }
+
+  // rc03c: the Verification section — FRAME, not quarantine: the verdict token is from a closed
+  // set, title and file are checked single-line slots, and the walk token and linked findings are
+  // ENGINE-derived. A VERIFICATION-genre pass always renders the section; a REVIEW-genre or
+  // external pass never does.
+  if (verifying) {
+    const rows: string[] = [];
+    if (pass.verification === undefined) {
+      rows.push('[no verification record]');
+    } else {
+      for (const v of pass.verification) {
+        const k = keyString(v);
+        const walk = ctx.verification?.latestWalk.get(k);
+        let row = `- ${v.verdict} — ${v.title} (\`${v.file}\`)${walk !== undefined ? ` · walk ${walk}` : ''}`;
+        if (v.verdict === 'regressed') {
+          const see = pass.findings.filter(f => f.walkEntry !== undefined && keyString(f.walkEntry) === k).map(f => f.title);
+          if (see.length > 0) row += ` · see: ${see.join('; ')}`;
+        }
+        rows.push(row);
+      }
+      for (const w of ctx.verification?.unreadable ?? []) rows.push(`- walk ${w} — unreadable; nothing owed`);
+      if (rows.length === 0) rows.push('- no verdicts owed — every entry of the verified walks claims no edit');
+    }
+    blocks.push(['### Verification', ...rows].join('\n'));
   }
 
   // rc04b: the Direction section — `Disposition: <token>` is a label the ENGINE prints from the
@@ -1131,6 +1228,24 @@ export function buildReportContext(
     newCount = pass.findings.length - repeatCount;
   }
 
+  // rc03c: the PASS GENRE, recomputed at render time over the records preceding the rendered pass
+  // (internal passes only), with the engine-derived facts the Verification section prints.
+  let passGenre: PassGenre | undefined;
+  let verification: ReportContext['verification'];
+  const ownToken = parseTsToken(path.basename(pass.filePath));
+  if (pass.genre === 'internal' && pass.reviewerClass !== undefined && ownToken !== null) {
+    const trail = readTrail(changeDir);
+    const g = computePassGenre(trail, pass.reviewerClass, pass.mode, ownToken);
+    passGenre = g.passGenre;
+    if (g.passGenre === 'VERIFICATION') {
+      const ledger = verificationLedger(trail, g.verifiedWalks);
+      verification = {
+        latestWalk: new Map([...ledger.owed].map(([k, o]) => [k, o.walk])),
+        unreadable: ledger.unreadable,
+      };
+    }
+  }
+
   // The engine tail — the phase gate the mode maps to; each line only when the
   // status computation yields it. The reviewer cannot author any of these.
   let gateLine: string | undefined;
@@ -1159,6 +1274,8 @@ export function buildReportContext(
     iteration: idx + 1,
     trend,
     ...(repeatCount !== undefined ? { repeatCount, newCount } : {}),
+    ...(passGenre !== undefined ? { passGenre } : {}),
+    ...(verification !== undefined ? { verification } : {}),
     ...(gateLine !== undefined ? { gateLine } : {}),
     ...(position !== undefined ? { position } : {}),
     ...(nextCommand !== undefined ? { nextCommand } : {}),
