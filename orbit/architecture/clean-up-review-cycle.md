@@ -2577,7 +2577,7 @@ the exemption is retired, not re-stated.
 
 ### Stage rc08-walk-completeness — walks sweep requirements, not examples
 
-Depends-on: rc03-review-genres
+Depends-on: rc03c-verification-record
 Complete: [ ]
 
 Charter: when a walk edits a command example or a normative sentence, the address-reviews body
@@ -4547,3 +4547,11 @@ rulings or questions this session: the readiness record's five accepted residual
 address-reviews' `internal-findings-format.md`, which no spec owns and which the exploration's four-voice count missed,
 handed to the next stage that touches the address-reviews input formats; and the archive schema's `audit.summary_path`,
 recorded at design for the next stage that touches the archive emit.
+
+**2026-10-04 — Architect session: rc08-walk-completeness's dependency re-pointed (Sal).** `Depends-on:
+rc03-review-genres` → `Depends-on: rc03c-verification-record`. rc03 is a split parent, ENDED 2026-10-04 with every
+exit criterion owned by a child; the slot named a stage that will never complete, so the doc read rc08 as waiting on
+unfinished work. The dependency the charter actually carries — "the R-crc-4 verification pass over the walk's own diff
+precedes any further review" — is the verification record rc03c shipped, and rc03c depends on rc03b, so the edge
+subsumes both children. The charter's prose references to rc03 (the DISAGREEMENT class's name staying with rc03's
+record) are unchanged: they cite rc03's record, not a dependency.
