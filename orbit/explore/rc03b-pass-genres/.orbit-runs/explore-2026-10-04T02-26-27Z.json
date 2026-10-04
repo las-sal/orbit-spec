@@ -1,0 +1,25 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-04T02:26:27Z",
+  "change": "rc03-review-genres",
+  "kind": "workflow",
+  "model": null,
+  "final_assessment": "Boundary: rc03-review-genres explored to a split in one sitting. The charter re-read against the shipped tree (Case 1) reduced five items to three live ones — the recommendation, the fixed classes and the blind-pair slot had shipped in rc04b/rc02, and the 'removal is confirmed by verification' argument answered clause (c), which rc02c retired. Three rules captured with Mechanism entries, every one accounted (D-rc03-2 genre computed from class x mode x trail position — DERIVED; D-rc03-3 a review-genre brief carries no findings and no trail pointer, rc03a's eleven channels re-enumerated at current lines — BOUNDED, the launching brief the declared residual; D-rc03-4 the verification record, landed/regressed per resolution over the walk record's files — SOURCED). Five scope decisions: one-launch descoped (the engine already outranks the walk while a pair is open, gates.ts:798-805); disagreement named here and assigned to rc08; external-first ordering not carried; the stage SPLITS under R-crc-9 into rc03b-pass-genres (conventions, review, review-external; no engine code) and rc03c-verification-record (emit-composition, report-rendering, review; depends on rc03b), exit (1)'s slot wording to be revised under R-crc-12 at ratification. Sal ratified A on all three scope calls in chat. Four open questions, each with a standing recommendation; seven options in Considered & out. Next is Sal's act: declare the two stages in an architect session, then rename this staging directory to its first child and repoint the citation (the rc04 precedent, commit 5565d8d0), then propose. Nothing committed yet.",
+  "decisions_captured": 8,
+  "open_questions_count": 4,
+  "open_questions_with_recommendation": "4 of 4",
+  "rules_total": 3,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [
+    {
+      "id": "D-rc03-3",
+      "kind": "an instruction outside `review.ts` — another body's prose, the chat invocation snippet, the launching brief — that hands a review-genre reviewer prior findings",
+      "method": "the exit (3) grep over the WHOLE generated surface for the trail path and the three finding-list phrasings, plus reading each pair's committed prompt file at the walk (the prompt is on the trail; the brief is not)"
+    }
+  ],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:explore rc03-review-genres — 8 decisions captured but 4 open questions remain; resolve open questions before formalizing"
+}

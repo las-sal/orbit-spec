@@ -1050,6 +1050,10 @@ never deleted.
   mechanism's guarantee depends on a human remembering the procedure. rc02 built the pair; nothing
   built the pair's walk. Two sessions of evidence now say the procedure does not survive contact
   without the operator reconstructing it each time.
+  **2026-10-04 (rc03 exploration, D-rc03-5):** the PRODUCER side is narrower than this entry assumed —
+  `gates.ts:798-805` already outranks the walk recommendation while a pair is open, so the engine never
+  recommends the foreclosing walk; what remained was same-turn overlap, now one sentence in rc03b's
+  review body. The CONSUMER side — one walk over both halves — is unchanged and stays rc08's.
 
 - **Q-crc-23 — the word "override" encodes the hard-gate authority the program does not claim,
   and one requirement is visibly arguing with itself about it.**
@@ -1289,11 +1293,11 @@ never deleted.
 
 ## Program stages
 
-<!-- src:stages -->25<!-- /src:stages --> small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
+<!-- src:stages -->27<!-- /src:stages --> small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
 split into rc02 + rc02b on 2026-09-12; rc13 added 2026-09-14 and moved to phase 1 the same day;
 rc03a split from rc03 on 2026-09-15 and WITHDRAWN the same day; rc13 split into rc13a + rc13b on
 2026-09-15 under R-crc-9; rc07b split from rc07 the same day under R-crc-9 applied PREVENTIVELY; rc04d split from rc04c on 2026-09-21, the THIRD preventive application, caught at exploration by a size check rather than after a cadence;
-rc13c declared 2026-09-25 from rc13a's archive proposal, and rc15 declared the same day taking up Q-crc-11; rc16 declared 2026-10-01 from Q-crc-28's ratified direction — rc14 stays reserved for the undeclared `rc14-delta-scope` recommendation).
+rc13c declared 2026-09-25 from rc13a's archive proposal, and rc15 declared the same day taking up Q-crc-11; rc16 declared 2026-10-01 from Q-crc-28's ratified direction; rc03 split into rc03b + rc03c on 2026-10-04 under R-crc-9, the FOURTH preventive application, again caught at exploration by a size check — rc14 stays reserved for the undeclared `rc14-delta-scope` recommendation).
 Every stage is sized under R-crc-1, names the capabilities it touches, and names its goal.
 Charters are settled under R-crc-3 until a citing change refines them; exit criteria are
 falsifiable and self-measured by the stage's own cadence (G0). Position is computed — see the
@@ -1823,6 +1827,35 @@ R-d-11's house rule (detection, not prevention). It was deferred three times on 
 Depends-on: rc02-gate-semantics
 Complete: [ ]
 
+**SPLIT 2026-10-04 (Sal) into rc03b + rc03c, under R-crc-9 — its fourth preventive application, the
+second caught at exploration by a size check before anything was proposed.** This heading is retained
+as the program's record of the problem, the charter and the evidence; the WORK is declared in the two
+stages that follow. The exploration (`orbit/explore/rc03-review-genres/`, one sitting on 2026-10-04)
+first re-measured the charter against the shipped tree and found it eaten from three sides: the
+forward recommendation shipped as rc04b's `direction`; the fixed classes and the `blind-pair` slot
+shipped in rc02; and the "REMOVAL IS CONFIRMED BY VERIFICATION, NOT BY ANOTHER REVIEW" paragraph below
+argues against clause (c), which rc02c RETIRED — the gate never asks for a further pass, so the
+verification genre's justification was re-derived (Q-crc-20, and nine rc-stage in-context confirms
+that each ran as an unnamed verification over "the walks' own additions"). What survived: the review
+brief ANCHORS (rc04b's real system prompt carried the walk logs under "Resolved since last review");
+the in-context pass has no record shape; and two shipped sentences contradict R-crc-4. Three rules
+were captured with accounted Mechanism entries — D-rc03-2 (genre is COMPUTED from class × mode × trail
+position, never declared), D-rc03-3 (a REVIEW-genre brief carries NO findings and NO trail pointer —
+which DISSOLVES rc03a's eleven-channel problem on every order, so no ordering rule and no attestation
+field is needed), D-rc03-4 (the verification record). Three scope calls ratified by Sal (A on all):
+the DISAGREEMENT class is named here and its handling rule is ASSIGNED to rc08, whose walk log is where
+a disagreement is observed; D-rc03a-9's external-first ordering is NOT carried (its blindness value is
+gone under D-rc03-3; a fourth capability for an ergonomic gain — a one-line rider for rc10, which
+touches that spec); and the split itself. One-launch is DESCOPED: `gates.ts` already outranks the walk
+while a pair is open, so the window this charter describes was closed by rc02; same-turn overlap is
+one body sentence. The exploration was RENAMED to `orbit/explore/rc03b-pass-genres/` and repointed at
+the first child, by the rc04 precedent (propose consumes a staging directory by NAME). Exit-criteria
+partition: this heading's (1) review-template half and (3) prompt clause → rc03b; (1)'s verification
+half and (2) → rc03c; (3)'s "zero WARNINGs outside the diff" → rc03c, measured on the next cadence's
+record. The parent's (1) names a cadence-slot wording the children's mechanism does not use (the genre
+is computed from position; the slot token is unchanged) — the children's criteria are authored fresh
+at declaration in their mechanism's terms, so no R-crc-12 case arises on this heading.
+
 **R-crc-11 IMPACT (2026-09-21) — this stage is PROMOTED, and gains a deliverable.** R-crc-11(a)
 makes the blind pair the point rather than a coverage device, and R-crc-11(f) states what this
 charter had already MEASURED independently: the in-context pass is a REACTION to the independent
@@ -1926,6 +1959,67 @@ few or zero findings is a legitimate outcome. It did not suppress anything — t
 thirteen findings including two CRITICALs — which is the point: it removes the production pressure
 without removing the findings, so a clean pass becomes a readable signal rather than an
 embarrassment.
+
+### Stage rc03b-pass-genres — a brief that carries nothing, and a genre the trail decides
+
+Depends-on: rc02-gate-semantics
+Complete: [ ]
+
+Declared 2026-10-04 (Sal) from the rc03 exploration's split (D-rc03-8). Charter: a pass's GENRE —
+REVIEW or VERIFICATION — is COMPUTED from reviewer class, mode and trail position and never declared:
+the independent classes are reviews; an in-context pass that follows a READABLE walk of its mode on the
+trail is a verification; every other in-context pass (none before it, only mode-less marker-scan walks
+before it, or architecture mode) is a review the cadence does not count toward its `in-context` slot.
+The table is stated ONCE, in `orbit-conventions`, REPLACING the `Review mode decision framework`
+requirement's scenarios (whose "in-context is the right first pass for a small change" R-crc-4
+contradicts); every other surface names it and points (R-crc-14). A REVIEW-genre brief carries NO
+findings and NO trail pointer: the external prompt's Cycle context keeps the iteration number only;
+the project-context bullet pointing the reviewer at `.orbit-runs/` goes; both halves' system-mode
+`git diff` excludes the trail by pathspec; review-genre passes skip Step 5 ("Inspect prior runs" —
+pushback is a resolution-time discipline the walk owns); the fresh brief names artifacts and the apply
+commit and nothing else — the one member with no artifact, carried as a rule with its residual declared
+(D-rc03-3, BOUNDED). The review body gains one sentence: when the pair is empty, package the external
+and spawn the fresh in the same turn. Two repairs ride: `orbit-review`'s `--fresh` requirement
+describes `--reviewer external` with `fresh`'s definition ("same model, fresh context, no cross-AI
+handoff") — the parenthetical moves to the right noun; and the framework rewrite above. The engine's
+genre FUNCTION ships in rc03c; this stage ships the table it implements. Inputs named (R-crc-10):
+`TrailPass.reviewerClass`, `TrailPass.mode`, `TrailResolution.sourcePath`, token order — all trail
+facts. Goal G1. Touches: orbit-conventions, orbit-review, orbit-review-external — at R-crc-1's ceiling,
+no engine code, ~7 MODIFIED blocks. Exit: (1) the genre table is the single statement — a grep of
+`orbit/specs/` and the generated surface finds the class-to-genre mapping stated once and pointed at
+elsewhere; (2) the generated surface carries none of the three finding-list phrasings ("still open",
+"Resolved since") and no `.orbit-runs/` read pointer in any review-genre brief, grep-tested; (3) the
+next blind pair's COMMITTED external prompt carries no findings and no trail pointer, read at the walk.
+
+### Stage rc03c-verification-record — a verification says what landed and what regressed
+
+Depends-on: rc03b-pass-genres
+Complete: [ ]
+
+Declared 2026-10-04 (Sal) from the rc03 exploration's split (D-rc03-8). Charter: the review emit
+gains `verification: {walks: [<tokens>], resolutions: [{title, file, verdict}]}`, OWED when the genre
+computes VERIFICATION (rc03b's table, implemented here as ONE exported function over the trail and
+stored on the emit as a computed extension like `iteration`) and refused mis-shaped at any genre
+(R-crc-13 permits refusing SHAPE where the record is produced — rc04b's `direction` is the pattern).
+The walks are every address-reviews record of the pass's mode with a token after the latest
+independent pass of that mode and before this pass; each resolution is keyed EXACTLY as the gate keys
+it (Q-crc-17); `verdict` ∈ `landed` | `regressed`, a CLOSED pair; a `regressed` entry pairs with a
+finding carrying `regresses: {title, file}` and the write gate checks EXISTENCE both ways. The walk
+record's `resolutions[].file` union is the engine's DECLARED PROXY for "the walk's diff", because walk
+edits need not be committed when the pass runs. The renderer adds `### Verification` inside the
+quarantine (one row per entry), marks a finding without `regresses` as `[outside the walk record]` —
+never refuses it — and marks an in-context pass the genre computes VERIFICATION for with no field
+`[no verification record]`, by absence and never by date. The review body's in-context branch, in a
+change mode with a preceding walk, reads the walk record(s), checks each resolution against the
+artifact, sweeps the walk's files for regressions, and emits — a whole-artifact re-review is what the
+marks make visible. The gate reads NONE of it. Q-crc-20 is NOT closed by this (a verification is
+in-context and reads the walk RECORD, not the tree's diff since the pair); `verification.walks` plus the
+file-set union is its nearest proxy and is to be named in Q-crc-20's entry at archive. Goal G1.
+Touches: orbit-emit-composition, orbit-report-rendering, orbit-review — at R-crc-1's ceiling. Exit:
+(1) a verification pass is a computed genre with its own body section and its owed record — the
+cadence-slot token is unchanged, and `gates.ts` carries no diff; (2) a verification emit carries
+per-resolution landed / regressed (rc03's (2) verbatim); (3) the next cadence's verification record
+carries zero findings marked `[outside the walk record]` at WARNING or above, measured on the record.
 
 ### Stage rc04-readiness-record — the cycle ends when someone says it is ready, and says why
 
@@ -4233,3 +4327,23 @@ shipped-since count, moved to eleven at the walk — and nothing on the retired 
 Q-crc-31 stand as opened at the archive. Next in dependency order: Phase 2's rc03-review-genres is premised and
 depends only on rc02 (complete) — eligible for exploration; the remaining premised stages are rc05–rc10, rc07b and
 rc12.
+
+**2026-10-04 — Architect session: rc03-review-genres SPLIT into rc03b-pass-genres + rc03c-verification-record
+(R-crc-9, fourth preventive application).** Opened from the explore session that ran the same evening. The
+exploration re-measured the charter against the shipped tree before designing anything and found three of its five
+items already shipped or standing on retired ground (rc04b's `direction`; rc02's fixed classes and slot; clause (c),
+retired by rc02c, which the "removal is confirmed by verification" paragraph argued against). Three rules captured with
+accounted Mechanism entries — genre computed from class × mode × trail position (DERIVED, six cells); a review-genre
+brief carries no findings and no trail pointer (BOUNDED — rc03a's eleven channels re-enumerated at current source lines,
+the launching brief the declared residual; the rule dissolves the channel problem on every order, so D-rc03a-9's
+ordering and rc03a's attestation idea are both unnecessary); the verification record (SOURCED). Three scope calls
+ratified in chat (Sal, A on all): disagreement handling assigned to rc08 with the name kept here; external-first
+ordering not carried (a rider for rc10); the split. One-launch DESCOPED on a read of `gates.ts:798-805` — the window the
+charter describes was closed by rc02's open-pair outranking. Declared here: `rc03b-pass-genres` (Depends-on rc02;
+conventions, review, review-external; no engine code) and `rc03c-verification-record` (Depends-on rc03b;
+emit-composition, report-rendering, review). Exit criteria partitioned across the children in their mechanism's terms;
+the parent heading retained as record with a SPLIT note, its `Complete:` slot left `[ ]` for Sal's word. The exploration
+RENAMED to `orbit/explore/rc03b-pass-genres/` and repointed at the first child (the rc04 precedent, commit `5565d8d0`).
+Stage count 25 → <!-- src:stages -->27<!-- /src:stages --> at both marked sites. Q-crc-22 gained a 2026-10-04 note
+narrowing its producer side. Position is engine-computed: `orbit architecture status` renders rc03 premised, rc03b
+exploring, rc03c premised.
