@@ -973,6 +973,19 @@ never deleted.
   the behaviour R-crc-11 wants. It is also precisely why this question exists: it should not have
   depended on the authoring AI happening to notice.
 
+  **Nearest proxy, NOT a closure (`rc03c-verification-record`, at archive 2026-10-04 — D-rc03-15).**
+  rc03c ships the closest thing the engine has to this record, and it is named here so it is not
+  mistaken for one: every review emit now stores `verified_walks` — the walks an in-context
+  VERIFICATION-genre pass graded — and that pass reads each walk entry's SWEEP SCOPE, its `file`
+  plus its `ripple_cascade.applied` paths, grading every `resolved` entry `landed` or `regressed`
+  (`orbit-emit-composition`; `orbit-review`'s `Verification-genre passes grade the walk record`).
+  What a walk AUTHORED therefore now has a reader after the pair, and a git-diff residual check from
+  the base file names what the walk touched without saying so. It does NOT close this question,
+  for three reasons: the sweep scope is the walk's CLAIM of what it touched, not an observation of
+  the tree; the verifying pass is in-context, so it is not the independent read this question asks
+  about; and a `landed` verdict is a judgement the engine checks only for completeness, never for
+  truth (R-crc-10). The question stays open.
+
   **SECOND INSTANCE 2026-09-22 (rc04d), and it is SHARPER than rc02c's — the walk changed the
   REVIEWED SENTENCE ITSELF.** rc02c's walk authored engine code ADJACENT to what the pair read.
   rc04d's blind pair (external GPT-5 Codex 02-21-40Z, fresh 02-25-46Z) reviewed a site-2
@@ -2028,6 +2041,12 @@ Touches: orbit-emit-composition, orbit-report-rendering, orbit-review — at R-c
 cadence-slot token is unchanged, and `gates.ts` carries no diff; (2) a verification emit carries
 per-resolution landed / regressed (rc03's (2) verbatim); (3) the next cadence's verification record
 carries zero findings marked `[outside the walk record]` at WARNING or above, measured on the record.
+Shipped as (2026-10-04; the charter above stays as declared — the departures are recorded in the archived design,
+`orbit/changes/archive/2026-10-04-rc03c-verification-record/design.md`): the walk set is engine-computed and stored
+as `verified_walks`, the payload carrying only `verification: [{title, file, verdict}]` (D1); the finding's link is
+`walk_entry`, naming ANY entry of the walk set — `regresses` was renamed (D4); the sweep scope is each entry's `file`
+plus its `ripple_cascade.applied` paths, not the `resolutions[].file` union (D6); `### Verification` renders in the
+frame, outside the quarantine (D8).
 
 ### Stage rc04-readiness-record — the cycle ends when someone says it is ready, and says why
 
@@ -4429,3 +4448,30 @@ audit came back clean. Carried, not captured as rulings or questions this sessio
 residuals (`archive-2026-10-04T04-20-29Z.json`) — among them the output channels (commit subjects carrying per-pass
 counts, the status gate reason) named as a rider for a later owner, and the acceptance blind spot of the in-context
 probe, which is rc03c-verification-record's to close with the engine function its dependency now permits.
+
+**2026-10-04 — rc03c-verification-record ARCHIVED through a COMPUTED PASSED gate via the blind pair (the tenth rc-stage
+through one, the ninth through the pair).** The pass genre is now COMPUTED by the engine: ONE exported function beside
+the trail reader (`src/core/artifact-graph/pass-genre.ts`) implements `orbit-conventions`' table over the ACCEPTED pass
+set — a walk's mode resolves by source basename through that set — and every review emit stores `pass_genre` and
+`verified_walks` (unnarrowed), refused in the payload. A VERIFICATION-genre payload OWES `verification:
+[{title, file, verdict}]`, one `landed` | `regressed` per `resolved` walk entry at every severity, keyed as the gate keys
+resolutions; the write gate refuses it absent (naming each owed key with its walk), incomplete, stray, duplicated, or on a
+REVIEW-genre pass, and pairs every `regressed` with a finding's `walk_entry`. The report prints the genre on the internal
+header, a FRAME `### Verification` section, a `walk entry:` line, `[outside the walk record]` and `[no verification
+record]`. The verdict definition is a fenced production the review body carries as a CHECKED MIRROR. Three capabilities,
+4 ADDED + 6 MODIFIED synced 10/10 byte-verified through the engine's merge; `gates.ts`, `trail.ts` and the schema carry
+no diff (rc03b's hash pin, moved three times for the two edited engine files and recorded each time). The cycle: proposal
+fresh → external (GPT-6 Codex) → in-context VERIFICATION, zero repeats; apply 16/17 in one session; the **blind pair on
+the pushed apply commit `80a9e343`** — external GPT-6 1C/1W/1S and fresh 0C/3W/3S, **zero findings shared** — the external
+half on engine edges (a same-second walk read as not preceding its review, because the emit surface's collision bump
+checked only its own filename — Sal: B, trail tokens unique per trail directory, a tenth block; the residual check's
+undefined base with no independent pass), the fresh half on the body a verifier executes (the verdict definition an
+installed skill could not open — now a mirror; a one-directional probe/engine reconciliation — Sal: a, both directions,
+the unnamed probe case an accepted residual; which system passes a verification runs). Committing the fresh pass file
+ALONE before any walk edit put both walks' edits inside the confirm's residual range — the ordinary-case limit the fresh
+half named, avoided in practice. The in-context confirm was the first pass emitted under the mechanism it ships:
+VERIFICATION over both walks, nine owed verdicts all `landed`, one SUGGESTION (a fingerprint stamp no ripple record
+listed). **Exit (3) MET** by design D9's instrument, run verbatim — task 4.5 closed at archive by observation. Q-crc-20's
+entry now names `verified_walks` plus the sweep scope as its nearest proxy, NOT a closure. The readiness record accepts four
+residuals, headlined by rc07's distinction. **2559 tests green.** Position is engine-computed: rc03c
+quiescent-awaiting-ratification.

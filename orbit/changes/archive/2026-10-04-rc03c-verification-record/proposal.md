@@ -20,7 +20,7 @@ Every rc-stage since rc13a has closed its system cadence with an in-context "con
 
 ### Modified Capabilities
 
-- `orbit-emit-composition`: ADDED `The review emit records its pass genre and the walks it verifies` and `A VERIFICATION-genre payload carries its verdicts and its findings link to the walk record`; MODIFIED `Generic emit surface with a narrative-only payload contract` (the review payload excerpt names `verification` and the per-finding `walk_entry`).
+- `orbit-emit-composition`: ADDED `The review emit records its pass genre and the walks it verifies` and `A VERIFICATION-genre payload carries its verdicts and its findings link to the walk record`; MODIFIED `Generic emit surface with a narrative-only payload contract` (the review payload excerpt names `verification` and the per-finding `walk_entry`) and `Engine-owned spine composition and filename discipline` (the collision bump clears a token against EVERY trail file, so token order is write order — added at system walk 1, external C1).
 - `orbit-report-rendering`: ADDED `Verification renders as its own section and its absence is marked`; MODIFIED `Report grammar — the frame sandwiches the commentary` (header pass genre; section order), `Render-time computed context — never stored, never authored` (pass genre computed at render time), `Strict input validation — fail loud, no partial render` (read-side twins for `verification` and `walk_entry`).
 - `orbit-review`: ADDED `Verification-genre passes grade the walk record`; MODIFIED `Internal run summary persisted per mode` (names the record and its owners).
 

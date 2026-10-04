@@ -21,6 +21,11 @@ import { fileURLToPath } from "node:url";
  * computed extensions, the verification write gate) and `src/core/report-render.ts` (the header word,
  * the Verification section, both marks, the read-side twin). Added to the listing:
  * `src/core/artifact-graph/pass-genre.ts`, the new module (pinned at its apply-time content).
+ * MOVED AGAIN at rc03c's system walk 1 (2026-10-04): the same two files — the collision bump now clears a
+ * token against every trail file (external C1, Sal: B), and the Verification row marks a verdict no walk on
+ * the trail carries (external S1). `gates.ts`, `trail.ts`, `pass-genre.ts` and the schema stay unchanged.
+ * MOVED a THIRD time at system walk 2 (2026-10-04): `emit-composition.ts` only — the REVIEW-genre refusal
+ * now states what the pass owes (fresh W2, Sal: A). `report-render.ts` did not move.
  */
 const PINNED: Record<string, string> = {
   "schemas/spec-driven/schema.yaml": "be6cda5fa604f105c14c2d5e2fd52ad04ca266ba22e7e438ffec8442641e345d",
@@ -39,8 +44,8 @@ const PINNED: Record<string, string> = {
   "src/core/artifact-graph/state.ts": "f59f748b94cd94ca2fe022ec5aa66b3251dd1b2c00bddb9a17cbd9273a04d0f2",
   "src/core/artifact-graph/trail.ts": "a8566c80c599097acb39146010a7aa2ab5b47cf707958f85fd243e05567cbaf1",
   "src/core/artifact-graph/types.ts": "246feb06872594a744233904bc0d3902c90545e23cdf8a38f2b42b80c4a4d10a",
-  "src/core/emit-composition.ts": "ddd96ffc4ecb5e0273a1b57562c0b7fd314b0c46cd64962a9699648f8178509c",
-  "src/core/report-render.ts": "2cab0af495c99d970c4a9e07ccf7309131c6601afe72ca2ef5ed3c33fc4774e2",
+  "src/core/emit-composition.ts": "2b1401ae3255c581a6c9cca357422b4ae9ec1ee37109d9e11581eaf1ff08f30e",
+  "src/core/report-render.ts": "b40046bc8059ca73744de33dd25ebf1e978a8dd3b0a5b0a33490298f161904a5",
 };
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");

@@ -35,11 +35,16 @@ describe('review body: the VERIFICATION branch (1.5)', () => {
     }
   });
 
-  it('restates neither the genre table nor the verdict definition', () => {
+  it('restates the genre table nowhere, and carries the verdict definition ONLY as its checked mirror', () => {
     const b = branch();
     expect(b).not.toContain('| reviewer class | mode | trail position | pass genre |');
-    // The verdict's four conjuncts are the owner's words; the branch names the tokens only.
-    expect(b).not.toMatch(/PRESENT|NOT UNDONE|COMPLETE across/);
+    // System walk 2 (fresh W1): an installed skill cannot open the owner, so the definition is carried
+    // as a CHECKED MIRROR (held byte-equal by `verification-verdict-parity.test.ts`) — and nowhere else
+    // in the branch: the grading step names the mirror, it does not paraphrase it.
+    const [steps, mirror] = b.split('#### Verdicts');
+    expect(mirror).toMatch(/CHECKED MIRROR/);
+    expect(steps).not.toMatch(/PRESENT|NOT UNDONE|COMPLETE across/);
+    expect(steps).toContain('by the definition under **Verdicts** below');
   });
 
   it('carries the sweep scope, the residual check with its range, and its co-committed-edit limit', () => {
@@ -47,13 +52,23 @@ describe('review body: the VERIFICATION branch (1.5)', () => {
     expect(b).toContain('its `file` plus every path in its `ripple_cascade.applied`');
     expect(b).toContain("git diff --name-only <C> -- . ':!orbit/changes/<name>/.orbit-runs'");
     expect(b).toContain("git ls-files --others --exclude-standard -- . ':!orbit/changes/<name>/.orbit-runs'");
-    expect(b).toContain('git log --diff-filter=A --format=%h -- <the latest accepted independent pass\'s file> | tail -1');
-    expect(b).toMatch(/KNOWN LIMIT: an edit committed in `<C>` itself/);
+    expect(b).toContain('git log --diff-filter=A --format=%h -- <base file> | tail -1');
+    // System walk 1 (external W1): the base is defined when the mode has no independent pass too.
+    expect(b).toContain("the BASE FILE is the latest accepted independent pass's file, or, when this mode has no accepted independent pass, the file of the pass the earliest walk you verify walked");
+    expect(b).toMatch(/KNOWN LIMIT: an edit committed in `<C>` itself — the commit that added the base file/);
+    // System walk 2 (fresh S2): the limit is the ordinary case under one commit order, and the remedy is stated.
+    expect(b).toContain('commit the pass file BEFORE the walks\' edits so they stay in range');
     expect(b).toMatch(/as a SUGGESTION without `walk_entry`/);
+    // System walk 2 (fresh W3): which passes run over the scope is stated, so exit (3) is graded
+    // against a procedure, not an interpretation.
+    expect(b).toContain("Run this mode's FILE-SET passes over the union of the sweep scopes — every proposal-mode pass; system-mode Passes 1–5.");
+    expect(b).toMatch(/system-mode Pass 0 \(verify-change\) and Pass 6 \(audit-drift\) — is NOT run: list it in `passes_skipped`/);
   });
 
   it('names the write-gate refusal as the reconciling channel', () => {
-    expect(branch()).toMatch(/The refusal is the reconciling channel — never a second probe, never a hand-computed walk set/);
+    expect(branch()).toMatch(/The refusal is the reconciling channel, in BOTH directions — never a second probe, never a hand-computed walk set/);
+    // System walk 2 (fresh W2): the reverse direction — the engine computed REVIEW.
+    expect(branch()).toMatch(/drop `verification` and every `walk_entry`, run this pass as a REVIEW-genre pass over the whole artifact, and emit again/);
   });
 
   it('lives in the SKILL body only — no reference a REVIEW pass reads carries it', () => {

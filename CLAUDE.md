@@ -209,7 +209,7 @@ file now carries a live mark. Do NOT read this paragraph as the program's full l
 only what rc07 produced. The authoritative list is the program doc's own Open questions section,
 which also carries Q-crc-11, Q-crc-12, Q-crc-20, Q-crc-21, Q-crc-22 and Q-crc-23.
 
-**Twelve more stages have shipped since, and the program is FIFTEEN stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b and rc03b ratified 2026-10-04; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening).
+**Thirteen more stages have shipped since, and the program is FIFTEEN stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b and rc03b ratified 2026-10-04; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening).
 
 `rc02c-confirmation-semantics` is ARCHIVED (2026-09-21): **the budget stopped being a target.**
 R-crc-11(h) — effort is RECORDED, never TARGETED — retired `budgetExhausted`, the
@@ -539,8 +539,8 @@ reworded the line), and a filtered test run reported green while one suite faile
 measure). Task 3.5 (exit (3)) closed at archive by observation; the readiness record accepts five residuals, headlined by
 rc07's distinction. **2507 tests green** (2465 → 2507).
 
-`rc03c-verification-record` is APPLIED (2026-10-04; the second child of the split parent `rc03-review-genres`;
-its system cadence and archive are still ahead): **a verification pass is a COMPUTED pass genre with its own owed
+`rc03c-verification-record` is ARCHIVED (2026-10-04; the second child of the split parent `rc03-review-genres`;
+all three exit criteria MET, exit (3) by design D9's instrument on its own in-context confirm): **a verification pass is a COMPUTED pass genre with its own owed
 record.** ONE exported function in a new module beside the trail reader (`src/core/artifact-graph/pass-genre.ts`,
 never `gates.ts`) implements `orbit-conventions`' genre table over the trail reader's ACCEPTED pass set — a walk's
 mode resolves by source basename THROUGH that set, so the walk of a rejected external return is mode-less — and
@@ -557,10 +557,20 @@ on the internal header (recomputed at render time — every internal golden move
 `### Verification` section between Suppressed and Direction with engine-derived walk tokens and `see:` links, a
 `walk entry:` line under a linked finding, `[outside the walk record]` on an unlinked finding of a pass carrying a
 record, and `[no verification record]` once on a prior-generation confirm. The review body's Step 5 VERIFICATION
-branch grades over each entry's SWEEP SCOPE (`file` plus `ripple_cascade.applied`) and runs a git-diff residual check
-from the commit that added the latest accepted independent pass's file, naming unlisted files as SUGGESTIONs. Three
+branch carries the verdict definition as a CHECKED MIRROR of the owner's fence (an installed skill cannot open our specs),
+reconciles its metadata probe with the engine through the write gate's refusal in BOTH directions, skips system-mode Pass 0
+and Pass 6 (whole-change / whole-project), and grades over each entry's SWEEP SCOPE (`file` plus `ripple_cascade.applied`) and runs a git-diff residual check
+from the commit that added the BASE FILE (the latest accepted independent pass's file, or the walked pass's when the mode has
+none), naming unlisted files as SUGGESTIONs. The emit surface's collision bump now clears a token against EVERY trail file, so
+token order is write order (system walk 1, external C1 — a same-second walk had read as not preceding its review). Three
 capabilities at R-crc-1's ceiling; `gates.ts`, `trail.ts` and the schema carry no diff, held by rc03b's hash pin
-(two hashes MOVED and the new module ADDED, recorded in the pin). **2552 tests green** (2507 → 2552).
+(two hashes MOVED and the new module ADDED, recorded in the pin). The cycle: the blind pair on the pushed apply
+commit `80a9e343` — external GPT-6 1C/1W/1S and fresh 0C/3W/3S, zero findings shared — walked in two logs (Sal: B on the
+same-second collision, a on the reverse reconciliation); the fresh pass file committed ALONE before any walk edit, so the
+confirm's residual check saw both walks; the in-context confirm, the first pass emitted under the mechanism it ships,
+graded nine owed verdicts `landed` and its record MET exit (3); a COMPUTED PASSED gate — the tenth rc-stage through one,
+the ninth through the pair. Sync 4 ADDED + 6 MODIFIED, 10/10 byte-verified. Q-crc-20 names `verified_walks` plus the
+sweep scope as its nearest proxy, not a closure. **2559 tests green** (2507 → 2559).
 
 Read that doc before any rc-stage work; the D-arc section below is the historical
 record of how the engine got here.

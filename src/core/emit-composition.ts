@@ -3,7 +3,7 @@ import * as path from 'node:path';
 import { loadChangeContext, formatChangeStatus } from './artifact-graph/instruction-loader.js';
 import { collectSameModePasses } from './report-render.js';
 import { normalizeInternalPass } from './report-render.js';
-import { readTrail, type ReviewerClass, type Trail } from './artifact-graph/trail.js';
+import { readTrail, parseTsToken, type ReviewerClass, type Trail } from './artifact-graph/trail.js';
 import { isIndependent } from './artifact-graph/gates.js';
 import {
   computePassGenre,
@@ -685,6 +685,12 @@ function validateReviewVerification(command: string, payload: Record<string, unk
 
 const describeKey = (k: { title: string; file: string }): string => `(${k.title}, ${k.file})`;
 
+// System walk 2 (fresh W2, Sal: A): the refusal reconciles the body's metadata probe with the engine in
+// BOTH directions. A body whose probe read VERIFICATION where the engine computes REVIEW is told what it
+// now owes, not just what was refused.
+const TAIL_REVIEW =
+  ` — the engine is authoritative on the genre: drop 'verification' and every walk_entry, run the pass as REVIEW genre over the whole artifact, and emit again.`;
+
 function verificationOwedCheck(payload: Record<string, unknown>, genre: PassGenreResult, changeDir: string | null): void {
   const findings = Array.isArray(payload.findings) ? (payload.findings as Record<string, unknown>[]) : [];
   const links: Array<{ i: number; key: { title: string; file: string } }> = [];
@@ -696,13 +702,13 @@ function verificationOwedCheck(payload: Record<string, unknown>, genre: PassGenr
   if (genre.passGenre === 'REVIEW') {
     if ('verification' in payload) {
       throw new EmitError(
-        `write gate: 'verification' is refused on a REVIEW-genre pass (in any form, [] included) — this pass computes REVIEW, so it verifies no walk.`
+        `write gate: 'verification' is refused on a REVIEW-genre pass (in any form, [] included) — this pass computes REVIEW, so it verifies no walk${TAIL_REVIEW}`
       );
     }
     if (links.length > 0) {
       const { i, key } = links[0];
       throw new EmitError(
-        `write gate: findings[${i}].walk_entry names ${describeKey(key)}, which no readable walk of verified_walks carries — this pass computes REVIEW genre, so every walk_entry names nothing.`
+        `write gate: findings[${i}].walk_entry names ${describeKey(key)}, which no readable walk of verified_walks carries — this pass computes REVIEW genre, so every walk_entry names nothing${TAIL_REVIEW}`
       );
     }
     return;
@@ -1374,8 +1380,14 @@ export function composeAndWriteEmit(
   // alias). Checked after creation, before any write; dirname-uniform, so every
   // scope (change/explore/archived/doc/project) is covered.
   assertCanonicalTrailDir(resolved.runsDir);
+  // rc03c system walk 1 (external C1, Sal: B): the bump clears the token against EVERY file in the
+  // trail — any command, any extension — not just this command's own filename. Within one trail,
+  // token order is then write order for every strict-order reader (the gate, the pass-genre
+  // computation, the judgement ordering check): a walk and the review that follows it can no
+  // longer share a second and read as unordered.
+  const trailTokens = new Set(fs.readdirSync(resolved.runsDir).map(n => parseTsToken(n)).filter(t => t !== null));
   let { token } = utcNow();
-  while (fs.existsSync(path.join(resolved.runsDir, `${filePrefix}-${token}.json`))) {
+  while (trailTokens.has(token)) {
     token = bumpToken(token);
   }
   const filename = `${filePrefix}-${token}.json`;

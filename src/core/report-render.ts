@@ -908,7 +908,9 @@ export function renderReviewReport(pass: NormalizedReviewPass, ctx: ReportContex
       for (const v of pass.verification) {
         const k = keyString(v);
         const walk = ctx.verification?.latestWalk.get(k);
-        let row = `- ${v.verdict} — ${v.title} (\`${v.file}\`)${walk !== undefined ? ` · walk ${walk}` : ''}`;
+        // System walk 1 (external S1): a verdict whose key no readable walk on the CURRENT trail carries
+        // (a trail edited after the emit) is MARKED, never rendered as a silently shorter row.
+        let row = `- ${v.verdict} — ${v.title} (\`${v.file}\`) · walk ${walk ?? '(no walk on the trail carries this key)'}`;
         if (v.verdict === 'regressed') {
           const see = pass.findings.filter(f => f.walkEntry !== undefined && keyString(f.walkEntry) === k).map(f => f.title);
           if (see.length > 0) row += ` · see: ${see.join('; ')}`;

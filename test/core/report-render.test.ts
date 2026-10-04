@@ -1135,6 +1135,19 @@ describe('rc03c: pass genre header and the Verification section (1.3)', () => {
     expect(bare.slice(bare.indexOf('\n---\n'))).toBe(report.slice(report.indexOf('\n---\n')));
   });
 
+  it('a verdict whose key no walk on the current trail carries renders an explicit mark, never a shorter row (system walk 1, external S1)', () => {
+    verifyingChange('v-gone', [], {
+      verification: [
+        { title: 'A', file: 'a.md', verdict: 'landed' },
+        { title: 'B', file: 'b.md', verdict: 'landed' },
+        { title: 'Z', file: 'z.md', verdict: 'landed' },
+      ],
+    });
+    const r = renderReport(root, 'v-gone');
+    expect(r).toContain('- landed — A (`a.md`) · walk 2026-10-04T02-00-00Z\n');
+    expect(r).toContain('- landed — Z (`z.md`) · walk (no walk on the trail carries this key)\n');
+  });
+
   it('[outside the walk record] follows [unreproduced] when both apply', () => {
     verifyingChange('v-crit', [{ severity: 'CRITICAL', title: 'Breaks', file: 'x.md' }], {
       verification: [

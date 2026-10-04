@@ -35,7 +35,7 @@ ONE exported function computes `pass_genre` and `verified_walks` (the qualifying
 
 ### D3. `landed` means the edit HOLDS; `regressed` means it does not, for any cause (explore D-rc03c-3)
 
-Holds = present AND complete AND clean AND not undone by a later edit. Any failed conjunct, or a claim the pass cannot decide, is `regressed`; the paired finding states the cause. Stated ONCE, in `orbit-emit-composition`.
+Holds = present AND complete AND clean AND not undone by a later edit. Any failed conjunct, or a claim the pass cannot decide, is `regressed`; the paired finding states the cause. Stated ONCE, in `orbit-emit-composition`. **Fenced at system walk 2 (fresh W1):** the owner's sentence became a fenced production the review body carries as a CHECKED MIRROR, held byte-equal by `verification-verdict-parity.test.ts` — an adopter's installed skill cannot open our specs, so a verifier pointed at the owner had nothing to grade by.
 
 ### D4. Findings link through `walk_entry`, naming ANY entry of W (explore D-rc03c-4)
 
@@ -47,7 +47,7 @@ Narrowing W to walks after the latest verification pass would give a VERIFICATIO
 
 ### D6. The sweep scope is `file` ∪ `ripple_cascade.applied`, read by the body (explore D-rc03c-6)
 
-This corrects D-rc03-4's `resolutions[].file` union, which read only the trail reader's normalized entry. The engine does not compute it — no check reads it — so `trail.ts` is not widened. It is BOUNDED; the residual is stated in `orbit-review`'s `Verification-genre passes grade the walk record` (see Risks). **Widened at proposal walk 1 (2026-10-04):** the residual method's listing now names its range — `<C>` the commit that first added the latest accepted independent pass's file (hash-only; `HEAD` when uncommitted), plus untracked files — EXCLUDES the trail, and files an unlisted edit as a SUGGESTION (a record gap), so bookkeeping files can never fail exit (3). explore.md's D-rc03c-6 entry keeps the propose-time wording as the exploration's record; the requirement is the owner. **Widened again at proposal walk 2 (external W2):** the Residual kind names an edit co-committed with the pass file — the range's start commit — as outside the check's reach; a recorded pre-walk baseline was rejected as new mechanism a walk may not author (R-crc-6), for a check that only files SUGGESTIONs.
+This corrects D-rc03-4's `resolutions[].file` union, which read only the trail reader's normalized entry. The engine does not compute it — no check reads it — so `trail.ts` is not widened. It is BOUNDED; the residual is stated in `orbit-review`'s `Verification-genre passes grade the walk record` (see Risks). **Widened at proposal walk 1 (2026-10-04):** the residual method's listing now names its range — `<C>` the commit that first added the latest accepted independent pass's file (hash-only; `HEAD` when uncommitted), plus untracked files — EXCLUDES the trail, and files an unlisted edit as a SUGGESTION (a record gap), so bookkeeping files can never fail exit (3). explore.md's D-rc03c-6 entry keeps the propose-time wording as the exploration's record; the requirement is the owner. **Widened again at proposal walk 2 (external W2):** the Residual kind names an edit co-committed with the pass file — the range's start commit — as outside the check's reach; a recorded pre-walk baseline was rejected as new mechanism a walk may not author (R-crc-6), for a check that only files SUGGESTIONs. **Widened at system walk 1 (external W1):** a VERIFICATION genre is computable with no accepted independent pass at all (an in-context pass, its walk, a verification), where "the latest accepted independent pass's file" names nothing; the range's start is now the BASE FILE — that file, or, when the mode has none, the file of the pass the earliest verified walk walked — stated once in `orbit-review`'s `Verification-genre passes grade the walk record`.
 
 ### D7. The function lives outside `gates.ts`; walk mode resolves through the ACCEPTED pass set; the report recomputes the genre (explore D-rc03c-7)
 
@@ -105,7 +105,7 @@ cross-checked by counting the finding lines carrying `[outside the walk record]`
 
 ### D10. Three capabilities, as chartered (explore D-rc03c-12)
 
-`orbit-emit-composition` (2 ADDED, 1 MODIFIED), `orbit-report-rendering` (1 ADDED, 3 MODIFIED), `orbit-review` (1 ADDED, 1 MODIFIED) — nine blocks. Consumed unchanged: `orbit-conventions`' table, `orbit-address-reviews`' `ripple_cascade`. Untouched: `orbit-engine-gates`, the external format.
+`orbit-emit-composition` (2 ADDED, 2 MODIFIED), `orbit-report-rendering` (1 ADDED, 3 MODIFIED), `orbit-review` (1 ADDED, 1 MODIFIED) — ten blocks. The tenth, `Engine-owned spine composition and filename discipline`, was added at system walk 1 (external C1, Sal: B): the emit surface's collision bump now clears a token against every file in the trail, not only the command's own filename, so a walk and the review written after it in the same second can no longer share a token and read as unordered by the strict-order readers. Consumed unchanged: `orbit-conventions`' table, `orbit-address-reviews`' `ripple_cascade`. Untouched: `orbit-engine-gates`, the external format.
 
 ## Mechanism → artifacts
 
@@ -144,7 +144,7 @@ The proposing AI's reading of the file; no engine record.
 - [A `landed` verdict is a claim, not a check — completeness proves every owed entry got a word, never that the word is true] → recorded as the verifying pass's judgement (R-crc-10); the rendered rows make each claim citable by the readiness author.
 - [`walk_entry` can be attached to an unrelated finding to avoid the mark] → existence is checked, relevance is not; the link renders beside the finding, so the dodge is visible to a reader.
 - [Under a key shared by a `resolved` and a non-`resolved` entry, a `landed` verdict with a linked finding is not refused] → declared in `orbit-emit-composition`'s verification requirement; the rendered link and row show it.
-- [The body's metadata probe and the engine can disagree on the genre (rc03b's stated probe limit)] → the write gate's owed/stray refusal names the difference; the engine is authoritative.
+- [The body's metadata probe and the engine can disagree on the genre (rc03b's stated probe limit)] → the write gate's refusal names the difference in BOTH directions and the engine is authoritative (widened at system walk 2, fresh W2, Sal: A: a REVIEW-genre refusal tells the body to drop the record and run as REVIEW). ACCEPTED RESIDUAL for the readiness record: a second divergence case — a walk whose `source_path` names a `review-<mode>` file absent from this trail, mode-less to the engine and moded to the probe — is not named in `orbit-conventions`' KNOWN LIMIT; naming it there is a fourth capability past R-crc-1's ceiling, handed to the next stage that touches `orbit-conventions`.
 - [Re-grading earlier walks on a second confirm costs verdict lines] → bounded by W's resolved entries; confirms rarely repeat on record.
 - [Exit (3) may be UNMEASURED on this change's own cadence] → stated as a third outcome in D9; carried forward, never graded.
 

@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { readTrail } from '../../src/core/artifact-graph/trail.js';
+import { computePassGenre } from '../../src/core/artifact-graph/pass-genre.js';
 
 /**
  * rc03b-pass-genres, system walk 1 (fresh W2 + external W2, Sal: A) — the in-context pass decides its
@@ -12,8 +13,12 @@ import { readTrail } from '../../src/core/artifact-graph/trail.js';
  * an external return cannot be read from metadata, so the probe counts every `external-<mode>-*.md`
  * file as a pass and the engine's computation is authoritative where the two differ.
  *
- * This decision table runs the probe AS THE OWNER STATES IT beside the trail reader on constructed
- * trails, and pins that they agree everywhere except the one named case.
+ * This decision table runs the probe AS THE OWNER STATES IT beside the ENGINE's computation
+ * (`computePassGenre`, since rc03c) on constructed trails, and pins that they agree everywhere except
+ * two cases: the owner's named limit (a rejected external return), and — found at rc03c's system walk 2
+ * against the real function — a walk naming a pass file absent from this trail, an ACCEPTED RESIDUAL
+ * (naming it in the owner is a fourth capability past rc03c's ceiling). The write gate's refusal
+ * reconciles both, in both directions; the engine is authoritative.
  */
 type Mode = 'proposal' | 'system';
 type Genre = 'REVIEW' | 'VERIFICATION';
@@ -49,14 +54,14 @@ function probeGenre(runsDir: string, mode: Mode, passToken: string): Genre {
   return walks.some(w => w > bound) ? 'VERIFICATION' : 'REVIEW';
 }
 
-/** The same rule over the trail reader's ACCEPTED pass set — what an engine computation reads. */
+/**
+ * The ENGINE's computation — rc03c-verification-record's `computePassGenre`, called directly (system walk
+ * 2, fresh S1: this was a hand model resolving a walk's mode from its source FILENAME, while the shipped
+ * function resolves it THROUGH the accepted pass set; a decision table pinned against a model witnesses
+ * the model, not the engine).
+ */
 function trailGenre(changeDir: string, mode: Mode, passToken: string): Genre {
-  const t = readTrail(changeDir);
-  const bound = t.passes
-    .filter(p => p.mode === mode && p.token < passToken && (p.reviewerClass === 'fresh' || p.reviewerClass === 'external'))
-    .map(p => p.token).sort().at(-1) ?? '';
-  return t.resolutions.some(r => r.token > bound && r.token < passToken && modeOfSource(r.sourcePath) === mode)
-    ? 'VERIFICATION' : 'REVIEW';
+  return computePassGenre(readTrail(changeDir), 'in-context', mode, passToken).passGenre;
 }
 
 let dir: string;
@@ -114,5 +119,10 @@ describe('pass-genre metadata probe ↔ trail reader (rc03b system walk 1)', () 
     write(`external-system-${T(3)}.md`, REJECTED_EXTERNAL);
     expect(readTrail(dir).rejectedExternals.map(r => r.token)).toEqual([T(3)]);
     expect(both(4)).toEqual(['REVIEW', 'VERIFICATION']);
+  });
+
+  it('THE SECOND DIFFERENCE (rc03c system walk 2, fresh W2 — an accepted residual, not named in the owner\'s KNOWN LIMIT): a walk naming a pass file ABSENT from this trail — the probe reads its mode from the filename (VERIFICATION), the engine resolves it through the accepted pass set (mode-less → REVIEW); the write gate\'s REVIEW-genre refusal reconciles it', () => {
+    walk(1, `orbit/changes/other/.orbit-runs/review-system-${T(0)}.json`);
+    expect(both(2)).toEqual(['VERIFICATION', 'REVIEW']);
   });
 });

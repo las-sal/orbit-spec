@@ -15,7 +15,7 @@ written — and carries ONLY the
 narrative/authored fields for that command per an AUTHORITATIVE engine-owned per-command
 payload-field table (the fields the emitting AI genuinely authors — review: `mode`,
 `reviewer_class`, `depth`, `flags`, `scorecard`, `findings`, `stale_suppressed`, `commentary`,
-`passes_run`, `passes_skipped`, the optional `blocks`, and `direction` — OPTIONAL on an `in-context` pass and OWED by a `fresh` or `external` one, per `The review payload carries direction`; address-reviews: the `source*` fields, `walk_mode`,
+`passes_run`, `passes_skipped`, the optional `blocks`, `direction` — OPTIONAL on an `in-context` pass and OWED by a `fresh` or `external` one, per `The review payload carries direction` — and `verification` — OWED when the emit's computed `pass_genre` is `VERIFICATION`, each finding entry optionally carrying `walk_entry`, per `A VERIFICATION-genre payload carries its verdicts and its findings link to the walk record` (the genre and its walk set are computed extensions, per `The review emit records its pass genre and the walks it verifies`); address-reviews: the `source*` fields, `walk_mode`,
 `resolutions`, the narrative `final_assessment` — its `iteration` is ENGINE-computed, the
 count of prior address-reviews emits on the resolved trail plus one, ANCHORED PER DOC on the
 shared architecture trail (a doc-scoped walk counts only logs whose `doc` matches — the same
@@ -131,9 +131,15 @@ no failure path writes any file. A
 `--change`/`--doc` value that resolves to no on-disk workstream (no change directory, no
 staging directory, no architecture doc) fails with a clean error naming the path checked; no
 file is written. The
-filename `<TS>` token is the timestamp with colons replaced by hyphens; when the target path
-already exists, the token is bumped forward one second until free (the collision rule bodies
-previously taught as prose — engine-owned here, preserving lexical ordering guarantees).
+filename `<TS>` token is the timestamp with colons replaced by hyphens; when ANY file in the
+target trail directory already carries that token — of any command, any extension (a pass
+record, a walk log, an external findings or prompt file) — the token is bumped forward one
+second until no trail file carries it (the collision rule bodies previously taught as prose —
+engine-owned here, preserving lexical ordering guarantees). Within one trail, token order is
+therefore WRITE order for every reader that orders records by strict token comparison (the
+reviewed gate, the pass-genre computation, the judgement ordering check): a walk and the review
+written after it in the same second cannot share a token and read as unordered. Prior trails
+that already hold an equal-token pair are not rewritten; the rule runs at write time only.
 Filename-token resolution — INCLUDING any collision bump — precedes deterministic-fact
 composition: a recommendation that names this emit's own path always names the FINAL written
 path, never a pre-bump token.
@@ -155,8 +161,13 @@ path, never a pre-bump token.
 
 #### Scenario: Collision bumps forward
 
-- **WHEN** an emit composes to a filename that already exists in the trail
-- **THEN** the `<TS>` token advances one second at a time until the path is free, and the JSON `timestamp` field matches the final token
+- **WHEN** an emit composes to a token that a file already in the trail carries — its own filename, or any other command's record or markdown file
+- **THEN** the `<TS>` token advances one second at a time until no trail file carries it, and the JSON `timestamp` field matches the final token
+
+#### Scenario: A same-second walk precedes the review written after it
+
+- **WHEN** an address-reviews log is written at token T and an in-context review of the same mode is emitted within the same second
+- **THEN** the review's token is bumped past T, so the pass-genre computation reads the walk as preceding it and computes `VERIFICATION`
 
 #### Scenario: Trail location per command
 
@@ -789,4 +800,128 @@ The `review` command's payload table SHALL admit a `direction` field — an obje
 
 - **WHEN** the trail holds a fresh review emit written before this requirement with no `direction`
 - **THEN** the trail reader and the gate accept it as before — the check runs at write time only — and the render is unchanged in kind: a D4-generation (renderable) emit renders marked `[no direction]` per `orbit-report-rendering`, by absence, never by date, while a pre-D4 emit still fails as `pre-capability emit` at the existing render boundary, which this requirement does not relax
+
+### Requirement: The review emit records its pass genre and the walks it verifies
+
+The surface SHALL compute, for every `review` emit in every mode, two COMPUTED EXTENSIONS — `pass_genre`, exactly one of the strings `REVIEW` | `VERIFICATION`, and `verified_walks`, an array of address-reviews record tokens — by ONE exported function implementing the pass-genre table that `orbit-conventions`' `Review mode decision framework` OWNS (this requirement names the table and restates none of its rows). The function's inputs are the trail reader's ACCEPTED pass set, its address-reviews records, and the pass's own `reviewer_class`, `mode` and filename token; it reads only records whose tokens precede that token. `verified_walks` is the table's QUALIFYING-WALK set for the pass, in token order — the SAME computation that decides the genre, so for an `in-context` pass in proposal or system mode `verified_walks` is non-empty exactly when `pass_genre` is `VERIFICATION`, and for every other pass `pass_genre` is `REVIEW` and `verified_walks` is `[]`. The set is UNNARROWED: a prior in-context pass does not move the qualifying-walk lower bound, so a second VERIFICATION-genre pass re-lists the walks an earlier one verified, which is how a later walk undoing an earlier fix is caught. A walk's MODE resolves through the accepted pass set: an address-reviews record whose `source_path` names an accepted pass of mode M is a walk of mode M; one whose source names a REJECTED external return, names no pass on the trail, or is null is MODE-LESS and qualifies for no mode. The function lives outside `src/core/artifact-graph/gates.ts`, which carries no diff for it, and the gate graph reads neither field (R-crc-13); `orbit-report-rendering` recomputes the genre at render time through the same function. Both fields are engine-owned and REJECTED when present in the payload, naming the field. Prior-generation emits lack both and stay valid on the trail; the computation runs at write time only.
+
+#### Scenario: The worked trail computes VERIFICATION over two walks
+
+- **WHEN** a system-mode trail holds a `fresh` pass at `03-55-35Z`, an accepted `external` return at `03-57-21Z`, a walk at `04-08-51Z` whose source is the fresh pass, and a walk at `04-12-35Z` whose source is the external return, and an `in-context` system-mode review is emitted after them
+- **THEN** the emit carries `pass_genre: "VERIFICATION"` and `verified_walks` naming the two walk tokens in token order
+
+#### Scenario: Independent classes and architecture mode compute REVIEW
+
+- **WHEN** a `fresh` or `external` pass is emitted at any trail position, or any pass is emitted under `--as architecture`
+- **THEN** the emit carries `pass_genre: "REVIEW"` and `verified_walks: []`
+
+#### Scenario: A walk of a rejected external return is mode-less
+
+- **WHEN** the only walk after the latest accepted independent pass names, as its `source_path`, an external findings file the trail reader rejected
+- **THEN** that walk qualifies for no mode, and an in-context pass after it computes `REVIEW` with `verified_walks: []`
+
+#### Scenario: A second VERIFICATION-genre pass re-lists earlier walks
+
+- **WHEN** an in-context pass has verified walks W1 and W2, a walk W3 resolves its findings, and a further in-context pass of the same mode is emitted with no independent pass in between
+- **THEN** the further pass carries `verified_walks` naming W1, W2 and W3
+
+#### Scenario: Payload-supplied genre fields are refused
+
+- **WHEN** a review payload supplies `pass_genre` or `verified_walks`
+- **THEN** the surface exits non-zero naming the field as engine-owned; no file is written
+
+### Requirement: A VERIFICATION-genre payload carries its verdicts and its findings link to the walk record
+
+The `review` command's payload table SHALL admit `verification` — an array of objects `{title, file, verdict}`, `title` and `file` non-empty single-line strings, `verdict` exactly one of `landed` | `regressed`, no other key — and each `findings[]` entry SHALL admit an optional `walk_entry` — an object `{title, file}`, both non-empty single-line strings, no other key. THIS requirement owns both shapes and the meaning of the two verdicts; every other spec names it and re-lists nothing.
+
+**The owed set.** An entry of a READABLE address-reviews record named in the emit's computed `verified_walks` OWES a verdict exactly when its disposition is `resolved`, at every severity — `stale`, `deferred` and `escalated` claim no edit and owe nothing. An owed entry is KEYED by the tuple the gate uses for resolution (trimmed, case-sensitive title + repo-relative file, any `:line` suffix stripped — per `orbit-engine-gates`' reviewed-gate resolution), and the payload's `verification[]` and `walk_entry` keys are normalized by the SAME rule before every check below (every refusal prints the normalized form); a key carried `resolved` by ANY walk of `verified_walks` is ONE owed entry, judged against the LATEST walk that carries it `resolved` — a later walk carrying the same key at another disposition (a `stale` call naming the earlier fix) does not lift the obligation, since that earlier edit is exactly what a verification checks; an UNREADABLE record owes nothing (it stays listed in `verified_walks`) — and for this record a walk the trail reader reads is ALSO unreadable when any of its entries normalizes to an empty title or an empty file, because no well-shaped verdict could name that key. `orbit-conventions`' pass-genre table says a verification answers "per resolution"; by this requirement that reads as per OWED (`resolved`) entry.
+
+**The verdicts**, stated once here as a fenced production. An adopter's installed review skill has none of our specs, so the review body carries this fence as a CHECKED MIRROR that says so and names this requirement, held byte-equal by a parity test (R-crc-14's mirror corollary); no other surface restates it:
+
+```
+landed — the resolution's edit is PRESENT, COMPLETE across every site the resolution claims, CLEAN (it introduced no defect), and NOT UNDONE by a later edit.
+regressed — any of those fails, or the verifying pass cannot decide (an undecidable claim is not a held one); its cause is stated by the finding that names it.
+```
+
+**The write gate** refuses, exiting non-zero with no file written and empty stdout, naming what it refuses: a `verification` or `walk_entry` that is mis-shaped, at ANY genre; a payload whose computed `pass_genre` is `VERIFICATION` and which carries no `verification` (naming the field, the owed count and EACH owed key as `walk <token>: (<title>, <file>)`, exactly as the incomplete-record refusal does — this refusal is the channel through which a review body whose metadata probe read REVIEW learns the owed set) — with ZERO owed entries the field is still owed, as `[]`, so a present empty array records that the pass checked and found nothing to grade; a `verification` that omits an owed key (naming EACH missing key as `walk <token>: (<title>, <file>)`, so the refusal itself tells the author the owed set); a verdict whose key is not owed, or a second verdict for one key; a `verification` field in ANY form, `[]` included, on a `REVIEW`-genre pass; a `walk_entry` naming a key carried by no readable record of `verified_walks` (on a `REVIEW`-genre pass every `walk_entry` names nothing); a `walk_entry` naming an owed key whose verdict is `landed`, WHEN every entry carrying that key in `verified_walks` is `resolved` — when a `stale`, `deferred` or `escalated` entry shares the key, the link may concern that entry, so it is accepted whatever the verdict (a DECLARED gap: in that shared-key case a landed-plus-linked contradiction is not refused, and the link rendered beside the finding is what shows it); and a `regressed` verdict that no finding's `walk_entry` names. A `walk_entry` MAY name an entry of ANY disposition — a finding that a walk dismissed a real finding as `stale` links to that entry. A finding WITHOUT `walk_entry` is never refused: on a pass carrying `verification` it renders marked, per `orbit-report-rendering`'s `Verification renders as its own section and its absence is marked`. The engine judges shape, presence, completeness and existence only (R-crc-10): whether a verdict is TRUE, and whether a `walk_entry` is RELEVANT to its finding, are the verifying pass's recorded judgement and the readiness author's to read; the gate graph reads none of it (R-crc-13). `references/run-summary-schema.md` names both fields and the schema-table parity test derives them. Prior-generation emits are untouched: the checks run at write time only.
+
+#### Scenario: Owed record absent is refused
+
+- **WHEN** an in-context system-mode payload computes `pass_genre: "VERIFICATION"` over walks holding nine `resolved` entries and carries no `verification`
+- **THEN** the surface exits non-zero naming `verification` and each of the nine owed entries as `walk <token>: (<title>, <file>)`; no file is written
+
+#### Scenario: A complete record writes
+
+- **WHEN** the same payload carries nine verdicts, one per owed key, each `landed` or `regressed`, and every `regressed` key is named by a finding's `walk_entry`
+- **THEN** the emit writes with `verification` verbatim beside the computed `pass_genre` and `verified_walks`
+
+#### Scenario: A missing key is named with its walk
+
+- **WHEN** a VERIFICATION-genre payload's `verification` omits one owed entry
+- **THEN** the refusal names that entry as `walk <token>: (<title>, <file>)`; no file is written
+
+#### Scenario: Only resolved entries owe a verdict
+
+- **WHEN** a verified walk holds two `resolved` WARNING entries and one `stale` WARNING entry
+- **THEN** two verdicts are owed; a verdict for the `stale` entry's key is refused as not owed
+
+#### Scenario: A key in two walks owes one verdict
+
+- **WHEN** two walks of `verified_walks` both carry a `resolved` entry with the same (title, file)
+- **THEN** exactly one verdict is owed for that key, judged against the later walk's `resolved` entry; a second verdict for the key is refused
+
+#### Scenario: An unreadable walk owes nothing
+
+- **WHEN** a walk in `verified_walks` is unreadable to the trail reader
+- **THEN** it owes no verdict and remains listed in `verified_walks`
+
+#### Scenario: A regressed verdict needs its finding
+
+- **WHEN** a payload's `verification` carries `{title: "T", file: "F", verdict: "regressed"}` and no finding carries `walk_entry: {title: "T", file: "F"}`
+- **THEN** the surface exits non-zero naming the unpaired `regressed` key; no file is written
+
+#### Scenario: A finding against a landed entry is a contradiction
+
+- **WHEN** a finding carries `walk_entry` naming a key whose verdict is `landed`, and every entry carrying that key in `verified_walks` is `resolved`
+- **THEN** the surface exits non-zero naming the contradiction; no file is written
+
+#### Scenario: A shared key lets a stale finding link beside a landed verdict
+
+- **WHEN** W1 carries (`T`, `F`) `resolved` and its edit holds, a later walk W2 carries (`T`, `F`) `stale` wrongly, and the verifying pass grades (`T`, `F`) `landed` and files a finding with `walk_entry: {title: "T", file: "F"}` about W2's call
+- **THEN** the emit writes — the key is shared with a non-`resolved` entry, so the link is accepted whatever the verdict
+
+#### Scenario: A walk with an entry no verdict can name is unreadable for the record
+
+- **WHEN** a walk in `verified_walks` is readable to the trail reader but one of its `resolved` entries carries no `title`
+- **THEN** that walk owes no verdict, stays listed in `verified_walks`, and renders as an unreadable row
+
+#### Scenario: A finding may link to a stale entry
+
+- **WHEN** a verifying pass finds that a walk wrongly dismissed a finding as `stale`, and its finding carries `walk_entry` naming that `stale` entry
+- **THEN** the emit writes; the stale entry owes no verdict and the link is accepted
+
+#### Scenario: Records and links on a REVIEW-genre pass are refused
+
+- **WHEN** a payload whose computed `pass_genre` is `REVIEW` carries `verification` — `[]` included — or a finding carrying `walk_entry`
+- **THEN** the surface exits non-zero naming the field or the unresolvable link; no file is written
+
+#### Scenario: Zero owed entries still owe an empty record
+
+- **WHEN** a payload computes `VERIFICATION` over walks whose entries are all `stale`, `deferred` or `escalated`
+- **THEN** a payload without `verification` is refused naming the field and an owed count of 0, and the same payload with `"verification": []` writes
+
+#### Scenario: Payload keys are normalized before matching
+
+- **WHEN** an owed entry is keyed (`T`, `design.md`) and the payload's verdict names `{"title": " T ", "file": "design.md:42"}`
+- **THEN** the verdict matches the owed key; a key that still matches nothing after normalization is refused naming its normalized form
+
+#### Scenario: A later stale call does not lift an earlier resolution
+
+- **WHEN** walk W1 carries (`T`, `F`) `resolved` and a later walk W3 of `verified_walks` carries (`T`, `F`) `stale`
+- **THEN** (`T`, `F`) is owed, judged against W1's entry
+
+#### Scenario: Mis-shaped verdicts are refused at any genre
+
+- **WHEN** a payload carries `"verification": [{"title": "T", "file": "F", "verdict": "fixed"}]`, or an entry with an extra key, or a `walk_entry` that is a string
+- **THEN** the surface exits non-zero naming `verification[<i>].verdict` (or the extra key, or `findings[<i>].walk_entry`); no file is written
 

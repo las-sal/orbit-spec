@@ -1,0 +1,72 @@
+{
+  "command": "archive",
+  "timestamp": "2026-10-04T17:12:45Z",
+  "change": "rc03c-verification-record",
+  "kind": "lifecycle",
+  "model": "claude-opus-5-5",
+  "final_assessment": "rc03c-verification-record archived: a verification pass is a COMPUTED pass genre with its own owed record — pass_genre / verified_walks stored on every review emit, the verification record and walk_entry links enforced at the write gate, the Verification section and both marks rendered, the body's VERIFICATION branch with its verdict mirror. Sync 4 ADDED + 6 MODIFIED across 3 capabilities, 10/10 blocks byte-verified; fingerprints 6/6; review-system gate COMPUTED PASSED; exit (1), (2) and (3) MET.",
+  "archive_path": "orbit/changes/archive/2026-10-04-rc03c-verification-record/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-emit-composition",
+      "orbit-report-rendering",
+      "orbit-review"
+    ],
+    "added": 4,
+    "modified": 6,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "Task 4.5 (User-validation, exit (3)) CLOSED AT ARCHIVE BY OBSERVATION: the confirm review-system-2026-10-04T17-09-30Z computed VERIFICATION; design D9's instrument printed MET; the rendered cross-check shows one [outside the walk record] line, under SUGGESTION only.",
+    "AT-ARCHIVE NOTE 4.6 executed: Q-crc-20's entry in orbit/architecture/clean-up-review-cycle.md names verified_walks plus the sweep scope (file ∪ ripple_cascade.applied) as its nearest proxy and states it is not a closure (D-rc03-15).",
+    "The confirm's one SUGGESTION is left open by design: walk 1 stamped the base fingerprint for its new MODIFIED block into .openspec.yaml without listing the file in its ripple record — a record gap with a correct value (fingerprints 6/6 verified).",
+    "Pre-archive audit ran in flow (summary_path null): retired-name residue zero field hits; lens staleness skipped (no orbit/lenses/); cross-doc and archive coherence checked against design D10's ten blocks and the dry-run counts."
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "formed_against": [
+        "2026-10-04T16-40-56Z",
+        "2026-10-04T16-41-51Z"
+      ],
+      "disposition": "ready",
+      "reasoning": "Both halves of the blind pair ran on the pushed apply commit and shared no finding; every finding of both was walked (one decision each, both chosen in chat), and the in-context VERIFICATION confirm graded all nine owed walk entries landed with the residual check in range. The engine half was sound in both reviews' reading; what they found was the body text a verifier executes and two engine edges, all repaired without new mechanism beyond the collision rule the user chose. Exit (3) measured MET by the instrument fixed at propose.",
+      "ratified_by": "ai",
+      "accepted": [
+        {
+          "claim": "PASSED means every finding is resolved, not that an independent pass stands clean on the final tree: the walks changed engine code after the pair read it (the cross-trail collision bump and the REVIEW-genre refusal text in emit-composition.ts, the walk-token mark in report-render.ts).",
+          "why": "rc07's distinction, carried as every stage has; the post-pair engine edits are small, each pinned by a test, and the in-context confirm verified them over their sweep scopes — the independent read of them is the open Q-crc-20, which this stage names a proxy for and does not close."
+        },
+        {
+          "claim": "A second probe/engine divergence — a walk whose source_path names a review-<mode> file absent from this trail, moded to the body's probe and mode-less to the engine — is not named in orbit-conventions' KNOWN LIMIT.",
+          "why": "Naming it there is a fourth capability past R-crc-1's ceiling (system walk 2, option A); the write gate's refusal now reconciles both directions and the engine is authoritative, so the case is unnamed, not broken; pinned as a row in pass-genre-probe.test.ts and handed to the next stage that touches orbit-conventions."
+        },
+        {
+          "claim": "The nine landed verdicts — and exit (3)'s MET — come from an in-context pass grading walks the same session wrote, on a single sample.",
+          "why": "That is the genre's design: a verdict is the verifying pass's recorded judgement (R-crc-10), the engine checks only completeness; the rows make each claim citable, and exit (3) is graded by the instrument fixed at propose (R-crc-12), not re-chosen at archive."
+        },
+        {
+          "claim": "The cross-trail collision rule is forward-only: prior trails holding an equal-token pair of different commands keep the strict-order readers' existing reading.",
+          "why": "Rewriting archived trails is out of scope and nothing observed one; the rule is stated as write-time only in orbit-emit-composition's filename-discipline requirement."
+        }
+      ]
+    }
+  ],
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."
+}

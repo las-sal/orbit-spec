@@ -7,6 +7,7 @@ architecture:
 base_fingerprints:
   orbit-emit-composition:
     Generic emit surface with a narrative-only payload contract: sha256:5a63bb62db298aebd1ca630480b30ce29f14fa581f3da5724c17538fd7b30560
+    Engine-owned spine composition and filename discipline: sha256:ae8c7890c3ba320e1106b4fd889ebd59af160308b21a609f134e3d21e07d6905
   orbit-report-rendering:
     Report grammar — the frame sandwiches the commentary: sha256:158a48bacb86d28e3471f2c5f2d4f113a0137013229a29c15f84357de0d358e9
     Render-time computed context — never stored, never authored: sha256:be317b1216d81b13b0cc33784f836b4641a69d5e0d5dd4ac31e49a98a912e24e

@@ -212,6 +212,24 @@ describe('target resolution and spine composition', () => {
     // Findings exist → the pointer names this emit's own (post-bump) path.
     expect(String(r.emit.next_recommended)).toContain('review-proposal-2026-08-05T10-00-01Z.json');
   });
+
+  it('rc03c (external C1, B): the bump clears the token against ANY trail file, not just the command\'s own prefix — a same-second walk precedes the review that follows it', () => {
+    makeChange('foo');
+    const RUNS = 'orbit/changes/foo/.orbit-runs';
+    write(`${RUNS}/review-system-2026-08-05T09-00-00Z.json`, JSON.stringify({ command: 'review', mode: 'system', reviewer_class: 'fresh', findings: [] }));
+    write(
+      `${RUNS}/address-reviews-2026-08-05T10-00-00Z.json`,
+      JSON.stringify({ command: 'address-reviews', source_path: `${RUNS}/review-system-2026-08-05T09-00-00Z.json`, resolutions: [{ severity: 'WARNING', outcome: 'stale', title: 'S', file: 's.md' }] })
+    );
+    write(`${RUNS}/external-prompt-system-2026-08-05T10-00-01Z.md`, '# prompt\n');
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-08-05T10:00:00Z'));
+    const r = composeAndWriteEmit('review', { change: 'foo' }, validReviewPayload({ mode: 'system', verification: [] }), { projectRoot: root });
+    // 10-00-00 is the walk's, 10-00-01 the prompt's (a non-JSON trail file counts too).
+    expect(r.path).toContain('review-system-2026-08-05T10-00-02Z.json');
+    expect((r.emit as any).pass_genre).toBe('VERIFICATION');
+    expect((r.emit as any).verified_walks).toEqual(['2026-08-05T10-00-00Z']);
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -1899,6 +1917,16 @@ describe('rc03c: pass genre, verified walks and the verification record', () => 
     refuses(sys([], { verification: [] }), /'verification'.*REVIEW/);
     refuses(sys([], { verification: [{ title: 'A', file: 'a.md', verdict: 'landed' }] }), /'verification'.*REVIEW/);
     refuses(sys([{ title: 'x', walk_entry: { title: 'A', file: 'a.md' } }]), /findings\[0\]\.walk_entry.*REVIEW/);
+  });
+
+  it('the REVIEW-genre refusal says what the pass now owes — the reverse reconciliation direction (system walk 2, fresh W2)', () => {
+    // A walk whose source names a pass file absent from this trail: the body's filename probe reads it as
+    // system-mode (VERIFICATION); the engine resolves it through the accepted pass set (mode-less → REVIEW).
+    makeChange('foo');
+    write(`${RUNS}/address-reviews-${W1}.json`, JSON.stringify({ command: 'address-reviews', source_path: 'orbit/changes/other/.orbit-runs/review-system-2026-10-01T00-00-00Z.json', resolutions: [res('A', 'a.md')] }));
+    const DIRECTIVE = /engine is authoritative on the genre: drop 'verification' and every walk_entry, run the pass as REVIEW genre over the whole artifact, and emit again/;
+    refuses(sys([], { verification: [{ title: 'A', file: 'a.md', verdict: 'landed' }] }), DIRECTIVE);
+    refuses(sys([{ title: 'x', walk_entry: { title: 'A', file: 'a.md' } }]), DIRECTIVE);
   });
 
   it('mis-shaped verdicts, extra keys and a string walk_entry are refused at ANY genre', () => {
