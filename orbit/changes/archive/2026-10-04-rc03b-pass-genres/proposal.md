@@ -28,8 +28,8 @@ carry nothing — which dissolves the channel problem on every launch order inst
   a separate session) and whose per-change "which class should I run" scenarios are replaced — the
   schema's cadence says which class runs next (explore D-rc03-2). The pass genre is a record and a header
   word; the gate reads nothing of it (R-crc-13). The in-context body learns it from one directory
-  fact — the token-ordered listing of the trail's pass and walk records with their `reviewer_class` and
-  `source_path` fields, metadata that supplies the bound's latest-independent-pass token; never findings. No record FIELD is defined by this change; the
+  fact — the token-ordered listing of the trail's pass and walk records with their `reviewer_class` (or, absent it,
+  `flags.fresh`) and `source_path` fields, metadata that supplies the bound's latest-accepted-independent-pass token; never findings. No record FIELD is defined by this change; the
   engine function that computes the genre and the verification record are the second child's.
 - **A REVIEW-genre brief carries no findings and no pointer at the trail.** Owned by the same
   conventions requirement, with its BOUNDED residual stated there once. The external prompt's Cycle

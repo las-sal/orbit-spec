@@ -763,7 +763,7 @@ The table below is a CHECKED MIRROR of \`orbit-conventions\`' \`Review mode deci
 
 ### 1. Resolve the mode
 
-Resolve the MODE first — it decides what the positional even IS. Mode comes from \`--as proposal|system|architecture\`. **Architecture mode is NEVER inferred** — it requires the explicit flag; a positional that happens to match a doc name does NOT trigger it. If \`--as\` is omitted, infer between the change modes from \`orbit/changes/<name>/tasks.md\` checkbox arithmetic: all unchecked → \`proposal\`; all checked + code changes since the change was proposed (\`git log --oneline -- orbit/changes/<name>/\`) → \`system\`; mixed or ambiguous → \`AskUserQuestion\`. State the resolution in the report header (\`Mode: proposal (inferred from 12 unchecked tasks)\`).
+Resolve the MODE first — it decides what the positional even IS. Mode comes from \`--as proposal|system|architecture\`. **Architecture mode is NEVER inferred** — it requires the explicit flag; a positional that happens to match a doc name does NOT trigger it. If \`--as\` is omitted, infer between the change modes from \`orbit/changes/<name>/tasks.md\` checkbox arithmetic: all unchecked → \`proposal\`; all checked + code changes since the change was proposed (\`git log --format=%h -- orbit/changes/<name>/ ':!orbit/changes/<name>/.orbit-runs'\` — hashes only: the inference needs only whether such a commit exists, and commit subjects can carry prior passes' counts) → \`system\`; mixed or ambiguous → \`AskUserQuestion\`. State the resolution in the report header (\`Mode: proposal (inferred from 12 unchecked tasks)\`).
 
 ### 2. Resolve the target
 

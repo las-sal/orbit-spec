@@ -12,7 +12,7 @@ The system SHALL compose every REVIEW-genre pass (per `orbit-conventions`' `Revi
 #### Scenario: Prior-run inspection skipped for review genre
 
 - **WHEN** a REVIEW-genre pass runs (any independent class; an in-context pass with no qualifying walk of its mode before it)
-- **THEN** the body opens no record's FINDINGS, suppressed list or resolution content from `review-<mode>-*.json`, `external-<mode>-*.md` or `address-reviews-*.json` for that pass — the in-context body's bounded metadata probe (filenames, `reviewer_class`, `source_path`) is the one read of the trail's pass and walk records it makes, to decide its genre; the rendered report's iteration ordinal and trend are unchanged, because the engine computes them from the trail at render time
+- **THEN** the body opens no record's FINDINGS, suppressed list or resolution content from `review-<mode>-*.json`, `external-<mode>-*.md` or `address-reviews-*.json` for that pass — the in-context body's bounded metadata probe (filenames, `reviewer_class` or — absent it — `flags.fresh`, `source_path`) is the one read of the trail's pass and walk records it makes, to decide its genre; the rendered report's iteration ordinal and trend are unchanged, because the engine computes them from the trail at render time
 
 #### Scenario: System-mode diff excludes the trail
 

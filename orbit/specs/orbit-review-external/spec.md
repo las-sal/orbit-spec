@@ -54,7 +54,7 @@ The system SHALL write the full handoff prompt to a versioned, committed file in
 #### Scenario: Prompt file contents
 
 - **WHEN** the file is written
-- **THEN** it contains the full self-contained prompt: role description, repo URL or path, project context file pointers (`CLAUDE.md`, `orbit/project.md`, `*_convention.md`, `orbit/lenses/`), iteration history pointer (`.orbit-runs/`), cycle context (iteration N, prior findings count, resolved-since-last), mode-specific "what to read" and "what to look for" sections, the one-paragraph severity ladder (per `Output format specification in prompt`), output format specification — whose block carries the REQUIRED `## Direction` section between `## Blocks` and `## Notes` (per the same requirement)
+- **THEN** it contains the full self-contained prompt: role description, repo URL or path, project context file pointers (`CLAUDE.md`, `orbit/project.md`, `*_convention.md`, `orbit/lenses/`) — and NO pointer at `.orbit-runs/` for the reviewer to READ (the output path and the commit line it is told to write are destinations, not reads) —, cycle context (the iteration number ONLY; per `Cycle context populated from prior runs`, which points at `orbit-conventions`' review-genre brief rule), mode-specific "what to read" and "what to look for" sections, the one-paragraph severity ladder (per `Output format specification in prompt`), output format specification — whose block carries the REQUIRED `## Direction` section between `## Blocks` and `## Notes` (per the same requirement)
 
 #### Scenario: Chat invocation snippet
 
@@ -96,15 +96,10 @@ inconsistent, or unclear. Don't be charitable to the authoring AI's reasoning.
 - `*_convention.md` at repo root — naming, error handling, etc. (if present)
 - `orbit/lenses/perspectives.md` — named callers worth validating from (if present)
 - `orbit/lenses/critical-paths.md` — user flows worth walking end-to-end (if present)
-- `orbit/changes/<change-name>/.orbit-runs/` — iteration history; see what's
-  already been addressed in prior cycles
 
 ## Cycle context
 
 - Iteration: <N>
-- Prior internal findings still open: <count + brief list>
-- Prior external findings still open: <count + brief list>
-- Resolved since last review: <brief list>
 
 Do not push back on stale findings — pushback discipline is enforced on
 resolution, not review. Just flag what you observe.
@@ -236,7 +231,7 @@ The system SHALL emit a recommendation about which external-AI session the user 
 #### Scenario: Recommendation appears in chat
 
 - **WHEN** the chat invocation snippet is emitted
-- **THEN** it includes a single short line labeled `Recommended session:` (or equivalent) before the prompt file path, summarizing whether to use a fresh session, continue a same-AI prior-iteration session, or pick a previously-unused AI
+- **THEN** it includes a single short line labeled `Recommended session:` (or equivalent) before the prompt file path, summarizing which fresh session to use — any AI at iteration 1, a different AI at iteration 2, a previously-unused AI from iteration 3 (a continued same-AI session is never recommended: an external pass is REVIEW pass genre, and a continued session carries its prior findings in its own head — `orbit-conventions`' `Review mode decision framework` owns that rule)
 
 #### Scenario: Recommendation logic by iteration
 
@@ -244,7 +239,8 @@ The system SHALL emit a recommendation about which external-AI session the user 
 - **THEN** it uses this logic:
   - **Iteration 1**: `Fresh session recommended — first external pass; sets independent baseline. Pick any AI (codex / fresh Claude / GPT / etc.).`
   - **Iteration 2**: `Fresh session in a DIFFERENT AI than iter 1's reviewer recommended (model diversity catches different blind spots). If iter 1 was <prior reviewer>, try <suggest different model>.`
-  - **Iteration 3+**: `Either (a) carry context from a same-AI prior session — lets that reviewer verify its earlier findings were actually addressed (ideal when concerns from that reviewer dominated prior iterations); or (b) fresh session in a previously-unused AI — maximum independence (ideal when looking for net-new issues). For this iter, consider <specific suggestion based on prior-reviewer pattern>.`
+  - **Iteration 3+**: `Fresh session in a previously-unused AI recommended (maximum independence); when every available AI has reviewed this change in this mode, a fresh session of the least-recently-used.`
+  - Least-recently-used is decided by ONE ordering input: each reviewer's latest `external-<as>-*.md` token in this mode; the reviewer whose latest token is oldest is least-recently-used
   - Prior-reviewer identity is read from the `**Reviewer**:` field of existing `external-<as>-*.md` files in `.orbit-runs/`
 
 #### Scenario: No prior data → iter 1 recommendation
@@ -297,17 +293,17 @@ The system SHALL count iterations separately for proposal-mode and system-mode r
 
 ### Requirement: Cycle context populated from prior runs
 
-The system SHALL include a "Cycle context" section in the prompt with iteration number, prior findings (open and resolved), populated from `.orbit-runs/` if it contains prior runs.
+The system SHALL include a "Cycle context" section in the prompt carrying the ITERATION NUMBER ONLY, computed from `.orbit-runs/` (the count of prior `external-<as>-*.md` files in this mode, per `Iteration counting per mode`). The section SHALL list no finding — open or resolved, internal or external — and the prompt SHALL carry no pointer at `.orbit-runs/` for the reviewer to read: an external pass is REVIEW pass genre, and a REVIEW-genre brief carries no findings and no pointer at the trail (`orbit-conventions`' `Review mode decision framework` owns that rule and its stated residual; this requirement is how the external prompt honours it). The body still READS the trail to count iterations and to pick the recommended session; the reviewer never does.
 
-#### Scenario: Prior internal review summary exists
+#### Scenario: Prior runs exist and the section still lists nothing
 
-- **WHEN** the change has a prior `review-proposal-<TS>.json` or `review-system-<TS>.json` summary in `.orbit-runs/`
-- **THEN** the cycle context section includes counts and short titles of those findings
+- **WHEN** the change has prior `review-<mode>-<TS>.json`, `external-<as>-<TS>.md` or `address-reviews-<TS>.json` records in `.orbit-runs/`
+- **THEN** the cycle context section reads `- Iteration: <N>` with N computed from the prior external files of this mode, and carries no count, title or list of findings from any of those records, and the prompt's project-context list carries no `.orbit-runs/` entry
 
-#### Scenario: Prior external review exists
+#### Scenario: No prior runs
 
-- **WHEN** the change has a prior `external-<as>-<TS>.md` in `.orbit-runs/`
-- **THEN** the cycle context section summarizes those findings so the external AI knows what was previously flagged
+- **WHEN** `.orbit-runs/` is absent or holds no prior external file for this mode
+- **THEN** the section reads `- Iteration: 1` and nothing else, as before
 
 ### Requirement: Handoff preflight blocks unusable pull invocations
 

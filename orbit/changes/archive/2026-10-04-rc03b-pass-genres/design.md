@@ -53,8 +53,8 @@ trail and invites the gate to read it. VOCABULARY: "genre" already means interna
 already say "pass genres", and moving a ruling's vocabulary to dodge a renderer field is the wrong
 trade — so every use is "pass genre", the owner names the render axis by pointer, and rc03c stores
 `pass_genre`. The in-context body learns its genre from ONE directory fact the owner names — the
-token-ordered listing of the trail's pass AND walk records with their `reviewer_class` and `source_path`
-fields (walk 2: the walk listing alone could not supply the bound's latest-independent-pass token — the
+token-ordered listing of the trail's pass AND walk records with their `reviewer_class` (or, absent it, `flags.fresh`) and `source_path`
+fields, bounded by the latest ACCEPTED independent pass (system walk 1, 2026-10-04) (walk 2: the walk listing alone could not supply the bound's latest-independent-pass token — the
 external's constructed case, a fresh pass landing between an old walk and the in-context pass, decides
 differently with the same walk listing) — a bounded METADATA PROBE that opens no findings, which is why it
 is not a "trail pointer" under D2. The engine surface that would print the qualifying-walk fact outright

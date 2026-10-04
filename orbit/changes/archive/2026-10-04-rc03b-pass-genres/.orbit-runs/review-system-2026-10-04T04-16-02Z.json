@@ -1,0 +1,85 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-04T04:16:02Z",
+  "change": "rc03b-pass-genres",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "Step 1's mode inference still runs `git log --oneline`, the subject-printing read walk 1 retired from Step 4",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 766,
+      "recommendation": "Walk 1 (fresh W1) moved the body's <change-start> read to a hash-only `git log --diff-filter=A --format=%h` because commit subjects carry prior passes' counts. Step 1's inference — 'all checked + code changes since the change was proposed (`git log --oneline -- orbit/changes/<name>/`)' — still prints subjects, and it runs for any review invoked without `--as`, including a REVIEW-genre in-context pass. The cascade stopped one site short. Replace it with a hash-only form (`git log --format=%h -- orbit/changes/<name>/ ':!orbit/changes/<name>/.orbit-runs'`: commits that touched the change's artifacts outside the trail — the inference needs only whether any exist) and pin it in the fidelity test beside the Step 4 assertion. The external-handoff's own Step 2 heuristic is the packager's read, not a reviewer's, and is out of the rule."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "The ADDED requirement's prior-run scenario still lists the probe as (filenames, reviewer_class, source_path), without the flags.fresh rule",
+      "file": "orbit/changes/rc03b-pass-genres/specs/orbit-review/spec.md",
+      "line": 15,
+      "recommendation": "Walk 1's decision #2 added `flags.fresh` (when `reviewer_class` is absent) to the owner, to (d) and to the in-context genre scenario, but the `Prior-run inspection skipped for review genre` scenario's parenthetical still names the probe as '(filenames, `reviewer_class`, `source_path`)'. An implementation built to that scenario reads the raw field only and decides the legacy case (the external's constructed trail) the other way. Make the parenthetical '(filenames, `reviewer_class` or — absent it — `flags.fresh`, `source_path`)'. Same requirement block, so no new capability and no fingerprint change."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "Proposal, design D1 and CLAUDE.md describe the probe without the accepted-pass bound's flags.fresh rule",
+      "file": "orbit/changes/rc03b-pass-genres/design.md",
+      "line": 56,
+      "recommendation": "design.md:56 ('with their `reviewer_class` and `source_path` fields'), proposal.md:32 ('`source_path` fields, metadata that supplies the bound's latest-independent-pass token') and CLAUDE.md:528 ('filenames, `reviewer_class`, `source_path`') describe the probe as it stood before walk 1's decision #2. Add 'or `flags.fresh`' and 'accepted' where each names the probe, so the prose and the owner say one thing; CLAUDE.md's paragraph is rewritten at archive and can absorb it there."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "title": "tasks.md's recorded counts and exit-(2) wording predate the walks",
+      "file": "orbit/changes/rc03b-pass-genres/tasks.md",
+      "line": 22,
+      "recommendation": "Tasks 2.7 and 3.4 record 2498 green 'on the final tree'; the tree after both walks is 2507. Task 3.3's exit-(2) measurement describes the REGION rule as running 'with its output sections exempt'; the walks changed it to a by-line exemption and extended it to the five read references. Re-measure exit (2) and the count at archive and amend the records there (CLAUDE.md:535's 2498 with them), naming the walks as the reason."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "VERIFICATION pass genre by the change's own table: the metadata probe found both system walks after the latest accepted independent pass, and nothing else was opened to decide it. All seventeen landing checks over the ten resolutions held in the generated surface and the deltas; the full suite, strict validate, fingerprints and the sources lint were green on the committed tree. Every finding sits in the walks' own additions, and the two warnings share one shape: a repair applied at the site named and at most of its siblings, stopping one site short — the hash-only read reached Step 4 and mode-sections but not Step 1, and the flags.fresh rule reached the owner, (d) and one scenario but not the other. The cascade sweep that would have caught both is a grep for the OLD form of the repaired instruction across the whole change, not for the finding's file.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4",
+    "5"
+  ],
+  "final_assessment": "0 critical, 2 warning, 2 suggestion.",
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc03b-pass-genres --from-file orbit/changes/rc03b-pass-genres/.orbit-runs/review-system-2026-10-04T04-16-02Z.json"
+}

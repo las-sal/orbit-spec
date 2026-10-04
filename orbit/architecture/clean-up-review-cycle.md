@@ -4392,3 +4392,27 @@ Position is engine-computed: rc03 premised (parent, undated), rc03b exploring, r
 **2026-10-04 — rc03-review-genres declared ENDED (Sal), through the unprompted route.** The retained split parent observed
 `premised` with an undated slot; every exit criterion it carried is owned by rc03b or rc03c, so the mark asserts nothing
 about the work and matches rc13's and rc04's. Fourth ended mark in the program.
+
+**2026-10-04 — rc03b-pass-genres ARCHIVED through a COMPUTED PASSED gate via the blind pair (the ninth rc-stage through
+one, the eighth through the pair).** A pass's genre — REVIEW or VERIFICATION — is COMPUTED from three trail facts and
+stated ONCE as a fenced six-row table in `orbit-conventions`' `Review mode decision framework`, mirrored fence-pinned in
+the review body; "pass genre" is qualified throughout and the gate reads nothing of it (R-crc-13). A REVIEW-genre brief
+names the artifacts, project context, baselines, lenses and (system mode) the commit range with the trail excluded, and
+NO finding, NO prior pass, NO trail path to read — the twelfth channel (iteration 3+'s "carry context from a same-AI
+session") deleted; Cycle context is the iteration line alone. Three capabilities at R-crc-1's ceiling, 1 ADDED + 5
+MODIFIED synced 6/6 byte-verified through the engine's merge; no engine code (hash pin over 17 files); capability count
+unchanged at 21. The cycle: proposal fresh → external (GPT-6 Codex) → in-context, zero repeats; apply 15/16 in one
+session; the **blind pair on the pushed apply commit `82b6f757`** — fresh 0C/4W/3S, external GPT-6 Astra 0C/3W/0S —
+converging on ONE defect (the in-context genre probe counted every external file and read only the literal class field,
+where the trail reader drops rejected returns and infers legacy `flags.fresh`; Sal: A — the accepted-pass rule with
+acceptance named as the probe's one known limit, pinned by a six-row decision table) and each half finding what the other
+could not: the fresh half that the commands a brief tells a reviewer to RUN surfaced prior passes (`git log` subjects,
+the status gate reason — now hash-only reads, the remaining output channels named in the owner's residual), the external
+half that the fresh brief as written made its own reader dispatch again (now the WORKER, not a dispatcher). The brief
+grep exempts output destinations BY LINE and reaches every reference a REVIEW pass loads to read (Sal: a, twice); a
+reworded read naming no path is the owner's named residual, pinned green so the boundary is visible. The in-context
+confirm was the program's first pass to RECORD its own genre — VERIFICATION, decided from the metadata probe alone — and
+its four findings were all the walks' cascade stopping one site short (Step 1's `git log --oneline`; one scenario
+parenthetical), closed at walk 3. Task 3.5 (exit (3)) closed at archive by observation. The readiness record accepts five
+residuals, headlined by rc07's distinction. **2507 tests green.** Position is engine-computed: rc03b
+quiescent-awaiting-ratification; rc03c-verification-record premised, its dependency now met.

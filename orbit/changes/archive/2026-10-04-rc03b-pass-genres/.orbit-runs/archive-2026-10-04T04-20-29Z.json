@@ -1,0 +1,78 @@
+{
+  "command": "archive",
+  "timestamp": "2026-10-04T04:20:29Z",
+  "change": "rc03b-pass-genres",
+  "kind": "lifecycle",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Archived rc03b-pass-genres through a COMPUTED PASSED review-system gate — the ninth rc-stage through one, the eighth through the blind pair. A pass's genre (REVIEW / VERIFICATION) is stated once as a fenced table in orbit-conventions' Review mode decision framework and mirrored, fence-pinned, in the review body; a REVIEW-genre brief carries no finding, no prior pass and no trail path to read, with its bounded residual stated once in the owner. Sync: 1 ADDED + 5 MODIFIED across 3 capabilities through the engine's applySpecs, 6/6 blocks byte-verified; fingerprints 5/5 verified; no engine code (hash pin). The cycle's first in-context pass to record its own genre ran as VERIFICATION. 2507 tests green.",
+  "archive_path": "orbit/changes/archive/2026-10-04-rc03b-pass-genres",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 4
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-conventions",
+      "orbit-review",
+      "orbit-review-external"
+    ],
+    "added": 1,
+    "modified": 5,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "Task 3.5 (the user-validation handoff, exit (3)) was CLOSED AT ARCHIVE BY OBSERVATION, not prompted past: the first blind pair under the new surface read the committed prompt external-prompt-system-2026-10-04T03-49-33Z.md — Cycle context the iteration line alone, no finding, no prior pass, no trail path to read — and the external half confirmed it in its notes; the evidence is on the task line.",
+    "The pre-archive audit-drift sweep ran IN FLOW (summary_path null): 0 CRITICAL; 1 WARNING and 4 SUGGESTIONs, all Category 5 Touchpoints divergence — actual-unpredicted src/core/templates/workflows/propose.ts (the one-phrase 'run trail' rewording, recorded under task 1.1 at apply) and three new test files under test/core/ (two at apply, the probe decision table at system walk 1); the predicted baseline-spec entry is satisfied by this archive's sync. Categories 1, 3, 4 and the consent tripwire clean; Category 2 skipped (no lenses); Category 6 skipped (no staging explorations).",
+    "explore.md's D-rc03-3 Mechanism entry keeps the propose-time Residual kind / Residual method wording; the owner was WIDENED at system walk 1 (output channels; reworded reads at walk 2). The exploration is the record of what was accounted at propose; design.md carries a dated note of the widening.",
+    "Two instrument slips in flow, both caught before they reached the trail: the first in-context confirm emit was refused by the write gate for capitalised scorecard keys (no file written; the second attempt is the record); and at walk 1 a test title gained an apostrophe inside single quotes, so the fidelity suite stopped compiling while a filtered run still reported green — the full suite caught it."
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "disposition": "ready",
+      "ratified_by": "ai",
+      "formed_against": [
+        "2026-10-04T03-01-32Z",
+        "2026-10-04T03-23-12Z",
+        "2026-10-04T03-55-35Z",
+        "2026-10-04T03-57-21Z"
+      ],
+      "reasoning": "Ready. The three exit criteria are each carried by a measurement on the final tree: (1) the pass-genre table appears in orbit/specs/ only in orbit-conventions, and elsewhere only as the review body's named, fence-pinned mirror; (2) the brief grep finds zero hits under both rules across all fifteen generated skills, with the region now covering every reference a REVIEW pass loads to read and the planted pointers red; (3) the first committed external prompt under the new surface carried the iteration line alone, observed at the walk and confirmed by the external half. The blind pair is the strongest evidence and it cut both ways: the halves converged on one real defect (the probe against the trail reader's accepted pass set) and each found what the other could not — the fresh half the commands a brief tells a reviewer to RUN (commit subjects, the gate reason), the external half that the fresh brief, as written, made its own reader dispatch again. Every finding was walked without authoring mechanism the cycle had not reviewed: two scope calls by letter (a on both; walk all, a), the rest obvious fixes, and the in-context confirm's four findings were all the walks' own cascade stopping one site short. What remains is below.",
+      "accepted": [
+        {
+          "claim": "PASSED means every substantive finding is resolved — NOT that an independent pass stood clean on the final tree. Both independent halves read the apply commit 82b6f757; the three walks edited after it (the hash-only start commit and Step 1 inference, the accepted-pass bound and its flags.fresh rule, the by-line exemption and the five read references, the worker brief), and no fresh or external pass has read those edits.",
+          "why": "rc07's distinction, carried on every rc-stage archive since. Each walk edit is pinned by a test (the probe decision table, the brief-grep plants, the fidelity assertions), and the in-context confirm verified all seventeen landing checks and found only cascade gaps, which walk 3 closed."
+        },
+        {
+          "claim": "The fresh launching brief exists only in the dispatching conversation and no check can read it; a REWORDED read instruction ('read the previous review summary') names no trail path and no grep decides it.",
+          "why": "The owner's stated BOUNDED residual (R-crc-10: a rule over prose is a RECORD, not a CHECK). The generated brief template is grep-held, the reworded case is pinned GREEN by test so the boundary is visible, and the walk-time check of whether either half's findings cite a prior pass is the stated method."
+        },
+        {
+          "claim": "The in-context genre probe cannot see whether the engine ACCEPTS an external return, so on a trail with a REJECTED return after a qualifying walk the body decides REVIEW where the trail reader decides VERIFICATION.",
+          "why": "The owner's named KNOWN LIMIT, chosen at system walk 1 (Sal: A) over making filename identity normative; the engine's computation is authoritative and is rc03c-verification-record's to build. The divergence is pinned as exactly one decision-table row; the pass genre is a record and a header word that no gate reads (R-crc-13)."
+        },
+        {
+          "claim": "Prior-pass content still reaches a reviewer through what a brief legitimately names: commit messages it reads on its own (this repository's own commit subjects carry per-pass counts by habit), the gate reason orbit status prints once one half of a pair has landed, and narrative prose in CLAUDE.md.",
+          "why": "Named in the owner's widened residual at system walk 1. The body's own reads are now hash-only (Step 1's inference and Step 4's start commit), so the review surface never TELLS a reviewer to read a subject; closing the channels themselves (commit-message convention, a narrowed status read) is a rider for a later owner, not this stage's three capabilities."
+        },
+        {
+          "claim": "The pass-genre table has no engine reader; the in-context body decides its own genre from prose instructions.",
+          "why": "By design of the R-crc-9 split: the engine function that computes the genre and the verification record are rc03c-verification-record's, which depends on this stage for the table. The decision table in test/core/pass-genre-probe.test.ts is the reference rc03c's function will be held to."
+        }
+      ]
+    }
+  ],
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."
+}

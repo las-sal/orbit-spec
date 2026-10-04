@@ -981,6 +981,10 @@ describe('rc03b-pass-genres: the review-genre brief carries nothing from the tra
     expect(step4).toContain(`git diff <change-start>..HEAD -- . ${PATHSPEC}`);
     expect(step4).toContain('git log --diff-filter=A --format=%h -- orbit/changes/<name>/proposal.md | tail -1');
     expect(step4).not.toMatch(/estimate `<change-start>` from `git log`/);
+    // Step 1's mode inference reads hashes only, never subjects (system in-context confirm, W1).
+    const step1 = review.instructions.split('### 1. Resolve the mode')[1].split('### 2.')[0];
+    expect(step1).toContain("git log --format=%h -- orbit/changes/<name>/ ':!orbit/changes/<name>/.orbit-runs'");
+    expect(review.instructions).not.toContain('git log --oneline');
   });
 
   it("Step 5 is scoped to VERIFICATION pass genre; the REVIEW-genre branch names the bounded metadata probe as its only read of the trail's pass and walk records", () => {
