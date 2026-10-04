@@ -1,0 +1,198 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-04T23:55:07Z",
+  "change": "rc06b-map-readers",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 5
+    }
+  },
+  "findings": [
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 15,
+      "title": "The new no-override clause is false on day one and its known limit does not name the overrides",
+      "recommendation": "The narrowed rule says no additions-section text overrides a step of the upstream portion, but existing additions sections already do: src/core/templates/workflows/propose.ts:153 'Replaces upstream Step 1 (the \"ask what to build\" prompt)' and src/core/templates/workflows/bulk-archive-change.ts:74 'supersedes Step 5c's \"newer overwrites\" heuristic'. The Known limit names only upstream-portion EDITS, so the rule lands in the baseline already contradicted — the same defect (a rule false in fact) the change cites as its reason to narrow the old one. Either name the existing additions-section overrides in the known limit (measured, per body), or scope the no-override clause to steps edited under this rule.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Extend the Known limit to name the existing additions-section overrides by body and step (propose Step 1, bulk-archive Step 5c, and any others a sweep finds), measured like the upstream-portion figures."
+        },
+        {
+          "label": "B",
+          "body": "Scope the clause: 'no additions-section text overrides a step edited under this rule', leaving pre-rule overrides outside it and saying so."
+        }
+      ]
+    },
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/specs/orbit-run-summary-emit/spec.md",
+      "line": 432,
+      "title": "Verify fail-mode recommendations still says verify itself gains no other behaviors",
+      "recommendation": "Baseline `Verify fail-mode recommendations` states 'verify itself does not gain marker-dropping or other behaviors (see Requirement: Emit-layer wraps upstream skills without modifying them)'. After this change verify gains a behaviour (reading the scenario map) and the pointed-at requirement no longer says that, so this is a third statement of the retired rule, outside the delta, and task 5.1's sweep (\"left intact\", \"MUST NOT modify the upstream-authored body\") does not find it. Add a MODIFIED block for that requirement in orbit-run-summary-emit (no new capability; still three) narrowing the sentence to the emit layer, and add the phrase to 5.1's sweep."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "src/core/templates/workflows/verify-change.ts",
+      "line": 89,
+      "title": "The fate of step 6's 'If scenario appears uncovered' sub-bullets is unstated",
+      "recommendation": "Step 6 is four lines: the two checks, then 'If scenario appears uncovered: Add WARNING: \"Scenario not covered: <scenario name>\" / Recommendation: \"Add test or implementation for scenario\"'. The requirement and task 1.2 replace only the test-tracing bullet. Kept as is, the sub-bullets now hang off the implementation check alone, still recommend adding a TEST, and emit a WARNING titled 'Scenario not covered' — the same title the table gives an UNCOVERED map entry, for a different condition. Two implementers will diverge. State in the requirement what the sub-bullets become (e.g. re-titled 'Scenario not handled in code' with an implementation-only recommendation) and assert it in task 1.1."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-verify-modifications/spec.md",
+      "line": 10,
+      "title": "The check-OFF row neither orders against the orphan/malformed rows nor covers a malformed key",
+      "recommendation": "When the check is OFF the surface still scans the default globs and returns `orphans` and `malformed` (src/core/scenario-map.ts:406, 'the map stays viewable before opting in'). The row says 'no per-scenario finding', which does not say whether the orphan and malformed rows (not per-scenario) still raise WARNINGs. And OFF is also the state of a MALFORMED `scenario_map:` key (orbit-scenario-map's 'A malformed key is inert with a warning'), where the row's fixed reason 'scenario_map: is absent' is false. State that the OFF row suppresses every other row, and word the note's reason as absent or malformed (or name the key without asserting why)."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-verify-modifications/spec.md",
+      "line": 14,
+      "title": "The pairing row assumes one malformed entry per repeated title; the surface returns one per occurrence",
+      "recommendation": "A title repeated within its requirement yields one `malformed` `source: \"spec\"` entry per OCCURRENCE (src/core/scenario-map.ts:372-377; orbit-scenario-map: 'then EVERY occurrence'), all with the same triple. The row says the orphan is reported 'under that malformed entry, as one finding' and the scenario 'one finding for the unkeyable title' — with two identical entries an implementer must choose one finding per entry or per distinct triple, and which entry the orphan joins. State that the reader groups spec entries by joined triple (one finding per distinct triple, its occurrence count named, its orphans listed under it), and have task 3.1 assert the surface returns two entries for two occurrences."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-verify-modifications/spec.md",
+      "line": 15,
+      "title": "The other-orphan row gives no recommendation, and its causes need different actions",
+      "recommendation": "Orphans are computed against the baseline plus THIS change's delta only (src/core/scenario-map.ts:429-437), so an ORPHAN at verify means one of: a tag left on a key this change RENAMED or REMOVED (fix the tag), a typo (fix the tag), or a tag on another active change's ADDED scenario (correct as written; nothing to do until that change archives). Unlike the UNCOVERED row, this row specifies no recommendation, so the AI will invent one, and 'remove or fix the tag' is wrong for the third cause. Specify the recommendation, naming the causes.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Give the row a recommendation naming the three causes and the action for each, leaving the WARNING grade."
+        },
+        {
+          "label": "B",
+          "body": "Name the other-active-change cause as a known limit of the row (the surface resolves one change at a time) and route it to the explore for a later mechanism, keeping this change's reader unchanged."
+        }
+      ]
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "specs/orbit-verify-modifications/spec.md",
+      "line": 74,
+      "title": "The surface DOES carry trail paths: an observed ledger declaration's record",
+      "recommendation": "The requirement (and design D5) asserts that naming the surface in an external brief 'carries no finding, prior pass or trail path' because it reads specs, the ledger and tests. But the ledger's `observed` entry carries `record`, which orbit-scenario-map's ledger requirement defines as 'a trail file path, or an archived task line', and the surface returns it in `declarations.observed[].record`; design D6 plans `observed` entries for this change's own scenarios. A REVIEW-genre reviewer running item 0 (or Pass 0 through verify, whose 'declared kinds are listed as the surface gives them') is handed `.orbit-runs/` paths. Correct the claim.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Narrow the sentence to what is true and name the observed-record path as an instance of the brief rule's existing bounded residual (prior-pass content arriving through what a brief legitimately names), by pointer."
+        },
+        {
+          "label": "B",
+          "body": "Have the table's declaration row list kinds without the cited record and item 0 say the reviewer does not open an observed record, then state the remaining residual."
+        }
+      ]
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "design.md",
+      "line": 29,
+      "title": "The table is paraphrased into the body with only its conditions pinned",
+      "recommendation": "D2 has the body carry the eleven rows 'in its own words', and task 1.1 asserts each row's CONDITION is named (plus the fail_mode rule), not what verify reports for it — the response column (grade, finding text, recommendation) can drift from the owner unseen, the restatement pattern R-crc-14 counts. Either carry the table as a checked mirror of the owner's fence (the corollary rc13a/rc15 used), or extend 1.1 to assert each row's response."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 15,
+      "title": "The Known limit's per-body figures are not reproducible under one method",
+      "recommendation": "Measured here on the skill instructions' upstream portion (up to '# Orbit additions') against upstream/v1.3.1: with the rename normalized, orbit-explore and orbit-bulk-archive-change differ by 0 lines, orbit-archive-change by 1 ('orbit status --change <name> --json'), orbit-apply-change by ~23 added lines; with no normalization (rename included), explore 7/7, bulk-archive 11/9, archive 14/12 lines. The limit's 'explore about 15' fits only the un-normalized count while 'archive, bulk-archive a few each' fits only the normalized one, and explore.md's Premise says ~4 for explore. State the method beside the figures, or name the bodies with semantic edits (apply, archive) and drop the counts, since the limit already says a cherry-pick diffs against the tag."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "CLAUDE.md",
+      "line": 89,
+      "title": "CLAUDE.md's D14 note still says 'pristine upstream body'",
+      "recommendation": "D14's line reads 'each skill instructions literal is the single behavioral source (pristine upstream body + # Orbit additions)'. After the narrowing, the upstream portion changes through named delta edits. Reword at archive (e.g. 'upstream body, edited only by named deltas, + # Orbit additions') with the capability-count move."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "specs/orbit-verify-modifications/spec.md",
+      "line": 21,
+      "title": "'Exhaustive over the surface's JSON shape' omits two top-level fields",
+      "recommendation": "The surface's JSON carries `change` and `tests` too (orbit-scenario-map's 'The JSON form carries the same facts'); neither has a row, so 'one row per state of each top-level field' is false as written. Narrow it to the fields that carry coverage facts, or add a row (e.g. `tests` named in the coverage note)."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "design.md",
+      "line": 31,
+      "title": "D2 says Pass 0 folds 'without re-grading'; the Pass 0 rule grades folded findings as its own",
+      "recommendation": "orbit-review's Pass 0 scenario says the folding body GRADES verify's findings by the ladder as their author ('not a reader's re-grade'), and names an uncovered scenario only — not orphan or malformed. Reword D2: Pass 0 grades them under its existing rule, and the ladder gives the same WARNING for the orphan and malformed findings, so no delta to orbit-review is needed."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The two reader requirements are well-scoped and the decision to keep orbit-review deltaless holds up against its Pass 0 scenario, the --fast subset and the VERIFICATION branch, all read. The weaker half is the rule narrowing: the old rule was retired because it was false in fact, and the new one ships with two more sentences of the same kind, one in the new rule (additions sections already override upstream steps in propose and bulk-archive) and one left in orbit-run-summary-emit's fail-mode requirement. Both were found by grepping the code and baselines for the claims the deltas make, not by reading the deltas. The reader table was probed by reading scenario-map.ts for every state it returns: the OFF scan, per-occurrence unkeyable entries and the one-change orphan basis each leave a row with more than one reading. The upstream-portion figures were re-measured twice, with and without the rename normalized.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "Nothing here needs a redesign. Every finding is a repair or a narrowing inside the three declared capabilities, and the reader mechanism (surface read, closed table, external item 0) is sound and grounded in the engine as it stands.\nThe one to settle before apply is the narrowed upstream rule. As written it is false on the day it lands, so walk it first, then the three reader-table ambiguities, which decide what the verify body will say."
+  },
+  "final_assessment": "0 critical, 7 warning, 5 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc06b-map-readers --from-file orbit/changes/rc06b-map-readers/.orbit-runs/review-proposal-2026-10-04T23-55-07Z.json"
+}

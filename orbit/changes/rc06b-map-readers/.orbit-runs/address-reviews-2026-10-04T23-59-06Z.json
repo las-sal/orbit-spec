@@ -1,0 +1,288 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-04T23:59:06Z",
+  "change": "rc06b-map-readers",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc06b-map-readers/.orbit-runs/review-proposal-2026-10-04T23-55-07Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-04T23-55-07Z",
+  "latest_apply_token": null,
+  "tie_break_rationale": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 7,
+    "suggestion": 5
+  },
+  "pushback_verification": "All twelve verified against current state at triage by reading the cited code and baselines; none stale.",
+  "resolution_summary": {
+    "resolved": 12,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The new no-override clause is false on day one and its known limit does not name the overrides",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 15,
+      "classification": "decision_required",
+      "action": "scoped the no-override clause to steps edited under the rule; named pre-rule upstream edits and additions-section overrides (propose Step 1, bulk-archive Step 5c) as known limits",
+      "evidence": "verified against current state before the edit (scenario-map.ts lines 366-377 and 400-410; propose.ts:153; bulk-archive-change.ts:324; orbit-run-summary-emit baseline Verify fail-mode recommendations; verify-change.ts:86-91)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc06b-map-readers/design.md",
+          "orbit/changes/rc06b-map-readers/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Extend the Known limit to name the existing additions-section overrides by body and step (propose Step 1, bulk-archive Step 5c, and any others a sweep finds), measured like the upstream-portion figures."
+          },
+          {
+            "label": "B",
+            "body": "Scope the clause: 'no additions-section text overrides a step edited under this rule', leaving pre-rule overrides outside it and saying so."
+          }
+        ],
+        "chosen": "B"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Verify fail-mode recommendations still says verify itself gains no other behaviors",
+      "marker_source": "internal-review",
+      "file": "orbit/specs/orbit-run-summary-emit/spec.md",
+      "line": 432,
+      "classification": "trivial_fix",
+      "action": "added a MODIFIED block for Verify fail-mode recommendations narrowing its sentence to the emit layer; re-stamped fingerprints (3/3); task 5.1 sweep gains the phrase",
+      "evidence": "verified against current state before the edit (scenario-map.ts lines 366-377 and 400-410; propose.ts:153; bulk-archive-change.ts:324; orbit-run-summary-emit baseline Verify fail-mode recommendations; verify-change.ts:86-91)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc06b-map-readers/proposal.md",
+          "orbit/changes/rc06b-map-readers/tasks.md",
+          "orbit/changes/rc06b-map-readers/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The fate of step 6's 'If scenario appears uncovered' sub-bullets is unstated",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/verify-change.ts",
+      "line": 89,
+      "classification": "trivial_fix",
+      "action": "the implementation check keeps its own finding, retitled Scenario not handled in code, recommending implementation only; new scenario; task 1.1/1.2 cover it",
+      "evidence": "verified against current state before the edit (scenario-map.ts lines 366-377 and 400-410; propose.ts:153; bulk-archive-change.ts:324; orbit-run-summary-emit baseline Verify fail-mode recommendations; verify-change.ts:86-91)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc06b-map-readers/tasks.md",
+          "orbit/changes/rc06b-map-readers/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The check-OFF row neither orders against the orphan/malformed rows nor covers a malformed key",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-verify-modifications/spec.md",
+      "line": 10,
+      "classification": "trivial_fix",
+      "action": "OFF row: no other row applies; the note names scenario_map as absent or malformed; scenario updated",
+      "evidence": "verified against current state before the edit (scenario-map.ts lines 366-377 and 400-410; propose.ts:153; bulk-archive-change.ts:324; orbit-run-summary-emit baseline Verify fail-mode recommendations; verify-change.ts:86-91)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc06b-map-readers/design.md",
+          "orbit/changes/rc06b-map-readers/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The pairing row assumes one malformed entry per repeated title; the surface returns one per occurrence",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-verify-modifications/spec.md",
+      "line": 14,
+      "classification": "trivial_fix",
+      "action": "unkeyable entries grouped by joined triple, one finding per distinct triple naming its entry count, orphans listed under it; scenario and task 3.1 assert two entries for two occurrences",
+      "evidence": "verified against current state before the edit (scenario-map.ts lines 366-377 and 400-410; propose.ts:153; bulk-archive-change.ts:324; orbit-run-summary-emit baseline Verify fail-mode recommendations; verify-change.ts:86-91)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc06b-map-readers/tasks.md",
+          "orbit/changes/rc06b-map-readers/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The other-orphan row gives no recommendation, and its causes need different actions",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-verify-modifications/spec.md",
+      "line": 15,
+      "classification": "decision_required",
+      "action": "the other-orphan row recommends by cause: correct the tag for a renamed, removed or mistyped key; nothing for another active change's scenario; new scenario",
+      "evidence": "verified against current state before the edit (scenario-map.ts lines 366-377 and 400-410; propose.ts:153; bulk-archive-change.ts:324; orbit-run-summary-emit baseline Verify fail-mode recommendations; verify-change.ts:86-91)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc06b-map-readers/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Give the row a recommendation naming the three causes and the action for each, leaving the WARNING grade."
+          },
+          {
+            "label": "B",
+            "body": "Name the other-active-change cause as a known limit of the row (the surface resolves one change at a time) and route it to the explore for a later mechanism, keeping this change's reader unchanged."
+          }
+        ],
+        "chosen": "A"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The surface DOES carry trail paths: an observed ledger declaration's record",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-verify-modifications/spec.md",
+      "line": 74,
+      "classification": "decision_required",
+      "action": "narrowed the claim and named the observed record by pointer as an instance of the brief rule's existing residual",
+      "evidence": "verified against current state before the edit (scenario-map.ts lines 366-377 and 400-410; propose.ts:153; bulk-archive-change.ts:324; orbit-run-summary-emit baseline Verify fail-mode recommendations; verify-change.ts:86-91)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc06b-map-readers/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Narrow the sentence to what is true and name the observed-record path as an instance of the brief rule's existing bounded residual (prior-pass content arriving through what a brief legitimately names), by pointer."
+          },
+          {
+            "label": "B",
+            "body": "Have the table's declaration row list kinds without the cited record and item 0 say the reviewer does not open an observed record, then state the remaining residual."
+          }
+        ],
+        "chosen": "A"
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The table is paraphrased into the body with only its conditions pinned",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 29,
+      "classification": "trivial_fix",
+      "action": "the body carries the reader table as a checked mirror held byte-equal by a parity test; new scenario; tasks 1.1/1.2 and design D2 rewritten",
+      "evidence": "verified against current state before the edit (scenario-map.ts lines 366-377 and 400-410; propose.ts:153; bulk-archive-change.ts:324; orbit-run-summary-emit baseline Verify fail-mode recommendations; verify-change.ts:86-91)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc06b-map-readers/tasks.md",
+          "orbit/changes/rc06b-map-readers/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The Known limit's per-body figures are not reproducible under one method",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 15,
+      "classification": "trivial_fix",
+      "action": "dropped the per-body counts; named the method (diff against upstream/v1.3.1, rename normalized) and the bodies with semantic edits",
+      "evidence": "verified against current state before the edit (scenario-map.ts lines 366-377 and 400-410; propose.ts:153; bulk-archive-change.ts:324; orbit-run-summary-emit baseline Verify fail-mode recommendations; verify-change.ts:86-91)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc06b-map-readers/design.md",
+          "orbit/changes/rc06b-map-readers/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "CLAUDE.md's D14 note still says 'pristine upstream body'",
+      "marker_source": "internal-review",
+      "file": "CLAUDE.md",
+      "line": 89,
+      "classification": "trivial_fix",
+      "action": "the at-archive note gains the D14 rewording beside the capability-count move",
+      "evidence": "verified against current state before the edit (scenario-map.ts lines 366-377 and 400-410; propose.ts:153; bulk-archive-change.ts:324; orbit-run-summary-emit baseline Verify fail-mode recommendations; verify-change.ts:86-91)",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "'Exhaustive over the surface's JSON shape' omits two top-level fields",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-verify-modifications/spec.md",
+      "line": 21,
+      "classification": "trivial_fix",
+      "action": "narrowed exhaustiveness to the coverage-fact fields; change and tests named as carrying none",
+      "evidence": "verified against current state before the edit (scenario-map.ts lines 366-377 and 400-410; propose.ts:153; bulk-archive-change.ts:324; orbit-run-summary-emit baseline Verify fail-mode recommendations; verify-change.ts:86-91)",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "D2 says Pass 0 folds 'without re-grading'; the Pass 0 rule grades folded findings as its own",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 31,
+      "classification": "trivial_fix",
+      "action": "reworded D2: Pass 0 grades verify's findings as their author under its existing rule; the ladder gives orphan and malformed the same WARNING",
+      "evidence": "verified against current state before the edit (scenario-map.ts lines 366-377 and 400-410; propose.ts:153; bulk-archive-change.ts:324; orbit-run-summary-emit baseline Verify fail-mode recommendations; verify-change.ts:86-91)",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Twelve of twelve resolved (7 WARNING, 5 SUGGESTION); none stale. The three lettered forks were settled under R-crc-3 at triage (1:B, 6:A, 7:A) and ratified by Sal's \"apply all\"; the narrowed upstream rule now governs only steps edited under it, with pre-rule edits and overrides named as limits, and the reader table is a checked mirror.",
+  "iteration": 1,
+  "next_recommended": "/orbit:review --as proposal rc06b-map-readers"
+}

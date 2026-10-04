@@ -1,0 +1,12 @@
+schema: spec-driven
+created: 2026-10-04
+schema_version: 4
+architecture:
+  doc: clean-up-review-cycle
+  stage: rc06b-map-readers
+base_fingerprints:
+  orbit-conventions:
+    Generated-file disposition: sha256:9f23db4f7cfdeef991e83e9e780b9804c7fe8ecc1f113349054d94119a7c0922
+  orbit-run-summary-emit:
+    Emit-layer wraps upstream skills without modifying them: sha256:f8f16987e51a174217fce5b5ace40cb1c700dcc48e99f0bd59712cd2d5089379
+    Verify fail-mode recommendations: sha256:8ceb989da10a41d4e3a0cd8f38a9256c303b35c7fd269a12337161e99d9e8ec3

@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-04T23:02:37Z",
+  "change": "rc06b-map-readers",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Settled every thread under R-crc-3 on Sal's delegation: verify's test-tracing line is replaced in place and orbit-run-summary-emit's wrapper requirement narrowed to the emit layer (D-rc06b-1); verify reads the surface by a closed SOURCED table, OFF says not-checked with no prose fallback (D-rc06b-2); Pass 0 folds WARNING, composes no block, orbit-review carries no delta (D-rc06b-3); the rider's premise was executed and holds for the repeated-title shape only (D-rc06b-4), answered in the reader with a test pin and no surface delta (D-rc06b-5); the external prompt's item 0 reads the surface too (D-rc06b-6); two capabilities, orbit-verify-modifications ADDED (D-rc06b-7). One open question remains, Q-rc06b-1 (the post-apply ERROR stops nothing in the agent flow), with its standing recommendation to carry it to rc10 at archive.",
+  "decisions_captured": 7,
+  "open_questions_count": 1,
+  "open_questions_with_recommendation": "1 of 1",
+  "rules_total": 2,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose rc06b-map-readers — 2 live rules accounted; formalize when you are ready (or /orbit:explore rc06b-map-readers to keep refining)"
+}
