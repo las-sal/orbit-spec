@@ -52,3 +52,12 @@ schema: spec-driven
 # PR layer. Under `never` (or absent) nothing is probed and no note is emitted.
 # Example:
 #   pr: per-architecture
+
+# Scenario map (optional — orbit-scenario-map, rc06a)
+# Turns on the declaration check: `orbit validate <change>` reports every delta scenario no
+# `// @scenario <behaviour|text> <capability> :: <requirement> :: <scenario>` tag (in the files
+# these globs match) and no `orbit/scenario-ledger.yaml` entry declares — INFO until the change's
+# apply gate passes, ERROR after. Absent = off, and validate behaves exactly as before.
+# Read the map with: orbit status --change <name> --scenarios
+scenario_map:
+  tests: ['test/**/*.test.ts']

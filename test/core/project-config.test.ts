@@ -8,6 +8,7 @@ import {
   suggestSchemas,
   resolvePrMode,
   PR_MODES,
+  resolveScenarioMapConfig,
 } from '../../src/core/project-config.js';
 
 describe('project-config', () => {
@@ -686,6 +687,73 @@ rules:
       expect(config?.schema).toBe('spec-driven');
       expect(config?.context).toBe('hello');
       expect(resolvePrMode(config)).toBe('never');
+    });
+  });
+
+  describe('scenario_map key (rc06a)', () => {
+    function writeConfig(body: string): string {
+      const configDir = path.join(tempDir, 'orbit');
+      fs.mkdirSync(configDir, { recursive: true });
+      fs.writeFileSync(path.join(configDir, 'config.yaml'), body);
+      return tempDir;
+    }
+    const warnings = (): string[] => consoleWarnSpy.mock.calls.map((c) => String(c[0]));
+
+    it('absent key: OFF, silent', () => {
+      const root = writeConfig('schema: spec-driven\n');
+      expect(resolveScenarioMapConfig(root)).toEqual({ check: 'off', tests: [] });
+      expect(consoleWarnSpy).not.toHaveBeenCalled();
+    });
+
+    it('no config file at all: OFF, silent', () => {
+      expect(resolveScenarioMapConfig(tempDir)).toEqual({ check: 'off', tests: [] });
+      expect(consoleWarnSpy).not.toHaveBeenCalled();
+    });
+
+    // @scenario behaviour orbit-scenario-map :: The scenario map is opt-in by the scenario_map config key :: A configured glob list turns the check on
+    it('a valid glob list: ON, the globs returned', () => {
+      const root = writeConfig("schema: spec-driven\nscenario_map:\n  tests: ['spec/**/*.test.ts']\n");
+      expect(resolveScenarioMapConfig(root)).toEqual({ check: 'on', tests: ['spec/**/*.test.ts'] });
+      expect(consoleWarnSpy).not.toHaveBeenCalled();
+    });
+
+    it.each([
+      ['tests: []', 'scenario_map:\n  tests: []\n', 'empty'],
+      ['tests absent', 'scenario_map:\n  other: 1\n', 'no'],
+      ['tests not a list of strings', 'scenario_map:\n  tests: [1, 2]\n', 'list of strings'],
+      ['tests a scalar', "scenario_map:\n  tests: 'test/**'\n", 'list of strings'],
+    ])('%s: INERT, OFF with one warning naming the shape', (_label, body, fragment) => {
+      const root = writeConfig(`schema: spec-driven\n${body}`);
+      expect(resolveScenarioMapConfig(root)).toEqual({ check: 'off', tests: [] });
+      expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
+      expect(warnings()[0]).toContain('scenario_map');
+      expect(warnings()[0]).toContain(fragment);
+    });
+
+    // @scenario behaviour orbit-scenario-map :: The scenario map is opt-in by the scenario_map config key :: A malformed key is inert with a warning
+    it.each([
+      ['a scalar', 'scenario_map: true\n', 'scalar'],
+      ['a list', 'scenario_map:\n  - test/**\n', 'list'],
+      ['null', 'scenario_map:\n', 'null'],
+    ])('a value that is %s: INERT, OFF with one warning naming the shape', (_label, body, shape) => {
+      const root = writeConfig(`schema: spec-driven\n${body}`);
+      expect(resolveScenarioMapConfig(root)).toEqual({ check: 'off', tests: [] });
+      expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
+      expect(warnings()[0]).toContain('scenario_map');
+      expect(warnings()[0]).toContain(shape);
+    });
+
+    it('an unknown sub-key beside a valid tests: ON, one warning naming it', () => {
+      const root = writeConfig("schema: spec-driven\nscenario_map:\n  tests: ['test/**/*.test.ts']\n  ledger: x\n");
+      expect(resolveScenarioMapConfig(root)).toEqual({ check: 'on', tests: ['test/**/*.test.ts'] });
+      expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
+      expect(warnings()[0]).toContain('ledger');
+    });
+
+    it('reads ONLY its own key: a malformed pr: prints nothing (design D6)', () => {
+      const root = writeConfig('schema: spec-driven\npr: sometimes\nrules: 3\n');
+      expect(resolveScenarioMapConfig(root)).toEqual({ check: 'off', tests: [] });
+      expect(consoleWarnSpy).not.toHaveBeenCalled();
     });
   });
 });

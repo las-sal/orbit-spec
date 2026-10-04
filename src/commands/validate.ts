@@ -159,6 +159,13 @@ export class ValidateCommand {
     }
     if (report.valid) {
       console.log(`${type === 'change' ? 'Change' : 'Specification'} '${id}' is valid`);
+      // rc06a (design D4): the scenario map's INFO lines print beneath a valid report — an INFO
+      // level nobody sees would be a level in name only. A report with none prints as before.
+      for (const issue of report.issues) {
+        if (issue.path === 'scenario-map' && issue.level === 'INFO') {
+          console.log(`ℹ [INFO] ${issue.path}: ${issue.message}`);
+        }
+      }
     } else {
       console.error(`${type === 'change' ? 'Change' : 'Specification'} '${id}' has issues`);
       for (const issue of report.issues) {

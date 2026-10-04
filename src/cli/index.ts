@@ -492,6 +492,10 @@ program
     '--boot',
     'Render the cold-start boot sequence — ordered pointers into existing artifacts (rides --change; composes with --json)'
   )
+  .option(
+    '--scenarios',
+    'Render the scenario map — which test or ledger entry declares each delta scenario (rides --change; composes with --json)'
+  )
   .option('--json', 'Output as JSON')
   .action(async (options: StatusOptions) => {
     try {

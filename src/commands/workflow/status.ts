@@ -6,6 +6,7 @@
 
 import ora from 'ora';
 import chalk from 'chalk';
+import path from 'path';
 import {
   loadChangeContext,
   formatChangeStatus,
@@ -46,6 +47,8 @@ export interface StatusOptions {
   report?: string | boolean;
   /** D5 `--boot`: the cold-start boot render (rides --change; composes with --json). */
   boot?: boolean;
+  /** rc06a `--scenarios`: the engine-computed scenario map (rides --change; composes with --json). */
+  scenarios?: boolean;
 }
 
 // -----------------------------------------------------------------------------
@@ -57,6 +60,33 @@ export async function statusCommand(options: StatusOptions): Promise<void> {
 
   try {
     const projectRoot = process.cwd();
+
+    // rc06a scenario map — computed at read time from the tags, the ledger and the specs with
+    // the change's deltas applied; stored nowhere (`orbit-scenario-map`). READ-ONLY.
+    if (options.scenarios) {
+      const isReport = options.report !== undefined && options.report !== false;
+      if (isReport || options.boot) {
+        throw new Error(
+          `--scenarios cannot be combined with ${isReport ? '--report' : '--boot'}: each is its own render of the change`
+        );
+      }
+      if (!options.change) {
+        throw new Error('--scenarios requires --change <name>: the scenario map is change-scoped');
+      }
+      const mapChange = await validateChangeExists(options.change, projectRoot);
+      const { resolveScenarioMapConfig } = await import('../../core/project-config.js');
+      const { computeScenarioMap, renderScenarioMap } = await import('../../core/scenario-map.js');
+      spinner?.stop();
+      const map = computeScenarioMap(projectRoot, path.join(projectRoot, 'orbit', 'changes', mapChange), {
+        config: resolveScenarioMapConfig(projectRoot),
+      });
+      if (options.json) {
+        console.log(JSON.stringify(map, null, 2));
+        return;
+      }
+      process.stdout.write(renderScenarioMap(map));
+      return;
+    }
 
     // D4 report render — the trail gateway's deepest zoom (rides --change only).
     // READ-ONLY: raw artifact resolution + normalize + pure render; no file is

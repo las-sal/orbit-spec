@@ -13,9 +13,19 @@ import {
 import { parseDeltaSpec, normalizeRequirementName } from '../parsers/requirement-blocks.js';
 import { findMainSpecStructureIssues } from '../parsers/spec-structure.js';
 import { FileSystemUtils } from '../../utils/file-system.js';
+import { parse as parseYamlSync } from 'yaml';
+import { resolveScenarioMapConfig, type ScenarioMapConfig } from '../project-config.js';
+import { computeScenarioMap, scanDeclarations, joinKey, type ScenarioScan } from '../scenario-map.js';
+import { loadChangeContext, formatChangeStatus } from '../artifact-graph/instruction-loader.js';
 
 export class Validator {
   private strictMode: boolean;
+  /**
+   * rc06a: the scenario-map config and declaration scan, taken ONCE per Validator — one
+   * command invocation — so a bulk `orbit validate` reads the config, scans the test files and
+   * raises its warnings once, then reuses them for every change (design D6).
+   */
+  private scenarioRun?: { root: string; config: ScenarioMapConfig; scan?: ScenarioScan };
 
   constructor(strictMode: boolean = false) {
     this.strictMode = strictMode;
@@ -271,8 +281,101 @@ export class Validator {
     }
 
     issues.push(...(await this.validateArchitectureCitation(changeDir)));
+    issues.push(...this.validateScenarioDeclarations(changeDir));
 
     return this.createReport(issues);
+  }
+
+  /**
+   * rc06a declaration check (`orbit-scenario-map`). With the check ON, every undeclared delta
+   * scenario is reported at the level the change's `apply` gate assigns — INFO until it passes,
+   * ERROR after — and every UNKEYABLE delta title at ERROR whatever the gate's state. Validate
+   * reports those two and nothing else from the map (design D5): ORPHAN and MALFORMED live on the
+   * `--scenarios` surface. With the check OFF it contributes nothing, so a repo without the key
+   * gets a byte-identical report.
+   */
+  private validateScenarioDeclarations(changeDir: string): ValidationIssue[] {
+    const root = this.projectRootFor(changeDir);
+    if (!root) return []; // not an orbit/changes layout — nothing to resolve against
+    if (!this.scenarioRun || this.scenarioRun.root !== root) {
+      this.scenarioRun = { root, config: resolveScenarioMapConfig(root) };
+    }
+    const run = this.scenarioRun;
+    if (run.config.check !== 'on') return [];
+    if (!run.scan) run.scan = scanDeclarations(root, run.config.tests, { warnOnZeroMatch: true });
+
+    const map = computeScenarioMap(root, changeDir, { config: run.config, scan: run.scan });
+    const issues: ValidationIssue[] = [];
+    for (const m of map.malformed) {
+      if (m.source !== 'spec') continue;
+      issues.push({
+        level: 'ERROR',
+        path: 'scenario-map',
+        message: `unkeyable delta scenario in ${m.capability}: requirement "${m.requirement}", scenario "${m.scenario}" — a title containing " :: " cannot be keyed by any tag or ledger entry; rename it`,
+      });
+    }
+    const undeclared = map.scenarios.filter((s) => s.uncovered);
+    if (undeclared.length === 0) return issues;
+    const level = this.scenarioLevel(root, changeDir);
+    for (const s of undeclared) {
+      issues.push({
+        level,
+        path: 'scenario-map',
+        message: `undeclared delta scenario: ${joinKey(s.capability, s.requirement, s.scenario)} (no @scenario tag or ledger entry; see orbit status --change ${map.change} --scenarios)`,
+      });
+    }
+    return issues;
+  }
+
+  /**
+   * The level for an undeclared, keyable delta scenario, read from the SAME gate computation
+   * `orbit status --change` renders (design D4), so validate and status cannot disagree about
+   * whether apply passed. No `apply` row, or a context that cannot load, is INFO — never a throw.
+   */
+  private scenarioLevel(root: string, changeDir: string): ValidationLevel {
+    try {
+      // The metadata's schema is passed EXPLICITLY: the default resolution silently falls back to
+      // the project's schema when the named one does not resolve, which would grade an unknown
+      // schema's change against a gate it does not declare. Explicit, an unknown schema throws,
+      // and a context that cannot load reads INFO (the requirement's last row).
+      const schema = this.metadataSchema(changeDir);
+      const status = formatChangeStatus(loadChangeContext(root, path.basename(changeDir), schema));
+      const apply = status.gates.find((g) => g.id === 'apply');
+      return apply?.state === 'passed' ? 'ERROR' : 'INFO';
+    } catch {
+      return 'INFO';
+    }
+  }
+
+  /** The `schema:` string from the change's metadata; undefined when absent; throws when unreadable. */
+  private metadataSchema(changeDir: string): string | undefined {
+    const metaPath = path.join(changeDir, '.openspec.yaml');
+    let raw: string;
+    try {
+      raw = readFileSync(metaPath, 'utf-8');
+    } catch {
+      return undefined; // no metadata: the default resolution applies
+    }
+    const parsed = parseYamlSync(raw) as { schema?: unknown } | null;
+    return typeof parsed?.schema === 'string' ? parsed.schema : undefined;
+  }
+
+  /** `<root>/orbit/changes/<name>` or `<root>/orbit/changes/archive/<name>`; null otherwise. */
+  private projectRootFor(changeDir: string): string | null {
+    const abs = path.resolve(changeDir);
+    const parent = path.dirname(abs);
+    if (path.basename(parent) === 'changes' && path.basename(path.dirname(parent)) === 'orbit') {
+      return path.dirname(path.dirname(parent));
+    }
+    const grand = path.dirname(parent);
+    if (
+      path.basename(parent) === 'archive' &&
+      path.basename(grand) === 'changes' &&
+      path.basename(path.dirname(grand)) === 'orbit'
+    ) {
+      return path.dirname(path.dirname(grand));
+    }
+    return null;
   }
 
   /**

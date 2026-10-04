@@ -53,6 +53,14 @@ export const ProjectConfigSchema = z.object({
     .enum(['never', 'per-proposal', 'per-architecture'])
     .optional()
     .describe('PR lifecycle regime: never | per-proposal | per-architecture'),
+
+  // Optional: the scenario map (rc06a, `orbit-scenario-map`) — opt-in by a glob list naming the
+  // scanned test files. Typed here for documentation only: `readProjectConfig` never parses it,
+  // because the key is read ON ITS OWN by `resolveScenarioMapConfig` (design D6).
+  scenario_map: z
+    .object({ tests: z.array(z.string()).min(1) })
+    .optional()
+    .describe('Scenario map: { tests: [<glob>, ...] } turns the declaration check on'),
 });
 
 export type ProjectConfig = z.infer<typeof ProjectConfigSchema>;
@@ -70,6 +78,66 @@ export type PrMode = (typeof PR_MODES)[number];
  */
 export function resolvePrMode(config: ProjectConfig | null): PrMode {
   return config?.pr ?? 'never';
+}
+
+/** The resolved scenario-map regime (per `orbit-scenario-map`'s opt-in requirement). */
+export interface ScenarioMapConfig {
+  check: 'on' | 'off';
+  /** The configured globs when ON; empty when OFF (the surface then scans its default). */
+  tests: string[];
+}
+
+/**
+ * Resolve the `scenario_map` key, reading ONLY that key from `orbit/config.yaml` (design D6).
+ *
+ * Deliberately NOT built on `readProjectConfig`, which warns on every malformed field: validate
+ * never read the config before this capability, and must not start printing `pr:` or `rules:`
+ * warnings. Absent key, absent file and an unparseable file are silent OFF (the other config
+ * readers own those warnings); every PRESENT-but-inert shape is OFF with exactly one warning
+ * naming the shape, following the `pr:` key's inert rule.
+ */
+export function resolveScenarioMapConfig(projectRoot: string): ScenarioMapConfig {
+  const off: ScenarioMapConfig = { check: 'off', tests: [] };
+  let configPath = path.join(projectRoot, 'orbit', 'config.yaml');
+  if (!existsSync(configPath)) {
+    configPath = path.join(projectRoot, 'orbit', 'config.yml');
+    if (!existsSync(configPath)) return off;
+  }
+  let raw: unknown;
+  try {
+    raw = parseYaml(readFileSync(configPath, 'utf-8'));
+  } catch {
+    return off;
+  }
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return off;
+  if (!Object.prototype.hasOwnProperty.call(raw, 'scenario_map')) return off;
+  const value = (raw as Record<string, unknown>).scenario_map;
+
+  const inert = (shape: string): ScenarioMapConfig => {
+    console.warn(
+      `Invalid 'scenario_map' field in config: ${shape} (expected { tests: [<glob>, ...] }); the scenario-map check is off`
+    );
+    return off;
+  };
+  if (value === null || value === undefined) return inert('got null');
+  if (Array.isArray(value)) return inert('got a list');
+  if (typeof value !== 'object') return inert(`got a scalar (${String(value)})`);
+
+  const map = value as Record<string, unknown>;
+  if (!Object.prototype.hasOwnProperty.call(map, 'tests')) return inert("no 'tests' key");
+  const tests = map.tests;
+  if (!Array.isArray(tests)) return inert("'tests' is not a list of strings");
+  if (tests.length === 0) return inert("'tests' is an empty list");
+  if (!tests.every((t) => typeof t === 'string' && t.length > 0)) {
+    return inert("'tests' is not a list of strings");
+  }
+  const unknown = Object.keys(map).filter((k) => k !== 'tests');
+  if (unknown.length > 0) {
+    console.warn(
+      `Unknown sub-key${unknown.length > 1 ? 's' : ''} in 'scenario_map': ${unknown.map((k) => `'${k}'`).join(', ')} (ignored)`
+    );
+  }
+  return { check: 'on', tests: tests as string[] };
 }
 
 const MAX_CONTEXT_SIZE = 50 * 1024; // 50KB hard limit
