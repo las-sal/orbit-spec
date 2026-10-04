@@ -53,8 +53,13 @@ trail and invites the gate to read it. VOCABULARY: "genre" already means interna
 already say "pass genres", and moving a ruling's vocabulary to dodge a renderer field is the wrong
 trade — so every use is "pass genre", the owner names the render axis by pointer, and rc03c stores
 `pass_genre`. The in-context body learns its genre from ONE directory fact the owner names — the
-token-ordered `address-reviews-*.json` listing and each record's `source_path`, read as a listing,
-never as findings — which is why that read is not a "trail pointer" under D2.
+token-ordered listing of the trail's pass AND walk records with their `reviewer_class` and `source_path`
+fields (walk 2: the walk listing alone could not supply the bound's latest-independent-pass token — the
+external's constructed case, a fresh pass landing between an old walk and the in-context pass, decides
+differently with the same walk listing) — a bounded METADATA PROBE that opens no findings, which is why it
+is not a "trail pointer" under D2. The engine surface that would print the qualifying-walk fact outright
+is Q-crc-24's territory and a fourth capability; named here as the better home once rc03c ships the
+function, not built.
 
 ### D2. A REVIEW-genre brief carries no findings and no pointer at the trail; the rule is owned by the conventions requirement with its residual stated there (explore D-rc03-3, D-rc03-10)
 
@@ -111,7 +116,7 @@ The proposing AI's reading of the file; no engine record.
 
 | rule | closure / state | owner's state | destination (shape) |
 |---|---|---|---|
-| D-rc03-2 | DERIVED | live rule | `orbit-conventions` › `Review mode decision framework` — the pass-genre table as a FENCED normative TABLE (six rows; the VERIFICATION row bounded at walk 1) plus a SCENARIO SET (one scenario per row; the two REVIEW-with-no-readable-walk rows share one, by the cell's own text); the `Closure:` justification is the sentence "computed from three trail facts … never declared" |
+| D-rc03-2 | DERIVED | live rule | `orbit-conventions` › `Review mode decision framework` — the pass-genre table as a FENCED normative TABLE (six rows; the VERIFICATION row bounded at walk 1) plus a SCENARIO SET (one scenario per row; the two REVIEW-with-no-qualifying-walk rows share one, by the cell's own text); the `Closure:` justification is the sentence "computed from three trail facts … never declared" |
 | D-rc03-3 | BOUNDED | live rule | `orbit-conventions` › `Review mode decision framework` — the brief rule, with `Residual kind:` and `Residual method:` VERBATIM as the named limit (the OWNER); `orbit-review` › ADDED `Review-genre passes read the artifacts and the code, never the trail's findings` and `orbit-review-external` › `Cycle context populated from prior runs` / `Prompt written to versioned file…` / `Recommended-session note in chat output` carry the mechanism and point; ONE Risks entry below names the rule and points at the owner |
 | D-rc03-4 | — | `Disposition: assigned rc03c-verification-record` | not carried — permitted history; its Mechanism entry travels with the file for rc03c's exploration to read |
 | D-rc03-1 | — | `Kind: fact` | not carried — the charter re-measurement; Context above |
@@ -133,7 +138,7 @@ lines were grepped in `specs/orbit-conventions/spec.md` before the move: both pr
 
 ## Touchpoints
 
-- `src/core/templates/workflows/review.ts` — the external-handoff reference (Step 5 gathering → iteration only; Step 6 iteration-3+ phrasing, trade-off sentence deleted; the worked example's Recommended-session line); the body's pushback epitome bullet (current-state verification, no prior-run comparison); a NEW "Dispatching a fresh pass" step carrying the brief by pointer; the prompt template (`.orbit-runs/` bullet removed, `## Cycle context` reduced to the iteration line); mode-sections' system-mode read list (trail-excluding pathspec); the body's Step 4 read list (same pathspec) and Step 5 (scoped to VERIFICATION genre); a genre paragraph mirroring the conventions table; the `--reviewer`/`--fresh` rows' class words.
+- `src/core/templates/workflows/review.ts` — the external-handoff reference (Step 5 gathering → iteration only; Step 6 iteration-3+ phrasing, trade-off sentence deleted; the worked example's Recommended-session line); the body's pushback epitome bullet (current-state verification, no prior-run comparison); a NEW "Dispatching a fresh pass" step carrying the brief by pointer; the prompt template (`.orbit-runs/` bullet removed, `## Cycle context` reduced to the iteration line); mode-sections' system-mode read list (trail-excluding pathspec); the body's Step 4 read list (same pathspec) and Step 5 (scoped to VERIFICATION genre); the fenced pass-genre table mirrored from the owner under a "Pass genre" heading; the `--reviewer`/`--fresh` rows' class words.
 - `test/core/templates/orbit-content-fidelity.test.ts` — expectations for Step 5/6, the template, the pathspec, the pass-genre fence.
 - `test/core/templates/*.test.ts` — NEW: the review-genre brief grep over the generated review skill under the PHRASE and REGION rules of `orbit-review`'s ADDED requirement; NEW or extended: the pass-genre fence parity pin against `orbit/specs/orbit-conventions/spec.md` through `ownerText` + `fencedProduction`; the untouched-modules hash pin over `src/core/artifact-graph/`, `src/core/emit-composition.ts`, `src/core/report-render.ts`, `schemas/`.
 - `orbit/architecture/clean-up-review-cycle.md` — the rc03b charter paragraph (slot-arithmetic sentence and exit (2)'s phrase list), amended at walk 1 by cascade, dated.
@@ -157,6 +162,10 @@ lines were grepped in `specs/orbit-conventions/spec.md` before the move: both pr
 - [The architecture body's iteration note is a prior-run read in a REVIEW-genre mode] → the one
   exemption, stated once in the owner: no pair and no gate exist in architecture mode, and no render
   surface computes the note; retiring it would remove the mode's only iteration signal.
+- [The REGION rule must let the prompt keep its three required output paths] → the rule exempts the
+  prompt template's output sections by SECTION (`## Output format — write to:`, `## After completing the
+  review`, and the reference's own header line) — decidable, and task 1.1 plants a read pointer and
+  asserts the three output paths pass (walk 2, the external's first finding).
 - [The pass-genre table has no engine reader until rc03c] → by design of the split: the table is a spec
   statement the bodies point at; rc03c's function is held to it by a test when it ships. Until then the
   word is a reader's, as every rc-stage's "in-context confirm" already was.

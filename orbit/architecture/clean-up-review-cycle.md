@@ -1967,8 +1967,9 @@ Complete: [ ]
 
 Declared 2026-10-04 (Sal) from the rc03 exploration's split (D-rc03-8). Charter: a pass's GENRE —
 REVIEW or VERIFICATION — is COMPUTED from reviewer class, mode and trail position and never declared:
-the independent classes are reviews; an in-context pass that follows a READABLE walk of its mode on the
-trail is a verification; every other in-context pass (none before it, only mode-less marker-scan walks
+the independent classes are reviews; an in-context pass that follows a QUALIFYING walk of its mode on the
+trail (one whose source resolves to the mode, after the latest independent pass of the mode — "qualifying"
+replaced "readable" at walk 2 of the proposal cadence, 2026-10-04) is a verification; every other in-context pass (none before it, only mode-less marker-scan walks
 before it, or architecture mode) is a review — and the cadence's slot arithmetic is unchanged by the genre
 (corrected 2026-10-04 at walk 1 of the proposal cadence: an earlier wording said such a pass is "not counted"
 toward the `in-context` slot, which is false when it follows the pair and precedes the walk; a VERIFICATION's

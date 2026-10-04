@@ -17,10 +17,10 @@ carry nothing — which dissolves the channel problem on every launch order inst
 ## What Changes
 
 - **A genre table, stated once.** A pass's genre — REVIEW or VERIFICATION — is COMPUTED from three
-  trail facts (reviewer class, mode, whether a readable walk record of its mode precedes it), never
-  declared: `fresh`/`external` are REVIEW; an `in-context` pass after a readable walk of its mode is
-  VERIFICATION — a qualifying walk being one with a token after the latest independent pass of the
-  mode and before the pass; every other `in-context` pass (none before it, only mode-less walks,
+  trail facts (reviewer class, mode, whether a QUALIFYING walk of its mode precedes it), never
+  declared: `fresh`/`external` are REVIEW; an `in-context` pass after a qualifying walk of its mode is
+  VERIFICATION — a qualifying walk being one whose source resolves to the mode, with a token after the
+  latest independent pass of the mode and before the pass; every other `in-context` pass (none before it, only mode-less walks,
   architecture mode) is REVIEW. "Pass genre" is qualified throughout: "genre" already means
   internal-versus-external in the renderer and two baseline requirements, and the owner says so by
   pointer rather than renaming a ruling's word. The table lives in `orbit-conventions`' `Review mode decision framework`, whose
@@ -28,7 +28,8 @@ carry nothing — which dissolves the channel problem on every launch order inst
   a separate session) and whose per-change "which class should I run" scenarios are replaced — the
   schema's cadence says which class runs next (explore D-rc03-2). The pass genre is a record and a header
   word; the gate reads nothing of it (R-crc-13). The in-context body learns it from one directory
-  fact — the token-ordered walk listing and each record's `source_path`, never findings. No record FIELD is defined by this change; the
+  fact — the token-ordered listing of the trail's pass and walk records with their `reviewer_class` and
+  `source_path` fields, metadata that supplies the bound's latest-independent-pass token; never findings. No record FIELD is defined by this change; the
   engine function that computes the genre and the verification record are the second child's.
 - **A REVIEW-genre brief carries no findings and no pointer at the trail.** Owned by the same
   conventions requirement, with its BOUNDED residual stated there once. The external prompt's Cycle
@@ -53,8 +54,8 @@ carry nothing — which dissolves the channel problem on every launch order inst
 **Size, measured at exploration (D-rc03-8).** THREE capabilities — at R-crc-1's ceiling, not over it:
 `orbit-conventions` (1 MODIFIED), `orbit-review` (1 ADDED, 1 MODIFIED), `orbit-review-external`
 (3 MODIFIED — one of them the 186-line prompt requirement, edited in six lines, carried whole because a
-MODIFIED block is the entire requirement). Six requirements, no engine code, one new generated-surface
-test. The parent stage was split preventively under R-crc-9 because its live work touched five
+MODIFIED block is the entire requirement). Six requirements, no engine code, three new test instruments (the brief grep, the fence parity
+pin, the hash pin). The parent stage was split preventively under R-crc-9 because its live work touched five
 capabilities; the verification record (`orbit-emit-composition`, `orbit-report-rendering`,
 `orbit-review`) is `rc03c-verification-record`, which depends on this change for the table.
 
@@ -71,8 +72,8 @@ capabilities; the verification record (`orbit-emit-composition`, `orbit-report-r
   BOUNDED residual stated once, the per-change class-choice scenarios replaced; the two gate-surfaced
   scenarios kept.
 - `orbit-review`: ADDED `Review-genre passes read the artifacts and the code, never the trail's
-  findings` (the fresh brief's contents, the skipped prior-run step, the trail-excluding diff pathspec,
-  the generated-surface grep test); MODIFIED `` `--fresh` runs pass work in a clean execution context ``
+  findings` (the fresh-dispatch step and its brief by pointer, the skipped prior-run step, the
+  trail-excluding diff pathspec, the in-context metadata probe, the generated-surface grep test); MODIFIED `` `--fresh` runs pass work in a clean execution context ``
   (the parenthetical on the right noun; a fresh pass is REVIEW genre by pointer).
 - `orbit-review-external`: `Cycle context populated from prior runs` (iteration number only; no finding
   list; no trail pointer — by pointer to the owner); `Prompt written to versioned file with chat

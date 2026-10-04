@@ -12,7 +12,7 @@ The system SHALL write the full handoff prompt to a versioned, committed file in
 #### Scenario: Prompt file contents
 
 - **WHEN** the file is written
-- **THEN** it contains the full self-contained prompt: role description, repo URL or path, project context file pointers (`CLAUDE.md`, `orbit/project.md`, `*_convention.md`, `orbit/lenses/`) — and NO pointer at `.orbit-runs/` —, cycle context (the iteration number ONLY; per `Cycle context populated from prior runs`, which points at `orbit-conventions`' review-genre brief rule), mode-specific "what to read" and "what to look for" sections, the one-paragraph severity ladder (per `Output format specification in prompt`), output format specification — whose block carries the REQUIRED `## Direction` section between `## Blocks` and `## Notes` (per the same requirement)
+- **THEN** it contains the full self-contained prompt: role description, repo URL or path, project context file pointers (`CLAUDE.md`, `orbit/project.md`, `*_convention.md`, `orbit/lenses/`) — and NO pointer at `.orbit-runs/` for the reviewer to READ (the output path and the commit line it is told to write are destinations, not reads) —, cycle context (the iteration number ONLY; per `Cycle context populated from prior runs`, which points at `orbit-conventions`' review-genre brief rule), mode-specific "what to read" and "what to look for" sections, the one-paragraph severity ladder (per `Output format specification in prompt`), output format specification — whose block carries the REQUIRED `## Direction` section between `## Blocks` and `## Notes` (per the same requirement)
 
 #### Scenario: Chat invocation snippet
 

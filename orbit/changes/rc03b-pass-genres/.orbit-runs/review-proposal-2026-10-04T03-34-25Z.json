@@ -1,0 +1,89 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-04T03:34:25Z",
+  "change": "rc03b-pass-genres",
+  "kind": "editorial",
+  "model": null,
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "fresh": false,
+    "parallel": false,
+    "strict": false,
+    "mark": false,
+    "focus": null
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "title": "The owner's brief rule still forbids every `.orbit-runs/` path, while walk 2's REGION rule permits the prompt's three required output paths",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 28,
+      "description": "Walk 2 fixed the GREP rule in `orbit-review`'s ADDED requirement — the prompt template's `## Output format — write to:` and `## After completing the review` sections and its header line are output destinations, never hits — but the OWNER's statement of the rule (the brief paragraph: 'names … NO path under `.orbit-runs/`') and its scenario 'A review-genre brief is checked for what it carries' ('the brief names no … `.orbit-runs/` path') were not qualified. Every external prompt must name its findings output path and its `git add` line (the review-external delta requires both at lines 79 and 149), so the owner as written is violated by every conforming prompt, and the mechanism built to honour the owner now permits what the owner forbids — two statements of one rule, disagreeing (R-crc-14). Introduced by walk 2's partial cascade.",
+      "recommendation": "Qualify the owner once: 'names NO path under `.orbit-runs/` as something to READ — the destinations a brief tells the reviewer to WRITE to (the findings file and its commit line) are not reads and are exempt'; the scenario's THEN says 'no `.orbit-runs/` path to read' and points at `orbit-review`'s grep scenario for how the output sections are told apart. Cascade the same qualifier to `orbit-review-external`'s `Prompt file contents` scenario ('NO pointer at `.orbit-runs/` to read')."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "Four stale words survive the two walks' sweeps in design.md and proposal.md",
+      "file": "design.md",
+      "line": 117,
+      "description": "The Mechanism → artifacts row for D-rc03-2 says 'the two REVIEW-with-no-readable-walk rows' (walk 2 replaced 'readable' with 'qualifying'); Touchpoints' first entry says 'a genre paragraph mirroring the conventions table' (walk 1 made it a fenced mirror); proposal.md's Capabilities bullet for `orbit-review` says the ADDED requirement covers 'the fresh brief's contents' (walk 1 moved the contents list to the owner; the requirement now names the dispatch step); and the size paragraph says 'one new generated-surface test' while Impact and tasks 1.1/1.2/1.4 name three instruments.",
+      "recommendation": "Replace the four phrases: 'no-qualifying-walk rows'; 'the fenced pass-genre table mirrored from the owner'; 'the fresh-dispatch step and its brief by pointer'; 'three new test instruments (the brief grep, the fence parity pin, the hash pin)'."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "title": "The `--fresh` requirement points at the ADDED requirement positionally ('below'), a word the archive sync will not honour",
+      "file": "specs/orbit-review/spec.md",
+      "line": 37,
+      "description": "The MODIFIED block ends 'the review-genre read rule below says how'. At archive the ADDED requirement is appended to the baseline wherever the sync places it, so 'below' is a claim about position the merged spec may falsify.",
+      "recommendation": "Name it: 'the review-genre read rule (`Review-genre passes read the artifacts and the code, never the trail's findings`) says how'."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "Task 2.6 restates the owner's positive content list that walk 1 reduced to one statement",
+      "file": "tasks.md",
+      "line": 15,
+      "description": "Walk 1 (finding 10) moved the brief's positive list — artifacts, baseline specs, lens files, system mode's apply commit range — into the owner alone and had every other site point. Task 2.6 carries the list again in parentheses, so the implementer has two statements to keep aligned.",
+      "recommendation": "Task 2.6 reads 'hand it the brief — what `orbit-conventions`' review-genre brief rule lists, and nothing from the trail' and names no items."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "By this change's own table this pass is VERIFICATION genre: in-context, with a qualifying walk of proposal mode (address-reviews-2026-10-04T03-31-28Z) after the latest independent pass (external-proposal-2026-10-04T03-23-12Z). So it was run that way first — every resolution in the two walk logs checked against the artifact it names (nineteen: fourteen from the fresh pass's walk, five from the external's), all landed — and then the nine passes were read over the walks' ADDITIONS, where new defects live. One regression came in with walk 2: fixing the REGION grep rule in the orbit-review delta left the owner's own sentence and scenario forbidding exactly the output paths the rule now permits, so the stated-once rule is stated twice and the two disagree — the pointer-repair cascade stopping one artifact short, the same shape rc16's confirm found. The rest is residue of vocabulary moves (readable → qualifying; paragraph → fence; the content list moving to the owner) at sites the sweeps did not reach, and one positional word in a MODIFIED block. Both independent passes converged on the same thesis from different angles — the fresh pass asked for the rules, the external found the rules' defects — and the halves disagreed on direction (forward against hold), which the two walks reconciled by repair. Probing was by reading each resolution's target and grepping the change for the old words; validate --strict, fingerprints and the explore parse all stand.",
+  "passes_run": [
+    "1 Structure & Delta Integrity",
+    "2 Internal Coherence",
+    "3 Cross-Doc Coherence",
+    "4 Archive Consistency",
+    "5 Codegen Readiness",
+    "6 Gap Hunt",
+    "7 Drift Hunt",
+    "8 Inline Review Marker Residue",
+    "9 Pre-Handoff Sweep"
+  ],
+  "passes_skipped": [],
+  "final_assessment": "0 critical, 1 warning, 3 suggestion.",
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc03b-pass-genres --from-file orbit/changes/rc03b-pass-genres/.orbit-runs/review-proposal-2026-10-04T03-34-25Z.json"
+}
