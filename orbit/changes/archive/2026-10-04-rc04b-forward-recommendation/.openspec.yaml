@@ -1,6 +1,9 @@
 schema: spec-driven
 created: 2026-10-03
 schema_version: 4
+architecture:
+  doc: clean-up-review-cycle
+  stage: rc04b-forward-recommendation
 base_fingerprints:
   orbit-conventions:
     External-review findings markdown format: sha256:aaa66a687e6846be1286ec2cc283e898d06c61e655f08efd5cd5b2c72db8e7b5
@@ -10,11 +13,9 @@ base_fingerprints:
     Report grammar — the frame sandwiches the commentary: sha256:43e731ee289e69ead3d7a6acbeb564acfc03c50b817147f539ff2f3ccdb59261
     Strict input validation — fail loud, no partial render: sha256:c9fbd4c2d5e41f9843056a2e262172802b6d2f10960eb04d2cf005b46dfaea38
     One grammar for internal and external passes: sha256:753405bb4e0f0aafbf341d8dd0b65239c1ecff571c4294b00cdb5e7d758313e8
+    Commentary is a first-class quarantined slot: sha256:6c1536fc642b5fc97c8fbcff432eb5109adc965c4f45c7b1aa7898cd1b736843
   orbit-review:
     Internal run summary persisted per mode: sha256:8771eadbaba54d2bcf277bc5861bf417b915bd3276a2c63a6582550c16065f27
   orbit-review-external:
     Output format specification in prompt: sha256:34025155d8780cd31b307abeac895af79119b4c0f8a78699dc04d62ee52d52aa
     Prompt written to versioned file with chat invocation snippet: sha256:aea97e6bc5940e6d2ddb0518f97048f7332ddd521767795b545cd1d1360b9e11
-architecture:
-  doc: clean-up-review-cycle
-  stage: rc04b-forward-recommendation

@@ -3,6 +3,7 @@ import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import { composeAndWriteEmit, EmitError } from '../../src/core/emit-composition.js';
+import { normalizeInternalPass } from '../../src/core/report-render.js';
 import { loadChangeContext, formatChangeStatus } from '../../src/core/artifact-graph/instruction-loader.js';
 
 let root: string;
@@ -1715,6 +1716,13 @@ describe('rc04b: the review payload carries direction — owed by the independen
     }
     expect(listRuns('orbit/changes/foo/.orbit-runs')).toEqual([]);
     expect(listRuns('orbit/architecture/.orbit-runs')).toEqual([]);
+  });
+
+  it('extra keys inside direction are CARRIED, never read — written verbatim, absent from the normalized render shape (system blind pair, fresh S3; declared in the ADDED requirement)', () => {
+    makeChange('foo');
+    const r = composeAndWriteEmit('review', { change: 'foo' }, validReviewPayload({ reviewer_class: 'fresh', direction: { ...direction, extra: 1 } }), { projectRoot: root });
+    expect((r.emit as any).direction).toEqual({ ...direction, extra: 1 });
+    expect(normalizeInternalPass(r.path, JSON.parse(fs.readFileSync(r.path, 'utf-8'))).direction).toEqual(direction);
   });
 
   it('direction is refused on a command whose table does not name it (the key check is per command)', () => {

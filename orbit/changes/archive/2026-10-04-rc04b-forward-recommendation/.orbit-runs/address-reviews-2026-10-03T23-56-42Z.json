@@ -1,0 +1,169 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-03T23:56:42Z",
+  "change": "rc04b-forward-recommendation",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc04b-forward-recommendation/.orbit-runs/review-system-2026-10-03T23-44-04Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-03T23-44-04Z",
+  "latest_apply_token": "2026-10-03T23-27-39Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 5
+  },
+  "pushback_verification": "6 of 6 verified against the current tree before triage (line 1113 grep; baseline line 115 read; placeholder at review.ts:661 and the delta fence at :159; the gate and normalizer read two keys; apply-state.ts:155; report-render.ts:570); 0 stale — walk 1's two fixes overlap none of these in location, and the one shared pattern (R-crc-14) is fixed here on its own evidence; 0 CRITICAL",
+  "resolution_summary": {
+    "resolved": 4,
+    "stale_suppressed": 0,
+    "deferred": 2,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The independent-class predicate is restated 500 lines below the write gate that exports it to avoid exactly that",
+      "file": "src/core/emit-composition.ts",
+      "line": 1113,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Verified at emit-composition.ts:1113 (`pp.reviewerClass === 'fresh' || pp.reviewerClass === 'external'` in rc04c's `judgementOrderingCheck`, with `isIndependent` imported at line 7 and called only at 608). Replaced with `isIndependent(pp.reviewerClass)` with a comment naming the finding. The same R-crc-14 disease walk 1 fixed in the schema field note, at a different site — fixed on its own evidence, not marked stale against log 1. Sweep: `grep -rn \"reviewerClass === 'fresh'\" src/` now hits only gates.ts's single-class pair-membership checks (one class each, not the two-class set).",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/emit-composition.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "`Commentary is a first-class quarantined slot` still frames commentary as THE quarantine now that Direction is a second verbatim reviewer-voiced section",
+      "file": "orbit/specs/orbit-report-rendering/spec.md",
+      "line": 113,
+      "marker_source": "internal-review",
+      "classification": "decision_required",
+      "recommendation_fork": {
+        "source": "heuristic",
+        "options": [
+          {
+            "label": "A",
+            "body": "Add a one-sentence MODIFIED delta for `Commentary is a first-class quarantined slot` now (a block in a capability already declared), synced at archive."
+          },
+          {
+            "label": "B",
+            "body": "Leave the baseline as is and hand the sentence to a rider for a later stage."
+          }
+        ],
+        "selected": "A"
+      },
+      "ratified_via": "chat",
+      "resolution": "A — Sal, in chat: \"walk all, 2a, 4a\".",
+      "action": "Verified at orbit/specs/orbit-report-rendering/spec.md:115 (`the single\\ndelimited \\`### Commentary\\` section … variance lives inside this field`). The baseline is OUT for the cascade, so the ripple is a DELTA: the requirement block was lifted from the baseline into the orbit-report-rendering delta under `## MODIFIED Requirements` with its opening sentence qualified — the reviewer's PROSE voice; variance lives inside the quarantined zone, this slot and the direction's reasoning (named as the other quarantined slot by pointer to the ADDED Direction requirement); content contract and both scenarios byte-unchanged. `orbit fingerprint` stamped the new block (add-missing; 9 verified). Cascade into the change's own artifacts: proposal.md's size paragraph (ten → eleven requirements, 9 MODIFIED), its orbit-report-rendering bullet and its What-Changes remark; design.md D4's `Commentary's contract is unchanged` remark; tasks.md 4.1's fingerprint count.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc04b-forward-recommendation/specs/orbit-report-rendering/spec.md",
+          "orbit/changes/rc04b-forward-recommendation/proposal.md",
+          "orbit/changes/rc04b-forward-recommendation/design.md",
+          "orbit/changes/rc04b-forward-recommendation/tasks.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/specs/orbit-report-rendering/spec.md",
+            "reason": "baseline spec; add a delta to your current change's specs/<capability>/spec.md to capture this ripple"
+          }
+        ]
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The prompt's `## Direction` placeholder tells the external reviewer about `[no direction]` but not `[direction malformed]`",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 661,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Verified: the placeholder at review.ts:661 (and the delta fence at orbit-review-external/spec.md:159) named only `[no direction]`. One clause added to BOTH copies in the same edit — `a section whose first non-blank line is not exactly the opener (or that has no reasoning under it) renders [direction malformed] with no body` — the parity test (`test/core/severity-ladder-parity.test.ts`) holds the two output-format blocks byte-equal and is green; `update --force` refreshed the installed surface.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/review.ts",
+          "orbit/changes/rc04b-forward-recommendation/specs/orbit-review-external/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The write gate's shape check is open on extra keys inside `direction`, so nested noise persists verbatim while top-level typos are refused",
+      "file": "src/core/emit-composition.ts",
+      "line": 616,
+      "marker_source": "internal-review",
+      "classification": "decision_required",
+      "recommendation_fork": {
+        "source": "heuristic",
+        "options": [
+          {
+            "label": "A",
+            "body": "Declare in the ADDED requirement that keys inside `direction` beyond the two are carried, never read."
+          },
+          {
+            "label": "B",
+            "body": "Refuse unknown keys inside `direction` naming `direction.<key>`, mirroring the top-level rule."
+          }
+        ],
+        "selected": "A"
+      },
+      "ratified_via": "chat",
+      "resolution": "A — Sal, in chat: \"walk all, 2a, 4a\". B is mechanism authored at a walk (R-crc-6).",
+      "action": "Verified against the gate (`validateReviewDirection` reads `disposition` and `reasoning` only) and the normalizer (constructs the two-key object). The ADDED requirement now states the openness — extra keys are CARRIED, never read; the top-level unknown-key rule does not descend — with a new scenario `Extra keys inside direction are carried, never read`; a test pins the write (verbatim, `extra` included) and the read (absent from the normalized shape).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc04b-forward-recommendation/specs/orbit-emit-composition/spec.md",
+          "test/core/emit-composition.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The apply emit's `files_touched` omits the stage's three NEW files because the engine lists tracked diffs only",
+      "file": "src/core/parsers/apply-state.ts",
+      "line": 155,
+      "marker_source": "internal-review",
+      "classification": "unresolvable",
+      "action": "Verified at apply-state.ts:155 (`git diff --name-only <base>` — tracked files only), and on this trail: the apply emit's 23 `files_touched` lack the three new files the commit added. Pre-existing engine limit outside every delta this change carries (no orbit-apply capability is declared); DEFERRED — named for the archive's open-questions list as a Q-crc candidate with the two repairs the finding offers (append `git ls-files --others --exclude-standard` to the working-tree view, or document the tracked-only limit on the apply reference's `files_touched` note). Not filed in tasks.md: the stage's tasks are its own measurements, and this is another stage's mechanism.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "deferred"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "A second `## Direction` is MALFORMED (\"two claims on one truth\") while a second `## Notes` silently keeps the LAST body",
+      "file": "src/core/report-render.ts",
+      "line": 559,
+      "marker_source": "internal-review",
+      "classification": "unresolvable",
+      "action": "Verified at report-render.ts:570 (`notesLines = []` on every `## Notes` heading — the last body wins, no mark). The stage did not touch `## Notes`, correctly (scope); DEFERRED — named as a rider for whichever stage next touches the external format, with the two shapes the finding offers (mark a duplicate Notes as Direction marks one, or declare last-wins in `orbit-conventions`' format requirement), so the sibling sections do not carry two unstated duplicate-handling rules. Recorded for the archive's open-questions list beside finding 5.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "deferred"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": null,
+  "final_assessment": "Walk 2 of the system cadence (the fresh half of the blind pair, 0C/1W/5S): 4 of 6 resolved, 2 deferred as named candidates for the archive's open-questions list (a pre-existing tracked-only `files_touched` and the external format's silent last-wins on a second `## Notes` — both outside this change's deltas, neither filed as a task). Two scope calls ratified by chat: 2A added the ninth MODIFIED block (Commentary's wording, fingerprint stamped, cascaded into proposal/design/tasks) and 4A declared the openness inside `direction` rather than closing it — no mechanism authored at this walk. Zero findings converged across the two halves in location; the one converged PATTERN (a rule stated twice) was fixed at both sites on each log's own evidence. 2465 tests green; validate --strict valid; fingerprints 9/9.",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system rc04b-forward-recommendation"
+}

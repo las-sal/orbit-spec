@@ -36,6 +36,35 @@ The report SHALL render the pass's direction as a `### Direction` section betwee
 
 ## MODIFIED Requirements
 
+### Requirement: Commentary is a first-class quarantined slot
+
+The review record's commentary SHALL render VERBATIM into the delimited `### Commentary`
+section — the reviewer's PROSE voice, quarantined: model-to-model variance lives inside the
+quarantined zone — this slot and the direction's reasoning, the other quarantined slot (per
+`Direction renders as its own section and its absence is marked on independent passes`, which
+owns that section) — never leaking into the structured sections. The slot's
+source is genre-symmetric: an internal emit's optional `commentary` field, or an external
+pass's `## Notes` body. Content
+contract (BOTH genres, stated at the SOURCE — the internal authoring instruction and the
+external prompt template's Notes instruction alike): commentary carries what the structure
+cannot say (the pattern behind the findings,
+what was probed and how hard, risk texture) and is PROHIBITED from stating finding counts,
+gate verdicts, or next commands — those exist only in engine sections. The separation is
+CONTRACT-ENFORCED at the source in both genres (the renderer places the slot verbatim and
+does not police its content); the engine tail rendering last means a contract violation can
+mislead but never be the report's final word. An absent field (or absent Notes section) omits
+the section.
+
+#### Scenario: Commentary renders verbatim in its slot
+
+- **WHEN** a record carries a `commentary` string
+- **THEN** it appears byte-verbatim inside the delimited Commentary section, and nowhere else in the report
+
+#### Scenario: Absent commentary omits the section
+
+- **WHEN** a record has no `commentary` field
+- **THEN** the report contains no Commentary section and the surrounding order is unchanged
+
 ### Requirement: Report grammar — the frame sandwiches the commentary
 
 The rendered report SHALL follow one fixed section order: (1) header (change · mode ·

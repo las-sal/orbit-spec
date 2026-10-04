@@ -1,0 +1,32 @@
+{
+  "command": "audit-drift",
+  "timestamp": "2026-10-04T01:52:09Z",
+  "change": null,
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "final_assessment": "No critical issues. 1 warning(s) to consider. Project-wide standalone run after rc04b-forward-recommendation's archive (uncommitted, staged). Category 1: no archived delta carries a RENAMED or REMOVED section (30 archives), so the residue pattern set is empty — clean by construction. Category 2: orbit/lenses/ absent; skipped. Category 3: `orbit validate --sources` green (stages 25, rulings 14, capabilities 21, schema 4); architecture staleness over the two parseable docs — no INCONSISTENT render, no `*State:*` line, no malformed doc, rc04b's archived citation resolves (quiescent-awaiting-ratification); the one finding is an UNMARKED figure in CLAUDE.md that the archive moved by one. Category 4: the last five archives' ADDED requirements are all present in baseline, no REMOVED/RENAMED to check; the consent tripwire read 53 apply/archive emits under the three-tier era rule and found every one carrying `consent`. Category 5: no active change; skipped. Category 6: no staging exploration under orbit/explore/; skipped.",
+  "categories_run": [
+    "1",
+    "3",
+    "4"
+  ],
+  "findings_by_category": {
+    "1": 0,
+    "3": 1,
+    "4": 0
+  },
+  "findings_total": 1,
+  "findings": [
+    {
+      "category": "3",
+      "dimension": "coherence",
+      "severity": "WARNING",
+      "file": "CLAUDE.md",
+      "line": 212,
+      "title": "CLAUDE.md's UNMARKED shipped-stage count reads `Ten more stages have shipped since` — eleven have, as of rc04b's archive",
+      "recommendation": "Line 212 counts the stages archived since rc07 (rc02c, rc04a, rc04d, rc04c, rc13a, rc13b, rc13c, rc15, rc16, rc02b — ten) and rc04b-forward-recommendation was archived 2026-10-04 (`orbit/changes/archive/2026-10-04-rc04b-forward-recommendation/`; `orbit architecture status` renders it quiescent-awaiting-ratification), so the figure is eleven. The `THIRTEEN stages complete` half of the same sentence stays correct until Sal ratifies. The figure is UNMARKED — exactly the rc07 lesson (an unmarked figure is invisible to `orbit validate --sources`), and `orbit/sources.yaml`'s closed four-entry table has no source for a shipped-since count, so a marker cannot be added without widening that table. Fold the correction into the architect session's CLAUDE.md edit (the session that writes the ratification mark already rewrites this sentence's count): `Eleven more stages have shipped since, and the program is FOURTEEN stages complete` once ratified, or `… THIRTEEN …` with `Eleven` now if the hotfix lands first."
+    }
+  ],
+  "stale_suppressed": [],
+  "next_recommended": "/orbit:address-reviews --from-file orbit/.orbit-runs/audit-drift-2026-10-04T01-52-09Z.json — 1 drift(s) detected project-wide; resolve before next workflow step"
+}

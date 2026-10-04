@@ -451,6 +451,17 @@ function isRealCalendarDate(value: string): boolean {
   return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === value;
 }
 
+/**
+ * The ONE line splitter for verbatim bodies under blockquote containment. CommonMark treats a
+ * bare carriage return as a line ending, so a body split on `\n` alone leaves the text after a
+ * `\r` at column 0 where it can forge the report's own grammar (rc04b system blind pair, external
+ * W1 — the direction inherited the hole from the three older bodies). Every containment site
+ * splits here; the single-line slots refuse CR and LF outright (`requireSingleLine`).
+ */
+function containedLines(body: string): string[] {
+  return body.split(/\r\n|\r|\n/);
+}
+
 function trimBlankEdges(lines: string[]): string[] {
   let start = 0;
   let end = lines.length;
@@ -790,12 +801,12 @@ export function renderReviewReport(pass: NormalizedReviewPass, ctx: ReportContex
         lines.push(`- ${mark}**${f.fileRef}** — ${f.title}`);
         // Blockquote containment at two-space indent: every source line
         // prefixed verbatim — none can forge report grammar at column 0.
-        for (const l of f.recommendation.split('\n')) lines.push(`  > ${l}`);
+        for (const l of containedLines(f.recommendation)) lines.push(`  > ${l}`);
         // rc02b: the reproduction, labelled, directly under the recommendation and under the
         // same containment — before the options, which are labels for choices, not evidence.
         if (f.reproduction !== undefined) {
           lines.push('  > Reproduction:');
-          for (const l of f.reproduction.split('\n')) lines.push(`  > ${l}`);
+          for (const l of containedLines(f.reproduction)) lines.push(`  > ${l}`);
         }
         for (const o of f.recommendationOptions ?? []) {
           // Option bodies are labels for choices, not documents: single-line,
@@ -824,24 +835,14 @@ export function renderReviewReport(pass: NormalizedReviewPass, ctx: ReportContex
     blocks.push('### Direction\n[direction malformed]');
   } else if (pass.direction !== undefined) {
     blocks.push(`### Direction\nDisposition: ${pass.direction.disposition}`);
-    blocks.push(
-      pass.direction.reasoning
-        .split('\n')
-        .map(l => `> ${l}`)
-        .join('\n')
-    );
+    blocks.push(containedLines(pass.direction.reasoning).map(l => `> ${l}`).join('\n'));
   } else if (pass.reviewerClass !== undefined && isIndependent(pass.reviewerClass)) {
     blocks.push('### Direction\n[no direction]');
   }
 
   if (pass.commentary !== undefined) {
     blocks.push('### Commentary');
-    blocks.push(
-      pass.commentary
-        .split('\n')
-        .map(l => `> ${l}`)
-        .join('\n')
-    );
+    blocks.push(containedLines(pass.commentary).map(l => `> ${l}`).join('\n'));
   }
 
   // The engine tail — ALWAYS last; each line only when the engine computed its

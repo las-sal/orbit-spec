@@ -1,0 +1,79 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-04T01:04:14Z",
+  "change": "rc04b-forward-recommendation",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 3
+    }
+  },
+  "findings": [
+    {
+      "pass": "0",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "The design's Mechanism → artifacts row for D-rc04b-4 does not name the Commentary block walk 2 added, so one delta block has no row",
+      "file": "orbit/changes/rc04b-forward-recommendation/design.md",
+      "line": 121,
+      "recommendation": "Walk 2 (2A) lifted `Commentary is a first-class quarantined slot` into the orbit-report-rendering delta as a ninth MODIFIED block and cascaded the count into proposal.md, design D4's remark and tasks 4.1 — but the Mechanism → artifacts table's D-rc04b-4 row still lists only the Report-grammar sentence and the ADDED Direction requirement as destinations. A reader checking \"did something land with no row\" (the fresh half's own Pass 0 question) finds this block. Append to the row's destination cell: `… ; \\`orbit-report-rendering\\` › \\`Commentary is a first-class quarantined slot\\` (wording only — the reviewer's PROSE voice, the direction's reasoning named as the other quarantined slot; walk 2 of the system cadence)`."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "The gate's fallthrough reason says `has no fresh pass` for every uncovered non-pair slot, including `in-context`",
+      "file": "src/core/artifact-graph/gates.ts",
+      "line": 498,
+      "recommendation": "On the final tree the review-system gate read `cadence class 'in-context' has no fresh pass` after both walks, and the new near-miss golden transcribes the same string for a fresh proposal pass whose uncovered slot is `in-context`. The wording is the BASELINE's own — `orbit-engine-gates` specifies `cadence class 'external' has no fresh pass` for the external slot (spec.md:348) — so this is not rc04b's defect and not a transcription error in the golden: it is a pre-existing wording in a capability this change does not declare. Name it as a rider for the next stage that touches orbit-engine-gates: `cadence class '<slot>' has no pass of that class` (or per-slot phrasing), with the spec scenario and the two goldens moving together. No edit here (R-crc-1: a fourth capability declined)."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "`orbit fingerprint`'s add-missing stamp rewrote `.openspec.yaml`'s key order, moving the `architecture:` citation above `base_fingerprints`",
+      "file": "orbit/changes/rc04b-forward-recommendation/.openspec.yaml",
+      "line": 1,
+      "recommendation": "The walks' diff shows the `architecture: {doc, stage}` block relocated from the end of the file to before `base_fingerprints` when walk 2 stamped the Commentary block — a serializer round-trip, no semantic change (`orbit validate --strict` and the architecture citation both still resolve). Residue only: a reviewer diffing the metadata sees a moved citation they did not move. Owner is the stamp command (`orbit-base-fingerprints`), out of this change's scope; rider: preserve key order on re-serialization, or document that the stamp canonicalizes the file."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The confirm re-ran every measurement over the two walks' own additions rather than reading the logs' word: validate --strict valid; fingerprints 9/9 (the Commentary block stamped by add-missing); validate --sources green; `git diff --stat 0e183d93 -- src/core/artifact-graph/` still exactly gates.ts 2 +- (the export keyword) with trail.ts absent; the six goldens carry zero column-0 gate lines inside any `### Direction` section, the two independent-pass goldens carrying the section; the template's `## Direction` heading sits at column 0 once in review.ts; the engine's applySpecs merged all ELEVEN delta blocks into a scratch copy of the five baselines byte-equal (the ninth MODIFIED block included); the real external return still renders its three parser probes contained under `> `. The walks' diff reads clean: the one shared splitter feeds all four containment sites and the single-line slots still refuse CR outright; the ordering check now calls the one predicate and the only remaining `=== 'fresh'` comparisons in src/ are gates.ts's single-class pair-membership checks; the placeholder clause landed in both fence copies and the parity test holds; the openness declaration has its scenario and its two-sided pin; the field note names both owners and re-lists nothing, and the fidelity test now pins the pointer form rather than the restatement. Probed: whether the Commentary MODIFIED block's two scenarios survived the lift byte-unchanged (they did — only the requirement's opening sentence moved); whether any consumer compared `reviewerClass` as a string after the narrowing (none); whether the walks' cascade reached every count the 2A block changed (proposal size paragraph, bullet and What-Changes remark; design D4; tasks 4.1 — one row in the Mechanism table did not, finding 1). What I found is record and rider texture: a table row short one destination, a baseline-owned reason string the golden faithfully transcribes, and a serializer reordering. The CLAUDE.md apply paragraph still states the apply-time test count; the archive paragraph supersedes it by the program's practice. Risk texture: low. The content contract remains unenforced by design (R-crc-10); task 4.5's two halves are now both observed on this trail — the gate accepted the fresh payload's direction first time, and the external return's section rendered unmarked with probes inside it.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6"
+  ],
+  "passes_skipped": [],
+  "final_assessment": "0 critical, 0 warning, 3 suggestion.",
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc04b-forward-recommendation --from-file orbit/changes/rc04b-forward-recommendation/.orbit-runs/review-system-2026-10-04T01-04-14Z.json"
+}

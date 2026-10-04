@@ -15,7 +15,7 @@ written — and carries ONLY the
 narrative/authored fields for that command per an AUTHORITATIVE engine-owned per-command
 payload-field table (the fields the emitting AI genuinely authors — review: `mode`,
 `reviewer_class`, `depth`, `flags`, `scorecard`, `findings`, `stale_suppressed`, `commentary`,
-`passes_run`, `passes_skipped`; address-reviews: the `source*` fields, `walk_mode`,
+`passes_run`, `passes_skipped`, the optional `blocks`, and `direction` — OPTIONAL on an `in-context` pass and OWED by a `fresh` or `external` one, per `The review payload carries direction`; address-reviews: the `source*` fields, `walk_mode`,
 `resolutions`, the narrative `final_assessment` — its `iteration` is ENGINE-computed, the
 count of prior address-reviews emits on the resolved trail plus one, ANCHORED PER DOC on the
 shared architecture trail (a doc-scoped walk counts only logs whose `doc` matches — the same
@@ -745,4 +745,48 @@ The `review` command's payload table SHALL admit an OPTIONAL `blocks` field: an 
 
 - **WHEN** the trail holds a review emit written before this requirement whose CRITICAL carries no `reproduction`
 - **THEN** every reader (trail, render, gate) accepts it as before — the check runs at write time only and no migration re-grades or rewrites it
+
+### Requirement: The review payload carries `direction`
+
+The `review` command's payload table SHALL admit a `direction` field — an object `{disposition, reasoning}` carrying the reviewer's FORWARD RECOMMENDATION: `disposition` exactly one of the two strings `forward` | `hold`, `reasoning` a non-empty string (multi-line allowed, never a single-line slot) — the reviewer's reasoning, whose CONTENT contract `orbit-report-rendering`'s `Direction renders as its own section and its absence is marked on independent passes` owns; THIS requirement owns the SHAPE, and every other spec names it and re-lists nothing. The write gate enforces PRESENCE BY CLASS and SHAPE AT EVERY CLASS, in ANY mode (`mode` is never read): a payload whose `reviewer_class` is `fresh` or `external` — the gate model's independent classes, by the ONE predicate `orbit-engine-gates`' cadence vocabulary already defines, exported rather than restated — and which carries no `direction` is refused, exiting non-zero naming `direction` and the class, writing no file, with empty stdout; a payload of ANY class whose present `direction` is not an object, whose `disposition` is outside the closed set, or whose `reasoning` is absent, non-string or blank after trimming is refused the same way naming `direction.<key>`; an `in-context` payload without the field writes; a payload whose `reviewer_class` is not one of `in-context` | `fresh` | `external` is refused by this check naming the three values — in every mode, because the architecture-mode write gate validates the class nowhere else and an unrecognised class would otherwise read as not-owed. The `external` × `architecture` cell is never PRODUCED by the `/orbit:review` workflow — `--reviewer external` requires `--as proposal|system` (a clean usage error, per `orbit-review`) — while this gate reads class and never mode, so a hand-composed external × architecture payload on the public emit surface is checked exactly like any other, not refused for its mode. The field is pass-through narrative: never counted in the scorecard rollup, never read by the gate graph, rendered by `orbit-report-rendering` in its own section. Keys inside `direction` beyond the two are CARRIED, never read — the gate checks the two it names and the renderer reads the two it names, so an extra key persists verbatim in the record and reaches no surface (declared here so the openness is a stated fact, not a discovery; the top-level unknown-key rule is the payload table's and does not descend). The engine judges presence and shape only (R-crc-10): whether the direction is RIGHT, and whether its reasoning agrees with its token, is the in-context reaction's and the readiness author's judgement (R-crc-11(f), (g)). The vocabulary is `orbit-run-summary-emit`'s judgement record's (`disposition` + `reasoning`, a kind-specific value set) — adopted, not invented. `references/run-summary-schema.md` names it and the schema-table parity test derives it.
+
+#### Scenario: Independent class without a direction refused
+
+- **WHEN** a review payload carries `"reviewer_class": "fresh"` (or `"external"`) and no `direction` key
+- **THEN** the surface exits non-zero with `write gate: review emit of class 'fresh' carries no direction — an independent pass owes its forward recommendation`; no file is written; stdout is empty
+
+#### Scenario: In-context pass without a direction writes
+
+- **WHEN** a review payload carries `"reviewer_class": "in-context"` and no `direction` key
+- **THEN** the emit writes exactly as before this requirement — the field is optional on the reacting class
+
+#### Scenario: Well-shaped direction accepted at any class
+
+- **WHEN** a payload of any class carries `"direction": { "disposition": "hold", "reasoning": "the walk-authored mechanism…\n…" }`
+- **THEN** the emit writes with the object verbatim; the scorecard rollup check and every gate input are unchanged by it
+
+#### Scenario: Mis-shaped direction refused at any class
+
+- **WHEN** a payload carries `"direction": "forward"`, or `{ "disposition": "ship", "reasoning": "…" }`, or `{ "disposition": "forward" }`, or `{ "disposition": "forward", "reasoning": "" }`, or `{ "disposition": "forward", "reasoning": 42 }`
+- **THEN** the surface exits non-zero naming `direction` (or `direction.disposition` / `direction.reasoning`); no file is written — the gate and the renderer's normalizer agree, so no persisted record is unrenderable
+
+#### Scenario: Extra keys inside direction are carried, never read
+
+- **WHEN** a payload carries `"direction": { "disposition": "forward", "reasoning": "ok", "extra": 1 }`
+- **THEN** the emit writes the object verbatim, `extra` included, and the report renders the direction from `disposition` and `reasoning` alone — the extra key reaches no surface
+
+#### Scenario: Unrecognised reviewer class refused
+
+- **WHEN** a payload carries `"reviewer_class": "Fresh"` (or `"fressh"`) in any mode
+- **THEN** the surface exits non-zero naming `reviewer_class` and the three values; no file is written — the owed check never silently reads a typo as not-owed
+
+#### Scenario: Architecture mode is checked the same way
+
+- **WHEN** `orbit emit review --doc <doc>` composes an architecture-mode summary with `"reviewer_class": "fresh"` and no `direction`
+- **THEN** it is refused exactly as a change-mode payload is — the rule keys on class, never on mode
+
+#### Scenario: Prior-generation emits are untouched
+
+- **WHEN** the trail holds a fresh review emit written before this requirement with no `direction`
+- **THEN** the trail reader and the gate accept it as before — the check runs at write time only — and the render is unchanged in kind: a D4-generation (renderable) emit renders marked `[no direction]` per `orbit-report-rendering`, by absence, never by date, while a pre-D4 emit still fails as `pre-capability emit` at the existing render boundary, which this requirement does not relax
 

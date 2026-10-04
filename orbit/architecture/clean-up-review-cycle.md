@@ -1264,6 +1264,29 @@ never deleted.
   stage that touches `orbit-pr-lifecycle`, or its own small change. Until then the open predicate is
   rc15's accepted residual.
 
+- **Q-crc-30 — the apply emit's `files_touched` lists TRACKED files only.** Opened 2026-10-04 at
+  rc04b's archive (raised by the fresh system pass, iter 2, S4; deferred at walk 2 as another owner's
+  mechanism). `filesTouchedSince` runs `git diff --name-only <base>`, which never lists untracked
+  files, so an apply emit written before the apply is committed omits every NEW file — rc04b's three
+  (a test module and a golden pair, the stage's own instrument) were absent from its apply record
+  while the committed diff names them. Bounded: the boot render's committed view is correct once the
+  commit lands, and the archive emit's `diff_base` chain is unaffected. Standing recommendation:
+  append `git ls-files --others --exclude-standard` to the working-tree view (one call, one union),
+  or document the tracked-only limit on the apply reference's `files_touched` field note so the
+  record says what it measures; a rider on the next stage that touches `orbit-apply-change`'s emit.
+- **Q-crc-31 — the external format's duplicate-section rule is stated for Direction and unstated for
+  Notes.** Opened 2026-10-04 at rc04b's archive (raised by the fresh system pass, iter 2, S5; deferred
+  at walk 2 — the stage touched `## Direction` only, correctly). rc04b's format rule reads a SECOND
+  `## Direction` as MALFORMED ("two claims on one truth"); the renderer's parser resets `## Notes` on
+  every heading, so a second Notes section silently keeps the LAST body with no mark. Two sibling
+  sections now carry two different, one-unstated, duplicate-handling rules. Standing recommendation:
+  whichever stage next touches `orbit-conventions`' External-review findings markdown format either
+  marks a duplicate Notes as Direction marks one, or declares last-wins for Notes in the requirement —
+  one sentence either way, with the parser and a test moving together. Two riders travel with it,
+  each owned elsewhere and named on rc04b's readiness record: the gate's fallthrough reason wording
+  (`has no fresh pass` for any uncovered non-pair slot — `orbit-engine-gates`) and `orbit fingerprint`'s
+  key-order re-serialization of `.openspec.yaml` (`orbit-base-fingerprints`).
+
 ## Program stages
 
 <!-- src:stages -->25<!-- /src:stages --> small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
@@ -2039,7 +2062,7 @@ available once the two disagree.
 ### Stage rc04b-forward-recommendation — an independent pass says which way, not just what is wrong
 
 Depends-on: rc02-gate-semantics
-Complete: [ ]
+Complete: [x] 2026-10-04 (Sal)
 
 Charter: an independent reviewer forms a view on whether the work should move forward and emits
 only findings; the view dies in prose. R-crc-11(g) makes that view the readiness judgement's
@@ -4166,3 +4189,47 @@ three readers, not two, and the standing recommendation now says re-measure befo
 ratification. Next in dependency order: Phase 2's rc03-review-genres and rc04b-forward-recommendation are both
 premised and both depend only on rc02 (complete) — either is eligible for exploration; the remaining premised
 stages are rc05–rc10, rc07b and rc12.
+
+**2026-10-04 — rc04b-forward-recommendation ARCHIVED through a COMPUTED PASSED gate via the blind pair (the eighth
+rc-stage through one, the seventh through the pair; the whole cycle ran 2026-10-03, the confirm crossing midnight UTC).**
+Every independent pass now owes a `direction` — `{disposition: forward|hold, reasoning}`, rc04a's vocabulary — refused at
+the write gate where produced (fresh/external, every mode, keyed on class; an unrecognised class refused naming the three
+values), marked where it cannot be (`### Direction` between Suppressed and Commentary; `[no direction]` by absence,
+`[direction malformed]` with no body on an external section the format reads as malformed; omitted on in-context), the gate
+reading nothing new (three-readers test; `gates.ts` diff exactly the `export` keyword on `isIndependent`, `trail.ts`
+untouched). Five capabilities DECLARED (D-rc04b-7), eleven blocks synced 11/11 byte-verified through the engine's own
+merge, the capability count unchanged at 21. The cycle: proposal fresh → external (GPT-6 Codex) → in-context, nineteen
+findings, zero CRITICAL, zero repeats; apply 18/19 in one session; the **blind pair on the pushed apply commit
+`2f482e65`** — external GPT-6 Codex 0C/2W/1S, fresh 0C/1W/5S — **zero CRITICAL on either half, the program's first
+system pair with none**; zero findings converged in location, ONE pattern converged (a rule stated twice: the schema
+field note and rc04c's ordering check), fixed at both sites on each log's own evidence; the external's one mechanism
+finding — a bare carriage return escaping blockquote containment — was PRE-EXISTING on the recommendation, reproduction
+and commentary bodies and inherited by the fourth, closed once in a shared splitter with a four-body pin; two scope
+calls by chat (2A: a ninth MODIFIED block qualifying the Commentary requirement so the two quarantined slots read as one
+zone; 4A: extra keys inside `direction` DECLARED carried-never-read rather than refused — R-crc-6); an in-context
+confirm 0C/0W/3S whose SUGGESTIONs ride the readiness record. **Task 4.5 closed at archive by observation on BOTH
+halves**: the fresh emit's direction accepted first time; the external return's `## Direction` conforming, with three
+parser probes planted in its reasoning, rendered unmarked and contained; the halves DISAGREED (hold against forward) —
+the slot producing two cited views where before there was prose, which is what Goal G1 asked for. Q-crc-30 and Q-crc-31
+opened at archive; the readiness record accepts seven residuals, headlined by rc07's distinction. 2465 tests green
+(2429 → 2465). Position is engine-computed: `orbit architecture status` renders rc04b quiescent, awaiting ratification.
+
+**2026-10-04 — Architect session: rc04b-forward-recommendation RATIFIED (fourteen stages complete).** All three exit
+criteria graded MET as written on the archived tree: (1) an independent pass without a recommendation is INCOMPLETE —
+refused at the write gate where produced (fresh/external, every mode; the CLI case pinned with empty stdout and no
+file) and MARKED where it cannot be (`[no direction]` on a section-less external file and on a renderable
+prior-generation fresh emit; `[direction malformed]` on a bad section), the gate reading nothing new (the
+three-readers test; `gates.ts` changed by the `export` keyword alone, `trail.ts` untouched); (2) the recommendation
+RENDERS under the single-voiced rules — `### Direction` inside the quarantine, the label engine-printed, the reasoning
+contained, the engine tail last, the near-miss golden pinning a gate line and an eligibility line inside the
+containment — and walk 1 of the system cadence tightened the rule past apply by closing a pre-existing bare-CR escape
+in one shared splitter over all four verbatim bodies; (3) the prompt template carries `## Direction` as a NAMED FIELD,
+installed byte-equal from the owning delta's fence and held by the parity test, and the first external return under it
+wrote the section with a conforming opener and three planted parser probes, rendered unmarked and contained, while
+the fresh half's emit carried its direction on the first attempt — the halves DISAGREED (hold against forward), the
+slot producing two cited views for the readiness author where before there was prose. Ratified through the offer
+(Sal): `Complete: [x] 2026-10-04 (Sal)`. The post-archive project-wide audit raised one WARNING — CLAUDE.md's unmarked
+shipped-since count, moved to eleven at the walk — and nothing on the retired set or the archives. Q-crc-30 and
+Q-crc-31 stand as opened at the archive. Next in dependency order: Phase 2's rc03-review-genres is premised and
+depends only on rc02 (complete) — eligible for exploration; the remaining premised stages are rc05–rc10, rc07b and
+rc12.

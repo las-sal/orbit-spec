@@ -1,0 +1,106 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-03T23:49:57Z",
+  "change": "rc04b-forward-recommendation",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc04b-forward-recommendation/.orbit-runs/external-system-2026-10-03T23-41-11Z.md",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": "2026-10-03T23-27-39Z",
+  "external_reviewer": "GPT-6 Codex",
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 1
+  },
+  "pushback_verification": "3 of 3 verified against the current tree: the CR escape reproduced through the real renderer before the fresh half returned (pre-existing on four bodies); the field note read at review.ts:103; the emit surface's acceptance of external × architecture under --doc confirmed by the fresh half's own surface walk; 0 stale; 0 CRITICAL (no reproduction re-runs)",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "A carriage return lets direction reasoning escape containment",
+      "file": "src/core/report-render.ts",
+      "line": 828,
+      "marker_source": "external",
+      "classification": "trivial_fix",
+      "action": "Verified before the walk by rendering a direction whose reasoning carried a bare CR through the real renderer: the CR survived inside one `> ` line, and CommonMark treats a bare carriage return as a line ending, so the text after it sat at column 0. Pre-existing, not new: the recommendation, reproduction and commentary bodies split on `\\n` the same way, so the direction inherited the hole. Fix: ONE shared splitter `containedLines` (`/\\r\\n|\\r|\\n/`) in report-render.ts now feeds all four containment sites; a new render test pins a bare CR and a CRLF inside every body (direction, commentary, recommendation, reproduction) rendering contained with no column-0 `Ready when you are:` / `Gate` line and no `\\r` in the output. No spec delta: `orbit-report-rendering`'s containment sentence already says every line is prefixed, so the renderer now conforms to the spec as written.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/report-render.ts",
+          "test/core/report-render.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The schema field note restates an unchecked direction rule",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 103,
+      "marker_source": "external",
+      "classification": "trivial_fix",
+      "action": "Verified: the field note at review.ts:103 carried the closed set, the non-empty predicate and the content prohibitions while claiming to re-list nothing — the rule-stated-twice pattern (R-crc-14) in a third place beyond the two authoring sources the design permits (Step 8, the prompt template). Trimmed to the field, its owed-by-class consequence at the emit seam (owed fresh/external, optional in-context, refused otherwise in every mode), the two owner requirement titles, the `### Direction` / `[no direction]` render consequence, the vocabulary pointer, and a pointer to Step 8 as the authoring instruction. The schema BLOCK keeps `\"forward\" | \"hold\"` as JSON-shape documentation, as `\"severity\"` does. The 1.6 fidelity test had PINNED the restatement (it asserted the note names forward/hold); it now asserts the pointer form — no closed set, no `non-empty`, no `finding counts` in the note, both owner titles present.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/review.ts",
+          "test/core/templates/orbit-content-fidelity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Scope the external architecture claim to the review workflow",
+      "file": "orbit/changes/rc04b-forward-recommendation/specs/orbit-emit-composition/spec.md",
+      "line": 5,
+      "marker_source": "external",
+      "classification": "decision_required",
+      "recommendation_fork": {
+        "source": "heuristic",
+        "options": [
+          {
+            "label": "A",
+            "body": "Repair the sentence so it claims only what is true: the workflow never produces the cell; the emit surface reads class and never mode, so a hand-composed external × architecture payload is checked like any other."
+          },
+          {
+            "label": "B",
+            "body": "Enforce the restriction on the public emit surface (refuse `external` under `--doc`)."
+          }
+        ],
+        "selected": "A"
+      },
+      "ratified_via": "chat",
+      "resolution": "A — Sal, in chat: \"walk all and 3A\". B would be new mechanism authored at a walk (R-crc-6) and would contradict the ADDED requirement's own `mode` is never read rule.",
+      "action": "Verified: `orbit emit review --doc` accepts `reviewer_class: \"external\"` with a `direction` and `handoff` (the fresh half's surface walk observed the same). The ADDED requirement's sentence now reads: the cell is never PRODUCED by the `/orbit:review` workflow (`--reviewer external` requires `--as proposal|system`, per `orbit-review`) while this gate reads class and never mode, so a hand-composed external × architecture payload on the public emit surface is checked exactly like any other, not refused for its mode. Cascade sweep: `cannot reach this gate` survives only in the audit trail (the fresh proposal emit, OUT by policy); design.md's Mechanism row says `foreclosed … by pointer to the review body's usage rule`, which remains true of the workflow and was left as is.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc04b-forward-recommendation/specs/orbit-emit-composition/spec.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/changes/rc04b-forward-recommendation/.orbit-runs/review-proposal-2026-10-03T22-29-59Z.json",
+            "reason": "audit-trail file; cascade skipped by policy"
+          }
+        ]
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": null,
+  "final_assessment": "Walk 1 of the system cadence (the external half of the blind pair, GPT-6 Codex 0C/2W/1S): 3 of 3 resolved, 0 stale. The one defect in mechanism — a bare carriage return escaping blockquote containment — was pre-existing on three older bodies and inherited by the fourth; it is closed once, in a shared splitter, with a render test over all four. The two prose findings are the rule-stated-twice pattern (the schema field note) and a sentence claiming more than the engine surface bears out (3A, Sal by chat); no mechanism was authored at this walk. The external return itself is task 4.5's external-half measurement: a conforming `## Direction` with parser probes inside the reasoning, read unmarked by the renderer and as content by all three readers. 2464 tests green; validate --strict valid; fingerprints 8/8. The fresh half's emit (review-system-2026-10-03T23-44-04Z) is next in engine order and is walked in a second log.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews rc04b-forward-recommendation --from-file orbit/changes/rc04b-forward-recommendation/.orbit-runs/review-system-2026-10-03T23-44-04Z.json"
+}

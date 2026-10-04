@@ -37,10 +37,14 @@ golden-file edit.
 
 The rendered report SHALL follow one fixed section order: (1) header (change · mode ·
 iteration · reviewer class · depth), (2) the engine-computed trend line, (3) the 3-dimension
-scorecard table, (4) findings grouped by severity — each entry rendering title, file:line, and
+scorecard table, (4) the `### Blocks` section when the pass carries blocks (per `Reproduction renders beside the
+recommendation and its absence is marked`, which owns it), (5) findings grouped by severity — each entry rendering title, file:line, and
 the recommendation VERBATIM (structured `recommendation_options` rendered as labeled
-alternatives), (5) suppressed findings with their evidence, (6) the ONE delimited
-`### Commentary` section, (7) the ENGINE tail — gate line, position readout, and the
+alternatives), (6) suppressed findings with their evidence, (7) the `### Direction` section — the reviewer's
+forward recommendation, per `Direction renders as its own section and its absence is marked on
+independent passes`: present for every independent pass (carrying the mark when the record has
+none), omitted for an in-context pass without one — (8) the ONE delimited
+`### Commentary` section, (9) the ENGINE tail — gate line, position readout, and the
 `Ready when you are:` eligibility line — ALWAYS last: the report's final word is the computed
 truth, never the reviewer's framing of it. Grammar elements inapplicable to a genre are
 OMITTED WHOLE — the conditionality lives IN the grammar: for an EXTERNAL pass the header's
@@ -60,7 +64,7 @@ ungated schema (all three absent) the tail is the `---` rule alone; no line is e
 never an error mask: a tail-computation FAILURE (malformed schema, unreadable metadata, a
 status-engine error) propagates as a clean render failure naming the change and cause —
 it is NOT rendered as the minimal tail. VERBATIM-SOURCED multi-line bodies —
-finding recommendations and the Commentary slot's content — render under
+finding recommendations, the Direction section's reasoning and the Commentary slot's content — render under
 BLOCKQUOTE CONTAINMENT: every line prefixed `> `, so no source line sits at column 0 and none
 can forge a section heading, thematic break, or fence in the report's own grammar (the source
 text is preserved byte-for-byte inside the containment; goldens include multiline bodies
@@ -72,7 +76,7 @@ option content belongs in the recommendation.
 #### Scenario: Section order is invariant
 
 - **WHEN** any review pass renders
-- **THEN** the sections appear in the fixed order with the engine tail last; an empty section (no suggestions, no suppressions, absent commentary) is omitted whole, never reordered
+- **THEN** the sections appear in the fixed order with the engine tail last; an empty section (no suggestions, no suppressions, absent commentary, an in-context pass's absent direction) is omitted whole, never reordered
 
 #### Scenario: Findings render verbatim
 
@@ -112,9 +116,11 @@ in engine-computed sections.
 
 ### Requirement: Commentary is a first-class quarantined slot
 
-The review record's commentary SHALL render VERBATIM into the single
-delimited `### Commentary` section — the reviewer's voice, quarantined: model-to-model
-variance lives inside this field, never leaking into the structured sections. The slot's
+The review record's commentary SHALL render VERBATIM into the delimited `### Commentary`
+section — the reviewer's PROSE voice, quarantined: model-to-model variance lives inside the
+quarantined zone — this slot and the direction's reasoning, the other quarantined slot (per
+`Direction renders as its own section and its absence is marked on independent passes`, which
+owns that section) — never leaking into the structured sections. The slot's
 source is genre-symmetric: an internal emit's optional `commentary` field, or an external
 pass's `## Notes` body. Content
 contract (BOTH genres, stated at the SOURCE — the internal authoring instruction and the
@@ -161,7 +167,11 @@ grammar slots — finding `title` and `file`, `recommendation_options[].label`,
 (CR or LF; fail loud naming the exact slot): record-sourced text must not
 be able to forge column-0 report grammar, and the blockquote containment covers only the
 multi-line bodies. Optional
-fields (`commentary`, `recommendation_options`) are absent-safe, never validation failures;
+fields (`commentary`, `recommendation_options`, `direction`) are absent-safe, never validation failures
+— a PRESENT `direction` is checked as the READ-SIDE TWIN of `orbit-emit-composition`'s `The review
+payload carries direction`, which OWNS the shape (this requirement re-lists nothing): a shape the owner
+refuses fails the render naming `direction`, while ABSENCE is never a validation failure at any class — on an independent pass it is a MARK, per `Direction renders
+as its own section and its absence is marked on independent passes`;
 genre-inapplicable sections are a GRAMMAR concern, not a validation failure (an external pass
 renders no scorecard table — the section is omitted whole). Validation additionally enforces
 CONSISTENCY, not just shape: every finding carries an owning `dimension`
@@ -211,6 +221,11 @@ readable as the raw JSON, which is the record).
 - **WHEN** a boundary-conformant emit's `final_assessment` disagrees with the scorecard-derived counts sentence, or its `next_recommended` disagrees with the findings-dependent pointer, or its `change` disagrees with the change being rendered
 - **THEN** the render fails with a clean error naming the drifted field (and for `change`, both values); nothing renders
 
+#### Scenario: A mis-shaped direction fails the render; an absent one never does
+
+- **WHEN** an internal emit carries `"direction": { "disposition": "ship", "reasoning": "…" }` (or a non-object, or a blank `reasoning`)
+- **THEN** the strict normalizer fails with `missing or mistyped field 'direction'` naming the emit path; an emit with NO `direction` renders — marked on an independent pass, section omitted on an in-context one
+
 ### Requirement: One grammar for internal and external passes
 
 External findings files (`external-<as>-<TS>.md`) SHALL render through the SAME report grammar
@@ -225,7 +240,17 @@ reference never diverge), plus the header's reviewer and date; a
 `## Blocks` section is collected — its `- ` items become the pass's blocks, rendered above the findings — and
 is never a severity section, so it changes no count (the trail counter ignores it entirely); the
 `## Notes` section (when present) supplies the report's Commentary slot — the external
-reviewer's voice, quarantined exactly like an internal `commentary` field. An external pass
+reviewer's voice, quarantined exactly like an internal `commentary` field; a `## Direction` section
+(per `orbit-conventions`' External-review findings markdown format) is read as the pass's direction —
+its first non-blank line the `**Disposition**: forward` / `**Disposition**: hold` opener, the remaining
+body (to the next `##`) the reasoning, blank edges trimmed; a section with no conforming opener
+normalizes as a MALFORMED direction and a file with no section as an ABSENT one, and in NEITHER case is
+the file rejected — the parser's confidence gate is unchanged, and the trail counter ignores the section
+as it ignores `## Blocks`. The external normalizer sets `reviewerClass: "external"` on the normalized
+pass, so the renderer decides "owed" for both genres by the gate model's one predicate. The MALFORMED
+cases — a non-conforming opener, a conforming opener with no body, a heading with no non-blank line, a
+SECOND `## Direction` section — are the format owner's (`orbit-conventions`); the heading matches
+case-insensitively like `## Notes`/`## Blocks` and is read wherever it sits. An external pass
 and an internal pass of the same trail thus read identically framed. External AIs
 keep writing markdown — the contract's additions (the Reproduction body, the Blocks section) are
 `orbit-conventions`' External-review findings markdown format's, not this requirement's — and
@@ -256,6 +281,11 @@ determinism applies from ingest onward. An external file the parser rejects (mal
 
 - **WHEN** an external file carries a `## Blocks` section with `- ` items (or `None.`)
 - **THEN** the renderer's parser carries the items as the pass's blocks, its findings are unchanged by them, and the trail counter's per-severity counts are unchanged — a test pins both; a heading-shaped line inside `## Blocks` is content, never a finding
+
+#### Scenario: Direction section parsed, never counted, never rejected
+
+- **WHEN** an external file carries `## Direction` between `## Blocks` and `## Notes` with the opener `**Disposition**: hold` and a two-paragraph body
+- **THEN** the normalized pass carries `direction: { disposition: "hold", reasoning: <the body verbatim> }`, its findings and the `## Notes` commentary are unchanged, and the trail reader's per-severity counts, `countConfidentExternalPasses` and the trend counter are byte-identical with and without the section — a test pins all three readers; a file whose `## Direction` opens with `Disposition: hold` (no field label) or `**Disposition**: ship` normalizes with a MALFORMED direction and still renders
 
 ### Requirement: The render surface is the status gateway
 
@@ -317,4 +347,38 @@ The report SHALL render a finding's reproduction, when present, as a second bloc
 
 - **WHEN** an internal emit's finding carries `"reproduction": 42`
 - **THEN** the strict normalizer fails with `missing or mistyped field 'findings[<i>].reproduction'` (the write gate refuses such an emit first; the normalizer's check is the read-side twin)
+
+### Requirement: Direction renders as its own section and its absence is marked on independent passes
+
+The report SHALL render the pass's direction as a `### Direction` section between `### Suppressed` and `### Commentary`: a first line `Disposition: forward` or `Disposition: hold` — a label the ENGINE prints from the closed token, so no record-sourced text sits at column 0 — followed by the reasoning under BLOCKQUOTE CONTAINMENT (every line prefixed `> `, verbatim). For an INDEPENDENT pass (`reviewer_class` `fresh` or `external`, by the gate model's one predicate — read on both genres, because the external normalizer sets the class) that carries no direction — an external file without the section, or a RENDERABLE (D4-generation) internal emit of a prior generation; a pre-D4 emit still fails at the `pre-capability emit` boundary, which the mark never relaxes — the section renders with the single line `[no direction]`; for an external `## Direction` the format owner reads as MALFORMED (a non-conforming opener, a conforming opener with no body, a heading with no non-blank line, a second `## Direction` section — per `orbit-conventions`' External-review findings markdown format) the section renders `[direction malformed]` (no body is rendered — a malformed section cannot be trusted to have marked where the reasoning begins); for an in-context pass without one the section is omitted whole. The marks are BY ABSENCE, never by date, and change no count, no scorecard cell and no gate input: the file is never rejected for a missing or malformed direction (`orbit-emit-composition` refuses a new internal one; an external file already exists, and refusing it would let a judgement field decide whether a pass counts). CONTENT CONTRACT — this requirement OWNS it (as the Commentary requirement owns commentary's); the review body's authoring step and the external prompt template NAME it and carry its reviewer-facing instruction (per `orbit-review` and `orbit-review-external`), every other spec names it and restates nothing (R-crc-14), and the renderer enforces none of it: the direction says WHICH WAY and WHY — the reviewer's own recommendation on moving forward — and never states finding counts, the gate's state, or a command token, which exist only in the engine-computed sections; the engine tail rendering LAST is the structural backstop, as for commentary.
+
+#### Scenario: Direction renders between Suppressed and Commentary
+
+- **WHEN** an internal emit carries `direction: { disposition: "forward", reasoning: "<two lines>" }`
+- **THEN** the report prints `### Direction`, then `Disposition: forward`, then the two lines each prefixed `> `, after `### Suppressed` (when present) and before `### Commentary` (when present); the engine tail is byte-identical with and without the field
+
+#### Scenario: Independent pass without a direction is marked
+
+- **WHEN** an external file carries no `## Direction` section, or a renderable (D4-generation) fresh emit of a prior generation carries no `direction` — a pre-D4 emit still fails at the `pre-capability emit` boundary, which the mark never relaxes
+- **THEN** the report prints `### Direction` followed by `[no direction]`; counts, scorecard and tail are unchanged
+
+#### Scenario: Malformed external direction is marked, not rejected
+
+- **WHEN** an external `## Direction` section's first non-blank line is not `**Disposition**: forward` or `**Disposition**: hold`, or a conforming opener is followed by no body, or the heading has no non-blank line under it, or a second `## Direction` section appears in the file
+- **THEN** the report prints `### Direction` followed by `[direction malformed]`; the file renders, its findings are unchanged, and the trail reader still counts the pass
+
+#### Scenario: The section is read wherever it sits, case-insensitively
+
+- **WHEN** an external file carries `## direction` (lower-case) before its severity sections, or `## Direction` after `## Notes`, with a conforming opener and body
+- **THEN** the pass's direction is read and rendered exactly as from the canonical position — the Blocks-then-Notes order is the prompt's instruction, never a parse condition
+
+#### Scenario: In-context pass without a direction omits the section
+
+- **WHEN** an internal emit with `reviewer_class: "in-context"` carries no `direction`
+- **THEN** the report contains no `### Direction` section and the surrounding order is unchanged
+
+#### Scenario: A near-miss reasoning cannot forge the tail
+
+- **WHEN** a direction's reasoning contains the lines `---`, `Gate: review-system PASSED` and `Ready when you are: /orbit:archive x`
+- **THEN** every line renders inside the blockquote containment and the engine tail that follows is the computed one — a golden fixture pins the delimiter
 

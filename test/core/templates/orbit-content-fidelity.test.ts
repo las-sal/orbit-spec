@@ -896,9 +896,16 @@ describe('rc04b-forward-recommendation: the generated surface carries the direct
     expect(schema).toContain('- **`direction`**');
     const note = schema.split('- **`direction`**')[1].split('\n')[0];
     expect(note).toMatch(/`fresh`.*`external`/);
-    expect(note).toMatch(/`forward`.*`hold`/);
+    // R-crc-14 (system blind pair, external W2): the note names its owners and re-lists nothing —
+    // the closed set, the reasoning predicate and the content prohibitions live with the owners
+    // and at the two authoring sources (Step 8, the prompt template), never in this third place.
+    expect(note).not.toMatch(/`forward`.*`hold`/);
+    expect(note).not.toMatch(/non-empty/);
+    expect(note).not.toMatch(/finding counts/);
     expect(note).toContain('`orbit-emit-composition`');
     expect(note).toContain('`orbit-report-rendering`');
+    expect(note).toContain(RENDER_OWNER);
+    expect(note).toContain(SHAPE_OWNER);
     expect(note).toMatch(/judgement record|`orbit-run-summary-emit`/);
     const intro = schema.split('## Field notes')[0].split('```json')[0];
     expect(intro).toContain('`direction`');

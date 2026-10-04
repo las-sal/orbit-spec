@@ -209,7 +209,7 @@ file now carries a live mark. Do NOT read this paragraph as the program's full l
 only what rc07 produced. The authoritative list is the program doc's own Open questions section,
 which also carries Q-crc-11, Q-crc-12, Q-crc-20, Q-crc-21, Q-crc-22 and Q-crc-23.
 
-**Ten more stages have shipped since, and the program is THIRTEEN stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening).
+**Eleven more stages have shipped since, and the program is FOURTEEN stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b ratified 2026-10-04; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening).
 
 `rc02c-confirmation-semantics` is ARCHIVED (2026-09-21): **the budget stopped being a target.**
 R-crc-11(h) — effort is RECORDED, never TARGETED — retired `budgetExhausted`, the
@@ -462,45 +462,51 @@ three now follow the field-line and Description-opening rules; collapsing them s
 (2376 → 2429; two goldens moved by one `[unreproduced]` prefix each). One instrument lesson: the user-validation
 subset rule reads the literal `(User-validation` marker on the task line.
 
-`rc04b-forward-recommendation` is APPLIED (2026-10-03; 18 of 19 tasks in one session, 4.5 the
-user-validation handoff), awaiting its system cadence: **every independent pass has a NAMED SLOT
-for its forward recommendation — a `direction`, distinct from the gate's verdict, which stays the
-engine's alone.** Internal: a top-level `direction: {disposition, reasoning}` object on the `review`
-payload, `disposition` exactly `forward` | `hold`, `reasoning` a non-empty string (multi-line);
-external: a `## Direction` section between `## Blocks` and `## Notes` whose first non-blank line is
-`**Disposition**: forward` or `**Disposition**: hold`. The shape adopts rc04a's judgement vocabulary
-(`recommendation` is every finding's fix body; `verdict` is the gate's word). OWED by `fresh` and
-`external` in every mode — keyed on `reviewer_class`, never on mode; the gate model's `isIndependent`
-is EXPORTED and is the ONE predicate at both the write gate and the renderer — and optional
-in-context (R-crc-11(f): the reacting class's direction is the readiness record's job).
-Incompleteness is TWO-TIER and the gate never reads it (R-crc-13): where the record is produced,
-`orbit emit review` REFUSES an independent-class payload without it and a mis-shaped one at ANY
-class — and refuses an unrecognised `reviewer_class` naming the three values, in every mode, because
-the architecture-mode write gate validated the class nowhere and a typo would have read as not-owed
-(fresh S1); where it already exists, the renderer MARKS — `### Direction` between `### Suppressed`
-and `### Commentary`, `Disposition: <token>` an ENGINE-printed label so no record text sits at
-column 0, the reasoning blockquote-contained, `[no direction]` on an independent pass without one
-(by absence, never by date — every renderable prior-generation independent pass, while a pre-D4
-emit still fails at the boundary), `[direction malformed]` with NO body on an external section the
-format owner reads as malformed (a non-conforming opener, a conforming opener with no body, a
-heading with no non-blank line, a SECOND section; the heading matches case-insensitively and the
-section is read wherever it sits), omitted whole on an in-context pass without one. The file is
-never rejected for it: a three-readers test pins the trail reader, the trend counter and the
-confident-pass count byte-identical with and without the section, `trail.ts` carries no diff and
-`gates.ts`'s diff is exactly the `export` keyword. The external normalizer now sets `reviewerClass:
-'external'`, so the renderer decides "owed" for both genres by one call. The prompt template's
-`## Direction` was installed byte-equal FROM the review-external delta's fence (the severity-ladder
-parity test holds the two output-format blocks); Step 8 of the review body — now "Author the
-direction and the commentary" — carries the content contract `orbit-report-rendering`'s Direction
-requirement OWNS (which way and why; never counts, gate state or a command token); the
-architecture-mode interim shape prints `Direction: <disposition>` with every reasoning line
-contained; the walk's format copy says the section is never walked. No migration. FIVE
-capabilities DECLARED against R-crc-1's ceiling (D-rc04b-7, Sal: "declare at five"); the
-proposal cadence ran fresh → external (GPT-6 Codex) → in-context, nineteen findings, zero
-CRITICAL, zero repeats, three walks, a COMPUTED PASSED review-proposal gate. **2463 tests green**
-(2429 → 2463; the one independent-pass golden gained the marked section, one near-miss direction
-golden was added, and two prior tests moved by design: a transcription gained the one new
-`reviewerClass` field, and the cross-genre equivalence test's internal half became `fresh`).
+`rc04b-forward-recommendation` is ARCHIVED and RATIFIED (2026-10-04 UTC; the whole cycle ran 2026-10-03; all
+three exit criteria graded MET as written): **every independent pass has a NAMED SLOT for its forward recommendation — a
+`direction`, distinct from the gate's verdict, which stays the engine's alone.** Internal: a top-level
+`direction: {disposition, reasoning}` on the `review` payload, `disposition` exactly `forward` | `hold`,
+`reasoning` a non-empty string; external: a `## Direction` section between `## Blocks` and `## Notes`
+opening `**Disposition**: forward` / `**Disposition**: hold`. The shape adopts rc04a's judgement
+vocabulary. OWED by `fresh` and `external` in every mode — keyed on `reviewer_class`, never on mode;
+the gate model's `isIndependent` is EXPORTED and is the ONE predicate at the write gate, the renderer
+and (since walk 2) rc04c's ordering check — and optional in-context (R-crc-11(f): the reacting class's
+direction is the readiness record's job). Incompleteness is TWO-TIER and the gate never reads it
+(R-crc-13): `orbit emit review` REFUSES an independent-class payload without it, a mis-shaped one at
+ANY class, and an unrecognised `reviewer_class` naming the three values in every mode (the
+architecture-mode gate validated the class nowhere); the renderer MARKS — `### Direction` between
+`### Suppressed` and `### Commentary`, `Disposition: <token>` an ENGINE-printed label, the reasoning
+blockquote-contained, `[no direction]` on an independent pass without one (by absence, never by
+date; a pre-D4 emit still fails at the boundary), `[direction malformed]` with NO body on an external
+section the format owner reads as malformed (a non-conforming opener, an opener with no body, a
+heading with no non-blank line, a SECOND section; case-insensitive, read wherever it sits), omitted
+whole on an in-context pass without one. The file is never rejected for it: a three-readers test pins
+the trail reader, the trend counter and the confident-pass count byte-identical with and without the
+section; `trail.ts` carries no diff and `gates.ts`'s diff is exactly the `export` keyword. Extra keys
+inside `direction` are DECLARED carried-never-read (walk 2, Sal: 4A over a check). The prompt
+template's `## Direction` was installed byte-equal FROM the review-external delta's fence (the
+severity-ladder parity test holds the two blocks) and names both marks; Step 8 of the review body —
+"Author the direction and the commentary" — carries the content contract `orbit-report-rendering`'s
+Direction requirement OWNS (which way and why; never counts, gate state or a command token), and the
+schema field note names the owners and re-lists nothing (walk 1). FIVE capabilities DECLARED against
+R-crc-1's ceiling (D-rc04b-7), eleven blocks (9 MODIFIED, 2 ADDED — the ninth MODIFIED is the
+Commentary requirement's wording, added at walk 2 so the two quarantined slots read as one zone);
+synced 11/11 byte-verified; the capability count stays at <!-- src:capabilities -->21<!-- /src:capabilities -->. The cycle: fresh → external (GPT-6 Codex) →
+in-context on the proposal (nineteen findings, zero CRITICAL); apply 18/19 in one session; then the
+**blind pair on the pushed apply commit `2f482e65`** — external GPT-6 Codex 0C/2W/1S and fresh
+0C/1W/5S, blind, **zero CRITICAL on either half (the program's first system pair with none)**, zero
+findings converged in location and ONE converged pattern (a rule stated twice — the schema note, the
+ordering check) fixed at both sites on each log's own evidence; the external found the one real
+mechanism defect, a bare carriage return escaping blockquote containment, PRE-EXISTING on three older
+bodies and inherited by the fourth, closed once in a shared splitter; two walk logs; an in-context
+confirm 0C/0W/3S riding the readiness record; a **COMPUTED PASSED gate** — the eighth rc-stage through
+one, the seventh through the pair. **Task 4.5 closed at archive by observation on BOTH halves**: the
+gate accepted the fresh payload's direction first time, and the external return wrote `## Direction`
+with the conforming opener and three parser probes inside its reasoning, rendered unmarked and
+contained — and the halves DISAGREED (hold against forward), the slot producing two cited views where
+before there was prose. Q-crc-30 (`files_touched` is tracked-only) and Q-crc-31 (a second `## Notes`
+is silently last-wins while a second `## Direction` is malformed) opened at archive; the readiness
+record accepts seven residuals, headlined by rc07's distinction. **2465 tests green** (2429 → 2465).
 
 Read that doc before any rc-stage work; the D-arc section below is the historical
 record of how the engine got here.

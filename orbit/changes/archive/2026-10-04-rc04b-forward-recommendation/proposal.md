@@ -42,7 +42,7 @@ verdict, which stays the engine's alone.
   `orbit-report-rendering`'s Direction requirement and carried at both authoring sources — moves D4's
   prohibition onto the axis Q-rc04-c named — JUDGEMENT versus COMPUTATION: the
   direction says WHICH WAY and WHY; it never states finding counts, the gate's state or a command
-  token. Commentary's own contract is unchanged (D-rc04b-4).
+  token. Commentary's own contract is unchanged (D-rc04b-4; its requirement's wording was qualified at walk 2 of the system cadence so it no longer calls itself the single quarantined slot).
 - **The external prompt carries it as a named field.** The reference prompt template asks for
   `## Direction` with its opener, stating that a return without it renders marked; the walk's
   `--from-file` copy of the format moves WITH its owner and says the section is never walked (no triage
@@ -56,7 +56,7 @@ verdict, which stays the engine's alone.
 against R-crc-1's ceiling of three — the charter's `orbit-review`, `orbit-review-external`,
 `orbit-report-rendering`, plus `orbit-conventions` (owner of the external format since rc02b) and
 `orbit-emit-composition` (its first requirement enumerates the review payload fields; one requirement
-per new field since `blocks`). Ten requirements (8 MODIFIED, 2 ADDED), changed bytes small — the eighth MODIFIED is `orbit-review-external`'s reference template, whose fenced output-format block the existing parity test holds byte-equal to the shipped prompt, so the two move together or not at all.
+per new field since `blocks`). Eleven requirements (9 MODIFIED, 2 ADDED — the ninth MODIFIED is `orbit-report-rendering`'s Commentary requirement, a wording qualification added at walk 2 of the system cadence so the two quarantined slots read as one zone), changed bytes small — the eighth MODIFIED is `orbit-review-external`'s reference template, whose fenced output-format block the existing parity test holds byte-equal to the shipped prompt, so the two move together or not at all.
 Not split, under R-crc-9's declare branch: internal-from-external puts the renderer in both halves and
 leaves one trail with two generations of the rule; produce-from-render ships a slot nothing renders —
 the write-only record the parent charter's exit (4) condemned.
@@ -75,7 +75,9 @@ the write-only record the parent charter's exit (4) condemned.
 - `orbit-report-rendering`: `Report grammar — the frame sandwiches the commentary` (the `### Direction`
   section in the fixed order); `Strict input validation — fail loud, no partial render` (`direction`
   absent-safe, a present mis-shaped one fails naming the field); `One grammar for internal and external
-  passes` (the external parser reads `## Direction`); ADDED `Direction renders as its own section and
+  passes` (the external parser reads `## Direction`); `Commentary is a first-class quarantined slot`
+  (wording only: the reviewer's PROSE voice, with the direction's reasoning named as the other quarantined
+  slot — its content contract is unchanged); ADDED `Direction renders as its own section and
   its absence is marked on independent passes` (the render form, the two marks, the content contract).
 - `orbit-conventions`: `External-review findings markdown format` (the `## Direction` section and its
   opener production, required on every return; marked never rejected; ignored by the counters).

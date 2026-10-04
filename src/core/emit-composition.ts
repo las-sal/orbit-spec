@@ -1110,7 +1110,9 @@ function judgementOrderingCheck(
   const passes = changeDir ? readTrail(changeDir).passes : [];
   const independent = new Map(
     passes
-      .filter(pp => pp.reviewerClass === 'fresh' || pp.reviewerClass === 'external')
+      // The ONE independent-class predicate (rc04b system blind pair, fresh W1: a second statement
+      // of the two-class set sat here, 500 lines below the write gate that imports it).
+      .filter(pp => isIndependent(pp.reviewerClass))
       .map(pp => [pp.token, pp])
   );
   const anyPass = new Set(passes.map(pp => pp.token));
