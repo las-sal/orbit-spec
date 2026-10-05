@@ -1,0 +1,544 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-05T03:47:19Z",
+  "change": "rc08b-walk-routing",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc08b-walk-routing/.orbit-runs/review-proposal-2026-10-05T03-41-05Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-05T03-41-05Z",
+  "latest_apply_token": null,
+  "tie_break_rationale": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 7,
+    "suggestion": 7
+  },
+  "pushback_verification": "Each finding re-read against the current artifact; the two code citations checked (gates.ts:735 and 807-809). The SUGGESTION citing gates.ts:531-551 holds in substance at line 735.",
+  "resolution_summary": {
+    "resolved": 14,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The rider swaps one false exhaustive claim for another: walk entries are also checked by the ripple-miss requirement",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 75,
+      "classification": "trivial_fix",
+      "lane": "obvious-fix",
+      "remedy": "repair",
+      "action": "named both walk-entry check owners in the rider sentence; repointed the block's stale rc03 multi-source parenthetical to `One invocation writes one log per discovered source`; design D7 names both",
+      "evidence": "verified against the current file before editing; the claim held",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc08b-walk-routing/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the emit surface's checks on a walk entry are those",
+          "is rc03's to decide when it owns the cadence templates"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08b-walk-routing/specs/orbit-engine-gates/spec.md",
+            "text": "`A ripple-miss pointer resolves and is counted` name"
+          }
+        ],
+        "searched": [
+          "walk write gate checks sweep evidence",
+          "rc03's to decide"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The gate's own canonical next stays a single-pass --from-file aim, which bypasses the discovery this change builds",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 45,
+      "classification": "decision_required",
+      "lane": "decision",
+      "remedy": "repair",
+      "action": "applied option A: the unresolved-pass canonical next becomes `/orbit:address-reviews <change>` with no --from-file; ADDED requirement states it with a scenario; design D1, proposal and tasks 1.1/1.2/1.5 carry the change and the golden move",
+      "evidence": "verified against the current file before editing; the claim held",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc08b-walk-routing/design.md",
+          "orbit/changes/rc08b-walk-routing/proposal.md",
+          "orbit/changes/rc08b-walk-routing/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "canonical next and every rendering are unchanged",
+          "`reason`, `nextCommand` and the readout are byte-identical"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08b-walk-routing/specs/orbit-engine-gates/spec.md",
+            "text": "#### Scenario: The walk next names no file"
+          }
+        ],
+        "searched": [
+          "nextCommand",
+          "canonical next",
+          "byte-identical",
+          "unchanged"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Change the unresolved-pass canonical next in gates.ts to the change-scoped bare form `/orbit:address-reviews <change>` (same capability, orbit-engine-gates; readout/next goldens move and D1's byte-identical claim narrows to `reason` and the readout)."
+          },
+          {
+            "label": "B",
+            "body": "Keep it, and add it to Risks as a third named residual beside the review emit's and the chat note's aims, stating that following the eligibility line walks one pass per invocation and never reaches discovery."
+          }
+        ],
+        "chosen": "A"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Markers no longer suppress discovery, but a --mark'ed review's markers duplicate its own pass's findings",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-address-reviews/spec.md",
+      "line": 20,
+      "classification": "trivial_fix",
+      "lane": "obvious-fix",
+      "remedy": "repair",
+      "action": "stated the --mark restatement rule (a marker at a discovered finding's file beginning with its title is walked as that finding, in its pass's log) with a scenario; design Risks names it",
+      "evidence": "verified against the current file before editing; the claim held",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc08b-walk-routing/design.md",
+          "orbit/changes/rc08b-walk-routing/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+            "text": "#### Scenario: A --mark marker is walked once"
+          }
+        ],
+        "searched": [
+          "--mark",
+          "markers' log"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "A SUGGESTION-only or clean pass is never outstanding, so the --mark scenario's unconditional claim is false",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-address-reviews/spec.md",
+      "line": 96,
+      "classification": "trivial_fix",
+      "lane": "obvious-fix",
+      "remedy": "repair",
+      "action": "qualified the --mark scenario to a pass carrying a CRITICAL or WARNING, stated suggestion-only passes are not outstanding, added a scenario, named the behaviour change in design Risks",
+      "evidence": "verified against the current file before editing; the claim held",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc08b-walk-routing/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+            "text": "#### Scenario: A suggestion-only pass is not discovered"
+          }
+        ],
+        "searched": [
+          "SUGGESTION-grade",
+          "outstanding"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "\"proceeds as the active-change row\" is ambiguous between the openPair-stop row and the union row",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-address-reviews/spec.md",
+      "line": 12,
+      "classification": "trivial_fix",
+      "lane": "obvious-fix",
+      "remedy": "repair",
+      "action": "bare row now re-enters the rows as a positional naming the change, so the openPair stop applies; added the bare + openPair scenario",
+      "evidence": "verified against the current file before editing; the claim held",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "then proceeds as the active-change row"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+            "text": "#### Scenario: A bare invocation meets the openPair stop"
+          }
+        ],
+        "searched": [
+          "active-change row",
+          "openPair"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The body carries the normative discovery table with no parity test, unlike the rc08a pattern it cites",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 57,
+      "classification": "trivial_fix",
+      "lane": "obvious-fix",
+      "remedy": "repair",
+      "action": "discovery is now ONE `DISCOVERY` fence in the owner (the markdown table removed so the owner states it once), carried by the body as a CHECKED MIRROR held by a parity test; design D2 and task 3.1 updated",
+      "evidence": "verified against the current file before editing; the claim held",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc08b-walk-routing/design.md",
+          "orbit/changes/rc08b-walk-routing/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "eight-row table",
+          "Discovery** (normative) is ONE table"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+            "text": "DISCOVERY — rows tested in order, first match wins:"
+          }
+        ],
+        "searched": [
+          "discovery table",
+          "the table above",
+          "not a second statement"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "A settled disagreement does not say what happens to the losing claim's entry in the EARLIER log",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-address-reviews/spec.md",
+      "line": 232,
+      "classification": "trivial_fix",
+      "lane": "obvious-fix",
+      "remedy": "repair",
+      "action": "the test runs at triage before either log; each claim's entry takes its disposition in its own log, a refuted claim stale with the test as evidence; scenario added",
+      "evidence": "verified against the current file before editing; the claim held",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc08b-walk-routing/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "The entry's disposition follows what was observed."
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+            "text": "#### Scenario: The earlier pass's claim is refuted"
+          }
+        ],
+        "searched": [
+          "disagreement",
+          "disposition follows"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "A pass held by an escalated or deferred entry is rediscovered by every later walk",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-address-reviews/spec.md",
+      "line": 206,
+      "classification": "trivial_fix",
+      "lane": "obvious-fix",
+      "remedy": "repair",
+      "action": "a rediscovered pass shows its prior dispositions, re-walks only open entries, and carries resolved/stale entries forward verbatim; scenario added",
+      "evidence": "verified against the current file before editing; the claim held",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc08b-walk-routing/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+            "text": "#### Scenario: A rediscovered pass re-walks only its open entries"
+          }
+        ],
+        "searched": [
+          "rediscover",
+          "escalated"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Walk order across sources is implied, not stated",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-address-reviews/spec.md",
+      "line": 183,
+      "classification": "trivial_fix",
+      "lane": "obvious-fix",
+      "remedy": "repair",
+      "action": "stated the walk proceeds source by source in token order after one shared triage, each log written before the next source",
+      "evidence": "verified against the current file before editing; the claim held",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Pass logs are written in the engine's token order, oldest pass first; the markers' log is written last."
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+            "text": "the walk proceeds SOURCE BY SOURCE"
+          }
+        ],
+        "searched": [
+          "token order",
+          "markers' log"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The separable-redesign row omits that its resolved entry owes a sweep",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-address-reviews/spec.md",
+      "line": 203,
+      "classification": "trivial_fix",
+      "lane": "obvious-fix",
+      "remedy": "repair",
+      "action": "the separable-redesign row now says its removal's sweep rides `sweep`",
+      "evidence": "verified against the current file before editing; the claim held",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+            "text": "(the removal's sweep rides `sweep`, as a descope's does)"
+          }
+        ],
+        "searched": [
+          "separable",
+          "sweep"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "\"otherwise short of computing resolution\" names no state, and D1 omits the passed-gate return path",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 296,
+      "classification": "trivial_fix",
+      "lane": "obvious-fix",
+      "remedy": "repair",
+      "action": "named the states carrying the fields; a passed gate carries [] from its own return path; design D1 and task 1.2 name gates.ts:735 (the review's cited 531-551 was the wrong line, as its author reported)",
+      "evidence": "verified against the current file before editing; the claim held",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc08b-walk-routing/design.md",
+          "orbit/changes/rc08b-walk-routing/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "nor otherwise short of computing resolution"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08b-walk-routing/specs/orbit-engine-gates/spec.md",
+            "text": "`superseded` being a flag on one of those"
+          }
+        ],
+        "searched": [
+          "short of computing",
+          "passed gate"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The T0 turn's eligibility line is computed before the save it is said to follow",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-run-summary-emit/spec.md",
+      "line": 22,
+      "classification": "trivial_fix",
+      "lane": "obvious-fix",
+      "remedy": "repair",
+      "action": "the T0 sentence now says the eligibility line read once the return is saved names the remaining member or the walk",
+      "evidence": "verified against the current file before editing; the claim held",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "What follows the save is the engine's eligibility line on the same turn"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08b-walk-routing/specs/orbit-run-summary-emit/spec.md",
+            "text": "as read once the return is saved"
+          }
+        ],
+        "searched": [
+          "eligibility line",
+          "same turn"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The scenario-declaration load is measured at 58 uncovered, not the 22 the design frames",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 112,
+      "classification": "trivial_fix",
+      "lane": "obvious-fix",
+      "remedy": "repair",
+      "action": "design D7 and Risks record the measured 66 delta scenarios, 8 covered, 58 to declare",
+      "evidence": "verified against the current file before editing; the claim held",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "[22 inherited scenarios from the rider's block]"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08b-walk-routing/design.md",
+            "text": "so 58 must be declared"
+          }
+        ],
+        "searched": [
+          "22 ",
+          "58"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 2.2 misses the review body's prose that describes the T0 line as ending in a follow-up command",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 11,
+      "classification": "trivial_fix",
+      "lane": "obvious-fix",
+      "remedy": "repair",
+      "action": "task 2.2 names the review body's 'user action plus the follow-up command (per D14)' prose",
+      "evidence": "verified against the current file before editing; the claim held",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08b-walk-routing/tasks.md",
+            "text": "the user action plus the follow-up command (per D14)"
+          }
+        ],
+        "searched": [
+          "follow-up command"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "same guidance as before - if decisions can be made using best practices for ai development, i will defer to you",
+  "final_assessment": "Fourteen of fourteen resolved (7 WARNING, 7 SUGGESTION), all repairs, none stale. W2 took option A under Sal's standing delegation: the gate's unresolved-pass next becomes the change-scoped walk. The walk's own W6 fix initially stated discovery twice in the owner (table plus fence); it was caught in-walk and the fence made the single statement.",
+  "iteration": 1,
+  "next_recommended": "/orbit:review --as proposal rc08b-walk-routing",
+  "ripple_misses": 0
+}

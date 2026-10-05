@@ -1,0 +1,9 @@
+{
+  "command": "propose",
+  "timestamp": "2026-10-05T03:34:26Z",
+  "change": "rc08b-walk-routing",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Consume mode from orbit/explore/rc08b-walk-routing (no open questions; Mechanism read: 7 live rules, all accounted DERIVED/SOURCED, row 4; nothing BOUNDED). Generated proposal, design (with Touchpoints and Mechanism → artifacts), three deltas (orbit-address-reviews 2 MODIFIED + 3 ADDED; orbit-engine-gates 1 MODIFIED + 1 ADDED; orbit-run-summary-emit 2 MODIFIED) and 6 task groups (21 tasks). Two corrections at propose, both recorded: D-rc08b-3 amended (audit-drift stays in discovery; the exploration misread which next line names --from-file), and the payload-key question closed by reading the write gate (per-resolution keys are open, so orbit-emit-composition is untouched). Capability count holds at three. Validates --strict; 58 delta scenarios await declaration (task group 5, including 22 carried by the rider's block). Fingerprints 5/5; architecture citation merged.",
+  "next_recommended": "/orbit:review rc08b-walk-routing — proposal artifacts ready; review before apply"
+}

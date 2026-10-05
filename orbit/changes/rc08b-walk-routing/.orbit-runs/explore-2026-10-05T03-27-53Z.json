@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-05T03:27:53Z",
+  "change": "rc08b-walk-routing",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Read the walk body, gate and trail reader against rc08b's six charter jobs and settled them under Sal's delegation of method (R-crc-3): ten Decisions (D-rc08b-1..10), seven rules each with a CLOSED Mechanism entry. Discovery reads a gate-exposed unresolvedPasses list (one predicate, two readers) and writes one log per pass, which lifts D-rc13-3's sourcePath blocker. R-crc-6's lane is recorded as `remedy`, orthogonal to D4's `lane`. REDESIGN takes two shapes (separable: descoped and routed; essential: escalated, and the gate holds). The disagreement record lands on the later log. The T0 line ends at 'save the response as'. No edit-level record (D-rc08b-7, scope). The rider is a pointer swap. Three capabilities at R-crc-1's ceiling; the status-JSON row ownership is checked at propose.",
+  "decisions_captured": 10,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 7,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose rc08b-walk-routing — 7 live rules accounted; formalize when you are ready (or /orbit:explore rc08b-walk-routing to keep refining)"
+}
