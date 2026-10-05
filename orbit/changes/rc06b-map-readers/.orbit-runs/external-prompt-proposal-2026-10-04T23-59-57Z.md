@@ -26,11 +26,11 @@ resolution, not review. Just flag what you observe.
 ## What to read for THIS review (--as proposal)
 
 ```
-- orbit/changes/<change-name>/proposal.md
-- orbit/changes/<change-name>/design.md
-- orbit/changes/<change-name>/tasks.md
-- orbit/changes/<change-name>/specs/<capability>/spec.md (every spec under specs/)
-- orbit/changes/<change-name>/explore.md (if present)
+- orbit/changes/rc06b-map-readers/proposal.md
+- orbit/changes/rc06b-map-readers/design.md
+- orbit/changes/rc06b-map-readers/tasks.md
+- orbit/changes/rc06b-map-readers/specs/<capability>/spec.md (every spec under specs/)
+- orbit/changes/rc06b-map-readers/explore.md (if present)
 - orbit/specs/<capability>/spec.md (archived baselines — for delta consistency checks)
 ```
 
