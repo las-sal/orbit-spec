@@ -1,0 +1,98 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-05T01:31:29Z",
+  "change": "rc08a-sweep-evidence",
+  "kind": "editorial",
+  "model": null,
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc08a-sweep-evidence/design.md",
+      "line": 59,
+      "title": "Design D3 still states the broad suffix rule walk 2 narrowed in the spec",
+      "recommendation": "Replace D3's 'strip `:<line>…`' with the narrowed rule the gate requirement now states (a trailing `:<line>` or `:<line>:<column>`, digits only, through the reused `stripLineSuffix`), and keep the measurement: re-run under the narrow rule, the figure is unchanged (1 unresolved of 1350 recorded `file`/`ripple_cascade.applied` paths since 2026-09-20, the same free-text entry).",
+      "walk_entry": {
+        "title": "The promised suffix rule is not the function tasks reuse",
+        "file": "orbit/changes/rc08a-sweep-evidence/specs/orbit-emit-composition/spec.md:15"
+      }
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Walk 2's five edits were read in the diff from the external return's commit (d1a01ba9) and checked against both owners. W1's moved example is now a genuine scope miss: the body file sits outside the change directory and the entry's other scope members. W2 and walk 1's status-only refusal now bind different things (the payload being written; records on disk), and the two requirements say so. W3's normalization is stated once in the gate requirement and pointed at from the shape. W5's narrowing reached design Goals, Non-Goals, Risks, the proposal and the architecture doc's SPLIT paragraph and rc08b charter. W4 stopped one site short: design D3 restates the path rule in its broad form. The residual check found no file changed outside walk 2's edit records.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "verification": [
+    {
+      "title": "An in-change miss cannot have the scenario's `scope` kind",
+      "file": "orbit/changes/rc08a-sweep-evidence/specs/orbit-address-reviews/spec.md:51",
+      "verdict": "landed"
+    },
+    {
+      "title": "Legacy resolved walks cannot be named as ripple misses",
+      "file": "orbit/changes/rc08a-sweep-evidence/specs/orbit-emit-composition/spec.md:58",
+      "verdict": "landed"
+    },
+    {
+      "title": "The pointer is both verbatim and normalized",
+      "file": "orbit/changes/rc08a-sweep-evidence/specs/orbit-address-reviews/spec.md:39",
+      "verdict": "landed"
+    },
+    {
+      "title": "The promised suffix rule is not the function tasks reuse",
+      "file": "orbit/changes/rc08a-sweep-evidence/specs/orbit-emit-composition/spec.md:15",
+      "verdict": "regressed"
+    },
+    {
+      "title": "Text presence cannot certify an edit set landed",
+      "file": "orbit/changes/rc08a-sweep-evidence/design.md:22",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 1 warning, 0 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-05T01-30-11Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc08a-sweep-evidence --from-file orbit/changes/rc08a-sweep-evidence/.orbit-runs/review-proposal-2026-10-05T01-31-29Z.json"
+}

@@ -36,7 +36,7 @@ An entry whose `outcome` is `stale`, `deferred` or `escalated` carries no `sweep
 
 ### Requirement: A ripple miss is attributed by the walk that finds it
 
-The system SHALL let a resolution entry whose `outcome` is `resolved` name the earlier walk entry whose sweep should have caught the finding, through an optional `ripple_miss_of` object with exactly four keys: `walk` (the earlier walk log's filename token), `title` and `file` (that walk's resolution entry, verbatim as written there), and `kind`, one of the CLOSED values:
+The system SHALL let a resolution entry whose `outcome` is `resolved` name the earlier walk entry whose sweep should have caught the finding, through an optional `ripple_miss_of` object with exactly four keys: `walk` (the earlier walk log's filename token), `title` and `file` (that walk's resolution entry, as written there; the gate compares both sides after one normalization, so a title's surrounding whitespace and a file's `:<line>` suffix never decide a match), and `kind`, one of the CLOSED values:
 
 | `kind` | the site of the later finding was… |
 |---|---|
@@ -48,7 +48,7 @@ The walker attributes at TRIAGE, when it reads the finding against the trail's e
 
 #### Scenario: A system-review finding is attributed to the proposal walk that missed it
 
-- **WHEN** a fresh system pass finds "'stated at both sources' survives in design.md", and the proposal walk's entry for the finding that introduced the ownership move had `scope: []`, with `design.md` outside its check scope
+- **WHEN** a fresh system pass finds "'stated at both sources' survives in the generated review body", `src/core/templates/workflows/review.ts`, and the proposal walk's entry for the finding that introduced the ownership move edited only files under the change directory, with `scope: []` and no cascade path outside it, so the body file was outside that entry's check scope
 - **THEN** the system walk's resolution carries `ripple_miss_of: {walk: "<proposal walk token>", title: "<that entry's title>", file: "<that entry's file>", kind: "scope"}`
 
 #### Scenario: An unrelated finding carries no attribution

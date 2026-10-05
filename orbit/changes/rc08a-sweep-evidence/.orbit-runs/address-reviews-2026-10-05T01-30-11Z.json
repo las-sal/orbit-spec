@@ -1,0 +1,113 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-05T01:30:11Z",
+  "change": "rc08a-sweep-evidence",
+  "kind": "editorial",
+  "model": null,
+  "source": "from-file",
+  "source_path": "orbit/changes/rc08a-sweep-evidence/.orbit-runs/external-proposal-2026-10-05T01-26-16Z.md",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6 (Codex)",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 5,
+    "suggestion": 0
+  },
+  "pushback_verification": "5 of 5 verified against current state; 0 stale",
+  "resolution_summary": {
+    "resolved": 5,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "An in-change miss cannot have the scenario's `scope` kind",
+      "marker_source": "external",
+      "file": "orbit/changes/rc08a-sweep-evidence/specs/orbit-address-reviews/spec.md:51",
+      "classification": "trivial_fix",
+      "action": "Kept the kind definitions; moved the scenario's leftover to a generated body outside the change directory, so the entry's check scope (change dir + file + cascade + scope) excludes it.",
+      "evidence": "verified against current state in the pull-and-evaluate turn (spec lines read; trail.ts:126 stripLineSuffix read)",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Legacy resolved walks cannot be named as ripple misses",
+      "marker_source": "external",
+      "file": "orbit/changes/rc08a-sweep-evidence/specs/orbit-emit-composition/spec.md:58",
+      "classification": "trivial_fix",
+      "action": "The pointer lookup reads the earlier entry through the trail reader's disposition (outcome, else legacy status); the status-only refusal binds only the payload being written; new scenario; task 1.1 case.",
+      "evidence": "verified against current state in the pull-and-evaluate turn (spec lines read; trail.ts:126 stripLineSuffix read)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc08a-sweep-evidence/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The pointer is both verbatim and normalized",
+      "marker_source": "external",
+      "file": "orbit/changes/rc08a-sweep-evidence/specs/orbit-address-reviews/spec.md:39",
+      "classification": "trivial_fix",
+      "action": "The requirement now says the gate compares both sides after one normalization (title trimmed, file through stripLineSuffix); task 1.1 pads the title and suffixes the file.",
+      "evidence": "verified against current state in the pull-and-evaluate turn (spec lines read; trail.ts:126 stripLineSuffix read)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc08a-sweep-evidence/specs/orbit-emit-composition/spec.md",
+          "orbit/changes/rc08a-sweep-evidence/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The promised suffix rule is not the function tasks reuse",
+      "marker_source": "external",
+      "file": "orbit/changes/rc08a-sweep-evidence/specs/orbit-emit-composition/spec.md:15",
+      "classification": "trivial_fix",
+      "action": "Narrowed the spec to stripLineSuffix's syntax (trailing :line or :line:column, digits only), reused unchanged; a path with text after the suffix resolves to nothing (warning in legacy fields, refusal in sweep); task 1.1 case; task 1.2 says unchanged.",
+      "evidence": "verified against current state in the pull-and-evaluate turn (spec lines read; trail.ts:126 stripLineSuffix read)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc08a-sweep-evidence/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Text presence cannot certify an edit set landed",
+      "marker_source": "external",
+      "file": "orbit/changes/rc08a-sweep-evidence/design.md:22",
+      "classification": "trivial_fix",
+      "action": "Narrowed the job (3) claim to what text shows, in design Goals, a new Non-Goal and a Risks entry, and the proposal; the edit-level guarantee carried to rc08b in the doc's rc08 SPLIT paragraph and rc08b charter.",
+      "evidence": "verified against current state in the pull-and-evaluate turn (spec lines read; trail.ts:126 stripLineSuffix read)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc08a-sweep-evidence/proposal.md",
+          "orbit/architecture/clean-up-review-cycle.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": 0,
+  "final_assessment": "All 5 external findings resolved. The sharpest (W5) narrowed a false guarantee: the gate certifies named text, not that each intended edit happened; the remainder of rc08 job (3) is carried to rc08b in the architecture doc. W2 corrected walk 1's status-only refusal, which had reached into how earlier records are read. Validates --strict; 14 tasks.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal rc08a-sweep-evidence"
+}

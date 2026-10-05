@@ -20,7 +20,11 @@ Source: `explore.md` (moved into this change), D-rc08-1..5, with three accounted
 **Goals:**
 - A resolved walk entry carries `sweep: {retired, introduced, searched, scope, kept}` (D-rc08-2).
 - The write gate refuses a log whose retired wording survives or whose introduced text is absent
-  (D-rc08-3). This also closes rc08's job (3): an edit set that half-applied cannot be logged as resolved.
+  (D-rc08-3). This covers rc08's job (3) ONLY as far as text is observable: an edit that did not land is
+  caught when it leaves a named retired string present or a named introduced text absent. It does NOT
+  certify that each intended edit happened: an introduced text that already appears elsewhere in its file
+  passes whether or not the edit landed (proposal walk 2, external W5). The edit-level guarantee is open,
+  carried to rc08b's exploration.
 - A later finding can be attributed to the walk entry that missed it, and the engine counts attributions
   (D-rc08-4).
 - The VERIFICATION pass grades where the walk says it looked.
@@ -31,6 +35,8 @@ Source: `explore.md` (moved into this change), D-rc08-1..5, with three accounted
   outside every check and becomes visible only through attribution.
 - Walk discovery, the three lanes, the disagreement rule, the T0 next line: rc08b's.
 - Re-validating archived walk logs.
+- Certifying that each intended edit happened. The gate checks named text, not edits; an edit-level record
+  is rc08b's open question.
 
 ## Decisions
 
@@ -50,7 +56,8 @@ exploration named the scope (the change directory minus its trail, plus `file`, 
 and `sweep.scope`). Propose measured how those fields are WRITTEN. Across walk logs since 2026-09-20,
 `file` is repo-relative (142) or change-relative (125, e.g. `specs/orbit-conventions/spec.md`), and
 `ripple_cascade.applied` is mostly `orbit/changes/<name>/…`, a path that moved at archive. One rule
-resolves all but one recorded path: strip `:<line>…`; map `orbit/changes/<name>/` to the change
+resolves all but one recorded path (1 of 1350, re-measured at proposal walk 3 under this narrowed form):
+strip a trailing `:<line>` or `:<line>:<column>` through the reused `stripLineSuffix`; map `orbit/changes/<name>/` to the change
 directory; else the project root; else the change directory. The one failure is free text
 (`.openspec.yaml fingerprint (13th stamp)`). Hence the asymmetry the requirement states: an unresolved
 LEGACY field (`file`, `applied`) is skipped with a stderr warning, because refusing would break walks over
@@ -125,6 +132,9 @@ Added at propose:
   is on the record, and a later miss attributed with `kind: query` or `scope` shows where it was taken.
   Measured by `ripple_misses` (D-rc08-2's FALSIFY move).
 - [Behavioural leftovers stay invisible to the check] → Attribution (D-rc08-4); stated as a Non-Goal.
+- [An `introduced` text already present elsewhere in its file passes whether or not the edit landed] →
+  stated as a Non-Goal; the walker names a text specific to the new edit, and the remainder is carried to
+  rc08b.
 - [The matching limit: markup inside a wrapped phrase] → named in `The walk write gate checks sweep
   evidence`; a shorter retired string avoids it.
 - [Attribution is optional judgement; an unattributed miss is invisible] → named in `A ripple miss is

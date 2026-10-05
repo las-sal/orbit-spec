@@ -12,7 +12,7 @@
 
 The CHECK SCOPE of an entry is the union of: on a change-scoped walk, every file under the change directory with its `.orbit-runs/` excluded; the entry's `file`; its `ripple_cascade.applied` paths; and its `sweep.scope` paths, a directory contributing its files. A walk resolved through the archived fallback is change-scoped, its change directory the archive directory. A project- or doc-scoped walk has no change directory and uses the last three. Files under `.git/`, `node_modules/`, `dist/` and `build/` are never read.
 
-A PATH from any of these fields resolves by one rule: strip a `:<line>` suffix and anything after it; a path beginning `orbit/changes/<name>/` for the walk's own change resolves under the change directory, archived or active; otherwise the path resolves against the project root, then, on a change-scoped walk, against the change directory. Every resolved path must stay inside the project root (the surface's containment rule). An entry's `file` or `ripple_cascade.applied` path that resolves to nothing is skipped and named in a stderr warning: those fields predate this check and carry free text. A `sweep` path that resolves to nothing is refused.
+A PATH from any of these fields resolves by one rule: strip a trailing `:<line>` or `:<line>:<column>` suffix (digits only, at the end of the path: the trail reader's `stripLineSuffix`, reused so a path and a trail key are normalized by one rule; a path carrying anything after the suffix, such as `design.md:40 (section)`, is not stripped and so resolves to nothing); a path beginning `orbit/changes/<name>/` for the walk's own change resolves under the change directory, archived or active; otherwise the path resolves against the project root, then, on a change-scoped walk, against the change directory. Every resolved path must stay inside the project root (the surface's containment rule). An entry's `file` or `ripple_cascade.applied` path that resolves to nothing is skipped and named in a stderr warning: those fields predate this check and carry free text. A `sweep` path that resolves to nothing is refused.
 
 MATCHING is literal and case-sensitive after every run of whitespace, newlines included, is collapsed to one space, in both the string and the file. A phrase wrapped across lines therefore matches. Named limit: markup that splits a phrase other than whitespace (a blockquote `>` or list marker at a wrapped line's start, emphasis inside the phrase) is not normalized, so such an occurrence is not found. `searched` is never checked: it is a record. Named limit of `--keep-resolved-markers` (a debug flag that leaves resolved `@review:` markers in their files, per `orbit-address-reviews`' `Marker removal invariant`): a retained marker quoting retired wording is found like any other text, so such a walk lists that file under `kept` with the flag as its `why`, which takes the file out of that entry's retired check.
 
@@ -55,7 +55,7 @@ The check runs at write time only. A walk log on disk is never re-validated by a
 
 ### Requirement: A ripple-miss pointer resolves and is counted
 
-`orbit emit address-reviews` SHALL refuse, writing nothing, a resolution whose `ripple_miss_of` is not an object of exactly the four keys and values `orbit-address-reviews`' `A ripple miss is attributed by the walk that finds it` owns, or that sits on an entry whose `outcome` is not `resolved`, or whose pointer does not resolve: `walk` must be the filename token of an `address-reviews-<token>.json` already in the same trail, earlier than this emit's token, whose `resolutions[]` holds an entry with `outcome: "resolved"` whose `title` (trimmed) and `file` (with any `:<line>` suffix stripped) equal the pointer's. The refusal names the entry and the pointer.
+`orbit emit address-reviews` SHALL refuse, writing nothing, a resolution whose `ripple_miss_of` is not an object of exactly the four keys and values `orbit-address-reviews`' `A ripple miss is attributed by the walk that finds it` owns, or that sits on an entry whose `outcome` is not `resolved`, or whose pointer does not resolve: `walk` must be the filename token of an `address-reviews-<token>.json` already in the same trail, earlier than this emit's token, whose `resolutions[]` holds an entry the trail reader reads as resolved (its `outcome`, or the legacy key `status` when `outcome` is absent: the refusal of a `status`-only entry binds the payload being written, never a record already on disk) whose title and file equal the pointer's, both sides compared after the same normalization: the title trimmed, the file through `stripLineSuffix`. The refusal names the entry and the pointer.
 
 The surface SHALL compute `ripple_misses`, the number of this payload's resolutions carrying `ripple_miss_of`, as a computed extension on every address-reviews emit. It is engine-owned: a payload that supplies `ripple_misses` is refused as an unknown key. No reader branches on the count; it is recorded, never targeted (R-crc-11(h)).
 
@@ -63,6 +63,11 @@ The surface SHALL compute `ripple_misses`, the number of this payload's resoluti
 
 - **WHEN** a payload's resolution carries `ripple_miss_of: {walk: "2026-10-05T01-00-00Z", title: "T", file: "design.md", kind: "scope"}` and `address-reviews-2026-10-05T01-00-00Z.json` in the same trail holds a resolved entry titled `T` on `design.md:40`
 - **THEN** the emit writes, carrying `ripple_misses: 1`
+
+#### Scenario: A pointer to a legacy resolved entry writes
+
+- **WHEN** the named earlier walk log's entry carries `status: "resolved"` and no `outcome`, and the pointer's title and file match it
+- **THEN** the emit writes: the earlier record is read as the trail reader reads it
 
 #### Scenario: A pointer to nothing is refused
 

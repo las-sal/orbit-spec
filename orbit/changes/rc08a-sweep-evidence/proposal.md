@@ -20,8 +20,10 @@ explore.md, Premise and D-rc08-5). This is stage `rc08a-sweep-evidence` of
   the check scope, or an introduced text absent from its path, refuses the log, naming the string, the
   path and the line. Matching is literal and case-sensitive after whitespace runs collapse to one space,
   so a phrase wrapped across lines still matches. `searched` and the judgement behind it are a record,
-  never checked (D-rc08-3). Job (3) of rc08's charter, an edit set that half-applied, is caught by the same
-  check: an edit that did not land leaves its retired string present or its introduced text absent.
+  never checked (D-rc08-3). Job (3) of rc08's charter, an edit set that half-applied, is caught only as far as
+  text shows it: an edit that did not land is caught when it leaves a named retired string present or a
+  named introduced text absent. The check cannot certify that each intended edit happened; that remainder
+  goes to rc08b.
 - **A ripple miss is attributed where it is found.** A walk resolution may carry `ripple_miss_of: {walk,
   title, file, kind}`, `kind` one of `query` | `scope` | `judgement`. The gate checks that the pointer
   names a `resolved` entry of an earlier walk on the same trail, and the engine computes `ripple_misses`

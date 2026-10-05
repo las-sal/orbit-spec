@@ -2676,9 +2676,10 @@ declaration) measured the trail: 205 walk logs and 1404 resolutions. `ripple_cas
 walk edited and never how it found them, so a site that was never examined and a site judged unaffected
 leave the same record. The exploration settled four decisions under Sal's delegation of method
 (D-rc08-1..4, three rules with accounted Mechanism entries). Charter jobs (1) sweep set plus ripple-miss
-detection and (3) walk execution go to rc08a. Job (3) folds into job (1)'s mechanism: an edit that did
-not land leaves its retired wording present or its introduced text absent, and the write gate refuses the
-log. Jobs (2) discovery, (4) three lanes, (5) the disagreement rule and (6) the T0 next line go to rc08b.
+detection and (3) walk execution go to rc08a. Job (3) folds into job (1)'s mechanism only as far as text
+shows it: an edit that did not land is refused when it leaves named retired wording present or named
+introduced text absent; the gate cannot certify that each intended edit happened (rc08a's external
+proposal pass, W5), and that remainder goes to rc08b. Jobs (2) discovery, (4) three lanes, (5) the disagreement rule and (6) the T0 next line go to rc08b.
 The charter below is kept as written. It is SUPERSEDED in one term: "`sweep_set`" ships as a `sweep`
 record, two of whose fields the gate checks (D-rc08-2, D-rc08-3).
 
@@ -2758,7 +2759,9 @@ restated here: walk DISCOVERY (a bare invocation resolves the single active chan
 outstanding pass is walked, through the gate's `passResolved`); R-crc-6's THREE LANES, with a REDESIGN
 finding routed to `/orbit:explore` and the routing recorded on the log; the DISAGREEMENT handling rule
 (D-rc03-6) in `orbit-address-reviews`; and the review-external T0 `next_recommended` ending at "save the
-response as …" (Q-rc03-5). Goal G3. Touches: orbit-address-reviews, orbit-run-summary-emit, and possibly
+response as …" (Q-rc03-5). It also takes the remainder of rc08's job (3) that rc08a's text check cannot
+reach: whether a walk needs an edit-level record certifying that each intended edit happened, decided at
+its exploration. Goal G3. Touches: orbit-address-reviews, orbit-run-summary-emit, and possibly
 orbit-engine-gates for the discovery predicate. These are measured at its exploration against R-crc-1.
 Exit: (1) a bare walk with one active change and two unwalked passes walks both, naming the change; (2)
 rc08's exit (4): the body implements the three lanes, a REDESIGN routes to explore, and the log records
