@@ -44,6 +44,9 @@ export const ENGINE_OWNED_PER_COMMAND: Record<string, string[]> = {
   // rc07b-reference-roundtrip (`orbit-emit-composition`'s `Audit-drift counts are engine-computed`):
   // both counts are computed from `findings` at write and refused in the payload.
   'audit-drift': ['findings_total', 'findings_by_category'],
+  // rc08a-sweep-evidence (`orbit-emit-composition`'s `A ripple-miss pointer resolves and is counted`):
+  // the count of the walk's attributions, computed at write and refused in the payload.
+  'address-reviews': ['ripple_misses'],
 };
 
 /** The full engine-owned set for one command — the field-set test's subtraction. */

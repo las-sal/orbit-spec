@@ -544,7 +544,7 @@ Every location is written by the emit surface — no scope hand-writes its log.
 
 The spine every emit carries is owned by \`orbit-conventions\`' \`Internal-run JSON summary format\` requirement, and is not restated here; the write gate refuses every field the engine composes (\`next_recommended\` and the \`iteration\` ordinal among them). For address-reviews, \`final_assessment\` is the payload's own narrative of the resolution outcome, and \`change\` is \`null\` for whole-repo / cross-change and architecture scope, where an architecture-scoped log carries a \`doc\` field instead.
 
-The schema below documents per-command extensions ADDED to that spine (\`source\`, \`source_path\`, \`external_reviewer\`, \`walk_mode\`, \`walk_mode_source\`, \`walk_mode_shifted_at_finding\`, \`input_findings_summary\`, \`pushback_verification\`, \`resolution_summary\`, \`delegation_directive\`, \`resolutions\` with entry-level \`ratified_via\`/\`resolution\` plus \`recommendation_fork\` and \`ripple_cascade\` sub-objects, \`remaining_markers_in_scope\`, \`persisted_escalations\`). Per-command extensions are address-reviews-specific state.
+The schema below documents per-command extensions ADDED to that spine (\`source\`, \`source_path\`, \`external_reviewer\`, \`walk_mode\`, \`walk_mode_source\`, \`walk_mode_shifted_at_finding\`, \`input_findings_summary\`, \`pushback_verification\`, \`resolution_summary\`, \`delegation_directive\`, \`resolutions\` with entry-level \`ratified_via\`/\`resolution\` plus \`recommendation_fork\`, \`ripple_cascade\`, \`sweep\` and \`ripple_miss_of\` sub-objects, \`remaining_markers_in_scope\`, \`persisted_escalations\`) and the engine-computed \`ripple_misses\`. Per-command extensions are address-reviews-specific state.
 
 ## Schema (v2)
 
@@ -602,9 +602,18 @@ The schema below documents per-command extensions ADDED to that spine (\`source\
         "applied": ["<paths edited as part of the cascade>"],
         "flagged_not_applied": [{ "path": "...", "reason": "<OUT-category reason OR \`--no-cascade suppressed\`>" }]
       },
+      "sweep": {
+        "retired": ["<wording the fix made false>"],
+        "introduced": [{ "path": "<path>", "text": "<text the fix added>" }],
+        "searched": ["<what was searched for>"],
+        "scope": ["<paths examined beyond file and ripple_cascade.applied>"],
+        "kept": [{ "path": "<path>", "why": "<why it keeps a retired string>" }]
+      },
+      "ripple_miss_of": { "walk": "<earlier walk's filename token>", "title": "<that entry's title>", "file": "<that entry's file>", "kind": "scope" | "query" | "judgement" },
       "outcome": "resolved" | "stale" | "deferred" | "escalated"
     }
   ],
+  "ripple_misses": "<engine-computed: the count of resolutions carrying ripple_miss_of; refused in the payload>",
   "delegation_directive": "<optional: the user's verbatim mid-walk delegation, when one was issued>",
   "remaining_markers_in_scope": 0,
   "persisted_escalations": [
@@ -645,6 +654,7 @@ Three payload files the walk writes, ONE PER PROVENANCE, because the fields that
       "reproduction_rerun": "reproduced",
       "evidence": "re-read design.md steps 3-4: the delete preceded the check",
       "ripple_cascade": { "applied": ["orbit/changes/add-detail-flag/tasks.md"], "flagged_not_applied": [] },
+      "sweep": { "retired": ["delete the staging directory, then verify the copy"], "introduced": [], "searched": ["staging directory", "verify the copy"], "scope": [], "kept": [] },
       "outcome": "resolved"
     },
     {
@@ -663,6 +673,7 @@ Three payload files the walk writes, ONE PER PROVENANCE, because the fields that
         "chosen": "B"
       },
       "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+      "sweep": { "retired": [], "introduced": [], "searched": ["generated surface", "update --force"], "scope": [], "kept": [] },
       "outcome": "resolved"
     }
   ],
@@ -696,6 +707,7 @@ Three payload files the walk writes, ONE PER PROVENANCE, because the fields that
       "classification": "trivial_fix",
       "action": "five → four, with the explicit list added",
       "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+      "sweep": { "retired": ["the five supported formats"], "introduced": [], "searched": ["five", "formats"], "scope": [], "kept": [] },
       "outcome": "resolved"
     }
   ],
@@ -730,6 +742,7 @@ Three payload files the walk writes, ONE PER PROVENANCE, because the fields that
       "ratified_via": "chat",
       "resolution": "s5 does not need s4; drop its edge",
       "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+      "sweep": { "retired": [], "introduced": [], "searched": ["Depends-on", "s4"], "scope": [], "kept": [] },
       "outcome": "resolved"
     }
   ],
@@ -774,6 +787,9 @@ The v2 shape is a **structural change** from v1, not a rename. Readers handling 
 - **\`ripple_cascade\`** (per-resolution) — replaces v1's top-level \`ripple_flagged_files_aggregate\`. Object splits each resolution's ripples into \`applied\` (paths cascade-edited consistent with the primary fix; recorded for audit) AND \`flagged_not_applied\` (paths identified as ripple targets but NOT edited, with \`{path, reason}\` entries). Reasons fall into TWO source categories:
   - **Structural OUT-category reasons** (4 codes): \`audit-trail file; cascade skipped by policy\` / \`baseline spec; add a delta to your current change's specs/<capability>/spec.md to capture this ripple\` / \`cross-change ripple; cascade scope is current change only\` / \`safe-exclusion path; never edited\`. Fire when cascade was ON and the file matched an OUT prefix.
   - **Mode-suppression reason** (1 code): \`--no-cascade suppressed\`. Fires uniformly for ALL ripple-flagged files when \`--no-cascade\` was set, regardless of IN/OUT classification.
+- **\`sweep\`** (per-resolution, on \`resolved\` entries — rc08a): the five arrays \`retired\` / \`introduced\` / \`searched\` / \`scope\` / \`kept\` composed at Step 3d.5. Shape owned by \`orbit-address-reviews\`' \`A resolved walk entry records its sweep evidence\`; checks owned by \`orbit-emit-composition\`'s \`The walk write gate checks sweep evidence\`. A log written before rc08a carries none.
+- **\`ripple_miss_of\`** (per-resolution, optional — rc08a): \`{walk, title, file, kind}\` naming the earlier walk entry that missed this finding, written at triage (Step 2). Shape owned by \`orbit-address-reviews\`' \`A ripple miss is attributed by the walk that finds it\`; the pointer check by \`orbit-emit-composition\`'s \`A ripple-miss pointer resolves and is counted\`.
+- **\`ripple_misses\`** (top-level, engine-computed — rc08a): the count of this walk's resolutions carrying \`ripple_miss_of\`; never supplied, per \`orbit-emit-composition\`'s \`A ripple-miss pointer resolves and is counted\`.
 
 ## Worked-example JSON snippets
 
@@ -791,6 +807,7 @@ The v2 shape is a **structural change** from v1, not a rename. Readers handling 
         "applied": ["orbit/changes/foo/design.md", "orbit/changes/foo/tasks.md"],
         "flagged_not_applied": []
       },
+      "sweep": { "retired": ["<old wording>"], "introduced": [], "searched": ["<old wording>"], "scope": [], "kept": [] },
       "outcome": "resolved"
     }
   ]
@@ -827,6 +844,7 @@ The v2 shape is a **structural change** from v1, not a rename. Readers handling 
       "ratified_via": "chat",
       "action": "applied the ratified direction B — added Group 19 to tasks.md",
       "ripple_cascade": { "applied": ["orbit/changes/foo/tasks.md"], "flagged_not_applied": [] },
+      "sweep": { "retired": [], "introduced": [{ "path": "orbit/changes/foo/tasks.md", "text": "## 19." }], "searched": ["Group 19"], "scope": [], "kept": [] },
       "outcome": "resolved"
     }
   ]
@@ -905,6 +923,8 @@ Found 12 markers in scope:
 
 Mark external-sourced entries explicitly (\`(external)\` prefix). **Blocks come first**: when the source carries lifecycle blocks (markdown \`## Blocks\` items; the review JSON's \`blocks[]\`), list them at the TOP of the triage table under a \`Blocks (not walked)\` heading — one line each, verbatim — before any numbered finding; they are never virtual markers, never walked, and never counted (per \`orbit-conventions\`' Severity ladder; the stop is the human's). A CRITICAL marker that carries no reproduction is tagged \`unreproduced\` in its triage line. The triage OPENS with the **obvious-fix lane preview** (D-arc Stage D4): every finding provisionally headed for the obvious-fix lane is listed compactly — finding + its one-line resolution — BEFORE any fix lands, so the user can pull any item into the decision lane with a word ("discuss the import one"). The preview derives from a PROVISIONAL classification (per-finding pushback has not yet run); walk-time pushback may reclassify, and a reclassified item is announced before its fix lands. Scoping (walk all — the default — / a subset / only-critical / cancel) is settled by the user's response to the preview; an \`AskUserQuestion\` is optional closure when the response doesn't settle it.
 
+**Ripple-miss attribution** (a change-scoped walk): read the change's EARLIER walk logs (\`address-reviews-*.json\` on its trail) against each finding. Where a finding sits at a site an earlier \`resolved\` entry's fix should have reached, that finding's resolution — once it resolves — carries \`ripple_miss_of: {walk, title, file, kind}\`, naming the earlier entry with \`title\` and \`file\` copied from that log, never retyped, and \`kind\` one of: \`scope\` (the site lay outside that entry's check scope), \`query\` (inside it, but matched by none of its \`retired\` or \`searched\` strings), or \`judgement\` (matched, and judged unaffected). An entry written before sweep records existed has no \`retired\`/\`searched\`; read its scope as its \`file\` and \`ripple_cascade.applied\`. Attribution is your judgement and optional: a finding no earlier entry touched carries none. Shape and rule: \`orbit-address-reviews\`' \`A ripple miss is attributed by the walk that finds it\`.
+
 ### 3. Walk each marker
 
 **Walk-mode is the default**: each marker receives its own complete inner cycle — pushback → classify → resolve per LANE → ripple-cascade → remove-marker — before the next marker's pushback begins. Obvious-fix findings (previewed at triage) apply with no prompt and no discussion; decision-lane findings follow the present → discuss → ratify protocol (3b.5). There is NO mandatory per-finding \`AskUserQuestion\`. The user can interrupt between markers; the resolution log captures partial completion if interrupted.
@@ -971,6 +991,18 @@ If the resolution edited a normative artifact, compute the ripple-flag set — f
 **\`--no-cascade\` flag** (opt-out): when set, NO ripples are edited regardless of IN/OUT classification. ALL ripple-flagged files are recorded under \`ripple_cascade.flagged_not_applied[]\` with reason \`--no-cascade suppressed\`. Use case: user wants to inspect the ripple set before allowing edits.
 
 **Cascade trusts the ripple-flag analysis** — no independent "should this file be touched?" judgments beyond the four-category OUT check; if analysis didn't surface a file, cascade doesn't touch it. \`--no-cascade suppressed\` is a mode-suppression reason that fires uniformly when the flag is set — NOT a fifth OUT category (structural OUT reasons fire only when cascade was ON).
+
+#### 3d.5. Record the sweep (\`resolved\` entries only)
+
+As the entry's last step before marker removal — in batch mode, for every entry after the one aggregated cascade — compose its \`sweep\`: five arrays, any of them empty, an empty array being the WRITTEN answer that there is nothing of that kind (shape: \`orbit-address-reviews\`' \`A resolved walk entry records its sweep evidence\`). A \`stale\`, \`deferred\` or \`escalated\` entry edited nothing and carries none.
+
+- \`retired\` — wording the fix made FALSE, which must no longer appear anywhere the gate looks.
+- \`introduced\` — \`{path, text}\`: text the fix added, which must appear in \`path\` (name text specific to this edit).
+- \`searched\` — what you searched for to find the fix's other sites (a phrase, an identifier, a grep pattern); a record, never checked.
+- \`scope\` — files or directories you examined beyond the entry's \`file\` and \`ripple_cascade.applied\`.
+- \`kept\` — \`{path, why}\`: a file that must keep a retired string (history quoting the old wording, a test asserting its absence). Under \`--keep-resolved-markers\`, a file whose retained marker quotes a retired string is listed here with the flag as its \`why\`.
+
+\`orbit emit address-reviews\` checks the record against the files as they stand at emit time (per \`orbit-emit-composition\`'s \`The walk write gate checks sweep evidence\`). A refusal names the string, the path and the line: fix that file, or list it under \`kept\` with its \`why\` — never trim \`retired\` to get past it.
 
 #### 3e. Remove the marker (invariant)
 

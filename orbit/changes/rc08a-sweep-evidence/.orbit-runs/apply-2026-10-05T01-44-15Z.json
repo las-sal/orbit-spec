@@ -1,0 +1,43 @@
+{
+  "command": "apply",
+  "timestamp": "2026-10-05T01:44:15Z",
+  "change": "rc08a-sweep-evidence",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "user_validation_tasks": [
+    "5.3"
+  ],
+  "consent": "user-invoked",
+  "tasks_completed": 13,
+  "tasks_remaining": 1,
+  "user_validation_remaining": 1,
+  "chunk": null,
+  "chunk_name": null,
+  "chunk_complete": true,
+  "tasks_completed_this_session": 13,
+  "files_touched": [
+    "orbit/architecture/clean-up-review-cycle.md",
+    "orbit/changes/rc08a-sweep-evidence/.orbit-runs/address-reviews-2026-10-05T01-30-11Z.json",
+    "orbit/changes/rc08a-sweep-evidence/.orbit-runs/address-reviews-2026-10-05T01-32-10Z.json",
+    "orbit/changes/rc08a-sweep-evidence/.orbit-runs/external-proposal-2026-10-05T01-26-16Z.md",
+    "orbit/changes/rc08a-sweep-evidence/.orbit-runs/review-proposal-2026-10-05T01-31-29Z.json",
+    "orbit/changes/rc08a-sweep-evidence/design.md",
+    "orbit/changes/rc08a-sweep-evidence/proposal.md",
+    "orbit/changes/rc08a-sweep-evidence/specs/orbit-address-reviews/spec.md",
+    "orbit/changes/rc08a-sweep-evidence/specs/orbit-emit-composition/spec.md",
+    "orbit/changes/rc08a-sweep-evidence/tasks.md",
+    "src/core/artifact-graph/trail.ts",
+    "src/core/emit-composition.ts",
+    "src/core/templates/workflows/address-reviews.ts",
+    "src/core/templates/workflows/review.ts",
+    "test/core/emit-composition.test.ts",
+    "test/core/emit-schema-parity.test.ts",
+    "test/core/rc03b-untouched-modules.test.ts",
+    "test/core/templates/orbit-content-fidelity.test.ts",
+    "test/core/templates/review-verification-branch.test.ts",
+    "test/helpers/schema-references.ts"
+  ],
+  "diff_base": "8bc39ad2a8eaacedea2e61e14a0ff9c95ce336cf",
+  "final_assessment": "13 of 14 tasks done. the walk write gate now checks sweep evidence and ripple-miss pointers (27-case suite), the walk body records the sweep at Step 3d.5 and attributes misses at triage, and the review VERIFICATION branch grades sweep.scope while the residual check keys on the edit record only; tasks 2.3 and 3.2 measured no template hash pin to move (recorded on the tasks); trail.ts also exports normalizeDisposition unchanged, beside stripLineSuffix; 40 of 40 delta scenarios declared; 2751 tests green",
+  "next_recommended": "/orbit:review --as system --fresh rc08a-sweep-evidence"
+}

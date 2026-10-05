@@ -3,7 +3,14 @@ import * as path from 'node:path';
 import { loadChangeContext, formatChangeStatus } from './artifact-graph/instruction-loader.js';
 import { collectSameModePasses } from './report-render.js';
 import { normalizeInternalPass } from './report-render.js';
-import { readTrail, parseTsToken, type ReviewerClass, type Trail } from './artifact-graph/trail.js';
+import {
+  readTrail,
+  parseTsToken,
+  stripLineSuffix,
+  normalizeDisposition,
+  type ReviewerClass,
+  type Trail,
+} from './artifact-graph/trail.js';
 import { isIndependent } from './artifact-graph/gates.js';
 import {
   computePassGenre,
@@ -295,6 +302,328 @@ function bumpToken(token: string): string {
 
 function tokenToTimestamp(token: string): string {
   return token.replace(/-(\d{2})-(\d{2})Z$/, ':$1:$2Z');
+}
+
+// ---------------------------------------------------------------------------
+// rc08a: the walk write gate's resolution-level checks — sweep evidence and the
+// ripple-miss pointer (`orbit-emit-composition`'s `The walk write gate checks sweep
+// evidence` and `A ripple-miss pointer resolves and is counted`; the field shapes are
+// `orbit-address-reviews`'). Write time only: no reader re-validates a log on disk.
+// ---------------------------------------------------------------------------
+
+const SWEEP_KEYS = ['retired', 'introduced', 'searched', 'scope', 'kept'] as const;
+const RIPPLE_MISS_KEYS = ['walk', 'title', 'file', 'kind'];
+const RIPPLE_MISS_KINDS = ['query', 'scope', 'judgement'];
+/** Directories the check scope never reads. */
+const SWEEP_SKIP_DIRS = new Set(['.git', 'node_modules', 'dist', 'build']);
+
+interface WalkContext {
+  projectRoot: string;
+  /** The walk's change directory (active or archived), or null on a doc/project walk. */
+  changeDir: string | null;
+  change: string | null;
+  runsDir: string;
+  /** This emit's own filename token. */
+  token: string;
+  warnings: string[];
+}
+
+function isPlainObject(v: unknown): v is Record<string, unknown> {
+  return v !== null && typeof v === 'object' && !Array.isArray(v);
+}
+
+function hasOwn(o: Record<string, unknown>, k: string): boolean {
+  return Object.prototype.hasOwnProperty.call(o, k);
+}
+
+function nonEmptyString(v: unknown): v is string {
+  return typeof v === 'string' && v.trim() !== '';
+}
+
+/** Whitespace runs (newlines included) collapse to one space. */
+function collapseWhitespace(s: string): string {
+  return s.replace(/\s+/g, ' ');
+}
+
+function isInside(p: string, root: string): boolean {
+  return p === root || p.startsWith(root + path.sep);
+}
+
+/**
+ * The one path rule: strip a trailing `:<line>[:<column>]` through the trail reader's
+ * `stripLineSuffix`; `orbit/changes/<name>/` for the walk's own change maps to its change
+ * directory; else the project root; else (change-scoped) the change directory. Returns the
+ * existing absolute path, or null when it resolves to nothing. A path escaping the project
+ * root — lexically or physically — is refused, whichever field carries it.
+ */
+function resolveWalkPath(raw: string, ctx: WalkContext, where: string): string | null {
+  const p = stripLineSuffix(raw.replace(/\\/g, '/'));
+  if (p === '') return null;
+  const rootAbs = path.resolve(ctx.projectRoot);
+  const candidates: string[] = [];
+  const prefix = ctx.change !== null ? `orbit/changes/${ctx.change}/` : null;
+  if (prefix !== null && ctx.changeDir !== null && p.startsWith(prefix)) {
+    candidates.push(path.resolve(ctx.changeDir, p.slice(prefix.length)));
+  } else {
+    candidates.push(path.resolve(rootAbs, p));
+    if (ctx.changeDir !== null) candidates.push(path.resolve(ctx.changeDir, p));
+  }
+  for (const c of candidates) {
+    if (!isInside(c, rootAbs)) {
+      throw new EmitError(`write gate: ${where} path '${raw}' resolves outside the project root — every walk path must stay contained.`);
+    }
+    if (!fs.existsSync(c)) continue;
+    let real: string;
+    try {
+      real = fs.realpathSync(c);
+    } catch {
+      continue;
+    }
+    if (!isInside(real, fs.realpathSync(rootAbs))) {
+      throw new EmitError(`write gate: ${where} path '${raw}' resolves outside the project root — every walk path must stay contained.`);
+    }
+    return c;
+  }
+  return null;
+}
+
+/** Every regular file under a directory (symlinks not followed), minus the never-read dirs. */
+function listFilesUnder(dir: string, skipDir: (abs: string) => boolean, out: string[]): void {
+  let entries: fs.Dirent[];
+  try {
+    entries = fs.readdirSync(dir, { withFileTypes: true });
+  } catch {
+    return;
+  }
+  for (const e of entries) {
+    const abs = path.join(dir, e.name);
+    if (e.isDirectory()) {
+      if (SWEEP_SKIP_DIRS.has(e.name) || skipDir(abs)) continue;
+      listFilesUnder(abs, skipDir, out);
+    } else if (e.isFile()) {
+      out.push(abs);
+    }
+  }
+}
+
+function expandPath(abs: string, ctx: WalkContext, out: Set<string>): void {
+  let stat: fs.Stats;
+  try {
+    stat = fs.statSync(abs);
+  } catch {
+    return;
+  }
+  if (stat.isFile()) {
+    out.add(abs);
+    return;
+  }
+  if (stat.isDirectory()) {
+    const files: string[] = [];
+    listFilesUnder(abs, d => d === path.resolve(ctx.runsDir), files);
+    for (const f of files) out.add(f);
+  }
+}
+
+function sweepShapeError(sweep: unknown): string | null {
+  if (!isPlainObject(sweep)) return `must be an object of exactly the five keys ${SWEEP_KEYS.join(', ')}`;
+  const keys = Object.keys(sweep);
+  const extra = keys.filter(k => !(SWEEP_KEYS as readonly string[]).includes(k));
+  const missing = SWEEP_KEYS.filter(k => !hasOwn(sweep, k));
+  if (extra.length > 0 || missing.length > 0) {
+    return `must carry exactly the five keys ${SWEEP_KEYS.join(', ')}${missing.length ? ` (missing: ${missing.join(', ')})` : ''}${extra.length ? ` (unknown: ${extra.join(', ')})` : ''}`;
+  }
+  for (const k of SWEEP_KEYS) {
+    const arr = sweep[k];
+    if (!Array.isArray(arr)) return `'${k}' must be an array (an empty array is the written answer)`;
+    for (let j = 0; j < arr.length; j++) {
+      const el = arr[j];
+      if (k === 'introduced' || k === 'kept') {
+        const pair = k === 'introduced' ? ['path', 'text'] : ['path', 'why'];
+        if (!isPlainObject(el) || Object.keys(el).length !== 2 || !pair.every(f => nonEmptyString(el[f]))) {
+          return `'${k}[${j}]' must be {${pair.join(', ')}}, both non-empty strings`;
+        }
+      } else if (!nonEmptyString(el)) {
+        return `'${k}[${j}]' must be a non-empty string`;
+      }
+    }
+  }
+  return null;
+}
+
+/** The 1-based line of the first whitespace-collapsed occurrence of `needle` in `text`, or null. */
+function findCollapsed(text: string, needle: string): number | null {
+  // Build the collapsed text with a map back to original offsets.
+  const chars: string[] = [];
+  const origin: number[] = [];
+  let inWs = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (/\s/.test(c)) {
+      if (!inWs) {
+        chars.push(' ');
+        origin.push(i);
+      }
+      inWs = true;
+    } else {
+      chars.push(c);
+      origin.push(i);
+      inWs = false;
+    }
+  }
+  const idx = chars.join('').indexOf(needle);
+  if (idx < 0) return null;
+  // The needle is trimmed by the caller, so `idx` sits on a non-space character.
+  const at = origin[idx];
+  let line = 1;
+  for (let i = 0; i < at; i++) if (text[i] === '\n') line++;
+  return line;
+}
+
+function readText(abs: string, cache: Map<string, string>): string {
+  let t = cache.get(abs);
+  if (t === undefined) {
+    try {
+      t = fs.readFileSync(abs, 'utf-8');
+    } catch {
+      t = '';
+    }
+    cache.set(abs, t);
+  }
+  return t;
+}
+
+function checkRipplePointer(i: number, title: string, ptr: unknown, ctx: WalkContext): void {
+  const where = `resolutions[${i}] ('${title}') ripple_miss_of`;
+  if (!isPlainObject(ptr) || Object.keys(ptr).length !== 4 || !RIPPLE_MISS_KEYS.every(k => hasOwn(ptr, k))) {
+    throw new EmitError(`write gate: ${where} must be an object of exactly the four keys ${RIPPLE_MISS_KEYS.join(', ')}.`);
+  }
+  for (const k of ['walk', 'title', 'file']) {
+    if (!nonEmptyString(ptr[k])) throw new EmitError(`write gate: ${where}.${k} must be a non-empty string.`);
+  }
+  if (typeof ptr.kind !== 'string' || !RIPPLE_MISS_KINDS.includes(ptr.kind)) {
+    throw new EmitError(`write gate: ${where}.kind must be one of ${RIPPLE_MISS_KINDS.join(' | ')} — got '${String(ptr.kind)}'.`);
+  }
+  const walk = ptr.walk as string;
+  const ptrTitle = (ptr.title as string).trim();
+  const ptrFile = stripLineSuffix((ptr.file as string).replace(/\\/g, '/'));
+  const shown = `{walk: ${walk}, title: '${ptr.title}', file: '${ptr.file}'}`;
+  const logPath = path.join(ctx.runsDir, `address-reviews-${walk}.json`);
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}Z$/.test(walk) || !fs.existsSync(logPath)) {
+    throw new EmitError(`write gate: ${where} ${shown} names no address-reviews log on this trail.`);
+  }
+  if (!(walk < ctx.token)) {
+    throw new EmitError(`write gate: ${where} ${shown} names a walk that does not precede this emit (${ctx.token}).`);
+  }
+  let rs: unknown;
+  try {
+    rs = JSON.parse(fs.readFileSync(logPath, 'utf-8')).resolutions;
+  } catch {
+    rs = undefined;
+  }
+  const hit =
+    Array.isArray(rs) &&
+    rs.some(
+      e =>
+        isPlainObject(e) &&
+        normalizeDisposition(e) === 'resolved' &&
+        String(e.title ?? '').trim() === ptrTitle &&
+        stripLineSuffix(String(e.file ?? '').replace(/\\/g, '/')) === ptrFile
+    );
+  if (!hit) {
+    throw new EmitError(`write gate: ${where} ${shown} matches no resolved entry of that walk (title trimmed, file without its :<line> suffix).`);
+  }
+}
+
+/**
+ * Validates every resolution entry of a walk payload and returns the computed
+ * `ripple_misses`. Unresolvable LEGACY paths (`file`, `ripple_cascade.applied`) are skipped
+ * into `ctx.warnings`; an unresolvable `sweep` path is refused.
+ */
+function validateWalkResolutions(resolutions: unknown, ctx: WalkContext): number {
+  if (!Array.isArray(resolutions)) return 0;
+  let misses = 0;
+  const cache = new Map<string, string>();
+  for (let i = 0; i < resolutions.length; i++) {
+    const e = resolutions[i];
+    if (!isPlainObject(e)) continue;
+    const title = String(e.title ?? '').trim();
+    const at = `resolutions[${i}] ('${title}')`;
+    if (hasOwn(e, 'status') && !hasOwn(e, 'outcome')) {
+      throw new EmitError(`write gate: ${at} carries the legacy key 'status' and no 'outcome' — a new log names its disposition only by 'outcome'.`);
+    }
+    const resolved = e.outcome === 'resolved';
+    if (!resolved && hasOwn(e, 'sweep')) {
+      throw new EmitError(`write gate: ${at} carries a 'sweep' but its outcome is '${String(e.outcome)}' — only a resolved entry edited anything to sweep.`);
+    }
+    if (!resolved && hasOwn(e, 'ripple_miss_of')) {
+      throw new EmitError(`write gate: ${at} carries 'ripple_miss_of' but its outcome is '${String(e.outcome)}' — only a resolved entry is a fixed leftover.`);
+    }
+    if (hasOwn(e, 'ripple_miss_of')) {
+      checkRipplePointer(i, title, e.ripple_miss_of, ctx);
+      misses++;
+    }
+    if (!resolved) continue;
+    if (!hasOwn(e, 'sweep')) {
+      throw new EmitError(`write gate: resolutions[${i}].sweep is required on a resolved entry ('${title}') — the five arrays, any of them empty.`);
+    }
+    const shapeErr = sweepShapeError(e.sweep);
+    if (shapeErr) throw new EmitError(`write gate: resolutions[${i}].sweep (${title}) ${shapeErr}.`);
+    const sweep = e.sweep as Record<string, unknown[]>;
+
+    // The CHECK SCOPE.
+    const scope = new Set<string>();
+    if (ctx.changeDir !== null) expandPath(path.resolve(ctx.changeDir), ctx, scope);
+    const legacy: string[] = [];
+    if (typeof e.file === 'string') legacy.push(e.file);
+    const rc = e.ripple_cascade;
+    if (isPlainObject(rc) && Array.isArray(rc.applied)) {
+      for (const a of rc.applied) if (typeof a === 'string') legacy.push(a);
+    }
+    for (const raw of legacy) {
+      const abs = resolveWalkPath(raw, ctx, at);
+      if (abs === null) {
+        ctx.warnings.push(`warning: ${at} path '${raw}' resolves to no file — skipped from the sweep check (a legacy free-text field).`);
+      } else {
+        expandPath(abs, ctx, scope);
+      }
+    }
+    for (const raw of sweep.scope as string[]) {
+      const abs = resolveWalkPath(raw, ctx, `${at} sweep.scope`);
+      if (abs === null) {
+        throw new EmitError(`write gate: ${at} sweep.scope path '${raw}' resolves to no file or directory.`);
+      }
+      expandPath(abs, ctx, scope);
+    }
+    const kept: string[] = [];
+    for (const k of sweep.kept as Array<{ path: string }>) {
+      const abs = resolveWalkPath(k.path, ctx, `${at} sweep.kept`);
+      if (abs !== null) kept.push(abs);
+    }
+    const isKept = (f: string): boolean => kept.some(k => isInside(f, k));
+
+    for (const raw of sweep.retired as string[]) {
+      const needle = collapseWhitespace(raw).trim();
+      for (const f of [...scope].sort()) {
+        if (isKept(f)) continue;
+        const line = findCollapsed(readText(f, cache), needle);
+        if (line !== null) {
+          const rel = path.relative(ctx.projectRoot, f).split(path.sep).join('/');
+          throw new EmitError(`write gate: ${at} retired '${raw}' still occurs at ${rel}:${line} — fix the file, or list it under 'kept' with why.`);
+        }
+      }
+    }
+    for (const intro of sweep.introduced as Array<{ path: string; text: string }>) {
+      const abs = resolveWalkPath(intro.path, ctx, `${at} sweep.introduced`);
+      let ok = false;
+      if (abs !== null && fs.statSync(abs).isFile()) {
+        ok = findCollapsed(readText(abs, cache), collapseWhitespace(intro.text).trim()) !== null;
+      }
+      if (!ok) {
+        throw new EmitError(`write gate: ${at} introduced text '${intro.text}' does not occur in '${intro.path}'${abs === null ? ' (the path resolves to no file)' : ''}.`);
+      }
+    }
+  }
+  return misses;
 }
 
 // ---------------------------------------------------------------------------
@@ -1573,6 +1902,16 @@ export function composeAndWriteEmit(
       break;
     }
     case 'address-reviews': {
+      // rc08a: the resolution-level checks, and `ripple_misses` (computed, never supplied:
+      // absent from the payload table, a supplied value is refused as an unknown key).
+      emit.ripple_misses = validateWalkResolutions((payload as any).resolutions, {
+        projectRoot,
+        changeDir: resolved.scope === 'change' || resolved.scope === 'archived' ? resolved.changeDir : null,
+        change: resolved.change,
+        runsDir: resolved.runsDir,
+        token,
+        warnings,
+      });
       const runs = fs.existsSync(resolved.runsDir) ? fs.readdirSync(resolved.runsDir) : [];
       const walkLogs = runs.filter(f => /^address-reviews-.*\.json$/.test(f));
       // Doc-scoped walks anchor per doc: the architecture trail is SHARED across

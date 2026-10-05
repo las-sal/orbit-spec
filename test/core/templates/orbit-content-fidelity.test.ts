@@ -819,9 +819,12 @@ describe('rc02b severity ladder: the generated bodies NAME the ladder and define
     expect(int).toMatch(/"blocks":/);
   });
 
+  // @scenario text orbit-address-reviews :: Resolution-log JSON shape extensions for walk-mode / decision-forks / cascade :: A CRITICAL entry carries its re-run result
   it('Step 3a carries step (0): re-run the reproduction first and record `reproduction_rerun`; the triage lists blocks first', () => {
     const body = walk.instructions;
     const step3a = body.split('#### 3a. Apply pushback')[1].split('#### 3b.')[0];
+    // rc08a task 4.2: the scenario's second half — a WARNING or SUGGESTION entry carries no such field.
+    expect(step3a).toContain('Below CRITICAL the field is absent.');
     expect(step3a).toMatch(/^0\. /m);
     expect(step3a).toContain('reproduction_rerun');
     for (const v of ['reproduced', 'not-reproduced', 'cannot-run', 'unreproduced']) expect(step3a).toContain(v);
@@ -1010,5 +1013,127 @@ describe('rc03b-pass-genres: the review-genre brief carries nothing from the tra
     const dispatch = body.split('### Dispatching a fresh pass')[1].split(/\n### /)[0];
     expect(dispatch).toContain("`orbit-conventions`' `Review mode decision framework`");
     expect(dispatch).toContain('orbit emit review');
+  });
+});
+
+describe('rc08a-sweep-evidence: the walk body records its sweep and attributes ripple misses (task 2.1)', () => {
+  const walk = getAddressReviewsSkillTemplate();
+  const body = walk.instructions;
+  const schema = walk.references!.find(r => r.name === 'run-summary-schema.md')!.content;
+
+  // @scenario text orbit-address-reviews :: A resolved walk entry records its sweep evidence :: A resolved entry carries all five keys
+  it('Step 3d.5 "Record the sweep" sits after the cascade and before marker removal, composing the five keys with their meanings and the owner pointer', () => {
+    const iCascade = body.indexOf('#### 3d. Ripple cascade');
+    const iSweep = body.indexOf('#### 3d.5. Record the sweep');
+    const iRemove = body.indexOf('#### 3e. Remove the marker');
+    expect(iSweep).toBeGreaterThan(iCascade);
+    expect(iRemove).toBeGreaterThan(iSweep);
+    const step = body.slice(iSweep, iRemove);
+    for (const k of ['retired', 'introduced', 'searched', 'scope', 'kept']) {
+      expect(step.split('\n').some(l => l.startsWith(`- \`${k}\``)), `a one-line meaning for \`${k}\``).toBe(true);
+    }
+    expect(step).toContain("`orbit-address-reviews`' `A resolved walk entry records its sweep evidence`");
+    expect(step).toContain('orbit emit address-reviews');
+    expect(step).toMatch(/stale/);
+  });
+
+  // @scenario text orbit-address-reviews :: A ripple miss is attributed by the walk that finds it :: A system-review finding is attributed to the proposal walk that missed it
+  // @scenario text orbit-address-reviews :: A ripple miss is attributed by the walk that finds it :: An unrelated finding carries no attribution
+  it('Step 2 carries the attribution read: earlier walks of the change, `ripple_miss_of`, and the three kind values', () => {
+    const triage = body.split('### 2. Triage')[1].split('### 3. Walk each marker')[0];
+    expect(triage).toContain('ripple_miss_of');
+    expect(triage).toContain('(the site lay outside that entry\'s check scope)');
+    expect(triage).toContain('a finding no earlier entry touched carries none');
+    for (const k of ['`scope`', '`query`', '`judgement`']) expect(triage).toContain(k);
+    expect(triage).toContain("`A ripple miss is attributed by the walk that finds it`");
+  });
+
+  it('the schema reference documents `sweep` and `ripple_miss_of` in its block and field notes, and `ripple_misses` as engine-computed', () => {
+    const block = schema.split('## Schema (v2)')[1].split('## Example payloads')[0];
+    expect(block).toMatch(/"sweep": \{/);
+    expect(block).toMatch(/"ripple_miss_of": \{/);
+    expect(block).toMatch(/"ripple_misses": [^\n]*engine-computed/);
+    const notes = schema.split('## Field notes')[1].split('## Worked-example')[0];
+    expect(notes).toMatch(/^- \*\*`sweep`\*\*/m);
+    expect(notes).toMatch(/^- \*\*`ripple_miss_of`\*\*/m);
+    expect(notes).toMatch(/^- \*\*`ripple_misses`\*\*[^\n]*engine-computed/m);
+    // The notes point at the owners and restate no rule.
+    const sweepNote = notes.split('\n').find(l => l.startsWith('- **`sweep`**'))!;
+    expect(sweepNote).toContain('`A resolved walk entry records its sweep evidence`');
+    expect(sweepNote).toContain('`The walk write gate checks sweep evidence`');
+  });
+
+  it('every `json example` carries `sweep` on its resolved entries, with `introduced: []` and `scope: []`', () => {
+    const examples = schema.split('## Example payloads')[1].split('## v1 → v2')[0];
+    const blocks = [...examples.matchAll(/```json example[^\n]*\n([\s\S]*?)\n```/g)].map(m => JSON.parse(m[1]));
+    expect(blocks.length).toBe(3);
+    for (const b of blocks) {
+      for (const r of b.resolutions) {
+        if (r.outcome !== 'resolved') continue;
+        expect(r.sweep, r.title).toBeDefined();
+        expect(r.sweep.introduced).toEqual([]);
+        expect(r.sweep.scope).toEqual([]);
+      }
+    }
+  });
+});
+
+describe('rc08a task 4.2: the walk body and its schema reference carry the lifecycle and resolution-log scenarios its MODIFIED blocks carry', () => {
+  const walk = getAddressReviewsSkillTemplate();
+  const body = walk.instructions;
+  const schema = walk.references!.find(r => r.name === 'run-summary-schema.md')!.content;
+  const notes = schema.split('## Field notes')[1].split('## Worked-example')[0];
+  const triage = body.split('### 2. Triage')[1].split('### 3. Walk each marker')[0];
+  const step3 = body.split('### 3. Walk each marker')[1].split('#### 3a.')[0];
+
+  // @scenario text orbit-address-reviews :: Discover → triage → walk → ripple flag → report lifecycle :: Triage scoping
+  it('triage scoping: the user may walk a subset', () => {
+    expect(triage).toContain('Scoping (walk all — the default — / a subset / only-critical / cancel)');
+  });
+
+  // @scenario text orbit-address-reviews :: Discover → triage → walk → ripple flag → report lifecycle :: Lane preview before any fix
+  it('the obvious-fix lane is previewed before any fix lands, and a word moves an item to the decision lane', () => {
+    expect(triage).toContain('**obvious-fix lane preview**');
+    expect(triage).toContain('BEFORE any fix lands, so the user can pull any item into the decision lane with a word');
+  });
+
+  // @scenario text orbit-address-reviews :: Discover → triage → walk → ripple flag → report lifecycle :: Walk-mode lifecycle order per finding
+  it('walk-mode: each finding completes its inner cycle before the next pushback; an interrupted walk logs partial completion', () => {
+    expect(step3).toContain("each marker receives its own complete inner cycle — pushback → classify → resolve per LANE → ripple-cascade → remove-marker — before the next marker's pushback begins");
+    expect(step3).toContain('the resolution log captures partial completion if interrupted');
+  });
+
+  // @scenario text orbit-address-reviews :: Discover → triage → walk → ripple flag → report lifecycle :: Batch-mode lifecycle order
+  // @scenario text orbit-address-reviews :: Resolution-log JSON shape extensions for walk-mode / decision-forks / cascade :: Batch-mode resolution log structure
+  it('batch-mode: resolve all, then one aggregated cascade; decisions still briefed per finding; recorded as batch with its source', () => {
+    expect(step3).toContain('all markers complete pushback + classify + resolve before ripples apply once as a single aggregated step');
+    expect(step3).toContain('decision-lane findings STILL get their per-finding briefing and ratification');
+    expect(step3).toContain('the `--batch` flag (`"flag"`)');
+    expect(schema).toContain('"walk_mode": "per_finding" | "batch"');
+    expect(notes).toContain('`flag` (`--batch` argv)');
+  });
+
+  // @scenario text orbit-address-reviews :: Resolution-log JSON shape extensions for walk-mode / decision-forks / cascade :: Walk-mode resolution log structure
+  // @scenario text orbit-address-reviews :: Resolution-log JSON shape extensions for walk-mode / decision-forks / cascade :: Resolution log omits recommendation_fork for findings without forks
+  it('per-finding log: walk_mode per_finding, per-entry ripple_cascade split, and no recommendation_fork without a fork', () => {
+    expect(notes).toContain('`per_finding` (default');
+    expect(notes).toContain('splits each resolution\'s ripples into `applied`');
+    expect(notes).toContain('`flagged_not_applied`');
+    expect(notes).toContain('absence IS the no-fork representation');
+    expect(body).toContain('NO `recommendation_fork` object is recorded (absence IS the no-fork representation)');
+  });
+
+  // @scenario text orbit-address-reviews :: Resolution-log JSON shape extensions for walk-mode / decision-forks / cascade :: Forked decision records its ratification channel at the entry level
+  // @scenario text orbit-address-reviews :: Resolution-log JSON shape extensions for walk-mode / decision-forks / cascade :: Non-fork decision still records its channel
+  // @scenario text orbit-address-reviews :: Resolution-log JSON shape extensions for walk-mode / decision-forks / cascade :: Off-menu chat ratification recorded
+  it('decision-lane recording: ratified_via at the entry level for every decision, resolution verbatim when unforked or off-menu, the fork carrying detection only', () => {
+    expect(body).toMatch(/every decision-lane resolution records `ratified_via: "chat" \| "prompt"` at the ENTRY level, plus a verbatim `resolution` string when no fork was detected or the ratified direction is off-menu/);
+    expect(notes).toMatch(/^- \*\*`ratified_via`\*\* \(per-resolution, REQUIRED for every decision-lane resolution — forked or not\)/m);
+    expect(notes).toContain('`chosen` (a presented label, or `"off-menu"` with the entry-level `resolution` carrying the direction)');
+  });
+
+  // @scenario text orbit-address-reviews :: Resolution-log JSON shape extensions for walk-mode / decision-forks / cascade :: --no-cascade resolution log records all ripples as flagged_not_applied
+  it('--no-cascade records every ripple under flagged_not_applied with the one suppression reason', () => {
+    expect(body).toContain('ALL ripple-flagged files are recorded under `ripple_cascade.flagged_not_applied[]` with reason `--no-cascade suppressed`');
   });
 });

@@ -47,9 +47,14 @@ describe('review body: the VERIFICATION branch (1.5)', () => {
     expect(steps).toContain('by the definition under **Verdicts** below');
   });
 
+  // @scenario text orbit-review :: Verification-genre passes grade the walk record :: A system-mode verification skips the change-wide and project-wide passes
+  // @scenario text orbit-review :: Verification-genre passes grade the walk record :: A file touched outside the record is named
+  // @scenario text orbit-review :: Verification-genre passes grade the walk record :: An edit co-committed with the pass file is outside the check's reach
+  // @scenario text orbit-review :: Verification-genre passes grade the walk record :: A verification with no independent pass has a base
   it('carries the sweep scope, the residual check with its range, and its co-committed-edit limit', () => {
     const b = branch();
-    expect(b).toContain('its `file` plus every path in its `ripple_cascade.applied`');
+    // rc08a (design D6b): the sweep scope gains `sweep.scope`; the old two-part wording is gone.
+    expect(b).not.toContain('its `file` plus every path in its `ripple_cascade.applied`');
     expect(b).toContain("git diff --name-only <C> -- . ':!orbit/changes/<name>/.orbit-runs'");
     expect(b).toContain("git ls-files --others --exclude-standard -- . ':!orbit/changes/<name>/.orbit-runs'");
     expect(b).toContain('git log --diff-filter=A --format=%h -- <base file> | tail -1');
@@ -65,6 +70,25 @@ describe('review body: the VERIFICATION branch (1.5)', () => {
     expect(b).toMatch(/system-mode Pass 0 \(verify-change\) and Pass 6 \(audit-drift\) — is NOT run: list it in `passes_skipped`/);
   });
 
+  // @scenario text orbit-review :: Verification-genre passes grade the walk record :: A walk entry's declared sweep scope is graded
+  // @scenario text orbit-review :: Verification-genre passes grade the walk record :: A verification grades each owed entry over its sweep scope
+  it('rc08a: the sweep scope is `file`, `ripple_cascade.applied` and, when present, `sweep.scope`; the residual check keys on the edit record only', () => {
+    const b = branch();
+    const grade = b.split('**(c) Grade.**')[1].split('**(d)')[0];
+    expect(grade).toContain('its `file`, every path in its `ripple_cascade.applied`');
+    expect(grade).toContain('on an entry that carries one, every path in its `sweep.scope`');
+    expect(grade).toContain("`orbit-address-reviews`' `A resolved walk entry records its sweep evidence`");
+    expect(grade).toContain("`orbit-emit-composition`'s `The walk write gate checks sweep evidence`");
+    expect(grade).toContain('gets one verdict');
+    expect(b).toContain("Run this mode's FILE-SET passes over the union of the sweep scopes");
+    const residual = b.split('**(d)')[1].split('\n')[0];
+    expect(residual).toContain("outside every entry's EDIT RECORD — its `file` plus its `ripple_cascade.applied`");
+    expect(residual).toMatch(/`sweep\.scope` names paths examined, not edited, so it never exempts a file here/);
+    expect(residual).not.toContain('outside every sweep scope');
+  });
+
+  // @scenario text orbit-review :: Verification-genre passes grade the walk record :: A refusal reconciles the probe with the engine
+  // @scenario text orbit-review :: Verification-genre passes grade the walk record :: A refusal reconciles a probe that read VERIFICATION where the engine computes REVIEW
   it('names the write-gate refusal as the reconciling channel', () => {
     expect(branch()).toMatch(/The refusal is the reconciling channel, in BOTH directions — never a second probe, never a hand-computed walk set/);
     // System walk 2 (fresh W2): the reverse direction — the engine computed REVIEW.

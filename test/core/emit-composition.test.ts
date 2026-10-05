@@ -1919,6 +1919,7 @@ describe('rc03c: pass genre, verified walks and the verification record', () => 
     expect((r.emit as any).verified_walks).toEqual([W1, W2]);
   });
 
+  // @scenario behaviour orbit-review :: Verification-genre passes grade the walk record :: A defect in the walk's own addition is a regression with its finding
   it('a regressed verdict needs a finding naming it', () => {
     seed([[W1, [res('T', 'F')]]]);
     refuses(sys([], { verification: [{ title: 'T', file: 'F', verdict: 'regressed' }] }), /\(T, F\) 'regressed' but no finding/);

@@ -36,6 +36,12 @@ import { fileURLToPath } from "node:url";
  * MOVED a THIRD time at rc07b's system walk 2 (2026-10-04): `emit-composition.ts` only — the `categories_run`
  * refusal message stopped promising the "1".."6" range the gate never checked; it now names the type-only
  * check (external S1, Sal: B).
+ * MOVED at rc08a-sweep-evidence apply (2026-10-05) — a PLANNED act (its task 1.3, design D6): TWO files.
+ * `src/core/emit-composition.ts` — the walk write gate's first resolution-level checks (`sweep` evidence, the
+ * legacy-`status` refusal, the `ripple_miss_of` pointer) and the computed `ripple_misses`. `src/core/artifact-graph/trail.ts`
+ * — `stripLineSuffix` EXPORTED unchanged (design D6) and `normalizeDisposition` EXPORTED unchanged (task 1.2: the
+ * pointer reads an earlier walk's entry "through the trail reader's disposition"), so the gate and the reader
+ * normalize by one rule each. No body of either function changed; every other hash here is unchanged.
  */
 const PINNED: Record<string, string> = {
   "schemas/spec-driven/schema.yaml": "be6cda5fa604f105c14c2d5e2fd52ad04ca266ba22e7e438ffec8442641e345d",
@@ -52,9 +58,9 @@ const PINNED: Record<string, string> = {
   "src/core/artifact-graph/resolver.ts": "3b10b86eeda7e1264ff6a549e2abcdce8fd3bee3e28cb42441ed49e5ebb3d81b",
   "src/core/artifact-graph/schema.ts": "fb80cfd9a9088ce9dbbd42e43d9525864f7035b51db99aa019489b18f1b1e3b0",
   "src/core/artifact-graph/state.ts": "f59f748b94cd94ca2fe022ec5aa66b3251dd1b2c00bddb9a17cbd9273a04d0f2",
-  "src/core/artifact-graph/trail.ts": "a8566c80c599097acb39146010a7aa2ab5b47cf707958f85fd243e05567cbaf1",
+  "src/core/artifact-graph/trail.ts": "1f1a908be4f20f94009d8fd4e49951b1f841d1751165086f3a95a7860337281d",
   "src/core/artifact-graph/types.ts": "246feb06872594a744233904bc0d3902c90545e23cdf8a38f2b42b80c4a4d10a",
-  "src/core/emit-composition.ts": "e6053d4c6ad30d70a984544a34574a9f3f72980c1021735eaaf8faa04adbe0a2",
+  "src/core/emit-composition.ts": "66b9e0b2b44b1c64189ec082cafa72652c5861948de613183f02464617a82239",
   "src/core/report-render.ts": "b40046bc8059ca73744de33dd25ebf1e978a8dd3b0a5b0a33490298f161904a5",
 };
 

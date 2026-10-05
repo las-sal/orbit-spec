@@ -28,7 +28,7 @@ import { REFERENCES, ENGINE_OWNED, engineOwnedFor, fences, schemaBlockKeys } fro
  * orphan check only fires for keys outside this set, so listing `blocks` or `direction` would
  * disarm it for exactly the note whose block key could be dropped (rc02b; rc04b walk 1, fresh W6).
  */
-const NESTED_NOTE_SUBJECTS = new Set(['recommendation_options', 'category', 'severity', 'dimension', 'title', 'file', 'line', 'recommendation', 'reproduction', 'reproduction_rerun', 'evidence', 'ratified_via', 'resolution', 'recommendation_fork', 'ripple_cascade', 'outcome', 'marker_source', 'classification', 'action', 'by_pass', 'by_category', 'reviewer_class', 'walk_mode_shifted_at_finding', 'walk_entry']);
+const NESTED_NOTE_SUBJECTS = new Set(['recommendation_options', 'category', 'severity', 'dimension', 'title', 'file', 'line', 'recommendation', 'reproduction', 'reproduction_rerun', 'evidence', 'ratified_via', 'resolution', 'recommendation_fork', 'ripple_cascade', 'outcome', 'marker_source', 'classification', 'action', 'by_pass', 'by_category', 'reviewer_class', 'walk_mode_shifted_at_finding', 'walk_entry', 'sweep', 'ripple_miss_of']);
 
 /** Top-level keys of every full-record schema block — the helper's ONE block grammar (rc07b walk 1). */
 function documentedKeys(content: string): { keys: Set<string>; blocks: number } {

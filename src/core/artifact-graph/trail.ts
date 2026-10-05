@@ -122,8 +122,11 @@ export function parseTsToken(filename: string): string | null {
   return m ? m[1] : null;
 }
 
-/** Strip a trailing `:line` (and `:line:col`) suffix from a file path. */
-function stripLineSuffix(file: string): string {
+/**
+ * Strip a trailing `:line` (and `:line:col`) suffix from a file path. Exported (rc08a) so the walk
+ * write gate's path rule and ripple-miss pointer key normalize by this one rule.
+ */
+export function stripLineSuffix(file: string): string {
   return file.replace(/:\d+(:\d+)?$/, '').trim();
 }
 
@@ -286,9 +289,10 @@ function normalizeSeverity(v: unknown): Severity | null {
  * A recognised disposition from `outcome`; the legacy key `status` is consulted ONLY when `outcome`
  * is ABSENT. Presence is tested with `in`, not truthiness or string-ness: `{outcome: null}` is a
  * PRESENT value the reader cannot interpret, and falling through to `status` there would revive a
- * legacy key to override a value the emit actually carried.
+ * legacy key to override a value the emit actually carried. Exported (rc08a) so the ripple-miss
+ * pointer check reads an earlier walk's entry as the trail reader reads it.
  */
-function normalizeDisposition(entry: any): Disposition | null {
+export function normalizeDisposition(entry: any): Disposition | null {
   const has = (k: string): boolean =>
     entry !== null && typeof entry === 'object' && Object.prototype.hasOwnProperty.call(entry, k);
   const read = (k: string): Disposition | null => {
