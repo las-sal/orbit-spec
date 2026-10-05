@@ -2,7 +2,7 @@
 
 ### Requirement: Verify's Scenario Coverage step reads the scenario map
 
-The verify-change body's Scenario Coverage step SHALL read the scenario map from `orbit status --change <name> --scenarios --json`, whose shape `orbit-scenario-map`'s `The scenario map is engine-computed at one read surface` owns. It SHALL NOT trace scenarios to tests by searching test files. This replaces, in place, the upstream step's instruction to check whether tests exist covering the scenario, and is the named edit `orbit-conventions`' `Generated-file disposition` requires. The same step's check that a scenario's conditions are handled in code is unchanged, because it traces implementation, not tests. Verify reports what it reads by this table, which is exhaustive over the surface's JSON fields plus the one state outside them, the command failing:
+The verify-change body's Scenario Coverage step SHALL read the scenario map from `orbit status --change <name> --scenarios --json`, whose shape `orbit-scenario-map`'s `The scenario map is engine-computed at one read surface` owns. It SHALL NOT trace scenarios to tests by searching test files. This replaces, in place, the upstream step's instruction to check whether tests exist covering the scenario, and is the named edit `orbit-conventions`' `Generated-file disposition` requires. The same step's check that a scenario's conditions are handled in code is unchanged, because it traces implementation, not tests. Verify reports what it reads by this table, which is exhaustive over the surface's JSON fields that carry coverage facts plus the one state outside them, the command failing:
 
 | what the surface returns | what verify reports |
 |---|---|
