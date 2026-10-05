@@ -1,0 +1,9 @@
+{
+  "command": "propose",
+  "timestamp": "2026-10-05T19:57:48Z",
+  "change": "rc17a-invoked-coverage",
+  "kind": "workflow",
+  "model": null,
+  "final_assessment": "rc17a-invoked-coverage proposed from its exploration: four live rules carried (D-bpc-6, -8, -10, -15) into three capabilities (orbit-engine-gates 2 ADDED + 7 MODIFIED, orbit-emit-composition 1 ADDED, orbit-address-reviews 1 MODIFIED); seven rules assigned to rc17b/rc17c (D-bpc-17, the rc17c split taken by Sal at this propose). Design revisions recorded: the launch is the T0 with pair: true (D2), v5 gates every change and is monotone (D3), membership by order for both classes (D4). Validates --strict; 48 of 92 delta scenarios await declaration at apply.",
+  "next_recommended": "/orbit:review rc17a-invoked-coverage — proposal artifacts ready; review before apply"
+}

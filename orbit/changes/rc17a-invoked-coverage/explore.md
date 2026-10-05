@@ -319,12 +319,16 @@ Moves:
 
 - **2026-10-05 — D-bpc-1: the external half dispatches by the recorded setup** — runner recorded and reachable → launched automatically; otherwise the prompt is printed for paste into another AI (today's handoff). The fresh half always launches. Sal, 2026-10-05.
   Kind: rule
+  Disposition: assigned rc17b-blind-pair-command
 - **2026-10-05 — D-bpc-2: the runner setup is the user's, explicit, and part of setup** — users configure it differently; orbit ships the concept and a setup note (even if only a note), and the command reads what the user set up rather than inventing a runner. Sal, 2026-10-05.
   Kind: rule
+  Disposition: assigned rc17b-blind-pair-command
 - **2026-10-05 — D-bpc-3: the command commits each pass file alone and pushes** — Sal: "no issue with that at all"; the outward-act barrier served the learning phase and is now suboptimal. A designed push sits inside `orbit-conventions`' Residual outward-actions rule, which covers only acts not designed into a step.
   Kind: rule
+  Disposition: assigned rc17b-blind-pair-command
 - **2026-10-05 — D-bpc-4: blindness between the halves is physical** — the external runs in a throwaway worktree at BASE; its return stays outside the repo until both are back. A method call (R-crc-3), unopposed.
   Kind: rule
+  Disposition: assigned rc17b-blind-pair-command
 
 - **2026-10-05 — D-bpc-5: "detect" checks the record's reachability; it never discovers a runner** — a runner on PATH with nothing recorded launches nothing; the readout may name it and point at the setup note. Resolves Q-bpc-3 (Sal: "agree on detect"). The behaviour is D-bpc-2's fourth domain row; this entry records the reading of Sal's word, not a second rule.
   Kind: scope
@@ -345,11 +349,13 @@ Moves:
 
 - **2026-10-05 — D-bpc-11: the runner record lives in the per-user global config, set at `orbit init`** — beside profile/delivery in the existing XDG global config; init explains the concept and offers the Codex preset, an own command, or none; the engine surfaces the record in `orbit status --json` and never executes it. Distinct from the review PREFERENCE (D-bpc-8, project policy in `orbit/config.yaml`). Resolves Q-bpc-2 (Sal: "per-user global config is fine, go with that").
   Kind: rule
+  Disposition: assigned rc17b-blind-pair-command
 
 - **2026-10-05 — D-bpc-12: a stuck pair needs no new mechanism — the user can always pass the gate manually** — Sal: "the user can always manually pass the gate in any scenario." The existing route is the recorded `continuation`/`proceed` judgement at the gate's seam: the gate keeps REPORTING its computed state and the user's proceed is RECORDED (R-crc-13), never a recomputed pass. Re-running only the missing half remains the other route. Resolves Q-bpc-8. D-bpc-8's and D-bpc-10's "Q-bpc-8" rows point here.
   Kind: scope
 - **2026-10-05 — D-bpc-13: the one command's step order** — preflight → launch record → package → commit + push (BASE) → worktree → both halves → wait → normalize the external return → commit each pass file alone in token order → push → remove the worktree → render both reports → end at the readout. A method call (R-crc-3), drafted for Sal's read.
   Kind: rule
+  Disposition: assigned rc17b-blind-pair-command
 
 - **2026-10-05 — D-bpc-14: a recorded runner auto-launches every external half, single or pair** — `--reviewer external` with a runner recorded launches it as the pair's half does; without one, it prints the prompt for paste as today. Sal confirmed. The behaviour is D-bpc-11's FALSIFY line and execute row; this entry records the confirmation.
   Kind: scope
@@ -358,6 +364,10 @@ Moves:
   Kind: rule
 - **2026-10-05 — D-bpc-16: the review emit's next line names the change, never a path, wherever discovery reaches the pass** — a change-mode pass carrying any finding names `/orbit:address-reviews <change>`, as audit-drift's change-scoped next already does; `--from-file` stays only where discovery cannot reach (architecture mode; project-wide audit-drift). The gate's next and the report tail already print the short form. Resolves Q-bpc-10; with D-bpc-15, no change-mode pass needs a path.
   Kind: rule
+  Disposition: assigned rc17c-short-review-next
+
+- **2026-10-05 — D-bpc-17: at propose, D-bpc-16 moves to its own stage and the command's rules carry no further here** — propose counted the capabilities this change's rules touch against every spec that restates them: D-bpc-16 also reaches `orbit-report-rendering` (its renderer fails a review emit whose `next_recommended` is not the self pointer) and `orbit-review` (a scenario asserts the pointer), so rc17a would be five capabilities. Sal took the split: D-bpc-16 is assigned to `rc17c-short-review-next`; D-bpc-1, -2, -3, -4, -11 and -13 are assigned to `rc17b-blind-pair-command`, as D-bpc-9 already measured. This change carries D-bpc-6, -8, -10 and -15.
+  Kind: scope
 
 ## Open questions
 

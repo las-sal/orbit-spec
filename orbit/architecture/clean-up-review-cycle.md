@@ -1325,11 +1325,11 @@ never deleted.
 
 ## Program stages
 
-<!-- src:stages -->34<!-- /src:stages --> small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
+<!-- src:stages -->35<!-- /src:stages --> small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
 split into rc02 + rc02b on 2026-09-12; rc13 added 2026-09-14 and moved to phase 1 the same day;
 rc03a split from rc03 on 2026-09-15 and WITHDRAWN the same day; rc13 split into rc13a + rc13b on
 2026-09-15 under R-crc-9; rc07b split from rc07 the same day under R-crc-9 applied PREVENTIVELY; rc04d split from rc04c on 2026-09-21, the THIRD preventive application, caught at exploration by a size check rather than after a cadence;
-rc13c declared 2026-09-25 from rc13a's archive proposal, and rc15 declared the same day taking up Q-crc-11; rc16 declared 2026-10-01 from Q-crc-28's ratified direction; rc03 split into rc03b + rc03c on 2026-10-04 under R-crc-9, the FOURTH preventive application, again caught at exploration by a size check; rc06 split into rc06a + rc06b the same day, the FIFTH, caught at exploration; rc08 split into rc08a + rc08b on 2026-10-05, the SIXTH, caught at exploration; rc17 declared the same day from rc08b's system walk, taking Sal's one-command blind pair and the walk's routed pair-diagnosis redesign; rc17 split into rc17a + rc17b the same day, the SEVENTH preventive application, caught at exploration — rc14 stays reserved for the undeclared `rc14-delta-scope` recommendation).
+rc13c declared 2026-09-25 from rc13a's archive proposal, and rc15 declared the same day taking up Q-crc-11; rc16 declared 2026-10-01 from Q-crc-28's ratified direction; rc03 split into rc03b + rc03c on 2026-10-04 under R-crc-9, the FOURTH preventive application, again caught at exploration by a size check; rc06 split into rc06a + rc06b the same day, the FIFTH, caught at exploration; rc08 split into rc08a + rc08b on 2026-10-05, the SIXTH, caught at exploration; rc17 declared the same day from rc08b's system walk, taking Sal's one-command blind pair and the walk's routed pair-diagnosis redesign; rc17 split into rc17a + rc17b the same day, the SEVENTH preventive application, caught at exploration; rc17c split from rc17a the same day at propose, the EIGHTH, caught by a capability count before any artifact was written — rc14 stays reserved for the undeclared `rc14-delta-scope` recommendation).
 Every stage is sized under R-crc-1, names the capabilities it touches, and names its goal.
 Charters are settled under R-crc-3 until a citing change refines them; exit criteria are
 falsifiable and self-measured by the stage's own cadence (G0). Position is computed — see the
@@ -3054,8 +3054,9 @@ engine-composed record, the pair LAUNCH, and the fresh emit stamped with its lau
 diagnosis reads only the passes the uncovered slot could use, retiring the `foreclosed` label (D-bpc-6,
 rc08b's routed external W1). Discovery widens beside the gate's hold: the engine computes every pass that
 carries a finding and has no walk record, at any severity, and a change-scoped walk reads that set with
-`unresolvedPasses` (D-bpc-15); the review emit's next names `/orbit:address-reviews <change>`, never a path,
-wherever discovery reaches the pass (D-bpc-16). The exploration's Mechanism entries are the design input.
+`unresolvedPasses` (D-bpc-15). The review emit's short next line (D-bpc-16) moved to rc17c at propose
+(2026-10-05, Sal): counted against the specs that restate the pointer, it touches two more capabilities.
+The exploration's Mechanism entries are the design input.
 Capabilities: `orbit-engine-gates`, `orbit-emit-composition`, `orbit-address-reviews` — at R-crc-1's
 ceiling. Goal G4.
 Exit: (1) with a pair launched and one half landed, the gate reports `openPair` and the slot uncovered on
@@ -3063,7 +3064,8 @@ every cadence the schema grammar admits up to a stated size, including `[externa
 measured by an exhaustive oracle over enumerated small cadences and trails, not by hand-picked cases;
 (2) a single invoked fresh or external pass covers the first slot on both gates, and the preference — set,
 absent or unknown — changes only the presented command; (3) a SUGGESTION-only pass is walked by
-`/orbit:address-reviews <change>`, and no change-mode review emit's `next_recommended` names a path.
+`/orbit:address-reviews <change>`. (Exit (3)'s second half, that no change-mode review emit's
+`next_recommended` names a path, moved to rc17c with D-bpc-16.)
 
 ### Stage rc17b-blind-pair-command — the pair is one command
 
@@ -3086,10 +3088,32 @@ another and with an explicit `--reviewer` (a clean usage error, as `--fresh` has
 coherent interface; `--fresh` stays. NARROWS D-rc03-5 as the parent charter states. The decisions live in rc17a's archived
 exploration. Capabilities: `orbit-review`, `orbit-review-external`, `orbit-onboard`, plus whichever owns
 init's setup step — measured at propose, and a fourth is declared there under R-crc-9 rather than found
-later. Goal G4.
+later. Two handoffs from rc17a's propose (its design D2 and D6), counted in that measurement: the pair's
+launch is the external half's T0 written with `pair: true`, so D-bpc-13's steps 2 and 3 are one act;
+and while no pair command exists the `blind-pair` review preference presents the fresh review, so
+switching that one presentation row to this command is an `orbit-engine-gates` edit. Goal G4.
 Exit: (1) one invocation produces both pass files on one commit, each committed alone, with no walk between
 them, and pushed; (2) with a runner recorded, the external half launches with no paste and its return is
 committed without hand edits; (3) an adopter without a recorded runner gets today's handoff, unchanged.
+
+### Stage rc17c-short-review-next — the review emit's next names the change, never a path
+
+Depends-on: rc17a-invoked-coverage
+Complete: [ ]
+
+Split from rc17a 2026-10-05 (Sal) at its propose, under R-crc-9: its eighth preventive application, caught by
+counting capabilities before any artifact was written. D-bpc-16, recorded in rc17a's exploration, says a
+change-mode review emit's `next_recommended` names `/orbit:address-reviews <change>` rather than
+`--from-file <own path>`, because rc17a's discovery (D-bpc-15) reaches every pass that carries a finding.
+Three specs state the old pointer: `orbit-emit-composition` composes it, `orbit-report-rendering` validates it
+at render and fails the render on any other value, and `orbit-review` has a scenario asserting it. So the stage
+is those three, at R-crc-1's ceiling. It depends on rc17a because the short form walks a SUGGESTION-only pass
+only once discovery reaches one. Every review emit already on a trail carries the old pointer, so the renderer
+must keep rendering it: the earlier form is a prior generation, never a render failure. Architecture mode and
+project-wide audit-drift keep `--from-file` (no change-scoped walk reaches them). Goal G4.
+Exit: (1) no change-mode review emit's `next_recommended` names a path; (2) a review emit written before the
+stage, carrying the `--from-file` self pointer, renders unchanged; (3) the architecture-mode pointer is
+unchanged.
 
 ## Considered & out
 
@@ -4947,7 +4971,7 @@ next naming the change rather than a path. Measured by capability the stage was 
 under R-crc-9, the seventh preventive application: rc17a takes the engine half (three capabilities), rc17b
 the command (three, a fourth to be declared at propose if init's owner adds one). The parent keeps its heading
 as the record, its exits owned by the children, its slot unmarked until both are done. Stage count 32 →
-<!-- src:stages -->34<!-- /src:stages --> at both marked sites (this entry's mark is the third; the previous
+34 at both marked sites (this entry's mark was the third, unmarked as history by the rc17c entry; the previous
 entry's is unmarked as history).
 
 **2026-10-05 — Architect session: rc17b gains a shorthand per reviewer class (Sal).** Sal found the review
@@ -4959,3 +4983,15 @@ the new `blind-pair` value it names: `--in-context`, `--external`, `--blind-pair
 capabilities rc17b already carries (`orbit-review` owns the flag table, `orbit-onboard` the command table), so
 the stage's size is unchanged and no exit criterion moves; `--fresh` stays, so no other spec needs a sweep. The
 commands the engine prints are untouched here.
+
+**2026-10-05 — rc17c-short-review-next SPLIT from rc17a at its propose (Sal).** Before writing any artifact,
+propose counted the capabilities rc17a's five rules touch against the specs that restate them. D-bpc-16 (the
+review emit's next names the change, never a path) reaches two specs the exploration's count missed:
+`orbit-report-rendering`, whose renderer fails any review emit whose `next_recommended` is not the self pointer
+(so every emit already on a trail must keep rendering), and `orbit-review`, whose scenario asserts the pointer.
+With it rc17a was five capabilities against R-crc-1's three. D-bpc-15 does not need it (the `--from-file` pointer
+still reaches the pass), so Sal took the split: rc17c carries D-bpc-16 across `orbit-emit-composition`,
+`orbit-report-rendering` and `orbit-review`, depending on rc17a; rc17a keeps three capabilities and the first half
+of its exit (3). This is R-crc-9's eighth preventive application, the first caught at propose by a count rather
+than at exploration. Stage count 34 → <!-- src:stages -->35<!-- /src:stages --> at the marked sites (this entry's mark is the third; the previous
+entry's is unmarked as history).

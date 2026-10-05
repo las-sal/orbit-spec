@@ -1,0 +1,17 @@
+schema: spec-driven
+created: 2026-10-05
+schema_version: 4
+base_fingerprints:
+  orbit-address-reviews:
+    Address-reviews command available: sha256:d6fba6fe5222426012a38e1d3639e0d4b7937ee9b54ece37169d4f28d73d4f5a
+  orbit-engine-gates:
+    Gate declaration in schema YAML: sha256:6c12f9c2752ca3c7f8056c244186af9e5739e23dfd15c3ee0f4dec7dc653e825
+    Gate state is a pure function of existing on-disk artifacts: sha256:9f79196951e14cdac0bddabefc3bd835fb19ec204adfbe07adcb9dc74099eada
+    Reviewed-gate pass condition — the computed convergence criterion: sha256:7ba77d39323b2fa0a5a6d66c5dd613b630d063dbb020f8d105ede4547701bbad
+    spec-driven v1 gates and cadence: sha256:7511a7745363dd05f94d93bb07d300afd655d87ff76864e395a8f8f49408c462
+    Single-voiced canonical-next computation: sha256:402988d52c0ea4e9a436a3adee12cbb3a5d2f99c9320a34d71a50c654e40e60a
+    The gate reason names the rule that fired and the rule about to fire: sha256:7b9024464d30f2dead4053093ec28219a6bddb6c9387bd20a6f723284750e331
+    A reviewed gate lists its outstanding passes: sha256:42bded03862fe98e8cf2b0c81274eb245d7f739e2a6a860f30e9065f871f9df3
+architecture:
+  doc: clean-up-review-cycle
+  stage: rc17a-invoked-coverage
