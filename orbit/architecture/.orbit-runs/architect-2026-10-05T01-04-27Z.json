@@ -1,0 +1,27 @@
+{
+  "command": "architect",
+  "timestamp": "2026-10-05T01:04:27Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": null,
+  "final_assessment": "Declared the rc08 split (D-rc08-1, sixth preventive application of R-crc-9): rc08a-sweep-evidence (sweep record, the write gate's retired/introduced string check, ripple-miss attribution; rc08's exits 1-3, depends on rc03c) and rc08b-walk-routing (discovery, three lanes, disagreement rule, T0 next line; rc08's exit 4, depends on rc08a). rc08 keeps its heading with a SPLIT paragraph; staging renamed to orbit/explore/rc08a-sweep-evidence/ with its citation re-pointed. Stage count 29 -> 31 at the marked sites; source lint passes.",
+  "stages_touched": [
+    "rc08-walk-completeness",
+    "rc08a-sweep-evidence",
+    "rc08b-walk-routing"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      "orbit/explore/rc08a-sweep-evidence/explore.md — D-rc08-1..5 with three accounted Mechanism entries; the source the proposal consumes",
+      "orbit/architecture/clean-up-review-cycle.md — Stage rc08a's charter and exits (read with `orbit architecture show clean-up-review-cycle rc08a-sweep-evidence`)"
+    ],
+    "next_command": "/orbit:propose rc08a-sweep-evidence",
+    "model_hint": null,
+    "seam": "split declared; rc08a exploring, ready to propose"
+  },
+  "next_recommended": "/orbit:propose rc08a-sweep-evidence"
+}

@@ -1,0 +1,191 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-05T01:16:24Z",
+  "change": "rc08a-sweep-evidence",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 4
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "line": 5,
+      "title": "The sweep requirement keys on `outcome` while the gate and the owed verification set key on the trail reader's disposition, which honours legacy `status`",
+      "recommendation": "Key the sweep requirement, the stale-with-sweep refusal and the pointer check on the entry's DISPOSITION as `src/core/artifact-graph/trail.ts` normalizeDisposition reads it (`outcome`, or legacy `status` when `outcome` is absent) and say so once in the gate requirement, or refuse a resolution entry carrying `status` without `outcome` at the walk write gate. Either way an entry the gate counts as resolved cannot skip the sweep check.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Key every new check on the trail reader's disposition (outcome, else legacy status), stated once in `The walk write gate checks sweep evidence`."
+        },
+        {
+          "label": "B",
+          "body": "Refuse, at the walk write gate, a resolution entry that carries `status` and no `outcome`, so `outcome` is the only key a new log can use."
+        }
+      ],
+      "reproduction": "trail.ts normalizeDisposition (lines 290-300) returns `status` when `outcome` is absent, and the baseline `A VERIFICATION-genre payload carries its verdicts…` (orbit-emit-composition spec line 842) defines the owed set by that disposition. A payload entry `{severity: \"WARNING\", title: \"T\", file: \"design.md\", status: \"resolved\"}` with no `outcome` and no `sweep` satisfies the delta as written (the refusal fires only on `outcome: \"resolved\"`), yet the gate's clause (b) counts it resolved and a later VERIFICATION pass owes a verdict on it."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "tasks.md",
+      "line": 4,
+      "title": "No task moves the `emit-composition.ts` hash pin in `test/core/rc03b-untouched-modules.test.ts`",
+      "recommendation": "Add to task 1.2 (or a new 1.3) moving the `src/core/emit-composition.ts` hash in `test/core/rc03b-untouched-modules.test.ts` with a dated comment naming this change, as a recorded act, and list that test under design.md's Touchpoints. If D6's 'same normalization TrailResolutionEntry applies' is implemented by exporting `stripLineSuffix` from `trail.ts`, that hash moves too, so say whether D6 reuses the trail module or reimplements the rule.",
+      "reproduction": "test/core/rc03b-untouched-modules.test.ts line 58 pins `src/core/emit-composition.ts` at sha256 e6053d4c…; task 1.2 edits that file, and neither tasks.md nor design.md Touchpoints names the pin test, so task 5.2's full `npm test` goes red on a line the plan does not contain (rc04c's recorded lesson: a hash pin names nothing, so grepping by field name misses it)."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "tasks.md",
+      "line": 25,
+      "title": "Task 5.1's residue string matches nothing in `src/`, so the sweep it asks for is vacuous",
+      "recommendation": "Quote the wording the body actually carries. `src/core/templates/workflows/review.ts` line 939 reads \"its `file` plus every path in its `ripple_cascade.applied`\"; the string in 5.1 (\"its `file` plus its `ripple_cascade.applied`\") is the BASELINE spec's wording and appears in neither `src/` nor the generated skill. Measure the string against the current tree before writing it into the task."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-review/spec.md",
+      "line": 50,
+      "title": "Adding `sweep.scope` (examined, not edited) to the residual check's exemption lets an unrecorded edit escape it, and a directory entry exempts a whole subtree",
+      "recommendation": "The residual check exists to name edits the walk record does not list; `sweep.scope` records paths EXAMINED, not edited. Either keep `sweep.scope` in the GRADING scope (step c/d) while the residual-check exemption stays `file` ∪ `ripple_cascade.applied`, or keep the new scenario and name the weakening as part of the Residual kind. In both cases state how a DIRECTORY in `sweep.scope` is read by the verification pass (the gate's requirement says a directory contributes its files; the orbit-review delta is silent), and that its paths resolve by the gate's path rule.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Grade over `sweep.scope` but exempt only `file` ∪ `ripple_cascade.applied` from the residual check; rewrite the new scenario's THEN accordingly."
+        },
+        {
+          "label": "B",
+          "body": "Keep the exemption and add 'an edit made in a path the walk listed only as examined, a directory included' to the Residual kind."
+        }
+      ]
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "line": 13,
+      "title": "Under `--keep-resolved-markers` a retained marker quoting the retired wording refuses the log, and the only escape is kept-listing the fix's own file",
+      "recommendation": "Baseline `Marker removal invariant` keeps resolved `@review:` markers in their source files under `--keep-resolved-markers`. A marker such as `@review: 'seventeen blocks' should read sixteen` then survives in the entry's own `file`, inside the check scope; the walker can satisfy the gate only by listing that file under `kept`, which removes the fix's primary site from its own check. State the interaction: exclude retained `@review:` marker text from the retired match, or name it as a limit of the flag.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "The retired check skips text inside a retained `@review:` marker under `--keep-resolved-markers`."
+        },
+        {
+          "label": "B",
+          "body": "Name it as a limit: a debug walk with retained markers may have to trim `retired` or kept-list the file, and the log says so."
+        }
+      ]
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "line": 13,
+      "title": "Whether an archived-change walk is 'change-scoped' for the check scope is not stated",
+      "recommendation": "The surface has four scopes (change, archived, project, doc). Say in the CHECK SCOPE paragraph that the archived fallback counts as change-scoped (its change directory being the archive directory), so two implementations do not split on it."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-address-reviews/spec.md",
+      "line": 13,
+      "title": "`kept` is defined as history, but the common case will be a test that asserts the retired wording is absent",
+      "recommendation": "This repo's walks often add a negative assertion (`not.toContain('<old phrase>')`) and list the test under `ripple_cascade.applied`, which puts the retired string in the check scope. Widen `kept`'s meaning to 'a file that must keep the retired string: history that quotes it, or a check that asserts its absence', so the walker is not left reading the table as a prohibition."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-address-reviews/spec.md",
+      "line": 15,
+      "title": "When batch mode records the sweep is unstated",
+      "recommendation": "Baseline batch mode applies ripples once at the end as one aggregated step. 'After the ripple cascade, as the entry's last step before marker removal' reads per-finding; add one clause saying batch mode composes every entry's `sweep` after the aggregated cascade."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-address-reviews/spec.md",
+      "line": 39,
+      "title": "Which outcomes may carry `ripple_miss_of` is not stated",
+      "recommendation": "The requirement lets 'a resolution entry' carry the pointer and the gate checks only its form. State whether a `stale` entry (already fixed, so arguably not a miss) or a `deferred`/`escalated` one may carry it, since `ripple_misses` counts every carrier."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "tasks.md",
+      "line": 19,
+      "title": "The 'Nothing to retire is written, not omitted' scenario carries a gate-refusal clause that a `text` tag on a body test cannot evidence",
+      "recommendation": "Task 4.1 tags the address-reviews scenarios `text`, but this scenario's THEN also says a resolved entry without `sweep` is refused at the write gate. Give it two declarations (a `text` tag on the body test and a `behaviour` tag on 1.1's refusal case), or drop the refusal clause, which `A resolved entry without sweep is refused` already carries."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "specs/orbit-address-reviews/spec.md",
+      "line": 15,
+      "title": "The baseline requirements that own the inner-cycle order and the resolution-log field list do not point at the new step and fields",
+      "recommendation": "`Discover → triage → walk → ripple flag → report lifecycle` still gives the per-finding cycle as pushback → classify → resolve → ripple-cascade → remove-marker, and `Resolution-log JSON shape extensions…` lists per-resolution fields (it gained `reproduction_rerun` at rc02b) without `sweep` or `ripple_miss_of`. A one-line MODIFIED pointer in each, inside the same capability, keeps a reader of either owner from missing the new step, with no capability-count cost."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The thesis holds up. The two observable halves (retired absent, introduced present) are cheap, literal, and give the walk log something it has never had, a claim the engine can falsify at write time; keeping `searched` as a record follows R-crc-10. I tested the path rule against the archive: no walk-log `file` value carries a colon, so D3's line-suffix rule and the trail's `stripLineSuffix` cannot disagree on any recorded value. The roundtrip coverage is top-level only, so `ripple_miss_of` needs no example. The weak points are at the edges where the new check meets an older rule: the legacy `status` key the trail still honours, a debug flag that leaves markers in the file, and the residual check, whose exemption the new field widens with paths that were only looked at. One hash pin is missing from the plan, which is the rc04c sizing lesson again.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The mechanism is sound and the right size, and nothing found requires redesign. Each finding is a repair inside the three declared capabilities or a missing task line. I would walk them and apply; the `status`-key bypass and the residual-check exemption are the two worth deciding deliberately rather than by default."
+  },
+  "final_assessment": "0 critical, 5 warning, 6 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc08a-sweep-evidence --from-file orbit/changes/rc08a-sweep-evidence/.orbit-runs/review-proposal-2026-10-05T01-16-24Z.json"
+}

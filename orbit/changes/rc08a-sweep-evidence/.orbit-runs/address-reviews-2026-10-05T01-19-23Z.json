@@ -1,0 +1,225 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-05T01:19:23Z",
+  "change": "rc08a-sweep-evidence",
+  "kind": "editorial",
+  "model": null,
+  "source": "from-file",
+  "source_path": "orbit/changes/rc08a-sweep-evidence/.orbit-runs/review-proposal-2026-10-05T01-16-24Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-05T01-16-24Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 5,
+    "suggestion": 6
+  },
+  "pushback_verification": "11 of 11 verified against current state (pin at rc03b-untouched-modules.test.ts:58 and review.ts:939 wording read directly); 0 stale",
+  "resolution_summary": {
+    "resolved": 11,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The sweep requirement keys on `outcome` while the gate and the owed verification set key on the trail reader's disposition, which honours legacy `status`",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "line": 5,
+      "classification": "trivial_fix",
+      "action": "Under method delegation (R-crc-3): option B. The walk gate refuses an entry carrying legacy `status` without `outcome`; new scenario; design D6a records why not A.",
+      "evidence": "verified against current state before the edit",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc08a-sweep-evidence/tasks.md",
+          "orbit/changes/rc08a-sweep-evidence/design.md",
+          "orbit/changes/rc08a-sweep-evidence/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "resolution": "option B of the finding's recommendation_options, settled by the walking AI under Sal's standing delegation of method (R-crc-3); not user-ratified in this walk"
+    },
+    {
+      "severity": "WARNING",
+      "title": "No task moves the `emit-composition.ts` hash pin in `test/core/rc03b-untouched-modules.test.ts`",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 4,
+      "classification": "trivial_fix",
+      "action": "Task 1.3 moves both pins (emit-composition.ts and trail.ts, since D6 now reuses an exported stripLineSuffix); Touchpoints and proposal Impact list the pin test.",
+      "evidence": "verified against current state before the edit",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc08a-sweep-evidence/design.md",
+          "orbit/changes/rc08a-sweep-evidence/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Task 5.1's residue string matches nothing in `src/`, so the sweep it asks for is vacuous",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 25,
+      "classification": "trivial_fix",
+      "action": "Task 5.1 now quotes the body wording measured at review.ts:939.",
+      "evidence": "verified against current state before the edit",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Adding `sweep.scope` (examined, not edited) to the residual check's exemption lets an unrecorded edit escape it, and a directory entry exempts a whole subtree",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-review/spec.md",
+      "line": 50,
+      "classification": "trivial_fix",
+      "action": "Under method delegation (R-crc-3): option A. sweep.scope widens grading only; the residual check keys on each entry's edit record (file + ripple_cascade.applied); directories and paths point at the gate's rule; scenario THEN rewritten; design D6b.",
+      "evidence": "verified against current state before the edit",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc08a-sweep-evidence/tasks.md",
+          "orbit/changes/rc08a-sweep-evidence/design.md",
+          "orbit/changes/rc08a-sweep-evidence/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "resolution": "option A of the finding's recommendation_options, settled by the walking AI under Sal's standing delegation of method (R-crc-3); not user-ratified in this walk"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Under `--keep-resolved-markers` a retained marker quoting the retired wording refuses the log, and the only escape is kept-listing the fix's own file",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "line": 13,
+      "classification": "trivial_fix",
+      "action": "Under method delegation (R-crc-3): option B. Named limit of --keep-resolved-markers in the gate requirement (kept-list with the flag as why); design D6c records why not A.",
+      "evidence": "verified against current state before the edit",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc08a-sweep-evidence/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "resolution": "option B of the finding's recommendation_options, settled by the walking AI under Sal's standing delegation of method (R-crc-3); not user-ratified in this walk"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Whether an archived-change walk is 'change-scoped' for the check scope is not stated",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "line": 13,
+      "classification": "trivial_fix",
+      "action": "Archived-fallback walk stated as change-scoped; task 1.1 case added.",
+      "evidence": "verified against current state before the edit",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc08a-sweep-evidence/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "`kept` is defined as history, but the common case will be a test that asserts the retired wording is absent",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-address-reviews/spec.md",
+      "line": 13,
+      "classification": "trivial_fix",
+      "action": "kept widened to history or a check asserting absence.",
+      "evidence": "verified against current state before the edit",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc08a-sweep-evidence/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "When batch mode records the sweep is unstated",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-address-reviews/spec.md",
+      "line": 15,
+      "classification": "trivial_fix",
+      "action": "Batch mode composes every record after the aggregated cascade.",
+      "evidence": "verified against current state before the edit",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Which outcomes may carry `ripple_miss_of` is not stated",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-address-reviews/spec.md",
+      "line": 39,
+      "classification": "trivial_fix",
+      "action": "ripple_miss_of restricted to resolved entries, in both requirements; gate scenario added; task 1.1 case added.",
+      "evidence": "verified against current state before the edit",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc08a-sweep-evidence/specs/orbit-emit-composition/spec.md",
+          "orbit/changes/rc08a-sweep-evidence/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The 'Nothing to retire is written, not omitted' scenario carries a gate-refusal clause that a `text` tag on a body test cannot evidence",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 19,
+      "classification": "trivial_fix",
+      "action": "Refusal clause dropped from the scenario; the gate scenario carries it.",
+      "evidence": "verified against current state before the edit",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The baseline requirements that own the inner-cycle order and the resolution-log field list do not point at the new step and fields",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-address-reviews/spec.md",
+      "line": 15,
+      "classification": "trivial_fix",
+      "action": "MODIFIED pointer line added to the lifecycle and resolution-log shape requirements; fingerprints stamped; proposal Capabilities and task 4.2 name them.",
+      "evidence": "verified against current state before the edit",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc08a-sweep-evidence/proposal.md",
+          "orbit/changes/rc08a-sweep-evidence/tasks.md",
+          "orbit/changes/rc08a-sweep-evidence/.openspec.yaml"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": 0,
+  "final_assessment": "All 11 fresh-pass findings resolved in the artifacts. Three decision findings (W1 B, W4 A, W5 B) were settled by the walking AI under the standing delegation of method and recorded as such in design D6a-D6c; any is reopenable on Sal's word. Two MODIFIED pointer blocks added inside orbit-address-reviews (capability count unchanged at three); 14 tasks; validates --strict.",
+  "iteration": 1,
+  "next_recommended": "/orbit:review --as proposal rc08a-sweep-evidence"
+}

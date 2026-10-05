@@ -1306,11 +1306,11 @@ never deleted.
 
 ## Program stages
 
-<!-- src:stages -->29<!-- /src:stages --> small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
+<!-- src:stages -->31<!-- /src:stages --> small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
 split into rc02 + rc02b on 2026-09-12; rc13 added 2026-09-14 and moved to phase 1 the same day;
 rc03a split from rc03 on 2026-09-15 and WITHDRAWN the same day; rc13 split into rc13a + rc13b on
 2026-09-15 under R-crc-9; rc07b split from rc07 the same day under R-crc-9 applied PREVENTIVELY; rc04d split from rc04c on 2026-09-21, the THIRD preventive application, caught at exploration by a size check rather than after a cadence;
-rc13c declared 2026-09-25 from rc13a's archive proposal, and rc15 declared the same day taking up Q-crc-11; rc16 declared 2026-10-01 from Q-crc-28's ratified direction; rc03 split into rc03b + rc03c on 2026-10-04 under R-crc-9, the FOURTH preventive application, again caught at exploration by a size check; rc06 split into rc06a + rc06b the same day, the FIFTH, caught at exploration — rc14 stays reserved for the undeclared `rc14-delta-scope` recommendation).
+rc13c declared 2026-09-25 from rc13a's archive proposal, and rc15 declared the same day taking up Q-crc-11; rc16 declared 2026-10-01 from Q-crc-28's ratified direction; rc03 split into rc03b + rc03c on 2026-10-04 under R-crc-9, the FOURTH preventive application, again caught at exploration by a size check; rc06 split into rc06a + rc06b the same day, the FIFTH, caught at exploration; rc08 split into rc08a + rc08b on 2026-10-05, the SIXTH, caught at exploration — rc14 stays reserved for the undeclared `rc14-delta-scope` recommendation).
 Every stage is sized under R-crc-1, names the capabilities it touches, and names its goal.
 Charters are settled under R-crc-3 until a citing change refines them; exit criteria are
 falsifiable and self-measured by the stage's own cadence (G0). Position is computed — see the
@@ -2437,7 +2437,7 @@ reference fails the suite; (3) the next blind pair finds zero grammar or selecto
 ### Stage rc06-scenario-test-map — scenarios are the test contract
 
 Depends-on: (none)
-Complete: [ ]
+Complete: [~] 2026-10-05 (Sal)
 
 **SPLIT 2026-10-04 (Sal) into rc06a + rc06b, under R-crc-9 — its fifth preventive application, the
 third caught at exploration before anything was proposed.** This heading is retained as the program's
@@ -2668,6 +2668,20 @@ the exemption is retired, not re-stated.
 Depends-on: rc03c-verification-record
 Complete: [ ]
 
+**SPLIT 2026-10-05 (Sal) into rc08a + rc08b, under R-crc-9: its sixth preventive application, the fourth
+caught at exploration before anything was proposed.** The heading is kept as the program's record of the
+problem and the charter; the WORK is declared in the two stages that follow. The exploration
+(`orbit/explore/rc08a-sweep-evidence/`, opened as `rc08-walk-completeness` and renamed at this
+declaration) measured the trail: 205 walk logs and 1404 resolutions. `ripple_cascade` records the files a
+walk edited and never how it found them, so a site that was never examined and a site judged unaffected
+leave the same record. The exploration settled four decisions under Sal's delegation of method
+(D-rc08-1..4, three rules with accounted Mechanism entries). Charter jobs (1) sweep set plus ripple-miss
+detection and (3) walk execution go to rc08a. Job (3) folds into job (1)'s mechanism: an edit that did
+not land leaves its retired wording present or its introduced text absent, and the write gate refuses the
+log. Jobs (2) discovery, (4) three lanes, (5) the disagreement rule and (6) the T0 next line go to rc08b.
+The charter below is kept as written. It is SUPERSEDED in one term: "`sweep_set`" ships as a `sweep`
+record, two of whose fields the gate checks (D-rc08-2, D-rc08-3).
+
 Charter: when a walk edits a command example or a normative sentence, the address-reviews body
 sweeps the owning requirement's prose, every scenario, task restatements, transcriptions, and
 sibling seams before the finding is marked resolved, recording the sweep set per resolution in
@@ -2709,6 +2723,46 @@ same exploration: the review-external T0 emit's `next_recommended` (`orbit-run-s
 record, while the gate's eligibility line on the same turn names the missing member. Standing
 recommendation carried from the exploration: the T0 prose ends at "save the response as …" and the
 eligibility line owns what follows. Both are the walk CONSUMER's business, which is why they land here.
+
+### Stage rc08a-sweep-evidence — a walk's log carries what it retired, and the gate checks it
+
+Depends-on: rc03c-verification-record
+Complete: [ ]
+
+Declared 2026-10-05 (Sal) from the rc08 exploration's split (D-rc08-1). Charter: every `resolved` walk
+entry carries `sweep: {retired, introduced, searched, scope, kept}` (D-rc08-2). `orbit emit
+address-reviews` REFUSES a log if a `retired` string survives in the check scope or an `introduced` text
+is absent from its path. The check scope is the change directory with the trail excluded, plus the
+entry's file, its cascaded files and `sweep.scope`. Matching is literal and whitespace-normalised, and
+`kept` is the one exemption (D-rc08-3). `searched` and `scope` are a RECORD that the VERIFICATION pass
+reads as part of an entry's sweep scope. A later finding is attributed by its walker through an optional
+`ripple_miss_of: {walk, title, file, kind}`, where `kind` is `query` | `scope` | `judgement` and the
+pointer is checked; `ripple_misses` is engine-computed (D-rc08-4). Prior-generation logs are exempt by
+absence. Goal G3. Touches: orbit-address-reviews (the field), orbit-emit-composition (the gate),
+orbit-review (the verification sweep scope), which is three, at R-crc-1's ceiling. Exit: (1) the walk log
+carries `sweep` on every resolved entry, and a fixture whose retired string survives, or whose introduced
+text is absent, is refused naming path and line; (2) a later finding at a site an earlier entry should
+have covered is detectable from the trail, as `ripple_miss_of` on its walk or as a `regressed`
+verification verdict; (3) the cadence of the stage after rc08a records zero ripple misses, read from
+`ripple_misses` plus the `regressed` count. Exits (1)–(3) are rc08's (1)–(3), with (1) restated in the
+shipped field's name.
+
+### Stage rc08b-walk-routing — a walk finds every outstanding pass, and a redesign leaves the walk
+
+Depends-on: rc08a-sweep-evidence
+Complete: [ ]
+
+Declared 2026-10-05 (Sal) from the rc08 exploration's split (D-rc08-1). It depends on rc08a because both
+edit `orbit-address-reviews` and its walk body. Charter, as rc08's charter states each job, with nothing
+restated here: walk DISCOVERY (a bare invocation resolves the single active change and says so; every
+outstanding pass is walked, through the gate's `passResolved`); R-crc-6's THREE LANES, with a REDESIGN
+finding routed to `/orbit:explore` and the routing recorded on the log; the DISAGREEMENT handling rule
+(D-rc03-6) in `orbit-address-reviews`; and the review-external T0 `next_recommended` ending at "save the
+response as …" (Q-rc03-5). Goal G3. Touches: orbit-address-reviews, orbit-run-summary-emit, and possibly
+orbit-engine-gates for the discovery predicate. These are measured at its exploration against R-crc-1.
+Exit: (1) a bare walk with one active change and two unwalked passes walks both, naming the change; (2)
+rc08's exit (4): the body implements the three lanes, a REDESIGN routes to explore, and the log records
+the routing; (3) the T0 emit's `next_recommended` names no walk command.
 
 ### Stage rc09-propose-hygiene — spike before spec, size before review
 
@@ -4659,7 +4713,7 @@ exits (1) and (2), (2) revised under R-crc-12's first case, plus a self-measured
 `rc06b-map-readers` (verify-change and system Pass 0 read the map — rc06's exit (3)), rc06b depending on
 rc06a. rc06's heading is retained as the record with a SPLIT paragraph; its charter is kept as written and
 named superseded in three terms. rc10's `Depends-on:` moved from rc06 to rc06a, with a RIDER naming the
-apply-emit pointer its charter assumed and D-rc06-3 retired. Stage count 27 → <!-- src:stages -->29<!-- /src:stages --> at both
+apply-emit pointer its charter assumed and D-rc06-3 retired. Stage count 27 → 29 at both
 marked sites (this entry's mark is the third; the previous entry's was unmarked as history). rc06 stays
 `exploring` while the exploration cites it; it takes its ENDED mark once both children have shipped, as
 rc03 did. Next: propose rc06a from the exploration.
@@ -4681,3 +4735,21 @@ the verify body's coverage step naming `orbit status --change <name> --scenarios
 to rc10-apply-closure as a rider. Baseline capabilities 22 → 23 (`orbit-verify-modifications`). A post-archive project-wide
 audit found one WARNING — archive-change's additions preamble claimed an unchanged upstream portion the narrowed
 `Generated-file disposition` names as edited — walked to zero the same session (`orbit/.orbit-runs/address-reviews-2026-10-05T00-50-35Z.json`).
+
+**2026-10-05 — rc06-scenario-test-map declared ENDED (Sal), through the unprompted route.** The retained split parent
+observed `premised` with an undated slot; every exit criterion it carried is owned by a child — (1) and (2) by
+rc06a-scenario-map ((2) revised there under R-crc-12's first case: no emit carries the map), (3) by rc06b-map-readers —
+both ratified, so the mark asserts nothing about the work and matches rc13's, rc04's and rc03's. Fifth ended mark in the
+program.
+
+**2026-10-05 — Architect session: the rc08 split DECLARED (Sal).** The rc08 exploration (boundary emit
+`explore-2026-10-05T01-02-59Z.json`) settled the split as D-rc08-1 under Sal's delegation of method, and
+this session declares it. `rc08a-sweep-evidence` takes the sweep record, the write-gate check of retired
+and introduced strings, and ripple-miss attribution: rc08's exits (1)–(3) and charter jobs (1) and (3).
+`rc08b-walk-routing` takes discovery, the three lanes, the disagreement rule and the T0 next line: rc08's
+exit (4) and jobs (2), (4), (5) and (6). rc08b depends on rc08a. rc08's heading is kept as the record with
+a SPLIT paragraph, and its charter is kept as written and named superseded in one term. The staging
+directory was renamed `rc08-walk-completeness` → `rc08a-sweep-evidence`, with its citation re-pointed, so
+rc08a renders `exploring`; rc08 takes its ENDED mark once both children have shipped, as rc03 and rc06
+did. Stage count 29 → <!-- src:stages -->31<!-- /src:stages --> at both marked sites (this entry's mark
+is the third; the previous entry's is unmarked as history). Sixth preventive application of R-crc-9.
