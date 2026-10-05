@@ -173,6 +173,16 @@ One goal per phase, each falsifiable, each stage naming its goal (settled under 
   pair runs. Rationale: pairs of blind reviewers are the standard instrument for both coverage
   and residual estimation; verification is a different task from review and should not be
   asked of a reviewer; in-context passes yielded one CRITICAL in ~25 across the D-arc.
+  **AMENDED 2026-10-05 (Sal, from extended use; rc17 exploration D-bpc-8):** the pair is the RECOMMENDED
+  first review, no longer the REQUIRED one. Both reviewed gates read `[<first>, in-context]`: the first
+  slot accepts a blind pair, a single fresh or a single external pass, and the user's INVOCATION decides
+  what covers it — an invoked pair needs BOTH halves before the slot is covered; a single covers it only
+  when the user invoked that single. A per-gate preference in `orbit/config.yaml` (proposal and system
+  separately, default blind-pair) changes only the command the readout PRESENTS, never what the gate
+  accepts. Unchanged: the pair's composition stays one `fresh` and one `external`, hardcoded, for the
+  reason above; the in-context slot after the walk; one verification pass over the walk's diff. The user
+  may always proceed past an unpassed gate through the recorded judgement (D-bpc-12). Carried by
+  rc17a-invoked-coverage.
 - **R-crc-5** (settled under R-crc-3, 2026-09-11; CONDITIONAL) — D-d6-7's "the engine never
   shells to git or `gh`" is REVERSED at the boundary the D-arc's own thesis draws: DETERMINISTIC
   sequences (remote/default-branch resolution, tip comparison, the isolated commit, the record
@@ -1315,11 +1325,11 @@ never deleted.
 
 ## Program stages
 
-<!-- src:stages -->32<!-- /src:stages --> small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
+<!-- src:stages -->34<!-- /src:stages --> small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
 split into rc02 + rc02b on 2026-09-12; rc13 added 2026-09-14 and moved to phase 1 the same day;
 rc03a split from rc03 on 2026-09-15 and WITHDRAWN the same day; rc13 split into rc13a + rc13b on
 2026-09-15 under R-crc-9; rc07b split from rc07 the same day under R-crc-9 applied PREVENTIVELY; rc04d split from rc04c on 2026-09-21, the THIRD preventive application, caught at exploration by a size check rather than after a cadence;
-rc13c declared 2026-09-25 from rc13a's archive proposal, and rc15 declared the same day taking up Q-crc-11; rc16 declared 2026-10-01 from Q-crc-28's ratified direction; rc03 split into rc03b + rc03c on 2026-10-04 under R-crc-9, the FOURTH preventive application, again caught at exploration by a size check; rc06 split into rc06a + rc06b the same day, the FIFTH, caught at exploration; rc08 split into rc08a + rc08b on 2026-10-05, the SIXTH, caught at exploration; rc17 declared the same day from rc08b's system walk, taking Sal's one-command blind pair and the walk's routed pair-diagnosis redesign — rc14 stays reserved for the undeclared `rc14-delta-scope` recommendation).
+rc13c declared 2026-09-25 from rc13a's archive proposal, and rc15 declared the same day taking up Q-crc-11; rc16 declared 2026-10-01 from Q-crc-28's ratified direction; rc03 split into rc03b + rc03c on 2026-10-04 under R-crc-9, the FOURTH preventive application, again caught at exploration by a size check; rc06 split into rc06a + rc06b the same day, the FIFTH, caught at exploration; rc08 split into rc08a + rc08b on 2026-10-05, the SIXTH, caught at exploration; rc17 declared the same day from rc08b's system walk, taking Sal's one-command blind pair and the walk's routed pair-diagnosis redesign; rc17 split into rc17a + rc17b the same day, the SEVENTH preventive application, caught at exploration — rc14 stays reserved for the undeclared `rc14-delta-scope` recommendation).
 Every stage is sized under R-crc-1, names the capabilities it touches, and names its goal.
 Charters are settled under R-crc-3 until a citing change refines them; exit criteria are
 falsifiable and self-measured by the stage's own cadence (G0). Position is computed — see the
@@ -2998,6 +3008,18 @@ unchanged, measured by its delta count being zero.
 Depends-on: rc08b-walk-routing
 Complete: [ ]
 
+**SPLIT 2026-10-05 (Sal) into rc17a + rc17b, under R-crc-9: its seventh preventive application, the fifth
+caught at exploration before anything was proposed.** The heading is kept as the program's record of the
+problem and the charter; the WORK is declared in the two stages that follow. The exploration
+(`orbit/explore/rc17a-invoked-coverage/`, opened as `blind-pair-command` and renamed at this declaration)
+settled sixteen decisions (D-bpc-1..16, eleven rules with accounted Mechanism entries), several of them
+Sal's from extended use, and they REFRAME the charter: the pair becomes the recommended first review rather
+than the required one (R-crc-4 amended this day), the invocation decides what covers the first slot, and a
+walk discovers every unwalked pass at any severity. Measured by capability, one stage would touch five or
+six. The gate, the launch record, discovery and the short next line go to rc17a; the command, the
+per-user runner and the setup step go to rc17b. The charter below is kept as written. Its exit (2) is
+carried by rc17a in the reframed terms; its exits (1) and (3) by rc17b.
+
 Declared 2026-10-05 (Sal) during rc08b's system walk. The cadence's `blind-pair` slot is one unit — two
 passes of distinct classes, one state, no walk between — but running it is two commands, a handoff, a
 wait and an ordered commit, and the engine meanwhile reports a half-open pair the user must not walk.
@@ -3017,6 +3039,54 @@ Exit: (1) one invocation produces both pass files on one commit, each committed 
 between them; (2) with only one half returned, the gate reports `openPair` on every supported cadence,
 including `[external, blind-pair]`; (3) an adopter without a configured external runner gets today's
 handoff, unchanged.
+
+### Stage rc17a-invoked-coverage — the invocation decides what covers a review, and a walk finds every pass
+
+Depends-on: rc08b-walk-routing
+Complete: [ ]
+
+Declared 2026-10-05 (Sal) from the rc17 exploration's split (D-bpc-9). Charter: both reviewed gates move to
+`[<first>, in-context]` (`spec-driven` version 5; a v4 change keeps its cadence), where the first slot
+accepts a blind pair, a single fresh or a single external pass, and a per-gate preference in
+`orbit/config.yaml` changes only what the readout presents (D-bpc-8; R-crc-4 as amended). Pair membership
+is a state machine COMPUTED from the trail — NO-LAUNCH, PAIR-OPEN, COMPLETE, BROKEN — with one new
+engine-composed record, the pair LAUNCH, and the fresh emit stamped with its launch (D-bpc-10). The pair
+diagnosis reads only the passes the uncovered slot could use, retiring the `foreclosed` label (D-bpc-6,
+rc08b's routed external W1). Discovery widens beside the gate's hold: the engine computes every pass that
+carries a finding and has no walk record, at any severity, and a change-scoped walk reads that set with
+`unresolvedPasses` (D-bpc-15); the review emit's next names `/orbit:address-reviews <change>`, never a path,
+wherever discovery reaches the pass (D-bpc-16). The exploration's Mechanism entries are the design input.
+Capabilities: `orbit-engine-gates`, `orbit-emit-composition`, `orbit-address-reviews` — at R-crc-1's
+ceiling. Goal G4.
+Exit: (1) with a pair launched and one half landed, the gate reports `openPair` and the slot uncovered on
+every cadence the schema grammar admits up to a stated size, including `[external, blind-pair]` —
+measured by an exhaustive oracle over enumerated small cadences and trails, not by hand-picked cases;
+(2) a single invoked fresh or external pass covers the first slot on both gates, and the preference — set,
+absent or unknown — changes only the presented command; (3) a SUGGESTION-only pass is walked by
+`/orbit:address-reviews <change>`, and no change-mode review emit's `next_recommended` names a path.
+
+### Stage rc17b-blind-pair-command — the pair is one command
+
+Depends-on: rc17a-invoked-coverage
+Complete: [ ]
+
+Declared 2026-10-05 (Sal) from the rc17 exploration's split (D-bpc-9). It depends on rc17a because the
+command writes the launch record rc17a defines and must never hand back a half-open pair the gate cannot
+see. Charter: `/orbit:review --as <mode> --reviewer blind-pair` runs both halves in one invocation, in the
+step order D-bpc-13 records — the launch record, the packaging and one commit as BASE, pushed; the external
+half in a throwaway worktree at BASE so it can read nothing the fresh half writes (D-bpc-4); the fresh half
+as a clean-context subagent; both awaited; the external return normalized; each pass file committed alone in
+token order and pushed (D-bpc-3); both reports rendered; the walk left to the user. The external runner is
+the USER's, recorded in the per-user global config at `orbit init`, which explains the concept and offers
+the Codex preset, an own command or none (D-bpc-2, D-bpc-11); a recorded and reachable runner launches
+every external half, single or pair, and otherwise the prompt is printed for paste (D-bpc-1, D-bpc-5,
+D-bpc-14). NARROWS D-rc03-5 as the parent charter states. The decisions live in rc17a's archived
+exploration. Capabilities: `orbit-review`, `orbit-review-external`, `orbit-onboard`, plus whichever owns
+init's setup step — measured at propose, and a fourth is declared there under R-crc-9 rather than found
+later. Goal G4.
+Exit: (1) one invocation produces both pass files on one commit, each committed alone, with no walk between
+them, and pushed; (2) with a runner recorded, the external half launches with no paste and its return is
+committed without hand edits; (3) an adopter without a recorded runner gets today's handoff, unchanged.
 
 ## Considered & out
 
@@ -4847,7 +4917,7 @@ Phase 4, depending on rc08b; it narrows D-rc03-5 (the review body's no-launch se
 says why no-chaining holds. It takes rc08b's system walk 1 redesign (external W1, Sal: C, routed to
 `orbit/explore/blind-pair-command/` in `address-reviews-2026-10-05T14-37-54Z.json`): the pair diagnosis
 ignores passes an earlier slot consumed, which the shipped cadence never reaches and a failed half of
-the new command would. Stage count 31 → <!-- src:stages -->32<!-- /src:stages --> at both marked sites
+the new command would. Stage count 31 → 32 at both marked sites
 (this entry's mark is the third; the previous entry's is unmarked as history).
 
 **2026-10-05 — rc08b-walk-routing RATIFIED; rc08-walk-completeness ENDED (Sal, at the architect offer).** rc08b's exits
@@ -4862,3 +4932,17 @@ cadence as its charter places it, read 4 (0 ripple misses + 4 regressed; two are
 in rc08b's archive; rc08a's mark is unchanged and the miss stands beside it. rc08 takes its ENDED mark through the offer,
 as rc03 and rc06 did: its heading stays as the record and every exit criterion is owned by a child.
 
+**2026-10-05 — Architect session: rc17 SPLIT into rc17a-invoked-coverage + rc17b-blind-pair-command; R-crc-4
+AMENDED (Sal).** The rc17 exploration (`orbit/explore/rc17a-invoked-coverage/`, opened as `blind-pair-command`)
+closed with sixteen decisions and no open questions, and Sal's calls from extended use reframed the stage:
+both reviewed gates become `[<first>, in-context]`, the first slot covered by whatever the user INVOKED (a pair
+needs both halves; a single covers alone), a per-gate `orbit/config.yaml` preference choosing only what is
+presented, default blind-pair — the R-crc-4 amendment recorded in the rulings index, the rulings count
+unchanged; the external runner per user, set at init, auto-launching every external half; the command
+committing and pushing; and a walk discovering every unwalked pass at any severity, with the review emit's
+next naming the change rather than a path. Measured by capability the stage was five or six, so it split
+under R-crc-9, the seventh preventive application: rc17a takes the engine half (three capabilities), rc17b
+the command (three, a fourth to be declared at propose if init's owner adds one). The parent keeps its heading
+as the record, its exits owned by the children, its slot unmarked until both are done. Stage count 32 →
+<!-- src:stages -->34<!-- /src:stages --> at both marked sites (this entry's mark is the third; the previous
+entry's is unmarked as history).

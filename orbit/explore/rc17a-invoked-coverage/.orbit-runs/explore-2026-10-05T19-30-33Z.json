@@ -1,0 +1,40 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-05T19:30:33Z",
+  "change": "blind-pair-command",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "The one-command blind pair is explored to sixteen decisions (eleven live rules, every one with a Mechanism entry; five scope entries; no open questions). Sal's model: both reviewed gates are [first, in-context]; the first slot accepts blind-pair, fresh or external, the INVOCATION decides what covers it (an invoked pair needs both halves), and orbit/config.yaml carries a per-gate preference for what is presented, default blind-pair (amends R-crc-4). Pair membership is a state machine computed from the trail with one new launch record. The external runner is per-user (global config, set at init), auto-launches every external half, and falls back to paste. The command commits and pushes, isolates the external half in a worktree at BASE, and ends at the readout. A walk discovers every unwalked pass at any severity, and the review emit's next names the change, never a path. Split recommended: rc17a (gate, launch record, discovery, short next: orbit-engine-gates, orbit-emit-composition, orbit-address-reviews) then rc17b (the command, runner setup); declaring both, and recording the R-crc-4 amendment, is the architect session's.",
+  "decisions_captured": 16,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 11,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [
+    {
+      "id": "D-bpc-1",
+      "kind": "a runner failure that yields a file which opens with the heading and parses yet is not a complete review (a truncated return)",
+      "method": "running the three external readers over the return and reading its `**Reviewer**:` line at each runner's first use"
+    },
+    {
+      "id": "D-bpc-4",
+      "kind": "a channel through machine state outside the repository (a runner's session history, an assistant's memory)",
+      "method": "listing what each runner reads beyond its working directory when it is recorded at setup"
+    },
+    {
+      "id": "D-bpc-8",
+      "kind": "a pass whose pair membership the trail cannot decide (a single invoked while a pair launch stands open)",
+      "method": "D-bpc-10's residual slots carry it"
+    },
+    {
+      "id": "D-bpc-10",
+      "kind": "an external return the trail cannot attribute to a single or to the open pair",
+      "method": "each T0 emit is engine-composed and can carry the launch token it was packaged under; an audit cross-check of returns against their T0s finds a single-packaged return counted as a member"
+    }
+  ],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose blind-pair-command — 11 live rules accounted, 4 bounded residuals named (D-bpc-1, D-bpc-4, D-bpc-8 +1 more); formalize when you are ready (or /orbit:explore blind-pair-command to keep refining)"
+}

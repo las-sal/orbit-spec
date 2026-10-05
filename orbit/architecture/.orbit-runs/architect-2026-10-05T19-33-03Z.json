@@ -1,0 +1,30 @@
+{
+  "command": "architect",
+  "timestamp": "2026-10-05T19:33:03Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "rc17-blind-pair-command split at its exploration into rc17a-invoked-coverage (the gate's [<first>, in-context] cadence with invocation-decided coverage, the pair launch record and computed pair state, the slot-bound pair diagnosis, discovery of every unwalked pass at any severity, the short review next line: orbit-engine-gates, orbit-emit-composition, orbit-address-reviews) and rc17b-blind-pair-command (the one-command pair, the per-user runner set at init, auto-launch, commit and push), R-crc-9's seventh preventive application. R-crc-4 amended on Sal's word: the blind pair is the recommended first review, no longer the required one; its composition stays hardcoded. The parent keeps its heading as the record, its exits owned by the children. Stage count 32 -> 34 at both marked sites; the exploration renamed to orbit/explore/rc17a-invoked-coverage/ and re-cited to rc17a. No ratification offer fired: no stage of this doc is awaiting.",
+  "stages_touched": [
+    "rc17-blind-pair-command",
+    "rc17a-invoked-coverage",
+    "rc17b-blind-pair-command"
+  ],
+  "rulings_captured": [
+    "R-crc-4 (amended 2026-10-05)"
+  ],
+  "completions_ratified": [],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md#stage-rc17a-invoked-coverage — the stage charter and exit criteria",
+      "orbit/explore/rc17a-invoked-coverage/explore.md — sixteen decisions; the Mechanism entries are the design input",
+      "orbit/architecture/clean-up-review-cycle.md#rulings-index — R-crc-4 as amended 2026-10-05"
+    ],
+    "next_command": "/orbit:propose rc17a-invoked-coverage",
+    "model_hint": null,
+    "seam": "rc17 split; rc17a exploring with its exploration concluded in substance (no open questions), ready to propose; rc17b premised, depending on rc17a."
+  },
+  "next_recommended": "/orbit:propose rc17a-invoked-coverage"
+}
