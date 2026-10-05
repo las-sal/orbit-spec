@@ -298,7 +298,7 @@ A reviewed gate whose state is `unpassed`, `stale` or `passed` — `superseded` 
 
 When the gate's canonical next command names a walk because a pass is unresolved, it SHALL be the change-scoped form `/orbit:address-reviews <change>`, naming no file: the walk discovers every listed pass, and the `openPair` stop applies (`orbit-address-reviews`' `Address-reviews command available`). A `--from-file` aim at one pass would walk one half and skip both. The blind-pair command that precedes it in the canonical-next order is unchanged.
 
-When the cadence's blind-pair slot is open and exactly one pairable member stands, the row SHALL also carry `openPair: {missing}`, `missing` `fresh` or `external` — the same fact the `reason`'s pair note states in prose, now a field a reader need not parse. Absent otherwise.
+When the gate's own pair diagnosis — the computation behind the `reason`'s pair note — finds the cadence's blind-pair slot open with a pairable member standing and the other class missing, however many members of the standing class there are, the row SHALL also carry `openPair: {missing}`, `missing` `fresh` or `external`: the same fact the pair note states in prose, now a field a reader need not parse. Absent otherwise.
 
 A `blocked` gate computes no resolution and carries neither field. A `superseded` gate carries both as computed; whether a reader acts on a superseded gate's list is the reader's rule (`orbit-address-reviews`' `Address-reviews command available` does not).
 
@@ -323,6 +323,11 @@ The fields REPORT; nothing new is ruled (R-crc-13). `orbit status --change <name
 
 - **WHEN** a `review-proposal` gate's first unresolved pass is `review-proposal-T1.json` and no blind pair is open
 - **THEN** its canonical next command is `/orbit:address-reviews <change>`, with no `--from-file`
+
+#### Scenario: Two fresh passes and no external still report the open pair
+
+- **WHEN** a `review-system` gate's trail holds two pairable fresh passes and no external pass
+- **THEN** its row carries `openPair: {missing: "external"}`
 
 #### Scenario: A blocked gate carries neither field
 

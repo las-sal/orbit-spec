@@ -134,7 +134,7 @@ Domain: the walk-log entries that can carry a remedy
 | `resolved` or `escalated`, mechanism routed out | `remedy: redesign` plus `routed_to` (D-rc08b-5) |
 | `stale` | no remedy; nothing was done |
 | `deferred` / `escalated` without a route | no remedy; filed or escalated as today |
-| SUGGESTION entries | optional; the remedy matters where a finding gates |
+| SUGGESTION entries | required on a resolved entry like any other severity (amended at proposal walk 2, 2026-10-05: one obligation at every severity, as the spec states it) |
 Closure: SOURCED — the four dispositions the trail reader recognises (`resolved` / `stale` / `deferred` / `escalated`)
 Moves:
 - READ: applied — `lane` already holds `obvious-fix` / `decision` / `stale` on 151 entries since 2026-09-14; R-crc-6's three appear only in prose (`resolution`, `action`)
@@ -231,7 +231,9 @@ Moves:
 - **2026-10-05 — D-rc08b-4: R-crc-6's lane is recorded as `remedy: repair | descope | redesign`** — a
   per-entry field beside D4's process `lane`, orthogonal to it. Its shape is owned by
   `orbit-address-reviews` and the write gate does not check it (a judgement, R-crc-10; a check would be
-  a fourth capability). Settled under R-crc-3.
+  a fourth capability). Settled under R-crc-3. AMENDED at proposal walk 2 (2026-10-05, external W7):
+  `remedy` is required on every `resolved` entry at EVERY severity. The Mechanism table's "optional for
+  SUGGESTION" row is replaced, so the exploration and the spec state one obligation.
   Kind: rule
 - **2026-10-05 — D-rc08b-5: a REDESIGN leaves the walk in one of two shapes** — separable: descope and
   route to a new exploration (`resolved`). Essential: `escalated`, routed to the change's own

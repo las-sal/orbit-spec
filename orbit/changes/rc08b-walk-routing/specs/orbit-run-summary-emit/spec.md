@@ -19,7 +19,7 @@ awaiting_findings     bool     always true at T0
  orbit/changes/<name>/.orbit-runs/external-<mode>-<TS>.md"
 ```
 
-It SHALL name no walk command. What follows the save is the engine's eligibility line as read once the return is saved: the remaining pair member when one is still missing, otherwise the change-scoped walk, which discovers the saved return with no path (`orbit-address-reviews`' `Address-reviews command available`). A walk command written into the record would be a one-half walk recorded as the next step.
+It SHALL name no walk command. What follows the save is whatever the gate's canonical next computes once the return is saved (`orbit-engine-gates`) — never written into this record; when that next is a walk, it discovers the saved return with no path (`orbit-address-reviews`' `Address-reviews command available`). A walk command written into the record would be a one-half walk recorded as the next step.
 
 A downstream status reader's best-effort parse will find no leading `/orbit:<verb>` (because the string leads with "Paste"); `command` and `args` are left null, and the full verbatim string is surfaced in `reason`. This is the expected behavior — multi-step user actions are accurately represented as prose, not collapsed into a single command.
 
@@ -32,6 +32,11 @@ T1 (findings returned and walked, by discovery or by `--from-file`) is the exist
 #### Scenario: Review-external T0 recommendation is prose-only
 - **WHEN** a downstream status reader reads the review-external T0 JSON and best-effort parses `next_recommended`
 - **THEN** no leading slash command is found; `command` and `args` are null; the full multi-step instruction is preserved verbatim in `reason`
+
+#### Scenario: A clean return is not followed by a walk
+
+- **WHEN** the T0 emit packages an external whose return, once saved, will complete a clean blind pair (no substantive findings on either half) on a cadence that still owes an in-context slot
+- **THEN** the T0 record's `next_recommended` names the paste and save steps and no walk, and the eligibility line read after the return is saved names the in-context review, not a walk
 
 #### Scenario: The T0 recommendation names no walk
 

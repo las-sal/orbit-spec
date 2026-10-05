@@ -66,8 +66,13 @@ of audit-drift's next line was wrong (explore.md, D-rc08b-3's amendment).
 
 **D3 — One log per source** (D-rc08b-1). `orbit emit address-reviews` is invoked once per discovered
 source, in token order, and the markers' log goes last. Nothing in the emit surface changes: each payload
-is an ordinary walk log with one `source_path`. Converged findings resolve in the earlier log and are
-`stale` with evidence in the later one, which is the practice of the last six stages, now written down.
+is an ordinary walk log with one `source_path`. A converged finding is walked in the earlier log and
+takes that entry's disposition in the later one (`stale` with evidence when it closed; the same open
+disposition when it did not). That is the practice of the last six stages, written down and closed
+against an open earlier entry at proposal walk 2. A rediscovered pass re-records its closed findings
+`stale` rather than copying them, because a copied `resolved` entry would owe a `sweep` the write gate
+checks against today's files (external C1). Batch mode writes every log after its one cascade, so the
+baseline batch requirement is unchanged (external W2).
 
 **D4 — `remedy` beside `lane`** (D-rc08b-4, D-rc08b-5). The field's shape and the REDESIGN routing are
 stated once, in a new `orbit-address-reviews` requirement as a four-row table. `Resolution-log JSON shape
@@ -89,8 +94,8 @@ naming both requirements that check walk entries at write time: `orbit-emit-comp
 write gate checks sweep evidence` and `A ripple-miss pointer resolves and is counted`. Both were read
 (walk 1). The fallback is unchanged. The block's stale parenthetical deferring multi-source ingest to rc03
 becomes a pointer to `One invocation writes one log per discovered source`. The cost is that the whole
-block's 22 scenarios become delta scenarios. In all, the change carries 66 delta scenarios, 8 of them
-covered at propose, so 58 must be declared (measured by `orbit status --change rc08b-walk-routing
+block's 22 scenarios become delta scenarios. In all, the change carries 76 delta scenarios, 8 of them
+covered, so 68 must be declared (measured at proposal walk 2 by `orbit status --change rc08b-walk-routing
 --scenarios`; task group 5).
 
 ## Alternatives considered
@@ -123,7 +128,10 @@ covered at propose, so 58 must be declared (measured by `orbit status --change r
 - [Bare with one active change narrows the marker scan to that change] → The triage header says
   `markers outside it are not scanned`. A path positional re-aims it. Markers are rare since discovery
   replaced `--mark`.
-- [58 delta scenarios to declare, 22 of them inherited from the rider's block] → Most are behaviours with existing gate tests that
+- [A partially walked audit-drift emit is not rediscovered] → It is not a gate pass, so discovery
+  reads no predicate for it beyond "no log names it". The empty-result line lists every named audit emit
+  with its `--from-file` route, so a partial audit never reads as clean (external W4).
+- [68 delta scenarios to declare at proposal walk 2, 22 of them inherited from the rider's block; task 5.3's run is the authoritative count] → Most are behaviours with existing gate tests that
   lack tags. Task group 5 measures the count before tagging, and declares any it cannot cover in the
   ledger with a `why`.
 - [Superseded proposal passes leave discovery] → A post-apply walk never picks up an unwalked proposal

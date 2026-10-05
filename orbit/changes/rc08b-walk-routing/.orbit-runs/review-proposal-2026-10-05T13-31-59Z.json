@@ -1,0 +1,153 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-05T13:31:59Z",
+  "change": "rc08b-walk-routing",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-address-reviews/spec.md",
+      "line": 195,
+      "title": "The batch-mode sentence asserts a baseline behaviour that does not exist and leaves a mid-walk shift to batch across sources unspecified",
+      "recommendation": "Delete 'as batch mode does today': the baseline states no batch-interruption behaviour (its only interruption rule is walk-mode's, between findings). State instead: an interrupted batch writes no log for any source whose log was not yet written. Add the mid-walk shift: a command-shaped switch to batch applies to the sources whose logs are not yet written, and the logs already written stand.",
+      "walk_entry": {
+        "title": "Per-source emission conflicts with invocation-wide batch semantics",
+        "file": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md"
+      }
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-run-summary-emit/spec.md",
+      "line": 39,
+      "title": "The clean-return scenario says the T0 record names no next step, contradicting the requirement it sits under",
+      "recommendation": "The T0 record still names the user action (paste, save), so 'names no next step' is false and a test built to it would assert an empty field. Rewrite the THEN as: the T0 record names no walk, and the eligibility line read after the return is saved names the in-context review. The WHEN also conflates T0 (before the return) with the completed pair: phrase it as a T0 emit for an external whose return will complete a clean pair.",
+      "walk_entry": {
+        "title": "The T0 handoff describes a walk where the engine can recommend verification",
+        "file": "orbit/changes/rc08b-walk-routing/specs/orbit-run-summary-emit/spec.md"
+      }
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "specs/orbit-address-reviews/spec.md",
+      "line": 237,
+      "title": "The essential-redesign row's resolution column still describes a change returning to exploration on scopes that have no change",
+      "recommendation": "The routed_to cell now covers archived, project-wide and architecture walks, but the resolution cell beside it still reads 'the mechanism cannot leave the change ... and the change returns to exploration'. Qualify it: on an active change the change returns to exploration; elsewhere the mechanism goes to a new exploration and the finding stays escalated.",
+      "walk_entry": {
+        "title": "Essential-redesign routing assumes an active change in a command supporting other scopes",
+        "file": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md"
+      }
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Seven of walk 2's ten resolutions landed clean, including the CRITICAL's descope: a rediscovered pass now re-records its closed findings stale, so nothing copied owes a sweep. The three regressions are all in the walk's own new sentences, at the edges of what each fix claimed: a baseline behaviour asserted without a read, a scenario wording that overshoots its requirement, and a table cell left beside the one that was edited. None adds mechanism; each is a wording repair. The residual check found no edit outside the walk's record.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The walk narrowed rather than invented, and what it left is wording, not mechanism. Repair the three in place and the proposal is ready to apply; another independent pass would be reviewing sentences, not design."
+  },
+  "verification": [
+    {
+      "title": "Verbatim carry-forward can prevent a resumed walk from being emitted",
+      "file": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The openPair cardinality rule disagrees with the predicate it must expose",
+      "file": "orbit/changes/rc08b-walk-routing/specs/orbit-engine-gates/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Per-source emission conflicts with invocation-wide batch semantics",
+      "file": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "Converged findings are marked stale even when their earlier counterpart remains open",
+      "file": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "A partial audit walk permanently removes its remaining findings from discovery",
+      "file": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Essential-redesign routing assumes an active change in a command supporting other scopes",
+      "file": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "The T0 handoff describes a walk where the engine can recommend verification",
+      "file": "orbit/changes/rc08b-walk-routing/specs/orbit-run-summary-emit/spec.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "Suggestion entries have conflicting remedy obligations",
+      "file": "orbit/changes/rc08b-walk-routing/explore.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The discovery table’s empty-result row is unreachable under first-match semantics",
+      "file": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The recorded scenario totals are stale",
+      "file": "orbit/changes/rc08b-walk-routing/design.md",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 2 warning, 1 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-05T13-29-54Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc08b-walk-routing --from-file orbit/changes/rc08b-walk-routing/.orbit-runs/review-proposal-2026-10-05T13-31-59Z.json"
+}

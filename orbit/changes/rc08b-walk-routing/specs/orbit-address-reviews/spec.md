@@ -6,7 +6,7 @@ The system SHALL expose a `/orbit:address-reviews` command that scans for `@revi
 
 **Discovery** (normative) is the fence below, rows tested in order, first match wins.
 
-Markers never suppress trail discovery: a stray marker hiding an outstanding pass is the disagreement this requirement exists to remove. A marker that RESTATES a discovered finding — at that finding's `file`, its text beginning with the finding's title, the form `/orbit:review --mark` writes — is walked AS that finding, in its pass's log, and removed at marker removal; the markers' log omits it, so no finding is walked twice. Only a pass carrying a CRITICAL or WARNING is outstanding (a pass whose findings are all SUGGESTION-grade, or none, needs no walk for the gate), so such a pass is never discovered and is reached by `--from-file`, as the review emit's own next line names it. A blocked reviewed gate computes no resolution, and a superseded one gates nothing, so neither contributes passes; a pass of either is reached by `--from-file`. The single-newest-by-`<TS>` recency rule is retired. The body carries the fence below as a CHECKED MIRROR, held byte-equal by a parity test (R-crc-14's mirror corollary: an installed skill cannot open this spec); the fence is the owner's, and the body never edits its copy.
+Markers never suppress trail discovery: a stray marker hiding an outstanding pass is the disagreement this requirement exists to remove. A marker that RESTATES a discovered finding — at that finding's `file`, its text beginning with the finding's title, the form `/orbit:review --mark` writes — is walked AS that finding, in its pass's log, and removed at marker removal; the markers' log omits it, so no finding is walked twice. An audit-drift emit is discovered only while no log names it; once named it is NOT rediscovered, even when that walk left an entry deferred or escalated, because audit-drift is not a gate pass and the body reads no second predicate. The empty-result line lists such emits with their `--from-file` route, so a partially walked audit never reads as clean. Only a pass carrying a CRITICAL or WARNING is outstanding (a pass whose findings are all SUGGESTION-grade, or none, needs no walk for the gate), so such a pass is never discovered and is reached by `--from-file`, as the review emit's own next line names it. A blocked reviewed gate computes no resolution, and a superseded one gates nothing, so neither contributes passes; a pass of either is reached by `--from-file`. The single-newest-by-`<TS>` recency rule is retired. The body carries the fence below as a CHECKED MIRROR, held byte-equal by a parity test (R-crc-14's mirror corollary: an installed skill cannot open this spec); the fence is the owner's, and the body never edits its copy.
 
 ```
 DISCOVERY — rows tested in order, first match wins:
@@ -17,7 +17,7 @@ DISCOVERY — rows tested in order, first match wins:
 5 active change: the UNION of @review: markers in the change directory, every unresolvedPasses entry of each reviewed gate neither blocked nor superseded (internal review-<mode>-*.json and external external-<mode>-*.md alike), and every audit-drift-*.json in its .orbit-runs/ whose basename no address-reviews-*.json there names in source_path.
 6 archived change: markers in the archived directory + its unwalked audit-drift-*.json by the same basename rule; its review passes are reached by --from-file, and the header says so.
 7 a positional resolving to no change (a path or pattern): markers in that scope only.
-8 nothing discovered: "No @review: markers and no outstanding passes in scope. Nothing to walk." and a clean exit.
+AFTER the matched row: when it discovered nothing, print "No @review: markers and no outstanding passes in scope. Nothing to walk.", then list each audit-drift-*.json in scope that a log already names as "walked before; reach by --from-file <path>", and exit clean.
 ```
 
 **Positional argument resolution** (normative): a positional argument is treated as a change name if and only if it matches one of these locations, checked in this order: (1) **active**: `orbit/changes/<name>/` (exact directory match); (2) **archived**: `orbit/changes/archive/<YYYY-MM-DD>-<name>/` — enumerate entries in `orbit/changes/archive/` matching the regex `^\d{4}-\d{2}-\d{2}-<name>$`. If multiple archive entries match the same `<name>` suffix (rare; would mean the same change name was archived on different dates), the lexicographically-latest date wins (most-recent archive). If no active match AND no archive match, the positional is treated as a path/pattern scope for the grep, and trail discovery does NOT apply.
@@ -192,11 +192,11 @@ The system SHALL extend the `address-reviews-<TS>.json` resolution-log shape wit
 
 ### Requirement: One invocation writes one log per discovered source
 
-A walk that discovers more than one source SHALL write ONE resolution log PER SOURCE — one per discovered pass, one per discovered audit-drift emit, and one for the markers when any were found — each carrying its own `source_path` (the markers' log carries the scope, `source: "scope"`). `source_path` stays a single path, so the gate's per-pass record match and the trail reader read the logs unchanged. After ONE shared triage the walk proceeds SOURCE BY SOURCE in that order — pass sources in the engine's token order, oldest first, then the markers — and writes each source's log when that source's findings are walked, before the next source begins.
+A walk that discovers more than one source SHALL write ONE resolution log PER SOURCE — one per discovered pass, one per discovered audit-drift emit, and one for the markers when any were found — each carrying its own `source_path` (the markers' log carries the scope, `source: "scope"`). `source_path` stays a single path, so the gate's per-pass record match and the trail reader read the logs unchanged. After ONE shared triage the walk proceeds SOURCE BY SOURCE in that order — pass sources in the engine's token order, oldest first, then the markers — and, in walk mode, writes each source's log when that source's findings are walked, before the next source begins. In batch mode the invocation resolves every source's findings, runs its ONE aggregated cascade, then writes every source's log, in the same order. An interrupted batch writes no log for any source whose log was not yet written. A mid-walk switch to batch (`Walk-mode by default with --batch opt-in`'s command-shaped interruption) applies to the sources whose logs are not yet written; the logs already written stand.
 
-A pass REDISCOVERED because its latest log left an entry `deferred` or `escalated` is presented at triage with that log's dispositions; only its open entries are walked again, and its new log carries the earlier `resolved` and `stale` entries forward verbatim, so the new log is complete for the gate's per-pass match.
+A pass REDISCOVERED because its latest log left an entry `deferred` or `escalated` is presented at triage with that log's dispositions. Its new log must name every substantive finding of the pass (the gate's per-pass match reads only the latest log), so each finding the earlier log closed is re-checked by pushback and recorded `stale`, with evidence naming the earlier log's token; only the open findings are walked again. Nothing is copied forward: a copied `resolved` entry would owe a fresh `sweep` the write gate checks against today's files.
 
-Triage runs ONCE across every discovered source and SHALL mark each finding that converges with a finding of another discovered pass (same site, same claim) as found by both. A converged finding is resolved in the log of the EARLIER pass; in each later pass's log it is `stale` with evidence naming the earlier log's token. The cross-pass split (found by both / one pass only / contradictory) is a triage rendering and is never stored as a merged record.
+Triage runs ONCE across every discovered source and SHALL mark each finding that converges with a finding of another discovered pass (same site, same claim) as found by both. A converged finding is walked in the log of the EARLIER pass; in each later pass's log it takes the earlier entry's disposition — `stale` with evidence naming the earlier log's token when the earlier entry is `resolved` or `stale`, and the same `deferred` or `escalated` disposition (and `routed_to`, when present) when the earlier entry stays open, so a later pass is never closed by a finding that is still open. The cross-pass split (found by both / one pass only / contradictory) is a triage rendering and is never stored as a merged record.
 
 An interrupted walk leaves the logs it completed on the trail; the sources whose logs were not written stay outstanding, and the next invocation discovers them again.
 
@@ -208,7 +208,17 @@ An interrupted walk leaves the logs it completed on the trail; the sources whose
 #### Scenario: A rediscovered pass re-walks only its open entries
 
 - **WHEN** a pass's latest log resolved four findings and escalated one, and a later walk discovers the pass again
-- **THEN** triage shows the five prior dispositions, only the escalated finding is walked, and the new log carries the four resolved entries forward verbatim
+- **THEN** triage shows the five prior dispositions, only the escalated finding is walked, and the new log records the four previously resolved findings `stale` with evidence naming the earlier log
+
+#### Scenario: A converged finding left open stays open in the later log
+
+- **WHEN** two passes report the same missing mechanism and the earlier log escalates it as an essential redesign
+- **THEN** the later log records it `escalated` with the same `routed_to`, and the later pass stays outstanding
+
+#### Scenario: A batch walk over two sources writes both logs after its cascade
+
+- **WHEN** a `--batch` walk discovers two passes
+- **THEN** every finding of both is resolved, the one aggregated cascade runs, and then both logs are written in token order
 
 #### Scenario: An interrupted walk resumes by rediscovery
 
@@ -217,16 +227,16 @@ An interrupted walk leaves the logs it completed on the trail; the sources whose
 
 ### Requirement: A walk entry records its remedy, and a REDESIGN leaves the walk
 
-R-crc-6's three lanes SHALL be recorded per entry as `remedy`, a field separate from the D4 process `lane` (`obvious-fix` | `decision` | `stale`, which says how a finding was CONDUCTED; `remedy` says what its resolution DID). Every `resolved` entry, and every `escalated` entry routed out, carries it; `stale` and unrouted `deferred` / `escalated` entries carry none. The values, decided by R-crc-6's test — does closing the finding require mechanism nobody has reviewed? — never by its size:
+R-crc-6's three lanes SHALL be recorded per entry as `remedy`, a field separate from the D4 process `lane` (`obvious-fix` | `decision` | `stale`, which says how a finding was CONDUCTED; `remedy` says what its resolution DID). Every `resolved` entry at every severity, and every `escalated` entry routed out, carries it; `stale` and unrouted `deferred` / `escalated` entries carry none. The values, decided by R-crc-6's test — does closing the finding require mechanism nobody has reviewed? — never by its size:
 
 | `remedy` | the resolution | disposition | `routed_to` |
 |---|---|---|---|
 | `repair` | the artifact said the wrong thing and the right thing is local; fixed in the walk | `resolved` | absent |
 | `descope` | the change was doing something it should not; removed (the removal's sweep rides `sweep`, per `A resolved walk entry records its sweep evidence`) | `resolved` | absent |
 | `redesign`, separable | the unreviewed mechanism can leave the change: it is removed from the change and routed to a NEW exploration (the removal's sweep rides `sweep`, as a descope's does) | `resolved` | `orbit/explore/<new-name>/` |
-| `redesign`, essential | the mechanism cannot leave the change: the finding stays open and the change returns to exploration | `escalated` | `orbit/changes/<name>/explore.md` |
+| `redesign`, essential | the mechanism cannot be closed by this walk: the finding stays open; on an active change the change returns to exploration, and on any other scope the mechanism goes to a new exploration | `escalated` | `orbit/changes/<name>/explore.md` on an ACTIVE change; on any other scope (an archived change, a project-wide or architecture walk) `orbit/explore/<new-name>/` |
 
-A REDESIGN is never closed in place. The walk NAMES the route (`/orbit:explore <new-name>`, or `/orbit:explore <name>`, which resumes in place against the change's `explore.md` per `orbit-explore-modifications`' re-entry resolution) and invokes nothing, per `orbit-conventions`' no-chaining contract. An essential redesign's `escalated` disposition keeps its pass unresolved, so the gate holds; the gate reports that and rules nothing new.
+A REDESIGN is never closed in place. The walk NAMES the route — `/orbit:explore <new-name>`, or, on an active change, `/orbit:explore <name>` — and invokes nothing, per `orbit-conventions`' no-chaining contract. Where that command lands is the re-entry table's to decide (`orbit-explore-modifications`' re-entry resolution), including its refusal when a staging directory and an active change share the name; this requirement promises no resume. An essential redesign's `escalated` disposition keeps its pass unresolved, so the gate holds; the gate reports that and rules nothing new.
 
 The write gate does not check `remedy` or `routed_to`: the remedy is a judgement, and the fields are a record.
 
