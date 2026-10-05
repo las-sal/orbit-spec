@@ -351,7 +351,7 @@ But this summary is optional. Sometimes the thinking IS the value.
 
 # Orbit additions
 
-The sections below describe orbit-specific additions on top of upstream's "stance, not workflow" character. The upstream content above is unchanged; orbit layers capture affordances, an \`explore.md\` authoring convention, and three invocation modes that activate when the conversation produces material worth keeping.
+The sections below describe orbit-specific additions on top of upstream's "stance, not workflow" character. The upstream content above is as \`orbit-conventions\`' \`Generated-file disposition\` records it; orbit layers capture affordances, an \`explore.md\` authoring convention, and three invocation modes that activate when the conversation produces material worth keeping.
 
 ## Four execution disciplines (epitome)
 

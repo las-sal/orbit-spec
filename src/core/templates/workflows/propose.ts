@@ -116,7 +116,7 @@ After completing all artifacts, summarize:
 
 # Orbit additions
 
-The sections below describe orbit-specific additions on top of upstream's standalone propose flow. The upstream content above is unchanged. Orbit adds a **consume mode** that activates when \`orbit/explore/<name>/explore.md\` exists from a prior \`/orbit:explore\` session — the exploration becomes the authoritative seed for artifact generation rather than asking the user for a description.
+The sections below describe orbit-specific additions on top of upstream's standalone propose flow. The upstream content above is as \`orbit-conventions\`' \`Generated-file disposition\` records it. Orbit adds a **consume mode** that activates when \`orbit/explore/<name>/explore.md\` exists from a prior \`/orbit:explore\` session — the exploration becomes the authoritative seed for artifact generation rather than asking the user for a description.
 
 ## Four execution disciplines (epitome)
 

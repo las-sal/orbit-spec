@@ -209,7 +209,7 @@ file now carries a live mark. Do NOT read this paragraph as the program's full l
 only what rc07 produced. The authoritative list is the program doc's own Open questions section,
 which also carries Q-crc-11, Q-crc-12, Q-crc-20, Q-crc-21, Q-crc-22 and Q-crc-23.
 
-**Sixteen more stages have shipped since, and the program is EIGHTEEN stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b, rc03c, rc07b and rc06a ratified 2026-10-04; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening).
+**Sixteen more stages have shipped since, and the program is NINETEEN stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b, rc03c, rc07b and rc06a ratified 2026-10-04; rc06b ratified 2026-10-05; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening).
 
 `rc02c-confirmation-semantics` is ARCHIVED (2026-09-21): **the budget stopped being a target.**
 R-crc-11(h) — effort is RECORDED, never TARGETED — retired `budgetExhausted`, the
@@ -616,7 +616,7 @@ gate**. The stage grades itself: 35 of 35 delta scenarios declared on its own su
 and counted, never backfilled. The readiness record accepts five residuals, headlined by rc07's distinction. **2679 tests
 green** (2583 → 2679).
 
-`rc06b-map-readers` is ARCHIVED (2026-10-05; the second child of the split parent `rc06`; both exit criteria graded MET as
+`rc06b-map-readers` is ARCHIVED and RATIFIED (2026-10-05; the second child of the split parent `rc06`; both exit criteria graded MET as
 written): **verify reads the scenario map, and every Pass 0 reader reads the same surface.** Verify's step 6 test-tracing line
 was replaced IN PLACE — the first named edit under the narrowed `Generated-file disposition` (an upstream portion changes only
 through a delta naming the edit; apply's and archive's earlier edits are named limits) — by a read of `orbit status --change

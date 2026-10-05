@@ -2503,7 +2503,7 @@ validation suite pins; exit (3) on 35 of 35 delta scenarios declared.
 ### Stage rc06b-map-readers — verify and the first review read the map
 
 Depends-on: rc06a-scenario-map
-Complete: [ ]
+Complete: [x] 2026-10-05 (Sal)
 
 Declared 2026-10-04 (Sal) from the rc06 exploration's split (D-rc06-6). Charter: verify-change's
 Scenario Coverage step stops tracing scenarios to tests by prose and reads rc06a's surface, reporting
@@ -4673,3 +4673,11 @@ archive. Archived through a COMPUTED PASSED gate (`archive-2026-10-04T22-43-17Z.
 five accepted residuals, one of which — a tag naming a repeated title's key renders ORPHAN, unpinned — is handed to
 rc06b-map-readers, whose readers interpret the surface. rc06 keeps its heading as the split record and takes its ENDED
 mark once rc06b ships, as rc03 did.
+
+**2026-10-05 — rc06b-map-readers RATIFIED (Sal, at the architect offer).** Both exit criteria graded MET as written: (1) on
+the verify body's coverage step naming `orbit status --change <name> --scenarios --json` with no prose-tracing instruction
+(body test), (2) on both system blind-pair halves consuming the map at Pass 0. Archived through a COMPUTED PASSED gate
+(`archive-2026-10-05T00-46-38Z.json`), readiness ready with six accepted residuals; the undeclared-scenario stop is proposed
+to rc10-apply-closure as a rider. Baseline capabilities 22 → 23 (`orbit-verify-modifications`). A post-archive project-wide
+audit found one WARNING — archive-change's additions preamble claimed an unchanged upstream portion the narrowed
+`Generated-file disposition` names as edited — walked to zero the same session (`orbit/.orbit-runs/address-reviews-2026-10-05T00-50-35Z.json`).

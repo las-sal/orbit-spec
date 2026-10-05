@@ -1,0 +1,28 @@
+{
+  "command": "architect",
+  "timestamp": "2026-10-05T00:52:05Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Ratified rc06b-map-readers at the offer (both exit criteria MET as written; 19 stages now complete); logged it with the post-archive audit walk; CLAUDE.md's complete count moved 18 → 19. The split parent rc06-scenario-test-map stays premised — its ENDED mark, anticipated in the status log, is the user's word on the unprompted route.",
+  "stages_touched": [
+    "rc06b-map-readers"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [
+    "rc06b-map-readers"
+  ],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      "CLAUDE.md — the live program's per-stage record, rc06b paragraph last",
+      "orbit/architecture/clean-up-review-cycle.md — the program doc; premised stages rc05, rc08, rc09, rc10, rc12 (and the split parent rc06)",
+      "orbit/changes/archive/2026-10-05-rc06b-map-readers/.orbit-runs/archive-2026-10-05T00-46-38Z.json — the readiness record whose undeclared-scenario residual is proposed to rc10 as a rider"
+    ],
+    "next_command": "/orbit:explore rc10-apply-closure",
+    "model_hint": null,
+    "seam": "post-ratification; no active change — the next stage is the user's pick, rc10 carries the fresh rider from rc06b"
+  },
+  "next_recommended": "/orbit:explore rc10-apply-closure"
+}

@@ -1,0 +1,31 @@
+{
+  "command": "audit-drift",
+  "timestamp": "2026-10-05T00:48:47Z",
+  "change": null,
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "final_assessment": "No critical issues. 1 warning(s) to consider.",
+  "categories_run": [
+    "1",
+    "3",
+    "4"
+  ],
+  "findings": [
+    {
+      "category": "3",
+      "severity": "WARNING",
+      "file": "src/core/templates/workflows/archive-change.ts",
+      "line": 259,
+      "title": "archive-change's additions preamble says the upstream content above is unchanged, which Generated-file disposition's named limit contradicts",
+      "recommendation": "The preamble reads 'The upstream content above is unchanged.' orbit-conventions' Generated-file disposition (narrowed by rc06b-map-readers) names archive-change as carrying semantic edits in its upstream portion, and a diff against upstream/v1.3.1 with the rename normalized confirms one (the guardrail's `orbit status --json` became `orbit status --change <name> --json`). Replace the sentence with a pointer: the upstream content above is as `orbit-conventions`' `Generated-file disposition` records it. explore.ts:354 and propose.ts:119 carry the same sentence and it is TRUE of them today (their upstream portions match the tag), so the same pointer there keeps the fact stated once, by its owner (R-crc-14). Moves the archive, explore and propose hash pins as a recorded act."
+    }
+  ],
+  "stale_suppressed": [],
+  "findings_total": 1,
+  "findings_by_category": {
+    "1": 0,
+    "3": 1,
+    "4": 0
+  },
+  "next_recommended": "/orbit:address-reviews --from-file orbit/.orbit-runs/audit-drift-2026-10-05T00-48-47Z.json — 1 drift(s) detected project-wide; resolve before next workflow step"
+}

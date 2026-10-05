@@ -83,7 +83,7 @@ import { generateSkillContent } from '../../../src/core/shared/skill-generation.
 // pointer to `orbit-conventions`, and the `audit.findings_summary` note was repointed (design D6). The
 // skill BODY did not change; the generated-content hashes below did not move.
 const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
-  getExploreSkillTemplate: 'a0befe149a57596b0bc65a682403c165d8fb5326314f23151d70d7daa074bb52',
+  getExploreSkillTemplate: '2835cca2ae531f797e0417d14f9bc66e6fd9c1b54558781ea95f3cbaad097583',
   getNewChangeSkillTemplate: '8f68be94db91a147b93d492f6f32ab3c02725a20a001c87602ac8d9741587614',
   getContinueChangeSkillTemplate: '98c49b247140ba301964c1e5a825686485b74a525f65f31a365d19e0aa84923e',
   getApplyChangeSkillTemplate: 'b2f2d8bfdc7bfb5283af4cb45d3f82fa6a393ccb0cfaeb332427c088ca956ecd',
@@ -95,7 +95,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   getOrbitContinueCommandTemplate: 'e1ecd4fffee224e284453be717226824c7567041d7c1676b6b6bca4727e3a9dd',
   getOrbitApplyCommandTemplate: 'e5a4f72b65777d13fdd9d968e3ba50ec3c9d49c890a604a64e8dbb472bf130f8',
   getOrbitFfCommandTemplate: '57607811009ca5ece844affae130fa47efc8e64f2c14c181113f581c81978405',
-  getArchiveChangeSkillTemplate: 'b608420ac5dfacb19c98cf2ec026b818cf5f533e80b33f850079cc4a05928a62',
+  getArchiveChangeSkillTemplate: 'f2768acddb1d59448a4a5f948d279afed60923490ca0e7237c83eca937b8f1d6',
   getBulkArchiveChangeSkillTemplate: 'd95ac9d5b2317736ac8395e44ff8eae1ce8d063b6eaa5fe16c225b41eeaa597d',
   getOrbitSyncCommandTemplate: '1067039e869d8dedf7922da46230b53a88253cf3fe27c7a5d60c96bc9a43453f',
   // rc06b-map-readers (2026-10-05) — verify moved DELIBERATELY, the first named edit to an upstream
@@ -126,7 +126,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // grep scenario: "iteration history" on a line naming the trail path) reads as a hit over EVERY generated
   // skill. The line describes moving files, not a brief; it now says "run trail". Keeping the rule as written
   // beat narrowing it; the hit was measured at task 1.1 (one of the eleven pre-apply reds).
-  getOrbitProposeSkillTemplate: 'bfa22c620d98981058070a8bd0447c92b3e3cc6b32e6a136fa14b35f3a622896',
+  getOrbitProposeSkillTemplate: '26186913b5641d3434f60e4c961c30913fdc67438845fec5f8d2ddb7b80671df',
   getOrbitProposeCommandTemplate: 'b91222654d5050d7ae7f2f49b5d6c4b34e65638bd8c5ae3e622550eb1329c168',
   getFeedbackSkillTemplate: 'ded61ad85c5050f7bf241870b14bfcdd929f0be68a028c1130fd30a66efbda3b',
   // rc15 (ended-stage-state, 2026-09-29): the orbit-architect body moved ONCE, deliberately — §5 (the
@@ -147,18 +147,25 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   getOrbitArchitectCommandTemplate: 'b65b8cca6431bb45aa8587d3bfc1e9458981e2e1bc925ae45cd57414143cb3db',
 };
 
+// Post-rc06b project-wide audit-drift walk (2026-10-05, category 3 WARNING) — archive, explore and
+// propose moved DELIBERATELY, one sentence each: the additions preamble's "The upstream content above
+// is unchanged" became a pointer to `orbit-conventions`' `Generated-file disposition`. It was FALSE of
+// archive-change (a named pre-rule upstream edit) and true of the other two; the owner states the fact
+// once (R-crc-14). A wording fix outside any change, recorded here and in the walk's address-reviews
+// emit under orbit/.orbit-runs/. Their three function hashes and three generated-skill hashes moved;
+// no other pin did.
 const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
-  'orbit-explore': '02a8b0724b4e49ffa8d28d98aaf045de2984e6500ebb13992e513fc10c118245', // rc16-retirement-sweep: moved once with the body at apply, a second time at the system blind-pair walk (see the function-hash note above)
+  'orbit-explore': 'd34772425aeff5415c9760e2ac7414facfc70d142bbb7e12f8ffbab50fde7004', // rc16-retirement-sweep: moved once with the body at apply, a second time at the system blind-pair walk (see the function-hash note above)
   'orbit-new-change': '94c9d6377c6de0484f3a51923eba08214ca45cab5d87a55e46e032de2640b925',
   'orbit-continue-change': 'f61634ab5e96436b33fd30c210f84a57f55baf1716d6ef4679c1ed2a518cc3d3',
   'orbit-apply-change': '90e1e529f4a264b4cf2eac15cea9229d6d2c4c1e9c246b049a00d3f79cb2e574',
   'orbit-ff-change': '77ea91cebd3be1e220824780ece9d90d82aa2f70783eedbf314a3298ec1f31e0',
   'orbit-sync-specs': '23adf56ababc77dac8dcc06048b4d74d27ded9bc4f49a57858e17c4ea7866a75',
-  'orbit-archive-change': '5338e4bc76f47e9294072101f48f9a0ffbabb8480d924955dbc275b0794a047b',
+  'orbit-archive-change': '4868cb3b0e95631238dd25753dc4a4e3fdf6794151dfa7131d2c8ddb4ffc40d1',
   'orbit-bulk-archive-change': '601dd7c74804c06a9818428f86030c8cef5311a9fc7c59f2dc14e490007a291d',
   'orbit-verify-change': '06080070b8f2dfd4e3053c9143845095d0b80c6efcce286cc46e9de37dfe8ea8', // rc06b-map-readers (2026-10-05): moved with the body's step 6 edit, then again at system walk 2's additions edit (see the function-hash note above)
   'orbit-onboard': '4b227395bb70c36c643970d821ec8eb245fbfca090accdc38d5b3588f7620fa7',
-  'orbit-propose': '97643dfd343dd2a797a65f0e853221d45fcaedc14f6a1d2b53966630da71d3d7', // rc13c, then rc03b: moved with the body (see the function-hash notes above)
+  'orbit-propose': '3d7fbf5611e1c778292635b8245e89ae1c3370b68f2d671a13bfd51af9f035a9', // rc13c, then rc03b: moved with the body (see the function-hash notes above)
   'orbit-architect': 'ad06e7eac6e4177eb5a7e0e07976fee6a956314b561f73ff64200fcff27fa24f', // rc15: moved twice with the body — apply, then the system walk; a third time at the post-archive audit walk (see the function-hash note above)
 };
 
