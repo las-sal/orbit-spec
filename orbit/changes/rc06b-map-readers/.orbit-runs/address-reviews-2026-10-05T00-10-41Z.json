@@ -1,0 +1,131 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-05T00:10:41Z",
+  "change": "rc06b-map-readers",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc06b-map-readers/.orbit-runs/external-proposal-2026-10-05T00-06-04Z.md",
+  "source_command": null,
+  "source_token": "2026-10-05T00-06-04Z",
+  "latest_apply_token": null,
+  "tie_break_rationale": null,
+  "external_reviewer": "GPT-6",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 6,
+    "suggestion": 0
+  },
+  "pushback_verification": "All six verified against code and artifacts at evaluation; none stale.",
+  "resolution_summary": {
+    "resolved": 6,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "An unkeyable-only change is reported as having no delta scenarios",
+      "marker_source": "external",
+      "file": "orbit/changes/rc06b-map-readers/specs/orbit-verify-modifications/spec.md",
+      "line": 11,
+      "classification": "trivial_fix",
+      "action": "the empty-scenarios note fires only when no malformed spec entry exists; new reader scenario for the unkeyable-only change",
+      "evidence": "verified at evaluation against scenario-map.ts:375-376, the surface JSON shape (ledger-file is {source, reason}), emit-composition.ts:1663-1665, the baselines still carrying the three phrases, and the conventions delta's own known limit",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The ledger-file row requires a location the surface does not return",
+      "marker_source": "external",
+      "file": "orbit/changes/rc06b-map-readers/specs/orbit-verify-modifications/spec.md",
+      "line": 16,
+      "classification": "trivial_fix",
+      "action": "split the row: a ledger-file entry names orbit/scenario-ledger.yaml with no line; new scenario",
+      "evidence": "verified at evaluation against scenario-map.ts:375-376, the surface JSON shape (ledger-file is {source, reason}), emit-composition.ts:1663-1665, the baselines still carrying the three phrases, and the conventions delta's own known limit",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Orphan recommendations require facts absent from the map",
+      "marker_source": "external",
+      "file": "orbit/changes/rc06b-map-readers/specs/orbit-verify-modifications/spec.md",
+      "line": 15,
+      "classification": "decision_required",
+      "action": "one recommendation true from the map alone: names the possible causes without choosing, recommends correcting the tag unless it names another active change's scenario; no extra read (R-crc-6)",
+      "evidence": "verified at evaluation against scenario-map.ts:375-376, the surface JSON shape (ledger-file is {source, reason}), emit-composition.ts:1663-1665, the baselines still carrying the three phrases, and the conventions delta's own known limit",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc06b-map-readers/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "Use one recommendation that stays true from the map alone: name the possible causes without choosing, correct the tag unless it names another active change's scenario; no extra read of active changes (R-crc-6)."
+    },
+    {
+      "severity": "WARNING",
+      "title": "The closeout grep cannot pass before archive",
+      "marker_source": "external",
+      "file": "orbit/changes/rc06b-map-readers/tasks.md",
+      "line": 24,
+      "classification": "trivial_fix",
+      "action": "5.1 sweeps src/, generated skills and this change's specs; the baseline grep moves to the at-archive note after sync",
+      "evidence": "verified at evaluation against scenario-map.ts:375-376, the surface JSON shape (ledger-file is {source, reason}), emit-composition.ts:1663-1665, the baselines still carrying the three phrases, and the conventions delta's own known limit",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The verify emit does not persist the named warning fields",
+      "marker_source": "external",
+      "file": "orbit/changes/rc06b-map-readers/specs/orbit-verify-modifications/spec.md",
+      "line": 20,
+      "classification": "trivial_fix",
+      "action": "replaced the persistence claim with a pointer to orbit-run-summary-emit's Verify fail-mode recommendations (precedence included); never scenarios-fail",
+      "evidence": "verified at evaluation against scenario-map.ts:375-376, the surface JSON shape (ledger-file is {source, reason}), emit-composition.ts:1663-1665, the baselines still carrying the three phrases, and the conventions delta's own known limit",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc06b-map-readers/design.md",
+          "orbit/changes/rc06b-map-readers/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The new named-edit scenario contradicts its own legacy exception",
+      "marker_source": "external",
+      "file": "orbit/changes/rc06b-map-readers/specs/orbit-conventions/spec.md",
+      "line": 20,
+      "classification": "trivial_fix",
+      "action": "scoped the clause: the rest of the upstream portion is unchanged by that edit",
+      "evidence": "verified at evaluation against scenario-map.ts:375-376, the surface JSON shape (ledger-file is {source, reason}), emit-composition.ts:1663-1665, the baselines still carrying the three phrases, and the conventions delta's own known limit",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Six of six external WARNINGs resolved; none stale. The orphan recommendation was settled under R-crc-3 as a map-only statement (no new read, R-crc-6) and ratified by Sal's \"yep\"; the rest were repairs of claims the map, the emit or the timeline could not honour.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal rc06b-map-readers"
+}

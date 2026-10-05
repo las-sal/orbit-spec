@@ -8,16 +8,17 @@ The verify-change body's Scenario Coverage step SHALL read the scenario map from
 |---|---|
 | the command fails (a non-zero exit, or output that does not parse) | one note naming the error, and the check listed as skipped, per the body's Graceful Degradation; no other row applies |
 | `check` is `"off"` | one note: the scenario-map check is off because `scenario_map:` is absent from, or malformed in, `orbit/config.yaml`; no other row applies — no scenario, orphan or malformed finding, and no tracing by any other means |
-| `check` is `"on"` and `scenarios` is empty | one note: the change has no delta scenarios; the rows below for `orphans`, `malformed` and `counts` still apply |
+| `check` is `"on"`, `scenarios` is empty, and no `malformed` entry has `source: "spec"` | one note: the change has no delta scenarios; the rows below for `orphans`, `malformed` and `counts` still apply |
 | a `scenarios` entry with `uncovered: true` | a WARNING `Scenario not covered: <capability> :: <requirement> :: <scenario>`, recommending a `@scenario` tag above the test that exercises it, or a ledger entry |
 | a `scenarios` entry with any declaration | no finding; its declared kinds are listed as the surface gives them, never summed and never re-graded |
 | one or more `malformed` entries with `source: "spec"` (`reason: "unkeyable"`) | ONE WARNING per distinct capability, requirement and scenario triple, naming the triple and its number of entries, stating that `orbit validate` reports it at the level `orbit-scenario-map` assigns, and recommending the title be renamed; every `orphans` entry whose `key` equals that triple joined by ` :: ` is listed under it and is never a finding of its own |
-| any other `orphans` entry | a WARNING naming the tag's file and line, or the ledger index, and the key, recommending by cause: a key this change renamed or removed, or a mistyped key — correct the tag or ledger entry; a scenario another active change adds — nothing to do, because the surface resolves one change at a time and the key resolves once that change archives |
-| a `malformed` entry with source `tag`, `ledger` or `ledger-file` | a WARNING naming the file and line, or the ledger index, and the surface's `reason` |
+| any other `orphans` entry | a WARNING naming the tag's file and line, or the ledger index, and the key, stating that the key names no scenario of the baseline or this change's delta — a renamed, removed or mistyped key, or a scenario another active change adds, which the map does not distinguish — and recommending the tag or ledger entry be corrected unless it names another active change's scenario |
+| a `malformed` entry with source `tag` or `ledger` | a WARNING naming the file and line, or the ledger index, and the surface's `reason` |
+| a `malformed` entry with source `ledger-file` | a WARNING naming `orbit/scenario-ledger.yaml`, with no line, and the surface's `reason` |
 | `counts` | printed as counts; no ratio of covered scenarios appears in the report or its scorecard |
 | `counts.baseline_undeclared` | printed as a count, never a finding |
 
-The table is exhaustive over the fields of the surface's JSON that carry coverage facts — `check`, `scenarios`, `orphans`, `malformed` and `counts` — plus the one state outside them, the command failing; `change` and `tests` carry none and raise nothing. The verify body carries this table as a CHECKED MIRROR, held byte-equal to this requirement by a parity test (R-crc-14's mirror corollary: an installed skill cannot open this spec). The step's implementation check keeps a finding of its own, titled apart from the map's: a scenario whose conditions are not handled in code is a WARNING `Scenario not handled in code: <scenario name>`, recommending its implementation and never a test. An uncovered, orphan or malformed finding is recorded in the verify emit through `fail_mode: "warnings"` and `warnings_count`, never `scenarios-fail`. Verify judges nothing the surface computed: whether a declared test really exercises its scenario stays the declaration's own record (the kind word).
+The table is exhaustive over the fields of the surface's JSON that carry coverage facts — `check`, `scenarios`, `orphans`, `malformed` and `counts` — plus the one state outside them, the command failing; `change` and `tests` carry none and raise nothing. The verify body carries this table as a CHECKED MIRROR, held byte-equal to this requirement by a parity test (R-crc-14's mirror corollary: an installed skill cannot open this spec). The step's implementation check keeps a finding of its own, titled apart from the map's: a scenario whose conditions are not handled in code is a WARNING `Scenario not handled in code: <scenario name>`, recommending its implementation and never a test. An uncovered, orphan or malformed finding is a WARNING for the verify emit's fail-mode classification, which `orbit-run-summary-emit`'s `Verify fail-mode recommendations` owns, precedence included; it is never `scenarios-fail`. Verify judges nothing the surface computed: whether a declared test really exercises its scenario stays the declaration's own record (the kind word).
 
 #### Scenario: The coverage step names the surface and carries no test-tracing instruction
 - **WHEN** the generated `orbit-verify-change` skill is read
@@ -53,7 +54,15 @@ The table is exhaustive over the fields of the surface's JSON that carry coverag
 
 #### Scenario: An orphan's recommendation names its causes
 - **WHEN** the surface returns an `orphans` entry that matches no unkeyable triple
-- **THEN** verify's WARNING recommends correcting the tag or ledger entry for a renamed, removed or mistyped key, and nothing for a scenario another active change adds
+- **THEN** verify's WARNING states that the key names no scenario of the baseline or this change's delta, names the possible causes without choosing one, and recommends correcting the tag or ledger entry unless it names another active change's scenario
+
+#### Scenario: A change whose only delta scenarios are unkeyable gets no empty note
+- **WHEN** the surface returns `check: "on"`, an empty `scenarios` list, and a `malformed` entry with `source: "spec"`
+- **THEN** verify reports the unkeyable finding and prints no note that the change has no delta scenarios
+
+#### Scenario: A malformed ledger file is reported by its path
+- **WHEN** the surface returns a `malformed` entry with `source: "ledger-file"`
+- **THEN** verify raises a WARNING naming `orbit/scenario-ledger.yaml` and the surface's reason, and names no line
 
 #### Scenario: A malformed tag is reported by its line
 - **WHEN** the surface returns a `malformed` entry with `source: "tag"`

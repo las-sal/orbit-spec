@@ -17,7 +17,7 @@ The system SHALL classify every skill and command file orbit generates into one 
 #### Scenario: A named edit replaces an upstream step in place
 
 - **WHEN** a change's delta spec names an edit to an orbit-modified body's upstream portion (`orbit-verify-modifications`' `Verify's Scenario Coverage step reads the scenario map` names the replacement of verify-change's test-tracing instruction)
-- **THEN** the step is edited in place in the upstream portion, no additions-section text overrides the same step, and the rest of the upstream portion stays the snapshot
+- **THEN** the step is edited in place in the upstream portion, no additions-section text overrides the same step, and the rest of the upstream portion is unchanged by that edit
 
 #### Scenario: Upstream-verbatim — kept unchanged
 
