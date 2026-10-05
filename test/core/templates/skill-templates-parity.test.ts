@@ -103,7 +103,12 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // bullet was replaced IN PLACE by the scenario-map read and its reader table (a checked mirror of
   // `orbit-verify-modifications`), and the implementation check's miss retitled `Scenario not handled
   // in code`. The additions section did not change. Only this hash and its generated skill moved.
-  getVerifyChangeSkillTemplate: 'f04f366d7805fc0cf95cc00f5982a4931c0942a4e118a513f576537cd4139c4e',
+  // Moved a SECOND time at the system walk 2 (2026-10-05, external W1, Sal: A) — a second act:
+  // verify's `# Orbit additions` gained the Fail-mode classification step (run `orbit validate`,
+  // take the first mode by precedence), because the engine composes from the mode verify hands it
+  // and classifies nothing; the emit paragraph stopped restating the precedence. Upstream portion
+  // unchanged by this second move.
+  getVerifyChangeSkillTemplate: '5db552e52e096f65444038e783172a98605d8909cc3499fc843bbbbc27e2ffcb',
   getOrbitArchiveCommandTemplate: '92e3ebad046cbc2a68dfb204cbb3c847498d2cafcdd2065357d744580c05a8fe',
   getOrbitOnboardCommandTemplate: '3a3e98c6a01517896dfdccaba4fa4477edea62fd69dc4189df1dd105bbedcc5b',
   getOrbitBulkArchiveCommandTemplate: '6bc94ce2a406ceb934f461665bdd1e96f5a7149c798172c04f50d83c3630819a',
@@ -151,7 +156,7 @@ const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
   'orbit-sync-specs': '23adf56ababc77dac8dcc06048b4d74d27ded9bc4f49a57858e17c4ea7866a75',
   'orbit-archive-change': '5338e4bc76f47e9294072101f48f9a0ffbabb8480d924955dbc275b0794a047b',
   'orbit-bulk-archive-change': '601dd7c74804c06a9818428f86030c8cef5311a9fc7c59f2dc14e490007a291d',
-  'orbit-verify-change': '0ab640def1d20fb33484f0dafeb4b4c62e4bb50f982e8056f615eee72ebdf856', // rc06b-map-readers (2026-10-05): moved with the body's step 6 edit (see the function-hash note above)
+  'orbit-verify-change': '06080070b8f2dfd4e3053c9143845095d0b80c6efcce286cc46e9de37dfe8ea8', // rc06b-map-readers (2026-10-05): moved with the body's step 6 edit, then again at system walk 2's additions edit (see the function-hash note above)
   'orbit-onboard': '4b227395bb70c36c643970d821ec8eb245fbfca090accdc38d5b3588f7620fa7',
   'orbit-propose': '97643dfd343dd2a797a65f0e853221d45fcaedc14f6a1d2b53966630da71d3d7', // rc13c, then rc03b: moved with the body (see the function-hash notes above)
   'orbit-architect': 'ad06e7eac6e4177eb5a7e0e07976fee6a956314b561f73ff64200fcff27fa24f', // rc15: moved twice with the body — apply, then the system walk; a third time at the post-archive audit walk (see the function-hash note above)

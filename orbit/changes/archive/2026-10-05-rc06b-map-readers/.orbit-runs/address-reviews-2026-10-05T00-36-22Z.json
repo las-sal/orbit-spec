@@ -1,0 +1,117 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-05T00:36:22Z",
+  "change": "rc06b-map-readers",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc06b-map-readers/.orbit-runs/review-system-2026-10-05T00-27-56Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-05T00-27-56Z",
+  "latest_apply_token": "2026-10-05T00-22-45Z",
+  "tie_break_rationale": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "walk_mode_shifted_at_finding": null,
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 2
+  },
+  "pushback_verification": "All three verified against current state at the walk; none stale.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "External item 0 names the surface with a `<name>` placeholder in a reference that substitutes `<change-name>`",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 662,
+      "classification": "trivial_fix",
+      "action": "item 0 in REVIEW_EXTERNAL_MODE_SECTIONS_REFERENCE now writes `orbit status --change <change-name> --scenarios --json`, the reference's own placeholder; the delta's external row and its scenario, the item-0 test assertion and task 2.1's text moved to the same spelling. Verify's body keeps `<name>`, its own placeholder.",
+      "evidence": "read review.ts:662 — the only `<name>` in a reference whose read list and commit-range command write `<change-name>`; the regenerated mode-sections.md carries `--change <change-name> --scenarios` once",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc06b-map-readers/specs/orbit-verify-modifications/spec.md",
+          "test/core/templates/verify-scenario-map.test.ts",
+          "orbit/changes/rc06b-map-readers/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "`Emit scope` still calls `orbit-sync-specs` \"upstream primitive, unmodified by orbit\"",
+      "marker_source": "internal-review",
+      "file": "orbit/specs/orbit-run-summary-emit/spec.md",
+      "line": 21,
+      "classification": "decision_required",
+      "ratified_via": "chat",
+      "resolution": "A — narrow the clause in this change: Emit scope carried as a fourth MODIFIED block in the orbit-run-summary-emit delta, its /orbit:sync clause reading 'upstream primitive whose upstream portion orbit does not edit (per orbit-conventions' Generated-file disposition); no emit behavior is added to it'.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Narrow the clause in this change as a fourth MODIFIED block, pointing at Generated-file disposition."
+          },
+          {
+            "label": "B",
+            "body": "Record it as a residual at archive; no spec edit now."
+          }
+        ],
+        "chosen": "A"
+      },
+      "action": "carried Emit scope verbatim from the baseline into the delta with the one clause narrowed; base fingerprint stamped (add-missing); its eight scenarios declared — three behaviour tags on emit-composition tests (the architect test gained its trail-path assertion), five text tests in verify-scenario-map.test.ts; proposal's capability line and the at-archive grep list name it",
+      "evidence": "read baseline orbit-run-summary-emit/spec.md:21 — 'upstream primitive, unmodified by orbit'; sync-specs.ts:143 carries `# Orbit additions` (the same fact ruled A at apply)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc06b-map-readers/specs/orbit-run-summary-emit/spec.md",
+          "orbit/changes/rc06b-map-readers/.openspec.yaml",
+          "test/core/emit-composition.test.ts",
+          "test/core/templates/verify-scenario-map.test.ts",
+          "orbit/changes/rc06b-map-readers/proposal.md",
+          "orbit/changes/rc06b-map-readers/tasks.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/specs/orbit-run-summary-emit/spec.md",
+            "reason": "baseline spec; add a delta to your current change's specs/<capability>/spec.md to capture this ripple"
+          }
+        ]
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The stage's rider says a title containing ` :: ` renders ORPHAN; the shipped pin shows it renders MALFORMED",
+      "marker_source": "internal-review",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 2517,
+      "classification": "trivial_fix",
+      "action": "the at-archive note in tasks.md now directs the stage's Shipped-as paragraph to record that the RIDER's premise held for the repeated-title shape only (a separator title makes its tag MALFORMED, pinned by the rider test); the dated RIDER text stays as written",
+      "evidence": "read clean-up-review-cycle.md:2516 — the RIDER says both shapes render ORPHAN; test/core/scenario-map.test.ts's separator-title rider test asserts MALFORMED and no orphan",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc06b-map-readers/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": null,
+  "final_assessment": "Three of three resolved: the external item 0 placeholder now matches its reference; Emit scope's sync-specs clause narrowed in the delta (Sal: A) with its eight scenarios declared; the rider's half-false premise routed to the stage's Shipped-as paragraph at archive. Map 36/36 declared, validate --strict clean, 2712 tests green.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews rc06b-map-readers --from-file orbit/changes/rc06b-map-readers/.orbit-runs/external-system-2026-10-05T00-30-25Z.md"
+}

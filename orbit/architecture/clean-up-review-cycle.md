@@ -2519,6 +2519,23 @@ rc06a's surface, and no sentence or test pins that. The behaviour fits ORPHAN's 
 single scenario); whether a reader should present it beside the two MALFORMED spec lines as one problem is this
 stage's to decide, since its readers are the ones that interpret the surface.
 
+Shipped as (2026-10-05; archived at `orbit/changes/archive/2026-10-05-rc06b-map-readers/`): verify-change GAINED a
+capability, `orbit-verify-modifications` (baseline capabilities 22 → 23), and `orbit-review` carries no delta. Verify's step 6
+test-tracing line was replaced IN PLACE by a read of `orbit status --change <name> --scenarios --json`, reported by one
+closed eleven-row table the body carries as a CHECKED MIRROR; the implementation check stays, its miss retitled `Scenario not
+handled in code`; check OFF prints one note naming `scenario_map:` and traces nothing by any other means. System Pass 0 reads
+the map through its existing `/orbit:verify` invocation; the external prompt's item 0 names the surface. The pristine-upstream
+rule is narrowed and stated once in `orbit-conventions`' `Generated-file disposition` — an upstream portion changes only
+through a named delta edit, in place — with apply-change's and archive-change's pre-rule edits and the propose/bulk-archive
+overrides named as limits. The RIDER above was HALF FALSE as stated: a title containing ` :: ` makes its tag MALFORMED, never
+ORPHAN; only the repeated-title shape renders ORPHAN, and the reader pairs that orphan with its unkeyable entry by exact key
+equality (both pinned in `test/core/scenario-map.test.ts`). Two corrections the cycle made beyond the charter, both by Sal's A:
+`orbit-sync-specs` was never "upstream-verbatim with no additions" (it has carried an additions section since D1/D5), and the
+verify fail-mode contract said the emit layer classifies when the engine has composed from verify's `fail_mode` since D5 —
+verify now classifies after an `orbit validate <name>` run, in its additions. Exits (1) and (2) MET as written: the body test
+asserts (1), and both system blind-pair halves consumed the map at Pass 0. The archive's undeclared-scenario stop stays out of
+scope (D-rc06b-8), proposed to rc10-apply-closure as a rider.
+
 ### Stage rc07-artifact-lint — consistency is a lint, not a review
 
 Depends-on: (none)

@@ -17,7 +17,7 @@ import {
   getArchitectSkillTemplate,
   getSyncSpecsSkillTemplate,
 } from '../../../src/core/templates/skill-templates.js';
-import { generateSkillContent } from '../../../src/core/shared/skill-generation.js';
+import { generateSkillContent, getSkillTemplates } from '../../../src/core/shared/skill-generation.js';
 import { ownerText } from '../../helpers/owner-text.js';
 
 /**
@@ -224,7 +224,7 @@ describe('every Pass 0 reader reads the scenario map (rc06b)', () => {
     const system = text.slice(text.indexOf('## System mode'));
     const item0 = system.split('\n').find((l) => l.startsWith('0. '));
     expect(item0, 'system mode carries an item 0').toBeDefined();
-    expect(item0).toContain('`orbit status --change <name> --scenarios --json`');
+    expect(item0).toContain('`orbit status --change <change-name> --scenarios --json`');
     expect(item0).toMatch(/cannot run it reports? the check as not run/);
   });
 });
@@ -290,9 +290,63 @@ describe('the emit layer wraps verify and apply without changing them (rc06b, ta
   });
 
   // @scenario text orbit-run-summary-emit :: Verify fail-mode recommendations :: Multiple fail signals — precedence ③ > ① > ②
-  it("verify's emit instructions name the precedence the engine composes by, in the additions only", () => {
+  // rc06b system walk 2 (Sal: A): verify classifies; the engine composes from the mode it is handed.
+  // The composition side is pinned per mode by emit-composition's behaviour tests.
+  it("verify's additions run validate and classify the fail mode by the precedence, mode ③ first", () => {
     const [upstream, additions] = split(getVerifyChangeSkillTemplate());
-    expect(additions).toContain('validator-error > tasks-incomplete > scenarios-fail');
+    const section = additions.slice(additions.indexOf('## Fail-mode classification'), additions.indexOf('## Run-summary emit'));
+    expect(section).toContain('orbit validate <name>');
+    expect(section).toContain('validator-error > tasks-incomplete > scenarios-fail');
+    expect(section).toMatch(/take the FIRST that holds/);
+    expect(section).toMatch(/classifies nothing/);
     expect(upstream).not.toContain('validator-error');
+  });
+});
+
+/**
+ * `orbit-run-summary-emit`'s `Emit scope`, carried as a MODIFIED block since system walk 1 (the
+ * sync-specs clause narrowed). Its scenarios that are body instructions are declared here as `text`;
+ * the engine-side ones are tagged at their emit-composition tests.
+ */
+describe("Emit scope's body-side scenarios (rc06b system walk 1)", () => {
+  const explore = (): string => getExploreSkillTemplate().instructions;
+
+  // @scenario text orbit-run-summary-emit :: Emit scope :: Mode C crystallization BEGIN emit carries the back-filled state (D-arc Stage D3)
+  it('explore instructs Mode C to back-fill explore.md before firing the begin emit', () => {
+    expect(explore()).toContain('Mode C (crystallization): back-fill `explore.md` FIRST, then fire');
+  });
+
+  // @scenario text orbit-run-summary-emit :: Emit scope :: Bare-mode /orbit:explore writes no JSON
+  it('explore states that bare mode does not emit', () => {
+    expect(explore()).toContain('Bare-mode `/orbit:explore` does NOT emit');
+  });
+
+  // @scenario text orbit-run-summary-emit :: Emit scope :: /orbit:onboard does not emit
+  it('onboard instructs no emit and says it does not emit', () => {
+    const body = getOnboardSkillTemplate().instructions;
+    expect(body).not.toMatch(/orbit emit onboard/);
+    expect(body).toContain('`/orbit:onboard` is one of the few commands that does NOT emit');
+  });
+
+  // @scenario text orbit-run-summary-emit :: Emit scope :: /orbit:bulk-archive relies on inner /orbit:archive emits
+  it('bulk-archive instructs no emit of its own and names the inner archive emits', () => {
+    const body = getBulkArchiveChangeSkillTemplate().instructions;
+    expect(body).not.toMatch(/orbit emit bulk-archive/);
+    expect(body).toContain('each inner `/orbit:archive` invocation emits its own `archive-<TS>.json`');
+    expect(body).toContain('SHALL NOT emit a separate `bulk-archive-<TS>.json`');
+  });
+
+  // @scenario text orbit-run-summary-emit :: Emit scope :: Bodies instruct the surface, never hand-compose
+  it('every SKILL.md body with an emit step invokes `orbit emit` and carries no spine JSON', () => {
+    let emitting = 0;
+    for (const { template } of getSkillTemplates()) {
+      const body = template.instructions;
+      if (!/Run-summary emit/.test(body)) continue;
+      emitting++;
+      expect(body, template.name).toMatch(/orbit emit [a-z-]+/);
+      expect(body, template.name).not.toMatch(/"timestamp"\s*:/);
+      expect(body, template.name).not.toMatch(/"next_recommended"\s*:/);
+    }
+    expect(emitting).toBeGreaterThan(5);
   });
 });

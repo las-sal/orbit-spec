@@ -18,7 +18,7 @@ The following commands SHALL NOT emit additional JSONs as part of this change:
 
 - `/orbit:bulk-archive` — wrapper; each inner `/orbit:archive` invocation emits separately
 - `/orbit:onboard` — meta walkthrough; no change-state transition
-- `/orbit:sync` (the `orbit-sync-specs` skill) — upstream primitive, unmodified by orbit; no emit behavior is added to it
+- `/orbit:sync` (the `orbit-sync-specs` skill) — upstream primitive whose upstream portion orbit does not edit (per `orbit-conventions`' `Generated-file disposition`); no emit behavior is added to it
 
 Existing emit-producing commands (`/orbit:review`, `/orbit:address-reviews`, `/orbit:archive`, inline `/orbit:audit-drift` during archive) continue emitting as today — through the emit surface; `/orbit:review`'s architecture mode persists to the architecture trail per `orbit-review`'s per-mode persistence requirement — a location change for that mode, not a new emitter.
 
@@ -148,17 +148,17 @@ For `/orbit:apply` mid-chunk pause specifically, the same conversation-boundary 
 
 ### Requirement: Emit-layer wraps upstream skills without modifying them
 
-The emit-layer SHALL be implemented as a wrapper that runs after a command completes, inspects the command's output (artifact state, return codes, tasks state), and writes the JSON. Upstream skill bodies (the `# <skill-name>` markdown for upstream-authored skills like `orbit-verify-change`, `orbit-apply-change`, etc.) MUST NOT gain new behavior as part of this change.
+The emit-layer SHALL be implemented as a wrapper that runs after a command completes, inspects the command's output (artifact state, return codes, tasks state), and writes the JSON. The emit layer itself SHALL NOT change what the command it wraps does. Whether and how the upstream-authored portion of an orbit-modified body changes is owned by `orbit-conventions`' `Generated-file disposition`, which this requirement names and does not restate.
 
 Specifically:
 
-- `/orbit:verify` SHALL NOT gain marker-dropping, spec-edit shortcuts, or other behaviors that change what verify itself does. The recommendation-classification logic for verify-fail modes (per `Requirement: Verify fail-mode recommendations`) lives in the emit-layer, not in verify.
-- `/orbit:apply` SHALL NOT gain task-ordering changes, parallel-task execution, or other behaviors that change what apply itself does. The chunk-end emit logic (per `Requirement: Apply per-chunk-end emission`) lives in the emit-layer, not in apply.
-- Where orbit modifies an upstream skill via the `# Orbit additions` pattern (the orbit-modified workflows per `orbit-conventions`'s `Generated-file disposition` requirement), the emit-layer instructions MAY be added to those `# Orbit additions` sections; they MUST NOT modify the upstream-authored body above the additions marker.
+- The emit layer SHALL NOT give `/orbit:verify` marker-dropping, spec-edit shortcuts, or other behaviors that change what verify itself does. The fail-mode CLASSIFICATION (per `Requirement: Verify fail-mode recommendations`) is verify's own, stated in its `# Orbit additions`; the emit layer composes the recommendation from the mode verify hands it and classifies nothing.
+- The emit layer SHALL NOT give `/orbit:apply` task-ordering changes, parallel-task execution, or other behaviors that change what apply itself does. The chunk-end emit logic (per `Requirement: Apply per-chunk-end emission`) lives in the emit-layer, not in apply.
+- Where orbit modifies an upstream skill via the `# Orbit additions` pattern (the orbit-modified workflows per `orbit-conventions`'s `Generated-file disposition` requirement), the emit-layer instructions MAY be added to those `# Orbit additions` sections, and only there.
 
-#### Scenario: /orbit:verify upstream behavior unchanged
+#### Scenario: A cherry-picked verify body keeps the emit layer's additions
 - **WHEN** a deliberate engine upgrade cherry-picks a newer upstream `verify-change` body into orbit's bundled template
-- **THEN** the upstream-authored portion of the template is replaced wholesale while the `# Orbit additions` section (including any emit-layer instructions) carries over unchanged; the emit-layer never silently overrides upstream verify behavior
+- **THEN** the upstream-authored portion is handled as `orbit-conventions`' `Generated-file disposition` says, re-applying each named edit, while the `# Orbit additions` section (including any emit-layer instructions) carries over unchanged; the emit-layer never silently overrides upstream verify behavior
 
 #### Scenario: emit-layer does not modify task-checking
 - **WHEN** `/orbit:apply` runs and checks off tasks per upstream behavior
@@ -421,7 +421,7 @@ invocation into `command`/`args`; the class qualifier travels in `args` alongsid
 
 ### Requirement: Verify fail-mode recommendations
 
-When standalone `/orbit:verify <name>` fails, the emit-layer SHALL classify the failure mode based on verify-change's output and write `next_recommended` accordingly:
+When standalone `/orbit:verify <name>` fails, verify SHALL classify the failure mode from its own findings and an `orbit validate <name>` run, by the precedence below, and hand it to the emit layer as `fail_mode`; the emit layer SHALL write `next_recommended` from that mode:
 
 - **Mode ① (tasks-incomplete)**: tasks.md has unchecked items → `"/orbit:apply <name> — N tasks remain unchecked; complete implementation before re-verifying"`
 - **Mode ② (impl-vs-spec gap)**: tasks all checked but spec scenarios fail → `"/orbit:review --as system <name> — N spec scenarios fail against implementation; system review will surface findings in its scorecard for you to walk each as code fix or spec revision"`
@@ -429,7 +429,7 @@ When standalone `/orbit:verify <name>` fails, the emit-layer SHALL classify the 
 
 When verify completes with warnings (passes but with non-blocking findings), the emit-layer SHALL write `next_recommended: "/orbit:review --as system <name> — verification passed with N warnings; system review recommended"`.
 
-The classification SHALL happen in the emit-layer; verify itself does not gain marker-dropping or other behaviors (see `Requirement: Emit-layer wraps upstream skills without modifying them`). The mode-② recommendation does NOT use `/orbit:review --as system --mark` because that flag is proposal-mode only and silently ignored in system mode (per `orbit-review/spec.md`'s `Requirement: --mark flag is proposal-mode only`). The user manually walks each system-review finding to decide code-vs-spec.
+The classification is verify's, stated in its body's `# Orbit additions`, where `orbit-conventions`' `Generated-file disposition` puts orbit behavior; the emit layer classifies nothing, composes from the mode it is handed, and gives verify no marker-dropping or other behaviors (see `Requirement: Emit-layer wraps upstream skills without modifying them`). The mode-② recommendation does NOT use `/orbit:review --as system --mark` because that flag is proposal-mode only and silently ignored in system mode (per `orbit-review/spec.md`'s `Requirement: --mark flag is proposal-mode only`). The user manually walks each system-review finding to decide code-vs-spec.
 
 **Precedence when multiple fail signals fire simultaneously** (highest precedence first):
 
@@ -456,7 +456,7 @@ This precedence directs the user to the root cause first: fix the spec (mode ③
 
 #### Scenario: Multiple fail signals — precedence ③ > ① > ②
 - **WHEN** `/orbit:verify foo` reports BOTH unchecked tasks (mode ① signal) AND `orbit validate` errors (mode ③ signal) simultaneously
-- **THEN** `verify-<TS>.json`'s `next_recommended` follows mode ③ (verbatim validator message), NOT mode ①; the user is directed to fix the spec validation error first, after which a re-run will surface the tasks-incomplete signal
+- **THEN** verify classifies the run as mode ③ and hands `fail_mode: "validator-error"` to the emit, so `verify-<TS>.json`'s `next_recommended` follows mode ③ (verbatim validator message), NOT mode ①; the user is directed to fix the spec validation error first, after which a re-run will surface the tasks-incomplete signal
 
 ### Requirement: Review-external T0 multi-step recommendation
 

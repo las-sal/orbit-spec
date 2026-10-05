@@ -86,7 +86,7 @@ tests green.** Phase 1 (3-way merge) and Phase 2 (scenario-level deltas) are exp
 follow-ups; `openspec-parallel-merge-plan.md` carries the status header. Three
 decisions were ratified during C1 remediation — **read these before touching templates**:
 - **D14 — thin launcher commands**: each skill `instructions` literal is the single behavioral source
-  (pristine upstream body + `# Orbit additions`); each command `content` literal is a ~3-line launcher
+  (upstream body — edited only by named deltas, in place, per `orbit-conventions`' `Generated-file disposition` — + `# Orbit additions`); each command `content` literal is a ~3-line launcher
   invoking the skill. Do NOT regrow workflow bodies in command literals.
 - **D15 — full surface always**: `getProfileWorkflows` (src/core/profiles.ts) always returns ALL
   workflows (15 as of D5); profile gating is deliberately inert (`delivery` still honored). Do NOT
@@ -106,7 +106,7 @@ The full plan and design decisions live in the docs below — **read them before
 
 ## The ACTIVE program: clean-up-review-cycle (the D-arc is quiescent)
 
-**Current state, engine-checked:** the program's rulings index holds <!-- src:rulings -->14<!-- /src:rulings --> rulings, and `orbit/specs/` holds <!-- src:capabilities -->22<!-- /src:capabilities --> baseline capabilities. Every marked figure in this file is checked against `orbit/sources.yaml` by `orbit validate --sources`; an UNMARKED figure is invisible to that check.
+**Current state, engine-checked:** the program's rulings index holds <!-- src:rulings -->14<!-- /src:rulings --> rulings, and `orbit/specs/` holds <!-- src:capabilities -->23<!-- /src:capabilities --> baseline capabilities. Every marked figure in this file is checked against `orbit/sources.yaml` by `orbit validate --sources`; an UNMARKED figure is invisible to that check.
 
 As of 2026-09-11 the D-arc's six stages are all archived (d1 complete-ratified; d2–d6
 quiescent, awaiting ratification) and the live program is
@@ -209,7 +209,7 @@ file now carries a live mark. Do NOT read this paragraph as the program's full l
 only what rc07 produced. The authoritative list is the program doc's own Open questions section,
 which also carries Q-crc-11, Q-crc-12, Q-crc-20, Q-crc-21, Q-crc-22 and Q-crc-23.
 
-**Fifteen more stages have shipped since, and the program is EIGHTEEN stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b, rc03c, rc07b and rc06a ratified 2026-10-04; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening).
+**Sixteen more stages have shipped since, and the program is EIGHTEEN stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b, rc03c, rc07b and rc06a ratified 2026-10-04; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening).
 
 `rc02c-confirmation-semantics` is ARCHIVED (2026-09-21): **the budget stopped being a target.**
 R-crc-11(h) — effort is RECORDED, never TARGETED — retired `budgetExhausted`, the
@@ -615,6 +615,20 @@ RULE; two walk logs (Sal: A on both); an in-context VERIFICATION confirm graded 
 gate**. The stage grades itself: 35 of 35 delta scenarios declared on its own surface, 1090 baseline scenarios undeclared
 and counted, never backfilled. The readiness record accepts five residuals, headlined by rc07's distinction. **2679 tests
 green** (2583 → 2679).
+
+`rc06b-map-readers` is ARCHIVED (2026-10-05; the second child of the split parent `rc06`; both exit criteria graded MET as
+written): **verify reads the scenario map, and every Pass 0 reader reads the same surface.** Verify's step 6 test-tracing line
+was replaced IN PLACE — the first named edit under the narrowed `Generated-file disposition` (an upstream portion changes only
+through a delta naming the edit; apply's and archive's earlier edits are named limits) — by a read of `orbit status --change
+<name> --scenarios --json` through one closed table the body carries as a CHECKED MIRROR; check OFF prints one note and traces
+nothing. System Pass 0 reads it through `/orbit:verify`; the external prompt's item 0 names it. Baseline capabilities **22 →
+23** (`orbit-verify-modifications` ADDED). The cycle corrected two older false claims on Sal's A: sync-specs has carried an
+additions section since D1/D5, and the verify fail-mode contract said the emit layer classifies while the engine has composed
+from verify's `fail_mode` since D5 — verify now classifies after an `orbit validate` run. The blind pair on `60e83077` (fresh
+0C/1W/2S forward, external GPT-6 Codex 0C/1W/1S hold, zero overlap) walked in two logs; the in-context VERIFICATION confirm
+graded four `landed` and one `regressed` — walk 2's cascade swept the vocabulary it changed rather than the behaviour it added,
+leaving three "system mode never runs validate" premises — repaired in walk 3; a COMPUTED PASSED gate. The rider's premise was
+half false: a separator title makes its tag MALFORMED; only a repeated title pairs. **2712 tests green** (2679 → 2712).
 
 Read that doc before any rc-stage work; the D-arc section below is the historical
 record of how the engine got here.

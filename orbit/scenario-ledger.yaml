@@ -8,3 +8,9 @@ scenarios:
   - key: "orbit-run-summary-emit :: Emit-layer wraps upstream skills without modifying them :: A cherry-picked verify body keeps the emit layer's additions"
     kind: untestable
     why: "The scenario is a deliberate cherry-pick of a newer upstream verify body, which this repo has not performed; the additions section's placement is tested, the cherry-pick act is not runnable."
+  # rc06b-map-readers system walk 2 (Sal: A) — the unchanged-upstream-body half of this scenario. Its
+  # additions half is a `text` test in test/core/templates/verify-scenario-map.test.ts; this half is an
+  # observation, dated by its record, and no test re-runs it (no test here reads git history).
+  - key: "orbit-conventions :: Generated-file disposition :: Upstream-verbatim — kept unchanged"
+    kind: observed
+    record: "orbit/changes/rc06b-map-readers/.orbit-runs/review-system-2026-10-05T00-27-56Z.json — the fresh system pass diffed every orbit-modified and upstream-verbatim body's upstream portion against upstream/v1.3.1 with the rename normalized; orbit-sync-specs' was unchanged"

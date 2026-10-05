@@ -201,6 +201,16 @@ The four disciplines from \`orbit-conventions\`, embedded per body; detail lives
 - **Pushback (review-time)**: verify each flagged issue against current state before acting; suppress stale findings with evidence rather than re-fixing already-fixed state.
 - **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — gate \`passed\` means *eligible*, not *commanded*.
 
+## Fail-mode classification
+
+The fail mode is YOURS to classify — the engine composes its recommendation from the \`fail_mode\` you hand it and classifies nothing (\`orbit-run-summary-emit\`'s \`Verify fail-mode recommendations\` owns the modes and their precedence). Before composing the emit, run:
+
+\`\`\`bash
+orbit validate <name>
+\`\`\`
+
+Then take the FIRST that holds, by the precedence validator-error > tasks-incomplete > scenarios-fail: \`validator-error\` when validate fails (its message verbatim as \`validator_message\`); \`tasks-incomplete\` when any task is unchecked; \`scenarios-fail\` when spec scenarios fail against the implementation; otherwise \`warnings\` on a pass with warnings, and no fail mode on a clean pass.
+
 ## Run-summary emit (one-shot at command completion — via the engine emit surface)
 
 (Per \`orbit-run-summary-emit\`; composed and written via \`orbit emit verify\` — \`orbit-emit-composition\`.)
@@ -211,7 +221,7 @@ At command completion, compose the narrative payload (\`final_assessment\`, \`ve
 orbit emit verify --change <name> --payload <payload-file>
 \`\`\`
 
-The ENGINE owns the spine, the trail path, timestamp + collision handling, and \`next_recommended\` composition (the fail-mode-conditional recommendation — validator-error / tasks-incomplete / scenarios-fail / warnings (pass WITH non-blocking findings — never recorded as clean) / incomplete (aborted or partial verify run) / clean — is composed from the payload's \`verdict\`/\`fail_mode\` per the baseline's precedence: validator-error > tasks-incomplete > scenarios-fail; warn state only when no failure mode fires). Never hand-compose the JSON.
+The ENGINE owns the spine, the trail path, timestamp + collision handling, and \`next_recommended\` composition (the fail-mode-conditional recommendation — validator-error / tasks-incomplete / scenarios-fail / warnings (pass WITH non-blocking findings — never recorded as clean) / incomplete (aborted or partial verify run) / clean — is composed from the payload's \`verdict\`/\`fail_mode\` — the mode you classified above, never re-classified). Never hand-compose the JSON.
 `,
     license: 'MIT',
     compatibility: 'Requires orbit CLI.',

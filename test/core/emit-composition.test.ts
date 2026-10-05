@@ -119,6 +119,7 @@ describe('payload contract', () => {
 // ---------------------------------------------------------------------------
 
 describe('target resolution and spine composition', () => {
+  // @scenario behaviour orbit-run-summary-emit :: Emit scope :: Named-mode /orbit:explore writes explore JSON
   it('routes change / explore staging / doc / bare project to their trails with the right kind', () => {
     makeChange('foo');
     write('orbit/explore/bar/explore.md', '## Decisions\n\n- one\n\n## Open questions\n');
@@ -371,6 +372,7 @@ describe('deterministic facts', () => {
     expect(r.warnings.some((w) => /(five|5)[- ]sections?/.test(w))).toBe(false);
   });
 
+  // @scenario behaviour orbit-run-summary-emit :: Emit scope :: Named-mode explore BEGIN emit at scaffold (D-arc Stage D3)
   it('explore: the BEGIN-emit shape on an empty scaffold carries the five fields at their zero values', () => {
     write('orbit/explore/blank/explore.md', '> **Status**: exploring.\n\n# Exploration: blank\n\n## Premise\n\n## Mechanism\n\n## Decisions\n\n## Open questions\n\n## Considered & out\n\n## References\n');
     const r = composeAndWriteEmit('explore', { change: 'blank' }, { final_assessment: 'begin', model: null }, { projectRoot: root });
@@ -400,6 +402,7 @@ describe('deterministic facts', () => {
     expect(listRuns('orbit/explore/owned/.orbit-runs')).toEqual([]);
   });
 
+  // @scenario behaviour orbit-run-summary-emit :: Emit scope :: /orbit:architect writes to the architecture trail
   it('architect: spine next_recommended mirrors handoff.next_command verbatim', () => {
     write('orbit/architecture/prog.md', '# prog\n');
     const r = composeAndWriteEmit(
@@ -409,6 +412,9 @@ describe('deterministic facts', () => {
       { projectRoot: root }
     );
     expect(r.emit.next_recommended).toBe('/orbit:architect prog — resume stage d6');
+    // rc06b system walk 1: the trail the architect emit lands on (Emit scope's architect scenario).
+    expect(r.path).toContain('orbit/architecture/.orbit-runs/architect-');
+    expect(r.emit.change).toBeNull();
   });
 
   it('architect: stages_ended is an accepted payload field beside completions_ratified; an unknown key is still refused (rc15)', () => {

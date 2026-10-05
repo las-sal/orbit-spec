@@ -83,7 +83,7 @@ Every place a review performs verify-change's check SHALL take scenario coverage
 | system-mode Pass 0 under `--skip-verify` | not run; the existing skip note stands |
 | system mode under `--fast` | Pass 0 runs, so the Scenario Coverage step runs |
 | an `in-context` VERIFICATION-genre system pass | Pass 0 is not run (`orbit-review`'s verification-pass requirement) |
-| an `external` system pass: the prompt's item 0, the verify-change-style structural check | the item names `orbit status --change <name> --scenarios --json` as the spec-coverage source; an external reviewer who cannot run it reports the check as not run |
+| an `external` system pass: the prompt's item 0, the verify-change-style structural check | the item names `orbit status --change <change-name> --scenarios --json` as the spec-coverage source; an external reviewer who cannot run it reports the check as not run |
 | proposal mode | no Pass 0; `orbit validate` reports undeclared scenarios at the level `orbit-scenario-map` assigns |
 | architecture mode | no Pass 0 |
 
@@ -95,4 +95,4 @@ The table is exhaustive over the review body's pass definitions for each mode, c
 
 #### Scenario: The external prompt's item 0 names the surface
 - **WHEN** the external review prompt's system-mode pass list is read
-- **THEN** its item 0 names `orbit status --change <name> --scenarios --json` as the source of spec coverage, and says an external reviewer who cannot run it reports the check as not run
+- **THEN** its item 0 names `orbit status --change <change-name> --scenarios --json` as the source of spec coverage, and says an external reviewer who cannot run it reports the check as not run

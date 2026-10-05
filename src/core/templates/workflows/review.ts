@@ -659,7 +659,7 @@ Substitute these into the \`## What to read for THIS review\` and \`## What to l
 
 ## System mode — "What to look for" (7 passes)
 
-0. **verify-change-style structural check** — tasks done, spec coverage, design adhered (the external AI runs its own equivalent of upstream verify-change). Take scenario test coverage from \`orbit status --change <name> --scenarios --json\` (the scenario map), never by searching test files; an external reviewer who cannot run it reports the check as not run.
+0. **verify-change-style structural check** — tasks done, spec coverage, design adhered (the external AI runs its own equivalent of upstream verify-change). Take scenario test coverage from \`orbit status --change <change-name> --scenarios --json\` (the scenario map), never by searching test files; an external reviewer who cannot run it reports the check as not run.
 1. **Baseline Compliance** — does this change break any archived \`orbit/specs/\` requirement?
 2. **Cohesion** — callers/dependents outside the tasks list. Signature drift, ripple effects, side-effect additions.
 3. **Surface Walk** — every CLI / MCP / HTTP / public-function surface in \`orbit/specs/\` still coherent? Capabilities ARE surfaces; don't redefine them.
