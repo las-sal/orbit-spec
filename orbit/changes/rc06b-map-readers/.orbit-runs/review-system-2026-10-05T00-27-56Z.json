@@ -1,0 +1,86 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-05T00:27:56Z",
+  "change": "rc06b-map-readers",
+  "kind": "editorial",
+  "model": null,
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 662,
+      "title": "External item 0 names the surface with a `<name>` placeholder in a reference that substitutes `<change-name>`",
+      "recommendation": "Every other placeholder in REVIEW_EXTERNAL_MODE_SECTIONS_REFERENCE (the system read list two lines above, the commit-range command) is `<change-name>`; the new item 0 alone writes `orbit status --change <name> --scenarios --json`. The packaging AI substitutes the change name into the prompt, and a substitution keyed on the reference's placeholder leaves `<name>` literal, so the external reviewer either guesses the name or runs a command that fails and — per the item's own fallback — reports the check as not run, which is exactly the Pass 0 reader exit (2) is meant to make work. Write `<change-name>` in item 0, and move the `orbit-verify-modifications` `Every Pass 0 reader reads the scenario map` external row and its scenario plus the verify-scenario-map.test.ts item-0 assertion to the same spelling (or state in the requirement that the placeholder follows the prompt's own convention)."
+    },
+    {
+      "pass": "1",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/specs/orbit-run-summary-emit/spec.md",
+      "line": 21,
+      "title": "`Emit scope` still calls `orbit-sync-specs` \"upstream primitive, unmodified by orbit\"",
+      "recommendation": "Task 4.3's apply note repaired this exact claim in `orbit-conventions`' `Upstream-verbatim — kept unchanged` (sync-specs carries a `# Orbit additions` section with the epitome and the consent note). The same capability this change already modifies keeps the sibling statement in `Emit scope`. Either narrow it to \"upstream primitive whose upstream portion orbit does not edit; no emit behavior is added to it\" and point at `Generated-file disposition`, or record it as a known residual at archive."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 2517,
+      "title": "The stage's rider says a title containing ` :: ` renders ORPHAN; the shipped pin shows it renders MALFORMED",
+      "recommendation": "The rc06b rider states both unkeyable shapes render ORPHAN. The change's own rider pin (test/core/scenario-map.test.ts, the separator-title test) asserts the tag is MALFORMED and orphans is empty; only the repeated-title shape pairs. The stage's Shipped-as paragraph at archive should say the rider's premise was half false, so the doc does not keep the stronger claim as living prose."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Pass 0 ran verify-change's procedure through the shipped step 6: the map reads ON, every delta scenario declared (no uncovered, orphan or malformed entry), counts printed as counts, validate clean, and the full suite green — so this pass is itself the first observation of exit (2) on the internal side. The upstream-portion measurement behind the narrowed `Generated-file disposition` was re-run independently (each of the ten upstream/v1.3.1 bodies diffed against its portion before `# Orbit additions`, rename normalized): only apply-change and archive-change carry edits besides verify's new one, matching the named limit. The reader table is a byte-equal mirror and every JSON field and source variant the surface can return (tag, ledger, ledger-file, spec) has a row. Lenses are absent, so Passes 4 and 5 did not run; Pass 6 was the source lint plus targeted residue greps for the retired phrases (only the baselines carry them, as the at-archive note expects), not a full audit-drift run.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4",
+    "5"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The mechanism is small, entirely prose plus tests, and the parts that could silently drift — the reader table, the hash pins, the upstream-edit limit — are each held by a check or a re-measurable fact. The one real gap is a placeholder spelling in the external item 0 that can make the external Pass 0 reader fail to run the command it was given; it is a one-line repair with its spec row and test, and does not need another design round."
+  },
+  "final_assessment": "0 critical, 1 warning, 2 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc06b-map-readers --from-file orbit/changes/rc06b-map-readers/.orbit-runs/review-system-2026-10-05T00-27-56Z.json"
+}
