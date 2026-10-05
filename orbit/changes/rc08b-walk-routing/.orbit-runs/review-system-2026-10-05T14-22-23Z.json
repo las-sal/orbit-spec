@@ -1,0 +1,115 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-05T14:22:23Z",
+  "change": "rc08b-walk-routing",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+      "line": 197,
+      "title": "Rediscovery rule triggers only on deferred/escalated, but the gate also rediscovers a pass whose latest log is incomplete or unreadable",
+      "recommendation": "Widen the trigger of the rediscovery paragraph (spec line 197, and its body copy at address-reviews.ts:1075) from 'its latest log left an entry deferred or escalated' to 'any pass discovered after a log already names it' (i.e. every reason passResolved rejects a walked pass: an open entry, a substantive finding the latest log does not name, or an unreadable latest log). The obligation that the new log name EVERY substantive finding, closed ones recorded stale against the earlier log, must hold in all three cases, because the gate reads only the latest record. Add a scenario for the incomplete-log case (one finding retyped or omitted).",
+      "reproduction": "Engine probe against dist (disposable project): a review-system pass with two WARNINGs A and B on x.md; a first address-reviews log names only A (resolved) -> gate unpassed, unresolvedPasses [T1], next '/orbit:address-reviews c'. A second log naming only B (resolved) -> gate STILL unpassed with the same list and next, because passResolved's completeness check reads the latest record only and A is no longer named. The body's rediscovery paragraph does not fire here (no entry is deferred or escalated), so a walker following it as written may write the B-only log and loop."
+    },
+    {
+      "pass": "1",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+      "line": 237,
+      "title": "An essential redesign keeps the gate's eligibility line on the walk, while the walk's own report names /orbit:explore",
+      "recommendation": "State what the eligibility line says after an essential redesign, and what a rediscovering walk does with an entry already escalated with routed_to. Either (A) the walk body treats a rediscovered entry already escalated with remedy redesign as carried, not re-walked, and names the route again, with the requirement admitting that the gate's canonical next stays the walk until the explored repair lands (a named residual); or (B) the gate's canonical next, when every unresolved pass's open entries are routed escalations, names nothing new beyond the walk but the reason carries the route. Today the requirement says 'the change returns to exploration' while the engine's single-voiced next (gates.ts:843) is '/orbit:address-reviews <change>', which rediscovers the escalated finding and, by the rediscovery rule, 'walks the open findings again' - the same finding with no new information.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Body-side: a rediscovered entry already escalated with remedy redesign and routed_to is re-recorded escalated with the same routed_to without a re-walk; the requirement names the eligibility line's persistence as a residual."
+        },
+        {
+          "label": "B",
+          "body": "Engine-side: carry the route into the gate's reason when every open entry is a routed escalation (a fourth capability touch is already at the ceiling, so this likely belongs to a later stage)."
+        }
+      ]
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 400,
+      "title": "The review body's ingestion sentence moved off its owner, orbit-review-external, which still says ingestion is --from-file",
+      "recommendation": "Record the divergence beside the design's named residual (the chat note's --from-file line): orbit/specs/orbit-review-external/spec.md:5 and the scenario at :334 still state ingestion is '/orbit:address-reviews --from-file <path>', while the body now says the change-scoped walk discovers the return. Not contradictory (--from-file still works) but the owner and the body now describe different primaries; name it in the readiness record or the next stage touching orbit-review-external."
+    },
+    {
+      "pass": "0",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "test/core/walk-discovery-e2e.test.ts",
+      "line": 59,
+      "title": "The e2e test's 'triage header names foo' half asserts a string the test itself constructs",
+      "recommendation": "The behaviour declaration for 'Bare invocation resolves the single active change' is backed by an engine round trip for the passes and logs, but the header half is a template literal built in discover() and then asserted to contain the change name - it tests nothing. Either declare the header half as text against the body's row-2 wording (the parity test already holds it), or drop the tautological assertion so the declaration matches its evidence. Similarly, active changes are found by readdir rather than 'orbit list --json' as row 2 says."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc08b-walk-routing/design.md",
+      "line": 51,
+      "title": "Design D1 places the repo-relative conversion at the instruction-loader boundary; the code does it in gates.ts",
+      "recommendation": "Repoint the sentence: toRepoRelPath runs in computeReviewedStatus (gates.ts), and GateStatus.unresolvedPasses[].file is already repo-relative; instruction-loader.ts only copies the field. Harmless, but a reader following D1 to instruction-loader finds no conversion."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Probed the engine change by running the dist gate against a disposable trail (incomplete-log rediscovery) and by reading every return path of computeReviewedStatus: openPair can no longer carry 'either' (it was never produced), a stale gate implies an empty list by construction (stale requires the full evaluation to converge), and a passed gate's [] comes from its own branch. The 76 delta scenarios are declared with zero uncovered/orphan/malformed; validate --strict is clean. Pass 0 ran as a direct check (tasks 16/17 with 6.3 the declared user-validation handoff, the scenario map, validate --strict, the full suite) rather than through the verify skill; Pass 6 ran as validate --sources plus residue greps for the retired recency rule across the generated surface. The pattern behind both warnings is the same: the walk body's new rules key on the disposition vocabulary, while the gate keys on its completeness-then-disposition predicate, so wherever the two vocabularies differ the 'one voice' promise thins out.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4: no perspectives defined (orbit/lenses/ absent); skip Pass 4",
+    "5: no critical paths defined (orbit/lenses/ absent); skip Pass 5"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The engine half is small, correct and well pinned: the loop now collects instead of returning, reason and readout stay byte-identical by construction, the walk next drops its one-half aim, and the full suite is green. The walk half is a large prose surface whose main rule - discover exactly what the gate holds - is sound and mirrored from one owner fence.\nWhat remains is at the edges of the new rediscovery and redesign paths: one trigger is narrower than the predicate it serves, and an essential redesign leaves two voices on what comes next. Both are repairs to wording inside this change's own capabilities, not new mechanism, so I would walk them and move on rather than hold."
+  },
+  "final_assessment": "0 critical, 2 warning, 3 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc08b-walk-routing --from-file orbit/changes/rc08b-walk-routing/.orbit-runs/review-system-2026-10-05T14-22-23Z.json"
+}
