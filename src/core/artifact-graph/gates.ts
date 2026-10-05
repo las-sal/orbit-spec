@@ -64,6 +64,24 @@ export interface GateStatus {
    * `passed`: the gate may never have converged; the flow simply advanced past it.
    */
   superseded?: boolean;
+  /**
+   * rc08b: EVERY pass the resolution clause finds unresolved, in token order (oldest first) —
+   * the same predicate and pass set as clause (b), so element 0 is the pass `reason` names.
+   * `[]` when every pass is resolved; absent on a blocked gate. `file` is repo-relative.
+   * The field REPORTS; nothing new is ruled (R-crc-13).
+   */
+  unresolvedPasses?: UnresolvedPassRow[];
+  /** rc08b: the pair diagnosis behind the reason's pair note, as a field a reader need not parse. */
+  openPair?: { missing: 'fresh' | 'external' };
+}
+
+/** rc08b: one outstanding pass, as `orbit status --change --json` reports it. */
+export interface UnresolvedPassRow {
+  token: string;
+  /** Repo-relative path of the findings artifact. */
+  file: string;
+  mode: ReviewMode | null;
+  source: 'internal-review' | 'external';
 }
 
 export interface GateComputation {
@@ -411,6 +429,8 @@ interface ConvergenceResult {
   pairFailure?: PairFailure;
   /** Pass whose findings are unresolved, when the failing clause is resolution. */
   unresolvedPass?: TrailPass;
+  /** rc08b: EVERY unresolved pass, token order; `[]` when clause (b) holds. */
+  unresolvedPasses: TrailPass[];
   /** Deferred SUGGESTION count, surfaced even on a converged gate. */
   deferredSuggestions?: number;
   /**
@@ -419,7 +439,7 @@ interface ConvergenceResult {
    * resolution recommends is exactly what forecloses the pair — the recommendation surface must
    * see this before it sees `unresolvedPass`.
    */
-  openPair?: { missing: 'fresh' | 'external' | 'either' };
+  openPair?: { missing: 'fresh' | 'external' };
 }
 
 /**
@@ -455,19 +475,23 @@ function evaluateReviewed(
   }
 
   // (b) resolution over EVERY relevant same-gate pass — INCLUDING stale ones.
+  // rc08b: the loop COLLECTS every unresolved pass rather than returning at the first, so the walk
+  // can discover exactly what the gate holds. `reason` still names the FIRST — the same pass the old
+  // early return named — so every human rendering is byte-identical.
   const resOrdered = [...resolutionPasses].sort((a, b) => (a.token < b.token ? -1 : 1));
-  for (const p of resOrdered) {
-    if (!passResolved(p, trail)) {
-      const pairNote = openPair
-        ? ` — and the ${gate.cadence.includes('blind-pair') ? 'blind pair is OPEN' : 'pair is open'}: run the ${openPair.missing === 'either' ? 'missing' : openPair.missing} member BEFORE walking these findings, or the pair can never be formed on this state`
-        : '';
-      return {
-        converged: false,
-        reason: `pass ${p.token} has unresolved substantive findings${pairNote}`,
-        unresolvedPass: p,
-        openPair,
-      };
-    }
+  const unresolvedPasses = resOrdered.filter(p => !passResolved(p, trail));
+  if (unresolvedPasses.length > 0) {
+    const p = unresolvedPasses[0];
+    const pairNote = openPair
+      ? ` — and the ${gate.cadence.includes('blind-pair') ? 'blind pair is OPEN' : 'pair is open'}: run the ${openPair.missing} member BEFORE walking these findings, or the pair can never be formed on this state`
+      : '';
+    return {
+      converged: false,
+      reason: `pass ${p.token} has unresolved substantive findings${pairNote}`,
+      unresolvedPass: p,
+      unresolvedPasses,
+      openPair,
+    };
   }
   const deferredSuggestions = deferredSuggestionCount(resOrdered, trail);
 
@@ -491,12 +515,13 @@ function evaluateReviewed(
               : how === 'no-fresh'
                 ? `blind pair open: the external pass on this state has no fresh partner; run it before walking these findings`
                 : `blind pair open: the fresh pass on this state has no external partner; run it before walking these findings`;
-      return { converged: false, reason, neededSlot: slot, pairFailure: how, openPair, deferredSuggestions };
+      return { converged: false, reason, neededSlot: slot, pairFailure: how, openPair, unresolvedPasses, deferredSuggestions };
     }
     return {
       converged: false,
       reason: `cadence class '${slot}' has no fresh pass`,
       neededSlot: slot,
+      unresolvedPasses,
       deferredSuggestions,
     };
   }
@@ -505,7 +530,7 @@ function evaluateReviewed(
   // NOT compute whether a change has converged. Under R-crc-11 a cadence ends when the AI judges
   // the work ready knowing what the independent reviewers returned — not when reviewers stop
   // finding things. `gate.confirm` is still ACCEPTED by the grammar and is read by nothing.
-  return { converged: true, deferredSuggestions };
+  return { converged: true, unresolvedPasses, deferredSuggestions };
 }
 
 /**
@@ -750,6 +775,8 @@ function computeReviewedStatus(gate: NormalizedGate, changeName: string, trail: 
       before: gate.before,
       consent: gate.consent,
       nextCommand: nextAfterPass(gate, changeName),
+      // rc08b: a passed gate lists nothing, from its own return path.
+      unresolvedPasses: [],
     };
   }
 
@@ -782,6 +809,13 @@ function computeReviewedStatus(gate: NormalizedGate, changeName: string, trail: 
     nextSlot: next.slot,
     before: gate.before,
     consent: gate.consent,
+    unresolvedPasses: freshEval.unresolvedPasses.map(p => ({
+      token: p.token,
+      file: toRepoRelPath(p.file, trail.changeDir),
+      mode: p.mode,
+      source: p.source,
+    })),
+    ...(freshEval.openPair ? { openPair: freshEval.openPair } : {}),
   };
 }
 
@@ -804,9 +838,10 @@ function canonicalNextForReviewed(
         : `/orbit:review --as ${m} --fresh ${change}`;
     return { cmd, slot: 'blind-pair' };
   }
+  // rc08b: the change-scoped walk, naming NO file — it discovers every listed pass and applies the
+  // openPair stop, where a `--from-file` aim would walk one half and skip both.
   if (ev.unresolvedPass) {
-    const p = ev.unresolvedPass;
-    return { cmd: `/orbit:address-reviews ${change} --from-file ${toRepoRelPath(p.file, trail.changeDir)}` };
+    return { cmd: `/orbit:address-reviews ${change}` };
   }
   if (ev.neededSlot === 'blind-pair') {
     // Name the class missing from the earliest pair STILL FORMABLE. A standing pass counts as a

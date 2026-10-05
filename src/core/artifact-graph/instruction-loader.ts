@@ -154,6 +154,9 @@ export interface GateStatusRow {
   independentSpend?: number;
   /** rc02: reported, never blocking. */
   deferredSuggestions?: number;
+  /** rc08b: every outstanding pass (`[]` when none; absent on a blocked gate), and the open pair. */
+  unresolvedPasses?: Array<{ token: string; file: string; mode: string | null; source: string }>;
+  openPair?: { missing: string };
 }
 
 /**
@@ -433,6 +436,8 @@ export function formatChangeStatus(context: ChangeContext, overlay?: TrailOverla
       ...(g.budget !== undefined ? { budget: g.budget } : {}),
       ...(g.independentSpend !== undefined ? { independentSpend: g.independentSpend } : {}),
       ...(g.deferredSuggestions !== undefined ? { deferredSuggestions: g.deferredSuggestions } : {}),
+      ...(g.unresolvedPasses !== undefined ? { unresolvedPasses: g.unresolvedPasses } : {}),
+      ...(g.openPair !== undefined ? { openPair: g.openPair } : {}),
     }));
     position = computation.position;
     // D1: entry into the apply phase carries the ` — user-invoked` marker when the

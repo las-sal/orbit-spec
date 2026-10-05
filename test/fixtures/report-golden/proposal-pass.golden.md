@@ -43,4 +43,4 @@ Trend: 0C/3W/2S → 1C/1W/1S (0 repeat, 3 new)
 ---
 Gate review-proposal: unpassed — pass 2026-07-25T10-00-00Z has unresolved substantive findings
 Position: propose ✓ → review(proposal) unpassed → apply ready → review(system) blocked-by-gate → archive blocked-by-gate
-Ready when you are: /orbit:address-reviews golden-change --from-file orbit/changes/golden-change/.orbit-runs/review-proposal-2026-07-25T10-00-00Z.json
+Ready when you are: /orbit:address-reviews golden-change

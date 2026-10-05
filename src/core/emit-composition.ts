@@ -1898,7 +1898,9 @@ export function composeAndWriteEmit(
       const mode = String((payload as any).mode ?? 'proposal');
       const findingsPattern = promptPath.replace('external-prompt-', 'external-').replace(/\.md$/, '').replace(/-\d{4}.*$/, `-<TS>`);
       emit.awaiting_findings = true;
-      emit.next_recommended = `Paste ${promptPath} into the target AI, save the response as ${path.dirname(promptPath)}/external-${mode}-<TS>.md, then /orbit:address-reviews ${resolved.change} --from-file <path>`;
+      // rc08b: the USER ACTION ONLY, ending at the save step. No walk is named — what follows the save
+      // is the gate's canonical next, and a walk written here would be a one-half walk.
+      emit.next_recommended = `Paste ${promptPath} into the target AI, and save the response as ${path.dirname(promptPath)}/external-${mode}-<TS>.md`;
       void findingsPattern;
       break;
     }

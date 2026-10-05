@@ -132,6 +132,7 @@ const ok = (sev: Sev, title: string) => ({ severity: sev, title, file: `f/${titl
 // ---- clause (b): severity, existence, readability --------------------------
 
 describe('rc02 clause (b) — existence first, one readability predicate, one fallback', () => {
+  // @scenario behaviour orbit-engine-gates :: Reviewed-gate pass condition — the computed convergence criterion :: Findings with no completing address-reviews run fail the gate
   it('an unwalked pass carrying a WARNING blocks', () => {
     review(T(1), 'system', 'fresh', [['WARNING', 'w']]);
     external(T(2), 'system');
@@ -140,6 +141,7 @@ describe('rc02 clause (b) — existence first, one readability predicate, one fa
     expect(gate(PAIR_YAML).reason).toMatch(/unresolved substantive findings/);
   });
 
+  // @scenario behaviour orbit-engine-gates :: Reviewed-gate pass condition — the computed convergence criterion :: An unwalked SUGGESTION-only pass does not block
   it('an unwalked SUGGESTION-only pass does NOT block — existence is scoped to substantive', () => {
     review(T(1), 'system', 'fresh', [['SUGGESTION', 's']]);
     external(T(2), 'system');
@@ -147,6 +149,7 @@ describe('rc02 clause (b) — existence first, one readability predicate, one fa
     expect(gate(PAIR_YAML).state).toBe('passed');
   });
 
+  // @scenario behaviour orbit-engine-gates :: Reviewed-gate pass condition — the computed convergence criterion :: A deferred SUGGESTION does not block a readable record
   it('a deferred SUGGESTION does not block a readable record, even when the summary reports it', () => {
     review(T(1), 'system', 'fresh', [['WARNING', 'w'], ['SUGGESTION', 's']]);
     external(T(2), 'system');
@@ -165,6 +168,7 @@ describe('rc02 clause (b) — existence first, one readability predicate, one fa
     expect(g.reason).toMatch(/^passed with 1 SUGGESTION-grade finding deferred/);
   });
 
+  // @scenario behaviour orbit-engine-gates :: Reviewed-gate pass condition — the computed convergence criterion :: Unresolved substantive findings fail the gate
   it('a deferred WARNING blocks', () => {
     review(T(1), 'system', 'fresh', [['WARNING', 'w']]);
     external(T(2), 'system');
@@ -173,8 +177,10 @@ describe('rc02 clause (b) — existence first, one readability predicate, one fa
       summary: { resolved: 0, stale_suppressed: 0, deferred: 1, escalated: 0 },
     });
     expect(gate(PAIR_YAML).state).toBe('unpassed');
+    expect(gate(PAIR_YAML).reason).toBe(`pass ${T(1)} has unresolved substantive findings`); // rc08b 5.2: the reason names the pass
   });
 
+  // @scenario behaviour orbit-engine-gates :: Reviewed-gate pass condition — the computed convergence criterion :: Legacy `status` is read as the disposition
   it('legacy `status` reads as the disposition (the 49-entry archive generation)', () => {
     review(T(1), 'system', 'fresh', [['WARNING', 'w']]);
     external(T(2), 'system');
@@ -185,6 +191,7 @@ describe('rc02 clause (b) — existence first, one readability predicate, one fa
     expect(gate(PAIR_YAML).state).toBe('passed');
   });
 
+  // @scenario behaviour orbit-engine-gates :: Reviewed-gate pass condition — the computed convergence criterion :: A dispositionless entry makes the record unreadable
   it('a dispositionless entry makes the record unreadable and falls it back WHOLE (the 217-entry generation)', () => {
     review(T(1), 'system', 'fresh', [['WARNING', 'w']]);
     external(T(2), 'system');
@@ -195,6 +202,7 @@ describe('rc02 clause (b) — existence first, one readability predicate, one fa
     expect(gate(PAIR_YAML).state).toBe('unpassed');
   });
 
+  // @scenario behaviour orbit-engine-gates :: Reviewed-gate pass condition — the computed convergence criterion :: An unrecognised disposition makes the record unreadable
   it('an unrecognised disposition makes the record unreadable', () => {
     review(T(1), 'system', 'fresh', [['WARNING', 'w']]);
     external(T(2), 'system');
@@ -205,6 +213,7 @@ describe('rc02 clause (b) — existence first, one readability predicate, one fa
     expect(gate(PAIR_YAML).state).toBe('unpassed');
   });
 
+  // @scenario behaviour orbit-engine-gates :: Reviewed-gate pass condition — the computed convergence criterion :: An unrecognised severity makes the record unreadable
   it('an unrecognised severity makes the record unreadable — the fail-safe points the safe way', () => {
     review(T(1), 'system', 'fresh', [['WARNING', 'w']]);
     external(T(2), 'system');
@@ -215,6 +224,7 @@ describe('rc02 clause (b) — existence first, one readability predicate, one fa
     expect(gate(PAIR_YAML).state).toBe('unpassed');
   });
 
+  // @scenario behaviour orbit-engine-gates :: Reviewed-gate pass condition — the computed convergence criterion :: An empty `resolutions` array is unreadable
   it('an EMPTY `resolutions` array is unreadable and never vacuously resolves over its own summary', () => {
     review(T(1), 'system', 'fresh', [['WARNING', 'w']]);
     external(T(2), 'system');
@@ -225,6 +235,7 @@ describe('rc02 clause (b) — existence first, one readability predicate, one fa
     expect(gate(PAIR_YAML).state).toBe('unpassed');
   });
 
+  // @scenario behaviour orbit-engine-gates :: Reviewed-gate pass condition — the computed convergence criterion :: A non-array `resolutions` is unreadable
   it('a counter-object `resolutions` with no summary leaves the pass unresolved (the 8-record generation)', () => {
     review(T(1), 'system', 'fresh', [['WARNING', 'w']]);
     external(T(2), 'system');
@@ -239,6 +250,7 @@ describe('rc02 clause (b) — existence first, one readability predicate, one fa
     expect(gate(PAIR_YAML).state).toBe('unpassed');
   });
 
+  // @scenario behaviour orbit-engine-gates :: Reviewed-gate pass condition — the computed convergence criterion :: Deferred suggestions do not fail the gate
   it('one suggestion deferred across two passes counts once', () => {
     review(T(1), 'system', 'fresh', [['SUGGESTION', 'dup']]);
     external(T(2), 'system', [['SUGGESTION', 'dup']]);
@@ -247,6 +259,9 @@ describe('rc02 clause (b) — existence first, one readability predicate, one fa
     walk(T(4), `external-system-${T(2)}.md`, { entries: [dup] });
     review(T(5), 'system', 'in-context');
     expect(gate(PAIR_YAML).deferredSuggestions).toBe(1);
+    // rc08b 5.2: clause (b) holds, the gate passes, and the count is named in the reason.
+    expect(gate(PAIR_YAML).state).toBe('passed');
+    expect(gate(PAIR_YAML).reason).toMatch(/^passed with 1 SUGGESTION-grade finding deferred/);
   });
 });
 
@@ -313,6 +328,7 @@ describe('rc02c clause (c) — RETIRED: convergence is clauses (a) and (b) ONLY'
 // ---- clause (a): the blind pair --------------------------------------------
 
 describe('rc02 clause (a) — the blind-pair slot', () => {
+  // @scenario behaviour orbit-engine-gates :: Reviewed-gate pass condition — the computed convergence criterion :: Blind pair satisfied by two distinct classes with no walk between
   it('a valid pair satisfies, and the trailing in-context covers the cadence', () => {
     review(T(1), 'system', 'fresh');
     external(T(2), 'system');
@@ -320,6 +336,7 @@ describe('rc02 clause (a) — the blind-pair slot', () => {
     expect(gate(PAIR_YAML).state).toBe('passed');
   });
 
+  // @scenario behaviour orbit-engine-gates :: Reviewed-gate pass condition — the computed convergence criterion :: A walk between the pair breaks blindness
   it('a walk of one member between them breaks blindness, and the reason names the class the command names', () => {
     review(T(1), 'system', 'fresh', [['WARNING', 'w']]);
     walk(T(2), `review-system-${T(1)}.json`, { entries: [ok('WARNING', 'w')] });
@@ -341,6 +358,7 @@ describe('rc02 clause (a) — the blind-pair slot', () => {
     expect(g.nextCommand).toContain('--fresh');
   });
 
+  // @scenario behaviour orbit-engine-gates :: Reviewed-gate pass condition — the computed convergence criterion :: An unrelated walk does not break the pair
   it('an UNRELATED walk does not break the pair', () => {
     review(T(1), 'system', 'fresh');
     walk(T(2), 'audit-drift-2026-09-14T09-00-00Z.json', { entries: [ok('WARNING', 'other')] });
@@ -349,6 +367,7 @@ describe('rc02 clause (a) — the blind-pair slot', () => {
     expect(gate(PAIR_YAML).state).toBe('passed');
   });
 
+  // @scenario behaviour orbit-engine-gates :: Reviewed-gate pass condition — the computed convergence criterion :: Same class twice does not form a pair
   it('two same-class passes do not form a pair', () => {
     review(T(1), 'system', 'fresh');
     review(T(2), 'system', 'fresh');
@@ -356,8 +375,10 @@ describe('rc02 clause (a) — the blind-pair slot', () => {
     const g = gate(PAIR_YAML);
     expect(g.state).toBe('unpassed');
     expect(g.reason).toMatch(/no external partner/);
+    expect(g.nextCommand).toBe('/orbit:review --as system --reviewer external x'); // rc08b 5.2: the THEN's canonical next
   });
 
+  // @scenario behaviour orbit-engine-gates :: Reviewed-gate pass condition — the computed convergence criterion :: Token ties fail safe
   it('token ties on the two members are REJECTED rather than certified', () => {
     review('2026-09-14T10-01-00Z', 'system', 'fresh');
     external('2026-09-14T10-01-00Z', 'system');
@@ -375,6 +396,7 @@ describe('rc02 clause (a) — the blind-pair slot', () => {
     expect(gate(PAIR_YAML).state).toBe('stale');
   });
 
+  // @scenario behaviour orbit-engine-gates :: Reviewed-gate pass condition — the computed convergence criterion :: A following slot must beat the previous slot's resolution records
   it('the trailing slot must beat the WALK, not merely the pair (the pre-walk ordering case)', () => {
     review(T(1), 'system', 'fresh', [['WARNING', 'a']]);
     external(T(2), 'system', [['WARNING', 'b']]);
@@ -393,6 +415,7 @@ describe('rc02 clause (a) — the blind-pair slot', () => {
     expect(gate(PAIR_YAML).state).toBe('passed');
   });
 
+  // @scenario behaviour orbit-engine-gates :: Reviewed-gate pass condition — the computed convergence criterion :: The earliest qualifying pair is taken
   it('a late second external does not foreclose a covered cadence (coverage is existential)', () => {
     external(T(1), 'system');
     review(T(2), 'system', 'fresh');
@@ -896,9 +919,12 @@ describe('rc02 walk 9 — the pass the stop rule bought', () => {
     )!;
     // The emitted path must be relative to the PROJECT root, not to the first `/orbit/` segment
     // anywhere in the absolute path — which here would have produced `orbit/orbit/changes/...`.
-    expect(g.nextCommand).toContain('--from-file');
-    expect(g.nextCommand).toContain('orbit/changes/c/.orbit-runs/review-system-');
-    expect(g.nextCommand).not.toContain('orbit/orbit/changes');
+    // rc08b (task 1.5, recorded act): the walk next names no file, so the path is now asserted where
+    // the engine renders it — the gate's `unresolvedPasses` list.
+    expect(g.nextCommand).toBe('/orbit:address-reviews c');
+    const file = g.unresolvedPasses![0].file;
+    expect(file).toBe(`orbit/changes/c/.orbit-runs/review-system-${T(1)}.json`);
+    expect(file).not.toContain('orbit/orbit/changes');
     fs.rmSync(root, { recursive: true, force: true });
   });
 });

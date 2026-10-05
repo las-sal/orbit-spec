@@ -31,4 +31,4 @@ Trend: 1C/2W/0S → 0C/4W/5S → 0C/0W/0S → 0C/1W/1S (0 repeat, 2 new)
 ---
 Gate review-system: unpassed — pass 2026-10-04T03-55-35Z has unresolved substantive findings
 Position: propose ✓ → review(proposal) (past) → apply ✓ → review(system) unpassed → archive blocked-by-gate
-Ready when you are: /orbit:address-reviews example-change --from-file orbit/changes/example-change/.orbit-runs/review-system-2026-10-04T03-55-35Z.json
+Ready when you are: /orbit:address-reviews example-change

@@ -190,7 +190,7 @@ self-assessment of review quality.
 #### Scenario: Unresolved substantive findings fail the gate
 
 - **WHEN** a fresh pass has a WARNING finding whose walk entry carries `outcome: "deferred"`
-- **THEN** the gate is unpassed with reason naming the pass and its unresolved substantive counts
+- **THEN** the gate is unpassed with reason naming the pass (`pass <token> has unresolved substantive findings`)
 
 #### Scenario: Deferred suggestions do not fail the gate
 

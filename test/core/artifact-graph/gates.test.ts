@@ -290,7 +290,8 @@ describe('artifact-graph/gates — computation', () => {
     });
     const rp = computeGateStates(schema, 'mychange', dir, allArtifacts).gates.find(g => g.id === 'review-proposal')!;
     expect(rp.state).toBe('unpassed');
-    expect(rp.nextCommand).toMatch(/^\/orbit:address-reviews mychange --from-file /);
+    // rc08b (task 1.5, recorded act): the walk next names no file — discovery reads the gate's list.
+    expect(rp.nextCommand).toBe('/orbit:address-reviews mychange');
   });
 
   it('no-new-findings: a finding first seen in an in-context pass is NOT new when an independent pass re-surfaces it', () => {

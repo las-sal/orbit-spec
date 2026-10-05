@@ -397,7 +397,7 @@ const REVIEW_EXTERNAL_HANDOFF_REFERENCE = `# Reference: the external-handoff bra
 
 This branch packages a review request for an external AI (codex, fresh Claude, GPT, etc.) to perform a second-opinion review of an OpenSpec change — the behavior formerly invoked as the standalone \`/orbit:review-external\` command (RETIRED at D-arc Stage D5; the RECORD VOCABULARY IS FROZEN: the T0 emit keeps \`command: "review-external"\` and its \`review-external-<TS>.json\` filename, prompts keep \`external-prompt-<as>-<TS>.md\`, findings keep \`external-<as>-<TS>.md\` — gates, orientation WAITING arithmetic, the report ordinal, and the address-reviews parser all key on those names). The branch emits **two things**: (a) a self-contained markdown prompt written to \`orbit/changes/<change-name>/.orbit-runs/external-prompt-<as>-<TS>.md\` (committed; the external AI reads it from the repo), and (b) a short invocation snippet to chat that tells the user what to paste into the external AI's session.
 
-**Does NOT run the review and does NOT ingest findings.** The external AI does the review work. Ingestion is \`/orbit:address-reviews --from-file <path>\`. This command's job is solely to package the handoff.
+**Does NOT run the review and does NOT ingest findings.** The external AI does the review work. Ingestion is the change-scoped \`/orbit:address-reviews <change-name>\`, which discovers the saved return as an outstanding pass, or an explicit \`--from-file <path>\` aim. This command's job is solely to package the handoff.
 
 **Input**: the change name and \`--as proposal|system\` resolved by the review trunk before this reference loads (\`--reviewer external\` requires \`--as proposal|system\`; architecture mode never reaches this branch). Compose the T0 emit via \`orbit emit review-external --change <name>\` — the engine owns the spine, the paste/save/ingest recommendation, and \`awaiting_findings\`.
 
@@ -533,7 +533,7 @@ orbit/changes/add-review-workflows/.orbit-runs/external-proposal-<TS>.md
 The command does not run the review and does not ingest findings:
 
 - **Running the review**: the external AI does it. This command is packaging.
-- **Ingesting findings**: \`/orbit:address-reviews --from-file <path>\` ingests; this command emits the path the user will pass to that command later.
+- **Ingesting findings**: \`/orbit:address-reviews <change-name>\` discovers the saved return; \`--from-file <path>\` aims at it explicitly. This command emits the path the return is saved to.
 
 ## Graceful degradation
 
@@ -559,7 +559,7 @@ orbit/changes/<name>/.orbit-runs/review-external-<TS>.json
 
 Where \`<TS>\` is ISO-8601 UTC with hyphens. Create \`.orbit-runs/\` if it doesn't exist. Use a FRESH timestamp distinct from the prompt file's \`<TS>\` (one ISO-second resolution may make them identical; bump by one second if so).
 
-This is the T0 emit. T1 (findings returned and ingested via \`/orbit:address-reviews --from-file\`) is the EXISTING \`address-reviews-<TS>.json\` emit and is unaffected.
+This is the T0 emit. T1 (findings returned and walked, by discovery or by \`--from-file\`) is the EXISTING \`address-reviews-<TS>.json\` emit and is unaffected.
 
 ### JSON shape
 
@@ -608,13 +608,12 @@ Per the universal spine in \`orbit-conventions\`'s \`Internal-run JSON summary f
 
 ### \`next_recommended\` — multi-step prose
 
-Per \`orbit-run-summary-emit\`'s \`Review-external T0 multi-step recommendation\` requirement, the recommendation is multi-step prose describing the user action plus the follow-up command (per D14):
+Per \`orbit-run-summary-emit\`'s \`Review-external T0 multi-step recommendation\` requirement, the recommendation is multi-step prose describing the user action ONLY, ending at the save step — it names no walk command; what follows the save is the gate's canonical next, read from \`orbit status --change <name> --json\`:
 
 \`\`\`
 "Paste orbit/changes/<name>/.orbit-runs/external-prompt-<as>-<TS>.md
- into the target AI, save the response as
- orbit/changes/<name>/.orbit-runs/external-<as>-<TS>.md,
- then /orbit:address-reviews <name> --from-file <path>"
+ into the target AI, and save the response as
+ orbit/changes/<name>/.orbit-runs/external-<as>-<TS>.md"
 \`\`\`
 
 A downstream status reader's tier-1 best-effort parse SHALL find no leading \`/orbit:<verb>\` (because the string leads with "Paste"); \`command\` and \`args\` are left null, and the full verbatim string is surfaced in \`reason\`. This is the expected behavior — multi-step user actions are accurately represented as prose, not collapsed into a single command.

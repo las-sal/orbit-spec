@@ -484,8 +484,8 @@ describe('the pure render is deterministic over its inputs', () => {
       gateLine: 'Gate review-proposal: unpassed — pass 2026-07-25T10-00-00Z has unresolved substantive findings',
       position:
         'propose ✓ → review(proposal) unpassed → apply ready → review(system) blocked-by-gate → archive blocked-by-gate',
-      nextCommand:
-        '/orbit:address-reviews golden-change --from-file orbit/changes/golden-change/.orbit-runs/review-proposal-2026-07-25T10-00-00Z.json',
+      // rc08b (task 1.5, recorded act): the gate's walk next names no file.
+      nextCommand: '/orbit:address-reviews golden-change',
     };
     const a = renderReviewReport(pass, ctx);
     const b = renderReviewReport(pass, ctx);

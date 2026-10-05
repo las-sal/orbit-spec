@@ -137,9 +137,9 @@ Overall impression goes here.
 This example has 0 CRITICAL (using \`None.\` sentinel), 2 WARNING, 1 SUGGESTION. The codex-pushed iter-1 system-mode findings file (\`orbit/changes/add-review-workflows/.orbit-runs/external-system-2026-05-18T17-33-40Z.md\`) is a real-world example produced by GPT-5 Codex.
 `;
 
-const ADDRESS_REVIEWS_INTERNAL_FINDINGS_FORMAT_REFERENCE = `# Reference: internal-findings file format (for \`--from-file\` JSON parsing AND auto-discovery)
+const ADDRESS_REVIEWS_INTERNAL_FINDINGS_FORMAT_REFERENCE = `# Reference: internal-findings file format (for \`--from-file\` JSON parsing AND discovery)
 
-This parser contract is consumed by BOTH explicit \`--from-file <path>\` invocations AND auto-discovery from \`.orbit-runs/\` when \`/orbit:address-reviews <change-name>\` finds no inline markers (per the auto-discovery fallback in SKILL.md Step 1). The parsing logic and virtual-marker construction are IDENTICAL regardless of how the JSON entered the lifecycle — only the resolution log's \`source\` field differs (\`"from-file"\` vs \`"auto-discovered"\`).
+This parser contract is consumed by BOTH explicit \`--from-file <path>\` invocations AND discovery from \`.orbit-runs/\` when \`/orbit:address-reviews <change-name>\` walks a change's outstanding passes and unwalked audit-drift emits (the DISCOVERY fence in SKILL.md Step 1). The parsing logic and virtual-marker construction are IDENTICAL regardless of how the JSON entered the lifecycle — only the resolution log's \`source\` field differs (\`"from-file"\` vs \`"auto-discovered"\`).
 
 The \`--from-file <path>\` flag accepts TWO format families: (a) external-review markdown (see \`external-findings-format.md\`), (b) internal findings JSON (this file). The parser auto-detects format via content sniff: leading \`{\` routes to JSON; leading \`# External Review:\` routes to markdown; anything else triggers a format-mismatch error.
 
@@ -334,25 +334,19 @@ const ADDRESS_REVIEWS_RESOLUTION_DETAIL_REFERENCE = `# Reference: resolution det
 
 Moved from the body verbatim (D5 body-economy pass). The body carries the compact protocol; this file carries the full rules, tables, examples, and error shapes.
 
-## Scope resolution and auto-discovery (Step 1 detail)
+## Scope resolution and discovery (Step 1 detail)
 
 **Positional \`<scope>\` argument** — resolve in this order:
 
-1. **Active change**: \`orbit/changes/<scope>/\` exists → treat \`<scope>\` as a change name; grep restricted to that directory; auto-discovery available (Step (c) below).
-2. **Archived change**: no active match, but \`orbit/changes/archive/\` contains one or more entries matching the regex \`^\\d{4}-\\d{2}-\\d{2}-<scope>$\` → treat as a change name resolving to the archive directory. If multiple archive entries match the same \`<scope>\` suffix (rare; same change name archived on different dates), the lexicographically-latest date wins (most-recent archive).
-3. **Path/pattern fallback**: no active or archive match → treat as a path/pattern scope; grep restricted to that path; auto-discovery does NOT apply (no \`.orbit-runs/\` anchor).
+1. **Active change**: \`orbit/changes/<scope>/\` exists → treat \`<scope>\` as a change name; the marker grep is restricted to that directory, and trail discovery applies (the body's DISCOVERY rows 4 and 5).
+2. **Archived change**: no active match, but \`orbit/changes/archive/\` contains one or more entries matching the regex \`^\\d{4}-\\d{2}-\\d{2}-<scope>$\` → treat as a change name resolving to the archive directory. If multiple archive entries match the same \`<scope>\` suffix (rare; same change name archived on different dates), the lexicographically-latest date wins (most-recent archive). Its markers and its unwalked audit-drift emits are discovered (row 6); \`orbit status\` cannot address an archived change, so its review passes are reached by \`--from-file\`, and the triage header says so.
+3. **Path/pattern fallback**: no active or archive match → treat as a path/pattern scope; grep restricted to that path; no trail is read (row 7).
 
-**Auto-discovery fallback** (change-name positional, no markers, no \`--from-file\`):
+**Discovery is the DISCOVERY fence in the body's Step 1**, a checked mirror of \`orbit-address-reviews\`' \`Address-reviews command available\`; this file does not restate it. The outstanding passes come from the engine's \`unresolvedPasses\` on each reviewed gate's status row, so the walk and the gate read one list. The single-newest-by-\`<TS>\` rule that this section used to carry is retired: it walked one pass when the gate held two, and it never reached an external return.
 
-(a) Run grep for \`@review:\` markers in the resolved change directory. If any found → walk them (current behavior; auto-discovery does NOT fire because markers already provide work).
+**Each discovered source is fed to the \`--from-file\` ingest path** (content-sniff routes JSON to the parser per \`references/internal-findings-format.md\` and \`# External Review:\` markdown per \`references/external-findings-format.md\`; identical lifecycle and virtual-marker construction to an explicit \`--from-file\` invocation). The only difference is the log's provenance fields (\`source: "auto-discovered"\` — see the schema reference).
 
-(b) If grep returns zero markers AND no \`--from-file\` flag was specified: look in the change's \`.orbit-runs/\` directory for files matching \`review-<mode>-*.json\` OR \`audit-drift-*.json\`. Pick the single most-recent file by filename \`<TS>\` token across all candidate types — review and audit-drift JSON compete on the same recency axis with NO class preference (per \`D-recency-1\`; audit-drift CAN win over review if its \`<TS>\` token is later). If two candidate files share an identical \`<TS>\` token (rare; possible only within the same ISO-second), tie-break by stable lexicographic sort of the full filename (ASCII order: \`a\` < \`r\`; within \`review-\`, \`proposal\` < \`system\` → so \`audit-drift-<TS>.json\` sorts before \`review-proposal-<TS>.json\` sorts before \`review-system-<TS>.json\`); alphabetically-earliest wins.
-
-(c) If a candidate JSON is found: feed it to the \`--from-file\` ingest path described below (content-sniff routes to JSON parser per \`references/internal-findings-format.md\`; identical lifecycle and virtual-marker construction to explicit \`--from-file\` invocation; the only difference is the resolution log's \`source\` field — see Step 5).
-
-(d) If neither markers nor JSON candidates exist: emit \`No @review: markers in scope and no internal review/audit-drift JSON in .orbit-runs/. Nothing to walk.\` and exit cleanly.
-
-**\`--mark\` is optional, not prerequisite**: historically, \`/orbit:review --as proposal --mark\` was the way to produce markers that address-reviews would later walk. Auto-discovery makes \`--mark\` purely a stylistic choice (do you want findings annotated in source for diff-readability?), NOT a structural requirement. The canonical \`/orbit:review <name>\` → \`/orbit:address-reviews <name>\` workflow works without \`--mark\` because address-reviews discovers the just-written \`review-<mode>-*.json\`.
+**\`--mark\` is optional, not prerequisite**: historically, \`/orbit:review --as proposal --mark\` was the way to produce markers that address-reviews would later walk. Discovery makes \`--mark\` purely a stylistic choice (do you want findings annotated in source for diff-readability?). A marker that restates a discovered finding is walked AS that finding, in its pass's log, so nothing is walked twice. A pass whose findings are all SUGGESTION-grade is not outstanding and is never discovered; walk it with \`--from-file\`, as the review emit's own next line names it.
 
 ## Batch-mode trigger table (Step 3)
 
@@ -366,7 +360,7 @@ Moved from the body verbatim (D5 body-economy pass). The body carries the compac
 
 **Hybrid detection** (supplies the BRIEFING's option set; structured first, heuristic fallback):
 
-1. **Structured path** — if the finding came from a JSON-virtual marker (internal-review or audit-drift JSON via \`--from-file\` or auto-discovery) AND the source JSON's finding entry includes a \`recommendation_options: [{label, body}]\` array with ≥ 2 entries AND every entry has non-empty \`label\` AND non-empty \`body\`: use that array DIRECTLY as the briefing's options. Skip heuristic. Record \`recommendation_fork.source: "structured"\` in the resolution log.
+1. **Structured path** — if the finding came from a JSON-virtual marker (internal-review or audit-drift JSON via \`--from-file\` or discovery) AND the source JSON's finding entry includes a \`recommendation_options: [{label, body}]\` array with ≥ 2 entries AND every entry has non-empty \`label\` AND non-empty \`body\`: use that array DIRECTLY as the briefing's options. Skip heuristic. Record \`recommendation_fork.source: "structured"\` in the resolution log.
 
 2. **Heuristic fallback** — if structured path was unavailable (missing field, malformed entry — see malformed-handling below) OR the marker is markdown-sourced (external markdown, inline markers): scan the finding's recommendation text for STRICT disjunctive signals. Triggers (all are non-fuzzy):
    - **Numbered alternatives**: \`(A) … (B)\`, \`1. … 2.\`, \`[A] … [B]\`
@@ -506,8 +500,8 @@ This example demonstrates the JSON path: the input is an internal \`review-syste
 ## Graceful degradation
 
 - **No markers found in bare or path/pattern scope** → emit \`No @review: markers in scope. Nothing to do.\` and exit clean.
-- **No markers found in change-name scope, no candidate JSON in \`.orbit-runs/\`** → emit \`No @review: markers in scope and no internal review/audit-drift JSON in .orbit-runs/. Nothing to walk.\` and exit clean. Note: this case ONLY applies after Step 1's auto-discovery fallback has been checked; bare/path scope never reaches auto-discovery (no \`.orbit-runs/\` anchor).
-- **No markers found in change-name scope, candidate JSON in \`.orbit-runs/\` (auto-discovery fires)** → NOT a graceful-degradation case; proceed with the discovered JSON as if it had been passed via \`--from-file\` per Step 1's auto-discovery fallback.
+- **Nothing discovered in change-name scope** (no markers, every reviewed gate reports \`unresolvedPasses: []\`, every audit-drift emit already named by a log) → emit \`No @review: markers and no outstanding passes in scope. Nothing to walk.\`, list each audit-drift emit a log already names as \`walked before; reach by --from-file <path>\`, and exit clean (the DISCOVERY fence's AFTER line).
+- **An open blind pair** (a reviewed gate reports \`openPair\`) → NOT a degradation case: the walk stops before triage, names the missing member and the gate's canonical next command, and writes no log (row 4).
 - **\`--from-file\` path missing** → fail clearly with usage; don't fall back to repo scan.
 - **\`--from-file\` neither-format-detected** → emit a clean format-mismatch error naming both supported formats (referencing \`references/external-findings-format.md\` and \`references/internal-findings-format.md\`) plus the observed leading-content snippet; refuse to act on partial parse. Concrete error shape:
 
@@ -544,7 +538,7 @@ Every location is written by the emit surface — no scope hand-writes its log.
 
 The spine every emit carries is owned by \`orbit-conventions\`' \`Internal-run JSON summary format\` requirement, and is not restated here; the write gate refuses every field the engine composes (\`next_recommended\` and the \`iteration\` ordinal among them). For address-reviews, \`final_assessment\` is the payload's own narrative of the resolution outcome, and \`change\` is \`null\` for whole-repo / cross-change and architecture scope, where an architecture-scoped log carries a \`doc\` field instead.
 
-The schema below documents per-command extensions ADDED to that spine (\`source\`, \`source_path\`, \`external_reviewer\`, \`walk_mode\`, \`walk_mode_source\`, \`walk_mode_shifted_at_finding\`, \`input_findings_summary\`, \`pushback_verification\`, \`resolution_summary\`, \`delegation_directive\`, \`resolutions\` with entry-level \`ratified_via\`/\`resolution\` plus \`recommendation_fork\`, \`ripple_cascade\`, \`sweep\` and \`ripple_miss_of\` sub-objects, \`remaining_markers_in_scope\`, \`persisted_escalations\`) and the engine-computed \`ripple_misses\`. Per-command extensions are address-reviews-specific state.
+The schema below documents per-command extensions ADDED to that spine (\`source\`, \`source_path\`, \`source_command\`, \`source_token\`, \`latest_apply_token\`, \`external_reviewer\`, \`walk_mode\`, \`walk_mode_source\`, \`walk_mode_shifted_at_finding\`, \`input_findings_summary\`, \`pushback_verification\`, \`resolution_summary\`, \`delegation_directive\`, \`resolutions\` with entry-level \`ratified_via\`/\`resolution\` plus \`recommendation_fork\`, \`ripple_cascade\`, \`sweep\` and \`ripple_miss_of\` sub-objects and the per-entry \`remedy\`, \`routed_to\` and \`disagreement\`, \`remaining_markers_in_scope\`, \`persisted_escalations\`) and the engine-computed \`ripple_misses\`. Per-command extensions are address-reviews-specific state.
 
 ## Schema (v2)
 
@@ -558,11 +552,10 @@ The schema below documents per-command extensions ADDED to that spine (\`source\
   "next_recommended": "<suggested next command, e.g., 're-run /orbit:review --as proposal to confirm convergence'>",
   "kind": "editorial",
   "source": "whole-repo" | "scope" | "from-file" | "auto-discovered",
-  "source_path": "<scope path or --from-file path or auto-discovered JSON path or null>",
-  "source_command": "<for auto-discovered source: the selected JSON's command field — 'review' or 'audit-drift'; null otherwise>",
-  "source_token": "<for auto-discovered source: filename <TS> token of the selected JSON; null otherwise>",
+  "source_path": "<scope path, --from-file path, or the ONE discovered file this log walks; null for whole-repo>",
+  "source_command": "<for auto-discovered source: the discovered file's top-level command — 'review' or 'audit-drift' — or null for an external return, which carries none; null otherwise>",
+  "source_token": "<for auto-discovered source: the discovered file's filename <TS> token; null otherwise>",
   "latest_apply_token": "<for auto-discovered source: most-recent apply-*.json filename token in the same .orbit-runs/, or null if no apply JSON exists; null for other sources>",
-  "tie_break_rationale": "<for auto-discovered source: optional string describing how a TS-token tie-break was resolved; absent (or null) otherwise>",
   "external_reviewer": "<from --from-file's Reviewer field, if applicable, else null>",
   "walk_mode": "per_finding" | "batch",
   "walk_mode_source": "flag" | "verbal" | "command-shape-interruption",
@@ -610,6 +603,9 @@ The schema below documents per-command extensions ADDED to that spine (\`source\
         "kept": [{ "path": "<path>", "why": "<why it keeps a retired string>" }]
       },
       "ripple_miss_of": { "walk": "<earlier walk's filename token>", "title": "<that entry's title>", "file": "<that entry's file>", "kind": "scope" | "query" | "judgement" },
+      "remedy": "repair" | "descope" | "redesign",
+      "routed_to": "<a REDESIGN's route: orbit/explore/<new-name>/, or orbit/changes/<name>/explore.md on an active change>",
+      "disagreement": { "with": { "pass": "<the other pass's filename token>", "title": "<its finding's title>", "file": "<its finding's file>" }, "test": "<the test as run>", "observed": "<its output or derivation>" },
       "outcome": "resolved" | "stale" | "deferred" | "escalated"
     }
   ],
@@ -624,9 +620,9 @@ The schema below documents per-command extensions ADDED to that spine (\`source\
 
 ## Example payloads
 
-Three payload files the walk writes, ONE PER PROVENANCE, because the fields that record where the findings came from cannot appear together: an auto-discovered change-scoped walk that switched to batch mid-walk (resolved against an active change, or through the archived fallback), a bare whole-repo marker walk, and a \`--from-file\` walk of an architecture review. Each is real JSON carrying no engine-owned key, and each is tagged with the scopes its own values describe — a bare whole-repo walk must carry \`remaining_markers_in_scope\`, which drives its recommendation. A test submits each block, unchanged, through the write gate in every scope its tag names, and checks that together they carry every key the schema documents (\`orbit-emit-composition\`'s \`Payload schema references are proven by execution\`). The worked-example snippets further down are ILLUSTRATIONS of single fields, not payloads: they omit \`command\` so the test never reads them as schema blocks.
+Five payload files the walk writes, ONE PER PROVENANCE, because the fields that record where the findings came from cannot appear together: a discovered internal review pass on an active change, walked in a mode that switched to batch mid-walk; the log for the external half of the same pair, written after it (a converged finding, a disagreement, an essential redesign — an active change only, because that route returns the change to exploration); a discovered audit-drift emit (an active change, or an archived one through the archived fallback); a bare whole-repo marker walk; and a \`--from-file\` walk of an architecture review. Each is real JSON carrying no engine-owned key, and each is tagged with the scopes its own values describe — a bare whole-repo walk must carry \`remaining_markers_in_scope\`, which drives its recommendation. A test submits each block, unchanged, through the write gate in every scope its tag names, and checks that together they carry every key the schema documents (\`orbit-emit-composition\`'s \`Payload schema references are proven by execution\`). The worked-example snippets further down are ILLUSTRATIONS of single fields, not payloads: they omit \`command\` so the test never reads them as schema blocks.
 
-\`\`\`json example change archived
+\`\`\`json example change
 {
   "final_assessment": "Two of two resolved: the CRITICAL by a reordered step, the WARNING by the ratified direction B.",
   "source": "auto-discovered",
@@ -634,7 +630,6 @@ Three payload files the walk writes, ONE PER PROVENANCE, because the fields that
   "source_command": "review",
   "source_token": "2026-10-02T09-00-00Z",
   "latest_apply_token": null,
-  "tie_break_rationale": null,
   "external_reviewer": null,
   "walk_mode": "batch",
   "walk_mode_source": "command-shape-interruption",
@@ -655,6 +650,7 @@ Three payload files the walk writes, ONE PER PROVENANCE, because the fields that
       "evidence": "re-read design.md steps 3-4: the delete preceded the check",
       "ripple_cascade": { "applied": ["orbit/changes/add-detail-flag/tasks.md"], "flagged_not_applied": [] },
       "sweep": { "retired": ["delete the staging directory, then verify the copy"], "introduced": [], "searched": ["staging directory", "verify the copy"], "scope": [], "kept": [] },
+      "remedy": "repair",
       "outcome": "resolved"
     },
     {
@@ -674,10 +670,139 @@ Three payload files the walk writes, ONE PER PROVENANCE, because the fields that
       },
       "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
       "sweep": { "retired": [], "introduced": [], "searched": ["generated surface", "update --force"], "scope": [], "kept": [] },
+      "remedy": "repair",
       "outcome": "resolved"
     }
   ],
   "delegation_directive": "batch the rest",
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "model": "claude-opus-5-5"
+}
+\`\`\`
+
+\`\`\`json example change
+{
+  "final_assessment": "One stale as converged with the fresh half's log, one repaired after a disagreement test, one escalated as an essential redesign; this pass stays outstanding.",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/add-detail-flag/.orbit-runs/external-system-2026-10-02T10-00-00Z.md",
+  "source_command": null,
+  "source_token": "2026-10-02T10-00-00Z",
+  "latest_apply_token": "2026-10-02T08-00-00Z",
+  "external_reviewer": "GPT-6 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": { "critical": 1, "warning": 2, "suggestion": 0 },
+  "pushback_verification": "All three verified; one converged with the fresh half, one settled by a test.",
+  "resolution_summary": { "resolved": 1, "stale_suppressed": 1, "deferred": 0, "escalated": 1 },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The detail flag is not documented in the command help",
+      "marker_source": "external",
+      "file": "src/cli/detail.ts",
+      "line": 12,
+      "classification": "stale",
+      "action": "converged with the fresh half's finding, walked in its log",
+      "evidence": "resolved in address-reviews-2026-10-02T11-00-00Z (the earlier pass's log)",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The parser accepts an empty detail value",
+      "marker_source": "external",
+      "file": "src/cli/detail.ts",
+      "line": 30,
+      "classification": "trivial_fix",
+      "action": "refused the empty value",
+      "disagreement": {
+        "with": { "pass": "2026-10-02T09-30-00Z", "title": "The parser refuses an empty detail value", "file": "src/cli/detail.ts" },
+        "test": "node bin/cli.js --detail ''",
+        "observed": "exit 0 with an empty detail, so the external claim holds and the fresh claim is stale"
+      },
+      "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+      "sweep": { "retired": [], "introduced": [], "searched": ["--detail", "empty value"], "scope": [], "kept": [] },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "The cache the flag reads has no invalidation rule",
+      "marker_source": "external",
+      "file": "design.md",
+      "line": 55,
+      "classification": "unresolvable",
+      "action": "escalated: invalidation is mechanism nobody has reviewed, and the change cannot ship without it",
+      "reproduction_rerun": "unreproduced",
+      "remedy": "redesign",
+      "routed_to": "orbit/changes/add-detail-flag/explore.md",
+      "outcome": "escalated"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "model": "claude-opus-5-5"
+}
+\`\`\`
+
+\`\`\`json example change archived
+{
+  "final_assessment": "Three drifts resolved: one stale vocabulary line repaired, one requirement the change should not carry descoped, one mechanism routed to a new exploration.",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/add-detail-flag/.orbit-runs/audit-drift-2026-10-02T12-00-00Z.json",
+  "source_command": "audit-drift",
+  "source_token": "2026-10-02T12-00-00Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": { "critical": 0, "warning": 3, "suggestion": 0 },
+  "pushback_verification": "All three drifts verified against current state; none stale.",
+  "resolution_summary": { "resolved": 3, "stale_suppressed": 0, "deferred": 0, "escalated": 0 },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "README still names the retired summary flag",
+      "marker_source": "audit-drift",
+      "file": "README.md",
+      "line": 8,
+      "classification": "trivial_fix",
+      "action": "renamed the flag",
+      "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+      "sweep": { "retired": ["--summary-only"], "introduced": [], "searched": ["summary-only"], "scope": [], "kept": [] },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The change specifies a color theme no stage asked for",
+      "marker_source": "audit-drift",
+      "file": "proposal.md",
+      "line": 20,
+      "classification": "decision_required",
+      "action": "removed the color-theme requirement, as ratified",
+      "ratified_via": "chat",
+      "resolution": "drop the theme; it is not this change's",
+      "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+      "sweep": { "retired": ["detail output uses the color theme"], "introduced": [], "searched": ["color theme"], "scope": [], "kept": [] },
+      "remedy": "descope",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The flag's cache warm-up is specified without a review",
+      "marker_source": "audit-drift",
+      "file": "design.md",
+      "line": 70,
+      "classification": "decision_required",
+      "action": "removed the warm-up from the change and routed it to a new exploration, as ratified",
+      "ratified_via": "chat",
+      "resolution": "the flag works without warm-up; explore it on its own",
+      "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+      "sweep": { "retired": ["warm the cache before the first detail read"], "introduced": [], "searched": ["warm-up", "warm the cache"], "scope": [], "kept": [] },
+      "remedy": "redesign",
+      "routed_to": "orbit/explore/detail-cache-warmup/",
+      "outcome": "resolved"
+    }
+  ],
   "remaining_markers_in_scope": 0,
   "persisted_escalations": [],
   "model": "claude-opus-5-5"
@@ -708,6 +833,7 @@ Three payload files the walk writes, ONE PER PROVENANCE, because the fields that
       "action": "five → four, with the explicit list added",
       "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
       "sweep": { "retired": ["the five supported formats"], "introduced": [], "searched": ["five", "formats"], "scope": [], "kept": [] },
+      "remedy": "repair",
       "outcome": "resolved"
     }
   ],
@@ -743,6 +869,7 @@ Three payload files the walk writes, ONE PER PROVENANCE, because the fields that
       "resolution": "s5 does not need s4; drop its edge",
       "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
       "sweep": { "retired": [], "introduced": [], "searched": ["Depends-on", "s4"], "scope": [], "kept": [] },
+      "remedy": "repair",
       "outcome": "resolved"
     }
   ],
@@ -765,9 +892,9 @@ The v2 shape is a **structural change** from v1, not a rename. Readers handling 
 
 ## Field notes
 
-- **\`source\`** distinguishes invocation paths: \`whole-repo\` for default scan, \`scope\` for positional \`<scope>\` argument, \`from-file\` for \`--from-file <path>\`, \`auto-discovered\` for the auto-discovery fallback (change-name positional + markers absent + candidate JSON found in \`.orbit-runs/\` — per the \`Auto-discovery resolution log captures audit-trail evidence\` scenario in the orbit-address-reviews spec).
-- **\`source_path\`** carries the scope, \`--from-file\` path, OR auto-discovered JSON path; \`null\` for \`whole-repo\`. For \`auto-discovered\` source, this is the repo-relative path to the selected JSON (e.g., \`orbit/changes/<name>/.orbit-runs/review-system-2026-05-27T00-43-10Z.json\`).
-- **\`source_command\`**, **\`source_token\`**, **\`latest_apply_token\`**, **\`tie_break_rationale\`** — the auto-discovery audit-trail fields. Emitted ONLY when \`source: "auto-discovered"\`; \`null\` (or absent for \`tie_break_rationale\`) for other sources. Together they document the discovery decision: \`source_command\` = the selected JSON's top-level \`command\` value (\`"review"\` or \`"audit-drift"\`); \`source_token\` = the selected JSON's filename \`<TS>\` token (the winner of the recency comparison); \`latest_apply_token\` = the most-recent \`apply-*.json\` filename token in the same \`.orbit-runs/\` (existence-checked at discovery time; supports the D-no-stale-detection design choice — orbit doesn't refuse to walk a JSON older than the latest apply, but the resolution log records both timestamps so downstream auditors can assess staleness); \`tie_break_rationale\` = optional explanation for when the recency comparison invoked the lexicographic-sort tie-break.
+- **\`source\`** distinguishes invocation paths: \`whole-repo\` for default scan, \`scope\` for positional \`<scope>\` argument (and the markers' log of a discovering walk), \`from-file\` for \`--from-file <path>\`, \`auto-discovered\` for a source the walk's discovery found (an outstanding pass or an unwalked audit-drift emit). Discovery's rule: \`orbit-address-reviews\`' \`Address-reviews command available\`.
+- **\`source_path\`** carries the scope, the \`--from-file\` path, OR the ONE discovered file this log walks; \`null\` for \`whole-repo\`. A walk that discovered several sources writes one log per source, each naming its own (\`orbit-address-reviews\`' \`One invocation writes one log per discovered source\`).
+- **\`source_command\`**, **\`source_token\`**, **\`latest_apply_token\`** — the discovery audit-trail fields. Emitted ONLY when \`source: "auto-discovered"\`; \`null\` for other sources. \`source_command\` = the discovered file's top-level \`command\` value (\`"review"\` or \`"audit-drift"\`), or \`null\` for an external return, which carries none; \`source_token\` = its filename \`<TS>\` token; \`latest_apply_token\` = the most-recent \`apply-*.json\` filename token in the same \`.orbit-runs/\` (orbit doesn't refuse to walk a pass older than the latest apply, but the log records both timestamps so downstream auditors can assess staleness). The retired recency rule's tie-break field is no longer written; the payload table still accepts it, and logs written before rc08b carry it.
 - **\`external_reviewer\`** parsed from the \`**Reviewer**:\` field in the \`--from-file\` input; lets downstream tools track which AI's findings have been ingested. Only populated when \`marker_source\` is \`external\` (external-review markdown input); set to \`null\` for inline / internal-review / audit-drift sources (those have no human-readable reviewer-name field).
 - **\`input_findings_summary\`** counts findings by severity at the input boundary (before pushback suppression). Total findings always = sum of \`resolved\` + \`stale_suppressed\` + \`deferred\` + \`escalated\` in \`resolution_summary\`.
 - **\`pushback_verification\`** is a short prose note (1-2 sentences) summarizing pushback work — "all 9 findings verified against current state; 0 stale suppressions" or "9 findings; 3 stale-suppressed with commit evidence."
@@ -789,6 +916,8 @@ The v2 shape is a **structural change** from v1, not a rename. Readers handling 
   - **Mode-suppression reason** (1 code): \`--no-cascade suppressed\`. Fires uniformly for ALL ripple-flagged files when \`--no-cascade\` was set, regardless of IN/OUT classification.
 - **\`sweep\`** (per-resolution, on \`resolved\` entries — rc08a): the five arrays \`retired\` / \`introduced\` / \`searched\` / \`scope\` / \`kept\` composed at Step 3d.5. Shape owned by \`orbit-address-reviews\`' \`A resolved walk entry records its sweep evidence\`; checks owned by \`orbit-emit-composition\`'s \`The walk write gate checks sweep evidence\`. A log written before rc08a carries none.
 - **\`ripple_miss_of\`** (per-resolution, optional — rc08a): \`{walk, title, file, kind}\` naming the earlier walk entry that missed this finding, written at triage (Step 2). Shape owned by \`orbit-address-reviews\`' \`A ripple miss is attributed by the walk that finds it\`; the pointer check by \`orbit-emit-composition\`'s \`A ripple-miss pointer resolves and is counted\`.
+- **\`remedy\`**, **\`routed_to\`** (per-resolution — rc08b): R-crc-6's lane — what the resolution DID, beside the process \`lane\` — and a REDESIGN's route. Values, dispositions and routes owned by \`orbit-address-reviews\`' \`A walk entry records its remedy, and a REDESIGN leaves the walk\`; recorded, never checked at the write gate. A log written before rc08b carries neither.
+- **\`disagreement\`** (per-resolution, optional — rc08b): \`{with: {pass, title, file}, test, observed}\` on the entry in the LATER pass's log, when the halves of a pair contradicted each other and one test settled it. Shape and rule owned by \`orbit-address-reviews\`' \`A disagreement between the halves of a pair is settled by one test\`; recorded, never checked.
 - **\`ripple_misses\`** (top-level, engine-computed — rc08a): the count of this walk's resolutions carrying \`ripple_miss_of\`; never supplied, per \`orbit-emit-composition\`'s \`A ripple-miss pointer resolves and is counted\`.
 
 ## Worked-example JSON snippets
@@ -875,7 +1004,7 @@ The v2 shape is a **structural change** from v1, not a rename. Readers handling 
 export function getAddressReviewsSkillTemplate(): SkillTemplate {
   return {
     name: 'orbit-address-reviews',
-    description: "Resolve `@review:` markers anywhere in the repo (or review findings via `--from-file` markdown / JSON, or auto-discovered internal review/audit-drift JSON when invoked with a change name and no markers) by walking each through pushback → classify → resolve-per-lane → ripple-cascade → remove-marker (obvious-fix findings previewed at triage and applied without prompts; decision-lane findings briefed in prose and ratified by chat directive or an optional closure prompt). Walk-mode (per-finding) is the default; `--batch` opts in. Cascade-by-default auto-applies ripple edits to IN-set files (everything outside the four lifecycle-invariant OUT categories: audit trail, baseline specs, cross-change/archive dirs, safe-exclusions); `--no-cascade` opts out. Use after `/orbit:review` writes findings to `.orbit-runs/` (auto-discovered; no `--mark` pre-step needed), after `/orbit:review --as <mode> --reviewer external` returns external findings, after `/orbit:audit-drift` writes drift findings, or any time the repo has accumulated `@review:` annotations.",
+    description: "Resolve `@review:` markers anywhere in the repo (or review findings via `--from-file` markdown / JSON, or, aimed at a change, every outstanding pass its reviewed gates report — internal JSON and external returns alike — plus its unwalked audit-drift emits) by walking each through pushback → classify → resolve-per-lane → ripple-cascade → remove-marker (obvious-fix findings previewed at triage and applied without prompts; decision-lane findings briefed in prose and ratified by chat directive or an optional closure prompt). Walk-mode (per-finding) is the default; `--batch` opts in. Cascade-by-default auto-applies ripple edits to IN-set files (everything outside the four lifecycle-invariant OUT categories: audit trail, baseline specs, cross-change/archive dirs, safe-exclusions); `--no-cascade` opts out. Use after `/orbit:review` writes findings to `.orbit-runs/` (discovered from the gate's outstanding passes; no `--mark` pre-step needed), after `/orbit:review --as <mode> --reviewer external` returns external findings, after `/orbit:audit-drift` writes drift findings, or any time the repo has accumulated `@review:` annotations.",
     instructions: `Resolve \`@review:\` markers across the repo (or external-review findings from a file) with pushback discipline. The lifecycle: **discover → triage → walk → report**, where each walked finding completes its inner cycle (pushback → classify → fix → ripple-cascade → remove-marker) in walk-mode by default. Cascade-by-default auto-applies parallel edits to ripple-flagged IN-set files. Markers are removed from their source files on resolution (the marker-removal invariant) so they don't leak into canonical artifacts.
 
 **Generates resolutions; does not generate findings.** This is the counterpart to \`/orbit:review\`. Primary use case: close the cross-AI review cycle by ingesting external-AI findings via \`--from-file\`. Secondary use case: walk repo-scanned inline \`@review:\` markers with structured pushback.
@@ -895,13 +1024,29 @@ The four disciplines from \`orbit-conventions\`, embedded per body; detail lives
 
 ### 1. Discover (or ingest)
 
-**Discovery priority order**: (1) \`@review:\` markers in scope — always tried first; (2) if the positional resolves to a change name AND no markers found AND no \`--from-file\`: auto-discover the most-recent internal review/audit-drift JSON in the change's \`.orbit-runs/\` by filename \`<TS>\` token — review and audit-drift compete on ONE recency axis, no class preference (tie-breaks + full scope-resolution rules in \`references/resolution-detail.md\`); (3) neither → clean "no findings" exit.
+**Discovery** decides which sources this invocation walks. The fence below is a CHECKED MIRROR of \`orbit-address-reviews\`' \`Address-reviews command available\`, its owner. An installed skill has no specs to point at, so the copy exists here; a parity test holds it byte-equal to the owner's fence. Never edit it here.
 
-**Explicit \`--from-file <path>\` is always exclusive**: marker grep and auto-discovery do NOT run — the file is the ONLY input source; the positional (if any) only resolves where the emit lands.
+\`\`\`
+DISCOVERY — rows tested in order, first match wins:
+1 --from-file <path>, with or without a positional: the file ONLY; no marker grep, no trail discovery, no openPair stop; the positional, if any, resolves only where the log lands.
+2 no positional, exactly one active change (per orbit list --json): say "resolved to the single active change <name>; markers outside it are not scanned", then re-enter these rows as a positional naming that change.
+3 no positional, zero or several active changes: the whole-repo @review: marker scan; several are named in the header so the user can aim the walk.
+4 active change, a reviewed gate neither blocked nor superseded reports openPair: stop before triage; name the missing member and the gate's canonical next command; walk nothing; write no log.
+5 active change: the UNION of @review: markers in the change directory, every unresolvedPasses entry of each reviewed gate neither blocked nor superseded (internal review-<mode>-*.json and external external-<mode>-*.md alike), and every audit-drift-*.json in its .orbit-runs/ whose basename no address-reviews-*.json there names in source_path.
+6 archived change: markers in the archived directory + its unwalked audit-drift-*.json by the same basename rule; its review passes are reached by --from-file, and the header says so.
+7 a positional resolving to no change (a path or pattern): markers in that scope only.
+AFTER the matched row: when it discovered nothing, print "No @review: markers and no outstanding passes in scope. Nothing to walk.", then list each audit-drift-*.json in scope that a log already names as "walked before; reach by --from-file <path>", and exit clean.
+\`\`\`
 
-**Default — whole-repo scan** (no positional, no \`--from-file\`): \`grep -rn "@review:"\` with the safe exclusions \`.git/\`, \`node_modules/\`, \`dist/\`, \`build/\`. Auto-discovery never fires for bare invocation (no \`.orbit-runs/\` anchor).
+**The outstanding set is the gate's, never a second rule here.** On an active change, read \`orbit status --change <name> --json\`. From each \`gates[]\` row with \`kind: "reviewed"\` whose \`state\` is not \`blocked\` and that does not carry \`superseded: true\`, take its \`unresolvedPasses\` (each \`{token, file, mode, source}\`, \`file\` repo-relative, oldest first) and its \`openPair\` (\`{missing}\`, present only when the pair is open). Row 4 reads \`openPair\`, and row 5 reads \`unresolvedPasses\`. Only a pass carrying a CRITICAL or WARNING is ever listed, so a suggestion-only pass is reached by \`--from-file\`, as the review emit's own next line names it. audit-drift is not a gate pass, so row 5 finds it by the basename rule.
 
-**Positional \`<scope>\`** resolves active change → archived change (lexicographically-latest date on collision) → path/pattern fallback; \`--mark\` on the producing review is a stylistic choice, never a prerequisite — auto-discovery finds the just-written review JSON without it. (Details: \`references/resolution-detail.md\`.)
+**A marker that restates a discovered finding** — at that finding's \`file\`, its text beginning with the finding's title (the form \`/orbit:review --mark\` writes) — is walked AS that finding, in its pass's log, and removed at Step 3e. The markers' log omits it, so no finding is walked twice. \`--mark\` stays a stylistic choice, never a prerequisite.
+
+**Default — whole-repo scan** (row 3): \`grep -rn "@review:"\` with the safe exclusions \`.git/\`, \`node_modules/\`, \`dist/\`, \`build/\`. No trail is read.
+
+**Positional \`<scope>\`** resolves active change → archived change (lexicographically-latest date on collision) → path/pattern fallback. (Details: \`references/resolution-detail.md\`.)
+
+**Every discovered pass and audit-drift emit walks the \`--from-file\` ingest path below**, exactly as if its path had been passed, and gets its own log (Step 6).
 
 **\`--from-file\` ingest** auto-detects format by content sniff (content only — never extension): leading \`{\` → internal JSON, accepting \`command: "review"\` or \`"audit-drift"\` only (\`"address-reviews"\` rejected on purpose — cycle prevention; contract at \`references/internal-findings-format.md\`); leading \`# External Review:\` → external markdown (\`references/external-findings-format.md\`); neither → clean format-mismatch error naming both. Each finding becomes a virtual marker (\`severity\` / \`title\` / \`file:line\` / \`description\` / \`reproduction\` when present / \`source\` tagged \`external\` / \`internal-review\` / \`audit-drift\`) walking the same lifecycle as inline markers, except Step 3e marker-removal is a no-op — the source file is an audit artifact that travels with the change into archive.
 
@@ -924,6 +1069,12 @@ Found 12 markers in scope:
 Mark external-sourced entries explicitly (\`(external)\` prefix). **Blocks come first**: when the source carries lifecycle blocks (markdown \`## Blocks\` items; the review JSON's \`blocks[]\`), list them at the TOP of the triage table under a \`Blocks (not walked)\` heading — one line each, verbatim — before any numbered finding; they are never virtual markers, never walked, and never counted (per \`orbit-conventions\`' Severity ladder; the stop is the human's). A CRITICAL marker that carries no reproduction is tagged \`unreproduced\` in its triage line. The triage OPENS with the **obvious-fix lane preview** (D-arc Stage D4): every finding provisionally headed for the obvious-fix lane is listed compactly — finding + its one-line resolution — BEFORE any fix lands, so the user can pull any item into the decision lane with a word ("discuss the import one"). The preview derives from a PROVISIONAL classification (per-finding pushback has not yet run); walk-time pushback may reclassify, and a reclassified item is announced before its fix lands. Scoping (walk all — the default — / a subset / only-critical / cancel) is settled by the user's response to the preview; an \`AskUserQuestion\` is optional closure when the response doesn't settle it.
 
 **Ripple-miss attribution** (a change-scoped walk): read the change's EARLIER walk logs (\`address-reviews-*.json\` on its trail) against each finding. Where a finding sits at a site an earlier \`resolved\` entry's fix should have reached, that finding's resolution — once it resolves — carries \`ripple_miss_of: {walk, title, file, kind}\`, naming the earlier entry with \`title\` and \`file\` copied from that log, never retyped, and \`kind\` one of: \`scope\` (the site lay outside that entry's check scope), \`query\` (inside it, but matched by none of its \`retired\` or \`searched\` strings), or \`judgement\` (matched, and judged unaffected). An entry written before sweep records existed has no \`retired\`/\`searched\`; read its scope as the change directory (on a change-scoped walk), its \`file\` and its \`ripple_cascade.applied\`. Attribution is your judgement and optional: a finding no earlier entry touched carries none. Shape and rule: \`orbit-address-reviews\`' \`A ripple miss is attributed by the walk that finds it\`.
+
+**Several sources, one triage.** When discovery yields more than one source, triage runs ONCE across all of them, grouped by source: passes in the engine's token order, oldest first, then the markers. Mark each finding that converges with a finding of another discovered pass (same site, same claim) as found by both. The split (found by both / one pass only / contradictory) is a triage rendering and is never stored as a merged record. A converged finding is walked in the log of the EARLIER pass. In each later pass's log it takes the earlier entry's disposition: \`stale\` with evidence naming the earlier log's token when the earlier entry is \`resolved\` or \`stale\`, and the same \`deferred\` or \`escalated\` disposition (and \`routed_to\`, when present) when the earlier entry stays open. A later pass is never closed by a finding that has not closed. Shape and rule: \`orbit-address-reviews\`' \`One invocation writes one log per discovered source\`.
+
+**A rediscovered pass** (its latest log left an entry \`deferred\` or \`escalated\`) is presented with that log's dispositions. Its new log must name every substantive finding of the pass, because the gate reads only the latest log. So each finding the earlier log closed is re-checked by pushback and recorded \`stale\`, with evidence naming the earlier log's token; only the open findings are walked again. Nothing is copied forward: a copied \`resolved\` entry would owe a fresh \`sweep\` the write gate checks against today's files.
+
+**A disagreement** — two discovered passes of one blind pair making CONTRADICTORY claims about one site, or about two sites whose premises contradict — is settled by ONE cheap empirical test (a command run, or a constructed case derived against the current artifact), run AT TRIAGE before either pass's log is written. Record it on the entry in the LATER pass's log as \`disagreement: {with, test, observed}\`: \`with\` is \`{pass, title, file}\` naming the other pass's token and its finding, \`test\` the test as run, \`observed\` its output or derivation. A claim the test refutes is \`stale\` with the test's output as its evidence, in its OWN pass's log; a claim it upholds is walked like any finding. When the test cannot be run, \`observed\` says so and the finding enters the decision lane, so the user decides. A claim pushback finds stale at HEAD is not a disagreement, and neither is a difference in the two passes' forward \`direction\` (that is the readiness record's). Rule: \`orbit-address-reviews\`' \`A disagreement between the halves of a pair is settled by one test\`.
 
 ### 3. Walk each marker
 
@@ -953,6 +1104,10 @@ Apply heuristics in order:
 2. **trivial fix** — single-line edit or a few-line localized edit with one obvious correct answer (no design implication, no scope question, no ambiguity in intent). Proceed to 3c without \`AskUserQuestion\`. Step 3b.5 does NOT fire (no decision needed); Step 3d ripple cascade DOES fire after the fix lands.
 3. **decision required** — resolution requires ambiguity resolution, a design choice between defensible alternatives, a scope decision, or has implications beyond the immediate location. Hand off to Step 3b.5 (the decision lane): construct 2–4 concrete options FOR THE PROSE BRIEFING (detection supplies them when the recommendation is disjunctive; otherwise derive them from context) — no prompt fires here; the \`AskUserQuestion\` exists only as post-discussion closure per 3b.5. Step 3d cascade fires after the ratified fix.
 4. **unresolvable** — resolution needs information not currently available (deferred decision, future capability, blocked on external input). Default: file as a task in \`tasks.md\` in Step 3c (action "filed as task"); Step 3d cascade does NOT fire (no fix was applied; no ripples); Step 3e marker-removal proceeds normally. Alternatives via **AskUserQuestion**: convert to \`@todo: <content>\` or escalate to \`@review(escalated): <content with explanation>\` — in both alternative cases, the marker is **transformed** in place (Step 3e) rather than removed; cascade still does not fire.
+
+**Then the remedy** — R-crc-6's three lanes, recorded per entry as \`remedy\`, a field separate from the process \`lane\` above (which says how a finding was CONDUCTED; \`remedy\` says what its resolution DID). Decide it by one test — does closing the finding require mechanism nobody has reviewed? — never by the finding's size. \`repair\`: the right thing is local, fixed here. \`descope\`: the change was doing something it should not, so it is removed (the removal's sweep rides \`sweep\`). \`redesign\`: closing it needs unreviewed mechanism. The values, dispositions and routes are \`orbit-address-reviews\`' \`A walk entry records its remedy, and a REDESIGN leaves the walk\` (a four-row table). Every \`resolved\` entry carries \`remedy\`, and so does every \`escalated\` entry routed out; a \`stale\` entry, and an unrouted \`deferred\` or \`escalated\` one, carries no \`remedy\`.
+
+**A REDESIGN is never closed in place.** If the unreviewed mechanism can leave the change (separable), remove it from the change, record the entry \`resolved\` with \`routed_to: "orbit/explore/<new-name>/"\`, and sweep the removal. If it cannot (essential), the entry is \`escalated\`, its pass stays unresolved and the gate holds; \`routed_to\` is \`orbit/changes/<name>/explore.md\` on an ACTIVE change, and on any other scope (an archived change, a project-wide or architecture walk) a new exploration, \`orbit/explore/<new-name>/\`. The report names the route — \`/orbit:explore <new-name>\`, or \`/orbit:explore <name>\` on an active change — and the walk invokes nothing (no-chaining). Where that command lands is the explore re-entry table's to decide; promise no resume.
 
 #### 3b.5. The decision lane: present → discuss → ratify (classify == "decision required")
 
@@ -1035,7 +1190,7 @@ Resolution log is NOT a 3-dimension scorecard. Output structure:
 \`\`\`
 ## Address-reviews report
 
-Source: <whole-repo | scope <path> | --from-file <path> | auto-discovered <path>>
+Source: <whole-repo | scope <path> | --from-file <path> | auto-discovered <path> — one report section per log when the walk wrote several>
 Markers found: <N>
 Markers walked: <M> (subset specified: <yes/no>)
 
@@ -1076,11 +1231,13 @@ Markers walked: <M> (subset specified: <yes/no>)
 Suggested next: re-run /orbit:review --as proposal to confirm clean baseline.
 \`\`\`
 
-The final-assessment line summarizes remaining-in-scope markers (0 if clean) plus any deliberately persisted escalations, and suggests the next command.
+The final-assessment line summarizes remaining-in-scope markers (0 if clean) plus any deliberately persisted escalations, and names any REDESIGN's route (\`/orbit:explore <name>\`) without invoking it. What runs next is the engine's eligibility line, read from \`orbit status --change <name> --json\`.
 
 ### 6. Persist the run summary
 
-Compose the payload — narrative + per-command extension fields ONLY; \`references/run-summary-schema.md\` lists what the AI supplies. The ENGINE owns the spine, the iteration ordinal, \`next_recommended\` composition, filename + collision handling, and the write gate. Write the payload to a temp file and invoke:
+**ONE resolution log PER SOURCE.** A walk that discovered more than one source writes one log per discovered pass, one per discovered audit-drift emit, and one for the markers when any were found. Each carries its own single \`source_path\` (the markers' log carries the scope, \`source: "scope"\`), so the gate's per-pass match reads every log unchanged. The logs go in token order, oldest first, then the markers. In walk mode, write each source's log when that source's findings are walked, before the next source begins. In batch mode the invocation resolves every source's findings, runs its ONE aggregated cascade, then writes every source's log, in the same order; an interrupted batch writes no log for a source whose log was not yet written, and a mid-walk switch to batch applies only to the sources whose logs are not yet written. An interrupted walk leaves the logs it completed on the trail; the sources whose logs were not written stay outstanding, and the next invocation discovers them again. A discovered source's log carries \`source: "auto-discovered"\`, \`source_path\` (that one file), \`source_command\` (its top-level \`command\`, or \`null\` for an external return), \`source_token\` and \`latest_apply_token\`; no \`tie_break_rationale\` is written, because nothing is selected by recency.
+
+Compose each payload — narrative + per-command extension fields ONLY; \`references/run-summary-schema.md\` lists what the AI supplies. The ENGINE owns the spine, the iteration ordinal, \`next_recommended\` composition, filename + collision handling, and the write gate. Write the payload to a temp file and invoke:
 
 \`\`\`bash
 orbit emit address-reviews --change <name> --payload <payload-file>
@@ -1139,7 +1296,7 @@ Every no-input, malformed-input, and unsupported-format case exits clean with a 
       },
     ],
     license: 'MIT',
-    compatibility: "Requires orbit CLI. Ingests findings via `--from-file` (external-review markdown OR internal `review-<mode>-*.json` OR `audit-drift-*.json`) OR via auto-discovery from `.orbit-runs/` when invoked with a change-name positional and no inline markers found. Default behaviors: walk-mode (per-finding); cascade-on (auto-applies ripples to IN-set files). `--batch` opts INTO batch-mode; `--no-cascade` opts OUT of cascade. `--mark` is optional, not prerequisite.",
+    compatibility: "Requires orbit CLI. Ingests findings via `--from-file` (external-review markdown OR internal `review-<mode>-*.json` OR `audit-drift-*.json`) OR via discovery on a change: its inline markers, every outstanding pass `orbit status --change <name> --json` lists on its reviewed gates, and its unwalked audit-drift emits, one log per source. Default behaviors: walk-mode (per-finding); cascade-on (auto-applies ripples to IN-set files). `--batch` opts INTO batch-mode; `--no-cascade` opts OUT of cascade. `--mark` is optional, not prerequisite.",
     metadata: { author: 'openspec', version: '0.1', capability: 'orbit-address-reviews' },
   };
 }
@@ -1150,7 +1307,7 @@ export function getOrbitAddressReviewsCommandTemplate(): CommandTemplate {
     description: 'Resolve @review: markers or review findings with pushback discipline',
     category: 'Workflow',
     tags: ["workflow","review","orbit"],
-    content: `Resolve \`@review:\` markers or review findings (via \`--from-file\` or auto-discovery) by walking each through pushback → classify → fix → ripple-cascade → remove-marker.
+    content: `Resolve \`@review:\` markers or review findings (via \`--from-file\`, or discovered from a change's outstanding passes) by walking each through pushback → classify → fix → ripple-cascade → remove-marker.
 
 This command is a thin launcher: invoke the \`orbit-address-reviews\` skill, passing along any arguments given with the command (e.g., \`/orbit:address-reviews [<change-or-scope>] [--from-file <path>] [--batch] [--no-cascade]\`). The skill carries the complete workflow instructions — upstream openspec behavior plus orbit's additions. Do not improvise the workflow from this file; load the skill.`
   };

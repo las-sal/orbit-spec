@@ -1066,7 +1066,8 @@ describe('rc08a-sweep-evidence: the walk body records its sweep and attributes r
   it('every `json example` carries `sweep` on its resolved entries, with `introduced: []` and `scope: []`', () => {
     const examples = schema.split('## Example payloads')[1].split('## v1 → v2')[0];
     const blocks = [...examples.matchAll(/```json example[^\n]*\n([\s\S]*?)\n```/g)].map(m => JSON.parse(m[1]));
-    expect(blocks.length).toBe(3);
+    // rc08b (recorded act): five provenances — the external half of a pair and a discovered audit-drift emit added.
+    expect(blocks.length).toBe(5);
     for (const b of blocks) {
       for (const r of b.resolutions) {
         if (r.outcome !== 'resolved') continue;

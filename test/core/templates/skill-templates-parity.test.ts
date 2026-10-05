@@ -89,7 +89,9 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   getApplyChangeSkillTemplate: 'b2f2d8bfdc7bfb5283af4cb45d3f82fa6a393ccb0cfaeb332427c088ca956ecd',
   getFfChangeSkillTemplate: 'b4411dbfa4c2fe0c02b5b5137006edf50f993d9187153b21e43de680b3f9b148',
   getSyncSpecsSkillTemplate: 'a9672b720eff36fb30f2229d835fd9a9e4cc88e81f1773bc74aff79247aa9809',
-  getOnboardSkillTemplate: '54c11448f293ffafc95d2e2075d7149e4f18ac94590a90e79f47ac550412034d',
+  // rc08b-walk-routing (2026-10-05, task 3.3): the command-table row's retired "auto-discovers … when invoked
+  // with a change name and no markers found" became the discovery sentence. One re-record, both onboard hashes.
+  getOnboardSkillTemplate: 'd88b6c8c0d345bcb0a4b0d9af87252ad04e417ebcbf3cbdb89d5e492c881ca43',
   getOrbitExploreCommandTemplate: '52892dbd4b5eb72264dc6eb54f8126a09fc903adc1c1654c58e0650df609bfb6',
   getOrbitNewCommandTemplate: '47d97305a2d3abca6eafa8f7ed5fe13fb83ea8ca0b71f007975b217135f5f5aa',
   getOrbitContinueCommandTemplate: 'e1ecd4fffee224e284453be717226824c7567041d7c1676b6b6bca4727e3a9dd',
@@ -164,7 +166,7 @@ const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
   'orbit-archive-change': '4868cb3b0e95631238dd25753dc4a4e3fdf6794151dfa7131d2c8ddb4ffc40d1',
   'orbit-bulk-archive-change': '601dd7c74804c06a9818428f86030c8cef5311a9fc7c59f2dc14e490007a291d',
   'orbit-verify-change': '06080070b8f2dfd4e3053c9143845095d0b80c6efcce286cc46e9de37dfe8ea8', // rc06b-map-readers (2026-10-05): moved with the body's step 6 edit, then again at system walk 2's additions edit (see the function-hash note above)
-  'orbit-onboard': '4b227395bb70c36c643970d821ec8eb245fbfca090accdc38d5b3588f7620fa7',
+  'orbit-onboard': '81e82b887ca070705710f64aaaef1f4efb24134252ee7943f15ebf71c19fa599', // rc08b-walk-routing task 3.3 (see the function-hash note above)
   'orbit-propose': '3d7fbf5611e1c778292635b8245e89ae1c3370b68f2d671a13bfd51af9f035a9', // rc13c, then rc03b: moved with the body (see the function-hash notes above)
   'orbit-architect': 'ad06e7eac6e4177eb5a7e0e07976fee6a956314b561f73ff64200fcff27fa24f', // rc15: moved twice with the body — apply, then the system walk; a third time at the post-archive audit walk (see the function-hash note above)
 };

@@ -273,6 +273,7 @@ describe('deterministic facts', () => {
     expect(clean.emit.iteration).toBe(2);
   });
 
+  // @scenario behaviour orbit-run-summary-emit :: Review-external T0 multi-step recommendation :: Review-external T0 emit has awaiting_findings=true
   it('T0: paste/save/ingest template from prompt_path, awaiting_findings engine-set', () => {
     makeChange('foo');
     const r = composeAndWriteEmit(
@@ -282,9 +283,124 @@ describe('deterministic facts', () => {
       { projectRoot: root }
     );
     expect(r.emit.awaiting_findings).toBe(true);
+    expect(path.basename(r.path)).toMatch(/^review-external-.*\.json$/);
+    expect(r.emit.mode).toBe('proposal');
+    expect(r.emit.prompt_path).toBe('orbit/changes/foo/.orbit-runs/external-prompt-proposal-2026-08-05T10-00-00Z.md');
     const nr = String(r.emit.next_recommended);
     expect(nr.startsWith('Paste ')).toBe(true);
-    expect(nr).toContain('then /orbit:address-reviews foo --from-file');
+    // rc08b (recorded act): the T0 line ends at the save step and names no walk.
+    expect(nr).toContain('and save the response as orbit/changes/foo/.orbit-runs/external-proposal-<TS>.md');
+    expect(nr).not.toContain('/orbit:address-reviews');
+  });
+
+  // @scenario behaviour orbit-run-summary-emit :: Review-external T0 multi-step recommendation :: Review-external T0 recommendation is prose-only
+  it('rc08b: the T0 recommendation leads with prose, never a slash command, and is kept verbatim', () => {
+    // The scenario's reader half (command/args null, the string surfaced in `reason`) belongs to a
+    // downstream status reader; no reader in this repo parses `next_recommended` (the v0.1 bash tool
+    // retired at D3). The emit half is what the engine owns, and is asserted here.
+    makeChange('foo');
+    const r = composeAndWriteEmit(
+      'review-external',
+      { change: 'foo' },
+      { mode: 'proposal', prompt_path: 'orbit/changes/foo/.orbit-runs/external-prompt-proposal-2026-10-05T10-00-00Z.md', target: null, final_assessment: 'packaged', model: null },
+      { projectRoot: root }
+    );
+    const nr = String(r.emit.next_recommended);
+    expect(nr).not.toMatch(/^\s*\/orbit:/);
+    const written = JSON.parse(fs.readFileSync(r.path, 'utf-8'));
+    expect(written.next_recommended).toBe(nr);
+  });
+
+  // @scenario behaviour orbit-run-summary-emit :: Review-external T0 multi-step recommendation :: A clean return is not followed by a walk
+  it('rc08b: a clean return completing a blind pair is followed by the in-context review, not a walk', () => {
+    makeChange('foo', { tasks: '# Tasks\n\n## 1. Group\n\n- [x] 1.1 done\n' });
+    write('orbit/changes/foo/.openspec.yaml', 'schema: spec-driven\nschema_version: 4\n');
+    write(
+      'orbit/changes/foo/.orbit-runs/review-system-2026-10-05T01-00-00Z.json',
+      JSON.stringify({ command: 'review', mode: 'system', reviewer_class: 'fresh', findings: [] })
+    );
+    const t0 = composeAndWriteEmit(
+      'review-external',
+      { change: 'foo' },
+      { mode: 'system', prompt_path: 'orbit/changes/foo/.orbit-runs/external-prompt-system-2026-10-05T01-05-00Z.md', target: null, final_assessment: 'packaged', model: null },
+      { projectRoot: root }
+    );
+    expect(String(t0.emit.next_recommended)).not.toContain('/orbit:address-reviews');
+    write(
+      'orbit/changes/foo/.orbit-runs/external-system-2026-10-05T01-10-00Z.md',
+      '# External Review: foo (iteration 1)\n\n**Reviewer**: M\n\n## CRITICAL\n\nNone.\n\n## WARNING\n\nNone.\n\n## SUGGESTION\n\nNone.\n'
+    );
+    const row = formatChangeStatus(loadChangeContext(root, 'foo')).gates.find(g => g.id === 'review-system')!;
+    expect(row.unresolvedPasses).toEqual([]);
+    expect(row.nextCommand).not.toContain('/orbit:address-reviews');
+    expect(row.nextCommand).toMatch(/^\/orbit:review --as system (?!--fresh|--reviewer)/);
+  });
+
+  // @scenario behaviour orbit-run-summary-emit :: Audit-drift standalone recommendations :: Change-scoped standalone audit-drift with findings recommends address-reviews
+  it('rc08b: change-scoped audit-drift with findings recommends the change-scoped walk, naming no file', () => {
+    makeChange('foo');
+    const r = composeAndWriteEmit('audit-drift', { change: 'foo' }, { final_assessment: '3 drifts.', categories_run: ['1'], findings: [driftFinding('1'), driftFinding('1'), driftFinding('1')], model: null }, { projectRoot: root });
+    expect(r.path).toContain(path.join('orbit', 'changes', 'foo', '.orbit-runs', 'audit-drift-'));
+    expect(r.emit.change).toBe('foo');
+    expect(r.emit.findings_total).toBe(3);
+    expect(String(r.emit.next_recommended)).toMatch(/^\/orbit:address-reviews foo — /);
+    expect(String(r.emit.next_recommended)).not.toContain('--from-file');
+  });
+
+  // @scenario behaviour orbit-run-summary-emit :: Audit-drift standalone recommendations :: Change-scoped clean audit-drift defers to prior workflow recommendation
+  it('rc08b: change-scoped clean audit-drift copies the prior emit\'s recommendation verbatim', () => {
+    makeChange('foo');
+    write(
+      'orbit/changes/foo/.orbit-runs/apply-2026-05-21T10-00-00Z.json',
+      JSON.stringify({ command: 'apply', next_recommended: '/orbit:apply foo — chunk 3 of 5 done' })
+    );
+    const r = composeAndWriteEmit('audit-drift', { change: 'foo' }, { final_assessment: 'drift check clean; deferring to prior workflow state.', categories_run: ['1'], findings: [], model: null }, { projectRoot: root });
+    expect(r.emit.findings_total).toBe(0);
+    expect(r.emit.next_recommended).toBe('/orbit:apply foo — chunk 3 of 5 done');
+    expect(String(r.emit.final_assessment)).toMatch(/drift check clean/);
+  });
+
+  // @scenario behaviour orbit-run-summary-emit :: Audit-drift standalone recommendations :: Project-wide standalone audit-drift with findings
+  it('rc08b: project-wide audit-drift with findings still names --from-file', () => {
+    const r = composeAndWriteEmit('audit-drift', {}, { final_assessment: '2 drifts.', categories_run: ['1'], findings: [driftFinding('1'), driftFinding('1')], model: null }, { projectRoot: root });
+    expect(r.path).toContain(path.join('orbit', '.orbit-runs', 'audit-drift-'));
+    expect(r.emit.change).toBeNull();
+    expect(r.emit.findings_total).toBe(2);
+    expect(String(r.emit.next_recommended)).toMatch(/^\/orbit:address-reviews --from-file /);
+  });
+
+  // @scenario behaviour orbit-run-summary-emit :: Audit-drift standalone recommendations :: Project-wide clean audit-drift (no prior workflow to defer to)
+  it('rc08b: project-wide clean audit-drift reads the fixed sentence', () => {
+    const r = composeAndWriteEmit('audit-drift', {}, { final_assessment: 'project-wide drift check clean.', categories_run: ['1'], findings: [], model: null }, { projectRoot: root });
+    expect(r.emit.change).toBeNull();
+    expect(r.emit.findings_total).toBe(0);
+    expect(r.emit.next_recommended).toBe('No project-wide drifts detected. Run /orbit:audit-drift periodically to catch new drift.');
+  });
+
+  // @scenario behaviour orbit-run-summary-emit :: Audit-drift standalone recommendations :: The payload is the owner's shape
+  it('rc08b: the owner\'s audit-drift payload is accepted, and each foreign field is refused by name', () => {
+    makeChange('foo');
+    const base = { categories_run: ['1', '3', '4'], findings: [], stale_suppressed: [], final_assessment: 'clean.', model: null };
+    expect(() => composeAndWriteEmit('audit-drift', { change: 'foo' }, base, { projectRoot: root })).not.toThrow();
+    for (const k of ['context', 'depth', 'flags', 'categories_skipped', 'findings_summary']) {
+      expect(() => composeAndWriteEmit('audit-drift', { change: 'foo' }, { ...base, [k]: 'x' }, { projectRoot: root }), k).toThrow(new RegExp(k));
+    }
+  });
+
+  // @scenario behaviour orbit-run-summary-emit :: Review-external T0 multi-step recommendation :: The T0 recommendation names no walk
+  it('rc08b: the T0 recommendation ends at the save step and names no walk', () => {
+    makeChange('foo');
+    const r = composeAndWriteEmit(
+      'review-external',
+      { change: 'foo' },
+      { mode: 'system', prompt_path: 'orbit/changes/foo/.orbit-runs/external-prompt-system-2026-10-05T10-00-00Z.md', target: null, final_assessment: 'packaged', model: null },
+      { projectRoot: root }
+    );
+    const nr = String(r.emit.next_recommended);
+    expect(nr).toBe(
+      'Paste orbit/changes/foo/.orbit-runs/external-prompt-system-2026-10-05T10-00-00Z.md into the target AI, and save the response as orbit/changes/foo/.orbit-runs/external-system-<TS>.md'
+    );
+    expect(nr).not.toContain('/orbit:address-reviews');
   });
 
   it('explore: counts computed from the file, maturity grid recommendation, missing-section note', () => {
