@@ -2675,7 +2675,7 @@ the exemption is retired, not re-stated.
 ### Stage rc08-walk-completeness — walks sweep requirements, not examples
 
 Depends-on: rc03c-verification-record
-Complete: [ ]
+Complete: [~] 2026-10-05 (Sal)
 
 **SPLIT 2026-10-05 (Sal) into rc08a + rc08b, under R-crc-9: its sixth preventive application, the fourth
 caught at exploration before anything was proposed.** The heading is kept as the program's record of the
@@ -2771,7 +2771,7 @@ rides rc08b's charter (system walk 2, Sal: B).
 ### Stage rc08b-walk-routing — a walk finds every outstanding pass, and a redesign leaves the walk
 
 Depends-on: rc08a-sweep-evidence
-Complete: [ ]
+Complete: [x] 2026-10-05 (Sal)
 
 Declared 2026-10-05 (Sal) from the rc08 exploration's split (D-rc08-1). It depends on rc08a because both
 edit `orbit-address-reviews` and its walk body. Charter, as rc08's charter states each job, with nothing
@@ -4849,3 +4849,16 @@ says why no-chaining holds. It takes rc08b's system walk 1 redesign (external W1
 ignores passes an earlier slot consumed, which the shipped cadence never reaches and a failed half of
 the new command would. Stage count 31 → <!-- src:stages -->32<!-- /src:stages --> at both marked sites
 (this entry's mark is the third; the previous entry's is unmarked as history).
+
+**2026-10-05 — rc08b-walk-routing RATIFIED; rc08-walk-completeness ENDED (Sal, at the architect offer).** rc08b's exits
+graded MET as written: (1) by test 4.1 against the real engine (discovery yields both passes of one active change; two
+logs, one per `source_path`, empty the gate's list), the "naming the change" half held by the row-2 text test, and
+observed live by system walk 1 except DISCOVERY row 2 — that walk was invoked with the change name, so a bare invocation
+was never seen (task 6.3, closed with the gap noted); (2) on system walk 1's log, every entry carrying `remedy` and the
+routed redesign carrying `routed_to: "orbit/explore/blind-pair-command/"`; (3) on `review-external-2026-10-05T14-14-36Z.json`,
+whose `next_recommended` ends at the save step. Archived through a COMPUTED PASSED gate
+(`archive-2026-10-05T15-14-29Z.json`), readiness ready with five accepted residuals. rc08a's exit (3), measured on this
+cadence as its charter places it, read 4 (0 ripple misses + 4 regressed; two are ripple misses proper), not zero — recorded
+in rc08b's archive; rc08a's mark is unchanged and the miss stands beside it. rc08 takes its ENDED mark through the offer,
+as rc03 and rc06 did: its heading stays as the record and every exit criterion is owned by a child.
+

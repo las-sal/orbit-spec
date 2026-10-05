@@ -209,7 +209,7 @@ file now carries a live mark. Do NOT read this paragraph as the program's full l
 only what rc07 produced. The authoritative list is the program doc's own Open questions section,
 which also carries Q-crc-11, Q-crc-12, Q-crc-20, Q-crc-21, Q-crc-22 and Q-crc-23.
 
-**Eighteen more stages have shipped since, and the program is TWENTY stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b, rc03c, rc07b and rc06a ratified 2026-10-04; rc06b and rc08a ratified 2026-10-05 — rc08a with its exit (3) pending by design on the next stage's cadence; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening).
+**Eighteen more stages have shipped since, and the program is TWENTY-ONE stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b, rc03c, rc07b and rc06a ratified 2026-10-04; rc06b, rc08a and rc08b ratified 2026-10-05 — rc08a's exit (3), pending by design, was measured on rc08b's cadence and read 4, not zero; the split parent rc08 took its ENDED mark the same day; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening).
 
 `rc02c-confirmation-semantics` is ARCHIVED (2026-09-21): **the budget stopped being a target.**
 R-crc-11(h) — effort is RECORDED, never TARGETED — retired `budgetExhausted`, the
@@ -647,7 +647,7 @@ two logs, both the first written under the sweep record (task 5.3 observed); the
 `orbit-engine-gates` sentence rides rc08b. The readiness record accepts six residuals, headlined by rc07's distinction.
 **2761 tests green** (2712 → 2761).
 
-`rc08b-walk-routing` is ARCHIVED (2026-10-05; the second child of the split parent `rc08`): **a walk finds what
+`rc08b-walk-routing` is ARCHIVED and RATIFIED (2026-10-05; the second child of the split parent `rc08`; all three exit criteria graded MET as written, exit (1)'s live observation lacking only the bare invocation): **a walk finds what
 the gate holds, and a redesign leaves the walk.** A reviewed gate's status row carries `unresolvedPasses` and
 `openPair`, `reason` byte-identical, and the unresolved-pass next names no file; the walk discovers from that list
 through a DISCOVERY fence mirrored from `orbit-address-reviews`, writes one log per source, and records `remedy` /
