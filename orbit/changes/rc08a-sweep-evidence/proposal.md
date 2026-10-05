@@ -61,7 +61,9 @@ Three capabilities, at R-crc-1's ceiling, as the stage charter declared.
   attributes ripple misses; the run-summary schema reference documents `sweep` and `ripple_miss_of`
   with `json example` blocks the rc07b round trip executes.
 - `src/core/templates/workflows/review.ts`: the VERIFICATION branch's sweep-scope sentence.
-- `src/core/artifact-graph/trail.ts`: `stripLineSuffix` exported for reuse.
-- Tests: a write-gate suite, the schema-parity and round-trip suites, the template hash pins, and the
-  module pins in `test/core/rc03b-untouched-modules.test.ts`.
+- `src/core/artifact-graph/trail.ts`: `stripLineSuffix` and `normalizeDisposition` exported, unchanged, for
+  reuse.
+- Tests: a write-gate suite, the schema-parity and round-trip suites, the template text suites, and the
+  module pins in `test/core/rc03b-untouched-modules.test.ts`. No template hash pin covers the two edited
+  bodies (measured at apply, tasks 2.3 and 3.2).
 - No migration. No new capability. Archived walk logs are never re-validated.

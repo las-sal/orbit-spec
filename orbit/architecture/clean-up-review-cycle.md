@@ -1303,6 +1303,15 @@ never deleted.
   each owned elsewhere and named on rc04b's readiness record: the gate's fallthrough reason wording
   (`has no fresh pass` for any uncovered non-pair slot — `orbit-engine-gates`) and `orbit fingerprint`'s
   key-order re-serialization of `.openspec.yaml` (`orbit-base-fingerprints`).
+- **Q-crc-32 — a `kept` path exempts its whole file from the retired check.** Opened 2026-10-05 at
+  rc08a's system walk 1 (fresh W2, Sal: B). rc08a's `sweep.kept` takes a file out of an entry's retired
+  check in full, so a live leftover in a file that ALSO quotes the old wording as history passes under a
+  log that records the wording as retired — and the files a walk most often keeps (the change's own
+  design, tasks and explore) are exactly the ones that mix the two. rc08a names the limit in
+  `orbit-emit-composition`'s `The walk write gate checks sweep evidence` and ships no narrower form.
+  Standing recommendation: rc08b's exploration decides whether `kept` gains an occurrence- or line-scoped
+  form (e.g. `{path, why, line}`), which is new mechanism (R-crc-6, R-crc-7), and measures against the
+  first walks' `kept` records how often a kept file carried a live site.
 
 ## Program stages
 
@@ -2761,8 +2770,12 @@ finding routed to `/orbit:explore` and the routing recorded on the log; the DISA
 (D-rc03-6) in `orbit-address-reviews`; and the review-external T0 `next_recommended` ending at "save the
 response as …" (Q-rc03-5). It also takes the remainder of rc08's job (3) that rc08a's text check cannot
 reach: whether a walk needs an edit-level record certifying that each intended edit happened, decided at
-its exploration. Goal G3. Touches: orbit-address-reviews, orbit-run-summary-emit, and possibly
-orbit-engine-gates for the discovery predicate. These are measured at its exploration against R-crc-1.
+its exploration. It carries one rider from rc08a (system walk 2, external W5, Sal: B): `orbit-engine-gates`'
+`Reviewed-gate pass condition` justifies its readability fallback with "the emit surface validates the
+payload KEY and none of the entry shapes", which rc08a's walk write gate made false for new walk logs; the
+sentence becomes a pointer to `orbit-emit-composition`'s `The walk write gate checks sweep evidence`, the
+fallback itself unchanged. Goal G3. Touches: orbit-address-reviews, orbit-run-summary-emit, and possibly
+orbit-engine-gates for the discovery predicate (and the rider). These are measured at its exploration against R-crc-1.
 Exit: (1) a bare walk with one active change and two unwalked passes walks both, naming the change; (2)
 rc08's exit (4): the body implements the three lanes, a REDESIGN routes to explore, and the log records
 the routing; (3) the T0 emit's `next_recommended` names no walk command.

@@ -78,7 +78,8 @@ describe('review body: the VERIFICATION branch (1.5)', () => {
     expect(grade).toContain('its `file`, every path in its `ripple_cascade.applied`');
     expect(grade).toContain('on an entry that carries one, every path in its `sweep.scope`');
     expect(grade).toContain("`orbit-address-reviews`' `A resolved walk entry records its sweep evidence`");
-    expect(grade).toContain("`orbit-emit-composition`'s `The walk write gate checks sweep evidence`");
+    // System walk 1 (fresh S2, Sal: B): the path rule is read from the body's checked mirror.
+    expect(grade).toContain('the rule under **Sweep scope and paths** below');
     expect(grade).toContain('gets one verdict');
     expect(b).toContain("Run this mode's FILE-SET passes over the union of the sweep scopes");
     const residual = b.split('**(d)')[1].split('\n')[0];

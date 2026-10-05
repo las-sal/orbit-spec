@@ -1,0 +1,310 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-05T02:39:33Z",
+  "change": "rc08a-sweep-evidence",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc08a-sweep-evidence/.orbit-runs/review-system-2026-10-05T01-53-24Z.json",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 4
+  },
+  "pushback_verification": "All 7 verified against current state: F1 by re-reading emit-composition.ts:600; F6 partially applies (design's Touchpoints is the frozen prediction and stays).",
+  "resolution_summary": {
+    "resolved": 7,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "A sweep.kept path that resolves to nothing is silently accepted, where the spec refuses an unresolved sweep path",
+      "marker_source": "internal-review",
+      "file": "src/core/emit-composition.ts",
+      "line": 600,
+      "classification": "trivial_fix",
+      "action": "composeAndWriteEmit refuses a sweep.kept path that resolves to nothing, naming the entry and the path, as sweep.scope is refused; test case added; the emit-composition module pin moved as a recorded act.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/emit-walk-sweep.test.ts",
+          "test/core/rc03b-untouched-modules.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "if (abs !== null) kept.push(abs);"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/emit-composition.ts",
+            "text": "sweep.kept path '${k.path}' resolves to no file or directory."
+          }
+        ],
+        "searched": [
+          "kept.push",
+          "sweep.kept"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "`kept` exempts a whole file, so a live leftover in a file that also quotes history passes the retired check, and no named limit says so",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc08a-sweep-evidence/specs/orbit-emit-composition/spec.md",
+      "line": 17,
+      "classification": "decision_required",
+      "action": "Named the whole-file kept limit in the owning requirement and in Step 3d.5; opened Q-crc-32 for an occurrence-scoped kept at rc08b; design Risks names it.",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Name the limit in `The walk write gate checks sweep evidence` and in Step 3d.5's `kept` line: a kept path is excluded from that entry's retired check in full, so a live site in the same file is not checked."
+          },
+          {
+            "label": "B",
+            "body": "Route a line- or occurrence-scoped `kept` (e.g. `{path, why, line}`) to rc08b's exploration as new mechanism; ship A meanwhile."
+          }
+        ],
+        "chosen": "B"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/address-reviews.ts",
+          "orbit/architecture/clean-up-review-cycle.md",
+          "orbit/changes/rc08a-sweep-evidence/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08a-sweep-evidence/specs/orbit-emit-composition/spec.md",
+            "text": "Named limit of `kept`: a kept path is excluded from that entry's retired check IN FULL"
+          },
+          {
+            "path": "src/core/templates/workflows/address-reviews.ts",
+            "text": "the WHOLE file leaves that entry's retired check"
+          },
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "text": "Q-crc-32 — a `kept` path exempts its whole file from the retired check."
+          }
+        ],
+        "searched": [
+          "kept"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The orbit-review requirement's (d) and Residual method still name files 'outside the scope', contradicting its own new (c) sentence that the residual check keys on the edit record",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc08a-sweep-evidence/specs/orbit-review/spec.md",
+      "line": 5,
+      "classification": "trivial_fix",
+      "action": "(d), the Residual method and the 'A file touched outside the record is named' scenario now name files outside every entry's edit record, matching (c) and the generated body.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-10-05T01-19-23Z",
+        "title": "Adding `sweep.scope` (examined, not edited) to the residual check's exemption lets an unrecorded edit escape it, and a directory entry exempts a whole subtree",
+        "file": "specs/orbit-review/spec.md",
+        "kind": "query"
+      },
+      "sweep": {
+        "retired": [
+          "listed file outside the scope as a SUGGESTION",
+          "in no owed entry's sweep scope"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08a-sweep-evidence/specs/orbit-review/spec.md",
+            "text": "outside every entry's edit record as a SUGGESTION"
+          }
+        ],
+        "searched": [
+          "outside the scope",
+          "sweep scope",
+          "edit record"
+        ],
+        "scope": [
+          "src/core/templates/workflows/review.ts"
+        ],
+        "kept": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Step 2's legacy-entry rule reads a pre-sweep entry's scope as file + ripple_cascade.applied, omitting the change directory the check scope includes",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/address-reviews.ts",
+      "line": 926,
+      "classification": "trivial_fix",
+      "action": "Step 2 reads a pre-sweep entry's scope as the change directory (on a change-scoped walk), its file and its ripple_cascade.applied.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "read its scope as its"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/address-reviews.ts",
+            "text": "read its scope as the change directory (on a change-scoped walk)"
+          }
+        ],
+        "searched": [
+          "read its scope as"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Step 3d.5 points at specs for the check scope and the path rule, which an installed skill cannot open",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/address-reviews.ts",
+      "line": 995,
+      "classification": "decision_required",
+      "action": "The check scope and path rule moved into one fenced production in orbit-emit-composition; the review body (new \"Sweep scope and paths\" section, step (c) re-pointed) and the walk body (Step 3d.5) carry it as a CHECKED MIRROR held byte-equal by test/core/sweep-path-parity.test.ts.",
+      "ratified_via": "chat",
+      "resolution": "B — a checked mirror of the path rule in both bodies (R-crc-14 mirror corollary), never an unchecked restatement",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/review.ts",
+          "orbit/changes/rc08a-sweep-evidence/specs/orbit-emit-composition/spec.md",
+          "test/core/sweep-path-parity.test.ts",
+          "test/core/templates/review-verification-branch.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "as they stand at emit time (per",
+          "and a path resolves by the rule"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08a-sweep-evidence/specs/orbit-emit-composition/spec.md",
+            "text": "CHECK SCOPE — the union of:"
+          },
+          {
+            "path": "src/core/templates/workflows/review.ts",
+            "text": "#### Sweep scope and paths"
+          },
+          {
+            "path": "src/core/templates/workflows/address-reviews.ts",
+            "text": "The scope the gate checks and the rule every path you write resolves by are below"
+          }
+        ],
+        "searched": [
+          "resolves by the rule",
+          "The walk write gate checks sweep evidence"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Proposal Impact and design Touchpoints still predict hash pins and a ledger the apply measured as nonexistent, and omit the normalizeDisposition export",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc08a-sweep-evidence/design.md",
+      "line": 156,
+      "classification": "trivial_fix",
+      "action": "Proposal Impact names both exports and states that no template hash pin covers the edited bodies; design D6 names normalizeDisposition. Partial pushback: design's Touchpoints is the frozen PREDICTION the engine shows beside the diff-computed actuals, so it is left as written.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc08a-sweep-evidence/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the template hash pins"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08a-sweep-evidence/proposal.md",
+            "text": "`stripLineSuffix` and `normalizeDisposition` exported"
+          },
+          {
+            "path": "orbit/changes/rc08a-sweep-evidence/design.md",
+            "text": "through the reader's `normalizeDisposition`"
+          }
+        ],
+        "searched": [
+          "hash pin",
+          "normalizeDisposition",
+          "stripLineSuffix"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "rc08a exit (1) says an absent introduced text is refused 'naming path and line'; the mechanism names path and text, since an absent text has no line",
+      "marker_source": "internal-review",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 2744,
+      "classification": "trivial_fix",
+      "action": "An at-archive note in tasks.md reads exit (1)'s line clause as the retired half's; the criterion text stays as written, its reading recorded at ratification (R-crc-12).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc08a-sweep-evidence/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08a-sweep-evidence/tasks.md",
+            "text": "grades the RETIRED half by the line and the INTRODUCED half by the path and the text"
+          }
+        ],
+        "searched": [
+          "naming path and line"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "System walk 1 (the fresh half): 7 of 7 resolved. An unresolved kept path is refused; the whole-file kept limit is named and Q-crc-32 opened (B); the orbit-review residual wording follows the edit record; the check scope and path rule are a checked mirror in both bodies (B). One ripple miss attributed to proposal walk 1. The first walk written under the sweep record.",
+  "ripple_misses": 1,
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews rc08a-sweep-evidence --from-file orbit/changes/rc08a-sweep-evidence/.orbit-runs/external-system-2026-10-05T01-56-05Z.md"
+}

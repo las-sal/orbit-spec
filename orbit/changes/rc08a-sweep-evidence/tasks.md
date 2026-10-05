@@ -28,3 +28,7 @@
 - [ ] 5.3 (User-validation) The first walk after apply, on this change's own review findings, writes `sweep` on every resolved entry and passes the gate; a refusal on that walk is fixed in the files, never by trimming `retired`.
 
 At-archive note (not a task): rc08's exit (3) is measured on the cadence of the stage after rc08a, from `ripple_misses` plus the `regressed` verdict count, and recorded in that stage's archive, not this one's.
+
+At-archive note (not a task; system walk 1, fresh S4): exit (1)'s "refused naming path and line" grades the RETIRED half by the line and the INTRODUCED half by the path and the text, since an absent text has no line (`orbit-emit-composition`'s `The walk write gate checks sweep evidence`, its check table). The criterion text stays as written. Record this reading with the exit grade at ratification (R-crc-12).
+
+At-archive note (not a task; system walk 2, external W5, Sal: B): the readiness record names as an accepted residual that `orbit-engine-gates`' `Reviewed-gate pass condition` still says the emit surface validates "none of the entry shapes", made false for new walk logs by this change; its repair rides rc08b's charter (a fourth capability declined under R-crc-1).

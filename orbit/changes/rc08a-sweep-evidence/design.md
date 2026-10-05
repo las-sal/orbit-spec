@@ -64,6 +64,12 @@ LEGACY field (`file`, `applied`) is skipped with a stderr warning, because refus
 a field this change does not own; an unresolved `sweep.scope` path is refused, because the field is new
 and its only job is to be a path.
 
+**D3a — What the check refuses to guess (system walk 2, external C1/C2/W1/W2).** The checks run on the
+record as frozen for writing, so a caller's `toJSON` hook cannot hand them one array and the serializer
+another. The never-read directories are excluded however a path entered the scope, named or listed. A
+`kept` element is one file, never a directory. A scope member that cannot be listed or read refuses the
+emit, because an unread file is not evidence of absence.
+
 **D4 — Matching normalizes whitespace and nothing else.** Collapsing whitespace runs (newlines included)
 in both the string and the file catches wrapped phrases, which are common in this repo's 110-column
 prose. Markup inside a wrapped phrase is NOT normalized, and that is the requirement's named limit.
@@ -78,7 +84,8 @@ unknown-key rule. Nothing reads it to decide anything (R-crc-11(h)). rc08a's exi
 **D6 — The pointer is keyed as the gate keys resolutions.** `title` trimmed, `file` with the `:<line>`
 suffix stripped, by REUSING `stripLineSuffix` from `src/core/artifact-graph/trail.ts` (exported for it),
 so a pointer and the gate cannot disagree about which entry is meant, and the rule exists once in code.
-Both `trail.ts` and `emit-composition.ts` are hash-pinned in `test/core/rc03b-untouched-modules.test.ts`;
+The pointer reads an earlier entry's disposition through the reader's `normalizeDisposition`, exported
+unchanged beside it at apply (task 1.2). Both `trail.ts` and `emit-composition.ts` are hash-pinned in `test/core/rc03b-untouched-modules.test.ts`;
 both pins move as recorded acts (proposal walk 1, fresh W2). `walk` is the filename token, and must precede this emit's token
 (the collision bump already makes token order write order, per rc03c).
 
@@ -139,6 +146,9 @@ Added at propose:
   evidence`; a shorter retired string avoids it.
 - [Attribution is optional judgement; an unattributed miss is invisible] → named in `A ripple miss is
   attributed by the walk that finds it`.
+- [A `kept` file is exempt from the retired check in full, so a live site in a kept file that also quotes
+  history passes] → named in `The walk write gate checks sweep evidence` (system walk 1, fresh W2); an
+  occurrence-scoped `kept` is new mechanism, carried to rc08b's exploration as Q-crc-32.
 - [Reading every change file per emit] → tens of files; negligible (D-rc08-3's FEASIBILITY move).
 
 ## Migration Plan

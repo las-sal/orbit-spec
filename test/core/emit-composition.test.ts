@@ -733,7 +733,10 @@ describe('post-write semantics (synthetic trail, single atomic write)', () => {
               fs.rmSync(runsDir, { recursive: true, force: true });
               fs.symlinkSync(outside, runsDir, 'dir');
             }
-            return { marker: 'm', severity: 'SUGGESTION', status: 'resolved' };
+            // rc08a system walk 2: the walk checks now read the FROZEN record, so the hook returns a
+            // current-generation entry (`outcome`, no sweep owed on `stale`) — a legacy `status`-only entry
+            // would be refused before the trail check this test exists for.
+            return { marker: 'm', severity: 'SUGGESTION', title: 'm', file: 'x.md', outcome: 'stale' };
           },
         },
       ],

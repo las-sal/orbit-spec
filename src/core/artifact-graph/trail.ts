@@ -130,9 +130,10 @@ export function stripLineSuffix(file: string): string {
   return file.replace(/:\d+(:\d+)?$/, '').trim();
 }
 
-function toRepoRelative(p: string): string {
+export function toRepoRelative(p: string): string {
   // Normalize to a forward-slash path; keep as-is if already relative. Absolute
-  // paths are compared after this normalization by callers.
+  // paths are compared after this normalization by callers. Exported (rc08a system walk 2,
+  // external W3) so the walk gate keys a path as this reader does: stripLineSuffix(toRepoRelative(x)).
   return p.replace(/\\/g, '/').trim();
 }
 

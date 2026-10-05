@@ -195,8 +195,10 @@ describe('The walk write gate checks sweep evidence — retired / introduced / s
     ).not.toThrow();
   });
 
-  it('refuses a sweep.scope path that resolves to nothing', () => {
+  it('refuses a sweep.scope or sweep.kept path that resolves to nothing', () => {
     refused(() => emit([entry({ sweep: { ...emptySweep(), scope: ['missing/dir'] } })]), /missing\/dir/);
+    // System walk 1 (fresh W1): a kept path is a sweep path, refused like a scope path.
+    refused(() => emit([entry({ sweep: { ...emptySweep(), kept: [{ path: 'does/not/exist.md', why: 'w' }] } })]), /sweep\.kept[\s\S]*does\/not\/exist\.md/);
   });
 
   // @scenario behaviour orbit-emit-composition :: The walk write gate checks sweep evidence :: A free-text ripple path is skipped with a warning
@@ -262,6 +264,63 @@ describe('The walk write gate checks sweep evidence — retired / introduced / s
     const retired = { ...emptySweep(), retired: ['seventeen blocks'] };
     expect(() => emit([entry({ file: 'README.md', sweep: retired })], { remaining_markers_in_scope: 0 }, {})).not.toThrow();
     refused(() => emit([entry({ file: 'docs/b.md', sweep: retired })], { remaining_markers_in_scope: 0 }, {}), /docs\/b\.md/, 'orbit/.orbit-runs');
+  });
+});
+
+describe('rc08a system walk 2 (external half): the frozen record, the never-read dirs, kept files, read failures', () => {
+  const retired = (r: string, extra: Record<string, unknown> = {}) => ({ ...emptySweep(), retired: [r], ...extra });
+
+  it('C1: the checks run on the FROZEN record — a toJSON hook cannot swap a checked entry for an unchecked one', () => {
+    const unchecked = { severity: 'WARNING', title: 'T', file: 'design.md', outcome: 'resolved' };
+    const resolutions: any = [entry()];
+    resolutions.toJSON = () => [unchecked];
+    refused(() => emit(resolutions), /resolutions\[0\]\.sweep/);
+  });
+
+  it('C1: ripple_misses is counted from the frozen record', () => {
+    const resolutions: any = [entry()];
+    resolutions.toJSON = () => [entry({ title: 'A' }), entry({ title: 'B' })];
+    const r = emit(resolutions);
+    expect(r.emit.ripple_misses).toBe(0);
+    expect((r.emit.resolutions as unknown[]).length).toBe(2);
+  });
+
+  it('C2: a never-read directory named in sweep.scope, or a file beneath one, is not read', () => {
+    write('dist/out.txt', 'old wording\n');
+    write('node_modules/pkg/out.txt', 'old wording\n');
+    expect(() => emit([entry({ sweep: retired('old wording', { scope: ['dist'] }) })])).not.toThrow();
+    expect(() => emit([entry({ sweep: retired('old wording', { scope: ['node_modules/pkg/out.txt'] }) })])).not.toThrow();
+    expect(() => emit([entry({ ripple_cascade: { applied: ['dist/out.txt'], flagged_not_applied: [] }, sweep: retired('old wording') })])).not.toThrow();
+  });
+
+  it('C2: a never-read name is judged inside the change directory, so a change named build is still checked', () => {
+    const arch = 'orbit/changes/archive/2026-07-01-build';
+    makeChange(arch);
+    write(`${arch}/proposal.md`, 'old wording\n');
+    refused(() => emit([entry({ sweep: retired('old wording') })], { remaining_markers_in_scope: 0 }, { change: 'build' }), /proposal\.md/, `${arch}/.orbit-runs`);
+  });
+
+  it('W1: a kept path naming a directory is refused, and a kept file exempts that file only', () => {
+    write(`${CH}/proposal.md`, 'old wording\n');
+    refused(() => emit([entry({ sweep: retired('old wording', { kept: [{ path: CH, why: 'history' }] }) })]), /sweep\.kept[\s\S]*directory/);
+    write(`${CH}/explore.md`, 'old wording\n');
+    refused(() => emit([entry({ sweep: retired('old wording', { kept: [{ path: `${CH}/explore.md`, why: 'history' }] }) })]), /proposal\.md/);
+  });
+
+  it.skipIf(typeof process.getuid === 'function' && process.getuid() === 0)('W2: an unreadable member of the check scope refuses the emit rather than reading as absent', () => {
+    write(`${CH}/locked.md`, 'old wording\n');
+    const locked = path.join(root, CH, 'locked.md');
+    fs.chmodSync(locked, 0o000);
+    try {
+      refused(() => emit([entry({ sweep: retired('old wording') })]), /cannot read[\s\S]*locked\.md/);
+    } finally {
+      fs.chmodSync(locked, 0o644);
+    }
+  });
+
+  it("W3: the pointer keys a legacy file by the reader's full normalization — whitespace beside a :line suffix", () => {
+    write(`${RUNS}/address-reviews-2026-10-05T01-00-00Z.json`, JSON.stringify({ command: 'address-reviews', resolutions: [{ severity: 'WARNING', title: 'T', file: 'file.md:40 ', outcome: 'resolved' }] }));
+    expect(() => emit([entry({ title: 'Later', ripple_miss_of: { walk: '2026-10-05T01-00-00Z', title: 'T', file: 'file.md', kind: 'scope' } })])).not.toThrow();
   });
 });
 

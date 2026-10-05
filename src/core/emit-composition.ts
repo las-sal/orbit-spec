@@ -7,6 +7,7 @@ import {
   readTrail,
   parseTsToken,
   stripLineSuffix,
+  toRepoRelative,
   normalizeDisposition,
   type ReviewerClass,
   type Trail,
@@ -357,7 +358,7 @@ function isInside(p: string, root: string): boolean {
  * root — lexically or physically — is refused, whichever field carries it.
  */
 function resolveWalkPath(raw: string, ctx: WalkContext, where: string): string | null {
-  const p = stripLineSuffix(raw.replace(/\\/g, '/'));
+  const p = stripLineSuffix(toRepoRelative(raw));
   if (p === '') return null;
   const rootAbs = path.resolve(ctx.projectRoot);
   const candidates: string[] = [];
@@ -387,19 +388,37 @@ function resolveWalkPath(raw: string, ctx: WalkContext, where: string): string |
   return null;
 }
 
-/** Every regular file under a directory (symlinks not followed), minus the never-read dirs. */
-function listFilesUnder(dir: string, skipDir: (abs: string) => boolean, out: string[]): void {
+function relForMessage(abs: string, ctx: WalkContext): string {
+  return path.relative(ctx.projectRoot, abs).split(path.sep).join('/');
+}
+
+/**
+ * A path under a never-read directory (`.git/`, `node_modules/`, `dist/`, `build/`), however it entered
+ * the scope — named directly, beneath a named directory, or met while listing one (external C2). Segments
+ * are read relative to the change directory for its own files, so a change NAMED `build` is not excluded
+ * wholesale, and relative to the project root otherwise.
+ */
+function isNeverRead(abs: string, ctx: WalkContext): boolean {
+  const base = ctx.changeDir !== null && isInside(path.resolve(abs), path.resolve(ctx.changeDir)) ? ctx.changeDir : ctx.projectRoot;
+  return path.relative(path.resolve(base), path.resolve(abs)).split(path.sep).some(seg => SWEEP_SKIP_DIRS.has(seg));
+}
+
+/**
+ * Every regular file under a directory (symlinks not followed), minus the never-read dirs. A listing
+ * that fails refuses the emit: an unread member of the check scope is not evidence of absence (external W2).
+ */
+function listFilesUnder(dir: string, ctx: WalkContext, out: string[]): void {
   let entries: fs.Dirent[];
   try {
     entries = fs.readdirSync(dir, { withFileTypes: true });
   } catch {
-    return;
+    throw new EmitError(`write gate: cannot list '${relForMessage(dir, ctx)}' — the sweep check cannot complete over an unreadable member of its scope.`);
   }
   for (const e of entries) {
     const abs = path.join(dir, e.name);
     if (e.isDirectory()) {
-      if (SWEEP_SKIP_DIRS.has(e.name) || skipDir(abs)) continue;
-      listFilesUnder(abs, skipDir, out);
+      if (SWEEP_SKIP_DIRS.has(e.name) || abs === path.resolve(ctx.runsDir)) continue;
+      listFilesUnder(abs, ctx, out);
     } else if (e.isFile()) {
       out.push(abs);
     }
@@ -407,11 +426,12 @@ function listFilesUnder(dir: string, skipDir: (abs: string) => boolean, out: str
 }
 
 function expandPath(abs: string, ctx: WalkContext, out: Set<string>): void {
+  if (isNeverRead(abs, ctx)) return;
   let stat: fs.Stats;
   try {
     stat = fs.statSync(abs);
   } catch {
-    return;
+    throw new EmitError(`write gate: cannot stat '${relForMessage(abs, ctx)}' — the sweep check cannot complete over an unreadable member of its scope.`);
   }
   if (stat.isFile()) {
     out.add(abs);
@@ -419,7 +439,7 @@ function expandPath(abs: string, ctx: WalkContext, out: Set<string>): void {
   }
   if (stat.isDirectory()) {
     const files: string[] = [];
-    listFilesUnder(abs, d => d === path.resolve(ctx.runsDir), files);
+    listFilesUnder(abs, ctx, files);
     for (const f of files) out.add(f);
   }
 }
@@ -479,13 +499,13 @@ function findCollapsed(text: string, needle: string): number | null {
   return line;
 }
 
-function readText(abs: string, cache: Map<string, string>): string {
+function readText(abs: string, cache: Map<string, string>, ctx: WalkContext): string {
   let t = cache.get(abs);
   if (t === undefined) {
     try {
       t = fs.readFileSync(abs, 'utf-8');
     } catch {
-      t = '';
+      throw new EmitError(`write gate: cannot read '${relForMessage(abs, ctx)}' — the sweep check cannot complete over an unreadable member of its scope.`);
     }
     cache.set(abs, t);
   }
@@ -505,7 +525,7 @@ function checkRipplePointer(i: number, title: string, ptr: unknown, ctx: WalkCon
   }
   const walk = ptr.walk as string;
   const ptrTitle = (ptr.title as string).trim();
-  const ptrFile = stripLineSuffix((ptr.file as string).replace(/\\/g, '/'));
+  const ptrFile = stripLineSuffix(toRepoRelative(ptr.file as string));
   const shown = `{walk: ${walk}, title: '${ptr.title}', file: '${ptr.file}'}`;
   const logPath = path.join(ctx.runsDir, `address-reviews-${walk}.json`);
   if (!/^\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}Z$/.test(walk) || !fs.existsSync(logPath)) {
@@ -527,7 +547,7 @@ function checkRipplePointer(i: number, title: string, ptr: unknown, ctx: WalkCon
         isPlainObject(e) &&
         normalizeDisposition(e) === 'resolved' &&
         String(e.title ?? '').trim() === ptrTitle &&
-        stripLineSuffix(String(e.file ?? '').replace(/\\/g, '/')) === ptrFile
+        stripLineSuffix(toRepoRelative(String(e.file ?? ''))) === ptrFile
     );
   if (!hit) {
     throw new EmitError(`write gate: ${where} ${shown} matches no resolved entry of that walk (title trimmed, file without its :<line> suffix).`);
@@ -597,15 +617,21 @@ function validateWalkResolutions(resolutions: unknown, ctx: WalkContext): number
     const kept: string[] = [];
     for (const k of sweep.kept as Array<{ path: string }>) {
       const abs = resolveWalkPath(k.path, ctx, `${at} sweep.kept`);
-      if (abs !== null) kept.push(abs);
+      if (abs === null) {
+        throw new EmitError(`write gate: ${at} sweep.kept path '${k.path}' resolves to no file or directory.`);
+      }
+      if (!fs.statSync(abs).isFile()) {
+        throw new EmitError(`write gate: ${at} sweep.kept path '${k.path}' names a directory — a kept element is one file, and exempts that file only.`);
+      }
+      kept.push(path.resolve(abs));
     }
-    const isKept = (f: string): boolean => kept.some(k => isInside(f, k));
+    const isKept = (f: string): boolean => kept.includes(path.resolve(f));
 
     for (const raw of sweep.retired as string[]) {
       const needle = collapseWhitespace(raw).trim();
       for (const f of [...scope].sort()) {
         if (isKept(f)) continue;
-        const line = findCollapsed(readText(f, cache), needle);
+        const line = findCollapsed(readText(f, cache, ctx), needle);
         if (line !== null) {
           const rel = path.relative(ctx.projectRoot, f).split(path.sep).join('/');
           throw new EmitError(`write gate: ${at} retired '${raw}' still occurs at ${rel}:${line} — fix the file, or list it under 'kept' with why.`);
@@ -616,7 +642,7 @@ function validateWalkResolutions(resolutions: unknown, ctx: WalkContext): number
       const abs = resolveWalkPath(intro.path, ctx, `${at} sweep.introduced`);
       let ok = false;
       if (abs !== null && fs.statSync(abs).isFile()) {
-        ok = findCollapsed(readText(abs, cache), collapseWhitespace(intro.text).trim()) !== null;
+        ok = findCollapsed(readText(abs, cache, ctx), collapseWhitespace(intro.text).trim()) !== null;
       }
       if (!ok) {
         throw new EmitError(`write gate: ${at} introduced text '${intro.text}' does not occur in '${intro.path}'${abs === null ? ' (the path resolves to no file)' : ''}.`);
@@ -1902,16 +1928,6 @@ export function composeAndWriteEmit(
       break;
     }
     case 'address-reviews': {
-      // rc08a: the resolution-level checks, and `ripple_misses` (computed, never supplied:
-      // absent from the payload table, a supplied value is refused as an unknown key).
-      emit.ripple_misses = validateWalkResolutions((payload as any).resolutions, {
-        projectRoot,
-        changeDir: resolved.scope === 'change' || resolved.scope === 'archived' ? resolved.changeDir : null,
-        change: resolved.change,
-        runsDir: resolved.runsDir,
-        token,
-        warnings,
-      });
       const runs = fs.existsSync(resolved.runsDir) ? fs.readdirSync(resolved.runsDir) : [];
       const walkLogs = runs.filter(f => /^address-reviews-.*\.json$/.test(f));
       // Doc-scoped walks anchor per doc: the architecture trail is SHARED across
@@ -2103,6 +2119,20 @@ export function composeAndWriteEmit(
   // closed the directory half of this check/use seam; the fresh pass closed the
   // content half the same way, one call earlier.
   const materialized = JSON.parse(JSON.stringify(emit)) as Record<string, unknown>;
+  if (command === 'address-reviews') {
+    // rc08a: the resolution-level checks run on the FROZEN record (external C1), and `ripple_misses`
+    // is computed from that same record — never from the caller's live payload, whose getters or
+    // `toJSON` hooks could hand the checks one array and the serializer another. Computed, never
+    // supplied: absent from the payload table, a supplied value is refused as an unknown key.
+    materialized.ripple_misses = validateWalkResolutions(materialized.resolutions, {
+      projectRoot,
+      changeDir: resolved.scope === 'change' || resolved.scope === 'archived' ? resolved.changeDir : null,
+      change: resolved.change,
+      runsDir: resolved.runsDir,
+      token,
+      warnings,
+    });
+  }
   // Full write gate on the now-complete FROZEN record, then EXACTLY ONE atomic
   // write. The dot-tmp never parses as an emit-shaped name, so no trail reader
   // ever sees a provisional record; the unlink covers every failure the process
