@@ -130,6 +130,7 @@ describe('generated surface fidelity (real init, all workflows, claude + codex)'
       expect(codex).toBe(claude);
     });
 
+    // @scenario behaviour orbit-conventions :: Generated-file disposition :: Commands are thin launchers delegating to skills
     it('claude command on disk is a thin launcher to the skill', async () => {
       const command = await fs.readFile(
         path.join(testDir, '.claude', 'commands', 'orbit', `${commandId}.md`),
@@ -173,6 +174,7 @@ describe('generated surface fidelity (real init, all workflows, claude + codex)'
     }
   });
 
+  // @scenario behaviour orbit-conventions :: Generated-file disposition :: Not generated — excluded from the install surface
   it('generates exactly the registered skills, no extras (e.g., no feedback)', async () => {
     const dirs = await fs.readdir(path.join(testDir, '.claude', 'skills'));
     expect(dirs.sort()).toEqual(SURFACE.map(([d]) => d).sort());

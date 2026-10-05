@@ -22,7 +22,7 @@ The system SHALL classify every skill and command file orbit generates into one 
 #### Scenario: Upstream-verbatim — kept unchanged
 
 - **WHEN** orbit generates an upstream skill it never modified because its interaction is at the invocation layer, not the skill-body layer (currently `orbit-sync-specs`, which upstream's own archive flow invokes as a callable primitive)
-- **THEN** the template carries the upstream body unchanged; no `# Orbit additions` section is needed
+- **THEN** the template carries the upstream body unchanged; a `# Orbit additions` section, where present, carries only the four execution disciplines' epitome every body carries and notes on how the skill behaves when invoked (`orbit-sync-specs`: consent inherited from the flow that invokes it), and no step of its own
 
 #### Scenario: Not generated — excluded from the install surface
 

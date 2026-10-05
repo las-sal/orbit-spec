@@ -430,18 +430,32 @@ describe('deterministic facts', () => {
     ).toThrow(/unknown payload key 'stages_endedd'/);
   });
 
-  it('verify: pass and fail-mode recommendations per the baseline rules', () => {
+  // rc06b-map-readers: split into one test per fail mode so each `orbit-run-summary-emit` scenario
+  // carries its own tag (stacked tags are refused); the assertions are unchanged.
+  it('verify: pass recommendation per the baseline rules', () => {
     makeChange('foo');
     const pass = composeAndWriteEmit('verify', { change: 'foo' }, { final_assessment: 'clean', verdict: 'pass', model: null }, { projectRoot: root });
     expect(String(pass.emit.next_recommended)).toMatch(/^\/orbit:review --as system foo/);
     expect(String(pass.emit.next_recommended)).toContain('/orbit:archive foo');
+  });
 
+  // @scenario behaviour orbit-run-summary-emit :: Verify fail-mode recommendations :: Mode-① fail recommends /orbit:apply
+  it('verify: mode ① (tasks-incomplete) recommends /orbit:apply with the remaining count', () => {
+    makeChange('foo');
     const failTasks = composeAndWriteEmit('verify', { change: 'foo' }, { final_assessment: 'incomplete', verdict: 'fail', fail_mode: 'tasks-incomplete', model: null }, { projectRoot: root });
     expect(String(failTasks.emit.next_recommended)).toMatch(/^\/orbit:apply foo — 2 tasks remaining/);
+  });
 
+  // @scenario behaviour orbit-run-summary-emit :: Verify fail-mode recommendations :: Mode-③ fail preserves verbatim validator message
+  it('verify: mode ③ (validator-error) carries the validator message verbatim behind no command', () => {
+    makeChange('foo');
     const failValidator = composeAndWriteEmit('verify', { change: 'foo' }, { final_assessment: 'broken', verdict: 'fail', fail_mode: 'validator-error', validator_message: 'bad frontmatter', model: null }, { projectRoot: root });
     expect(String(failValidator.emit.next_recommended)).toBe('Fix artifact validation errors: bad frontmatter');
+  });
 
+  // @scenario behaviour orbit-run-summary-emit :: Verify fail-mode recommendations :: Mode-② fail recommends /orbit:review --as system (without --mark)
+  it('verify: mode ② (scenarios-fail) recommends system review without --mark', () => {
+    makeChange('foo');
     const failScenarios = composeAndWriteEmit('verify', { change: 'foo' }, { final_assessment: 'gaps', verdict: 'fail', fail_mode: 'scenarios-fail', scenarios_failed: 3, model: null }, { projectRoot: root });
     expect(String(failScenarios.emit.next_recommended)).toBe(
       '/orbit:review --as system foo — 3 spec scenarios fail against implementation; system review will surface findings in its scorecard for you to walk each as code fix or spec revision'

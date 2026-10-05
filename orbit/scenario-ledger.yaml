@@ -1,0 +1,10 @@
+# The scenario ledger (orbit-scenario-map): declarations for scenarios no test can run.
+# `untestable` carries a `why`; `observed` carries the `record` that observed it.
+scenarios:
+  # rc06b-map-readers (task 4.2) — process rules carried in this change's MODIFIED blocks.
+  - key: "orbit-conventions :: Generated-file disposition :: Per-skill disposition is documented"
+    kind: untestable
+    why: "The scenario is a contributor act at a future engine upgrade (recording a disposition in that change's proposal); no test can observe a proposal not yet written."
+  - key: "orbit-run-summary-emit :: Emit-layer wraps upstream skills without modifying them :: A cherry-picked verify body keeps the emit layer's additions"
+    kind: untestable
+    why: "The scenario is a deliberate cherry-pick of a newer upstream verify body, which this repo has not performed; the additions section's placement is tested, the cherry-pick act is not runnable."

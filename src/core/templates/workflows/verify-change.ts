@@ -85,10 +85,30 @@ export function getVerifyChangeSkillTemplate(): SkillTemplate {
    **Scenario Coverage**:
    - For each scenario in delta specs (marked with "#### Scenario:"):
      - Check if conditions are handled in code
-     - Check if tests exist covering the scenario
-     - If scenario appears uncovered:
-       - Add WARNING: "Scenario not covered: <scenario name>"
-       - Recommendation: "Add test or implementation for scenario: <description>"
+     - If a scenario's conditions are not handled in code:
+       - Add WARNING: "Scenario not handled in code: <scenario name>"
+       - Recommendation: "Implement scenario: <description>"
+   - Take test coverage from the scenario map — never trace scenarios to tests by searching test files:
+     \`\`\`bash
+     orbit status --change "<name>" --scenarios --json
+     \`\`\`
+     Report what it returns by this table, a CHECKED MIRROR of \`orbit-verify-modifications\`' \`Verify's Scenario Coverage step reads the scenario map\`, held byte-equal to it by a parity test (an installed skill cannot open that spec). The table is exhaustive: \`change\` and \`tests\` carry no coverage fact and raise nothing.
+
+| what the surface returns | what verify reports |
+|---|---|
+| the command fails (a non-zero exit, or output that does not parse) | one note naming the error, and the check listed as skipped, per the body's Graceful Degradation; no other row applies |
+| \`check\` is \`"off"\` | one note: the scenario-map check is off because \`scenario_map:\` is absent from, or malformed in, \`orbit/config.yaml\`; no other row applies — no scenario, orphan or malformed finding, and no tracing by any other means |
+| \`check\` is \`"on"\`, \`scenarios\` is empty, and no \`malformed\` entry has \`source: "spec"\` | one note: the change has no delta scenarios; the rows below for \`orphans\`, \`malformed\` and \`counts\` still apply |
+| a \`scenarios\` entry with \`uncovered: true\` | a WARNING \`Scenario not covered: <capability> :: <requirement> :: <scenario>\`, recommending a \`@scenario\` tag above the test that exercises it, or a ledger entry |
+| a \`scenarios\` entry with any declaration | no finding; its declared kinds are listed as the surface gives them, never summed and never re-graded |
+| one or more \`malformed\` entries with \`source: "spec"\` (\`reason: "unkeyable"\`) | ONE WARNING per distinct capability, requirement and scenario triple, naming the triple and its number of entries, stating that \`orbit validate\` reports it at the level \`orbit-scenario-map\` assigns, and recommending the title be renamed; every \`orphans\` entry whose \`key\` equals that triple joined by \` :: \` is listed under it and is never a finding of its own |
+| any other \`orphans\` entry | a WARNING naming the tag's file and line, or the ledger index, and the key, stating that the key names no scenario of the baseline or this change's delta — a renamed, removed or mistyped key, or a scenario another active change adds, which the map does not distinguish — and recommending the tag or ledger entry be corrected unless it names another active change's scenario |
+| a \`malformed\` entry with source \`tag\` or \`ledger\` | a WARNING naming the file and line, or the ledger index, and the surface's \`reason\` |
+| a \`malformed\` entry with source \`ledger-file\` | a WARNING naming \`orbit/scenario-ledger.yaml\`, with no line, and the surface's \`reason\` |
+| \`counts\` | printed as counts; no ratio of covered scenarios appears in the report or its scorecard |
+| \`counts.baseline_undeclared\` | printed as a count, never a finding |
+
+   An uncovered, orphan or malformed finding is a WARNING for the run-summary emit's fail mode, which \`orbit-run-summary-emit\`'s \`Verify fail-mode recommendations\` owns, precedence included — never \`scenarios-fail\`. Judge nothing the surface computed: whether a declared test really exercises its scenario is the declaration's own record (its kind word).
 
 7. **Verify Coherence**
 

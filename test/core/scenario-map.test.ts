@@ -428,6 +428,33 @@ describe('cover kinds and the render', () => {
     expect(m.counts).toMatchObject({ delta_scenarios: 1, behaviour: 0, uncovered: 1, malformed: 2 });
   });
 
+  // rc06b-map-readers (design D4) — the rider pin. Verify's reader pairs an ORPHAN with an unkeyable
+  // spec entry ONLY on exact string equality of the joined triple; these two pin which shape can pair.
+  // @scenario behaviour orbit-scenario-map :: A test declares the scenario it exercises with a scenario tag :: A near-miss tag is malformed, never ignored
+  it('a title containing the separator: the spec entry is unkeyable and a tag naming it is MALFORMED, never ORPHAN', () => {
+    delta('orbit-x', { ADDED: [req('Req A', ['Scen 1', 'A :: B'])] });
+    testFile([tag('behaviour', 'orbit-x :: Req A :: A :: B'), "it('x', () => {});"]);
+    const m = map();
+    expect(m.malformed).toContainEqual({
+      source: 'spec', capability: 'orbit-x', requirement: 'Req A', scenario: 'A :: B', reason: 'unkeyable',
+    });
+    expect(m.malformed.filter((e) => e.source === 'tag')).toHaveLength(1);
+    expect(m.malformed.find((e) => e.source === 'tag')).toMatchObject({ file: 'test/a.test.ts', line: 1 });
+    expect(m.orphans).toEqual([]);
+  });
+
+  // @scenario behaviour orbit-scenario-map :: Cover kinds are reported separately and never summed :: A tag naming no scenario is an orphan
+  it("a title repeated within its requirement: TWO unkeyable entries with one triple, and the tag is an ORPHAN whose key is that triple joined", () => {
+    delta('orbit-x', { ADDED: [req('Req A', ['Scen 1', 'Same', 'Same'])] });
+    testFile([tag('behaviour', 'orbit-x :: Req A :: Same'), "it('x', () => {});"]);
+    const m = map();
+    const spec = m.malformed.filter((e) => e.source === 'spec');
+    expect(spec).toHaveLength(2);
+    for (const e of spec) expect(e).toMatchObject({ capability: 'orbit-x', requirement: 'Req A', scenario: 'Same' });
+    expect(m.orphans).toEqual([{ source: 'tag', file: 'test/a.test.ts', line: 1, key: 'orbit-x :: Req A :: Same' }]);
+    expect(m.orphans[0].key).toBe([spec[0].capability, spec[0].requirement, spec[0].scenario].join(' :: '));
+  });
+
   it('a repeated title OUTSIDE the delta is counted per occurrence, never refused', () => {
     baseline('orbit-z', [req('Req Z', ['Z', 'Z'])]);
     const m = map();
