@@ -30,8 +30,8 @@ producing redesigns is invisible on the trail (see explore.md, Premise). This is
   process `lane` (D-rc08b-4).
 - **A REDESIGN leaves the walk** in one of two shapes, carrying `routed_to`. If the mechanism is
   separable, it is descoped and routed to a new exploration (`resolved`). If it is essential, the entry
-  is `escalated` and routed to the change's own `explore.md`, and the gate holds. The walk names the
-  route and never invokes it (D-rc08b-5).
+  is `escalated` and routed to the change's own `explore.md`; on a CRITICAL or WARNING of a gate pass,
+  the gate holds. The walk names the route and never invokes it (D-rc08b-5).
 - **A disagreement** between the two halves of one pair is settled by one cheap empirical test, recorded
   on the later log as `disagreement: {with, test, observed}` (D-rc08b-6, D-rc03-6).
 - **The review-external T0 `next_recommended` ends at "save the response as …"**. It no longer names a

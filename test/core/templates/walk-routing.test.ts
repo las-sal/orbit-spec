@@ -84,8 +84,25 @@ describe('rc08b — the walk body discovers what the gate holds (task 3.1)', () 
 
   // @scenario text orbit-address-reviews :: One invocation writes one log per discovered source :: A rediscovered pass re-walks only its open entries
   it('a rediscovered pass re-records its closed findings stale; nothing is copied forward', () => {
-    expect(step2).toMatch(/re-checked by pushback and recorded `stale`/);
+    expect(step2).toMatch(/re-checked by pushback against current state: still fixed, it is recorded `stale`/);
     expect(step2).toContain('Nothing is copied forward');
+  });
+
+  // @scenario text orbit-address-reviews :: One invocation writes one log per discovered source :: An incomplete log leaves its pass rediscovered
+  it('rediscovery covers an incomplete or unreadable log, and an unnamed finding is walked', () => {
+    expect(step2).toContain('names only some of its substantive findings, or is unreadable with summary counts that leave an entry open or carry none');
+    expect(step2).toContain('a substantive finding that log does not name is walked');
+  });
+
+  // @scenario text orbit-address-reviews :: One invocation writes one log per discovered source :: A routed redesign is carried, not re-walked
+  it('a routed redesign is re-recorded escalated with its route, not walked, and its route named again', () => {
+    expect(step2).toContain('re-record it `escalated` with the same `routed_to`, do not walk it, and name its route again in the report');
+    expect(classify).toContain('While the hold stands, the eligibility line stays on the walk');
+  });
+
+  // @scenario text orbit-address-reviews :: One invocation writes one log per discovered source :: A regressed fix is walked again on rediscovery
+  it('a regressed fix on a rediscovered pass is walked again with a fresh sweep, never recorded stale', () => {
+    expect(step2).toContain('reproduced — the fix regressed — it is walked again like any finding, with a fresh `sweep`');
   });
 
   // @scenario text orbit-address-reviews :: One invocation writes one log per discovered source :: A batch walk over two sources writes both logs after its cascade
@@ -111,6 +128,11 @@ describe('rc08b — the walk body discovers what the gate holds (task 3.1)', () 
   it('the essential-redesign route is scoped to active changes', () => {
     expect(classify).toContain('`orbit/changes/<name>/explore.md` on an ACTIVE change');
     expect(classify).toMatch(/on any other scope[^.]*`orbit\/explore\/<new-name>\/`/);
+  });
+
+  // (the scenario's THEN is engine state: declared as behaviour in walk-discovery-e2e.test.ts)
+  it('an essential redesign holds the gate only on a substantive gate-pass finding', () => {
+    expect(classify).toContain('It holds the gate only where the gate reads it: on a CRITICAL or WARNING of a reviewed-gate pass, that pass stays unresolved; an escalated SUGGESTION, or an entry from an audit-drift emit or from markers, records the route and holds nothing.');
   });
 
   // @scenario text orbit-address-reviews :: A walk entry records its remedy, and a REDESIGN leaves the walk :: A stale entry carries no remedy
@@ -175,6 +197,11 @@ describe('rc08b 5.1 — the discovery scenarios the walk body carries', () => {
   // @scenario text orbit-address-reviews :: Address-reviews command available :: Bare invocation with several active changes names them
   it('several active changes are named in the header', () => {
     expect(row(3)).toContain('several are named in the header so the user can aim the walk');
+  });
+
+  // @scenario text orbit-address-reviews :: Address-reviews command available :: Bare invocation resolves the single active change
+  it('the header half: a bare invocation with one active change names it before walking', () => {
+    expect(row(2)).toContain('say "resolved to the single active change <name>; markers outside it are not scanned"');
   });
 
   // @scenario text orbit-address-reviews :: Address-reviews command available :: Scoped scan — path or pattern

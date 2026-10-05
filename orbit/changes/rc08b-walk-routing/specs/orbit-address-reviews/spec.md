@@ -194,7 +194,7 @@ The system SHALL extend the `address-reviews-<TS>.json` resolution-log shape wit
 
 A walk that discovers more than one source SHALL write ONE resolution log PER SOURCE — one per discovered pass, one per discovered audit-drift emit, and one for the markers when any were found — each carrying its own `source_path` (the markers' log carries the scope, `source: "scope"`). `source_path` stays a single path, so the gate's per-pass record match and the trail reader read the logs unchanged. After ONE shared triage the walk proceeds SOURCE BY SOURCE in that order — pass sources in the engine's token order, oldest first, then the markers — and, in walk mode, writes each source's log when that source's findings are walked, before the next source begins. In batch mode the invocation resolves every source's findings, runs its ONE aggregated cascade, then writes every source's log, in the same order. An interrupted batch writes no log for any source whose log was not yet written. A mid-walk switch to batch (`Walk-mode by default with --batch opt-in`'s command-shaped interruption) applies to the sources whose logs are not yet written; the logs already written stand.
 
-A pass REDISCOVERED because its latest log left an entry `deferred` or `escalated` is presented at triage with that log's dispositions. Its new log must name every substantive finding of the pass (the gate's per-pass match reads only the latest log), so each finding the earlier log closed is re-checked by pushback and recorded `stale`, with evidence naming the earlier log's token; only the open findings are walked again. Nothing is copied forward: a copied `resolved` entry would owe a fresh `sweep` the write gate checks against today's files.
+A pass is REDISCOVERED when discovery lists it although a log already names it — its latest log left an entry `deferred` or `escalated`, names only some of its substantive findings, or is unreadable with a `resolution_summary` that leaves a deferral or escalation or carries no readable counts: each a reason the gate's resolution clause rejects a walked pass (an unreadable log whose counts are clean resolves its pass, per `orbit-engine-gates`' `Reviewed-gate pass condition — the computed convergence criterion`). It is presented at triage with that log's dispositions, where it has any, and a substantive finding that log does not name is walked. Its new log must name every substantive finding of the pass (the gate's per-pass match reads only the latest log), so each finding the earlier log closed is re-checked by pushback against current state: still fixed, it is recorded `stale`, with evidence naming the earlier log's token; reproduced — the fix regressed — it is walked again like any finding, with a fresh `sweep`. The open findings are walked again, except one the earlier log escalated with `remedy: "redesign"` and a `routed_to`: it is re-recorded `escalated` with the same `routed_to` and is not walked, since nothing it waits on has changed until the routed exploration's repair lands. Nothing is copied forward: a copied `resolved` entry would owe a fresh `sweep` the write gate checks against today's files.
 
 Triage runs ONCE across every discovered source and SHALL mark each finding that converges with a finding of another discovered pass (same site, same claim) as found by both. A converged finding is walked in the log of the EARLIER pass; in each later pass's log it takes the earlier entry's disposition — `stale` with evidence naming the earlier log's token when the earlier entry is `resolved` or `stale`, and the same `deferred` or `escalated` disposition (and `routed_to`, when present) when the earlier entry stays open, so a later pass is never closed by a finding that is still open. The cross-pass split (found by both / one pass only / contradictory) is a triage rendering and is never stored as a merged record.
 
@@ -208,7 +208,22 @@ An interrupted walk leaves the logs it completed on the trail; the sources whose
 #### Scenario: A rediscovered pass re-walks only its open entries
 
 - **WHEN** a pass's latest log resolved four findings and escalated one, and a later walk discovers the pass again
-- **THEN** triage shows the five prior dispositions, only the escalated finding is walked, and the new log records the four previously resolved findings `stale` with evidence naming the earlier log
+- **THEN** triage shows the five prior dispositions, pushback finds the four resolved fixes still standing, only the escalated finding is walked, and the new log records the four `stale` with evidence naming the earlier log
+
+#### Scenario: An incomplete log leaves its pass rediscovered
+
+- **WHEN** a pass carries two WARNINGs and its only log names one of them, resolved
+- **THEN** a change-scoped walk discovers the pass again, records the named WARNING `stale` after pushback finds it still fixed, and walks the unnamed one
+
+#### Scenario: A routed redesign is carried, not re-walked
+
+- **WHEN** a pass's latest log escalated a WARNING with `remedy: "redesign"` and `routed_to: "orbit/changes/foo/explore.md"`, and a later walk discovers the pass again
+- **THEN** the new log records that WARNING `escalated` with the same `remedy` and `routed_to`, it is not walked, and the report names `/orbit:explore foo` again
+
+#### Scenario: A regressed fix is walked again on rediscovery
+
+- **WHEN** a pass's latest log resolved one WARNING and escalated another, and a later edit undid the resolved WARNING's fix before the pass is rediscovered
+- **THEN** pushback reproduces the first WARNING, so it is walked again and resolved with a fresh `sweep` rather than recorded `stale`
 
 #### Scenario: A converged finding left open stays open in the later log
 
@@ -236,7 +251,7 @@ R-crc-6's three lanes SHALL be recorded per entry as `remedy`, a field separate 
 | `redesign`, separable | the unreviewed mechanism can leave the change: it is removed from the change and routed to a NEW exploration (the removal's sweep rides `sweep`, as a descope's does) | `resolved` | `orbit/explore/<new-name>/` |
 | `redesign`, essential | the mechanism cannot be closed by this walk: the finding stays open; on an active change the change returns to exploration, and on any other scope the mechanism goes to a new exploration | `escalated` | `orbit/changes/<name>/explore.md` on an ACTIVE change; on any other scope (an archived change, a project-wide or architecture walk) `orbit/explore/<new-name>/` |
 
-A REDESIGN is never closed in place. The walk NAMES the route — `/orbit:explore <new-name>`, or, on an active change, `/orbit:explore <name>` — and invokes nothing, per `orbit-conventions`' no-chaining contract. Where that command lands is the re-entry table's to decide (`orbit-explore-modifications`' re-entry resolution), including its refusal when a staging directory and an active change share the name; this requirement promises no resume. An essential redesign's `escalated` disposition keeps its pass unresolved, so the gate holds; the gate reports that and rules nothing new.
+A REDESIGN is never closed in place. The walk NAMES the route — `/orbit:explore <new-name>`, or, on an active change, `/orbit:explore <name>` — and invokes nothing, per `orbit-conventions`' no-chaining contract. Where that command lands is the re-entry table's to decide (`orbit-explore-modifications`' re-entry resolution), including its refusal when a staging directory and an active change share the name; this requirement promises no resume. An essential redesign holds the gate only where the gate reads the entry: on a CRITICAL or WARNING of a reviewed-gate pass, its `escalated` disposition keeps that pass unresolved, and the gate reports that and rules nothing new. An escalated SUGGESTION, and any entry walked from an audit-drift emit or from markers, records the route and holds nothing, because SUGGESTIONs never gate and neither source is a gate pass. While the hold stands, the gate's canonical next stays the walk (`orbit-engine-gates`' `A reviewed gate lists its outstanding passes`), and that walk carries the routed entry forward unwalked, per `One invocation writes one log per discovered source`: the route the walk names is where the work goes, and the eligibility line's walk is bookkeeping. That second voice is a named limit of this requirement, standing until the explored repair lands; the gate does not read `routed_to`.
 
 The write gate does not check `remedy` or `routed_to`: the remedy is a judgement, and the fields are a record.
 
@@ -254,6 +269,11 @@ The write gate does not check `remedy` or `routed_to`: the remedy is a judgement
 
 - **WHEN** a walk resolves one finding by a local edit and another by removing a requirement the change should not carry
 - **THEN** the first entry carries `remedy: "repair"` and the second `remedy: "descope"`, each beside its own `lane`
+
+#### Scenario: A redesign outside a gate pass records its route and holds nothing
+
+- **WHEN** a walk of a discovered audit-drift emit escalates a WARNING as an essential redesign on an active change
+- **THEN** the entry is `escalated` with `remedy: "redesign"` and its `routed_to`, and the reviewed gate's state and `unresolvedPasses` are unchanged by it
 
 #### Scenario: A stale entry carries no remedy
 

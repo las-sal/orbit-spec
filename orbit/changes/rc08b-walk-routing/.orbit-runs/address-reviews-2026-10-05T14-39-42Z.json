@@ -1,0 +1,224 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-05T14:39:42Z",
+  "change": "rc08b-walk-routing",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc08b-walk-routing/.orbit-runs/review-system-2026-10-05T14-22-23Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-05T14-22-23Z",
+  "latest_apply_token": "2026-10-05T13-56-47Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 3
+  },
+  "pushback_verification": "All five verified against current state; W1's dist probe stands (an incomplete latest log keeps the pass listed). W1 shares spec.md:197 with the external pass's rediscovery finding under a different claim (trigger breadth, not regression), so it is walked here, not taken stale; no claims of the pair contradict.",
+  "resolution_summary": {
+    "resolved": 5,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Rediscovery rule triggers only on deferred/escalated, but the gate also rediscovers a pass whose latest log is incomplete or unreadable",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+      "line": 197,
+      "classification": "trivial_fix",
+      "action": "the trigger is now every reason the gate's resolution clause rejects a walked pass (an open entry, an incomplete log, an unreadable log), and a finding the earlier log does not name is walked; scenario added; body copy and text test moved with it",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/address-reviews.ts",
+          "test/core/templates/walk-routing.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "A pass REDISCOVERED because its latest log left an entry",
+          "**A rediscovered pass** (its latest log left an entry"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+            "text": "names only some of its substantive findings, or is unreadable"
+          }
+        ],
+        "searched": [
+          "REDISCOVERED",
+          "rediscovered pass"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "An essential redesign keeps the gate's eligibility line on the walk, while the walk's own report names /orbit:explore",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+      "line": 237,
+      "classification": "decision_required",
+      "action": "applied A: a rediscovered entry escalated with remedy redesign and a routed_to is re-recorded escalated with the same route and not walked, its route named again; the eligibility line's walk is stated as a named limit until the explored repair lands; two text tests added",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Body-side: a rediscovered entry already escalated with remedy redesign and routed_to is re-recorded escalated with the same routed_to without a re-walk; the requirement names the eligibility line's persistence as a residual."
+          },
+          {
+            "label": "B",
+            "body": "Engine-side: carry the route into the gate's reason when every open entry is a routed escalation (a fourth capability touch is already at the ceiling, so this likely belongs to a later stage)."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/address-reviews.ts",
+          "test/core/templates/walk-routing.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "The open findings are walked again. Nothing is copied forward"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+            "text": "That second voice is a named limit of this requirement"
+          }
+        ],
+        "searched": [
+          "eligibility line",
+          "walked again",
+          "routed_to"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The review body's ingestion sentence moved off its owner, orbit-review-external, which still says ingestion is --from-file",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 400,
+      "classification": "trivial_fix",
+      "action": "named beside the design's existing residual for the chat note, for the later stage touching orbit-review-external",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc08b-walk-routing/design.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/specs/orbit-review-external/spec.md",
+            "reason": "baseline spec; add a delta to your current change's specs/<capability>/spec.md to capture this ripple"
+          }
+        ]
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08b-walk-routing/design.md",
+            "text": "the owner and the body describe different primaries"
+          }
+        ],
+        "searched": [
+          "Ingestion is",
+          "--from-file"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The e2e test's 'triage header names foo' half asserts a string the test itself constructs",
+      "marker_source": "internal-review",
+      "file": "test/core/walk-discovery-e2e.test.ts",
+      "line": 59,
+      "classification": "trivial_fix",
+      "action": "the self-built header string and its assertion removed; the readdir stand-in for orbit list --json stated in a comment; the header half declared as text against row 2's wording",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/templates/walk-routing.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "names the change, and two logs empty"
+        ],
+        "introduced": [
+          {
+            "path": "test/core/walk-discovery-e2e.test.ts",
+            "text": "a readdir of orbit/changes stands in for it here"
+          }
+        ],
+        "searched": [
+          "header",
+          "single active change"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Design D1 places the repo-relative conversion at the instruction-loader boundary; the code does it in gates.ts",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc08b-walk-routing/design.md",
+      "line": 51,
+      "classification": "trivial_fix",
+      "action": "D1 now names computeReviewedStatus in gates.ts as the conversion site",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "is made repo-relative at that"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08b-walk-routing/design.md",
+            "text": "`file` is made repo-relative in"
+          }
+        ],
+        "searched": [
+          "repo-relative"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Five of five resolved: the rediscovery trigger widened to every reason the gate rejects a walked pass, a routed redesign carried forward rather than re-walked with the eligibility-line voice named as a limit (Sal: A), and three record repairs (the owner divergence named beside the design residual, a tautological test assertion dropped, the design's conversion site corrected).",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system rc08b-walk-routing",
+  "ripple_misses": 0
+}

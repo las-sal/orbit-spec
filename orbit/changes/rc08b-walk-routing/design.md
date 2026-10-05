@@ -48,8 +48,8 @@ already computed before the loop, and it is copied onto the status. The canonica
 pass CHANGES (`gates.ts:807-809`): it becomes `/orbit:address-reviews <change>` with no `--from-file`, so
 the engine's own eligibility line reaches discovery and the `openPair` stop, instead of aiming one half
 (walk 1, Sal's delegation, option A). The goldens that print that line move as a recorded act (task 1.5). Both fields ride `GateStatus` → `GateStatusRow`
-(`instruction-loader.ts:419`) into `orbit status --change --json`. `file` is made repo-relative at that
-boundary. A blocked gate never reaches the convergence computation, so it carries neither field. A
+(`instruction-loader.ts:419`) into `orbit status --change --json`. `file` is made repo-relative in
+`computeReviewedStatus` (`gates.ts`); the row only copies it. A blocked gate never reaches the convergence computation, so it carries neither field. A
 superseded gate carries both, and the walk body ignores them (the reader's rule, per the ADDED
 requirement). Alternative considered: a separate engine command that lists outstanding passes. Rejected,
 because the status row is already the surface the body reads, and a second surface would be a second
@@ -118,7 +118,11 @@ covered, so 68 must be declared (measured at proposal walk 2 by `orbit status --
   next line and the external chat note both name `--from-file`, so a user following either walks one
   pass. Those lines are `orbit-review`'s and `orbit-review-external`'s (a fourth and fifth capability
   under R-crc-1). The gate's own eligibility line, the most-followed of the three, no longer does (D1).
-  Named residual; the natural owner is a later stage touching the review body.
+  Named residual; the natural owner is a later stage touching the review body. The review body's
+  external branch now names discovery as the primary ingestion route (`review.ts`, "Ingestion is the
+  change-scoped …"), while its owner `orbit-review-external` still states ingestion as `--from-file`
+  (its Purpose and the findings-path scenario). Not contradictory — `--from-file` still works — but the
+  owner and the body describe different primaries until that later stage reconciles them.
 - [A suggestion-only pass is no longer walked by discovery] → Today's newest-by-TS rule walked it. Now
   only a pass carrying a CRITICAL or WARNING is outstanding, because that is the gate's predicate. The
   review emit's next line still names `--from-file` for it, and the requirement says so.
@@ -136,6 +140,14 @@ covered, so 68 must be declared (measured at proposal walk 2 by `orbit status --
   ledger with a `why`.
 - [Superseded proposal passes leave discovery] → A post-apply walk never picks up an unwalked proposal
   pass. That gate gates nothing, so `--from-file` reaches it, and the requirement says so.
+- [`openPair` ignores passes an earlier cadence slot consumed] → The pair diagnosis
+  (`diagnosePair(ordered0, …)`, since rc02) reads the whole pass list without the failed slot's ordering
+  bound. On a cadence that puts a blind pair after another slot (e.g. `[external, blind-pair]`), a pass
+  consumed by the earlier slot reads as the standing partner, `openPair` stays absent, and the gate's
+  next is the walk — which forecloses the pair. The shipped `[blind-pair, in-context]` cadence never hits
+  it. rc08b's discovery now stops on `openPair`, which raises the stakes. Routed as a separable REDESIGN to
+  `orbit/explore/blind-pair-command/` (system walk 1, Sal: C), beside the one-command blind pair it
+  shares a subject with: the pair's lifecycle.
 - [A walk across many passes is long] → The triage response scopes it (all / subset / only-critical),
   and each completed log stands on the trail if interrupted.
 

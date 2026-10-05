@@ -9,7 +9,7 @@ import { loadChangeContext, formatChangeStatus } from '../../src/core/artifact-g
  * rc08b-walk-routing, task 4.1 — exit (1)'s measure, end to end in a disposable project. One active
  * change whose `review-system` gate holds two unwalked passes, a fresh JSON and an external return.
  * The bare-invocation discovery read — status JSON through the DISCOVERY fence's rows 2 and 5 — yields
- * both and names the change; two walk payloads, one per `source_path`, pass the real write gate and
+ * both; two walk payloads, one per `source_path`, pass the real write gate and
  * leave the gate's list empty.
  */
 
@@ -50,18 +50,19 @@ beforeEach(() => {
 afterEach(() => fs.rmSync(root, { recursive: true, force: true }));
 
 /** The body's discovery read, rows 2 and 5 of the DISCOVERY fence, over real engine output. */
-function discover(): { header: string; passes: Array<{ token: string; file: string; source: string }>; openPair?: unknown } {
+function discover(): { passes: Array<{ token: string; file: string; source: string }>; openPair?: unknown } {
+  // Row 2's input is `orbit list --json`; a readdir of orbit/changes stands in for it here. The header
+  // row 2 prints is body text, held by the row-2 text test in walk-routing.test.ts — not asserted here.
   const active = fs
     .readdirSync(path.join(root, 'orbit', 'changes'), { withFileTypes: true })
     .filter(d => d.isDirectory() && d.name !== 'archive')
     .map(d => d.name);
   expect(active).toEqual([CHANGE]); // row 2: exactly one active change
-  const header = `resolved to the single active change ${active[0]}; markers outside it are not scanned`;
   const status = JSON.parse(JSON.stringify(formatChangeStatus(loadChangeContext(root, active[0]))));
   const reviewed = status.gates.filter((g: any) => g.kind === 'reviewed' && g.state !== 'blocked' && !g.superseded);
   const openPair = reviewed.find((g: any) => g.openPair)?.openPair; // row 4
   const passes = reviewed.flatMap((g: any) => g.unresolvedPasses ?? []); // row 5
-  return { header, passes, openPair };
+  return { passes, openPair };
 }
 
 function walkPayload(sourcePath: string, token: string, command: string | null, title: string, file: string) {
@@ -100,9 +101,8 @@ function walkPayload(sourcePath: string, token: string, command: string | null, 
 
 describe('rc08b exit (1): a bare walk discovers every outstanding pass and writes one log per source', () => {
   // @scenario behaviour orbit-address-reviews :: Address-reviews command available :: Bare invocation resolves the single active change
-  it('discovers both halves, names the change, and two logs empty the gate list', () => {
+  it('discovers both halves of the single active change, and two logs empty the gate list', () => {
     const before = discover();
-    expect(before.header).toContain(`single active change ${CHANGE}`);
     expect(before.openPair).toBeUndefined();
     expect(before.passes.map(p => [p.token, p.file, p.source])).toEqual([
       ['2026-10-05T01-00-00Z', `${RUNS}/review-system-2026-10-05T01-00-00Z.json`, 'internal-review'],
@@ -135,5 +135,30 @@ describe('rc08b exit (1): a bare walk discovers every outstanding pass and write
     const r = composeAndWriteEmit('address-reviews', { change: CHANGE }, walkPayload(ext.file, ext.token, null, 'External finding', 'src/b.ts'), { projectRoot: root });
     expect(r.emit.source_path).toBe(ext.file);
     expect(discover().passes.map(p => p.source)).toEqual(['internal-review']);
+  });
+
+  // @scenario behaviour orbit-address-reviews :: A walk entry records its remedy, and a REDESIGN leaves the walk :: A redesign outside a gate pass records its route and holds nothing
+  it('an essential redesign escalated from an audit-drift emit leaves the gate and its list unchanged', () => {
+    const gateRow = () => {
+      const st = JSON.parse(JSON.stringify(formatChangeStatus(loadChangeContext(root, CHANGE))));
+      const g = st.gates.find((x: any) => x.id === 'review-system');
+      return { state: g.state, reason: g.reason, unresolvedPasses: g.unresolvedPasses };
+    };
+    const before = gateRow();
+    const audit = composeAndWriteEmit('audit-drift', { change: CHANGE }, { final_assessment: '1 drift.', categories_run: ['1'], findings: [{ category: '1', severity: 'WARNING', file: 'src/a.ts', line: 1, title: 'Drift', recommendation: 'r' }], model: null }, { projectRoot: root });
+    const rel = path.relative(root, audit.path);
+    composeAndWriteEmit(
+      'address-reviews',
+      { change: CHANGE },
+      {
+        ...walkPayload(rel, path.basename(rel).slice('audit-drift-'.length, -'.json'.length), 'audit-drift', 'Drift', 'src/a.ts'),
+        resolution_summary: { resolved: 0, stale_suppressed: 0, deferred: 0, escalated: 1 },
+        resolutions: [
+          { severity: 'WARNING', title: 'Drift', marker_source: 'audit-drift', file: 'src/a.ts', line: 1, classification: 'unresolvable', action: 'escalated: essential redesign', remedy: 'redesign', routed_to: `orbit/changes/${CHANGE}/explore.md`, outcome: 'escalated' },
+        ],
+      },
+      { projectRoot: root }
+    );
+    expect(gateRow()).toEqual(before);
   });
 });

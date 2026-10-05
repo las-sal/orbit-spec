@@ -1,0 +1,95 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-05T15:10:18Z",
+  "change": "rc08b-walk-routing",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc08b-walk-routing/.orbit-runs/review-system-2026-10-05T15-07-55Z.json",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 2
+  },
+  "pushback_verification": "Both verified against current state: the unqualified sentence was present at spec.md:197 and its body copy; the three architect files were uncommitted and outside every walk entry's edit record. Neither stale.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "The widened rediscovery trigger names an unreadable log as a reason the gate rejects a walked pass, but an unreadable log with clean summary counts resolves it",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+      "line": 197,
+      "classification": "trivial_fix",
+      "action": "qualified the unreadable case to the gate's fallback (clean summary counts resolve the pass), pointing at orbit-engine-gates' Reviewed-gate pass condition; the body copy and its text test carry the same qualifier",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/address-reviews.ts",
+          "test/core/templates/walk-routing.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "or is unreadable: each a reason",
+          "or is unreadable — is presented"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+            "text": "an unreadable log whose counts are clean resolves its pass"
+          }
+        ],
+        "searched": [
+          "is unreadable",
+          "unreadable latest log"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Three files changed since the base pass sit outside every walk entry's edit record",
+      "marker_source": "internal-review",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 2977,
+      "classification": "trivial_fix",
+      "action": "committed CLAUDE.md, the program doc and the architect emit in their own commit (138a94e3), apart from the walks' edits",
+      "evidence": "git show --stat 138a94e3: exactly those three files",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [],
+        "searched": [
+          "git diff --name-only 974118a1"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Two of two resolved: the widened rediscovery trigger qualified to the gate's unreadable-record fallback at both sites, and the architect session's files committed apart from the walks' edits (138a94e3).",
+  "iteration": 6,
+  "next_recommended": "/orbit:archive rc08b-walk-routing — user-invoked",
+  "ripple_misses": 0
+}

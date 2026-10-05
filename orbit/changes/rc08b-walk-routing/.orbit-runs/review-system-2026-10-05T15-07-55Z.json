@@ -1,0 +1,130 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-05T15:07:55Z",
+  "change": "rc08b-walk-routing",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+      "line": 197,
+      "title": "The widened rediscovery trigger names an unreadable log as a reason the gate rejects a walked pass, but an unreadable log with clean summary counts resolves it",
+      "recommendation": "Qualify the unreadable case to what the gate computes: 'or is unreadable and its resolution_summary leaves a deferral or escalation, or carries no readable counts' (gates.ts:230-231, and orbit-engine-gates' Reviewed-gate pass condition: an unreadable record falls back WHOLE to deferred == 0 AND escalated == 0). The body copy at address-reviews.ts:1074 only enumerates the cases under 'discovery lists it' and needs the same qualifier for parity, not for correctness. The walker reads the list from the engine, so no walk diverges; the sentence's 'each a reason the gate's resolution clause rejects a walked pass' is what is false. The overstatement entered through the finding's own recommendation text and was copied without a read of passResolved.",
+      "walk_entry": {
+        "title": "Rediscovery rule triggers only on deferred/escalated, but the gate also rediscovers a pass whose latest log is incomplete or unreadable",
+        "file": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md"
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 2977,
+      "title": "Three files changed since the base pass sit outside every walk entry's edit record",
+      "recommendation": "Residual check from 974118a1 (the commit that added the fresh pass file): CLAUDE.md, orbit/architecture/clean-up-review-cycle.md and orbit/architecture/.orbit-runs/architect-2026-10-05T15-05-29Z.json are in the diff and in no entry's file or ripple_cascade.applied. They are the architect session's rc17 declaration and its stage-count marks (recorded by its own emit), not walk edits — a record gap, not a defect. Commit them separately from the walks' edits so the range reads cleanly."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Read both walk logs entry by entry and graded each resolved entry over its file plus ripple_cascade.applied (no entry carried a sweep.scope). Nine edits stand as written: the regression-aware rediscovery, the qualified gate hold with its engine-backed scenario, the routed-redesign carry-forward with its named second voice, the one empty-result rule, the independent examples, the routed pair-diagnosis residual, and the three record repairs. The one that does not is the widened rediscovery trigger: it lists an unreadable log among the gate's rejections, which the gate's own fallback (summary counts) contradicts. Checked by reading passResolved rather than the finding's paraphrase of it — the paraphrase is where the claim came from. The pattern is the one the fresh half named: walk prose re-describing the gate's predicate drifts wherever it paraphrases instead of pointing. Re-ran strict validation, the scenario map (80 declared, none uncovered) and the full suite on the walked tree.",
+  "passes_run": [
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    "0: verify-change — whole-change subject; a VERIFICATION-genre pass runs the file-set passes over the walks' sweep scopes only",
+    "4: no perspectives defined (orbit/lenses/ absent)",
+    "5: no critical paths defined (orbit/lenses/ absent)",
+    "6: audit-drift — whole-project subject; not run on a VERIFICATION-genre pass"
+  ],
+  "verification": [
+    {
+      "title": "Blind-pair protection ignores passes consumed by earlier cadence slots",
+      "file": "src/core/artifact-graph/gates.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Rediscovery mandates stale dispositions even when a previous fix regressed",
+      "file": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Essential redesigns do not universally hold the gate",
+      "file": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The degradation reference retains the old bare-scan exit",
+      "file": "src/core/templates/workflows/address-reviews.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "The example logs described as one pair do not belong to one pair",
+      "file": "src/core/templates/workflows/address-reviews.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Rediscovery rule triggers only on deferred/escalated, but the gate also rediscovers a pass whose latest log is incomplete or unreadable",
+      "file": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "An essential redesign keeps the gate's eligibility line on the walk, while the walk's own report names /orbit:explore",
+      "file": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The review body's ingestion sentence moved off its owner, orbit-review-external, which still says ingestion is --from-file",
+      "file": "src/core/templates/workflows/review.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "The e2e test's 'triage header names foo' half asserts a string the test itself constructs",
+      "file": "test/core/walk-discovery-e2e.test.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Design D1 places the repo-relative conversion at the instruction-loader boundary; the code does it in gates.ts",
+      "file": "orbit/changes/rc08b-walk-routing/design.md",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 0 warning, 2 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-05T14-37-54Z",
+    "2026-10-05T14-39-42Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc08b-walk-routing --from-file orbit/changes/rc08b-walk-routing/.orbit-runs/review-system-2026-10-05T15-07-55Z.json"
+}
