@@ -1,0 +1,26 @@
+{
+  "command": "architect",
+  "timestamp": "2026-10-05T19:41:52Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": null,
+  "final_assessment": "rc17b's charter gains a shorthand per reviewer class (--in-context, --external, --blind-pair beside the existing --fresh), each exactly --reviewer <class> and mutually exclusive; Sal chose this over retiring --fresh. Inside rc17b's existing capabilities; no exit criterion moved.",
+  "stages_touched": [
+    "rc17b-blind-pair-command"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md#stage-rc17a-invoked-coverage — the stage charter and exit criteria",
+      "orbit/explore/rc17a-invoked-coverage/explore.md — sixteen decisions; the Mechanism entries are the design input",
+      "orbit/architecture/clean-up-review-cycle.md#stage-rc17b-blind-pair-command — now carries the reviewer-class shorthands"
+    ],
+    "next_command": "/orbit:propose rc17a-invoked-coverage",
+    "model_hint": null,
+    "seam": "rc17a exploring, ready to propose; rc17b premised behind it, its charter now including the --reviewer shorthands."
+  },
+  "next_recommended": "/orbit:propose rc17a-invoked-coverage"
+}

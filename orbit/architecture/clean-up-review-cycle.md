@@ -3080,7 +3080,10 @@ token order and pushed (D-bpc-3); both reports rendered; the walk left to the us
 the USER's, recorded in the per-user global config at `orbit init`, which explains the concept and offers
 the Codex preset, an own command or none (D-bpc-2, D-bpc-11); a recorded and reachable runner launches
 every external half, single or pair, and otherwise the prompt is printed for paste (D-bpc-1, D-bpc-5,
-D-bpc-14). NARROWS D-rc03-5 as the parent charter states. The decisions live in rc17a's archived
+D-bpc-14). The `--reviewer` axis gets one shorthand per class, as `--fresh` already is for `fresh`:
+`--in-context`, `--external` and `--blind-pair`, each exactly `--reviewer <class>`, mutually exclusive with one
+another and with an explicit `--reviewer` (a clean usage error, as `--fresh` has today) — Sal, 2026-10-05, for a
+coherent interface; `--fresh` stays. NARROWS D-rc03-5 as the parent charter states. The decisions live in rc17a's archived
 exploration. Capabilities: `orbit-review`, `orbit-review-external`, `orbit-onboard`, plus whichever owns
 init's setup step — measured at propose, and a fourth is declared there under R-crc-9 rather than found
 later. Goal G4.
@@ -4946,3 +4949,13 @@ the command (three, a fourth to be declared at propose if init's owner adds one)
 as the record, its exits owned by the children, its slot unmarked until both are done. Stage count 32 →
 <!-- src:stages -->34<!-- /src:stages --> at both marked sites (this entry's mark is the third; the previous
 entry's is unmarked as history).
+
+**2026-10-05 — Architect session: rc17b gains a shorthand per reviewer class (Sal).** Sal found the review
+interface incoherent in use: `--fresh` is the only shorthand on the `--reviewer` axis, so `--external` was refused
+each time they reached for it. Of the two coherent shapes — retire `--fresh` so every class is spelled
+`--reviewer <class>`, or give every class a shorthand — Sal chose the second. Slotted into rc17b's charter, beside
+the new `blind-pair` value it names: `--in-context`, `--external`, `--blind-pair`, each exactly
+`--reviewer <class>`, mutually exclusive with each other and with an explicit `--reviewer`. It sits inside
+capabilities rc17b already carries (`orbit-review` owns the flag table, `orbit-onboard` the command table), so
+the stage's size is unchanged and no exit criterion moves; `--fresh` stays, so no other spec needs a sweep. The
+commands the engine prints are untouched here.
