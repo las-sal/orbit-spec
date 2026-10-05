@@ -1315,11 +1315,11 @@ never deleted.
 
 ## Program stages
 
-<!-- src:stages -->31<!-- /src:stages --> small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
+<!-- src:stages -->32<!-- /src:stages --> small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
 split into rc02 + rc02b on 2026-09-12; rc13 added 2026-09-14 and moved to phase 1 the same day;
 rc03a split from rc03 on 2026-09-15 and WITHDRAWN the same day; rc13 split into rc13a + rc13b on
 2026-09-15 under R-crc-9; rc07b split from rc07 the same day under R-crc-9 applied PREVENTIVELY; rc04d split from rc04c on 2026-09-21, the THIRD preventive application, caught at exploration by a size check rather than after a cadence;
-rc13c declared 2026-09-25 from rc13a's archive proposal, and rc15 declared the same day taking up Q-crc-11; rc16 declared 2026-10-01 from Q-crc-28's ratified direction; rc03 split into rc03b + rc03c on 2026-10-04 under R-crc-9, the FOURTH preventive application, again caught at exploration by a size check; rc06 split into rc06a + rc06b the same day, the FIFTH, caught at exploration; rc08 split into rc08a + rc08b on 2026-10-05, the SIXTH, caught at exploration — rc14 stays reserved for the undeclared `rc14-delta-scope` recommendation).
+rc13c declared 2026-09-25 from rc13a's archive proposal, and rc15 declared the same day taking up Q-crc-11; rc16 declared 2026-10-01 from Q-crc-28's ratified direction; rc03 split into rc03b + rc03c on 2026-10-04 under R-crc-9, the FOURTH preventive application, again caught at exploration by a size check; rc06 split into rc06a + rc06b the same day, the FIFTH, caught at exploration; rc08 split into rc08a + rc08b on 2026-10-05, the SIXTH, caught at exploration; rc17 declared the same day from rc08b's system walk, taking Sal's one-command blind pair and the walk's routed pair-diagnosis redesign — rc14 stays reserved for the undeclared `rc14-delta-scope` recommendation).
 Every stage is sized under R-crc-1, names the capabilities it touches, and names its goal.
 Charters are settled under R-crc-3 until a citing change refines them; exit criteria are
 falsifiable and self-measured by the stage's own cadence (G0). Position is computed — see the
@@ -2973,6 +2973,31 @@ one requirement; (3) every new production is exercised by a test that EXECUTES i
 malformed near-miss as well as the well-formed line (the rc13a discipline: a production asserted
 present is not a production tested), and the WAITING-set requirement in `orbit-orientation` is
 unchanged, measured by its delta count being zero.
+
+### Stage rc17-blind-pair-command — the pair is one command, as it is one slot
+
+Depends-on: rc08b-walk-routing
+Complete: [ ]
+
+Declared 2026-10-05 (Sal) during rc08b's system walk. The cadence's `blind-pair` slot is one unit — two
+passes of distinct classes, one state, no walk between — but running it is two commands, a handoff, a
+wait and an ordered commit, and the engine meanwhile reports a half-open pair the user must not walk.
+Charter: `/orbit:review --as <mode> --reviewer blind-pair` launches an isolated fresh pass and an
+isolated external pass from ONE pushed commit, waits for both, commits each pass file in its own commit,
+and renders both reports; the walk follows as its own command. NARROWS D-rc03-5 (no launch sentence in
+the review body): that ruling barred a spawn the user had not named, and here the user names both halves
+in one command, so no-chaining holds. It also takes rc08b's routed redesign (system walk 1, external W1,
+Sal: C): `openPair` reads the whole pass list without the failed slot's ordering bound, so on a cadence
+that puts a pair after another slot the gate recommends the walk that forecloses the pair — the state a
+failed half of this command would hand back. Open at exploration: the external runner for an adopter
+without Codex (a configured command, with the manual handoff as fallback); where orchestration lives
+(the body, per D6's zero engine processes, unless rc12 settles otherwise); partial failure; and size
+against R-crc-1 (orbit-review, orbit-review-external, orbit-engine-gates, likely config). Its exploration
+is `orbit/explore/blind-pair-command/`, the route rc08b's walk log already records. Goal G4.
+Exit: (1) one invocation produces both pass files on one commit, each committed alone, with no walk
+between them; (2) with only one half returned, the gate reports `openPair` on every supported cadence,
+including `[external, blind-pair]`; (3) an adopter without a configured external runner gets today's
+handoff, unchanged.
 
 ## Considered & out
 
@@ -4778,8 +4803,8 @@ exit (4) and jobs (2), (4), (5) and (6). rc08b depends on rc08a. rc08's heading 
 a SPLIT paragraph, and its charter is kept as written and named superseded in one term. The staging
 directory was renamed `rc08-walk-completeness` → `rc08a-sweep-evidence`, with its citation re-pointed, so
 rc08a renders `exploring`; rc08 takes its ENDED mark once both children have shipped, as rc03 and rc06
-did. Stage count 29 → <!-- src:stages -->31<!-- /src:stages --> at both marked sites (this entry's mark
-is the third; the previous entry's is unmarked as history). Sixth preventive application of R-crc-9.
+did. Stage count 29 → 31 at both marked sites (this entry's mark was the third; unmarked as history
+when the count next moved). Sixth preventive application of R-crc-9.
 
 **2026-10-05 — rc08a-sweep-evidence RATIFIED (Sal, at the architect offer).** Exits (1) and (2) graded MET as written:
 (1) on both system walk logs carrying `sweep` on 14 of 14 resolved entries and the gate suite's refusals of a surviving
@@ -4794,3 +4819,14 @@ with an exit criterion open, stated here so the mark does not imply otherwise. A
 `orbit-engine-gates` sentence rides rc08b. The post-archive project-wide audit found one SUGGESTION — walk provenance in
 the `orbit-emit-composition` baseline — walked to zero the same session
 (`orbit/.orbit-runs/address-reviews-2026-10-05T03-03-04Z.json`).
+
+**2026-10-05 — Architect session: rc17-blind-pair-command DECLARED (Sal).** Proposed by Sal during rc08b's
+system walk, after the program's first blind pair run with the external half launched from the command
+line (`codex exec`, read-only, the prompt verbatim on stdin): the pair is one slot and should be one
+command, so the engine never waits on a half and the user never sequences one. Declared premised in
+Phase 4, depending on rc08b; it narrows D-rc03-5 (the review body's no-launch sentence), and its charter
+says why no-chaining holds. It takes rc08b's system walk 1 redesign (external W1, Sal: C, routed to
+`orbit/explore/blind-pair-command/` in `address-reviews-2026-10-05T14-37-54Z.json`): the pair diagnosis
+ignores passes an earlier slot consumed, which the shipped cadence never reaches and a failed half of
+the new command would. Stage count 31 → <!-- src:stages -->32<!-- /src:stages --> at both marked sites
+(this entry's mark is the third; the previous entry's is unmarked as history).
