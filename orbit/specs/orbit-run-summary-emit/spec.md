@@ -469,18 +469,19 @@ target                string|null   the named external AI (e.g., "codex", "gpt-5
 awaiting_findings     bool     always true at T0
 ```
 
-`next_recommended` SHALL be multi-step prose describing the user action plus the follow-up command:
+`next_recommended` SHALL be multi-step prose describing the USER ACTION ONLY, ending at the save step:
 
 ```
 "Paste orbit/changes/<name>/.orbit-runs/external-prompt-<mode>-<TS>.md
- into the target AI, save the response as
- orbit/changes/<name>/.orbit-runs/external-<mode>-<TS>.md,
- then /orbit:address-reviews <name> --from-file <path>"
+ into the target AI, and save the response as
+ orbit/changes/<name>/.orbit-runs/external-<mode>-<TS>.md"
 ```
+
+It SHALL name no walk command. What follows the save is whatever the gate's canonical next computes once the return is saved (`orbit-engine-gates`) — never written into this record; when that next is a walk, it discovers the saved return with no path (`orbit-address-reviews`' `Address-reviews command available`). A walk command written into the record would be a one-half walk recorded as the next step.
 
 A downstream status reader's best-effort parse will find no leading `/orbit:<verb>` (because the string leads with "Paste"); `command` and `args` are left null, and the full verbatim string is surfaced in `reason`. This is the expected behavior — multi-step user actions are accurately represented as prose, not collapsed into a single command.
 
-T1 (findings returned, `/orbit:address-reviews --from-file` invoked) is the existing `/orbit:address-reviews` emit and is unaffected by this requirement.
+T1 (findings returned and walked, by discovery or by `--from-file`) is the existing `/orbit:address-reviews` emit and is unaffected by this requirement.
 
 #### Scenario: Review-external T0 emit has awaiting_findings=true
 - **WHEN** `/orbit:review foo --as proposal --reviewer external` runs and packages the prompt
@@ -490,6 +491,16 @@ T1 (findings returned, `/orbit:address-reviews --from-file` invoked) is the exis
 - **WHEN** a downstream status reader reads the review-external T0 JSON and best-effort parses `next_recommended`
 - **THEN** no leading slash command is found; `command` and `args` are null; the full multi-step instruction is preserved verbatim in `reason`
 
+#### Scenario: A clean return is not followed by a walk
+
+- **WHEN** the T0 emit packages an external whose return, once saved, will complete a clean blind pair (no substantive findings on either half) on a cadence that still owes an in-context slot
+- **THEN** the T0 record's `next_recommended` names the paste and save steps and no walk, and the eligibility line read after the return is saved names the in-context review, not a walk
+
+#### Scenario: The T0 recommendation names no walk
+
+- **WHEN** `/orbit:review foo --as system --reviewer external` packages its prompt
+- **THEN** the T0 emit's `next_recommended` ends at the `save the response as <path>` step and contains no `/orbit:address-reviews`
+
 ### Requirement: Audit-drift standalone recommendations
 
 Standalone `/orbit:audit-drift` emits `audit-drift-<TS>.json`, and THIS requirement owns that emit's payload: the `orbit-audit-drift` skill's `references/run-summary-schema.md` (shipped alongside the generated skill) MIRRORS it, never defines it, per `orbit-emit-composition`'s `Payload tables agree with their schema references`. The emit SHALL include the universal spine from `orbit-conventions`'s `Internal-run JSON summary format` (with `kind: "editorial"`). The emit-layer recognizes TWO standalone invocation modes — **change-scoped** (`/orbit:audit-drift <name>`) and **project-wide** (`/orbit:audit-drift` with no argument) — each with distinct emit path, `change` value, and recommendation logic:
@@ -497,16 +508,16 @@ Standalone `/orbit:audit-drift` emits `audit-drift-<TS>.json`, and THIS requirem
 **Change-scoped standalone** (`/orbit:audit-drift <name>`):
 - Emit path: `orbit/changes/<name>/.orbit-runs/audit-drift-<TS>.json`
 - `change` field: the change name
-- `next_recommended` on findings: `"/orbit:address-reviews <name> — N drift(s) detected; resolve before next workflow step"`. The `--from-file <this-json>` argument is NOT required: `/orbit:address-reviews` auto-discovers the most-recent `audit-drift-*.json` in the change's `.orbit-runs/` per the orbit-address-reviews `Address-reviews command available` requirement's auto-discovery fallback. Address-reviews picks the audit-drift JSON via the recency rule (single global most-recent across `review-<mode>-*.json` + `audit-drift-*.json`); the just-written `audit-drift-<TS>.json` will be the most recent at recommendation-emit time, so auto-discovery resolves to it cleanly.
+- `next_recommended` on findings: `"/orbit:address-reviews <name> — N drift(s) detected; resolve before next workflow step"`. The `--from-file <this-json>` argument is NOT required: a change-scoped walk discovers every `audit-drift-*.json` no resolution log names, per `orbit-address-reviews`' `Address-reviews command available`, so the just-written emit is discovered with no path.
 - `next_recommended` on clean (zero findings): copy from the most recent prior `.orbit-runs/*.json` for the same change, excluding the just-written audit-drift JSON itself. `final_assessment` SHALL note "drift check clean; deferring to prior workflow state."
 
 **Project-wide standalone** (`/orbit:audit-drift` with no argument):
 - Emit path: `orbit/.orbit-runs/audit-drift-<TS>.json` (create the directory if it doesn't exist)
 - `change` field: `null` (no change scope)
-- `next_recommended` on findings: `"/orbit:address-reviews --from-file <this-json> — N drift(s) detected project-wide; resolve before next workflow step"`. The `--from-file <path>` argument IS required here: project-wide audit-drift has no change-directory anchor for `.orbit-runs/` lookup, so auto-discovery does NOT apply per the orbit-address-reviews spec's positional-resolution algorithm (no positional → bare invocation → grep-only; bare invocation skips auto-discovery).
+- `next_recommended` on findings: `"/orbit:address-reviews --from-file <this-json> — N drift(s) detected project-wide; resolve before next workflow step"`. The `--from-file <path>` argument IS required here: project-wide audit-drift writes to `orbit/.orbit-runs/`, which no change-scoped walk reads, so `orbit-address-reviews`' discovery never reaches it.
 - `next_recommended` on clean (zero findings): `"No project-wide drifts detected. Run /orbit:audit-drift periodically to catch new drift."` (no prior-workflow defer because project-wide audit-drift has no per-change workflow narrative to defer to). `final_assessment` SHALL note "project-wide drift check clean."
 
-(Historical note: `--from-file <this-json>` was historically required for the change-scoped recommendation because earlier versions of `/orbit:address-reviews` did not auto-discover internal JSON. Now that auto-discovery handles change-scoped invocations, the `--from-file` argument is dropped for change-scoped recommendations to give users the cleaner 2-command workflow. Project-wide invocations still require explicit `--from-file` because they have no change-directory anchor.)
+(Historical note: `--from-file <this-json>` was historically required for the change-scoped recommendation because earlier versions of `/orbit:address-reviews` did not discover internal JSON. Change-scoped walks now discover it, so the argument is dropped there; project-wide emits still need it, because no change-scoped walk reads `orbit/.orbit-runs/`.)
 
 Per-command extensions for audit-drift SHALL include:
 
@@ -525,7 +536,7 @@ This requirement applies only to **standalone** `/orbit:audit-drift` invocations
 #### Scenario: Change-scoped standalone audit-drift with findings recommends address-reviews
 
 - **WHEN** `/orbit:audit-drift foo` runs and detects 3 drifts
-- **THEN** `orbit/changes/foo/.orbit-runs/audit-drift-<TS>.json` is written with `change: "foo"`, `findings_total: 3`, and `next_recommended` beginning with `"/orbit:address-reviews foo —"` (no `--from-file` argument; auto-discovery picks up the just-written audit-drift JSON via the recency rule)
+- **THEN** `orbit/changes/foo/.orbit-runs/audit-drift-<TS>.json` is written with `change: "foo"`, `findings_total: 3`, and `next_recommended` beginning with `"/orbit:address-reviews foo —"` (no `--from-file` argument; a change-scoped walk discovers the just-written audit-drift JSON because no resolution log names it yet)
 
 #### Scenario: Change-scoped clean audit-drift defers to prior workflow recommendation
 
@@ -535,7 +546,7 @@ This requirement applies only to **standalone** `/orbit:audit-drift` invocations
 #### Scenario: Project-wide standalone audit-drift with findings
 
 - **WHEN** `/orbit:audit-drift` runs with no change argument and detects 2 project-wide drifts
-- **THEN** `orbit/.orbit-runs/audit-drift-<TS>.json` is written with `change: null`, `findings_total: 2`, and `next_recommended` beginning with `"/orbit:address-reviews --from-file"` (still requires `--from-file` because project-wide invocations have no change-directory anchor; auto-discovery does not apply to bare `/orbit:address-reviews` invocations)
+- **THEN** `orbit/.orbit-runs/audit-drift-<TS>.json` is written with `change: null`, `findings_total: 2`, and `next_recommended` beginning with `"/orbit:address-reviews --from-file"` (still requires `--from-file`, because no change-scoped walk reads `orbit/.orbit-runs/`)
 
 #### Scenario: Project-wide clean audit-drift (no prior workflow to defer to)
 

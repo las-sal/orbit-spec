@@ -2791,6 +2791,25 @@ Exit: (1) a bare walk with one active change and two unwalked passes walks both,
 rc08's exit (4): the body implements the three lanes, a REDESIGN routes to explore, and the log records
 the routing; (3) the T0 emit's `next_recommended` names no walk command.
 
+Shipped as (2026-10-05; the charter above stays as declared — departures are recorded in the archived design,
+`orbit/changes/archive/2026-10-05-rc08b-walk-routing/design.md`): a reviewed gate's status row carries
+`unresolvedPasses` (every pass clause (b) rejects, token order) and `openPair`, its `reason` byte-identical, and the
+unresolved-pass canonical next is `/orbit:address-reviews <change>`, naming no file. The walk discovers from that list
+through a DISCOVERY fence owned by `orbit-address-reviews`' `Address-reviews command available` and mirrored byte-equal
+into the body, writes one log per source in token order, records `remedy` / `routed_to` / `disagreement` per entry, and
+the T0 line ends at the save step. Three capabilities at R-crc-1's ceiling; 4 ADDED + 5 MODIFIED synced 9/9
+byte-verified. The system pair ran with its external half launched by `codex exec` from the command line (GPT-6 Astra,
+read-only), the fresh half a clean subagent; the walks routed the pair-diagnosis gap (`openPair` ignores passes an
+earlier slot consumed — rc02's, newly consequential) to rc17 (Sal: C), and the in-context VERIFICATION confirm graded 9
+landed and 1 regressed (a widened trigger carried a false claim copied from the finding's own text), walked to zero.
+Exit (1) is MET by test 4.1 and observed live except row 2: the walk was invoked with the change name, so a bare
+invocation resolving the single active change was never seen live (task 6.3, closed with that gap noted, Sal). Exits
+(2) and (3) are MET on the walk logs and the T0 emit `review-external-2026-10-05T14-14-36Z.json`. rc08a's exit (3) was
+measured on this cadence as its charter places it: `ripple_misses` 0 across six walks, `regressed` 4 (3 at the proposal
+confirm, 1 at the system confirm), so the measure reads 4, not zero — of the four, two are true ripple misses (an edited
+requirement's own scenario and a qualified cell's neighbour, both caught by a VERIFICATION pass) and two are unclean
+edits. Recorded as measured, not graded: the grade is rc08a's.
+
 ### Stage rc09-propose-hygiene — spike before spec, size before review
 
 Depends-on: (none)

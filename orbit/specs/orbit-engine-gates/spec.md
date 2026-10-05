@@ -261,8 +261,9 @@ apply tokens and walk records, so an unrelated edit between the two passes is an
 ARTIFACT: an `address-reviews-*.json` record carries ONE `source_path`, so a `blind-pair` whose
 members both carried findings is resolved by ONE RECORD PER MEMBER. R-crc-4's "one merged walk" is
 one resolution SITTING by the human, not one emitted record; a multi-source record does not exist
-at this stage and this gate SHALL NOT be specified as though it did. (Whether the walk surface
-should gain multi-source ingest is rc03's to decide when it owns the cadence templates.)
+at this stage and this gate SHALL NOT be specified as though it did. (The walk surface writes one
+record per discovered source, per `orbit-address-reviews`' `One invocation writes one log per
+discovered source`.)
 
 **EXISTENCE FIRST.** A pass carrying any SUBSTANTIVE (CRITICAL or WARNING) finding SHALL have at
 least one `address-reviews-*.json` record whose `source_path` references its findings artifact.
@@ -272,8 +273,9 @@ before a suggestion-only pass could clear the gate would be SUGGESTIONs gating b
 which is the defect this clause exists to remove.
 
 **ONE READABILITY PREDICATE, ONE FALLBACK.** Per-entry resolution data is AI-authored narrative:
-the emit surface validates the payload KEY and none of the entry shapes, and four generations of
-the shape exist on real trails. The gate asks ONE question of the most recent record referencing the pass's findings artifact.
+the emit surface checks some entry fields at write time — those `orbit-emit-composition`'s `The walk
+write gate checks sweep evidence` and `A ripple-miss pointer resolves and is counted` name — written
+logs are never re-validated, and four generations of the shape exist on real trails. The gate asks ONE question of the most recent record referencing the pass's findings artifact.
 
 A record is **READABLE** when `resolutions` is a NON-EMPTY ARRAY and EVERY element is an object
 carrying
@@ -388,7 +390,7 @@ self-assessment of review quality.
 #### Scenario: Unresolved substantive findings fail the gate
 
 - **WHEN** a fresh pass has a WARNING finding whose walk entry carries `outcome: "deferred"`
-- **THEN** the gate is unpassed with reason naming the pass and its unresolved substantive counts
+- **THEN** the gate is unpassed with reason naming the pass (`pass <token> has unresolved substantive findings`)
 
 #### Scenario: Deferred suggestions do not fail the gate
 
@@ -949,3 +951,46 @@ SUGGESTION-grade findings (reported, never blocking).
 - **WHEN** a gate converges while its completing walk deferred SUGGESTION-grade findings
 - **THEN** the gate is `passed` and its reason names the deferred suggestion count — non-blocking
   and never silent
+
+### Requirement: A reviewed gate lists its outstanding passes
+
+A reviewed gate whose state is `unpassed`, `stale` or `passed` — `superseded` being a flag on one of those, never a state of its own — SHALL report EVERY pass its resolution clause finds unresolved, not only the first: its status row carries `unresolvedPasses`, an array in token order (oldest first) of `{token, file, mode, source}` — `token` the pass's filename `<TS>` token, `file` its repo-relative path, `mode` its review mode, `source` `internal-review` or `external`. The array is `[]` when every pass is resolved. It is computed by the same predicate and the same pass set as the resolution clause of `Reviewed-gate pass condition — the computed convergence criterion`, so its first element is the pass the gate's `reason` names; a `passed` gate carries `unresolvedPasses: []` from its own return path. `reason`, the position readout and every human rendering are unchanged.
+
+When the gate's canonical next command names a walk because a pass is unresolved, it SHALL be the change-scoped form `/orbit:address-reviews <change>`, naming no file: the walk discovers every listed pass, and the `openPair` stop applies (`orbit-address-reviews`' `Address-reviews command available`). A `--from-file` aim at one pass would walk one half and skip both. The blind-pair command that precedes it in the canonical-next order is unchanged.
+
+When the gate's own pair diagnosis — the computation behind the `reason`'s pair note — finds the cadence's blind-pair slot open with a pairable member standing and the other class missing, however many members of the standing class there are, the row SHALL also carry `openPair: {missing}`, `missing` `fresh` or `external`: the same fact the pair note states in prose, now a field a reader need not parse. Absent otherwise.
+
+A `blocked` gate computes no resolution and carries neither field. A `superseded` gate carries both as computed; whether a reader acts on a superseded gate's list is the reader's rule (`orbit-address-reviews`' `Address-reviews command available` does not).
+
+The fields REPORT; nothing new is ruled (R-crc-13). `orbit status --change <name> --json` carries them on the gate row, and they are the outstanding set the walk discovers.
+
+#### Scenario: Two unresolved passes are both listed
+
+- **WHEN** a `review-system` gate's trail holds a fresh pass at `T1` and an external return at `T2`, both with unwalked substantive findings
+- **THEN** its row carries `unresolvedPasses` with two entries, `T1` first, `source` `internal-review` then `external`, and `reason` still names `T1`
+
+#### Scenario: A resolved gate lists nothing
+
+- **WHEN** every pass on a reviewed gate's trail is resolved
+- **THEN** its row carries `unresolvedPasses: []`
+
+#### Scenario: An open pair is a field
+
+- **WHEN** a `review-system` gate's trail holds a fresh pass and no external pass on the same state, and the cadence's blind-pair slot is open
+- **THEN** its row carries `openPair: {missing: "external"}` beside the unchanged `reason`
+
+#### Scenario: The walk next names no file
+
+- **WHEN** a `review-proposal` gate's first unresolved pass is `review-proposal-T1.json` and no blind pair is open
+- **THEN** its canonical next command is `/orbit:address-reviews <change>`, with no `--from-file`
+
+#### Scenario: Two fresh passes and no external still report the open pair
+
+- **WHEN** a `review-system` gate's trail holds two pairable fresh passes and no external pass
+- **THEN** its row carries `openPair: {missing: "external"}`
+
+#### Scenario: A blocked gate carries neither field
+
+- **WHEN** `review-system` is blocked by an incomplete `apply`
+- **THEN** its row carries no `unresolvedPasses` and no `openPair`
+
