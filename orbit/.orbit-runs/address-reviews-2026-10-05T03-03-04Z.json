@@ -1,0 +1,79 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-05T03:03:04Z",
+  "change": null,
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "from-file",
+  "source_path": "orbit/.orbit-runs/audit-drift-2026-10-05T03-00-48Z.json",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 1
+  },
+  "pushback_verification": "The one finding verified: the provenance sat at orbit/specs/orbit-emit-composition/spec.md:1034, the only match across the 23 baselines.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "A baseline requirement cites change-local walk provenance ('system walk 1, Sal: B') that resolves only in an archived trail",
+      "marker_source": "audit-drift",
+      "file": "orbit/specs/orbit-emit-composition/spec.md",
+      "line": 1034,
+      "classification": "trivial_fix",
+      "action": "Dropped the walk provenance from the sentence introducing the CHECK SCOPE / PATH fence; the reason stays. The fence and its two body mirrors are unchanged.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/changes/archive/2026-10-05-rc08a-sweep-evidence/specs/orbit-emit-composition/spec.md",
+            "reason": "cross-change ripple; cascade scope is current change only"
+          }
+        ]
+      },
+      "sweep": {
+        "retired": [
+          "(system walk 1, Sal: B"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/specs/orbit-emit-composition/spec.md",
+            "text": "are stated in this fence (an installed skill cannot open this spec, so"
+          }
+        ],
+        "searched": [
+          "walk 1",
+          "walk 2",
+          "Sal: B",
+          "Sal: A"
+        ],
+        "scope": [
+          "orbit/specs"
+        ],
+        "kept": [
+          {
+            "path": "orbit/changes/archive/2026-10-05-rc08a-sweep-evidence/specs/orbit-emit-composition/spec.md",
+            "why": "the archived delta is the record of what rc08a proposed and synced; history, never rewritten"
+          }
+        ]
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Post-rc08a audit walk: 1 of 1 resolved — the only walk-provenance citation across the baselines is gone from orbit-emit-composition; the archived delta keeps it as history.",
+  "iteration": 11,
+  "next_recommended": "No markers remain in scope; the project trail records this walk.",
+  "ripple_misses": 0
+}

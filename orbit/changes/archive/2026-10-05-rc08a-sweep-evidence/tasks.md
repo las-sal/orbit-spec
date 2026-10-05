@@ -25,7 +25,7 @@
 
 - [x] 5.1 `npm run build && node bin/orbit.js update --force`, then sweep the generated `.claude/skills/orbit-address-reviews/` and `.claude/skills/orbit-review/` for `sweep` (the step, the reference, the scope sentence) and confirm the old two-part sweep-scope wording ("its `file` plus every path in its `ripple_cascade.applied`", as `src/core/templates/workflows/review.ts` carries it today) survives nowhere in `src/` or the generated skills.
 - [x] 5.2 Run the FULL `npm test` and confirm the `Test Files` line reports no failures.
-- [ ] 5.3 (User-validation) The first walk after apply, on this change's own review findings, writes `sweep` on every resolved entry and passes the gate; a refusal on that walk is fixed in the files, never by trimming `retired`.
+- [x] 5.3 (User-validation) The first walk after apply, on this change's own review findings, writes `sweep` on every resolved entry and passes the gate; a refusal on that walk is fixed in the files, never by trimming `retired`. — OBSERVED 2026-10-05 at system walk 1 (`address-reviews-2026-10-05T02-39-33Z.json`): 7 of 7 resolved entries carried `sweep` and the gate accepted the log first time, `ripple_misses: 1`; walk 2 (`address-reviews-2026-10-05T02-48-21Z.json`) the same, 7 of 7. Closed at archive by observation.
 
 At-archive note (not a task): rc08's exit (3) is measured on the cadence of the stage after rc08a, from `ripple_misses` plus the `regressed` verdict count, and recorded in that stage's archive, not this one's.
 

@@ -132,6 +132,8 @@ The system SHALL accept a `--from-file <path>` flag and parse the file's content
 
 The system SHALL execute five lifecycle stages: (1) discover markers (or load from file), (2) triage with user (numbered list, optional scoping) — the triage OPENS with a compact preview of every finding headed for the OBVIOUS-FIX lane (its one-line resolution named) BEFORE any fix lands, so the user can pull any item into the decision lane with a word (the over-classification guard: presentation-ordering, not a prompt); the preview derives from a PROVISIONAL classification (per-finding pushback has not yet run) — walk-time pushback may reclassify a finding, and a reclassified item is announced before its fix lands, (3) walk each marker per-finding (walk-mode default; `--batch` opts INTO legacy batch-mode), (4) ripple cascade (auto-apply ripples to in-scope files by default; `--no-cascade` opts out), (5) report a resolution log.
 
+A `resolved` entry closes its cycle by recording its sweep evidence after the ripple cascade and before marker removal, per `A resolved walk entry records its sweep evidence`; triage reads earlier walks for ripple misses, per `A ripple miss is attributed by the walk that finds it`.
+
 **Walk-mode is the default**: each finding receives its own pushback → classify → resolve → ripple-cascade → remove-marker cycle, where "resolve" follows the finding's lane — obvious-fix findings apply directly; decision-lane findings follow the present → discuss → ratify protocol (per `Disjunctive recommendation fields surface as decision forks`: a full-prose briefing in chat, genuine back-and-forth, ratification by user chat directive or by the optional closure prompt). Batch-mode (all findings resolved together before any ripple) is opt-in via the `--batch` flag or by verbal batch-intent in the user's invocation message (per `Walk-mode by default with --batch opt-in`).
 
 **Cascade is the default**: when a finding resolves, ripple-flagged files are automatically updated unless they fall into one of four lifecycle-invariant OUT categories (audit trail, baseline specs, cross-change directories, safe-exclusions) — see `Ripple cascade by default`. `--no-cascade` reverts to v1 list-only behavior; the resolution log records ripple-flagged files in `flagged_not_applied` regardless of mode.
@@ -474,6 +476,8 @@ The system SHALL extend the `address-reviews-<TS>.json` resolution-log shape wit
 
 **Field semantics**:
 
+- **`sweep`** and **`ripple_miss_of`** (per-resolution): shapes owned by `A resolved walk entry records its sweep evidence` and `A ripple miss is attributed by the walk that finds it`; checked at the write gate per `orbit-emit-composition`.
+
 - **`walk_mode`** (top-level, required): `"per_finding"` (walk-mode, the default) or `"batch"`.
 - **`walk_mode_source`** (top-level, required when `walk_mode == "batch"`): `"flag"` (via `--batch`), `"verbal"` (via verbal trigger in invocation message), or `"command-shape-interruption"` (via mid-walk command-shaped message). Omitted when `walk_mode == "per_finding"`.
 - **`walk_mode_shifted_at_finding`** (top-level, present only when `walk_mode_source == "command-shape-interruption"`): the 1-indexed finding number at which the mode shifted.
@@ -549,4 +553,60 @@ standing depends on — D-arc Stage D2).
 
 - **WHEN** `/orbit:address-reviews --from-file orbit/architecture/.orbit-runs/review-architecture-<TS>.json` completes its walk
 - **THEN** the resolution log lands at `orbit/architecture/.orbit-runs/address-reviews-<TS>.json` with `change: null` and the `doc` carried from the source emit
+
+### Requirement: A resolved walk entry records its sweep evidence
+
+The system SHALL record, on every resolution entry whose `outcome` is `resolved`, a `sweep` object with exactly five keys, each an array (any of which may be empty; an empty array is the WRITTEN answer that there is nothing of that kind, never an omission):
+
+| key | element | meaning | checked at the write gate? |
+|---|---|---|---|
+| `retired` | non-empty string | wording the fix removed, which must no longer appear anywhere the gate looks | yes |
+| `introduced` | `{path, text}`, both non-empty strings | text the fix added, which must appear in `path` | yes |
+| `searched` | non-empty string | what the walker searched for to find the fix's other sites (a phrase, an identifier, a grep pattern) | no, a record |
+| `scope` | non-empty string, a path | files or directories the walker examined beyond the entry's `file` and `ripple_cascade.applied` | each path must resolve; its contents are part of the retired check |
+| `kept` | `{path, why}`, both non-empty strings | a file that must keep this entry's `retired` strings: history that quotes the old wording, or a check that asserts its absence | the path is excluded from this entry's retired check |
+
+An entry whose `outcome` is `stale`, `deferred` or `escalated` carries no `sweep`: nothing was edited, so there is nothing to sweep. The walk body composes the record after the ripple cascade, as the entry's last step before marker removal; in batch mode, every entry's record is composed after the one aggregated cascade. `retired` names the wording the fix made FALSE; `searched` names how the walker looked for it, which may be broader. The checks themselves are owned by `orbit-emit-composition`'s `The walk write gate checks sweep evidence`; this requirement owns the shape. A walk log written before this requirement carries no `sweep` and is exempt by absence: no reader re-grades it.
+
+#### Scenario: A resolved entry carries all five keys
+
+- **WHEN** the walk resolves a finding by rewording "seventeen blocks" to "sixteen blocks" in `design.md` and `tasks.md`
+- **THEN** the entry carries `sweep: {retired: ["seventeen blocks"], introduced: [{path: "<change>/design.md", text: "sixteen blocks"}, …], searched: ["seventeen", "17 blocks"], scope: ["<change>/proposal.md"], kept: []}`
+
+#### Scenario: Nothing to retire is written, not omitted
+
+- **WHEN** a resolved fix only adds a missing scenario and retires no wording
+- **THEN** the entry carries `retired: []` and the added scenario's text under `introduced`
+
+#### Scenario: A stale entry carries no sweep
+
+- **WHEN** pushback finds a finding already fixed and the entry's `outcome` is `stale`
+- **THEN** the entry carries no `sweep`
+
+#### Scenario: History that quotes the old wording is kept
+
+- **WHEN** the change's `explore.md` records "we first wrote seventeen blocks" in a Decisions entry
+- **THEN** the walker lists `{path: "<change>/explore.md", why: "Decisions history"}` under `kept`, and that file is not searched for this entry's retired strings
+
+### Requirement: A ripple miss is attributed by the walk that finds it
+
+The system SHALL let a resolution entry whose `outcome` is `resolved` name the earlier walk entry whose sweep should have caught the finding, through an optional `ripple_miss_of` object with exactly four keys: `walk` (the earlier walk log's filename token), `title` and `file` (that walk's resolution entry, as written there; the gate compares both sides after one normalization, so a title's surrounding whitespace and a file's `:<line>` suffix never decide a match), and `kind`, one of the CLOSED values:
+
+| `kind` | the site of the later finding was… |
+|---|---|
+| `scope` | outside that entry's check scope |
+| `query` | inside the scope, but matched none of its `retired` or `searched` strings |
+| `judgement` | matched by them, and judged unaffected |
+
+The walker attributes at TRIAGE, when it reads the finding against the trail's earlier walks of the same change; a REVIEW-genre pass cannot attribute, because its brief names no prior pass (per `orbit-conventions`' `Review mode decision framework`). Only a `resolved` entry carries it: a stale finding was already fixed, and a deferred or escalated one is not yet a fixed leftover. Attribution is the walker's judgement and the field is optional: an unattributed miss is the named residual, invisible to every check. A VERIFICATION-genre pass keeps its own channel, `regressed` verdicts and `walk_entry` links (per `orbit-emit-composition`'s verification requirement), unchanged. The pointer check and the count are owned by `orbit-emit-composition`'s `A ripple-miss pointer resolves and is counted`.
+
+#### Scenario: A system-review finding is attributed to the proposal walk that missed it
+
+- **WHEN** a fresh system pass finds "'stated at both sources' survives in the generated review body", `src/core/templates/workflows/review.ts`, and the proposal walk's entry for the finding that introduced the ownership move edited only files under the change directory, with `scope: []` and no cascade path outside it, so the body file was outside that entry's check scope
+- **THEN** the system walk's resolution carries `ripple_miss_of: {walk: "<proposal walk token>", title: "<that entry's title>", file: "<that entry's file>", kind: "scope"}`
+
+#### Scenario: An unrelated finding carries no attribution
+
+- **WHEN** a finding concerns a defect no earlier walk entry touched
+- **THEN** its resolution carries no `ripple_miss_of`
 

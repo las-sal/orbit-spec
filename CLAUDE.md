@@ -209,7 +209,7 @@ file now carries a live mark. Do NOT read this paragraph as the program's full l
 only what rc07 produced. The authoritative list is the program doc's own Open questions section,
 which also carries Q-crc-11, Q-crc-12, Q-crc-20, Q-crc-21, Q-crc-22 and Q-crc-23.
 
-**Sixteen more stages have shipped since, and the program is NINETEEN stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b, rc03c, rc07b and rc06a ratified 2026-10-04; rc06b ratified 2026-10-05; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening).
+**Seventeen more stages have shipped since, and the program is TWENTY stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b, rc03c, rc07b and rc06a ratified 2026-10-04; rc06b and rc08a ratified 2026-10-05 — rc08a with its exit (3) pending by design on the next stage's cadence; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening).
 
 `rc02c-confirmation-semantics` is ARCHIVED (2026-09-21): **the budget stopped being a target.**
 R-crc-11(h) — effort is RECORDED, never TARGETED — retired `budgetExhausted`, the
@@ -629,6 +629,23 @@ from verify's `fail_mode` since D5 — verify now classifies after an `orbit val
 graded four `landed` and one `regressed` — walk 2's cascade swept the vocabulary it changed rather than the behaviour it added,
 leaving three "system mode never runs validate" premises — repaired in walk 3; a COMPUTED PASSED gate. The rider's premise was
 half false: a separator title makes its tag MALFORMED; only a repeated title pairs. **2712 tests green** (2679 → 2712).
+
+`rc08a-sweep-evidence` is ARCHIVED and RATIFIED (2026-10-05; exits (1)–(2) graded MET as written, exit (3) pending by design — measured on the next stage's cadence; the first child of the split parent `rc08`, R-crc-9's sixth preventive
+application): **a walk's log carries what it retired, and the gate checks it.** Every `resolved` walk entry carries
+`sweep: {retired, introduced, searched, scope, kept}` (shape owned by `orbit-address-reviews`), and `orbit emit
+address-reviews` refuses a log whose retired wording survives in the entry's CHECK SCOPE or whose introduced text is
+absent from its path — whitespace-collapsed literal matching, `searched` a record never checked, `kept` one file exempt
+in full. A later finding names the entry that missed it through `ripple_miss_of: {walk, title, file, kind}` (`scope` |
+`query` | `judgement`), the pointer checked against the trail, and `ripple_misses` is engine-computed. The checks run on
+the record as frozen for writing; the check scope and path rule are one fenced production mirrored byte-equal into the
+walk and review bodies; the VERIFICATION pass grades `sweep.scope` while its residual check keys on the edit record.
+Three capabilities at R-crc-1's ceiling (4 ADDED, 3 MODIFIED, 7/7 byte-verified). The blind pair on `56bfe1f3` — fresh
+0C/3W/4S (forward), external GPT-6 Codex 2C/4W/1S (hold) — converged on the `kept` exemption; the external half found
+both criticals in the stage's own new mechanism (checks before the freeze; explicitly named never-read paths). Walked in
+two logs, both the first written under the sweep record (task 5.3 observed); the in-context VERIFICATION confirm graded
+13 landed and 1 regressed (walk provenance in a baseline-bound sentence); a COMPUTED PASSED gate. Q-crc-32 opened; the
+`orbit-engine-gates` sentence rides rc08b. The readiness record accepts six residuals, headlined by rc07's distinction.
+**2761 tests green** (2712 → 2761).
 
 Read that doc before any rc-stage work; the D-arc section below is the historical
 record of how the engine got here.

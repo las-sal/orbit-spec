@@ -2737,7 +2737,7 @@ eligibility line owns what follows. Both are the walk CONSUMER's business, which
 ### Stage rc08a-sweep-evidence — a walk's log carries what it retired, and the gate checks it
 
 Depends-on: rc03c-verification-record
-Complete: [ ]
+Complete: [x] 2026-10-05 (Sal)
 
 Declared 2026-10-05 (Sal) from the rc08 exploration's split (D-rc08-1). Charter: every `resolved` walk
 entry carries `sweep: {retired, introduced, searched, scope, kept}` (D-rc08-2). `orbit emit
@@ -2756,6 +2756,17 @@ have covered is detectable from the trail, as `ripple_miss_of` on its walk or as
 verification verdict; (3) the cadence of the stage after rc08a records zero ripple misses, read from
 `ripple_misses` plus the `regressed` count. Exits (1)–(3) are rc08's (1)–(3), with (1) restated in the
 shipped field's name.
+
+Shipped as (2026-10-05; the charter above stays as declared — the departures are recorded in the archived design,
+`orbit/changes/archive/2026-10-05-rc08a-sweep-evidence/design.md`): the CHECK SCOPE and PATH rule are ONE fenced
+production in `orbit-emit-composition`'s `The walk write gate checks sweep evidence`, mirrored byte-equal into the walk
+and review bodies (system walk 1, Sal: B); the checks run on the record as frozen for writing, the never-read
+directories hold however a path entered the scope, a `kept` element is one FILE exempt in full (Q-crc-32 carries the
+occurrence-scoped form to rc08b), and an unreadable scope member refuses rather than reading as absent (system walk 2);
+`trail.ts` exports `stripLineSuffix`, `normalizeDisposition` and `toRepoRelative`, each unchanged, so the gate keys as
+the reader does. Exit (1)'s "naming path and line" grades the retired half by the line and the introduced half by the
+path and the text, since an absent text has no line. `orbit-engine-gates`' stale "none of the entry shapes" sentence
+rides rc08b's charter (system walk 2, Sal: B).
 
 ### Stage rc08b-walk-routing — a walk finds every outstanding pass, and a redesign leaves the walk
 
@@ -4769,3 +4780,17 @@ directory was renamed `rc08-walk-completeness` → `rc08a-sweep-evidence`, with 
 rc08a renders `exploring`; rc08 takes its ENDED mark once both children have shipped, as rc03 and rc06
 did. Stage count 29 → <!-- src:stages -->31<!-- /src:stages --> at both marked sites (this entry's mark
 is the third; the previous entry's is unmarked as history). Sixth preventive application of R-crc-9.
+
+**2026-10-05 — rc08a-sweep-evidence RATIFIED (Sal, at the architect offer).** Exits (1) and (2) graded MET as written:
+(1) on both system walk logs carrying `sweep` on 14 of 14 resolved entries and the gate suite's refusals of a surviving
+retired string (path and line) and an absent introduced text (path and text — an absent text has no line, the reading the
+archived tasks' at-archive note records); (2) on system walk 1's `ripple_miss_of` naming proposal walk 1's entry
+(`kind: query`), counted `ripple_misses: 1`, beside the confirm's one `regressed` verdict. Exit (3) is PENDING BY DESIGN,
+not graded: the charter places it on the cadence of the stage after rc08a, read from `ripple_misses` plus the `regressed`
+count and recorded in THAT stage's archive; rc08a's own cadence (1 attributed miss, 1 regression) is its baseline, not its
+measure. Ratified on the recommendation that unmeasured is not unmet (R-crc-12) — the first ratification in the program
+with an exit criterion open, stated here so the mark does not imply otherwise. Archived through a COMPUTED PASSED gate
+(`archive-2026-10-05T02-53-30Z.json`), readiness ready with six accepted residuals; Q-crc-32 opened; the
+`orbit-engine-gates` sentence rides rc08b. The post-archive project-wide audit found one SUGGESTION — walk provenance in
+the `orbit-emit-composition` baseline — walked to zero the same session
+(`orbit/.orbit-runs/address-reviews-2026-10-05T03-03-04Z.json`).
