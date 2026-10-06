@@ -102,6 +102,7 @@ function gate(id: 'review-proposal' | 'review-system' = 'review-system', schema:
 const modeOf = (id: string) => (id === 'review-proposal' ? 'proposal' : 'system');
 const freshCmd = (id: string) => `/orbit:review --as ${modeOf(id)} --fresh x`;
 const externalCmd = (id: string) => `/orbit:review --as ${modeOf(id)} --reviewer external x`;
+const pairCmd = (id: string) => `/orbit:review --as ${modeOf(id)} --reviewer blind-pair x`;
 
 // ---- exit (2): the first slot is covered by what the user invoked, on BOTH shipped gates -------
 
@@ -140,16 +141,16 @@ describe('exit (2) — a single fresh or external pass covers the invoked slot o
         else config(yaml);
         return gate(id);
       };
-      const cases: Array<[string, string | null, string, 'fresh' | 'external', RegExp | null]> = [
-        ['absent', null, freshCmd(id), 'fresh', null],
-        ['blind-pair', `review_preference:\n  ${id}: blind-pair\n`, freshCmd(id), 'fresh', null],
+      const cases: Array<[string, string | null, string, 'fresh' | 'external' | 'blind-pair', RegExp | null]> = [
+        ['absent', null, pairCmd(id), 'blind-pair', null],
+        ['blind-pair', `review_preference:\n  ${id}: blind-pair\n`, pairCmd(id), 'blind-pair', null],
         ['fresh', `review_preference:\n  ${id}: fresh\n`, freshCmd(id), 'fresh', null],
         ['external', `review_preference:\n  ${id}: external\n`, externalCmd(id), 'external', null],
-        ['unknown value', `review_preference:\n  ${id}: triple-blind\n`, freshCmd(id), 'fresh', new RegExp(`'${id}'.*'triple-blind'.*blind-pair`)],
-        ['malformed (a list)', `review_preference:\n  - external\n`, freshCmd(id), 'fresh', /Invalid 'review_preference'.*a list/],
-        ['unknown gate key', `review_preference:\n  review-nothing: external\n`, freshCmd(id), 'fresh', /Unknown gate 'review-nothing'/],
+        ['unknown value', `review_preference:\n  ${id}: triple-blind\n`, pairCmd(id), 'blind-pair', new RegExp(`'${id}'.*'triple-blind'.*blind-pair`)],
+        ['malformed (a list)', `review_preference:\n  - external\n`, pairCmd(id), 'blind-pair', /Invalid 'review_preference'.*a list/],
+        ['unknown gate key', `review_preference:\n  review-nothing: external\n`, pairCmd(id), 'blind-pair', /Unknown gate 'review-nothing'/],
         // rc17a system walk (external C1): a MAP-shaped value — `String()` on it threw — warns and falls back.
-        ['a map value', `review_preference:\n  ${id}:\n    toString: external\n`, freshCmd(id), 'fresh', new RegExp(`'${id}': a map`)],
+        ['a map value', `review_preference:\n  ${id}:\n    toString: external\n`, pairCmd(id), 'blind-pair', new RegExp(`'${id}': a map`)],
       ];
       const strip = (g: GateStatus) => {
         const { nextCommand, nextSlot, ...rest } = g;
@@ -178,6 +179,17 @@ describe('exit (2) — a single fresh or external pass covers the invoked slot o
       expect(gate(id)).toEqual(without);
       config(`review_preference:\n  ${id}: blind-pair\n`);
       expect(gate(id)).toEqual(without);
+    });
+
+    // @scenario behaviour orbit-engine-gates :: The first review slot covers what the user invoked :: The default preference presents the pair command
+    it(`${id}: the default preference presents the pair command`, () => {
+      prep();
+      fs.rmSync(path.join(root, 'orbit', 'config.yaml'), { force: true });
+      const g = gate(id);
+      expect(g.reason).toBe('no outside review stands on this state');
+      expect(g.nextCommand).toBe(pairCmd(id));
+      expect(g.nextSlot).toBe('blind-pair');
+      expect(g.openPair).toBeUndefined();
     });
   }
 });
@@ -404,6 +416,15 @@ describe('The invoked slot presents what the launch state says', () => {
     expect(status.next_hint_keys).toEqual({ phase: 'review-system', slot: 'external' });
     expect(modelHintFor(root, status.next_hint_keys)).toBe('GPT-6 Codex');
   });
+
+  // @scenario behaviour orbit-engine-gates :: Single-voiced canonical-next computation :: A blind-pair hint garnishes the presented pair command
+  it('a blind-pair hint garnishes the pair command the default preference presents', () => {
+    config('models:\n  blind-pair: "codex gpt-6.1-sol + a fresh subagent"\n  fresh: "Claude"\n');
+    const status = formatChangeStatus(loadChangeContext(root, 'x'));
+    expect(status.next_command).toBe('/orbit:review --as system --reviewer blind-pair x');
+    expect(status.next_hint_keys).toEqual({ phase: 'review-system', slot: 'blind-pair' });
+    expect(modelHintFor(root, status.next_hint_keys)).toBe('codex gpt-6.1-sol + a fresh subagent');
+  });
 });
 
 // ---- ordering, freshness and the in-context slot -----------------------------
@@ -611,7 +632,7 @@ gates:
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
     config('review_preference:\n  review-system:\n    toString: external\n');
     const status = formatChangeStatus(loadChangeContext(root, 'x'));
-    expect(status.next_command).toBe('/orbit:review --as system --fresh x');
+    expect(status.next_command).toBe('/orbit:review --as system --reviewer blind-pair x');
     expect(warn.mock.calls.map(c => String(c[0])).join('\n')).toMatch(/'review-system': a map/);
   });
 

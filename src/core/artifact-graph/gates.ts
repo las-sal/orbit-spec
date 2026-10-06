@@ -134,10 +134,11 @@ function commandForClass(slot: CadenceEntry, mode: ReviewMode, change: string): 
     // A `blind-pair` reaching here has no pairable pass standing; the fresh invocation is the
     // lighter first half. The pairable-partner case is resolved in canonicalNextForReviewed.
     case 'blind-pair':
-    // An `invoked` slot's command is chosen by its presentation table (`presentInvoked`); reaching
-    // here means the default preference, whose interim command is the fresh review (rc17a D6).
-    case 'invoked':
       return `/orbit:review --as ${mode} --fresh ${change}`;
+    // An `invoked` slot's command is chosen by its presentation table (`presentInvoked`); reaching
+    // here means the default preference, which presents the pair command (rc17b).
+    case 'invoked':
+      return `/orbit:review --as ${mode} --reviewer blind-pair ${change}`;
     case 'external':
       return `/orbit:review --as ${mode} --reviewer external ${change}`;
     case 'in-context':
@@ -570,7 +571,8 @@ function isPairable(pass: TrailPass, trail: Trail): boolean {
  */
 interface InvokedPresentation {
   reason: string;
-  cls: 'fresh' | 'external';
+  /** The presented class; `blind-pair` presents the pair command (rc17b). */
+  cls: 'fresh' | 'external' | 'blind-pair';
   openPair?: { missing: 'fresh' | 'external' };
 }
 
@@ -581,7 +583,8 @@ function presentInvoked(
   membership: PairMembership,
   preference: ReviewPreference
 ): InvokedPresentation {
-  const preferred: 'fresh' | 'external' = preference === 'external' ? 'external' : 'fresh';
+  const preferred: 'fresh' | 'external' | 'blind-pair' =
+    preference === 'external' || preference === 'fresh' ? preference : 'blind-pair';
   const fallback: InvokedPresentation = { reason: 'no outside review stands on this state', cls: preferred };
   const ofMode = membership.pairs.filter(p => mode === null || p.launch.mode === mode);
   const live = ofMode[ofMode.length - 1];
@@ -1101,8 +1104,12 @@ function canonicalNextForReviewed(
   freshPasses: TrailPass[]
 ): { cmd: string; slot?: CadenceEntry } {
   const m: ReviewMode = mode ?? 'proposal';
-  const forClass = (cls: 'fresh' | 'external'): string =>
-    cls === 'external' ? `/orbit:review --as ${m} --reviewer external ${change}` : `/orbit:review --as ${m} --fresh ${change}`;
+  const forClass = (cls: 'fresh' | 'external' | 'blind-pair'): string =>
+    cls === 'external'
+      ? `/orbit:review --as ${m} --reviewer external ${change}`
+      : cls === 'blind-pair'
+        ? `/orbit:review --as ${m} --reviewer blind-pair ${change}`
+        : `/orbit:review --as ${m} --fresh ${change}`;
   // An OPEN PAIR outranks the walk recommendation: on a `blind-pair` slot walking now writes a record
   // between the two members and forecloses the pair; on an `invoked` slot it ENDS the launched pair.
   if (ev.openPair) {

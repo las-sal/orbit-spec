@@ -17,4 +17,4 @@ First proposal-mode review of this change.
 ---
 Gate review-proposal: unpassed — no outside review stands on this state
 Position: propose ✓ → review(proposal) unpassed → apply ready → review(system) blocked-by-gate → archive blocked-by-gate
-Ready when you are: /orbit:review --as proposal --fresh nearmiss-change
+Ready when you are: /orbit:review --as proposal --reviewer blind-pair nearmiss-change

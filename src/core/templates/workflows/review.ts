@@ -449,6 +449,15 @@ It prints ONE object: \`{"runner": null}\`, or \`{"runner": {"form", "name", "ar
 - \`reachable: false\` → UNCHANGED but for one extra item in Step 8 (item 6) naming the unresolved command.
 - \`reachable: true\` → the LAUNCH route. Fact 1 above now DECIDES: a dirty working tree, read BEFORE the prompt file is written, means the reviewed state is not committed — do NOT launch and write NOTHING (no prompt file, no T0); print \`Not launched: <name> reviews the committed state, and the working tree has uncommitted changes. Commit the pending work, then re-run the review.\` and stop. Never auto-commit the user's pending work. A clean tree continues to Step 4; unpushed commits do not block — they go with the handoff push in Step 9.
 
+**3b. A blind pair's half.** Decide whether this run is a HALF of a blind pair. Every half of a pair reviews the state the pair was launched on — the rule, its BASE and REVIEWED COMMIT, and its named limit are \`orbit-review-external\`'s \`A pair's external half reads the pair's reviewed state\`; this step is its procedure. Outside a pair, nothing in this step applies and every later step reads as written.
+
+- **The pair's first run** — this reference was loaded by \`references/blind-pair.md\`. The pair reference owns the ORDER: its Step 1 is this branch's runner read (do not read the runner again here) and its dirty-tree preflight; its Step 3 makes the handoff commit, which IS the pair's BASE, and pushes it on both routes. This reference supplies the packaging (Steps 4–7), the T0 with \`pair: true\`, the launch (9b–9c), the save command and the commit message (9d), and the failed-run paragraph. The REVIEWED COMMIT is \`git rev-parse HEAD\` read BEFORE the handoff commit.
+- **A RE-RUN of the pair's missing external half** — read \`orbit status --change <name> --json\`. When the mode's reviewed gate row carries \`openPair: {missing: "external"}\`, find the OPEN launch L — the latest \`review-external-<TS>.json\` of this mode carrying \`pair: true\`, reading only its \`mode\` and \`pair\` fields — and list the trail's \`apply-*.json\` tokens. With NO apply token later than L the run is a RE-RUN: BASE is \`git log --diff-filter=A --format=%H -- <L's T0 path> | tail -1\` (a hash-only read) and the REVIEWED COMMIT is \`git rev-parse <BASE>^1\`. The re-run packages as usual — its own prompt, its own T0 WITHOUT \`pair\` (so it refills the open pair rather than launching another), its own handoff commit — with three differences on the launch route: 9b adds the worktree at BASE, never at the re-run's own handoff commit (which holds the committed fresh partner); 9c feeds the prompt from the LIVE CHECKOUT's copy of the re-run's committed prompt file, since BASE does not contain it; 9d saves with \`--launch L\`, never the re-run's own T0 token, so supersession is measured from the state it reviewed.
+- **An apply token later than L** — NOT a re-run. Print \`The pair launched at <L> reviewed a superseded state (an apply landed after it); running an ordinary single external review on the current state.\` and continue as a single: the worktree at the run's own handoff commit, the save with its own T0 token.
+- **No \`openPair\` for the mode, or one missing \`fresh\`** — a single; nothing here applies.
+
+**A pair half's reviewed commit.** For a pair half — first run or re-run — printed for PASTE, the prompt's \`## Repo\` line (Step 7) reads \`<repo URL or path> — read the repository at commit <REVIEWED COMMIT>\`; and when a LAUNCHED pair half fails, the paste fallback's commit line (9d) names the REVIEWED COMMIT in place of \`<handoff-sha>\`. The re-run test is this body's reading of the trail; the gate's computation is authoritative.
+
 ### 4. Count iterations (per mode)
 
 In \`orbit/changes/<name>/.orbit-runs/\`, count files matching \`external-<as>-*.md\` (findings files from prior external reviews in this mode — distinct from \`external-prompt-<as>-*.md\` which are prompt files).
@@ -482,7 +491,7 @@ orbit/changes/<change-name>/.orbit-runs/external-prompt-<as>-<TS>.md
 
 \`<TS>\` is ISO-8601 with hyphens (e.g., \`2026-05-18T14-35-23Z\`). Create \`.orbit-runs/\` if it doesn't exist. The file is **committed**, not gitignored.
 
-**On the launch route**, first fix the run's scratch directory OUTSIDE the repository: \`<run-dir>\` = \`<absolute system temp dir>/orbit-external-<change-name>-<TS>\` (the prompt's \`<TS>\`; resolve the temp dir with \`node -p "require('os').tmpdir()"\`). The worktree will be \`<run-dir>/worktree\`, the runner's \`{output}\` \`<run-dir>/return.md\`, its log \`<run-dir>/runner.log\`. The prompt's \`## Repo\` line names \`<run-dir>/worktree\` — the runner's working directory, a checkout of the handoff commit — NEVER the live checkout's path.
+**On the launch route**, first fix the run's scratch directory OUTSIDE the repository: \`<run-dir>\` = \`<absolute system temp dir>/orbit-external-<change-name>-<TS>\` (the prompt's \`<TS>\`; resolve the temp dir with \`node -p "require('os').tmpdir()"\`). The worktree will be \`<run-dir>/worktree\`, the runner's \`{output}\` \`<run-dir>/return.md\`, its log \`<run-dir>/runner.log\`. The prompt's \`## Repo\` line names \`<run-dir>/worktree\` — the runner's working directory, a checkout of the handoff commit — NEVER the live checkout's path. (A pair's re-run: a checkout of BASE, Step 3b.) **On the paste route**, a pair half's \`## Repo\` line names the repository and the pair's REVIEWED COMMIT (Step 3b); a single's is the repository as before.
 
 Mode-specific content:
 
@@ -526,15 +535,17 @@ A failed push, or no remote, is REPORTED and the launch PROCEEDS — the runner 
 git worktree add --detach <run-dir>/worktree <handoff-sha>
 \`\`\`
 
+On a RE-RUN of a pair's missing external half (Step 3b), \`<BASE-sha>\` replaces \`<handoff-sha>\`: the worktree holds no fresh pass file of the pair.
+
 **9c. The launch.** Substitute \`{worktree}\` → \`<run-dir>/worktree\` and \`{output}\` → \`<run-dir>/return.md\` into \`argv\` FIRST. Then build ONE command line that keeps every element exactly one argument: single-quote EVERY element, writing an embedded \`'\` as \`'\\''\`; run it with the worktree as the working directory; feed the prompt by a \`<\` redirect; send the runner's own chatter to the log. The directory change is scoped to a subshell, so nothing after the launch runs inside the worktree:
 
 \`\`\`bash
 ( cd '<run-dir>/worktree' && '<argv[0]>' '<argv[1]>' … < '<run-dir>/worktree/<prompt-path>' > '<run-dir>/runner.log' 2>&1 )
 \`\`\`
 
-NEVER hand a recorded string to \`sh -c\`, and never join the argv unquoted. Run it with the Bash tool's \`run_in_background\` — an external review outlasts the foreground limit — and WAIT on its completion notification; do not poll. While it runs, print the launch output (items 1–5 of 9e).
+On a pair's re-run the redirect reads the LIVE CHECKOUT's copy — \`< '<repository root>/<prompt-path>'\` — because BASE does not contain the re-run's prompt. NEVER hand a recorded string to \`sh -c\`, and never join the argv unquoted. Run it with the Bash tool's \`run_in_background\` — an external review outlasts the foreground limit — and WAIT on its completion notification; do not poll. While it runs, print the launch output (items 1–5 of 9e).
 
-**9d. The return.** Every step from here runs from the REPOSITORY ROOT — the live checkout the review was invoked in, never the worktree. When the run exits 0, save it — the engine cuts any preamble above the first unfenced \`# External Review:\` heading, checks the result with the trail reader and the report renderer, and refuses a return an apply has since superseded:
+**9d. The return.** **In a pair's first run, stop here and return control to \`references/blind-pair.md\`** once the run exits: the save waits until the pair's fresh pass file is committed (or the fresh half is known missing), and the pair's one push follows both commits — the order is the pair reference's; the commands below are what its steps run, with no \`git push\` of their own. On a pair's RE-RUN, \`--launch\` takes L, never this run's own T0 token (Step 3b). Every step from here runs from the REPOSITORY ROOT — the live checkout the review was invoked in, never the worktree. When the run exits 0, save it — the engine cuts any preamble above the first unfenced \`# External Review:\` heading, checks the result with the trail reader and the report renderer, and refuses a return an apply has since superseded:
 
 \`\`\`bash
 orbit external save <change-name> --as <as> --from <run-dir>/return.md --launch <T0 token> --json
@@ -557,7 +568,7 @@ git push
 
 (Omit the "Removed" paragraph when nothing was removed.) Then \`git worktree remove --force <run-dir>/worktree\` — a failed removal is reported, never fatal. Then render the return's report with \`orbit status --change <change-name> --report <saved TS>\` and paste it. Do NOT walk it: the walk is \`/orbit:address-reviews\`, invoked separately.
 
-**A failed run** — a non-zero exit, or ANY \`orbit external save\` refusal (no unfenced heading, another change's heading, a reader rejection, an apply after the launch) — commits NOTHING for the return. Report the cause (the exit status, or the save's stderr) and the raw return's path (\`<run-dir>/return.md\`, when it exists; it stays outside the repository), remove the worktree as above, then print the paste fallback: Step 8 item 2 (the recommended-session note, now that the prompt is printed for paste); \`The prompt's ## Repo line names the launch worktree, now removed — read the repository at <repo URL, or the live checkout's path> at commit <handoff-sha> instead.\`; the Step 8 item 4 pull invocation with its attestation when the handoff push landed, or, when it did not, \`Handoff blocked: the handoff commit <short-sha> is not pushed. Push, then hand off: Pull <repo URL> and read <prompt-path>. ...\` — the prompt is already committed, so only the push leads (never Step 8's commit-the-pending-work text); then Step 8 item 5. The T0 stands, so the gate keeps presenting the external half. An apply after the launch is the one failure with NO paste fallback: the prompt reviews a superseded state, so say so and that the review should be re-run, which packages a new prompt.
+**A failed run** — a non-zero exit, or ANY \`orbit external save\` refusal (no unfenced heading, another change's heading, a reader rejection, an apply after the launch) — commits NOTHING for the return. Report the cause (the exit status, or the save's stderr) and the raw return's path (\`<run-dir>/return.md\`, when it exists; it stays outside the repository), remove the worktree as above, then print the paste fallback: Step 8 item 2 (the recommended-session note, now that the prompt is printed for paste); \`The prompt's ## Repo line names the launch worktree, now removed — read the repository at <repo URL, or the live checkout's path> at commit <handoff-sha> instead.\` — for a pair half, the pair's REVIEWED COMMIT in place of \`<handoff-sha>\` (Step 3b); the Step 8 item 4 pull invocation with its attestation when the handoff push landed, or, when it did not, \`Handoff blocked: the handoff commit <short-sha> is not pushed. Push, then hand off: Pull <repo URL> and read <prompt-path>. ...\` — the prompt is already committed, so only the push leads (never Step 8's commit-the-pending-work text); then Step 8 item 5. The T0 stands, so the gate keeps presenting the external half. An apply after the launch is the one failure with NO paste fallback: the prompt reviews a superseded state, so say so and that the review should be re-run, which packages a new prompt.
 
 **Named limits.** A writable own runner may follow the prompt's write/commit/push steps inside the worktree; the saved return is the only record, and the worktree is removed with \`--force\`. A return that opens with the heading and parses yet is truncated is not detected here — read its \`**Reviewer**:\` line at each runner's first use. The T0's \`next_recommended\` keeps the paste/save prose the emit surface requires even when a runner launched; the launch is reported in chat.
 
@@ -683,7 +694,7 @@ Per the universal spine in \`orbit-conventions\`'s \`Internal-run JSON summary f
 }
 \`\`\`
 
-**THE PAIR LAUNCH (rc17a).** \`pair\` is OPTIONAL. A T0 carrying \`pair: true\` is a blind pair's LAUNCH: its meaning is \`orbit-engine-gates\`' \`A pair's membership is computed from its launch\`, and the field's checks are \`orbit-emit-composition\`'s \`The review-external payload carries pair\` (a boolean; \`pair: true\` needs an explicit \`mode\` of \`proposal\` or \`system\`; \`pair: false\` writes the ordinary T0). No step of this branch writes it on its own: it is written only when the user has invoked a blind pair whose external half this packaging is. A re-run of a missing external half re-packages WITHOUT it, so the re-run refills the open pair rather than launching a new one. The payload below is a launch's:
+**THE PAIR LAUNCH (rc17a).** \`pair\` is OPTIONAL. A T0 carrying \`pair: true\` is a blind pair's LAUNCH: its meaning is \`orbit-engine-gates\`' \`A pair's membership is computed from its launch\`, and the field's checks are \`orbit-emit-composition\`'s \`The review-external payload carries pair\` (a boolean; \`pair: true\` needs an explicit \`mode\` of \`proposal\` or \`system\`; \`pair: false\` writes the ordinary T0). No step of this branch writes it on its own: it is written only when \`references/blind-pair.md\` runs this packaging as a blind pair's external half (\`--reviewer blind-pair\`). A re-run of a missing external half re-packages WITHOUT it, so the re-run refills the open pair rather than launching a new one. The payload below is a launch's:
 
 \`\`\`json example change
 {
@@ -897,6 +908,127 @@ commit/push, and the user will commit it manually.
 \`\`\`\`
 `;
 
+const REVIEW_BLIND_PAIR_REFERENCE = `# Reference: the blind pair (\`--reviewer blind-pair\`)
+
+This reference runs a BLIND PAIR — one \`fresh\` pass and one \`external\` pass of the mode, blind to each other — in ONE invocation. Its step order is \`orbit-review\`'s \`The blind-pair reviewer runs both halves in one invocation\`; what the launch record means is \`orbit-engine-gates\`' \`A pair's membership is computed from its launch\`. The external half's packaging, launch, save and commit are \`references/external-handoff.md\`'s (loaded with this one) and are NAMED below, never restated; the fresh half is the trunk's **Dispatching a fresh pass**, also named, not restated.
+
+**Input**: the change name and \`--as proposal|system\`, resolved by the review trunk before this reference loads (architecture mode never reaches it).
+
+**This session orchestrates; it is neither half.** It runs no pass work, writes no pass file, and reads neither half's return before both are committed — beyond the trail listing Step 6 needs (filenames and the \`reviewer_class\` field). Every git act is a body step (zero engine git), and every commit adds NAMED paths only — \`git add <paths>\` then \`git commit --only <paths>\` — so work the user stages during the run stays out.
+
+**Other flags.** Every other flag of the command applies to each half exactly as it applies to that half's single run — the fresh half as under \`--reviewer fresh\`, the external half as under \`--reviewer external\`.
+
+## Steps
+
+### 1. Preflight and the runner
+
+Run \`git status --porcelain\`. ANY output refuses the pair: write NOTHING — no prompt file, no T0 — dispatch no subagent, launch no runner, and print \`Not run: a blind pair reviews the committed state, and the working tree has uncommitted changes:\` followed by each uncommitted path, then \`Commit the pending work, then re-run the review.\` Never auto-commit the user's pending work. Unpushed commits are allowed: they ride Step 3's push.
+
+Then read the runner ONCE — this IS the handoff reference's Step 3a read, which is not repeated:
+
+\`\`\`bash
+orbit external runner --json
+\`\`\`
+
+Record the ROUTE: \`reachable: true\` → LAUNCHED; \`{"runner": null}\` or \`reachable: false\` → PASTED. The route decides what the packaging writes (the prompt's \`## Repo\` line, the T0's \`target\`) and Step 4; the runner is never read again in this run.
+
+### 2. The launch
+
+Read the REVIEWED COMMIT now: \`git rev-parse HEAD\`. Run the handoff reference's Steps 4–7 for the route — the iteration count, the cycle context, the recommended-session note, and the prompt file (on the launched route, Step 7's \`<run-dir>\` and worktree \`## Repo\` line; on the pasted route, the pair-half \`## Repo\` line of its Step 3b, naming the REVIEWED COMMIT). Then emit the T0 with \`pair: true\` — the payload shape is the handoff reference's pair-launch example (\`target\` the runner's \`name\` on the launched route, \`null\` otherwise):
+
+\`\`\`bash
+orbit emit review-external --change <change-name> --payload <payload-file>
+\`\`\`
+
+The prompt file and this T0 are ONE act, the LAUNCH. Its token is L.
+
+### 3. BASE
+
+Commit the prompt file and the T0 — and nothing else — as the HANDOFF COMMIT, on BOTH routes, and push:
+
+\`\`\`bash
+git add <prompt-path> <t0-path>
+git commit --only <prompt-path> <t0-path> -m "External review handoff (<as>, iter <N>): <change-name> — blind pair launch"
+git push
+\`\`\`
+
+That commit is the pair's BASE. A failed push, or no remote, is REPORTED and the run goes on; record whether the push landed — every later attestation says "pushed" only when it did.
+
+### 4. The route
+
+Step 1's reading decides: LAUNCHED takes Step 5a, PASTED takes Step 5b. Step 5c runs on both, after Step 3.
+
+### 5a. The external half, launched
+
+Run the handoff reference's 9b (the worktree at BASE, which is the handoff commit) and 9c (the launch, in the background, with \`run_in_background\`). Print its 9e items 1–4, then, in place of item 5, the recovery line under **Session end** below. Its return stays at \`<run-dir>/return.md\`, OUTSIDE the repository, and is NOT saved yet (the handoff reference's 9d hands control back here).
+
+### 5b. The external half, pasted
+
+Print the handoff reference's Step 8 items in order, with item 4 the output Step 3's push left selected: when the push landed, the attestation \`Prompt committed (<short-sha>) and pushed to <remote>/<branch>\` and the pull invocation; when it did not, \`Handoff blocked: the handoff commit <short-sha> is not pushed. Push, then hand off: Pull <repo URL> and read <prompt-path>. ...\` — the prompt is already committed, so only the push leads.
+
+### 5c. The fresh half
+
+Dispatch the fresh half per the trunk's **Dispatching a fresh pass** — a clean-context subagent with that section's brief, unchanged — in the background (the **Task tool** with \`run_in_background\`). It reads the live checkout at BASE and persists through \`orbit emit review\` with \`reviewer_class: "fresh"\` like any fresh pass; it carries no launch token.
+
+### 6. Wait
+
+Wait on both background completions — on the pasted route, the fresh half's only. A half ends when its process exits or the user stops it; invent no timeout, and do not poll.
+
+Whether the fresh half LANDED is read from the TRAIL, never from the worker's exit: list \`orbit/changes/<change-name>/.orbit-runs/review-<as>-*.json\` and read each one's \`reviewer_class\` field only. The earliest one with \`reviewer_class: "fresh"\` and a token later than L IS the landed member, however the worker ended (a worker stopped after its emit landed); with none, the fresh half is MISSING. The external half is MISSING when its run exits non-zero or Step 8's save refuses it. Nothing is committed for a missing half.
+
+### 7. The fresh pass file
+
+Commit the landed fresh pass file ALONE, BEFORE Step 8:
+
+\`\`\`bash
+git add <fresh-path>
+git commit --only <fresh-path> -m "Fresh review (<as>): <change-name> — blind pair, fresh half"
+\`\`\`
+
+### 8. The external return
+
+LAUNCHED route only, and only after Step 7 — or once the fresh half is known MISSING: save the return with the handoff reference's 9d command, \`--launch\` taking L:
+
+\`\`\`bash
+orbit external save <change-name> --as <as> --from <run-dir>/return.md --launch <L> --json
+\`\`\`
+
+A non-zero run exit or a save refusal is the handoff reference's **A failed run** paragraph: nothing committed for the return, its cause and raw path reported, its paste fallback printed with the commit line naming the REVIEWED COMMIT — except after an apply later than the launch, which has no fallback.
+
+### 9. The saved return
+
+Commit the saved file ALONE exactly as the handoff reference's 9d does — the message written to \`<run-dir>/commit-msg.txt\` with the removed lines quoted, passed with \`-F\` — but WITHOUT 9d's \`git push\`:
+
+\`\`\`bash
+git add <saved-path>
+git commit --only <saved-path> -F '<run-dir>/commit-msg.txt'
+\`\`\`
+
+### 10. Push
+
+ONCE, after Steps 7 and 9 (whichever committed): \`git push\`. A failed push is reported; the commits stand; no retry.
+
+### 11. The worktree
+
+LAUNCHED route only: \`git worktree remove --force <run-dir>/worktree\`, after the return was read. A failed removal is reported, never fatal.
+
+### 12. Reports
+
+For each LANDED pass — the fresh pass, then the saved external return — render \`orbit status --change <change-name> --report <TS>\` and paste it.
+
+### 13. End
+
+Render the position readout and the engine's eligibility line from \`orbit status --change <change-name> --json\` — \`Ready when you are: <next_command>\`. The walk is NEVER invoked: \`/orbit:address-reviews\` is the user's to run (no-chaining). After Step 5b — or with a MISSING external half — the pair ends OPEN: the gate reports \`openPair: {missing: "external"}\`, no half covers alone, and the pasted return completes the pair when it is saved. A MISSING fresh half leaves \`openPair: {missing: "fresh"}\` the same way.
+
+## Session end
+
+A session that ends mid-pair leaves work outside the record. On the LAUNCHED route print, in place of the handoff reference's 9e item 5:
+
+\`Raw output: <run-dir>/return.md — if this session ends before the pair does: first commit the fresh pass file alone (the review-<as>-*.json with reviewer_class "fresh" later than <L>: git add <path>, then git commit --only <path>), then save the return with: orbit external save <change-name> --as <as> --from <run-dir>/return.md --launch <L>, commit the saved file alone, push, and run git worktree remove --force <run-dir>/worktree\`
+
+On the PASTED route print: \`If this session ends before the fresh half does: commit the fresh pass file alone (the review-<as>-*.json with reviewer_class "fresh" later than <L>: git add <path>, then git commit --only <path>) and push.\`
+`;
+
 const REVIEW_FLAGS_DETAIL_REFERENCE = `# Reference: rarely-used review flags — \`--mark\` / \`--parallel\` / \`--focus\`
 
 Loaded only when one of these flags is set (D5 body-economy pass; content moved from the body verbatim).
@@ -942,7 +1074,7 @@ export function getReviewSkillTemplate(): SkillTemplate {
   return {
     name: 'orbit-review',
     description: "Editorial review of an OpenSpec change or an architecture doc: proposal mode (pre-apply, 9 passes over artifacts), system mode (post-apply, verify-change + 6 system-wide passes), or architecture mode (a doc under orbit/architecture/, 6 passes, no gate). Use when the user wants a second-pair-of-eyes pass before applying or archiving, or a graded pass over a program architecture doc.",
-    instructions: `Run an editorial review of an OpenSpec change or an architecture doc. Three modes: \`--as proposal\` reviews a change's pre-implementation artifacts (9 passes); \`--as system\` reviews the whole product state after apply (verify-change as Pass 0 + 6 system-wide passes); \`--as architecture\` reviews an architecture DOC under \`orbit/architecture/\` (6 passes, NO gate — D-arc Stage D2). All modes share the 3-dimension scorecard (Completeness / Correctness / Coherence), the severity ladder (CRITICAL / WARNING / SUGGESTION — defined ONCE, by consequence, in \`orbit-conventions\`' Severity ladder; every pass rule NAMES it and defines nothing of its own), pushback discipline, and \`.orbit-runs/\` persistence. They differ on which passes run, what the final-assessment references (the \`review-proposal\` / \`review-system\` gates for the change modes; NO gate in architecture mode), and a few mode-specific flags (\`--mark\` for proposal, \`--skip-verify\` for system). The command additionally carries the REVIEWER-CLASS axis (D-arc Stage D5): \`--reviewer in-context|fresh|external\` (default \`in-context\`; \`--fresh\` remains as shorthand for \`--reviewer fresh\` — supplying BOTH \`--fresh\` and an explicit \`--reviewer\` value is a clean usage error naming the shorthand equivalence). \`--reviewer external\` REQUIRES \`--as proposal|system\` (architecture mode supports in-context and fresh only; the combination is a clean usage error) and dispatches to the EXTERNAL-HANDOFF BRANCH: load \`references/external-handoff.md\` and follow it — the packaging flow (prompt file + T0 emit + chat snippet); no review passes run in that invocation, and the internal-class branches never load that reference.
+    instructions: `Run an editorial review of an OpenSpec change or an architecture doc. Three modes: \`--as proposal\` reviews a change's pre-implementation artifacts (9 passes); \`--as system\` reviews the whole product state after apply (verify-change as Pass 0 + 6 system-wide passes); \`--as architecture\` reviews an architecture DOC under \`orbit/architecture/\` (6 passes, NO gate — D-arc Stage D2). All modes share the 3-dimension scorecard (Completeness / Correctness / Coherence), the severity ladder (CRITICAL / WARNING / SUGGESTION — defined ONCE, by consequence, in \`orbit-conventions\`' Severity ladder; every pass rule NAMES it and defines nothing of its own), pushback discipline, and \`.orbit-runs/\` persistence. They differ on which passes run, what the final-assessment references (the \`review-proposal\` / \`review-system\` gates for the change modes; NO gate in architecture mode), and a few mode-specific flags (\`--mark\` for proposal, \`--skip-verify\` for system). The command additionally carries the REVIEWER axis (D-arc Stage D5): \`--reviewer in-context|fresh|external|blind-pair\` (default \`in-context\`). The first three are the reviewer classes; \`blind-pair\` is not a class but an INVOCATION of both independent classes at once — one fresh pass and one external pass, blind to each other. Each value has ONE shorthand that is exactly \`--reviewer <value>\`: \`--in-context\`, \`--fresh\`, \`--external\`, \`--blind-pair\`; an invocation carries AT MOST ONE reviewer selector (the selector table under Step 3). \`--reviewer external\` and \`--reviewer blind-pair\`, by either spelling, REQUIRE \`--as proposal|system\` (architecture mode supports in-context and fresh only; the combination is a clean usage error naming the constraint, and writes no prompt file and no T0 emit). \`external\` dispatches to the EXTERNAL-HANDOFF BRANCH: load \`references/external-handoff.md\` and follow it — it packages the prompt file and the T0 emit, then either prints the chat invocation snippet for paste or, with a reachable recorded runner, launches that runner and saves its return; no pass of the internal classes runs in that invocation. \`blind-pair\` loads \`references/blind-pair.md\` AND \`references/external-handoff.md\` and follows the pair reference, which runs both halves. The in-context and fresh branches load neither reference.
 
 **Generates findings; does not resolve them.** Resolution flows through \`/orbit:address-reviews\` (inline \`@review:\` markers, OR \`--from-file\` ingesting external-review markdown OR internal review JSON OR audit-drift JSON) or by the user replying directly to the report.
 
@@ -992,10 +1124,24 @@ Resolve the MODE first — it decides what the positional even IS. Mode comes fr
 | \`--parallel\` | off | Spawn subagents for heavy passes. Proposal: parallelize Passes 2, 4, 6. System: parallelize Passes 2, 3, 4, 5. |
 | \`--focus <lens>\` | none | Emphasize specific passes (additive — does not skip others). See \`references/flags-detail.md\`. |
 | \`--strict\` | off | Fail-fast on the first CRITICAL or the first BLOCK — stop on what must be addressed. Useful for CI-like runs. |
-| \`--reviewer <class>\` | \`in-context\` | Reviewer class: \`in-context\` (this session — the reacting class) / \`fresh\` (same model, clean context — a clean-context subagent; see Dispatching a fresh pass) / \`external\` (a different AI in a separate session — the handoff branch, \`references/external-handoff.md\`). |
-| \`--fresh\` | off | Shorthand for \`--reviewer fresh\` (same model, clean context). Never combined with an explicit \`--reviewer\` value (clean usage error). |
+| \`--reviewer <value>\` | \`in-context\` | Reviewer: \`in-context\` (this session — the reacting class) / \`fresh\` (same model, clean context — a clean-context subagent; see Dispatching a fresh pass) / \`external\` (a different AI in a separate session — the handoff branch, \`references/external-handoff.md\`) / \`blind-pair\` (one fresh and one external pass in one invocation — \`references/blind-pair.md\`). |
+| \`--in-context\` | off | Exactly \`--reviewer in-context\`. |
+| \`--fresh\` | off | Exactly \`--reviewer fresh\` (same model, clean context). |
+| \`--external\` | off, proposal/system only | Exactly \`--reviewer external\`. |
+| \`--blind-pair\` | off, proposal/system only | Exactly \`--reviewer blind-pair\`. |
 | \`--mark\` | off, proposal only | After report, write \`@review: <text>\` markers at each finding's file:line. See \`references/flags-detail.md\`. |
 | \`--skip-verify\` | off, system only | Skip Pass 0 (verify-change). Use when verify-change was run separately. |
+
+**Reviewer selectors.** Resolve the reviewer BEFORE anything is read or written, by this table; every error row is a clean usage error that runs no pass and writes no file:
+
+| selectors given | resolves to |
+|---|---|
+| none | \`--reviewer in-context\`, the default |
+| exactly one shorthand | exactly \`--reviewer <its value>\` |
+| \`--reviewer <value>\` alone | that value |
+| two shorthands, or a shorthand with an explicit \`--reviewer\` — even when they agree | usage error naming the shorthand equivalence: \`--<value> is exactly --reviewer <value>; give one reviewer selector\` |
+| \`external\` or \`blind-pair\`, by either spelling, with \`--as architecture\` | usage error: \`--reviewer <value> requires --as proposal|system; architecture mode supports in-context and fresh only\` |
+| a \`--reviewer\` value outside the four | usage error naming the four: \`in-context\`, \`fresh\`, \`external\`, \`blind-pair\` |
 
 If a flag is specified for the wrong mode (e.g., \`--mark\` in system mode or \`--skip-verify\` in proposal mode), accept it silently and emit a one-line note in the report (\`Note: --mark writes to source files is v2; ignored for v1 system-mode runs.\`). In architecture mode, \`--parallel\`, \`--fast\`, and \`--focus <lens>\` are accepted but are no-ops (architecture docs are small; all six passes run in one context — no per-mode subset or lens table is defined), each noted in the report the same way.
 
@@ -1064,6 +1210,8 @@ names for the mode — the change's artifacts, the baseline specs, the lens file
 commit range with the trail excluded by the pathspec it gives. Persist through orbit emit review with
 reviewer_class "fresh" and a direction.
 \`\`\`
+
+**A re-run of a blind pair's missing fresh half.** Before dispatching, read \`orbit status --change <name> --json\`. When the mode's reviewed gate row carries \`openPair: {missing: "fresh"}\`, find the pair's open launch L — the latest \`review-external-<TS>.json\` of this mode carrying \`pair: true\`, reading only its \`mode\` and \`pair\` fields — and list the trail's \`apply-*.json\` tokens. With NO apply token later than L the run is a RE-RUN: BASE is \`git log --diff-filter=A --format=%H -- <L's T0 path> | tail -1\` (a hash-only read), the REVIEWED COMMIT is \`git rev-parse <BASE>^1\`, and the brief gains ONE line after its last: \`Review the repository as it stands at commit <REVIEWED COMMIT>, not the live checkout: read the change's files and, in system mode, the code and the commit range ending at that commit (git show <commit>:<path>; git diff <change-start>..<commit>). Run orbit emit review from the repository root as usual.\` The isolation is instructed, not physical — the rule and its named limit are \`orbit-review-external\`'s \`A pair's external half reads the pair's reviewed state\`. With an apply token later than L, say \`The pair launched at <L> reviewed a superseded state (an apply landed after it); running an ordinary single fresh review on the current state.\` and dispatch the brief unchanged. The re-run test is this body's reading of the trail; the gate's computation is authoritative.
 
 ### 6. Run passes (load the resolved mode's reference ONLY)
 
@@ -1221,6 +1369,10 @@ next, anything the structure can't say — never contradicting the tail's engine
       {
         name: 'external-handoff.md',
         content: REVIEW_EXTERNAL_HANDOFF_REFERENCE,
+      },
+      {
+        name: 'blind-pair.md',
+        content: REVIEW_BLIND_PAIR_REFERENCE,
       },
       {
         name: 'mode-sections.md',

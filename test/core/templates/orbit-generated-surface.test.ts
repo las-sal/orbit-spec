@@ -54,7 +54,7 @@ const SURFACE: Array<[string, string, string[]]> = [
   ['orbit-bulk-archive-change', 'bulk-archive', ['# Orbit additions']],
   ['orbit-verify-change', 'verify', ['execution disciplines', 'Run-summary emit']],
   ['orbit-onboard', 'onboard', ['execution disciplines', 'self-contained', 'Program architecture', 'orbit/architecture/.orbit-runs/', 'architecture mode — D-arc Stage D2']],
-  ['orbit-review', 'review', ['execution disciplines', 'Paste the output VERBATIM', 'hand-rendering them is PROHIBITED', 'REVIEWER-CLASS axis', 'references/external-handoff.md', 'references/passes-<mode>.md', 'orbit emit review', 'Using doc:', 'First architecture review for this doc']],
+  ['orbit-review', 'review', ['execution disciplines', 'Paste the output VERBATIM', 'hand-rendering them is PROHIBITED', 'REVIEWER axis', 'references/external-handoff.md', 'references/passes-<mode>.md', 'orbit emit review', 'Using doc:', 'First architecture review for this doc']],
   ['orbit-address-reviews', 'address-reviews', ['execution disciplines', 'Ripple cascade', 'resolution log', 'Architecture-scoped']],
   ['orbit-audit-drift', 'audit-drift', ['execution disciplines', 'Vocabulary residue', 'Persist the run summary', 'Architecture staleness check']],
   ['orbit-architect', 'architect', ['execution disciplines', 'Run-summary emit', 'Completion-ratification flow', 'a gatekeeper']],
@@ -68,7 +68,7 @@ const REFERENCE_SKILLS: Record<string, string[]> = {
   'orbit-ff-change': ['pr-choreography.md'],
   // D6 (external iter 1): the arc-done readout carries the shared resolution algorithm.
   'orbit-architect': ['pr-resolution.md'],
-  'orbit-review': ['run-summary-schema.md', 'passes-proposal.md', 'passes-system.md', 'passes-architecture.md', 'external-handoff.md', 'mode-sections.md', 'prompt-template.md', 'flags-detail.md'],
+  'orbit-review': ['run-summary-schema.md', 'passes-proposal.md', 'passes-system.md', 'passes-architecture.md', 'external-handoff.md', 'blind-pair.md', 'mode-sections.md', 'prompt-template.md', 'flags-detail.md'],
   'orbit-address-reviews': ['external-findings-format.md', 'internal-findings-format.md', 'resolution-detail.md', 'run-summary-schema.md'],
   'orbit-audit-drift': ['run-summary-schema.md', 'worked-example.md'],
 };

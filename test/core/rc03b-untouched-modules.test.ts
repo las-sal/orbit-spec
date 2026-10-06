@@ -65,6 +65,9 @@ import { fileURLToPath } from "node:url";
  * member as its own presentation row (fresh W1, Sal: C) and a pass sharing its launch's token neither member
  * nor single (external W2); `emit-composition.ts` — one comment stopped stating the v4 cadence (fresh S3).
  * Every other hash here is unchanged.
+ * MOVED at rc17b-blind-pair-command apply (2026-10-06) — a PLANNED act (its task 1.1): `gates.ts` only — the
+ * default and unknown review preferences present the pair command (`--reviewer blind-pair`, presented class
+ * `blind-pair`), retiring rc17a D6's interim fresh-review row. Every other hash here is unchanged.
  */
 const PINNED: Record<string, string> = {
   "schemas/spec-driven/schema.yaml": "21e0ae86532a39be558a2b81d23738a6fbf92fbd32b0d01612a65e83d6a96739",
@@ -72,7 +75,7 @@ const PINNED: Record<string, string> = {
   "schemas/spec-driven/templates/proposal.md": "9c554e0dbe918e3dc745dcc143a999e1d102954d75fb6e51e231c4cba78f06f3",
   "schemas/spec-driven/templates/spec.md": "e025078f238dc6e4df552a1e0a140cf9efce0bbdecbeb9f45837d45ed91dca01",
   "schemas/spec-driven/templates/tasks.md": "b2a6a4c08c15f347a1d8c3e2d43e0c8fb066dc5cc0feb795f47555f176f9c421",
-  "src/core/artifact-graph/gates.ts": "0c383ae7e2877459fbb885472537681a8f2b2c0762825e479811fd9bee803046",
+  "src/core/artifact-graph/gates.ts": "6d13033ffe72472d657085e4574decc1eaee3e70ebbca1e9382b74faf3f43981",
   "src/core/artifact-graph/graph.ts": "3193a3884bb59296dc4ddc177020d3135d99c694109298ac31c3f3a91c45a0ed",
   "src/core/artifact-graph/index.ts": "9dc35ba8e64105fbfd6af821cf99f1fbc5777b74b75311f09fdab279cf12d438",
   "src/core/artifact-graph/instruction-loader.ts": "fd36a43ed47b2515218211a228121becf50e3213fd34621e3a7c5085e0ab44ad",

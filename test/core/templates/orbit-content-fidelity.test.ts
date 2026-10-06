@@ -83,7 +83,7 @@ const RELOCATED: Array<[string, () => SkillTemplate, string[]]> = [
   ['onboard', getOnboardSkillTemplate, ['execution disciplines', 'self-contained', 'Four execution disciplines']],
   ['sync-specs', getSyncSpecsSkillTemplate, ['execution disciplines', 'Consent inheritance']],
   // B3 editorial workflows (net-new relocation; parity proof per D-b3-4)
-  ['review', getReviewSkillTemplate, ['execution disciplines', 'orbit status --change <name> --report', 'Paste the output VERBATIM', 'hand-rendering them is PROHIBITED', 'architecture mode is EXEMPT', 'recommendation_options', 'reviewer_class', 'commentary', 'REVIEWER-CLASS axis', 'references/external-handoff.md', 'references/passes-<mode>.md', 'orbit emit review']],
+  ['review', getReviewSkillTemplate, ['execution disciplines', 'orbit status --change <name> --report', 'Paste the output VERBATIM', 'hand-rendering them is PROHIBITED', 'architecture mode is EXEMPT', 'recommendation_options', 'reviewer_class', 'commentary', 'REVIEWER axis', 'references/external-handoff.md', 'references/passes-<mode>.md', 'orbit emit review']],
   ['address-reviews', getAddressReviewsSkillTemplate, ['execution disciplines', 'Ripple cascade', 'obvious-fix lane preview', 'present → discuss → ratify', "AFTER the finding's discussion concludes", 'RE-PRESENTS the finding', 'one prompt NEVER spans multiple findings', 'ratified_via', 'delegation_directive', 'resolution log']],
   ['audit-drift', getAuditDriftSkillTemplate, ['execution disciplines', 'Vocabulary residue', 'Persist the run summary', 'recommendation_options']],
 ];
@@ -111,7 +111,7 @@ const ALL_SURFACE_SKILLS: Array<[string, () => SkillTemplate]> = [
 
 // dirName -> exact reference declarations for the B3 multi-file editorial skills
 const B3_REFERENCES: Array<[string, () => SkillTemplate, string[]]> = [
-  ['review', getReviewSkillTemplate, ['run-summary-schema.md', 'passes-proposal.md', 'passes-system.md', 'passes-architecture.md', 'external-handoff.md', 'mode-sections.md', 'prompt-template.md', 'flags-detail.md']],
+  ['review', getReviewSkillTemplate, ['run-summary-schema.md', 'passes-proposal.md', 'passes-system.md', 'passes-architecture.md', 'external-handoff.md', 'blind-pair.md', 'mode-sections.md', 'prompt-template.md', 'flags-detail.md']],
   ['address-reviews', getAddressReviewsSkillTemplate, ['external-findings-format.md', 'internal-findings-format.md', 'resolution-detail.md', 'run-summary-schema.md']],
   ['audit-drift', getAuditDriftSkillTemplate, ['run-summary-schema.md', 'worked-example.md']],
 ];

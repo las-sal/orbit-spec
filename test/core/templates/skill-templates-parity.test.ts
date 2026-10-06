@@ -94,7 +94,10 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   getSyncSpecsSkillTemplate: 'a9672b720eff36fb30f2229d835fd9a9e4cc88e81f1773bc74aff79247aa9809',
   // rc08b-walk-routing (2026-10-05, task 3.3): the command-table row's retired "auto-discovers … when invoked
   // with a change name and no markers found" became the discovery sentence. One re-record, both onboard hashes.
-  getOnboardSkillTemplate: 'd88b6c8c0d345bcb0a4b0d9af87252ad04e417ebcbf3cbdb89d5e492c881ca43',
+  // rc17b-blind-pair-command (2026-10-06, task 5.1), a PLANNED move: the Identity, Phase 4 cross-AI and
+  // command-table sentences stopped enumerating the reviewer values and point at the review skill instead
+  // (design D8). One re-record, both onboard hashes.
+  getOnboardSkillTemplate: '8021ad74d6f34caaaba48603644e17679ac07218ce998d428aafb1e691100e24',
   getOrbitExploreCommandTemplate: '52892dbd4b5eb72264dc6eb54f8126a09fc903adc1c1654c58e0650df609bfb6',
   getOrbitNewCommandTemplate: '47d97305a2d3abca6eafa8f7ed5fe13fb83ea8ca0b71f007975b217135f5f5aa',
   getOrbitContinueCommandTemplate: 'e1ecd4fffee224e284453be717226824c7567041d7c1676b6b6bca4727e3a9dd',
@@ -169,7 +172,7 @@ const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
   'orbit-archive-change': '4868cb3b0e95631238dd25753dc4a4e3fdf6794151dfa7131d2c8ddb4ffc40d1',
   'orbit-bulk-archive-change': '601dd7c74804c06a9818428f86030c8cef5311a9fc7c59f2dc14e490007a291d',
   'orbit-verify-change': '06080070b8f2dfd4e3053c9143845095d0b80c6efcce286cc46e9de37dfe8ea8', // rc06b-map-readers (2026-10-05): moved with the body's step 6 edit, then again at system walk 2's additions edit (see the function-hash note above)
-  'orbit-onboard': '81e82b887ca070705710f64aaaef1f4efb24134252ee7943f15ebf71c19fa599', // rc08b-walk-routing task 3.3 (see the function-hash note above)
+  'orbit-onboard': 'a2d4f3bc2b5fc3562fe264fcb291e0e280f988fe0a10be081a4770c32fe00e2f', // rc17b task 5.1 (see the function-hash note above)
   'orbit-propose': '3d7fbf5611e1c778292635b8245e89ae1c3370b68f2d671a13bfd51af9f035a9', // rc13c, then rc03b: moved with the body (see the function-hash notes above)
   'orbit-architect': 'ad06e7eac6e4177eb5a7e0e07976fee6a956314b561f73ff64200fcff27fa24f', // rc15: moved twice with the body — apply, then the system walk; a third time at the post-archive audit walk (see the function-hash note above)
 };

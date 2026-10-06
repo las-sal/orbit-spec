@@ -12,4 +12,4 @@ First system-mode review of this change.
 ---
 Gate review-system: unpassed — no outside review stands on this state
 Position: propose ✓ → review(proposal) (past) → apply ✓ → review(system) unpassed → archive blocked-by-gate
-Ready when you are: /orbit:review --as system --fresh sys-change
+Ready when you are: /orbit:review --as system --reviewer blind-pair sys-change
