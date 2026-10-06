@@ -125,17 +125,25 @@ no fifth capability: `orbit-conventions`' class 3 was corrected by rc17d, and th
 `orbit-engine-gates`' `independent`/`blind-pair` cadence rows and `orbit-run-summary-emit`'s verify scenario are stated
 for the v4 cadence tokens, which this change does not touch.
 
-### D10 — a re-run checks supersession against the pair's launch (proposal walk; Sal: A)
+### D10 — a re-run reviews the state its landed partner reviewed (proposal walk; Sal: A; system walk; Sal: A′)
 
-A re-run reviews the pair's BASE, so whether an apply overtook it is measured from the pair's launch L, never from the
-re-run's own T0: the re-run saves with `--launch L`. The external pass's CRITICAL reproduced the alternative — an apply
-between L and the re-run, a fresh member emitted after the apply, a re-run saved against its own later token — to a
-gate computing `passed` over two reviews of the superseded state. With an apply already later than L, the run is not a
-re-run at all: it says the pair's reviewed state is superseded and proceeds as an ordinary single on the current state,
-so the gate never loops on a refusal it keeps presenting. The re-run test (`openPair` plus no apply later than L) is the
-body's reading of the trail; the gate stays authoritative. One edge is left in the named limit: a fresh half that
-STARTED before an apply and emitted after it reads as current by the freshness rule — orbit is single-user, and an apply
-while a pair is open is that user racing their own review.
+With no apply later than the pair's launch L, a re-run reviews the pair's BASE, so whether an apply overtook it is
+measured from L, never from the re-run's own T0: the re-run saves with `--launch L`. The proposal walk's external
+CRITICAL reproduced the alternative — a re-run saved against its own later token — to a gate computing `passed` over two
+reviews of a superseded state.
+
+With an apply later than L and `openPair` standing, the landed member was emitted AFTER that apply (one emitted before it
+is stale, and the gate reports no `openPair`), so it reviewed the post-apply state — and the engine's membership rule (the
+first pass of each class after the launch; an apply ends nothing) counts the next run of the missing class as the pair's
+member, never a single. The proposal had called that run "an ordinary single" at its own handoff commit; the system
+walk's fresh CRITICAL reproduced the result — a worktree holding the committed partner, and a gate counting the pair
+blind. The re-run therefore reviews the state the landed member reviewed: the first parent of the commit that added the
+member's file, by the same hash-only read that finds BASE, saved under the re-run's own T0 token (later than the apply).
+Only when no `openPair` stands and the gate names the latest launch's member stale is the run a single, and the chat says
+the pair is superseded (system walk, external W3). The re-run test is the body's reading of the trail; the gate stays
+authoritative. One edge is left in the named limit: a fresh half that STARTED before an apply and emitted after it reads
+as current by the freshness rule — orbit is single-user, and an apply while a pair is open is that user racing their own
+review.
 
 ## Mechanism → artifacts
 

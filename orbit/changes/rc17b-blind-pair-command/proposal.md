@@ -25,8 +25,10 @@ rc17a's assigned rules (D-bpc-3, -4, -13) against what rc17a and rc17d shipped; 
 - **Every half of a pair reads the pair's reviewed state.** A re-run of a missing external half launches its
   worktree at the commit that added the pair's launch, not at its own handoff commit, and checks supersession against
   the pair's launch token; a pasted half's prompt, and a failed run's paste fallback, name the pair's reviewed commit; a
-  fresh re-run is briefed with that commit. After an apply later than the launch, a run is an ordinary single on the
-  current state, not a re-run. What cannot be made physical is stated as a BOUNDED named limit.
+  fresh re-run is briefed with that commit. After an apply later than the launch, the landed member reviewed the
+  post-apply state and the engine still counts the next run as its partner, so the re-run reviews the commit before that
+  member's own and saves under its own token; only once the member is stale is a run an ordinary single. What cannot be
+  made physical is stated as a BOUNDED named limit.
 - **Reviewer shorthands.** `--in-context`, `--external` and `--blind-pair` join `--fresh`, each exactly
   `--reviewer <class>`; at most one reviewer selector per invocation, a clean usage error otherwise.
 - **The default preference presents the pair.** With nothing covering an `invoked` slot and the preference

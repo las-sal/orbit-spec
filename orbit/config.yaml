@@ -61,8 +61,8 @@ schema: spec-driven
 # A map from reviewed-gate id to blind-pair | fresh | external: which review the readout
 # PRESENTS when nothing covers a gate's first (`invoked`) slot. It never changes what covers
 # the slot — a single fresh or external pass, or a complete blind pair, covers whatever this
-# says. Absent = blind-pair for every gate (until a one-command pair ships, that presents the
-# fresh review). An unknown value warns and resolves to blind-pair; a key naming no reviewed
+# says. Absent = blind-pair for every gate, which presents the one-command pair
+# (/orbit:review --as <mode> --reviewer blind-pair <change>). An unknown value warns and resolves to blind-pair; a key naming no reviewed
 # gate warns and is ignored; a non-map value warns and is ignored.
 # Example:
 #   review_preference:

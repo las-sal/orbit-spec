@@ -70,6 +70,11 @@ function emit(repo: string, cliEntry: string, cmd: string, change: string, paylo
   return r.stdout.trim().split('\n').pop()!.trim();
 }
 
+/** A stub fresh worker's emit through the real surface; returns the trail path (repo-relative). */
+export function emitFresh(repo: string, cliEntry: string, change: string, mode: string, scratch: string): string {
+  return emit(repo, cliEntry, 'review', change, FRESH_PAYLOAD(mode), scratch);
+}
+
 const tokenOf = (p: string) => /(\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}Z)/.exec(path.basename(p))![1];
 
 function runsDir(repo: string, change: string): string {
@@ -220,7 +225,8 @@ export function runPair(opts: {
 }
 
 export interface RerunOutcome {
-  kind: 're-run' | 'single';
+  /** `re-run` (no apply later than L), `re-run-after-apply`, `stale-single` (the notice), or `single`. */
+  kind: 're-run' | 're-run-after-apply' | 'stale-single' | 'single';
   L: string | null;
   base: string | null;
   worktreeBase: string;
@@ -253,11 +259,19 @@ export function runExternalRerun(opts: {
   const lFile = launches[launches.length - 1];
   const L = lFile ? tokenOf(lFile) : null;
   const applyLater = L !== null && files.some((f) => /^apply-/.test(f) && tokenOf(f) > L);
-  const isRerun = row?.openPair?.missing === 'external' && L !== null && !applyLater;
+  const isRerun = row?.openPair?.missing === 'external' && L !== null;
+  const staleNotice = !row?.openPair && /cannot fill this slot: its \w+ member is stale/.test(row?.reason ?? '');
+  const addedBy = (rel: string) => {
+    const lines = git('log', '--diff-filter=A', '--format=%H', '--', rel).stdout.trim().split('\n');
+    return lines[lines.length - 1];
+  };
+  // Step 3b: the WORKTREE COMMIT — BASE with no apply later than L; after one, the first parent of the commit
+  // that added the landed fresh member (the post-apply state it reviewed).
   let base: string | null = null;
-  if (isRerun) {
-    const lines = git('log', '--diff-filter=A', '--format=%H', '--', `orbit/changes/${change}/.orbit-runs/${lFile}`).stdout.trim().split('\n');
-    base = lines[lines.length - 1];
+  if (isRerun && !applyLater) base = addedBy(`orbit/changes/${change}/.orbit-runs/${lFile}`);
+  if (isRerun && applyLater) {
+    const member = landedFresh(repo, change, mode, L!)!;
+    base = git('rev-parse', `${addedBy(member)}^1`).stdout.trim();
   }
 
   // The re-run's own packaging: its prompt, its T0 with no pair, its handoff commit.
@@ -290,8 +304,9 @@ export function runExternalRerun(opts: {
   const prompt = isRerun ? path.join(repo, promptPath) : path.join(worktree, promptPath);
   const output = path.join(runDir, 'return.md');
   const exit = runStub(opts.runner, worktree, output, prompt, runDir);
-  const saveLaunch = isRerun ? L! : tokenOf(t0Path);
-  const out: RerunOutcome = { kind: isRerun ? 're-run' : 'single', L, base, worktreeBase, worktreeHadFresh, saveLaunch, savedPath: null, failure: null };
+  const saveLaunch = isRerun && !applyLater ? L! : tokenOf(t0Path);
+  const kind: RerunOutcome['kind'] = isRerun ? (applyLater ? 're-run-after-apply' : 're-run') : staleNotice ? 'stale-single' : 'single';
+  const out: RerunOutcome = { kind, L, base, worktreeBase, worktreeHadFresh, saveLaunch, savedPath: null, failure: null };
   if (exit !== 0) out.failure = `runner exited ${exit}`;
   else {
     const save = cli(repo, cliEntry, ['external', 'save', change, '--as', mode, '--from', output, '--launch', saveLaunch, '--json']);

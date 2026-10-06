@@ -103,7 +103,7 @@ work the user stages during the run stays out. The external half's launch, save 
 | 10. push | once, after rows 7 and 9; a failed push is reported, the commits stand, no retry |
 | 11. the worktree | removed per the launch requirement (row 5a only); a failed removal is reported, never fatal |
 | 12. reports | `orbit status --change <change> --report <TS>` rendered for each landed pass |
-| 13. end | the position readout and the engine's eligibility line; the walk is never invoked (no-chaining). After row 5b the pair ends OPEN — the gate reports `openPair: {missing: "external"}` — and no half covers alone |
+| 13. end | the position readout and the engine's eligibility line; the walk is never invoked (no-chaining). When a half is missing — after row 5b, or a half that failed or wrote nothing — the pair ends OPEN and no half covers alone: with one half landed the gate reports `openPair` naming the missing class (after row 5b, `{missing: "external"}`); with both missing it reports no `openPair` and a reason saying neither member has landed |
 
 Closure: DERIVED — the steps are the pair's acts in dependency order (the launch before both halves; BASE holds the
 launch; the external reads BASE; the fresh pass file is committed before the external return enters the repository;

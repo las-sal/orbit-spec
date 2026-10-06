@@ -6,7 +6,7 @@ import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ensureCliBuilt } from '../../helpers/run-cli.js';
 import { sh } from './launch.js';
-import { runPair, runExternalRerun } from './pair.js';
+import { runPair, runExternalRerun, emitFresh } from './pair.js';
 
 /**
  * rc17b-blind-pair-command task 6.1 — the blind pair's git steps, TRANSCRIBED (see `pair.ts` for the
@@ -200,30 +200,54 @@ describe('rc17b — the blind pair against real git (task 6.1)', () => {
     expect(g.reason).toBe("cadence class 'in-context' has no fresh pass");
   });
 
-  // @scenario behaviour orbit-review-external :: A pair's external half reads the pair's reviewed state :: A re-run after an apply is a single
-  it('an apply later than L: a re-run return refuses under --launch L, and the single route saves under its own token', () => {
-    const first = pair(null);
-    // An apply after the launch. Its token is one second past L — the trail's latest token.
-    const later = new Date(first.L!.replace(/T(\d{2})-(\d{2})-(\d{2})Z/, 'T$1:$2:$3Z'));
+  /** An apply after L: its token one second past the trail's latest token, committed alone. */
+  const applyAfter = (after: string): string => {
+    const later = new Date(after.replace(/T(\d{2})-(\d{2})-(\d{2})Z/, 'T$1:$2:$3Z'));
     later.setUTCSeconds(later.getUTCSeconds() + 1);
-    const applyTok = later.toISOString().replace(/\.\d{3}Z$/, 'Z').replace(/:/g, '-');
-    const applyRel = `orbit/changes/${CHANGE}/.orbit-runs/apply-${applyTok}.json`;
-    fs.writeFileSync(path.join(repo, applyRel), JSON.stringify({ command: 'apply' }));
-    sh(repo, 'git', ['add', applyRel]);
-    sh(repo, 'git', ['commit', '--only', applyRel, '-q', '-m', 'apply']);
-    // The constructed case of the proposal walk's external CRITICAL: a re-run's return saved under L refuses.
+    const tok = later.toISOString().replace(/\.\d{3}Z$/, 'Z').replace(/:/g, '-');
+    const rel = `orbit/changes/${CHANGE}/.orbit-runs/apply-${tok}.json`;
+    fs.writeFileSync(path.join(repo, rel), JSON.stringify({ command: 'apply' }));
+    sh(repo, 'git', ['add', rel]);
+    sh(repo, 'git', ['commit', '--only', rel, '-q', '-m', 'apply']);
+    return tok;
+  };
+
+  // @scenario behaviour orbit-review-external :: A pair's external half reads the pair's reviewed state :: A re-run after an apply reviews the landed member's state
+  it("an apply later than L, then a fresh member: the re-run reviews the commit before that member's, and the pair completes blind", () => {
+    // The system walk's fresh CRITICAL, constructed: launch, no member, an apply, then the presented fresh review.
+    const first = pair(null, { emit: false, exit: 0 });
+    const applyTok = applyAfter(first.L!);
+    // The constructed case of the proposal walk's external CRITICAL still refuses: a return saved under L after the apply.
     const raw = path.join(scratch, 'return.md');
     fs.writeFileSync(raw, REVIEW);
     const refused = spawnSync(process.execPath, [cliEntry, 'external', 'save', CHANGE, '--as', MODE, '--from', raw, '--launch', first.L!, '--json'], { cwd: repo, encoding: 'utf-8' });
     expect(refused.status).not.toBe(0);
     expect(refused.stderr).toMatch(/later than the launch/);
-    // The body's reading: not a re-run, a single on the current state under its own T0 token.
+    const fresh = emitFresh(repo, cliEntry, CHANGE, MODE, scratch);
+    sh(repo, 'git', ['add', fresh]);
+    sh(repo, 'git', ['commit', '--only', fresh, '-q', '-m', 'fresh']);
+    expect(gateRow().openPair).toEqual({ missing: 'external' });
     const r = runExternalRerun({ repo, change: CHANGE, mode: MODE, cliEntry, runner: [stub, '--out', '{output}'], scratch });
-    expect(r.kind).toBe('single');
+    expect(r.kind).toBe('re-run-after-apply');
+    expect(r.worktreeHadFresh).toBe(false);
     expect(r.saveLaunch).not.toBe(first.L);
     expect(r.saveLaunch > applyTok).toBe(true);
     expect(r.failure).toBeNull();
-    expect(r.savedPath).not.toBeNull();
+    const g = gateRow();
+    expect(g.openPair).toBeUndefined();
+    expect(g.reason).toBe("cadence class 'in-context' has no fresh pass");
+  });
+
+  // @scenario behaviour orbit-review-external :: A pair's external half reads the pair's reviewed state :: A stale member's pair is superseded
+  it('a member emitted before an apply is stale: no openPair, the notice, and an ordinary single', () => {
+    const first = pair(null);
+    applyAfter(tok(first.freshPath!));
+    const before = gateRow();
+    expect(before.openPair).toBeUndefined();
+    expect(before.reason).toMatch(/cannot fill this slot: its fresh member is stale/);
+    const r = runExternalRerun({ repo, change: CHANGE, mode: MODE, cliEntry, runner: [stub, '--out', '{output}'], scratch });
+    expect(r.kind).toBe('stale-single');
+    expect(r.failure).toBeNull();
   });
 
   // @scenario behaviour orbit-review :: The blind-pair reviewer runs both halves in one invocation :: A missing fresh half lets the external return land

@@ -92,9 +92,16 @@ describe('rc17b — the review trunk (task 2.3)', () => {
     expect(rerun).toContain('`openPair: {missing: "fresh"}`');
     expect(rerun).toContain('`git log --diff-filter=A --format=%H -- <L\'s T0 path> | tail -1`');
     expect(rerun).toContain('`git rev-parse <BASE>^1`');
+    // System walk (Sal: A′): after an apply later than L, the commit before the landed external member's.
+    expect(rerun).toContain('the REVIEWED COMMIT is `git rev-parse <M>^1`');
+    expect(rerun).toContain('the engine counts this run as the pair\'s missing member');
     expect(rerun).toContain('Review the repository as it stands at commit <REVIEWED COMMIT>, not the live checkout');
+    // System walk (external W1): the skill's own CLI readings describe the live checkout.
+    expect(rerun).toContain('that output describes the live checkout, not the reviewed commit');
+    expect(rerun).toContain('say in the pass which readings came from the live checkout');
     expect(rerun).toContain('Run orbit emit review from the repository root as usual.');
-    expect(rerun).toContain('running an ordinary single fresh review on the current state');
+    expect(rerun).toContain('this run is an ordinary single on the current state');
+    expect(rerun).not.toContain('running an ordinary single fresh review');
     // The brief itself is untouched: the line is appended only on a re-run.
     expect(fresh.split('```')[1]).not.toContain('REVIEWED COMMIT');
   });
@@ -180,15 +187,20 @@ describe('rc17b — the pair reference (task 3.3)', () => {
     expect(s6).toContain('the fresh half is MISSING');
     const s5b = steps.split('### 5b.')[1].split('### 5c.')[0];
     expect(s5b).toContain('when it did not, `Handoff blocked: the handoff commit <short-sha> is not pushed.');
-    expect(steps.split('### 13. End')[1]).toContain('`openPair: {missing: "external"}`, no half covers alone');
+    const end13 = steps.split('### 13. End')[1];
+    expect(end13).toContain('the pair ends OPEN and no half covers alone; read what the gate reports from that same status JSON, never from this text');
+    // System walk (fresh S1): both missing sets no openPair.
+    expect(end13).toContain('with BOTH missing it carries no `openPair` and its reason says neither member has landed');
     expect(steps.split('### 8.')[1].split('### 9.')[0]).toContain("the handoff reference's **A failed run** paragraph");
     expect(pairRef).toContain('the fresh half as under `--reviewer fresh`, the external half as under `--reviewer external`');
   });
 
   it('the session-end recovery line names the uncommitted fresh pass file beside the raw-return save', () => {
     const end = pairRef.split('## Session end')[1];
-    expect(end).toMatch(/first commit the fresh pass file alone[^`]*then save the return with: orbit external save <change-name> --as <as> --from <run-dir>\/return\.md --launch <L>/);
-    expect(end).toContain('On the PASTED route print');
+    // System walk (external W4): conditional on a fresh pass file having landed.
+    expect(end).toMatch(/first, IF a fresh pass file landed[^`]*commit it alone[^`]*with none, the pair stays open missing its fresh half[^`]*then save the return with: orbit external save <change-name> --as <as> --from <run-dir>\/return\.md --launch <L>/);
+    expect(end).toContain('On the PASTED route print: `If this session ends before the fresh half does: IF a fresh pass file landed');
+    expect(end).not.toContain('first commit the fresh pass file alone');
   });
 });
 
@@ -202,12 +214,12 @@ describe('rc17b — the external-handoff reference (task 4.4)', () => {
 
   // @scenario text orbit-review-external :: A pair's external half reads the pair's reviewed state :: A single external outside a pair is unchanged
   it('a single external outside a pair reads as before: worktree at the handoff commit, its own T0 token', () => {
-    expect(step3b).toContain('**No `openPair` for the mode, or one missing `fresh`** — a single; nothing here applies.');
+    expect(step3b).toContain('**Any other state** — no `openPair` for the mode, or one missing `fresh` — a single; nothing here applies.');
     expect(handoff).toContain('git worktree add --detach <run-dir>/worktree <handoff-sha>');
     expect(handoff).toContain('orbit external save <change-name> --as <as> --from <run-dir>/return.md --launch <T0 token> --json');
     // Every pair addition to the shared steps is conditioned on the pair.
     for (const added of [
-      "On a RE-RUN of a pair's missing external half (Step 3b), `<BASE-sha>` replaces `<handoff-sha>`",
+      "On a RE-RUN of a pair's missing external half (Step 3b), its WORKTREE COMMIT replaces `<handoff-sha>`",
       "On a pair's re-run the redirect reads the LIVE CHECKOUT's copy",
       "**In a pair's first run, stop here and return control to `references/blind-pair.md`**",
       "for a pair half, the pair's REVIEWED COMMIT in place of `<handoff-sha>` (Step 3b)",
@@ -216,13 +228,30 @@ describe('rc17b — the external-handoff reference (task 4.4)', () => {
     }
   });
 
-  it('a re-run: openPair missing external and no apply later than L; BASE by hash-only read; the save passes --launch L', () => {
-    expect(step3b).toContain('`openPair: {missing: "external"}`');
+  it('a re-run: BASE and --launch L with no apply later than L; after one, the commit before the landed member and its own token', () => {
+    expect(step3b).toContain('`openPair: {missing: "external"}`, the run is a RE-RUN');
     expect(step3b).toContain("`git log --diff-filter=A --format=%H -- <L's T0 path> | tail -1` (a hash-only read)");
     expect(step3b).toContain('its own T0 WITHOUT `pair`');
-    expect(step3b).toContain('9b adds the worktree at BASE, never at the re-run\'s own handoff commit');
-    expect(step3b).toContain('9d saves with `--launch L`, never the re-run\'s own T0 token');
-    expect(step3b).toContain('running an ordinary single external review on the current state');
+    expect(step3b).toContain('The worktree commit is BASE; the save token is L');
+    // System walk (fresh C1, Sal: A′): never a single while openPair stands.
+    expect(step3b).toContain("the engine counts this run as the pair's missing member — never a single");
+    expect(step3b).toContain('The REVIEWED COMMIT is the state that member reviewed: `git rev-parse <M>^1`');
+    expect(step3b).toContain("the save token is this run's OWN T0 token, which is later than the apply");
+    expect(step3b).toContain("9b adds the worktree at the WORKTREE COMMIT, never at the re-run's own handoff commit");
+    expect(step3b).toContain('9d saves with `--launch <SAVE TOKEN>`');
+    // System walk (external W3): the stale-member notice, checked before the single exit.
+    expect(step3b).toContain("**No `openPair`, but the gate's reason names a member of the latest launch as stale**");
+    expect(step3b.indexOf('as stale**')).toBeLessThan(step3b.indexOf('**Any other state**'));
+    expect(step3b).not.toContain('**An apply token later than L** — NOT a re-run');
+  });
+
+  it('a re-run states its worktree commit and save token in the launch output and the recovery line (system walk, fresh W1)', () => {
+    expect(handoff).toContain("on a pair's RE-RUN, `launched <name> at <worktree-commit short-sha>, the pair's reviewed state` in place of `at that commit`");
+    expect(handoff).toContain("on a pair's RE-RUN, Step 3b's SAVE TOKEN in place of `<T0 token>`");
+  });
+
+  it("a pasted pair half's system read list ends at the reviewed commit, not HEAD (system walk, external W2)", () => {
+    expect(handoff).toContain('in system mode the read list\'s commit range ends at that commit, not `HEAD` (`git diff <change-start>..<REVIEWED COMMIT>`)');
   });
 
   // @scenario text orbit-review-external :: A pair's external half reads the pair's reviewed state :: A pasted pair half names the reviewed commit
