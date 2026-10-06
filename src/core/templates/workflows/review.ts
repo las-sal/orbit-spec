@@ -576,6 +576,7 @@ Per the universal spine in \`orbit-conventions\`'s \`Internal-run JSON summary f
   "mode": "proposal" | "system",
   "prompt_path": "orbit/changes/<name>/.orbit-runs/external-prompt-<as>-<TS>.md",
   "target": "<named external AI if user specified; null otherwise>",
+  "pair": true,
   "awaiting_findings": true,
   "judgements": [ { "kind": "continuation", "disposition": "spend", "formed_against": ["<independent pass TS>"], "reasoning": "<why a further pass was bought>", "ratified_by": "ai|user" } ]
 }
@@ -602,9 +603,22 @@ Per the universal spine in \`orbit-conventions\`'s \`Internal-run JSON summary f
 }
 \`\`\`
 
+**THE PAIR LAUNCH (rc17a).** \`pair\` is OPTIONAL. A T0 carrying \`pair: true\` is a blind pair's LAUNCH: its meaning is \`orbit-engine-gates\`' \`A pair's membership is computed from its launch\`, and the field's checks are \`orbit-emit-composition\`'s \`The review-external payload carries pair\` (a boolean; \`pair: true\` needs an explicit \`mode\` of \`proposal\` or \`system\`; \`pair: false\` writes the ordinary T0). No step of this branch writes it on its own: it is written only when the user has invoked a blind pair whose external half this packaging is. A re-run of a missing external half re-packages WITHOUT it, so the re-run refills the open pair rather than launching a new one. The payload below is a launch's:
+
+\`\`\`json example change
+{
+  "mode": "system",
+  "pair": true,
+  "prompt_path": "orbit/changes/add-detail-flag/.orbit-runs/external-prompt-system-2026-10-02T09-15-00Z.md",
+  "target": "GPT-6 Codex",
+  "final_assessment": "External review prompt packaged for add-detail-flag (iter 1, mode system) as the external half of a launched blind pair; awaiting findings from GPT-6 Codex.",
+  "model": "claude-opus-5-5"
+}
+\`\`\`
+
 **THE SPEND RECORD (rc04a).** When this handoff is a FURTHER independent pass bought past a gate that has ALREADY passed — a decision the cadence has no other home for — the payload SHALL carry a \`judgements\` entry with \`kind: "continuation"\` and \`disposition: "spend"\`, written at exactly the moment the decision is taken rather than reconstructed later. \`formed_against\` names the passes already returned; \`reasoning\` says why another was worth buying. The token source is the TRAIL ITSELF, not \`orbit status\`: the change-tier status payload reports gate spend COUNTS and reason strings, never pass tokens. List \`orbit/changes/<change-name>/.orbit-runs/\` and take the \`<TS>\` of each \`review-<mode>-<TS>.json\` whose \`reviewer_class\` is \`fresh\` or \`external\`, plus each \`external-<mode>-<TS>.md\` the trail reader ACCEPTED as a pass — a return the gate's \`reason\` names as REJECTED is not citable, and enumerating filenames alone over-counts by exactly those. Which passes count is \`orbit-run-summary-emit\`'s rule (the trail reader's pass set); this body names it and does not restate it — the write gate enforces it and names the pass it refuses on. This emit admits \`continuation\` ONLY — a \`readiness\` here is refused, since the T0 handoff record has no reader for one. A handoff that merely covers a DECLARED, still-uncovered cadence slot is not a spend decision and carries no record.
 
-\`awaiting_findings: true\` is always set at T0. Future tooling may flip this when findings land; for now it's a flag that downstream consumers can use to identify "T0 emit, not yet completed cycle." \`reviewer_class: "external"\` (C1) describes the intended handoff class for audit readability — but per \`orbit-run-summary-emit\`, a T0 emit is a PACKAGING record, NOT a completed pass: whichever cadence slot an external return would satisfy — a bare \`external\` slot, an \`independent\` slot, or the external half of a \`blind-pair\` — is satisfied ONLY when an \`external-<as>-<TS>.md\` findings file exists, so a packaged-but-unreturned external never counts as class coverage.
+\`awaiting_findings: true\` is always set at T0. Future tooling may flip this when findings land; for now it's a flag that downstream consumers can use to identify "T0 emit, not yet completed cycle." \`reviewer_class: "external"\` (C1) describes the intended handoff class for audit readability — but per \`orbit-run-summary-emit\`, a T0 emit is a PACKAGING record, NOT a completed pass: whichever cadence slot an external return would satisfy — a bare \`external\` slot, an \`independent\` slot, the external half of a \`blind-pair\`, or an \`invoked\` slot (as a single, or as a launched pair's external member) — is satisfied ONLY when an \`external-<as>-<TS>.md\` findings file exists, so a packaged-but-unreturned external never counts as class coverage.
 
 ### \`next_recommended\` — multi-step prose
 
@@ -1097,9 +1111,9 @@ covers the architecture trail.
 [run: orbit status --change example-change --report]
 [paste the rendered report verbatim — it ends with the engine tail, e.g.:
 ---
-Gate review-system: unpassed — pair launched at 2026-05-26T14-40-02Z is open: the fresh member has no external partner; run it before walking these findings
+Gate review-system: unpassed — pass 2026-05-26T15-12-08Z has unresolved substantive findings
 Position: propose ✓ → review(proposal) (past) → apply ✓ → review(system) unpassed → archive blocked-by-gate
-Ready when you are: /orbit:review --as system --reviewer external example-change]
+Ready when you are: /orbit:address-reviews example-change]
 
 [then loose-form conversation: what the pattern behind the findings means, what to probe
 next, anything the structure can't say — never contradicting the tail's engine lines]

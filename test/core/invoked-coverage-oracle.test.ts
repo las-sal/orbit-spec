@@ -12,14 +12,14 @@ import { buildTrail, cadences, gateOf, runOracleShard, trails, ORACLE_TRAIL_COUN
  * oracle's contract.
  *
  * STATED SIZE: every cadence of length 1 to 3 over the six cadence tokens (258 cadences) × every trail of
- * 1 to 5 events (45,435 trails) = 11,722,230 cases, run as SIX shards (this file and the five
+ * 1 to 5 events (81,426 trails, the launch tie `U` added at the system walk) = 21,007,908 cases, run as SIX shards (this file and the five
  * `invoked-coverage-oracle.shard-<token>.test.ts` siblings), one per cadence-initial token, so they spread
  * across test workers. The shard set is asserted complete below.
  */
 const here = path.dirname(fileURLToPath(import.meta.url));
 
 describe('rc17a exit (1) — the exhaustive invoked-coverage oracle', () => {
-  it('the stated size: six tokens, 258 cadences, 45,435 trails, and one shard per cadence-initial token', () => {
+  it('the stated size: six tokens, 258 cadences, 81,426 trails, and one shard per cadence-initial token', () => {
     expect([...CADENCE_ENTRIES]).toEqual(['in-context', 'fresh', 'external', 'independent', 'blind-pair', 'invoked']);
     expect(cadences()).toHaveLength(258);
     let n = 0;

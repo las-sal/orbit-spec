@@ -13,7 +13,7 @@ DISCOVERY — rows tested in order, first match wins:
 1 --from-file <path>, with or without a positional: the file ONLY; no marker grep, no trail discovery, no openPair warning; the positional, if any, resolves only where the log lands.
 2 no positional, exactly one active change (per orbit list --json): say "resolved to the single active change <name>; markers outside it are not scanned", then re-enter these rows as a positional naming that change.
 3 no positional, zero or several active changes: the whole-repo @review: marker scan; several are named in the header so the user can aim the walk.
-4 active change, a reviewed gate neither blocked nor superseded reports openPair: before triage, warn that the pair is half-landed, naming the missing member and the gate's canonical next command, and offer two choices — stop (walk nothing, write no log, so the missing review can run) or walk now. Walking now ends the pair: on an invoked slot the walked half then covers alone; on a blind-pair slot no pair can form on this state. On walk, continue at row 5.
+4 active change, a reviewed gate neither blocked nor superseded reports openPair: before triage, warn that the pair is half-landed, naming the missing member and the gate's canonical next command. When the landed half is listed in that gate's unresolvedPasses or unwalkedPasses, offer two choices — stop (walk nothing, write no log, so the missing review can run) or walk now. Walking now ends the pair: on an invoked slot the walked half then covers alone; on a blind-pair slot no pair can form on this state. On walk, continue at row 5. When the landed half is listed in neither (it carries no finding), no walk can end the pair: say so, name the routes that can — a further review of the landed half's class, which on an invoked slot lands as a single and covers, or a continuation/proceed judgement at the gate's seam — then walk nothing and write no log.
 5 active change: the UNION of @review: markers in the change directory, every unresolvedPasses and unwalkedPasses entry of each reviewed gate neither blocked nor superseded (internal review-<mode>-*.json and external external-<mode>-*.md alike), and every audit-drift-*.json in its .orbit-runs/ whose basename no address-reviews-*.json there names in source_path.
 6 archived change: markers in the archived directory + its unwalked audit-drift-*.json by the same basename rule; its review passes are reached by --from-file, and the header says so.
 7 a positional resolving to no change (a path or pattern): markers in that scope only.
@@ -65,6 +65,11 @@ How the discovered work is written — one log per pass — is owned by `One inv
 
 - **WHEN** the gate's `invoked` slot has a launched pair whose fresh half landed, and the user chooses to walk at the warning
 - **THEN** the fresh pass is walked and its log written; the gate's row then carries no `openPair`, and the walked pass covers the `invoked` slot as a single
+
+#### Scenario: A clean landed half cannot be walked past
+
+- **WHEN** the gate's `invoked` slot has a launched pair whose fresh half landed carrying no finding, so `openPair: {missing: "external"}` stands and neither list names the fresh pass
+- **THEN** the walk warns naming the missing external member, says no walk can end the pair, names a further fresh review and a `continuation`/`proceed` judgement as the routes that can, and writes no log
 
 #### Scenario: A bare invocation meets the openPair warning
 

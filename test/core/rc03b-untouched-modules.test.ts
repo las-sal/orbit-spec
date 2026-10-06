@@ -61,6 +61,10 @@ import { fileURLToPath } from "node:url";
  * retired — the review preference read once, `unwalkedPasses`, and the exported in-memory seam);
  * `instruction-loader.ts` (the `unwalkedPasses` spread on the gate row); `emit-composition.ts` (the T0's `pair`
  * field and its write-gate checks). `schema.ts` did NOT move: the six-token message is `CADENCE_ENTRIES.join`.
+ * MOVED AGAIN at rc17a's system walk (2026-10-06): `gates.ts` — "landed" read from membership with a stale
+ * member as its own presentation row (fresh W1, Sal: C) and a pass sharing its launch's token neither member
+ * nor single (external W2); `emit-composition.ts` — one comment stopped stating the v4 cadence (fresh S3).
+ * Every other hash here is unchanged.
  */
 const PINNED: Record<string, string> = {
   "schemas/spec-driven/schema.yaml": "21e0ae86532a39be558a2b81d23738a6fbf92fbd32b0d01612a65e83d6a96739",
@@ -68,7 +72,7 @@ const PINNED: Record<string, string> = {
   "schemas/spec-driven/templates/proposal.md": "9c554e0dbe918e3dc745dcc143a999e1d102954d75fb6e51e231c4cba78f06f3",
   "schemas/spec-driven/templates/spec.md": "e025078f238dc6e4df552a1e0a140cf9efce0bbdecbeb9f45837d45ed91dca01",
   "schemas/spec-driven/templates/tasks.md": "b2a6a4c08c15f347a1d8c3e2d43e0c8fb066dc5cc0feb795f47555f176f9c421",
-  "src/core/artifact-graph/gates.ts": "df13b9f3996d8b0ea1da267b603ff438bb49cf1cdc45bd89246efe3a74366830",
+  "src/core/artifact-graph/gates.ts": "0c383ae7e2877459fbb885472537681a8f2b2c0762825e479811fd9bee803046",
   "src/core/artifact-graph/graph.ts": "3193a3884bb59296dc4ddc177020d3135d99c694109298ac31c3f3a91c45a0ed",
   "src/core/artifact-graph/index.ts": "9dc35ba8e64105fbfd6af821cf99f1fbc5777b74b75311f09fdab279cf12d438",
   "src/core/artifact-graph/instruction-loader.ts": "fd36a43ed47b2515218211a228121becf50e3213fd34621e3a7c5085e0ab44ad",
@@ -79,7 +83,7 @@ const PINNED: Record<string, string> = {
   "src/core/artifact-graph/state.ts": "f59f748b94cd94ca2fe022ec5aa66b3251dd1b2c00bddb9a17cbd9273a04d0f2",
   "src/core/artifact-graph/trail.ts": "39b5d110ef53b7e03f49ddf292e86db598a14f426a02e6d84142e16231e37d69",
   "src/core/artifact-graph/types.ts": "d83e0cc6d7fca7b80618ffbb7ce052ee68e35be79e7949a941e989b2e102392c",
-  "src/core/emit-composition.ts": "958582faa8d39e65fc3eadf316a26de75cec10b1f9a3e073e077f2d2b74896ef",
+  "src/core/emit-composition.ts": "25c0a82f4f7790ae2ac468eca326a9a972bf818779ab62d4d3ccb340cd323e34",
   "src/core/report-render.ts": "b40046bc8059ca73744de33dd25ebf1e978a8dd3b0a5b0a33490298f161904a5",
 };
 

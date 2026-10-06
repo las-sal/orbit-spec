@@ -1,0 +1,190 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-06T02:20:35Z",
+  "change": "rc17a-invoked-coverage",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc17a-invoked-coverage/.orbit-runs/review-system-2026-10-06T02-01-28Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-06T02-01-28Z",
+  "latest_apply_token": "2026-10-06T01-53-00Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 3
+  },
+  "pushback_verification": "4 of 4 verified against current state; the WARNING's two-trail reproduction re-ran through the in-memory seam and reproduced; 0 stale.",
+  "resolution_summary": {
+    "resolved": 4,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "A stale pair member reads as not landed, so the invoked presentation contradicts the membership table",
+      "marker_source": "internal-review",
+      "file": "src/core/artifact-graph/gates.ts",
+      "line": 575,
+      "classification": "decision_required",
+      "action": "Option C, ratified in chat ('walk all' over the briefed recommendation): 'landed' is read from membership; a landed member is usable only when fresh and above the bound; a stale landed member is its own presentation row presenting a further review of its class (a single that covers); a complete pair with a stale member falls to the last row with no openPair. The owner's presentation table gained the stale row and the landed/usable definitions, its membership sentence was corrected, design D7/D9 follow, and the oracle now compares invoked-slot reason text.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17a-invoked-coverage/specs/orbit-engine-gates/spec.md",
+          "orbit/changes/rc17a-invoked-coverage/design.md",
+          "orbit/changes/rc17a-invoked-coverage/tasks.md",
+          "test/helpers/invoked-oracle.ts",
+          "test/core/invoked-coverage-oracle.test.ts",
+          "test/core/artifact-graph/invoked-coverage.test.ts",
+          "test/core/rc03b-untouched-modules.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "cannot cover until it is run again",
+          "`openPair` is set on the first row only",
+          "the presentation table's first row and no other",
+          "is read on the pass list being evaluated"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/artifact-graph/gates.ts",
+            "text": "member is stale (an apply landed after it); a further ${cls} review lands as a single"
+          },
+          {
+            "path": "orbit/changes/rc17a-invoked-coverage/specs/orbit-engine-gates/spec.md",
+            "text": "PAIR-OPEN, one member landed, stale"
+          },
+          {
+            "path": "test/helpers/invoked-oracle.ts",
+            "text": "export function refInvokedReason"
+          }
+        ],
+        "searched": [
+          "first row",
+          "cannot cover until",
+          "neither member has landed",
+          "landed",
+          "inList"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "C"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The T0 JSON shape omits the pair field the payload table now accepts",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 580,
+      "classification": "trivial_fix",
+      "action": "Added optional pair to the T0 JSON shape with a THE PAIR LAUNCH paragraph pointing at its two owners and a launch payload example the round-trip test executes; added the invoked slot to the slot list; replaced the worked example's launched-pair engine line with a state a shipped flow reaches.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "pair launched at 2026-05-26T14-40-02Z is open"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/review.ts",
+            "text": "THE PAIR LAUNCH (rc17a)"
+          }
+        ],
+        "searched": [
+          "review-external T0",
+          "awaiting_findings",
+          "Worked example"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The config's commented key guide misses review_preference and keeps a models example that v5 never reads",
+      "marker_source": "internal-review",
+      "file": "orbit/config.yaml",
+      "line": 25,
+      "classification": "trivial_fix",
+      "action": "Added a commented review_preference block; the models guidance now says an invoked slot's hint is read from the presented class and its example keys fresh and external.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "independent: \"any frontier model, clean context\""
+        ],
+        "introduced": [
+          {
+            "path": "orbit/config.yaml",
+            "text": "Review preference (optional — orbit-engine-gates, rc17a)"
+          }
+        ],
+        "searched": [
+          "models:",
+          "independent:"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "A code comment still states the v4 cadence as current",
+      "marker_source": "internal-review",
+      "file": "src/core/emit-composition.ts",
+      "line": 2020,
+      "classification": "trivial_fix",
+      "action": "Reworded the comment: which review covers the first system slot is read from the gate graph whatever the cadence. The emit-composition hash pin moved as a recorded act.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/rc03b-untouched-modules.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Under spec-driven v4 the first uncovered system slot is"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/emit-composition.ts",
+            "text": "it is read from the gate graph whatever the"
+          }
+        ],
+        "searched": [
+          "spec-driven v4"
+        ],
+        "scope": [
+          "src/core"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "All four findings of the fresh system half resolved: the stale-member presentation by option C (Sal), the T0 reference, the config guide and a stale comment.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews rc17a-invoked-coverage",
+  "ripple_misses": 0
+}

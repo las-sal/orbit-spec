@@ -148,6 +148,8 @@ describe('exit (2) — a single fresh or external pass covers the invoked slot o
         ['unknown value', `review_preference:\n  ${id}: triple-blind\n`, freshCmd(id), 'fresh', new RegExp(`'${id}'.*'triple-blind'.*blind-pair`)],
         ['malformed (a list)', `review_preference:\n  - external\n`, freshCmd(id), 'fresh', /Invalid 'review_preference'.*a list/],
         ['unknown gate key', `review_preference:\n  review-nothing: external\n`, freshCmd(id), 'fresh', /Unknown gate 'review-nothing'/],
+        // rc17a system walk (external C1): a MAP-shaped value — `String()` on it threw — warns and falls back.
+        ['a map value', `review_preference:\n  ${id}:\n    toString: external\n`, freshCmd(id), 'fresh', new RegExp(`'${id}': a map`)],
       ];
       const strip = (g: GateStatus) => {
         const { nextCommand, nextSlot, ...rest } = g;
@@ -317,13 +319,69 @@ describe('The invoked slot presents what the launch state says', () => {
     expect(g.openPair).toBeUndefined();
   });
 
-  it('a stale landed member has not landed on this state', () => {
+  const apply = (token: string) => fs.writeFileSync(path.join(runs, `apply-${token}.json`), JSON.stringify({ command: 'apply' }));
+
+  // rc17a system walk (fresh W1, Sal: C): "landed" is read from membership; a stale member cannot fill the slot.
+  it('one member landed and made stale: it cannot fill the slot, and a further review of its class is presented', () => {
     launch(T(1));
     review(T(2), 'system', 'fresh');
-    fs.writeFileSync(path.join(runs, `apply-${T(3)}.json`), JSON.stringify({ command: 'apply' }));
+    apply(T(3));
     const g = gate();
     expect(g.openPair).toBeUndefined();
-    expect(g.reason).toMatch(/neither member has landed/);
+    expect(g.reason).toBe(`pair launched at ${T(1)} cannot fill this slot: its fresh member is stale (an apply landed after it); a further fresh review lands as a single`);
+    expect(g.nextCommand).toBe('/orbit:review --as system --fresh x');
+    // That further review is the window's second fresh pass: a single, and it covers.
+    review(T(4), 'system', 'fresh');
+    expect(gate().reason).toBe("cadence class 'in-context' has no fresh pass");
+  });
+
+  it('both members landed, one or both stale: the pair is complete, no openPair, and the last row presents the preference', () => {
+    launch(T(1));
+    review(T(2), 'system', 'fresh');
+    apply(T(3));
+    external(T(4), 'system'); // L F A E — complete by membership; the fresh member is stale
+    let g = gate();
+    expect(g.openPair).toBeUndefined();
+    expect(g.reason).toBe('no outside review stands on this state');
+    apply(T(5)); // L F A E A — both stale
+    g = gate();
+    expect(g.openPair).toBeUndefined();
+    expect(g.reason).toBe('no outside review stands on this state');
+  });
+
+  // rc17a system walk (external W2): a pass sharing its launch's token is neither member nor single.
+  it('an external return sharing its launch token covers nothing, and the reason names the tie', () => {
+    launch(T(2));
+    external(T(2), 'system');
+    review(T(3), 'system', 'in-context');
+    const m = computePairMembership(readTrail(dir));
+    expect([...m.ambiguousFiles].map(f => path.basename(f))).toEqual([`external-system-${T(2)}.md`]);
+    expect(m.pairs[0].external).toBeUndefined();
+    const g = gate();
+    expect(g.state).toBe('unpassed');
+    expect(g.reason).toBe(
+      `pair launched at ${T(2)} ambiguous: the external pass sharing its token may have preceded it; a further external review lands as its member`
+    );
+    expect(g.nextCommand).toBe('/orbit:review --as system --reviewer external x');
+  });
+
+  it('the launch-boundary tie is class-agnostic: a fresh pass sharing the launch token covers nothing either', () => {
+    launch(T(2));
+    review(T(2), 'system', 'fresh');
+    review(T(3), 'system', 'in-context');
+    const g = gate();
+    expect(g.state).toBe('unpassed');
+    expect(g.reason).toMatch(/ambiguous: the fresh pass sharing its token may have preceded it/);
+  });
+
+  // rc17a system walk (external W1, Sal: B): the engine state discovery row 4 reads for a clean landed half.
+  it('a clean landed half: openPair stands and neither list names it, so no walk can end the pair', () => {
+    launch(T(1));
+    review(T(2), 'system', 'fresh');
+    const g = gate();
+    expect(g.openPair).toEqual({ missing: 'external' });
+    expect(g.unresolvedPasses).toEqual([]);
+    expect(g.unwalkedPasses).toEqual([]);
   });
 
   // @scenario behaviour orbit-engine-gates :: The gate reason names the rule that fired and the rule about to fire :: An open launched pair is announced before the walk
@@ -548,6 +606,14 @@ gates:
     walkDir(root);
     return out.sort();
   };
+
+  it('a map-shaped preference leaves orbit status usable: it warns and falls back (external C1)', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    config('review_preference:\n  review-system:\n    toString: external\n');
+    const status = formatChangeStatus(loadChangeContext(root, 'x'));
+    expect(status.next_command).toBe('/orbit:review --as system --fresh x');
+    expect(warn.mock.calls.map(c => String(c[0])).join('\n')).toMatch(/'review-system': a map/);
+  });
 
   // @scenario behaviour orbit-engine-gates :: Gate state is a pure function of existing on-disk artifacts :: No new files written by state computation
   it('computing gate state creates and modifies no file', () => {

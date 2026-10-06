@@ -22,11 +22,15 @@ schema: spec-driven
 # Model hints (optional — D-arc Stage D5)
 # When set, the eligibility line ("Ready when you are: ...") appends " — hint: <value>".
 # Keys are schema phase ids (review-proposal, review-system, apply, archive) or review
-# cadence slot names (in-context, fresh, independent, external); a slot entry wins over a
-# phase entry. Values must be single-line, <= 80 chars. Unknown keys are inert.
+# cadence slot names (in-context, fresh, external, independent, blind-pair); a slot entry wins
+# over a phase entry. Under spec-driven v5 a first review slot is `invoked`, and its hint is
+# read from the CLASS of the command presented (fresh or external) — a key naming
+# `independent` or `blind-pair` garnishes only a schema that declares that slot. Values must
+# be single-line, <= 80 chars. Unknown keys are inert.
 # Example:
 #   models:
-#     independent: "any frontier model, clean context"
+#     fresh: "any frontier model, clean context"
+#     external: "a different AI from the session's"
 #     review-system: "strongest available reviewer"
 
 # PR lifecycle (optional — D-arc Stage D6)
@@ -52,6 +56,18 @@ schema: spec-driven
 # PR layer. Under `never` (or absent) nothing is probed and no note is emitted.
 # Example:
 #   pr: per-architecture
+
+# Review preference (optional — orbit-engine-gates, rc17a)
+# A map from reviewed-gate id to blind-pair | fresh | external: which review the readout
+# PRESENTS when nothing covers a gate's first (`invoked`) slot. It never changes what covers
+# the slot — a single fresh or external pass, or a complete blind pair, covers whatever this
+# says. Absent = blind-pair for every gate (until a one-command pair ships, that presents the
+# fresh review). An unknown value warns and resolves to blind-pair; a key naming no reviewed
+# gate warns and is ignored; a non-map value warns and is ignored.
+# Example:
+#   review_preference:
+#     review-proposal: fresh
+#     review-system: blind-pair
 
 # Scenario map (optional — orbit-scenario-map, rc06a)
 # Turns on the declaration check: `orbit validate <change>` reports every delta scenario no

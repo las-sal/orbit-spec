@@ -292,6 +292,8 @@ export interface LaunchedPair {
   fresh?: TrailPass;
   external?: TrailPass;
   endedAt?: string;
+  /** rc17a system walk: the first independent pass of the mode sharing the launch's token, when one does. */
+  tied?: TrailPass;
 }
 
 export interface PairMembership {
@@ -299,6 +301,12 @@ export interface PairMembership {
   pairs: LaunchedPair[];
   /** Files of the passes that are members of a pair that has not ended. Every other independent pass is a single. */
   memberFiles: Set<string>;
+  /**
+   * rc17a system walk (external W2): files of the independent passes sharing a launch's token. Whether such a
+   * pass followed its launch is unknowable, so it is neither a member nor a single and covers nothing — the
+   * tie fail-safe, applied at the launch boundary.
+   */
+  ambiguousFiles: Set<string>;
 }
 
 /**
@@ -313,6 +321,7 @@ export interface PairMembership {
 export function computePairMembership(trail: Trail): PairMembership {
   const pairs: LaunchedPair[] = [];
   const memberFiles = new Set<string>();
+  const ambiguousFiles = new Set<string>();
   const byMode = new Map<ReviewMode, TrailLaunch[]>();
   for (const l of trail.launches) {
     const list = byMode.get(l.mode) ?? [];
@@ -330,7 +339,16 @@ export function computePairMembership(trail: Trail): PairMembership {
         .sort((a, b) => (a.token < b.token ? -1 : a.token > b.token ? 1 : 0));
       const fresh = window.find(p => p.reviewerClass === 'fresh');
       const external = window.find(p => p.reviewerClass === 'external');
-      const pair: LaunchedPair = { launch, ...(fresh ? { fresh } : {}), ...(external ? { external } : {}) };
+      const tiedAll = trail.passes
+        .filter(p => p.mode === mode && isIndependent(p.reviewerClass) && p.token === launch.token)
+        .sort((a, b) => (path.basename(a.file) < path.basename(b.file) ? -1 : 1));
+      for (const t of tiedAll) ambiguousFiles.add(t.file);
+      const pair: LaunchedPair = {
+        launch,
+        ...(fresh ? { fresh } : {}),
+        ...(external ? { external } : {}),
+        ...(tiedAll.length > 0 ? { tied: tiedAll[0] } : {}),
+      };
       // ENDED: a walk of a landed member before its partner lands — the user chose to proceed on one review.
       let endedAt: string | undefined;
       for (const [member, partner] of [
@@ -353,7 +371,7 @@ export function computePairMembership(trail: Trail): PairMembership {
     }
   }
   pairs.sort((a, b) => (a.launch.token < b.launch.token ? -1 : a.launch.token > b.launch.token ? 1 : 0));
-  return { pairs, memberFiles };
+  return { pairs, memberFiles, ambiguousFiles };
 }
 
 /** Blindness between two members, endpoints INCLUSIVE, scoped to records referencing either. */
@@ -405,7 +423,7 @@ function slotCandidates(
     // a single; an ended pair's former members are.
     for (let i = 0; i < ordered.length; i++) {
       const p = ordered[i];
-      if (!eligible(i) || !isIndependent(p.reviewerClass) || membership.memberFiles.has(p.file)) continue;
+      if (!eligible(i) || !isIndependent(p.reviewerClass) || membership.memberFiles.has(p.file) || membership.ambiguousFiles.has(p.file)) continue;
       out.push({ indices: [i], token: p.token, sortKey: [p.token, path.basename(p.file)].join('\u0000') });
     }
     const index = new Map(ordered.map((p, i) => [p.file, i]));
@@ -569,16 +587,24 @@ function presentInvoked(
   const live = ofMode[ofMode.length - 1];
   // NO-LAUNCH, or the latest launch's pair already ENDED by a walk: nothing is open.
   if (!live || live.endedAt !== undefined) return fallback;
-  // "Landed" is read on the pass list being evaluated: a member made stale by a later apply is absent
-  // from the fresh list, so it has not landed on this state and cannot cover.
+  // "Landed" is read from MEMBERSHIP (rc17a system walk, fresh W1, Sal: C): a member exists when the
+  // membership table names it, stale or not. A landed member is USABLE on this state only when it is in the
+  // evaluated (fresh) pass list and above the slot's bound; one that is not cannot fill the slot, and a
+  // further review of its class — a second pass of that class in the window — lands as a single.
   const inList = new Set(ordered.map(p => p.file));
-  const landed = [live.fresh, live.external].filter((m): m is TrailPass => m !== undefined && inList.has(m.file));
+  const members = [live.fresh, live.external].filter((m): m is TrailPass => m !== undefined);
   const L = live.launch.token;
   const above = (m: TrailPass): boolean => bound === null || m.token > bound;
-  if (landed.length === 1) {
-    const m = landed[0];
+  if (members.length === 1) {
+    const m = members[0];
     const cls = m.reviewerClass as 'fresh' | 'external';
     const missing: 'fresh' | 'external' = cls === 'fresh' ? 'external' : 'fresh';
+    if (!inList.has(m.file)) {
+      return {
+        reason: `pair launched at ${L} cannot fill this slot: its ${cls} member is stale (an apply landed after it); a further ${cls} review lands as a single`,
+        cls,
+      };
+    }
     if (above(m)) {
       return {
         reason: `pair launched at ${L} is open: the ${cls} member has no ${missing} partner; run it before walking these findings`,
@@ -591,10 +617,17 @@ function presentInvoked(
       cls,
     };
   }
-  if (landed.length === 0) {
+  if (members.length === 0) {
+    if (live.tied) {
+      const cls = live.tied.reviewerClass as 'fresh' | 'external';
+      return {
+        reason: `pair launched at ${L} ambiguous: the ${cls} pass sharing its token may have preceded it; a further ${cls} review lands as its member`,
+        cls,
+      };
+    }
     return { reason: `pair launched at ${L}: neither member has landed; both must land before either is walked`, cls: 'fresh' };
   }
-  if (landed.every(above) && landed[0].token === landed[1].token) {
+  if (members.every(m => inList.has(m.file) && above(m)) && members[0].token === members[1].token) {
     return { reason: `pair launched at ${L} ambiguous: its two members share a timestamp token`, cls: preferred };
   }
   return fallback;

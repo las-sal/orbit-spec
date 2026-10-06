@@ -117,8 +117,9 @@ its count includes it.
 
 The presentation is the table in `orbit-engine-gates`' `The first review slot covers what the user
 invoked`, rows tested in order; it is stated there once and not restated here. Two choices behind it:
-`openPair` is set on the PAIR-OPEN-one-landed row only, because that is the one state where a walk
-would foreclose a pair still formable; and `nextSlot` names the class of the presented command, so a
+`openPair` is set on the row where one member has landed and is usable on this state, because that is
+the one state where a walk would foreclose a pair still formable (a stale member cannot complete a pair
+that covers, so its row presents a further review of its class instead); and `nextSlot` names the class of the presented command, so a
 `models:` hint keyed `fresh` or `external` garnishes the command it describes. The preference
 `blind-pair` presents the fresh review until rc17b (D6), so its class is `fresh`.
 
@@ -154,7 +155,8 @@ the change; the tie stays.
 `test/core/invoked-coverage-oracle.test.ts` enumerates every cadence of length 1 to 3 over the six
 tokens, and every trail of up to five events: passes of the three classes, `pair: true` T0s, walk records
 referencing a chosen pass, external returns the trail reader rejects, and apply tokens, with distinct
-tokens plus the tie case. It calls the exported pure
+tokens plus two tie cases: a fresh and an external sharing a token, and a launch and an external return
+sharing one (the second added at the system walk). It calls the exported pure
 entry that evaluates one reviewed gate over an in-memory `Trail` (task 3.1), never on-disk fixtures, and
 compares the engine's `openPair` and slot coverage against a reference written directly from the
 requirements' text. The reference enumerates every assignment (no memo, no pruning) and reads membership
@@ -162,10 +164,12 @@ straight from the launch definition. Two properties are asserted on each case:
 
 - **Equality.** `openPair` equals the reference's own reading of the diagnosis: `missing: X` exactly when,
   on a structural `blind-pair` slot, the failed slot's eligible pairable set holds the other class and
-  not X; or, on an `invoked` slot, the live launch has exactly one member landed, of the other class,
-  above the bound, and the pair has not ended — the presentation table's first row and no other.
-  Absent otherwise: on `tie`, on `blindness-broken`, on a landed member at or below the bound, and on an
-  ended pair.
+  not X; or, on an `invoked` slot, the live launch has exactly one member landed (by membership), of the
+  other class, usable on this state (in the fresh list) and above the bound, and the pair has not ended —
+  the presentation table's usable-member row and no other. Absent otherwise: on `tie`, on
+  `blindness-broken`, on a stale landed member, on a landed member at or below the bound, and on an
+  ended pair. On an `invoked` slot the engine's reason equals the reference's reading of the presentation
+  table row by row (added at the system walk: both reviewers found the oracle compared no reason text).
 - **Repairability, one direction only.** Whenever `openPair.missing` is X, adding one new pass of class X
   above every token lets the failed slot be covered. The converse is NOT asserted: on a `tie`, adding
   either class repairs the slot while `openPair` is rightly absent.

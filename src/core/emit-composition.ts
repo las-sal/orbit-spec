@@ -2017,9 +2017,10 @@ export function composeAndWriteEmit(
         emit.next_recommended = `/orbit:apply ${name} — ${boxes.tasksRemaining} tasks remaining`;
       } else if (failMode === 'scenarios-fail') {
         // rc02: the post-verify pointer is the GATE GRAPH's canonical next, never a hardcoded
-        // `--as system` literal. Under spec-driven v4 the first uncovered system slot is
-        // `blind-pair`, whose canonical command is the fresh invocation, so a literal here would
-        // recommend a class satisfying no slot — which the single-voiced requirement forbids.
+        // `--as system` literal. Which review covers the first system slot depends on the schema's
+        // cadence and the project's review preference, so it is read from the gate graph whatever the
+        // cadence; a literal here could recommend a class satisfying no slot — which the single-voiced
+        // requirement forbids.
         // Baseline mode-② template carries the scenario count when the payload supplies it.
         const n = (payload as any).scenarios_failed;
         const countPrefix =

@@ -148,6 +148,19 @@ export function resolveScenarioMapConfig(projectRoot: string): ScenarioMapConfig
   return { check: 'on', tests: tests as string[] };
 }
 
+/**
+ * Describe an inert config value for a warning WITHOUT coercing it: YAML can hand back any map, and
+ * `String()` on a map whose `toString` key is not a function throws (rc17a system walk, external C1).
+ * A warning that crashes the surface it was meant to keep usable defeats the inert rule.
+ */
+function describeInertValue(v: unknown): string {
+  if (typeof v === 'string') return `'${v}'`;
+  if (v === null || v === undefined) return 'an empty value';
+  if (Array.isArray(v)) return 'a list';
+  if (typeof v === 'object') return 'a map';
+  return `'${String(v)}'`;
+}
+
 /** The closed set of `review_preference` values (rc17a). */
 export const REVIEW_PREFERENCES = ['blind-pair', 'fresh', 'external'] as const;
 export type ReviewPreference = (typeof REVIEW_PREFERENCES)[number];
@@ -197,7 +210,7 @@ export function resolveReviewPreference(
       out[key] = pref as ReviewPreference;
     } else {
       console.warn(
-        `Unrecognized 'review_preference' value for gate '${key}': '${String(pref)}' (expected ${REVIEW_PREFERENCES.join(' | ')}); treating as 'blind-pair'`
+        `Unrecognized 'review_preference' value for gate '${key}': ${describeInertValue(pref)} (expected ${REVIEW_PREFERENCES.join(' | ')}); treating as 'blind-pair'`
       );
     }
   }

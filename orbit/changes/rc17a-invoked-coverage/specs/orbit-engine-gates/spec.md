@@ -31,7 +31,7 @@ readout presents, per gate):
 | a pair INVOKED, both halves landed, blind | covers the slot as one unit; the in-context slot follows the walks of BOTH members |
 | a pair INVOKED, one half landed | NOT covered: `openPair: {missing}` presents the partner; a walk warns first (`orbit-address-reviews`' discovery row 4) |
 | a pair INVOKED, its landed half walked before the partner lands | the pair ENDS: the walked half covers the slot as a single, the user having walked past the walk's warning |
-| a pair INVOKED, the partner never lands and the user wants to proceed | re-run the missing half, or walk the landed half (which ends the pair), or the recorded `continuation`/`proceed` judgement at the gate's seam; the gate keeps reporting its computed state |
+| a pair INVOKED, the partner never lands and the user wants to proceed | re-run the missing half, or walk the landed half (which ends the pair; a landed half carrying no finding has nothing to walk, so instead a further review of its class lands as a single and covers), or the recorded `continuation`/`proceed` judgement at the gate's seam; the gate keeps reporting its computed state |
 | a single fresh or single external INVOKED, landed | covers the slot |
 | two singles invoked separately on one state | the first covers the slot; the second is an extra independent pass whose findings clause (b) still requires resolved |
 | how the engine knows a pass was invoked as a pair member | `A pair's membership is computed from its launch` |
@@ -48,17 +48,23 @@ Residual method: D-bpc-10's residual slots carry it — the residual and its met
 
 When the deepest uncovered slot is `invoked`, read at the canonical lower bound (the lowest bound
 that reaches it, per `Single-voiced canonical-next computation`), the latest launch of the gate's mode
-decides the reason, the canonical next and `nextSlot`, rows tested in order:
+decides the reason, the canonical next and `nextSlot`, rows tested in order. A member has LANDED when
+the membership table below names it, stale or not; a landed member is USABLE on this state when it is in
+the fresh pass list (per the freshness rule) and above the bound. A pair whose latest launch ENDED is the
+last row.
 
 | state at the bound | reason | canonical next | `nextSlot` |
 |---|---|---|---|
-| PAIR-OPEN, one member landed, above the bound | `pair launched at <L> is open: the <class> member has no <missing> partner; run it before walking these findings` | the missing class's review | the missing class |
-| PAIR-OPEN, neither member landed | `pair launched at <L>: neither member has landed; both must land before either is walked` | the fresh review | `fresh` |
+| PAIR-OPEN, one member landed, stale | `pair launched at <L> cannot fill this slot: its <class> member is stale (an apply landed after it); a further <class> review lands as a single` | the landed member's class's review | the landed member's class |
+| PAIR-OPEN, one member landed, usable | `pair launched at <L> is open: the <class> member has no <missing> partner; run it before walking these findings` | the missing class's review | the missing class |
 | PAIR-OPEN, one member landed, at or below the bound | `pair launched at <L> cannot fill this slot: its <class> member sits at or below the slot's bound; a further <class> review lands as a single` | the landed member's class's review | the landed member's class |
-| both landed above the bound, sharing a token | `pair launched at <L> ambiguous: its two members share a timestamp token` | the preference's command | the presented command's class |
-| anything else: NO-LAUNCH, or a launch with a landed member at or below the bound | `no outside review stands on this state` | the preference's command | the presented command's class |
+| PAIR-OPEN, no member landed, a pass sharing the launch's token | `pair launched at <L> ambiguous: the <class> pass sharing its token may have preceded it; a further <class> review lands as its member` | the tied pass's class's review | the tied pass's class |
+| PAIR-OPEN, no member landed | `pair launched at <L>: neither member has landed; both must land before either is walked` | the fresh review | `fresh` |
+| both landed, usable, sharing a token | `pair launched at <L> ambiguous: its two members share a timestamp token` | the preference's command | the presented command's class |
+| anything else: NO-LAUNCH, an ENDED pair, or a complete pair with a member stale or at or below the bound | `no outside review stands on this state` | the preference's command | the presented command's class |
 
-`openPair` is set on the first row only. `<L>` is the launch's token. The fresh review is
+`openPair` is set on the second row only. Where several passes share the launch's token, `<class>` is the
+first by findings-artifact filename. `<L>` is the launch's token. The fresh review is
 `/orbit:review --as <mode> --fresh <change>` and the external review
 `/orbit:review --as <mode> --reviewer external <change>`.
 
@@ -104,8 +110,11 @@ mode's next launch, if any, drawn from the trail reader's ACCEPTED passes: a rej
 no member and takes no position. When an `address-reviews-*.json` record whose `source_path` references a
 landed member precedes that member's partner, the pair ENDS at that record: the walked member reads as a
 single, and every independent pass after the record is a single. An apply between the halves ends
-nothing; a member the apply made stale satisfies no coverage, by the freshness rule, so the pair cannot
-cover until it is run again. Every other independent pass is a single. Membership is read from the trail
+nothing; a member the apply made stale satisfies no coverage, by the freshness rule, so the pair never
+covers on this state, and a further review of the stale member's class — a second pass of that class in
+the window — lands as a single and covers. An independent pass whose token EQUALS a launch's token of its
+mode is neither a member nor a single and covers nothing: whether it followed the launch is unknowable,
+and the tie fails safe. Every other independent pass is a single. Membership is read from the trail
 on every evaluation; the engine stores nothing, and gate state stays a pure function of on-disk
 artifacts. A T0 without `pair: true` is no launch, so a re-run of the missing external half, which
 re-packages, writes none.
@@ -121,6 +130,7 @@ The trail states of one reviewed gate's first slot, per mode, are this table:
 | both landed, no walk record referencing either at or between their tokens | COMPLETE: covers the slot as one unit |
 | a walk record referencing a landed member before its partner lands | ENDED: the walked member reads as a single and covers the slot alone; every later independent pass is a single |
 | the two halves share a timestamp token | not covered: the existing fail-safe tie |
+| a pass shares the launch's own token | neither member nor single; covers nothing (the fail-safe tie, at the launch boundary); the next pass of its class after the launch is the member |
 | a newer launch after an open or ended one | the newer is the live pair; the older stays as history |
 | a newer launch after a complete pair | a new round; the complete pair still covers (coverage is existential) |
 | a second fresh pass after the launch, before the next | a single, not a member |

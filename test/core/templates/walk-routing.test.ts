@@ -217,8 +217,14 @@ describe('rc08b 5.1 — the discovery scenarios the walk body carries', () => {
 
   // @scenario text orbit-address-reviews :: Address-reviews command available :: An open pair warns before the walk
   it('an open pair warns before triage, naming the missing member and the canonical next, and offers stop or walk', () => {
-    expect(row(4)).toContain('before triage, warn that the pair is half-landed, naming the missing member and the gate\'s canonical next command, and offer two choices — stop (walk nothing, write no log, so the missing review can run) or walk now');
+    expect(row(4)).toContain('before triage, warn that the pair is half-landed, naming the missing member and the gate\'s canonical next command.');
+    expect(row(4)).toContain('When the landed half is listed in that gate\'s unresolvedPasses or unwalkedPasses, offer two choices — stop (walk nothing, write no log, so the missing review can run) or walk now.');
     expect(step1).toContain('Row 4 reads `openPair`');
+  });
+
+  // @scenario text orbit-address-reviews :: Address-reviews command available :: A clean landed half cannot be walked past
+  it('a clean landed half: the walk says no walk can end the pair, names the routes that can, and writes nothing', () => {
+    expect(row(4)).toContain('When the landed half is listed in neither (it carries no finding), no walk can end the pair: say so, name the routes that can — a further review of the landed half\'s class, which on an invoked slot lands as a single and covers, or a continuation/proceed judgement at the gate\'s seam — then walk nothing and write no log.');
   });
 
   // @scenario text orbit-address-reviews :: Address-reviews command available :: Walking past the warning ends the pair
