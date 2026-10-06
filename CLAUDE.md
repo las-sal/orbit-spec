@@ -211,7 +211,7 @@ file now carries a live mark. Do NOT read this paragraph as the program's full l
 only what rc07 produced. The authoritative list is the program doc's own Open questions section,
 which also carries Q-crc-11, Q-crc-12, Q-crc-20, Q-crc-21, Q-crc-22 and Q-crc-23.
 
-**Nineteen more stages have shipped since, and the program is TWENTY-ONE stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b, rc03c, rc07b and rc06a ratified 2026-10-04; rc06b, rc08a and rc08b ratified 2026-10-05 — rc08a's exit (3), pending by design, was measured on rc08b's cadence and read 4, not zero; the split parent rc08 took its ENDED mark the same day; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening).
+**Nineteen more stages have shipped since, and the program is TWENTY-TWO stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b, rc03c, rc07b and rc06a ratified 2026-10-04; rc06b, rc08a and rc08b ratified 2026-10-05 — rc08a's exit (3), pending by design, was measured on rc08b's cadence and read 4, not zero; the split parent rc08 took its ENDED mark the same day; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening; rc17a ratified 2026-10-06).
 
 `rc02c-confirmation-semantics` is ARCHIVED (2026-09-21): **the budget stopped being a target.**
 R-crc-11(h) — effort is RECORDED, never TARGETED — retired `budgetExhausted`, the
@@ -659,7 +659,7 @@ one-command pair, declared as `rc17-blind-pair-command`, which also carries the 
 in-context VERIFICATION confirm graded 9 landed, 1 regressed (walked to zero); a COMPUTED PASSED gate. rc08a's exit (3)
 measured here: 0 ripple misses + 4 regressed = 4, not zero. **2826 tests green** (2761 → 2826).
 
-`rc17a-invoked-coverage` is ARCHIVED (2026-10-06; the first child of the split parent `rc17-blind-pair-command`):
+`rc17a-invoked-coverage` is ARCHIVED and RATIFIED (2026-10-06; all three exit criteria graded MET as written; the first child of the split parent `rc17-blind-pair-command`):
 **the invocation decides what covers a review.** `spec-driven` is version 5 and both reviewed gates read
 `[invoked, in-context]`: a single fresh or external pass covers the first slot, and so does a COMPLETE pair, whose
 LAUNCH is a `review-external` T0 written with `pair: true` and whose members are the first fresh pass and the first

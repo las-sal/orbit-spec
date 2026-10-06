@@ -1,0 +1,28 @@
+{
+  "command": "architect",
+  "timestamp": "2026-10-06T13:59:32Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "rc17a-invoked-coverage RATIFIED through the architect offer, all three exit criteria graded MET as written; the split parent rc17-blind-pair-command stays premised behind rc17b and rc17c.",
+  "stages_touched": [
+    "rc17a-invoked-coverage"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [
+    "rc17a-invoked-coverage"
+  ],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md#stage-rc17b-blind-pair-command — the one-command pair's charter and exit criteria",
+      "orbit/changes/archive/2026-10-06-rc17a-invoked-coverage/explore.md — the rc17 exploration; seven rules (D-bpc-1..4, -11, -13) are assigned to rc17b, D-bpc-16 to rc17c",
+      "orbit/changes/archive/2026-10-06-rc17a-invoked-coverage/design.md — D2 (the pair: true launch) and D6 (the interim preference branch rc17b replaces)"
+    ],
+    "next_command": "/orbit:explore rc17b-blind-pair-command",
+    "model_hint": null,
+    "seam": "rc17a complete; rc17b and rc17c both depend only on it and are premised — rc17b replaces the hand-run pair this stage's own system review used."
+  },
+  "next_recommended": "/orbit:explore rc17b-blind-pair-command"
+}

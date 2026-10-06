@@ -3043,7 +3043,7 @@ handoff, unchanged.
 ### Stage rc17a-invoked-coverage — the invocation decides what covers a review, and a walk finds every pass
 
 Depends-on: rc08b-walk-routing
-Complete: [ ]
+Complete: [x] 2026-10-06 (Sal)
 
 Declared 2026-10-05 (Sal) from the rc17 exploration's split (D-bpc-9). Charter: both reviewed gates move to
 `[<first>, in-context]` (`spec-driven` version 5; a v4 change keeps its cadence), where the first slot
@@ -5031,3 +5031,11 @@ Both halves named the same oracle blind spot (it compared no reason text and had
 the oracle grew from 11.7M to 21.0M cases to close it. Fingerprints 8/8; sync 3 ADDED + 8 MODIFIED, 11/11
 byte-verified; the capability count is unchanged. The readiness record accepts five residuals, headlined by
 rc07's distinction. Exits (1)–(3) are met as written; ratification is the architect session's.
+
+**2026-10-06 — rc17a-invoked-coverage RATIFIED (Sal)**, through the architect session's offer, all three exit
+criteria graded MET as written: (1) the exhaustive oracle, 258 cadences × 81,426 trails = 21,007,908 cases
+including `[external, blind-pair]` with rc08b's reproduction pinned by name, shown able to fail on four
+re-introduced defects; (2) a single fresh or external pass covers the first slot on both shipped gates, and the
+preference in every shape changes only the presented command; (3) a SUGGESTION-only pass is discovered through
+`unwalkedPasses` and walked through the real write gate. The split parent `rc17-blind-pair-command` stays
+`premised`: rc17b and rc17c still own its other criteria, so no ended mark is due yet.
