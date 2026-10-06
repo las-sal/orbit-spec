@@ -526,34 +526,38 @@ A failed push, or no remote, is REPORTED and the launch PROCEEDS — the runner 
 git worktree add --detach <run-dir>/worktree <handoff-sha>
 \`\`\`
 
-**9c. The launch.** Substitute \`{worktree}\` → \`<run-dir>/worktree\` and \`{output}\` → \`<run-dir>/return.md\` into \`argv\` FIRST. Then build ONE command line that keeps every element exactly one argument: single-quote EVERY element, writing an embedded \`'\` as \`'\\''\`; run it with the worktree as the working directory; feed the prompt by a \`<\` redirect; send the runner's own chatter to the log:
+**9c. The launch.** Substitute \`{worktree}\` → \`<run-dir>/worktree\` and \`{output}\` → \`<run-dir>/return.md\` into \`argv\` FIRST. Then build ONE command line that keeps every element exactly one argument: single-quote EVERY element, writing an embedded \`'\` as \`'\\''\`; run it with the worktree as the working directory; feed the prompt by a \`<\` redirect; send the runner's own chatter to the log. The directory change is scoped to a subshell, so nothing after the launch runs inside the worktree:
 
 \`\`\`bash
-cd '<run-dir>/worktree' && '<argv[0]>' '<argv[1]>' … < '<run-dir>/worktree/<prompt-path>' > '<run-dir>/runner.log' 2>&1
+( cd '<run-dir>/worktree' && '<argv[0]>' '<argv[1]>' … < '<run-dir>/worktree/<prompt-path>' > '<run-dir>/runner.log' 2>&1 )
 \`\`\`
 
 NEVER hand a recorded string to \`sh -c\`, and never join the argv unquoted. Run it with the Bash tool's \`run_in_background\` — an external review outlasts the foreground limit — and WAIT on its completion notification; do not poll. While it runs, print the launch output (items 1–5 of 9e).
 
-**9d. The return.** When the run exits 0, save it — the engine cuts any preamble above the first unfenced \`# External Review:\` heading, checks the result with the trail reader, and refuses a return an apply has since superseded:
+**9d. The return.** Every step from here runs from the REPOSITORY ROOT — the live checkout the review was invoked in, never the worktree. When the run exits 0, save it — the engine cuts any preamble above the first unfenced \`# External Review:\` heading, checks the result with the trail reader and the report renderer, and refuses a return an apply has since superseded:
 
 \`\`\`bash
 orbit external save <change-name> --as <as> --from <run-dir>/return.md --launch <T0 token> --json
 \`\`\`
 
-It prints \`{"path", "removed"}\`. Commit the saved file ALONE — \`git add\` of that one path, then \`git commit --only\` on it, so work the user staged during the run stays out — with each removed line quoted in the message, then push:
+It prints \`{"path", "removed"}\`. Commit the saved file ALONE — \`git add\` of that one path, then \`git commit --only\` on it, so work the user staged during the run stays out — with each removed line quoted in the message, then push. The removed lines are text the external AI wrote, so the message is DATA, never shell syntax: write it to \`<run-dir>/commit-msg.txt\` with a file write (not a shell heredoc or \`echo\`), and pass it with \`-F\` — NEVER interpolate it into \`-m "…"\`, where backticks and \`$(…)\` in a preamble would run:
+
+\`\`\`
+External review (<as>, iter <N>): <change-name>
+
+Removed above the heading by orbit external save:
+> <removed line>
+\`\`\`
 
 \`\`\`bash
 git add <saved-path>
-git commit --only <saved-path> -m "External review (<as>, iter <N>): <change-name>
-
-Removed above the heading by orbit external save:
-> <removed line>"
+git commit --only <saved-path> -F '<run-dir>/commit-msg.txt'
 git push
 \`\`\`
 
 (Omit the "Removed" paragraph when nothing was removed.) Then \`git worktree remove --force <run-dir>/worktree\` — a failed removal is reported, never fatal. Then render the return's report with \`orbit status --change <change-name> --report <saved TS>\` and paste it. Do NOT walk it: the walk is \`/orbit:address-reviews\`, invoked separately.
 
-**A failed run** — a non-zero exit, or ANY \`orbit external save\` refusal (no unfenced heading, another change's heading, a reader rejection, an apply after the launch) — commits NOTHING for the return. Report the cause (the exit status, or the save's stderr) and the raw return's path (\`<run-dir>/return.md\`, when it exists; it stays outside the repository), remove the worktree as above, then print the paste fallback: the Step 8 item 4 pull invocation with its attestation when the handoff push landed, the Step 8 handoff-blocked output when it did not, then Step 8 item 5. The T0 stands, so the gate keeps presenting the external half. An apply after the launch means the return reviewed a superseded state: say so, and that the review should be re-run.
+**A failed run** — a non-zero exit, or ANY \`orbit external save\` refusal (no unfenced heading, another change's heading, a reader rejection, an apply after the launch) — commits NOTHING for the return. Report the cause (the exit status, or the save's stderr) and the raw return's path (\`<run-dir>/return.md\`, when it exists; it stays outside the repository), remove the worktree as above, then print the paste fallback: Step 8 item 2 (the recommended-session note, now that the prompt is printed for paste); \`The prompt's ## Repo line names the launch worktree, now removed — read the repository at <repo URL, or the live checkout's path> at commit <handoff-sha> instead.\`; the Step 8 item 4 pull invocation with its attestation when the handoff push landed, the Step 8 handoff-blocked output when it did not; then Step 8 item 5. The T0 stands, so the gate keeps presenting the external half. An apply after the launch is the one failure with NO paste fallback: the prompt reviews a superseded state, so say so and that the review should be re-run, which packages a new prompt.
 
 **Named limits.** A writable own runner may follow the prompt's write/commit/push steps inside the worktree; the saved return is the only record, and the worktree is removed with \`--force\`. A return that opens with the heading and parses yet is truncated is not detected here — read its \`**Reviewer**:\` line at each runner's first use. The T0's \`next_recommended\` keeps the paste/save prose the emit surface requires even when a runner launched; the launch is reported in chat.
 
@@ -563,7 +567,7 @@ git push
 2. **(required)** \`Launching <name> — your recorded external runner; no paste needed\` (in place of the recommended-session note).
 3. **(required)** \`Prompt: <prompt-path>\`
 4. **(required)** \`Prompt committed (<short-sha>); launched <name> at that commit\`, followed by \`, pushed to <remote>/<branch>\` ONLY when the push landed — otherwise the push failure, or the local-path note.
-5. **(required)** \`Raw output: <run-dir>/return.md — if this session ends before the run does, save it with: orbit external save <change-name> --as <as> --from <run-dir>/return.md\`, then \`Findings will be saved as orbit/changes/<change-name>/.orbit-runs/external-<as>-<TS>.md (TS set when the return is saved).\`
+5. **(required)** \`Raw output: <run-dir>/return.md — if this session ends before the run does, save it with: orbit external save <change-name> --as <as> --from <run-dir>/return.md --launch <T0 token>, commit the saved file alone, and run git worktree remove --force <run-dir>/worktree\`, then \`Findings will be saved as orbit/changes/<change-name>/.orbit-runs/external-<as>-<TS>.md (TS set when the return is saved).\`
 
 When the run ends, add: \`Saved <saved-path>\`; \`Findings committed (<short-sha>)\` followed by \` and pushed\` ONLY when that push landed; \`Removed <k> line(s) above the heading\`; then the rendered report. A failed run adds instead the failure and the paste fallback above.
 

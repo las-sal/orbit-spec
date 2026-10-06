@@ -16,6 +16,7 @@ import * as path from 'node:path';
 import { getGlobalConfig, type GlobalConfig } from './global-config.js';
 import { createFenceTracker } from './markdown-fence.js';
 import { readTrail, parseTsToken } from './artifact-graph/trail.js';
+import { normalizeExternalPass } from './report-render.js';
 
 export const EXTERNAL_RUNNER_FIELD = 'externalRunner';
 
@@ -89,6 +90,12 @@ export function checkRunnerShape(value: unknown): RunnerShapeCheck {
   const nonString = argv.findIndex((el) => typeof el !== 'string');
   if (nonString !== -1) {
     return { ok: false, reason: `"argv" element ${nonString} is not a string` };
+  }
+  // rc17d system walk (fresh S2): the record is per-user and global, and the launch runs from the
+  // worktree, so a path-bearing argv[0] has no fixed base unless it is absolute.
+  const first = argv[0] as string;
+  if ((first.includes('/') || (process.platform === 'win32' && first.includes('\\'))) && !path.isAbsolute(first)) {
+    return { ok: false, reason: `"argv" element 0 is a relative path (${JSON.stringify(first)}); record an absolute path or a bare command name` };
   }
   if (!argv.some((el: string) => el.includes(OUTPUT_PLACEHOLDER))) {
     return { ok: false, reason: `"argv" carries no ${OUTPUT_PLACEHOLDER}, so the return would have nowhere to land` };
@@ -239,9 +246,27 @@ export function saveExternalReturn(opts: ExternalSaveOptions): ExternalSaveResul
   if (!/^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(opts.change) || opts.change.includes('..')) {
     refuse(`"${opts.change}" is not a change name`);
   }
-  const changeDir = path.join(opts.projectRoot, 'orbit', 'changes', opts.change);
+  const changesRoot = path.join(opts.projectRoot, 'orbit', 'changes');
+  const changeDir = path.join(changesRoot, opts.change);
   if (!fs.existsSync(changeDir) || !fs.statSync(changeDir).isDirectory()) {
     refuse(`change "${opts.change}" does not exist`);
+  }
+  // rc17d system walk (external W4): the emit surface's canonical-child rule, mirrored here because
+  // `emit-composition.ts` is a pinned module — a change directory or trail that physically resolves
+  // anywhere but its own canonical child (a symlink into another change) is never a write target.
+  const canonicalChild = (p: string, parent: string, name: string): boolean => {
+    try {
+      return fs.realpathSync(p) === path.join(fs.realpathSync(parent), name);
+    } catch {
+      return true; // an unresolvable path fails at the write itself
+    }
+  };
+  if (!canonicalChild(changeDir, changesRoot, opts.change)) {
+    refuse(`change directory ${changeDir} physically resolves elsewhere (an alias); never a write target`);
+  }
+  const runsPath = path.join(changeDir, '.orbit-runs');
+  if (fs.existsSync(runsPath) && !canonicalChild(runsPath, changeDir, '.orbit-runs')) {
+    refuse(`trail directory ${runsPath} physically resolves elsewhere (an alias); never a write target`);
   }
   if (opts.launch !== undefined && !TS_TOKEN_EXACT.test(opts.launch)) {
     refuse(`--launch must be a trail token (YYYY-MM-DDTHH-MM-SSZ), got "${opts.launch}"`);
@@ -275,9 +300,18 @@ export function saveExternalReturn(opts: ExternalSaveOptions): ExternalSaveResul
     const stagedRuns = path.join(stage, '.orbit-runs');
     fs.mkdirSync(stagedRuns);
     fs.writeFileSync(path.join(stagedRuns, `external-${mode}-2000-01-01T00-00-00Z.md`), kept, 'utf-8');
+    const stagedFile = path.join(stagedRuns, `external-${mode}-2000-01-01T00-00-00Z.md`);
     const staged = readTrail(stage);
     if (staged.passes.length !== 1) {
       refuse('the trail reader rejects the return (it needs the heading, a **Reviewer**: line and all three severity sections)');
+    }
+    // rc17d system walk (external W2): the report renderer reads the same file with a stricter
+    // header contract (a real `**Date**:`, single-valued fields); a return it rejects would be saved,
+    // committed and pushed before the report step failed on it.
+    try {
+      normalizeExternalPass(stagedFile, kept);
+    } catch (e) {
+      refuse(`the report renderer rejects the return: ${(e as Error).message.replace(stagedFile, '<staged copy>')}`);
     }
   } finally {
     fs.rmSync(stage, { recursive: true, force: true });

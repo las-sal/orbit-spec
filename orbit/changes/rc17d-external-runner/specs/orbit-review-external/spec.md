@@ -15,18 +15,20 @@ The record is never parsed by a shell, and the launch keeps it so: `{worktree}` 
 the resolved argv FIRST; the process runs with the worktree as its working directory (so an own argv that names no
 `{worktree}` still reads the fixed reviewed state); every element is passed as exactly one argument — on a shell
 command line, each element single-quoted with an embedded `'` written `'\''`; and the prompt file arrives by a `<`
-redirect. A recorded string is never handed to `sh -c`. On a launched run the prompt's `## Repo` line names the
-runner's working directory — a checkout of the handoff commit — never the live checkout's path.
+redirect. A recorded string is never handed to `sh -c`. The directory change is scoped to a subshell, and every step
+after the launch — the save, the commits, the push, the report — runs from the repository root, never the worktree. On
+a launched run the prompt's `## Repo` line names the runner's working directory — a checkout of the handoff commit —
+never the live checkout's path.
 
 | member | covered by |
 |---|---|
 | recorded, `argv[0]` resolves on `PATH` | launched in the background in a worktree at the handoff commit; prompt on stdin; return written to `{output}` outside the repository |
 | recorded, `argv[0]` does not resolve | the prompt is printed for paste, with the one extra item naming the unresolved command (per `Prompt written to versioned file with chat invocation snippet`) |
 | nothing recorded | today's handoff, unchanged |
-| launched, exits non-zero or is stopped (including a runner that is not signed in) | no pass file; the failure is reported with its exit status and the paste fallback is printed — the pull invocation when the handoff push landed, the handoff-blocked output when it did not; the T0 stands, so the gate keeps presenting the external half |
+| launched, exits non-zero or is stopped (including a runner that is not signed in) | no pass file; the failure is reported with its exit status and the paste fallback is printed — the recommended-session note, a line saying the prompt's `## Repo` names the removed launch worktree and naming the repository and the handoff commit instead, then the pull invocation when the handoff push landed, the handoff-blocked output when it did not; the T0 stands, so the gate keeps presenting the external half |
 | the return opens with lines above `# External Review:` | removed by `orbit external save`, which reports them; the body quotes them in the commit message |
 | the return carries no unfenced `# External Review:` heading, names another change, or is rejected by the trail reader | refused by `orbit external save`; treated as a failed run; the raw return stays outside the repository and its path is named |
-| an apply landed after the launch | refused by `orbit external save` (`--launch`); treated as a failed run — the return reviewed a superseded state — and the review is re-run |
+| an apply landed after the launch | refused by `orbit external save` (`--launch`); a failed run with NO paste fallback — the prompt reviews a superseded state — and the review is re-run, packaging a new prompt |
 
 The failure rows are those observed on one runner (Codex, on rc08b's and rc17a's pairs) plus the absent and
 unresolved cases (D-rc17d-1). **Named limit.** Residual kind: a return that opens with the heading and parses yet is not a complete review (a truncated run)
@@ -56,13 +58,15 @@ preset's name, or the basename of `argv[0]`) when one launched.
 #### Scenario: A failed run falls back to paste
 
 - **WHEN** the launched runner exits non-zero
-- **THEN** nothing is committed for the return, the failure is reported with its exit status and the raw return's path, and the paste fallback is printed — the pull invocation when the handoff push landed, the handoff-blocked output (per `Handoff preflight blocks unusable pull invocations`) when it did not
+- **THEN** nothing is committed for the return, the failure is reported with its exit status and the raw return's path, and the paste fallback is printed — the recommended-session note, the line naming the repository and the handoff commit in place of the removed worktree, then the pull invocation when the handoff push landed, the handoff-blocked output (per `Handoff preflight blocks unusable pull invocations`) when it did not
 
 ### Requirement: A launched return is committed alone and pushed
 
 When a launched runner returns, the body SHALL save the return through `orbit external save`, commit the saved file
 ALONE — `git add` of that one path, then `git commit --only` on it, so work the user staged during the run stays
-out — with the removed preamble lines quoted in the commit message, push, and remove the worktree with `--force`. The
+out — with the removed preamble lines quoted in the commit message, which is written to a file and passed with `-F`,
+never interpolated into a shell string (the lines are text an external AI wrote), push, and remove the worktree with
+`--force`. The
 handoff commit is made the same way, on the prompt file and the T0 emit.
 
 | member | covered by |
@@ -156,7 +160,7 @@ The system SHALL write the full handoff prompt to a versioned, committed file in
 #### Scenario: Chat output when a runner launches
 
 - **WHEN** the file is written and a recorded, reachable runner is launched (per `A recorded runner launches the external review`)
-- **THEN** the chat output contains, in this order: the optional mode-inference note; the runner line `Launching <name> — your recorded external runner; no paste needed` in place of the recommended-session note; the prompt file path; the launch attestation `Prompt committed (<short-sha>); launched <name> at that commit`, followed by `pushed to <remote>/<branch>` only when the push landed (else the push failure, or the local-path note); the raw output path, with the manual recovery `orbit external save <change> --as <mode> --from <output path>` should the session end before the run does; and the findings path as `external-<mode>-<TS>.md`, its token set when the return is saved. When the run ends, the output adds the saved path, `Findings committed (<short-sha>)` followed by `and pushed` only when that push landed, and the count of removed preamble lines, then the return's rendered report; a failed run adds instead the failure (exit status, and the raw return's path when one exists) followed by the paste fallback per `A recorded runner launches the external review`
+- **THEN** the chat output contains, in this order: the optional mode-inference note; the runner line `Launching <name> — your recorded external runner; no paste needed` in place of the recommended-session note; the prompt file path; the launch attestation `Prompt committed (<short-sha>); launched <name> at that commit`, followed by `pushed to <remote>/<branch>` only when the push landed (else the push failure, or the local-path note); the raw output path, with the manual recovery `orbit external save <change> --as <mode> --from <output path> --launch <T0 token>`, then committing the saved file alone and `git worktree remove --force` on the worktree, should the session end before the run does; and the findings path as `external-<mode>-<TS>.md`, its token set when the return is saved. When the run ends, the output adds the saved path, `Findings committed (<short-sha>)` followed by `and pushed` only when that push landed, and the count of removed preamble lines, then the return's rendered report; a failed run adds instead the failure (exit status, and the raw return's path when one exists) followed by the paste fallback per `A recorded runner launches the external review`
 
 
 #### Scenario: Mode-specific sections

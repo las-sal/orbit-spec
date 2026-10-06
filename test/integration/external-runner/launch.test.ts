@@ -53,6 +53,7 @@ case "$mode" in
   fail) echo "not signed in" >&2; exit 3 ;;
   noheading) echo "I ran out of time." > "$out" ;;
   preamble) { echo "I could not save, commit, or push the findings file."; cat "$dir/review.md"; } > "$out" ;;
+  hostile) { cat "$dir/hostile.txt"; cat "$dir/review.md"; } > "$out" ;;
   *) cat "$dir/review.md" > "$out" ;;
 esac
 `;
@@ -165,6 +166,17 @@ describe('rc17d — the launch route against real git (task 5.1)', () => {
     expect(o.saved!.removed).toEqual(['I could not save, commit, or push the findings file.']);
     expect(fs.readFileSync(path.join(repo, o.saved!.path), 'utf-8')).toBe(REVIEW);
     expect(headSubject()).toContain('> I could not save, commit, or push the findings file.');
+  });
+
+  it('a preamble carrying shell syntax stays literal data in the commit message; nothing runs', () => {
+    const probe = path.join(base, 'PREAMBLE_RAN');
+    const hostile = `I could not run \`touch ${probe}\` or $(touch ${probe}) — "quoted" and 'single'`;
+    fs.writeFileSync(path.join(stubDir, 'hostile.txt'), hostile + '\n');
+    const o = launch('hostile');
+    expect(o.returnCommitted).toBe(true);
+    expect(o.saved!.removed).toEqual([hostile]);
+    expect(fs.existsSync(probe)).toBe(false);
+    expect(headSubject()).toContain(`> ${hostile}`);
   });
 
   it('no heading: nothing committed for the return, paste fallback', () => {

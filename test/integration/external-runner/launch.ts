@@ -96,8 +96,8 @@ export function runLaunchRoute(opts: {
   const output = path.join(runDir, 'return.md');
   const argv = opts.argv.map((a) => a.split('{worktree}').join(worktree).split('{output}').join(output));
   const line =
-    `cd ${quote(worktree)} && ${argv.map(quote).join(' ')} < ${quote(path.join(worktree, promptPath))}` +
-    ` > ${quote(path.join(runDir, 'runner.log'))} 2>&1`;
+    `( cd ${quote(worktree)} && ${argv.map(quote).join(' ')} < ${quote(path.join(worktree, promptPath))}` +
+    ` > ${quote(path.join(runDir, 'runner.log'))} 2>&1 )`;
   out.launched = true;
   // The Bash tool runs the composed line in a shell; the recorded argv itself is never the string.
   const run = spawnSync('/bin/sh', ['-c', line], { encoding: 'utf-8' });
@@ -122,14 +122,20 @@ export function runLaunchRoute(opts: {
   out.saved = JSON.parse(save.stdout);
   const saved = out.saved!;
 
-  // Commit the saved file ALONE, the removed lines quoted, then push.
+  // Commit the saved file ALONE, the removed lines quoted, then push. The message is DATA: written
+  // with a file write and passed by -F through the shell, exactly as the body states (system walk:
+  // the earlier transcription passed it as a spawn argument and so never exercised the shell form).
+  const msgFile = path.join(runDir, 'commit-msg.txt');
   const msg =
     `External review (${mode}, iter 1): ${change}` +
     (saved.removed.length > 0
       ? `\n\nRemoved above the heading by orbit external save:\n${saved.removed.map((l) => `> ${l}`).join('\n')}`
       : '');
+  fs.writeFileSync(msgFile, msg + '\n');
   git('add', saved.path);
-  out.returnCommitted = git('commit', '--only', saved.path, '-m', msg).status === 0;
+  out.returnCommitted =
+    spawnSync('/bin/sh', ['-c', `git commit --only ${quote(saved.path)} -F ${quote(msgFile)}`], { cwd: repo, encoding: 'utf-8' })
+      .status === 0;
   out.returnPushed = git('push').status === 0;
   removeWorktree();
   return out;

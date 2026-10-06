@@ -1,0 +1,276 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-06T16:52:39Z",
+  "change": "rc17d-external-runner",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc17d-external-runner/.orbit-runs/review-system-2026-10-06T15-27-33Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-06T15-27-33Z",
+  "latest_apply_token": "2026-10-06T15-21-30Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 3
+  },
+  "pushback_verification": "All six verified against current state; none stale. W1 reproduced by executing the documented -m form with a $(...) preamble (the substitution ran and vanished from the message).",
+  "resolution_summary": {
+    "resolved": 6,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Return commit message interpolates external-AI preamble lines into a double-quoted shell string",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 547,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "action": "Step 9d writes the commit message to <run-dir>/commit-msg.txt with a file write and commits with git commit --only <saved-path> -F; -m with the removed lines is prohibited. The launched-return requirement says the message is a file passed by -F; the harness transcribes the -F form through a real shell, with a preamble carrying backticks and $(...) that must not run. Converges with the external half's CRITICAL (walked here, the earlier pass).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+          "test/integration/external-runner/launch.ts",
+          "test/integration/external-runner/launch.test.ts",
+          "test/core/templates/external-runner-branch.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "git commit --only <saved-path> -m"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/review.ts",
+            "text": "git commit --only <saved-path> -F '<run-dir>/commit-msg.txt'"
+          },
+          {
+            "path": "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+            "text": "which is written to a file and passed with `-F`, never interpolated into a shell string"
+          },
+          {
+            "path": "test/integration/external-runner/launch.test.ts",
+            "text": "a preamble carrying shell syntax stays literal data in the commit message; nothing runs"
+          }
+        ],
+        "searched": [
+          "-m \"External review",
+          "removed line",
+          "commit message"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Failed-run paste fallback hands over a prompt whose ## Repo names the removed temp worktree",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 485,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "action": "The failed-run fallback prints a line saying the prompt's ## Repo names the launch worktree, now removed, and naming the repository and the handoff commit instead; an apply after the launch gets no paste fallback (re-run, which packages a new prompt). The failed-run row and the failed-run scenario in orbit-review-external say the same. Converges with the external half's W1.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+          "test/core/templates/external-runner-branch.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "then print the paste fallback: the Step 8 item 4"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/review.ts",
+            "text": "names the launch worktree, now removed"
+          },
+          {
+            "path": "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+            "text": "names the removed launch worktree and naming the repository and the handoff commit instead"
+          },
+          {
+            "path": "src/core/templates/workflows/review.ts",
+            "text": "An apply after the launch is the one failure with NO paste fallback"
+          }
+        ],
+        "searched": [
+          "paste fallback",
+          "## Repo",
+          "failed run"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Failed-run fallback prints the prompt for paste without the Recommended-session note the modified requirement owes",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 557,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "action": "The failed-run fallback now prints Step 8 item 2 (the recommended-session note) first, as the modified Recommended-session requirement owes whenever the prompt is printed for paste; the failed-run row and scenario name it.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+          "test/core/templates/external-runner-branch.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/review.ts",
+            "text": "Step 8 item 2 (the recommended-session note, now that the prompt is printed for paste)"
+          },
+          {
+            "path": "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+            "text": "the recommended-session note, the line naming the repository and the handoff commit in place of the removed worktree"
+          }
+        ],
+        "searched": [
+          "Recommended-session",
+          "item 2"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "`orbit config unset externalRunner.preset` leaves a malformed `{}` record",
+      "marker_source": "internal-review",
+      "file": "src/core/config-schema.ts",
+      "line": 67,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "action": "orbit config unset on externalRunner.preset now drops the emptied externalRunner record (src/commands/config.ts), so no malformed {} is left to warn; the config table in orbit-external-runner gains the row; a CLI test covers it.",
+      "ripple_cascade": {
+        "applied": [
+          "src/commands/config.ts",
+          "orbit/changes/rc17d-external-runner/specs/orbit-external-runner/spec.md",
+          "test/commands/external.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "src/commands/config.ts",
+            "text": "drop the emptied parent with it"
+          },
+          {
+            "path": "orbit/changes/rc17d-external-runner/specs/orbit-external-runner/spec.md",
+            "text": "removes the preset and the emptied record with it"
+          }
+        ],
+        "searched": [
+          "deleteNestedValue",
+          "config unset"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "`reachable` resolves a relative argv[0] against the caller's cwd while the launch runs it from the worktree",
+      "marker_source": "internal-review",
+      "file": "src/core/external-runner.ts",
+      "line": 124,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "action": "A path-bearing argv[0] that is not absolute is now malformed (checkRunnerShape, so init's check and validateConfig refuse it too): the record is per-user and the launch runs from the worktree, so a relative path has no fixed base. Shape-table row added; unit test added.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17d-external-runner/specs/orbit-external-runner/spec.md",
+          "test/core/external-runner.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "src/core/external-runner.ts",
+            "text": "is a relative path"
+          },
+          {
+            "path": "orbit/changes/rc17d-external-runner/specs/orbit-external-runner/spec.md",
+            "text": "an `argv[0]` naming a relative path"
+          }
+        ],
+        "searched": [
+          "isOnPath",
+          "path.resolve(cwd"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Manual recovery line omits the worktree cleanup, the --launch check and the commit-alone step",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 565,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "action": "The session-ended recovery line now reads orbit external save ... --launch <T0 token>, then commit the saved file alone and git worktree remove --force; the launch chat-output scenario says the same. Converges with the external half's CRITICAL on the missing --launch.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+          "test/core/templates/external-runner-branch.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "--from <output path>` should the session end"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/review.ts",
+            "text": "--launch <T0 token>, commit the saved file alone, and run git worktree remove --force <run-dir>/worktree"
+          },
+          {
+            "path": "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+            "text": "--from <output path> --launch <T0 token>`, then committing the saved file alone"
+          }
+        ],
+        "searched": [
+          "Raw output",
+          "manual recovery"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Six of six resolved, all repairs: the return's commit message is a file passed by -F, the failed-run fallback names the repository and carries the session note, the recovery line keeps --launch, and two config-path gaps are closed.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews rc17d-external-runner",
+  "ripple_misses": 0
+}

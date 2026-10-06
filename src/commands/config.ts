@@ -337,6 +337,12 @@ export function registerConfigCommand(program: Command): void {
     .action((key: string) => {
       const config = getGlobalConfig() as Record<string, unknown>;
       const existed = deleteNestedValue(config, key);
+      // rc17d system walk (fresh S1): unsetting the runner's one nested path leaves an empty record,
+      // which every later read warns on as malformed — drop the emptied parent with it.
+      const runner = config.externalRunner;
+      if (key.startsWith('externalRunner.') && runner !== null && typeof runner === 'object' && !Array.isArray(runner) && Object.keys(runner).length === 0) {
+        delete config.externalRunner;
+      }
 
       if (existed) {
         saveGlobalConfig(config as GlobalConfig);

@@ -1,0 +1,231 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-06T16:53:09Z",
+  "change": "rc17d-external-runner",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc17d-external-runner/.orbit-runs/external-system-2026-10-06T15-37-42Z.md",
+  "source_command": null,
+  "source_token": "2026-10-06T15-37-42Z",
+  "latest_apply_token": "2026-10-06T15-21-30Z",
+  "external_reviewer": "GPT-6 (Codex)",
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 2,
+    "warning": 5,
+    "suggestion": 0
+  },
+  "pushback_verification": "All seven verified against current state; both CRITICAL reproductions re-run and reproduced; W2 probed (saved, then the report failed). Three are the fresh pass's findings, closed in its log.",
+  "resolution_summary": {
+    "resolved": 4,
+    "stale_suppressed": 3,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "Removed preamble text becomes executable shell syntax",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 547,
+      "classification": "stale",
+      "reproduction_rerun": "reproduced",
+      "outcome": "stale",
+      "evidence": "Re-ran the reproduction at triage: the $(printf ...) span executed and vanished from the message. The same defect is the fresh pass's W1 ('Return commit message interpolates external-AI preamble lines into a double-quoted shell string'), walked and resolved in address-reviews-2026-10-06T16-52-39Z.json (the earlier pass's log): the message is now a file passed by -F, and the harness runs a $(...)/backtick preamble through the shell without executing it.",
+      "action": "converged with the earlier pass; resolved in that pass's log"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "The advertised recovery command bypasses review freshness protection",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 566,
+      "classification": "stale",
+      "reproduction_rerun": "reproduced",
+      "outcome": "stale",
+      "evidence": "Re-ran the reproduction at triage: with --launch the save refused (the later apply named); without it the save wrote an accepted pass. The same defect is the fresh pass's S3 ('Manual recovery line omits the worktree cleanup, the --launch check and the commit-alone step'), walked and resolved in address-reviews-2026-10-06T16-52-39Z.json: the recovery line now carries --launch <T0 token>, the commit-alone step and the worktree removal.",
+      "action": "converged with the earlier pass; resolved in that pass's log"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Failure fallback points reviewers at the worktree it just deleted",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 556,
+      "classification": "stale",
+      "outcome": "stale",
+      "evidence": "The same defect is the fresh pass's W2 ('Failed-run paste fallback hands over a prompt whose ## Repo names the removed temp worktree'), walked and resolved in address-reviews-2026-10-06T16-52-39Z.json: the fallback names the repository and the handoff commit in place of the removed worktree, and an apply after the launch gets no paste fallback (a re-run packages a new prompt) — this finding's second ask.",
+      "action": "converged with the earlier pass; resolved in that pass's log"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Successful saves can fail the mandatory report step",
+      "marker_source": "external",
+      "file": "src/core/external-runner.ts",
+      "line": 272,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "action": "orbit external save now also runs the report renderer's external normalizer (normalizeExternalPass, imported unchanged) on the staged copy and refuses what it rejects, so a return without a real **Date**: is never committed before its report fails. Step 6 of the save requirement and its domain table name the renderer; Step 9d says the save checks with the renderer; unit test added; the CLI save fixture gained its Date line.",
+      "evidence": "Probe at triage: a return with **Reviewer** and the three severity sections but no **Date** was saved (exit 0) and orbit status --report then failed with missing '**Date**:' field.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17d-external-runner/specs/orbit-external-runner/spec.md",
+          "src/core/templates/workflows/review.ts",
+          "test/core/external-runner.test.ts",
+          "test/commands/external.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "and refuse a result it rejects;"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/external-runner.ts",
+            "text": "the report renderer rejects the return"
+          },
+          {
+            "path": "orbit/changes/rc17d-external-runner/specs/orbit-external-runner/spec.md",
+            "text": "external-findings reader, and refuse a result either rejects"
+          },
+          {
+            "path": "orbit/changes/rc17d-external-runner/specs/orbit-external-runner/spec.md",
+            "text": "a result the report renderer rejects (a missing or malformed `**Date**:`)"
+          }
+        ],
+        "searched": [
+          "trail reader rejects",
+          "normalizeExternalPass"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The return steps leave the destination checkout implicit",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 532,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "action": "Step 9c's launch is scoped to a subshell, ( cd '<run-dir>/worktree' && ... ), and Step 9d opens by stating every return step runs from the repository root, never the worktree; the launch requirement says the same; the harness transcribes the subshell form.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+          "test/integration/external-runner/launch.ts",
+          "test/core/templates/external-runner-branch.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "send the runner's own chatter to the log:"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/review.ts",
+            "text": "Every step from here runs from the REPOSITORY ROOT"
+          },
+          {
+            "path": "src/core/templates/workflows/review.ts",
+            "text": "( cd '<run-dir>/worktree' && '<argv[0]>'"
+          },
+          {
+            "path": "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+            "text": "runs from the repository root, never the worktree"
+          }
+        ],
+        "searched": [
+          "cd '<run-dir>/worktree'",
+          "repository root"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The saver follows aliases into another change’s trail",
+      "marker_source": "external",
+      "file": "src/core/external-runner.ts",
+      "line": 242,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "action": "The save refuses a change directory or .orbit-runs that physically resolves anywhere but its canonical child — the emit surface's rule, mirrored locally (emit-composition.ts is hash-pinned and this stage does not move it). Two refused rows added to the save table; symlink tests for both cases.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17d-external-runner/specs/orbit-external-runner/spec.md",
+          "test/core/external-runner.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "src/core/external-runner.ts",
+            "text": "physically resolves elsewhere (an alias); never a write target"
+          },
+          {
+            "path": "orbit/changes/rc17d-external-runner/specs/orbit-external-runner/spec.md",
+            "text": "a change directory or `.orbit-runs` that physically resolves elsewhere (a symlink into another change)"
+          }
+        ],
+        "searched": [
+          "assertCanonicalTrailDir",
+          "realpathSync"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Active review instructions still prohibit the behavior this change adds",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 941,
+      "classification": "decision_required",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "A — keep the proposal walk's ruling: the two orbit-review sentences and the generated trunk's matching line are rc17b's to correct (a fourth capability here would breach R-crc-1); the contradiction is carried as a named residual on the archive's readiness record, and at-archive note 6.5 now names the trunk line beside the two spec sentences.",
+      "action": "Widened at-archive note 6.5 in tasks.md to name the generated trunk line (review.ts, 'no review passes run in that invocation') beside the two orbit-review sentences, with Sal's ruling; no body or spec edit to orbit-review (precedent: rc15's named-residual hand-off, recorded resolved).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17d-external-runner/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc17d-external-runner/tasks.md",
+            "text": "which contradicts the external-handoff reference's launch branch until rc17b lands"
+          }
+        ],
+        "searched": [
+          "no review passes run in that invocation",
+          "rc17b"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Seven findings: three converged with the fresh pass and closed in its log, three repairs to the saver and the return steps, and one decision ratified A — the rc17b hand-off kept, carried as a named residual.",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system rc17d-external-runner",
+  "ripple_misses": 0
+}

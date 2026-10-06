@@ -48,6 +48,29 @@ describe('rc17d — the external-handoff reference', () => {
     expect(ref).toContain('git add <saved-path>\ngit commit --only <saved-path>');
   });
 
+  it('the return commit message is data: written to a file and passed with -F, never -m with the removed lines (system walk)', () => {
+    const step9 = ref.split('### 9. Launch the recorded runner')[1].split('## Reference prompt template')[0];
+    expect(step9).toContain("git commit --only <saved-path> -F '<run-dir>/commit-msg.txt'");
+    expect(step9).toContain('NEVER interpolate it into `-m "…"`');
+    expect(step9).not.toMatch(/-m "External review \(<as>, iter <N>\)[^"]*Removed above/);
+  });
+
+  it('the launch is scoped to a subshell and the return steps run from the repository root (system walk)', () => {
+    expect(ref).toContain("( cd '<run-dir>/worktree' && '<argv[0]>'");
+    expect(ref).toContain('Every step from here runs from the REPOSITORY ROOT');
+  });
+
+  it('the failed-run fallback carries the session note and the Repo-line correction; an apply after launch has none (system walk)', () => {
+    const failed = ref.split('**A failed run**')[1].split('**Named limits.**')[0];
+    expect(failed).toContain('Step 8 item 2 (the recommended-session note');
+    expect(failed).toContain("names the launch worktree, now removed — read the repository at <repo URL, or the live checkout's path> at commit <handoff-sha> instead.");
+    expect(failed).toContain('An apply after the launch is the one failure with NO paste fallback');
+  });
+
+  it('the session-ended recovery keeps --launch, the commit-alone step and the worktree removal (system walk)', () => {
+    expect(ref).toContain('orbit external save <change-name> --as <as> --from <run-dir>/return.md --launch <T0 token>, commit the saved file alone, and run git worktree remove --force <run-dir>/worktree');
+  });
+
   it('never instructs sh -c: every mention is a prohibition', () => {
     const lines = ref.split('\n').filter((l) => l.includes('sh -c'));
     expect(lines.length).toBeGreaterThan(0);

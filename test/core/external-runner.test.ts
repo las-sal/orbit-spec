@@ -71,6 +71,7 @@ describe('runner record: the shape table', () => {
     ['a key beside them', { preset: 'codex', model: 'x' }, /unknown key/],
     ['an array', ['codex'], /object/],
     ['null', null, /object/],
+    ['a relative path as argv[0]', { argv: ['./scripts/reviewer.sh', '{output}'] }, /relative path/],
   ])('%s is malformed', (_label, value, reason) => {
     const r = checkRunnerShape(value);
     expect(r.ok).toBe(false);
@@ -291,6 +292,28 @@ describe('orbit external save', () => {
   it('a heading-only return is refused by the trail reader', () => {
     fs.writeFileSync(src, '# External Review: my-change (iteration 1)\n');
     refused(save, /trail reader rejects/);
+  });
+
+  it('a return the trail reader accepts but the report renderer rejects (no **Date**:) is refused', () => {
+    fs.writeFileSync(src, REVIEW('my-change').replace('**Date**: 2026-10-06\n', ''));
+    refused(save, /report renderer rejects.*Date/);
+  });
+
+  it('a trail that is a symlink into another change is refused, and nothing is written there', () => {
+    const other = path.join(root, 'orbit', 'changes', 'other-change', '.orbit-runs');
+    fs.mkdirSync(other, { recursive: true });
+    fs.symlinkSync(other, path.join(changeDir, '.orbit-runs'));
+    fs.writeFileSync(src, REVIEW('my-change'));
+    expect(save).toThrow(/resolves elsewhere/);
+    expect(fs.readdirSync(other)).toEqual([]);
+  });
+
+  it('a change directory that is a symlink to another change is refused', () => {
+    const real = path.join(root, 'orbit', 'changes', 'real-change');
+    fs.mkdirSync(real);
+    fs.symlinkSync(real, path.join(root, 'orbit', 'changes', 'alias-change'));
+    fs.writeFileSync(src, REVIEW('alias-change'));
+    expect(() => save({ change: 'alias-change' })).toThrow(/resolves elsewhere/);
   });
 
   it('a return missing **Reviewer**: is refused by the trail reader', () => {

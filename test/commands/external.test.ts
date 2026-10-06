@@ -88,6 +88,16 @@ describe('orbit external (CLI)', () => {
     expect(s.exitCode).toBe(0);
   });
 
+  it('config unset externalRunner.preset drops the emptied record, so nothing warns afterwards', async () => {
+    writeConfig({ externalRunner: { preset: 'codex' } });
+    const u = await runCLI(['config', 'unset', 'externalRunner.preset'], { env: env() });
+    expect(u.exitCode).toBe(0);
+    expect('externalRunner' in readConfig()).toBe(false);
+    const r = await runCLI(['external', 'runner', '--json'], { env: env() });
+    expect(JSON.parse(r.stdout)).toEqual({ runner: null });
+    expect(r.stderr).toBe('');
+  });
+
   describe('save', () => {
     let root: string;
     let src: string;
@@ -104,7 +114,7 @@ describe('orbit external (CLI)', () => {
     it('--json prints {path, removed} on success', async () => {
       fs.writeFileSync(
         src,
-        'preamble\n# External Review: my-change (iteration 1)\n\n**Reviewer**: m\n\n## CRITICAL\n\nNone.\n\n## WARNING\n\nNone.\n\n## SUGGESTION\n\nNone.\n'
+        'preamble\n# External Review: my-change (iteration 1)\n\n**Reviewer**: m\n**Date**: 2026-10-06\n\n## CRITICAL\n\nNone.\n\n## WARNING\n\nNone.\n\n## SUGGESTION\n\nNone.\n'
       );
       const r = await runCLI(['external', 'save', 'my-change', '--as', 'system', '--from', src, '--json'], { cwd: root });
       expect(r.exitCode).toBe(0);

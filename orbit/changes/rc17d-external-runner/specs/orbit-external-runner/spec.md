@@ -110,6 +110,7 @@ argv held in orbit's source; it passes no model flag, so the user's own Codex co
 | `{argv: []}`, or an element that is not a string | malformed |
 | a string (a shell command line) | malformed: the record is never parsed by a shell |
 | an unknown preset name, both keys, neither key, or a key beside them | malformed |
+| an `argv[0]` naming a relative path (it carries a path separator and is not absolute) | malformed: the record is per-user and the launch runs from the worktree, so a relative path has no fixed base |
 
 Closure: the field's type is `{preset}` or `{argv}`, and every value is one of these rows (D-rc17d-5).
 
@@ -144,6 +145,7 @@ it with its warning and offers the same three choices, none of which keeps it. `
 | `orbit config set externalRunner.preset codex` | records the preset (`config set` coerces scalars only); refused over a recorded argv, naming the unset |
 | an own argv | init's step, or `orbit config edit`; `config set` cannot write an array |
 | `orbit config unset externalRunner` | back to `none` |
+| `orbit config unset externalRunner.preset` | removes the preset and the emptied record with it: back to `none`, with no malformed `{}` left behind |
 
 Closure: two writers (init, config) by their modes; every mode is a row (D-rc17d-4). The setup note lives in init's
 output, so the onboarding body carries no copy of it.
@@ -172,8 +174,9 @@ command SHALL, in order:
    `# External Review:` — none is refused, so a preamble that leaves a fence open never cuts inside it;
 4. refuse that heading when it does not name `<change>` (`# External Review: <change> (`);
 5. remove only the lines before it and keep every byte from that line on unchanged;
-6. check the result with the trail reader that decides whether a return is an accepted pass, and refuse a result it
-   rejects;
+6. check the result with the trail reader that decides whether a return is an accepted pass, and with the report
+   renderer's external-findings reader, and refuse a result either rejects — a return the renderer rejects would
+   otherwise be committed before its report fails;
 7. with `--launch <token>` (the launch's T0 token), refuse when any `apply-*.json` on the trail carries a later
    token — the return reviewed a state an apply has since changed, and the freshness rule would otherwise count it as
    current; without `--launch` no such check runs;
@@ -195,6 +198,8 @@ the same way. The command reads no git state and runs no process (D-rc17d-8, an 
 | no unfenced heading | refused |
 | a heading naming another change | refused |
 | a result the trail reader rejects (a heading with no severity sections, a missing `**Reviewer**:`) | refused |
+| a result the report renderer rejects (a missing or malformed `**Date**:`) | refused |
+| a change directory or `.orbit-runs` that physically resolves elsewhere (a symlink into another change) | refused: never a write target, as for the emit surface |
 | an apply token later than `--launch` | refused |
 | `--from` missing or unreadable, `--as architecture`, no such change | refused |
 | text AFTER the review (a "could not commit" note) | kept byte for byte |

@@ -47,4 +47,4 @@ checkboxes they held the apply gate unpassed until archive, and with it the `rev
 - 6.2 Close 5.5 by observation when the system review's external half ran through the runner
 - 6.3 Correct `orbit-review-external`'s Purpose paragraph by hand ("Does NOT run the review" → runs only through a recorded runner; never ingests findings)
 - 6.4 Move CLAUDE.md's `src:capabilities` mark from 23 to 24 and run `orbit validate --sources`
-- 6.5 Record in the program doc's status log that the two `orbit-review` sentences (design, Risks) are rc17b's to correct
+- 6.5 Record in the program doc's status log that the two `orbit-review` sentences (design, Risks) are rc17b's to correct, and with them the generated review trunk's matching line ("no review passes run in that invocation", `src/core/templates/workflows/review.ts`), which contradicts the external-handoff reference's launch branch until rc17b lands (system walk, external W5; Sal: A — the hand-off ruling kept, the contradiction carried as a named residual on the archive's readiness record)
