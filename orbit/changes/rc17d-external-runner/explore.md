@@ -75,7 +75,7 @@ Domain: every surface the record passes through, and its fallback states
 |---|---|
 | where it is stored | a new optional `externalRunner` field on `GlobalConfig` in `<XDG config>/openspec/config.json`, registered in `config-schema.ts`'s known keys so `orbit config` accepts it |
 | who writes it | `orbit init` and `orbit config` (D-rc17d-4) |
-| who reads it | the engine, surfacing the RESOLVED form (`none`, or an argv with its placeholders) in `orbit status --json`, as the `pr` scalar is surfaced |
+| who reads it | the engine, printing the RESOLVED form (`none`, or an argv with its placeholders) through `orbit external runner --json` — not `orbit status --json`, whose key set `orbit-orientation` enumerates (corrected at propose, 2026-10-06) |
 | who executes it | the review body, under the user's `--reviewer external`; never the engine |
 | the field absent | `none`: today's handoff |
 | the field malformed (D-rc17d-5's refused shapes) | warns, naming the field and the reason, and resolves to `none`, as the `pr:` scalar's inert values do |
@@ -88,9 +88,9 @@ Moves:
 - EXECUTE: not applied — nothing built yet
 - FALSIFY: applied — an unregistered key would make `orbit config set` refuse the very edit path D-rc17d-4 relies on; the registration row closes it
 - CONFORM: applied — D6 / D-d6-7 (zero engine processes); rc07 (no executable repository data)
-- FEASIBILITY: applied — one optional field, one resolver, one status field
-- CONSUME: applied — the body reads the resolved argv from status JSON and carries no preset knowledge of its own
-- INVOKE: applied — resolved on every `orbit status --json`; read at every external packaging
+- FEASIBILITY: applied — one optional field, one resolver, one read command
+- CONSUME: applied — the body reads the resolved argv from `orbit external runner --json` and carries no preset knowledge of its own; a status-JSON field would have been a fourth capability, because `orbit-orientation` enumerates that key set
+- INVOKE: applied — resolved on every `orbit external runner --json`; read at every external packaging
 
 ### D-rc17d-4 — init offers the record; `orbit config` edits it
 Domain: the writers of the record, by mode
@@ -133,7 +133,7 @@ Moves:
 - CONFORM: applied — rc07 (no shell field); D11 (the Codex preset is a named tool, kept)
 - FEASIBILITY: not applied — two shapes
 - CONSUME: applied — D-rc17d-1 runs the resolved argv; the normalization step reads `{output}`
-- INVOKE: applied — resolved at every `orbit status --json`
+- INVOKE: applied — resolved at every `orbit external runner --json`
 
 ### D-rc17d-6 — the handoff commit is the launch base; the return is committed alone and pushed
 Domain: the files and acts around one launched external half
@@ -162,7 +162,7 @@ Moves:
   Kind: rule
 - **2026-10-06 — D-rc17d-2: a runner is used only through the user's explicit record; presence on PATH launches nothing** — re-entered from D-bpc-2 and D-bpc-5.
   Kind: rule
-- **2026-10-06 — D-rc17d-3: the record lives in the per-user global config and the engine surfaces it, never executes it** — re-entered from D-bpc-11; the measured `orbit config` CLI and its key whitelist are facts the source entry did not read.
+- **2026-10-06 — D-rc17d-3: the record lives in the per-user global config and the engine surfaces it, never executes it** — re-entered from D-bpc-11; the measured `orbit config` CLI and its key whitelist are facts the source entry did not read. **Corrected at propose (2026-10-06):** the engine surfaces the resolved record through its own read command, `orbit external runner --json`, rather than `orbit status --json` as D-bpc-11 said — `orbit-orientation`'s `--json` requirement enumerates the bare and `--full` key sets, so a new key there is a fourth capability.
   Kind: rule
 
 - **2026-10-06 — D-rc17d-4: init offers the record; `orbit config` edits it** — resolves Q-rc17d-1 (Sal: "go with the leanings"). `config set` writes only scalars, so an own argv goes through init or `orbit config edit`.
@@ -173,12 +173,12 @@ Moves:
   Kind: rule
 - **2026-10-06 — D-rc17d-7: the T0 record's paste/save `next_recommended` stays as written; it states the manual fallback** — Sal: "a" (architect session, 2026-10-06). `orbit-run-summary-emit` requires the T0's next to be the user's paste/save action and `orbit-emit-composition` composes it; a launched runner makes it stale while the run is in flight. Kept as a NAMED LIMIT in the `orbit-review-external` delta (the launch is reported in chat) rather than a launch-aware record, which would add those two capabilities. Follow-up, not this stage.
   Kind: scope
+- **2026-10-06 — D-rc17d-8: an engine command normalizes the external return** — resolves Q-rc17d-3 at propose (Sal: "Resolve: engine command"). Removal is required, not cosmetic: the trail reader and the renderer refuse a file whose header is not `# External Review:`. The engine removes only the lines before the first `# External Review:` line, reports them so the body can quote them in the commit message, touches nothing from the heading on, and writes the result to the trail under its fixed filename — unit-testable rather than prose a body follows. No Mechanism entry authored at propose (an open domain in the proposal's record).
+  Kind: rule
 
 ## Open questions
 
-- **Q-rc17d-3: who normalizes the return (strip lines above `# External Review:`)?** Required, not cosmetic: the trail reader and the renderer refuse a file whose header is not `# External Review:`.
-  Standing recommendation: a body step for now — remove only the lines before the first `# External Review:` line, quote them in the commit message, touch nothing from the heading on; an engine command for it belongs to rc12-engine-owned-choreography if it ever moves.
-
+_(none open)_
 
 ## Considered & out
 

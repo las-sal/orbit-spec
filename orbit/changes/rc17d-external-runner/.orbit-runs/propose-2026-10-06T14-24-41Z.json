@@ -1,0 +1,9 @@
+{
+  "command": "propose",
+  "timestamp": "2026-10-06T14:24:41Z",
+  "change": "rc17d-external-runner",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Consumed explore.md (8 decisions, 6 live accounted rules, 1 BOUNDED). Q-rc17d-3 resolved at propose as D-rc17d-8 (Sal: engine command) — a live rule with no Mechanism entry, UNACCOUNTED in design Risks. D-rc17d-3 corrected: the record is read through `orbit external runner --json`, because orbit-orientation enumerates the status JSON key set (a fourth capability otherwise). Three capabilities: orbit-external-runner ADDED (5 requirements), orbit-review-external (2 ADDED, 2 MODIFIED, 1 REMOVED), orbit-conventions (1 MODIFIED). D-rc17d-1 residual carried verbatim; D-rc17d-7 named limit stated in the launch requirement. 28 tasks, 5.5 the user-validation handoff. Validates --strict; fingerprints 4/4.",
+  "next_recommended": "/orbit:review rc17d-external-runner — proposal artifacts ready; review before apply"
+}
