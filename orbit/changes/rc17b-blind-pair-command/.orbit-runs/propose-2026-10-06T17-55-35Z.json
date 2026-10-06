@@ -1,0 +1,9 @@
+{
+  "command": "propose",
+  "timestamp": "2026-10-06T17:55:35Z",
+  "change": "rc17b-blind-pair-command",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Consume-mode propose from the rc17b exploration: proposal, design (D1-D9), four delta specs (orbit-review: axis + shorthands MODIFIED, --fresh sentence MODIFIED, the pair's thirteen-step order ADDED; orbit-review-external: launch base and deferred save MODIFIED, a pair's external half reads the pair's reviewed state ADDED with D-rc17b-4's BOUNDED residual verbatim; orbit-engine-gates: the default preference presents the pair command; orbit-onboard: the axis by pointer) and 18 tasks. Four capabilities declared over R-crc-1's ceiling at exploration (D-rc17b-8); eight requirements, ~39 KB of delta; validates --strict; six base fingerprints stamped. Two exploration rows refined at propose and recorded in design D5/D6 (the pasted half names the reviewed commit in the prompt's ## Repo line, since the chat items are pinned; a fresh re-run rides the REVIEW-genre brief rule). Measured: today's paste route never commits the prompt, so the pair commits BASE on both routes (D3).",
+  "next_recommended": "/orbit:review rc17b-blind-pair-command — proposal artifacts ready; review before apply"
+}
