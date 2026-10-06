@@ -1,0 +1,106 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-06T02:01:28Z",
+  "change": "rc17a-invoked-coverage",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "src/core/artifact-graph/gates.ts",
+      "line": 575,
+      "title": "A stale pair member reads as not landed, so the invoked presentation contradicts the membership table",
+      "recommendation": "State in the spec what 'landed' means for a member an apply made stale, and make the presentation agree with it. Under the membership requirement a launch whose first fresh and first external both arrived is COMPLETE; an apply makes it stale, and per its own table a re-run of either class is then a SECOND pass of that class in the window, so a single, never a member. The presentation should therefore read the stale-complete pair as the table's last row ('no outside review stands on this state', the preference's command) and set no openPair, and the L F A E case should not report the pair as half-open or warn that walking ends it. Also repair the membership requirement's sentence 'so the pair cannot cover until it is run again' (spec.md:108): a re-run lands as a single and the pair never covers again. The oracle missed this because its reference adopts the same 'landed = in the fresh list' reading (test/helpers/invoked-oracle.ts refOpenPair) and never compares reasons.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Keep task 6.1's reading (a) and write it into the spec: a member made stale is 'not landed'; then fix the two reason strings so they stop claiming the pair is half-open or that neither member landed, and drop the 'walking ends the pair' warning where it cannot."
+        },
+        {
+          "label": "B",
+          "body": "Read 'landed' from membership (as the spec's tables do): a stale-complete pair falls to the last presentation row with no openPair, and a half-stale pair (L F A E) is COMPLETE-but-stale, also the last row."
+        }
+      ],
+      "reproduction": "Through the exported seam evaluateReviewedGate with gateOf(['invoked','in-context']) and test/helpers/invoked-oracle.ts buildTrail: (1) trail L F E A (launch, fresh, external, apply) returns reason 'pair launched at <L>: neither member has landed; both must land before either is walked' with next fresh, although both members landed; adding F after it (L F E A F) covers the invoked slot as a single, so the 'both must land' instruction is false. (2) trail L F A E returns openPair {missing: 'fresh'} and 'the external member has no fresh partner', so address-reviews row 4 warns that walking E ends the pair, yet a walk of E after F cannot end it (ENDED needs a walk before the partner's token), and the membership table reads this pair COMPLETE."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 580,
+      "title": "The T0 JSON shape omits the pair field the payload table now accepts",
+      "recommendation": "Add an optional pair entry to the review-external T0 JSON shape (with a one-line pointer to orbit-emit-composition's 'The review-external payload carries pair'), and add 'the invoked slot' to the list of slots an external return satisfies at :607. Design D4 declares that no shipped body WRITES the field until rc17b, but the reference is the payload table's mirror, and this session's own launch had to be hand-composed from the spec. The worked example at :1100 now shows a launched-pair reason that no shipped body can produce; consider an example a shipped flow reaches."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/config.yaml",
+      "line": 25,
+      "title": "The config's commented key guide misses review_preference and keeps a models example that v5 never reads",
+      "recommendation": "Add a commented review_preference block beside the models, pr and scenario_map blocks (values blind-pair | fresh | external per reviewed gate; default blind-pair; shapes only the presented command). Update the models comment: under v5 the shipped schema never presents an independent or blind-pair slot (an invoked slot presents fresh or external), so the 'independent: \"any frontier model, clean context\"' example now never garnishes anything; a user who copied it silently loses the hint."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/emit-composition.ts",
+      "line": 2020,
+      "title": "A code comment still states the v4 cadence as current",
+      "recommendation": "Reword the verify scenarios-fail comment ('Under spec-driven v4 the first uncovered system slot is blind-pair ...') to say the next is read from the gate graph whatever the cadence; task 4.2's sweep covered living prose but not this comment, and the named residual covers only the orbit-run-summary-emit sentence."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The core mechanism holds up. I probed the new membership and presentation code through the in-memory seam on hand-built trails (launch-ordered pairs, walk-ends, double launches, a single before the launch, the walk-past case) and every case matched the spec's tables except where an apply makes a member stale. That edge is where the spec never says what 'landed' means; the apply settled it in tasks.md as reading (a), the oracle's reference adopted the same reading, and the oracle compares coverage and openPair but not reason text. So the exhaustive oracle could not see a reason that contradicts the spec. The rest is documentation residue around a field no shipped body writes yet. Pass 0 ran inline rather than through /orbit:verify: 20/20 tasks, validate --strict clean, 95 delta scenarios declared with 0 uncovered, validate --sources green, full suite 2879 green. Passes 4 and 5 were skipped because orbit/lenses/ does not exist. Pass 6 was skipped so this worker would write nothing to the trail beyond its own emit; a targeted residue sweep for v4-cadence claims stood in for it (two sites found, reported above).",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    "4",
+    "5",
+    "6"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "Walk the one WARNING and continue to archive. The gate logic, the slot-bound diagnosis and the discovery widening behave as specified on every trail I built, and the suite is green. The stale-member divergence needs a decision (state reading (a) in the spec, or make the presentation follow the membership table), but it is a reason-and-warning text problem in a post-apply edge case: coverage and the presented command are right in both reproductions. The suggestions are documentation residue that can ride the walk."
+  },
+  "final_assessment": "0 critical, 1 warning, 3 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc17a-invoked-coverage --from-file orbit/changes/rc17a-invoked-coverage/.orbit-runs/review-system-2026-10-06T02-01-28Z.json"
+}
