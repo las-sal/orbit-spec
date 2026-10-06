@@ -3103,7 +3103,7 @@ rc17b ships — in the background, its return normalized (lines above `# Externa
 commit message) and committed without hand edits; otherwise the prompt is printed for paste, today's handoff
 unchanged (D-bpc-1, D-bpc-5, D-bpc-14). A runner on PATH with nothing recorded launches nothing. The setup note lives
 in init's output, owned by the new capability, so `orbit-onboard` is not touched. The decisions and their Mechanism
-entries live in the change's `explore.md` (`orbit/changes/rc17d-external-runner/`, D-rc17d-1..8, re-entered from rc17a's archived exploration and
+entries live in the change's `explore.md` (`orbit/changes/archive/2026-10-06-rc17d-external-runner/`, D-rc17d-1..8, re-entered from rc17a's archived exploration and
 re-read for the single external path). Capabilities: an ADDED runner capability (no baseline owns init's
 prompts, the global config or the record's status field), `orbit-review-external` (its `Command does not run the
 review or ingest findings` and handoff requirements gain the launched branch), `orbit-conventions` (the external
