@@ -151,9 +151,9 @@ did not name.
 ## Risks / Trade-offs
 
 - **D-rc17d-8 is UNACCOUNTED (state `absent`).** The rule that the engine normalizes the return was answered at this
-  propose and has no Mechanism entry; its domain (which inputs the save command sees and how each is handled) is
-  written only as the requirement's scenarios. → The proposal review reads `The engine saves an external return into
-  the trail` as an open domain.
+  propose and has no Mechanism entry; its domain (which inputs the save command sees and how each is handled) is the
+  save requirement's own domain table, written at the proposal walk with no Mechanism entry behind it. → The review
+  reads that table in `The engine saves an external return into the trail` as the open domain.
 - **D-rc17d-1's named limit** (a truncated return that still parses) — see `A recorded runner launches the external
   review`.
 - **Text after the review is kept by `orbit external save`** and renders inside the review's last section — see `The

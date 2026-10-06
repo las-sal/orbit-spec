@@ -78,7 +78,7 @@ Closure: the path writes the packaging pair and at most one pass file; each is a
 
 #### Scenario: The return is its own commit
 
-- **WHEN** a launched runner returns a well-formed review
+- **WHEN** a launched runner returns a well-formed review and the push lands
 - **THEN** exactly one new commit adds the saved `external-<mode>-<TS>.md` and nothing else, and it is pushed
 
 ## MODIFIED Requirements

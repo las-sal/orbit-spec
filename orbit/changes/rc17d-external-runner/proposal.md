@@ -50,8 +50,9 @@ rc17b and depends on this stage.
 ### Modified Capabilities
 
 - `orbit-review-external`: the branch launches a recorded runner instead of only packaging — the chat output gains
-  the launched branch, the handoff preflight gains the launch path, and `Command does not run the review or ingest
-  findings` is REMOVED and replaced by a requirement that runs the review only through the recorded runner and still
+  the launched branch, the handoff preflight gains the launch path, `Review-external command available` gives the
+  paste-ready snippet only when no runner launches, `Recommended-session note in chat output` is emitted only when the
+  prompt is printed for paste, and `Command does not run the review or ingest findings` is REMOVED and replaced by a requirement that runs the review only through the recorded runner and still
   never ingests findings.
 - `orbit-conventions`: `Review mode decision framework` stops describing the external class as reached only by "a
   packaged prompt a human carries across vendors".
