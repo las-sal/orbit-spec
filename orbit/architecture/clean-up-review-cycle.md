@@ -3074,6 +3074,18 @@ Refined at the proposal walk (Sal; the design's D10): the state set is NO-LAUNCH
 ENDED — a walk of a pair's landed half ENDS the pair and the walked half covers as a single, where the
 charter's BROKEN left the pair open — and the walk's `openPair` stop becomes a warning that offers to
 stop or walk. The charter above is kept as written.
+Shipped as (2026-10-06; archived as `orbit/changes/archive/2026-10-06-rc17a-invoked-coverage/`; the charter
+above stays as declared): `spec-driven` version 5, both reviewed gates `[invoked, in-context]`, with the
+refinements above plus three made at the system walk. "Landed" is read from membership, stale or not, and a
+stale landed member is its own presentation row, presenting a further review of its class (a single that
+covers) rather than a partner that would complete a pair unable to cover (fresh W1, Sal: C). A pass sharing its
+launch's own token is neither member nor single, the tie fail-safe at the launch boundary (external W2). And the
+walk's half-pair warning offers to walk only when the landed half carries a finding; a clean landed half has
+nothing to walk, so the warning names the routes that can end the pair (external W1, Sal: B). Exit (1)'s oracle
+ran at 21,007,908 cases (258 cadences × 81,426 trails, reason text compared on the `invoked` slot) and was
+shown able to fail on four re-introduced defects; exits (2) and (3) are suites over the shipped schema and the
+real walk write gate. The system review ran as the program's first LAUNCHED blind pair, by hand (a `pair: true`
+T0; rc17b ships the command), and the gate computed PASSED through it.
 
 ### Stage rc17b-blind-pair-command — the pair is one command
 
@@ -5003,3 +5015,19 @@ still reaches the pass), so Sal took the split: rc17c carries D-bpc-16 across `o
 of its exit (3). This is R-crc-9's eighth preventive application, the first caught at propose by a count rather
 than at exploration. Stage count 34 → <!-- src:stages -->35<!-- /src:stages --> at the marked sites (this entry's mark is the third; the previous
 entry's is unmarked as history).
+
+**2026-10-06 — rc17a-invoked-coverage ARCHIVED.** `spec-driven` is version 5: both reviewed gates read
+`[invoked, in-context]`, the first slot covered by what the user invoked — a single fresh or external pass, or a
+complete pair launched by a `pair: true` T0 — and the blind pair is the recommended first review through the
+default `review_preference`, no longer the required one (R-crc-4 as amended). The pair diagnosis reads the
+failed slot's eligible set (`foreclosed` retired), and the gate row lists `unwalkedPasses`, so a walk discovers
+SUGGESTION-only passes. The cycle: proposal blind pair (fresh + external GPT-6) with three walks and an
+in-context verification; apply 20/20; then the program's first LAUNCHED system blind pair — a hand-composed
+`pair: true` T0, a fresh subagent and a `codex exec` external (GPT-6 Astra) on the pushed apply commit, blind,
+zero findings in common — 1C/5W/3S across the halves, every claim reproduced, walked in two logs (Sal: C and B
+on the two decisions); an in-context VERIFICATION graded six `landed` and one `regressed` (three spec sentences
+the widened term no longer fit, a ripple miss of kind `query`), walked to zero; a COMPUTED PASSED gate.
+Both halves named the same oracle blind spot (it compared no reason text and had no launch-boundary tie), and
+the oracle grew from 11.7M to 21.0M cases to close it. Fingerprints 8/8; sync 3 ADDED + 8 MODIFIED, 11/11
+byte-verified; the capability count is unchanged. The readiness record accepts five residuals, headlined by
+rc07's distinction. Exits (1)–(3) are met as written; ratification is the architect session's.
