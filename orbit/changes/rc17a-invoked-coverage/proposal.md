@@ -33,10 +33,12 @@ propose, D-bpc-17).
   a pair member, or a COMPLETE pair. `independent` and `blind-pair` stay in the grammar, unchanged.
 - **The pair launch.** A `review-external` T0 emit whose payload carries `pair: true` is the pair's
   LAUNCH. The pair's members are the first fresh pass and the first external return after it, before
-  the mode's next launch. The engine computes the pair's state from the trail (NO-LAUNCH, PAIR-OPEN,
-  COMPLETE, BROKEN) and stores nothing.
+  the mode's next launch, drawn from accepted passes. The engine computes the pair's state from the
+  trail (NO-LAUNCH, PAIR-OPEN, COMPLETE, ENDED) and stores nothing.
 - **`openPair` on the `invoked` slot.** A launched pair with one half landed reports
-  `openPair: {missing}`, the slot stays uncovered, and the walk's `openPair` stop applies unchanged.
+  `openPair: {missing}` and the slot stays uncovered. The walk's `openPair` stop becomes a WARNING
+  (Sal, at the proposal walk): the user may stop so the missing half can run, or walk the landed half,
+  which ENDS the pair, and the walked half then covers the slot as a single.
 - **A per-gate review preference.** `review_preference` in `orbit/config.yaml`, keyed by gate id,
   with the values `blind-pair` (the default), `fresh` or `external`, changes only which command the
   readout presents when nothing covers the first slot. An unknown value warns and resolves to
@@ -63,7 +65,7 @@ propose, D-bpc-17).
 - `orbit-address-reviews`: discovery reads `unwalkedPasses` beside `unresolvedPasses`; a
   SUGGESTION-only pass is discovered.
 
-Three capabilities, at R-crc-1's ceiling.
+Three capabilities, at R-crc-1's ceiling. Tasks: 20 at propose, against R-crc-1's "under 20" — one over, declared here rather than met by merging task lines; still 20 after the proposal walk.
 
 ## Impact
 

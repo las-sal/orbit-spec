@@ -1,0 +1,164 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-06T01:20:25Z",
+  "change": "rc17a-invoked-coverage",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc17a-invoked-coverage/.orbit-runs/external-proposal-2026-10-05T22-54-48Z.md",
+  "source_command": null,
+  "source_token": "2026-10-05T22-54-48Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 5,
+    "suggestion": 1
+  },
+  "pushback_verification": "All six verified against current state; three converged with the fresh pass and recorded stale naming its log; E3 checked against recordTokensFor in gates.ts (walk records of any severity raise the next slot's bound).",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 3,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Broken-pair recovery can recommend a pass that cannot cover the slot",
+      "marker_source": "external",
+      "file": "orbit/changes/rc17a-invoked-coverage/specs/orbit-engine-gates/spec.md",
+      "line": 53,
+      "classification": "stale",
+      "action": "converged with the fresh pass's finding; walked in log 2026-10-06T01-20-05Z",
+      "evidence": "Converged with the fresh pass's 'BROKEN row presents a command whose pass is absorbed as the broken pair's member', resolved in address-reviews-2026-10-06T01-20-05Z: a walk of a landed half now ENDS the pair and the walked member covers as a single, so the presented pass is a single.",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The oracle’s equivalence fails on its explicitly included tie case",
+      "marker_source": "external",
+      "file": "orbit/changes/rc17a-invoked-coverage/design.md",
+      "line": 149,
+      "classification": "trivial_fix",
+      "action": "D9's oracle now asserts equality with the diagnosis and repairability one way only, so a tie with no openPair is not a failure; task 6.1 follows",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "`openPair.missing = X` exactly when adding one new pass of class X above every token lets the failed slot be covered"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc17a-invoked-coverage/design.md",
+            "text": "Repairability, one direction only"
+          },
+          {
+            "path": "orbit/changes/rc17a-invoked-coverage/tasks.md",
+            "text": "D9's two properties"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Suggestion-only walks are not universally neutral to gate state",
+      "marker_source": "external",
+      "file": "orbit/changes/rc17a-invoked-coverage/tasks.md",
+      "line": 35,
+      "classification": "decision_required",
+      "action": "stated that a walk of an unwalked pass raises the following slot's ordering bar like any walk, with a walk-after-confirm scenario; qualified task 6.3 and the address-reviews discovery scenario, which claimed the gate's state unchanged",
+      "ratified_via": "chat",
+      "resolution": "Sal (chat): 2A — accept as designed: the following slot checks any walk, so walking after the confirm calls for another confirm; stated in the outstanding-passes requirement.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the gate's state is identical with and without the walk",
+          "the gate's state is unchanged by the walk"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc17a-invoked-coverage/specs/orbit-engine-gates/spec.md",
+            "text": "A walk after the confirm moves the following slot's bar"
+          },
+          {
+            "path": "orbit/changes/rc17a-invoked-coverage/tasks.md",
+            "text": "the walk-after-confirm scenario"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Retained scenarios still require mandatory pairs and ignore unwalked suggestions",
+      "marker_source": "external",
+      "file": "orbit/changes/rc17a-invoked-coverage/specs/orbit-engine-gates/spec.md",
+      "line": 917,
+      "classification": "stale",
+      "action": "converged with the fresh pass's finding; walked in log 2026-10-06T01-20-05Z",
+      "evidence": "Converged with the fresh pass's 'Carried scenarios still describe review-system as a blind-pair gate, false under version 5' and ''Nothing to walk' still conditions only on unresolvedPasses being empty', both resolved in address-reviews-2026-10-06T01-20-05Z.",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The live charter and migration claims disagree with the chosen design",
+      "marker_source": "external",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 3049,
+      "classification": "stale",
+      "action": "converged with the fresh pass's finding; walked in log 2026-10-06T01-20-05Z",
+      "evidence": "Converged with the fresh pass's 'Three departures from the stage charter are recorded only in the design', resolved in address-reviews-2026-10-06T01-20-05Z: the charter carries a refined-at-propose note naming D2-D4, and the design's migration line states the relaxation instead of unchanged computation.",
+      "outcome": "stale"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Record the task-count ceiling breach",
+      "marker_source": "external",
+      "file": "orbit/changes/rc17a-invoked-coverage/proposal.md",
+      "line": 66,
+      "classification": "trivial_fix",
+      "action": "the proposal's sizing line declares 20 tasks against R-crc-1's 'under 20', to be restated after the walk",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc17a-invoked-coverage/proposal.md",
+            "text": "one over, declared here"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "walk all - then let's discuss the decisions one by one",
+  "final_assessment": "Six findings of the external proposal pass: three resolved here (the oracle's tie, the walk-after-confirm ordering by decision 2A, the task-count declaration) and three stale as converged with the fresh pass's log.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal rc17a-invoked-coverage",
+  "ripple_misses": 0
+}

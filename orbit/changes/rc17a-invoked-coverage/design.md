@@ -73,7 +73,8 @@ has a blind pair (F, E) and an in-context pass I later than both members and eve
 either. Take the earlier member alone as the `invoked` single; I beats its token and its records. So
 every assignment that covered v4 covers v5, and a live change can only become easier to pass, never
 harder. Building a version store to keep a stricter rule for changes stamped v4 buys nothing this repo
-has (no active change) and nothing an adopter needs (their gate relaxes).
+has (no active change other than this one, whose system review is meant to run under v5) and nothing
+an adopter needs (their gate relaxes). Accepted as a scope call at the proposal walk (Sal, 2026-10-05).
 
 ### D4 — membership is by ORDER for both classes (revises D-bpc-10's stamp)
 
@@ -81,7 +82,8 @@ D-bpc-10 matched the external member by order and the fresh member by a launch t
 fresh emit. This design matches both by order: a launch L's members are the FIRST fresh pass and the
 FIRST external return of L's mode whose tokens are later than L and earlier than the mode's next launch.
 Every other independent pass is a single. This adds no review payload field, keeps the two halves
-symmetric, and lets a pair run by hand today (the flagged T0, then the two halves) before rc17b exists.
+symmetric, and lets a pair run by hand before rc17b exists — but only through a hand-composed T0 payload
+carrying `pair: true`, since no shipped body writes the field yet.
 The cost is the residual D-bpc-10 already named, widened from one class to both: a single invoked while
 a pair is open is counted as its member. The requirement states that widening beside the residual's
 verbatim lines.
@@ -105,7 +107,7 @@ unknown value warns, naming the gate and the value, and resolves to `blind-pair`
 and is ignored, as the `pr:` scalar's inert shapes do. The gate computation reads it
 ONCE, itself, from the change's project root, so `orbit status`, `orbit instructions` and the
 orientation surface cannot present different commands. It is read ONLY where the canonical next is
-chosen for an uncovered `invoked` slot with nothing standing, broken or tied. Gate state, reason and every field but `nextCommand` /
+chosen for an uncovered `invoked` slot with nothing standing or tied. Gate state, reason and every field but `nextCommand` /
 `nextSlot` are independent of it, so a teammate's config cannot re-grade a change. **Interim:** until
 rc17b ships `--reviewer blind-pair`, the `blind-pair` preference presents the fresh review. Switching that one
 branch to rc17b's command is an `orbit-engine-gates` edit, written into rc17b's charter at this propose so
@@ -113,18 +115,10 @@ its count includes it.
 
 ### D7 — what the `invoked` slot presents, and its reason
 
-When the deepest failed slot is `invoked`, read at the canonical bound (D5), the latest launch of the
-gate's mode decides the presentation:
-
-| state at the bound | reason | next | `nextSlot` |
-|---|---|---|---|
-| NO-LAUNCH, or a launch whose members are all at or below the bound | `no outside review stands on this state` | the preference's command | the presented command's class |
-| PAIR-OPEN, one member landed, eligible and pairable | `pair launched at <L> is open: the <class> member has no <missing> partner; run it before walking these findings` | the missing class's command | the missing class |
-| PAIR-OPEN, neither member landed | `pair launched at <L>: neither member has landed; both must land before either is walked` | the fresh review | `fresh` |
-| BROKEN (a walk of one member stands between them, or the landed member is not pairable) | `pair launched at <L> broken: a walk of one member's findings stands between them` | the preference's command | the presented command's class |
-| members share a token | `pair launched at <L> ambiguous: its two members share a timestamp token` | the preference's command | the presented command's class |
-
-`openPair` is set on the second row only. `nextSlot` names the class of the presented command, so a
+The presentation is the table in `orbit-engine-gates`' `The first review slot covers what the user
+invoked`, rows tested in order; it is stated there once and not restated here. Two choices behind it:
+`openPair` is set on the PAIR-OPEN-one-landed row only, because that is the one state where a walk
+would foreclose a pair still formable; and `nextSlot` names the class of the presented command, so a
 `models:` hint keyed `fresh` or `external` garnishes the command it describes. The preference
 `blind-pair` presents the fresh review until rc17b (D6), so its class is `fresh`.
 
@@ -137,19 +131,44 @@ stale included) that carries at least one finding of any severity, is referenced
 like any other field, since a passed gate can still hold an unwalked SUGGESTION-only pass. A `blocked` gate
 carries none. The gate never reads it. The walk's discovery row 5 reads the union, and the fence's prose stops
 saying a suggestion-only pass "is reached by `--from-file`". A walk that only defers a SUGGESTION has walked the
-pass, so the pass leaves the set and is not rediscovered.
+pass, so the pass leaves the set and is not rediscovered. Like any walk, such a walk raises the following
+slot's ordering bar (clause (a) counts walk records at any severity); in the ordinary order the walk
+precedes the confirm, and walking after a confirm calls for another — accepted at the proposal walk (Sal,
+2026-10-05) over narrowing clause (a) to substantive records, which would be unreviewed gate mechanism.
+
+### D10 — a walk ends a half-landed pair (Sal, proposal walk, 2026-10-05)
+
+Both reviewers showed that a launch's window, open until the mode's next launch, absorbed the next pass
+of the missing class as a member after the pair had already failed, so the engine recommended a pass
+that could not cover. Sal's rule: a pair stays open through anything the user does except a walk of its
+landed half. The walk's `openPair` stop becomes a warning that offers to stop (so the missing review can
+run) or to walk; walking ENDS the pair at the walk record, the walked member reads as a single and covers
+the slot, and every later independent pass is a single. An apply between the halves ends nothing: the
+freshness rule already keeps a stale member from covering. Members are drawn from the trail reader's
+accepted passes, so a rejected return takes no position. The membership and presentation tables carry
+it (`orbit-engine-gates`), and discovery row 4 (`orbit-address-reviews`). The BROKEN state is gone with
+the change; the tie stays.
 
 ### D9 — exit (1)'s oracle is an independent brute-force implementation
 
 `test/core/invoked-coverage-oracle.test.ts` enumerates every cadence of length 1 to 3 over the six
 tokens, and every trail of up to five events: passes of the three classes, `pair: true` T0s, and walk
-records referencing a chosen pass, with distinct tokens plus the tie case. On each it compares the
-engine's `openPair` and slot coverage against a reference written directly from the requirements' text.
-The reference enumerates every assignment (no memo, no pruning) and reads membership straight from the launch
-definition. It also checks D-bpc-6's semantic property on structural `blind-pair` slots:
-`openPair.missing = X` exactly when adding one new pass of class X above every token lets the failed
-slot be covered. The stated size is in the test's header. A disagreement fails naming the cadence
-and the trail. `[external, blind-pair]` with rc08b's reproduction trail is also pinned as a named case.
+records referencing a chosen pass, with distinct tokens plus the tie case. It calls the exported pure
+entry that evaluates one reviewed gate over an in-memory `Trail` (task 3.1), never on-disk fixtures, and
+compares the engine's `openPair` and slot coverage against a reference written directly from the
+requirements' text. The reference enumerates every assignment (no memo, no pruning) and reads membership
+straight from the launch definition. Two properties are asserted on each case:
+
+- **Equality.** `openPair` equals the reference's own reading of the diagnosis: `missing: X` exactly when
+  the failed slot's eligible pairable set (structural `blind-pair`), or its launch's landed members
+  (`invoked`), hold the other class and not X; absent otherwise, including on `tie` and
+  `blindness-broken`.
+- **Repairability, one direction only.** Whenever `openPair.missing` is X, adding one new pass of class X
+  above every token lets the failed slot be covered. The converse is NOT asserted: on a `tie`, adding
+  either class repairs the slot while `openPair` is rightly absent.
+
+The stated size is in the test's header. A disagreement fails naming the cadence and the trail.
+`[external, blind-pair]` with rc08b's reproduction trail is also pinned as a named case.
 
 ## Mechanism → artifacts
 
@@ -193,17 +212,24 @@ prose, and the exploration's table is the record of the original.
   is computed from its launch`.
 - [Order membership absorbs a single invoked while a pair is open] → the residual is stated with its
   widening (D4); a deliberate single after an open pair is still possible as the class's second pass.
-- [v5 relaxes the system gate for a change stamped v4] → monotone by D3; no active change exists, and
-  the relaxation is the ruling (R-crc-4 amended).
+- [v5 relaxes the system gate for a change stamped v4] → monotone by D3; no other active change exists, and
+  the relaxation is the ruling (R-crc-4 amended); this change is the one active change it reaches.
 - [The interim presents the fresh review under the `blind-pair` preference] → a fresh run then lands as a
   single and covers, the D-bpc-8 row 1 interim the exploration chose; rc17b replaces the branch (D6).
+- [`orbit-run-summary-emit`'s scenario `Verify pass emit recommends review-as-system canonically`
+  says "under `spec-driven` v4, whose first uncovered system slot is `blind-pair`"] → a named residual,
+  not a fourth capability: the sentence is qualified by version and true of v4, and its THEN (the
+  verify emit's next begins `/orbit:review --as system --fresh foo`) still holds under v5, where the
+  default preference presents the fresh review.
 - [Existing tests pin v4 cadences, `foreclosed` and the `PairFailure` set] → the red set is measured at
   task 1.1 before code moves, including hash pins (rc04c's lesson).
 
 ## Migration Plan
 
-No data migration. Archived trails compute as before (no `pair: true` T0 exists on any of them). Every
-active change moves to v5 at the build that ships the schema, which D3 shows is monotone. Rollback is
+No data migration. No `pair: true` T0 exists on any archived trail, so every independent pass on one
+reads as a single. Coverage under v5 can only RELAX relative to v4, never be lost (D3): a system trail
+holding one fresh pass and a later in-context pass was uncovered under v4 and is covered under v5. Every
+active change moves to v5 at the build that ships the schema. Rollback is
 reverting the schema to version 4, since nothing new is written except the optional `pair` field.
 
 ## Open Questions

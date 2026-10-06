@@ -3066,6 +3066,11 @@ measured by an exhaustive oracle over enumerated small cadences and trails, not 
 absent or unknown — changes only the presented command; (3) a SUGGESTION-only pass is walked by
 `/orbit:address-reviews <change>`. (Exit (3)'s second half, that no change-mode review emit's
 `next_recommended` names a path, moved to rc17c with D-bpc-16.)
+Refined at propose (2026-10-05; the change's design D2–D4, which give the reasons): the pair LAUNCH is
+the external half's T0 written with `pair: true`, not a new record kind; the fresh member is matched by
+order, as the external one is, so no fresh emit is stamped; and no versioned cadence reader exists, so
+version 5 gates every change, including one stamped v4 — a relaxation that never removes coverage. The
+charter above is kept as written.
 
 ### Stage rc17b-blind-pair-command — the pair is one command
 

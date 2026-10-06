@@ -10,10 +10,10 @@ Markers never suppress trail discovery: a stray marker hiding an outstanding pas
 
 ```
 DISCOVERY — rows tested in order, first match wins:
-1 --from-file <path>, with or without a positional: the file ONLY; no marker grep, no trail discovery, no openPair stop; the positional, if any, resolves only where the log lands.
+1 --from-file <path>, with or without a positional: the file ONLY; no marker grep, no trail discovery, no openPair warning; the positional, if any, resolves only where the log lands.
 2 no positional, exactly one active change (per orbit list --json): say "resolved to the single active change <name>; markers outside it are not scanned", then re-enter these rows as a positional naming that change.
 3 no positional, zero or several active changes: the whole-repo @review: marker scan; several are named in the header so the user can aim the walk.
-4 active change, a reviewed gate neither blocked nor superseded reports openPair: stop before triage; name the missing member and the gate's canonical next command; walk nothing; write no log.
+4 active change, a reviewed gate neither blocked nor superseded reports openPair: before triage, warn that the pair is half-landed, naming the missing member and the gate's canonical next command, and offer two choices — stop (walk nothing, write no log, so the missing review can run) or walk now. Walking now ends the pair: on an invoked slot the walked half then covers alone; on a blind-pair slot no pair can form on this state. On walk, continue at row 5.
 5 active change: the UNION of @review: markers in the change directory, every unresolvedPasses and unwalkedPasses entry of each reviewed gate neither blocked nor superseded (internal review-<mode>-*.json and external external-<mode>-*.md alike), and every audit-drift-*.json in its .orbit-runs/ whose basename no address-reviews-*.json there names in source_path.
 6 archived change: markers in the archived directory + its unwalked audit-drift-*.json by the same basename rule; its review passes are reached by --from-file, and the header says so.
 7 a positional resolving to no change (a path or pattern): markers in that scope only.
@@ -22,7 +22,7 @@ AFTER the matched row: when it discovered nothing, print "No @review: markers an
 
 **Positional argument resolution** (normative): a positional argument is treated as a change name if and only if it matches one of these locations, checked in this order: (1) **active**: `orbit/changes/<name>/` (exact directory match); (2) **archived**: `orbit/changes/archive/<YYYY-MM-DD>-<name>/` — enumerate entries in `orbit/changes/archive/` matching the regex `^\d{4}-\d{2}-\d{2}-<name>$`. If multiple archive entries match the same `<name>` suffix (rare; would mean the same change name was archived on different dates), the lexicographically-latest date wins (most-recent archive). If no active match AND no archive match, the positional is treated as a path/pattern scope for the grep, and trail discovery does NOT apply.
 
-**`--from-file` exclusivity** (normative): when `--from-file <path>` is specified, the parser ingests the file's content and that is the ONLY input source. Marker grep does NOT run; trail discovery does NOT run, and neither does the `openPair` stop — an explicit aim is the user's; the positional argument (if present) is used only for emit-path resolution (where the resulting `address-reviews-<TS>.json` is written) and does NOT affect discovery.
+**`--from-file` exclusivity** (normative): when `--from-file <path>` is specified, the parser ingests the file's content and that is the ONLY input source. Marker grep does NOT run; trail discovery does NOT run, and neither does the `openPair` warning — an explicit aim is the user's; the positional argument (if present) is used only for emit-path resolution (where the resulting `address-reviews-<TS>.json` is written) and does NOT affect discovery.
 
 How the discovered work is written — one log per pass — is owned by `One invocation writes one log per discovered source`.
 
@@ -56,15 +56,20 @@ How the discovered work is written — one log per pass — is owned by `One inv
 - **WHEN** a change's `review-system` gate reports an unresolved `external-system-<TS>.md`
 - **THEN** a change-scoped walk discovers it with no `--from-file`, and its log's `source_path` names that file
 
-#### Scenario: An open blind pair stops the walk
+#### Scenario: An open pair warns before the walk
 
 - **WHEN** the user invokes `/orbit:address-reviews foo` and the `review-system` gate reports `openPair: {missing: "external"}`
-- **THEN** the walk names the missing external member and the gate's canonical next command, walks nothing, and writes no log
+- **THEN** before triage the walk names the missing external member and the gate's canonical next command and offers to stop or walk; on stop it walks nothing and writes no log
 
-#### Scenario: A bare invocation meets the openPair stop
+#### Scenario: Walking past the warning ends the pair
+
+- **WHEN** the gate's `invoked` slot has a launched pair whose fresh half landed, and the user chooses to walk at the warning
+- **THEN** the fresh pass is walked and its log written; the gate's row then carries no `openPair`, and the walked pass covers the `invoked` slot as a single
+
+#### Scenario: A bare invocation meets the openPair warning
 
 - **WHEN** the user invokes `/orbit:address-reviews` with no arguments, `foo` is the single active change, and its `review-system` gate reports `openPair: {missing: "fresh"}`
-- **THEN** the header names `foo`, the walk stops naming the missing fresh member, and no log is written
+- **THEN** the header names `foo`, the walk warns naming the missing fresh member, and on stop no log is written
 
 #### Scenario: A --mark marker is walked once
 
@@ -74,7 +79,7 @@ How the discovered work is written — one log per pass — is owned by `One inv
 #### Scenario: A suggestion-only pass is discovered
 
 - **WHEN** the just-written proposal pass carries only SUGGESTIONs, no walk record references it, and the change holds no markers
-- **THEN** a change-scoped walk discovers the pass through the gate's `unwalkedPasses`, walks it, and writes its log; the gate's state is unchanged by the walk
+- **THEN** a change-scoped walk discovers the pass through the gate's `unwalkedPasses`, walks it, and writes its log; the walk holds nothing on the gate, though like any walk it raises the following cadence slot's ordering bar (`orbit-engine-gates`' `A reviewed gate lists its outstanding passes`)
 
 #### Scenario: A walked suggestion-only pass is not rediscovered
 
@@ -93,13 +98,13 @@ How the discovered work is written — one log per pass — is owned by `One inv
 
 #### Scenario: Nothing to walk
 
-- **WHEN** the user invokes `/orbit:address-reviews foo`, the change holds no markers, every reviewed gate reports `unresolvedPasses: []`, and every audit-drift emit is named by a log
+- **WHEN** the user invokes `/orbit:address-reviews foo`, the change holds no markers, every reviewed gate reports `unresolvedPasses: []` and `unwalkedPasses: []`, and every audit-drift emit is named by a log
 - **THEN** the command prints `No @review: markers and no outstanding passes in scope. Nothing to walk.` and exits cleanly
 
 #### Scenario: Explicit `--from-file` overrides discovery
 
 - **WHEN** the user invokes `/orbit:address-reviews <change-name> --from-file <path>`
-- **THEN** marker grep, trail discovery and the `openPair` stop do NOT run; the file is the ONLY input source, and the positional is used only for emit-path resolution
+- **THEN** marker grep, trail discovery and the `openPair` warning do NOT run; the file is the ONLY input source, and the positional is used only for emit-path resolution
 
 #### Scenario: Discovered work walks the standard ingest lifecycle
 
