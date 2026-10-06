@@ -224,6 +224,10 @@ prose, and the exploration's table is the record of the original.
   not a fourth capability: the sentence is qualified by version and true of v4, and its THEN (the
   verify emit's next begins `/orbit:review --as system --fresh foo`) still holds under v5, where the
   default preference presents the fresh review.
+- [The third proposal walk's four repairs (D9's equality and event set, D4's pointer, task 5.1's `:503`,
+  the reason requirement's invoked-slot clause) were read by no review pass: the gate's in-context slot
+  checks only the first slot's walks] → apply's own first read of D9, D4 and tasks 5.1 and 6.1 is that
+  check; a defect found there is fixed in the artifact before code follows it.
 - [Existing tests pin v4 cadences, `foreclosed` and the `PairFailure` set] → the red set is measured at
   task 1.1 before code moves, including hash pins (rc04c's lesson).
 
