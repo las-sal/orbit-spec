@@ -22,7 +22,8 @@ rules (R-crc-13); one canonical next (single-voiced); three capabilities (R-crc-
 **Goals:**
 - Both gates' first slot is covered by what the user invoked: a single fresh or external pass, or a
   complete blind pair (exit (2)).
-- A pair with one half landed reports `openPair` and the slot uncovered on every cadence the grammar
+- A pair with one half landed and usable on the current state reports `openPair` (the presentation
+  table's row that sets it), and the slot stays uncovered, on every cadence the grammar
   admits, measured by an exhaustive oracle (exit (1)).
 - A SUGGESTION-only pass is walked by `/orbit:address-reviews <change>` (exit (3), as narrowed by the
   rc17c split).
@@ -144,7 +145,9 @@ of the missing class as a member after the pair had already failed, so the engin
 that could not cover. Sal's rule: a pair stays open through anything the user does except a walk of its
 landed half. The walk's `openPair` stop becomes a warning that offers to stop (so the missing review can
 run) or to walk; walking ENDS the pair at the walk record, the walked member reads as a single and covers
-the slot, and every later independent pass is a single. An apply between the halves ends nothing: the
+the slot, and every later independent pass is a single. The offer to walk stands only when the landed half
+carries a finding (it is then listed); a clean landed half has nothing to walk, so the warning names the
+routes that can end the pair instead (discovery row 4, as the system walk narrowed it). An apply between the halves ends nothing: the
 freshness rule already keeps a stale member from covering. Members are drawn from the trail reader's
 accepted passes, so a rejected return takes no position. The membership and presentation tables carry
 it (`orbit-engine-gates`), and discovery row 4 (`orbit-address-reviews`). The BROKEN state is gone with

@@ -139,13 +139,16 @@ The trail states of one reviewed gate's first slot, per mode, are this table:
 | a trail with no launch records (every trail before this requirement) | every independent pass is a single |
 
 Closure: BOUNDED — every row reads a record the trail holds; one attribution the trail cannot make.
-Revised from the exploration's table in three rows: a fresh member is matched by ORDER, as the external
+Revised from the exploration's table in four rows: a fresh member is matched by ORDER, as the external
 member already was, rather than by a launch token stamped on the fresh emit (so the stamped and
 unstamped fresh rows become "the first fresh pass after it" and "a second fresh pass"); and a trail with
 no launch records reads as singles, which is how a version-4 cadence's trail reads under version 5. The
 exploration's BROKEN row is ENDED here: a walk of a landed half is the user's choice to proceed on one
 review, so the pair ends there and the walked half counts as a single, rather than the
-window staying open to absorb the next pass of the missing class as a member that cannot cover.
+window staying open to absorb the next pass of the missing class as a member that cannot cover. And a
+row for a pass sharing the launch's own token was added at the system walk: the exploration did not name
+it, and the tie fail-safe settles it — such a pass is neither member nor single — so it adds no
+attribution the trail cannot make.
 
 **Named limit.** Residual kind: an external return the trail cannot attribute to a single or to the open pair
 Residual method: each T0 emit is engine-composed and can carry the launch token it was packaged under; an audit cross-check of returns against their T0s finds a single-packaged return counted as a member
@@ -849,8 +852,8 @@ two members. On a `blind-pair` slot that walk forecloses the pair permanently an
 independent passes; on an `invoked` slot it ENDS the pair, so the walked half covers alone and the
 review the user invoked as a pair is never completed. Coverage
 SHALL therefore be computed even when resolution fails, and when the cadence declares an UNCOVERED
-pair-bearing slot — a `blind-pair` slot with a PAIRABLE member STANDING, or an `invoked` slot whose
-launched pair is open with one member landed (per `A pair's membership is computed from its launch`)
+pair-bearing slot — a `blind-pair` slot with a PAIRABLE member STANDING, or an `invoked` slot in the
+state of the presentation table's row that sets `openPair` in `The first review slot covers what the user invoked`
 — the canonical next command SHALL name the missing member's class rather than the walk. The qualifier is load-bearing in both directions: with NOTHING
 pairable standing there is no pair to foreclose, so a safe outstanding walk SHALL run first rather
 than being deferred behind a review of a state no future pair member shares, and the reason SHALL carry BOTH facts — the pass awaiting
@@ -860,7 +863,7 @@ nothing.
 
 The named forward case: when the gate's cadence DECLARES a `blind-pair` slot that is not yet
 covered, and one PAIRABLE independent pass stands on the current state without a partner — or an
-`invoked` slot is not yet covered and its launched pair stands open with one member — the
+`invoked` slot is not yet covered in the state of the presentation table's row that sets `openPair` in `The first review slot covers what the user invoked` — the
 reason SHALL say the pair is open and name the missing class BEFORE the standing pass's findings
 are walked — a walk of those findings makes the pair unformable on that
 state, and the cost is not recoverable. One further note rides the same slot: a passed gate whose walk deferred
@@ -929,7 +932,7 @@ rule bites only when the walk comes after.
 
 When the gate's canonical next command names a walk because a pass is unresolved, it SHALL be the change-scoped form `/orbit:address-reviews <change>`, naming no file: the walk discovers every listed pass, and the `openPair` warning applies (`orbit-address-reviews`' `Address-reviews command available`). A `--from-file` aim at one pass would walk one half and skip both. The blind-pair command that precedes it in the canonical-next order is unchanged.
 
-When the gate's own pair diagnosis — the computation behind the `reason`'s pair note — finds the cadence's blind-pair slot open with a pairable member standing and the other class missing, however many members of the standing class there are — or an `invoked` slot's launched pair open with one member landed — the row SHALL also carry `openPair: {missing}`, `missing` `fresh` or `external`: the same fact the pair note states in prose, now a field a reader need not parse. Absent otherwise.
+When the gate's own pair diagnosis — the computation behind the `reason`'s pair note — finds the cadence's blind-pair slot open with a pairable member standing and the other class missing, however many members of the standing class there are — or an `invoked` slot in the state of the presentation table's row that sets `openPair` in `The first review slot covers what the user invoked` — the row SHALL also carry `openPair: {missing}`, `missing` `fresh` or `external`: the same fact the pair note states in prose, now a field a reader need not parse. Absent otherwise.
 
 A `blocked` gate computes no resolution and carries none of the three fields. A `superseded` gate carries all three as computed; whether a reader acts on a superseded gate's list is the reader's rule (`orbit-address-reviews`' `Address-reviews command available` does not).
 

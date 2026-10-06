@@ -35,10 +35,13 @@ propose, D-bpc-17).
   LAUNCH. The pair's members are the first fresh pass and the first external return after it, before
   the mode's next launch, drawn from accepted passes. The engine computes the pair's state from the
   trail (NO-LAUNCH, PAIR-OPEN, COMPLETE, ENDED) and stores nothing.
-- **`openPair` on the `invoked` slot.** A launched pair with one half landed reports
-  `openPair: {missing}` and the slot stays uncovered. The walk's `openPair` stop becomes a WARNING
-  (Sal, at the proposal walk): the user may stop so the missing half can run, or walk the landed half,
-  which ENDS the pair, and the walked half then covers the slot as a single.
+- **`openPair` on the `invoked` slot.** A launched pair with one half landed, and usable on the current
+  state, reports `openPair: {missing}` and the slot stays uncovered (the presentation table's row that
+  sets it; a stale landed half is its own row). The walk's `openPair` stop becomes a WARNING (Sal, at
+  the proposal walk): when the landed half carries a finding, the user may stop so the missing half can
+  run, or walk the landed half, which ENDS the pair, and the walked half then covers the slot as a
+  single; when it carries none, there is nothing to walk, and the warning names the routes that can end
+  the pair (discovery row 4).
 - **A per-gate review preference.** `review_preference` in `orbit/config.yaml`, keyed by gate id,
   with the values `blind-pair` (the default), `fresh` or `external`, changes only which command the
   readout presents when nothing covers the first slot. An unknown value warns and resolves to
