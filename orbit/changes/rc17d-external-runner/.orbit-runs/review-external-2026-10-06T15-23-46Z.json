@@ -1,0 +1,14 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-10-06T15:23:46Z",
+  "change": "rc17d-external-runner",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "prompt_path": "orbit/changes/rc17d-external-runner/.orbit-runs/external-prompt-system-2026-10-06T15-23-22Z.md",
+  "target": "codex",
+  "final_assessment": "External review prompt packaged for rc17d-external-runner (iter 1, mode system) as the external half of a launched blind pair; launched through the recorded codex runner in a worktree at the handoff commit.",
+  "pair": true,
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/rc17d-external-runner/.orbit-runs/external-prompt-system-2026-10-06T15-23-22Z.md into the target AI, and save the response as orbit/changes/rc17d-external-runner/.orbit-runs/external-system-<TS>.md"
+}
