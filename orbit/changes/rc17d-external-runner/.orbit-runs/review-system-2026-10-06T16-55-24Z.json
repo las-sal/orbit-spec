@@ -1,0 +1,140 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-06T16:55:24Z",
+  "change": "rc17d-external-runner",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "pass": "1",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+      "line": 28,
+      "title": "The launch requirement's refusal row names only the trail reader, not the save's two new refusals",
+      "recommendation": "Walk 2 gave orbit external save two more refusals — a return the report renderer rejects, and an aliased change directory or trail — and recorded both in orbit-external-runner's save table. The launch requirement in orbit-review-external closes its domain over failure rows, and its refusal row still reads 'no unfenced heading, names another change, or is rejected by the trail reader'. The body is right (Step 9d treats ANY save refusal as a failed run), so this is the row's wording only: widen it to 'or is refused by orbit external save for any other cause (per orbit-external-runner's save table)'."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 556,
+      "title": "After a failed handoff push, the fallback's handoff-blocked text tells the user to commit a prompt that is already committed",
+      "recommendation": "On the launch route the prompt and T0 are committed in Step 9a before the push; when that push fails and the run then fails, the fallback prints Step 8's handoff-blocked output, which leads 'Commit the pending work (including the prompt file above) and push'. Only the push is pending. Name the launch-route variant in the failed-run paragraph: 'Handoff blocked: the handoff commit <short-sha> is not pushed. Push, then hand off: …'."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Graded both walk logs against the generated reference, the two delta specs and the engine code. Every resolved entry is present at each site it claims: the -F commit form appears in the body, the launched-return requirement and the harness (which now runs the message through a real shell with a $(...) and backtick preamble that must not execute); the failed-run fallback carries the session note and the Repo correction, with the apply-after-launch case split out; the subshell and the repository-root anchor are both stated; the recovery line keeps --launch and the cleanup. The new renderer import closes no load-order problem: config list/set/unset, external runner and status all ran under a scratch config home, and unset of the preset now leaves no empty record. The residual check from the commit that added the external return lists eleven files, all inside the walks' edit records. Both remaining notes sit beside the walks' edits rather than in them: a domain row that names one of the save's three refusal kinds, and a pre-existing fallback string that predates the walk.",
+  "passes_run": [
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    {
+      "pass": "0",
+      "reason": "a VERIFICATION-genre pass skips the whole-change verify"
+    },
+    {
+      "pass": "4",
+      "reason": "orbit/lenses/ does not exist"
+    },
+    {
+      "pass": "5",
+      "reason": "orbit/lenses/ does not exist"
+    },
+    {
+      "pass": "6",
+      "reason": "a VERIFICATION-genre pass skips the whole-project audit"
+    }
+  ],
+  "verification": [
+    {
+      "title": "Return commit message interpolates external-AI preamble lines into a double-quoted shell string",
+      "file": "src/core/templates/workflows/review.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Failed-run paste fallback hands over a prompt whose ## Repo names the removed temp worktree",
+      "file": "src/core/templates/workflows/review.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Failed-run fallback prints the prompt for paste without the Recommended-session note the modified requirement owes",
+      "file": "src/core/templates/workflows/review.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "`orbit config unset externalRunner.preset` leaves a malformed `{}` record",
+      "file": "src/core/config-schema.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "`reachable` resolves a relative argv[0] against the caller's cwd while the launch runs it from the worktree",
+      "file": "src/core/external-runner.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Manual recovery line omits the worktree cleanup, the --launch check and the commit-alone step",
+      "file": "src/core/templates/workflows/review.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Successful saves can fail the mandatory report step",
+      "file": "src/core/external-runner.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "The return steps leave the destination checkout implicit",
+      "file": "src/core/templates/workflows/review.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "The saver follows aliases into another change’s trail",
+      "file": "src/core/external-runner.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Active review instructions still prohibit the behavior this change adds",
+      "file": "src/core/templates/workflows/review.ts",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 0 warning, 2 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-06T16-52-39Z",
+    "2026-10-06T16-53-09Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc17d-external-runner --from-file orbit/changes/rc17d-external-runner/.orbit-runs/review-system-2026-10-06T16-55-24Z.json"
+}
