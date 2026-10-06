@@ -8,20 +8,35 @@ as before. It SHALL NOT ingest findings: the saved return is walked by `/orbit:a
 The launch runs in the background, in a throwaway `git worktree` added at the handoff commit (per `Handoff preflight
 blocks unusable pull invocations`) OUTSIDE the repository directory, with the prompt file on the runner's standard
 input unchanged and `{output}` a path outside the repository; the body waits on the run's completion notification,
-because an external review outlasts the foreground limit. The return is saved through `orbit external save`.
+because an external review outlasts the foreground limit. The return is saved through `orbit external save`, passed
+the launch's T0 token as `--launch`.
+
+The record is never parsed by a shell, and the launch keeps it so: `{worktree}` and `{output}` are substituted into
+the resolved argv FIRST; the process runs with the worktree as its working directory (so an own argv that names no
+`{worktree}` still reads the fixed reviewed state); every element is passed as exactly one argument — on a shell
+command line, each element single-quoted with an embedded `'` written `'\''`; and the prompt file arrives by a `<`
+redirect. A recorded string is never handed to `sh -c`. On a launched run the prompt's `## Repo` line names the
+runner's working directory — a checkout of the handoff commit — never the live checkout's path.
 
 | member | covered by |
 |---|---|
 | recorded, `argv[0]` resolves on `PATH` | launched in the background in a worktree at the handoff commit; prompt on stdin; return written to `{output}` outside the repository |
-| recorded, `argv[0]` does not resolve | the prompt is printed for paste, naming the unresolved command — today's handoff |
+| recorded, `argv[0]` does not resolve | the prompt is printed for paste, with the one extra item naming the unresolved command (per `Prompt written to versioned file with chat invocation snippet`) |
 | nothing recorded | today's handoff, unchanged |
-| launched, exits non-zero or is stopped (including a runner that is not signed in) | no pass file; the failure is reported with its exit status and the paste invocation is printed as the fallback; the T0 stands, so the gate keeps presenting the external half |
+| launched, exits non-zero or is stopped (including a runner that is not signed in) | no pass file; the failure is reported with its exit status and the paste fallback is printed — the pull invocation when the handoff push landed, the handoff-blocked output when it did not; the T0 stands, so the gate keeps presenting the external half |
 | the return opens with lines above `# External Review:` | removed by `orbit external save`, which reports them; the body quotes them in the commit message |
-| the return carries no `# External Review:` heading | refused by `orbit external save`; treated as a failed run; the raw return stays outside the repository and its path is named |
+| the return carries no unfenced `# External Review:` heading, names another change, or is rejected by the trail reader | refused by `orbit external save`; treated as a failed run; the raw return stays outside the repository and its path is named |
+| an apply landed after the launch | refused by `orbit external save` (`--launch`); treated as a failed run — the return reviewed a superseded state — and the review is re-run |
 
 The failure rows are those observed on one runner (Codex, on rc08b's and rc17a's pairs) plus the absent and
 unresolved cases (D-rc17d-1). **Named limit.** Residual kind: a return that opens with the heading and parses yet is not a complete review (a truncated run)
 Residual method: running the three external readers over the return and reading its `**Reviewer**:` line at each runner's first recorded use
+
+**Named limit (a writable own runner).** The prompt tells a reviewer that can write files to write, commit and push
+its findings. A read-only runner cannot; an own argv that can may write, and commit from a detached head, inside the
+worktree. orbit cannot stop it: the worktree is removed with `--force` after the return is read, and the return saved
+through `orbit external save` is the only record. A runner whose own commit reaches a remote branch is outside this
+requirement.
 
 **Named limit (D-rc17d-7).** The T0 record's `next_recommended` stays the paste/save prose
 `orbit-run-summary-emit`'s `Review-external T0 multi-step recommendation` requires: it states the manual fallback
@@ -36,17 +51,19 @@ preset's name, or the basename of `argv[0]`) when one launched.
 #### Scenario: No recorded runner is today's handoff
 
 - **WHEN** the same invocation runs with no `externalRunner` record
-- **THEN** the chat output and the files written are those of the handoff before this requirement, byte for byte
+- **THEN** the chat output and the files written are those of the handoff before this requirement, byte for byte (the unresolved-runner case adds one item and is not covered by this scenario)
 
 #### Scenario: A failed run falls back to paste
 
 - **WHEN** the launched runner exits non-zero
-- **THEN** nothing is committed for the return, the failure is reported with its exit status, and the paste invocation is printed
+- **THEN** nothing is committed for the return, the failure is reported with its exit status and the raw return's path, and the paste fallback is printed — the pull invocation when the handoff push landed, the handoff-blocked output (per `Handoff preflight blocks unusable pull invocations`) when it did not
 
 ### Requirement: A launched return is committed alone and pushed
 
 When a launched runner returns, the body SHALL save the return through `orbit external save`, commit the saved file
-ALONE with the removed preamble lines quoted in the commit message, push, and remove the worktree.
+ALONE — `git add` of that one path, then `git commit --only` on it, so work the user staged during the run stays
+out — with the removed preamble lines quoted in the commit message, push, and remove the worktree with `--force`. The
+handoff commit is made the same way, on the prompt file and the T0 emit.
 
 | member | covered by |
 |---|---|
@@ -54,7 +71,7 @@ ALONE with the removed preamble lines quoted in the commit message, push, and re
 | the saved return | `external-<mode>-<TS>.md`, committed alone, the removed lines quoted in the message, then pushed |
 | a failed run | nothing committed; the T0 stands |
 | a failed push | reported; the commit stands; no retry |
-| the worktree | removed after the return is read; a failed removal is reported, never fatal |
+| the worktree | removed with `--force` after the return is read; a failed removal is reported, never fatal |
 
 Closure: the path writes the packaging pair and at most one pass file; each is a row, plus the push and the worktree
 (D-rc17d-6). Committing the return alone keeps the VERIFICATION confirm's residual-check base exact.
@@ -65,6 +82,49 @@ Closure: the path writes the packaging pair and at most one pass file; each is a
 - **THEN** exactly one new commit adds the saved `external-<mode>-<TS>.md` and nothing else, and it is pushed
 
 ## MODIFIED Requirements
+
+### Requirement: Review-external command available
+
+The system SHALL provide the external-review packaging capability — preparing a review request for an external AI (codex, fresh Claude, GPT, etc.) to perform a second-opinion review — invoked as `/orbit:review --as <mode> --reviewer external <change-name>` (D-arc Stage D5: the reviewer-class axis on the review command; the standalone `/orbit:review-external` launcher and skill are RETIRED from the generated surface, 16 → 15). The packaging behavior itself is UNCHANGED by the merge, and the RECORD VOCABULARY IS FROZEN: the T0 packaging emit keeps `command: "review-external"` and its `review-external-<TS>.json` filename, prompt files keep `external-prompt-<as>-<TS>.md`, and findings files keep `external-<as>-<TS>.md` — the gate reader's cadence slots, the orientation surface's WAITING arithmetic, the report ordinal's shared pass axis, and the address-reviews parser all key on those names and are untouched. Archived trails and historical emits citing the retired invocation form are records, never rewritten.
+
+#### Scenario: Invoke with change name and mode
+
+- **WHEN** the user invokes `/orbit:review <change-name> --as proposal --reviewer external` (or `--as system`)
+- **THEN** the command writes a self-contained markdown prompt to `orbit/changes/<change-name>/.orbit-runs/external-prompt-<as>-<TS>.md` and emits a short invocation snippet to chat — with no runner launched, the file path + paste-ready instruction for the external AI + the eventual findings path; with a recorded runner launched, the launch output instead (per `Prompt written to versioned file with chat invocation snippet`); the file is intended to be committed
+
+#### Scenario: Invoke without change name
+
+- **WHEN** the user invokes `/orbit:review --reviewer external` with no positional
+- **THEN** the command runs `orbit list --json` and prompts via `AskUserQuestion` to pick a change
+
+#### Scenario: Record vocabulary frozen across the merge
+
+- **WHEN** the external-handoff branch packages a prompt and emits T0
+- **THEN** the emit carries `command: "review-external"` in a `review-external-<TS>.json` file — byte-compatible with pre-merge records — and every downstream consumer (gates, orientation, report ordinal, ingest parser) behaves identically to pre-merge behavior
+
+### Requirement: Recommended-session note in chat output
+
+The system SHALL emit a recommendation about which external-AI session the user should paste the invocation into, based on iteration number and prior reviewer history, whenever the prompt is printed for paste. When a recorded runner is launched (per `A recorded runner launches the external review`) there is no session to choose: the runner line takes the note's place, and no recommendation is emitted.
+
+#### Scenario: Recommendation appears in chat
+
+- **WHEN** the chat invocation snippet is emitted for paste
+- **THEN** it includes a single short line labeled `Recommended session:` (or equivalent) before the prompt file path, summarizing which fresh session to use — any AI at iteration 1, a different AI at iteration 2, a previously-unused AI from iteration 3 (a continued same-AI session is never recommended: an external pass is REVIEW pass genre, and a continued session carries its prior findings in its own head — `orbit-conventions`' `Review mode decision framework` owns that rule)
+
+#### Scenario: Recommendation logic by iteration
+
+- **WHEN** the command computes the recommendation
+- **THEN** it uses this logic:
+  - **Iteration 1**: `Fresh session recommended — first external pass; sets independent baseline. Pick any AI (codex / fresh Claude / GPT / etc.).`
+  - **Iteration 2**: `Fresh session in a DIFFERENT AI than iter 1's reviewer recommended (model diversity catches different blind spots). If iter 1 was <prior reviewer>, try <suggest different model>.`
+  - **Iteration 3+**: `Fresh session in a previously-unused AI recommended (maximum independence); when every available AI has reviewed this change in this mode, a fresh session of the least-recently-used.`
+  - Least-recently-used is decided by ONE ordering input: each reviewer's latest `external-<as>-*.md` token in this mode; the reviewer whose latest token is oldest is least-recently-used
+  - Prior-reviewer identity is read from the `**Reviewer**:` field of existing `external-<as>-*.md` files in `.orbit-runs/`
+
+#### Scenario: No prior data → iter 1 recommendation
+
+- **WHEN** `.orbit-runs/` contains no prior `external-<as>-*.md` files for the current mode
+- **THEN** the iter 1 recommendation is emitted regardless of how many runs exist for other modes
 
 ### Requirement: Prompt written to versioned file with chat invocation snippet
 
@@ -82,21 +142,23 @@ The system SHALL write the full handoff prompt to a versioned, committed file in
 
 #### Scenario: Chat invocation snippet
 
-- **WHEN** the file is written and no runner is launched (none recorded, `reachable: false`, or the preflight blocks the launch — per `A recorded runner launches the external review`)
+- **WHEN** the file is written and no runner is launched (none recorded, or a recorded runner with `reachable: false` — per `A recorded runner launches the external review`)
 - **THEN** the chat output contains the following items, in this order:
   - **(optional)** Mode-inference note when `--as` was omitted (per the State-based inference scenario): `Generating external-review prompt as \`<as>\` (inferred from tasks state).`
   - **(required)** Recommended-session note (per the Recommended-session requirement): a single line summarizing which AI session the user should paste into.
   - **(required)** The prompt file path.
   - **(conditional — handoff preflight gate, per the Handoff-preflight requirement)** ONE of: the affirmative committed-and-pushed attestation (`Prompt committed (<short-sha>) and pushed to <remote>/<branch>`, or the local-path equivalent) immediately followed by the copy-paste-ready pull invocation (`Pull <repo URL> and read <prompt-file-path>. Follow its instructions; write findings to the path specified inside.`) when the preflight is satisfied, OR the handoff-blocked output (commit+push action leading; pull text framed as the after-push step) when it is not.
   - **(required)** The eventual findings path the user will pass to `/orbit:address-reviews --from-file` once findings come back.
+  - **(conditional — a recorded runner that does not resolve)** `Recorded runner <argv[0]> not found on PATH — printing the prompt for paste.`, after the findings path.
 
-  No other items are emitted; required items are always present in the specified order.
-
+  No other items are emitted; required items are always present in the specified order. With nothing recorded the output is the handoff's before the runner existed, byte for byte.
 
 #### Scenario: Chat output when a runner launches
 
 - **WHEN** the file is written and a recorded, reachable runner is launched (per `A recorded runner launches the external review`)
-- **THEN** the chat output contains, in this order: the optional mode-inference note; the runner line `Launching <name> — your recorded external runner; no paste needed` in place of the recommended-session note; the prompt file path; the launch attestation `Prompt committed (<short-sha>) and pushed to <remote>/<branch>; launched <name> at that commit` (the push clause replaced by the failure or local-path note when the push did not land); and the findings path the return will be saved to. When the run ends, the output adds the saved path, `Findings committed (<short-sha>) and pushed`, and the count of removed preamble lines, then the return's rendered report; a failed run adds instead the failure (exit status, and the raw return's path when one exists) followed by the paste invocation as the fallback
+- **THEN** the chat output contains, in this order: the optional mode-inference note; the runner line `Launching <name> — your recorded external runner; no paste needed` in place of the recommended-session note; the prompt file path; the launch attestation `Prompt committed (<short-sha>); launched <name> at that commit`, followed by `pushed to <remote>/<branch>` only when the push landed (else the push failure, or the local-path note); the raw output path, with the manual recovery `orbit external save <change> --as <mode> --from <output path>` should the session end before the run does; and the findings path as `external-<mode>-<TS>.md`, its token set when the return is saved. When the run ends, the output adds the saved path, `Findings committed (<short-sha>)` followed by `and pushed` only when that push landed, and the count of removed preamble lines, then the return's rendered report; a failed run adds instead the failure (exit status, and the raw return's path when one exists) followed by the paste fallback per `A recorded runner launches the external review`
+
+
 #### Scenario: Mode-specific sections
 
 - **WHEN** the prompt file is written in `--as proposal` mode
@@ -258,9 +320,9 @@ the user will commit it manually.
 The system SHALL verify the handoff state before emitting a pull-based invocation: the working tree is clean (`git status --porcelain` empty) AND no local commits are unpushed (`git rev-list @{u}..HEAD --count` is zero, when an upstream exists). When either check fails, the pull invocation is withheld; the chat output instead leads with the required commit-and-push action (naming the just-written prompt file among the pending work) and frames the pull text as the after-push step. A repo with no remote satisfies the preflight via the local-path handoff route.
 
 When a recorded runner resolves and is reachable, the same two facts decide the LAUNCH. A dirty working tree,
-read BEFORE the prompt file is written, means the reviewed state is not committed: the runner is NOT launched, and
-the chat output is the handoff-blocked output above, naming the runner as launchable once the pending work is
-committed. A clean tree is satisfied by the launch itself: the body commits the prompt file and the T0 emit — and
+read BEFORE the prompt file is written, means the reviewed state is not committed: the runner is NOT launched, NOTHING
+is written — no prompt file, no T0 — and the chat output names the dirty-tree cause and says to commit the pending work
+and re-run the review, which then launches. A clean tree is satisfied by the launch itself: the body commits the prompt file and the T0 emit — and
 nothing else — as the HANDOFF COMMIT, then pushes; unpushed commits already on the branch go with that push. A
 failed push is reported and the launch proceeds from the local commit, because the runner reads a worktree and needs
 no remote; a repository with no remote launches the same way.
@@ -288,7 +350,7 @@ no remote; a repository with no remote launches the same way.
 #### Scenario: A dirty tree with a runner does not launch
 
 - **WHEN** a reachable runner is recorded and `git status --porcelain` reports uncommitted changes before the prompt is written
-- **THEN** the runner is not launched; the chat output is the handoff-blocked output naming the dirty-tree cause, and says the runner launches once the pending work is committed and the review is re-run
+- **THEN** the runner is not launched and no prompt file or T0 is written; the chat output names the dirty-tree cause and says the runner launches once the pending work is committed and the review is re-run
 
 ## REMOVED Requirements
 

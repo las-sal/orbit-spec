@@ -1,0 +1,694 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-06T14:46:45Z",
+  "change": "rc17d-external-runner",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc17d-external-runner/.orbit-runs/review-proposal-2026-10-06T14-32-17Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-06T14-32-17Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 9,
+    "suggestion": 9
+  },
+  "pushback_verification": "All 18 verified against current state before editing; none stale. Two facts checked at triage: the trail reader and renderer find the heading anywhere outside a fence (so the proposal's stated reason was false, the requirement holds for the walk's routing), and `orbit config set` runs validateConfig on the merged result.",
+  "resolution_summary": {
+    "resolved": 18,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Registering externalRunner as a known key does not make `orbit config set externalRunner.preset codex` succeed",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 3,
+      "classification": "trivial_fix",
+      "action": "Admitted exactly one nested path, `externalRunner.preset`, and put the record's shape into the whole-config validation `orbit config set` runs, so a set over a recorded argv is refused naming `orbit config unset externalRunner`; added the switching scenario; task 1.1 and 1.4 rewritten.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17d-external-runner/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "register it among `config-schema.ts`'s known top-level keys; test that"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc17d-external-runner/specs/orbit-external-runner/spec.md",
+            "text": "Switching from an own argv to the preset needs an unset first"
+          },
+          {
+            "path": "orbit/changes/rc17d-external-runner/tasks.md",
+            "text": "admit exactly one nested path under it, `externalRunner.preset`"
+          }
+        ],
+        "searched": [
+          "validateConfigKeyPath",
+          "validateConfig",
+          "externalRunner.preset"
+        ],
+        "scope": [
+          "src/core/config-schema.ts",
+          "src/commands/config.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The `orbit external runner --json` output shape is unspecified, yet the review body and every launch test key on it",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-external-runner/spec.md",
+      "line": 8,
+      "classification": "trivial_fix",
+      "action": "Fenced the three exact JSON shapes of `orbit external runner --json` ({\"runner\": null} is none) and the save command's `{\"path\", \"removed\"}` object; every warning goes to standard error; scenarios and task 2.1 aligned.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17d-external-runner/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "and `--json` prints the same as one"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc17d-external-runner/specs/orbit-external-runner/spec.md",
+            "text": "{\"runner\": null}"
+          },
+          {
+            "path": "orbit/changes/rc17d-external-runner/tasks.md",
+            "text": "prints exactly one of the three JSON shapes"
+          }
+        ],
+        "searched": [
+          "--json",
+          "prints `none`"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Init's 'own argv' choice has no stated input method, and the obvious one (a typed command line) is shell splitting",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-external-runner/spec.md",
+      "line": 109,
+      "classification": "trivial_fix",
+      "action": "An own argv is entered at init as one JSON array checked against the shape table (a refused value asks again); a malformed present record is shown with its warning and none of the choices keeps it; table rows and tasks 3.1/3.2 aligned.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17d-external-runner/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "When a record is present the step shows it and the default answer keeps it."
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc17d-external-runner/specs/orbit-external-runner/spec.md",
+            "text": "An own argv is entered as ONE JSON array typed at a single prompt"
+          },
+          {
+            "path": "orbit/changes/rc17d-external-runner/tasks.md",
+            "text": "an own argv typed as one JSON array"
+          }
+        ],
+        "searched": [
+          "own argv",
+          "init"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "'Nothing runs through a shell' cannot hold for a launch the body performs through background Bash, and the launch line's composition is unspecified",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-external-runner/spec.md",
+      "line": 80,
+      "classification": "trivial_fix",
+      "action": "Reworded the shape rule to 'the record is never parsed by a shell' and stated the launch composition in the launch requirement: placeholders substituted first, the worktree as working directory, every element single-quoted, the prompt by `<` redirect, never `sh -c`; design D9; tasks 4.3, 4.6 and 5.1 (an argv[0] path with a space and a quote).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+          "orbit/changes/rc17d-external-runner/design.md",
+          "orbit/changes/rc17d-external-runner/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "malformed: nothing runs through a shell"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+            "text": "A recorded string is never handed to `sh -c`"
+          },
+          {
+            "path": "orbit/changes/rc17d-external-runner/design.md",
+            "text": "### D9 — the launch passes each argv element as one argument"
+          }
+        ],
+        "searched": [
+          "through a shell",
+          "sh -c",
+          "quot"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/rc17d-external-runner/explore.md",
+            "why": "history: the exploration record keeps the wording it was written with"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "`reachable: false` is placed in the fixed-item snippet scenario, but the launch requirement adds an item naming the unresolved command",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-review-external/spec.md",
+      "line": 85,
+      "classification": "trivial_fix",
+      "action": "Narrowed the no-launch snippet scenario to none recorded or `reachable: false`, added the conditional item naming the unresolved command, and limited the byte-for-byte promise to 'nothing recorded'; the launch table row points at the item.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "or the preflight blocks the launch"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+            "text": "not found on PATH — printing the prompt for paste"
+          }
+        ],
+        "searched": [
+          "reachable: false",
+          "byte for byte"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The launch table has no row for a return that carries the heading but fails the readers' shape check",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-review-external/spec.md",
+      "line": 13,
+      "classification": "trivial_fix",
+      "action": "`orbit external save` now checks the cut result with the trail reader and refuses what it rejects; the launch table treats the refusal as a failed run; scenario for a heading-only return.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+          "orbit/changes/rc17d-external-runner/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc17d-external-runner/specs/orbit-external-runner/spec.md",
+            "text": "check the result with the trail reader that decides whether a return is an accepted pass"
+          },
+          {
+            "path": "orbit/changes/rc17d-external-runner/specs/orbit-external-runner/spec.md",
+            "text": "A heading-bearing return the reader rejects is refused"
+          }
+        ],
+        "searched": [
+          "trail reader",
+          "shape check"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The save command's open domain misses inputs the observed runner and the prompt itself make likely",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-external-runner/spec.md",
+      "line": 137,
+      "classification": "trivial_fix",
+      "action": "Rewrote the save requirement as eight ordered steps with a domain table: cut at the first heading OUTSIDE every fence (shared fence tracker), byte-order mark dropped, another change's heading refused, missing --from refused, trailing text kept as a named limit; the stated reason corrected to the walk's leading-token routing (the trail reader and renderer tolerate a preamble — verified at trail.ts:428 and report-render.ts); design D2, proposal and Context aligned.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+          "orbit/changes/rc17d-external-runner/design.md",
+          "orbit/changes/rc17d-external-runner/proposal.md",
+          "orbit/changes/rc17d-external-runner/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "find the first line of the return that begins with",
+          "both external readers refuse",
+          "that the parsers refuse"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc17d-external-runner/specs/orbit-external-runner/spec.md",
+            "text": "a heading inside a fence in the preamble (a quoted template)"
+          },
+          {
+            "path": "orbit/changes/rc17d-external-runner/design.md",
+            "text": "the walk routes\na `--from-file` source by its leading token"
+          }
+        ],
+        "searched": [
+          "# External Review:",
+          "refuse",
+          "preamble",
+          "fence"
+        ],
+        "scope": [
+          "src/core/artifact-graph/trail.ts",
+          "src/core/report-render.ts",
+          "orbit/specs/orbit-address-reviews/spec.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "orbit-review's baseline still calls the external class 'the cross-vendor handoff a human carries'",
+      "marker_source": "internal-review",
+      "file": "orbit/specs/orbit-review/spec.md",
+      "line": 226,
+      "classification": "decision_required",
+      "action": "Handed both orbit-review sentences (the 'External reviewer class dispatches to the handoff branch' scenario and the --fresh requirement's 'cross-vendor handoff a human carries') to rc17b as a named residual: design Risks, proposal Impact, rc17b's charter, task 6.5.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17d-external-runner/design.md",
+          "orbit/changes/rc17d-external-runner/proposal.md",
+          "orbit/architecture/clean-up-review-cycle.md",
+          "orbit/changes/rc17d-external-runner/tasks.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/specs/orbit-review/spec.md",
+            "reason": "baseline spec; add a delta to your current change's specs/<capability>/spec.md to capture this ripple"
+          }
+        ]
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc17d-external-runner/design.md",
+            "text": "go stale in letter, handed to rc17b"
+          },
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "text": "It also takes a residual rc17d hands it"
+          }
+        ],
+        "searched": [
+          "cross-vendor handoff",
+          "no review passes run"
+        ],
+        "scope": [
+          "orbit/specs/orbit-review/spec.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "Sal: \"walk all\" — taking the recommendation: name both orbit-review sentences as a residual handed to rc17b, which modifies orbit-review anyway, rather than a fourth capability."
+    },
+    {
+      "severity": "WARNING",
+      "title": "No task rewrites the handoff reference's opening 'Does NOT run the review … solely to package the handoff' paragraph",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 26,
+      "classification": "trivial_fix",
+      "action": "Task 4.5 now rewrites the reference's opening paragraph and its 'emits two things' intro; task 4.7 checks the generated surface for the old opening.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc17d-external-runner/tasks.md",
+            "text": "Rewrite the reference's opening paragraph"
+          }
+        ],
+        "searched": [
+          "Does NOT run the review",
+          "two things"
+        ],
+        "scope": [
+          "src/core/templates/workflows/review.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "On the no-remote route the prompt's `## Repo` line names the live checkout, undoing D4's fixed reviewed state",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 59,
+      "classification": "trivial_fix",
+      "action": "On a launched run the prompt's `## Repo` line names the runner's working directory, never the live checkout's path; design D7 and task 4.2.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17d-external-runner/design.md",
+          "orbit/changes/rc17d-external-runner/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+            "text": "never the live checkout's path"
+          },
+          {
+            "path": "orbit/changes/rc17d-external-runner/tasks.md",
+            "text": "the prompt's `## Repo` filled with the runner's working directory"
+          }
+        ],
+        "searched": [
+          "## Repo",
+          "local path"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The launch output does not name the `{output}` path, so a run that outlives the session cannot be recovered",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-review-external/spec.md",
+      "line": 99,
+      "classification": "trivial_fix",
+      "action": "The launch output prints the raw output path with the manual `orbit external save` recovery; task 4.3.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17d-external-runner/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+            "text": "with the manual recovery `orbit external save"
+          },
+          {
+            "path": "orbit/changes/rc17d-external-runner/tasks.md",
+            "text": "print the raw output path and the manual `orbit external save` recovery"
+          }
+        ],
+        "searched": [
+          "{output}"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Launched chat output promises 'the findings path the return will be saved to', which is not known until save runs",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-review-external/spec.md",
+      "line": 99,
+      "classification": "trivial_fix",
+      "action": "The launch output names the findings path as `external-<mode>-<TS>.md`, its token set when the return is saved.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "and the findings path the return will be saved to"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+            "text": "its token set when the return is saved"
+          }
+        ],
+        "searched": [
+          "findings path"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "A write-capable own-argv runner will follow the unchanged prompt's 'write, commit and push' steps inside the detached worktree",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 79,
+      "classification": "trivial_fix",
+      "action": "Named the writable own-runner limit in the launch requirement (orbit cannot stop it; the worktree is removed with --force; the saved return is the only record); design D7 and Risks point at it.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+          "orbit/changes/rc17d-external-runner/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+            "text": "**Named limit (a writable own runner).**"
+          }
+        ],
+        "searched": [
+          "commit and push",
+          "writable"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "`git commit --only` on the new prompt and T0 fails unless they are added first",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 23,
+      "classification": "trivial_fix",
+      "action": "Tasks 4.2 and 4.4 run `git add` then `git commit --only`; the commit requirement says so, and that staged work stays out.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+          "orbit/changes/rc17d-external-runner/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc17d-external-runner/tasks.md",
+            "text": "`git add` then `git commit --only` on the prompt and the T0"
+          },
+          {
+            "path": "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+            "text": "so work the user staged during the run stays"
+          }
+        ],
+        "searched": [
+          "--only"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "A blocked launch leaves its prompt and T0 behind when the user re-runs as instructed",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-review-external/spec.md",
+      "line": 291,
+      "classification": "trivial_fix",
+      "action": "With a reachable runner and a dirty tree the branch writes nothing — no prompt, no T0 — and says commit then re-run; preflight paragraph, scenario, design D5 and task 4.2 aligned.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17d-external-runner/design.md",
+          "orbit/changes/rc17d-external-runner/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "naming the runner as launchable once the pending work is"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+            "text": "no prompt file or T0 is written"
+          },
+          {
+            "path": "orbit/changes/rc17d-external-runner/design.md",
+            "text": "so a re-run after the user commits writes one prompt, not two"
+          }
+        ],
+        "searched": [
+          "dirty",
+          "handoff-blocked"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The stage charter still says the engine surfaces the record in `orbit status --json`",
+      "marker_source": "internal-review",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 3098,
+      "classification": "trivial_fix",
+      "action": "rc17d's charter now names `orbit external runner --json` (corrected at propose) and points at the change's explore.md.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the engine surfaces the record in `orbit status --json` and never executes it"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "text": "prints the resolved record through its own read command"
+          }
+        ],
+        "searched": [
+          "status --json",
+          "orbit/explore/rc17d-external-runner"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "No at-archive task moves CLAUDE.md's marked capability count",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 38,
+      "classification": "trivial_fix",
+      "action": "Added at-archive task 6.4: move CLAUDE.md's `src:capabilities` mark 23 → 24 and run `orbit validate --sources`.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc17d-external-runner/tasks.md",
+            "text": "Move CLAUDE.md's `src:capabilities` mark from 23 to 24"
+          }
+        ],
+        "searched": [
+          "src:capabilities"
+        ],
+        "scope": [
+          "CLAUDE.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Missing blank line between the `Chat output when a runner launches` scenario and the next scenario heading",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-review-external/spec.md",
+      "line": 99,
+      "classification": "trivial_fix",
+      "action": "Removed the stray blank line; every scenario is separated by exactly one blank line.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [],
+        "searched": [
+          "#### Scenario: Mode-specific sections"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "All 18 findings of the fresh pass resolved by repair: the config edit path, the two commands' JSON shapes, init's argv input, the launch composition, a fence-aware save with a reader check, the launch output's paths and push-conditional lines, the dirty-tree rule, and the orbit-review residual handed to rc17b (Sal: walk all).",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc17d-external-runner",
+  "ripple_misses": 0
+}

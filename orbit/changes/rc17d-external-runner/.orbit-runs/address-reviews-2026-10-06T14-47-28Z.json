@@ -1,0 +1,290 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-06T14:47:28Z",
+  "change": "rc17d-external-runner",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc17d-external-runner/.orbit-runs/external-proposal-2026-10-06T14-38-19Z.md",
+  "source_command": null,
+  "source_token": "2026-10-06T14-38-19Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 2,
+    "warning": 6,
+    "suggestion": 2
+  },
+  "pushback_verification": "All 10 verified against current state; 6 converge with the fresh pass and are recorded stale naming its log; both CRITICAL reproductions re-derived (C1 not reproduced after the fence-aware cut; C2 reproduced against the artifact as reviewed, then fixed). The commentary's claim that the readers tolerate a preamble was verified (trail.ts:428, report-render.ts) and corrected in the proposal, design and spec.",
+  "resolution_summary": {
+    "resolved": 4,
+    "stale_suppressed": 6,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "Normalization can hide real findings by changing fence boundaries",
+      "marker_source": "external",
+      "file": "orbit/changes/rc17d-external-runner/specs/orbit-external-runner/spec.md",
+      "line": 137,
+      "classification": "stale",
+      "action": "converged with the fresh pass's finding; walked in log address-reviews-2026-10-06T14-46-45Z",
+      "evidence": "Re-derived the reproduction against the current spec: the raw return is prose, an opened fence holding D0, its closing fence, then D1. Step 3 skips D0's heading (inside the fence) and cuts at D1's heading, the first unfenced one; D1's CRITICAL survives and the step-6 reader check counts it. Expected (D1's finding visible) now matches observed. Converged with the fresh pass's 'The save command's open domain misses inputs the observed runner and the prompt itself make likely', resolved in address-reviews-2026-10-06T14-46-45Z: `orbit external save` now cuts at the first `# External Review:` line OUTSIDE every fence (shared CommonMark fence tracker), and a scenario carries this case.",
+      "outcome": "stale",
+      "reproduction_rerun": "not-reproduced"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "An older snapshot can satisfy review coverage after a newer apply",
+      "marker_source": "external",
+      "file": "orbit/changes/rc17d-external-runner/specs/orbit-external-runner/spec.md",
+      "line": 139,
+      "classification": "decision_required",
+      "reproduction_rerun": "reproduced",
+      "evidence": "Re-derived against the artifact as reviewed: the save step wrote the return under its save-time token and nothing compared it with the apply at 10-05; isPassStale reads only token order, so the gate passed. Reproduced.",
+      "action": "Added `--launch <T0 token>` to `orbit external save`: it refuses when any apply-*.json token on the trail is later than the launch, and the launch path treats that as a failed run that is re-run; step 7 of the save requirement, a scenario, a table row in the launch requirement, design D2's 'Why --launch' (the manual route keeps the gap), tasks 2.2-2.4 and 4.4.",
+      "ratified_via": "chat",
+      "resolution": "Sal: \"walk all\" — taking option A: `orbit external save --launch <T0 token>` refuses a return older than an apply; the run is failed and re-run.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "orbit external save takes --launch <T0 token> and refuses when an apply token is later; the run is failed and re-run."
+          },
+          {
+            "label": "B",
+            "body": "A named limit routed to a program question; the manual route has the same gap."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+          "orbit/changes/rc17d-external-runner/design.md",
+          "orbit/changes/rc17d-external-runner/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc17d-external-runner/specs/orbit-external-runner/spec.md",
+            "text": "A return older than an apply is refused"
+          },
+          {
+            "path": "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+            "text": "an apply landed after the launch"
+          },
+          {
+            "path": "orbit/changes/rc17d-external-runner/design.md",
+            "text": "**Why `--launch`**"
+          }
+        ],
+        "searched": [
+          "isPassStale",
+          "apply-",
+          "freshness"
+        ],
+        "scope": [
+          "src/core/artifact-graph/gates.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The retirement misses a contradictory fourth capability",
+      "marker_source": "external",
+      "file": "orbit/changes/rc17d-external-runner/proposal.md",
+      "line": 49,
+      "classification": "decision_required",
+      "action": "Two parts. The orbit-review baseline sentences (the 'External reviewer class dispatches to the handoff branch' scenario at :34 and its trunk repeat in the review body) are handed to rc17b as a named residual, with the fresh pass's converged finding (log address-reviews-2026-10-06T14-46-45Z). The orbit-review-external parts are fixed in this change: MODIFIED 'Review-external command available' (its scenario's snippet is the paste instruction only with no runner launched) and 'Recommended-session note in chat output' (emitted only when the prompt is printed for paste; the runner line takes its place on a launch).",
+      "ratified_via": "chat",
+      "resolution": "Sal: \"walk all\" — taking the recommendation: hand the orbit-review sentences to rc17b; fix the two orbit-review-external requirements here.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17d-external-runner/design.md",
+          "orbit/changes/rc17d-external-runner/proposal.md",
+          "orbit/architecture/clean-up-review-cycle.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/specs/orbit-review/spec.md",
+            "reason": "baseline spec; add a delta to your current change's specs/<capability>/spec.md to capture this ripple"
+          }
+        ]
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+            "text": "whenever the prompt is printed for paste"
+          },
+          {
+            "path": "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+            "text": "with a recorded runner launched, the launch output instead"
+          }
+        ],
+        "searched": [
+          "paste-ready instruction",
+          "Recommended session",
+          "no review passes run"
+        ],
+        "scope": [
+          "orbit/specs/orbit-review/spec.md",
+          "orbit/specs/orbit-review-external/spec.md",
+          "src/core/templates/workflows/review.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Registering the config key does not enable the documented preset setter",
+      "marker_source": "external",
+      "file": "orbit/changes/rc17d-external-runner/tasks.md",
+      "line": 3,
+      "classification": "stale",
+      "action": "converged with the fresh pass's finding; walked in log address-reviews-2026-10-06T14-46-45Z",
+      "evidence": "Converged with the fresh pass's 'Registering externalRunner as a known key does not make `orbit config set externalRunner.preset codex` succeed', resolved in address-reviews-2026-10-06T14-46-45Z: the key-path rule admits `externalRunner.preset`, the record's shape joins validateConfig, and a set over a recorded argv is refused naming the unset (switching scenario added).",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "A heading-bearing malformed return follows the success path",
+      "marker_source": "external",
+      "file": "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+      "line": 48,
+      "classification": "stale",
+      "action": "converged with the fresh pass's finding; walked in log address-reviews-2026-10-06T14-46-45Z",
+      "evidence": "Converged with the fresh pass's 'The launch table has no row for a return that carries the heading but fails the readers' shape check', resolved in address-reviews-2026-10-06T14-46-45Z: `orbit external save` checks the cut result with the trail reader and refuses what it rejects, before any commit; the launch table treats that as a failed run (raw path named, paste fallback).",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Push failures are not reflected consistently in completion and fallback output",
+      "marker_source": "external",
+      "file": "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+      "line": 99,
+      "classification": "trivial_fix",
+      "action": "Both attestations say 'pushed' only when that push landed; a failed run's paste fallback is the pull invocation when the handoff push landed and the handoff-blocked output when it did not (failed-run scenario, launch table row, task 4.4).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17d-external-runner/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the paste invocation is printed as the fallback"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+            "text": "followed by `pushed to <remote>/<branch>` only when the push landed"
+          },
+          {
+            "path": "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+            "text": "the handoff-blocked output (per `Handoff preflight blocks unusable pull invocations`) when it did not"
+          }
+        ],
+        "searched": [
+          "and pushed",
+          "paste invocation"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/rc17d-external-runner/explore.md",
+            "why": "history: the exploration record keeps the wording it was written with"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The unchanged prompt gives writable custom runners conflicting ownership",
+      "marker_source": "external",
+      "file": "orbit/changes/rc17d-external-runner/design.md",
+      "line": 79,
+      "classification": "stale",
+      "action": "converged with the fresh pass's finding; walked in log address-reviews-2026-10-06T14-46-45Z",
+      "evidence": "Converged with the fresh pass's 'A write-capable own-argv runner will follow the unchanged prompt's 'write, commit and push' steps inside the detached worktree', resolved in address-reviews-2026-10-06T14-46-45Z: a named limit for writable own runners in the launch requirement; the worktree is removed with --force and the saved return is the only record.",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The machine-readable command interfaces lack concrete schemas",
+      "marker_source": "external",
+      "file": "orbit/changes/rc17d-external-runner/specs/orbit-external-runner/spec.md",
+      "line": 8,
+      "classification": "stale",
+      "action": "converged with the fresh pass's finding; walked in log address-reviews-2026-10-06T14-46-45Z",
+      "evidence": "Converged with the fresh pass's 'The `orbit external runner --json` output shape is unspecified, yet the review body and every launch test key on it', resolved in address-reviews-2026-10-06T14-46-45Z: the runner's three JSON shapes are fenced and the save command prints {\"path\", \"removed\"}; warnings go to standard error.",
+      "outcome": "stale"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The architecture charter still names the abandoned read surface",
+      "marker_source": "external",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 3099,
+      "classification": "stale",
+      "action": "converged with the fresh pass's finding; walked in log address-reviews-2026-10-06T14-46-45Z",
+      "evidence": "Converged with the fresh pass's 'The stage charter still says the engine surfaces the record in `orbit status --json`', resolved in address-reviews-2026-10-06T14-46-45Z: the charter names `orbit external runner --json` and points at the change's explore.md.",
+      "outcome": "stale"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "State what the disposable-repository test actually executes",
+      "marker_source": "external",
+      "file": "orbit/changes/rc17d-external-runner/tasks.md",
+      "line": 32,
+      "classification": "trivial_fix",
+      "action": "Task 5.1 names its instrument: the reference's launch commands transcribed into a disposable-repo harness, as the PR-lifecycle harness does, with its limit stated in the test (it proves the commands, not that an agent follows the body).",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc17d-external-runner/tasks.md",
+            "text": "runs the reference's launch commands TRANSCRIBED"
+          }
+        ],
+        "searched": [
+          "pr-lifecycle",
+          "harness"
+        ],
+        "scope": [
+          "test/integration/pr-lifecycle"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "External pass walked in engine order after the fresh log: 4 resolved (the late-return check, Sal: A; the two orbit-review-external requirements plus the orbit-review residual handed to rc17b; push-conditional attestations; the harness instrument), 6 stale as converged with address-reviews-2026-10-06T14-46-45Z, the fence CRITICAL re-derived not-reproduced against the fixed rule. The block (27 tasks against the under-20 ceiling) is declared in design D10 on Sal's word.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal rc17d-external-runner",
+  "ripple_misses": 0
+}

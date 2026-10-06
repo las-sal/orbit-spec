@@ -3096,13 +3096,14 @@ Split from rc17b 2026-10-06 (Sal) at its exploration, under R-crc-9: its ninth p
 capability count before anything was proposed (D-rc17b-1, `orbit/explore/rc17b-blind-pair-command/`). It carries
 the half of rc17b's charter that stands alone. Charter: the external runner is the USER's, recorded in the per-user
 global config at `orbit init`, which explains the concept and offers the Codex preset, an own command or none
-(D-bpc-2, D-bpc-11); the engine surfaces the record in `orbit status --json` and never executes it; a recorded and
+(D-bpc-2, D-bpc-11); the engine prints the resolved record through its own read command, `orbit external runner
+--json` (corrected at propose: `orbit-orientation` enumerates the status JSON key set), and never executes it; a recorded and
 reachable runner launches EVERY external half — today's single `--reviewer external` first, the pair's half once
 rc17b ships — in the background, its return normalized (lines above `# External Review:` removed and quoted in the
 commit message) and committed without hand edits; otherwise the prompt is printed for paste, today's handoff
 unchanged (D-bpc-1, D-bpc-5, D-bpc-14). A runner on PATH with nothing recorded launches nothing. The setup note lives
 in init's output, owned by the new capability, so `orbit-onboard` is not touched. The decisions and their Mechanism
-entries live in `orbit/explore/rc17d-external-runner/` (D-rc17d-1..7, re-entered from rc17a's archived exploration and
+entries live in the change's `explore.md` (`orbit/changes/rc17d-external-runner/`, D-rc17d-1..8, re-entered from rc17a's archived exploration and
 re-read for the single external path). Capabilities: an ADDED runner capability (no baseline owns init's
 prompts, the global config or the record's status field), `orbit-review-external` (its `Command does not run the
 review or ingest findings` and handoff requirements gain the launched branch), `orbit-conventions` (the external
@@ -3124,7 +3125,11 @@ Complete: [ ]
 init setup step, auto-launch of every external half (D-bpc-1's dispatch, D-bpc-2, -5, -11, -14) — moved to
 `rc17d-external-runner`, on which this stage now depends, and with it this stage's exits (2) and (3) (D-rc17b-1).
 This stage keeps the one-command pair: D-bpc-3, -4, -13, the three shorthands and the `blind-pair` presentation row,
-across `orbit-review` and `orbit-engine-gates` — two capabilities. The charter is kept as written; its capability
+across `orbit-review` and `orbit-engine-gates` — two capabilities. It also takes a residual rc17d hands it (rc17d's
+proposal walk, 2026-10-06): two `orbit-review` sentences describe the external class as packaging-only — the scenario
+"External reviewer class dispatches to the handoff branch" ("no review passes run in this invocation", repeated in the
+review body's trunk) and the `--fresh` requirement's "the cross-vendor handoff a human carries" — which a recorded
+runner makes false in letter; correcting them inside rc17d would have made `orbit-review` its fourth capability. The charter is kept as written; its capability
 sentence and exits are superseded by this paragraph and the exit line below.
 
 Declared 2026-10-05 (Sal) from the rc17 exploration's split (D-bpc-9). It depends on rc17a because the
