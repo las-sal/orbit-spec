@@ -34,6 +34,7 @@ gates:
 `;
 
 describe('merged external invocation (D5)', () => {
+  // @scenario behaviour orbit-engine-gates :: Single-voiced canonical-next computation :: External slot renders the merged form
   it('the external cadence slot renders /orbit:review --reviewer external, with the slot key for hints', () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'orbit-gates-'));
     try {

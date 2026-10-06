@@ -431,6 +431,7 @@ describe('rc02c budget — a DECLARED EXPECTATION nothing consults; the RECORD i
   // rc02c: this trail used to set `budgetExhausted`, carry a `budget spent: 3 of 3` reason clause
   // and render a BUDGET-SPENT token. Effort is RECORDED, never TARGETED (R-crc-11(h)), so the
   // over-budget gate is now indistinguishable from any other unpassed gate except in its figure.
+  // @scenario behaviour orbit-engine-gates :: The gate reason names the rule that fired and the rule about to fire :: The reason names the rule, never the spend
   it('a gate OVER its declared budget renders no token and names no spend in its reason', () => {
     review(T(1), 'system', 'fresh', [['CRITICAL', 'c']]);
     walk(T(2), `review-system-${T(1)}.json`, { entries: [ok('CRITICAL', 'c')] });
@@ -496,6 +497,7 @@ describe('rc02c budget — a DECLARED EXPECTATION nothing consults; the RECORD i
 // ---- schema validation -----------------------------------------------------
 
 describe('rc02 schema validation names the gate id', () => {
+  // @scenario behaviour orbit-engine-gates :: Gate declaration in schema YAML :: Non-positive budget rejected
   it('rejects a non-positive budget', () => {
     expect(() => parseSchema(PAIR_YAML.replace('budget: 3', 'budget: 0'))).toThrow(
       /review-system.*budget must be a positive integer/
@@ -654,16 +656,17 @@ describe('rc02 over a v3-era trail', () => {
 
 // ---- the shipped schema ----------------------------------------------------
 
-describe('spec-driven v4', () => {
-  it('declares the blind pair and both budgets', () => {
+describe('spec-driven v5 (rc17a; was v4 at rc02)', () => {
+  // @scenario behaviour orbit-engine-gates :: spec-driven v1 gates and cadence :: v5 declares the invoked slot on both gates
+  it('declares the invoked slot on both gates, and both budgets', () => {
     const yaml = fs.readFileSync('schemas/spec-driven/schema.yaml', 'utf-8');
     const schema = parseSchema(yaml);
-    expect(schema.version).toBe(4);
+    expect(schema.version).toBe(5);
     const sys = schema.gates!.find(g => g.id === 'review-system')!;
     const prop = schema.gates!.find(g => g.id === 'review-proposal')!;
-    expect(sys.cadence).toEqual(['blind-pair', 'in-context']);
+    expect(sys.cadence).toEqual(['invoked', 'in-context']);
     expect(sys.budget).toBe(3);
-    expect(prop.cadence).toEqual(['independent', 'in-context']);
+    expect(prop.cadence).toEqual(['invoked', 'in-context']);
     expect(prop.budget).toBe(3);
     // consent markers survive the bump
     expect(sys.consent).toBe('user-invoked');

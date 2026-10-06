@@ -76,7 +76,7 @@ describe('artifact-graph/resolver', () => {
       const schema = resolveSchema('spec-driven');
 
       expect(schema.name).toBe('spec-driven');
-      expect(schema.version).toBe(4);
+      expect(schema.version).toBe(5);
       expect(schema.artifacts.length).toBeGreaterThan(0);
     });
 
@@ -239,7 +239,7 @@ version: [[[invalid yaml
       const schema = resolveSchema('spec-driven');
 
       expect(schema.name).toBe('spec-driven');
-      expect(schema.version).toBe(4);
+      expect(schema.version).toBe(5);
     });
 
     it('should throw when schema not found', () => {

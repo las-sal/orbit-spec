@@ -61,6 +61,14 @@ export const ProjectConfigSchema = z.object({
     .object({ tests: z.array(z.string()).min(1) })
     .optional()
     .describe('Scenario map: { tests: [<glob>, ...] } turns the declaration check on'),
+
+  // Optional: the per-gate review preference (rc17a, `orbit-engine-gates`' `The first review slot
+  // covers what the user invoked`). Typed here for documentation only: the gate computation reads it
+  // ON ITS OWN through `resolveReviewPreference`, and it shapes only the presented command.
+  review_preference: z
+    .record(z.string(), z.enum(['blind-pair', 'fresh', 'external']))
+    .optional()
+    .describe('Per-gate review preference: { <reviewed-gate-id>: blind-pair | fresh | external }'),
 });
 
 export type ProjectConfig = z.infer<typeof ProjectConfigSchema>;
@@ -138,6 +146,62 @@ export function resolveScenarioMapConfig(projectRoot: string): ScenarioMapConfig
     );
   }
   return { check: 'on', tests: tests as string[] };
+}
+
+/** The closed set of `review_preference` values (rc17a). */
+export const REVIEW_PREFERENCES = ['blind-pair', 'fresh', 'external'] as const;
+export type ReviewPreference = (typeof REVIEW_PREFERENCES)[number];
+
+/**
+ * Resolve the `review_preference` key for the given reviewed gates, reading ONLY that key from
+ * `orbit/config.yaml` (rc17a design D6; the `resolveScenarioMapConfig` pattern, so no other field's
+ * warning reaches the gate computation). Every gate resolves independently: absent map, absent entry,
+ * absent file and an unparseable file resolve to `blind-pair` silently. A present but inert shape warns
+ * once and is treated as absent: a non-map value is ignored whole; an entry with an unknown value
+ * resolves to `blind-pair`, naming the gate and the value; an entry whose key names no reviewed gate of
+ * the active schema is ignored, naming the key. The result shapes ONLY the presented command.
+ */
+export function resolveReviewPreference(
+  projectRoot: string,
+  reviewedGateIds: readonly string[]
+): Record<string, ReviewPreference> {
+  const out: Record<string, ReviewPreference> = {};
+  for (const id of reviewedGateIds) out[id] = 'blind-pair';
+  let configPath = path.join(projectRoot, 'orbit', 'config.yaml');
+  if (!existsSync(configPath)) {
+    configPath = path.join(projectRoot, 'orbit', 'config.yml');
+    if (!existsSync(configPath)) return out;
+  }
+  let raw: unknown;
+  try {
+    raw = parseYaml(readFileSync(configPath, 'utf-8'));
+  } catch {
+    return out;
+  }
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return out;
+  if (!Object.prototype.hasOwnProperty.call(raw, 'review_preference')) return out;
+  const value = (raw as Record<string, unknown>).review_preference;
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) {
+    const shape = value === null ? 'an empty value' : Array.isArray(value) ? 'a list' : `a scalar (${String(value)})`;
+    console.warn(
+      `Invalid 'review_preference' field in config: expected a map from reviewed-gate id to ${REVIEW_PREFERENCES.join(' | ')}, got ${shape}; ignored`
+    );
+    return out;
+  }
+  for (const [key, pref] of Object.entries(value as Record<string, unknown>)) {
+    if (!reviewedGateIds.includes(key)) {
+      console.warn(`Unknown gate '${key}' in 'review_preference': no reviewed gate of the active schema has that id; ignored`);
+      continue;
+    }
+    if (typeof pref === 'string' && (REVIEW_PREFERENCES as readonly string[]).includes(pref)) {
+      out[key] = pref as ReviewPreference;
+    } else {
+      console.warn(
+        `Unrecognized 'review_preference' value for gate '${key}': '${String(pref)}' (expected ${REVIEW_PREFERENCES.join(' | ')}); treating as 'blind-pair'`
+      );
+    }
+  }
+  return out;
 }
 
 const MAX_CONTEXT_SIZE = 50 * 1024; // 50KB hard limit

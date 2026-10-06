@@ -61,7 +61,10 @@ function discover(): { passes: Array<{ token: string; file: string; source: stri
   const status = JSON.parse(JSON.stringify(formatChangeStatus(loadChangeContext(root, active[0]))));
   const reviewed = status.gates.filter((g: any) => g.kind === 'reviewed' && g.state !== 'blocked' && !g.superseded);
   const openPair = reviewed.find((g: any) => g.openPair)?.openPair; // row 4
-  const passes = reviewed.flatMap((g: any) => g.unresolvedPasses ?? []); // row 5
+  // row 5: the UNION of each gate's unresolvedPasses and unwalkedPasses (rc17a), oldest first per gate.
+  const passes = reviewed.flatMap((g: any) =>
+    [...(g.unresolvedPasses ?? []), ...(g.unwalkedPasses ?? [])].sort((a: any, b: any) => (a.token < b.token ? -1 : 1))
+  );
   return { passes, openPair };
 }
 
@@ -162,3 +165,69 @@ describe('rc08b exit (1): a bare walk discovers every outstanding pass and write
     expect(gateRow()).toEqual(before);
   });
 });
+
+describe('rc17a exit (3): a SUGGESTION-only pass is discovered, walked once, and holds nothing', () => {
+  const SUG = '2026-10-05T02-00-00Z';
+  const sugFile = `${RUNS}/review-system-${SUG}.json`;
+
+  beforeEach(() => {
+    // Replace the rc08b fixture's two substantive passes with ONE fresh pass carrying only SUGGESTIONs.
+    fs.rmSync(path.join(root, `${RUNS}/review-system-2026-10-05T01-00-00Z.json`));
+    fs.rmSync(path.join(root, `${RUNS}/external-system-2026-10-05T01-10-00Z.md`));
+    write(
+      sugFile,
+      JSON.stringify({
+        command: 'review',
+        mode: 'system',
+        reviewer_class: 'fresh',
+        findings: [
+          { severity: 'SUGGESTION', title: 'Name it better', file: 'src/a.ts', line: 1 },
+          { severity: 'SUGGESTION', title: 'Trim the comment', file: 'src/b.ts', line: 1 },
+        ],
+      })
+    );
+  });
+
+  const gateRow = (): any =>
+    JSON.parse(JSON.stringify(formatChangeStatus(loadChangeContext(root, CHANGE)))).gates.find((g: any) => g.id === 'review-system');
+
+  const deferral = (title: string, file: string) => ({
+    severity: 'SUGGESTION',
+    title,
+    marker_source: 'internal-review',
+    file,
+    line: 1,
+    classification: 'decision_required',
+    action: 'deferred',
+    ripple_cascade: { applied: [], flagged_not_applied: [] },
+    remedy: 'descope',
+    outcome: 'deferred',
+  });
+
+  // @scenario behaviour orbit-address-reviews :: Address-reviews command available :: A walked suggestion-only pass is not rediscovered
+  it('discovery lists it through unwalkedPasses; a log deferring both SUGGESTIONs takes it out; clause (b) never moved', () => {
+    const before = gateRow();
+    expect(before.unresolvedPasses).toEqual([]);
+    expect(before.unwalkedPasses).toEqual([{ token: SUG, file: sugFile, mode: 'system', source: 'internal-review' }]);
+    expect(discover().passes.map(p => p.file)).toEqual([sugFile]);
+
+    const payload = {
+      ...walkPayload(sugFile, SUG, 'review', 'Name it better', 'src/a.ts'),
+      final_assessment: 'Two SUGGESTIONs deferred.',
+      input_findings_summary: { critical: 0, warning: 0, suggestion: 2 },
+      resolution_summary: { resolved: 0, stale_suppressed: 0, deferred: 2, escalated: 0 },
+      resolutions: [deferral('Name it better', 'src/a.ts'), deferral('Trim the comment', 'src/b.ts')],
+    };
+    const r = composeAndWriteEmit('address-reviews', { change: CHANGE }, payload, { projectRoot: root });
+    expect(r.emit.source_path).toBe(sugFile);
+
+    const after = gateRow();
+    expect(after.unwalkedPasses).toEqual([]);
+    expect(after.unresolvedPasses).toEqual([]);
+    // The walk adds nothing to clause (b): the gate's state and reason are what they were before it.
+    expect([after.state, after.reason]).toEqual([before.state, before.reason]);
+    // Nothing left for discovery: the fence's AFTER line ("Nothing to walk") is what the body then prints.
+    expect(discover().passes).toEqual([]);
+  });
+});
+

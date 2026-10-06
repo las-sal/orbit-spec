@@ -6,6 +6,7 @@ import {
   readTrail,
   isSubstantive,
   type Trail,
+  type TrailLaunch,
   type TrailOverlay,
   type TrailPass,
   type TrailResolution,
@@ -13,6 +14,7 @@ import {
   type ReviewMode,
   type ReviewerClass,
 } from './trail.js';
+import { resolveReviewPreference, type ReviewPreference } from '../project-config.js';
 
 /**
  * Gate-state computation (C1 engine gates). PURE: reads the change dir + `.orbit-runs/`
@@ -71,6 +73,12 @@ export interface GateStatus {
    * The field REPORTS; nothing new is ruled (R-crc-13).
    */
   unresolvedPasses?: UnresolvedPassRow[];
+  /**
+   * rc17a: every pass in clause (b)'s set carrying at least one finding of ANY severity that no walk
+   * record references and that is not in `unresolvedPasses` — the discovery set beside the hold. Same
+   * shape and order; `[]` when there is none; absent on a blocked gate. The gate never reads it.
+   */
+  unwalkedPasses?: UnresolvedPassRow[];
   /** rc08b: the pair diagnosis behind the reason's pair note, as a field a reader need not parse. */
   openPair?: { missing: 'fresh' | 'external' };
 }
@@ -126,6 +134,9 @@ function commandForClass(slot: CadenceEntry, mode: ReviewMode, change: string): 
     // A `blind-pair` reaching here has no pairable pass standing; the fresh invocation is the
     // lighter first half. The pairable-partner case is resolved in canonicalNextForReviewed.
     case 'blind-pair':
+    // An `invoked` slot's command is chosen by its presentation table (`presentInvoked`); reaching
+    // here means the default preference, whose interim command is the fresh review (rc17a D6).
+    case 'invoked':
       return `/orbit:review --as ${mode} --fresh ${change}`;
     case 'external':
       return `/orbit:review --as ${mode} --reviewer external ${change}`;
@@ -267,13 +278,91 @@ interface SlotAssignment {
 }
 
 /** Why a `blind-pair` slot could not be satisfied, for the reason line. */
-export type PairFailure =
-  | 'no-fresh'
-  | 'no-external'
-  | 'blindness-broken'
-  | 'tie'
-  | 'none-standing'
-  | 'foreclosed';
+export type PairFailure = 'no-fresh' | 'no-external' | 'blindness-broken' | 'tie' | 'none-standing';
+
+/**
+ * rc17a: one launch's pair, computed per `orbit-engine-gates`' `A pair's membership is computed from
+ * its launch`. `fresh` / `external` are the FIRST accepted pass of each class later than the launch and
+ * earlier than the mode's next launch. `endedAt` is the token of the walk record that referenced a
+ * landed member before its partner landed; an ended pair has no members — the walked member and every
+ * later pass read as singles.
+ */
+export interface LaunchedPair {
+  launch: TrailLaunch;
+  fresh?: TrailPass;
+  external?: TrailPass;
+  endedAt?: string;
+}
+
+export interface PairMembership {
+  /** Every launch's pair, token order, all modes. */
+  pairs: LaunchedPair[];
+  /** Files of the passes that are members of a pair that has not ended. Every other independent pass is a single. */
+  memberFiles: Set<string>;
+}
+
+/**
+ * rc17a: pair membership, read from the trail on every evaluation (the engine stores nothing). Per mode,
+ * a launch's members are the first fresh pass and the first external return among the trail reader's
+ * ACCEPTED passes — a rejected return is not in `trail.passes`, so it takes no position — later than the
+ * launch and earlier than the mode's next launch. A walk record referencing a landed member whose token
+ * precedes that member's partner (or with no partner landed at all) ENDS the pair at that record. An
+ * apply ends nothing: freshness alone keeps a stale member from covering. ONE function, read by
+ * coverage, diagnosis and presentation.
+ */
+export function computePairMembership(trail: Trail): PairMembership {
+  const pairs: LaunchedPair[] = [];
+  const memberFiles = new Set<string>();
+  const byMode = new Map<ReviewMode, TrailLaunch[]>();
+  for (const l of trail.launches) {
+    const list = byMode.get(l.mode) ?? [];
+    list.push(l);
+    byMode.set(l.mode, list);
+  }
+  for (const [mode, launches] of byMode) {
+    const sorted = [...launches].sort((a, b) => (a.token < b.token ? -1 : a.token > b.token ? 1 : 0));
+    for (let k = 0; k < sorted.length; k++) {
+      const launch = sorted[k];
+      const next = sorted[k + 1]?.token;
+      const window = trail.passes
+        .filter(p => p.mode === mode && isIndependent(p.reviewerClass))
+        .filter(p => p.token > launch.token && (next === undefined || p.token < next))
+        .sort((a, b) => (a.token < b.token ? -1 : a.token > b.token ? 1 : 0));
+      const fresh = window.find(p => p.reviewerClass === 'fresh');
+      const external = window.find(p => p.reviewerClass === 'external');
+      const pair: LaunchedPair = { launch, ...(fresh ? { fresh } : {}), ...(external ? { external } : {}) };
+      // ENDED: a walk of a landed member before its partner lands — the user chose to proceed on one review.
+      let endedAt: string | undefined;
+      for (const [member, partner] of [
+        [fresh, external],
+        [external, fresh],
+      ] as Array<[TrailPass | undefined, TrailPass | undefined]>) {
+        if (!member) continue;
+        for (const r of recordsFor(member, trail)) {
+          if (partner === undefined || r.token < partner.token) {
+            if (endedAt === undefined || r.token < endedAt) endedAt = r.token;
+          }
+        }
+      }
+      if (endedAt !== undefined) pair.endedAt = endedAt;
+      else {
+        if (fresh) memberFiles.add(fresh.file);
+        if (external) memberFiles.add(external.file);
+      }
+      pairs.push(pair);
+    }
+  }
+  pairs.sort((a, b) => (a.launch.token < b.launch.token ? -1 : a.launch.token > b.launch.token ? 1 : 0));
+  return { pairs, memberFiles };
+}
+
+/** Blindness between two members, endpoints INCLUSIVE, scoped to records referencing either. */
+function isBlindPair(a: TrailPass, b: TrailPass, trail: Trail): boolean {
+  if (a.token === b.token) return false; // token equality fails SAFE
+  const lo = a.token < b.token ? a.token : b.token;
+  const hi = a.token < b.token ? b.token : a.token;
+  return !recordTokensFor([a, b], trail).some(t => t >= lo && t <= hi);
+}
 
 /**
  * Candidate assignments for ONE slot, in the TOTAL order the requirement names (later token, then
@@ -285,7 +374,8 @@ function slotCandidates(
   ordered: TrailPass[],
   used: Set<number>,
   lowerBound: string | null,
-  trail: Trail
+  trail: Trail,
+  membership: PairMembership
 ): Array<{ indices: number[]; token: string; sortKey: string }> {
   const eligible = (i: number): boolean =>
     !used.has(i) && (lowerBound === null || ordered[i].token > lowerBound);
@@ -308,6 +398,30 @@ function slotCandidates(
         const hiPass = a.token === hi ? a : b;
         out.push({ indices: [i, j], token: hi, sortKey: [hi, lo, path.basename(hiPass.file)].join('\u0000') });
       }
+    }
+  } else if (slot === 'invoked') {
+    // rc17a: what the user INVOKED — every eligible SINGLE at its own token, and every COMPLETE pair at
+    // its later member's token, in the same total order. A member of an open or complete pair is never
+    // a single; an ended pair's former members are.
+    for (let i = 0; i < ordered.length; i++) {
+      const p = ordered[i];
+      if (!eligible(i) || !isIndependent(p.reviewerClass) || membership.memberFiles.has(p.file)) continue;
+      out.push({ indices: [i], token: p.token, sortKey: [p.token, path.basename(p.file)].join('\u0000') });
+    }
+    const index = new Map(ordered.map((p, i) => [p.file, i]));
+    for (const pair of membership.pairs) {
+      if (pair.endedAt !== undefined || !pair.fresh || !pair.external) continue;
+      const i = index.get(pair.fresh.file);
+      const j = index.get(pair.external.file);
+      // Both members must be in THIS pass list (a stale member is absent from the fresh list) and eligible.
+      if (i === undefined || j === undefined || !eligible(i) || !eligible(j)) continue;
+      const a = ordered[i];
+      const b = ordered[j];
+      if (!isBlindPair(a, b, trail)) continue;
+      const lo = a.token < b.token ? a.token : b.token;
+      const hi = a.token < b.token ? b.token : a.token;
+      const hiPass = a.token === hi ? a : b;
+      out.push({ indices: [i, j], token: hi, sortKey: [hi, lo, path.basename(hiPass.file)].join('\u0000') });
     }
   } else {
     for (let i = 0; i < ordered.length; i++) {
@@ -332,9 +446,14 @@ function slotCandidates(
 function assignCadence(
   cadence: CadenceEntry[],
   ordered: TrailPass[],
-  trail: Trail
-): { assignment: SlotAssignment[] } | { failedSlot: number } {
+  trail: Trail,
+  membership: PairMembership
+): { assignment: SlotAssignment[] } | { failedSlot: number; failedBound: string | null } {
   let deepest = 0;
+  // rc17a (D-bpc-6): the LOWEST lower bound seen at the deepest slot. Eligibility is `token > bound`, so
+  // the lowest reaching bound's eligible set contains every other reaching state's — the canonical
+  // state the failed slot is diagnosed at. `null` (no bound, slot 0) is lowest of all.
+  let deepestBound: string | null = null;
   // Memoized FAILURE states. Without it the search re-explores equivalent (slot, consumed set,
   // lower bound) states and grows exponentially on a cadence with many slots; measured 4.5s at
   // 22 passes / 12 slots before this.
@@ -352,9 +471,14 @@ function assignCadence(
     // collapses the state space from combinatorial to slots x distinct-tokens.
     const memoKey = `${slotIdx}|${lowerBound ?? ''}`;
     if (failed.has(memoKey)) return null;
-    if (slotIdx > deepest) deepest = slotIdx;
+    if (slotIdx > deepest) {
+      deepest = slotIdx;
+      deepestBound = lowerBound;
+    } else if (slotIdx === deepest && deepestBound !== null && (lowerBound === null || lowerBound < deepestBound)) {
+      deepestBound = lowerBound;
+    }
     const slot = cadence[slotIdx];
-    for (const cand of slotCandidates(slot, ordered, used, lowerBound, trail)) {
+    for (const cand of slotCandidates(slot, ordered, used, lowerBound, trail, membership)) {
       const passes = cand.indices.map(i => ordered[i]);
       // The NEXT slot must beat this slot's passes AND every record closing their findings — what
       // makes a following slot a CHECK ON THE WALK rather than a pass that merely arrived late.
@@ -374,18 +498,22 @@ function assignCadence(
     return null;
   };
   const found = search(0, new Set(), null, []);
-  return found ? { assignment: found } : { failedSlot: deepest };
+  return found ? { assignment: found } : { failedSlot: deepest, failedBound: deepestBound };
 }
 
-/** Why a blind-pair slot failed, given the passes available to it. */
 /**
- * Why a blind-pair slot failed. Diagnosis uses the SAME predicates assignment uses — only PAIRABLE
- * members are candidates — so the reason can never name a class the canonical command does not.
- * The blindness test is asserted, not negated: an earlier draft returned `blindness-broken` when
- * blindness HELD, which made the label a constant carrying no information.
+ * Why a blind-pair slot failed. Diagnosis uses the SAME predicates assignment uses, OVER THE SAME SET
+ * (rc17a, D-bpc-6): the PAIRABLE passes ELIGIBLE at the failed slot — tokens above its canonical lower
+ * bound — never the whole pass list, so the reason and the canonical command can never name different
+ * classes. A pair excluded by the ordering constraints is a class missing above the bound; the retired
+ * `foreclosed` label named that state and set no `openPair`.
  */
-function diagnosePair(ordered: TrailPass[], trail: Trail): PairFailure {
-  const pairable = ordered.filter(p => isPairable(p, trail));
+function pairableEligible(ordered: TrailPass[], bound: string | null, trail: Trail): TrailPass[] {
+  return ordered.filter(p => isIndependent(p.reviewerClass) && (bound === null || p.token > bound) && isPairable(p, trail));
+}
+
+function diagnosePair(ordered: TrailPass[], bound: string | null, trail: Trail): PairFailure {
+  const pairable = pairableEligible(ordered, bound, trail);
   const fresh = pairable.filter(p => p.reviewerClass === 'fresh');
   const ext = pairable.filter(p => p.reviewerClass === 'external');
   if (fresh.length === 0 && ext.length === 0) return 'none-standing';
@@ -399,15 +527,12 @@ function diagnosePair(ordered: TrailPass[], trail: Trail): PairFailure {
         sawTie = true;
         continue;
       }
-      const lo = a.token < b.token ? a.token : b.token;
-      const hi = a.token < b.token ? b.token : a.token;
-      if (recordTokensFor([a, b], trail).some(t => t >= lo && t <= hi)) sawBroken = true;
-      // A candidate that is blind and still unassigned was excluded by the ORDERING constraints,
-      // not by blindness — reported distinctly so the reason never blames a walk that does not exist.
-      else return 'foreclosed';
+      if (!isBlindPair(a, b, trail)) sawBroken = true;
     }
   }
-  return sawBroken ? 'blindness-broken' : sawTie ? 'tie' : 'foreclosed';
+  // A blind untied pairable pair above the canonical bound is UNREACHABLE here: it would have been a
+  // candidate, and a LATER slot would be the deepest failure. Defensively it reads as broken.
+  return sawTie && !sawBroken ? 'tie' : 'blindness-broken';
 }
 
 /**
@@ -420,13 +545,72 @@ function isPairable(pass: TrailPass, trail: Trail): boolean {
   return !recordsFor(pass, trail).some(r => r.token >= pass.token);
 }
 
+/**
+ * rc17a: what an uncovered `invoked` slot presents — the reason, the presented class (which names the
+ * canonical command and `nextSlot`), and `openPair` on the PAIR-OPEN-one-landed row only. The table is
+ * `orbit-engine-gates`' `The first review slot covers what the user invoked`; rows tested in order.
+ */
+interface InvokedPresentation {
+  reason: string;
+  cls: 'fresh' | 'external';
+  openPair?: { missing: 'fresh' | 'external' };
+}
+
+function presentInvoked(
+  mode: ReviewMode | null,
+  ordered: TrailPass[],
+  bound: string | null,
+  membership: PairMembership,
+  preference: ReviewPreference
+): InvokedPresentation {
+  const preferred: 'fresh' | 'external' = preference === 'external' ? 'external' : 'fresh';
+  const fallback: InvokedPresentation = { reason: 'no outside review stands on this state', cls: preferred };
+  const ofMode = membership.pairs.filter(p => mode === null || p.launch.mode === mode);
+  const live = ofMode[ofMode.length - 1];
+  // NO-LAUNCH, or the latest launch's pair already ENDED by a walk: nothing is open.
+  if (!live || live.endedAt !== undefined) return fallback;
+  // "Landed" is read on the pass list being evaluated: a member made stale by a later apply is absent
+  // from the fresh list, so it has not landed on this state and cannot cover.
+  const inList = new Set(ordered.map(p => p.file));
+  const landed = [live.fresh, live.external].filter((m): m is TrailPass => m !== undefined && inList.has(m.file));
+  const L = live.launch.token;
+  const above = (m: TrailPass): boolean => bound === null || m.token > bound;
+  if (landed.length === 1) {
+    const m = landed[0];
+    const cls = m.reviewerClass as 'fresh' | 'external';
+    const missing: 'fresh' | 'external' = cls === 'fresh' ? 'external' : 'fresh';
+    if (above(m)) {
+      return {
+        reason: `pair launched at ${L} is open: the ${cls} member has no ${missing} partner; run it before walking these findings`,
+        cls: missing,
+        openPair: { missing },
+      };
+    }
+    return {
+      reason: `pair launched at ${L} cannot fill this slot: its ${cls} member sits at or below the slot's bound; a further ${cls} review lands as a single`,
+      cls,
+    };
+  }
+  if (landed.length === 0) {
+    return { reason: `pair launched at ${L}: neither member has landed; both must land before either is walked`, cls: 'fresh' };
+  }
+  if (landed.every(above) && landed[0].token === landed[1].token) {
+    return { reason: `pair launched at ${L} ambiguous: its two members share a timestamp token`, cls: preferred };
+  }
+  return fallback;
+}
+
 interface ConvergenceResult {
   converged: boolean;
   reason?: string;
   /** Cadence slot / class still needed, when the failing clause is coverage. */
   neededSlot?: CadenceEntry;
+  /** rc17a: the canonical lower bound the failed slot was read at (the lowest that reaches it). */
+  failedBound?: string | null;
   /** How the pair failed, when the needed slot is a blind pair. */
   pairFailure?: PairFailure;
+  /** rc17a: what an uncovered `invoked` slot presents. */
+  invoked?: InvokedPresentation;
   /** Pass whose findings are unresolved, when the failing clause is resolution. */
   unresolvedPass?: TrailPass;
   /** rc08b: EVERY unresolved pass, token order; `[]` when clause (b) holds. */
@@ -434,12 +618,14 @@ interface ConvergenceResult {
   /** Deferred SUGGESTION count, surfaced even on a converged gate. */
   deferredSuggestions?: number;
   /**
-   * Set whenever the cadence declares an UNCOVERED `blind-pair` slot with a PAIRABLE member
-   * standing, WHATEVER clause failed. Computed even when resolution fails, because the walk that
-   * resolution recommends is exactly what forecloses the pair — the recommendation surface must
-   * see this before it sees `unresolvedPass`.
+   * Set whenever the cadence declares an UNCOVERED pair-bearing slot with a member standing alone —
+   * a `blind-pair` slot with a PAIRABLE member, or an `invoked` slot whose launched pair is open with
+   * one member landed above the bound — WHATEVER clause failed. Computed even when resolution fails,
+   * because the walk that resolution recommends is exactly what forecloses (or ends) the pair.
    */
   openPair?: { missing: 'fresh' | 'external' };
+  /** rc17a: which slot kind produced `openPair` — the reason's pair note and `nextSlot` differ. */
+  openPairFrom?: 'blind-pair' | 'invoked';
 }
 
 /**
@@ -456,74 +642,88 @@ function evaluateReviewed(
   gate: NormalizedGate,
   coveragePasses: TrailPass[],
   resolutionPasses: TrailPass[],
-  trail: Trail
+  trail: Trail,
+  membership: PairMembership,
+  preference: ReviewPreference
 ): ConvergenceResult {
-  const ordered0 = [...coveragePasses].sort((a, b) => (a.token < b.token ? -1 : 1));
+  const ordered = [...coveragePasses].sort((a, b) => (a.token < b.token ? -1 : 1));
+  const mode = gateMode(gate);
 
   // COVERAGE IS COMPUTED FIRST, even though resolution decides the state. The walk that clause (b)
-  // would recommend is the very act that forecloses an open blind pair, so the recommendation
-  // surface has to know about the pair BEFORE it is told to walk.
-  const preCover = assignCadence(gate.cadence, ordered0, trail);
+  // would recommend is the very act that forecloses an open blind pair (or ends a launched one), so
+  // the recommendation surface has to know about the pair BEFORE it is told to walk.
+  const cover = assignCadence(gate.cadence, ordered, trail, membership);
   let openPair: ConvergenceResult['openPair'];
-  if ('failedSlot' in preCover && gate.cadence[preCover.failedSlot] === 'blind-pair') {
-    const how = diagnosePair(ordered0, trail);
-    // ONLY when a PAIRABLE member actually stands, which is the normative qualifier. With NOTHING
-    // standing there is no pair to foreclose, so a safe outstanding walk must run first rather than
-    // being deferred behind a review of a state no future pair member shares.
-    if (how === 'no-fresh') openPair = { missing: 'fresh' };
-    else if (how === 'no-external') openPair = { missing: 'external' };
+  let openPairFrom: ConvergenceResult['openPairFrom'];
+  let pairFailure: PairFailure | undefined;
+  let invoked: InvokedPresentation | undefined;
+  if ('failedSlot' in cover) {
+    const slot = gate.cadence[cover.failedSlot];
+    if (slot === 'blind-pair') {
+      pairFailure = diagnosePair(ordered, cover.failedBound, trail);
+      // ONLY when a PAIRABLE member actually stands, which is the normative qualifier. With NOTHING
+      // standing there is no pair to foreclose, so a safe outstanding walk must run first rather than
+      // being deferred behind a review of a state no future pair member shares.
+      if (pairFailure === 'no-fresh') openPair = { missing: 'fresh' };
+      else if (pairFailure === 'no-external') openPair = { missing: 'external' };
+      if (openPair) openPairFrom = 'blind-pair';
+    } else if (slot === 'invoked') {
+      invoked = presentInvoked(mode, ordered, cover.failedBound, membership, preference);
+      if (invoked.openPair) {
+        openPair = invoked.openPair;
+        openPairFrom = 'invoked';
+      }
+    }
   }
 
   // (b) resolution over EVERY relevant same-gate pass — INCLUDING stale ones.
   // rc08b: the loop COLLECTS every unresolved pass rather than returning at the first, so the walk
-  // can discover exactly what the gate holds. `reason` still names the FIRST — the same pass the old
-  // early return named — so every human rendering is byte-identical.
+  // can discover exactly what the gate holds. `reason` still names the FIRST.
   const resOrdered = [...resolutionPasses].sort((a, b) => (a.token < b.token ? -1 : 1));
   const unresolvedPasses = resOrdered.filter(p => !passResolved(p, trail));
   if (unresolvedPasses.length > 0) {
     const p = unresolvedPasses[0];
-    const pairNote = openPair
-      ? ` — and the ${gate.cadence.includes('blind-pair') ? 'blind pair is OPEN' : 'pair is open'}: run the ${openPair.missing} member BEFORE walking these findings, or the pair can never be formed on this state`
-      : '';
+    let pairNote = '';
+    if (openPair && openPairFrom === 'invoked' && invoked) {
+      // The presentation's own row-1 reason, its tail sharpened: a walk now ENDS the pair.
+      pairNote = ` — and the ${invoked.reason.replace(/; run it before walking these findings$/, '; run it BEFORE walking these findings, or the walk ends the pair')}`;
+    } else if (openPair) {
+      pairNote = ` — and the ${gate.cadence.includes('blind-pair') ? 'blind pair is OPEN' : 'pair is open'}: run the ${openPair.missing} member BEFORE walking these findings, or the pair can never be formed on this state`;
+    }
     return {
       converged: false,
       reason: `pass ${p.token} has unresolved substantive findings${pairNote}`,
       unresolvedPass: p,
       unresolvedPasses,
       openPair,
+      openPairFrom,
+      invoked,
     };
   }
   const deferredSuggestions = deferredSuggestionCount(resOrdered, trail);
 
-  const ordered = ordered0;
-
   // (a) ordered-slot coverage, existential with backtracking (computed above; reused here).
-  const cover = preCover;
   if ('failedSlot' in cover) {
     const slot = gate.cadence[cover.failedSlot];
+    const failed = { converged: false as const, neededSlot: slot, failedBound: cover.failedBound, unresolvedPasses, deferredSuggestions };
     if (slot === 'blind-pair') {
-      const how = diagnosePair(ordered, trail);
+      const how = pairFailure!;
       const reason =
         how === 'blindness-broken'
           ? `blind pair broken: a walk of one member's findings stands between them`
           : how === 'tie'
             ? `blind pair ambiguous: two candidate members share a timestamp token`
-            : how === 'foreclosed'
-            ? `blind pair foreclosed: a pairable fresh and external exist but the cadence's ordering constraints exclude them`
-          : how === 'none-standing'
+            : how === 'none-standing'
               ? `blind pair open: no independent pass stands on this state — both members must run before EITHER is walked`
               : how === 'no-fresh'
                 ? `blind pair open: the external pass on this state has no fresh partner; run it before walking these findings`
                 : `blind pair open: the fresh pass on this state has no external partner; run it before walking these findings`;
-      return { converged: false, reason, neededSlot: slot, pairFailure: how, openPair, unresolvedPasses, deferredSuggestions };
+      return { ...failed, reason, pairFailure: how, openPair, openPairFrom };
     }
-    return {
-      converged: false,
-      reason: `cadence class '${slot}' has no fresh pass`,
-      neededSlot: slot,
-      unresolvedPasses,
-      deferredSuggestions,
-    };
+    if (slot === 'invoked') {
+      return { ...failed, reason: invoked!.reason, invoked, openPair, openPairFrom };
+    }
+    return { ...failed, reason: `cadence class '${slot}' has no fresh pass` };
   }
 
   // (c) is RETIRED (rc02c). The convergence criterion is clauses (a) and (b) ONLY: the gate SHALL
@@ -584,6 +784,14 @@ export function computeGateStates(
   const gates = normalizeGates(schema);
   const trail = readTrail(changeDir, overlay);
   const byId = new Map(gates.map(g => [g.id, g]));
+  // rc17a (design D6): the review preference is read ONCE, here, from the change's project root, so
+  // every surface that prints `nextCommand` presents the same command. It shapes only the presentation.
+  const reviewedIds = gates.filter(g => g.kind === 'reviewed').map(g => g.id);
+  const projectRoot = projectRootOf(changeDir);
+  const preferences: Record<string, ReviewPreference> =
+    projectRoot !== null && reviewedIds.length > 0
+      ? resolveReviewPreference(projectRoot, reviewedIds)
+      : Object.fromEntries(reviewedIds.map(id => [id, 'blind-pair' as ReviewPreference]));
   const statusById = new Map<string, GateStatus>();
 
   const computeOne = (gate: NormalizedGate, stack: Set<string>): GateStatus => {
@@ -676,7 +884,7 @@ export function computeGateStates(
         nextCommand: passed ? nextAfterPass(gate, changeName) : undefined,
       };
     } else {
-      status = computeReviewedStatus(gate, changeName, trail);
+      status = evaluateReviewedGate(gate, changeName, trail, preferences[gate.id] ?? 'blind-pair');
     }
 
     stack.delete(gate.id);
@@ -729,8 +937,26 @@ function computeSpend(
   };
 }
 
-function computeReviewedStatus(gate: NormalizedGate, changeName: string, trail: Trail): GateStatus {
+/** The project root, derived STRUCTURALLY from the change dir (`<root>/orbit/...`); null when it is not under one. */
+function projectRootOf(changeDir: string): string | null {
+  const cd = changeDir.replace(/\\/g, '/');
+  const marker = cd.lastIndexOf('/orbit/');
+  return marker >= 0 ? changeDir.slice(0, marker) || '/' : null;
+}
+
+/**
+ * rc17a: evaluates ONE reviewed gate over an in-memory `Trail` — the pure seam the exhaustive oracle
+ * calls. Reads no file: the trail and the resolved preference are its whole input. (Gate `requires`
+ * are not evaluated here; `computeGateStates` does that before calling it.)
+ */
+export function evaluateReviewedGate(
+  gate: NormalizedGate,
+  changeName: string,
+  trail: Trail,
+  preference: ReviewPreference = 'blind-pair'
+): GateStatus {
   const mode = gateMode(gate);
+  const membership = computePairMembership(trail);
   const relevant = trail.passes.filter(p => (mode ? p.mode === mode : true));
   const fresh = relevant.filter(p => !isPassStale(p, trail.applyTokens));
 
@@ -755,8 +981,24 @@ function computeReviewedStatus(gate: NormalizedGate, changeName: string, trail: 
     ...(spendReportable ? { independentSpend } : {}),
   };
 
+  // rc17a: the discovery set beside the hold — every relevant pass (stale included) carrying a finding
+  // of ANY severity that no walk record references, minus what `unresolvedPasses` already lists.
+  const toRow = (p: TrailPass): UnresolvedPassRow => ({
+    token: p.token,
+    file: toRepoRelPath(p.file, trail.changeDir),
+    mode: p.mode,
+    source: p.source,
+  });
+  const unwalkedFor = (unresolved: TrailPass[]): UnresolvedPassRow[] => {
+    const held = new Set(unresolved.map(p => p.file));
+    return [...relevant]
+      .sort((a, b) => (a.token < b.token ? -1 : 1))
+      .filter(p => p.critical + p.warning + p.suggestion > 0 && recordsFor(p, trail).length === 0 && !held.has(p.file))
+      .map(toRow);
+  };
+
   // Coverage (a) uses fresh passes; resolution (b) uses ALL relevant passes. There is no (c).
-  const freshEval = evaluateReviewed(gate, fresh, relevant, trail);
+  const freshEval = evaluateReviewed(gate, fresh, relevant, trail, membership, preference);
   if (freshEval.converged) {
     const deferred = freshEval.deferredSuggestions ?? 0;
     return {
@@ -777,14 +1019,16 @@ function computeReviewedStatus(gate: NormalizedGate, changeName: string, trail: 
       nextCommand: nextAfterPass(gate, changeName),
       // rc08b: a passed gate lists nothing, from its own return path.
       unresolvedPasses: [],
+      // rc17a: a passed gate can still hold an unwalked SUGGESTION-only pass.
+      unwalkedPasses: unwalkedFor([]),
     };
   }
 
   // Distinguish stale (a later apply invalidated otherwise-covering passes) from unpassed.
-  const allEval = evaluateReviewed(gate, relevant, relevant, trail);
+  const allEval = evaluateReviewed(gate, relevant, relevant, trail, membership, preference);
   const stale = allEval.converged && !freshEval.converged;
 
-  const next = canonicalNextForReviewed(gate, mode, changeName, freshEval, trail, fresh);
+  const next = canonicalNextForReviewed(mode, changeName, freshEval, trail, fresh);
   let reason = stale ? `a review pass is stale (an apply landed after it)` : freshEval.reason;
   // A rejected return is named UNCONDITIONALLY — there is no ceiling for the naming to be below,
    // and naming it names the rule that fired, not the spend. Otherwise the
@@ -809,19 +1053,14 @@ function computeReviewedStatus(gate: NormalizedGate, changeName: string, trail: 
     nextSlot: next.slot,
     before: gate.before,
     consent: gate.consent,
-    unresolvedPasses: freshEval.unresolvedPasses.map(p => ({
-      token: p.token,
-      file: toRepoRelPath(p.file, trail.changeDir),
-      mode: p.mode,
-      source: p.source,
-    })),
+    unresolvedPasses: freshEval.unresolvedPasses.map(toRow),
+    unwalkedPasses: unwalkedFor(freshEval.unresolvedPasses),
     ...(freshEval.openPair ? { openPair: freshEval.openPair } : {}),
   };
 }
 
 /** Single-voiced canonical next command (+ covered slot) for an unpassed/stale reviewed gate. */
 function canonicalNextForReviewed(
-  gate: NormalizedGate,
   mode: ReviewMode | null,
   change: string,
   ev: ConvergenceResult,
@@ -829,31 +1068,33 @@ function canonicalNextForReviewed(
   freshPasses: TrailPass[]
 ): { cmd: string; slot?: CadenceEntry } {
   const m: ReviewMode = mode ?? 'proposal';
-  // An OPEN BLIND PAIR outranks the walk recommendation: walking now writes a record between the
-  // two members and forecloses the pair permanently, costing two further independent passes.
+  const forClass = (cls: 'fresh' | 'external'): string =>
+    cls === 'external' ? `/orbit:review --as ${m} --reviewer external ${change}` : `/orbit:review --as ${m} --fresh ${change}`;
+  // An OPEN PAIR outranks the walk recommendation: on a `blind-pair` slot walking now writes a record
+  // between the two members and forecloses the pair; on an `invoked` slot it ENDS the launched pair.
   if (ev.openPair) {
-    const cmd =
-      ev.openPair.missing === 'external'
-        ? `/orbit:review --as ${m} --reviewer external ${change}`
-        : `/orbit:review --as ${m} --fresh ${change}`;
-    return { cmd, slot: 'blind-pair' };
+    // `nextSlot` names the presented class on an `invoked` slot, so a `models:` hint keyed by class
+    // garnishes the command it describes (rc17a D7); a `blind-pair` slot keeps its own name.
+    return { cmd: forClass(ev.openPair.missing), slot: ev.openPairFrom === 'invoked' ? ev.openPair.missing : 'blind-pair' };
   }
   // rc08b: the change-scoped walk, naming NO file — it discovers every listed pass and applies the
-  // openPair stop, where a `--from-file` aim would walk one half and skip both.
+  // openPair warning, where a `--from-file` aim would walk one half and skip both.
   if (ev.unresolvedPass) {
     return { cmd: `/orbit:address-reviews ${change}` };
   }
+  if (ev.neededSlot === 'invoked' && ev.invoked) {
+    return { cmd: forClass(ev.invoked.cls), slot: ev.invoked.cls };
+  }
   if (ev.neededSlot === 'blind-pair') {
-    // Name the class missing from the earliest pair STILL FORMABLE. A standing pass counts as a
-    // candidate member only while it is PAIRABLE — once walked it can never pair with a later
-    // partner, so recommending its partner would buy a pass that satisfies no slot.
-    const pairable = freshPasses.filter(p => isIndependent(p.reviewerClass) && isPairable(p, trail));
+    // Name the class missing from the earliest pair STILL FORMABLE, over the SAME eligible pairable set
+    // the diagnosis read (rc17a, D-bpc-6): tokens above the canonical bound, never the whole list.
+    const pairable = pairableEligible(freshPasses, ev.failedBound ?? null, trail);
     const hasFresh = pairable.some(p => p.reviewerClass === 'fresh');
     const hasExternal = pairable.some(p => p.reviewerClass === 'external');
     if (hasFresh && !hasExternal) {
-      return { cmd: `/orbit:review --as ${m} --reviewer external ${change}`, slot: 'blind-pair' };
+      return { cmd: forClass('external'), slot: 'blind-pair' };
     }
-    return { cmd: `/orbit:review --as ${m} --fresh ${change}`, slot: 'blind-pair' };
+    return { cmd: forClass('fresh'), slot: 'blind-pair' };
   }
   if (ev.neededSlot) {
     return { cmd: commandForClass(ev.neededSlot, m, change), slot: ev.neededSlot };

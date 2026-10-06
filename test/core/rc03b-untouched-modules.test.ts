@@ -54,25 +54,32 @@ import { fileURLToPath } from "node:url";
  * and the unresolved-pass canonical next names no file (design D1); `instruction-loader.ts` — the gate row
  * carries both fields into `orbit status --change --json`; `emit-composition.ts` — the review-external T0
  * `next_recommended` ends at the save step and names no walk (design D6).
+ * MOVED at rc17a-invoked-coverage apply (2026-10-05) — PLANNED acts (its task 1.1 measured them before any
+ * code): `schemas/spec-driven/schema.yaml` (version 5, both gates `[invoked, in-context]`, the header rewritten);
+ * `types.ts` (the `invoked` cadence token); `trail.ts` (`Trail.launches` from `pair: true` T0s); `gates.ts` (pair
+ * membership, the `invoked` slot and its presentation table, the slot-bound pair diagnosis — `foreclosed`
+ * retired — the review preference read once, `unwalkedPasses`, and the exported in-memory seam);
+ * `instruction-loader.ts` (the `unwalkedPasses` spread on the gate row); `emit-composition.ts` (the T0's `pair`
+ * field and its write-gate checks). `schema.ts` did NOT move: the six-token message is `CADENCE_ENTRIES.join`.
  */
 const PINNED: Record<string, string> = {
-  "schemas/spec-driven/schema.yaml": "be6cda5fa604f105c14c2d5e2fd52ad04ca266ba22e7e438ffec8442641e345d",
+  "schemas/spec-driven/schema.yaml": "21e0ae86532a39be558a2b81d23738a6fbf92fbd32b0d01612a65e83d6a96739",
   "schemas/spec-driven/templates/design.md": "3251f08057d142f6e3c26f65f5f100ab602ee7ce880d5503bfaa45668ba19f59",
   "schemas/spec-driven/templates/proposal.md": "9c554e0dbe918e3dc745dcc143a999e1d102954d75fb6e51e231c4cba78f06f3",
   "schemas/spec-driven/templates/spec.md": "e025078f238dc6e4df552a1e0a140cf9efce0bbdecbeb9f45837d45ed91dca01",
   "schemas/spec-driven/templates/tasks.md": "b2a6a4c08c15f347a1d8c3e2d43e0c8fb066dc5cc0feb795f47555f176f9c421",
-  "src/core/artifact-graph/gates.ts": "f69b712686922bff8ce25143efe6dcd2e2d1a2ce187b172d32c85432d477b61f",
+  "src/core/artifact-graph/gates.ts": "df13b9f3996d8b0ea1da267b603ff438bb49cf1cdc45bd89246efe3a74366830",
   "src/core/artifact-graph/graph.ts": "3193a3884bb59296dc4ddc177020d3135d99c694109298ac31c3f3a91c45a0ed",
   "src/core/artifact-graph/index.ts": "9dc35ba8e64105fbfd6af821cf99f1fbc5777b74b75311f09fdab279cf12d438",
-  "src/core/artifact-graph/instruction-loader.ts": "b7e79925b0026a1a27907d5acfe4ca945075b18229e49bc6f3b1962c239bc7ff",
+  "src/core/artifact-graph/instruction-loader.ts": "fd36a43ed47b2515218211a228121becf50e3213fd34621e3a7c5085e0ab44ad",
   "src/core/artifact-graph/pass-genre.ts": "af72ef5bc3b543b79c8c4d1a4678ca667f8e307dd3325110d38bb8319fa26a04",
   "src/core/artifact-graph/outputs.ts": "7a95459becd3831b3cc0416aa473990169d671a1e491a284df4695d1c8008047",
   "src/core/artifact-graph/resolver.ts": "3b10b86eeda7e1264ff6a549e2abcdce8fd3bee3e28cb42441ed49e5ebb3d81b",
   "src/core/artifact-graph/schema.ts": "fb80cfd9a9088ce9dbbd42e43d9525864f7035b51db99aa019489b18f1b1e3b0",
   "src/core/artifact-graph/state.ts": "f59f748b94cd94ca2fe022ec5aa66b3251dd1b2c00bddb9a17cbd9273a04d0f2",
-  "src/core/artifact-graph/trail.ts": "3ba373f99e8440bd1f3e137dbaf92758e0825788d58996bef0406e05c14e13df",
-  "src/core/artifact-graph/types.ts": "246feb06872594a744233904bc0d3902c90545e23cdf8a38f2b42b80c4a4d10a",
-  "src/core/emit-composition.ts": "58738fea4d514c9c183513f4d1844fdfafda667cc0637a878a5999e29f515cdd",
+  "src/core/artifact-graph/trail.ts": "39b5d110ef53b7e03f49ddf292e86db598a14f426a02e6d84142e16231e37d69",
+  "src/core/artifact-graph/types.ts": "d83e0cc6d7fca7b80618ffbb7ce052ee68e35be79e7949a941e989b2e102392c",
+  "src/core/emit-composition.ts": "958582faa8d39e65fc3eadf316a26de75cec10b1f9a3e073e077f2d2b74896ef",
   "src/core/report-render.ts": "b40046bc8059ca73744de33dd25ebf1e978a8dd3b0a5b0a33490298f161904a5",
 };
 

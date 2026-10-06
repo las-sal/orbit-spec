@@ -51,6 +51,7 @@ const NO_CONSENT_YAML = CONSENT_YAML.replace(/\n    consent: user-invoked/g, '')
 );
 
 describe('consent attribute (D1) — parse / surface / reject', () => {
+  // @scenario behaviour orbit-engine-gates :: Gate declaration in schema YAML :: Consent attribute parses, surfaces, and rejects unknown values
   it('parses consent: user-invoked and normalizes it through', () => {
     const schema = parseSchema(CONSENT_YAML);
     const norm = normalizeGates(schema);
@@ -59,6 +60,7 @@ describe('consent attribute (D1) — parse / surface / reject', () => {
     expect(norm.find(g => g.id === 'apply')!.consent).toBeUndefined();
   });
 
+  // @scenario behaviour orbit-engine-gates :: Gate declaration in schema YAML :: Consent attribute parses, surfaces, and rejects unknown values
   it('rejects an unknown consent value, naming the gate id and the single legal value', () => {
     const yaml = CONSENT_YAML.replace('consent: user-invoked', 'consent: always');
     expect(() => parseSchema(yaml)).toThrow(SchemaValidationError);
@@ -67,6 +69,7 @@ describe('consent attribute (D1) — parse / surface / reject', () => {
     );
   });
 
+  // @scenario behaviour orbit-engine-gates :: spec-driven v1 gates and cadence :: v5 declares the consent-marked seams
   it('a v2-style schema without consent parses and normalizes with no consent keys', () => {
     const schema = parseSchema(NO_CONSENT_YAML);
     for (const g of normalizeGates(schema)) {
@@ -74,9 +77,10 @@ describe('consent attribute (D1) — parse / surface / reject', () => {
     }
   });
 
-  it('the shipped spec-driven schema (version 4) consent-marks both reviewed gates', () => {
+  // @scenario behaviour orbit-engine-gates :: spec-driven v1 gates and cadence :: v5 declares the consent-marked seams
+  it('the shipped spec-driven schema (version 5) consent-marks both reviewed gates', () => {
     const schema = resolveSchema('spec-driven');
-    expect(schema.version).toBe(4);
+    expect(schema.version).toBe(5);
     const norm = normalizeGates(schema);
     expect(norm.find(g => g.id === 'review-proposal')!.consent).toBe('user-invoked');
     expect(norm.find(g => g.id === 'review-system')!.consent).toBe('user-invoked');
@@ -126,6 +130,7 @@ describe('consent attribute (D1) — gate computation and readout marker', () =>
     expect(withConsent.position).toBe(without.position);
   });
 
+  // @scenario behaviour orbit-engine-gates :: Gate declaration in schema YAML :: Consent does not alter gate computation
   it('a passed consent-marked gate is passed (eligibility and consent are independent axes)', () => {
     cleanProposalTrail();
     const rp = computeGateStates(consentSchema, 'c', dir, allArtifacts).gates.find(
@@ -135,6 +140,7 @@ describe('consent attribute (D1) — gate computation and readout marker', () =>
     expect(rp.consent).toBe('user-invoked');
   });
 
+  // @scenario behaviour orbit-engine-gates :: Gate declaration in schema YAML :: Consent attribute parses, surfaces, and rejects unknown values
   it('gates[] rows surface the consent marker; unmarked gates carry none', () => {
     const { gates } = computeGateStates(consentSchema, 'c', dir, allArtifacts);
     expect(gates.find(g => g.id === 'review-proposal')!.consent).toBe('user-invoked');
@@ -256,6 +262,7 @@ describe('eligibility phrasing (D1) — no imperative Next: label in engine outp
       return e.name.endsWith('.ts') ? [p] : [];
     });
 
+  // @scenario text orbit-engine-gates :: Single-voiced canonical-next computation :: Eligibility label, never imperative
   it('no engine source renders an imperative `Next:` label', () => {
     const offenders: string[] = [];
     for (const file of walk(SRC)) {
@@ -266,6 +273,7 @@ describe('eligibility phrasing (D1) — no imperative Next: label in engine outp
     expect(offenders).toEqual([]);
   });
 
+  // @scenario text orbit-engine-gates :: Single-voiced canonical-next computation :: Eligibility label, never imperative
   it('the status renderer uses the eligibility label', () => {
     const statusSrc = fs.readFileSync(
       path.join(SRC, 'commands', 'workflow', 'status.ts'),

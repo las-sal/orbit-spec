@@ -42,6 +42,7 @@ gates:
 `;
 
 describe('artifact-graph/schema — gates (C1)', () => {
+  // @scenario behaviour orbit-engine-gates :: Gate declaration in schema YAML :: Valid gates list parses
   it('parses a valid gates list', () => {
     const schema = parseSchema(GATED_YAML);
     expect(schema.gates).toHaveLength(3);
@@ -52,6 +53,7 @@ describe('artifact-graph/schema — gates (C1)', () => {
     expect(rp.confirm).toBe('no-new-findings');
   });
 
+  // @scenario behaviour orbit-engine-gates :: Gate declaration in schema YAML :: Unknown kind rejected
   it('rejects an unknown gate kind, naming the gate id', () => {
     const yaml = GATED_YAML.replace('kind: tracked', 'kind: scored');
     expect(() => parseSchema(yaml)).toThrow(SchemaValidationError);

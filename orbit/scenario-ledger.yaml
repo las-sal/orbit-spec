@@ -14,3 +14,7 @@ scenarios:
   - key: "orbit-conventions :: Generated-file disposition :: Upstream-verbatim — kept unchanged"
     kind: observed
     record: "orbit/changes/rc06b-map-readers/.orbit-runs/review-system-2026-10-05T00-27-56Z.json — the fresh system pass diffed every orbit-modified and upstream-verbatim body's upstream portion against upstream/v1.3.1 with the rename normalized; orbit-sync-specs' was unchanged"
+  # rc17a-invoked-coverage (task 6.4) — a MODIFIED block's process claim carried with its requirement.
+  - key: "orbit-engine-gates :: spec-driven v1 gates and cadence :: Cadence tuning is a schema edit"
+    kind: untestable
+    why: "The scenario is how a FUTURE revision changes the cadence (an edit to schema.yaml with a version bump, no engine code); no test can observe a revision not yet made. The current cadence living in the schema file is held by the v5 declaration test."

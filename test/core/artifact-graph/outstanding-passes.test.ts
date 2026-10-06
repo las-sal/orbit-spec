@@ -161,13 +161,14 @@ describe('rc08b — a reviewed gate lists its outstanding passes', () => {
     expect(g.nextCommand).not.toMatch(/--from-file/);
   });
 
-  // @scenario behaviour orbit-engine-gates :: A reviewed gate lists its outstanding passes :: A blocked gate carries neither field
-  it('a blocked gate carries neither field', () => {
+  // @scenario behaviour orbit-engine-gates :: A reviewed gate lists its outstanding passes :: A blocked gate carries none of the three fields
+  it('a blocked gate carries none of the three fields', () => {
     fs.writeFileSync(path.join(dir, 'tasks.md'), '- [ ] one\n');
     review(runs, T(1), 'system', 'fresh', [['WARNING', 'w1']]);
     const g = gate(PAIR_YAML);
     expect(g.state).toBe('blocked');
     expect('unresolvedPasses' in g).toBe(false);
+    expect('unwalkedPasses' in g).toBe(false);
     expect('openPair' in g).toBe(false);
   });
 });
@@ -186,12 +187,19 @@ describe('rc08b — both fields reach orbit status --change --json', () => {
       for (const f of ['proposal.md', 'design.md']) fs.writeFileSync(path.join(cd, f), '# x');
       fs.writeFileSync(path.join(cd, 'specs', 's.md'), '# s');
       fs.writeFileSync(path.join(cd, 'tasks.md'), '- [x] one\n');
+      // rc17a: under spec-driven v5 a lone fresh pass is a single that covers the `invoked` slot, so the
+      // open pair this test projects is now a LAUNCHED one — a `pair: true` T0 before the fresh half.
+      fs.writeFileSync(
+        path.join(cr, `review-external-${T(0)}.json`),
+        JSON.stringify({ command: 'review-external', mode: 'system', pair: true })
+      );
       review(cr, T(1), 'system', 'fresh', [['WARNING', 'w1']]);
       const status = formatChangeStatus(loadChangeContext(root, 'c'));
       const row = status.gates.find(g => g.id === 'review-system')!;
       expect(row.unresolvedPasses).toEqual([
         { token: T(1), file: `orbit/changes/c/.orbit-runs/review-system-${T(1)}.json`, mode: 'system', source: 'internal-review' },
       ]);
+      expect(row.unwalkedPasses).toEqual([]);
       expect(row.openPair).toEqual({ missing: 'external' });
       // JSON round trip keeps both (the projection is field-by-field and explicit).
       const json = JSON.parse(JSON.stringify(status));

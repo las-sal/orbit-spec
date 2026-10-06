@@ -86,7 +86,10 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   getExploreSkillTemplate: '2835cca2ae531f797e0417d14f9bc66e6fd9c1b54558781ea95f3cbaad097583',
   getNewChangeSkillTemplate: '8f68be94db91a147b93d492f6f32ab3c02725a20a001c87602ac8d9741587614',
   getContinueChangeSkillTemplate: '98c49b247140ba301964c1e5a825686485b74a525f65f31a365d19e0aa84923e',
-  getApplyChangeSkillTemplate: 'b2f2d8bfdc7bfb5283af4cb45d3f82fa6a393ccb0cfaeb332427c088ca956ecd',
+  // rc17a-invoked-coverage apply (2026-10-05), a PLANNED move (its task 4.2): Step 3's all_done clause
+  // stopped naming "spec-driven v4" and `blind-pair` as the post-apply slot — under v5 which review comes
+  // next depends on the cadence and the review preference, so the body says it is read, not predicted.
+  getApplyChangeSkillTemplate: 'a6fee1123aa05f50fb422bea764f5ed3dee8a4a3d85481515b65a693d2c38758',
   getFfChangeSkillTemplate: 'b4411dbfa4c2fe0c02b5b5137006edf50f993d9187153b21e43de680b3f9b148',
   getSyncSpecsSkillTemplate: 'a9672b720eff36fb30f2229d835fd9a9e4cc88e81f1773bc74aff79247aa9809',
   // rc08b-walk-routing (2026-10-05, task 3.3): the command-table row's retired "auto-discovers … when invoked
@@ -160,7 +163,7 @@ const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
   'orbit-explore': 'd34772425aeff5415c9760e2ac7414facfc70d142bbb7e12f8ffbab50fde7004', // rc16-retirement-sweep: moved once with the body at apply, a second time at the system blind-pair walk (see the function-hash note above)
   'orbit-new-change': '94c9d6377c6de0484f3a51923eba08214ca45cab5d87a55e46e032de2640b925',
   'orbit-continue-change': 'f61634ab5e96436b33fd30c210f84a57f55baf1716d6ef4679c1ed2a518cc3d3',
-  'orbit-apply-change': '90e1e529f4a264b4cf2eac15cea9229d6d2c4c1e9c246b049a00d3f79cb2e574',
+  'orbit-apply-change': '491bbad729e422441417760e937dfd15facaa5b1af64da61336732c7b66336b7', // rc17a apply: the v4 clause (see the function-hash note above)
   'orbit-ff-change': '77ea91cebd3be1e220824780ece9d90d82aa2f70783eedbf314a3298ec1f31e0',
   'orbit-sync-specs': '23adf56ababc77dac8dcc06048b4d74d27ded9bc4f49a57858e17c4ea7866a75',
   'orbit-archive-change': '4868cb3b0e95631238dd25753dc4a4e3fdf6794151dfa7131d2c8ddb4ffc40d1',

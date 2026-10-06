@@ -212,24 +212,32 @@ describe('rc08b 5.1 — the discovery scenarios the walk body carries', () => {
 
   // @scenario text orbit-address-reviews :: Address-reviews command available :: Markers and outstanding passes are walked together
   it('an active change walks the UNION of markers and outstanding passes', () => {
-    expect(row(5)).toMatch(/the UNION of @review: markers in the change directory, every unresolvedPasses entry/);
+    expect(row(5)).toMatch(/the UNION of @review: markers in the change directory, every unresolvedPasses and unwalkedPasses entry/);
   });
 
-  // @scenario text orbit-address-reviews :: Address-reviews command available :: An open blind pair stops the walk
-  it('an open pair stops the walk before triage, naming the missing member and the canonical next', () => {
-    expect(row(4)).toContain('stop before triage; name the missing member and the gate\'s canonical next command; walk nothing; write no log');
+  // @scenario text orbit-address-reviews :: Address-reviews command available :: An open pair warns before the walk
+  it('an open pair warns before triage, naming the missing member and the canonical next, and offers stop or walk', () => {
+    expect(row(4)).toContain('before triage, warn that the pair is half-landed, naming the missing member and the gate\'s canonical next command, and offer two choices — stop (walk nothing, write no log, so the missing review can run) or walk now');
     expect(step1).toContain('Row 4 reads `openPair`');
   });
 
-  // @scenario text orbit-address-reviews :: Address-reviews command available :: A bare invocation meets the openPair stop
-  it('a bare invocation re-enters the rows as the single change, so the openPair stop applies', () => {
+  // @scenario text orbit-address-reviews :: Address-reviews command available :: Walking past the warning ends the pair
+  it('walking past the warning ends the pair and continues at row 5', () => {
+    expect(row(4)).toContain('Walking now ends the pair: on an invoked slot the walked half then covers alone');
+    expect(row(4)).toContain('On walk, continue at row 5.');
+  });
+
+  // @scenario text orbit-address-reviews :: Address-reviews command available :: A bare invocation meets the openPair warning
+  it('a bare invocation re-enters the rows as the single change, so the openPair warning applies', () => {
     expect(row(2)).toContain('then re-enter these rows as a positional naming that change');
     expect(row(2)).toContain('resolved to the single active change <name>');
   });
 
-  // @scenario text orbit-address-reviews :: Address-reviews command available :: A suggestion-only pass is not discovered
-  it('a suggestion-only pass is never listed, and is reached by --from-file', () => {
-    expect(step1).toContain('Only a pass carrying a CRITICAL or WARNING is ever listed, so a suggestion-only pass is reached by `--from-file`');
+  // @scenario text orbit-address-reviews :: Address-reviews command available :: A suggestion-only pass is discovered
+  it('a suggestion-only pass is discovered through unwalkedPasses, and the walk holds nothing on the gate', () => {
+    expect(step1).toContain('row 5 reads the union of the two lists');
+    expect(step1).toContain('so a suggestion-only pass is discovered and walked like any other');
+    expect(step1).not.toContain('a suggestion-only pass is reached by `--from-file`');
   });
 
   // @scenario text orbit-address-reviews :: Address-reviews command available :: Superseded and blocked gates contribute nothing
@@ -249,8 +257,8 @@ describe('rc08b 5.1 — the discovery scenarios the walk body carries', () => {
   });
 
   // @scenario text orbit-address-reviews :: Address-reviews command available :: Explicit `--from-file` overrides discovery
-  it('--from-file is the only input: no grep, no discovery, no openPair stop', () => {
-    expect(row(1)).toContain('the file ONLY; no marker grep, no trail discovery, no openPair stop; the positional, if any, resolves only where the log lands');
+  it('--from-file is the only input: no grep, no discovery, no openPair warning', () => {
+    expect(row(1)).toContain('the file ONLY; no marker grep, no trail discovery, no openPair warning; the positional, if any, resolves only where the log lands');
   });
 
   // @scenario text orbit-address-reviews :: Address-reviews command available :: Discovered work walks the standard ingest lifecycle

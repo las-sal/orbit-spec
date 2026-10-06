@@ -145,8 +145,10 @@ computed EXISTENCE-FIRST over substantive
 findings, completeness before disposition. `assignCadence` is an existential DFS memoized on
 `(slot, lowerBound)` — the consumed set is redundant under strict token ordering, which collapses
 exponential to polynomial. ONE shared CommonMark fence tracker (`src/core/markdown-fence.ts`) now
-backs both the report renderer and the external-findings parser. **`spec-driven` is version <!-- src:schema-version -->4<!-- /src:schema-version -->**:
-`review-system` cadence `[blind-pair, in-context]`, both reviewed gates `budget: 3`. Baseline
+backs both the report renderer and the external-findings parser. rc02 shipped `spec-driven`
+version 4 with the `review-system` cadence `[blind-pair, in-context]`; **`spec-driven` is now version <!-- src:schema-version -->5<!-- /src:schema-version -->**
+(rc17a): both reviewed gates read `[invoked, in-context]`, the first slot covered by what the user
+INVOKED (a single fresh or external pass, or a complete launched pair), both `budget: 3`. Baseline
 capabilities stayed at **20** (three MODIFIED; 10 delta blocks synced byte-verified). **2103 tests
 green.**
 

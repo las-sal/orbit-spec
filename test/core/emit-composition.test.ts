@@ -1628,6 +1628,48 @@ describe('rc04a judgement record', () => {
     expect(listRuns(RUNS).filter(f => f.startsWith('review-external-'))).toHaveLength(0);
   });
 
+  // ---- rc17a: the review-external T0 carries `pair`, the launch record ----
+  const t0Payload = (extra: Record<string, unknown>) => ({
+    model: null,
+    prompt_path: `${RUNS}/external-prompt-system-2026-01-02T00-00-00Z.md`,
+    target: null,
+    final_assessment: 'packaged',
+    ...extra,
+  });
+
+  // @scenario behaviour orbit-emit-composition :: The review-external payload carries `pair` :: A pair launch is accepted and carried
+  it('rc17a: a pair launch is written carrying pair: true, its composed facts unchanged by the field', () => {
+    const plain = composeAndWriteEmit('review-external', { change: 'foo' }, t0Payload({ mode: 'system' }) as any, { projectRoot: root });
+    const launched = composeAndWriteEmit('review-external', { change: 'foo' }, t0Payload({ mode: 'system', pair: true }) as any, { projectRoot: root });
+    const written = JSON.parse(fs.readFileSync(launched.path, 'utf-8'));
+    expect(written.pair).toBe(true);
+    expect(written.awaiting_findings).toBe(true);
+    expect(written.next_recommended).toBe(plain.emit.next_recommended);
+    // `pair: false` writes the ordinary T0: no key at all.
+    const off = composeAndWriteEmit('review-external', { change: 'foo' }, t0Payload({ mode: 'system', pair: false }) as any, { projectRoot: root });
+    expect(Object.prototype.hasOwnProperty.call(JSON.parse(fs.readFileSync(off.path, 'utf-8')), 'pair')).toBe(false);
+  });
+
+  // @scenario behaviour orbit-emit-composition :: The review-external payload carries `pair` :: A malformed pair is refused
+  it('rc17a: a non-boolean pair is refused naming the field, and nothing is written', () => {
+    for (const bad of ['yes', 1, null]) {
+      expect(() =>
+        composeAndWriteEmit('review-external', { change: 'foo' }, t0Payload({ mode: 'system', pair: bad }) as any, { projectRoot: root })
+      ).toThrow(/'pair' must be a boolean/);
+    }
+    expect(listRuns(RUNS).filter(f => f.startsWith('review-external-'))).toHaveLength(0);
+  });
+
+  // @scenario behaviour orbit-emit-composition :: The review-external payload carries `pair` :: A pair launch without a mode is refused
+  it('rc17a: pair: true without an explicit proposal|system mode is refused naming mode, and nothing is written', () => {
+    for (const extra of [{ pair: true }, { pair: true, mode: 'architecture' }]) {
+      expect(() =>
+        composeAndWriteEmit('review-external', { change: 'foo' }, t0Payload(extra) as any, { projectRoot: root })
+      ).toThrow(/requires an explicit 'mode'/);
+    }
+    expect(listRuns(RUNS).filter(f => f.startsWith('review-external-'))).toHaveLength(0);
+  });
+
   it('admits BOTH kinds on one archive emit — the reason the carrier is an array', () => {
     // ALSO pins orbit-run-summary-emit's 'Sufficiency above zero remains outside the engine'
     // scenario: the continuation cites ONE of the two preceding independent passes ([FRESH] on a

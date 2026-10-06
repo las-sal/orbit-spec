@@ -15,6 +15,6 @@ First proposal-mode review of this change.
 > 0 critical, 0 warning. Next: /orbit:apply nearmiss-change
 
 ---
-Gate review-proposal: unpassed — cadence class 'independent' has no fresh pass
+Gate review-proposal: unpassed — no outside review stands on this state
 Position: propose ✓ → review(proposal) unpassed → apply ready → review(system) blocked-by-gate → archive blocked-by-gate
 Ready when you are: /orbit:review --as proposal --fresh nearmiss-change

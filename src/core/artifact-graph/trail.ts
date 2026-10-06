@@ -92,11 +92,23 @@ export interface RejectedExternal {
   mode: ReviewMode;
 }
 
+/**
+ * rc17a: a blind pair's LAUNCH — a `review-external-<TS>.json` T0 whose JSON carries `pair: true` and a
+ * `mode` of `proposal` or `system`. Its members are COMPUTED by the gate model from the passes after it
+ * (`orbit-engine-gates`' `A pair's membership is computed from its launch`); nothing is stored.
+ */
+export interface TrailLaunch {
+  token: string;
+  mode: ReviewMode;
+}
+
 export interface Trail {
   changeDir: string;
   runsDir: string;
   passes: TrailPass[];
   resolutions: TrailResolution[];
+  /** rc17a: pair launches, token order. A T0 without `pair: true` or a valid `mode` is no launch. */
+  launches: TrailLaunch[];
   /** `apply-*.json` filename tokens (artifact-changing events for freshness). */
   applyTokens: string[];
   /**
@@ -160,6 +172,7 @@ export function readTrail(changeDir: string, overlay?: TrailOverlay): Trail {
     runsDir,
     passes: [],
     resolutions: [],
+    launches: [],
     applyTokens: [],
     rejectedExternals: [],
   };
@@ -180,6 +193,13 @@ export function readTrail(changeDir: string, overlay?: TrailOverlay): Trail {
     }
     // review-external-*.json (T0 packaging emit) is intentionally NOT a pass:
     // a packaged-but-unreturned external never counts as class coverage.
+    // rc17a: one carrying `pair: true` and a valid `mode` is a pair LAUNCH. Any other T0 is no launch,
+    // so a re-run of the missing external half, which re-packages without the flag, writes none.
+    else if (/^review-external-/.test(name)) {
+      if (json !== null && typeof json === 'object' && json.pair === true && (json.mode === 'proposal' || json.mode === 'system')) {
+        trail.launches.push({ token, mode: json.mode });
+      }
+    }
   };
 
   if (fs.existsSync(runsDir)) {
@@ -227,6 +247,7 @@ export function readTrail(changeDir: string, overlay?: TrailOverlay): Trail {
 
   trail.passes.sort((a, b) => (a.token < b.token ? -1 : a.token > b.token ? 1 : 0));
   trail.resolutions.sort((a, b) => (a.token < b.token ? -1 : a.token > b.token ? 1 : 0));
+  trail.launches.sort((a, b) => (a.token < b.token ? -1 : a.token > b.token ? 1 : 0));
   trail.applyTokens.sort();
   trail.rejectedExternals.sort((a, b) => (a.token < b.token ? -1 : a.token > b.token ? 1 : 0));
   if (applyUserValidation.length > 0) {

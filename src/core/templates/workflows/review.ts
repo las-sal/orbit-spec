@@ -1097,7 +1097,7 @@ covers the architecture trail.
 [run: orbit status --change example-change --report]
 [paste the rendered report verbatim — it ends with the engine tail, e.g.:
 ---
-Gate review-system: unpassed — blind pair open: the fresh pass on this state has no external partner; run it before walking these findings
+Gate review-system: unpassed — pair launched at 2026-05-26T14-40-02Z is open: the fresh member has no external partner; run it before walking these findings
 Position: propose ✓ → review(proposal) (past) → apply ✓ → review(system) unpassed → archive blocked-by-gate
 Ready when you are: /orbit:review --as system --reviewer external example-change]
 

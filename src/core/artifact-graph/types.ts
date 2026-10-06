@@ -35,7 +35,9 @@ export const GateConfirmSchema = z.enum(['no-new-findings', 'findings-resolved']
 // `in-context`). `independent` is NOT a value the `reviewer_class` emit field carries.
 // `blind-pair` (rc02) is a COMPOUND slot: two passes of distinct independent classes, read blind
 // of each other. Like `independent` it is cadence-only — `reviewer_class` never carries it.
-export const CADENCE_ENTRIES = ['in-context', 'fresh', 'external', 'independent', 'blind-pair'] as const;
+// `invoked` (rc17a) is covered by what the user INVOKED: a single independent pass that is not a
+// pair member, or a COMPLETE pair whose membership is computed from its launch. Cadence-only too.
+export const CADENCE_ENTRIES = ['in-context', 'fresh', 'external', 'independent', 'blind-pair', 'invoked'] as const;
 export const CadenceEntrySchema = z.enum(CADENCE_ENTRIES);
 
 // Lifecycle-phase tokens that a gate's `before` may target (in addition to a

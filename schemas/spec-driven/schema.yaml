@@ -1,5 +1,5 @@
 name: spec-driven
-version: 4
+version: 5
 description: Default OpenSpec workflow - proposal → specs → design → tasks
 artifacts:
   - id: proposal
@@ -150,11 +150,20 @@ artifacts:
 # `consent: user-invoked` (D1) marks the gate's `before:` phase as entered only on
 # an explicit user invocation — the engine surfaces the marker; bodies prompt.
 #
-# v4 (rc02): the system cadence opens with a BLIND PAIR — two passes of distinct
-# independent classes (one fresh, one external) read blind of each other, with no
-# walk of either pass's findings between them. Its trailing `in-context` slot is the
-# check on the walk that resolved the pair's findings, and clause (a) requires that
-# pass to be later than those resolution records, not merely later than the pair.
+# v5 (rc17a): BOTH reviewed gates open with the `invoked` slot — covered by what the
+# user INVOKED: a single fresh or external pass that is not a pair member, or a
+# COMPLETE blind pair (a `review-external` T0 carrying `pair: true` launches one; its
+# members are the first fresh pass and the first external return after it). A pair
+# with one half landed covers nothing and reports `openPair`; walking its landed
+# half ENDS the pair, and that half then covers alone. The trailing `in-context`
+# slot is the check on the walk that resolved the leading slot's findings, and
+# clause (a) requires that pass to be later than those resolution records.
+# `review_preference` in orbit/config.yaml (blind-pair | fresh | external, per gate;
+# default blind-pair) shapes ONLY which command the readout presents when nothing
+# covers the slot — never what covers it. There is no versioned cadence: v5 gates
+# every change, including one stamped with an earlier schema_version, and the move
+# from v4 only relaxes (a v4 trail has no launch, so every pass on it is a single).
+# `independent` and `blind-pair` stay in the grammar; no shipped gate declares them.
 # rc02c: `budget` is a DECLARED EXPECTATION and NOTHING CONSULTS IT. Both reviewed
 # gates declare `budget: 3` — what the cadence is expected to cost in independent
 # passes — but the engine never compares it to actual spend, derives no exhaustion
@@ -173,7 +182,7 @@ gates:
     kind: reviewed
     requires: [proposal, specs, design, tasks]
     inputs: [proposal, specs, design, tasks]
-    cadence: [independent, in-context]
+    cadence: [invoked, in-context]
     confirm: no-new-findings
     budget: 3
     before: apply
@@ -190,7 +199,7 @@ gates:
   - id: review-system
     kind: reviewed
     requires: [apply]
-    cadence: [blind-pair, in-context]
+    cadence: [invoked, in-context]
     confirm: findings-resolved
     budget: 3
     before: archive

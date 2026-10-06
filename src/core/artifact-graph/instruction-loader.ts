@@ -156,6 +156,8 @@ export interface GateStatusRow {
   deferredSuggestions?: number;
   /** rc08b: every outstanding pass (`[]` when none; absent on a blocked gate), and the open pair. */
   unresolvedPasses?: Array<{ token: string; file: string; mode: string | null; source: string }>;
+  /** rc17a: unwalked passes carrying any finding — the discovery set beside the hold. */
+  unwalkedPasses?: Array<{ token: string; file: string; mode: string | null; source: string }>;
   openPair?: { missing: string };
 }
 
@@ -437,6 +439,7 @@ export function formatChangeStatus(context: ChangeContext, overlay?: TrailOverla
       ...(g.independentSpend !== undefined ? { independentSpend: g.independentSpend } : {}),
       ...(g.deferredSuggestions !== undefined ? { deferredSuggestions: g.deferredSuggestions } : {}),
       ...(g.unresolvedPasses !== undefined ? { unresolvedPasses: g.unresolvedPasses } : {}),
+      ...(g.unwalkedPasses !== undefined ? { unwalkedPasses: g.unwalkedPasses } : {}),
       ...(g.openPair !== undefined ? { openPair: g.openPair } : {}),
     }));
     position = computation.position;

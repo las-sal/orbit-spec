@@ -179,7 +179,9 @@ const COMMANDS: Record<string, CommandSpec> = {
   'review-external': {
     kind: 'editorial',
     scopes: { change: true },
-    payloadFields: ['mode', 'prompt_path', 'target', 'final_assessment', 'judgements'],
+    // rc17a: `pair` — OPTIONAL boolean; `pair: true` marks the T0 as a blind pair's LAUNCH, whose
+    // meaning `orbit-engine-gates`' `A pair's membership is computed from its launch` owns.
+    payloadFields: ['mode', 'prompt_path', 'target', 'final_assessment', 'judgements', 'pair'],
   },
   archive: {
     kind: 'lifecycle',
@@ -1860,7 +1862,7 @@ export function composeAndWriteEmit(
       // Architecture mode has no change trail to read; the function still decides its genre.
       const trail: Trail =
         mode === 'architecture'
-          ? { changeDir: '', runsDir: resolved.runsDir, passes: [], resolutions: [], applyTokens: [], rejectedExternals: [] }
+          ? { changeDir: '', runsDir: resolved.runsDir, passes: [], resolutions: [], launches: [], applyTokens: [], rejectedExternals: [] }
           : readTrail(resolved.changeDir as string);
       const genre = computePassGenre(trail, (payload as any).reviewer_class, mode, token);
       verificationOwedCheck(payload, genre, resolved.changeDir);
@@ -1895,6 +1897,26 @@ export function composeAndWriteEmit(
     case 'review-external': {
       const promptPath = String((payload as any).prompt_path ?? '');
       if (!promptPath) throw new EmitError(`review-external T0 payload requires 'prompt_path'.`);
+      // rc17a: the pair LAUNCH. Pass-through narrative otherwise: nothing composed below reads it.
+      if (Object.prototype.hasOwnProperty.call(payload, 'pair')) {
+        const pair = (payload as any).pair;
+        if (typeof pair !== 'boolean') {
+          throw new EmitError(
+            `review-external payload 'pair' must be a boolean (true marks a blind pair's launch), got ${JSON.stringify(pair) ?? String(pair)}.`
+          );
+        }
+        if (pair) {
+          const explicitMode = (payload as any).mode;
+          if (explicitMode !== 'proposal' && explicitMode !== 'system') {
+            throw new EmitError(
+              `review-external payload 'pair: true' requires an explicit 'mode' of proposal or system — a launch the trail cannot attribute to a mode is no launch at all.`
+            );
+          }
+        } else {
+          // `pair: false` writes the ordinary T0, byte-for-byte what an absent field writes.
+          delete emit.pair;
+        }
+      }
       const mode = String((payload as any).mode ?? 'proposal');
       const findingsPattern = promptPath.replace('external-prompt-', 'external-').replace(/\.md$/, '').replace(/-\d{4}.*$/, `-<TS>`);
       emit.awaiting_findings = true;
