@@ -1325,11 +1325,11 @@ never deleted.
 
 ## Program stages
 
-<!-- src:stages -->35<!-- /src:stages --> small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
+<!-- src:stages -->36<!-- /src:stages --> small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
 split into rc02 + rc02b on 2026-09-12; rc13 added 2026-09-14 and moved to phase 1 the same day;
 rc03a split from rc03 on 2026-09-15 and WITHDRAWN the same day; rc13 split into rc13a + rc13b on
 2026-09-15 under R-crc-9; rc07b split from rc07 the same day under R-crc-9 applied PREVENTIVELY; rc04d split from rc04c on 2026-09-21, the THIRD preventive application, caught at exploration by a size check rather than after a cadence;
-rc13c declared 2026-09-25 from rc13a's archive proposal, and rc15 declared the same day taking up Q-crc-11; rc16 declared 2026-10-01 from Q-crc-28's ratified direction; rc03 split into rc03b + rc03c on 2026-10-04 under R-crc-9, the FOURTH preventive application, again caught at exploration by a size check; rc06 split into rc06a + rc06b the same day, the FIFTH, caught at exploration; rc08 split into rc08a + rc08b on 2026-10-05, the SIXTH, caught at exploration; rc17 declared the same day from rc08b's system walk, taking Sal's one-command blind pair and the walk's routed pair-diagnosis redesign; rc17 split into rc17a + rc17b the same day, the SEVENTH preventive application, caught at exploration; rc17c split from rc17a the same day at propose, the EIGHTH, caught by a capability count before any artifact was written — rc14 stays reserved for the undeclared `rc14-delta-scope` recommendation).
+rc13c declared 2026-09-25 from rc13a's archive proposal, and rc15 declared the same day taking up Q-crc-11; rc16 declared 2026-10-01 from Q-crc-28's ratified direction; rc03 split into rc03b + rc03c on 2026-10-04 under R-crc-9, the FOURTH preventive application, again caught at exploration by a size check; rc06 split into rc06a + rc06b the same day, the FIFTH, caught at exploration; rc08 split into rc08a + rc08b on 2026-10-05, the SIXTH, caught at exploration; rc17 declared the same day from rc08b's system walk, taking Sal's one-command blind pair and the walk's routed pair-diagnosis redesign; rc17 split into rc17a + rc17b the same day, the SEVENTH preventive application, caught at exploration; rc17c split from rc17a the same day at propose, the EIGHTH, caught by a capability count before any artifact was written; rc17d split from rc17b on 2026-10-06, the NINTH, caught at exploration by a capability count — rc14 stays reserved for the undeclared `rc14-delta-scope` recommendation).
 Every stage is sized under R-crc-1, names the capabilities it touches, and names its goal.
 Charters are settled under R-crc-3 until a citing change refines them; exit criteria are
 falsifiable and self-measured by the stage's own cadence (G0). Position is computed — see the
@@ -3087,10 +3087,45 @@ shown able to fail on four re-introduced defects; exits (2) and (3) are suites o
 real walk write gate. The system review ran as the program's first LAUNCHED blind pair, by hand (a `pair: true`
 T0; rc17b ships the command), and the gate computed PASSED through it.
 
+### Stage rc17d-external-runner — a recorded runner launches the external review
+
+Depends-on: (none)
+Complete: [ ]
+
+Split from rc17b 2026-10-06 (Sal) at its exploration, under R-crc-9: its ninth preventive application, caught by a
+capability count before anything was proposed (D-rc17b-1, `orbit/explore/rc17b-blind-pair-command/`). It carries
+the half of rc17b's charter that stands alone. Charter: the external runner is the USER's, recorded in the per-user
+global config at `orbit init`, which explains the concept and offers the Codex preset, an own command or none
+(D-bpc-2, D-bpc-11); the engine surfaces the record in `orbit status --json` and never executes it; a recorded and
+reachable runner launches EVERY external half — today's single `--reviewer external` first, the pair's half once
+rc17b ships — in the background, its return normalized (lines above `# External Review:` removed and quoted in the
+commit message) and committed without hand edits; otherwise the prompt is printed for paste, today's handoff
+unchanged (D-bpc-1, D-bpc-5, D-bpc-14). A runner on PATH with nothing recorded launches nothing. The setup note lives
+in init's output, owned by the new capability, so `orbit-onboard` is not touched. The decisions and their Mechanism
+entries live in `orbit/explore/rc17d-external-runner/` (D-rc17d-1..7, re-entered from rc17a's archived exploration and
+re-read for the single external path). Capabilities: an ADDED runner capability (no baseline owns init's
+prompts, the global config or the record's status field), `orbit-review-external` (its `Command does not run the
+review or ingest findings` and handoff requirements gain the launched branch), `orbit-conventions` (the external
+class is "reached by a packaged prompt a human carries across vendors") — three, at R-crc-1's ceiling. Named limit
+(Sal, 2026-10-06, D-rc17d-7): the T0 record's `next_recommended` stays the paste/save prose `orbit-run-summary-emit`
+requires and `orbit-emit-composition` composes — it states the manual fallback even when a runner launches, and the
+launch is reported in chat; making the record launch-aware would add those two capabilities and is left as a
+follow-up. Goal G4.
+Exit: (1) with a runner recorded, `--reviewer external` launches with no paste and its return is committed without
+hand edits; (2) an adopter without a recorded runner gets today's handoff, unchanged; (3) a runner present on PATH
+but not recorded is never launched.
+
 ### Stage rc17b-blind-pair-command — the pair is one command
 
-Depends-on: rc17a-invoked-coverage
+Depends-on: rc17a-invoked-coverage, rc17d-external-runner
 Complete: [ ]
+
+**Narrowed 2026-10-06 (Sal) at its exploration:** the runner half of the charter below — the per-user record, the
+init setup step, auto-launch of every external half (D-bpc-1's dispatch, D-bpc-2, -5, -11, -14) — moved to
+`rc17d-external-runner`, on which this stage now depends, and with it this stage's exits (2) and (3) (D-rc17b-1).
+This stage keeps the one-command pair: D-bpc-3, -4, -13, the three shorthands and the `blind-pair` presentation row,
+across `orbit-review` and `orbit-engine-gates` — two capabilities. The charter is kept as written; its capability
+sentence and exits are superseded by this paragraph and the exit line below.
 
 Declared 2026-10-05 (Sal) from the rc17 exploration's split (D-bpc-9). It depends on rc17a because the
 command writes the launch record rc17a defines and must never hand back a half-open pair the gate cannot
@@ -3112,9 +3147,10 @@ later. Two handoffs from rc17a's propose (its design D2 and D6), counted in that
 launch is the external half's T0 written with `pair: true`, so D-bpc-13's steps 2 and 3 are one act;
 and while no pair command exists the `blind-pair` review preference presents the fresh review, so
 switching that one presentation row to this command is an `orbit-engine-gates` edit. Goal G4.
-Exit: (1) one invocation produces both pass files on one commit, each committed alone, with no walk between
-them, and pushed; (2) with a runner recorded, the external half launches with no paste and its return is
-committed without hand edits; (3) an adopter without a recorded runner gets today's handoff, unchanged.
+Exit (as narrowed 2026-10-06): (1) one invocation produces both pass files on one commit, each committed alone,
+with no walk between them, and pushed; (2) with no runner recorded, the invocation runs the fresh half, prints the
+external prompt for paste, and ends with the pair open (`openPair: {missing: "external"}`), never a half covering
+alone. The original exits (2) and (3) are rc17d's exits (1) and (2).
 
 ### Stage rc17c-short-review-next — the review emit's next names the change, never a path
 
@@ -5013,7 +5049,7 @@ With it rc17a was five capabilities against R-crc-1's three. D-bpc-15 does not n
 still reaches the pass), so Sal took the split: rc17c carries D-bpc-16 across `orbit-emit-composition`,
 `orbit-report-rendering` and `orbit-review`, depending on rc17a; rc17a keeps three capabilities and the first half
 of its exit (3). This is R-crc-9's eighth preventive application, the first caught at propose by a count rather
-than at exploration. Stage count 34 → <!-- src:stages -->35<!-- /src:stages --> at the marked sites (this entry's mark is the third; the previous
+than at exploration. Stage count 34 → 35 at the marked sites (this entry's mark was the third, unmarked as history by the rc17d entry; the previous
 entry's is unmarked as history).
 
 **2026-10-06 — rc17a-invoked-coverage ARCHIVED.** `spec-driven` is version 5: both reviewed gates read
@@ -5039,3 +5075,26 @@ re-introduced defects; (2) a single fresh or external pass covers the first slot
 preference in every shape changes only the presented command; (3) a SUGGESTION-only pass is discovered through
 `unwalkedPasses` and walked through the real write gate. The split parent `rc17-blind-pair-command` stays
 `premised`: rc17b and rc17c still own its other criteria, so no ended mark is due yet.
+
+**2026-10-06 — rc17d-external-runner SPLIT from rc17b at its exploration (Sal).** The exploration opened by
+measuring the charter against the baseline before anything was proposed: six capabilities against R-crc-1's three —
+`orbit-review`, `orbit-review-external` (its `Command does not run the review or ingest findings` is false once a
+runner launches), `orbit-engine-gates` (rc17a's D6 presentation row), `orbit-conventions` (the external class is
+"a packaged prompt a human carries"), `orbit-onboard`, and an ADDED capability, because no baseline owns `orbit
+init`'s prompts or the global config. The rules divide by dependency: the runner stands alone and serves the old
+exits (2) and (3); the pair consumes it and serves exit (1). Sal: "yes split" (D-rc17b-1). rc17d takes the runner
+(the ADDED capability, `orbit-review-external`, `orbit-conventions`); rc17b keeps the pair (`orbit-review`,
+`orbit-engine-gates`) and depends on rc17d; the setup note moves into init's output, so `orbit-onboard` drops out.
+Following the rc04d precedent, rc17b keeps its id so the exploration's citation stays valid. rc17b's exit (2) is
+restated for the no-runner path, which the pair command still owns. The exploration also recorded three facts
+rc17a shipped that the assigned rules predate (the launch is the `pair: true` T0; membership is by order, so the
+fresh emit carries no launch token; the presentation row is this program's edit). R-crc-9's ninth preventive
+application. Stage count 35 → <!-- src:stages -->36<!-- /src:stages --> at the marked sites (this entry's mark is the third; the previous
+entry's is unmarked as history).
+
+**2026-10-06 — Architect session: rc17d's charter re-pointed before propose (Sal).** A pre-propose sweep for specs
+the runner makes false found one the exploration's count missed: the review-external T0's `next_recommended` is
+required to be the user's paste/save action (`orbit-run-summary-emit`, composed by `orbit-emit-composition`), which a
+launched runner makes stale. Sal took A: keep the record as the stated manual fallback, a named limit in rc17d's
+`orbit-review-external` delta, rather than B (a launch-aware record, five capabilities). The charter now names the
+limit and points at rc17d's own exploration, where the six rules carry Mechanism entries. Stage count unchanged.
