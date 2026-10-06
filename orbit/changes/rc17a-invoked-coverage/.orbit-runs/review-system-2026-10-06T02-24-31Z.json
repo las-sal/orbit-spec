@@ -1,0 +1,139 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-06T02:24:31Z",
+  "change": "rc17a-invoked-coverage",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc17a-invoked-coverage/specs/orbit-engine-gates/spec.md",
+      "line": 932,
+      "title": "Three requirement sentences still set openPair on any landed member, though the walk made a stale one land without it",
+      "recommendation": "Walk 1's option C defined 'landed' from membership, stale or not, and gave a stale landed member its own presentation row with NO openPair; openPair fires only on the usable-member row. Three normative sentences in the same delta still state the condition as 'open with one member landed': the outstanding-passes requirement's SHALL at :932 (the row SHALL carry openPair when 'an invoked slot's launched pair [is] open with one member landed'), the reason requirement's outranks-the-walk clause at :853, and its named forward case at :863. Read with the walk's own definition, :932 now requires openPair on L F A, where the engine (correctly, per the table) sets none. Point each at the presentation table's usable-member row instead of restating it ('per The first review slot covers what the user invoked, the row that sets openPair'), and qualify the two goal sentences that say the same thing (design.md:25, proposal.md:38).",
+      "reproduction": "Through evaluateReviewedGate with cadence [invoked, in-context]: trail L(T1) F(T2) A(T3) returns openPair undefined and the reason 'its fresh member is stale (an apply landed after it)'; spec.md:932 read with spec.md's 'A member has LANDED when the membership table below names it, stale or not' requires openPair {missing: external} on that state.",
+      "walk_entry": {
+        "title": "A stale pair member reads as not landed, so the invoked presentation contradicts the membership table",
+        "file": "src/core/artifact-graph/gates.ts"
+      }
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc17a-invoked-coverage/design.md",
+      "line": 145,
+      "title": "Design D10 and the proposal still say the walk's warning always offers stop or walk",
+      "recommendation": "Walk 2 narrowed discovery row 4: the walk offers stop-or-walk only when the landed half is listed, and on a clean landed half it names the routes that can end the pair and walks nothing. D10 (design.md:145-146) and the proposal's What Changes bullet (proposal.md:39-41) state the offer unconditionally. Add the clean-half qualification, or point at discovery row 4 rather than restating it."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc17a-invoked-coverage/specs/orbit-engine-gates/spec.md",
+      "line": 141,
+      "title": "The membership table's closure note does not account for the launch-tie row the walk added",
+      "recommendation": "The note lists how the table was revised from the exploration's (three rows) and says one attribution is beyond the trail. Walk 2 added the row for a pass sharing the launch's own token, settled by the tie fail-safe. Name it in the note as a fourth revision, so the table's provenance stays readable from the note alone."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Every edit the two walks claim is present, and the residual check from the commit that added the external return (0854833c) lists no changed file outside the two walks' edit records. The one regression is the cascade pattern this program keeps meeting: walk 1 widened a term ('landed' now includes stale members) and qualified the behaviour hanging off it, but three sentences elsewhere in the same delta that use the term were not re-read against the new definition. The engine, the oracle and the presentation table agree with each other; the spec's prose around the table does not. Probed by grepping every statement of the landed condition across the delta, design and proposal, re-running the walks' 106 tests, and reading each entry's introduced text in place.",
+  "passes_run": [
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    {
+      "pass": "0",
+      "reason": "a VERIFICATION-genre pass skips the whole-change verify"
+    },
+    {
+      "pass": "4",
+      "reason": "orbit/lenses/ does not exist"
+    },
+    {
+      "pass": "5",
+      "reason": "orbit/lenses/ does not exist"
+    },
+    {
+      "pass": "6",
+      "reason": "a VERIFICATION-genre pass skips the whole-project audit"
+    }
+  ],
+  "verification": [
+    {
+      "title": "A stale pair member reads as not landed, so the invoked presentation contradicts the membership table",
+      "file": "src/core/artifact-graph/gates.ts",
+      "verdict": "regressed"
+    },
+    {
+      "title": "The T0 JSON shape omits the pair field the payload table now accepts",
+      "file": "src/core/templates/workflows/review.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "The config's commented key guide misses review_preference and keeps a models example that v5 never reads",
+      "file": "orbit/config.yaml",
+      "verdict": "landed"
+    },
+    {
+      "title": "A code comment still states the v4 cadence as current",
+      "file": "src/core/emit-composition.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Formatting an invalid review preference can crash status",
+      "file": "src/core/project-config.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "“Walk now” cannot end a pair whose landed half is clean",
+      "file": "orbit/changes/rc17a-invoked-coverage/specs/orbit-address-reviews/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "A return tied with its launch silently becomes a covering single",
+      "file": "orbit/changes/rc17a-invoked-coverage/specs/orbit-engine-gates/spec.md",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 1 warning, 2 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-06T02-20-35Z",
+    "2026-10-06T02-20-54Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc17a-invoked-coverage --from-file orbit/changes/rc17a-invoked-coverage/.orbit-runs/review-system-2026-10-06T02-24-31Z.json"
+}
