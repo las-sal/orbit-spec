@@ -106,7 +106,7 @@ The full plan and design decisions live in the docs below — **read them before
 
 ## The ACTIVE program: clean-up-review-cycle (the D-arc is quiescent)
 
-**Current state, engine-checked:** the program's rulings index holds <!-- src:rulings -->14<!-- /src:rulings --> rulings, and `orbit/specs/` holds <!-- src:capabilities -->23<!-- /src:capabilities --> baseline capabilities. Every marked figure in this file is checked against `orbit/sources.yaml` by `orbit validate --sources`; an UNMARKED figure is invisible to that check.
+**Current state, engine-checked:** the program's rulings index holds <!-- src:rulings -->14<!-- /src:rulings --> rulings, and `orbit/specs/` holds <!-- src:capabilities -->24<!-- /src:capabilities --> baseline capabilities. Every marked figure in this file is checked against `orbit/sources.yaml` by `orbit validate --sources`; an UNMARKED figure is invisible to that check.
 
 As of 2026-09-11 the D-arc's six stages are all archived (d1 complete-ratified; d2–d6
 quiescent, awaiting ratification) and the live program is
@@ -211,7 +211,7 @@ file now carries a live mark. Do NOT read this paragraph as the program's full l
 only what rc07 produced. The authoritative list is the program doc's own Open questions section,
 which also carries Q-crc-11, Q-crc-12, Q-crc-20, Q-crc-21, Q-crc-22 and Q-crc-23.
 
-**Nineteen more stages have shipped since, and the program is TWENTY-TWO stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b, rc03c, rc07b and rc06a ratified 2026-10-04; rc06b, rc08a and rc08b ratified 2026-10-05 — rc08a's exit (3), pending by design, was measured on rc08b's cadence and read 4, not zero; the split parent rc08 took its ENDED mark the same day; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening; rc17a ratified 2026-10-06).
+**Twenty more stages have shipped since, and the program is TWENTY-TWO stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b, rc03c, rc07b and rc06a ratified 2026-10-04; rc06b, rc08a and rc08b ratified 2026-10-05 — rc08a's exit (3), pending by design, was measured on rc08b's cadence and read 4, not zero; the split parent rc08 took its ENDED mark the same day; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening; rc17a ratified 2026-10-06).
 
 `rc02c-confirmation-semantics` is ARCHIVED (2026-09-21): **the budget stopped being a target.**
 R-crc-11(h) — effort is RECORDED, never TARGETED — retired `budgetExhausted`, the
@@ -671,6 +671,20 @@ the failed slot's eligible set at the lowest reaching bound (`foreclosed` retire
 an exhaustive oracle (21,007,908 cases, six shards, the suite's new long pole) shown able to fail on four
 re-introduced defects. The system review was the program's first LAUNCHED blind pair (by hand; rc17b ships the
 command): a COMPUTED PASSED gate after two walks and an in-context verification. **2885 tests green** (2826 → 2885).
+
+`rc17d-external-runner` is ARCHIVED (2026-10-06; split from `rc17b-blind-pair-command` at its exploration):
+**a recorded runner launches the external review, with no paste.** A per-user `externalRunner` record in the
+global config (`{preset: "codex"}` or `{argv: [...]}`, never a shell string, a path-bearing `argv[0]` absolute),
+written by `orbit init`'s interactive setup step and `orbit config`; `orbit external runner [--json]` prints it
+resolved and never executes it; `orbit external save` cuts a raw return at the first unfenced `# External Review:`,
+checks it with the trail reader and the report renderer, refuses an aliased trail and — with `--launch` — a return an
+apply superseded. The review body's external branch launches a reachable runner in a subshell in a worktree at the
+handoff commit, commits the return alone with its message passed by `-F`, and with no record prints today's handoff
+byte for byte. Baseline capabilities **23 → 24** (`orbit-external-runner` ADDED). The system pair's external half ran
+through the new runner — the program's first external review with no paste (task 5.5, closed by observation); the
+halves converged on three defects, walked in two logs; a COMPUTED PASSED gate. Handed to rc17b: two `orbit-review`
+sentences and the review trunk's matching line still describe the external class as packaging-only. **2985 tests
+green** (2885 → 2985).
 
 Read that doc before any rc-stage work; the D-arc section below is the historical
 record of how the engine got here.

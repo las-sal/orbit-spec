@@ -3116,6 +3116,18 @@ Exit: (1) with a runner recorded, `--reviewer external` launches with no paste a
 hand edits; (2) an adopter without a recorded runner gets today's handoff, unchanged; (3) a runner present on PATH
 but not recorded is never launched.
 
+Shipped as (2026-10-06; archived as `orbit/changes/archive/2026-10-06-rc17d-external-runner/`, where its
+`explore.md` now lives; the charter above stays as declared): the ADDED capability is `orbit-external-runner`, and
+the return is normalized by an ENGINE command, `orbit external save` (D-rc17d-8, Sal at propose), not a body step: it
+cuts at the first `# External Review:` line OUTSIDE every fence, checks the result with the trail reader and the
+report renderer, refuses an aliased change directory or trail, and — given the launch's T0 token — refuses a return
+an apply has since superseded. A single external also runs in a worktree at the handoff commit (design D4), launched
+in a subshell, and the return's commit message is a FILE passed by `-F`, because the removed preamble is text an
+external AI wrote (the system pair's converged CRITICAL: `$(...)` in a preamble ran under `-m`). A path-bearing
+`argv[0]` must be absolute. Task count 27, declared over R-crc-1's "under 20" at the proposal walk (Sal; design
+D10); the capability count held at three. Exit (1) was observed on the stage's own system review: its external
+half launched Codex through the recorded runner with no paste, and the return was committed with no hand edit.
+
 ### Stage rc17b-blind-pair-command — the pair is one command
 
 Depends-on: rc17a-invoked-coverage, rc17d-external-runner
@@ -5103,3 +5115,23 @@ required to be the user's paste/save action (`orbit-run-summary-emit`, composed 
 launched runner makes stale. Sal took A: keep the record as the stated manual fallback, a named limit in rc17d's
 `orbit-review-external` delta, rather than B (a launch-aware record, five capabilities). The charter now names the
 limit and points at rc17d's own exploration, where the six rules carry Mechanism entries. Stage count unchanged.
+
+**2026-10-06 — rc17d-external-runner ARCHIVED.** A per-user `externalRunner` record in the global config
+(`{preset: "codex"}` or `{argv: [...]}`, never a shell string), written by `orbit init`'s interactive setup step and
+`orbit config`; `orbit external runner [--json]` prints it resolved and never executes it; `orbit external save`
+normalizes a raw return into the trail; and the review body's external branch launches a recorded, reachable runner in
+a worktree at the handoff commit and commits its return alone — with no record, today's handoff unchanged byte for
+byte. The cycle: proposal blind pair with three walks and an in-context verification; apply 21/22 (5.5 the
+user-validation handoff; the five at-archive tasks converted to notes at apply); then a system blind pair launched by
+hand with the external half through the new runner — the first external review in the program run with no paste,
+closing 5.5 by observation — fresh 0C/3W/3S (forward) and external GPT-6 Codex 2C/5W/0S (hold), converging on three
+defects (the shell-interpolated commit message, the recovery line without `--launch`, the fallback naming a removed
+worktree), walked in two logs; an in-context VERIFICATION graded ten `landed`; its two suggestions walked; a COMPUTED
+PASSED gate. Fingerprints 6/6; sync 7 ADDED + 5 MODIFIED + 1 REMOVED across three capabilities, 12/12 blocks
+byte-verified (one doubled blank line collapsed by the merge); baseline capabilities 23 → 24. **Handed to rc17b**
+(note 6.5; the proposal walk's ruling, kept at the system walk, Sal: A): `orbit-review`'s scenario "External reviewer
+class dispatches to the handoff branch" ("no review passes run in this invocation"), its `--fresh` requirement's
+"the cross-vendor handoff a human carries", and the generated review trunk's matching line in
+`src/core/templates/workflows/review.ts` describe the external class as packaging-only and now contradict the
+external-handoff reference's launch branch; rc17b, which modifies `orbit-review`, corrects all three. Exits (1)–(3)
+are met as written; ratification is the architect session's.

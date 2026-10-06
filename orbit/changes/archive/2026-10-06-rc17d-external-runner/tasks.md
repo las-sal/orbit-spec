@@ -33,7 +33,7 @@
 - [x] 5.2 Exit (3) test: a stub runner on `PATH` named `codex` with no record → `orbit external runner --json` prints `{"runner": null}` and nothing launches
 - [x] 5.3 Declare every delta scenario (`@scenario` tags or `orbit/scenario-ledger.yaml` entries) and check `orbit status --change rc17d-external-runner --scenarios`
 - [x] 5.4 Full `npm test` green; `orbit validate rc17d-external-runner --strict`
-- [ ] 5.5 (User-validation handoff) Record the Codex preset with `orbit config set externalRunner.preset codex` and run this change's system review as `--reviewer external`: it launches with no paste and its return is committed without hand edits (exit 1)
+- [x] 5.5 (User-validation handoff) Record the Codex preset with `orbit config set externalRunner.preset codex` and run this change's system review as `--reviewer external`: it launches with no paste and its return is committed without hand edits (exit 1) — CLOSED AT ARCHIVE BY OBSERVATION (note 6.2), 2026-10-06: Sal ran `orbit config set externalRunner.preset codex`; the system pair's external half launched codex through the recorded runner in a worktree at the handoff commit e975b42d with no paste, exited 0, and `orbit external save --launch 2026-10-06T15-23-46Z` wrote external-system-2026-10-06T15-37-42Z.md (0 lines removed), committed alone as 41f03552 with no hand edit
 
 ## 6. At archive
 

@@ -1,0 +1,80 @@
+{
+  "command": "archive",
+  "timestamp": "2026-10-06T17:05:10Z",
+  "change": "rc17d-external-runner",
+  "kind": "lifecycle",
+  "model": "claude-opus-5-5",
+  "final_assessment": "rc17d-external-runner archived: a recorded runner launches the external review with no paste, its return saved by orbit external save and committed alone; with no record the handoff is unchanged. Gate review-system PASSED; sync 7 ADDED + 5 MODIFIED + 1 REMOVED across three capabilities; baseline capabilities 23 to 24.",
+  "archive_path": "orbit/changes/archive/2026-10-06-rc17d-external-runner",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 5
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-conventions",
+      "orbit-external-runner",
+      "orbit-review-external"
+    ],
+    "added": 7,
+    "modified": 5,
+    "removed": 1,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "Pre-archive audit (in flow, no separate emit), category 5 Touchpoints divergence: 1 WARNING — src/commands/config.ts, a substantive source the frozen Touchpoints did not predict (system walk 1's unset fix); 5 SUGGESTION riding along — orbit/architecture/clean-up-review-cycle.md, orbit/scenario-ledger.yaml, test/commands/external.test.ts and the two launch-harness files. Category 1's one residue (the baseline orbit-review-external Purpose's 'Does NOT run the review') corrected in flow by note 6.3; category 3's capability mark moved by note 6.4; categories 4 and 6 clean; category 2 skipped (orbit/lenses/ absent).",
+    "The marker grep found two '@review:' strings in the orbit-review-external delta; both are the prompt template's prose describing a marker (the Severity paragraph and the Blocks placeholder), not markers, so no prompt fired.",
+    "Task 5.5 (the user-validation handoff) CLOSED AT ARCHIVE BY OBSERVATION per note 6.2: the system pair's external half launched codex through the recorded preset in a worktree at handoff commit e975b42d with no paste, and its return was saved by orbit external save --launch and committed alone as 41f03552 with no hand edit.",
+    "Fingerprints 6/6 verified; sync through the engine's applySpecs, 12/12 ADDED and MODIFIED blocks byte-verified in baseline (one doubled blank line in the delta collapsed by the merge), the REMOVED requirement absent. The new baseline's TBD Purpose written in flow.",
+    "At-archive notes 6.1–6.5 executed in flow: sync (6.1), 5.5 closed (6.2), orbit-review-external's Purpose corrected (6.3), CLAUDE.md's src:capabilities 23 to 24 with orbit validate --sources clean (6.4), and the program doc's status log names the three packaging-only sentences rc17b corrects (6.5).",
+    "Full npm test: 2985 passed, 132 files, exit 0 at archive. Two earlier full runs during the system walk passed every test but exited 1 on vitest worker 'Timeout calling onTaskUpdate' errors while outside processes held the host at load ~20; a clean HEAD run and this run at load ~4 exit 0."
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "formed_against": [
+        "2026-10-06T14-32-17Z",
+        "2026-10-06T14-38-19Z",
+        "2026-10-06T15-27-33Z",
+        "2026-10-06T15-37-42Z"
+      ],
+      "disposition": "ready",
+      "reasoning": "Both reviewed gates computed PASSED through blind pairs. The system pair's external half ran through the mechanism this change ships, which is the stage's exit (1) observed on its own cadence. The pair's three converged defects, both CRITICALs among them, were reproduced and repaired, and the harness now runs the commit message through a real shell with a preamble that would execute under the old form. The in-context verification graded all ten walk entries landed. What remains is stated below.",
+      "ratified_by": "ai",
+      "accepted": [
+        {
+          "claim": "PASSED means every finding resolved, not that an independent pass stood clean on the final tree: system walk 3's two edits (the refusal row's pointer, the launch-route blocked line) were read by no pass.",
+          "why": "Wording only, verified by the sweep gate's introduced and retired strings and by the template test that asserts the new line and the old one's absence."
+        },
+        {
+          "claim": "Until rc17b archives, orbit-review's dispatch scenario, its external-class description and the generated review trunk's line say the external branch only packages, contradicting the reference's launch branch.",
+          "why": "Sal's ruling, kept at the system walk (A): a fourth capability here breaches R-crc-1; rc17b modifies orbit-review anyway; the reference is the more specific instruction and was followed correctly on this stage's own run."
+        },
+        {
+          "claim": "A return that opens with its heading and parses yet is truncated is saved and committed as a pass.",
+          "why": "The named limit of A recorded runner launches the external review, with its residual method (read the Reviewer line and run the external readers at each runner's first use); the renderer check added at the walk catches malformed headers, not missing findings."
+        },
+        {
+          "claim": "The launch harness proves the transcribed commands against real git, not that an agent follows the body; the body's launch route has been followed by an agent once, on this stage's own system review.",
+          "why": "The PR-lifecycle harness's stated limit, carried; rc17b's pair command reuses this launch path and will exercise it again."
+        },
+        {
+          "claim": "The T0 record's next_recommended states the paste/save fallback even when a runner launched.",
+          "why": "D-rc17d-7, Sal's named limit; the launch is reported in chat, and a launch-aware record would touch two more capabilities."
+        }
+      ]
+    }
+  ],
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."
+}
