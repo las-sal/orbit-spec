@@ -79,7 +79,10 @@ describe('rc17d — the external-handoff reference', () => {
 
   // @scenario text orbit-review-external :: A recorded runner launches the external review :: A failed run falls back to paste
   it('a failed run commits nothing and prints the paste fallback by push outcome', () => {
-    expect(ref).toMatch(/\*\*A failed run\*\*[^\n]*commits NOTHING for the return[^\n]*the Step 8 item 4 pull invocation with its attestation when the handoff push landed, the Step 8 handoff-blocked output when it did not/);
+    expect(ref).toMatch(/\*\*A failed run\*\*[^\n]*commits NOTHING for the return[^\n]*the Step 8 item 4 pull invocation with its attestation when the handoff push landed, or, when it did not, `Handoff blocked: the handoff commit <short-sha> is not pushed\. Push, then hand off/);
+    // system walk 3: the launch route's blocked line leads with the push only — the prompt is already committed.
+    const failed = ref.split('**A failed run**')[1].split('**Named limits.**')[0];
+    expect(failed).not.toContain('Commit the pending work');
   });
 
   it('the old packaging-only phrasing is gone', () => {

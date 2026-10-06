@@ -25,9 +25,9 @@ never the live checkout's path.
 | recorded, `argv[0]` resolves on `PATH` | launched in the background in a worktree at the handoff commit; prompt on stdin; return written to `{output}` outside the repository |
 | recorded, `argv[0]` does not resolve | the prompt is printed for paste, with the one extra item naming the unresolved command (per `Prompt written to versioned file with chat invocation snippet`) |
 | nothing recorded | today's handoff, unchanged |
-| launched, exits non-zero or is stopped (including a runner that is not signed in) | no pass file; the failure is reported with its exit status and the paste fallback is printed — the recommended-session note, a line saying the prompt's `## Repo` names the removed launch worktree and naming the repository and the handoff commit instead, then the pull invocation when the handoff push landed, the handoff-blocked output when it did not; the T0 stands, so the gate keeps presenting the external half |
+| launched, exits non-zero or is stopped (including a runner that is not signed in) | no pass file; the failure is reported with its exit status and the paste fallback is printed — the recommended-session note, a line saying the prompt's `## Repo` names the removed launch worktree and naming the repository and the handoff commit instead, then the pull invocation when the handoff push landed, or, when it did not, a launch-route handoff-blocked line naming the unpushed handoff commit with the push leading (the prompt is already committed); the T0 stands, so the gate keeps presenting the external half |
 | the return opens with lines above `# External Review:` | removed by `orbit external save`, which reports them; the body quotes them in the commit message |
-| the return carries no unfenced `# External Review:` heading, names another change, or is rejected by the trail reader | refused by `orbit external save`; treated as a failed run; the raw return stays outside the repository and its path is named |
+| the return carries no unfenced `# External Review:` heading, names another change, is rejected by the trail reader, or is refused by `orbit external save` for any other cause (per `orbit-external-runner`'s `The engine saves an external return into the trail`) | refused by `orbit external save`; treated as a failed run; the raw return stays outside the repository and its path is named |
 | an apply landed after the launch | refused by `orbit external save` (`--launch`); a failed run with NO paste fallback — the prompt reviews a superseded state — and the review is re-run, packaging a new prompt |
 
 The failure rows are those observed on one runner (Codex, on rc08b's and rc17a's pairs) plus the absent and
@@ -58,7 +58,7 @@ preset's name, or the basename of `argv[0]`) when one launched.
 #### Scenario: A failed run falls back to paste
 
 - **WHEN** the launched runner exits non-zero
-- **THEN** nothing is committed for the return, the failure is reported with its exit status and the raw return's path, and the paste fallback is printed — the recommended-session note, the line naming the repository and the handoff commit in place of the removed worktree, then the pull invocation when the handoff push landed, the handoff-blocked output (per `Handoff preflight blocks unusable pull invocations`) when it did not
+- **THEN** nothing is committed for the return, the failure is reported with its exit status and the raw return's path, and the paste fallback is printed — the recommended-session note, the line naming the repository and the handoff commit in place of the removed worktree, then the pull invocation when the handoff push landed, or, when it did not, a launch-route handoff-blocked line naming the unpushed handoff commit with the push leading — the prompt is already committed, so Step 8's commit-the-pending-work output (per `Handoff preflight blocks unusable pull invocations`) does not apply
 
 ### Requirement: A launched return is committed alone and pushed
 
