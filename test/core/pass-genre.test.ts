@@ -43,6 +43,7 @@ beforeEach(() => {
 afterEach(() => fs.rmSync(dir, { recursive: true, force: true }));
 
 describe('computePassGenre — the decision table (task 1.1)', () => {
+  // @scenario behaviour orbit-conventions :: Review mode decision framework :: Independent classes are REVIEW genre
   it('independent classes are REVIEW with [] at every trail position, even after a qualifying walk', () => {
     review(1, 'fresh');
     walk(2, src(`review-system-${T(1)}.json`));
@@ -51,6 +52,7 @@ describe('computePassGenre — the decision table (task 1.1)', () => {
     }
   });
 
+  // @scenario behaviour orbit-conventions :: Review mode decision framework :: Architecture mode is REVIEW genre
   it('architecture mode is REVIEW with [] for every class', () => {
     review(1, 'fresh');
     walk(2, src(`review-system-${T(1)}.json`));
@@ -58,6 +60,7 @@ describe('computePassGenre — the decision table (task 1.1)', () => {
     expect(genre('fresh', 'architecture', 3)).toEqual({ passGenre: 'REVIEW', verifiedWalks: [] });
   });
 
+  // @scenario behaviour orbit-conventions :: Review mode decision framework :: In-context after a qualifying walk of its mode is VERIFICATION genre
   it('in-context after a qualifying walk is VERIFICATION, its walks in token order', () => {
     review(1, 'fresh');
     write(`external-system-${T(2)}.md`, ACCEPTED_EXTERNAL);
@@ -66,6 +69,7 @@ describe('computePassGenre — the decision table (task 1.1)', () => {
     expect(genre('in-context', 'system', 5)).toEqual({ passGenre: 'VERIFICATION', verifiedWalks: [T(3), T(4)] });
   });
 
+  // @scenario behaviour orbit-conventions :: Review mode decision framework :: In-context with no qualifying walk of its mode is REVIEW genre
   it('in-context with no walk at all, or only walks older than the latest accepted independent pass, is REVIEW', () => {
     review(1, 'fresh');
     expect(genre('in-context', 'system', 2)).toEqual({ passGenre: 'REVIEW', verifiedWalks: [] });

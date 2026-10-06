@@ -18,3 +18,10 @@ scenarios:
   - key: "orbit-engine-gates :: spec-driven v1 gates and cadence :: Cadence tuning is a schema edit"
     kind: untestable
     why: "The scenario is how a FUTURE revision changes the cadence (an edit to schema.yaml with a version bump, no engine code); no test can observe a revision not yet made. The current cadence living in the schema file is held by the v5 declaration test."
+  # rc17d-external-runner (task 5.3) — two process claims carried in orbit-conventions' MODIFIED block.
+  - key: "orbit-conventions :: Review mode decision framework :: A user doc stating the framework is held to this requirement"
+    kind: untestable
+    why: "The THEN is an /orbit:audit-drift Category 3 finding an AI produces on its next run, and the scenario's own text says no such user doc exists yet; there is no second statement for a test to compare."
+  - key: "orbit-conventions :: Review mode decision framework :: Framework guidance is gate-surfaced, never gate-enforced"
+    kind: untestable
+    why: "The THEN is the archive body's inflection prompt and the user's proceed decision, choreography an AI follows in a session; the gate's computed unpassed state is engine-tested elsewhere, but the prompt-and-proceed act is not runnable."

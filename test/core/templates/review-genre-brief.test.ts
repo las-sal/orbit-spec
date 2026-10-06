@@ -139,6 +139,7 @@ function surfaceHits(): Hit[] {
 }
 
 describe('review-genre brief: the generated surface carries no finding and no trail read pointer (rc03b task 1.1)', () => {
+  // @scenario text orbit-conventions :: Review mode decision framework :: A review-genre brief is checked for what it carries
   it('zero hits under the PHRASE rule (every generated skill) and the REGION rule (the review skill)', () => {
     expect(surfaceHits()).toEqual([]);
   });

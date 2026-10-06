@@ -66,6 +66,7 @@ describe('merged external invocation (D5)', () => {
 });
 
 describe('record vocabulary frozen across the merge (6.4)', () => {
+  // @scenario text orbit-review-external :: Review-external command available :: Record vocabulary frozen across the merge
   it("review's merged references keep every frozen record name byte-intact", async () => {
     const { getReviewSkillTemplate } = await import('../../../src/core/templates/workflows/review.js');
     const t = getReviewSkillTemplate();

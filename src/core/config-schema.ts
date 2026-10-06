@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { checkRunnerShape, EXTERNAL_RUNNER_FIELD } from './external-runner.js';
 
 /**
  * Zod schema for global OpenSpec configuration.
@@ -21,6 +22,8 @@ export const GlobalConfigSchema = z
     workflows: z
       .array(z.string())
       .optional(),
+    // rc17d: the shape is checked by `checkRunnerShape` (the shape table's one implementation), not here.
+    externalRunner: z.unknown().optional(),
   })
   .passthrough();
 
@@ -35,7 +38,7 @@ export const DEFAULT_CONFIG: GlobalConfigType = {
   delivery: 'both',
 };
 
-const KNOWN_TOP_LEVEL_KEYS = new Set([...Object.keys(DEFAULT_CONFIG), 'workflows']);
+const KNOWN_TOP_LEVEL_KEYS = new Set([...Object.keys(DEFAULT_CONFIG), 'workflows', EXTERNAL_RUNNER_FIELD]);
 
 /**
  * Validate a config key path for CLI set operations.
@@ -58,6 +61,14 @@ export function validateConfigKeyPath(path: string): { valid: boolean; reason?: 
       return { valid: false, reason: 'featureFlags values are booleans and do not support nested keys' };
     }
     return { valid: true };
+  }
+
+  // rc17d: exactly one nested path — an own argv is an array, which `config set` cannot write.
+  if (rootKey === EXTERNAL_RUNNER_FIELD && rawKeys.length > 1) {
+    if (rawKeys.length === 2 && rawKeys[1] === 'preset') {
+      return { valid: true };
+    }
+    return { valid: false, reason: `"${EXTERNAL_RUNNER_FIELD}" admits one nested key, "${EXTERNAL_RUNNER_FIELD}.preset"` };
   }
 
   if (rawKeys.length > 1) {
@@ -231,6 +242,17 @@ export function formatValueYaml(value: unknown, indent: number = 0): string {
 export function validateConfig(config: unknown): { success: boolean; error?: string } {
   try {
     GlobalConfigSchema.parse(config);
+    // rc17d: the runner record's shape is part of the whole-config validation, so a `set` whose merged
+    // result is a refused shape (`preset` over a recorded `argv`) is refused before anything is written.
+    if (config !== null && typeof config === 'object' && EXTERNAL_RUNNER_FIELD in config) {
+      const shape = checkRunnerShape((config as Record<string, unknown>)[EXTERNAL_RUNNER_FIELD]);
+      if (!shape.ok) {
+        return {
+          success: false,
+          error: `${EXTERNAL_RUNNER_FIELD} ${shape.reason}. To switch forms or clear a malformed record, run \`orbit config unset ${EXTERNAL_RUNNER_FIELD}\` first.`,
+        };
+      }
+    }
     return { success: true };
   } catch (error) {
     if (error instanceof z.ZodError) {

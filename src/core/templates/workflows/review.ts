@@ -395,9 +395,9 @@ No \`--fast\` subset: all six passes always run (the flag is a noted no-op in th
 
 const REVIEW_EXTERNAL_HANDOFF_REFERENCE = `# Reference: the external-handoff branch (\`--reviewer external\`)
 
-This branch packages a review request for an external AI (codex, fresh Claude, GPT, etc.) to perform a second-opinion review of an OpenSpec change — the behavior formerly invoked as the standalone \`/orbit:review-external\` command (RETIRED at D-arc Stage D5; the RECORD VOCABULARY IS FROZEN: the T0 emit keeps \`command: "review-external"\` and its \`review-external-<TS>.json\` filename, prompts keep \`external-prompt-<as>-<TS>.md\`, findings keep \`external-<as>-<TS>.md\` — gates, orientation WAITING arithmetic, the report ordinal, and the address-reviews parser all key on those names). The branch emits **two things**: (a) a self-contained markdown prompt written to \`orbit/changes/<change-name>/.orbit-runs/external-prompt-<as>-<TS>.md\` (committed; the external AI reads it from the repo), and (b) a short invocation snippet to chat that tells the user what to paste into the external AI's session.
+This branch packages a review request for an external AI (codex, fresh Claude, GPT, etc.) to perform a second-opinion review of an OpenSpec change — the behavior formerly invoked as the standalone \`/orbit:review-external\` command (RETIRED at D-arc Stage D5; the RECORD VOCABULARY IS FROZEN: the T0 emit keeps \`command: "review-external"\` and its \`review-external-<TS>.json\` filename, prompts keep \`external-prompt-<as>-<TS>.md\`, findings keep \`external-<as>-<TS>.md\` — gates, orientation WAITING arithmetic, the report ordinal, and the address-reviews parser all key on those names). The branch writes a self-contained markdown prompt to \`orbit/changes/<change-name>/.orbit-runs/external-prompt-<as>-<TS>.md\` (committed; the external AI reads it from the repo), then takes ONE of two routes. **With no runner launched** (none recorded, or the recorded one not on \`PATH\`) it emits a short invocation snippet to chat that tells the user what to paste into the external AI's session — the handoff exactly as it was before runners existed. **With the user's recorded runner reachable** it launches that runner on the prompt itself, in a throwaway worktree at the handoff commit, and saves and commits the return — no paste (Step 9).
 
-**Does NOT run the review and does NOT ingest findings.** The external AI does the review work. Ingestion is the change-scoped \`/orbit:address-reviews <change-name>\`, which discovers the saved return as an outstanding pass, or an explicit \`--from-file <path>\` aim. This command's job is solely to package the handoff.
+**Runs the review ONLY through the user's recorded runner, and NEVER ingests findings.** The runner is the one the user recorded in their per-user global config (\`orbit-external-runner\`; read through \`orbit external runner --json\`); a runner merely present on \`PATH\` is never launched. With none, the external AI is the user's to run. Either way, ingestion is the change-scoped \`/orbit:address-reviews <change-name>\`, which discovers the saved return as an outstanding pass, or an explicit \`--from-file <path>\` aim — invoked separately, never by this branch.
 
 **Input**: the change name and \`--as proposal|system\` resolved by the review trunk before this reference loads (\`--reviewer external\` requires \`--as proposal|system\`; architecture mode never reaches this branch). Compose the T0 emit via \`orbit emit review-external --change <name>\` — the engine owns the spine, the paste/save/ingest recommendation, and \`awaiting_findings\`.
 
@@ -437,6 +437,18 @@ The pull-based handoff only works if the external AI can actually see the review
 
 If the repo has no remote at all, the preflight is satisfied by the local-path handoff route (see Graceful degradation).
 
+**3a. The runner.** At this step, read the user's runner:
+
+\`\`\`bash
+orbit external runner --json
+\`\`\`
+
+It prints ONE object: \`{"runner": null}\`, or \`{"runner": {"form", "name", "argv", "reachable"}}\` with \`{worktree}\` and \`{output}\` placeholders in \`argv\` (any warning goes to standard error and the object is still \`null\`). The engine resolves the record and executes nothing; this branch holds no preset knowledge — use \`argv\` exactly as printed.
+
+- \`{"runner": null}\` → the branch is UNCHANGED: Steps 4–8, then the T0 emit.
+- \`reachable: false\` → UNCHANGED but for one extra item in Step 8 (item 6) naming the unresolved command.
+- \`reachable: true\` → the LAUNCH route. Fact 1 above now DECIDES: a dirty working tree, read BEFORE the prompt file is written, means the reviewed state is not committed — do NOT launch and write NOTHING (no prompt file, no T0); print \`Not launched: <name> reviews the committed state, and the working tree has uncommitted changes. Commit the pending work, then re-run the review.\` and stop. Never auto-commit the user's pending work. A clean tree continues to Step 4; unpushed commits do not block — they go with the handoff push in Step 9.
+
 ### 4. Count iterations (per mode)
 
 In \`orbit/changes/<name>/.orbit-runs/\`, count files matching \`external-<as>-*.md\` (findings files from prior external reviews in this mode — distinct from \`external-prompt-<as>-*.md\` which are prompt files).
@@ -470,6 +482,8 @@ orbit/changes/<change-name>/.orbit-runs/external-prompt-<as>-<TS>.md
 
 \`<TS>\` is ISO-8601 with hyphens (e.g., \`2026-05-18T14-35-23Z\`). Create \`.orbit-runs/\` if it doesn't exist. The file is **committed**, not gitignored.
 
+**On the launch route**, first fix the run's scratch directory OUTSIDE the repository: \`<run-dir>\` = \`<absolute system temp dir>/orbit-external-<change-name>-<TS>\` (the prompt's \`<TS>\`; resolve the temp dir with \`node -p "require('os').tmpdir()"\`). The worktree will be \`<run-dir>/worktree\`, the runner's \`{output}\` \`<run-dir>/return.md\`, its log \`<run-dir>/runner.log\`. The prompt's \`## Repo\` line names \`<run-dir>/worktree\` — the runner's working directory, a checkout of the handoff commit — NEVER the live checkout's path.
+
 Mode-specific content:
 
 - **"What to read for THIS review"** lists files appropriate to the mode (proposal mode emphasizes the change directory artifacts; system mode adds \`git diff\`, codebase paths, lens files).
@@ -477,9 +491,9 @@ Mode-specific content:
 
 The **"Output format"** block inside the prompt MUST appear verbatim — the section headers (\`## CRITICAL\` / \`## WARNING\` / \`## SUGGESTION\` / \`## Blocks\` / \`## Direction\`) and the field labels (\`**File**:\`, \`**Description**:\`, \`**Reproduction**:\`, \`**Disposition**:\`) are what \`/orbit:address-reviews --from-file\` and the report renderer parse. Deviating breaks ingestion. The \`## Severity\` paragraph before it is \`orbit-conventions\`' Severity ladder, mirrored byte-equal (a parity test holds it) — carry it as written.
 
-### 8. Emit the chat invocation snippet
+### 8. Emit the chat invocation snippet (no runner launched)
 
-Print to chat, in this exact order:
+On the launch route, skip this step: Step 9 owns the chat output. Otherwise print to chat, in this exact order:
 
 1. **(optional)** Mode-inference note when \`--as\` was omitted: \`Generating external-review prompt as \\\`<as>\\\` (inferred from tasks state).\`
 2. **(required)** Recommended-session note: \`Recommended session: <phrasing from Step 6>\`
@@ -488,8 +502,70 @@ Print to chat, in this exact order:
    - **Preflight satisfied** (clean tree, no unpushed commits — or local-path route): FIRST affirmatively state the prompt's committed-and-pushed state with evidence — \`Prompt committed (<short-sha>) and pushed to <remote>/<branch>\` (or, on the local-path route, the equivalent naming the path) — NEVER implied by the mere absence of a warning; THEN the copy-paste-ready invocation: \`Pull <repo URL> and read <prompt-file-path>. Follow its instructions; write findings to the path specified inside.\` (Get \`<short-sha>\` from \`git rev-parse --short HEAD\` and \`<remote>/<branch>\` from \`git rev-parse --abbrev-ref --symbolic-full-name @{u}\` after the push.)
    - **Preflight failed** (dirty tree and/or unpushed commits): the pull invocation is WITHHELD. Emit instead: \`Handoff blocked: <dirty tree | N unpushed commit(s)>. Commit the pending work (including the prompt file above) and push, then hand off: Pull <repo URL> and read <prompt-file-path>. ...\` — the commit+push action leads; the pull text is framed as the after-push step, never as an immediately-usable instruction.
 5. **(required)** The eventual findings path: \`When findings come back: /orbit:address-reviews --from-file orbit/changes/<change-name>/.orbit-runs/external-<as>-<TS>.md (TS will be set by the external AI when it writes).\`
+6. **(conditional — a recorded runner with \`reachable: false\`)** \`Recorded runner <argv[0]> not found on PATH — printing the prompt for paste.\`
 
-No other items. Required items always appear in the specified order. (The T0 emit's \`next_recommended\` mirrors the gate: when the preflight failed, it leads with the commit+push action before the paste step.)
+No other items. Required items always appear in the specified order. With nothing recorded, item 6 never appears and the output is the handoff's before runners existed. (The T0 emit's \`next_recommended\` mirrors the gate: when the preflight failed, it leads with the commit+push action before the paste step.)
+
+### 9. Launch the recorded runner (launch route only)
+
+Reached only with \`reachable: true\` and a clean tree (Step 3a). The engine never runs a process and reads no git state here; every git act and the launch are this body's steps.
+
+**9a. The handoff commit.** Emit the T0 now (see Run-summary emit) with \`target\` set to the runner's \`name\`. Then commit the prompt file and the T0 emit — and nothing else — and push:
+
+\`\`\`bash
+git add <prompt-path> <t0-path>
+git commit --only <prompt-path> <t0-path> -m "External review handoff (<as>, iter <N>): <change-name>"
+git push
+\`\`\`
+
+A failed push, or no remote, is REPORTED and the launch PROCEEDS — the runner reads a local worktree and needs no remote. Record whether the push landed: every later attestation says "pushed" only when it did.
+
+**9b. The worktree.** Add a detached worktree at the handoff commit, outside the repository:
+
+\`\`\`bash
+git worktree add --detach <run-dir>/worktree <handoff-sha>
+\`\`\`
+
+**9c. The launch.** Substitute \`{worktree}\` → \`<run-dir>/worktree\` and \`{output}\` → \`<run-dir>/return.md\` into \`argv\` FIRST. Then build ONE command line that keeps every element exactly one argument: single-quote EVERY element, writing an embedded \`'\` as \`'\\''\`; run it with the worktree as the working directory; feed the prompt by a \`<\` redirect; send the runner's own chatter to the log:
+
+\`\`\`bash
+cd '<run-dir>/worktree' && '<argv[0]>' '<argv[1]>' … < '<run-dir>/worktree/<prompt-path>' > '<run-dir>/runner.log' 2>&1
+\`\`\`
+
+NEVER hand a recorded string to \`sh -c\`, and never join the argv unquoted. Run it with the Bash tool's \`run_in_background\` — an external review outlasts the foreground limit — and WAIT on its completion notification; do not poll. While it runs, print the launch output (items 1–5 of 9e).
+
+**9d. The return.** When the run exits 0, save it — the engine cuts any preamble above the first unfenced \`# External Review:\` heading, checks the result with the trail reader, and refuses a return an apply has since superseded:
+
+\`\`\`bash
+orbit external save <change-name> --as <as> --from <run-dir>/return.md --launch <T0 token> --json
+\`\`\`
+
+It prints \`{"path", "removed"}\`. Commit the saved file ALONE — \`git add\` of that one path, then \`git commit --only\` on it, so work the user staged during the run stays out — with each removed line quoted in the message, then push:
+
+\`\`\`bash
+git add <saved-path>
+git commit --only <saved-path> -m "External review (<as>, iter <N>): <change-name>
+
+Removed above the heading by orbit external save:
+> <removed line>"
+git push
+\`\`\`
+
+(Omit the "Removed" paragraph when nothing was removed.) Then \`git worktree remove --force <run-dir>/worktree\` — a failed removal is reported, never fatal. Then render the return's report with \`orbit status --change <change-name> --report <saved TS>\` and paste it. Do NOT walk it: the walk is \`/orbit:address-reviews\`, invoked separately.
+
+**A failed run** — a non-zero exit, or ANY \`orbit external save\` refusal (no unfenced heading, another change's heading, a reader rejection, an apply after the launch) — commits NOTHING for the return. Report the cause (the exit status, or the save's stderr) and the raw return's path (\`<run-dir>/return.md\`, when it exists; it stays outside the repository), remove the worktree as above, then print the paste fallback: the Step 8 item 4 pull invocation with its attestation when the handoff push landed, the Step 8 handoff-blocked output when it did not, then Step 8 item 5. The T0 stands, so the gate keeps presenting the external half. An apply after the launch means the return reviewed a superseded state: say so, and that the review should be re-run.
+
+**Named limits.** A writable own runner may follow the prompt's write/commit/push steps inside the worktree; the saved return is the only record, and the worktree is removed with \`--force\`. A return that opens with the heading and parses yet is truncated is not detected here — read its \`**Reviewer**:\` line at each runner's first use. The T0's \`next_recommended\` keeps the paste/save prose the emit surface requires even when a runner launched; the launch is reported in chat.
+
+**9e. Chat output (launch route)**, in this order:
+
+1. **(optional)** The mode-inference note, as in Step 8.
+2. **(required)** \`Launching <name> — your recorded external runner; no paste needed\` (in place of the recommended-session note).
+3. **(required)** \`Prompt: <prompt-path>\`
+4. **(required)** \`Prompt committed (<short-sha>); launched <name> at that commit\`, followed by \`, pushed to <remote>/<branch>\` ONLY when the push landed — otherwise the push failure, or the local-path note.
+5. **(required)** \`Raw output: <run-dir>/return.md — if this session ends before the run does, save it with: orbit external save <change-name> --as <as> --from <run-dir>/return.md\`, then \`Findings will be saved as orbit/changes/<change-name>/.orbit-runs/external-<as>-<TS>.md (TS set when the return is saved).\`
+
+When the run ends, add: \`Saved <saved-path>\`; \`Findings committed (<short-sha>)\` followed by \` and pushed\` ONLY when that push landed; \`Removed <k> line(s) above the heading\`; then the rendered report. A failed run adds instead the failure and the paste fallback above.
 
 ## Reference prompt template
 
@@ -530,10 +606,10 @@ orbit/changes/add-review-workflows/.orbit-runs/external-proposal-<TS>.md
 
 ## Out of scope
 
-The command does not run the review and does not ingest findings:
+The command runs the review only through the recorded runner and never ingests findings:
 
-- **Running the review**: the external AI does it. This command is packaging.
-- **Ingesting findings**: \`/orbit:address-reviews <change-name>\` discovers the saved return; \`--from-file <path>\` aims at it explicitly. This command emits the path the return is saved to.
+- **Running the review**: with a reachable recorded runner, Step 9 launches it; otherwise the external AI is the user's to run. A runner on \`PATH\` that the user has not recorded is never launched.
+- **Ingesting findings**: \`/orbit:address-reviews <change-name>\` discovers the saved return; \`--from-file <path>\` aims at it explicitly. This command emits (or, on the launch route, commits) the path the return is saved to.
 
 ## Graceful degradation
 
@@ -549,7 +625,7 @@ The command does not run the review and does not ingest findings:
 The external-handoff branch writes TWO artifacts during a single invocation:
 
 1. **The prompt file**: \`external-prompt-<as>-<TS>.md\` written per Step 7.
-2. **The T0 run-summary JSON**: emitted at command completion (after Step 8's chat invocation snippet), recording that the external pass was packaged and is awaiting findings.
+2. **The T0 run-summary JSON**: emitted at command completion (after Step 8's chat invocation snippet), recording that the external pass was packaged and is awaiting findings. On the launch route it is emitted at Step 9a instead, BEFORE the handoff commit (it is one of that commit's two files), with \`target\` set to the runner's \`name\`; its token is the \`--launch\` token Step 9d passes.
 
 The T0 emit goes to:
 

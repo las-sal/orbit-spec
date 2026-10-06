@@ -17,6 +17,8 @@ export interface GlobalConfig {
   profile?: Profile;
   delivery?: Delivery;
   workflows?: string[];
+  /** rc17d: the user's external runner, `{preset}` or `{argv}` (`orbit-external-runner`). Optional; absent = none. */
+  externalRunner?: unknown;
 }
 
 const DEFAULT_CONFIG: GlobalConfig = {

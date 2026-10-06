@@ -15,6 +15,7 @@ import { ownerText, fencedProduction } from '../helpers/owner-text.js';
 const HEADER_ROW = '| reviewer class | mode | trail position | pass genre |';
 
 describe('pass-genre table ↔ review body parity (rc03b)', () => {
+  // @scenario text orbit-conventions :: Review mode decision framework :: The review body carries the table as a checked mirror
   it("the review body's \"Pass genre\" fence is byte-equal to `orbit-conventions`' fenced table", async () => {
     const owner = await ownerText('orbit-conventions', '```\n' + HEADER_ROW);
     const table = fencedProduction(owner, HEADER_ROW);

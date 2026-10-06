@@ -315,6 +315,32 @@ program
     }
   });
 
+// External runner (rc17d): read the user's recorded runner; save an external return into a trail
+const external = program
+  .command('external')
+  .description("External review: the user's recorded runner, and saving a raw return into a change's trail");
+external
+  .command('runner')
+  .description('Print the resolved external runner record (never executes it)')
+  .option('--json', 'Output as JSON')
+  .action(async (options?: { json?: boolean }) => {
+    const { ExternalCommand } = await import('../commands/external.js');
+    const exitCode = new ExternalCommand().runner(options ?? {});
+    if (exitCode !== 0) process.exit(exitCode);
+  });
+external
+  .command('save <change-name>')
+  .description("Save an external AI's raw return into the change's trail as external-<mode>-<TS>.md")
+  .requiredOption('--as <mode>', 'Review mode: proposal or system')
+  .requiredOption('--from <path>', 'The raw return file')
+  .option('--launch <token>', "The launch's T0 token; refuses a return older than a later apply")
+  .option('--json', 'Output as JSON')
+  .action(async (changeName: string, options?: { as?: string; from?: string; launch?: string; json?: boolean }) => {
+    const { ExternalCommand } = await import('../commands/external.js');
+    const exitCode = new ExternalCommand().save(changeName, options ?? {});
+    if (exitCode !== 0) process.exit(exitCode);
+  });
+
 // Architecture tier (D-arc D2): computed program position over orbit/architecture/ docs
 const architecture = program
   .command('architecture')
