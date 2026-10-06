@@ -3069,8 +3069,11 @@ absent or unknown — changes only the presented command; (3) a SUGGESTION-only 
 Refined at propose (2026-10-05; the change's design D2–D4, which give the reasons): the pair LAUNCH is
 the external half's T0 written with `pair: true`, not a new record kind; the fresh member is matched by
 order, as the external one is, so no fresh emit is stamped; and no versioned cadence reader exists, so
-version 5 gates every change, including one stamped v4 — a relaxation that never removes coverage. The
-charter above is kept as written.
+version 5 gates every change, including one stamped v4 — a relaxation that never removes coverage.
+Refined at the proposal walk (Sal; the design's D10): the state set is NO-LAUNCH, PAIR-OPEN, COMPLETE,
+ENDED — a walk of a pair's landed half ENDS the pair and the walked half covers as a single, where the
+charter's BROKEN left the pair open — and the walk's `openPair` stop becomes a warning that offers to
+stop or walk. The charter above is kept as written.
 
 ### Stage rc17b-blind-pair-command — the pair is one command
 

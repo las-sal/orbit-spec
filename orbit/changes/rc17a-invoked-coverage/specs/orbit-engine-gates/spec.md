@@ -6,7 +6,8 @@ An `invoked` cadence slot SHALL be covered by what the user INVOKED, never by wh
 configuration prefers: a single independent pass that is not a pair member covers it at its own
 token, and a COMPLETE pair (per `A pair's membership is computed from its launch`) covers it as one
 unit at its later member's token. A pair, once launched, covers only when both members land, blind;
-a single fresh or single external pass covers by itself. The ordering constraints of clause (a) of
+a pair ended by a walk of its landed half leaves that half covering as a single; a single fresh or
+single external pass covers by itself. The ordering constraints of clause (a) of
 `Reviewed-gate pass condition — the computed convergence criterion` apply to both forms unchanged.
 
 `orbit/config.yaml` MAY carry `review_preference`, a map from reviewed-gate id to one of
@@ -834,7 +835,9 @@ determinable and acting on it early is cheaper than acting on it late.
 **AN OPEN BLIND PAIR OUTRANKS THE RESOLUTION RECOMMENDATION.** Clause (b) fails before clause (a)
 is reached in the ordinary reading, so the moment one pair member lands carrying a substantive
 finding the gate would otherwise recommend walking it — and that walk writes a record between the
-two members, foreclosing the pair permanently and costing two further independent passes. Coverage
+two members. On a `blind-pair` slot that walk forecloses the pair permanently and costs two further
+independent passes; on an `invoked` slot it ENDS the pair, so the walked half covers alone and the
+review the user invoked as a pair is never completed. Coverage
 SHALL therefore be computed even when resolution fails, and when the cadence declares an UNCOVERED
 pair-bearing slot — a `blind-pair` slot with a PAIRABLE member STANDING, or an `invoked` slot whose
 launched pair is open with one member landed (per `A pair's membership is computed from its launch`)

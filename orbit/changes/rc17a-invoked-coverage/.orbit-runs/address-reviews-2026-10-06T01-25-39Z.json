@@ -1,0 +1,184 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-06T01:25:39Z",
+  "change": "rc17a-invoked-coverage",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc17a-invoked-coverage/.orbit-runs/review-proposal-2026-10-06T01-23-54Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-06T01-23-54Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 1
+  },
+  "pushback_verification": "All four verified against current state; none stale. Three attributed as ripple misses of the first walk's entries (one scope, two query).",
+  "resolution_summary": {
+    "resolved": 4,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "D9's equality property sets openPair on rows the presentation table leaves without it",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 162,
+      "classification": "trivial_fix",
+      "action": "D9's Equality bullet now sets openPair on an invoked slot only when the live launch has exactly one member landed, above the bound, and the pair has not ended",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "or its launch's landed members\n  (`invoked`), hold the other class and not X"
+        ],
+        "introduced": [
+          {
+            "path": "design.md",
+            "text": "the presentation table's first row and no other"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Decision 1's stop-to-warning cascade misses the walk body's degradation line and the charter",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 31,
+      "classification": "trivial_fix",
+      "action": "task 5.1 names address-reviews.ts:503; the charter's refined-at-propose note records ENDED and the warning",
+      "ripple_miss_of": {
+        "walk": "2026-10-06T01-20-05Z",
+        "title": "BROKEN row presents a command whose pass is absorbed as the broken pair's member",
+        "file": "specs/orbit-engine-gates/spec.md",
+        "kind": "scope"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/architecture/clean-up-review-cycle.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "tasks.md",
+            "text": "the degradation line at `address-reviews.ts:503`"
+          },
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "text": "the state set is NO-LAUNCH, PAIR-OPEN, COMPLETE, ENDED"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Two sentences still read a walk of a pair half as foreclosing, against the ENDED rule",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 837,
+      "classification": "trivial_fix",
+      "action": "D9's event set and task 6.1 gain rejected external returns and apply tokens; D4 points at the membership requirement and D10 instead of restating the window",
+      "ripple_miss_of": {
+        "walk": "2026-10-06T01-20-05Z",
+        "title": "Pair membership never says which pass list it is read over (stale passes, rejected returns)",
+        "file": "specs/orbit-engine-gates/spec.md",
+        "kind": "query"
+      },
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "of L's mode whose tokens are later than L and earlier than the mode's next launch."
+        ],
+        "introduced": [
+          {
+            "path": "design.md",
+            "text": "external returns the trail reader rejects, and apply tokens"
+          },
+          {
+            "path": "tasks.md",
+            "text": "rejected external returns and apply tokens, plus the tie case"
+          },
+          {
+            "path": "design.md",
+            "text": "within the window `A pair's membership is computed from its launch` states"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The oracle's event set and design D4 do not carry the membership rule the walk settled",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 83,
+      "classification": "trivial_fix",
+      "action": "the reason requirement's rationale scopes the foreclosure to a blind-pair slot and names the invoked case; the invoked-slot requirement names the ended case",
+      "ripple_miss_of": {
+        "walk": "2026-10-06T01-20-05Z",
+        "title": "BROKEN row presents a command whose pass is absorbed as the broken pair's member",
+        "file": "specs/orbit-engine-gates/spec.md",
+        "kind": "query"
+      },
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "two members, foreclosing the pair permanently and costing two further independent passes."
+        ],
+        "introduced": [
+          {
+            "path": "specs/orbit-engine-gates/spec.md",
+            "text": "on an `invoked` slot it ENDS the pair, so the walked half covers alone"
+          },
+          {
+            "path": "specs/orbit-engine-gates/spec.md",
+            "text": "a pair ended by a walk of its landed half leaves that half covering as a single"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "All four findings of the in-context verification pass resolved as obvious fixes: the oracle's equality rule, the stop-to-warning cascade, the oracle's event set, and two sentences against the ended-pair rule.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply rc17a-invoked-coverage — user-invoked",
+  "ripple_misses": 3
+}

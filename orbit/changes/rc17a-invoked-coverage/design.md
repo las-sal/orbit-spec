@@ -79,9 +79,9 @@ an adopter needs (their gate relaxes). Accepted as a scope call at the proposal 
 ### D4 — membership is by ORDER for both classes (revises D-bpc-10's stamp)
 
 D-bpc-10 matched the external member by order and the fresh member by a launch token stamped on the
-fresh emit. This design matches both by order: a launch L's members are the FIRST fresh pass and the
-FIRST external return of L's mode whose tokens are later than L and earlier than the mode's next launch.
-Every other independent pass is a single. This adds no review payload field, keeps the two halves
+fresh emit. This design matches both by order, the first pass of each class after the launch, within the
+window `A pair's membership is computed from its launch` states (and D10 explains); every other
+independent pass is a single. This adds no review payload field, keeps the two halves
 symmetric, and lets a pair run by hand before rc17b exists — but only through a hand-composed T0 payload
 carrying `pair: true`, since no shipped body writes the field yet.
 The cost is the residual D-bpc-10 already named, widened from one class to both: a single invoked while
@@ -152,17 +152,20 @@ the change; the tie stays.
 ### D9 — exit (1)'s oracle is an independent brute-force implementation
 
 `test/core/invoked-coverage-oracle.test.ts` enumerates every cadence of length 1 to 3 over the six
-tokens, and every trail of up to five events: passes of the three classes, `pair: true` T0s, and walk
-records referencing a chosen pass, with distinct tokens plus the tie case. It calls the exported pure
+tokens, and every trail of up to five events: passes of the three classes, `pair: true` T0s, walk records
+referencing a chosen pass, external returns the trail reader rejects, and apply tokens, with distinct
+tokens plus the tie case. It calls the exported pure
 entry that evaluates one reviewed gate over an in-memory `Trail` (task 3.1), never on-disk fixtures, and
 compares the engine's `openPair` and slot coverage against a reference written directly from the
 requirements' text. The reference enumerates every assignment (no memo, no pruning) and reads membership
 straight from the launch definition. Two properties are asserted on each case:
 
-- **Equality.** `openPair` equals the reference's own reading of the diagnosis: `missing: X` exactly when
-  the failed slot's eligible pairable set (structural `blind-pair`), or its launch's landed members
-  (`invoked`), hold the other class and not X; absent otherwise, including on `tie` and
-  `blindness-broken`.
+- **Equality.** `openPair` equals the reference's own reading of the diagnosis: `missing: X` exactly when,
+  on a structural `blind-pair` slot, the failed slot's eligible pairable set holds the other class and
+  not X; or, on an `invoked` slot, the live launch has exactly one member landed, of the other class,
+  above the bound, and the pair has not ended — the presentation table's first row and no other.
+  Absent otherwise: on `tie`, on `blindness-broken`, on a landed member at or below the bound, and on an
+  ended pair.
 - **Repairability, one direction only.** Whenever `openPair.missing` is X, adding one new pass of class X
   above every token lets the failed slot be covered. The converse is NOT asserted: on a `tie`, adding
   either class repairs the slot while `openPair` is rightly absent.
