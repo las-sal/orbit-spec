@@ -7,6 +7,7 @@ architecture:
 base_fingerprints:
   orbit-engine-gates:
     The first review slot covers what the user invoked: sha256:7e81091089e2541f7b467ba26f6a59c9784f2e378dd60a0cf693e39fb8c8ce69
+    Single-voiced canonical-next computation: sha256:459e5d220373e2c3af5139ebcae33745e0c15fc7b5bfaa6f6922dfcb514940a5
   orbit-onboard:
     Identity statement section: sha256:1da93d6de07e30f94c5161d4cf5762d2cdd652e56742757e7eef165a5922f3c9
   orbit-review:

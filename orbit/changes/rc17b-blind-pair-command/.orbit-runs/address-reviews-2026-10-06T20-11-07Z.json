@@ -1,0 +1,230 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-06T20:11:07Z",
+  "change": "rc17b-blind-pair-command",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc17b-blind-pair-command/.orbit-runs/external-proposal-2026-10-06T20-02-53Z.md",
+  "source_command": null,
+  "source_token": "2026-10-06T20-02-53Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 5,
+    "suggestion": 1
+  },
+  "pushback_verification": "All seven verified against current artifacts; two converged with the fresh half (same site, same claim) and are stale here naming its log.",
+  "resolution_summary": {
+    "resolved": 5,
+    "stale_suppressed": 2,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "Retrying from BASE can certify a superseded review as current",
+      "marker_source": "external",
+      "file": "orbit/changes/rc17b-blind-pair-command/specs/orbit-review-external/spec.md",
+      "line": 115,
+      "classification": "stale",
+      "reproduction_rerun": "not-reproduced",
+      "action": "converged with the fresh half's W4 (the re-run's save token), walked in its log",
+      "evidence": "resolved in address-reviews-2026-10-06T20-10-41Z (the earlier pass's log; Sal: A). Re-derived against the repaired spec: L=20-00-00, apply A=20-00-01, fresh F=20-00-02, re-run R=20-00-03 — `A pair's external half reads the pair's reviewed state` now saves a re-run with --launch L, and A > L makes orbit external save refuse the S0 return; and because an apply token is later than L the run is not a re-run at all, so it reviews S1 at its own handoff commit. The expected result (no S0 review certified as current) now holds.",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Runner selection occurs after route-dependent packaging is committed",
+      "marker_source": "external",
+      "file": "orbit/changes/rc17b-blind-pair-command/specs/orbit-review/spec.md",
+      "line": 95,
+      "classification": "trivial_fix",
+      "action": "row 1 becomes 'preflight and the runner': the runner is read ONCE before packaging and its result decides the route; row 4 routes on that reading; design D3 and task 3.1 say so",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17b-blind-pair-command/design.md",
+          "orbit/changes/rc17b-blind-pair-command/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "| 4. the runner | `orbit external runner --json`: a reachable runner takes row 5a"
+        ],
+        "introduced": [
+          {
+            "path": "specs/orbit-review/spec.md",
+            "text": "read ONCE: its result decides the route"
+          }
+        ],
+        "searched": [
+          "orbit external runner --json",
+          "the runner"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Failed external retries direct the paste reviewer to the wrong commit",
+      "marker_source": "external",
+      "file": "orbit/changes/rc17b-blind-pair-command/specs/orbit-review-external/spec.md",
+      "line": 29,
+      "classification": "stale",
+      "action": "converged with the fresh half's W2, walked in its log",
+      "evidence": "resolved in address-reviews-2026-10-06T20-10-41Z (the earlier pass's log): the failure row and the reviewed-state requirement's fallback row now name the pair's REVIEWED COMMIT",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The fresh retry loses its reviewed-state instruction",
+      "marker_source": "external",
+      "file": "orbit/changes/rc17b-blind-pair-command/specs/orbit-review-external/spec.md",
+      "line": 118,
+      "classification": "trivial_fix",
+      "action": "the fresh re-run row now briefs the worker with the pair's REVIEWED COMMIT as the state to read, emitting from the repository root, with a scenario; design D6 rewritten; proposal and task 4.1 updated",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17b-blind-pair-command/design.md",
+          "orbit/changes/rc17b-blind-pair-command/proposal.md",
+          "orbit/changes/rc17b-blind-pair-command/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "A fresh re-run rides the existing review-genre brief rule",
+          "a fresh re-run rides the existing brief rule",
+          "`Review mode decision framework`: the brief names no"
+        ],
+        "introduced": [
+          {
+            "path": "specs/orbit-review-external/spec.md",
+            "text": "the brief names the pair's REVIEWED COMMIT as the state to read"
+          }
+        ],
+        "searched": [
+          "fresh re-run",
+          "brief rule"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "A missing fresh half has conflicting external-save prerequisites",
+      "marker_source": "external",
+      "file": "orbit/changes/rc17b-blind-pair-command/specs/orbit-review-external/spec.md",
+      "line": 80,
+      "classification": "trivial_fix",
+      "action": "the commit table row gains 'or once the fresh half is known missing'; a scenario in the pair requirement and a harness case in task 6.1",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17b-blind-pair-command/specs/orbit-review/spec.md",
+          "orbit/changes/rc17b-blind-pair-command/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "only after the pair's fresh pass file is committed; pushed"
+        ],
+        "introduced": [
+          {
+            "path": "specs/orbit-review-external/spec.md",
+            "text": "or once the fresh half is known missing; pushed"
+          }
+        ],
+        "searched": [
+          "known missing",
+          "fresh pass file is committed"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "A stopped fresh worker can leave a member the engine still counts",
+      "marker_source": "external",
+      "file": "orbit/changes/rc17b-blind-pair-command/specs/orbit-review/spec.md",
+      "line": 99,
+      "classification": "trivial_fix",
+      "action": "row 6 reads the fresh half's landing from the trail: a fresh pass file later than L is the member and is committed whatever the worker's exit; with none, the half is MISSING; a scenario and harness cases before and after the file is written",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17b-blind-pair-command/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "specs/orbit-review/spec.md",
+            "text": "IS the landed member and goes to row 7, however the worker ended"
+          }
+        ],
+        "searched": [
+          "MISSING",
+          "stopped"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Define how existing review flags apply to the pair",
+      "marker_source": "external",
+      "file": "orbit/changes/rc17b-blind-pair-command/specs/orbit-review/spec.md",
+      "line": 98,
+      "classification": "trivial_fix",
+      "action": "one sentence after the pair table: every other flag applies to each half exactly as to that half's single run; task 3.2 carries it",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17b-blind-pair-command/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "specs/orbit-review/spec.md",
+            "text": "Every other flag of the command applies to each half"
+          }
+        ],
+        "searched": [
+          "--mark",
+          "--skip-verify",
+          "flag"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Seven walked: five repaired in place, two stale as converged with the fresh half's log (the CRITICAL re-derived against the repaired spec and no longer reproducing).",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal rc17b-blind-pair-command",
+  "ripple_misses": 0
+}

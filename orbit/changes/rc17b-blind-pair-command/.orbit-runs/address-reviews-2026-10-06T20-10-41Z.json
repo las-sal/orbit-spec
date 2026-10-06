@@ -1,0 +1,403 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-06T20:10:41Z",
+  "change": "rc17b-blind-pair-command",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc17b-blind-pair-command/.orbit-runs/review-proposal-2026-10-06T18-03-13Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-06T18-03-13Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 5,
+    "suggestion": 4
+  },
+  "pushback_verification": "All nine verified against current artifacts and src/core/artifact-graph/gates.ts; none stale.",
+  "resolution_summary": {
+    "resolved": 9,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The presented class becomes blind-pair but the baseline model-hint rule still says an invoked slot's class is fresh or external",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 69,
+      "classification": "decision_required",
+      "action": "applied the ratified option A: added `Single-voiced canonical-next computation` as a MODIFIED block whose hint sentence reads the presented class as fresh, external or blind-pair, a blind-pair hint describing the pair command as a whole, with a scenario; counts moved to nine requirements in proposal and design D9; design D7 records the ruling; task 1.1/1.2 cover it",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Modify `Single-voiced canonical-next computation` to read the presented class (`fresh`, `external` or `blind-pair`) and state that a `blind-pair` hint garnishes the pair command as a whole."
+          },
+          {
+            "label": "B",
+            "body": "Keep the hint key on the pair command unread (presented class `blind-pair`, but no hint garnish for it), and say so in the same modified sentence, so the v4 slot meaning of the key is not overloaded."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17b-blind-pair-command/proposal.md",
+          "orbit/changes/rc17b-blind-pair-command/design.md",
+          "orbit/changes/rc17b-blind-pair-command/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Eight requirements (two ADDED, six MODIFIED)",
+          "command (`fresh` or `external`), so a hint describes"
+        ],
+        "introduced": [
+          {
+            "path": "specs/orbit-engine-gates/spec.md",
+            "text": "a `blind-pair` hint describes the pair command as a whole"
+          },
+          {
+            "path": "proposal.md",
+            "text": "Nine requirements (two ADDED, seven MODIFIED)"
+          }
+        ],
+        "searched": [
+          "fresh` or `external`",
+          "models:",
+          "Eight requirements",
+          "presented class"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "A failed RE-RUN's paste fallback sends the reviewer to the re-run's handoff commit, which holds the committed fresh partner",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-review-external/spec.md",
+      "line": 29,
+      "classification": "trivial_fix",
+      "action": "the launch requirement's failure row names a blind pair's REVIEWED COMMIT in place of the handoff commit; the reviewed-state requirement gained the failure-fallback row and a failed-re-run scenario; task 4.2 covers the fallback line",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17b-blind-pair-command/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "naming the repository and the handoff commit instead,"
+        ],
+        "introduced": [
+          {
+            "path": "specs/orbit-review-external/spec.md",
+            "text": "the paste fallback's commit line names the pair's REVIEWED COMMIT"
+          }
+        ],
+        "searched": [
+          "handoff commit instead",
+          "handoff-sha"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "'No recorded runner is today's handoff, byte for byte' contradicts the pasted re-run's changed `## Repo` line",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-review-external/spec.md",
+      "line": 57,
+      "classification": "trivial_fix",
+      "action": "qualified the scenario's WHEN with the gate reporting no openPair for the mode; task 4.4's byte-identical check carries the same guard",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17b-blind-pair-command/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "specs/orbit-review-external/spec.md",
+            "text": "with no `externalRunner` record, and the gate reports no `openPair` for the mode"
+          }
+        ],
+        "searched": [
+          "byte for byte",
+          "No recorded runner is today's handoff"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Which token a re-run passes to `orbit external save --launch` is unstated, and the two readings diverge after an apply",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-review-external/spec.md",
+      "line": 13,
+      "classification": "decision_required",
+      "action": "applied the ratified option A: a re-run saves with --launch L; with an apply later than L the run is not a re-run and proceeds as an ordinary single on the current state; the fresh-started-before-apply edge is named in the limit; design D10, task 4.1 and the harness case in 6.1",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "A re-run passes `--launch L`, and a re-run is not detected (single external at its own handoff commit) when an apply token is later than L; the pair ends unfillable as the stale-member row already describes."
+          },
+          {
+            "label": "B",
+            "body": "A re-run passes its own T0 token, and the reviewed-state requirement names the apply-between case as part of its named limit."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17b-blind-pair-command/design.md",
+          "orbit/changes/rc17b-blind-pair-command/tasks.md",
+          "orbit/changes/rc17b-blind-pair-command/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "--launch <the re-run's T0 token>",
+          "the launch's T0 token as `--launch`."
+        ],
+        "introduced": [
+          {
+            "path": "specs/orbit-review-external/spec.md",
+            "text": "its\nreturn is saved with `--launch L`"
+          },
+          {
+            "path": "design.md",
+            "text": "a re-run checks supersession against the pair's launch"
+          }
+        ],
+        "searched": [
+          "--launch",
+          "T0 token",
+          "apply-*.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "explore.md",
+            "why": "the exploration is the historical record of how the change took shape; it keeps the wording the walk revised"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The launched half's isolation is claimed physical, but the fresh half's uncommitted pass file sits in the live checkout while the runner runs",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-review-external/spec.md",
+      "line": 120,
+      "classification": "trivial_fix",
+      "action": "narrowed the closure to the TREE the runner is pointed at and widened the residual kind to a launched runner that reads outside its worktree (the live checkout, or the object store and refs the worktree shares); design's Mechanism → artifacts note records the revision",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17b-blind-pair-command/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "physical isolation reaches only the launched routes"
+        ],
+        "introduced": [
+          {
+            "path": "specs/orbit-review-external/spec.md",
+            "text": "a launched runner that reads outside its worktree"
+          }
+        ],
+        "searched": [
+          "physical isolation",
+          "physical"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "explore.md",
+            "why": "the exploration is the historical record of how the change took shape; it keeps the wording the walk revised"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "'Token order, commit order and the residual base agree on every run' holds only on the launched route",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-review/spec.md",
+      "line": 114,
+      "classification": "trivial_fix",
+      "action": "scoped the agreement claim to the launched route in the pair requirement and design D2; the pasted route's order follows the external AI's own commit",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17b-blind-pair-command/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "and makes token order, commit order",
+          "agree on every run. `orbit external save` needs"
+        ],
+        "introduced": [
+          {
+            "path": "specs/orbit-review/spec.md",
+            "text": "On the pasted route the external AI picks its own token"
+          }
+        ],
+        "searched": [
+          "every run",
+          "token order"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "explore.md",
+            "why": "the exploration is the historical record of how the change took shape; it keeps the wording the walk revised"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Row 5b says step 3 satisfies the snippet's preflight, but step 3 allows a failed push",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-review/spec.md",
+      "line": 97,
+      "classification": "trivial_fix",
+      "action": "row 5b prints whichever snippet output the push state selects; design D3 says the same",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17b-blind-pair-command/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "(step 3 satisfies its preflight)",
+          "finds its preflight satisfied"
+        ],
+        "introduced": [
+          {
+            "path": "specs/orbit-review/spec.md",
+            "text": "printing whichever of its outputs the state step 3 left selects"
+          }
+        ],
+        "searched": [
+          "preflight satisf"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 1.1 names `commandForClass`, but the invoked slot's command is rendered by `canonicalNextForReviewed`'s local `forClass`",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 3,
+      "classification": "trivial_fix",
+      "action": "task 1.1 names canonicalNextForReviewed's local forClass beside commandForClass; design D7 says the same. Touchpoints stays as the frozen prediction: its gates.ts path already covers the function",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17b-blind-pair-command/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "`commandForClass`'s `invoked` case returns `/orbit:review"
+        ],
+        "introduced": [
+          {
+            "path": "tasks.md",
+            "text": "`canonicalNextForReviewed`'s local `forClass`"
+          }
+        ],
+        "searched": [
+          "commandForClass",
+          "forClass"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Row 6's 'never returns' has no decider",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-review/spec.md",
+      "line": 99,
+      "classification": "trivial_fix",
+      "action": "row 6 names the decider: a half ends when its process exits or the user stops it, no timeout invented (with external W5's landing rule in the same row)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17b-blind-pair-command/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "a half that fails, is stopped or never returns is MISSING"
+        ],
+        "introduced": [
+          {
+            "path": "specs/orbit-review/spec.md",
+            "text": "no timeout is invented"
+          }
+        ],
+        "searched": [
+          "never returns",
+          "timeout"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Nine of nine resolved: two by ratified option A (the blind-pair hint key; the re-run's --launch L), seven repaired in place. Two converge with the external half and are walked here.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc17b-blind-pair-command",
+  "ripple_misses": 0
+}

@@ -10,7 +10,8 @@ blocks unusable pull invocations`) — or, when the run re-launches a blind pair
 (per `A pair's external half reads the pair's reviewed state`) — OUTSIDE the repository directory, with the prompt file on the runner's standard
 input unchanged and `{output}` a path outside the repository; the body waits on the run's completion notification,
 because an external review outlasts the foreground limit. The return is saved through `orbit external save`, passed
-the launch's T0 token as `--launch`.
+the launch's T0 token as `--launch` — on a re-run of a blind pair's missing external half, the PAIR's launch token (per
+`A pair's external half reads the pair's reviewed state`).
 
 The record is never parsed by a shell, and the launch keeps it so: `{worktree}` and `{output}` are substituted into
 the resolved argv FIRST; the process runs with the worktree as its working directory (so an own argv that names no
@@ -26,7 +27,7 @@ was added at — never the live checkout's path.
 | recorded, `argv[0]` resolves on `PATH` | launched in the background in a worktree at the handoff commit (a pair's re-run: at the pair's BASE); prompt on stdin; return written to `{output}` outside the repository |
 | recorded, `argv[0]` does not resolve | the prompt is printed for paste, with the one extra item naming the unresolved command (per `Prompt written to versioned file with chat invocation snippet`) |
 | nothing recorded | today's handoff, unchanged |
-| launched, exits non-zero or is stopped (including a runner that is not signed in) | no pass file; the failure is reported with its exit status and the paste fallback is printed — the recommended-session note, a line saying the prompt's `## Repo` names the removed launch worktree and naming the repository and the handoff commit instead, then the pull invocation when the handoff push landed, or, when it did not, a launch-route handoff-blocked line naming the unpushed handoff commit with the push leading (the prompt is already committed); the T0 stands, so the gate keeps presenting the external half |
+| launched, exits non-zero or is stopped (including a runner that is not signed in) | no pass file; the failure is reported with its exit status and the paste fallback is printed — the recommended-session note, a line saying the prompt's `## Repo` names the removed launch worktree and naming the repository and the handoff commit instead — for a blind pair's external half, the pair's REVIEWED COMMIT (per `A pair's external half reads the pair's reviewed state`) — then the pull invocation when the handoff push landed, or, when it did not, a launch-route handoff-blocked line naming the unpushed handoff commit with the push leading (the prompt is already committed); the T0 stands, so the gate keeps presenting the external half |
 | the return opens with lines above `# External Review:` | removed by `orbit external save`, which reports them; the body quotes them in the commit message |
 | the return carries no unfenced `# External Review:` heading, names another change, is rejected by the trail reader, or is refused by `orbit external save` for any other cause (per `orbit-external-runner`'s `The engine saves an external return into the trail`) | refused by `orbit external save`; treated as a failed run; the raw return stays outside the repository and its path is named |
 | an apply landed after the launch | refused by `orbit external save` (`--launch`); a failed run with NO paste fallback — the prompt reviews a superseded state — and the review is re-run, packaging a new prompt |
@@ -53,7 +54,7 @@ preset's name, or the basename of `argv[0]`) when one launched.
 
 #### Scenario: No recorded runner is today's handoff
 
-- **WHEN** the same invocation runs with no `externalRunner` record
+- **WHEN** the same invocation runs with no `externalRunner` record, and the gate reports no `openPair` for the mode
 - **THEN** the chat output and the files written are those of the handoff before this requirement, byte for byte (the unresolved-runner case adds one item and is not covered by this scenario)
 
 #### Scenario: A failed run falls back to paste
@@ -77,7 +78,7 @@ named here and not restated.
 |---|---|
 | the prompt file and T0 emit | the handoff commit, pushed before launch (per `Handoff preflight blocks unusable pull invocations`); the worktree's base |
 | the saved return | `external-<mode>-<TS>.md`, committed alone, the removed lines quoted in the message, then pushed |
-| the saved return of a blind pair's external half | saved and committed alone only after the pair's fresh pass file is committed; pushed by the pair's one push |
+| the saved return of a blind pair's external half | saved and committed alone only after the pair's fresh pass file is committed, or once the fresh half is known missing; pushed by the pair's one push |
 | a failed run | nothing committed; the T0 stands |
 | a failed push | reported; the commit stands; no retry |
 | the worktree | removed with `--force` after the return is read; a failed removal is reported, never fatal |
@@ -99,38 +100,46 @@ Closure: the path writes the packaging pair and at most one pass file; each is a
 
 ### Requirement: A pair's external half reads the pair's reviewed state
 
-Every external half of a blind pair SHALL review the state the pair was launched on, never a later one. A pair's BASE is
+Every half of a blind pair SHALL review the state the pair was launched on, never a later one. A pair's BASE is
 the commit that added its launch T0 — found by a hash-only read, `git log --diff-filter=A --format=%H -- <launch T0
 path> | tail -1` — and its REVIEWED COMMIT is BASE's first parent, which differs from BASE only by the launch's prompt
 file and T0. The OPEN pair is the one the gate reports: the latest `review-external-<TS>.json` of the mode carrying
-`pair: true`, which is the launch `orbit-engine-gates`' `A pair's membership is computed from its launch` reads. A run of
-the external branch is a RE-RUN of a pair's missing half when the mode's reviewed gate row in `orbit status --change
-<change> --json` carries `openPair: {missing: "external"}`; its own T0 carries no `pair` (per the same requirement), so
-it refills the open pair.
+`pair: true`, whose token L is the launch `orbit-engine-gates`' `A pair's membership is computed from its launch` reads.
+A run is a RE-RUN of a pair's missing half when the mode's reviewed gate row in `orbit status --change <change> --json`
+carries `openPair: {missing}` naming that half's class AND no `apply-*.json` token on the trail is later than L. A re-run
+of the external half writes its own T0 with no `pair` (per the same requirement), so it refills the open pair, and its
+return is saved with `--launch L`, so supersession is measured from the state it reviewed. When an apply token is later
+than L, the run is NOT a re-run: the chat says the pair's reviewed state is superseded, and the run proceeds as an
+ordinary single of its class on the current state — the external at its own handoff commit, saved with its own T0
+token. The re-run test is the body's reading of the trail; the gate's computation is authoritative.
 
 | member | covered by |
 |---|---|
 | first run, launched | the worktree at the handoff commit, which IS BASE (per `A recorded runner launches the external review`) |
 | first run, pasted | the prompt's `## Repo` line names the repository and the pair's REVIEWED COMMIT, telling the reviewer to read the repository at that commit |
-| re-run of the missing external half, launched | the worktree is added at BASE, NOT at the re-run's own handoff commit, which holds the committed fresh partner; the prompt reaches standard input from the live checkout's copy of the re-run's committed prompt file |
+| a launched first run or re-run that fails | the paste fallback's commit line names the pair's REVIEWED COMMIT, never the run's handoff commit (per `A recorded runner launches the external review`'s failure row) |
+| re-run of the missing external half, launched | the worktree is added at BASE, NOT at the re-run's own handoff commit, which holds the committed fresh partner; the prompt reaches standard input from the live checkout's copy of the re-run's committed prompt file; the save passes `--launch L` |
 | re-run of the missing external half, pasted | the prompt's `## Repo` line names the repository and the pair's REVIEWED COMMIT |
 | first run, fresh half | the live checkout at BASE; the external partner stays outside the repository until the fresh pass file is committed (per `orbit-review`'s `The blind-pair reviewer runs both halves in one invocation`) |
-| re-run of the missing fresh half | the REVIEW-genre brief rule of `orbit-conventions`' `Review mode decision framework`: the brief names no `.orbit-runs/` path, where the committed external partner sits — instructed, not physical |
+| re-run of the missing fresh half | the brief names the pair's REVIEWED COMMIT as the state to read — the change's files read at that commit — and the worker still emits from the repository root; with the REVIEW-genre brief rule of `orbit-conventions`' `Review mode decision framework`, it names no `.orbit-runs/` path, where the committed external partner sits — instructed, not physical |
+| an apply later than L | not a re-run: an ordinary single of the run's class on the current state |
 
-Closure: BOUNDED — the routes are the launch, the paste and the two re-runs; physical isolation reaches only the
-launched routes.
+Closure: BOUNDED — the routes are the launch, the paste, the failure fallback and the two re-runs; the launched routes
+fix the TREE the runner is pointed at, and no route confines what a reader reads.
 
-**Named limit.** Residual kind: a reader that goes past the commit it was told to read — a human-carried external AI that pulls HEAD, or a fresh re-run subagent that reads the live checkout
+**Named limit.** Residual kind: a reader that goes past the commit it was told to read — a human-carried external AI that pulls HEAD, a fresh re-run subagent that reads the live checkout, or a launched runner that reads outside its worktree (the live checkout, or the object store and refs the worktree shares with it)
 Residual method: reading the walked return's `**Reviewer**:` line and file citations for paths that exist only after BASE, when a re-run or a paste completes a pair
 
 The gate cannot see this limit: its blindness rule reads walk order only (the blind-pair rule of clause (a) of `orbit-engine-gates`' `Reviewed-gate
 pass condition — the computed convergence criterion`), so a
-half that read its partner still completes a pair the gate counts as blind.
+half that read its partner still completes a pair the gate counts as blind. A fresh half that STARTED before an apply
+and emitted after it reads as current by the freshness rule; orbit is single-user, and an apply while a pair is open is
+that user racing their own review.
 
 #### Scenario: A launched re-run of the missing external reads BASE
 
 - **WHEN** a pair launched at L has its fresh pass committed, the gate reports `openPair: {missing: "external"}`, a reachable runner is recorded, and the user runs `/orbit:review foo --as system --reviewer external`
-- **THEN** the re-run's prompt and T0 (no `pair`) are committed and pushed as its handoff commit, but the worktree is added at the commit that added L's T0; the worktree holds no fresh pass file of the pair, and the saved return completes the pair
+- **THEN** the re-run's prompt and T0 (no `pair`) are committed and pushed as its handoff commit, but the worktree is added at the commit that added L's T0; the worktree holds no fresh pass file of the pair, the return is saved with `--launch L`, and the saved return completes the pair
 
 #### Scenario: A pasted pair half names the reviewed commit
 
@@ -141,3 +150,18 @@ half that read its partner still completes a pair the gate counts as blind.
 
 - **WHEN** `--reviewer external` runs and the gate reports no `openPair` for the mode
 - **THEN** the worktree is added at the run's own handoff commit and the `## Repo` line is filled as `A recorded runner launches the external review` states
+
+#### Scenario: A re-run after an apply is a single
+
+- **WHEN** a pair launched at L is open with `openPair: {missing: "external"}`, an `apply-*.json` token later than L is on the trail, and the user runs `--reviewer external`
+- **THEN** the chat says the pair's reviewed state is superseded, the worktree is added at the run's own handoff commit, and the return is saved with the run's own T0 token
+
+#### Scenario: A failed re-run's fallback names the reviewed commit
+
+- **WHEN** a launched re-run of a pair's missing external half exits non-zero
+- **THEN** the paste fallback's commit line names the pair's REVIEWED COMMIT, not the re-run's handoff commit, which holds the committed fresh partner
+
+#### Scenario: A fresh re-run is briefed with the reviewed commit
+
+- **WHEN** a pair is open with `openPair: {missing: "fresh"}`, no apply is later than its launch, and the user runs `--fresh`
+- **THEN** the fresh worker's brief names the pair's REVIEWED COMMIT as the state to read, and its pass is emitted from the repository root

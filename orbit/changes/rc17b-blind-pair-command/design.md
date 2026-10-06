@@ -53,8 +53,9 @@ only what its mode and reviewer need. The orchestrating session never runs passe
 
 Rows 7–8 of the step table. Saving on arrival, as a single external does, would put the return inside the live
 checkout while the fresh subagent may still be reading it, and would order the two files by whichever half finished
-first. Waiting makes the order fixed — fresh, then external — so token order, commit order and the VERIFICATION
-residual check's base agree on every run. `orbit external save` needs no clean tree (its checks are token shape,
+first. Waiting makes the order fixed on the launched route — fresh, then external — so token order, commit order and the
+VERIFICATION residual check's base agree on every launched run; on the pasted route the external AI picks its own token
+and may commit its return itself (proposal walk, fresh S1). `orbit external save` needs no clean tree (its checks are token shape,
 heading, the readers and apply-after-launch, `src/core/external-runner.ts`), so the save can follow the fresh commit
 directly. One push follows both commits.
 
@@ -64,7 +65,10 @@ rc17d's dirty-tree block guards the launch route only, and its paste route never
 — the launch and the prompt — committed before either half reads anything, on either route: the fresh half reads the
 live checkout, and the gate needs the launch on the trail before either member. So the pair's step 1 refuses a dirty
 tree whatever the runner state, and step 3 makes the handoff commit and pushes on both routes. On the paste route the
-chat snippet then finds its preflight satisfied and prints the attestation and the pull line, unchanged.
+chat snippet then prints whichever of its outputs that state selects — the attestation and the pull line when the push
+landed, the handoff-blocked line when it did not (proposal walk, fresh S2). The runner is read ONCE, at step 1, before
+packaging, because the packaging already depends on the route (the `## Repo` line, the T0's `target`) (proposal walk,
+external W1).
 
 ### D4 — the open pair's BASE is found from the trail, not a new engine field
 
@@ -83,21 +87,25 @@ chat. The prompt's `## Repo` line is filled per route already (rc17d fills it wi
 pasted half's line names the repository and the REVIEWED COMMIT. The prompt cannot name BASE, the commit that contains
 it; the reviewed commit is BASE's first parent and differs from it only by the prompt and the T0.
 
-### D6 — a fresh re-run rides the existing brief rule (refines D-rc17b-4)
+### D6 — a fresh re-run is briefed with the reviewed commit (refines D-rc17b-4)
 
-The exploration's row had a fresh re-run briefed to read a worktree at BASE. At propose that was judged no stronger
-than the rule already in force: a subagent told to read a worktree can still read the live checkout, so the
-isolation is instructed either way, and a worktree would also move the directory the subagent emits from. The
-committed external partner sits under `.orbit-runs/`, which a REVIEW-genre brief never names. The row points at that
-rule and the residual says what it cannot stop.
+The exploration's row had a fresh re-run briefed to read a worktree at BASE. The proposal first dropped that for the
+brief rule alone; the proposal walk restored it (external W3): the brief rule keeps the partner's FINDINGS out of the
+brief, but says nothing about WHICH STATE to review, so a fresh re-run would review HEAD while its external partner
+reviewed BASE. The brief now names the pair's REVIEWED COMMIT as the state to read — the change's files read at that
+commit — and the worker still emits from the repository root, so no worktree moves its emit. The isolation stays
+instructed, and the residual says what it cannot stop.
 
 ### D7 — the presented pair command uses the long form
 
 The engine presents the external review as `--reviewer external` and the fresh review as `--fresh`. The pair is
 presented as `/orbit:review --as <mode> --reviewer blind-pair <change>`, the same form as the external. Its presented
-class — `nextSlot` and the `models:` hint key — is `blind-pair`, a token the cadence vocabulary already carries.
-`presentInvoked`'s class type widens to it; `commandForClass`'s `invoked` case, commented as rc17a D6's interim, returns
-the pair command. Rows that present a missing half stay single.
+class — `nextSlot` and the `models:` hint key — is `blind-pair`, a token the cadence vocabulary already carries, and a
+`blind-pair` hint describes the pair command as a whole (proposal walk, fresh W1; Sal: A — `Single-voiced
+canonical-next computation` named the presented class as `fresh` or `external` and is modified for it).
+`presentInvoked`'s class type widens to it, and so does `canonicalNextForReviewed`'s local `forClass`, which renders
+the presented command; `commandForClass`'s `invoked` case, commented as rc17a D6's interim, returns the pair command
+too (proposal walk, fresh S3). Rows that present a missing half stay single.
 
 ### D8 — onboard points instead of enumerating
 
@@ -108,11 +116,26 @@ partial. Both become pointers to `orbit-review` (R-crc-14): the next value added
 ### D9 — four capabilities, declared
 
 `orbit-review`, `orbit-review-external`, `orbit-engine-gates`, and `orbit-onboard` for one pointer sentence: one over
-R-crc-1's ceiling, declared at exploration (D-rc17b-8; Sal: "a, ok to go over if you think it makes sense"). Eight
-requirements (two ADDED, six MODIFIED), 39 KB of delta. A capability count against every spec that restates the rules
-found no fifth: `orbit-conventions`' class 3 was corrected by rc17d, and the `--fresh` presentations in
+R-crc-1's ceiling, declared at exploration (D-rc17b-8; Sal: "a, ok to go over if you think it makes sense"). Nine
+requirements (two ADDED, seven MODIFIED), ~55 KB of delta. The ninth arrived at the proposal walk: the restatement
+count missed the hint-key sentence in `Single-voiced canonical-next computation`, inside a capability already in scope,
+and modifying one sentence of that 10 KB requirement carries the whole block — the reason the delta passes R-crc-1's
+~40 KB guide (bytes are the weakest of its predictors; capabilities, the strongest, are unchanged). The count found
+no fifth capability: `orbit-conventions`' class 3 was corrected by rc17d, and the `--fresh` presentations in
 `orbit-engine-gates`' `independent`/`blind-pair` cadence rows and `orbit-run-summary-emit`'s verify scenario are stated
 for the v4 cadence tokens, which this change does not touch.
+
+### D10 — a re-run checks supersession against the pair's launch (proposal walk; Sal: A)
+
+A re-run reviews the pair's BASE, so whether an apply overtook it is measured from the pair's launch L, never from the
+re-run's own T0: the re-run saves with `--launch L`. The external pass's CRITICAL reproduced the alternative — an apply
+between L and the re-run, a fresh member emitted after the apply, a re-run saved against its own later token — to a
+gate computing `passed` over two reviews of the superseded state. With an apply already later than L, the run is not a
+re-run at all: it says the pair's reviewed state is superseded and proceeds as an ordinary single on the current state,
+so the gate never loops on a refusal it keeps presenting. The re-run test (`openPair` plus no apply later than L) is the
+body's reading of the trail; the gate stays authoritative. One edge is left in the named limit: a fresh half that
+STARTED before an apply and emitted after it reads as current by the freshness rule — orbit is single-user, and an apply
+while a pair is open is that user racing their own review.
 
 ## Mechanism → artifacts
 
@@ -131,7 +154,10 @@ the proposing AI's reading of the file; no engine record
 
 Three tables are revised from the exploration's. D-rc17b-3's twelve steps are thirteen: the preflight's refusal is
 widened to both routes and BASE is committed on both (D3), and the end row names the open pair. D-rc17b-4's paste rows
-name the reviewed commit in the prompt (D5) and its fresh re-run row points at the brief rule (D6). D-rc17b-5's
+name the reviewed commit in the prompt (D5); at the proposal walk it gained the failure-fallback row, the save token and
+the apply-after-launch row (D10), its fresh re-run row names the reviewed commit (D6), and its residual kind was widened
+to a launched runner that reads outside its worktree — the worktree shares the repository's object store and refs
+(fresh W5); the spec carries the widened line, and the exploration keeps the original as history. D-rc17b-5's
 architecture row covers both spellings of both values.
 
 ## Touchpoints
@@ -184,3 +210,9 @@ None open. Q-rc17b-1 and Q-rc17b-2 were resolved in the exploration.
   pasted reviewer reads the prompt.
 - **A worktree for a fresh re-run** (the exploration's row; D6). Out: instructed either way, and it moves the emit's
   working directory.
+- **Leave the `blind-pair` hint key unread on the pair command** (proposal walk, fresh W1 option B). Out (Sal: A): the
+  v4 meaning of the key was the pair's slot too, so garnishing the pair command keeps one meaning, and no active change
+  is on v4.
+- **Save a re-run against its own T0 token** (proposal walk, D10's option B). Out (Sal: A): the external pass's
+  reproduction reached a gate computing `passed` over two reviews of a superseded state.
+

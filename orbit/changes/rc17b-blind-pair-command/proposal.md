@@ -22,10 +22,11 @@ rc17a's assigned rules (D-bpc-3, -4, -13) against what rc17a and rc17d shipped; 
   committed ALONE first, and only then is the external return saved and committed alone; one push; both reports
   rendered; the walk left to the user. With no runner, the invocation ends with the pair open
   (`openPair: {missing: "external"}`), never a half covering alone.
-- **Every external half of a pair reads the pair's reviewed state.** A re-run of a missing external half launches its
-  worktree at the commit that added the pair's launch, not at its own handoff commit; a pasted half's prompt names the
-  pair's reviewed commit in its `## Repo` line. A fresh re-run rides the existing review-genre brief rule. What cannot
-  be made physical is stated as a BOUNDED named limit.
+- **Every half of a pair reads the pair's reviewed state.** A re-run of a missing external half launches its
+  worktree at the commit that added the pair's launch, not at its own handoff commit, and checks supersession against
+  the pair's launch token; a pasted half's prompt, and a failed run's paste fallback, name the pair's reviewed commit; a
+  fresh re-run is briefed with that commit. After an apply later than the launch, a run is an ordinary single on the
+  current state, not a re-run. What cannot be made physical is stated as a BOUNDED named limit.
 - **Reviewer shorthands.** `--in-context`, `--external` and `--blind-pair` join `--fresh`, each exactly
   `--reviewer <class>`; at most one reviewer selector per invocation, a clean usage error otherwise.
 - **The default preference presents the pair.** With nothing covering an `invoked` slot and the preference
@@ -46,10 +47,12 @@ rc17a's assigned rules (D-bpc-3, -4, -13) against what rc17a and rc17d shipped; 
 - `orbit-review`: the reviewer axis gains `blind-pair` and the three shorthands; the external-dispatch scenario stops
   saying no pass runs; the `--fresh` requirement's class sentence points instead of describing a hand relay; ADDED —
   the one-command pair's step order.
-- `orbit-review-external`: the launch requirement's worktree base gains the re-run case; the commit requirement gains
-  the pair's deferred save; ADDED — a pair's external half reads the pair's reviewed state, with its named limit.
+- `orbit-review-external`: the launch requirement's worktree base, save token and failure fallback gain the re-run
+  case; the commit requirement gains the pair's deferred save; ADDED — a pair's external half reads the pair's reviewed
+  state, with its named limit.
 - `orbit-engine-gates`: `The first review slot covers what the user invoked` — the default preference's presentation
-  row and the requirement's closure note.
+  row and the requirement's closure note; `Single-voiced canonical-next computation` — the `models:` hint key of the
+  presented pair command.
 - `orbit-onboard`: `Identity statement section` — the reviewer axis by pointer.
 
 ## Impact
@@ -61,6 +64,7 @@ rc17a's assigned rules (D-bpc-3, -4, -13) against what rc17a and rc17d shipped; 
 - Tests: the presentation scenarios and every golden that prints the default presented command; template fidelity for
   the trunk, the new reference and the handoff edits; a disposable-repo run of the pair's git steps.
 - **Size.** FOUR capabilities, one over R-crc-1's ceiling, DECLARED at exploration (D-rc17b-8; Sal: "a, ok to go over
-  if you think it makes sense"): the fourth is one pointer sentence. Eight requirements (two ADDED, six MODIFIED).
+  if you think it makes sense"): the fourth is one pointer sentence. Nine requirements (two ADDED, seven MODIFIED), ~55 KB of delta — over the ~40 KB guide, because the proposal walk's
+  ninth block is a 10 KB requirement modified for one sentence (design D9).
 - No migration. Archived trails and pair records are read unchanged; adopters without a runner get a pair that ends
   open after its fresh half, by design.

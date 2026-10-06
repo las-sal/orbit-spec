@@ -89,14 +89,14 @@ work the user stages during the run stays out. The external half's launch, save 
 
 | member | covered by |
 |---|---|
-| 1. preflight | `git status --porcelain` non-empty refuses the pair: nothing is written — no prompt, no launch — and the output names the uncommitted paths; unpushed commits are allowed and ride step 3's push |
+| 1. preflight and the runner | `git status --porcelain` non-empty refuses the pair: nothing is written — no prompt, no launch — and the output names the uncommitted paths; unpushed commits are allowed and ride step 3's push. Then `orbit external runner --json`, read ONCE: its result decides the route the packaging writes for (the `## Repo` line, the T0's `target`) and row 4, and is never read again in the run |
 | 2. the launch | the external-handoff packaging, its T0 written with `pair: true` (per `orbit-emit-composition`'s "The review-external payload carries `pair`"): ONE act, the prompt file and the launch T0, token L |
 | 3. BASE | the prompt file and the T0 committed alone as the HANDOFF COMMIT — BASE — and pushed, on BOTH external routes; a failed push or no remote is reported and the run goes on |
-| 4. the runner | `orbit external runner --json`: a reachable runner takes row 5a, anything else row 5b |
+| 4. the route | row 1's runner reading: a reachable runner takes row 5a, anything else row 5b |
 | 5a. the external half, launched | per `orbit-review-external`'s `A recorded runner launches the external review`, at BASE, in the background; its return stays at its output path outside the repository and is NOT saved yet |
-| 5b. the external half, pasted | the chat invocation snippet per `orbit-review-external`'s `Prompt written to versioned file with chat invocation snippet` (step 3 satisfies its preflight); its prompt's `## Repo` line per `A pair's external half reads the pair's reviewed state` |
+| 5b. the external half, pasted | the chat invocation snippet per `orbit-review-external`'s `Prompt written to versioned file with chat invocation snippet`, printing whichever of its outputs the state step 3 left selects — the attestation and the pull line when the push landed, the handoff-blocked line when it did not; its prompt's `## Repo` line per `A pair's external half reads the pair's reviewed state` |
 | 5c. the fresh half | a clean-context subagent dispatched after step 3, briefed per the REVIEW-genre brief rule of `orbit-conventions`' `Review mode decision framework`, in the background; it persists through `orbit emit review` with `reviewer_class: "fresh"` like any fresh pass, carrying no launch token |
-| 6. wait | both background completions (row 5b: the fresh half only); a half that fails, is stopped or never returns is MISSING and nothing is committed for it |
+| 6. wait | both background completions (row 5b: the fresh half only). A half ends when its process exits or the user stops it — no timeout is invented. Whether the fresh half LANDED is read from the trail, never from the worker's exit: a `review-<mode>-*.json` with `reviewer_class: "fresh"` later than L in the live checkout IS the landed member and goes to row 7, however the worker ended; with no such file the fresh half is MISSING. The external half is MISSING when its run exits non-zero or `orbit external save` refuses it; nothing is committed for a missing half |
 | 7. the fresh pass file | committed ALONE, BEFORE row 8 |
 | 8. the external return | saved through `orbit external save … --launch L` only after row 7, or once the fresh half is known MISSING; a refusal is the launch requirement's failed-run row |
 | 9. the saved return | committed alone per `orbit-review-external`'s `A launched return is committed alone and pushed` |
@@ -110,8 +110,13 @@ launch; the external reads BASE; the fresh pass file is committed before the ext
 the push after both), one row each, its failure in the row.
 
 Saving the external return only after the fresh pass file is committed (rows 7–8) keeps the halves blind — a return
-saved on arrival would sit in the live checkout a still-running fresh half reads — and makes token order, commit order
-and the VERIFICATION residual check's base agree on every run: the fresh pass first, the external return second.
+saved on arrival would sit in the live checkout a still-running fresh half reads — and, on the launched route, makes
+token order, commit order and the VERIFICATION residual check's base agree on every run: the fresh pass first, the
+external return second. On the pasted route the external AI picks its own token and may commit its return itself, so
+the order there follows its commit.
+
+Every other flag of the command applies to each half exactly as it applies to that half's single run — the fresh half
+as under `--reviewer fresh`, the external half as under `--reviewer external`.
 
 #### Scenario: A launched pair commits each half alone
 
@@ -142,3 +147,13 @@ and the VERIFICATION residual check's base agree on every run: the fresh pass fi
 
 - **WHEN** a pair run ends with findings in either half
 - **THEN** the run ends at the position readout and the eligibility line; `/orbit:address-reviews` is not invoked
+
+#### Scenario: A fresh worker stopped after it persisted is the landed member
+
+- **WHEN** the fresh worker is stopped after `orbit emit review` wrote its pass file, and the external half returns well-formed
+- **THEN** that pass file is committed alone as the fresh member at row 7, then the external return is saved and committed, and the gate's `invoked` slot is covered by the COMPLETE pair
+
+#### Scenario: A missing fresh half lets the external return land
+
+- **WHEN** the fresh worker ends without writing a pass file, and the launched external half returns well-formed
+- **THEN** the external return is saved and committed alone, and the gate reports `openPair: {missing: "fresh"}`
