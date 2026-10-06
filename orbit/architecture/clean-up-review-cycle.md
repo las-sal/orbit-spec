@@ -3090,7 +3090,7 @@ T0; rc17b ships the command), and the gate computed PASSED through it.
 ### Stage rc17d-external-runner — a recorded runner launches the external review
 
 Depends-on: (none)
-Complete: [ ]
+Complete: [x] 2026-10-06 (Sal)
 
 Split from rc17b 2026-10-06 (Sal) at its exploration, under R-crc-9: its ninth preventive application, caught by a
 capability count before anything was proposed (D-rc17b-1, `orbit/explore/rc17b-blind-pair-command/`). It carries
@@ -5135,3 +5135,14 @@ class dispatches to the handoff branch" ("no review passes run in this invocatio
 `src/core/templates/workflows/review.ts` describe the external class as packaging-only and now contradict the
 external-handoff reference's launch branch; rc17b, which modifies `orbit-review`, corrects all three. Exits (1)–(3)
 are met as written; ratification is the architect session's.
+
+**2026-10-06 — rc17d-external-runner RATIFIED (Sal)**, through the architect session's offer, all three exit
+criteria graded MET as written: (1) with the Codex preset recorded, the stage's own system review launched its
+external half with no paste, and the return was saved by `orbit external save --launch` and committed alone with no
+hand edit (task 5.5, closed by observation at archive); (2) with no record, the external branch is today's handoff —
+the paste route's five chat items pinned byte-equal to the reference text before runners existed, the sixth item
+firing only for a recorded runner that does not resolve; (3) a `codex` on PATH with nothing recorded resolves to
+`{"runner": null}` and is never executed (a CLI test with a marker-writing stub). The post-archive project-wide audit
+found no drift beyond one charter pointer, walked the same day. The split parent `rc17-blind-pair-command` stays
+`premised`: rc17b and rc17c still own its other criteria.
+

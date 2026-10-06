@@ -211,7 +211,7 @@ file now carries a live mark. Do NOT read this paragraph as the program's full l
 only what rc07 produced. The authoritative list is the program doc's own Open questions section,
 which also carries Q-crc-11, Q-crc-12, Q-crc-20, Q-crc-21, Q-crc-22 and Q-crc-23.
 
-**Twenty more stages have shipped since, and the program is TWENTY-TWO stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b, rc03c, rc07b and rc06a ratified 2026-10-04; rc06b, rc08a and rc08b ratified 2026-10-05 — rc08a's exit (3), pending by design, was measured on rc08b's cadence and read 4, not zero; the split parent rc08 took its ENDED mark the same day; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening; rc17a ratified 2026-10-06).
+**Twenty more stages have shipped since, and the program is TWENTY-THREE stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b, rc03c, rc07b and rc06a ratified 2026-10-04; rc06b, rc08a and rc08b ratified 2026-10-05 — rc08a's exit (3), pending by design, was measured on rc08b's cadence and read 4, not zero; the split parent rc08 took its ENDED mark the same day; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening; rc17a ratified 2026-10-06; rc17d ratified 2026-10-06).
 
 `rc02c-confirmation-semantics` is ARCHIVED (2026-09-21): **the budget stopped being a target.**
 R-crc-11(h) — effort is RECORDED, never TARGETED — retired `budgetExhausted`, the
@@ -672,7 +672,7 @@ an exhaustive oracle (21,007,908 cases, six shards, the suite's new long pole) s
 re-introduced defects. The system review was the program's first LAUNCHED blind pair (by hand; rc17b ships the
 command): a COMPUTED PASSED gate after two walks and an in-context verification. **2885 tests green** (2826 → 2885).
 
-`rc17d-external-runner` is ARCHIVED (2026-10-06; split from `rc17b-blind-pair-command` at its exploration):
+`rc17d-external-runner` is ARCHIVED and RATIFIED (2026-10-06; all three exit criteria graded MET as written; split from `rc17b-blind-pair-command` at its exploration):
 **a recorded runner launches the external review, with no paste.** A per-user `externalRunner` record in the
 global config (`{preset: "codex"}` or `{argv: [...]}`, never a shell string, a path-bearing `argv[0]` absolute),
 written by `orbit init`'s interactive setup step and `orbit config`; `orbit external runner [--json]` prints it
