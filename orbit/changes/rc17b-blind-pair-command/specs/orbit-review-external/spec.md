@@ -60,7 +60,7 @@ preset's name, or the basename of `argv[0]`) when one launched.
 #### Scenario: A failed run falls back to paste
 
 - **WHEN** the launched runner exits non-zero
-- **THEN** nothing is committed for the return, the failure is reported with its exit status and the raw return's path, and the paste fallback is printed — the recommended-session note, the line naming the repository and the handoff commit in place of the removed worktree, then the pull invocation when the handoff push landed, or, when it did not, a launch-route handoff-blocked line naming the unpushed handoff commit with the push leading — the prompt is already committed, so Step 8's commit-the-pending-work output (per `Handoff preflight blocks unusable pull invocations`) does not apply
+- **THEN** nothing is committed for the return, the failure is reported with its exit status and the raw return's path, and the paste fallback is printed — the recommended-session note, the line naming the repository and the handoff commit in place of the removed worktree (for a blind pair's external half, the pair's REVIEWED COMMIT), then the pull invocation when the handoff push landed, or, when it did not, a launch-route handoff-blocked line naming the unpushed handoff commit with the push leading — the prompt is already committed, so Step 8's commit-the-pending-work output (per `Handoff preflight blocks unusable pull invocations`) does not apply
 
 ### Requirement: A launched return is committed alone and pushed
 
@@ -121,7 +121,7 @@ token. The re-run test is the body's reading of the trail; the gate's computatio
 | re-run of the missing external half, launched | the worktree is added at BASE, NOT at the re-run's own handoff commit, which holds the committed fresh partner; the prompt reaches standard input from the live checkout's copy of the re-run's committed prompt file; the save passes `--launch L` |
 | re-run of the missing external half, pasted | the prompt's `## Repo` line names the repository and the pair's REVIEWED COMMIT |
 | first run, fresh half | the live checkout at BASE; the external partner stays outside the repository until the fresh pass file is committed (per `orbit-review`'s `The blind-pair reviewer runs both halves in one invocation`) |
-| re-run of the missing fresh half | the brief names the pair's REVIEWED COMMIT as the state to read — the change's files read at that commit — and the worker still emits from the repository root; with the REVIEW-genre brief rule of `orbit-conventions`' `Review mode decision framework`, it names no `.orbit-runs/` path, where the committed external partner sits — instructed, not physical |
+| re-run of the missing fresh half | the brief names the pair's REVIEWED COMMIT as the state to read — the repository read at that commit: the change's files and, in system mode, the code and the commit range ending there — and the worker still emits from the repository root; with the REVIEW-genre brief rule of `orbit-conventions`' `Review mode decision framework`, it names no `.orbit-runs/` path, where the committed external partner sits — instructed, not physical |
 | an apply later than L | not a re-run: an ordinary single of the run's class on the current state |
 
 Closure: BOUNDED — the routes are the launch, the paste, the failure fallback and the two re-runs; the launched routes

@@ -92,8 +92,8 @@ it; the reviewed commit is BASE's first parent and differs from it only by the p
 The exploration's row had a fresh re-run briefed to read a worktree at BASE. The proposal first dropped that for the
 brief rule alone; the proposal walk restored it (external W3): the brief rule keeps the partner's FINDINGS out of the
 brief, but says nothing about WHICH STATE to review, so a fresh re-run would review HEAD while its external partner
-reviewed BASE. The brief now names the pair's REVIEWED COMMIT as the state to read — the change's files read at that
-commit — and the worker still emits from the repository root, so no worktree moves its emit. The isolation stays
+reviewed BASE. The brief now names the pair's REVIEWED COMMIT as the state to read — the repository read at that commit:
+the change's files and, in system mode, the code and the commit range ending there — and the worker still emits from the repository root, so no worktree moves its emit. The isolation stays
 instructed, and the residual says what it cannot stop.
 
 ### D7 — the presented pair command uses the long form
