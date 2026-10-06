@@ -1,0 +1,215 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-06T14:51:19Z",
+  "change": "rc17d-external-runner",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 3
+    }
+  },
+  "findings": [
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "2",
+      "title": "design Risks still says the save command's domain is written only as scenarios",
+      "file": "orbit/changes/rc17d-external-runner/design.md",
+      "line": 153,
+      "recommendation": "The walk gave `The engine saves an external return into the trail` an eleven-row domain table, yet the D-rc17d-8 Risks entry still says its domain 'is written only as the requirement's scenarios'. Reword it: D-rc17d-8 has no Mechanism entry (still UNACCOUNTED in the record), and its domain is the requirement's table; the review reads that table as the open domain.",
+      "walk_entry": {
+        "title": "The save command's open domain misses inputs the observed runner and the prompt itself make likely",
+        "file": "specs/orbit-external-runner/spec.md"
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "2",
+      "title": "The proposal's capability summary omits the two requirements walk 2 modified",
+      "file": "orbit/changes/rc17d-external-runner/proposal.md",
+      "line": 49,
+      "recommendation": "Walk 2 added MODIFIED `Review-external command available` (the paste-ready snippet only when no runner launches) and `Recommended-session note in chat output` (emitted only for paste), but the proposal's `orbit-review-external` line still lists only the chat output, the preflight and the REMOVED requirement. Add the two.",
+      "walk_entry": {
+        "title": "The retirement misses a contradictory fourth capability",
+        "file": "orbit/changes/rc17d-external-runner/proposal.md"
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "pass": "9",
+      "title": "The fingerprint re-stamp in .openspec.yaml sits outside every walk entry's edit record",
+      "file": "orbit/changes/rc17d-external-runner/.openspec.yaml",
+      "line": 7,
+      "recommendation": "`git diff --name-only 7230051c` lists .openspec.yaml, changed by walk 2's `orbit fingerprint` stamping the two new MODIFIED blocks, but no resolved entry names it in `file` or `ripple_cascade.applied`. A record gap, not a defect: the two fingerprints are correct (add-missing-only)."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "2",
+      "title": "The commit-alone scenario asserts the push unconditionally",
+      "file": "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+      "line": 82,
+      "recommendation": "`The return is its own commit` ends 'and it is pushed', while the table beside it says a failed push is reported and the commit stands. Put the push in the WHEN ('…and the push lands') or say 'and pushed when the push lands'."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Verified both walks against the files as they stand, over each entry's sweep scope and the residual range from the external pass's commit. The two CRITICALs' fixes hold: the eight-step save procedure cuts at the first unfenced heading, checks with the trail reader and refuses a return older than an apply under --launch, and both reproductions now fail to reproduce against it. What regressed is the familiar shape: two cascades that stopped one artifact short — design's Risks still describes the save domain as it was before the walk gave it a table, and the proposal's capability line predates walk 2's two extra MODIFIED blocks. Both are descriptive drift, not mechanism. Validate --strict passes; six fingerprints stand.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "verification": [
+    {
+      "title": "Registering externalRunner as a known key does not make `orbit config set externalRunner.preset codex` succeed",
+      "file": "tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The `orbit external runner --json` output shape is unspecified, yet the review body and every launch test key on it",
+      "file": "specs/orbit-external-runner/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Init's 'own argv' choice has no stated input method, and the obvious one (a typed command line) is shell splitting",
+      "file": "specs/orbit-external-runner/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "'Nothing runs through a shell' cannot hold for a launch the body performs through background Bash, and the launch line's composition is unspecified",
+      "file": "specs/orbit-external-runner/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "`reachable: false` is placed in the fixed-item snippet scenario, but the launch requirement adds an item naming the unresolved command",
+      "file": "specs/orbit-review-external/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The launch table has no row for a return that carries the heading but fails the readers' shape check",
+      "file": "specs/orbit-review-external/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The save command's open domain misses inputs the observed runner and the prompt itself make likely",
+      "file": "specs/orbit-external-runner/spec.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "orbit-review's baseline still calls the external class 'the cross-vendor handoff a human carries'",
+      "file": "orbit/specs/orbit-review/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "No task rewrites the handoff reference's opening 'Does NOT run the review … solely to package the handoff' paragraph",
+      "file": "tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "On the no-remote route the prompt's `## Repo` line names the live checkout, undoing D4's fixed reviewed state",
+      "file": "design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The launch output does not name the `{output}` path, so a run that outlives the session cannot be recovered",
+      "file": "specs/orbit-review-external/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Launched chat output promises 'the findings path the return will be saved to', which is not known until save runs",
+      "file": "specs/orbit-review-external/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "A write-capable own-argv runner will follow the unchanged prompt's 'write, commit and push' steps inside the detached worktree",
+      "file": "design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "`git commit --only` on the new prompt and T0 fails unless they are added first",
+      "file": "tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "A blocked launch leaves its prompt and T0 behind when the user re-runs as instructed",
+      "file": "specs/orbit-review-external/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The stage charter still says the engine surfaces the record in `orbit status --json`",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "No at-archive task moves CLAUDE.md's marked capability count",
+      "file": "tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Missing blank line between the `Chat output when a runner launches` scenario and the next scenario heading",
+      "file": "specs/orbit-review-external/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "An older snapshot can satisfy review coverage after a newer apply",
+      "file": "orbit/changes/rc17d-external-runner/specs/orbit-external-runner/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The retirement misses a contradictory fourth capability",
+      "file": "orbit/changes/rc17d-external-runner/proposal.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "Push failures are not reflected consistently in completion and fallback output",
+      "file": "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "State what the disposable-repository test actually executes",
+      "file": "orbit/changes/rc17d-external-runner/tasks.md",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 0 warning, 4 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-06T14-46-45Z",
+    "2026-10-06T14-47-28Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc17d-external-runner --from-file orbit/changes/rc17d-external-runner/.orbit-runs/review-proposal-2026-10-06T14-51-19Z.json"
+}
