@@ -1,0 +1,54 @@
+{
+  "command": "audit-drift",
+  "timestamp": "2026-10-07T01:36:06Z",
+  "change": null,
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "final_assessment": "No critical issues. 1 warning(s) to consider.",
+  "categories_run": [
+    "1",
+    "3",
+    "4",
+    "5",
+    "6"
+  ],
+  "findings": [
+    {
+      "category": "3",
+      "severity": "WARNING",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 3020,
+      "title": "The split parent rc17's paragraph still assigns the runner, the setup step and its exit (3) to rc17b, and the short next line to rc17a",
+      "recommendation": "Append a dated note to the parent's SPLIT paragraph, leaving the paragraph itself as record: the runner, the setup step and exit (3) moved to rc17d-external-runner (its exit (2), met), which split from rc17b on 2026-10-06. The short next line moved to rc17c-short-review-next, which split from rc17a on 2026-10-05. Exit (1) is rc17b's, and it was met on rc17b's own system review. That leaves rc17c as the only child still open, and the architect session's ended-mark for the parent reads the exit owners from this paragraph."
+    },
+    {
+      "category": "3",
+      "severity": "SUGGESTION",
+      "file": "orbit/specs/orbit-onboard/spec.md",
+      "line": 4,
+      "title": "Six baselines still carry B1's placeholder Purpose ('TBD - created by archiving change relocate-modified-upstream-workflows')",
+      "recommendation": "Write a one-paragraph Purpose for orbit-archive-modifications, orbit-explore-modifications, orbit-conventions, orbit-onboard, orbit-skill-generation and orbit-propose-modifications in the next change that touches each of them, or in one doc-only change. CLAUDE.md records that B3 gave its four capabilities real Purpose sections; these six from B1 never got theirs."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "category": "3",
+      "title": "Stage sections and CLAUDE.md say 'rc17b ships the command' / 'while no pair command exists'",
+      "evidence": "every hit (rc17a's and rc17d's Shipped-as paragraphs, rc17d's charter, rc17b's own charter, CLAUDE.md's rc17a and rc17d paragraphs) is a charter kept as declared or a history paragraph recording what was true when written; rc17b's Shipped-as paragraph and status-log entry (3b6efef5) state the shipped command"
+    },
+    {
+      "category": "1",
+      "title": "rc17d's REMOVED requirement 'Command does not run the review or ingest findings' as residue",
+      "evidence": "grep over orbit/specs and CLAUDE.md finds the requirement heading nowhere; the only REMOVED/RENAMED name across every archive"
+    }
+  ],
+  "findings_total": 2,
+  "findings_by_category": {
+    "1": 0,
+    "3": 2,
+    "4": 0,
+    "5": 0,
+    "6": 0
+  },
+  "next_recommended": "/orbit:address-reviews --from-file orbit/.orbit-runs/audit-drift-2026-10-07T01-36-06Z.json — 2 drift(s) detected project-wide; resolve before next workflow step"
+}
