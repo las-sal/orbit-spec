@@ -3216,6 +3216,15 @@ now." The stage refreshes the three examples and adds a test that executes each 
 the fourth capability. This is declared under R-crc-9, following the rc07b, rc02b and rc17b precedents. The
 charter text above stays as written: it named three capabilities, and the fourth is an addition, not a revision.
 
+**Shipped as (2026-10-07; the charter above stays as declared).** The three exits shipped as written: the composer's
+change-mode branch names `/orbit:address-reviews <change>`; the renderer accepts the prior generation's self pointer by value
+on a pass with findings; the architecture branch is untouched. Beyond the charter: `orbit-conventions`' three canonical
+examples are refreshed and EXECUTED by a guard that reads the requirement as it will stand, subtracts the engine's refused
+set, submits each through the write gate and compares key sets — and, for the review example under its own change name, every
+engine-composed value but `timestamp` (Sal: B at the system walk, after the external half showed the subtraction discarded the
+pointer the stage repairs). The emit's pointer and the gate's canonical next coincide only when that next is a walk; on a
+half-landed pair the gate names the missing member.
+
 ### Stage rc18-walk-is-next — a passed gate with an unwalked pass names the walk next
 
 Depends-on: rc17a-invoked-coverage

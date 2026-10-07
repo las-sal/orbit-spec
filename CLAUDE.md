@@ -211,7 +211,7 @@ file now carries a live mark. Do NOT read this paragraph as the program's full l
 only what rc07 produced. The authoritative list is the program doc's own Open questions section,
 which also carries Q-crc-11, Q-crc-12, Q-crc-20, Q-crc-21, Q-crc-22 and Q-crc-23.
 
-**Twenty-one more stages have shipped since, and the program is TWENTY-FOUR stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b, rc03c, rc07b and rc06a ratified 2026-10-04; rc06b, rc08a and rc08b ratified 2026-10-05 — rc08a's exit (3), pending by design, was measured on rc08b's cadence and read 4, not zero; the split parent rc08 took its ENDED mark the same day; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening; rc17a ratified 2026-10-06; rc17d ratified 2026-10-06; rc17b ratified 2026-10-06).
+**Twenty-two more stages have shipped since, and the program is TWENTY-FOUR stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b, rc03c, rc07b and rc06a ratified 2026-10-04; rc06b, rc08a and rc08b ratified 2026-10-05 — rc08a's exit (3), pending by design, was measured on rc08b's cadence and read 4, not zero; the split parent rc08 took its ENDED mark the same day; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening; rc17a ratified 2026-10-06; rc17d ratified 2026-10-06; rc17b ratified 2026-10-06).
 
 `rc02c-confirmation-semantics` is ARCHIVED (2026-09-21): **the budget stopped being a target.**
 R-crc-11(h) — effort is RECORDED, never TARGETED — retired `budgetExhausted`, the
@@ -699,6 +699,24 @@ was the program's first pair run by its command (task 6.5, closed by observation
 would count blind after an apply — was reproduced and repaired; two verifications ended clean on a COMPUTED PASSED gate.
 Four capabilities (declared one over the ceiling), 2 ADDED + 7 MODIFIED, 9/9 byte-verified; capability count holds at 24.
 **3024 tests green** (2985 → 3024).
+
+`rc17c-short-review-next` is ARCHIVED (2026-10-07; split from `rc17a-invoked-coverage` at its propose): **a change-mode review
+emit's next names the change, never a path.** A proposal- or system-mode pass with findings composes
+`/orbit:address-reviews <change>` — the walk the gate's canonical next names whenever that next is a walk; on a half-landed
+pair the gate names the missing member instead, because the emit's pointer depends only on the pass's findings. The clean
+pointer, architecture mode, the external T0 and both audit-drift scopes are unchanged. The renderer accepts, on a pass with
+findings, a closed set of two values computed from the emit itself — the short form and the prior generation's self pointer
+naming that emit's own path — by value, never by date, so the 152 archived self-pointer emits keep rendering. The review
+body names the composition rule's owner instead of restating it. `orbit-conventions`' three canonical examples were refreshed
+to the shapes the engine writes and are now EXECUTED by `test/core/canonical-examples.test.ts`: it reads the requirement as it
+will stand (the one active delta MODIFYING it, found fence-aware, else the baseline), subtracts the engine's own refused set,
+submits each example through the real write gate, holds the written top-level key set equal, and — for the review example,
+submitted under its own change name — compares every engine-composed value but `timestamp`. Four capabilities, declared one
+over R-crc-1's ceiling (D-rc17c-6, Sal: "why wait til audit-drift to fix something we see now?"); 4 MODIFIED blocks synced
+4/4 byte-verified; the capability count holds at 24. The system blind pair on `95bc46e8` — fresh 0C/0W/3S (forward) and
+external GPT-6 Codex 0C/1W/1S (hold) — converged on one defect, the guard's substring source selection; Sal took B on the
+external's other finding (the subtraction discarded the very pointer the stage repairs). Two walk logs, an in-context
+VERIFICATION grading four `landed`, its one SUGGESTION walked; a COMPUTED PASSED gate. **3039 tests green** (3024 → 3039).
 
 Read that doc before any rc-stage work; the D-arc section below is the historical
 record of how the engine got here.

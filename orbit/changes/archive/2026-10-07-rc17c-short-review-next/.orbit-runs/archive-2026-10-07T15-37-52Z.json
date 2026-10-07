@@ -1,0 +1,74 @@
+{
+  "command": "archive",
+  "timestamp": "2026-10-07T15:37:52Z",
+  "change": "rc17c-short-review-next",
+  "kind": "lifecycle",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Archived rc17c-short-review-next to orbit/changes/archive/2026-10-07-rc17c-short-review-next/: a change-mode review emit with findings now names /orbit:address-reviews <change>, the renderer accepts the prior generation's self pointer by value, and orbit-conventions' canonical examples are executed by a guard. Sync 4 MODIFIED blocks across four capabilities, 4/4 byte-verified; fingerprints 4/4 verified; 3039 tests green.",
+  "archive_path": "orbit/changes/archive/2026-10-07-rc17c-short-review-next/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 4
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-conventions",
+      "orbit-emit-composition",
+      "orbit-report-rendering",
+      "orbit-review"
+    ],
+    "added": 0,
+    "modified": 4,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "Pre-archive audit (in flow, no separate emit): category 5 Touchpoints divergence — 4 SUGGESTION riding along, unpredicted by the frozen Touchpoints: CLAUDE.md and orbit/architecture/.orbit-runs/architect-2026-10-07T14-36-01Z.json (the rc18 declaration commit, inside the change's range but not its work), orbit/scenario-ledger.yaml (the ledger entries tasks 3.4 and 4.5 named) and test/core/templates/orbit-content-fidelity.test.ts (one scenario tag). Category 1 clean after sync: the self pointer survives only in the two baseline blocks this sync replaced and in the stage charter's description of the old pointer. Categories 3, 4 and 6 clean; category 2 skipped (orbit/lenses/ absent).",
+    "Sync through the engine's applySpecs: 4 MODIFIED across four capabilities, 4/4 delta blocks byte-present in baseline; fingerprints 4/4 verified before the sync.",
+    "In flow: CLAUDE.md gained the rc17c paragraph and its shipped-since count moved to twenty-two; the stage section gained its Shipped-as paragraph (the guard and the value comparison are beyond the charter)."
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "formed_against": [
+        "2026-10-07T13-15-56Z",
+        "2026-10-07T13-16-20Z",
+        "2026-10-07T14-54-11Z",
+        "2026-10-07T14-54-33Z"
+      ],
+      "disposition": "ready",
+      "reasoning": "Both reviewed gates computed PASSED. The system blind pair ran on the pushed apply commit and found no defect in the shipped pointer or the renderer's accepted set; both halves converged on one defect in the new guard, its substring source selection, repaired structurally and shown red against the old code. The external half's other finding showed the guard discarded the very pointer the stage repairs; Sal took B, and the review example's engine-composed values are now compared, again shown able to fail. An in-context verification graded all four walk entries landed and its one suggestion was walked. What remains is below.",
+      "ratified_by": "ai",
+      "accepted": [
+        {
+          "claim": "PASSED means every finding resolved, not that an independent pass stood clean on the final tree: the walk's structural source selection, the value comparison B added, and the new spec sentence and scenario were read only by the in-context verification, never by a fresh or external reviewer.",
+          "why": "Each is a test-side mechanism in one file, and each was mutation-checked (the old substring selection and a disabled comparison both turn their new cases red); the verification re-read every edit site and re-ran the touched suites."
+        },
+        {
+          "claim": "The canonical-example guard checks apply and archive by top-level keys only: a stale value under a current key, including their engine-composed values, passes.",
+          "why": "The requirement's named limit, stated after the walk narrowed it; apply's chunk text is illustrative and preamble-dependent, and the review example — the one whose values this stage changed — is compared value by value."
+        },
+        {
+          "claim": "A post-stage emit hand-edited back to the self pointer naming its own path renders silently.",
+          "why": "Design D2's accepted risk: the composer is the only writer, and the old form still walks the pass it names."
+        },
+        {
+          "claim": "The gate passed with the verification pass's suggestion still unwalked and named archive next; the walk ran only because it was recommended in chat.",
+          "why": "This is rc18-walk-is-next's declared gap, observed live on this change's own trail; rc18 owns the fix."
+        }
+      ]
+    }
+  ],
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."
+}

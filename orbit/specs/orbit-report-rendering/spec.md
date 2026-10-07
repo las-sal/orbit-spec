@@ -190,7 +190,13 @@ be one of the three named classes, the emit's `change` SHALL equal the change be
 (it is the internal header's change source — a mismatch fails naming both values, never a
 silent relabel), and the DETERMINISTIC spine facts SHALL equal their computed values —
 `final_assessment` the scorecard-derived counts sentence and `next_recommended` the
-findings-dependent self/report pointer (drift fails naming the field: the orientation
+findings-dependent pointer `orbit-emit-composition`'s `Deterministic facts are engine-composed
+per command` composes — or, on a pass WITH findings, the PRIOR GENERATION's self pointer
+`/orbit:address-reviews <change> --from-file orbit/changes/<change>/.orbit-runs/<this emit's
+file name>`, accepted by VALUE: on a pass with findings the accepted set is closed at those two
+values, both computed from the emit itself (its `change` and its file name), and no date and no
+field marks the generation, so an emit written before the short form keeps rendering while a
+self pointer naming any OTHER path is drift (drift fails naming the field: the orientation
 surface reads these fields verbatim, so a wrong stored value would recreate the stale second
 voice this change removes). The render BOUNDARY is the D4 EMIT
 GENERATION — the shape THIS capability defines: the full universal spine (including `kind`) +
@@ -223,8 +229,18 @@ readable as the raw JSON, which is the record).
 
 #### Scenario: Deterministic spine drift fails the render
 
-- **WHEN** a boundary-conformant emit's `final_assessment` disagrees with the scorecard-derived counts sentence, or its `next_recommended` disagrees with the findings-dependent pointer, or its `change` disagrees with the change being rendered
+- **WHEN** a boundary-conformant emit's `final_assessment` disagrees with the scorecard-derived counts sentence, or its `next_recommended` is neither the findings-dependent pointer nor — on a pass with findings — the prior generation's self pointer naming this emit's own path, or its `change` disagrees with the change being rendered
 - **THEN** the render fails with a clean error naming the drifted field (and for `change`, both values); nothing renders
+
+#### Scenario: A prior-generation self pointer renders
+
+- **WHEN** `--report <TS>` resolves to an emit with findings written before the short form, whose `next_recommended` is `/orbit:address-reviews foo --from-file orbit/changes/foo/.orbit-runs/review-proposal-<TS>.json` naming that same file
+- **THEN** the render succeeds and its bytes equal a render of the same emit carrying `/orbit:address-reviews foo` — the report prints neither value; the tail's eligibility line is the gate's canonical next, computed at render time
+
+#### Scenario: A self pointer at another file is drift
+
+- **WHEN** an emit with findings carries `/orbit:address-reviews foo --from-file` naming a DIFFERENT pass file, or carries `/orbit:address-reviews foo` while it has no findings
+- **THEN** the render fails naming `next_recommended`
 
 #### Scenario: A mis-shaped direction fails the render; an absent one never does
 
