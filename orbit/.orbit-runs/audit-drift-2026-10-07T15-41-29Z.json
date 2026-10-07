@@ -1,0 +1,35 @@
+{
+  "command": "audit-drift",
+  "timestamp": "2026-10-07T15:41:29Z",
+  "change": null,
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "final_assessment": "No critical issues. 0 warning(s) to consider.",
+  "categories_run": [
+    "1",
+    "3",
+    "4",
+    "5",
+    "6"
+  ],
+  "findings": [
+    {
+      "category": "3",
+      "severity": "SUGGESTION",
+      "file": "orbit/specs/orbit-conventions/spec.md",
+      "line": 4,
+      "title": "The placeholder Purposes' deferral route was missed by the first change to touch one of the six",
+      "recommendation": "The 2026-10-07 project-wide walk (address-reviews-2026-10-07T01-37-17Z) deferred the six B1 placeholder Purposes with the route 'the next change touching each capability, or one doc-only change, writes them'. rc17c-short-review-next was the next change to touch orbit-conventions — it synced a MODIFIED block into this baseline — and the Purpose still reads 'TBD - created by archiving change relocate-modified-upstream-workflows'. A per-change route depends on each change remembering an obligation no artifact carries; give the six a home that cannot be missed: one doc-only change writing all six Purposes, or an open question in the program doc naming them so the next stage's sizing sees it."
+    }
+  ],
+  "stale_suppressed": [],
+  "findings_total": 1,
+  "findings_by_category": {
+    "1": 0,
+    "3": 1,
+    "4": 0,
+    "5": 0,
+    "6": 0
+  },
+  "next_recommended": "/orbit:address-reviews --from-file orbit/.orbit-runs/audit-drift-2026-10-07T15-41-29Z.json — 1 drift(s) detected project-wide; resolve before next workflow step"
+}
