@@ -1325,11 +1325,11 @@ never deleted.
 
 ## Program stages
 
-<!-- src:stages -->36<!-- /src:stages --> small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
+<!-- src:stages -->37<!-- /src:stages --> small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
 split into rc02 + rc02b on 2026-09-12; rc13 added 2026-09-14 and moved to phase 1 the same day;
 rc03a split from rc03 on 2026-09-15 and WITHDRAWN the same day; rc13 split into rc13a + rc13b on
 2026-09-15 under R-crc-9; rc07b split from rc07 the same day under R-crc-9 applied PREVENTIVELY; rc04d split from rc04c on 2026-09-21, the THIRD preventive application, caught at exploration by a size check rather than after a cadence;
-rc13c declared 2026-09-25 from rc13a's archive proposal, and rc15 declared the same day taking up Q-crc-11; rc16 declared 2026-10-01 from Q-crc-28's ratified direction; rc03 split into rc03b + rc03c on 2026-10-04 under R-crc-9, the FOURTH preventive application, again caught at exploration by a size check; rc06 split into rc06a + rc06b the same day, the FIFTH, caught at exploration; rc08 split into rc08a + rc08b on 2026-10-05, the SIXTH, caught at exploration; rc17 declared the same day from rc08b's system walk, taking Sal's one-command blind pair and the walk's routed pair-diagnosis redesign; rc17 split into rc17a + rc17b the same day, the SEVENTH preventive application, caught at exploration; rc17c split from rc17a the same day at propose, the EIGHTH, caught by a capability count before any artifact was written; rc17d split from rc17b on 2026-10-06, the NINTH, caught at exploration by a capability count — rc14 stays reserved for the undeclared `rc14-delta-scope` recommendation).
+rc13c declared 2026-09-25 from rc13a's archive proposal, and rc15 declared the same day taking up Q-crc-11; rc16 declared 2026-10-01 from Q-crc-28's ratified direction; rc03 split into rc03b + rc03c on 2026-10-04 under R-crc-9, the FOURTH preventive application, again caught at exploration by a size check; rc06 split into rc06a + rc06b the same day, the FIFTH, caught at exploration; rc08 split into rc08a + rc08b on 2026-10-05, the SIXTH, caught at exploration; rc17 declared the same day from rc08b's system walk, taking Sal's one-command blind pair and the walk's routed pair-diagnosis redesign; rc17 split into rc17a + rc17b the same day, the SEVENTH preventive application, caught at exploration; rc17c split from rc17a the same day at propose, the EIGHTH, caught by a capability count before any artifact was written; rc17d split from rc17b on 2026-10-06, the NINTH, caught at exploration by a capability count; rc18 declared 2026-10-07 from rc17c's proposal cycle — rc14 stays reserved for the undeclared `rc14-delta-scope` recommendation).
 Every stage is sized under R-crc-1, names the capabilities it touches, and names its goal.
 Charters are settled under R-crc-3 until a citing change refines them; exit criteria are
 falsifiable and self-measured by the stage's own cadence (G0). Position is computed — see the
@@ -3207,6 +3207,29 @@ project-wide audit-drift keep `--from-file` (no change-scoped walk reaches them)
 Exit: (1) no change-mode review emit's `next_recommended` names a path; (2) a review emit written before the
 stage, carrying the `--from-file` self pointer, renders unchanged; (3) the architecture-mode pointer is
 unchanged.
+
+### Stage rc18-walk-is-next — a passed gate with an unwalked pass names the walk next
+
+Depends-on: rc17a-invoked-coverage
+Complete: [ ]
+
+Declared 2026-10-07 (Sal) from rc17c's proposal cycle. rc17c's in-context verification passed the
+`review-proposal` gate with three SUGGESTIONs. The gate row listed that pass under `unwalkedPasses`, while the
+canonical next read `/orbit:apply`: the engine knew a walk was owed and did not say so. Sal: "even if there are
+suggestions, i think the next recommended path should be an address-reviews". rc17a made SUGGESTION-only passes
+DISCOVERABLE (D-bpc-15); this stage makes them the RECOMMENDED next while they stay unwalked. SUGGESTIONs still never
+gate (rc02): the gate's verdict and the next phase's eligibility are unchanged, and only the recommendation moves.
+Direction: one voice. When a reviewed gate has PASSED and its mode carries an unwalked pass, the canonical next is
+`/orbit:address-reviews <change>`, and the phase command returns once the pass is walked. `orbit-engine-gates`'
+`Single-voiced canonical-next computation` stands. Offering both commands on two lines was considered and is NOT this
+stage's direction: it would reverse that ruling, which is Sal's to take. Measured before declaring: in a scratch copy
+of rc17c's trail, a walk written after the passed gate's last pass left the gate `passed` and `unwalkedPasses` empty,
+so walking cannot start a review loop. The capability count is the exploration's to measure (`orbit-engine-gates` at
+least, plus every surface that reads or restates the next line). Goal G4.
+Exit: (1) a change whose reviewed gate has passed, with an unwalked pass in that gate's mode, renders
+`/orbit:address-reviews <change>` as its canonical next, and the gate's state still reads `passed`; (2) after that pass
+is walked, the canonical next is the phase command again and the gate still reads `passed`; (3) an unpassed gate's
+next is unchanged.
 
 ## Considered & out
 
@@ -5126,7 +5149,7 @@ Following the rc04d precedent, rc17b keeps its id so the exploration's citation 
 restated for the no-runner path, which the pair command still owns. The exploration also recorded three facts
 rc17a shipped that the assigned rules predate (the launch is the `pair: true` T0; membership is by order, so the
 fresh emit carries no launch token; the presentation row is this program's edit). R-crc-9's ninth preventive
-application. Stage count 35 → <!-- src:stages -->36<!-- /src:stages --> at the marked sites (this entry's mark is the third; the previous
+application. Stage count 35 → 36 at the marked sites (this entry's mark is the third; the previous
 entry's is unmarked as history).
 
 **2026-10-06 — Architect session: rc17d's charter re-pointed before propose (Sal).** A pre-propose sweep for specs
@@ -5200,3 +5223,12 @@ no-runner case commits and pushes BASE and the fresh half and ends with the gate
 named rc17b for what rc17d took. It was walked the same day with a dated note under the parent. Six B1 placeholder
 Purposes were deferred to a change. The split parent `rc17-blind-pair-command` stays `premised`, and rc17c is the only
 child still open.
+
+**2026-10-07 — Architect session: `rc18-walk-is-next` declared (Sal).** rc17c's in-context verification passed
+`review-proposal` with three SUGGESTIONs that the gate listed as unwalked, while the canonical next named apply.
+Sal: the next recommended path should be the walk, even for suggestions. The stage takes the single-voiced direction:
+the walk is the canonical next while a passed gate's mode carries an unwalked pass, and eligibility is untouched. The
+two-line alternative was recorded as NOT this stage's direction, since it would reverse `Single-voiced canonical-next
+computation`, which is Sal's call. A scratch-copy simulation showed a walk after the passed gate leaves it passed.
+Depends on rc17a, which shipped `unwalkedPasses`. Stage count 36 → <!-- src:stages -->37<!-- /src:stages --> at the
+marked sites (this entry's mark is the third; the previous entry's is unmarked as history).
