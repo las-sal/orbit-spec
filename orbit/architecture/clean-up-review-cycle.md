@@ -3169,6 +3169,20 @@ with no walk between them, and pushed; (2) with no runner recorded, the invocati
 external prompt for paste, and ends with the pair open (`openPair: {missing: "external"}`), never a half covering
 alone. The original exits (2) and (3) are rc17d's exits (1) and (2).
 
+Shipped as (2026-10-06; archived as `orbit/changes/archive/2026-10-06-rc17b-blind-pair-command/`, where its
+`explore.md` now lives; the charter above stays as declared, narrowed as stated): `--reviewer blind-pair` (shorthand
+`--blind-pair`) loads a new `references/blind-pair.md`, a thirteen-step order that names rc17d's launch path rather than
+restating it. Two acts are new and both decide blindness. The external return is SAVED only after the fresh pass file is
+committed alone (D-rc17b-3), so token order is fixed on the launched route. And EVERY half of a pair reads the pair's
+reviewed state (D-rc17b-4, BOUNDED): a re-run of a missing external half launches at BASE and saves with `--launch L`. The
+system walk added one more case (D10 as revised, Sal: A′). After an apply later than the launch, the engine still counts
+the next run of the missing class as the pair's member, so the re-run reviews the commit before the landed member's own
+and saves under its own token. Only a member read from the trail as STALE makes a run a single. BASE is committed and
+pushed on both routes, so the no-runner pair ends open after its fresh half (exit (2), by the harness). Four
+capabilities, declared one over R-crc-1's ceiling at exploration (D-rc17b-8); the default review preference now
+presents the pair command (an `orbit-engine-gates` row), and onboard points at the reviewer axis instead of enumerating
+it. Exit (1) was observed on the stage's own system review, run as one `--reviewer blind-pair` invocation.
+
 ### Stage rc17c-short-review-next — the review emit's next names the change, never a path
 
 Depends-on: rc17a-invoked-coverage
@@ -5146,3 +5160,27 @@ firing only for a recorded runner that does not resolve; (3) a `codex` on PATH w
 found no drift beyond one charter pointer, walked the same day. The split parent `rc17-blind-pair-command` stays
 `premised`: rc17b and rc17c still own its other criteria.
 
+**2026-10-06 — rc17b-blind-pair-command ARCHIVED.** The one-command pair: `/orbit:review --as <mode> --reviewer
+blind-pair <change>` (`--blind-pair`) runs a fresh and an external pass of the mode, blind to each other, in one
+invocation. The steps: a dirty-tree refusal; the `pair: true` launch; BASE committed and pushed on both routes; the
+external half launched through rc17d's runner at BASE or printed for paste; a fresh subagent beside it; the fresh pass
+file committed ALONE before the external return is saved with `--launch L` and committed alone; one push; both reports;
+no walk. Every half of a pair reads the pair's reviewed state, including both re-runs, and the shorthands `--in-context`,
+`--external` and `--blind-pair` join `--fresh`. The default `blind-pair` preference now PRESENTS the pair command,
+retiring rc17a D6's interim fresh-review row. rc17d's two packaging-only sentences in `orbit-review` and the trunk are
+corrected (its note 6.5). The cycle: a proposal blind pair (the external half re-run after a model-capacity failure) with
+three walks and a verification; apply 17/18 (6.5 the user-validation handoff); then the stage's OWN system review run as
+one `--reviewer blind-pair` invocation (the long form of `--blind-pair`) — the program's first pair run by its command,
+closing 6.5 by observation at archive: BASE `e71cdb14`, the fresh pass `611642b1`, the external return `a2b150c5` (it
+finished first and waited outside the repository), one push, no walk between. Fresh 1C/2W/1S (hold) and external GPT-6
+Codex 0C/4W/1S (hold), no finding at a shared site, both clustered on the re-run and supersession branches. The fresh
+CRITICAL was reproduced with the real CLI: an apply after the launch, a fresh member emitted after it, and the
+proposal's "ordinary single" handed the gate a pair it counted blind when it wasn't. Walked in two logs under Sal's A′.
+An in-context VERIFICATION graded 8 `landed` and 1 `regressed` (the stale notice keyed on the gate's reason, which names
+the first failing clause), walked from the trail. A second verification graded all ten `landed` with no finding. A
+COMPUTED PASSED gate. Fingerprints 7/7; sync 2 ADDED + 7 MODIFIED across four capabilities, 9/9 blocks byte-verified;
+the capability count holds at 24. Exit (2) is recorded by the harness's no-runner case (note 7.3). The readiness record
+accepts four residuals, headlined by rc07's distinction (no fresh or external reviewer read the A′ derivation or the
+trail-read STALE rule). Its warnings carry one observation from the run itself: the fresh worker's completion hands its
+report to the orchestrating session before Step 7's commit, so the pair reference's "reads neither half's return"
+cannot hold for the fresh half. Exits (1)–(2) are met as written; ratification is the architect session's.

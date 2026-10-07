@@ -746,7 +746,8 @@ keys are the two vocabularies the engine already computes against: the active sc
 ids (under the active schema, e.g. `review-proposal`, `apply`, `review-system`, plus any other declared
 phase) and the cadence slot names (`in-context`, `fresh`, `independent`, `external`,
 `blind-pair`). For an `invoked` slot, the slot entry read is the CLASS of the presented
-command (`fresh` or `external`), so a hint describes the command it garnishes; a `models:` key
+command — `fresh`, `external`, or `blind-pair` for the pair command, per `The first review slot covers what the user
+invoked` — so a hint describes the command it garnishes, and a `blind-pair` hint describes the pair command as a whole; a `models:` key
 naming `invoked` is never read, and is inert like any other unknown key. When both
 the resolved command's phase AND its cadence slot carry entries, the SLOT entry wins (the more
 specific hook); keys outside both vocabularies are inert (never an error — the map is garnish).
@@ -814,6 +815,11 @@ user-owned config, never spec.
 - **WHEN** `models:` maps `external` to a hint and an `invoked` slot's canonical next is the external
   review
 - **THEN** the eligibility line ends with that hint
+
+#### Scenario: A blind-pair hint garnishes the presented pair command
+
+- **WHEN** `orbit/config.yaml` carries `models: {blind-pair: "codex gpt-6.1-sol + a fresh subagent"}` and a gate's uncovered `invoked` slot presents the pair command under the default preference
+- **THEN** the eligibility line ends with ` — hint: codex gpt-6.1-sol + a fresh subagent`
 
 ### Requirement: Inflection-prompt override contract
 
@@ -1157,7 +1163,7 @@ readout presents, per gate):
 
 | member | covered by |
 |---|---|
-| nothing independent standing, preference `blind-pair` (the default) | presents the fresh review: no single command runs a pair, and a fresh pass invoked alone lands as a single and covers the slot |
+| nothing independent standing, preference `blind-pair` (the default) | presents the pair command, `/orbit:review --as <mode> --reviewer blind-pair <change>` (`orbit-review`'s `The blind-pair reviewer runs both halves in one invocation`); the pair it launches covers only when both halves land |
 | nothing standing, preference `fresh` or `external` | presents that class's single invocation |
 | preference absent | `blind-pair`, for each gate independently |
 | preference an unknown value | warns and resolves to `blind-pair`, as the `pr:` scalar's inert values warn and resolve to `never` |
@@ -1169,12 +1175,11 @@ readout presents, per gate):
 | two singles invoked separately on one state | the first covers the slot; the second is an extra independent pass whose findings clause (b) still requires resolved |
 | how the engine knows a pass was invoked as a pair member | `A pair's membership is computed from its launch` |
 
-Closure: BOUNDED — the invocation forms are the three `--reviewer` values plus the preference's two
-fallbacks; pair membership is the launch requirement's record. Revised from the exploration's table
-in three rows: the default preference presents the fresh review rather than a pair command, because no
-command yet runs a pair, and the row says what that fresh pass then covers; and walking a pair's landed
-half ENDS the pair rather than breaking it, so the walked half covers as a single and walking is one
-more way to proceed.
+Closure: BOUNDED — the invocation forms are the four `--reviewer` values (the three classes and the
+pair) plus the preference's two fallbacks; pair membership is the launch requirement's record. Revised
+from the exploration's table in two rows: walking a pair's landed half ENDS the pair rather than
+breaking it, so the walked half covers as a single and walking is one more way to proceed. The default
+preference's row presents the pair command; it presented the fresh review until a command ran a pair.
 
 **Named limit.** Residual kind: a pass whose pair membership the trail cannot decide (a single invoked while a pair launch stands open)
 Residual method: D-bpc-10's residual slots carry it — the residual and its method are stated in `A pair's membership is computed from its launch`.
@@ -1198,8 +1203,10 @@ last row.
 
 `openPair` is set on the second row only. Where several passes share the launch's token, `<class>` is the
 first by findings-artifact filename. `<L>` is the launch's token. The fresh review is
-`/orbit:review --as <mode> --fresh <change>` and the external review
-`/orbit:review --as <mode> --reviewer external <change>`.
+`/orbit:review --as <mode> --fresh <change>`, the external review
+`/orbit:review --as <mode> --reviewer external <change>`, and the pair command
+`/orbit:review --as <mode> --reviewer blind-pair <change>`, whose presented class — the `nextSlot` value and the
+`models:` hint key — is `blind-pair`.
 
 #### Scenario: A single fresh pass covers the invoked slot
 
@@ -1223,8 +1230,8 @@ first by findings-artifact filename. `<L>` is the launch's token. The fresh revi
 
 - **WHEN** nothing covers a gate's `invoked` slot, and `review_preference` maps that gate to
   `external`, to `fresh`, to an unknown value, or is absent
-- **THEN** the canonical next is the external review, the fresh review, the fresh review with a
-  warning, and the fresh review respectively; the gate's state, its reason and every field other
+- **THEN** the canonical next is the external review, the fresh review, the pair command with a
+  warning, and the pair command respectively; the gate's state, its reason and every field other
   than `nextCommand` and `nextSlot` are identical across the four
 
 #### Scenario: The preference never re-grades a covered slot
@@ -1232,6 +1239,11 @@ first by findings-artifact filename. `<L>` is the launch's token. The fresh revi
 - **WHEN** a single fresh pass covers a gate's `invoked` slot and `review_preference` maps the gate to
   `blind-pair`
 - **THEN** the slot stays covered; the preference is read only where nothing covers it
+
+#### Scenario: The default preference presents the pair command
+
+- **WHEN** nothing covers a `review-system` gate's `invoked` slot, no pair launch is open, and `review_preference` is absent
+- **THEN** the canonical next is `/orbit:review --as system --reviewer blind-pair <change>` and `nextSlot` is `blind-pair`
 
 ### Requirement: A pair's membership is computed from its launch
 

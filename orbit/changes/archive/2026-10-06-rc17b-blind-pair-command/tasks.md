@@ -32,7 +32,7 @@
 - [x] 6.2 `npm run build && node bin/orbit.js update --force`; the generated review skill carries `references/blind-pair.md`; update the skill parity pins as a recorded act
 - [x] 6.3 Declare every delta scenario (`@scenario` tags or `orbit/scenario-ledger.yaml`) and check `orbit status --change rc17b-blind-pair-command --scenarios`
 - [x] 6.4 Full `npm test` green; `orbit validate rc17b-blind-pair-command --strict`
-- [ ] 6.5 (User-validation handoff) Run this change's system review as `/orbit:review rc17b-blind-pair-command --as system --blind-pair`: one invocation produces both pass files, each committed alone, with no walk between, and pushed (exit 1)
+- [x] 6.5 (User-validation handoff) Run this change's system review as `/orbit:review rc17b-blind-pair-command --as system --blind-pair`: one invocation produces both pass files, each committed alone, with no walk between, and pushed (exit 1) — CLOSED AT ARCHIVE BY OBSERVATION (2026-10-07): the system review ran as one `--reviewer blind-pair` invocation (the long form of `--blind-pair`): BASE `e71cdb14`, the fresh pass alone `611642b1`, the external return alone `a2b150c5` (the external finished first and waited outside the repository), one push, no walk between; the gate's invoked slot covered by the complete pair
 
 ## 7. At archive
 
