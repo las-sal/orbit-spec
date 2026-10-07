@@ -3192,7 +3192,7 @@ it. Exit (1) was observed on the stage's own system review, run as one `--review
 ### Stage rc17c-short-review-next — the review emit's next names the change, never a path
 
 Depends-on: rc17a-invoked-coverage
-Complete: [ ]
+Complete: [x] 2026-10-07 (Sal)
 
 Split from rc17a 2026-10-05 (Sal) at its propose, under R-crc-9: its eighth preventive application, caught by
 counting capabilities before any artifact was written. D-bpc-16, recorded in rc17a's exploration, says a
@@ -5249,3 +5249,14 @@ two-line alternative was recorded as NOT this stage's direction, since it would 
 computation`, which is Sal's call. A scratch-copy simulation showed a walk after the passed gate leaves it passed.
 Depends on rc17a, which shipped `unwalkedPasses`. Stage count 36 → <!-- src:stages -->37<!-- /src:stages --> at the
 marked sites (this entry's mark is the third; the previous entry's is unmarked as history).
+
+**2026-10-07 — rc17c-short-review-next RATIFIED (Sal)**, through the architect session's offer, all three exit criteria
+graded MET as written. (1) The composer's change-mode branch writes `/orbit:address-reviews <change>` with no path, held
+by tests for proposal and system passes. (2) The two golden fixtures carrying the `--from-file` self pointer render
+byte-equal and untouched, and a pinned test shows the prior form renders byte-equal to the short form. (3) The
+architecture-mode pointer still names its own emit, asserted by test. The cadence ended on a COMPUTED PASSED gate after
+a system blind pair, two walk logs and an in-context verification grading four entries `landed`. The post-archive
+project-wide audit found one drift: the six B1 placeholder Purposes, whose deferral route could never fire because no
+delta carries a Purpose. It was walked the same day on Sal's direction A, and all six Purposes are written. With rc17c
+ratified, every child of the split parent `rc17-blind-pair-command` (rc17a, rc17b, rc17c, rc17d) is complete; the
+parent stays `premised` until Sal declares its ended mark, the route rc08, rc13, rc04, rc03 and rc06 took.
