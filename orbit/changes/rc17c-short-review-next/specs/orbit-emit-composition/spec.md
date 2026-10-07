@@ -7,7 +7,7 @@ Where a capability defines an emit field as a deterministic fact, the surface SH
 sentence derived from the payload's scorecard (`"X critical, Y warning, Z suggestion."` /
 `"No findings."`) and `next_recommended` is the findings-dependent pointer — when findings
 exist, the change-scoped `/orbit:address-reviews <change>` for proposal/system (naming no file:
-the change-scoped walk discovers every pass that carries a finding, per `orbit-address-reviews`'
+on an active change the change-scoped walk discovers every pass that carries a finding, per `orbit-address-reviews`'
 `Address-reviews command available`, so the emit names the same invocation as the gate's
 canonical next per `orbit-engine-gates`' `A reviewed gate lists its outstanding passes`), and for architecture mode the address-reviews
 `--from-file` invocation naming this emit's own path (no change-scoped walk reads the

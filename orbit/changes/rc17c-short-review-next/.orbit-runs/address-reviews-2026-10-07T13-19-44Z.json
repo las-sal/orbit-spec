@@ -1,0 +1,197 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-07T13:19:44Z",
+  "change": "rc17c-short-review-next",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc17c-short-review-next/.orbit-runs/review-proposal-2026-10-07T13-15-56Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-07T13-15-56Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 3
+  },
+  "pushback_verification": "All four verified against the current artifacts and src/core/emit-composition.ts (computeApply writes the chunk keys as null when unused); none stale.",
+  "resolution_summary": {
+    "resolved": 4,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "orbit-review's MODIFIED requirement body still states the --from-file self pointer its own scenario retires",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc17c-short-review-next/specs/orbit-review/spec.md",
+      "line": 5,
+      "classification": "trivial_fix",
+      "action": "replaced the requirement's self-pointer clause with a pointer to orbit-emit-composition's `Deterministic facts are engine-composed per command`, which composes and owns the value and its per-mode split; converges with the external half's CRITICAL (same site, same claim), walked here",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the `/orbit:address-reviews <change> --from-file <this emit's own path>` invocation when the pass has findings"
+        ],
+        "introduced": [
+          {
+            "path": "specs/orbit-review/spec.md",
+            "text": "composes and owns — this requirement names it and restates neither its values nor its per-mode split"
+          }
+        ],
+        "searched": [
+          "own path>",
+          "--from-file <",
+          "this emit's own path"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The chunked tasks.md seeding and its unchunked fallback cannot affect what the guard checks",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc17c-short-review-next/design.md",
+      "line": 78,
+      "classification": "trivial_fix",
+      "action": "dropped the chunked-tasks.md seeding and its unchunked fallback (a method call, R-crc-3: the engine writes the chunk keys as null when unused and the check compares keys): design D6 and its Risks line, tasks 4.2 and 4.3, and the orbit-conventions guard paragraph now seed only what the write gate requires; proposal's Impact line names both exported lists, as design D6 does",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17c-short-review-next/tasks.md",
+          "orbit/changes/rc17c-short-review-next/specs/orbit-conventions/spec.md",
+          "orbit/changes/rc17c-short-review-next/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the chunked `tasks.md` the apply example's chunk fields need",
+          "If seeding a chunked apply proves heavier",
+          "if seeding a chunked apply is disproportionate",
+          "Seeding a chunked apply in a disposable project may be costly",
+          "`ENGINE_OWNED_EXTRA` gains `export`"
+        ],
+        "introduced": [
+          {
+            "path": "design.md",
+            "text": "No chunk is seeded for apply"
+          },
+          {
+            "path": "specs/orbit-conventions/spec.md",
+            "text": "with no chunk seeded, because the engine writes the chunk keys on every apply emit"
+          },
+          {
+            "path": "tasks.md",
+            "text": "no chunk is seeded, since the engine writes the chunk keys either way"
+          }
+        ],
+        "searched": [
+          "chunked",
+          "seeding",
+          "seeded",
+          "unchunked",
+          "ENGINE_OWNED_EXTRA"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "descope",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Two stated counts disagree with measurement (182 self-pointer emits; 35 delta scenarios)",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc17c-short-review-next/design.md",
+      "line": 18,
+      "classification": "trivial_fix",
+      "action": "restated both counts from measurement — 155 of the 182 archived proposal/system review emits carry the self pointer (design Context, proposal Impact), and 36 delta scenarios (design Risks) — and moved D7 back before D8; the converged scenario-count half of the external pass is walked here",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17c-short-review-next/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "There are 182 archived proposal/system emits carrying the self pointer",
+          "[35 delta scenarios",
+          "No migration. 182 archived proposal/system emits"
+        ],
+        "introduced": [
+          {
+            "path": "design.md",
+            "text": "Of the 182 archived proposal/system review emits, 155 carry the self pointer."
+          },
+          {
+            "path": "design.md",
+            "text": "[36 delta scenarios across four MODIFIED blocks"
+          },
+          {
+            "path": "proposal.md",
+            "text": "The 155 archived proposal/system emits that carry the self pointer"
+          }
+        ],
+        "searched": [
+          "182",
+          "35 delta",
+          "36 delta",
+          "**D8",
+          "**D7"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The delta's 'discovers every pass' justification holds only while the change is active",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc17c-short-review-next/specs/orbit-emit-composition/spec.md",
+      "line": 9,
+      "classification": "trivial_fix",
+      "action": "qualified the discovery claim as holding on an active change; the owner's archived-change row stays the owner's",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "naming no file: the change-scoped walk discovers"
+        ],
+        "introduced": [
+          {
+            "path": "specs/orbit-emit-composition/spec.md",
+            "text": "naming no file: on an active change the change-scoped walk discovers every pass"
+          }
+        ],
+        "searched": [
+          "discovers every pass",
+          "change-scoped walk"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Four of four resolved in the obvious-fix lane: the orbit-review requirement now points at its owner (converged with the external CRITICAL, walked here), the chunk seeding is descoped, two counts restated from measurement, and the discovery claim qualified to an active change.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc17c-short-review-next",
+  "ripple_misses": 0
+}

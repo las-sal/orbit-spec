@@ -47,10 +47,10 @@ rc02b and rc17b precedent). The charter named three; the fourth is the stale exa
 
 ## Impact
 
-- `src/core/emit-composition.ts`: the review composer's change-mode branch; `ENGINE_OWNED_EXTRA` gains `export` so
-  the example test strips by the engine's own list.
+- `src/core/emit-composition.ts`: the review composer's change-mode branch; `SPINE_FIELDS` and `ENGINE_OWNED_EXTRA`
+  gain `export` so the example test strips by the engine's own list.
 - `src/core/report-render.ts`: the spine-semantics pointer check.
 - `src/core/templates/workflows/review.ts`: the spine paragraph and the schema line.
 - Tests: emit-composition and report-render assertions on the pointer; golden fixtures whose JSON carries a pointer
   (the rendered goldens do not move, because no report prints `next_recommended`); a new canonical-example test.
-- No migration. 182 archived proposal/system emits keep the self pointer and keep rendering.
+- No migration. The 155 archived proposal/system emits that carry the self pointer keep it and keep rendering.

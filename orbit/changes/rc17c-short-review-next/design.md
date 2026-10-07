@@ -15,7 +15,7 @@ Three code sites carry the pointer today:
   `run-summary-schema.md`, both restating the composition rule.
 
 No report prints `next_recommended`. The tail's eligibility line is the gate's canonical next, computed at render time
-(explore.md, Case 2). There are 182 archived proposal/system emits carrying the self pointer.
+(explore.md, Case 2). Of the 182 archived proposal/system review emits, 155 carry the self pointer.
 
 ## Goals / Non-Goals
 
@@ -50,7 +50,7 @@ marked by shape, never by date, since rc02b.
 **D3 — the review body names the owner and stops restating the rule** (D-rc17c-3, R-crc-14). The spine paragraph says
 `next_recommended` is the pointer `orbit-emit-composition`'s `Deterministic facts are engine-composed per command`
 composes. It says the walk is change-scoped when the pass has findings, and the report render when the pass is clean.
-The schema line's placeholder follows. The architecture-mode lines (the handoff example and the final-assessment table)
+The schema line's placeholder names the same owner and spells neither pointer, so the body carries no second statement of the rule. The external-handoff reference's "paste/save/ingest recommendation" (stale since rc08b, the D4 clause's twin in the body) names its owner the same way. The architecture-mode lines (the handoff example and the final-assessment table)
 keep `--from-file`, because architecture mode is unchanged.
 
 **D4 — the T0 clause in the same block points at its owner.** `Deterministic facts are engine-composed per command` still
@@ -75,10 +75,14 @@ references unchanged. These examples are written emits, so the test removes the 
 (`SPINE_FIELDS`) plus `ENGINE_OWNED_EXTRA[command]`, both exported from `emit-composition.ts` so there is one list. It
 then submits through `composeAndWriteEmit` and holds the written top-level key set equal to the example's. The review
 example is also rendered. Fences are found with `src/core/markdown-fence.ts`, after the `**Canonical examples**` line.
-The disposable projects reuse rc07b's helpers wherever they fit (`test/helpers/schema-references.ts`). For apply, the
-seeded `tasks.md` carries the chunk preamble the example's chunk fields need. If seeding a chunked apply proves heavier
-than the example is worth, the apply author rewrites the example as an unchunked apply and records the call under the
-task.
+The disposable projects reuse rc07b's helpers wherever they fit (`test/helpers/schema-references.ts`). No chunk is
+seeded for apply: the engine writes `chunk`, `chunk_name`, `chunk_complete`, `files_touched` and `diff_base` on every
+apply emit (as `null` when unused), and the check compares keys, so the apply project needs only the minimal `tasks.md`
+the engine reads. The example's chunk values stay illustrative and are not checked, which the named limit already
+states.
+
+**D7 — declared size: four capabilities** (D-rc17c-6, R-crc-9). The fourth, `orbit-conventions`, is the example's
+owner. Without it the stale example would stay.
 
 **D8 — the guard reads the requirement as it will stand.** The refreshed examples reach the baseline only at archive
 sync, so a test reading `orbit/specs/` alone would fail throughout this change's apply. The test reads the MODIFIED block
@@ -87,9 +91,6 @@ otherwise. Two active changes modifying the requirement fail the test, naming bo
 examples is held to them during its own apply. *Alternatives:* syncing the baseline mid-apply was rejected, because it
 would break this change's own base fingerprint at archive. Reading the baseline and accepting a red suite until archive
 was rejected outright.
-
-**D7 — declared size: four capabilities** (D-rc17c-6, R-crc-9). The fourth, `orbit-conventions`, is the example's
-owner. Without it the stale example would stay.
 
 ## Mechanism → artifacts
 
@@ -121,9 +122,7 @@ decisions.
   pass it names, and the composer is the only writer. This is stated in D2 and not checked.
 - [The guard compares top-level keys only] → A stale nested key or value passes for apply and archive. This is the named
   limit in the `orbit-conventions` requirement; the review example is graded harder by the renderer.
-- [Seeding a chunked apply in a disposable project may be costly] → D6 gives the apply author a recorded fallback (an
-  unchunked example).
-- [35 delta scenarios across four MODIFIED blocks must be declared before the apply gate passes] → Most are existing
+- [36 delta scenarios across four MODIFIED blocks must be declared before the apply gate passes] → Most are existing
   behaviour with existing tests. The task adds `@scenario` tags where a test asserts the THEN, and ledger entries
   otherwise. It never backfills baseline scenarios outside this delta.
 - [The rc03b hash pin moves] → A planned act, recorded in the pin's comment like rc07b's and rc08a's moves.

@@ -1,0 +1,99 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-07T13:20:03Z",
+  "change": "rc17c-short-review-next",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc17c-short-review-next/.orbit-runs/external-proposal-2026-10-07T13-16-20Z.md",
+  "source_command": null,
+  "source_token": "2026-10-07T13-16-20Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 1,
+    "suggestion": 1
+  },
+  "pushback_verification": "The CRITICAL reproduction was re-run at triage (reproduced) and re-derived after log 1 (not reproduced); the WARNING verified against tasks.md:16; the SUGGESTION converged.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 2,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "The review requirement still directs callers to one pass",
+      "marker_source": "external",
+      "file": "orbit/changes/rc17c-short-review-next/specs/orbit-review/spec.md",
+      "line": 5,
+      "classification": "stale",
+      "reproduction_rerun": "not-reproduced",
+      "action": "converged with the fresh half's WARNING (same site, same claim), walked in its log",
+      "evidence": "resolved in address-reviews-2026-10-07T13-19-44Z (the earlier pass's log). Re-derived against the repaired delta: the requirement paragraph of `Internal run summary persisted per mode` no longer states any pointer value — it names orbit-emit-composition's `Deterministic facts are engine-composed per command`, whose change-mode branch is `/orbit:address-reviews <change>`; an implementation built to the requirement as written now stores the change-scoped walk, which discovers both the internal and the external pass, so the expected result holds. (Re-run at triage, before the fix: reproduced — line 5 named --from-file <this emit's own path>.)",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The schema task retains a second pointer rule",
+      "marker_source": "external",
+      "file": "orbit/changes/rc17c-short-review-next/tasks.md",
+      "line": 16,
+      "classification": "trivial_fix",
+      "action": "task 3.1 now makes the schema line's placeholder NAME orbit-emit-composition's owning requirement rather than spell either pointer, matching D3; design D3 says the same; the same-class stale body restatement (the external-handoff reference's 'paste/save/ingest recommendation', the twin of D4's spec clause) joins task 3.1, pointing at orbit-run-summary-emit's T0 requirement",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17c-short-review-next/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "update the schema line's placeholder to the short form",
+          "The schema line's placeholder follows."
+        ],
+        "introduced": [
+          {
+            "path": "tasks.md",
+            "text": "make the schema line's placeholder NAME that owner rather than spell either pointer"
+          },
+          {
+            "path": "design.md",
+            "text": "names the same owner and spells neither pointer"
+          }
+        ],
+        "searched": [
+          "placeholder",
+          "schema line",
+          "paste/save/ingest"
+        ],
+        "scope": [
+          "src/core/templates/workflows/review.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Correct the delta scenario count",
+      "marker_source": "external",
+      "file": "orbit/changes/rc17c-short-review-next/design.md",
+      "line": 126,
+      "classification": "stale",
+      "action": "converged with the fresh half's counts SUGGESTION, walked in its log",
+      "evidence": "resolved in address-reviews-2026-10-07T13-19-44Z: design.md's Risks line now reads '36 delta scenarios across four MODIFIED blocks', matching orbit status --change rc17c-short-review-next --scenarios.",
+      "outcome": "stale"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "One resolved (the schema task now names the owner, and the body's stale T0 restatement joins it); two stale, each converged with the fresh half and walked in its log.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal rc17c-short-review-next",
+  "ripple_misses": 0
+}
