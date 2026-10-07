@@ -15,7 +15,7 @@ Three code sites carry the pointer today:
   `run-summary-schema.md`, both restating the composition rule.
 
 No report prints `next_recommended`. The tail's eligibility line is the gate's canonical next, computed at render time
-(explore.md, Case 2). Of the 182 archived proposal/system review emits, 155 carry the self pointer.
+(explore.md, Case 2). Of the 182 archived proposal/system review emits, 152 carry the self pointer.
 
 ## Goals / Non-Goals
 
@@ -77,7 +77,7 @@ then submits through `composeAndWriteEmit` and holds the written top-level key s
 example is also rendered. Fences are found with `src/core/markdown-fence.ts`, after the `**Canonical examples**` line.
 The disposable projects reuse rc07b's helpers wherever they fit (`test/helpers/schema-references.ts`). No chunk is
 seeded for apply: the engine writes `chunk`, `chunk_name`, `chunk_complete`, `files_touched` and `diff_base` on every
-apply emit (as `null` when unused), and the check compares keys, so the apply project needs only the minimal `tasks.md`
+apply emit (the nullable ones as `null` when unused), and the check compares keys, so the apply project needs only the minimal `tasks.md`
 the engine reads. The example's chunk values stay illustrative and are not checked, which the named limit already
 states.
 

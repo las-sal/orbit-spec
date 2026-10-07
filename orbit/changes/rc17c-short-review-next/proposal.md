@@ -53,4 +53,4 @@ rc02b and rc17b precedent). The charter named three; the fourth is the stale exa
 - `src/core/templates/workflows/review.ts`: the spine paragraph and the schema line.
 - Tests: emit-composition and report-render assertions on the pointer; golden fixtures whose JSON carries a pointer
   (the rendered goldens do not move, because no report prints `next_recommended`); a new canonical-example test.
-- No migration. The 155 archived proposal/system emits that carry the self pointer keep it and keep rendering.
+- No migration. The 152 archived proposal/system emits that carry the self pointer keep it and keep rendering.
