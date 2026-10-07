@@ -1,7 +1,7 @@
 # orbit-archive-modifications Specification
 
 ## Purpose
-TBD - created by archiving change relocate-modified-upstream-workflows. Update Purpose after archive.
+Orbit's additions to upstream's archive flow, which is otherwise preserved: consent at entry, the pre-archive audit-drift sweep (informational, never a gate), the unresolved-marker warning, the base-fingerprint divergence prompt, the archive run summary and its schema reference, the trail moving with the change, the stage line in the completion readout, and the PR-attached archive tail.
 ## Requirements
 ### Requirement: Upstream archive behavior preserved
 

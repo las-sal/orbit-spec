@@ -1,7 +1,7 @@
 # orbit-conventions Specification
 
 ## Purpose
-TBD - created by archiving change relocate-modified-upstream-workflows. Update Purpose after archive.
+The project-wide conventions every orbit workflow shares: the `@review:` marker family, the lens files, the explore staging directory and its decision and mechanism grammars, `.orbit-runs/` persistence with the run-summary and external-findings formats, the review scorecard and severity ladder, the execution disciplines and the no-chaining and outward-actions contracts, convention files, and the fork's distribution and generated-file rules.
 ## Requirements
 ### Requirement: `@review:` marker convention
 

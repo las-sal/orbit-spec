@@ -1,7 +1,7 @@
 # orbit-explore-modifications Specification
 
 ## Purpose
-TBD - created by archiving change relocate-modified-upstream-workflows. Update Purpose after archive.
+Orbit's additions to upstream's explore stance, which is otherwise preserved: the invocation modes, what an exploration captures and when it offers rather than writes, the `explore.md` file it maintains, the residency sweep before each emit, the moves applied to every rule in its Mechanism section, and how an exploration is re-entered or concluded.
 ## Requirements
 ### Requirement: Upstream explore stance preserved
 

@@ -1,7 +1,7 @@
 # orbit-onboard Specification
 
 ## Purpose
-TBD - created by archiving change relocate-modified-upstream-workflows. Update Purpose after archive.
+The `/orbit:onboard` reference: a single-pass orientation that states what orbit is, walks the canonical flow, and lists the command surface, delivered as a thin launcher over its skill and writing no run summary.
 ## Requirements
 ### Requirement: Skill body 5-section structure
 

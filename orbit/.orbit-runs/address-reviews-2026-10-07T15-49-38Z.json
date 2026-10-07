@@ -1,0 +1,78 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-07T15:49:38Z",
+  "change": null,
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "from-file",
+  "source_path": "orbit/.orbit-runs/audit-drift-2026-10-07T15-41-29Z.json",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 1
+  },
+  "pushback_verification": "Verified: orbit-conventions:4 still read the TBD line, as did five other baselines. Pushback also tested the earlier deferral's premise and found it false: delta specs carry requirement blocks only and the sync writes the TBD Purpose once (src/core/specs-apply.ts:459), so no change's delta can replace it; prior placeholders were replaced by direct edit (009b709f, 94cab1b9).",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "The placeholder Purposes' deferral route was missed by the first change to touch one of the six",
+      "marker_source": "audit-drift",
+      "file": "orbit/specs/orbit-conventions/spec.md",
+      "line": 4,
+      "classification": "decision_required",
+      "action": "wrote all six Purposes directly in their baselines, each a summary of what the capability's requirements already state with no counts that could go stale; each spec validates --strict and the suite is unchanged (3039)",
+      "ratified_via": "chat",
+      "resolution": "A — write the six Purposes now, in this walk, by direct edit (the precedent of 009b709f and 94cab1b9), since no delta can carry a Purpose",
+      "evidence": "the earlier walk (address-reviews-2026-10-07T01-37-17Z) deferred on the premise that a Purpose moves only through a delta; the sync never touches ## Purpose after creating it",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/specs/orbit-archive-modifications/spec.md",
+          "orbit/specs/orbit-explore-modifications/spec.md",
+          "orbit/specs/orbit-onboard/spec.md",
+          "orbit/specs/orbit-propose-modifications/spec.md",
+          "orbit/specs/orbit-skill-generation/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "TBD - created by archiving change"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/specs/orbit-conventions/spec.md",
+            "text": "The project-wide conventions every orbit workflow shares"
+          },
+          {
+            "path": "orbit/specs/orbit-skill-generation/spec.md",
+            "text": "How the generator emits the installed skill surface"
+          }
+        ],
+        "searched": [
+          "TBD - created by archiving",
+          "## Purpose"
+        ],
+        "scope": [
+          "orbit/specs"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "One of one resolved on Sal's direction A: the six placeholder Purposes are written in place, because no delta can move a Purpose and the deferral's route could never fire.",
+  "iteration": 14,
+  "next_recommended": "No markers remain in scope; the project trail records this walk.",
+  "ripple_misses": 0
+}

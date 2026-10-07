@@ -1,7 +1,7 @@
 # orbit-skill-generation Specification
 
 ## Purpose
-TBD - created by archiving change b2-grow-generator. Update Purpose after archive.
+How the generator emits the installed skill surface: multi-file skills with a `references/` directory validated at generation time, frontmatter metadata passed through, and generated reference directories and retired artifacts converging on every init and update.
 ## Requirements
 ### Requirement: Multi-file skill emission
 
