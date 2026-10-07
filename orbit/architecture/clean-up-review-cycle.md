@@ -3137,7 +3137,7 @@ half launched Codex through the recorded runner with no paste, and the return wa
 ### Stage rc17b-blind-pair-command — the pair is one command
 
 Depends-on: rc17a-invoked-coverage, rc17d-external-runner
-Complete: [ ]
+Complete: [x] 2026-10-06 (Sal)
 
 **Narrowed 2026-10-06 (Sal) at its exploration:** the runner half of the charter below — the per-user record, the
 init setup step, auto-launch of every external half (D-bpc-1's dispatch, D-bpc-2, -5, -11, -14) — moved to
@@ -5190,3 +5190,13 @@ accepts four residuals, headlined by rc07's distinction (no fresh or external re
 trail-read STALE rule). Its warnings carry one observation from the run itself: the fresh worker's completion hands its
 report to the orchestrating session before Step 7's commit, so the pair reference's "reads neither half's return"
 cannot hold for the fresh half. Exits (1)–(2) are met as written; ratification is the architect session's.
+
+**2026-10-06 — rc17b-blind-pair-command RATIFIED (Sal)**, through the architect session's offer, both exit criteria
+graded MET as written. (1) The stage's own system review ran as one `--reviewer blind-pair` invocation: BASE
+`e71cdb14`, the fresh pass alone `611642b1`, the external return alone `a2b150c5`, one push, no walk between, and the
+gate's invoked slot covered by the complete pair (task 6.5, closed by observation at archive). (2) The harness's
+no-runner case commits and pushes BASE and the fresh half and ends with the gate reporting `openPair: {missing:
+"external"}`, as note 7.3 planned. The post-archive project-wide audit found one drift: the split parent's exit owners
+named rc17b for what rc17d took. It was walked the same day with a dated note under the parent. Six B1 placeholder
+Purposes were deferred to a change. The split parent `rc17-blind-pair-command` stays `premised`, and rc17c is the only
+child still open.

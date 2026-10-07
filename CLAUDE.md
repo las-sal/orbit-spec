@@ -211,7 +211,7 @@ file now carries a live mark. Do NOT read this paragraph as the program's full l
 only what rc07 produced. The authoritative list is the program doc's own Open questions section,
 which also carries Q-crc-11, Q-crc-12, Q-crc-20, Q-crc-21, Q-crc-22 and Q-crc-23.
 
-**Twenty-one more stages have shipped since, and the program is TWENTY-THREE stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b, rc03c, rc07b and rc06a ratified 2026-10-04; rc06b, rc08a and rc08b ratified 2026-10-05 — rc08a's exit (3), pending by design, was measured on rc08b's cadence and read 4, not zero; the split parent rc08 took its ENDED mark the same day; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening; rc17a ratified 2026-10-06; rc17d ratified 2026-10-06).
+**Twenty-one more stages have shipped since, and the program is TWENTY-FOUR stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b, rc03c, rc07b and rc06a ratified 2026-10-04; rc06b, rc08a and rc08b ratified 2026-10-05 — rc08a's exit (3), pending by design, was measured on rc08b's cadence and read 4, not zero; the split parent rc08 took its ENDED mark the same day; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening; rc17a ratified 2026-10-06; rc17d ratified 2026-10-06; rc17b ratified 2026-10-06).
 
 `rc02c-confirmation-semantics` is ARCHIVED (2026-09-21): **the budget stopped being a target.**
 R-crc-11(h) — effort is RECORDED, never TARGETED — retired `budgetExhausted`, the
@@ -686,7 +686,7 @@ halves converged on three defects, walked in two logs; a COMPUTED PASSED gate. H
 sentences and the review trunk's matching line still describe the external class as packaging-only. **2985 tests
 green** (2885 → 2985).
 
-`rc17b-blind-pair-command` is ARCHIVED (2026-10-06; awaiting ratification; the second child of the split parent `rc17-blind-pair-command`):
+`rc17b-blind-pair-command` is ARCHIVED and RATIFIED (2026-10-06; both exit criteria graded MET as written; the second child of the split parent `rc17-blind-pair-command`):
 **the blind pair is one command.** `/orbit:review --as <mode> --reviewer blind-pair <change>` (`--blind-pair`, beside the
 new `--in-context` and `--external` shorthands; at most one reviewer selector) runs the fresh and the external half in
 one invocation through `references/blind-pair.md`. The steps: BASE committed and pushed on both routes; the external half
