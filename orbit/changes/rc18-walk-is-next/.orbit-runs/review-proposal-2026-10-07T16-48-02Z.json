@@ -1,0 +1,125 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-07T16:48:02Z",
+  "change": "rc18-walk-is-next",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc18-walk-is-next/design.md",
+      "line": 83,
+      "title": "The un-pass case is the ordinary path when the engine's own next is followed, not a bounded edge",
+      "recommendation": "Decide whether the stage accepts a second in-context pass whenever the invoked pass is SUGGESTION-only, or moves the walk before the following slot's pass. Option A reverses exit (3) as written, so it is a scope call for Sal.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Widen the rule to the unpassed side: when an EARLIER slot's pass is unwalked (SUGGESTION-only) and the next uncovered slot is a later one, the unpassed gate's canonical next is the walk first. Walking before the following pass raises no bar, so the loop never forms. This revises exit (3) under R-crc-12 and adds rows to the selection table."
+        },
+        {
+          "label": "B",
+          "body": "Keep the design and restate the cost honestly: in design.md Risks and D-rc18-4, say the extra in-context pass occurs on EVERY trail whose invoked pass is SUGGESTION-only and whose user follows the eligibility line, and add a task 2.1 shape for exactly that ordinary order (fresh T1 SUGGESTION-only, in-context T2, walk T3 of both, in-context T4)."
+        }
+      ],
+      "reproduction": "Scratch copy of orbit/changes/archive/2026-10-07-rc17c-short-review-next as change x, keeping only the fresh system pass review-system-2026-10-07T14-54-11Z (3 SUGGESTIONs) and the apply emit (pair T0, external return, both system walks, the in-context pass and its walk removed). `orbit status --change x --json` reads review-system `unpassed`, reason \"cadence class 'in-context' has no fresh pass\", unwalkedPasses [2026-10-07T14-54-11Z], next_command `/orbit:review --as system x` -- the in-context review, not the walk (exit (3) keeps this). Following that line: in-context T2 passes the gate; rc18 then names the walk; the walk discovers T1 and writes its log at T3 > T2; per D-rc18-1 the gate un-passes and owes a second in-context pass. Explore Case 1 measured only trails where the fresh half was walked BEFORE the in-context pass (rc17c's emit next named the walk), so it did not observe that the engine's eligibility line leads the other way."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc18-walk-is-next/tasks.md",
+      "line": 4,
+      "title": "The loop change does not say how it tells the walk apart from a passed gate's phase command, and the fall-through path gives the wrong hint key",
+      "recommendation": "State in design D1 and task 1.2 that the loop takes a passed gate's command ONLY when the shared frontier-with-unwalked predicate holds (export it, or carry a row flag), never because nextCommand is set. A passed review-proposal ALWAYS carries nextCommand `/orbit:apply <change> - user-invoked` from nextAfterPass (gates.ts:158, :1055). So 'take that command from a passed gate' as written would name /orbit:apply again after apply passes, whenever no apply emit made the proposal passes stale. It would also re-key the hint to review-proposal on an ordinary passed gate. Then drop the fall-through clause: review-system is always the frontier (no gate named archive exists), so the loop takes it first. If the system case were left to the fall-through instead, its hint keys would be `{phase: g.before}` = archive (instruction-loader.ts:477), against the spec row's 'its hint keys are the gate's phase id'. Add a task 1.3 case asserting next_hint_keys on both the proposal and the system walk."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc18-walk-is-next/proposal.md",
+      "line": 40,
+      "title": "Proposal says `A reviewed gate lists its outstanding passes` gains a scenario; the delta adds none",
+      "recommendation": "The delta's only change to that requirement is the one qualified sentence (byte-diff against the baseline). Either delete 'and gains a scenario for the walk the next names' from proposal.md, or add the scenario if one was intended. The walk-naming scenarios all sit under `Single-voiced canonical-next computation`."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc18-walk-is-next/specs/orbit-engine-gates/spec.md",
+      "line": 58,
+      "title": "'takes the FIRST row of this table that yields a command' reads as table-row order",
+      "recommendation": "Read literally, row order would put the tracked `ready` row (row 2) ahead of the passed-frontier row (row 7), which is the motivating defect. Say 'takes the command of the FIRST gate, in flow order, whose row yields one'."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc18-walk-is-next/design.md",
+      "line": 35,
+      "title": "The named walk also discovers a passed, non-frontier gate's unwalked passes",
+      "recommendation": "The superseded flag is set only on NON-passed gates (gates.ts:937-939), and discovery takes every reviewed row that is neither blocked nor carrying superseded: true (the address-reviews DISCOVERY fence, row 5). A review-proposal still PASSED after apply (tasks checked with no apply emit making its passes stale) is not superseded. So the walk this stage names for review-system also walks that gate's passes, which the selection table's 'passed, not the frontier' row never recommends. That is narrower than 'discovery already treats them that way'. Either state it as a known edge in the Non-Goals line, or note that the selection and discovery differ on that one row."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc18-walk-is-next/explore.md",
+      "line": 1,
+      "title": "explore.md still reads `exploring.` though its one rule is now proposed",
+      "recommendation": "If the convention expects the header to change at promotion, set `concluded <date>.` or leave it as the archive step expects. Check against propose's consumption rule rather than editing by habit; it has no effect on the gate."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Read the two code sites the design names (gates.ts computeGateStates / evaluateReviewedGate / nextAfterPass, and formatChangeStatus' selection loop and fall-through), the address-reviews DISCOVERY fence, and passResolved for D-rc18-2. I re-ran one scenario on a scratch copy of rc17c's archived trail. D-rc18-2 and D-rc18-3 hold as stated. The spec's selection table is a sound partition. The risk is concentrated in two places. First, the design treats D-rc18-1's un-pass as a corner, but the unpassed gate's own next leads straight into it. Second, the loop edit is described loosely enough that the obvious implementation ('take a passed gate's nextCommand') is wrong, because every passed review gate already carries a phase command.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "hold",
+    "reasoning": "Walk the two correctness issues before apply. The loop discriminator is a one-sentence repair, but as written it invites an implementation that names /orbit:apply after apply has finished. The un-pass cost is the substantive question: the stage moves the walk to after the gate passes, while the engine's eligibility line sends the user to the next slot's review before walking. On the common trail with a SUGGESTION-only invoked pass, every change would then pay a second in-context review. Whether to move the walk earlier, which touches exit (3), or to accept and document that cost is Sal's scope call. It should be made with the ordinary path in view, not only the Case 1 trails."
+  },
+  "final_assessment": "0 critical, 2 warning, 4 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc18-walk-is-next"
+}
