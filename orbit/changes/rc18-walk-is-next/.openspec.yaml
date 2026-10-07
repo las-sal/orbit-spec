@@ -1,0 +1,10 @@
+schema: spec-driven
+created: 2026-10-07
+schema_version: 5
+architecture:
+  doc: clean-up-review-cycle
+  stage: rc18-walk-is-next
+base_fingerprints:
+  orbit-engine-gates:
+    Single-voiced canonical-next computation: sha256:d9ca32db09ef3367250e8354dd4a3ebb25f9e73aeaa1e973f99e2c189e820476
+    A reviewed gate lists its outstanding passes: sha256:66eb25033a9eac8df2f05a4609b3800cbef8aac5d2efa1cca016e83249e6f6a0
