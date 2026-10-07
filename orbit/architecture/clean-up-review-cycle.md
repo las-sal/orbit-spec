@@ -3006,7 +3006,7 @@ unchanged, measured by its delta count being zero.
 ### Stage rc17-blind-pair-command — the pair is one command, as it is one slot
 
 Depends-on: rc08b-walk-routing
-Complete: [ ]
+Complete: [~] 2026-10-07 (Sal)
 
 **SPLIT 2026-10-05 (Sal) into rc17a + rc17b, under R-crc-9: its seventh preventive application, the fifth
 caught at exploration before anything was proposed.** The heading is kept as the program's record of the
@@ -5260,3 +5260,9 @@ project-wide audit found one drift: the six B1 placeholder Purposes, whose defer
 delta carries a Purpose. It was walked the same day on Sal's direction A, and all six Purposes are written. With rc17c
 ratified, every child of the split parent `rc17-blind-pair-command` (rc17a, rc17b, rc17c, rc17d) is complete; the
 parent stays `premised` until Sal declares its ended mark, the route rc08, rc13, rc04, rc03 and rc06 took.
+
+**2026-10-07 — rc17-blind-pair-command ENDED (Sal)**, through the unprompted route ("end rc17"), the stage observed
+`premised` with an undated slot. It is a split parent: its heading stays as record, and every exit criterion it carried
+is owned by a child that shipped — exit (2) by rc17a, exit (1) by rc17b, exit (3) by rc17d (as its exit (2)), and the
+short next line by rc17c — all four ratified. The mark says the parent itself will not be graded, as for rc08, rc13,
+rc04, rc03 and rc06.
