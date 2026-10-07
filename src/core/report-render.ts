@@ -462,14 +462,18 @@ export function normalizeInternalPass(filePath: string, json: unknown): Normaliz
       filePath
     );
   }
+  // rc17c: on a pass with findings the accepted set is CLOSED at two values, both
+  // computed from the emit itself — the short form, and the prior generation's self
+  // pointer naming THIS emit's own path. Accepted by value, never by date.
   const emitRepoPath = `orbit/changes/${j.change}/.orbit-runs/${path.basename(filePath)}`;
-  const expectedNext =
+  const acceptedNext =
     findings.length > 0
-      ? `/orbit:address-reviews ${j.change} --from-file ${emitRepoPath}`
-      : `orbit status --change ${j.change} --report`;
-  if (j.next_recommended !== expectedNext) {
+      ? [`/orbit:address-reviews ${j.change}`, `/orbit:address-reviews ${j.change} --from-file ${emitRepoPath}`]
+      : [`orbit status --change ${j.change} --report`];
+  if (!acceptedNext.includes(j.next_recommended as string)) {
     fail(
-      `field 'next_recommended' is '${j.next_recommended}' but the deterministic pointer is '${expectedNext}'`,
+      `field 'next_recommended' is '${j.next_recommended}' but the deterministic pointer is ` +
+        acceptedNext.map(v => `'${v}'`).join(' or '),
       filePath
     );
   }

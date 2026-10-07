@@ -68,6 +68,12 @@ import { fileURLToPath } from "node:url";
  * MOVED at rc17b-blind-pair-command apply (2026-10-06) — a PLANNED act (its task 1.1): `gates.ts` only — the
  * default and unknown review preferences present the pair command (`--reviewer blind-pair`, presented class
  * `blind-pair`), retiring rc17a D6's interim fresh-review row. Every other hash here is unchanged.
+ * MOVED at rc17c-short-review-next apply (2026-10-07) — a PLANNED act (its task 5.1, design Touchpoints):
+ * TWO files. `emit-composition.ts` — the review composer's change-mode branch names the change-scoped walk
+ * (`/orbit:address-reviews <change>`, no path; D1), and `SPINE_FIELDS` / `ENGINE_OWNED_EXTRA` gain `export`
+ * so the canonical-example guard subtracts by the engine's own list (D6). `report-render.ts` — the spine-
+ * semantics pointer check accepts the closed two-value set on a pass with findings: the short form and the
+ * prior generation's self pointer, both computed from the emit itself (D2). Every other hash is unchanged.
  */
 const PINNED: Record<string, string> = {
   "schemas/spec-driven/schema.yaml": "21e0ae86532a39be558a2b81d23738a6fbf92fbd32b0d01612a65e83d6a96739",
@@ -86,8 +92,8 @@ const PINNED: Record<string, string> = {
   "src/core/artifact-graph/state.ts": "f59f748b94cd94ca2fe022ec5aa66b3251dd1b2c00bddb9a17cbd9273a04d0f2",
   "src/core/artifact-graph/trail.ts": "39b5d110ef53b7e03f49ddf292e86db598a14f426a02e6d84142e16231e37d69",
   "src/core/artifact-graph/types.ts": "d83e0cc6d7fca7b80618ffbb7ce052ee68e35be79e7949a941e989b2e102392c",
-  "src/core/emit-composition.ts": "25c0a82f4f7790ae2ac468eca326a9a972bf818779ab62d4d3ccb340cd323e34",
-  "src/core/report-render.ts": "b40046bc8059ca73744de33dd25ebf1e978a8dd3b0a5b0a33490298f161904a5",
+  "src/core/emit-composition.ts": "2c71ce61f7ecd28039e50d19a791a1e1a1298c89dcc11e5ee7860c14ccf415fd",
+  "src/core/report-render.ts": "ceaf85f5b3254b5dde97b82c94b829de510d1f70669f16d65bd820a55b7ae393",
 };
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");

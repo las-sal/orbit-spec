@@ -16,7 +16,7 @@ Create the trail directory if it doesn't exist. The file is **committed** (not g
 
 ## Universal spine inheritance
 
-The spine every emit carries is owned by \`orbit-conventions\`' \`Internal-run JSON summary format\` requirement, and is not restated here. For review the engine composes every spine field and the payload supplies only \`model\`: \`final_assessment\` is the DETERMINISTIC severity-counts sentence computed from the emit's own scorecard (\`"X critical, Y warning, Z suggestion."\` / \`"No findings."\`, never a verdict), and in change modes \`next_recommended\` is the DETERMINISTIC pointer — the \`/orbit:address-reviews <name> --from-file <this emit's own path>\` invocation when the pass has findings, the \`orbit status --change <name> --report\` render pointer when clean (the engine-computed canonical next rides the rendered tail, never the emit). \`change\` is \`null\` in architecture mode, where a \`doc\` field names the reviewed doc instead.
+The spine every emit carries is owned by \`orbit-conventions\`' \`Internal-run JSON summary format\` requirement, and is not restated here. For review the engine composes every spine field and the payload supplies only \`model\`: \`final_assessment\` is the DETERMINISTIC severity-counts sentence computed from the emit's own scorecard (\`"X critical, Y warning, Z suggestion."\` / \`"No findings."\`, never a verdict), and in change modes \`next_recommended\` is the DETERMINISTIC pointer \`orbit-emit-composition\`'s \`Deterministic facts are engine-composed per command\` composes — the change-scoped walk when the pass has findings, the report render when clean; that requirement owns the values, and this body does not restate them (the engine-computed canonical next rides the rendered tail, never the emit). \`change\` is \`null\` in architecture mode, where a \`doc\` field names the reviewed doc instead.
 
 The schema below documents per-command extensions ADDED to that spine (\`mode\`, \`iteration\`, \`depth\`, \`reviewer_class\`, \`flags\`, \`passes_run\`, \`passes_skipped\`, \`scorecard\`, \`findings\`, \`blocks\`, \`stale_suppressed\`, \`commentary\`, \`direction\`, \`verification\`, and the engine-computed \`pass_genre\` and \`verified_walks\`). The former \`findings_summary\` and \`iteration_note\` fields are RETIRED in CHANGE MODES (D-arc Stage D4): \`scorecard\` supersedes the counts (readers tolerate both generations), and the iteration note is RENDERER-computed from the trail — a stored copy would be a second stale voice. (Architecture-mode emits carry the same \`scorecard\` shape; the interim hand-rendered report path documented below reads it — no render surface covers the architecture trail yet.) Per-command extensions are review-specific state; they supplement, not replace, the spine.
 
@@ -28,7 +28,7 @@ The schema below documents per-command extensions ADDED to that spine (\`mode\`,
   "timestamp": "<ISO-8601>",
   "change": "<change-name>",         // null in architecture mode
   "final_assessment": "<counts sentence, e.g. \"0 critical, 1 warning, 3 suggestion.\">",
-  "next_recommended": "<findings → '/orbit:address-reviews <name> --from-file <own path>'; clean → 'orbit status --change <name> --report'>",
+  "next_recommended": "<engine-composed — the pointer orbit-emit-composition's 'Deterministic facts are engine-composed per command' owns>",
   "kind": "editorial",
   "mode": "proposal" | "system" | "architecture",
   "iteration": <integer, per-mode>,
@@ -399,7 +399,7 @@ This branch packages a review request for an external AI (codex, fresh Claude, G
 
 **Runs the review ONLY through the user's recorded runner, and NEVER ingests findings.** The runner is the one the user recorded in their per-user global config (\`orbit-external-runner\`; read through \`orbit external runner --json\`); a runner merely present on \`PATH\` is never launched. With none, the external AI is the user's to run. Either way, ingestion is the change-scoped \`/orbit:address-reviews <change-name>\`, which discovers the saved return as an outstanding pass, or an explicit \`--from-file <path>\` aim — invoked separately, never by this branch.
 
-**Input**: the change name and \`--as proposal|system\` resolved by the review trunk before this reference loads (\`--reviewer external\` requires \`--as proposal|system\`; architecture mode never reaches this branch). Compose the T0 emit via \`orbit emit review-external --change <name>\` — the engine owns the spine, the paste/save/ingest recommendation, and \`awaiting_findings\`.
+**Input**: the change name and \`--as proposal|system\` resolved by the review trunk before this reference loads (\`--reviewer external\` requires \`--as proposal|system\`; architecture mode never reaches this branch). Compose the T0 emit via \`orbit emit review-external --change <name>\` — the engine owns the spine, the recommendation \`orbit-run-summary-emit\`'s \`Review-external T0 multi-step recommendation\` owns, and \`awaiting_findings\`.
 
 ## Disciplines
 

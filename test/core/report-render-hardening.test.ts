@@ -348,11 +348,50 @@ describe('spine semantic validation (W2)', () => {
     (emit.scorecard as any).correctness.warning = 1;
     emit.final_assessment = '0 critical, 1 warning, 0 suggestion.';
     // next_recommended stays the clean-pass form — wrong for a findings pass.
+    // rc17c: the error names BOTH accepted values (the short form, the prior generation's self pointer).
     expect(() => normalizeInternalPass(FAKE_PATH, emit)).toThrow(
-      /field 'next_recommended' .* but the deterministic pointer is '\/orbit:address-reviews sem-change --from-file orbit\/changes\/sem-change\/\.orbit-runs\/review-proposal-2026-07-29T10-00-00Z\.json'/
+      /field 'next_recommended' .* but the deterministic pointer is '\/orbit:address-reviews sem-change' or '\/orbit:address-reviews sem-change --from-file orbit\/changes\/sem-change\/\.orbit-runs\/review-proposal-2026-07-29T10-00-00Z\.json'/
     );
   });
 
+  // rc17c — the closed two-value set on a pass with findings, computed from the emit itself.
+  const withFinding = (next: string): Record<string, unknown> => {
+    const emit = d4Emit('sem-change', {
+      findings: [{ severity: 'WARNING', dimension: 'correctness', title: 'W', file: 'a.md', line: 1, recommendation: 'r' }],
+      final_assessment: '0 critical, 1 warning, 0 suggestion.',
+      next_recommended: next,
+    });
+    (emit.scorecard as any).correctness.warning = 1;
+    return emit;
+  };
+  const SELF = 'orbit/changes/sem-change/.orbit-runs/review-proposal-2026-07-29T10-00-00Z.json';
+
+  it('rc17c: the short form validates on a pass with findings', () => {
+    expect(() => normalizeInternalPass(FAKE_PATH, withFinding('/orbit:address-reviews sem-change'))).not.toThrow();
+  });
+
+  // @scenario behaviour orbit-report-rendering :: Strict input validation — fail loud, no partial render :: A prior-generation self pointer renders
+  it('rc17c: a prior-generation self pointer renders, byte-equal to the short form', () => {
+    const dir = makeChange('sem-change');
+    const name = 'review-proposal-2026-07-29T10-00-00Z.json';
+    writeTrail(dir, name, JSON.stringify(withFinding(`/orbit:address-reviews sem-change --from-file ${SELF}`)));
+    const prior = renderReport(root, 'sem-change', '2026-07-29T10-00-00Z');
+    writeTrail(dir, name, JSON.stringify(withFinding('/orbit:address-reviews sem-change')));
+    const short = renderReport(root, 'sem-change', '2026-07-29T10-00-00Z');
+    expect(prior).toBe(short);
+    expect(prior).not.toContain('--from-file');
+  });
+
+  // @scenario behaviour orbit-report-rendering :: Strict input validation — fail loud, no partial render :: A self pointer at another file is drift
+  // @scenario behaviour orbit-report-rendering :: Strict input validation — fail loud, no partial render :: Deterministic spine drift fails the render
+  it('rc17c: a self pointer naming a DIFFERENT pass file is drift', () => {
+    const other = 'orbit/changes/sem-change/.orbit-runs/review-proposal-2026-07-28T09-00-00Z.json';
+    expect(() =>
+      normalizeInternalPass(FAKE_PATH, withFinding(`/orbit:address-reviews sem-change --from-file ${other}`))
+    ).toThrow(/field 'next_recommended'/);
+  });
+
+  // @scenario behaviour orbit-report-rendering :: Strict input validation — fail loud, no partial render :: A self pointer at another file is drift
   it('a clean pass pointing at address-reviews fails loud (the pointer is the status gateway)', () => {
     const emit = d4Emit('sem-change', {
       next_recommended: '/orbit:address-reviews sem-change',

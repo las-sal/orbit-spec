@@ -25,3 +25,14 @@ scenarios:
   - key: "orbit-conventions :: Review mode decision framework :: Framework guidance is gate-surfaced, never gate-enforced"
     kind: untestable
     why: "The THEN is the archive body's inflection prompt and the user's proceed decision, choreography an AI follows in a session; the gate's computed unpassed state is engine-tested elsewhere, but the prompt-and-proceed act is not runnable."
+  # rc17c-short-review-next (task 3.4) — the authoring half of a MODIFIED block's scenario.
+  - key: "orbit-review :: Internal run summary persisted per mode :: Commentary carried for the renderer"
+    kind: untestable
+    why: "The carrying half is a behaviour test (the emit writes `commentary` verbatim); the other half, that commentary never asserts counts, verdicts or next commands, is a content rule on prose the reviewing AI authors, and no check can grade free prose for it."
+  # rc17c-short-review-next (task 4.5) — two reader-side claims carried in orbit-conventions' MODIFIED block.
+  - key: "orbit-conventions :: Internal-run JSON summary format :: Downstream status readers parse next_recommended uniformly across kinds"
+    kind: untestable
+    why: "The THEN is a downstream status reader's parse; no reader in this repo parses `next_recommended` (the v0.1 bash tool retired at D3), so there is nothing to run. The emit half, that every kind carries the field, is held by the canonical-example guard."
+  - key: "orbit-conventions :: Internal-run JSON summary format :: Future consumers route by `kind` field rather than parsing filename prefix"
+    kind: untestable
+    why: "The THEN is a permission (MAY) granted to consumers outside this repo; no in-repo consumer routes by either key, so there is no behaviour to observe. Every emit carrying `kind` is held by the canonical-example guard."

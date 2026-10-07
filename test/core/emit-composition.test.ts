@@ -98,6 +98,18 @@ describe('payload contract', () => {
     ).toThrow(/unknown payload key 'pases_run'/);
   });
 
+  // @scenario behaviour orbit-conventions :: Internal-run JSON summary format :: Model provenance recorded, absence tolerated
+  it('rc17c: a new emit carries model while a pre-capability emit beside it, lacking the key, still validates', () => {
+    makeChange('foo');
+    const fresh = composeAndWriteEmit('review', { change: 'foo' }, validReviewPayload({ model: 'claude-x' }), { projectRoot: root });
+    expect(fresh.emit.model).toBe('claude-x');
+    const old = JSON.parse(fs.readFileSync(fresh.path, 'utf-8'));
+    delete old.model;
+    const oldPath = path.join(root, 'orbit/changes/foo/.orbit-runs/review-proposal-2026-01-01T00-00-00Z.json');
+    fs.writeFileSync(oldPath, JSON.stringify(old));
+    expect(() => normalizeInternalPass(oldPath, old)).not.toThrow();
+  });
+
   it('rejects a payload missing the model key; explicit null is accepted', () => {
     makeChange('foo');
     const p = validReviewPayload();
@@ -210,7 +222,7 @@ describe('target resolution and spine composition', () => {
     expect(persisted.audit_skipped_via_flag).toBe(true);
   });
 
-  it('collision bumps the token forward and the self-pointer names the FINAL path', () => {
+  it('collision bumps the token forward to the FINAL path', () => {
     makeChange('foo');
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-08-05T10:00:00Z'));
@@ -220,8 +232,8 @@ describe('target resolution and spine composition', () => {
     const r = composeAndWriteEmit('review', { change: 'foo' }, validReviewPayload(), { projectRoot: root });
     expect(r.path).toContain('review-proposal-2026-08-05T10-00-01Z.json');
     expect(r.emit.timestamp).toBe('2026-08-05T10:00:01Z');
-    // Findings exist → the pointer names this emit's own (post-bump) path.
-    expect(String(r.emit.next_recommended)).toContain('review-proposal-2026-08-05T10-00-01Z.json');
+    // rc17c (planned act): findings exist → the change-scoped walk, naming no path at all.
+    expect(r.emit.next_recommended).toBe('/orbit:address-reviews foo');
   });
 
   it('rc03c (external C1, B): the bump clears the token against ANY trail file, not just the command\'s own prefix — a same-second walk precedes the review that follows it', () => {
@@ -248,11 +260,85 @@ describe('target resolution and spine composition', () => {
 // ---------------------------------------------------------------------------
 
 describe('deterministic facts', () => {
+  // @scenario behaviour orbit-review :: Internal run summary persisted per mode :: Summary written after run
+  // @scenario behaviour orbit-review :: Internal run summary persisted per mode :: Spine fields carry deterministic facts under persist-first
+  // @scenario behaviour orbit-review :: Internal run summary persisted per mode :: Commentary carried for the renderer
+  it('rc17c: the persisted proposal summary — location, computed facts, the short pointer, commentary carried; spine facts refused in the payload', () => {
+    makeChange('foo');
+    const scorecard = {
+      completeness: { critical: 0, warning: 1, suggestion: 3 },
+      correctness: { critical: 0, warning: 0, suggestion: 0 },
+      coherence: { critical: 0, warning: 0, suggestion: 0 },
+    };
+    const f = (severity: string, title: string) => ({ severity, dimension: 'completeness', title, file: 'a.md', line: 1, recommendation: 'r' });
+    const findings = [f('WARNING', 'W'), f('SUGGESTION', 'S1'), f('SUGGESTION', 'S2'), f('SUGGESTION', 'S3')];
+    const r = composeAndWriteEmit('review', { change: 'foo' }, validReviewPayload({ scorecard, findings, commentary: 'texture' }), { projectRoot: root });
+    expect(path.relative(root, r.path)).toMatch(/^orbit\/changes\/foo\/\.orbit-runs\/review-proposal-.*\.json$/);
+    const onDisk = JSON.parse(fs.readFileSync(r.path, 'utf-8'));
+    expect(onDisk.command).toBe('review');
+    expect(onDisk.mode).toBe('proposal');
+    expect(onDisk.iteration).toBe(1);
+    expect(onDisk.scorecard).toEqual(scorecard);
+    expect(onDisk.findings).toHaveLength(4);
+    expect(onDisk.final_assessment).toBe('0 critical, 1 warning, 3 suggestion.');
+    expect(onDisk.next_recommended).toBe('/orbit:address-reviews foo');
+    expect(onDisk.commentary).toBe('texture');
+    for (const key of ['final_assessment', 'next_recommended']) {
+      expect(() =>
+        composeAndWriteEmit('review', { change: 'foo' }, validReviewPayload({ [key]: 'x' }), { projectRoot: root })
+      ).toThrow(new RegExp(`'${key}' is engine-owned`));
+    }
+  });
+
+  // @scenario behaviour orbit-emit-composition :: Deterministic facts are engine-composed per command :: Review iteration engine-computed from the shared pass axis
+  it('rc17c: review iteration is the next ordinal on the shared axis; a supplied iteration is refused', () => {
+    makeChange('foo');
+    composeAndWriteEmit('review', { change: 'foo' }, validReviewPayload(), { projectRoot: root });
+    composeAndWriteEmit('review', { change: 'foo' }, validReviewPayload(), { projectRoot: root });
+    const third = composeAndWriteEmit('review', { change: 'foo' }, validReviewPayload(), { projectRoot: root });
+    expect(third.emit.iteration).toBe(3);
+    expect(() =>
+      composeAndWriteEmit('review', { change: 'foo' }, validReviewPayload({ iteration: 7 }), { projectRoot: root })
+    ).toThrow(/'iteration' is engine-owned/);
+  });
+
+  // @scenario behaviour orbit-emit-composition :: Deterministic facts are engine-composed per command :: Apply assessment core engine-composed, suffix appended
+  it('rc17c: the apply core is engine-composed with the suffix appended; a supplied final_assessment is refused', () => {
+    const tasks = `<!--\nImplementation chunks:\n  Chunk 1 (groups 1):  First\n  Chunk 2 (groups 2):  Second\n-->\n\n# Tasks\n\n## 1. A\n\n- [x] 1.1 done\n\n## 2. B\n\n- [ ] 2.1 pending\n`;
+    makeChange('foo', { tasks });
+    const r = composeAndWriteEmit(
+      'apply',
+      { change: 'foo' },
+      { assessment_suffix: 'Parser edge cases ran deeper than planned.', consent: 'user-invoked', model: null },
+      { projectRoot: root }
+    );
+    const fa = String(r.emit.final_assessment);
+    expect(fa.startsWith('Completed chunk 1 of 2 (First)')).toBe(true);
+    expect(fa.endsWith('Parser edge cases ran deeper than planned.')).toBe(true);
+    expect(() =>
+      composeAndWriteEmit('apply', { change: 'foo' }, { final_assessment: 'mine', consent: 'user-invoked', model: null }, { projectRoot: root })
+    ).toThrow(/'final_assessment' is engine-owned/);
+  });
+
+  // @scenario behaviour orbit-emit-composition :: Deterministic facts are engine-composed per command :: Architect recommendation mirrors the handoff
+  it('rc17c: the architect spine next mirrors the handoff verbatim; a supplied spine next_recommended is refused', () => {
+    write('orbit/architecture/my-program.md', '# my-program\n');
+    const handoff = { boot_sequence: ['CLAUDE.md'], next_command: '/orbit:architect my-program — resume', model_hint: null, seam: 'post-session' };
+    const r = composeAndWriteEmit('architect', { doc: 'my-program' }, { final_assessment: 's', handoff, model: null }, { projectRoot: root });
+    expect(r.emit.next_recommended).toBe(handoff.next_command);
+    expect(() =>
+      composeAndWriteEmit('architect', { doc: 'my-program' }, { final_assessment: 's', handoff, next_recommended: 'x', model: null }, { projectRoot: root })
+    ).toThrow(/'next_recommended' is engine-owned/);
+  });
+
+  // @scenario behaviour orbit-emit-composition :: Deterministic facts are engine-composed per command :: Review counts sentence composed from the payload scorecard
+  // @scenario behaviour orbit-emit-composition :: Deterministic facts are engine-composed per command :: A clean change-mode pass still points at the report
   it('review: counts sentence + findings-dependent pointer; clean → report pointer', () => {
     makeChange('foo');
     const withFindings = composeAndWriteEmit('review', { change: 'foo' }, validReviewPayload(), { projectRoot: root });
     expect(withFindings.emit.final_assessment).toBe('0 critical, 1 warning, 0 suggestion.');
-    expect(String(withFindings.emit.next_recommended)).toMatch(/^\/orbit:address-reviews foo --from-file /);
+    // rc17c (exit (1)): the change-scoped walk, naming no path.
+    expect(withFindings.emit.next_recommended).toBe('/orbit:address-reviews foo');
 
     const clean = composeAndWriteEmit(
       'review',
@@ -274,6 +360,8 @@ describe('deterministic facts', () => {
   });
 
   // @scenario behaviour orbit-run-summary-emit :: Review-external T0 multi-step recommendation :: Review-external T0 emit has awaiting_findings=true
+  // @scenario behaviour orbit-emit-composition :: Deterministic facts are engine-composed per command :: T0 recommendation composed from the path template
+  // @scenario behaviour orbit-conventions :: Internal-run JSON summary format :: Editorial command emit shape (pre-findings T0 case)
   it('T0: paste/save/ingest template from prompt_path, awaiting_findings engine-set', () => {
     makeChange('foo');
     const r = composeAndWriteEmit(
@@ -283,6 +371,9 @@ describe('deterministic facts', () => {
       { projectRoot: root }
     );
     expect(r.emit.awaiting_findings).toBe(true);
+    expect(r.emit.kind).toBe('editorial');
+    expect('target' in r.emit).toBe(true);
+    expect('scorecard' in r.emit).toBe(false);
     expect(path.basename(r.path)).toMatch(/^review-external-.*\.json$/);
     expect(r.emit.mode).toBe('proposal');
     expect(r.emit.prompt_path).toBe('orbit/changes/foo/.orbit-runs/external-prompt-proposal-2026-08-05T10-00-00Z.md');
@@ -1039,6 +1130,8 @@ describe('write gate', () => {
     ).toThrow();
   });
 
+  // @scenario behaviour orbit-emit-composition :: Deterministic facts are engine-composed per command :: Architecture-mode review keeps its self pointer
+  // @scenario behaviour orbit-review :: Internal run summary persisted per mode :: Architecture-mode summary in the architecture trail
   it('architecture-mode review emit passes the mode-scoped gate (strict normalizer not applied)', () => {
     write('orbit/architecture/prog.md', '# prog\n');
     const r = composeAndWriteEmit(
@@ -1052,9 +1145,14 @@ describe('write gate', () => {
     );
     expect(r.emit.change).toBeNull();
     expect(r.emit.doc).toBe('prog');
+    expect(r.emit.mode).toBe('architecture');
+    expect((r.emit as any).handoff.next_command).toBe('/orbit:architect prog');
+    expect(path.relative(root, r.path)).toMatch(/^orbit\/architecture\/\.orbit-runs\/review-architecture-.*\.json$/);
     expect(r.emit.iteration).toBe(1);
-    // Findings exist → the address pointer, doc-scoped.
-    expect(String(r.emit.next_recommended)).toMatch(/^\/orbit:address-reviews --from-file /);
+    // Findings exist → the address pointer naming THIS emit's own path (rc17c exit (3): unchanged).
+    expect(r.emit.next_recommended).toBe(
+      `/orbit:address-reviews --from-file orbit/architecture/.orbit-runs/${path.basename(r.path)}`
+    );
   });
 
   it('doc-scoped walk ordinal anchors PER DOC on the shared architecture trail', () => {
@@ -1718,6 +1816,7 @@ describe('rc02b: an internal CRITICAL carries its reproduction at the write gate
     coherence: { critical: 0, warning: 0, suggestion: 0 },
   };
 
+  // @scenario behaviour orbit-review :: Internal run summary persisted per mode :: A finding entry carries its reproduction
   it('a CRITICAL with no reproduction is refused naming the index and the title; no file is written', () => {
     makeChange('foo');
     expect(() =>
@@ -1744,6 +1843,7 @@ describe('rc02b: an internal CRITICAL carries its reproduction at the write gate
     expect(listRuns('orbit/changes/foo/.orbit-runs')).toHaveLength(1);
   });
 
+  // @scenario behaviour orbit-review :: Internal run summary persisted per mode :: A finding entry carries its reproduction
   it('WARNING and SUGGESTION need no reproduction; a present string passes through', () => {
     makeChange('foo');
     const ok = composeAndWriteEmit('review', { change: 'foo' }, validReviewPayload(), { projectRoot: root });
@@ -1787,6 +1887,7 @@ describe('rc02b: an internal CRITICAL carries its reproduction at the write gate
 });
 
 describe('rc02b: the review payload carries blocks', () => {
+  // @scenario behaviour orbit-review :: Internal run summary persisted per mode :: Blocks ride the payload beside the findings
   it('blocks: [single-line strings] is accepted and written verbatim; the scorecard rollup is unchanged by it', () => {
     makeChange('foo');
     const blocks = ['Pass 1: orbit validate fails — specs/x/spec.md:12 scenario has 3 hashtags', 'Pass 8: unresolved @review: marker at design.md:40'];
@@ -1831,6 +1932,7 @@ describe('rc04b: the review payload carries direction — owed by the independen
   const OWED = (cls: string) =>
     `write gate: review emit of class '${cls}' carries no direction — an independent pass owes its forward recommendation`;
 
+  // @scenario behaviour orbit-review :: Internal run summary persisted per mode :: Direction authored on an independent pass
   it('a fresh payload with no direction is refused with the ADDED requirement\'s sentence; no file is written', () => {
     makeChange('foo');
     expect(() =>
@@ -1847,6 +1949,7 @@ describe('rc04b: the review payload carries direction — owed by the independen
     expect(listRuns('orbit/changes/foo/.orbit-runs')).toEqual([]);
   });
 
+  // @scenario behaviour orbit-review :: Internal run summary persisted per mode :: Direction authored on an independent pass
   it('an in-context payload without it writes exactly as before; the key is not composed', () => {
     makeChange('foo');
     const r = composeAndWriteEmit('review', { change: 'foo' }, validReviewPayload(), { projectRoot: root });
@@ -1991,6 +2094,7 @@ describe('rc03c: pass genre, verified walks and the verification record', () => 
   const writes = (payload: Record<string, unknown>) =>
     composeAndWriteEmit('review', { change: 'foo' }, payload, { projectRoot: root });
 
+  // @scenario behaviour orbit-review :: Internal run summary persisted per mode :: A verification-genre pass carries its record
   it('every review emit carries the computed pass_genre and verified_walks — REVIEW/[] with no walk, VERIFICATION over the walks after the fresh pass', () => {
     seed([]);
     const r1 = writes(sys());

@@ -3208,6 +3208,14 @@ Exit: (1) no change-mode review emit's `next_recommended` names a path; (2) a re
 stage, carrying the `--from-file` self pointer, renders unchanged; (3) the architecture-mode pointer is
 unchanged.
 
+**2026-10-07 — size declared: four capabilities, one over R-crc-1's ceiling (D-rc17c-6, Sal).** Measuring the
+stage at exploration found a fourth surface stating the old pointer: the editorial example in
+`orbit-conventions`' `Internal-run JSON summary format`. All three of that requirement's canonical examples
+were stale, because nothing read them. Sal: "why wait til audit-drift to fix something we see now? let's fix it
+now." The stage refreshes the three examples and adds a test that executes each one, so `orbit-conventions` is
+the fourth capability. This is declared under R-crc-9, following the rc07b, rc02b and rc17b precedents. The
+charter text above stays as written: it named three capabilities, and the fourth is an addition, not a revision.
+
 ### Stage rc18-walk-is-next — a passed gate with an unwalked pass names the walk next
 
 Depends-on: rc17a-invoked-coverage

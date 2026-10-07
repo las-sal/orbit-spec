@@ -925,6 +925,7 @@ describe('rc04b-forward-recommendation: the generated surface carries the direct
     expect(section).toContain("`orbit-conventions`' External-review findings markdown format");
   });
 
+  // @scenario text orbit-review :: Internal run summary persisted per mode :: Architecture-mode fresh pass prints its direction
   it('the architecture interim shape prints `Direction: <disposition>` and contains every reasoning line under `> `; a multiline near-miss with `Ready when you are:` on its second line is pinned contained (walk 2, external W3)', () => {
     const body = review.instructions;
     const interim = body.split('#### Architecture mode — NO gate')[1].split('### 11.')[0];

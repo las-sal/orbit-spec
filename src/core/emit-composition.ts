@@ -217,8 +217,8 @@ const COMMANDS: Record<string, CommandSpec> = {
 };
 
 /** Spine + deterministic facts + computed extensions per command — REJECTED in payloads. */
-const SPINE_FIELDS = ['command', 'timestamp', 'change', 'kind', 'next_recommended', 'doc'];
-const ENGINE_OWNED_EXTRA: Record<string, string[]> = {
+export const SPINE_FIELDS = ['command', 'timestamp', 'change', 'kind', 'next_recommended', 'doc'];
+export const ENGINE_OWNED_EXTRA: Record<string, string[]> = {
   // rc03c: `pass_genre` / `verified_walks` are computed at write beside `iteration`.
   review: ['final_assessment', 'iteration', 'pass_genre', 'verified_walks'],
   apply: [
@@ -1888,8 +1888,10 @@ export function composeAndWriteEmit(
         // Shared internal+external pass axis (the report ordinal's counting rule).
         const passes = collectSameModePasses(resolved.changeDir as string, mode);
         emit.iteration = passes.length + 1;
+        // rc17c: change-scoped, naming no file — the walk discovers every pass that carries
+        // a finding, so the emit names the same invocation as the gate's canonical next.
         emit.next_recommended = hasFindings(payload)
-          ? `/orbit:address-reviews ${resolved.change} --from-file ${path.relative(projectRoot, filePath)}`
+          ? `/orbit:address-reviews ${resolved.change}`
           : `orbit status --change ${resolved.change} --report`;
       }
       break;

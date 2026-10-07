@@ -119,6 +119,7 @@ describe('golden renders (byte-identical to the D2b-transcribed goldens)', () =>
     expect(report).toContain('  - (B) Convert the delta to ADDED and leave the baseline untouched');
   });
 
+  // @scenario behaviour orbit-report-rendering :: Strict input validation — fail loud, no partial render :: D4-generation emits without commentary render fine
   it('system pass: first-run literal, all-zero scorecard, Findings + Commentary omitted whole, system-phase gate tail', () => {
     const dir = makeChange('sys-change', { tasksDone: true });
     writeTrail(dir, 'review-system-2026-07-26T09-00-00Z.json', fixture('system-clean.json'));
@@ -360,6 +361,7 @@ describe('strict validation — fail loud, no partial render', () => {
     return JSON.parse(d4Emit('v-change', 'proposal'));
   }
 
+  // @scenario behaviour orbit-report-rendering :: Strict input validation — fail loud, no partial render :: Pre-D4 generations fail at the named boundary
   it('pre-boundary emits from the REAL archives fail with the clean pre-capability error', () => {
     // B2-era shape: kind + findings_summary, no scorecard, findings absent.
     const b2 = fixtureJson('pre-boundary-b2-kind-findings-summary.json');
@@ -373,6 +375,7 @@ describe('strict validation — fail loud, no partial render', () => {
     expect(() => normalizeInternalPass('/fake/d3.json', d3)).toThrow(/D4-generation boundary/);
   });
 
+  // @scenario behaviour orbit-report-rendering :: Strict input validation — fail loud, no partial render :: Scorecard/findings mismatch fails whole
   it('scorecard/findings mismatch fails whole, naming the cell', () => {
     const json = fixtureJson('mismatch-cell.json');
     expect(() => normalizeInternalPass(D4_PATH, json)).toThrow(
@@ -388,6 +391,7 @@ describe('strict validation — fail loud, no partial render', () => {
     expect(() => normalizeInternalPass(D4_PATH, json)).toThrow(/review-proposal-2026-07-25T10-00-00Z\.json/);
   });
 
+  // @scenario behaviour orbit-report-rendering :: Strict input validation — fail loud, no partial render :: Malformed record fails naming the field
   it('a finding missing severity fails naming the entry field', () => {
     const json = d4Object();
     json.findings = [
@@ -903,6 +907,7 @@ describe('rc04b: the internal normalizer carries a well-shaped direction and fai
     expect(normalizeInternalPass(P, emit({ reviewer_class: 'fresh', direction })).direction).toEqual(direction);
   });
 
+  // @scenario behaviour orbit-report-rendering :: Strict input validation — fail loud, no partial render :: A mis-shaped direction fails the render; an absent one never does
   it('fails `{disposition: "ship"}`, a non-object, a missing/blank/non-string reasoning — each naming direction', () => {
     for (const bad of ['forward', null, 7, ['forward'], { disposition: 'ship', reasoning: 'x' }, { disposition: 'forward' }, { disposition: 'forward', reasoning: '' }, { disposition: 'forward', reasoning: '  \n' }, { disposition: 'forward', reasoning: 1 }, { reasoning: 'x' }]) {
       expect(() => normalizeInternalPass(P, emit({ reviewer_class: 'fresh', direction: bad })), JSON.stringify(bad)).toThrow(
@@ -911,6 +916,7 @@ describe('rc04b: the internal normalizer carries a well-shaped direction and fai
     }
   });
 
+  // @scenario behaviour orbit-report-rendering :: Strict input validation — fail loud, no partial render :: A mis-shaped direction fails the render; an absent one never does
   it('absence never fails at any class', () => {
     for (const cls of ['in-context', 'fresh', 'external']) {
       expect(normalizeInternalPass(P, emit({ reviewer_class: cls })).direction).toBeUndefined();
@@ -1158,6 +1164,7 @@ describe('rc03c: pass genre header and the Verification section (1.3)', () => {
     expect(renderReport(root, 'v-crit')).toContain('- [unreproduced] [outside the walk record] **x.md:1** — Breaks');
   });
 
+  // @scenario behaviour orbit-report-rendering :: Strict input validation — fail loud, no partial render :: A mis-shaped verification fails the render; an absent one never does
   it('a prior-generation VERIFICATION-genre emit renders [no verification record] once and marks no finding; its genre is recomputed (no stored pass_genre)', () => {
     verifyingChange('v-old', [{ severity: 'WARNING', title: 'Old finding', file: 'x.md' }], {});
     const report = renderReport(root, 'v-old');
@@ -1189,6 +1196,7 @@ describe('rc03c: pass genre header and the Verification section (1.3)', () => {
     expect(ext).not.toContain('### Verification');
   });
 
+  // @scenario behaviour orbit-report-rendering :: Strict input validation — fail loud, no partial render :: A mis-shaped verification fails the render; an absent one never does
   it('a mis-shaped verification or a newline in a walk_entry slot fails the render naming the field', () => {
     const base = JSON.parse(emit('m', 'system', 'review-system-2026-10-04T09-00-00Z.json', 'in-context', [{ severity: 'WARNING', title: 't', file: 'x.md' }]));
     expect(() => normalizeInternalPass('/f.json', { ...base, verification: [{ title: 'T', file: 'F', verdict: 'fixed' }] })).toThrow(
