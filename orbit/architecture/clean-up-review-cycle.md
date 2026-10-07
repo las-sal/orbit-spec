@@ -3020,6 +3020,12 @@ six. The gate, the launch record, discovery and the short next line go to rc17a;
 per-user runner and the setup step go to rc17b. The charter below is kept as written. Its exit (2) is
 carried by rc17a in the reframed terms; its exits (1) and (3) by rc17b.
 
+**Exit owners as of 2026-10-06** (the paragraph above stays as the split's record; two later splits moved what it
+names). The short next line split from rc17a into `rc17c-short-review-next` (2026-10-05). The per-user runner, the
+setup step and this charter's exit (3) split from rc17b into `rc17d-external-runner` (2026-10-06), where exit (3) is
+rc17d's exit (2), met. Exit (1) stays rc17b's, met on rc17b's own system review, and exit (2) stays rc17a's. Of the
+four children, rc17c is the only one still open.
+
 Declared 2026-10-05 (Sal) during rc08b's system walk. The cadence's `blind-pair` slot is one unit — two
 passes of distinct classes, one state, no walk between — but running it is two commands, a handoff, a
 wait and an ordered commit, and the engine meanwhile reports a half-open pair the user must not walk.

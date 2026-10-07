@@ -1,0 +1,81 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-07T01:37:17Z",
+  "change": null,
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "from-file",
+  "source_path": "orbit/.orbit-runs/audit-drift-2026-10-07T01-36-06Z.json",
+  "source_command": "audit-drift",
+  "source_token": "2026-10-07T01-36-06Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 1
+  },
+  "pushback_verification": "Both re-read at HEAD 3b6efef5+audit: the parent paragraph unchanged; six baselines still open their Purpose with the TBD line.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 0,
+    "deferred": 1,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The split parent rc17's paragraph still assigns the runner, the setup step and its exit (3) to rc17b, and the short next line to rc17a",
+      "marker_source": "audit-drift",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 3020,
+      "classification": "trivial_fix",
+      "action": "appended a dated 'Exit owners as of 2026-10-06' note after the parent's SPLIT paragraph, keeping the paragraph as the split's record: the short next line went to rc17c, the runner, the setup step and exit (3) to rc17d (its exit (2), met), exit (1) stays rc17b's (met), exit (2) rc17a's; rc17c is the only child still open",
+      "evidence": "lines 3020-3021 assigned the runner, the setup step and exits (1) and (3) to rc17b, and named neither rc17c nor rc17d",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "text": "Exit owners as of 2026-10-06"
+          },
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "text": "rc17c is the only one still open"
+          }
+        ],
+        "searched": [
+          "go to rc17b",
+          "exits (1) and (3) by rc17b",
+          "rc17d-external-runner"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Six baselines still carry B1's placeholder Purpose ('TBD - created by archiving change relocate-modified-upstream-workflows')",
+      "marker_source": "audit-drift",
+      "file": "orbit/specs/orbit-onboard/spec.md",
+      "line": 4,
+      "classification": "unresolvable",
+      "action": "deferred: a baseline's Purpose moves only through a change's delta, so a walk does not edit six baselines in place; the next change touching each capability, or one doc-only change, writes them. No TODO.md exists to file it in, and this log is its record.",
+      "evidence": "grep finds the TBD line in orbit-archive-modifications, orbit-conventions, orbit-explore-modifications, orbit-onboard, orbit-propose-modifications and orbit-skill-generation",
+      "outcome": "deferred"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "One resolved, one deferred: the rc17 parent now records who owns each exit after the rc17c and rc17d splits; B1's six placeholder Purposes are deferred to a change, because baselines move only through deltas.",
+  "iteration": 13,
+  "next_recommended": "No markers remain in scope; the project trail records this walk.",
+  "ripple_misses": 0
+}
