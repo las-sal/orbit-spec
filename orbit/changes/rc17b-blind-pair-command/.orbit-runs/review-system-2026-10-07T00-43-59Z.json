@@ -1,0 +1,110 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-07T00:43:59Z",
+  "change": "rc17b-blind-pair-command",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [],
+  "stale_suppressed": [],
+  "commentary": "I re-graded the walk set unnarrowed, all three walks. The supersession-notice entry from the second walk now holds, because the third walk's trail-read condition completes it. I checked that condition against the engine rather than the harness. Exactly one landed member with no walk naming it is the engine's PAIR-OPEN one-landed row before the ENDED rule applies. An apply later than that member is exactly what drops it from the fresh list. So the notice fires where the engine's own stale presentation row would, whatever clause the reason names. The only mention of the reason left in either body is the sentence saying not to use it. The residual diff from the external return's commit lies entirely inside the three walks' edit records. One imprecision from the last pass still stands and is unchanged: the bodies pick the external member by filename, which cannot tell a reader-rejected hand-saved return from an accepted one. orbit external save never writes such a file.",
+  "passes_run": [
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    "0 (VERIFICATION genre: a whole-change pass, not run over the walks' sweep scopes)",
+    "4 (no orbit/lenses/ perspectives file)",
+    "5 (no orbit/lenses/ critical-paths file)",
+    "6 (VERIFICATION genre: a whole-project pass, not run over the walks' sweep scopes)"
+  ],
+  "verification": [
+    {
+      "title": "The apply-later-than-L branch runs an 'ordinary single' that the engine counts as the open pair's member, so a non-blind pair covers the invoked slot",
+      "file": "orbit/changes/rc17b-blind-pair-command/specs/orbit-review-external/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "On a re-run, the launch route's session-end recovery line still saves with --launch <T0 token>, the re-run's own token",
+      "file": "src/core/templates/workflows/review.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "The behaviour declaration for 'A re-run after an apply is a single' never sets up its WHEN and never checks what the gate computes",
+      "file": "test/integration/external-runner/pair.test.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Row 13 and the pair reference's Step 13 state the open pair's openPair value without the both-missing case",
+      "file": "orbit/changes/rc17b-blind-pair-command/specs/orbit-review/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Fresh re-run still uses live-state CLI reads",
+      "file": "src/core/templates/workflows/review.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Pasted system prompt still directs a HEAD diff",
+      "file": "src/core/templates/workflows/review.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Supersession notice is skipped when an apply makes the member stale",
+      "file": "src/core/templates/workflows/review.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Session-end recovery assumes a fresh pass file exists",
+      "file": "src/core/templates/workflows/review.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Config guidance still describes the interim default",
+      "file": "orbit/config.yaml",
+      "verdict": "landed"
+    },
+    {
+      "title": "The stale-member notice keys on the gate's reason, which names the stale member only when coverage is the failing clause",
+      "file": "src/core/templates/workflows/review.ts",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "No findings.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-06T22-25-20Z",
+    "2026-10-06T22-25-40Z",
+    "2026-10-07T00-42-49Z"
+  ],
+  "iteration": 4,
+  "next_recommended": "orbit status --change rc17b-blind-pair-command --report"
+}
