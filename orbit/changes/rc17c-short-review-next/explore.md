@@ -78,7 +78,7 @@ Moves:
 - ENUMERATE: applied — this table
 - COHERE: applied — rc07b's round trip proves a PAYLOAD reference; this proves an EMIT example by subtracting back to its payload, so the two instruments share the write gate and the subtraction and differ only in direction
 - EXECUTE: not applied — nothing built
-- FALSIFY: applied — the round trip is exactly as strong as the write gate's validators plus a key-set comparison; a stale VALUE under a current key passes (rc07b's named limit, inherited); the review example is held harder because the renderer grades values
+- FALSIFY: applied — the round trip is exactly as strong as the write gate's validators plus a key-set comparison; a stale VALUE under a current key passes (rc07b's named limit, inherited); the review example is held harder: its engine-composed values other than `timestamp` are compared with the written emit under the example's own `change` name, since the renderer alone grades only the values the engine recomposes
 - CONFORM: applied — R-crc-10 (the check runs on what the engine observes: keys and the gate); R-crc-14 (the subtraction list has one home, the engine)
 - FEASIBILITY: applied — the apply example's chunk fields need a seeded `tasks.md` with a chunk preamble; if seeding costs more than the example is worth, the example is rewritten to an unchunked apply instead (the apply author's call, recorded)
 - CONSUME: applied — no runtime reader consumes these examples; their consumer is the human or AI reading the spec, which is why staleness went unseen (Case 3)
