@@ -53,13 +53,23 @@ the gate's reason SHALL state that both members must run before EITHER is walked
 pairability test the engine recommends a partner for a pass that can never pair, and every
 recommended run satisfies no slot while still costing an independent pass.
 
-**The change's next is selected over the gates in flow order (rc18).** The per-gate commands above
-supply it, and the change-level selection visits the gates in the order the position readout uses
-and takes the FIRST row of this table that yields a command. A reviewed gate is the FRONTIER while
-its `before` phase is not yet complete. That is the negation of the superseded test in `Gate-aware
-status and instructions with position readout`, applied to a `passed` gate, which is never marked
-superseded. When no gate yields a command, the flow-latest `passed` gate's own command is the next,
-so the eligibility line never goes silent at a lifecycle seam:
+**An unpassed or stale reviewed gate's own canonical command is chosen in ORDER (rc18), first match
+wins:** (1) when the row carries `openPair`, the missing member's review; (2) when `unresolvedPasses`
+OR `unwalkedPasses` is non-empty, the walk, `/orbit:address-reviews <change>`, naming no file; (3)
+otherwise the review command for the cadence position, as computed above and by `The first review
+slot covers what the user invoked`. Step (2)'s second list is rc18's: a pass carrying only SUGGESTIONs
+is walked BEFORE the following slot's review runs, exactly as a pass carrying a WARNING already is, so
+on the recommended path every walk precedes the pass that checks it. An open pair outranks the walk
+because walking a landed member ends the pair.
+
+**The change's next is selected over the gates in flow order (rc18).** The change-level selection
+visits the gates in the order the position readout uses and takes the command of the FIRST gate, in
+that order, whose row in the table below yields one. A reviewed gate is the FRONTIER while its `before`
+names no gate that has passed. That is exactly the test that marks a non-passed reviewed gate
+superseded in `Gate-aware status and instructions with position readout`, negated, and nothing more: a
+`before` naming an artifact, a lifecycle phase that is not a gate (`archive`), or nothing never makes a
+gate non-frontier. When no gate yields a command, the flow-latest `passed` gate's own command is the
+next, so the eligibility line never goes silent at a lifecycle seam:
 
 | member | covered by |
 |---|---|
@@ -67,23 +77,27 @@ so the eligibility line never goes silent at a lifecycle seam:
 | tracked gate `ready` | the apply command (with ` — user-invoked` when the gate declaring `before: apply` is consent-marked) |
 | tracked gate `passed` | nothing; selection continues |
 | reviewed gate `blocked` | nothing from this selection; it carries no `unwalkedPasses` |
-| reviewed gate `unpassed` or `stale`, not superseded | its canonical command as computed above; its unwalked passes are already discovered by the walk it may name |
+| reviewed gate `unpassed` or `stale`, not superseded | its own canonical command, in the order above |
 | reviewed gate superseded | skipped; its unwalked passes are not recommended |
-| reviewed gate `passed`, frontier, `unwalkedPasses` non-empty | `/orbit:address-reviews <change>`, naming no file; no ` — user-invoked` marker; its hint keys are the gate's phase id, as for the unresolved-pass walk |
-| reviewed gate `passed`, frontier, `unwalkedPasses` empty | nothing; selection continues, and the gate's own command is the phase command |
+| reviewed gate `passed`, frontier, `unwalkedPasses` non-empty | `/orbit:address-reviews <change>`, naming no file; no ` — user-invoked` marker; its hint keys are the gate's phase id, as for the walk in step (2) |
+| reviewed gate `passed`, frontier, `unwalkedPasses` empty | nothing; selection continues, and the gate's own command stays the phase command |
 | reviewed gate `passed`, not the frontier | nothing; selection continues |
 
 Closure: DERIVED — reviewed state (`blocked` / `unpassed` / `stale` / `passed`) × superseded ×
 frontier × an empty or non-empty unwalked set, where `passed` is never superseded, so only its
 frontier split applies, plus the two tracked-gate states and the ungated schema the selection also
-visits. A passed frontier gate's own row `nextCommand` SHALL equal the command its table row yields,
-computed by the SAME predicate, so the row and the change never name different commands. The walk
-moves the RECOMMENDATION only: the gate's state, its reason and the next phase's eligibility are
-unchanged, because SUGGESTIONs never gate. Walking an unwalked pass can still un-pass the gate. A walk
-of a pass that filled an earlier slot, written after the following slot's pass, raises that slot's
-ordering bar (`A reviewed gate lists its outstanding passes`), and the next is then the `unpassed`
-row's command. That cost is bounded: the trailing slot is the cadence's last, and a walk of the last
-slot's pass raises no bar.
+visits. For a `passed` frontier gate whose `unwalkedPasses` is non-empty, the gate row's own
+`nextCommand` SHALL be the walk, computed by the SAME predicate the selection applies, so the row and
+the change never name different commands; every other `passed` gate's row keeps its phase command,
+and the selection takes a passed gate's command only on that predicate, never because the row carries
+one. The walk moves the RECOMMENDATION only: the gate's state, its reason and the next phase's
+eligibility are unchanged, because SUGGESTIONs never gate. On the recommended path, the unwalked pass
+of a `passed` gate is the last slot's, and walking it raises no bar. A gate is un-passed by a walk
+only off that path: an EARLIER slot's pass walked after the following slot's pass ran raises that
+slot's ordering bar (`A reviewed gate lists its outstanding passes`), the gate reads `unpassed`, and
+the next is whatever this order computes for the slots the raised bar uncovers. On `spec-driven`'s
+`[invoked, in-context]` that is the one in-context review; a longer cadence can uncover more than one
+slot.
 Recommendation surfaces (gate
 reasons, blocked-by-gate payloads, and the workflow handoffs that render them) SHALL present only
 this canonical command: no advertised alternatives, no skip paths, and no bare command names
@@ -200,12 +214,36 @@ user-owned config, never spec.
   referencing it is written
 - **THEN** the gate still reads `passed` and the change's `next_command` is the phase command again
 
+#### Scenario: An unpassed gate with an unwalked SUGGESTION-only pass names the walk first
+
+- **WHEN** cadence `[invoked, in-context]` has a fresh pass at T1 carrying only SUGGESTIONs, no pair
+  launch, and no in-context pass
+- **THEN** the gate reads `unpassed` with its reason unchanged, its `nextCommand` and the change's
+  `next_command` are `/orbit:address-reviews <change>`, and after a walk record referencing T1 is
+  written at T2 both are the in-context review
+
+#### Scenario: A half-landed pair outranks the walk
+
+- **WHEN** a pair launched at T1 has a fresh member at T2 carrying only SUGGESTIONs and no external
+  return
+- **THEN** the row carries `openPair: {missing: "external"}` and the canonical next is the external
+  review, not the walk
+
 #### Scenario: Walking an earlier slot's pass after the gate passed names the check it owes
 
 - **WHEN** cadence `[invoked, in-context]` passed with a fresh pass at T1 carrying only SUGGESTIONs and
-  an in-context pass at T2, and a walk record referencing T1 is written at T3
+  an in-context pass at T2 — the walk the order named before T2 was not taken — and a walk record
+  referencing T1 is written at T3
 - **THEN** the gate reads `unpassed`, and the change's `next_command` is that gate's in-context
   command, not the walk and not the phase command
+
+#### Scenario: A longer cadence can owe more than one review after an off-path walk
+
+- **WHEN** cadence `[fresh, external, in-context]` passed with a fresh pass at T1 carrying only
+  SUGGESTIONs, an external pass at T2 and an in-context pass at T3, and a walk record referencing T1
+  is written at T4
+- **THEN** the gate reads `unpassed` and the change's `next_command` is the external review; once it
+  lands, an in-context review is still owed
 
 #### Scenario: A gate past its phase never names the walk
 
@@ -220,8 +258,8 @@ The row SHALL also carry `unwalkedPasses`, in the same shape and order: every pa
 clause's set that carries at least one finding of any severity, that no `address-reviews-*.json`
 record's `source_path` references, and that is not in `unresolvedPasses`. It is `[]` when there is
 none, and a `passed` gate computes it like any other, since a passed gate can still hold an unwalked
-SUGGESTION-only pass. The gate's STATE never reads it — SUGGESTIONs never gate — while the change's
-canonical next does (`Single-voiced canonical-next computation`), and severity, the reviewer's
+SUGGESTION-only pass. The gate's STATE never reads it — SUGGESTIONs never gate — while its canonical
+next and the change's do (`Single-voiced canonical-next computation`), and severity, the reviewer's
 consequence judgement, ranks a finding without deciding whether it is read. The two sets partition the
 discovered passes as this table states (a change-mode pass, by what it carries and whether a walk
 record references it):
@@ -247,7 +285,7 @@ lands after the following slot's pass leaves that slot uncovered until a later p
 In the ordinary order (review, walk, then the following slot's pass) the walk already precedes it; the
 rule bites only when the walk comes after.
 
-When the gate's canonical next command names a walk because a pass is unresolved, it SHALL be the change-scoped form `/orbit:address-reviews <change>`, naming no file: the walk discovers every listed pass, and the `openPair` warning applies (`orbit-address-reviews`' `Address-reviews command available`). A `--from-file` aim at one pass would walk one half and skip both. The blind-pair command that precedes it in the canonical-next order is unchanged.
+When the gate's canonical next command names a walk because a pass is unresolved or unwalked, it SHALL be the change-scoped form `/orbit:address-reviews <change>`, naming no file: the walk discovers every listed pass, and the `openPair` warning applies (`orbit-address-reviews`' `Address-reviews command available`). A `--from-file` aim at one pass would walk one half and skip both. The blind-pair command that precedes it in the canonical-next order is unchanged.
 
 When the gate's own pair diagnosis — the computation behind the `reason`'s pair note — finds the cadence's blind-pair slot open with a pairable member standing and the other class missing, however many members of the standing class there are — or an `invoked` slot in the state of the presentation table's row that sets `openPair` in `The first review slot covers what the user invoked` — the row SHALL also carry `openPair: {missing}`, `missing` `fresh` or `external`: the same fact the pair note states in prose, now a field a reader need not parse. Absent otherwise.
 
@@ -302,3 +340,112 @@ The fields REPORT; nothing new is ruled (R-crc-13). `orbit status --change <name
 
 - **WHEN** a walk record referencing that pass defers both SUGGESTIONs
 - **THEN** the row carries `unwalkedPasses: []`
+
+### Requirement: The first review slot covers what the user invoked
+
+An `invoked` cadence slot SHALL be covered by what the user INVOKED, never by what the user's
+configuration prefers: a single independent pass that is not a pair member covers it at its own
+token, and a COMPLETE pair (per `A pair's membership is computed from its launch`) covers it as one
+unit at its later member's token. A pair, once launched, covers only when both members land, blind;
+a pair ended by a walk of its landed half leaves that half covering as a single; a single fresh or
+single external pass covers by itself. The ordering constraints of clause (a) of
+`Reviewed-gate pass condition — the computed convergence criterion` apply to both forms unchanged.
+
+`orbit/config.yaml` MAY carry `review_preference`, a map from reviewed-gate id to one of
+`blind-pair` | `fresh` | `external`. It shapes ONLY the command the readout presents when nothing
+covers the slot; it enters no coverage row, no state, no reason and no field other than
+`nextCommand` and `nextSlot`, so a teammate's configuration can never re-grade a change. An absent
+map or entry resolves to `blind-pair`, for each gate independently. An entry with any other value
+warns, naming the gate and the value, and resolves to `blind-pair`. An entry whose key names no
+reviewed gate of the active schema warns, naming the key, and is ignored. A `review_preference` that
+is not a map warns and is ignored, as the `pr:` scalar's inert shapes are.
+
+The slot's domain is this table (what covers the first slot, by what the user INVOKED, and what the
+readout presents, per gate):
+
+| member | covered by |
+|---|---|
+| nothing independent standing, preference `blind-pair` (the default) | presents the pair command, `/orbit:review --as <mode> --reviewer blind-pair <change>` (`orbit-review`'s `The blind-pair reviewer runs both halves in one invocation`); the pair it launches covers only when both halves land |
+| nothing standing, preference `fresh` or `external` | presents that class's single invocation |
+| preference absent | `blind-pair`, for each gate independently |
+| preference an unknown value | warns and resolves to `blind-pair`, as the `pr:` scalar's inert values warn and resolve to `never` |
+| a pair INVOKED, both halves landed, blind | covers the slot as one unit; the in-context slot follows the walks of BOTH members |
+| a pair INVOKED, one half landed | NOT covered: `openPair: {missing}` presents the partner; a walk warns first (`orbit-address-reviews`' discovery row 4) |
+| a pair INVOKED, its landed half walked before the partner lands | the pair ENDS: the walked half covers the slot as a single, the user having walked past the walk's warning |
+| a pair INVOKED, the partner never lands and the user wants to proceed | re-run the missing half, or walk the landed half (which ends the pair; a landed half carrying no finding has nothing to walk, so instead a further review of its class lands as a single and covers), or the recorded `continuation`/`proceed` judgement at the gate's seam; the gate keeps reporting its computed state |
+| a single fresh or single external INVOKED, landed | covers the slot |
+| two singles invoked separately on one state | the first covers the slot; the second is an extra independent pass whose findings clause (b) still requires resolved |
+| how the engine knows a pass was invoked as a pair member | `A pair's membership is computed from its launch` |
+
+Closure: BOUNDED — the invocation forms are the four `--reviewer` values (the three classes and the
+pair) plus the preference's two fallbacks; pair membership is the launch requirement's record. Revised
+from the exploration's table in two rows: walking a pair's landed half ENDS the pair rather than
+breaking it, so the walked half covers as a single and walking is one more way to proceed. The default
+preference's row presents the pair command; it presented the fresh review until a command ran a pair.
+
+**Named limit.** Residual kind: a pass whose pair membership the trail cannot decide (a single invoked while a pair launch stands open)
+Residual method: D-bpc-10's residual slots carry it — the residual and its method are stated in `A pair's membership is computed from its launch`.
+
+When the deepest uncovered slot is `invoked`, read at the canonical lower bound (the lowest bound
+that reaches it, per `Single-voiced canonical-next computation`), the latest launch of the gate's mode
+decides the reason, the slot's command and `nextSlot`, rows tested in order. The slot's command is the
+gate's canonical next unless an earlier step of that requirement's order applies: the open pair's
+missing member (this table's second row, which is that step), or the walk when a pass is unresolved
+or unwalked. A member has LANDED when
+the membership table below names it, stale or not; a landed member is USABLE on this state when it is in
+the fresh pass list (per the freshness rule) and above the bound. A pair whose latest launch ENDED is the
+last row.
+
+| state at the bound | reason | canonical next | `nextSlot` |
+|---|---|---|---|
+| PAIR-OPEN, one member landed, stale | `pair launched at <L> cannot fill this slot: its <class> member is stale (an apply landed after it); a further <class> review lands as a single` | the landed member's class's review | the landed member's class |
+| PAIR-OPEN, one member landed, usable | `pair launched at <L> is open: the <class> member has no <missing> partner; run it before walking these findings` | the missing class's review | the missing class |
+| PAIR-OPEN, one member landed, at or below the bound | `pair launched at <L> cannot fill this slot: its <class> member sits at or below the slot's bound; a further <class> review lands as a single` | the landed member's class's review | the landed member's class |
+| PAIR-OPEN, no member landed, a pass sharing the launch's token | `pair launched at <L> ambiguous: the <class> pass sharing its token may have preceded it; a further <class> review lands as its member` | the tied pass's class's review | the tied pass's class |
+| PAIR-OPEN, no member landed | `pair launched at <L>: neither member has landed; both must land before either is walked` | the fresh review | `fresh` |
+| both landed, usable, sharing a token | `pair launched at <L> ambiguous: its two members share a timestamp token` | the preference's command | the presented command's class |
+| anything else: NO-LAUNCH, an ENDED pair, or a complete pair with a member stale or at or below the bound | `no outside review stands on this state` | the preference's command | the presented command's class |
+
+`openPair` is set on the second row only. Where several passes share the launch's token, `<class>` is the
+first by findings-artifact filename. `<L>` is the launch's token. The fresh review is
+`/orbit:review --as <mode> --fresh <change>`, the external review
+`/orbit:review --as <mode> --reviewer external <change>`, and the pair command
+`/orbit:review --as <mode> --reviewer blind-pair <change>`, whose presented class — the `nextSlot` value and the
+`models:` hint key — is `blind-pair`.
+
+#### Scenario: A single fresh pass covers the invoked slot
+
+- **WHEN** a `review-proposal` gate with cadence `[invoked, in-context]` has a fresh pass at T1, no
+  pair launch, and an in-context pass at T2 later than every walk of T1
+- **THEN** the gate's coverage holds, with T1 covering the `invoked` slot alone
+
+#### Scenario: A single external pass covers the invoked slot
+
+- **WHEN** the same gate has an external return at T1 instead, and no pair launch
+- **THEN** T1 covers the `invoked` slot alone
+
+#### Scenario: An invoked pair with one half landed does not cover
+
+- **WHEN** a `review-system` gate with cadence `[invoked, in-context]` has a pair launch at T1 and a
+  fresh pass at T2, and no external return after T1
+- **THEN** the `invoked` slot is uncovered, the row carries `openPair: {missing: "external"}`, and the
+  canonical next is `/orbit:review --as system --reviewer external <change>`
+
+#### Scenario: The preference changes only the presented command
+
+- **WHEN** nothing covers a gate's `invoked` slot, and `review_preference` maps that gate to
+  `external`, to `fresh`, to an unknown value, or is absent
+- **THEN** the canonical next is the external review, the fresh review, the pair command with a
+  warning, and the pair command respectively; the gate's state, its reason and every field other
+  than `nextCommand` and `nextSlot` are identical across the four
+
+#### Scenario: The preference never re-grades a covered slot
+
+- **WHEN** a single fresh pass covers a gate's `invoked` slot and `review_preference` maps the gate to
+  `blind-pair`
+- **THEN** the slot stays covered; the preference is read only where nothing covers it
+
+#### Scenario: The default preference presents the pair command
+
+- **WHEN** nothing covers a `review-system` gate's `invoked` slot, no pair launch is open, and `review_preference` is absent
+- **THEN** the canonical next is `/orbit:review --as system --reviewer blind-pair <change>` and `nextSlot` is `blind-pair`

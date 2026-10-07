@@ -23,35 +23,48 @@ relevant pass, and a pass with any CRITICAL or WARNING resolves only through a w
 
 - Exit (1): a change whose reviewed gate has passed, with an unwalked pass in that gate's mode, renders
   `/orbit:address-reviews <change>` as its canonical next, and the gate still reads `passed`.
-- Exit (2), as revised (D-rc18-4): after that pass is walked, the canonical next is the phase command. When the walk
-  un-passed an earlier slot, it is the in-context check the walk now owes.
-- Exit (3): an unpassed gate's next is unchanged.
+- Exit (2), as revised (D-rc18-4): after that pass is walked, the canonical next is the phase command. When an
+  off-path walk un-passed an earlier slot, it is the review the order computes for the uncovered slots.
+- Exit (3), as widened at the proposal walk (D5, Sal): an unpassed gate holding an unwalked pass, and no open pair,
+  names the walk before its next review; an unpassed gate holding neither keeps its next unchanged.
 
 **Non-Goals:**
 
 - Changing any gate's state, reason or cadence. rc17a's 2A (every walk raises the following slot's ordering bar)
   stands, on Sal's word (D-rc18-4).
 - Offering the walk beside the phase command. `Single-voiced canonical-next computation` stands.
-- Recommending walks for superseded gates' passes. Their phase has run, and discovery already treats them that way.
+- Recommending walks for superseded gates' passes. Their phase has run, and discovery skips superseded gates too.
+  KNOWN DIFFERENCE: `superseded` is marked only on a gate that has NOT passed, so a `review-proposal` still `passed`
+  after apply (tasks checked, no apply emit yet making its passes stale) is not superseded. The selection never names
+  the walk for it (it is not the frontier), but a walk named for another reason, such as the system gate's, discovers
+  and walks its unwalked passes too. Selection and discovery differ on that one row by design: discovery walks what is
+  outstanding, while selection decides only what to recommend.
 - Gating apply or archive on the walk. Eligibility is unchanged, so `/orbit:archive` over an unwalked pass still
   proceeds.
 
 ## Decisions
 
-**D1 — the rule lives in the selection, decided by one predicate shared with the gate row (D-rc18-5).** A function
-in `gates.ts` returns whether a gate is a passed FRONTIER gate holding an unwalked pass. `computeGateStates` applies it
-after the superseded marking, where the frontier is known: for such a gate it sets the row's `nextCommand` to
-`/orbit:address-reviews <change>`. The selection loop in `formatChangeStatus` then treats that gate like any gate with
-a command: it takes the command, with hint keys `{phase: <gate id>}`, and stops. The all-passed fall-through needs no
-change, because it reads the row. One predicate computes the row and the change, so they cannot disagree. The
-spec's `A passed frontier gate's own row nextCommand SHALL equal…` sentence states this.
+**D1 — the passed-gate rule lives in the selection, decided by one predicate shared with the gate row (D-rc18-5).**
+An exported function in `gates.ts` returns whether a gate is a passed FRONTIER gate holding an unwalked pass.
+`computeGateStates` applies it after the superseded marking, where the frontier is known, and for such a gate sets the
+row's `nextCommand` to `/orbit:address-reviews <change>`. The selection loop in `formatChangeStatus` calls the SAME
+function on each `passed` gate. When it holds, the loop takes the walk with hint keys `{phase: <gate id>}` and stops.
+When it does not, the loop skips the gate as today. The loop never takes a passed gate's command merely because the
+row carries one: every passed `review-proposal` carries `/orbit:apply … — user-invoked` from `nextAfterPass`, and
+taking that would name apply again after apply passed. The system gate is always the frontier (its `before` is
+`archive`, which names no gate), so the loop takes its walk BEFORE the all-passed fall-through is reached. That keeps
+its hint keys the gate's phase id rather than the fall-through's `{phase: g.before}` (`archive`). One predicate
+computes the row and the change, so they cannot disagree, and every other passed row keeps its phase command.
 
 *Alternative:* compute the walk only in the loop and leave the row's `nextCommand` as the phase command. Rejected:
 the row and the change would then name different commands for one state.
 
-**D2 — the frontier is the negation of the superseded test.** A reviewed gate is the frontier while its `before` gate
-has not passed. `computeGateStates` already marks a NON-passed reviewed gate superseded on exactly that test, so the
-frontier reuses it and adds no new concept. One consequence is stated, not hidden: during apply, before the `apply`
+**D2 — the frontier is the negation of the superseded test, and only that.** A reviewed gate is the frontier while
+its `before` names no gate that has passed. `computeGateStates` already marks a NON-passed reviewed gate superseded on
+exactly that test (`passedGateIds.has(s.before)`), so the frontier reuses it and adds no new concept. It is a test on
+GATE IDS: a `before` naming an artifact, a lifecycle phase that is not a gate (`archive`), or nothing never makes a
+gate non-frontier, whether or not that artifact is complete. That narrower rule is stated in the spec rather than
+equated with "the phase is complete", which an artifact target would make ambiguous. One consequence is stated, not hidden: during apply, before the `apply`
 gate passes and before any apply emit makes the proposal passes stale, a passed `review-proposal` with an unwalked
 pass still names the walk. The walk is still owed at that point, and the recommendation is not an entry gate.
 
@@ -63,25 +76,43 @@ is still unwalked.
 passes, and the walk's pushback suppresses stale findings with evidence. A second, narrower list here would be a
 second rule over the set the walk already discovers.
 
-**D4 — the walk that un-passes is answered by the existing table (D-rc18-4).** No new branch. After a walk of an
-earlier slot's pass, the gate is `unpassed` and its `canonicalNextForReviewed` names the in-context check. The table's
-`unpassed` row covers that state, and the spec's scenario holds it.
+**D4 — the walk that un-passes is answered by the existing computation (D-rc18-4).** No new branch. After an
+off-path walk of an earlier slot's pass, the gate is `unpassed` and `canonicalNextForReviewed` names the review for
+whichever slot the raised bar uncovered. On `spec-driven`'s `[invoked, in-context]` that is the in-context check; a
+longer cadence can owe more than one review, and a test holds a three-slot case.
+
+**D5 — the unpassed gate names the walk too, before the next review (Sal: A, proposal walk 1).** The fresh proposal
+pass reproduced the ordinary order. An invoked pass carrying only SUGGESTIONs leaves the gate `unpassed`, and the gate
+named the in-context review, not the walk. Following that line put the in-context pass BEFORE the walk rc18 then named,
+so the walk un-passed the gate on every such change. `canonicalNextForReviewed` already names the walk for an
+UNRESOLVED pass, after the open-pair check and before any slot command. The unwalked set joins that step: `openPair` →
+the walk when `unresolvedPasses` or `unwalkedPasses` is non-empty → the slot's command. The walk then precedes the review
+that checks it on the recommended path, and the passed-gate rule (D1) ordinarily meets only the last slot's pass. An
+open pair stays first because walking a landed member ends the pair. rc17a's oracle is untouched: every pass it builds
+carries zero findings, so its unwalked set is always empty. The cost is exit (3), widened on Sal's word.
+
+*Alternative (option B):* keep D1 alone and document the second in-context review as the ordinary cost. Rejected by
+Sal at the walk.
 
 ## Alternatives considered
 
 From `explore.md`'s Considered & out:
 
-- **A SUGGESTION-only walk does not raise the next slot's bar (option A).** Out: it reverses rc17a's 2A, which Sal
+- **A SUGGESTION-only walk does not raise the next slot's bar (the exploration's option A).** Out: it reverses rc17a's 2A, which Sal
   ratified over exactly this narrowing (2026-10-05). Sal kept 2A.
-- **Name the walk only when it cannot un-pass the gate (option B).** Out: it leaves SUGGESTION-only passes in earlier
+- **Name the walk only when it cannot un-pass the gate (the exploration's option B).** Out: it leaves SUGGESTION-only passes in earlier
   slots silent, the hole Sal named.
 - **Offer the walk and the phase command on two lines.** Out per the charter: it reverses `Single-voiced
   canonical-next computation`, which is Sal's to take.
 
 ## Risks / Trade-offs
 
-- [A walk of an earlier slot's pass costs one in-context review] → Bounded: that review fills the cadence's last
-  slot, and walking the last slot's pass raises no bar (Case 1). The cost is Sal's ratified 2A operating as designed.
+- [A walk can still un-pass a gate] → Only off the recommended path (D5): an earlier slot's pass walked after the
+  following slot's review ran. On `spec-driven`'s cadence that costs one in-context review; a longer cadence can owe
+  more (D4). The cost is Sal's ratified 2A operating as designed.
+- [An unpassed gate's next moves from a review to the walk whenever an unwalked pass stands] → Intended (exit (3) as
+  widened). The gate's state and reason do not move, so a reason naming a slot can sit beside a next naming the walk.
+  That is already the case for an unresolved pass.
 - [A `models:` hint keyed by the review gate's phase id now garnishes the walk] → The same keying the unresolved-pass
   walk already uses (rc08b); the hint describes the phase the walk belongs to.
 - [verify's `systemReviewNext` keeps the graph's next only when it names a system review] → When `review-system` has

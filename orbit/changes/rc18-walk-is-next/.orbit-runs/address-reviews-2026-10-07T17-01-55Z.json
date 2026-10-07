@@ -1,0 +1,258 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-07T17:01:55Z",
+  "change": "rc18-walk-is-next",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc18-walk-is-next/.orbit-runs/review-proposal-2026-10-07T16-48-02Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-07T16-48-02Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 4
+  },
+  "pushback_verification": "All six verified against the artifacts at HEAD. W1's reproduction (a SUGGESTION-only invoked pass leaves the gate naming the in-context review) matches canonicalNextForReviewed, which names a walk only for an unresolved pass. W2 matches nextAfterPass and the all-passed fall-through's {phase: g.before}. S4 is stale: propose keeps explore.md unchanged as the historical record.",
+  "resolution_summary": {
+    "resolved": 5,
+    "stale_suppressed": 1,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The un-pass case is the ordinary path when the engine's own next is followed, not a bounded edge",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc18-walk-is-next/design.md",
+      "line": 83,
+      "classification": "decision_required",
+      "action": "Added the unpassed gate's command order to Single-voiced canonical-next computation (open pair, then the walk when a pass is unresolved or unwalked, then the slot's review). Added three scenarios and rewrote the off-path un-pass paragraph. Qualified the invoked-slot requirement's 'decides the canonical next'. Added design D5 and widened exit (3) in the goals. Proposal and tasks group 2 follow.",
+      "ratified_via": "chat",
+      "resolution": "Sal: \"a\". A taken in its general form: any unwalked pass on an unpassed or stale gate with no open pair names the walk before the slot's review. The walk precedes every review on the recommended path, so the earlier-slot qualifier in the option text is not needed.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Widen the rule to the unpassed side: when an EARLIER slot's pass is unwalked (SUGGESTION-only) and the next uncovered slot is a later one, the unpassed gate's canonical next is the walk first. Walking before the following pass raises no bar, so the loop never forms. This revises exit (3) under R-crc-12 and adds rows to the selection table."
+          },
+          {
+            "label": "B",
+            "body": "Keep the design and restate the cost honestly: in design.md Risks and D-rc18-4, say the extra in-context pass occurs on EVERY trail whose invoked pass is SUGGESTION-only and whose user follows the eligibility line, and add a task 2.1 shape for exactly that ordinary order (fresh T1 SUGGESTION-only, in-context T2, walk T3 of both, in-context T4)."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc18-walk-is-next/specs/orbit-engine-gates/spec.md",
+          "orbit/changes/rc18-walk-is-next/proposal.md",
+          "orbit/changes/rc18-walk-is-next/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "That cost is bounded",
+          "Exit (3): an unpassed gate's next is unchanged."
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc18-walk-is-next/specs/orbit-engine-gates/spec.md",
+            "text": "chosen in ORDER (rc18)"
+          },
+          {
+            "path": "orbit/changes/rc18-walk-is-next/design.md",
+            "text": "D5 — the unpassed gate names the walk too, before the next review"
+          },
+          {
+            "path": "orbit/changes/rc18-walk-is-next/tasks.md",
+            "text": "## 2. The unpassed gate's order (D5, exit (3) as widened)"
+          },
+          {
+            "path": "orbit/changes/rc18-walk-is-next/specs/orbit-engine-gates/spec.md",
+            "text": "The slot's command is the gate's canonical next unless an earlier step of that requirement's order applies"
+          }
+        ],
+        "searched": [
+          "canonical next is unchanged",
+          "unpassed",
+          "bounded",
+          "exit (3)",
+          "decides the reason, the canonical next"
+        ],
+        "scope": [
+          "orbit/specs/orbit-engine-gates/spec.md",
+          "src/core/artifact-graph/gates.ts",
+          "test/helpers/invoked-oracle.ts"
+        ],
+        "kept": [
+          {
+            "path": "orbit/changes/rc18-walk-is-next/explore.md",
+            "why": "the exploration record, which propose keeps unchanged; its D-rc18-4 and Mechanism entry predate the walk's decision"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The loop change does not say how it tells the walk apart from a passed gate's phase command, and the fall-through path gives the wrong hint key",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc18-walk-is-next/tasks.md",
+      "line": 4,
+      "classification": "trivial_fix",
+      "action": "Task 1.2 and design D1 now say the loop calls the shared predicate on each passed gate and never takes a passed gate's command because the row carries one. The system gate's walk is taken by the loop before the fall-through, so its hint keys are the gate's phase id. Task 1.3 asserts next_hint_keys on both walks, and that a passed review-proposal after apply never yields /orbit:apply.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc18-walk-is-next/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "take that command from a `passed` gate before skipping it",
+          "The all-passed fall-through needs no change, because it reads the row"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc18-walk-is-next/tasks.md",
+            "text": "Never take a passed gate's command because the row carries one"
+          },
+          {
+            "path": "orbit/changes/rc18-walk-is-next/design.md",
+            "text": "The loop never takes a passed gate's command merely because the row carries one"
+          }
+        ],
+        "searched": [
+          "fall-through",
+          "take that command",
+          "hint keys"
+        ],
+        "scope": [
+          "src/core/artifact-graph/instruction-loader.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Proposal says `A reviewed gate lists its outstanding passes` gains a scenario; the delta adds none",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc18-walk-is-next/proposal.md",
+      "line": 40,
+      "classification": "trivial_fix",
+      "action": "Rewrote the Modified Capabilities entry as three requirements; the outstanding-passes line now names its two sentence edits and claims no scenario.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "gains a scenario for the walk the next names"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc18-walk-is-next/proposal.md",
+            "text": "its walk-form sentence covers an unwalked pass as well as an unresolved one"
+          }
+        ],
+        "searched": [
+          "gains a scenario"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "'takes the FIRST row of this table that yields a command' reads as table-row order",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc18-walk-is-next/specs/orbit-engine-gates/spec.md",
+      "line": 58,
+      "classification": "trivial_fix",
+      "action": "Reworded to take the command of the first gate, in flow order, whose row yields one.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "takes the FIRST row of this table that yields a command"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc18-walk-is-next/specs/orbit-engine-gates/spec.md",
+            "text": "takes the command of the FIRST gate, in that order, whose row in the table below yields one"
+          }
+        ],
+        "searched": [
+          "FIRST row"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The named walk also discovers a passed, non-frontier gate's unwalked passes",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc18-walk-is-next/design.md",
+      "line": 35,
+      "classification": "trivial_fix",
+      "action": "The Non-Goals line now states the known difference: a still-passed review-proposal after apply is not superseded, so a walk named for another reason discovers its unwalked passes, while the selection never names a walk for it.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "and discovery already treats them that way"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc18-walk-is-next/design.md",
+            "text": "Selection and discovery differ on that one row by design"
+          }
+        ],
+        "searched": [
+          "discovery already"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "explore.md still reads `exploring.` though its one rule is now proposed",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc18-walk-is-next/explore.md",
+      "line": 1,
+      "classification": "stale",
+      "action": "No edit: the header is a historical record. The propose body says 'explore.md persists unchanged as the historical record of how the change took shape', and rc17c's archived explore.md still opens '> **Status**: exploring.'.",
+      "evidence": "orbit-propose Step 0d; orbit/changes/archive/2026-10-07-rc17c-short-review-next/explore.md line 1",
+      "outcome": "stale"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "final_assessment": "Six of six closed: five resolved and one stale. The ordinary-path un-pass was decided on Sal's word (A): the walk is named on the unpassed gate too, before the following slot's review, so on the recommended path every walk precedes the pass that checks it.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc18-walk-is-next",
+  "ripple_misses": 0
+}
