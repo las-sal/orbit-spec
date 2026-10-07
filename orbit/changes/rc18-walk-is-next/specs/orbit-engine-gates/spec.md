@@ -396,7 +396,7 @@ the membership table below names it, stale or not; a landed member is USABLE on 
 the fresh pass list (per the freshness rule) and above the bound. A pair whose latest launch ENDED is the
 last row.
 
-| state at the bound | reason | canonical next | `nextSlot` |
+| state at the bound | reason | slot's command | `nextSlot` |
 |---|---|---|---|
 | PAIR-OPEN, one member landed, stale | `pair launched at <L> cannot fill this slot: its <class> member is stale (an apply landed after it); a further <class> review lands as a single` | the landed member's class's review | the landed member's class |
 | PAIR-OPEN, one member landed, usable | `pair launched at <L> is open: the <class> member has no <missing> partner; run it before walking these findings` | the missing class's review | the missing class |
@@ -433,7 +433,7 @@ first by findings-artifact filename. `<L>` is the launch's token. The fresh revi
 
 #### Scenario: The preference changes only the presented command
 
-- **WHEN** nothing covers a gate's `invoked` slot, and `review_preference` maps that gate to
+- **WHEN** nothing covers a gate's `invoked` slot, no pass is unresolved or unwalked, and `review_preference` maps that gate to
   `external`, to `fresh`, to an unknown value, or is absent
 - **THEN** the canonical next is the external review, the fresh review, the pair command with a
   warning, and the pair command respectively; the gate's state, its reason and every field other
@@ -447,5 +447,5 @@ first by findings-artifact filename. `<L>` is the launch's token. The fresh revi
 
 #### Scenario: The default preference presents the pair command
 
-- **WHEN** nothing covers a `review-system` gate's `invoked` slot, no pair launch is open, and `review_preference` is absent
+- **WHEN** nothing covers a `review-system` gate's `invoked` slot, no pair launch is open, no pass is unresolved or unwalked, and `review_preference` is absent
 - **THEN** the canonical next is `/orbit:review --as system --reviewer blind-pair <change>` and `nextSlot` is `blind-pair`

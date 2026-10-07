@@ -134,10 +134,12 @@ the proposing AI's reading of the file; no engine record
 | D-rc18-4 | — | `Kind: scope` | not carried |
 | D-rc18-6 | — | `Kind: fact` | not carried |
 
+After promotion, the proposal walk (Sal: A, D5) superseded one row of D-rc18-5's domain. Its row for an `unpassed` or `stale` gate ("unchanged: its own canonical next (exit (3))") is replaced by the spec table's row ("its own canonical command, in the order above"). `explore.md` keeps the entry as the exploration recorded it; the spec table is the rule.
+
 ## Touchpoints
 
 - `src/core/artifact-graph/gates.ts` — the shared frontier predicate; the passed gate row's `nextCommand`.
 - `src/core/artifact-graph/instruction-loader.ts` — the selection loop's hint keys for the walk.
-- `test/core/artifact-graph/outstanding-passes.test.ts` + `test/core/artifact-graph/instruction-loader.test.ts` — the table's rows and the five scenarios.
+- `test/core/artifact-graph/outstanding-passes.test.ts` + `test/core/artifact-graph/instruction-loader.test.ts` — the table's rows, the order's steps and the eight new scenarios.
 - `test/core/rc03b-untouched-modules.test.ts` — the two pinned hashes move, recorded.
-- `orbit/architecture/clean-up-review-cycle.md` — exit (2) revised.
+- `orbit/architecture/clean-up-review-cycle.md` — exit (2) revised and exit (3) widened.
