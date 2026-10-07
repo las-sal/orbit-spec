@@ -139,8 +139,10 @@ member, never a single. The proposal had called that run "an ordinary single" at
 walk's fresh CRITICAL reproduced the result — a worktree holding the committed partner, and a gate counting the pair
 blind. The re-run therefore reviews the state the landed member reviewed: the first parent of the commit that added the
 member's file, by the same hash-only read that finds BASE, saved under the re-run's own T0 token (later than the apply).
-Only when no `openPair` stands and the gate names the latest launch's member stale is the run a single, and the chat says
-the pair is superseded (system walk, external W3). The re-run test is the body's reading of the trail; the gate stays
+Only when no `openPair` stands and the latest launch's one landed member is stale — read from the trail (no walk naming
+it, an apply token later than it), never from the gate's reason, which names the first failing clause and so names an
+unresolved member's pass instead (system verification, V1) — is the run a single, and the chat says the pair is
+superseded (system walk, external W3). The re-run test is the body's reading of the trail; the gate stays
 authoritative. One edge is left in the named limit: a fresh half that STARTED before an apply and emitted after it reads
 as current by the freshness rule — orbit is single-user, and an apply while a pair is open is that user racing their own
 review.

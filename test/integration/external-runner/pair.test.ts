@@ -239,12 +239,19 @@ describe('rc17b — the blind pair against real git (task 6.1)', () => {
   });
 
   // @scenario behaviour orbit-review-external :: A pair's external half reads the pair's reviewed state :: A stale member's pair is superseded
-  it('a member emitted before an apply is stale: no openPair, the notice, and an ordinary single', () => {
-    const first = pair(null);
-    applyAfter(tok(first.freshPath!));
+  it('a member emitted before an apply is stale: no openPair, the notice, and an ordinary single — read from the trail, not the reason', () => {
+    const first = pair(null, { emit: false, exit: 0 });
+    // The member carries a WARNING, so the gate's reason names the unresolved pass, never the stale member
+    // (the system verification pass's reproduction).
+    const fresh = emitFresh(repo, cliEntry, CHANGE, MODE, scratch, true);
+    sh(repo, 'git', ['add', fresh]);
+    sh(repo, 'git', ['commit', '--only', fresh, '-q', '-m', 'fresh']);
+    expect(tok(fresh) > first.L!).toBe(true);
+    applyAfter(tok(fresh));
     const before = gateRow();
     expect(before.openPair).toBeUndefined();
-    expect(before.reason).toMatch(/cannot fill this slot: its fresh member is stale/);
+    expect(before.reason).toMatch(/has unresolved substantive findings/);
+    expect(before.reason).not.toMatch(/member is stale/);
     const r = runExternalRerun({ repo, change: CHANGE, mode: MODE, cliEntry, runner: [stub, '--out', '{output}'], scratch });
     expect(r.kind).toBe('stale-single');
     expect(r.failure).toBeNull();

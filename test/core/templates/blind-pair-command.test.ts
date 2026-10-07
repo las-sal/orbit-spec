@@ -240,8 +240,13 @@ describe('rc17b — the external-handoff reference (task 4.4)', () => {
     expect(step3b).toContain("9b adds the worktree at the WORKTREE COMMIT, never at the re-run's own handoff commit");
     expect(step3b).toContain('9d saves with `--launch <SAVE TOKEN>`');
     // System walk (external W3): the stale-member notice, checked before the single exit.
-    expect(step3b).toContain("**No `openPair`, but the gate's reason names a member of the latest launch as stale**");
-    expect(step3b.indexOf('as stale**')).toBeLessThan(step3b.indexOf('**Any other state**'));
+    expect(step3b).toContain("**No `openPair`, and the latest launch's one landed member is STALE** — read from the trail, never from the gate's reason");
+    expect(step3b).toContain('an `apply-*.json` token is later than the member\'s token');
+    expect(step3b.indexOf('is STALE**')).toBeLessThan(step3b.indexOf('**Any other state**'));
+    // System verification (V1): the reason-string test is gone from both bodies.
+    expect(handoff).not.toContain("the gate's reason names a member of the latest launch as stale");
+    expect(trunk).not.toContain("the gate's reason names a member of the latest launch as stale");
+    expect(trunk).toContain('read from the trail: exactly one landed member later than L');
     expect(step3b).not.toContain('**An apply token later than L** — NOT a re-run');
   });
 

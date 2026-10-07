@@ -71,8 +71,13 @@ function emit(repo: string, cliEntry: string, cmd: string, change: string, paylo
 }
 
 /** A stub fresh worker's emit through the real surface; returns the trail path (repo-relative). */
-export function emitFresh(repo: string, cliEntry: string, change: string, mode: string, scratch: string): string {
-  return emit(repo, cliEntry, 'review', change, FRESH_PAYLOAD(mode), scratch);
+export function emitFresh(repo: string, cliEntry: string, change: string, mode: string, scratch: string, withWarning = false): string {
+  const payload: any = FRESH_PAYLOAD(mode);
+  if (withWarning) {
+    payload.scorecard.correctness.warning = 1;
+    payload.findings = [{ pass: '1', severity: 'WARNING', dimension: 'correctness', file: 'design.md', line: 1, title: 'stub warning', recommendation: 'stub' }];
+  }
+  return emit(repo, cliEntry, 'review', change, payload, scratch);
 }
 
 const tokenOf = (p: string) => /(\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}Z)/.exec(path.basename(p))![1];
@@ -260,7 +265,14 @@ export function runExternalRerun(opts: {
   const L = lFile ? tokenOf(lFile) : null;
   const applyLater = L !== null && files.some((f) => /^apply-/.test(f) && tokenOf(f) > L);
   const isRerun = row?.openPair?.missing === 'external' && L !== null;
-  const staleNotice = !row?.openPair && /cannot fill this slot: its \w+ member is stale/.test(row?.reason ?? '');
+  // Step 3b's STALE test, read from the trail — never from the gate's reason: exactly one landed member later
+  // than L, no walk record naming it, and an apply token later than it.
+  const later = L === null ? [] : files.filter((f) => tokenOf(f) > L);
+  const freshM = later.find((f) => f.startsWith(`review-${mode}-`) && JSON.parse(fs.readFileSync(path.join(dir, f), 'utf-8')).reviewer_class === 'fresh');
+  const extM = later.find((f) => f.startsWith(`external-${mode}-`) && f.endsWith('.md'));
+  const one = freshM && !extM ? freshM : extM && !freshM ? extM : undefined;
+  const walked = one !== undefined && files.some((f) => f.startsWith('address-reviews-') && String(JSON.parse(fs.readFileSync(path.join(dir, f), 'utf-8')).source_path ?? '').endsWith(one));
+  const staleNotice = !row?.openPair && one !== undefined && !walked && files.some((f) => /^apply-/.test(f) && tokenOf(f) > tokenOf(one));
   const addedBy = (rel: string) => {
     const lines = git('log', '--diff-filter=A', '--format=%H', '--', rel).stdout.trim().split('\n');
     return lines[lines.length - 1];

@@ -121,8 +121,10 @@ token on the trail is later than L:
   at that commit and its return is saved under its OWN T0 token, which is later than the apply. When the landed
   member's file is not yet committed, the run stops and says to commit that file alone first.
 
-When the mode has no `openPair` but the gate's reason names a member of the latest launch as stale (an apply landed
-after it), the run is an ordinary single of its class on the current state and the chat says so: the pair's reviewed
+A pair's member is STALE, read from the trail and never from the gate's reason (whose text names the first failing
+clause, not the pair): the latest launch L of the mode has exactly ONE landed member — its first fresh pass or first
+accepted external return later than L, with no member of the other class — no `address-reviews-*.json` names that
+member in its `source_path`, and an `apply-*.json` token is later than the member's token. With a stale member, the run is an ordinary single of its class on the current state and the chat says so: the pair's reviewed
 state is superseded; a further review of the stale member's class lands as a single and covers; a run of the other
 class becomes that pair's missing member and covers nothing. The re-run test is the body's reading of the trail; the
 gate's computation is authoritative.
@@ -137,7 +139,7 @@ gate's computation is authoritative.
 | first run, fresh half | the live checkout at BASE; the external partner stays outside the repository until the fresh pass file is committed (per `orbit-review`'s `The blind-pair reviewer runs both halves in one invocation`) |
 | re-run of the missing fresh half, no apply later than L | the brief names the pair's REVIEWED COMMIT as the state to read — the repository read at that commit: the change's files and, in system mode, the code and the commit range ending there — and the worker still emits from the repository root; with the REVIEW-genre brief rule of `orbit-conventions`' `Review mode decision framework`, it names no `.orbit-runs/` path, where the committed external partner sits — instructed, not physical |
 | re-run of a missing half, an apply later than L | the REVIEWED COMMIT is the first parent of the commit that added the landed member's file — the post-apply state that member reviewed; an external re-run's worktree is added there and its return saved under its own T0 token; a fresh re-run is briefed with that commit |
-| no `openPair`, the gate's reason naming a member of the latest launch stale | an ordinary single on the current state, with the supersession notice |
+| a STALE member (read from the trail, as above) | an ordinary single on the current state, with the supersession notice |
 
 Closure: BOUNDED — the routes are the launch, the paste, the failure fallback, the two re-runs on either side of an
 apply, and the stale-member single; the launched routes
@@ -174,7 +176,7 @@ that user racing their own review.
 
 #### Scenario: A stale member's pair is superseded
 
-- **WHEN** a pair launched at L has a fresh member emitted before an `apply-*.json` token later than it, so the gate reports no `openPair` and names the member stale, and the user runs a review of either class
+- **WHEN** a pair launched at L has a fresh member emitted before an `apply-*.json` token later than it, so the gate reports no `openPair` — the member carrying an unresolved WARNING, so the gate's reason names the unresolved pass, not the stale member — and the user runs a review of either class
 - **THEN** the chat says the pair's reviewed state is superseded, and the run proceeds as an ordinary single on the current state
 
 #### Scenario: A failed re-run's fallback names the reviewed commit
