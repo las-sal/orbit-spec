@@ -3,7 +3,8 @@
 rc17a shipped discovery: a change-scoped walk reaches every pass that carries a finding, at any severity. The gate's
 canonical next already names no file. But a change-mode review emit's `next_recommended` still names
 `/orbit:address-reviews <change> --from-file <own path>`, an aim at ONE pass, which inside a pair walks one half. The
-emit and the gate should name the same invocation (D-bpc-16, carried here as D-rc17c-1; see explore.md).
+emit should name the walk the gate names whenever the gate's next is a walk (D-bpc-16, carried here as D-rc17c-1; see
+explore.md).
 
 Measuring the stage turned up a fourth surface stating the old pointer: the editorial-kind example in
 `orbit-conventions`' `Internal-run JSON summary format`. All three canonical examples in that requirement are stale

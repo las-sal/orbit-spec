@@ -18,8 +18,10 @@ import { fences, type Fence } from '../helpers/schema-references.js';
  *
  * The requirement is read AS IT WILL STAND: the MODIFIED block of the one active change whose delta
  * holds it, else the baseline — so a change that edits the examples is held to them during its own
- * apply. Named limit (stated in the requirement): top-level keys only, plus the renderer's grading
- * for review.
+ * apply. The review example is submitted under its OWN `change` name on a fresh trail, where every
+ * engine-composed value but `timestamp` is predictable, and each is compared with the written emit
+ * (rc17c system walk, external S1: the subtraction had discarded the very pointer the stage repairs).
+ * Named limit (stated in the requirement): apply and archive get top-level keys only.
  */
 
 const repo = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..', '..');
@@ -32,7 +34,27 @@ interface Source {
   text: string;
 }
 
-/** The requirement as it will stand: one active delta holding it, else the baseline. */
+/**
+ * The 0-indexed line of the requirement's exact heading OUTSIDE a fence, or -1. With `section`, the
+ * heading counts only under that `## ` section (also read outside fences): a delta that QUOTES the
+ * heading in a fenced example, or carries it under REMOVED or RENAMED Requirements, does not modify it
+ * (rc17c system walk, fresh S3 / external W1).
+ */
+function headingLine(text: string, section?: string): number {
+  const tracker = createFenceTracker();
+  let current: string | null = null;
+  const lines = text.split('\n');
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].replace(/\r$/, '');
+    const wasIn = tracker.inFence;
+    if (tracker.handle(line) || wasIn) continue;
+    if (/^## /.test(line)) current = line.trim();
+    else if (line === HEADING && (section === undefined || current === section)) return i;
+  }
+  return -1;
+}
+
+/** The requirement as it will stand: one active delta MODIFYING it, else the baseline. */
 function requirementSource(root: string): Source {
   const holders: string[] = [];
   const changesDir = path.join(root, 'orbit', 'changes');
@@ -40,7 +62,7 @@ function requirementSource(root: string): Source {
     if (d === 'archive') continue;
     const rel = path.join('orbit', 'changes', d, 'specs', CAPABILITY, 'spec.md');
     const abs = path.join(root, rel);
-    if (fs.existsSync(abs) && fs.readFileSync(abs, 'utf-8').includes(HEADING)) holders.push(rel);
+    if (fs.existsSync(abs) && headingLine(fs.readFileSync(abs, 'utf-8'), '## MODIFIED Requirements') >= 0) holders.push(rel);
   }
   if (holders.length > 1) {
     throw new Error(`more than one active change modifies '${HEADING.slice(17)}': ${holders.join(', ')}`);
@@ -58,7 +80,7 @@ interface Example {
 /** Every `json` fence after the marker line, inside the requirement block, read by the engine's fence tracker. */
 function canonicalExamples(src: Source): Example[] {
   const lines = src.text.split('\n');
-  const start = lines.findIndex((l) => l.replace(/\r$/, '') === HEADING);
+  const start = headingLine(src.text);
   if (start < 0) throw new Error(`${src.file}: no '${HEADING}'`);
   // The block ends at the next requirement or section heading OUTSIDE a fence.
   const tracker = createFenceTracker();
@@ -127,7 +149,9 @@ function execute(ex: Example, where: string): Execution {
   const payload = Object.fromEntries(Object.entries(ex.emit).filter(([k]) => !refused.has(k)));
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'orbit-canonical-'));
   try {
-    const dir = scope === 'change' ? `orbit/changes/${CHANGE}` : `orbit/changes/archive/2026-10-07-${CHANGE}`;
+    // review: the example's own change name, so its engine-composed values are reproducible and compared.
+    const change = command === 'review' ? String(ex.emit.change) : CHANGE;
+    const dir = scope === 'change' ? `orbit/changes/${change}` : `orbit/changes/archive/2026-10-07-${change}`;
     seedChangeDir(root, dir);
     const cited = Array.isArray(payload.judgements)
       ? (payload.judgements as any[]).flatMap((j) => (Array.isArray(j?.formed_against) ? j.formed_against : []))
@@ -137,15 +161,23 @@ function execute(ex: Example, where: string): Execution {
     }
     let r;
     try {
-      r = composeAndWriteEmit(command, { change: CHANGE }, payload, { projectRoot: root });
+      r = composeAndWriteEmit(command, { change }, payload, { projectRoot: root });
     } catch (e) {
       throw new Error(`${where}:${ex.line} (${command} example): the write gate refused it — ${(e as Error).message}`);
     }
     const written = JSON.parse(fs.readFileSync(r.path, 'utf-8'));
     const out: Execution = { exampleKeys: sorted(Object.keys(ex.emit)), writtenKeys: sorted(Object.keys(written)), kinds: written.kind };
     if (command === 'review') {
+      // Every engine-composed value except the clock is reproducible on this fresh trail.
+      for (const key of [...refused].filter((k) => k !== 'timestamp' && k in ex.emit)) {
+        if (JSON.stringify(ex.emit[key]) !== JSON.stringify(written[key])) {
+          throw new Error(
+            `${where}:${ex.line} (review example): engine-composed '${key}' is ${JSON.stringify(ex.emit[key])} but the engine writes ${JSON.stringify(written[key])}`
+          );
+        }
+      }
       const ts = path.basename(r.path).replace(/^review-[a-z]+-/, '').replace(/\.json$/, '');
-      out.report = renderReport(root, CHANGE, ts);
+      out.report = renderReport(root, change, ts);
     }
     return out;
   } finally {
@@ -177,8 +209,6 @@ function fakeRepo(files: Record<string, string>): string {
 }
 
 describe('rc17c: the canonical examples are executed', () => {
-  // @scenario behaviour orbit-conventions :: Internal-run JSON summary format :: Universal spine present on every emit
-  // @scenario behaviour orbit-conventions :: Internal-run JSON summary format :: Workflow command emit shape
   // @scenario behaviour orbit-conventions :: Internal-run JSON summary format :: Editorial command emit shape (with findings)
   // @scenario behaviour orbit-conventions :: Internal-run JSON summary format :: Lifecycle command emit shape
   it('every example in the requirement as it will stand is accepted by the write gate and its key set equals the written emit', () => {
@@ -218,6 +248,17 @@ describe('rc17c: the canonical examples are executed', () => {
     expect(msg.split('\n')[1]).not.toContain('pass_genre');
   });
 
+  // @scenario behaviour orbit-conventions :: Internal-run JSON summary format :: A stale engine-composed value in the review example fails
+  it('rc17c (system walk, external S1): a stale engine-composed value in the review example fails, naming the key and both values', () => {
+    const src = requirementSource(repo);
+    const short = '"next_recommended": "/orbit:address-reviews emit-run-summary-jsons-from-workflow-commands"';
+    expect(src.text).toContain(short);
+    const stale = src.text.replace(short, '"next_recommended": "/orbit:address-reviews emit-run-summary-jsons-from-workflow-commands --from-file <this emit\'s own path>"');
+    expect(() => checkAll({ file: src.file, text: stale })).toThrow(
+      /\(review example\): engine-composed 'next_recommended' is ".*--from-file.*" but the engine writes "\/orbit:address-reviews emit-run-summary-jsons-from-workflow-commands"/
+    );
+  });
+
   // @scenario behaviour orbit-conventions :: Internal-run JSON summary format :: An example with no executable target fails
   it('a fourth fence whose command has no target fails naming its opening line', () => {
     const src = requirementSource(repo);
@@ -250,6 +291,20 @@ describe('rc17c: the canonical examples are executed', () => {
       expect(() => requirementSource(two)).toThrow(`${spec('a-change')}, ${spec('b-change')}`);
     } finally {
       fs.rmSync(two, { recursive: true, force: true });
+    }
+
+    // A heading QUOTED inside a fence, or carried under REMOVED Requirements, does not make a delta a modifier.
+    const quoted = `## ADDED Requirements\n\n### Requirement: Other\n\nText.\n\n\`\`\`markdown\n${HEADING}\n\`\`\`\n`;
+    const removed = `## REMOVED Requirements\n\n${HEADING}\n\n**Reason**: gone.\n`;
+    const notModifiers = fakeRepo({
+      'orbit/specs/orbit-conventions/spec.md': baseline,
+      [spec('quotes-it')]: quoted,
+      [spec('removes-it')]: removed,
+    });
+    try {
+      expect(requirementSource(notModifiers).file).toBe('orbit/specs/orbit-conventions/spec.md');
+    } finally {
+      fs.rmSync(notModifiers, { recursive: true, force: true });
     }
 
     const none = fakeRepo({ 'orbit/specs/orbit-conventions/spec.md': baseline, 'orbit/changes/archive/x/specs/orbit-conventions/spec.md': delta });

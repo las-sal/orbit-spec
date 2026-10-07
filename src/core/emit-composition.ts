@@ -1889,7 +1889,8 @@ export function composeAndWriteEmit(
         const passes = collectSameModePasses(resolved.changeDir as string, mode);
         emit.iteration = passes.length + 1;
         // rc17c: change-scoped, naming no file — the walk discovers every pass that carries
-        // a finding, so the emit names the same invocation as the gate's canonical next.
+        // a finding, so the emit names the walk the gate's canonical next names whenever that next
+        // is a walk (on a half-landed pair the gate names the missing member instead).
         emit.next_recommended = hasFindings(payload)
           ? `/orbit:address-reviews ${resolved.change}`
           : `orbit status --change ${resolved.change} --report`;

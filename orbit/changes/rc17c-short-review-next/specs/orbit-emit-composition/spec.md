@@ -8,8 +8,10 @@ sentence derived from the payload's scorecard (`"X critical, Y warning, Z sugges
 `"No findings."`) and `next_recommended` is the findings-dependent pointer — when findings
 exist, the change-scoped `/orbit:address-reviews <change>` for proposal/system (naming no file:
 on an active change the change-scoped walk discovers every pass that carries a finding, per `orbit-address-reviews`'
-`Address-reviews command available`, so the emit names the same invocation as the gate's
-canonical next per `orbit-engine-gates`' `A reviewed gate lists its outstanding passes`), and for architecture mode the address-reviews
+`Address-reviews command available`, so the emit names the walk the gate's canonical next
+names whenever that next is a walk, per `orbit-engine-gates`' `A reviewed gate lists its outstanding passes` — the
+emit's pointer depends only on the pass's findings, while the gate's next is computed from the whole trail and names
+the missing member on a half-landed pair), and for architecture mode the address-reviews
 `--from-file` invocation naming this emit's own path (no change-scoped walk reads the
 architecture trail); when CLEAN,
 the `orbit status --change <name> --report` render pointer for proposal/system, and for

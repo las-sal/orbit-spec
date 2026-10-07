@@ -110,6 +110,47 @@ describe('payload contract', () => {
     expect(() => normalizeInternalPass(oldPath, old)).not.toThrow();
   });
 
+  // @scenario behaviour orbit-conventions :: Internal-run JSON summary format :: Universal spine present on every emit
+  // @scenario behaviour orbit-conventions :: Internal-run JSON summary format :: Workflow command emit shape
+  it('rc17c (system walk, fresh S2): every command the surface supports writes the 7 spine fields; the workflow commands write kind workflow', () => {
+    makeChange('foo');
+    write('orbit/changes/archive/2026-03-01-bar/proposal.md', 'p');
+    write('orbit/architecture/prog.md', '# prog\n');
+    const handoff = { boot_sequence: ['CLAUDE.md'], next_command: '/orbit:architect prog', model_hint: null, seam: 'post-session' };
+    const plain = { final_assessment: 'x', model: null };
+    const cases: Array<[string, Record<string, unknown>, Record<string, unknown>, string]> = [
+      ['explore', { change: 'foo' }, plain, 'workflow'],
+      ['propose', { change: 'foo' }, plain, 'workflow'],
+      ['new', { change: 'foo' }, plain, 'workflow'],
+      ['continue', { change: 'foo' }, plain, 'workflow'],
+      ['ff', { change: 'foo' }, plain, 'workflow'],
+      ['apply', { change: 'foo' }, { consent: 'user-invoked', model: null }, 'workflow'],
+      ['verify', { change: 'foo' }, plain, 'workflow'],
+      ['architect', { doc: 'prog' }, { ...plain, handoff }, 'workflow'],
+      ['review', { change: 'foo' }, validReviewPayload(), 'editorial'],
+      ['address-reviews', {}, { source: 'whole-repo', walk_mode: 'per_finding', resolutions: [], final_assessment: 'x', remaining_markers_in_scope: 0, model: null }, 'editorial'],
+      ['audit-drift', { change: 'foo' }, { final_assessment: 'x', categories_run: ['1'], findings: [driftFinding('1')], model: null }, 'editorial'],
+      ['review-external', { change: 'foo' }, { mode: 'proposal', prompt_path: 'orbit/changes/foo/.orbit-runs/external-prompt-proposal-2026-08-05T10-00-00Z.md', target: null, final_assessment: 'x', model: null }, 'editorial'],
+      ['archive', { change: 'bar' }, { ...plain, archive_path: 'orbit/changes/archive/2026-03-01-bar/' }, 'lifecycle'],
+    ];
+    // The case list is held to the surface's own command set (its unknown-command error names it).
+    let supported = '';
+    try { composeAndWriteEmit('frobnicate', { change: 'foo' }, { model: null }, { projectRoot: root }); } catch (e) { supported = (e as Error).message; }
+    const engineCommands = supported.replace(/^.*supported: /, '').replace(/\.$/, '').split(', ').sort();
+    expect(cases.map(c => c[0]).sort()).toEqual(engineCommands);
+    const SPINE = ['command', 'timestamp', 'change', 'final_assessment', 'next_recommended', 'kind', 'model'];
+    for (const [command, target, payload, kind] of cases) {
+      const r = composeAndWriteEmit(command, target as any, payload, { projectRoot: root });
+      const onDisk = JSON.parse(fs.readFileSync(r.path, 'utf-8'));
+      for (const key of SPINE) expect(key in onDisk, `${command}: ${key}`).toBe(true);
+      expect(onDisk.command, command).toBe(command);
+      expect(onDisk.kind, command).toBe(kind);
+      expect(typeof onDisk.next_recommended, command).toBe('string');
+      // A workflow command's per-command extension rides beside the spine (orbit-run-summary-emit's example: apply.chunk_complete).
+      if (command === 'apply') for (const key of ['tasks_completed', 'tasks_remaining', 'chunk_complete', 'files_touched', 'consent']) expect(key in onDisk, key).toBe(true);
+    }
+  });
+
   it('rejects a payload missing the model key; explicit null is accepted', () => {
     makeChange('foo');
     const p = validReviewPayload();

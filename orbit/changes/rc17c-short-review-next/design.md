@@ -36,8 +36,10 @@ No report prints `next_recommended`. The tail's eligibility line is the gate's c
 ## Decisions
 
 **D1 — the change-mode branch composes `/orbit:address-reviews <change>` when the pass has findings** (D-rc17c-1). One
-branch in one composer. The architecture branch is untouched. After this, the emit's next and the gate's canonical next
-(`orbit-engine-gates`' `A reviewed gate lists its outstanding passes`) name the same invocation. *Alternative:* keep
+branch in one composer. The architecture branch is untouched. After this, whenever the gate's canonical next is a walk
+(`orbit-engine-gates`' `A reviewed gate lists its outstanding passes`), the emit's next names that same walk. The two
+differ when the gate names something else, as it does on a half-landed pair, where it names the missing member: the
+emit's pointer depends only on the pass's findings. *Alternative:* keep
 `--from-file` and add the change name. Rejected because it still aims at one half of a pair.
 
 **D2 — the renderer accepts two values by VALUE, never by date** (D-rc17c-2). On a pass with findings, the expected set
@@ -74,7 +76,8 @@ out. The guard compares written key sets, so an example shows exactly what its p
 references unchanged. These examples are written emits, so the test removes the engine-composed keys first: the spine
 (`SPINE_FIELDS`) plus `ENGINE_OWNED_EXTRA[command]`, both exported from `emit-composition.ts` so there is one list. It
 then submits through `composeAndWriteEmit` and holds the written top-level key set equal to the example's. The review
-example is also rendered. Fences are found with `src/core/markdown-fence.ts`, after the `**Canonical examples**` line.
+example is submitted under its own `change` name, its engine-composed values other than `timestamp` are compared with
+the written emit, and it is rendered. Fences are found with `src/core/markdown-fence.ts`, after the `**Canonical examples**` line.
 The disposable projects reuse rc07b's helpers wherever they fit (`test/helpers/schema-references.ts`). No chunk is
 seeded for apply: the engine writes `chunk`, `chunk_name`, `chunk_complete`, `files_touched` and `diff_base` on every
 apply emit (the nullable ones as `null` when unused), and the check compares keys, so the apply project needs only the minimal `tasks.md`
@@ -121,7 +124,9 @@ decisions.
 - [A post-stage emit hand-edited back to the self pointer renders silently] → Accepted. The old form still walks the
   pass it names, and the composer is the only writer. This is stated in D2 and not checked.
 - [The guard compares top-level keys only] → A stale nested key or value passes for apply and archive. This is the named
-  limit in the `orbit-conventions` requirement; the review example is graded harder by the renderer.
+  limit in the `orbit-conventions` requirement. The review example is held harder: it is submitted under its own
+  `change` name, and every engine-composed value but `timestamp` is compared with the written emit (the renderer alone
+  would grade only the values the engine recomposed, never the example's).
 - [36 delta scenarios across four MODIFIED blocks must be declared before the apply gate passes] → Most are existing
   behaviour with existing tests. The task adds `@scenario` tags where a test asserts the THEN, and ledger entries
   otherwise. It never backfills baseline scenarios outside this delta.
