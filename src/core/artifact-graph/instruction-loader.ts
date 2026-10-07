@@ -4,7 +4,7 @@ import { getSchemaDir, resolveSchema } from './resolver.js';
 import { ArtifactGraph } from './graph.js';
 import { detectCompleted } from './state.js';
 import { normalizeGates } from './schema.js';
-import { computeGateStates } from './gates.js';
+import { computeGateStates, passedFrontierHoldsUnwalked } from './gates.js';
 import type { TrailOverlay } from './trail.js';
 import { resolveSchemaForChange } from '../../utils/change-metadata.js';
 import { FileSystemUtils } from '../../utils/file-system.js';
@@ -449,7 +449,17 @@ export function formatChangeStatus(context: ChangeContext, overlay?: TrailOverla
       g => g.before === 'apply' && g.consent === 'user-invoked'
     );
     for (const g of computation.gates) {
-      if (g.state === 'passed') continue;
+      if (g.state === 'passed') {
+        // rc18 (D1): the SAME predicate that set the row's walk. A passed gate's command is taken
+        // only on it, never because the row carries one (a passed `review-proposal` carries
+        // `/orbit:apply`, which would name apply again after apply passed).
+        if (passedFrontierHoldsUnwalked(g, computation.gates)) {
+          nextCommand = `/orbit:address-reviews ${context.changeName}`;
+          nextHintKeys = { phase: g.id };
+          break;
+        }
+        continue;
+      }
       // C1: skip a reviewed gate whose gated phase already ran (moot) — the frontier
       // has advanced past it, so it must not drive the canonical next command.
       if (g.superseded) continue;

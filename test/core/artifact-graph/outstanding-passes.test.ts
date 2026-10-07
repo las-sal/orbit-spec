@@ -4,6 +4,8 @@ import * as path from 'node:path';
 import * as os from 'node:os';
 import { parseSchema } from '../../../src/core/artifact-graph/schema.js';
 import { computeGateStates } from '../../../src/core/artifact-graph/gates.js';
+import { loadChangeContext, formatChangeStatus } from '../../../src/core/artifact-graph/instruction-loader.js';
+import { composeAndWriteEmit } from '../../../src/core/emit-composition.js';
 import type { SchemaYaml } from '../../../src/core/artifact-graph/types.js';
 
 /**
@@ -291,5 +293,351 @@ describe('rc08b 5.2 — carried convergence scenarios with no prior test', () =>
     const g = gate(withCadence('[external, blind-pair]'));
     expect(g.state).toBe('unpassed');
     expect(g.reason).toMatch(/blind pair/);
+  });
+});
+
+/**
+ * rc18-walk-is-next. A passed FRONTIER gate holding an unwalked pass names the walk (D1, D2), and an
+ * unpassed or stale gate names the walk for an unwalked pass as it does for an unresolved one (D5).
+ * The gate's state and reason never move. Change-level next selection runs through the real
+ * `formatChangeStatus` over the shipped `spec-driven` schema in a disposable project.
+ */
+describe('rc18 — the walk is next', () => {
+  let root: string;
+  let cr: string;
+  const C = 'c';
+
+  beforeEach(() => {
+    root = fs.mkdtempSync(path.join(os.tmpdir(), 'rc18-'));
+    const cd = path.join(root, 'orbit', 'changes', C);
+    cr = path.join(cd, '.orbit-runs');
+    fs.mkdirSync(path.join(cd, 'specs', 's'), { recursive: true });
+    fs.mkdirSync(cr, { recursive: true });
+    fs.writeFileSync(path.join(cd, '.openspec.yaml'), 'schema: spec-driven\nschema_version: 5\n');
+    fs.writeFileSync(path.join(cd, 'proposal.md'), '# Proposal\n\n## Why\nw\n');
+    fs.writeFileSync(path.join(cd, 'design.md'), '# Design\n');
+    fs.writeFileSync(
+      path.join(cd, 'specs', 's', 'spec.md'),
+      '## ADDED Requirements\n\n### Requirement: R\n\nThe system SHALL r.\n\n#### Scenario: s\n\n- **WHEN** w\n- **THEN** t\n'
+    );
+    tasks(false);
+  });
+  afterEach(() => fs.rmSync(root, { recursive: true, force: true }));
+
+  function tasks(done: boolean): void {
+    fs.writeFileSync(path.join(root, 'orbit', 'changes', C, 'tasks.md'), `# Tasks\n\n## 1. G\n\n- [${done ? 'x' : ' '}] 1.1 one\n`);
+  }
+  function walk(token: string, source: string, entries: Array<[Sev, string]>): void {
+    fs.writeFileSync(
+      path.join(cr, `address-reviews-${token}.json`),
+      JSON.stringify({
+        source_path: `orbit/changes/${C}/.orbit-runs/${source}`,
+        resolution_summary: { resolved: entries.length, deferred: 0, escalated: 0 },
+        resolutions: entries.map(([severity, title]) => ({ severity, title, file: `f/${title}.ts`, outcome: 'resolved' })),
+      })
+    );
+  }
+  const launch = (token: string, mode: string) =>
+    fs.writeFileSync(path.join(cr, `review-external-${token}.json`), JSON.stringify({ command: 'review-external', mode, pair: true }));
+  const applyEmit = (token: string) =>
+    fs.writeFileSync(path.join(cr, `apply-${token}.json`), JSON.stringify({ command: 'apply' }));
+  const S3: Array<[Sev, string]> = [['SUGGESTION', 's1'], ['SUGGESTION', 's2'], ['SUGGESTION', 's3']];
+
+  function ctx(mutate?: (s: SchemaYaml) => void) {
+    const c = loadChangeContext(root, C);
+    if (!mutate) return c;
+    const schema = structuredClone(c.schema);
+    mutate(schema);
+    return { ...c, schema };
+  }
+  const status = (mutate?: (s: SchemaYaml) => void) => formatChangeStatus(ctx(mutate));
+  const row = (st: ReturnType<typeof formatChangeStatus>, id: string) => st.gates.find(g => g.id === id)!;
+
+  const APPLY = `/orbit:apply ${C} — user-invoked`;
+  const ARCHIVE = `/orbit:archive ${C} — user-invoked`;
+  const WALK = `/orbit:address-reviews ${C}`;
+  const IN_CONTEXT = (mode: string) => `/orbit:review --as ${mode} ${C}`;
+
+  /** The row-equality rule, stated independently of the engine's predicate: on every passed gate whose
+   *  `before` names no passed gate and whose unwalked list is non-empty, the row's next IS the change's. */
+  function expectRowsAgree(st: ReturnType<typeof formatChangeStatus>): number {
+    const passedIds = new Set(st.gates.filter(g => g.state === 'passed').map(g => g.id));
+    let n = 0;
+    for (const g of st.gates) {
+      if (g.kind !== 'reviewed' || g.state !== 'passed' || (g.unwalkedPasses?.length ?? 0) === 0) continue;
+      if (g.before && passedIds.has(g.before)) continue;
+      expect(g.nextCommand).toBe(st.next_command);
+      n++;
+    }
+    return n;
+  }
+
+  /** Proposal gate passed through a clean fresh single + an in-context pass carrying `ic`. */
+  function proposalPassed(ic: Array<[Sev, string]> = []): void {
+    review(cr, T(1), 'proposal', 'fresh');
+    review(cr, T(2), 'proposal', 'in-context', ic);
+  }
+
+  describe('1.3 — the selection table, row by row', () => {
+    it('ungated schema: no gate rows and no command from the selection', () => {
+      const st = status(s => {
+        delete (s as any).gates;
+        delete (s as any).apply;
+      });
+      expect(st.gates).toEqual([]);
+      expect(st.next_command).toBeUndefined();
+    });
+
+    it('tracked `ready` beside a passed frontier gate with no unwalked pass: the apply command, the row keeping its phase command', () => {
+      proposalPassed();
+      const st = status();
+      expect(row(st, 'review-proposal').state).toBe('passed');
+      expect(row(st, 'review-proposal').unwalkedPasses).toEqual([]);
+      expect(row(st, 'review-proposal').nextCommand).toBe(APPLY);
+      expect(row(st, 'apply').state).toBe('ready');
+      expect(st.next_command).toBe(APPLY);
+      expect(st.next_hint_keys).toEqual({ phase: 'apply' });
+    });
+
+    // @scenario behaviour orbit-engine-gates :: Single-voiced canonical-next computation :: A passed proposal gate with an unwalked pass names the walk
+    it('passed frontier `review-proposal` holding an unwalked pass: the walk, on the row and the change, state unchanged', () => {
+      proposalPassed(S3);
+      const st = status();
+      const rp = row(st, 'review-proposal');
+      expect(rp.state).toBe('passed');
+      expect(rp.unwalkedPasses!.map(p => p.token)).toEqual([T(2)]);
+      expect(row(st, 'apply').state).toBe('ready');
+      expect(st.next_command).toBe(WALK);
+      expect(rp.nextCommand).toBe(WALK);
+      expect(st.next_command).not.toMatch(/user-invoked|--from-file/);
+      expect(st.next_hint_keys).toEqual({ phase: 'review-proposal' });
+      // reviewed `blocked`: the system gate carries no unwalked list and is never selected
+      expect(row(st, 'review-system').state).toBe('blocked');
+      expect('unwalkedPasses' in row(st, 'review-system')).toBe(false);
+      expect(expectRowsAgree(st)).toBe(1);
+    });
+
+    // @scenario behaviour orbit-engine-gates :: Single-voiced canonical-next computation :: A gate past its phase never names the walk
+    it('passed `review-proposal` after tracked `apply` passed is not the frontier: never the walk, never `/orbit:apply`', () => {
+      proposalPassed(S3);
+      tasks(true);
+      const st = status();
+      const rp = row(st, 'review-proposal');
+      expect(rp.state).toBe('passed');
+      expect(rp.unwalkedPasses).toHaveLength(1);
+      expect(rp.nextCommand).toBe(APPLY); // its row keeps its phase command
+      expect(row(st, 'apply').state).toBe('passed');
+      expect(st.next_command).toBe(`/orbit:review --as system --reviewer blind-pair ${C}`);
+      expect(st.next_command).not.toBe(WALK);
+      expect(st.next_command).not.toMatch(/^\/orbit:apply/);
+      expect(st.next_hint_keys?.phase).toBe('review-system');
+    });
+
+    it('superseded `review-proposal` is skipped: its unwalked passes are not recommended', () => {
+      review(cr, T(1), 'proposal', 'fresh', [['WARNING', 'w'], ['SUGGESTION', 's']]);
+      review(cr, T(2), 'proposal', 'fresh', [['SUGGESTION', 'only']]);
+      tasks(true);
+      const st = status();
+      const rp = row(st, 'review-proposal');
+      expect(rp.superseded).toBe(true);
+      expect(rp.nextCommand).toBe(WALK); // its own row's walk, never selected
+      expect(st.next_command).toBe(`/orbit:review --as system --reviewer blind-pair ${C}`);
+    });
+
+    // @scenario behaviour orbit-engine-gates :: Single-voiced canonical-next computation :: A passed system gate with an unwalked pass names the walk before archive
+    it('every gate passed and `review-system` holds an unwalked pass: the walk before the fall-through, archive still eligible', () => {
+      proposalPassed();
+      tasks(true);
+      review(cr, T(3), 'system', 'fresh');
+      review(cr, T(4), 'system', 'in-context', [['SUGGESTION', 'x']]);
+      const st = status();
+      expect(st.gates.every(g => g.state === 'passed')).toBe(true);
+      expect(st.next_command).toBe(WALK);
+      expect(st.next_command).not.toBe(ARCHIVE);
+      expect(st.next_hint_keys).toEqual({ phase: 'review-system' });
+      expect(st.position).toMatch(/archive ready$/);
+      expect(expectRowsAgree(st)).toBe(1);
+    });
+
+    // @scenario behaviour orbit-engine-gates :: Single-voiced canonical-next computation :: Walking the last slot's pass returns the phase command
+    it('walking the last slot\'s pass returns the phase command and the gate stays passed (proposal and system)', () => {
+      proposalPassed(S3);
+      walk(T(3), `review-proposal-${T(2)}.json`, S3);
+      let st = status();
+      expect(row(st, 'review-proposal').state).toBe('passed');
+      expect(row(st, 'review-proposal').nextCommand).toBe(APPLY);
+      expect(st.next_command).toBe(APPLY);
+
+      tasks(true);
+      review(cr, T(4), 'system', 'fresh');
+      review(cr, T(5), 'system', 'in-context', [['SUGGESTION', 'x']]);
+      expect(status().next_command).toBe(WALK);
+      walk(T(6), `review-system-${T(5)}.json`, [['SUGGESTION', 'x']]);
+      st = status();
+      expect(row(st, 'review-system').state).toBe('passed');
+      expect(st.next_command).toBe(ARCHIVE);
+    });
+
+    it('a `before` naming an artifact, or nothing, stays the frontier', () => {
+      review(cr, T(1), 'proposal', 'in-context', [['SUGGESTION', 's']]);
+      const only = (before: string | undefined) => (s: SchemaYaml) => {
+        s.gates = [{ id: 'review-proposal', kind: 'reviewed', requires: ['proposal'], cadence: ['in-context'], ...(before ? { before } : {}) } as any];
+        delete (s as any).apply;
+      };
+      for (const before of ['tasks', undefined]) {
+        const st = status(only(before));
+        const rp = row(st, 'review-proposal');
+        expect(rp.state).toBe('passed');
+        expect(st.next_command).toBe(WALK);
+        expect(rp.nextCommand).toBe(WALK);
+        expect(st.next_hint_keys).toEqual({ phase: 'review-proposal' });
+      }
+    });
+  });
+
+  describe('2.2 — the unpassed gate\'s order', () => {
+    // @scenario behaviour orbit-engine-gates :: Single-voiced canonical-next computation :: An unpassed gate with an unwalked SUGGESTION-only pass names the walk first
+    it('a SUGGESTION-only invoked pass and no in-context pass: the walk, state and reason unchanged; the in-context review once walked', () => {
+      review(cr, T(1), 'proposal', 'fresh');
+      const clean = row(status(), 'review-proposal');
+      expect(clean.nextCommand).toBe(IN_CONTEXT('proposal')); // exit (3)'s unchanged branch
+      review(cr, T(1), 'proposal', 'fresh', [['SUGGESTION', 's1'], ['SUGGESTION', 's2']]);
+      let st = status();
+      const rp = row(st, 'review-proposal');
+      expect([rp.state, rp.reason]).toEqual([clean.state, clean.reason]);
+      expect(rp.state).toBe('unpassed');
+      expect(rp.nextCommand).toBe(WALK);
+      expect(st.next_command).toBe(WALK);
+      walk(T(2), `review-proposal-${T(1)}.json`, [['SUGGESTION', 's1'], ['SUGGESTION', 's2']]);
+      st = status();
+      expect(row(st, 'review-proposal').nextCommand).toBe(IN_CONTEXT('proposal'));
+      expect(st.next_command).toBe(IN_CONTEXT('proposal'));
+    });
+
+    // @scenario behaviour orbit-engine-gates :: Single-voiced canonical-next computation :: A half-landed pair outranks the walk
+    it('a half-landed pair with a SUGGESTION-only member names the missing member, not the walk', () => {
+      launch(T(1), 'proposal');
+      review(cr, T(2), 'proposal', 'fresh', [['SUGGESTION', 's']]);
+      const st = status();
+      const rp = row(st, 'review-proposal');
+      expect(rp.openPair).toEqual({ missing: 'external' });
+      expect(rp.unwalkedPasses).toHaveLength(1);
+      expect(rp.nextCommand).toBe(`/orbit:review --as proposal --reviewer external ${C}`);
+      expect(st.next_command).toBe(rp.nextCommand);
+    });
+
+    it('a stale gate holding an unwalked pass names the walk', () => {
+      proposalPassed();
+      tasks(true);
+      review(cr, T(3), 'system', 'fresh', [['SUGGESTION', 's']]);
+      review(cr, T(4), 'system', 'in-context');
+      applyEmit(T(5));
+      const st = status();
+      const rs = row(st, 'review-system');
+      expect(rs.state).toBe('stale');
+      expect(rs.unwalkedPasses!.map(p => p.token)).toEqual([T(3)]);
+      expect(rs.nextCommand).toBe(WALK);
+      expect(st.next_command).toBe(WALK);
+    });
+
+    it('an unpassed gate with no unresolved or unwalked pass keeps its slot command', () => {
+      review(cr, T(1), 'proposal', 'fresh');
+      const st = status();
+      expect(row(st, 'review-proposal').state).toBe('unpassed');
+      expect(st.next_command).toBe(IN_CONTEXT('proposal'));
+    });
+  });
+
+  describe('3.x — after the walk', () => {
+    it('3.1 the ordinary order: walk first, then the in-context review, then passed and the phase command', () => {
+      review(cr, T(1), 'proposal', 'fresh', [['SUGGESTION', 's']]);
+      expect(status().next_command).toBe(WALK);
+      walk(T(2), `review-proposal-${T(1)}.json`, [['SUGGESTION', 's']]);
+      expect(status().next_command).toBe(IN_CONTEXT('proposal'));
+      review(cr, T(3), 'proposal', 'in-context');
+      const st = status();
+      expect(row(st, 'review-proposal').state).toBe('passed');
+      expect(st.next_command).toBe(APPLY);
+    });
+
+    // @scenario behaviour orbit-engine-gates :: Single-voiced canonical-next computation :: Walking an earlier slot's pass after the gate passed names the check it owes
+    it('3.1 Case 1: an off-path walk of the invoked pass after the in-context pass un-passes and names the in-context command', () => {
+      review(cr, T(1), 'proposal', 'fresh', [['SUGGESTION', 's']]);
+      review(cr, T(2), 'proposal', 'in-context');
+      let st = status();
+      expect(row(st, 'review-proposal').state).toBe('passed');
+      expect(st.next_command).toBe(WALK); // the passed frontier gate names the walk it holds
+      walk(T(3), `review-proposal-${T(1)}.json`, [['SUGGESTION', 's']]);
+      st = status();
+      expect(row(st, 'review-proposal').state).toBe('unpassed');
+      expect(st.next_command).toBe(IN_CONTEXT('proposal'));
+      expect(st.next_command).not.toBe(WALK);
+      expect(st.next_command).not.toBe(APPLY);
+    });
+
+    // @scenario behaviour orbit-engine-gates :: Single-voiced canonical-next computation :: A longer cadence can owe more than one review after an off-path walk
+    it('3.2 a three-slot cadence owes the external review, then the in-context review', () => {
+      const three = (s: SchemaYaml) => {
+        const g = (s.gates as any[]).find(x => x.id === 'review-proposal');
+        g.cadence = ['fresh', 'external', 'in-context'];
+      };
+      review(cr, T(1), 'proposal', 'fresh', [['SUGGESTION', 's']]);
+      external(cr, T(2), 'proposal');
+      review(cr, T(3), 'proposal', 'in-context');
+      expect(row(status(three), 'review-proposal').state).toBe('passed');
+      walk(T(4), `review-proposal-${T(1)}.json`, [['SUGGESTION', 's']]);
+      let st = status(three);
+      expect(row(st, 'review-proposal').state).toBe('unpassed');
+      expect(st.next_command).toBe(`/orbit:review --as proposal --reviewer external ${C}`);
+      external(cr, T(5), 'proposal');
+      st = status(three);
+      expect(row(st, 'review-proposal').state).toBe('unpassed');
+      expect(st.next_command).toBe(IN_CONTEXT('proposal'));
+    });
+
+    it('3.3 the walk\'s own emit over the last unwalked pass carries the phase command as next_recommended', () => {
+      proposalPassed([['SUGGESTION', 'only']]);
+      fs.mkdirSync(path.join(root, 'f'), { recursive: true });
+      fs.writeFileSync(path.join(root, 'f', 'only.ts'), 'x\n');
+      const src = `orbit/changes/${C}/.orbit-runs/review-proposal-${T(2)}.json`;
+      const r = composeAndWriteEmit(
+        'address-reviews',
+        { change: C },
+        {
+          final_assessment: 'One of one resolved.',
+          source: 'auto-discovered',
+          source_path: src,
+          source_command: 'review',
+          source_token: T(2),
+          latest_apply_token: null,
+          external_reviewer: null,
+          walk_mode: 'per_finding',
+          input_findings_summary: { critical: 0, warning: 0, suggestion: 1 },
+          pushback_verification: 'verified',
+          resolution_summary: { resolved: 1, stale_suppressed: 0, deferred: 0, escalated: 0 },
+          resolutions: [
+            {
+              severity: 'SUGGESTION',
+              title: 'only',
+              marker_source: 'internal-review',
+              file: 'f/only.ts',
+              line: 1,
+              classification: 'trivial_fix',
+              action: 'fixed',
+              ripple_cascade: { applied: [], flagged_not_applied: [] },
+              sweep: { retired: [], introduced: [], searched: ['only'], scope: [], kept: [] },
+              remedy: 'repair',
+              outcome: 'resolved',
+            },
+          ],
+          remaining_markers_in_scope: 0,
+          persisted_escalations: [],
+          model: null,
+        },
+        { projectRoot: root }
+      );
+      expect(r.emit.next_recommended).toBe(APPLY);
+      expect(status().next_command).toBe(APPLY);
+    });
   });
 });

@@ -76,7 +76,8 @@ export interface GateStatus {
   /**
    * rc17a: every pass in clause (b)'s set carrying at least one finding of ANY severity that no walk
    * record references and that is not in `unresolvedPasses` — the discovery set beside the hold. Same
-   * shape and order; `[]` when there is none; absent on a blocked gate. The gate never reads it.
+   * shape and order; `[]` when there is none; absent on a blocked gate. The gate's STATE never reads
+   * it; its canonical next and the change's do (rc18).
    */
   unwalkedPasses?: UnresolvedPassRow[];
   /** rc08b: the pair diagnosis behind the reason's pair note, as a field a reader need not parse. */
@@ -939,11 +940,30 @@ export function computeGateStates(
       s.superseded = true;
     }
   }
+  // rc18 (D1): a passed FRONTIER gate holding an unwalked pass names the walk, by the SAME predicate the
+  // change-level selection applies, so the row and the change never name different commands. Every
+  // other passed row keeps its phase command; state and reason do not move.
+  for (const s of results) {
+    if (passedFrontierHoldsUnwalked(s, results)) s.nextCommand = `/orbit:address-reviews ${changeName}`;
+  }
 
   // Order by flow edges (requires/before), not declaration order, so both the position
   // readout AND canonical-next selection (which iterates this list) follow the graph.
   const ordered = flowOrderGates(gates, results);
   return { gates: ordered, position: buildPositionReadout(schema, ordered, completedArtifacts) };
+}
+
+/**
+ * rc18 (D1, D2): a `passed` reviewed gate that is the FRONTIER — its `before` names no gate that has
+ * passed, the superseded test negated on GATE IDS only (a `before` naming an artifact, a non-gate phase
+ * such as `archive`, or nothing never makes a gate non-frontier) — and whose `unwalkedPasses` is
+ * non-empty. The ONE predicate both the gate row and the change-level selection read.
+ */
+export function passedFrontierHoldsUnwalked(gate: GateStatus, gates: GateStatus[]): boolean {
+  if (gate.kind !== 'reviewed' || gate.state !== 'passed') return false;
+  if ((gate.unwalkedPasses?.length ?? 0) === 0) return false;
+  if (gate.before && gates.some(o => o.id === gate.before && o.state === 'passed')) return false;
+  return true;
 }
 
 /**
@@ -1064,7 +1084,8 @@ export function evaluateReviewedGate(
   const allEval = evaluateReviewed(gate, relevant, relevant, trail, membership, preference);
   const stale = allEval.converged && !freshEval.converged;
 
-  const next = canonicalNextForReviewed(mode, changeName, freshEval, trail, fresh);
+  const unwalked = unwalkedFor(freshEval.unresolvedPasses);
+  const next = canonicalNextForReviewed(mode, changeName, freshEval, trail, fresh, unwalked);
   let reason = stale ? `a review pass is stale (an apply landed after it)` : freshEval.reason;
   // A rejected return is named UNCONDITIONALLY — there is no ceiling for the naming to be below,
    // and naming it names the rule that fired, not the spend. Otherwise the
@@ -1090,7 +1111,7 @@ export function evaluateReviewedGate(
     before: gate.before,
     consent: gate.consent,
     unresolvedPasses: freshEval.unresolvedPasses.map(toRow),
-    unwalkedPasses: unwalkedFor(freshEval.unresolvedPasses),
+    unwalkedPasses: unwalked,
     ...(freshEval.openPair ? { openPair: freshEval.openPair } : {}),
   };
 }
@@ -1101,7 +1122,8 @@ function canonicalNextForReviewed(
   change: string,
   ev: ConvergenceResult,
   trail: Trail,
-  freshPasses: TrailPass[]
+  freshPasses: TrailPass[],
+  unwalked: UnresolvedPassRow[]
 ): { cmd: string; slot?: CadenceEntry } {
   const m: ReviewMode = mode ?? 'proposal';
   const forClass = (cls: 'fresh' | 'external' | 'blind-pair'): string =>
@@ -1118,8 +1140,9 @@ function canonicalNextForReviewed(
     return { cmd: forClass(ev.openPair.missing), slot: ev.openPairFrom === 'invoked' ? ev.openPair.missing : 'blind-pair' };
   }
   // rc08b: the change-scoped walk, naming NO file — it discovers every listed pass and applies the
-  // openPair warning, where a `--from-file` aim would walk one half and skip both.
-  if (ev.unresolvedPass) {
+  // openPair warning, where a `--from-file` aim would walk one half and skip both. rc18 (D5): an
+  // UNWALKED SUGGESTION-only pass joins this step, so it is walked before the review that checks it.
+  if (ev.unresolvedPass || unwalked.length > 0) {
     return { cmd: `/orbit:address-reviews ${change}` };
   }
   if (ev.neededSlot === 'invoked' && ev.invoked) {

@@ -77,6 +77,12 @@ import { fileURLToPath } from "node:url";
  * MOVED AGAIN at rc17c's system walk (2026-10-07): `emit-composition.ts` only — the composer comment stopped
  * claiming the emit always names the gate's canonical next; it names that walk whenever the gate's next is a walk
  * (fresh S1). `report-render.ts` did not move.
+ * MOVED at rc18-walk-is-next apply (2026-10-07) — a PLANNED act (its task 4.1, design Touchpoints): TWO files.
+ * `gates.ts` — the exported `passedFrontierHoldsUnwalked` predicate sets a passed FRONTIER gate's row to the
+ * change-scoped walk when it holds an unwalked pass (D1, D2), and `canonicalNextForReviewed`'s walk step fires on
+ * an unwalked pass as well as an unresolved one, after the open pair (D5). `instruction-loader.ts` — the
+ * selection loop takes a passed gate's walk on that same predicate, never because the row carries a command.
+ * Every other hash here is unchanged.
  */
 const PINNED: Record<string, string> = {
   "schemas/spec-driven/schema.yaml": "21e0ae86532a39be558a2b81d23738a6fbf92fbd32b0d01612a65e83d6a96739",
@@ -84,10 +90,10 @@ const PINNED: Record<string, string> = {
   "schemas/spec-driven/templates/proposal.md": "9c554e0dbe918e3dc745dcc143a999e1d102954d75fb6e51e231c4cba78f06f3",
   "schemas/spec-driven/templates/spec.md": "e025078f238dc6e4df552a1e0a140cf9efce0bbdecbeb9f45837d45ed91dca01",
   "schemas/spec-driven/templates/tasks.md": "b2a6a4c08c15f347a1d8c3e2d43e0c8fb066dc5cc0feb795f47555f176f9c421",
-  "src/core/artifact-graph/gates.ts": "6d13033ffe72472d657085e4574decc1eaee3e70ebbca1e9382b74faf3f43981",
+  "src/core/artifact-graph/gates.ts": "c25f1c80ca454a96c8ef72e7948814759b57b18cb5746381bcc68c912d9ba25c",
   "src/core/artifact-graph/graph.ts": "3193a3884bb59296dc4ddc177020d3135d99c694109298ac31c3f3a91c45a0ed",
   "src/core/artifact-graph/index.ts": "9dc35ba8e64105fbfd6af821cf99f1fbc5777b74b75311f09fdab279cf12d438",
-  "src/core/artifact-graph/instruction-loader.ts": "fd36a43ed47b2515218211a228121becf50e3213fd34621e3a7c5085e0ab44ad",
+  "src/core/artifact-graph/instruction-loader.ts": "6e79d8b17fe1140dc98287156253df5e41d4073d0fa5382d1b7fd07c8a02600c",
   "src/core/artifact-graph/pass-genre.ts": "af72ef5bc3b543b79c8c4d1a4678ca667f8e307dd3325110d38bb8319fa26a04",
   "src/core/artifact-graph/outputs.ts": "7a95459becd3831b3cc0416aa473990169d671a1e491a284df4695d1c8008047",
   "src/core/artifact-graph/resolver.ts": "3b10b86eeda7e1264ff6a549e2abcdce8fd3bee3e28cb42441ed49e5ebb3d81b",

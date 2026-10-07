@@ -3245,8 +3245,19 @@ so walking cannot start a review loop. The capability count is the exploration's
 least, plus every surface that reads or restates the next line). Goal G4.
 Exit: (1) a change whose reviewed gate has passed, with an unwalked pass in that gate's mode, renders
 `/orbit:address-reviews <change>` as its canonical next, and the gate's state still reads `passed`; (2) after that pass
-is walked, the canonical next is the phase command again and the gate still reads `passed`; (3) an unpassed gate's
-next is unchanged.
+is walked, the canonical next is the phase command, or, when an off-path walk un-passed an earlier slot, the review the
+order names for the slots it uncovered; the gate's state is never changed by the selection; (3) an unpassed gate
+holding no unwalked pass keeps its next; one holding an unwalked pass, and no open pair, names the walk before its next
+review.
+Exits revised 2026-10-07 at rc18's apply (R-crc-12's first case for (2); Sal's word for (3)). Exit (2) as declared
+read "the phase command again and the gate still reads `passed`". That wording came from the one measured branch: the
+exploration found that walking a SUGGESTION-only pass filling an EARLIER slot, after the gate passed, un-passes it,
+because rc17a's ratified 2A makes every walk raise the following slot's ordering bar (D-rc18-1, Case 1). Sal kept 2A
+(D-rc18-4), so the mechanism falsifies the criterion's "still reads `passed`" on that branch, and the criterion is
+revised to the gate's state never being changed by the SELECTION. Exit (3) as declared read "an unpassed gate's next
+is unchanged". The proposal's blind pair showed the un-pass is the ordinary path when an unpassed gate names the
+in-context review before the walk; Sal took A at proposal walk 1: the unpassed gate names the walk too, before the
+following slot's review, so on the recommended path every walk precedes the pass that checks it.
 
 ## Considered & out
 
