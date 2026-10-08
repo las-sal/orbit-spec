@@ -424,7 +424,7 @@ Mode comes from \`--as proposal|system\` if specified. If omitted:
 3. **All checked + code changes visible** (heuristic: \`git log\` shows commits after the change directory was created) → infer \`system\`.
 4. **Ambiguous** → use **AskUserQuestion** to let the user pick.
 
-Emit a one-line inference note in chat output when \`--as\` was omitted: \`Generating external-review prompt as \\\`<as>\\\` (inferred from tasks state).\`
+Emit a one-line inference note in chat output when \`--as\` was omitted: \`\` Generating external-review prompt as \`<as>\` (inferred from tasks state). \`\`
 
 ### 3. Handoff preflight — committed-and-pushed state
 
@@ -507,7 +507,7 @@ The **"Output format"** block inside the prompt MUST appear verbatim — the sec
 
 On the launch route, skip this step: Step 9 owns the chat output. Otherwise print to chat, in this exact order:
 
-1. **(optional)** Mode-inference note when \`--as\` was omitted: \`Generating external-review prompt as \\\`<as>\\\` (inferred from tasks state).\`
+1. **(optional)** Mode-inference note when \`--as\` was omitted: \`\` Generating external-review prompt as \`<as>\` (inferred from tasks state). \`\`
 2. **(required)** Recommended-session note: \`Recommended session: <phrasing from Step 6>\`
 3. **(required)** The prompt file path: \`Prompt: orbit/changes/<change-name>/.orbit-runs/external-prompt-<as>-<TS>.md\`
 4. **(conditional — preflight gate)** ONE of:

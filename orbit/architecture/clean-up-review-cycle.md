@@ -2439,19 +2439,33 @@ the owning requirement's opening definition still excluding the zero-pass record
 repair had added a paragraph beside the sentence instead of replacing it) — closed by deletion too,
 the sentence rewritten around cadence position and stated once.
 
-### Stage rc05-executable-references — documented commands run in CI
+### Stage rc05-executable-references — documented `orbit` commands parse against the CLI
 
 Depends-on: rc01-instrument-fidelity
 Complete: [ ]
 
-Charter: every copyable command in a generated reference is a claim about a tool's grammar,
-and claims are tested, not reviewed. A doctest-style extractor pulls fenced/backticked
-invocations from the emitted references and runs each against the real `git` or the
-contract-recorded `gh` stub in a disposable repo; a documented step that cannot be executed
-is a failing test, not a reviewer's finding. Goal G2. Touches: test/integration,
-orbit-skill-generation (the reference contract). Exit: (1) the extractor covers 100% of
-invocation-shaped snippets in the three PR references; (2) a grammar defect injected into a
-reference fails the suite; (3) the next blind pair finds zero grammar or selector defects.
+Charter: every copyable command on the generated surface is a claim about a tool's grammar, and claims are tested, not
+reviewed. Rescoped at its exploration (2026-10-08, Sal; D-rc05-4, D-rc05-5, D-rc05-6, D-rc05-15 in
+`orbit/explore/rc05-executable-references/explore.md`): EVERY generated SKILL.md and reference, not the three PR
+references; `orbit` FIRST, our own CLI and its most-cited tool; GRAMMAR ONLY, nothing executed. A shared extractor
+locates fences with a CommonMark parser and pulls `orbit` commands from shell fences and inline spans, a guard fails a
+command written where the extractor does not look, and commander's own parser over the CLI's one program (now built by
+an exported builder) is the validator, so the check and the CLI cannot disagree. The shell-completion registry is held
+to that program by a parity test. `git`, and moving rc01's `gh` sweep onto the shared extractor, are
+`rc05b-git-grammar`'s. Goal G2. Touches: `orbit-cli-grammar` (ADDED), the CLI entry, the completion registry.
+Exit: (1) on the generated surface at the apply commit, the guard finds zero lines outside a shell fence that start
+with `orbit` and a flag, and every extracted `orbit` snippet parses against the builder's program; real defects the
+sweep finds are fixed in the stage, and the extracted count is stated as a figure; (2) each injection in tasks.md
+section 5 fails the suite; a snippet or guard injection names the snippet's surface and line, and a parity injection
+names the command or flag; (3) the stage's own system blind pair finds zero grammar defects in an `orbit` snippet.
+Exits revised 2026-10-08 at rc05's apply (R-crc-12's first case; D-rc05-14, D-rc05-17). As declared, exit (1) read
+"the extractor covers 100% of invocation-shaped snippets in the three PR references", and exit (2) "a grammar defect
+injected into a reference fails the suite". Once the extractor DEFINES a snippet (its places table, with a guard
+covering every other place), "invocation-shaped" names no set the shipped mechanism can measure, and "100%" of the
+extractor's own output is true by construction; and the three PR references are rc01's `gh` surface, which moved to
+`rc05b-git-grammar` with the scope. The criteria are restated in the shipped terms: the guard's zero and the parse of
+every extracted snippet for (1), and for (2) one injection per place the extractor reads, each failing with its
+location. Exit (3) as declared named "grammar or selector defects"; selectors are `gh`'s, and moved with it.
 
 ### Stage rc05b-git-grammar — the git and gh snippets parse against recorded contracts
 

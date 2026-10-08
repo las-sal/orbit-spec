@@ -12,6 +12,7 @@ import {
 } from '../core/artifact-graph/resolver.js';
 import { parseSchema, SchemaValidationError } from '../core/artifact-graph/schema.js';
 import type { SchemaYaml, Artifact } from '../core/artifact-graph/types.js';
+import type { ProgramOptions } from '../cli/program.js';
 
 /**
  * Schema source location type
@@ -287,15 +288,17 @@ const DEFAULT_ARTIFACTS: Array<{
 /**
  * Register the schema command and all its subcommands.
  */
-export function registerSchemaCommand(program: Command): void {
+export function registerSchemaCommand(program: Command, options: ProgramOptions = {}): void {
   const schemaCmd = program
     .command('schema')
     .description('Manage workflow schemas [experimental]');
 
   // Experimental warning
-  schemaCmd.hook('preAction', () => {
-    console.error('Note: Schema commands are experimental and may change.');
-  });
+  if (options.hooks !== false) {
+    schemaCmd.hook('preAction', () => {
+      console.error('Note: Schema commands are experimental and may change.');
+    });
+  }
 
   // schema which
   schemaCmd

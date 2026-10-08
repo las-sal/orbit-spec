@@ -44,6 +44,16 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
         description: 'Configure AI tools non-interactively (e.g., "all", "none", or comma-separated tool IDs)',
         takesValue: true,
       },
+      {
+        name: 'force',
+        description: 'Auto-cleanup legacy files without prompting',
+      },
+      {
+        name: 'profile',
+        description: 'Override global config profile (core or custom)',
+        takesValue: true,
+        values: ['core', 'custom'],
+      },
     ],
   },
   {
@@ -51,7 +61,12 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
     description: 'Update OpenSpec instruction files',
     acceptsPositional: true,
     positionalType: 'path',
-    flags: [],
+    flags: [
+      {
+        name: 'force',
+        description: 'Force update even when tools are up to date',
+      },
+    ],
   },
   {
     name: 'list',
@@ -65,6 +80,13 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
         name: 'changes',
         description: 'List changes explicitly (default)',
       },
+      {
+        name: 'sort',
+        description: 'Sort order: "recent" (default) or "name"',
+        takesValue: true,
+        values: ['recent', 'name'],
+      },
+      COMMON_FLAGS.json,
     ],
   },
   {
@@ -89,6 +111,10 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
       {
         name: 'specs',
         description: 'Validate all specs',
+      },
+      {
+        name: 'sources',
+        description: 'Lint marked source spans against orbit/sources.yaml',
       },
       COMMON_FLAGS.type,
       COMMON_FLAGS.strict,
@@ -152,6 +178,10 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
       {
         name: 'no-validate',
         description: 'Skip validation (not recommended)',
+      },
+      {
+        name: 'override-fingerprints',
+        description: 'Proceed past base-fingerprint divergence (deliberate)',
       },
     ],
   },
@@ -380,6 +410,7 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
       {
         name: 'profile',
         description: 'Configure workflow profile (interactive picker or preset shortcut)',
+        acceptsPositional: true,
         flags: [],
       },
     ],
@@ -455,6 +486,207 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
           {
             name: 'force',
             description: 'Overwrite existing schema',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    name: 'emit',
+    description: 'Compose and write a run-summary emit from a narrative payload',
+    acceptsPositional: true,
+    flags: [
+      {
+        name: 'change',
+        description: 'Target workstream (a change, or the staging exploration)',
+        takesValue: true,
+      },
+      {
+        name: 'doc',
+        description: 'Target architecture doc (architecture-scoped commands)',
+        takesValue: true,
+      },
+      {
+        name: 'payload',
+        description: 'Payload JSON file',
+        takesValue: true,
+      },
+      {
+        name: 'json',
+        description: 'Stdout becomes exactly one {path, emit, render?} object',
+      },
+      {
+        name: 'render',
+        description: 'Print the engine report render after the write',
+      },
+    ],
+  },
+  {
+    name: 'fingerprint',
+    description: 'Stamp or check base fingerprints for the delta specs of a change',
+    acceptsPositional: true,
+    positionalType: 'change-id',
+    flags: [
+      {
+        name: 'check',
+        description: 'Check mode: recompute live hashes (never writes)',
+      },
+      {
+        name: 'refresh',
+        description: 'Stamp mode: overwrite existing fingerprints',
+      },
+      COMMON_FLAGS.json,
+    ],
+  },
+  {
+    name: 'external',
+    description: 'External review: the recorded runner of the user, and saving a raw return',
+    flags: [],
+    subcommands: [
+      {
+        name: 'runner',
+        description: 'Print the resolved external runner record (never executes it)',
+        flags: [COMMON_FLAGS.json],
+      },
+      {
+        name: 'save',
+        description: 'Save the raw return of an external AI into the trail of a change',
+        acceptsPositional: true,
+        positionalType: 'change-id',
+        flags: [
+          {
+            name: 'as',
+            description: 'Review mode: proposal or system',
+            takesValue: true,
+            values: ['proposal', 'system'],
+          },
+          {
+            name: 'from',
+            description: 'The raw return file',
+            takesValue: true,
+          },
+          {
+            name: 'launch',
+            description: 'The T0 token of the launch',
+            takesValue: true,
+          },
+          COMMON_FLAGS.json,
+        ],
+      },
+    ],
+  },
+  {
+    name: 'architecture',
+    description: 'Architecture-tier declarations: computed program position, stage sections, doc validation',
+    flags: [],
+    subcommands: [
+      {
+        name: 'status',
+        description: 'Computed stage states across all architecture docs',
+        flags: [COMMON_FLAGS.json],
+      },
+      {
+        name: 'show',
+        description: 'Print one stage section (or the stage index of a doc)',
+        acceptsPositional: true,
+        flags: [COMMON_FLAGS.json],
+      },
+      {
+        name: 'validate',
+        description: 'Validate the parseable structure of a doc',
+        acceptsPositional: true,
+        flags: [COMMON_FLAGS.json],
+      },
+    ],
+  },
+  {
+    name: 'status',
+    description: 'Orientation: bare = current sprint; --full = arc view; --change <id> = per-change status',
+    flags: [
+      {
+        name: 'change',
+        description: 'Change name to show status for',
+        takesValue: true,
+      },
+      {
+        name: 'schema',
+        description: 'Schema override (auto-detected from config.yaml)',
+        takesValue: true,
+      },
+      {
+        name: 'full',
+        description: 'Render the arc view',
+      },
+      {
+        name: 'report',
+        description: 'Render a review pass as the engine-computed report (rides --change)',
+        takesValue: true,
+      },
+      {
+        name: 'boot',
+        description: 'Render the cold-start boot sequence (rides --change)',
+      },
+      {
+        name: 'scenarios',
+        description: 'Render the scenario map (rides --change)',
+      },
+      COMMON_FLAGS.json,
+    ],
+  },
+  {
+    name: 'instructions',
+    description: 'Output enriched instructions for creating an artifact or applying tasks',
+    acceptsPositional: true,
+    flags: [
+      {
+        name: 'change',
+        description: 'Change name',
+        takesValue: true,
+      },
+      {
+        name: 'schema',
+        description: 'Schema override (auto-detected from config.yaml)',
+        takesValue: true,
+      },
+      COMMON_FLAGS.json,
+    ],
+  },
+  {
+    name: 'templates',
+    description: 'Show resolved template paths for all artifacts in a schema',
+    flags: [
+      {
+        name: 'schema',
+        description: 'Schema to use',
+        takesValue: true,
+      },
+      COMMON_FLAGS.json,
+    ],
+  },
+  {
+    name: 'schemas',
+    description: 'List available workflow schemas with descriptions',
+    flags: [COMMON_FLAGS.json],
+  },
+  {
+    name: 'new',
+    description: 'Create new items',
+    flags: [],
+    subcommands: [
+      {
+        name: 'change',
+        description: 'Create a new change directory',
+        acceptsPositional: true,
+        flags: [
+          {
+            name: 'description',
+            description: 'Description to add to README.md',
+            takesValue: true,
+          },
+          {
+            name: 'schema',
+            description: 'Workflow schema to use',
+            takesValue: true,
           },
         ],
       },

@@ -151,7 +151,11 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // SUGGESTION): the §5 heading's parenthetical now scopes its one-prompt claim to the completion flow
   // and names the Step 1 doc selector as the body's other prompt — a wording fix outside any change,
   // one re-record, recorded here and in orbit/.orbit-runs/address-reviews-<TS>.json.
-  getArchitectSkillTemplate: '1c5506bade5358a8cb03c22f617c9e2043ad4f932f46f17e5c7278e586f4ad2f',
+  // rc05 (executable-references, design D6/D8) moved it a FOURTH time: the §2 scaffold's blockquote line
+  // escaped each backtick around `orbit architecture status` twice inside the template literal, so the
+  // generated doc scaffold carried a literal backslash before each one; it now carries plain backticks.
+  // That one line, nothing else; held from here by test/core/cli-grammar/escaped-backticks.test.ts.
+  getArchitectSkillTemplate: 'd0cd052e33c0684b14f3b248ee96119015c61a4cf6023b9947849df143c0fce1',
   getOrbitArchitectCommandTemplate: 'b65b8cca6431bb45aa8587d3bfc1e9458981e2e1bc925ae45cd57414143cb3db',
 };
 
@@ -174,7 +178,7 @@ const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
   'orbit-verify-change': '06080070b8f2dfd4e3053c9143845095d0b80c6efcce286cc46e9de37dfe8ea8', // rc06b-map-readers (2026-10-05): moved with the body's step 6 edit, then again at system walk 2's additions edit (see the function-hash note above)
   'orbit-onboard': 'a2d4f3bc2b5fc3562fe264fcb291e0e280f988fe0a10be081a4770c32fe00e2f', // rc17b task 5.1 (see the function-hash note above)
   'orbit-propose': '3d7fbf5611e1c778292635b8245e89ae1c3370b68f2d671a13bfd51af9f035a9', // rc13c, then rc03b: moved with the body (see the function-hash notes above)
-  'orbit-architect': 'ad06e7eac6e4177eb5a7e0e07976fee6a956314b561f73ff64200fcff27fa24f', // rc15: moved twice with the body — apply, then the system walk; a third time at the post-archive audit walk (see the function-hash note above)
+  'orbit-architect': 'f8b7a68ca470c5a2d2e2f36d42f11b0973c8be58748d86222cca944adb80aed1', // rc15: moved twice with the body — apply, then the system walk; a third time at the post-archive audit walk; a fourth at rc05's apply, the scaffold's escaped backticks (see the function-hash note above)
 };
 
 function stableStringify(value: unknown): string {

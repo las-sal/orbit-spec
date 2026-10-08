@@ -47,7 +47,7 @@ Write the doc scaffolded in the parseable structure BY CONSTRUCTION — format c
 \`\`\`markdown
 # Program: <doc-name>
 
-> Position is COMPUTED — run \\\`orbit architecture status\\\`. This doc declares; the engine renders.
+> Position is COMPUTED — run \`orbit architecture status\`. This doc declares; the engine renders.
 
 ## Premise
 
