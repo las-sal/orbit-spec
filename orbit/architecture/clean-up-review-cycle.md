@@ -3260,6 +3260,18 @@ is unchanged". The proposal's blind pair showed the un-pass is the ordinary path
 in-context review before the walk; Sal took A at proposal walk 1: the unpassed gate names the walk too, before the
 following slot's review, so on the recommended path every walk precedes the pass that checks it.
 
+**Shipped as (2026-10-08; the charter above stays as declared, its exits as revised).** One exported predicate,
+`passedFrontierHoldsUnwalked`, sets a passed FRONTIER gate's row to `/orbit:address-reviews <change>` when it holds an
+unwalked pass, and the change-level selection takes that walk on the same predicate, never because a passed row
+carries a command. An unpassed or stale gate's order is open pair, then the walk when a pass is unresolved OR
+unwalked, then the slot's review. The stage shipped across TWO capabilities, not the one the exploration measured:
+the system blind pair converged on verify's handoff, which still pointed at the next review while the gate named the
+walk, and Sal took A at the walk. Verify's pass, warn and mode-② recommendations now lead with the walk when the
+graph names it (`orbit-run-summary-emit`). On the same walk (Sal: B) `orbit-engine-gates`' superseded sentence was
+narrowed to the gate-id test the engine has always computed, so the frontier's pointer names what the engine does.
+Exit (1) was observed on the stage's own cycle: the in-context verification left `review-system` passed with an
+unwalked SUGGESTION-only pass, and the eligibility line read the walk, then moved to archive once the walk landed.
+
 ## Considered & out
 
 - **Iteration grouping for parallel external passes** (the scaffold's c3-cadence-arithmetic;

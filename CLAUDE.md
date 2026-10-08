@@ -211,7 +211,7 @@ file now carries a live mark. Do NOT read this paragraph as the program's full l
 only what rc07 produced. The authoritative list is the program doc's own Open questions section,
 which also carries Q-crc-11, Q-crc-12, Q-crc-20, Q-crc-21, Q-crc-22 and Q-crc-23.
 
-**Twenty-two more stages have shipped since, and the program is TWENTY-FIVE stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b, rc03c, rc07b and rc06a ratified 2026-10-04; rc06b, rc08a and rc08b ratified 2026-10-05 — rc08a's exit (3), pending by design, was measured on rc08b's cadence and read 4, not zero; the split parent rc08 took its ENDED mark the same day; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening; rc17a ratified 2026-10-06; rc17d ratified 2026-10-06; rc17b ratified 2026-10-06; rc17c ratified 2026-10-07).
+**Twenty-three more stages have shipped since, and the program is TWENTY-FIVE stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b, rc03c, rc07b and rc06a ratified 2026-10-04; rc06b, rc08a and rc08b ratified 2026-10-05 — rc08a's exit (3), pending by design, was measured on rc08b's cadence and read 4, not zero; the split parent rc08 took its ENDED mark the same day; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening; rc17a ratified 2026-10-06; rc17d ratified 2026-10-06; rc17b ratified 2026-10-06; rc17c ratified 2026-10-07).
 
 `rc02c-confirmation-semantics` is ARCHIVED (2026-09-21): **the budget stopped being a target.**
 R-crc-11(h) — effort is RECORDED, never TARGETED — retired `budgetExhausted`, the
@@ -717,6 +717,24 @@ over R-crc-1's ceiling (D-rc17c-6, Sal: "why wait til audit-drift to fix somethi
 external GPT-6 Codex 0C/1W/1S (hold) — converged on one defect, the guard's substring source selection; Sal took B on the
 external's other finding (the subtraction discarded the very pointer the stage repairs). Two walk logs, an in-context
 VERIFICATION grading four `landed`, its one SUGGESTION walked; a COMPUTED PASSED gate. **3039 tests green** (3024 → 3039).
+
+`rc18-walk-is-next` is ARCHIVED (2026-10-08; awaiting ratification): **a passed gate with an unwalked pass names the
+walk next.** One exported predicate in `gates.ts`, `passedFrontierHoldsUnwalked`, sets a passed FRONTIER reviewed
+gate's row to `/orbit:address-reviews <change>` when it holds an unwalked pass (a SUGGESTION-only pass, which never
+gates). The change-level selection takes that walk on the same predicate, never because a passed row carries a
+command, so a passed `review-proposal` after apply never names `/orbit:apply` again. The frontier is the superseded
+test negated, on GATE IDS only, and `orbit-engine-gates`' superseded sentence was narrowed to that test at the system
+walk (Sal: B). An unpassed or stale gate's order is open pair, then the walk when a pass is unresolved OR unwalked,
+then the slot's review, so a SUGGESTION-only pass is walked before the review that checks it (Sal: A at the proposal
+walk). That widened exit (3); exit (2) was revised under R-crc-12's first case, because walking an earlier slot's
+pass after the gate passed still un-passes it (rc17a's 2A, kept). The gate's state, reason and eligibility never move.
+The system blind pair on `54d951b3` (fresh 0C/1W/5S forward, external GPT-6 Codex 0C/1W/0S hold) converged on verify's
+handoff, which still named the next review while the gate named the walk. Sal took A: verify leads with the walk when
+the graph names it, making `orbit-run-summary-emit` the stage's second capability. Two walk logs and an in-context
+VERIFICATION (four `landed`, two `regressed`, walked to zero) led to a COMPUTED PASSED gate. Exit (1) was observed on
+the stage's own cycle: that verification left the gate passed with the walk as its line, and the line moved to archive
+once walked. Sync: 7 MODIFIED across two capabilities, 7/7 byte-verified; the capability count holds at 24.
+**3066 tests green** (3039 → 3066).
 
 Read that doc before any rc-stage work; the D-arc section below is the historical
 record of how the engine got here.

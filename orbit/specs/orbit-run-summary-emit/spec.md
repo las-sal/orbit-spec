@@ -411,9 +411,21 @@ under a cadence whose first uncovered slot is `in-context` it is the bare `/orbi
 and would then name a class satisfying no slot. A downstream status reader extracts the leading
 invocation into `command`/`args`; the class qualifier travels in `args` alongside the change name. The alternative `/orbit:archive <name>` path lives in the reason text and is surfaced to the user via the reader's `reason` field.
 
+**When a review pass is outstanding, the walk leads.** When the gate graph's canonical next for the
+change is the change-scoped walk, `/orbit:address-reviews <name>` (per `orbit-engine-gates`' `Single-voiced
+canonical-next computation`), the leading token is that walk and the text is
+`"/orbit:address-reviews <name> — verification clean; walk the outstanding review findings first"`,
+with no `/orbit:archive` alternative: verify never points at a review the gate's order puts after the walk.
+Any other graph next that is not a system review — the archive command once the system gate has passed with
+nothing outstanding — falls back to the bare `/orbit:review --as system <name>`.
+
 #### Scenario: Verify pass emit recommends review-as-system canonically
 - **WHEN** `/orbit:verify foo` passes
 - **THEN** `verify-<TS>.json`'s `next_recommended` begins with the gate graph's canonical system-review invocation for that change — `"/orbit:review --as system --fresh foo"` under `spec-driven` v4, whose first uncovered system slot is `blind-pair` — and the reason text mentions `/orbit:archive foo` as alternative
+
+#### Scenario: A verify pass with a review pass outstanding leads with the walk
+- **WHEN** `/orbit:verify foo` passes and the gate graph's canonical next is `/orbit:address-reviews foo`, the system gate unpassed or passed
+- **THEN** `verify-<TS>.json`'s `next_recommended` is `"/orbit:address-reviews foo — verification clean; walk the outstanding review findings first"` and names no `/orbit:archive`
 
 #### Scenario: Status reader parses verify-pass recommendation
 - **WHEN** a downstream status reader reads the verify-pass JSON and best-effort parses
@@ -428,6 +440,12 @@ When standalone `/orbit:verify <name>` fails, verify SHALL classify the failure 
 - **Mode ③ (orbit-validate failure)**: `orbit validate` itself fails → `"Fix artifact validation errors: <validator message verbatim>"` (no leading orbit command; reason field carries the validator output)
 
 When verify completes with warnings (passes but with non-blocking findings), the emit-layer SHALL write `next_recommended: "/orbit:review --as system <name> — verification passed with N warnings; system review recommended"`.
+
+The leading `/orbit:review --as system <name>` of mode ② and of the warn state is the gate graph's canonical
+system-review command, as in `Verify pass recommendation`, and when that graph's next is the change-scoped walk
+the walk leads by the same rule: mode ② reads `"/orbit:address-reviews <name> — N spec scenarios fail against
+implementation; walk the outstanding review findings first"` and the warn state
+`"/orbit:address-reviews <name> — verification passed with N warnings; walk the outstanding review findings first"`.
 
 The classification is verify's, stated in its body's `# Orbit additions`, where `orbit-conventions`' `Generated-file disposition` puts orbit behavior; the emit layer classifies nothing, composes from the mode it is handed, and gives verify no marker-dropping or other behaviors (see `Requirement: Emit-layer wraps upstream skills without modifying them`). The mode-② recommendation does NOT use `/orbit:review --as system --mark` because that flag is proposal-mode only and silently ignored in system mode (per `orbit-review/spec.md`'s `Requirement: --mark flag is proposal-mode only`). The user manually walks each system-review finding to decide code-vs-spec.
 
@@ -447,8 +465,12 @@ This precedence directs the user to the root cause first: fix the spec (mode ③
 - **THEN** `verify-<TS>.json`'s `next_recommended` begins with `"/orbit:apply foo"` and mentions the count of remaining tasks
 
 #### Scenario: Mode-② fail recommends /orbit:review --as system (without --mark)
-- **WHEN** `/orbit:verify foo` fails because spec scenarios don't pass against the implementation
+- **WHEN** `/orbit:verify foo` fails because spec scenarios don't pass against the implementation, and no review pass is outstanding
 - **THEN** `verify-<TS>.json`'s `next_recommended` begins with `"/orbit:review --as system foo"` (without `--mark` — that flag is proposal-mode only); reason text explains the user must walk each system-review finding as either a code fix or spec revision
+
+#### Scenario: Mode ② and the warn state lead with the walk when a review pass is outstanding
+- **WHEN** `/orbit:verify foo` fails in mode ②, or passes with warnings, and the gate graph's canonical next is `/orbit:address-reviews foo`
+- **THEN** `verify-<TS>.json`'s `next_recommended` begins with `"/orbit:address-reviews foo — "` and ends `"walk the outstanding review findings first"`
 
 #### Scenario: Mode-③ fail preserves verbatim validator message
 - **WHEN** `/orbit:verify foo` fails because `orbit validate` itself errors (e.g., malformed spec frontmatter)
@@ -574,7 +596,7 @@ When the planned change lands, every prior emit that recommended its command aut
 
 #### Scenario: Verify-pass recommendation does not reference planned reviewer-mode changes
 - **WHEN** the emit-layer writes a verify-pass JSON's `next_recommended`
-- **THEN** the text contains `"/orbit:review --as system <name>"` and does NOT contain qualifiers about external review, fresh-context, or reviewer-mode defaults
+- **THEN** its leading invocation is the one `Verify pass recommendation` names, read from the gate graph, and the text adds NO qualifier of its own about external review, fresh-context, or reviewer-mode defaults
 
 #### Scenario: Emit text contains no other-issue references
 - **WHEN** any run-summary JSON is inspected
