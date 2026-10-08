@@ -1,0 +1,76 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-08T21:05:14Z",
+  "change": "rc05-executable-references",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc05-executable-references/.orbit-runs/review-proposal-2026-10-08T20-55-41Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-08T20-55-41Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 1
+  },
+  "pushback_verification": "verified",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "The hook row and task 1.2 attribute spec's preAction hook to index.ts; it is registered in src/commands/spec.ts",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc05-executable-references/specs/orbit-cli-grammar/spec.md",
+      "line": 20,
+      "classification": "trivial_fix",
+      "action": "The hook row now reads 'on the root and `change` (`src/cli/index.ts`), `spec` (`src/commands/spec.ts`), `config` …', and task 1.2 places the root's and change's hooks in index.ts and spec's, config's and schema's in their command modules, matching specCommand.hook at src/commands/spec.ts:117 and design.md's Context.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc05-executable-references/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "and `spec` (`src/cli/index.ts`)",
+          "`spec`'s in `index.ts`"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc05-executable-references/specs/orbit-cli-grammar/spec.md",
+            "text": "`spec` (`src/commands/spec.ts`)"
+          },
+          {
+            "path": "orbit/changes/rc05-executable-references/tasks.md",
+            "text": "which live in `src/commands/spec.ts`"
+          }
+        ],
+        "searched": [
+          "spec",
+          "hook",
+          "index.ts"
+        ],
+        "scope": [
+          "src/commands/spec.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "One of one resolved: spec's preAction hook is attributed to src/commands/spec.ts in the hook row and task 1.2.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply rc05-executable-references — user-invoked",
+  "ripple_misses": 0
+}

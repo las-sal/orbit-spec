@@ -17,7 +17,7 @@ effects, a check neutralises every commander setting that alters a parse or caus
 | member | covered by |
 |---|---|
 | `.action()` handlers (they exit, write output and touch the repository) | replaced by a no-op on every command that declares one; a command without an action (a group) keeps none, so commander still rejects it run without a subcommand and still reports an unknown subcommand as unknown |
-| `.hook('preAction', …)` on the root, `change` and `spec` (`src/cli/index.ts`), `config` (`src/commands/config.ts`, which exits on a non-global `--scope`) and `schema` (`src/commands/schema.ts`, which writes to stderr) | skipped by the builder's option, passed into the register modules, so no hook is registered |
+| `.hook('preAction', …)` on the root and `change` (`src/cli/index.ts`), `spec` (`src/commands/spec.ts`), `config` (`src/commands/config.ts`, which exits on a non-global `--scope`) and `schema` (`src/commands/schema.ts`, which writes to stderr) | skipped by the builder's option, passed into the register modules, so no hook is registered |
 | commander's own exits (a parse error, `--help`, `--version`) | `exitOverride()` on every command, recursively; an exit is accepted exactly when its code is `commander.helpDisplayed` or `commander.version`, and every other code, `commander.help` (a group run without a subcommand) included, is a rejection |
 | commander's error and help output | `configureOutput` on every command, recursively, capturing commander's message for the failure |
 | `.allowUnknownOption(true)` on `show` | not covered: any flag passes there |
