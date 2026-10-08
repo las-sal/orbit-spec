@@ -3228,7 +3228,7 @@ half-landed pair the gate names the missing member.
 ### Stage rc18-walk-is-next — a passed gate with an unwalked pass names the walk next
 
 Depends-on: rc17a-invoked-coverage
-Complete: [ ]
+Complete: [x] 2026-10-08 (Sal)
 
 Declared 2026-10-07 (Sal) from rc17c's proposal cycle. rc17c's in-context verification passed the
 `review-proposal` gate with three SUGGESTIONs. The gate row listed that pass under `unwalkedPasses`, while the
@@ -5290,3 +5290,15 @@ parent stays `premised` until Sal declares its ended mark, the route rc08, rc13,
 is owned by a child that shipped — exit (2) by rc17a, exit (1) by rc17b, exit (3) by rc17d (as its exit (2)), and the
 short next line by rc17c — all four ratified. The mark says the parent itself will not be graded, as for rc08, rc13,
 rc04, rc03 and rc06.
+
+**2026-10-08 — rc18-walk-is-next RATIFIED (Sal)**, through the architect session's offer. All three exit criteria
+graded MET, (2) as revised under R-crc-12's first case and (3) as widened on Sal's A at the proposal walk, both recorded
+in the charter at apply. (1) A passed frontier gate holding an unwalked pass names `/orbit:address-reviews <change>`
+and still reads `passed`, held by tests on both gates. (2) After the last slot's walk the next is the phase command
+again. After an off-path walk it is the review the order names for the uncovered slots, tested on two- and three-slot
+cadences. (3) An unpassed gate with nothing unwalked keeps its slot command, and one holding an unwalked pass with no
+open pair names the walk first. Exits (1) and (2) were observed live on the stage's own cycle: the in-context
+verification left `review-system` passed with the walk as its line, and the line moved to archive once walked. The
+stage shipped across two capabilities: the system blind pair converged on verify's competing handoff, and Sal's A
+added `orbit-run-summary-emit`. The post-archive project-wide audit found one SUGGESTION, a v4 example in a verify
+scenario, walked the same day.
