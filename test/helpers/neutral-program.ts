@@ -8,7 +8,7 @@
  * - every command, recursively: `exitOverride()` and `configureOutput` capturing
  *   commander's message;
  * - `action(noop)` ONLY on a command that already declares an action, so a group
- *   command still rejects a run without a subcommand (`commander.help`) and still
+ *   command still rejects a run without a subcommand (`commander.help`, exit code 1) and still
  *   reports an unknown subcommand as unknown.
  *
  * The program is built fresh per parse, so option state cannot leak between
@@ -18,11 +18,15 @@ import { Command, CommanderError } from 'commander';
 import { buildProgram } from '../../src/cli/program.js';
 import type { CommandNode } from './surface-snippets.js';
 
-/** The two exit codes that are an ACCEPTED parse; every other code rejects. */
-export const ACCEPTED_EXIT_CODES: ReadonlySet<string> = new Set([
-  'commander.helpDisplayed',
-  'commander.version',
-]);
+/**
+ * A thrown exit is an ACCEPTED parse exactly when commander's exit code is 0, as the CLI's
+ * process would exit: `--help`, `--version` and `help <command>`. Every nonzero exit rejects,
+ * `commander.help` from a group run without a subcommand included, though `help <command>`
+ * throws the same error code with exit code 0.
+ */
+export function acceptedExit(error: CommanderError): boolean {
+  return error.exitCode === 0;
+}
 
 export interface ParseResult {
   ok: boolean;
@@ -63,7 +67,7 @@ export async function parseArgv(argv: string[]): Promise<ParseResult> {
   } catch (error) {
     if (error instanceof CommanderError) {
       const message = (sink.join('').trim() || error.message).trim();
-      return { ok: ACCEPTED_EXIT_CODES.has(error.code), code: error.code, message };
+      return { ok: acceptedExit(error), code: error.code, message };
     }
     throw error;
   }

@@ -11,14 +11,16 @@
  * unchanged. Fences are LOCATED by markdown-it (a devDependency), and the same
  * parse serves the extractor and the guard.
  */
+import { readFileSync } from 'fs';
 import MarkdownIt, { type Token } from 'markdown-it';
-import { getSkillTemplates } from '../../src/core/shared/skill-generation.js';
+import { generateSkillContent, getSkillTemplates } from '../../src/core/shared/skill-generation.js';
 
 export interface Surface {
   /** The workflow id (`getSkillTemplates()`'s `workflowId`). */
   workflowId: string;
   /** `SKILL.md`, or `references/<name>`. */
   file: string;
+  /** The file as the generator writes it, so a reported line is a line of the installed file. */
   text: string;
 }
 
@@ -67,11 +69,17 @@ export const MARKDOWN_INFO = new Set(['markdown', 'md']);
 
 const md = new MarkdownIt();
 
-/** Every generated SKILL.md and `references/*.md`, through the generator's own registry. */
+const VERSION: string = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf-8')).version;
+
+/**
+ * Every generated SKILL.md and `references/*.md`, through the generator's own registry. A SKILL.md
+ * is the generator's own output — its frontmatter above the instructions — as written for the
+ * tools that take no command-reference transform (Claude, Codex); a reference is written verbatim.
+ */
 export function generatedSurfaces(): Surface[] {
   const surfaces: Surface[] = [];
   for (const entry of getSkillTemplates()) {
-    surfaces.push({ workflowId: entry.workflowId, file: 'SKILL.md', text: entry.template.instructions });
+    surfaces.push({ workflowId: entry.workflowId, file: 'SKILL.md', text: generateSkillContent(entry.template, VERSION) });
     for (const ref of entry.template.references ?? []) {
       surfaces.push({ workflowId: entry.workflowId, file: `references/${ref.name}`, text: ref.content });
     }
@@ -93,7 +101,10 @@ export type TokenizeResult = { ok: true; tokens: string[] } | { ok: false; open:
 
 /**
  * Split one command line into tokens by the spec's rules: a quoted value is one
- * token (`\"` does not close a double quote); a `<…>` placeholder is one token,
+ * token; a backslash escapes as the shell's does (outside quotes the next
+ * character; inside double quotes `"`, `\`, `$` and a backtick; inside single
+ * quotes nothing), so `\"` opens no quote; a `<…>` placeholder (a `<` not
+ * followed by whitespace, which is a redirect) is one token,
  * spaces inside and a suffix attached; a trailing ` # …` comment outside quotes
  * is dropped; `…` and `...` are dropped. An open quote at the end is reported, so
  * the caller can join the next line or fail.
@@ -116,6 +127,12 @@ export function tokenize(line: string): TokenizeResult {
       continue;
     }
     if (c === '#' && !inToken) break;
+    if (c === '\\' && i + 1 < line.length) {
+      current += line[i + 1];
+      inToken = true;
+      i += 2;
+      continue;
+    }
     if (c === "'") {
       const end = line.indexOf("'", i + 1);
       if (end === -1) return { ok: false, open: "'" };
@@ -128,8 +145,8 @@ export function tokenize(line: string): TokenizeResult {
       let j = i + 1;
       let value = '';
       while (j < line.length && line[j] !== '"') {
-        if (line[j] === '\\' && line[j + 1] === '"') {
-          value += '"';
+        if (line[j] === '\\' && j + 1 < line.length && '"\\$`'.includes(line[j + 1])) {
+          value += line[j + 1];
           j += 2;
           continue;
         }
@@ -142,7 +159,8 @@ export function tokenize(line: string): TokenizeResult {
       i = j + 1;
       continue;
     }
-    if (c === '<') {
+    // `< file` (whitespace after) is a shell redirect, never a placeholder's opener.
+    if (c === '<' && i + 1 < line.length && !/\s/.test(line[i + 1])) {
       const end = line.indexOf('>', i + 1);
       if (end !== -1) {
         current += line.slice(i, end + 1);
@@ -217,14 +235,14 @@ function extractFenceLines(walk: Walk, token: Token, contentStart: number): void
     }
     const line = contentStart + startIdx + 1;
     if (!result.ok) {
-      if (tokenizeFirstWord(lines[startIdx]) === walk.tool) {
-        walk.out.failures.push({
-          surface: walk.surface,
-          line,
-          snippet: text,
-          message: `unterminated ${result.open} quote at the end of the shell fence`,
-        });
-      }
+      // Whatever the line's first word: a non-tool line holding a quote open would
+      // otherwise swallow every tool line after it, unseen by the sweep and the guard.
+      walk.out.failures.push({
+        surface: walk.surface,
+        line,
+        snippet: text,
+        message: `unterminated ${result.open} quote at the end of the shell fence`,
+      });
       i++;
       continue;
     }
@@ -235,9 +253,6 @@ function extractFenceLines(walk: Walk, token: Token, contentStart: number): void
   }
 }
 
-function tokenizeFirstWord(line: string): string {
-  return line.trim().split(/\s+/)[0] ?? '';
-}
 
 function locateInline(parent: Token, child: Token, from: number): { index: number; end: number } | null {
   const escaped = child.content.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/ /g, '[ \\n]');

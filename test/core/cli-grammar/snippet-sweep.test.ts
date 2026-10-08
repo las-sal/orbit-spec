@@ -11,7 +11,8 @@ const analysis = analyseOrbit(generatedSurfaces());
 
 /**
  * A non-vacuity floor, not a pin: at rc05's apply the sweep parsed 129 snippets and set aside
- * 35 bare command names (figures recorded in the apply emit). An extractor that silently found
+ * 35 bare command names (figures recorded in the apply emit); 130 once the system walk read each
+ * SKILL.md with its generated frontmatter. An extractor that silently found
  * nothing would pass every parse; the floor fails it, while a body edit adding or removing a
  * snippet does not.
  */

@@ -134,7 +134,9 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // grep scenario: "iteration history" on a line naming the trail path) reads as a hit over EVERY generated
   // skill. The line describes moving files, not a brief; it now says "run trail". Keeping the rule as written
   // beat narrowing it; the hit was measured at task 1.1 (one of the eleven pre-apply reds).
-  getOrbitProposeSkillTemplate: '26186913b5641d3434f60e4c961c30913fdc67438845fec5f8d2ddb7b80671df',
+  // rc05's system walk: the Touchpoints example names `src/cli/program.ts` for registration and flags, where
+  // rc05's builder moved them (`src/cli/index.ts` only parses now); both propose hashes moved with that one line.
+  getOrbitProposeSkillTemplate: '32a2cd2dbcd86f82aa4a6fb103e250b4b4f57222bf625ba4eb2f9059dbd6b743',
   getOrbitProposeCommandTemplate: 'b91222654d5050d7ae7f2f49b5d6c4b34e65638bd8c5ae3e622550eb1329c168',
   getFeedbackSkillTemplate: 'ded61ad85c5050f7bf241870b14bfcdd929f0be68a028c1130fd30a66efbda3b',
   // rc15 (ended-stage-state, 2026-09-29): the orbit-architect body moved ONCE, deliberately — §5 (the
@@ -177,7 +179,7 @@ const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
   'orbit-bulk-archive-change': '601dd7c74804c06a9818428f86030c8cef5311a9fc7c59f2dc14e490007a291d',
   'orbit-verify-change': '06080070b8f2dfd4e3053c9143845095d0b80c6efcce286cc46e9de37dfe8ea8', // rc06b-map-readers (2026-10-05): moved with the body's step 6 edit, then again at system walk 2's additions edit (see the function-hash note above)
   'orbit-onboard': 'a2d4f3bc2b5fc3562fe264fcb291e0e280f988fe0a10be081a4770c32fe00e2f', // rc17b task 5.1 (see the function-hash note above)
-  'orbit-propose': '3d7fbf5611e1c778292635b8245e89ae1c3370b68f2d671a13bfd51af9f035a9', // rc13c, then rc03b: moved with the body (see the function-hash notes above)
+  'orbit-propose': 'ba2dca74088af042251726bb44e110eb796e5ab1f239a7e8721f0f8297ee00ab', // rc13c, then rc03b, then rc05's system walk: moved with the body (see the function-hash notes above)
   'orbit-architect': 'f8b7a68ca470c5a2d2e2f36d42f11b0973c8be58748d86222cca944adb80aed1', // rc15: moved twice with the body — apply, then the system walk; a third time at the post-archive audit walk; a fourth at rc05's apply, the scaffold's escaped backticks (see the function-hash note above)
 };
 

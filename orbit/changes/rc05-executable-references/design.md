@@ -59,17 +59,18 @@ message) on every command, and `action(noop)` ONLY on a command that already dec
 keeps no action, so commander still rejects it run without a subcommand (`commander.help`), still offers its implicit
 `help` subcommand, and still reports an unknown subcommand as unknown; putting a no-op on every command would change
 all three (proposal walk, both halves of the pair). Each snippet's argument vector goes to
-`parseAsync(argv, { from: 'user' })`. A `CommanderError` is accepted exactly when its code is `commander.helpDisplayed`
-or `commander.version`. The program is built fresh per snippet, so option state cannot leak between snippets.
+`parseAsync(argv, { from: 'user' })`. A `CommanderError` is accepted exactly when its exit code is 0 (`--help`,
+`--version`, `help <command>`), as the CLI's process would exit; its error code cannot decide, because `help <command>`
+and a group run without a subcommand both throw `commander.help`. The program is built fresh per snippet, so option state cannot leak between snippets.
 
 **D3 — one shared extraction helper (D-rc05-11, D-rc05-13, D-rc05-18).** A test helper enumerates every generated
 surface through `getSkillTemplates()` (`src/core/shared/skill-generation.ts`), the generator's own registry, so it reads
 exactly the shipped workflows (architect included, the never-generated feedback template excluded) and picks up a new
-workflow without an edit. For each entry it reads `instructions` and every `references` entry. It locates fences with a CommonMark
+workflow without an edit. For each entry it reads the SKILL.md as `generateSkillContent` writes it (frontmatter above the `instructions`, so a reported line is a line of the installed file) and every `references` entry. It locates fences with a CommonMark
 parser and parses the content of a `markdown`/`md` fence again. It extracts lines of `bash`/`sh`/`shell` fences and
 inline `orbit ` spans, tokenizes them by the spec's rules, and applies the bare-name rule by walking the program's
-command tree. Joining an open quote stops at the end of its shell fence's content, and a quote still open there fails extraction;
-inside double quotes, `\"` does not close. It is tool-agnostic apart from the tool name, so `rc05b-git-grammar`
+command tree. Joining an open quote stops at the end of its shell fence's content, and a quote still open there fails extraction
+whatever the line's first token; a backslash escapes as the shell's does, and a `<` followed by whitespace is a redirect. It is tool-agnostic apart from the tool name, so `rc05b-git-grammar`
 consumes it unchanged. The guard reads the same parse: on every line outside a shell fence it strips leading
 whitespace, `>` markers, list markers and a leading `|`, and fails a line whose first token is the tool and any later
 token begins with `-`.

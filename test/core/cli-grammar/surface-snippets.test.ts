@@ -73,6 +73,22 @@ describe('the places table', () => {
     expect(result.failures[0].message).toMatch(/unterminated " quote/);
   });
 
+  // @scenario behaviour orbit-cli-grammar :: Every `orbit` snippet on the generated surface parses against that program :: An unterminated quote fails extraction
+  it('a quote a non-orbit line holds open fails extraction too, so it cannot hide a later orbit line', () => {
+    const swallowed = analyse(`${FENCE}bash\necho it's here\norbit status --frobnicate\n${FENCE}\n`);
+    expect(swallowed.snippets).toEqual([]);
+    expect(swallowed.failures.map((f) => ({ line: f.line, snippet: f.snippet }))).toEqual([
+      { line: 2, snippet: "echo it's here\norbit status --frobnicate" },
+    ]);
+
+    // A backslash outside quotes escapes as the shell's does: `\"` opens no quote.
+    const escaped = analyse(`${FENCE}bash\necho \\"\norbit status --frobnicate\n${FENCE}\n`);
+    expect(escaped.failures).toEqual([]);
+    expect(escaped.snippets.map((sn) => ({ line: sn.line, tokens: sn.tokens }))).toEqual([
+      { line: 3, tokens: ['orbit', 'status', '--frobnicate'] },
+    ]);
+  });
+
   it('an inline single-backtick span beginning `orbit ` is extracted', () => {
     expect(extracted('Run `orbit status --change demo --json` first.\n')).toEqual([
       { line: 1, tokens: ['orbit', 'status', '--change', 'demo', '--json'], source: 'inline' },
@@ -148,6 +164,18 @@ describe('the tokenizer', () => {
 
   it('inside double quotes, \\" does not close the quote', () => {
     expect(tokenize(`orbit a "say \\"hi\\" now" b`)).toEqual({ ok: true, tokens: ['orbit', 'a', 'say "hi" now', 'b'] });
+  });
+
+  it('a backslash escapes as the shell\'s does: outside quotes the next character, inside single quotes nothing', () => {
+    expect(tokenize(`echo \\" it\\'s`)).toEqual({ ok: true, tokens: ['echo', '"', "it's"] });
+    expect(tokenize(`orbit a "x\\\\" 'y\\'`)).toEqual({ ok: true, tokens: ['orbit', 'a', 'x\\', 'y\\'] });
+  });
+
+  it('a `<` followed by whitespace is a redirect, not a placeholder\'s opener', () => {
+    expect(tokenize(`run < '<run-dir>/p.md' > '<run-dir>/log'`)).toEqual({
+      ok: true,
+      tokens: ['run', '<', '<run-dir>/p.md', '>', '<run-dir>/log'],
+    });
   });
 
   // @scenario behaviour orbit-cli-grammar :: Every `orbit` snippet on the generated surface parses against that program :: A placeholder with a suffix is one token

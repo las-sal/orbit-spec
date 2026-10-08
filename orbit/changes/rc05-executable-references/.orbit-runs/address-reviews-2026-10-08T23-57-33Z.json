@@ -1,0 +1,153 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-08T23:57:33Z",
+  "change": "rc05-executable-references",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc05-executable-references/.orbit-runs/external-system-2026-10-08T23-44-26Z.md",
+  "source_command": null,
+  "source_token": "2026-10-08T23-44-26Z",
+  "latest_apply_token": "2026-10-08T21-30-48Z",
+  "external_reviewer": "GPT-6 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 2
+  },
+  "pushback_verification": "verified",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 1,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "classification": "stale",
+      "outcome": "stale",
+      "marker_source": "external",
+      "severity": "WARNING",
+      "title": "A non-orbit line can silently swallow an orbit command",
+      "file": "test/helpers/surface-snippets.ts",
+      "line": 213,
+      "action": "Converged with the fresh pass's \"An unclosed quote on a non-orbit shell line hides every later orbit line in the fence\", walked in log 2026-10-08T23-53-57Z: the tokenizer now escapes a backslash outside quotes as the shell does, so `echo \\\"` opens no quote, and an open quote fails extraction whatever the first word. Re-checked by injection: `echo \\\"` then `orbit status --frobnicate` in a reference fence fails the sweep on the orbit line's unknown option.",
+      "evidence": "resolved in address-reviews-2026-10-08T23-53-57Z; test/core/cli-grammar/injections.test.ts \"an escaped quote opens none, so the orbit line after it is parsed and fails\" passes, and fails against the HEAD helper"
+    },
+    {
+      "remedy": "repair",
+      "outcome": "resolved",
+      "classification": "trivial_fix",
+      "marker_source": "external",
+      "severity": "SUGGESTION",
+      "title": "SKILL.md diagnostic locations omit the generated frontmatter",
+      "file": "test/helpers/surface-snippets.ts",
+      "line": 74,
+      "action": "Each SKILL.md surface is now the generator's own output, generateSkillContent(template, version) — frontmatter above the instructions, as written for Claude and Codex (no command-reference transform) — so a reported line is a line of the installed file. The frontmatter carried one orbit snippet (address-reviews compatibility line, `orbit status --change <name> --json`), now parsed: 130 snippets, 35 bare names, 0 failures, 0 guard hits. Design D3 and the sweep floor comment say so.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc05-executable-references/design.md",
+          "test/core/cli-grammar/snippet-sweep.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "text: entry.template.instructions"
+        ],
+        "introduced": [
+          {
+            "path": "test/helpers/surface-snippets.ts",
+            "text": "generateSkillContent(entry.template, VERSION)"
+          },
+          {
+            "path": "orbit/changes/rc05-executable-references/design.md",
+            "text": "so a reported line is a line of the installed file"
+          }
+        ],
+        "searched": [
+          "instructions",
+          "generatedSurfaces",
+          "SKILL.md"
+        ],
+        "scope": [
+          "orbit/changes/rc05-executable-references/tasks.md",
+          "test/core/cli-grammar/"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "remedy": "repair",
+      "outcome": "resolved",
+      "classification": "trivial_fix",
+      "marker_source": "external",
+      "severity": "SUGGESTION",
+      "title": "The generated touchpoints example still names the former grammar owner",
+      "file": "src/core/templates/workflows/propose.ts",
+      "line": 215,
+      "action": "The Touchpoints example names src/cli/program.ts for registration and flags. Both propose hashes in the skill-templates parity pin moved with that one line, recorded in the pin. The touchpoints parser test keeps its own fixture line: it tests the entry grammar, not this repo's layout.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "src/cli/index.ts"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/propose.ts",
+            "text": "src/cli/program.ts"
+          }
+        ],
+        "searched": [
+          "registration; flags",
+          "src/cli/index.ts"
+        ],
+        "scope": [
+          "test/core/parsers/touchpoints.test.ts"
+        ],
+        "kept": [
+          {
+            "path": "test/core/parsers/touchpoints.test.ts",
+            "why": "a parser fixture for the Touchpoints entry grammar; it names no claim about this repo's layout"
+          },
+          {
+            "path": "orbit/changes/rc05-executable-references/proposal.md",
+            "why": "names src/cli/index.ts as the entry point the change reduces, which it still is"
+          },
+          {
+            "path": "orbit/changes/rc05-executable-references/design.md",
+            "why": "D1 names src/cli/index.ts as the entry point that only builds and parses"
+          },
+          {
+            "path": "orbit/changes/rc05-executable-references/tasks.md",
+            "why": "task records naming the entry point the apply reduced"
+          },
+          {
+            "path": "orbit/changes/rc05-executable-references/explore.md",
+            "why": "the concluded exploration record"
+          },
+          {
+            "path": "orbit/changes/rc05-executable-references/specs/orbit-cli-grammar/spec.md",
+            "why": "the requirement names src/cli/index.ts as the entry point that only builds and parses"
+          },
+          {
+            "path": "test/core/templates/skill-templates-parity.test.ts",
+            "why": "the pin's note records the move away from it"
+          }
+        ]
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "The warning converged with the fresh pass and was walked in its log; two suggestions repaired: SKILL.md surfaces are the generated files with frontmatter, and the propose Touchpoints example names the builder.",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system rc05-executable-references",
+  "ripple_misses": 0
+}

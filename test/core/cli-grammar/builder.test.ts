@@ -34,6 +34,9 @@ describe('the entry point', () => {
     expect(source).toMatch(/buildProgram\(\)\.parse\(\);/);
 
     const effects = spyEffects();
+    // The root hook's only effect is setting NO_COLOR on `--no-color`; the spies cannot see it.
+    const noColor = process.env.NO_COLOR;
+    delete process.env.NO_COLOR;
     for (const argv of [
       ['config', '--scope', 'local', 'list'],
       ['schema', 'which'],
@@ -45,6 +48,8 @@ describe('the entry point', () => {
       const result = await parseArgv(argv);
       expect(result, argv.join(' ')).toEqual({ ok: true, code: null, message: '' });
     }
+    expect(process.env.NO_COLOR).toBeUndefined();
+    if (noColor !== undefined) process.env.NO_COLOR = noColor;
     expect(effects.exit).not.toHaveBeenCalled();
     expect(effects.stderr).not.toHaveBeenCalled();
     expect(effects.stdout).not.toHaveBeenCalled();
@@ -91,8 +96,23 @@ describe('the neutral parse', () => {
     expect(version).toMatchObject({ ok: true, code: 'commander.version' });
   });
 
+  // Commander throws `commander.help` for both; only the exit code tells them apart, as the CLI's
+  // own exit status does (`orbit help status` exits 0, `orbit help frobnicate` and `orbit external` 1).
+  it('accepts `help <command>` and rejects `help` of an unknown command, by exit code', async () => {
+    expect(await parseArgv(['help', 'status'])).toMatchObject({ ok: true, code: 'commander.help' });
+    expect(await parseArgv(['help', 'frobnicate'])).toMatchObject({ ok: false, code: 'commander.help' });
+  });
+
   it('rejects a missing required argument and an excess argument', async () => {
     expect(await parseArgv(['fingerprint'])).toMatchObject({ ok: false, code: 'commander.missingArgument' });
     expect(await parseArgv(['list', 'extra'])).toMatchObject({ ok: false, code: 'commander.excessArguments' });
+  });
+
+  it('keeps and enforces a required option (`external save` without `--as`)', async () => {
+    expect(await parseArgv(['external', 'save', 'c', '--from', 'r.md'])).toMatchObject({
+      ok: false,
+      code: 'commander.missingMandatoryOptionValue',
+    });
+    expect(await parseArgv(['external', 'save', 'c', '--as', 'system', '--from', 'r.md'])).toEqual({ ok: true, code: null, message: '' });
   });
 });

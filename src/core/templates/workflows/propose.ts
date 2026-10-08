@@ -212,7 +212,7 @@ The generated \`design.md\` carries a \`## Touchpoints\` section: the PREDICTED 
 \`\`\`markdown
 ## Touchpoints
 
-- \`src/cli/index.ts\` — registration; flags.
+- \`src/cli/program.ts\` — registration; flags.
 - \`src/commands/\` — new command module.
 - \`src/core/templates/workflows/*.ts\` — the body pass.
 - \`src/core/orientation.ts\` + \`src/core/artifact-graph/gates.ts\` — either home works.

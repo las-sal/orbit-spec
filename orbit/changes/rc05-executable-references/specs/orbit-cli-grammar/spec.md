@@ -18,17 +18,18 @@ effects, a check neutralises every commander setting that alters a parse or caus
 |---|---|
 | `.action()` handlers (they exit, write output and touch the repository) | replaced by a no-op on every command that declares one; a command without an action (a group) keeps none, so commander still rejects it run without a subcommand and still reports an unknown subcommand as unknown |
 | `.hook('preAction', …)` on the root and `change` (`src/cli/index.ts`), `spec` (`src/commands/spec.ts`), `config` (`src/commands/config.ts`, which exits on a non-global `--scope`) and `schema` (`src/commands/schema.ts`, which writes to stderr) | skipped by the builder's option, passed into the register modules, so no hook is registered |
-| commander's own exits (a parse error, `--help`, `--version`) | `exitOverride()` on every command, recursively; an exit is accepted exactly when its code is `commander.helpDisplayed` or `commander.version`, and every other code, `commander.help` (a group run without a subcommand) included, is a rejection |
+| commander's own exits (a parse error, `--help`, `--version`, `help <command>`) | `exitOverride()` on every command, recursively; an exit is accepted exactly when commander's exit code is 0, as the CLI's process would exit (`--help`, `--version`, `help <command>`), and every nonzero exit is a rejection — `commander.help` from a group run without a subcommand included, though `help <command>` throws the same error code with exit code 0 |
 | commander's error and help output | `configureOutput` on every command, recursively, capturing commander's message for the failure |
 | `.allowUnknownOption(true)` on `show` | not covered: any flag passes there |
+| `.requiredOption()` on `external save` (`--as`, `--from`) | kept and enforced: a missing one rejects with `commander.missingMandatoryOptionValue`, as the CLI does |
 | option values (no command declares `.choices()`) | not covered: values are checked in action code a grammar check never runs |
 | async actions | `parseAsync`, so a rejected promise is caught, never unhandled |
 | module-level work (the version read, the tool list, the parse call) | the builder holds everything except the parse call, which `index.ts` keeps |
 | the three `register*Command(program)` modules | called inside the builder, each passed the hook option |
 
 Closure: commander 14's Command settings that change parsing or cause effects — action, hook, exitOverride,
-configureOutput, allowUnknownOption, allowExcessArguments, passThroughOptions, enablePositionalOptions, help and
-version — each grepped in `src/cli/index.ts` and the three `register*Command` modules.
+configureOutput, allowUnknownOption, requiredOption, allowExcessArguments, passThroughOptions, enablePositionalOptions,
+help and version — each grepped in `src/cli/index.ts` and the three `register*Command` modules.
 
 #### Scenario: The entry point declares nothing of its own
 
@@ -39,7 +40,7 @@ version — each grepped in `src/cli/index.ts` and the three `register*Command` 
 #### Scenario: A group command run without its subcommand is rejected
 
 - **WHEN** a check hands the neutralised program `external`, a group command with no action of its own
-- **THEN** `parseAsync` rejects with `commander.help`, as the CLI rejects it, and `external frobnicate` rejects with
+- **THEN** `parseAsync` rejects with `commander.help` and exit code 1, as the CLI rejects it, and `external frobnicate` rejects with
   commander's unknown-command error
 
 #### Scenario: A parse error throws instead of exiting
@@ -79,19 +80,25 @@ leading whitespace, blockquote `>` markers, list markers and a leading `|`, and 
 | a line in a fence whose info string is `bash`, `sh` or `shell` | extracted, one argument vector per line |
 | a line in such a fence nested in a list item | extracted the same way |
 | a shell fence inside a fence whose info string is `markdown` or `md` | extracted: the outer fence's content is parsed again, and its reader runs those commands |
-| a quoted argument spanning lines | the lines are joined until the quote closes, within the same shell fence's content; a quote still open at the fence's end fails extraction, naming the surface, the line and the snippet |
+| a quoted argument spanning lines | the lines are joined until the quote closes, within the same shell fence's content; a quote still open at the fence's end fails extraction whatever the opening line's first token, naming the surface, the line and the snippet, so a line of another tool cannot hide the `orbit` lines after it |
 | an inline single-backtick span beginning `orbit ` | extracted, unless every token resolves to a command of the program with nothing after it: a bare command NAME is prose |
 | a line in an untagged fence, a data-tagged fence, or prose outside every fence | not extracted; the guard |
 | a line whose first token is a placeholder (a runner's argument vector) | not extracted: not `orbit` |
 
 Named limit (the places). Residual kind: a command in a container not listed: a blockquote, an indented code block, an
-HTML block, a table cell, or mid-line after `&&`, `$ ` or `|`. Residual method: the guard itself reads every line
-whatever its container, so a residual member that starts a line fails it; a member mid-line is found by splitting
-candidate lines on `&&`, `;` and `|` and rerunning the guard.
+HTML block, a table cell, or mid-line after `&&`, `$ ` or `|`; a command in a double-backtick inline span; and, inside
+a shell fence, a line prefixed `$ ` or by an assignment (`VAR=1 orbit …`), or a command continued onto the next line by
+a trailing `\` (its `\` reaches the parser as an argument, a false failure). Residual method: the guard reads every
+line OUTSIDE a shell fence whatever its container, so a residual member there that starts a line fails it; a member
+mid-line, or in a double-backtick span, is found by splitting candidate lines on `&&`, `;` and `|` and rerunning the
+guard; the shell-fence members are found by grepping the extracted fences' lines for a leading `$ ` or assignment and a
+trailing `\`.
 
 The tokenizer SHALL keep a quoted value as one token, keep a `<…>` placeholder as one token even with spaces inside
 or a suffix attached (`<run-dir>/return.md`), drop a trailing ` # …` comment outside quotes, and drop `…` and `...`.
-Inside double quotes, `\"` does not close the quote.
+A backslash escapes as the shell's does: outside quotes it escapes the next character, so `\"` opens no quote; inside
+double quotes it escapes `"`, `\`, `$` and a backtick; inside single quotes it escapes nothing. A `<` followed by
+whitespace is a redirect, never a placeholder's opener.
 A placeholder reaches the parser as a value, exactly as a real value would.
 
 Fences are LOCATED by a CommonMark parser, the same parse serving the extractor and the guard, so a line cannot be

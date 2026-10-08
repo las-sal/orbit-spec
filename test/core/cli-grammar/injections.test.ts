@@ -103,6 +103,34 @@ describe('the sweep fails on an injected defect, naming the surface and the line
   });
 });
 
+describe('a non-orbit line before an injected defect cannot hide it', () => {
+  const place = PLACES.find((p) => p.place === 'reference shell fence')!;
+
+  function injectAfterOpener(lines: string[]): { surfaces: Surface[]; first: number } {
+    const base = surfaceNamed(place.surface);
+    const opening = openingLine(base, 'reference shell fence');
+    const text = base.text.split('\n');
+    const indent = text[opening].match(/^[\s>]*/)?.[0] ?? '';
+    text.splice(opening + 1, 0, ...lines.map((l) => indent + l));
+    return { surfaces: withSurface({ ...base, text: text.join('\n') }), first: opening + 2 };
+  }
+
+  it('an apostrophe left open fails extraction at its own line', async () => {
+    const { surfaces, first } = injectAfterOpener(["echo it's here", 'orbit status --frobnicate']);
+    const failures = await sweepFailures(analyseOrbit(surfaces));
+    expect(failures).toHaveLength(1);
+    expect(failures[0]).toMatch(new RegExp(`^${place.surface}:${first}: echo it's here\n`));
+    expect(failures[0]).toMatch(/unterminated ' quote at the end of the shell fence$/);
+  });
+
+  it('an escaped quote opens none, so the orbit line after it is parsed and fails', async () => {
+    const { surfaces, first } = injectAfterOpener(['echo \\"', 'orbit status --frobnicate']);
+    expect(await sweepFailures(analyseOrbit(surfaces))).toEqual([
+      `${place.surface}:${first + 1}: orbit status --frobnicate\n    error: unknown option '--frobnicate'`,
+    ]);
+  });
+});
+
 describe('the guard fails on an injected command outside a shell fence, naming the surface and the line', () => {
   const UNTAGGED_HOST = 'apply/SKILL.md';
 
