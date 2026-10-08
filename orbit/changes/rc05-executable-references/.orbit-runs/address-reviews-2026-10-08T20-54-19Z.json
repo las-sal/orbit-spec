@@ -1,0 +1,145 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-08T20:54:19Z",
+  "change": "rc05-executable-references",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc05-executable-references/.orbit-runs/external-proposal-2026-10-08T20-48-08Z.md",
+  "source_command": null,
+  "source_token": "2026-10-08T20-48-08Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6 (Codex)",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 3
+  },
+  "pushback_verification": "verified",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 4,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Neutralising every command changes the grammar being checked",
+      "marker_source": "external",
+      "file": "orbit/changes/rc05-executable-references/design.md",
+      "line": 49,
+      "classification": "stale",
+      "outcome": "stale",
+      "action": "Converged with the fresh pass's \"Neutralisation as written makes the sweep accept invocations the CLI rejects\", walked in the earlier pass's log address-reviews-2026-10-08T20-54-00Z.",
+      "evidence": "address-reviews-2026-10-08T20-54-00Z resolved it: design D2 now sets action(noop) only on a command that already declares one and accepts exactly commander.helpDisplayed and commander.version; the spec's table row says the same."
+    },
+    {
+      "severity": "WARNING",
+      "title": "The guard predicate contradicts its required untagged-fence scenario",
+      "marker_source": "external",
+      "file": "orbit/changes/rc05-executable-references/specs/orbit-cli-grammar/spec.md",
+      "line": 65,
+      "classification": "stale",
+      "outcome": "stale",
+      "action": "Converged with the fresh pass's \"The guard's matching rule is ambiguous, and its residual claim depends on an unstated line normalisation\", walked in the earlier pass's log address-reviews-2026-10-08T20-54-00Z.",
+      "evidence": "address-reviews-2026-10-08T20-54-00Z resolved it: the guard fails a normalised line whose first token is orbit and any later token begins with '-', so `orbit validate --strict` and `orbit status --frobnicate` fail; task 5.2 injects both."
+    },
+    {
+      "severity": "WARNING",
+      "title": "Unterminated quotes have no specified failure or joining boundary",
+      "marker_source": "external",
+      "file": "orbit/changes/rc05-executable-references/specs/orbit-cli-grammar/spec.md",
+      "line": 74,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "action": "The places table's joining row now stops at the end of the same shell fence's content, and a quote still open there fails extraction naming the surface, line and snippet. Inside double quotes, \\\" does not close the quote. A new scenario covers it, and design D3 and tasks 2.2 and 2.3 carry the rule and its failure test.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc05-executable-references/design.md",
+          "orbit/changes/rc05-executable-references/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "joined until the quote closes |"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc05-executable-references/specs/orbit-cli-grammar/spec.md",
+            "text": "a quote still open at the fence's end fails extraction"
+          }
+        ],
+        "searched": [
+          "quote",
+          "joined"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Enumerate installed workflows rather than every template getter",
+      "marker_source": "external",
+      "file": "orbit/changes/rc05-executable-references/design.md",
+      "line": 55,
+      "classification": "stale",
+      "outcome": "stale",
+      "action": "Converged with the fresh pass's \"D3 and task 2.2 enumerate templates the generator does not emit\", walked in the earlier pass's log address-reviews-2026-10-08T20-54-00Z.",
+      "evidence": "address-reviews-2026-10-08T20-54-00Z resolved it: D3 and task 2.2 enumerate through getSkillTemplates(), and task 2.3 asserts the helper's set equals it (architect in, feedback out)."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The refactor baseline needs a reproducible verification strategy",
+      "marker_source": "external",
+      "file": "orbit/changes/rc05-executable-references/tasks.md",
+      "line": 5,
+      "classification": "stale",
+      "outcome": "stale",
+      "action": "Converged with the fresh pass's \"Task 1.3's byte-identity tests compare against an uncommitted baseline that section 4 changes on purpose\", walked in the earlier pass's log address-reviews-2026-10-08T20-54-00Z.",
+      "evidence": "address-reviews-2026-10-08T20-54-00Z resolved it: byte-identity is a one-time apply measurement (task 1.4) recorded in the apply emit; the committed test asserts the entry point declares nothing."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Explicitly falsify flag parity as well as command parity",
+      "marker_source": "external",
+      "file": "orbit/changes/rc05-executable-references/tasks.md",
+      "line": 29,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "action": "Task 5.3 now shows the parity test failing on a flag added to a program command the registry lacks, a registry flag the program lacks, and a changed short and a changed takesValue on one flag, as well as on a missing and a surplus command; each failure names the command or flag.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Show the parity test failing in both directions"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc05-executable-references/tasks.md",
+            "text": "a flag added to a program command that the registry lacks"
+          }
+        ],
+        "searched": [
+          "parity",
+          "takesValue"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Two of six resolved and four stale: the unterminated-quote boundary and the flag-parity injections repaired here; the four findings that converged with the fresh pass were walked in address-reviews-2026-10-08T20-54-00Z.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal rc05-executable-references",
+  "ripple_misses": 0
+}

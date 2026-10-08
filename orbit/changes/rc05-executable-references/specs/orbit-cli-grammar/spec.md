@@ -6,34 +6,41 @@ The `orbit` CLI's commander program SHALL be constructed by ONE exported builder
 SHALL do nothing but build the program and parse the process arguments with it. Every command, argument and option
 the CLI accepts, including those the three `register*Command` modules add, is declared inside the builder, so a test
 can build the same program in-process without running any command. The builder SHALL accept an option that skips
-registering lifecycle hooks, because commander offers no public way to remove a hook once added.
+registering lifecycle hooks, because commander offers no public way to remove a hook once added, and SHALL pass that
+option into the three `register*Command` modules, which register three of the CLI's five hooks themselves.
 
 The program is the ONE statement of the CLI's grammar. A check that needs the grammar builds the program and asks
 commander's own parser; it never derives, records or re-implements a contract beside it. To run that parser without
 effects, a check neutralises every commander setting that alters a parse or causes an effect, as this table states
-(the settings the CLI uses, grepped from its source):
+(the settings the CLI uses, grepped in `src/cli/index.ts` and the three `register*Command` modules):
 
 | member | covered by |
 |---|---|
-| `.action()` handlers (they exit, write output and touch the repository) | replaced by no-ops on every command of the check's build |
-| `.hook('preAction', …)` on the root, `change` and `spec` | skipped by the builder's option, so no hook is registered |
-| commander's own exits (a parse error, `--help`, `--version`) | `exitOverride()` on every command, recursively; a help or version exit counts as accepted |
+| `.action()` handlers (they exit, write output and touch the repository) | replaced by a no-op on every command that declares one; a command without an action (a group) keeps none, so commander still rejects it run without a subcommand and still reports an unknown subcommand as unknown |
+| `.hook('preAction', …)` on the root, `change` and `spec` (`src/cli/index.ts`), `config` (`src/commands/config.ts`, which exits on a non-global `--scope`) and `schema` (`src/commands/schema.ts`, which writes to stderr) | skipped by the builder's option, passed into the register modules, so no hook is registered |
+| commander's own exits (a parse error, `--help`, `--version`) | `exitOverride()` on every command, recursively; an exit is accepted exactly when its code is `commander.helpDisplayed` or `commander.version`, and every other code, `commander.help` (a group run without a subcommand) included, is a rejection |
 | commander's error and help output | `configureOutput` on every command, recursively, capturing commander's message for the failure |
 | `.allowUnknownOption(true)` on `show` | not covered: any flag passes there |
 | option values (no command declares `.choices()`) | not covered: values are checked in action code a grammar check never runs |
 | async actions | `parseAsync`, so a rejected promise is caught, never unhandled |
 | module-level work (the version read, the tool list, the parse call) | the builder holds everything except the parse call, which `index.ts` keeps |
-| the three `register*Command(program)` modules | called inside the builder |
+| the three `register*Command(program)` modules | called inside the builder, each passed the hook option |
 
 Closure: commander 14's Command settings that change parsing or cause effects — action, hook, exitOverride,
 configureOutput, allowUnknownOption, allowExcessArguments, passThroughOptions, enablePositionalOptions, help and
-version — each grepped against the CLI's source.
+version — each grepped in `src/cli/index.ts` and the three `register*Command` modules.
 
-#### Scenario: Production and a check build the same program
+#### Scenario: The entry point declares nothing of its own
 
-- **WHEN** a test builds the program through the exported builder
-- **THEN** its command tree (every command and subcommand name, every option flag, every declared argument) equals
-  the tree `src/cli/index.ts` parses, and building it runs no action and no hook
+- **WHEN** `src/cli/index.ts` is read, and a test builds the program with hooks skipped and neutralises it
+- **THEN** `index.ts` declares no command, option or hook and builds its program through the exported builder, and the
+  test's build runs no action and no hook
+
+#### Scenario: A group command run without its subcommand is rejected
+
+- **WHEN** a check hands the neutralised program `external`, a group command with no action of its own
+- **THEN** `parseAsync` rejects with `commander.help`, as the CLI rejects it, and `external frobnicate` rejects with
+  commander's unknown-command error
 
 #### Scenario: A parse error throws instead of exiting
 
@@ -62,16 +69,17 @@ on the measuring machine, one written path-prefixed (`./bin/orbit.js`, `node bin
 `|` or `;` mid-line. Residual method: rerun the enumeration without the PATH filter, splitting each candidate on `&&`,
 `|` and `;`, and classify every unrecognised token by reading its line.
 
-A command is EXTRACTED from the places this table names, and a GUARD covers the others: it fails any line outside a
-shell-tagged fence that starts with `orbit` followed by a flag, so a command written in the wrong place fails rather
-than escaping:
+A command is EXTRACTED from the places this table names, and a GUARD covers the others, so a command written in the
+wrong place fails rather than escaping. The guard reads every line outside a shell-tagged fence after stripping its
+leading whitespace, blockquote `>` markers, list markers and a leading `|`, and fails the line when its first token is
+`orbit` and any later token begins with `-`:
 
 | member | covered by |
 |---|---|
 | a line in a fence whose info string is `bash`, `sh` or `shell` | extracted, one argument vector per line |
 | a line in such a fence nested in a list item | extracted the same way |
 | a shell fence inside a fence whose info string is `markdown` or `md` | extracted: the outer fence's content is parsed again, and its reader runs those commands |
-| a quoted argument spanning lines | the lines are joined until the quote closes |
+| a quoted argument spanning lines | the lines are joined until the quote closes, within the same shell fence's content; a quote still open at the fence's end fails extraction, naming the surface, the line and the snippet |
 | an inline single-backtick span beginning `orbit ` | extracted, unless every token resolves to a command of the program with nothing after it: a bare command NAME is prose |
 | a line in an untagged fence, a data-tagged fence, or prose outside every fence | not extracted; the guard |
 | a line whose first token is a placeholder (a runner's argument vector) | not extracted: not `orbit` |
@@ -83,6 +91,7 @@ candidate lines on `&&`, `;` and `|` and rerunning the guard.
 
 The tokenizer SHALL keep a quoted value as one token, keep a `<…>` placeholder as one token even with spaces inside
 or a suffix attached (`<run-dir>/return.md`), drop a trailing ` # …` comment outside quotes, and drop `…` and `...`.
+Inside double quotes, `\"` does not close the quote.
 A placeholder reaches the parser as a value, exactly as a real value would.
 
 Fences are LOCATED by a CommonMark parser, the same parse serving the extractor and the guard, so a line cannot be
@@ -108,8 +117,7 @@ A failure SHALL name the surface (the workflow and the file), the line, the snip
 #### Scenario: Today's surface parses
 
 - **WHEN** the sweep runs over every generated surface
-- **THEN** every extracted `orbit` snippet parses, and the guard finds no line outside a shell fence that starts with
-  `orbit` and a flag
+- **THEN** every extracted `orbit` snippet parses, and the guard fails no line
 
 #### Scenario: An unknown flag in a reference fails the sweep
 
@@ -131,6 +139,16 @@ A failure SHALL name the surface (the workflow and the file), the line, the snip
 
 - **WHEN** an untagged fence carries a line beginning `orbit validate --strict`
 - **THEN** the guard fails naming the surface and the line
+
+#### Scenario: Prose naming a command is not a guard failure
+
+- **WHEN** an untagged fence carries the line `orbit validate passes`, which carries no token beginning with `-`
+- **THEN** the guard does not fail it
+
+#### Scenario: An unterminated quote fails extraction
+
+- **WHEN** a shell fence's last line reads `orbit status --change "demo`
+- **THEN** extraction fails naming the surface, the line and the snippet, and no line beyond the fence is joined to it
 
 #### Scenario: A bare command name is prose
 
@@ -178,6 +196,7 @@ named as not comparable, plus the three kinds of program entry the registry deli
 
 #### Scenario: The registry offers orbit's own commands
 
-- **WHEN** a user generates a completion script with `orbit completion generate <shell>`
+- **WHEN** a user generates a completion script with `orbit completion generate <shell>`, for each of `zsh`, `bash`,
+  `fish` and `powershell`
 - **THEN** the script offers `status`, `emit`, `architecture`, `external`, `fingerprint`, `instructions`, `templates`,
   `schemas` and `new`
