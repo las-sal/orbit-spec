@@ -1,0 +1,106 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-08T23:38:30Z",
+  "change": "rc05-executable-references",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "test/helpers/surface-snippets.ts",
+      "line": 220,
+      "title": "An unclosed quote on a non-orbit shell line hides every later orbit line in the fence",
+      "recommendation": "In extractFenceLines, when the join reaches the fence's end without closing the quote, report it whatever the opening line's first word is (or re-scan from the line after the opener), so no orbit line is consumed silently. Add an injection: a fence reading `echo it's here` then `orbit status --frobnicate` must fail. The spec's quoted-argument row (spec.md:82) already says a quote still open at the fence's end fails extraction; the code applies it only when the opening line starts with the tool.",
+      "reproduction": "analyseSurface over \"```bash\\necho it's here\\norbit status --frobnicate\\n```\" returns 0 snippets, 0 failures, 0 guard hits. The apostrophe opens a quote, the join swallows the orbit line, the failure is gated on the opener's first word being orbit, and the guard skips shell-fence lines. Today's surface has no such fence (measured: 0)."
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc05-executable-references/specs/orbit-cli-grammar/spec.md",
+      "line": 21,
+      "title": "The accepted-codes rule rejects `orbit help <command>`, which the real CLI accepts with exit 0",
+      "recommendation": "Commander uses the code `commander.help` both for a group run without a subcommand (exit 1) and for the implicit `help` subcommand (exit 0). Decide acceptance on the CommanderError's exitCode, or accept `commander.help` when exitCode is 0, and state that in the neutralisation table's exits row and in ACCEPTED_EXIT_CODES (test/helpers/neutral-program.ts:22). Add `help status` to the builder test as accepted and keep `external` as rejected.",
+      "reproduction": "parseArgv(['help','status']) returns {ok:false, code:'commander.help'}, while `node bin/orbit.js help status` exits 0 and `node bin/orbit.js external` exits 1. A documented `orbit help status` snippet would fail the sweep although the CLI accepts it. No such snippet is on today's surface."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc05-executable-references/specs/orbit-cli-grammar/spec.md",
+      "line": 87,
+      "title": "The places limit omits three forms the extractor and guard both miss",
+      "recommendation": "Name them in the places residual, or handle them: a double-backtick inline span (`` `` orbit status --x `` `` mid-line), a `$ `-prompted or `VAR=1`-prefixed line inside a shell fence (the guard skips shell-fence lines, so the residual method's claim that the guard reads every line does not hold there), and a trailing `\\` line continuation (tokenized as a literal `\\` argument, a false failure). Measured on today's surface: zero of each."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "test/core/cli-grammar/builder.test.ts",
+      "line": 45,
+      "title": "The no-hook assertion cannot see the root hook's effect",
+      "recommendation": "The root preAction hook's only effect is setting process.env.NO_COLOR; the test spies exit and console only, so `--no-color list` would pass with the root hook registered. Assert process.env.NO_COLOR is unchanged after that parse. (Probed: hooks:false leaves it unset today, so the code is right; the test is blind.)"
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc05-executable-references/specs/orbit-cli-grammar/spec.md",
+      "line": 29,
+      "title": "The neutralisation closure leaves out requiredOption, which the CLI uses",
+      "recommendation": "`external save` declares `--as` and `--from` with requiredOption (src/cli/program.ts:354). The neutralised build keeps it and rejects a missing one (probed: commander.missingMandatoryOptionValue), so nothing is uncovered, but the closure lists the settings grepped and this one is not among them. Add it as a row stating that it is kept and enforced."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Probed by script rather than by reading: the neutralised parse against the real CLI's exit codes, the extractor on hand-built fences, and a survey of every shell fence and inline span on today's surface for unbalanced quotes, continuations, prompt prefixes, mid-line invocations and double-backtick spans (zero of each). The builder refactor is clean: a whitespace-insensitive diff of program.ts against the old index.ts shows only the options gate and the return. The two warnings are both cases where the check and the CLI or the spec disagree outside today's surface. One lets a command escape both the sweep and the guard; the other fails a valid command. Neither is a grammar defect in an orbit snippet, so exit (3) is untouched by this half. Pass 0 ran in substance: tasks, validate --strict, the scenario map, and the cli-grammar suite (71 green). The verify skill was not invoked as a subprocess. Passes 4 and 5 were skipped because orbit/lenses/ is absent. Pass 6 (audit-drift) was not run from this fresh half and is left to the invoking session.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    "4",
+    "5",
+    "6"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The mechanism does what the charter needs on today's surface. Commander's own parser over the real program is the right validator, and the refactor leaves the CLI untouched. Walk the two warnings before archive. Each is a small, local repair with an injection to prove it: the quote-swallow escape is the one hole a future body edit could fall through silently, and the help-code rule is a false rejection waiting for the first `orbit help` snippet."
+  },
+  "final_assessment": "0 critical, 2 warning, 3 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc05-executable-references"
+}
