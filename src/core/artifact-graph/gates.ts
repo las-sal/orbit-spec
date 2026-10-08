@@ -59,8 +59,9 @@ export interface GateStatus {
    */
   consent?: ConsentValue;
   /**
-   * C1: true when this reviewed gate's `before` phase is already complete — the gate
-   * gated ENTRY to a phase that has since run, so it is no longer the active frontier
+   * C1: true when this reviewed gate has not passed and its `before` names a GATE that has passed
+   * (a test on gate ids only; rc18) — the gate gated ENTRY to a phase that has since run, so it is
+   * no longer the active frontier
    * (post-apply, `review-proposal` is moot). Superseded gates are skipped by
    * canonical-next and rendered as "(past)" in the position readout. NOT the same as
    * `passed`: the gate may never have converged; the flow simply advanced past it.
@@ -931,9 +932,9 @@ export function computeGateStates(
 
   const results = gates.map(g => computeOne(g, new Set()));
 
-  // C1: mark reviewed gates whose `before` phase is already complete as superseded
-  // (moot). `before` names a declared gate (e.g. `apply`) — if that gate is passed,
-  // this reviewed gate gated a phase that has run and is no longer the frontier.
+  // C1: mark non-passed reviewed gates superseded (moot) when their `before` names a declared
+  // gate (e.g. `apply`) that has passed: such a gate gated a phase that has run and is no longer
+  // the frontier. A test on gate ids only (rc18): an artifact or non-gate phase never marks one.
   const passedGateIds = new Set(results.filter(s => s.state === 'passed').map(s => s.id));
   for (const s of results) {
     if (s.kind === 'reviewed' && s.state !== 'passed' && s.before && passedGateIds.has(s.before)) {

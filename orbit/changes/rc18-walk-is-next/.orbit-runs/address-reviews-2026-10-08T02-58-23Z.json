@@ -1,0 +1,138 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-08T02:58:23Z",
+  "change": "rc18-walk-is-next",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc18-walk-is-next/.orbit-runs/review-system-2026-10-08T02-54-02Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-08T02-54-02Z",
+  "latest_apply_token": "2026-10-07T17-18-28Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 3
+  },
+  "pushback_verification": "verified",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "Two gates.ts comments still state the superseded test in phase terms",
+      "marker_source": "internal-review",
+      "file": "src/core/artifact-graph/gates.ts",
+      "line": 62,
+      "classification": "trivial_fix",
+      "action": "Reworded both comments to the gate-id test: the `superseded` field's docstring (line 62) and the marking loop's comment (line 934) now say a non-passed reviewed gate whose `before` names a gate that has passed, and that an artifact or non-gate phase never marks one. Comment-only; the rc03b pin for gates.ts moved, recorded.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/rc03b-untouched-modules.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "true when this reviewed gate's `before` phase is already complete",
+          "mark reviewed gates whose `before` phase is already complete as superseded"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/artifact-graph/gates.ts",
+            "text": "names a GATE that has passed"
+          }
+        ],
+        "searched": [
+          "phase is already complete"
+        ],
+        "scope": [
+          "src/core/artifact-graph"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The verify walk clause names a next review that a passed system gate does not owe",
+      "marker_source": "internal-review",
+      "file": "src/core/emit-composition.ts",
+      "line": 277,
+      "classification": "trivial_fix",
+      "action": "Made the clause gate-neutral: 'walk the outstanding review findings first', in VERIFY_WALK_CLAUSE, all five sites of the orbit-run-summary-emit delta (the pass text and scenario, the mode-② and warn texts, the fail-mode scenario), and the test's CLAUSE. On a passed system gate archive follows the walk, so the text no longer promises a review. The rc03b pin for emit-composition.ts moved, recorded.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc18-walk-is-next/specs/orbit-run-summary-emit/spec.md",
+          "test/core/artifact-graph/outstanding-passes.test.ts",
+          "test/core/rc03b-untouched-modules.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "walk the outstanding review findings before the next review"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/emit-composition.ts",
+            "text": "walk the outstanding review findings first'"
+          },
+          {
+            "path": "orbit/changes/rc18-walk-is-next/specs/orbit-run-summary-emit/spec.md",
+            "text": "verification clean; walk the outstanding review findings first"
+          }
+        ],
+        "searched": [
+          "before the next review",
+          "VERIFY_WALK_CLAUSE",
+          "CLAUSE"
+        ],
+        "scope": [
+          "src/core",
+          "test/core/artifact-graph"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The fingerprint stamp in .openspec.yaml is outside every walk entry's edit record",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc18-walk-is-next/.openspec.yaml",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "No edit. This entry records .openspec.yaml as the file the system walk changed: it carries the four base fingerprints stamped for the requirements that walk carried (Gate-aware status and instructions with position readout; Verify pass recommendation, Verify fail-mode recommendations and No forward-look at planned future behavior changes). `orbit fingerprint --check` verifies 7 of 7. The earlier walk log is a trail record and is not rewritten.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [],
+        "searched": [
+          "base_fingerprints"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Three of three resolved: two gates.ts comments reworded to the gate-id test, the verify walk clause made gate-neutral, and the fingerprint stamp recorded.",
+  "iteration": 6,
+  "next_recommended": "/orbit:archive rc18-walk-is-next — user-invoked",
+  "ripple_misses": 0
+}

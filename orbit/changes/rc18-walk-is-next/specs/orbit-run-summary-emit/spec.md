@@ -21,7 +21,7 @@ invocation into `command`/`args`; the class qualifier travels in `args` alongsid
 **When a review pass is outstanding, the walk leads.** When the gate graph's canonical next for the
 change is the change-scoped walk, `/orbit:address-reviews <name>` (per `orbit-engine-gates`' `Single-voiced
 canonical-next computation`), the leading token is that walk and the text is
-`"/orbit:address-reviews <name> — verification clean; walk the outstanding review findings before the next review"`,
+`"/orbit:address-reviews <name> — verification clean; walk the outstanding review findings first"`,
 with no `/orbit:archive` alternative: verify never points at a review the gate's order puts after the walk.
 Any other graph next that is not a system review — the archive command once the system gate has passed with
 nothing outstanding — falls back to the bare `/orbit:review --as system <name>`.
@@ -32,7 +32,7 @@ nothing outstanding — falls back to the bare `/orbit:review --as system <name>
 
 #### Scenario: A verify pass with a review pass outstanding leads with the walk
 - **WHEN** `/orbit:verify foo` passes and the gate graph's canonical next is `/orbit:address-reviews foo`, the system gate unpassed or passed
-- **THEN** `verify-<TS>.json`'s `next_recommended` is `"/orbit:address-reviews foo — verification clean; walk the outstanding review findings before the next review"` and names no `/orbit:archive`
+- **THEN** `verify-<TS>.json`'s `next_recommended` is `"/orbit:address-reviews foo — verification clean; walk the outstanding review findings first"` and names no `/orbit:archive`
 
 #### Scenario: Status reader parses verify-pass recommendation
 - **WHEN** a downstream status reader reads the verify-pass JSON and best-effort parses
@@ -51,9 +51,8 @@ When verify completes with warnings (passes but with non-blocking findings), the
 The leading `/orbit:review --as system <name>` of mode ② and of the warn state is the gate graph's canonical
 system-review command, as in `Verify pass recommendation`, and when that graph's next is the change-scoped walk
 the walk leads by the same rule: mode ② reads `"/orbit:address-reviews <name> — N spec scenarios fail against
-implementation; walk the outstanding review findings before the next review"` and the warn state
-`"/orbit:address-reviews <name> — verification passed with N warnings; walk the outstanding review findings before
-the next review"`.
+implementation; walk the outstanding review findings first"` and the warn state
+`"/orbit:address-reviews <name> — verification passed with N warnings; walk the outstanding review findings first"`.
 
 The classification is verify's, stated in its body's `# Orbit additions`, where `orbit-conventions`' `Generated-file disposition` puts orbit behavior; the emit layer classifies nothing, composes from the mode it is handed, and gives verify no marker-dropping or other behaviors (see `Requirement: Emit-layer wraps upstream skills without modifying them`). The mode-② recommendation does NOT use `/orbit:review --as system --mark` because that flag is proposal-mode only and silently ignored in system mode (per `orbit-review/spec.md`'s `Requirement: --mark flag is proposal-mode only`). The user manually walks each system-review finding to decide code-vs-spec.
 
@@ -78,7 +77,7 @@ This precedence directs the user to the root cause first: fix the spec (mode ③
 
 #### Scenario: Mode ② and the warn state lead with the walk when a review pass is outstanding
 - **WHEN** `/orbit:verify foo` fails in mode ②, or passes with warnings, and the gate graph's canonical next is `/orbit:address-reviews foo`
-- **THEN** `verify-<TS>.json`'s `next_recommended` begins with `"/orbit:address-reviews foo — "` and ends `"walk the outstanding review findings before the next review"`
+- **THEN** `verify-<TS>.json`'s `next_recommended` begins with `"/orbit:address-reviews foo — "` and ends `"walk the outstanding review findings first"`
 
 #### Scenario: Mode-③ fail preserves verbatim validator message
 - **WHEN** `/orbit:verify foo` fails because `orbit validate` itself errors (e.g., malformed spec frontmatter)

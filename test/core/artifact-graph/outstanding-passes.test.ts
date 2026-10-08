@@ -645,7 +645,7 @@ describe('rc18 — the walk is next', () => {
   describe('system walk — verify leads with the walk, and the carried blocks', () => {
     const verify = (payload: Record<string, unknown>) =>
       String(composeAndWriteEmit('verify', { change: C }, { final_assessment: 'v', verdict: 'pass', model: null, ...payload }, { projectRoot: root }).emit.next_recommended);
-    const CLAUSE = 'walk the outstanding review findings before the next review';
+    const CLAUSE = 'walk the outstanding review findings first';
     function systemOpen(findings: Array<[Sev, string]>): void {
       proposalPassed();
       tasks(true);

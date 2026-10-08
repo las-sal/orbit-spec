@@ -274,7 +274,7 @@ function systemReviewNext(projectRoot: string, name: string): { cmd: string; wal
 }
 
 /** rc18: the clause a verify recommendation carries when the walk leads it. */
-const VERIFY_WALK_CLAUSE = 'walk the outstanding review findings before the next review';
+const VERIFY_WALK_CLAUSE = 'walk the outstanding review findings first';
 
 export interface EmitTarget {
   change?: string;

@@ -86,6 +86,9 @@ import { fileURLToPath } from "node:url";
  * MOVED AGAIN at rc18's system walk (2026-10-07): `emit-composition.ts` only — `systemReviewNext` keeps the gate
  * graph's next when it is the change-scoped walk, and the verify recommendation leads with it (fresh S2 + external W1,
  * converged; Sal: A). `gates.ts` and `instruction-loader.ts` did not move.
+ * MOVED a THIRD time at rc18's verification walk (2026-10-08): `gates.ts` — two comments state the superseded test
+ * as the gate-id test (V1, comment-only); `emit-composition.ts` — the verify walk clause is gate-neutral (V2).
+ * `instruction-loader.ts` did not move.
  */
 const PINNED: Record<string, string> = {
   "schemas/spec-driven/schema.yaml": "21e0ae86532a39be558a2b81d23738a6fbf92fbd32b0d01612a65e83d6a96739",
@@ -93,7 +96,7 @@ const PINNED: Record<string, string> = {
   "schemas/spec-driven/templates/proposal.md": "9c554e0dbe918e3dc745dcc143a999e1d102954d75fb6e51e231c4cba78f06f3",
   "schemas/spec-driven/templates/spec.md": "e025078f238dc6e4df552a1e0a140cf9efce0bbdecbeb9f45837d45ed91dca01",
   "schemas/spec-driven/templates/tasks.md": "b2a6a4c08c15f347a1d8c3e2d43e0c8fb066dc5cc0feb795f47555f176f9c421",
-  "src/core/artifact-graph/gates.ts": "c25f1c80ca454a96c8ef72e7948814759b57b18cb5746381bcc68c912d9ba25c",
+  "src/core/artifact-graph/gates.ts": "46a86a52955269e9ddfd759ac2aca321608fdb8a874fd8e397538e08287f0761",
   "src/core/artifact-graph/graph.ts": "3193a3884bb59296dc4ddc177020d3135d99c694109298ac31c3f3a91c45a0ed",
   "src/core/artifact-graph/index.ts": "9dc35ba8e64105fbfd6af821cf99f1fbc5777b74b75311f09fdab279cf12d438",
   "src/core/artifact-graph/instruction-loader.ts": "6e79d8b17fe1140dc98287156253df5e41d4073d0fa5382d1b7fd07c8a02600c",
@@ -104,7 +107,7 @@ const PINNED: Record<string, string> = {
   "src/core/artifact-graph/state.ts": "f59f748b94cd94ca2fe022ec5aa66b3251dd1b2c00bddb9a17cbd9273a04d0f2",
   "src/core/artifact-graph/trail.ts": "39b5d110ef53b7e03f49ddf292e86db598a14f426a02e6d84142e16231e37d69",
   "src/core/artifact-graph/types.ts": "d83e0cc6d7fca7b80618ffbb7ce052ee68e35be79e7949a941e989b2e102392c",
-  "src/core/emit-composition.ts": "9004f25281a6ed63b1a6e5726141d5d8ba6e50047054cad7a8fe1d82576709be",
+  "src/core/emit-composition.ts": "a58d91e9ebdf9c8ffd86b59dbd4fd37b7633fc96f9802042a83f7aefe33da9d2",
   "src/core/report-render.ts": "ceaf85f5b3254b5dde97b82c94b829de510d1f70669f16d65bd820a55b7ae393",
 };
 
