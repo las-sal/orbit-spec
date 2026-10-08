@@ -421,7 +421,7 @@ nothing outstanding — falls back to the bare `/orbit:review --as system <name>
 
 #### Scenario: Verify pass emit recommends review-as-system canonically
 - **WHEN** `/orbit:verify foo` passes
-- **THEN** `verify-<TS>.json`'s `next_recommended` begins with the gate graph's canonical system-review invocation for that change — `"/orbit:review --as system --fresh foo"` under `spec-driven` v4, whose first uncovered system slot is `blind-pair` — and the reason text mentions `/orbit:archive foo` as alternative
+- **THEN** `verify-<TS>.json`'s `next_recommended` begins with the gate graph's canonical system-review invocation for that change — `"/orbit:review --as system --reviewer blind-pair foo"` under `spec-driven` v5 when nothing covers its first system slot, `invoked`, and the default review preference presents the pair command — and the reason text mentions `/orbit:archive foo` as alternative
 
 #### Scenario: A verify pass with a review pass outstanding leads with the walk
 - **WHEN** `/orbit:verify foo` passes and the gate graph's canonical next is `/orbit:address-reviews foo`, the system gate unpassed or passed
