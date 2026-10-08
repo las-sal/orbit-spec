@@ -1325,11 +1325,11 @@ never deleted.
 
 ## Program stages
 
-<!-- src:stages -->37<!-- /src:stages --> small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
+<!-- src:stages -->38<!-- /src:stages --> small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
 split into rc02 + rc02b on 2026-09-12; rc13 added 2026-09-14 and moved to phase 1 the same day;
 rc03a split from rc03 on 2026-09-15 and WITHDRAWN the same day; rc13 split into rc13a + rc13b on
 2026-09-15 under R-crc-9; rc07b split from rc07 the same day under R-crc-9 applied PREVENTIVELY; rc04d split from rc04c on 2026-09-21, the THIRD preventive application, caught at exploration by a size check rather than after a cadence;
-rc13c declared 2026-09-25 from rc13a's archive proposal, and rc15 declared the same day taking up Q-crc-11; rc16 declared 2026-10-01 from Q-crc-28's ratified direction; rc03 split into rc03b + rc03c on 2026-10-04 under R-crc-9, the FOURTH preventive application, again caught at exploration by a size check; rc06 split into rc06a + rc06b the same day, the FIFTH, caught at exploration; rc08 split into rc08a + rc08b on 2026-10-05, the SIXTH, caught at exploration; rc17 declared the same day from rc08b's system walk, taking Sal's one-command blind pair and the walk's routed pair-diagnosis redesign; rc17 split into rc17a + rc17b the same day, the SEVENTH preventive application, caught at exploration; rc17c split from rc17a the same day at propose, the EIGHTH, caught by a capability count before any artifact was written; rc17d split from rc17b on 2026-10-06, the NINTH, caught at exploration by a capability count; rc18 declared 2026-10-07 from rc17c's proposal cycle — rc14 stays reserved for the undeclared `rc14-delta-scope` recommendation).
+rc13c declared 2026-09-25 from rc13a's archive proposal, and rc15 declared the same day taking up Q-crc-11; rc16 declared 2026-10-01 from Q-crc-28's ratified direction; rc03 split into rc03b + rc03c on 2026-10-04 under R-crc-9, the FOURTH preventive application, again caught at exploration by a size check; rc06 split into rc06a + rc06b the same day, the FIFTH, caught at exploration; rc08 split into rc08a + rc08b on 2026-10-05, the SIXTH, caught at exploration; rc17 declared the same day from rc08b's system walk, taking Sal's one-command blind pair and the walk's routed pair-diagnosis redesign; rc17 split into rc17a + rc17b the same day, the SEVENTH preventive application, caught at exploration; rc17c split from rc17a the same day at propose, the EIGHTH, caught by a capability count before any artifact was written; rc17d split from rc17b on 2026-10-06, the NINTH, caught at exploration by a capability count; rc18 declared 2026-10-07 from rc17c's proposal cycle; rc05b split from rc05 on 2026-10-08, the TENTH, caught at exploration — rc14 stays reserved for the undeclared `rc14-delta-scope` recommendation).
 Every stage is sized under R-crc-1, names the capabilities it touches, and names its goal.
 Charters are settled under R-crc-3 until a citing change refines them; exit criteria are
 falsifiable and self-measured by the stage's own cadence (G0). Position is computed — see the
@@ -2452,6 +2452,27 @@ is a failing test, not a reviewer's finding. Goal G2. Touches: test/integration,
 orbit-skill-generation (the reference contract). Exit: (1) the extractor covers 100% of
 invocation-shaped snippets in the three PR references; (2) a grammar defect injected into a
 reference fails the suite; (3) the next blind pair finds zero grammar or selector defects.
+
+### Stage rc05b-git-grammar — the git and gh snippets parse against recorded contracts
+
+Depends-on: rc05-executable-references
+Complete: [ ]
+
+Split from rc05 at its exploration on 2026-10-08 (Sal: B, D-rc05-15 in
+`orbit/explore/rc05-executable-references/explore.md`), R-crc-9's tenth preventive application. rc05 ships the shared
+extractor, the guard and the CommonMark-located fences under `orbit`, their first consumer; this stage brings the
+other two tools on the generated surface onto them. `git` (100 snippets, measured 2026-10-08) has no in-repo program,
+so its grammar is a RECORDED contract with one validator, the shape rc01 built for `gh`. rc01's `gh` sweep moves from
+its inline-only extractor onto the shared one, so fenced `gh` lines and the six `gh` snippets in SKILL.md bodies are
+checked too and the repo keeps ONE extractor. Grammar only (D-rc05-6): nothing is executed. Touches
+`orbit-pr-lifecycle`'s `Test instruments derive from a recorded real-CLI contract`, whose title names the GitHub CLI;
+whether `git`'s contract joins rc05's new capability or sits beside `gh`'s is this stage's exploration's to decide.
+Goal G2.
+Exit: (1) the guard finds zero `git` or `gh` commands outside shell fences, and every extracted `git` and `gh` snippet
+on the generated surface validates against its tool's contract; (2) an unknown flag, an unknown subcommand and a
+missing required argument, injected at each of rc05's extraction sites for each tool, fail the suite naming the
+snippet's surface and line, and rc01's inline extractor is retired; (3) the stage's own system blind pair finds zero
+grammar defects in a `git` or `gh` snippet.
 
 ### Stage rc06-scenario-test-map — scenarios are the test contract
 
@@ -5271,7 +5292,7 @@ Sal: the next recommended path should be the walk, even for suggestions. The sta
 the walk is the canonical next while a passed gate's mode carries an unwalked pass, and eligibility is untouched. The
 two-line alternative was recorded as NOT this stage's direction, since it would reverse `Single-voiced canonical-next
 computation`, which is Sal's call. A scratch-copy simulation showed a walk after the passed gate leaves it passed.
-Depends on rc17a, which shipped `unwalkedPasses`. Stage count 36 → <!-- src:stages -->37<!-- /src:stages --> at the
+Depends on rc17a, which shipped `unwalkedPasses`. Stage count 36 → 37 at the
 marked sites (this entry's mark is the third; the previous entry's is unmarked as history).
 
 **2026-10-07 — rc17c-short-review-next RATIFIED (Sal)**, through the architect session's offer, all three exit criteria
@@ -5302,3 +5323,14 @@ verification left `review-system` passed with the walk as its line, and the line
 stage shipped across two capabilities: the system blind pair converged on verify's competing handoff, and Sal's A
 added `orbit-run-summary-emit`. The post-archive project-wide audit found one SUGGESTION, a v4 example in a verify
 scenario, walked the same day.
+
+**2026-10-08 — rc05b-git-grammar DECLARED (Sal)**, split from rc05-executable-references at its exploration
+(Sal: B on D-rc05-15), R-crc-9's tenth preventive application. rc05's exploration rescoped the stage on Sal's word:
+every generated surface rather than the three PR references, `orbit` first, grammar only. rc05 keeps `orbit` (an
+exported program builder with commander's own parser as the validator, a shared extractor over shell fences and inline
+spans located by a dev-only CommonMark library, a guard against commands outside shell fences, and a parity test
+holding the completion registry to the program) as ONE new capability. The child takes `git`'s recorded contract and
+the move of rc01's `gh` sweep onto the shared extractor; it depends on rc05. rc05's own charter and exits are revised
+by its change at propose, under R-crc-12's first case (D-rc05-14, D-rc05-17). Stage count 37 →
+<!-- src:stages -->38<!-- /src:stages --> at the marked sites (this entry's mark is the third; the previous entry's is
+unmarked as history).

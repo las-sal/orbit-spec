@@ -1,0 +1,30 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-08T20:04:20Z",
+  "change": "rc05-executable-references",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Every open question walked and decided with Sal. rc05 is rescoped to every generated surface and `orbit` first, grammar only, as ONE new capability: an exported program builder with commander's own parser as the validator, an extractor over shell fences and inline spans located by a dev-only CommonMark library, a guard against commands outside shell fences, and a parity test holding the completion registry to the program. `git` and the `gh` sweep's move split into a child stage, rc05b-git-grammar. Exits restated: no escapes and the surface parses; every check shown able to fail; the stage's own blind pair finds zero orbit grammar defects. Five rules accounted, two with BOUNDED residuals.",
+  "decisions_captured": 17,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 5,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [
+    {
+      "id": "D-rc05-6",
+      "kind": "a tool invoked by a snippet the enumeration did not see: one not installed on the measuring machine, one written path-prefixed (`./bin/orbit.js`, `node bin/orbit.js`), or one following `&&`, `|` or `;` mid-line",
+      "method": "rerun the enumeration without the PATH filter, splitting each candidate on `&&`, `|` and `;`, and classify every unrecognised token by reading its line"
+    },
+    {
+      "id": "D-rc05-11",
+      "kind": "a command in a container not listed: a blockquote, an indented code block, an HTML block, a table cell, or mid-line after `&&`, `$ ` or `|`",
+      "method": "the guard itself reads every line whatever its container, so a residual member that starts a line fails it; a member mid-line is found by splitting candidate lines on `&&`, `;` and `|` and rerunning the guard"
+    }
+  ],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose rc05-executable-references — 5 live rules accounted, 2 bounded residuals named (D-rc05-6, D-rc05-11); formalize when you are ready (or /orbit:explore rc05-executable-references to keep refining)"
+}
