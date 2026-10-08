@@ -48,7 +48,7 @@ Domain: every place a copyable command can sit in a generated Markdown surface
 | a line in a list-nested shell-tagged fence (four today, D-rc05-12) | extracted, given a fence grammar that sees list containers (open question) |
 | a shell-tagged fence inside a markdown-tagged fence (the external prompt template) | extracted: the outer block is a document whose reader runs its commands |
 | a quoted argument spanning lines (the template's three-line `git commit -m "…"`) | the tokenizer joins lines until the quote closes |
-| an inline single-backtick span beginning `<tool> ` | extracted, every one, bare commands included |
+| an inline single-backtick span beginning `<tool> ` | extracted, unless every token resolves to a command in the program with nothing after it: a bare command NAME is prose (D-rc05-18) |
 | a line in an untagged fence | not extracted; the guard fails it when it starts with a tool and a flag |
 | a line in a data-tagged fence (`json`, `yaml`, prose `markdown`) | not extracted; guarded the same way |
 | a prose line outside every fence | not extracted; guarded the same way |
@@ -215,10 +215,13 @@ Moves:
   line), and from an inline single-backtick span beginning with a covered tool followed by a space. Every other place
   (an untagged fence, a data-tagged fence, a prose line) is not extracted, and a GUARD test fails when a line there
   starts with a covered tool followed by a flag, so a command written in the wrong kind of fence fails rather than
-  escaping. The tokenizer is quote-aware, takes a `<…>` placeholder as ONE token even with spaces inside, drops a
+  escaping. The tokenizer is quote-aware, takes a `<…>` placeholder as ONE token even with spaces inside (and with a
+  suffix attached: `<run-dir>/return.md` is one token), drops a
   trailing ` # …` comment outside quotes, drops `…` and `...`, and joins lines until an open quote closes. Rejected:
   shell fences only, with no guard (A: a command in an untagged fence escapes silently), and every fence line (B:
   needs a prose classifier, the heuristic rc01 retired).
+  Revised at propose, 2026-10-08 (Sal: "a", on D-rc05-18): a bare command NAME in an inline span is prose, decided by
+  the program; the earlier "bare commands included" rested on a premise the measurement falsified.
 - **2026-10-08 — D-rc05-12: the engine's fence tracker cannot see half the shell fences on today's surface**
   Kind: fact
   `src/core/markdown-fence.ts` opens a fence only at zero to three spaces of indentation (line 31), with no notion of a
@@ -274,6 +277,17 @@ Moves:
   Propose may tighten the wording and may not drop an injection site. The charter's "100% of invocation-shaped
   snippets" was circular once the extractor defines a snippet; this is R-crc-12's first case, recorded in the charter
   when the change revises it.
+- **2026-10-08 — D-rc05-18: a bare command name is not always a valid invocation, and the surface carries one real defect**
+  Kind: fact
+  Measured at propose by a throwaway probe (a temporary copy of the built CLI exporting its program, actions and
+  hooks stripped, commander's own `parseAsync`): of the inline and shell-fence `orbit` snippets on every generated
+  surface, 131 parse, 35 are bare command names, and 1 is rejected. Four of the bare names fail as invocations because
+  the command needs an argument or option (`orbit feedback`, `orbit new change` twice, `orbit external save`), so
+  D-rc05-11's "bare commands included, a valid invocation" was false for them; Sal chose A, a bare name is prose,
+  decided by the program. The one rejection is real: the architect body's doc scaffold, inside a ```` ```markdown ````
+  fence, renders `run \`orbit architecture status\`` with literal backslashes, which an AI copying the scaffold writes
+  into a new doc. Two further rejections were the probe's own tokenizer splitting `<run-dir>/return.md` at the
+  placeholder; the extractor keeps a placeholder and its suffix as one token.
 
 ## Open questions
 

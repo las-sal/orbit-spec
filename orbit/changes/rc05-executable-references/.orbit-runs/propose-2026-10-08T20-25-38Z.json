@@ -1,0 +1,9 @@
+{
+  "command": "propose",
+  "timestamp": "2026-10-08T20:25:38Z",
+  "change": "rc05-executable-references",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Proposed from the rc05 exploration in consume mode: one new capability, orbit-cli-grammar, three ADDED requirements (the program built by an exported builder; every orbit snippet on the generated surface parses against it, extracted from shell fences and inline spans with a guard on every other place and fences located by a dev-only CommonMark parser; the completion registry held to the program by parity). Five accounted rules carried as normative tables, the two BOUNDED residuals verbatim as named limits. A propose-time probe found 131 orbit snippets parse, 35 are bare command names (prose, Sal: A on D-rc05-18) and one real defect, the architect scaffold's backslashes, fixed in the tasks.",
+  "next_recommended": "/orbit:review rc05-executable-references — proposal artifacts ready; review before apply"
+}
