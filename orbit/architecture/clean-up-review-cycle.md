@@ -3241,7 +3241,8 @@ Direction: one voice. When a reviewed gate has PASSED and its mode carries an un
 `Single-voiced canonical-next computation` stands. Offering both commands on two lines was considered and is NOT this
 stage's direction: it would reverse that ruling, which is Sal's to take. Measured before declaring: in a scratch copy
 of rc17c's trail, a walk written after the passed gate's last pass left the gate `passed` and `unwalkedPasses` empty,
-so walking cannot start a review loop. The capability count is the exploration's to measure (`orbit-engine-gates` at
+so walking the last slot's pass cannot start a review loop (the measured branch; the exits' revision note below
+records the off-path case). The capability count is the exploration's to measure (`orbit-engine-gates` at
 least, plus every surface that reads or restates the next line). Goal G4.
 Exit: (1) a change whose reviewed gate has passed, with an unwalked pass in that gate's mode, renders
 `/orbit:address-reviews <change>` as its canonical next, and the gate's state still reads `passed`; (2) after that pass

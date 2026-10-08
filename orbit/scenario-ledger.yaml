@@ -36,3 +36,7 @@ scenarios:
   - key: "orbit-conventions :: Internal-run JSON summary format :: Future consumers route by `kind` field rather than parsing filename prefix"
     kind: untestable
     why: "The THEN is a permission (MAY) granted to consumers outside this repo; no in-repo consumer routes by either key, so there is no behaviour to observe. Every emit carrying `kind` is held by the canonical-example guard."
+  # rc18-walk-is-next system walk (Sal: 2A) — a reader-side claim carried in orbit-run-summary-emit's MODIFIED block.
+  - key: "orbit-run-summary-emit :: Verify pass recommendation :: Status reader parses verify-pass recommendation"
+    kind: untestable
+    why: "The THEN is a downstream status reader's best-effort parse of `next_recommended` into `command`/`args`; no reader in this repo performs that parse (the v0.1 bash tool retired at D3), so there is nothing to run. The emit half, that the text leads with the graph's command, is held by the verify-pass behaviour tests in outstanding-passes.test.ts."

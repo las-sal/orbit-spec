@@ -63,10 +63,15 @@ the row and the change would then name different commands for one state.
 its `before` names no gate that has passed. `computeGateStates` already marks a NON-passed reviewed gate superseded on
 exactly that test (`passedGateIds.has(s.before)`), so the frontier reuses it and adds no new concept. It is a test on
 GATE IDS: a `before` naming an artifact, a lifecycle phase that is not a gate (`archive`), or nothing never makes a
-gate non-frontier, whether or not that artifact is complete. That narrower rule is stated in the spec rather than
-equated with "the phase is complete", which an artifact target would make ambiguous. One consequence is stated, not hidden: during apply, before the `apply`
+gate non-frontier, whether or not that artifact is complete. The baseline's superseded sentence in `Gate-aware status
+and instructions with position readout` stated the test as "whose `before` phase is already complete", which an
+artifact target makes ambiguous, so that sentence is narrowed to the gate-id test the engine computes and the
+frontier points at it (system walk, Sal: B). One consequence is stated, not hidden: during apply, before the `apply`
 gate passes and before any apply emit makes the proposal passes stale, a passed `review-proposal` with an unwalked
-pass still names the walk. The walk is still owed at that point, and the recommendation is not an entry gate.
+pass still names the walk. Once a partial-apply emit lands, the same gate reads `stale`, and it is not superseded
+because `apply` has not passed, so it names the walk through D5's step (2): `orbit status` shows the walk mid-apply,
+while the apply emit's own next stays `/orbit:apply`. The walk is still owed at that point in both shapes, and the
+recommendation is not an entry gate.
 
 *Alternative:* mirror `orbit instructions apply`'s entry rule (frontier only while no task is checked). Rejected: that
 rule decides whether apply ENTRY is gated. This one decides what is recommended, and a pass left unwalked mid-apply
@@ -113,11 +118,16 @@ From `explore.md`'s Considered & out:
 - [An unpassed gate's next moves from a review to the walk whenever an unwalked pass stands] → Intended (exit (3) as
   widened). The gate's state and reason do not move, so a reason naming a slot can sit beside a next naming the walk.
   That is already the case for an unresolved pass.
+- [A pair launched with no member landed reads "both must land before either is walked" beside a next naming the
+  walk] → "Either" names the pair's MEMBERS. The walk the next names is of an earlier pass outside the pair, and
+  walking it leaves the pair intact: the pair still forms, covers, and passes after the in-context pass (probed on the
+  fresh system pass).
 - [A `models:` hint keyed by the review gate's phase id now garnishes the walk] → The same keying the unresolved-pass
   walk already uses (rc08b); the hint describes the phase the walk belongs to.
-- [verify's `systemReviewNext` keeps the graph's next only when it names a system review] → When `review-system` has
-  passed with an unwalked pass, verify falls back to the bare system-review invocation. The archive next fails that
-  filter today in the same way, so nothing new is introduced.
+- [verify's `systemReviewNext` read the graph's next only when it named a system review] → Resolved at the system
+  walk (Sal: A). When the graph's next is the change-scoped walk, on an unpassed or passed system gate, verify's
+  recommendation leads with that walk (`orbit-run-summary-emit`), so verify never points at a review the gate's order
+  puts after the walk. The archive next still falls back to the bare system-review invocation, unchanged.
 - [The rc03b hash pin covers `gates.ts` and `instruction-loader.ts`] → Moving both hashes is a planned act (tasks.md),
   recorded in the pin's header.
 

@@ -44,19 +44,30 @@ following slot's review, as it already is for a pass carrying a WARNING.
 
 ### Modified Capabilities
 
-- `orbit-engine-gates`, three requirements:
+- `orbit-engine-gates`, four requirements:
   - `Single-voiced canonical-next computation` gains the unpassed gate's command order, and the change-level
     selection as a decision table over the reviewed states it visits (D-rc18-5's DERIVED domain).
   - `A reviewed gate lists its outstanding passes` qualifies its "never reads it" sentence to the gate's STATE, and
     its walk-form sentence covers an unwalked pass as well as an unresolved one.
   - `The first review slot covers what the user invoked` says its table decides the slot's command, which the order
     in `Single-voiced canonical-next computation` can precede.
+  - `Gate-aware status and instructions with position readout` narrows its superseded sentence to the gate-id test
+    the engine computes, so the frontier's pointer names what the engine does (system walk, Sal: B).
+- `orbit-run-summary-emit`, three requirements (system walk, Sal: A):
+  - `Verify pass recommendation` and `Verify fail-mode recommendations`: when the gate graph's next is the
+    change-scoped walk, verify's recommendation leads with that walk, so verify never points at a review the gate's
+    order puts after the walk.
+  - `No forward-look at planned future behavior changes`: its verify-pass scenario reads the graph's leading
+    command instead of a fixed string.
 
-**Size: one capability**, measured at exploration (D-rc18-6).
+**Size: two capabilities.** One was measured at exploration (D-rc18-6); the second was added at the system walk
+(Sal: A), under R-crc-1's ceiling of three.
 
 ## Impact
 
 - `src/core/artifact-graph/instruction-loader.ts`: `formatChangeStatus`'s next-selection loop.
+- `src/core/emit-composition.ts`: `systemReviewNext` keeps the graph's next when it is the change-scoped walk, and
+  the verify recommendation carries the walk clause (system walk).
 - `src/core/artifact-graph/gates.ts`: `canonicalNextForReviewed`'s walk step reads the unwalked set; the passed
   branch's `nextCommand`, through a shared frontier predicate.
 - Tests: gate and status unit tests covering every row of the selection table and each step of the order, including

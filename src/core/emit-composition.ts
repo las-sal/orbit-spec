@@ -256,17 +256,25 @@ export const ENGINE_OWNED_EXTRA: Record<string, string[]> = {
  * emits point AT the review phase, and which class that phase needs is the graph's to compute —
  * a hardcoded literal goes stale the moment a cadence changes. Falls back to the bare invocation
  * only when the graph yields nothing (no gated schema, unreadable change).
+ *
+ * rc18 (system walk, Sal: A): when the graph's next is the change-scoped WALK — an outstanding review pass —
+ * that walk leads instead, with `walk: true`, so verify never points at a review the gate's order puts after
+ * the walk. Any other non-review next (the archive command) still falls back to the bare invocation.
  */
-function systemReviewNext(projectRoot: string, name: string): string {
+function systemReviewNext(projectRoot: string, name: string): { cmd: string; walk: boolean } {
   try {
     const status = formatChangeStatus(loadChangeContext(projectRoot, name));
     const cmd = status.next_command;
-    if (typeof cmd === 'string' && cmd.includes('/orbit:review --as system')) return cmd;
+    if (cmd === `/orbit:address-reviews ${name}`) return { cmd, walk: true };
+    if (typeof cmd === 'string' && cmd.includes('/orbit:review --as system')) return { cmd, walk: false };
   } catch {
     /* fall through to the bare invocation */
   }
-  return `/orbit:review --as system ${name}`;
+  return { cmd: `/orbit:review --as system ${name}`, walk: false };
 }
+
+/** rc18: the clause a verify recommendation carries when the walk leads it. */
+const VERIFY_WALK_CLAUSE = 'walk the outstanding review findings before the next review';
 
 export interface EmitTarget {
   change?: string;
@@ -2028,7 +2036,10 @@ export function composeAndWriteEmit(
         const n = (payload as any).scenarios_failed;
         const countPrefix =
           typeof n === 'number' && Number.isInteger(n) && n > 0 ? `${n} spec scenarios` : 'spec scenarios';
-        emit.next_recommended = `${systemReviewNext(projectRoot, name)} — ${countPrefix} fail against implementation; system review will surface findings in its scorecard for you to walk each as code fix or spec revision`;
+        const next = systemReviewNext(projectRoot, name);
+        emit.next_recommended = next.walk
+          ? `${next.cmd} — ${countPrefix} fail against implementation; ${VERIFY_WALK_CLAUSE}`
+          : `${next.cmd} — ${countPrefix} fail against implementation; system review will surface findings in its scorecard for you to walk each as code fix or spec revision`;
       } else if (failMode === 'warnings') {
         // Warn state (pass with non-blocking findings): a truthful record, never 'clean'.
         const n = (payload as any).warnings_count;
@@ -2037,11 +2048,17 @@ export function composeAndWriteEmit(
             `verify fail_mode 'warnings' requires a positive integer warnings_count — a warn-state record without its count is the wrong-but-plausible class this surface exists to prevent.`
           );
         }
-        emit.next_recommended = `${systemReviewNext(projectRoot, name)} — verification passed with ${n} warnings; system review recommended`;
+        const next = systemReviewNext(projectRoot, name);
+        emit.next_recommended = next.walk
+          ? `${next.cmd} — verification passed with ${n} warnings; ${VERIFY_WALK_CLAUSE}`
+          : `${next.cmd} — verification passed with ${n} warnings; system review recommended`;
       } else if (failMode === 'incomplete') {
         emit.next_recommended = `Re-run /orbit:verify ${name} — prior verify run incomplete (see verify-change output for details)`;
       } else {
-        emit.next_recommended = `${systemReviewNext(projectRoot, name)} — verification clean; formal pre-archive review recommended (or /orbit:archive ${name} if you're skipping the editorial pass)`;
+        const next = systemReviewNext(projectRoot, name);
+        emit.next_recommended = next.walk
+          ? `${next.cmd} — verification clean; ${VERIFY_WALK_CLAUSE}`
+          : `${next.cmd} — verification clean; formal pre-archive review recommended (or /orbit:archive ${name} if you're skipping the editorial pass)`;
       }
       delete (emit as any).fail_mode;
       delete (emit as any).validator_message;

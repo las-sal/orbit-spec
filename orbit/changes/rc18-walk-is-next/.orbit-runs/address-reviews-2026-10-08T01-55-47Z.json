@@ -1,0 +1,45 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-08T01:55:47Z",
+  "change": "rc18-walk-is-next",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc18-walk-is-next/.orbit-runs/external-system-2026-10-07T17-25-57Z.md",
+  "source_command": null,
+  "source_token": "2026-10-07T17-25-57Z",
+  "latest_apply_token": "2026-10-07T17-18-28Z",
+  "external_reviewer": "GPT-6 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 0
+  },
+  "pushback_verification": "verified",
+  "resolution_summary": {
+    "resolved": 0,
+    "stale_suppressed": 1,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Verify handoffs discard the newly recommended walk",
+      "marker_source": "external",
+      "file": "src/core/emit-composition.ts",
+      "line": 264,
+      "classification": "stale",
+      "action": "Converged with the fresh pass's 'The verify fallback risk is stated for the passed gate only; the unpassed walk now diverges too', walked in the earlier pass's log address-reviews-2026-10-08T01-55-35Z (Sal: A). Evidence at HEAD: systemReviewNext returns the change-scoped walk when the graph names it, and the verify pass, warn and mode-② recommendations lead with it on both an unpassed and a passed review-system, held by the verify tests in test/core/artifact-graph/outstanding-passes.test.ts.",
+      "evidence": "address-reviews-2026-10-08T01-55-35Z resolved the converged finding; src/core/emit-composition.ts systemReviewNext: `if (cmd === `/orbit:address-reviews ${name}`) return { cmd, walk: true };`",
+      "outcome": "stale"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "One of one stale: the external WARNING converged with the fresh pass's verify finding, resolved in that pass's log (address-reviews-2026-10-08T01-55-35Z).",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system rc18-walk-is-next",
+  "ripple_misses": 0
+}

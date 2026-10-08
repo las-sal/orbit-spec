@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as os from 'node:os';
@@ -638,6 +638,150 @@ describe('rc18 — the walk is next', () => {
       );
       expect(r.emit.next_recommended).toBe(APPLY);
       expect(status().next_command).toBe(APPLY);
+    });
+  });
+
+  /** rc18 system walk (Sal: 1B, 2A): the scenarios of the three requirement blocks the walk carried. */
+  describe('system walk — verify leads with the walk, and the carried blocks', () => {
+    const verify = (payload: Record<string, unknown>) =>
+      String(composeAndWriteEmit('verify', { change: C }, { final_assessment: 'v', verdict: 'pass', model: null, ...payload }, { projectRoot: root }).emit.next_recommended);
+    const CLAUSE = 'walk the outstanding review findings before the next review';
+    function systemOpen(findings: Array<[Sev, string]>): void {
+      proposalPassed();
+      tasks(true);
+      review(cr, T(3), 'system', 'fresh', findings);
+    }
+
+    // @scenario behaviour orbit-run-summary-emit :: Verify pass recommendation :: Verify pass emit recommends review-as-system canonically
+    it('nothing outstanding: a verify pass leads with the graph\'s system-review command and names archive as the alternative', () => {
+      systemOpen([]);
+      const st = status();
+      expect(st.next_command).toBe(IN_CONTEXT('system'));
+      const next = verify({});
+      expect(next.startsWith(`${st.next_command} — verification clean; formal pre-archive review recommended`)).toBe(true);
+      expect(next).toContain(`/orbit:archive ${C}`);
+    });
+
+    // @scenario behaviour orbit-run-summary-emit :: Verify pass recommendation :: A verify pass with a review pass outstanding leads with the walk
+    it('a review pass outstanding: a verify pass leads with the walk and names no archive, unpassed and passed alike', () => {
+      systemOpen([['SUGGESTION', 's']]);
+      expect(row(status(), 'review-system').state).toBe('unpassed');
+      expect(verify({})).toBe(`${WALK} — verification clean; ${CLAUSE}`);
+      walk(T(4), `review-system-${T(3)}.json`, [['SUGGESTION', 's']]);
+      review(cr, T(5), 'system', 'in-context', [['SUGGESTION', 'x']]);
+      expect(row(status(), 'review-system').state).toBe('passed');
+      const next = verify({});
+      expect(next).toBe(`${WALK} — verification clean; ${CLAUSE}`);
+      expect(next).not.toContain('/orbit:archive');
+    });
+
+    // @scenario behaviour orbit-run-summary-emit :: Verify fail-mode recommendations :: Mode ② and the warn state lead with the walk when a review pass is outstanding
+    it('mode ② and the warn state lead with the walk when a review pass is outstanding', () => {
+      systemOpen([['SUGGESTION', 's']]);
+      expect(verify({ verdict: 'fail', fail_mode: 'scenarios-fail', scenarios_failed: 2 })).toBe(
+        `${WALK} — 2 spec scenarios fail against implementation; ${CLAUSE}`
+      );
+      expect(verify({ fail_mode: 'warnings', warnings_count: 3 })).toBe(`${WALK} — verification passed with 3 warnings; ${CLAUSE}`);
+    });
+
+    // @scenario behaviour orbit-run-summary-emit :: No forward-look at planned future behavior changes :: Verify-pass recommendation does not reference planned reviewer-mode changes
+    it('the verify-pass lead is the graph\'s command and the text adds no reviewer-mode qualifier of its own', () => {
+      systemOpen([]);
+      const lead = status().next_command!;
+      const next = verify({});
+      expect(next.startsWith(`${lead} — `)).toBe(true);
+      expect(next.slice(lead.length)).not.toMatch(/external|fresh|reviewer|blind/i);
+    });
+
+    // @scenario behaviour orbit-run-summary-emit :: No forward-look at planned future behavior changes :: Emit text contains no other-issue references
+    it('verify recommendations in every branch carry no issue number', () => {
+      systemOpen([['SUGGESTION', 's']]);
+      const texts = [
+        verify({}),
+        verify({ fail_mode: 'warnings', warnings_count: 1 }),
+        verify({ verdict: 'fail', fail_mode: 'scenarios-fail', scenarios_failed: 1 }),
+        verify({ verdict: 'fail', fail_mode: 'incomplete' }),
+      ];
+      walk(T(4), `review-system-${T(3)}.json`, [['SUGGESTION', 's']]);
+      texts.push(verify({}));
+      for (const t of texts) expect(t).not.toMatch(/#\d+/);
+    });
+
+    // @scenario behaviour orbit-engine-gates :: Gate-aware status and instructions with position readout :: Status shows the position readout
+    it('the status text renders per-gate rows with reasons and the position readout', async () => {
+      const { printStatusText } = await import('../../../src/commands/workflow/status.js');
+      review(cr, T(1), 'proposal', 'fresh', [['WARNING', 'w']]);
+      const st = status();
+      const lines: string[] = [];
+      const spy = vi.spyOn(console, 'log').mockImplementation((...a: unknown[]) => void lines.push(a.join(' ')));
+      try {
+        printStatusText(st);
+      } finally {
+        spy.mockRestore();
+      }
+      const out = lines.join('\n');
+      expect(out).toContain('Gates:');
+      expect(out).toContain(`review-proposal: unpassed (${row(st, 'review-proposal').reason})`);
+      expect(out).toContain(`Position: ${st.position}`);
+    });
+
+    // @scenario behaviour orbit-engine-gates :: Gate-aware status and instructions with position readout :: An undeclared budget is absent as a KEY, not merely as a JSON value
+    it('a gate declaring no budget carries no budget key on its row', () => {
+      review(cr, T(1), 'proposal', 'fresh');
+      const st = status(s => {
+        for (const g of s.gates as any[]) delete g.budget;
+      });
+      for (const g of st.gates) expect(Object.hasOwn(g, 'budget')).toBe(false);
+      expect(Object.hasOwn(row(status(), 'review-proposal'), 'budget')).toBe(true);
+    });
+
+    // @scenario behaviour orbit-engine-gates :: Gate-aware status and instructions with position readout :: Spend never renders a position token
+    it('a gate whose spend reached its budget reads unpassed, reports the figure, and renders no spend token', () => {
+      for (const n of [1, 2, 3]) review(cr, T(n), 'proposal', 'fresh', [['WARNING', `w${n}`]]);
+      const st = status();
+      const rp = row(st, 'review-proposal');
+      expect(rp.state).toBe('unpassed');
+      expect(rp.independentSpend).toBe(3);
+      expect(rp.budget).toBe(3);
+      expect(rp.reason).not.toMatch(/budget|spen[dt]|exhaust/i);
+      expect(st.position).toContain('review(proposal) unpassed');
+      expect(st.position).not.toMatch(/BUDGET|SPENT/);
+    });
+
+    // @scenario behaviour orbit-engine-gates :: Gate-aware status and instructions with position readout :: Instructions surface blocked-by-gate
+    it('apply instructions surface blocked-by-gate with the gate id, reason and canonical next before any task is checked', async () => {
+      const { generateApplyInstructions } = await import('../../../src/commands/workflow/instructions.js');
+      review(cr, T(1), 'proposal', 'fresh', [['WARNING', 'w']]);
+      const ins = await generateApplyInstructions(root, C);
+      expect(ins.state).toBe('blocked-by-gate');
+      expect(ins.gate).toMatchObject({ id: 'review-proposal', state: 'unpassed', reason: row(status(), 'review-proposal').reason });
+      expect(ins.next_command).toBe(WALK);
+    });
+
+    // @scenario behaviour orbit-engine-gates :: Gate-aware status and instructions with position readout :: blocked-by-gate is entry-gated, not a mid-apply re-block
+    it('once a task is checked, an unpassed proposal gate no longer blocks apply', async () => {
+      const { generateApplyInstructions } = await import('../../../src/commands/workflow/instructions.js');
+      review(cr, T(1), 'proposal', 'fresh', [['WARNING', 'w']]);
+      fs.writeFileSync(path.join(root, 'orbit', 'changes', C, 'tasks.md'), '# Tasks\n\n## 1. G\n\n- [x] 1.1 one\n- [ ] 1.2 two\n');
+      const ins = await generateApplyInstructions(root, C);
+      expect(row(status(), 'review-proposal').state).toBe('unpassed');
+      expect(ins.state).toBe('ready');
+      expect(ins.gate).toBeUndefined();
+    });
+
+    // @scenario behaviour orbit-engine-gates :: Gate-aware status and instructions with position readout :: A before naming an artifact never marks a gate superseded
+    it('an unpassed gate whose before names a complete artifact is not superseded', () => {
+      review(cr, T(1), 'proposal', 'fresh', [['WARNING', 'w']]);
+      const st = status(s => {
+        s.gates = [{ id: 'review-proposal', kind: 'reviewed', requires: ['proposal'], cadence: ['fresh', 'in-context'], before: 'tasks' } as any];
+        delete (s as any).apply;
+      });
+      const rp = row(st, 'review-proposal');
+      expect(rp.state).toBe('unpassed');
+      expect(rp.superseded).toBeFalsy();
+      expect(st.position).toContain('review(proposal) unpassed');
+      expect(st.position).not.toContain('(past)');
+      expect(st.next_command).toBe(WALK);
     });
   });
 });

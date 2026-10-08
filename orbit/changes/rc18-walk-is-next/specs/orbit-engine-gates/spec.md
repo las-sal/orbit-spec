@@ -65,10 +65,8 @@ because walking a landed member ends the pair.
 **The change's next is selected over the gates in flow order (rc18).** The change-level selection
 visits the gates in the order the position readout uses and takes the command of the FIRST gate, in
 that order, whose row in the table below yields one. A reviewed gate is the FRONTIER while its `before`
-names no gate that has passed. That is exactly the test that marks a non-passed reviewed gate
-superseded in `Gate-aware status and instructions with position readout`, negated, and nothing more: a
-`before` naming an artifact, a lifecycle phase that is not a gate (`archive`), or nothing never makes a
-gate non-frontier. When no gate yields a command, the flow-latest `passed` gate's own command is the
+names no gate that has passed: the gate-id test `Gate-aware status and instructions with position
+readout` states for superseded gates, negated, and read on a gate of any state. When no gate yields a command, the flow-latest `passed` gate's own command is the
 next, so the eligibility line never goes silent at a lifecycle seam:
 
 | member | covered by |
@@ -76,6 +74,7 @@ next, so the eligibility line never goes silent at a lifecycle seam:
 | ungated schema | no gate rows; no command from this selection |
 | tracked gate `ready` | the apply command (with ` — user-invoked` when the gate declaring `before: apply` is consent-marked) |
 | tracked gate `passed` | nothing; selection continues |
+| tracked gate `blocked` | nothing; selection continues |
 | reviewed gate `blocked` | nothing from this selection; it carries no `unwalkedPasses` |
 | reviewed gate `unpassed` or `stale`, not superseded | its own canonical command, in the order above |
 | reviewed gate superseded | skipped; its unwalked passes are not recommended |
@@ -85,7 +84,7 @@ next, so the eligibility line never goes silent at a lifecycle seam:
 
 Closure: DERIVED — reviewed state (`blocked` / `unpassed` / `stale` / `passed`) × superseded ×
 frontier × an empty or non-empty unwalked set, where `passed` is never superseded, so only its
-frontier split applies, plus the two tracked-gate states and the ungated schema the selection also
+frontier split applies, plus the three tracked-gate states and the ungated schema the selection also
 visits. For a `passed` frontier gate whose `unwalkedPasses` is non-empty, the gate row's own
 `nextCommand` SHALL be the walk, computed by the SAME predicate the selection applies, so the row and
 the change never name different commands; every other `passed` gate's row keeps its phase command,
@@ -449,3 +448,79 @@ first by findings-artifact filename. `<L>` is the launch's token. The fresh revi
 
 - **WHEN** nothing covers a `review-system` gate's `invoked` slot, no pair launch is open, no pass is unresolved or unwalked, and `review_preference` is absent
 - **THEN** the canonical next is `/orbit:review --as system --reviewer blind-pair <change>` and `nextSlot` is `blind-pair`
+
+### Requirement: Gate-aware status and instructions with position readout
+
+`orbit status --change <name>` (the per-change form; bare `orbit status` is the orientation surface per `orbit-orientation` — D-arc Stage D3) SHALL render gate rows (state: `blocked | ready | passed | stale | unpassed`, with
+reasons, plus the RECORDED SPEND on a reviewed gate) alongside artifact rows, and a one-line
+POSITION READOUT of the canonical flow (e.g.
+`propose ✓ → review(proposal) (past) → apply ✓ → review(system) unpassed → archive blocked-by-gate`).
+
+**THE TWO GATE-ROW SURFACES DIFFER DELIBERATELY, and the split is normative.** The HUMAN row
+renders `independentSpend` ALONE — never beside the declaration, never composed with it. The JSON
+projection carries the optional `budget` declaration and `independentSpend` as SEPARATE named
+fields, composing neither, and OMITS either key entirely when its value is absent rather than
+emitting it undefined-valued: an in-process consumer testing key presence must not be told a gate
+declares a budget it does not.
+
+Each position-readout step token is a gate id or lifecycle-phase token (`propose`, `review(proposal)`,
+`apply`, `review(system)`, `archive`); a gate step renders its computed state (`✓` passed, `STALE`,
+`ready`, `blocked-by-gate`, `unpassed` — there is NO spend-derived token, because no
+token may make a recorded cost read as a verdict (the retired forms were `unpassed BUDGET-SPENT`
+and `STALE BUDGET-SPENT`), or `(past)` for a superseded gate). **Superseded gates**: a
+`reviewed` gate that has NOT passed and whose `before` names a GATE that has passed (e.g.
+`review-proposal` after `apply` has passed) is no longer the active frontier — it gated ENTRY to a
+phase that has since run. The test is on gate ids only (rc18): a `before` naming an artifact, a
+lifecycle phase that is not a gate (`archive`), or nothing never marks a gate superseded, whether or
+not that artifact is complete. Such a gate
+is marked SUPERSEDED (distinct from `passed`: it may never have converged; the flow simply advanced
+past it), renders as `(past)`, and is SKIPPED by the single-voiced canonical-next computation so the
+recommendation advances to the next actionable gate rather than re-surfacing a moot earlier one.
+Step order follows the gate graph's `requires`/`before` edges; ties broken by declaration order in
+the schema YAML (v1 relies on declaration order matching flow order, as the shipped `spec-driven`
+schema does). `orbit instructions` for a phase whose gate is unpassed SHALL return a `blocked-by-gate`
+state carrying the gate id, the human-readable reason, and the canonical next command. JSON outputs
+carry the same fields for downstream readers.
+
+#### Scenario: Status shows the position readout
+
+- **WHEN** `orbit status --change <name>` runs on a gated schema
+- **THEN** the output includes the position readout and per-gate rows with reasons
+
+#### Scenario: A before naming an artifact never marks a gate superseded
+
+- **WHEN** a reviewed gate declaring `before: tasks` (an artifact, not a gate) is unpassed and `tasks` is complete
+- **THEN** the gate carries no `superseded` flag, its position token is its computed state rather than `(past)`, and
+  its own canonical command can be the change's next
+
+#### Scenario: An undeclared budget is absent as a KEY, not merely as a JSON value
+
+- **WHEN** a gate declaring no `budget` is projected to the gate-status row
+- **THEN** the row carries NO `budget` key at all — `Object.hasOwn(row, 'budget')` is false, so an
+  in-process consumer testing key presence is never told a gate declares what it does not; JSON
+  hiding an undefined value is not sufficient
+
+#### Scenario: Spend never renders a position token
+
+- **WHEN** an unpassed reviewed gate's independent spend has reached or exceeded its declared budget
+- **THEN** its gate row carries `state: "unpassed"` with `independentSpend` reporting the figure,
+  its reason names only the clause that failed, and its position token reads `unpassed` — no
+  spend-derived token exists, because a recorded cost must never read as a verdict
+
+#### Scenario: Instructions surface blocked-by-gate
+
+- **WHEN** `orbit instructions apply --change <name> --json` runs while `review-proposal` is
+  unpassed AND no task has been checked yet (apply has not started)
+- **THEN** the JSON includes `state: "blocked-by-gate"`, the gate id, the reason, and
+  `next_command` (the canonical full invocation)
+
+#### Scenario: blocked-by-gate is entry-gated, not a mid-apply re-block
+
+- **WHEN** `orbit instructions apply` runs while `review-proposal` is unpassed/stale BUT one or more
+  tasks are already checked (implementation is underway)
+- **THEN** the state is `ready` (not `blocked-by-gate`): the gate gates ENTRY to apply and is checked
+  only before the first task is completed. Post-apply the `review-proposal` pass goes stale relative
+  to the `apply-*.json` emit (expected + moot per the v1 freshness scope) and the gate has already
+  served its purpose, so mid-apply continuation is never re-blocked. Apply-parity holds throughout:
+  even at entry the gate NEVER hard-blocks — the consuming skill prompts (address / proceed-anyway /
+  abort) and records the override on proceed-anyway.

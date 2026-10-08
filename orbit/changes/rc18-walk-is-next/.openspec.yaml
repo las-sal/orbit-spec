@@ -9,3 +9,8 @@ base_fingerprints:
     Single-voiced canonical-next computation: sha256:d9ca32db09ef3367250e8354dd4a3ebb25f9e73aeaa1e973f99e2c189e820476
     A reviewed gate lists its outstanding passes: sha256:66eb25033a9eac8df2f05a4609b3800cbef8aac5d2efa1cca016e83249e6f6a0
     The first review slot covers what the user invoked: sha256:3e5ce73c2b759a57d6133c0fcc93afd3c6b89245c478117515c2874fc3b31487
+    Gate-aware status and instructions with position readout: sha256:ca67263cf1c70f9e2319d34a3a28d27317a4f6eef8b85ade3a741ae259df416c
+  orbit-run-summary-emit:
+    Verify pass recommendation: sha256:4cb339b6a98a3685bde6a325d2fd0f168418cc5485504cecacc2f3c797e5ee4d
+    Verify fail-mode recommendations: sha256:c32194054b557e6cb9d393db6ab42887f0064284e9a28be8d1a41f74c1a3ffda
+    No forward-look at planned future behavior changes: sha256:a1c214726e164d968e88a7b33666b0355e90eff7cd685a2a3de872bf83ab1897

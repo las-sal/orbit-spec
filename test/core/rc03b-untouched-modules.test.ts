@@ -83,6 +83,9 @@ import { fileURLToPath } from "node:url";
  * an unwalked pass as well as an unresolved one, after the open pair (D5). `instruction-loader.ts` — the
  * selection loop takes a passed gate's walk on that same predicate, never because the row carries a command.
  * Every other hash here is unchanged.
+ * MOVED AGAIN at rc18's system walk (2026-10-07): `emit-composition.ts` only — `systemReviewNext` keeps the gate
+ * graph's next when it is the change-scoped walk, and the verify recommendation leads with it (fresh S2 + external W1,
+ * converged; Sal: A). `gates.ts` and `instruction-loader.ts` did not move.
  */
 const PINNED: Record<string, string> = {
   "schemas/spec-driven/schema.yaml": "21e0ae86532a39be558a2b81d23738a6fbf92fbd32b0d01612a65e83d6a96739",
@@ -101,7 +104,7 @@ const PINNED: Record<string, string> = {
   "src/core/artifact-graph/state.ts": "f59f748b94cd94ca2fe022ec5aa66b3251dd1b2c00bddb9a17cbd9273a04d0f2",
   "src/core/artifact-graph/trail.ts": "39b5d110ef53b7e03f49ddf292e86db598a14f426a02e6d84142e16231e37d69",
   "src/core/artifact-graph/types.ts": "d83e0cc6d7fca7b80618ffbb7ce052ee68e35be79e7949a941e989b2e102392c",
-  "src/core/emit-composition.ts": "b65afa502c8b4d2d09960f913ebd4d71f7f04fa2b5cec0530f260d76d5d1ee7d",
+  "src/core/emit-composition.ts": "9004f25281a6ed63b1a6e5726141d5d8ba6e50047054cad7a8fe1d82576709be",
   "src/core/report-render.ts": "ceaf85f5b3254b5dde97b82c94b829de510d1f70669f16d65bd820a55b7ae393",
 };
 
