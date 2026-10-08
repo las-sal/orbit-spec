@@ -1,0 +1,134 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-08T20:55:41Z",
+  "change": "rc05-executable-references",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "pass": "2",
+      "title": "The hook row and task 1.2 attribute spec's preAction hook to index.ts; it is registered in src/commands/spec.ts",
+      "file": "orbit/changes/rc05-executable-references/specs/orbit-cli-grammar/spec.md",
+      "line": 20,
+      "walk_entry": {
+        "title": "The hook row names three preAction hooks; the CLI registers five, and config's calls process.exit",
+        "file": "specs/orbit-cli-grammar/spec.md"
+      },
+      "recommendation": "The walk's hook row reads 'on the root, `change` and `spec` (`src/cli/index.ts`)', and task 1.2 reads 'the root's, `change`'s and `spec`'s in `index.ts`'. `spec`'s hook is `specCommand.hook('preAction', …)` at src/commands/spec.ts:117; index.ts registers only the root's (line 47) and `change`'s (line 176). design.md's Context states it correctly, and the counts agree everywhere ('three of the five' in the register modules: spec, config, schema), so an implementer passing the option into all three modules builds the right thing; only the attribution misleads. Repair the row to 'on the root and `change` (`src/cli/index.ts`), `spec` (`src/commands/spec.ts`)' and task 1.2 to match."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Graded the proposal walk's twelve resolved entries over their sweep scopes at c5f04b3d, and checked the external log's four stale calls, each a real convergence the fresh log resolved. The neutralisation repair holds against source: `external` declares no action of its own (index.ts:320), so keeping group commands action-free makes it reject with commander.help, as the CLI does. The guard's normalisation makes the places table's residual method true as written. D8's 'three slips' matches the generated surface: three backslash-backtick lines, one in the architect body and two in the review's external-handoff reference. The one regression is an attribution inside the widest repair: the hook row and task 1.2 place spec's hook in index.ts, while design's Context, written in the same walk, names src/commands/spec.ts correctly. The residual diff lists four files, all inside the walks' edit records.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "verification": [
+    {
+      "title": "The hook row names three preAction hooks; the CLI registers five, and config's calls process.exit",
+      "file": "specs/orbit-cli-grammar/spec.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "Neutralisation as written makes the sweep accept invocations the CLI rejects",
+      "file": "specs/orbit-cli-grammar/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The guard's matching rule is ambiguous, and its residual claim depends on an unstated line normalisation",
+      "file": "specs/orbit-cli-grammar/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The stage's one 'real defect' is invisible to the mechanism it specifies",
+      "file": "proposal.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Task 1.3's byte-identity tests compare against an uncommitted baseline that section 4 changes on purpose",
+      "file": "tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Exit (2) as worded cannot be met by the registry-parity injections",
+      "file": "design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "D3 and task 2.2 enumerate templates the generator does not emit",
+      "file": "design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The first scenario's THEN cannot be observed by a test",
+      "file": "specs/orbit-cli-grammar/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Snippet counts do not reconcile: 164 against 131 + 35 + 1",
+      "file": "proposal.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Task 4.3 tests zsh while its scenario claims every shell",
+      "file": "tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Unterminated quotes have no specified failure or joining boundary",
+      "file": "orbit/changes/rc05-executable-references/specs/orbit-cli-grammar/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Explicitly falsify flag parity as well as command parity",
+      "file": "orbit/changes/rc05-executable-references/tasks.md",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 0 warning, 1 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-08T20-54-00Z",
+    "2026-10-08T20-54-19Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc05-executable-references"
+}
