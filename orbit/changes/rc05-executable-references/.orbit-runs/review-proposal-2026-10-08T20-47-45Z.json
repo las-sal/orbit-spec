@@ -1,0 +1,162 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-08T20:47:45Z",
+  "change": "rc05-executable-references",
+  "kind": "editorial",
+  "model": null,
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 2
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-cli-grammar/spec.md",
+      "line": 19,
+      "title": "The hook row names three preAction hooks; the CLI registers five, and config's calls process.exit",
+      "recommendation": "The neutralisation table's hook row (and design D1, task 1.2) names hooks on the root, change and spec only, under a SOURCED closure that claims each setting was grepped. The CLI also registers preAction hooks in src/commands/config.ts:215 (exits with process.exit(1) when --scope is not global) and src/commands/schema.ts:296 (writes a note to stderr). Three of the five hooks are registered INSIDE register*Command modules, so the builder's hooks:false option can only skip them if it is threaded into registerSpecCommand, registerConfigCommand and registerSchemaCommand, whose signatures then change. Repair: list all five hooks in the row, state that the option is passed to the three register modules, and add src/commands/spec.ts, config.ts and schema.ts to the proposal's Impact, design D1, task 1.2 and the Touchpoints (otherwise the engine will report them as actual_unpredicted).",
+      "reproduction": "Build to the spec as written (skip root/change/spec hooks only), replace actions with no-ops, and parseAsync ['config','--scope','local','list']: config's preAction hook runs before the no-op action and calls process.exit(1) inside the test run; ['schema','which'] prints the experimental note to stderr, contradicting task 1.3's 'runs no action and no hook'."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-cli-grammar/spec.md",
+      "line": 18,
+      "title": "Neutralisation as written makes the sweep accept invocations the CLI rejects",
+      "recommendation": "Two rows let the check and the CLI disagree, against the requirement's 'cannot disagree' claim. (a) 'replaced by no-ops on every command' (also design D2's 'action(noop)' on every command) gives group commands an action handler they do not have in production (root, change, spec, config, schema, external, architecture, completion, new); commander then runs the no-op instead of printing help, so `orbit external` is accepted (the real CLI exits 1), and an unknown subcommand is reported as 'too many arguments' rather than the CLI's 'unknown command'. (b) 'a help or version exit counts as accepted' includes commander.help, the code commander raises when a group command is invoked without a subcommand (exit 1), not only commander.helpDisplayed (an explicit --help, exit 0). Repair: replace an action only where the built command already has one, and count exactly commander.helpDisplayed and commander.version as accepted; commander.help is a rejection.",
+      "reproduction": "With commander 14.0.3 in node_modules, a two-level program (external > runner with an action): setting action(noop) on every command, parseAsync(['external']) resolves (ACCEPTED) and ['external','frobnicate'] throws commander.excessArguments; setting it only where an action exists, ['external'] throws commander.help and ['external','frobnicate'] throws commander.unknownCommand. The real CLI: `node bin/orbit.js external` exits 1."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-cli-grammar/spec.md",
+      "line": 65,
+      "title": "The guard's matching rule is ambiguous, and its residual claim depends on an unstated line normalisation",
+      "recommendation": "'fails any line ... that starts with `orbit` followed by a flag' reads as 'the second token is a flag', yet the scenario 'A command in an untagged fence fails the guard' (line 130) needs `orbit validate --strict` to fail, where the second token is a subcommand; the explore's own probe (D-rc05-12) evidently matched 'starts with orbit and carries a flag'. Separately, the places table's residual method (line 81) says 'the guard itself reads every line whatever its container, so a residual member that starts a line fails it', which holds for a blockquote line (`> orbit ...`), a list-nested untagged fence (indented) or a table row (`| orbit ...`) only if the guard strips leading indentation and container prefixes; nothing says it does. State the match precisely (first token `orbit`, any later token beginning `-`), and state what is stripped before the first token is read (leading whitespace, `>` markers, list markers, a leading `|`), or narrow the residual claim to what the guard actually reads."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "proposal.md",
+      "line": 13,
+      "title": "The stage's one 'real defect' is invisible to the mechanism it specifies",
+      "recommendation": "The architect scaffold line is `run \\`orbit architecture status\\`` inside a markdown fence. Under the specified mechanism the markdown fence is re-parsed by a CommonMark parser, where a backslash before a backtick is an escaped literal, so the line yields NO code span and nothing is extracted; the line starts with `>`, so the guard does not see it either. The defect was found by the propose-time probe's naive span finder, not by anything the stage builds, so (i) proposal/design present it as sweep evidence it is not, (ii) task 3.2's fix has no check that would catch its return, and (iii) design's Non-Goal excludes the same slip at review.ts:427/:510 because it is 'not an orbit command' — reasoning that applies equally here. Either record it plainly as a hand fix found by the probe (and drop it from the sweep's expected figures in 3.3), or add a cheap regression check for backslash-escaped backticks in generated bodies and decide review.ts:427/:510 by the same rule.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Record the scaffold fix as a probe-found hand fix outside the sweep; keep review.ts:427/:510 out; state in 3.3 that the sweep's figures are its own measurement."
+        },
+        {
+          "label": "B",
+          "body": "Add a regression check (no backslash-escaped backtick in any generated body) as its own small test, and fix review.ts:427/:510 under it in the same task."
+        }
+      ]
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "tasks.md",
+      "line": 5,
+      "title": "Task 1.3's byte-identity tests compare against an uncommitted baseline that section 4 changes on purpose",
+      "recommendation": "Task 1.1 captures --help output and `orbit completion generate zsh` in a scratch directory, 'not committed', and task 1.3 makes byte-identity to it a test in test/core/cli-grammar/. A committed test cannot read an uncommitted scratch baseline, and the zsh completion output is changed deliberately by task 4.2, so a durable test would go red there. Make the refactor's byte-identity an apply-time measurement recorded in the apply emit (not a suite test), or commit the --help captures as fixtures and leave completion output out of the durable comparison (task 4.3 covers it)."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "design.md",
+      "line": 26,
+      "title": "Exit (2) as worded cannot be met by the registry-parity injections",
+      "recommendation": "'Each injection in tasks.md section 5 fails the suite naming the snippet's surface and line' — task 5.3's parity injections (a command the registry lacks; a registry entry the program lacks) have no snippet, surface or line; the parity test names a command or flag. Graded as written (task 6.2 writes this text into the charter), 5.3 would read as a MISS. Word exit (2) per injection kind: snippet and guard injections name the surface and line; parity injections name the command or flag. Carry the same wording into task 6.2."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "design.md",
+      "line": 56,
+      "title": "D3 and task 2.2 enumerate templates the generator does not emit",
+      "recommendation": "'each get*SkillTemplate()' includes getFeedbackSkillTemplate, which src/core/shared/skill-generation.ts's getSkillTemplates() does not list; the spec says 'every workflow the generator emits'. Enumerate through getSkillTemplates() so the sweep reads exactly the shipped surface and a newly added workflow is picked up without editing the helper."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-cli-grammar/spec.md",
+      "line": 35,
+      "title": "The first scenario's THEN cannot be observed by a test",
+      "recommendation": "'its command tree equals the tree src/cli/index.ts parses' — index.ts parses on import, so no in-process test can obtain its tree except by calling the same builder, which makes the comparison tautological. Restate as something observable (index.ts imports buildProgram and declares no command itself; the pre-refactor --help captures are unchanged), so task 6.1's tag rests on a test that asserts it."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "proposal.md",
+      "line": 5,
+      "title": "Snippet counts do not reconcile: 164 against 131 + 35 + 1",
+      "recommendation": "The proposal cites 164 `orbit` snippets (D-rc05-8's first-token count) and, eight lines later, a probe of 131 parsed + 35 bare + 1 rejected = 167 (with two further tokenizer rejections mentioned in D-rc05-18). Say they are two measurements by two rules, or reconcile them; exit (1) states the sweep's own figure at apply."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "tasks.md",
+      "line": 23,
+      "title": "Task 4.3 tests zsh while its scenario claims every shell",
+      "recommendation": "The scenario 'The registry offers orbit's own commands' reads `orbit completion generate <shell>`; task 4.3 checks zsh only. Test each supported shell, or narrow the scenario to zsh, so the 6.1 tag matches its evidence."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Probed hardest at the parts the exploration marked EXECUTE: not applied — the builder and neutralisation (D-rc05-9) — by reading every .hook/.command site in src/cli and src/commands and running commander 14.0.3's own parser on a small program to see which codes each neutralisation choice produces. The SOURCED closure on D-rc05-9 is the pattern worth noticing: the setting KINDS were enumerated against commander, but the INSTANCES of each kind were grepped in index.ts and not followed into the three register modules, which is where two of the five hooks live. The fence and places tables held up against CommonMark reasoning except at the one place the probe's evidence came from: an escaped backtick is not a code span, so the stage's headline defect sits outside its own instrument.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "hold",
+    "reasoning": "The design is sound and well-bounded: commander's own parser over one exported builder is the right instrument, and the CommonMark-located extraction plus guard is a coherent closure. But the neutralisation layer, which is what makes 'the sweep and the CLI cannot disagree' true, is mis-specified in two places that would be built as written: the hook enumeration misses two hooks (one of which exits the process), and no-op actions on every command plus accepting any help exit let the check accept invocations the CLI rejects. The guard's match rule also needs one precise sentence. All of these are repairs to stated tables and task lines, not redesign; once walked, the change is ready to apply."
+  },
+  "final_assessment": "0 critical, 6 warning, 4 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc05-executable-references"
+}
