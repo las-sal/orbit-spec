@@ -81,6 +81,13 @@ describe('the places table', () => {
       { line: 2, snippet: "echo it's here\norbit status --frobnicate" },
     ]);
 
+    // A later line's apostrophe closes the quote: the orbit line between is held as data, and fails.
+    const closedLater = analyse(`${FENCE}bash\necho it's here\norbit status --frobnicate\necho that's all\n${FENCE}\n`);
+    expect(closedLater.snippets).toEqual([]);
+    expect(closedLater.failures.map((f) => ({ line: f.line, snippet: f.snippet, message: f.message }))).toEqual([
+      { line: 3, snippet: 'orbit status --frobnicate', message: 'inside a quote opened at line 2 by another command' },
+    ]);
+
     // A backslash outside quotes escapes as the shell's does: `\"` opens no quote.
     const escaped = analyse(`${FENCE}bash\necho \\"\norbit status --frobnicate\n${FENCE}\n`);
     expect(escaped.failures).toEqual([]);

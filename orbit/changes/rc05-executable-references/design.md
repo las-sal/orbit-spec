@@ -70,7 +70,8 @@ workflow without an edit. For each entry it reads the SKILL.md as `generateSkill
 parser and parses the content of a `markdown`/`md` fence again. It extracts lines of `bash`/`sh`/`shell` fences and
 inline `orbit ` spans, tokenizes them by the spec's rules, and applies the bare-name rule by walking the program's
 command tree. Joining an open quote stops at the end of its shell fence's content, and a quote still open there fails extraction
-whatever the line's first token; a backslash escapes as the shell's does, and a `<` followed by whitespace is a redirect. It is tool-agnostic apart from the tool name, so `rc05b-git-grammar`
+whatever the line's first token, and an `orbit` line joined into another command's quote fails at its own line even when
+a later line closes it; a backslash escapes as the shell's does, and a `<` followed by whitespace is a redirect. It is tool-agnostic apart from the tool name, so `rc05b-git-grammar`
 consumes it unchanged. The guard reads the same parse: on every line outside a shell fence it strips leading
 whitespace, `>` markers, list markers and a leading `|`, and fails a line whose first token is the tool and any later
 token begins with `-`.

@@ -1,0 +1,131 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-09T00:26:06Z",
+  "change": "rc05-executable-references",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc05-executable-references/.orbit-runs/review-system-2026-10-09T00-20-32Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-09T00-20-32Z",
+  "latest_apply_token": "2026-10-08T21-30-48Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 1
+  },
+  "pushback_verification": "verified",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "A second apostrophe closes the first one's quote, so a non-orbit line can still hide an orbit line",
+      "file": "orbit/changes/rc05-executable-references/specs/orbit-cli-grammar/spec.md",
+      "line": 83,
+      "marker_source": "internal-review",
+      "classification": "decision_required",
+      "ratified_via": "prompt",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "In extractFenceLines, when a join began on a line whose first token is not the tool, fail extraction for each joined line whose first token is the tool, naming its own line. Add the two-apostrophe injection."
+          },
+          {
+            "label": "B",
+            "body": "Narrow the quoted-argument row's last clause to a quote still open at the fence's end, and add to the places limit's residual kind: an orbit line inside a quote another line opens and a later line closes."
+          }
+        ],
+        "chosen": "A"
+      },
+      "action": "Applied the ratified direction A: when a join began on a line whose first token is not the tool, each joined line whose first token is the tool fails extraction at its own line ('inside a quote opened at line N by another command'), so the row's clause — a line of another tool cannot hide the orbit lines after it — now holds. Tests: the two-apostrophe case in the places table and an injection into a real reference fence; both fail against the previous helper. The surface still sweeps clean. The spec row and design D3 state the rule.",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "test/helpers/surface-snippets.ts",
+          "orbit/changes/rc05-executable-references/design.md",
+          "test/core/cli-grammar/surface-snippets.test.ts",
+          "test/core/cli-grammar/injections.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc05-executable-references/specs/orbit-cli-grammar/spec.md",
+            "text": "fails extraction at its own line, though a later line closes the quote"
+          },
+          {
+            "path": "test/helpers/surface-snippets.ts",
+            "text": "by another command"
+          },
+          {
+            "path": "test/core/cli-grammar/injections.test.ts",
+            "text": "a quote a later line closes fails extraction at the held orbit line"
+          }
+        ],
+        "searched": [
+          "cannot hide",
+          "joined",
+          "still open at"
+        ],
+        "scope": [
+          "orbit/changes/rc05-executable-references/tasks.md",
+          "orbit/changes/rc05-executable-references/proposal.md"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "A trailing backslash on a command that takes a positional passes silently, not as a false failure",
+      "file": "orbit/changes/rc05-executable-references/specs/orbit-cli-grammar/spec.md",
+      "line": 91,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "action": "The trailing-backslash residual names both outcomes: a false failure on a command that takes no positional, and on one that does (orbit validate), a parse that passes while the continued flags go unchecked.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "as an argument, a false failure)"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc05-executable-references/specs/orbit-cli-grammar/spec.md",
+            "text": "a parse that passes while the continued flags go unchecked"
+          }
+        ],
+        "searched": [
+          "false failure",
+          "trailing"
+        ],
+        "scope": [
+          "orbit/changes/rc05-executable-references/design.md"
+        ],
+        "kept": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Two of two resolved: Sal took A, so an orbit line held inside another command's quote now fails at its own line, and the continuation residual names its silent outcome.",
+  "iteration": 6,
+  "next_recommended": "/orbit:archive rc05-executable-references — user-invoked",
+  "ripple_misses": 0
+}

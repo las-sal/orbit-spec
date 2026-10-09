@@ -248,11 +248,27 @@ function extractFenceLines(walk: Walk, token: Token, contentStart: number): void
     }
     if (result.tokens[0] === walk.tool) {
       walk.out.snippets.push({ surface: walk.surface, line, text, tokens: result.tokens, source: 'fence' });
+    } else {
+      // Another tool's quote, closed by a later line, would hold a tool line as data,
+      // unseen by the sweep and the guard: each such joined line fails at its own line.
+      for (let k = startIdx + 1; k <= i; k++) {
+        if (firstWord(lines[k]) === walk.tool) {
+          walk.out.failures.push({
+            surface: walk.surface,
+            line: contentStart + k + 1,
+            snippet: lines[k],
+            message: `inside a quote opened at line ${line} by another command`,
+          });
+        }
+      }
     }
     i++;
   }
 }
 
+function firstWord(line: string): string {
+  return line.trim().split(/\s+/)[0] ?? '';
+}
 
 function locateInline(parent: Token, child: Token, from: number): { index: number; end: number } | null {
   const escaped = child.content.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/ /g, '[ \\n]');

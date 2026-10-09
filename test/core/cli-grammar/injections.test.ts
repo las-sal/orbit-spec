@@ -123,6 +123,13 @@ describe('a non-orbit line before an injected defect cannot hide it', () => {
     expect(failures[0]).toMatch(/unterminated ' quote at the end of the shell fence$/);
   });
 
+  it('a quote a later line closes fails extraction at the held orbit line', async () => {
+    const { surfaces, first } = injectAfterOpener(["echo it's here", 'orbit status --frobnicate', "echo that's all"]);
+    expect(await sweepFailures(analyseOrbit(surfaces))).toEqual([
+      `${place.surface}:${first + 1}: orbit status --frobnicate\n    inside a quote opened at line ${first} by another command`,
+    ]);
+  });
+
   it('an escaped quote opens none, so the orbit line after it is parsed and fails', async () => {
     const { surfaces, first } = injectAfterOpener(['echo \\"', 'orbit status --frobnicate']);
     expect(await sweepFailures(analyseOrbit(surfaces))).toEqual([

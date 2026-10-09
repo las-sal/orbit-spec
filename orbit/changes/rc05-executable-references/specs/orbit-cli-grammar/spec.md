@@ -80,7 +80,7 @@ leading whitespace, blockquote `>` markers, list markers and a leading `|`, and 
 | a line in a fence whose info string is `bash`, `sh` or `shell` | extracted, one argument vector per line |
 | a line in such a fence nested in a list item | extracted the same way |
 | a shell fence inside a fence whose info string is `markdown` or `md` | extracted: the outer fence's content is parsed again, and its reader runs those commands |
-| a quoted argument spanning lines | the lines are joined until the quote closes, within the same shell fence's content; a quote still open at the fence's end fails extraction whatever the opening line's first token, naming the surface, the line and the snippet, so a line of another tool cannot hide the `orbit` lines after it |
+| a quoted argument spanning lines | the lines are joined until the quote closes, within the same shell fence's content; a quote still open at the fence's end fails extraction whatever the opening line's first token, naming the surface, the line and the snippet; and an `orbit` line joined into a quote another command opened fails extraction at its own line, though a later line closes the quote — so a line of another tool cannot hide the `orbit` lines after it |
 | an inline single-backtick span beginning `orbit ` | extracted, unless every token resolves to a command of the program with nothing after it: a bare command NAME is prose |
 | a line in an untagged fence, a data-tagged fence, or prose outside every fence | not extracted; the guard |
 | a line whose first token is a placeholder (a runner's argument vector) | not extracted: not `orbit` |
@@ -88,7 +88,8 @@ leading whitespace, blockquote `>` markers, list markers and a leading `|`, and 
 Named limit (the places). Residual kind: a command in a container not listed: a blockquote, an indented code block, an
 HTML block, a table cell, or mid-line after `&&`, `$ ` or `|`; a command in a double-backtick inline span; and, inside
 a shell fence, a line prefixed `$ ` or by an assignment (`VAR=1 orbit …`), or a command continued onto the next line by
-a trailing `\` (its `\` reaches the parser as an argument, a false failure). Residual method: the guard reads every
+a trailing `\` (its `\` reaches the parser as an argument: a false failure on a command that takes no positional,
+and on one that does, a parse that passes while the continued flags go unchecked). Residual method: the guard reads every
 line OUTSIDE a shell fence whatever its container, so a residual member there that starts a line fails it; a member
 mid-line, or in a double-backtick span, is found by splitting candidate lines on `&&`, `;` and `|` and rerunning the
 guard; the shell-fence members are found by grepping the extracted fences' lines for a leading `$ ` or assignment and a
