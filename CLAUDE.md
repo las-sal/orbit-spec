@@ -106,7 +106,7 @@ The full plan and design decisions live in the docs below — **read them before
 
 ## The ACTIVE program: clean-up-review-cycle (the D-arc is quiescent)
 
-**Current state, engine-checked:** the program's rulings index holds <!-- src:rulings -->14<!-- /src:rulings --> rulings, and `orbit/specs/` holds <!-- src:capabilities -->24<!-- /src:capabilities --> baseline capabilities. Every marked figure in this file is checked against `orbit/sources.yaml` by `orbit validate --sources`; an UNMARKED figure is invisible to that check.
+**Current state, engine-checked:** the program's rulings index holds <!-- src:rulings -->14<!-- /src:rulings --> rulings, and `orbit/specs/` holds <!-- src:capabilities -->25<!-- /src:capabilities --> baseline capabilities. Every marked figure in this file is checked against `orbit/sources.yaml` by `orbit validate --sources`; an UNMARKED figure is invisible to that check.
 
 As of 2026-09-11 the D-arc's six stages are all archived (d1 complete-ratified; d2–d6
 quiescent, awaiting ratification) and the live program is
@@ -211,7 +211,7 @@ file now carries a live mark. Do NOT read this paragraph as the program's full l
 only what rc07 produced. The authoritative list is the program doc's own Open questions section,
 which also carries Q-crc-11, Q-crc-12, Q-crc-20, Q-crc-21, Q-crc-22 and Q-crc-23.
 
-**Twenty-three more stages have shipped since, and the program is TWENTY-SIX stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b, rc03c, rc07b and rc06a ratified 2026-10-04; rc06b, rc08a and rc08b ratified 2026-10-05 — rc08a's exit (3), pending by design, was measured on rc08b's cadence and read 4, not zero; the split parent rc08 took its ENDED mark the same day; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening; rc17a ratified 2026-10-06; rc17d ratified 2026-10-06; rc17b ratified 2026-10-06; rc17c ratified 2026-10-07; rc18 ratified 2026-10-08).
+**Twenty-four more stages have shipped since, and the program is TWENTY-SIX stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b, rc03c, rc07b and rc06a ratified 2026-10-04; rc06b, rc08a and rc08b ratified 2026-10-05 — rc08a's exit (3), pending by design, was measured on rc08b's cadence and read 4, not zero; the split parent rc08 took its ENDED mark the same day; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening; rc17a ratified 2026-10-06; rc17d ratified 2026-10-06; rc17b ratified 2026-10-06; rc17c ratified 2026-10-07; rc18 ratified 2026-10-08).
 
 `rc02c-confirmation-semantics` is ARCHIVED (2026-09-21): **the budget stopped being a target.**
 R-crc-11(h) — effort is RECORDED, never TARGETED — retired `budgetExhausted`, the
@@ -735,6 +735,23 @@ VERIFICATION (four `landed`, two `regressed`, walked to zero) led to a COMPUTED 
 the stage's own cycle: that verification left the gate passed with the walk as its line, and the line moved to archive
 once walked. Sync: 7 MODIFIED across two capabilities, 7/7 byte-verified; the capability count holds at 24.
 **3066 tests green** (3039 → 3066).
+
+`rc05-executable-references` is ARCHIVED (2026-10-08; all three exit criteria graded MET, (1) and (2) as revised at apply
+under R-crc-12's first case): **documented `orbit` commands parse against the CLI.** `src/cli/program.ts` exports
+`buildProgram({hooks})`, the CLI's ONE program, and `src/cli/index.ts` only builds and parses; a test builds it with all
+five hooks skipped, neutralises it, and asks commander's own `parseAsync`, a parse accepted exactly when commander's exit
+code is 0. A test-only extractor (`test/helpers/surface-snippets.ts`, `markdown-it` a devDependency, tool-agnostic so
+`rc05b-git-grammar` consumes it unchanged) reads every generated SKILL.md as the generator writes it and every reference,
+tokenizes by the shell's quoting, and fails a quote that would hide an `orbit` line; a guard fails any `orbit` line with a
+flag outside a shell fence. The sweep parses 130 snippets and sets aside 35 bare command names; the only real defects were
+three backslash-before-backtick slips, fixed and now checked. The completion registry is held to the program both ways (it
+had drifted nine commands short), and the generated zsh and bash scripts are syntax-checked. Baseline capabilities **24 →
+25** (`orbit-cli-grammar` ADDED). The system blind pair on `3c4ad6dd` (fresh 0C/2W/3S forward, external GPT-6 Codex
+0C/1W/2S hold) converged on the extractor's one hole, a non-orbit line's quote swallowing the `orbit` lines after it;
+two walk logs, then an in-context VERIFICATION grading five `landed` and two `regressed` (a second apostrophe closing the
+quote; the continuation residual stated too loud), walked to zero on Sal's A; a COMPUTED PASSED gate. Left for Sal: the
+upstream zsh completion generator escapes `'` as `\'` inside single quotes, avoided in the registry and unfixed.
+**3145 tests green** (3066 → 3145).
 
 Read that doc before any rc-stage work; the D-arc section below is the historical
 record of how the engine got here.

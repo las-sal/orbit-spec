@@ -2467,6 +2467,23 @@ extractor's own output is true by construction; and the three PR references are 
 every extracted snippet for (1), and for (2) one injection per place the extractor reads, each failing with its
 location. Exit (3) as declared named "grammar or selector defects"; selectors are `gh`'s, and moved with it.
 
+Shipped as (2026-10-08; archived as `orbit/changes/archive/2026-10-08-rc05-executable-references/`; the charter and the
+exits above stand as revised): `src/cli/program.ts` exports `buildProgram({hooks})`, the CLI's one program, and
+`src/cli/index.ts` only builds and parses; `hooks: false` reaches all five `preAction` hooks, three of them inside the
+register modules, and every `--help` page and `--version` was byte-identical across the move. The check is commander's
+own `parseAsync` over a neutralised build, a parse accepted exactly when commander's exit code is 0 (the system walk:
+`help <command>` and a group run alone throw the same error code). A test-only extractor, with `markdown-it` as a
+devDependency, reads every generated SKILL.md, as the generator writes it, and every reference; it tokenizes by the
+shell's quoting, and a quote another command holds open, or opens and a later line closes, fails rather than hiding an
+`orbit` line (the system pair converged on the first case, and the verification found the second). Exit (1) MET: 129
+snippets parsed and 35 bare names set aside at apply, 130 once the frontmatter was read, with zero guard hits; the only
+real defects were three backslash-before-backtick slips, fixed and now checked. Exit (2) MET: one injection per place
+read, each failing with its location, plus the parity and backtick injections. Exit (3) MET: the system blind pair
+(fresh and GPT-6 Codex) found no grammar defect in an `orbit` snippet. The completion registry was nine commands, seven
+flags and one positional short of the program; it is filled and held both ways, and the generated zsh and bash scripts
+are syntax-checked, because filling it exposed an upstream zsh generator bug (an apostrophe escaped as `\'` inside single
+quotes), avoided in the registry's descriptions and left unfixed in the generator, a scope call for Sal.
+
 ### Stage rc05b-git-grammar — the git and gh snippets parse against recorded contracts
 
 Depends-on: rc05-executable-references

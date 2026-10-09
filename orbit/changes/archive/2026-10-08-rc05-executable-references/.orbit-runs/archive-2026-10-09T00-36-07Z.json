@@ -1,0 +1,69 @@
+{
+  "command": "archive",
+  "timestamp": "2026-10-09T00:36:07Z",
+  "change": "rc05-executable-references",
+  "kind": "lifecycle",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Archived rc05-executable-references through a COMPUTED PASSED review-system gate: the CLI's grammar is one exported program, every orbit snippet on the generated surface parses against it through commander's own parser, and the completion registry is held to it. Sync 3 ADDED into the new orbit-cli-grammar capability, byte-verified.",
+  "archive_path": "orbit/changes/archive/2026-10-08-rc05-executable-references",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 4
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-cli-grammar"
+    ],
+    "added": 3,
+    "modified": 0,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": 0,
+  "user_decision": null,
+  "consent": "user-invoked",
+  "warnings": [
+    "Pre-archive audit (in flow, no separate emit): category 5 Touchpoints divergence — 4 SUGGESTION, unpredicted by the frozen Touchpoints: test/helpers/neutral-program.ts, test/helpers/orbit-sweep.ts and test/helpers/registry-parity.ts (the apply split the predicted test/helpers/surface-snippets.ts into four helpers), and src/core/templates/workflows/propose.ts (the system walk's Touchpoints example). Category 1 clean: the delta carries no RENAMED or REMOVED. Category 3 clean: validate --sources reads capabilities 25 after the sync, and the architecture doc validates. Category 4: the three ADDED blocks byte-present in the new baseline. Category 2 skipped (orbit/lenses/ absent); category 6 not run in flow.",
+    "Sync through the engine's applySpecs: 3 ADDED into orbit-cli-grammar, a NEW capability (fingerprints: no entries, the delta touches no existing requirement), 3/3 delta blocks byte-present in baseline. Baseline capabilities 24 → 25. The sync's TBD Purpose was replaced in place.",
+    "Task 6.4 (user-validation) CLOSED AT ARCHIVE BY OBSERVATION: the system blind pair — fresh review-system-2026-10-08T23-38-30Z and external external-system-2026-10-08T23-44-26Z — found no grammar defect in an orbit snippet among its eight findings (exit (3)).",
+    "The first external launch hung after the machine slept (log silent from two minutes in, process alive with 2s CPU); it was stopped and relaunched at the same BASE and launch token, and only the relaunch's return was saved. Its raw log is outside the repository.",
+    "In flow: CLAUDE.md gained the rc05 paragraph, its capabilities mark moved to 25 and its shipped-since count to twenty-four; the stage section gained its Shipped-as paragraph."
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "disposition": "ready",
+      "formed_against": [
+        "2026-10-08T20-47-45Z",
+        "2026-10-08T20-48-08Z",
+        "2026-10-08T23-38-30Z",
+        "2026-10-08T23-44-26Z"
+      ],
+      "reasoning": "Both blind pairs' findings were walked to zero, and the system pair's converged defect, a non-orbit line's quote hiding the orbit lines after it, was repaired in the stage together with the second case the verification constructed. Each repaired rule is held by a test shown able to fail against the previous helper, the sweep reads clean on the shipped surface, and the stage's exit (3) was observed on its own pair.",
+      "ratified_by": "ai",
+      "accepted": [
+        {
+          "claim": "PASSED means every finding was resolved, not that an independent pass stood clean on the final tree.",
+          "why": "The system walks' edits (the tokenizer's quoting, the exit-code rule, the generated-content surfaces, and the verification walk's held-line failure) were graded only by the in-context verification, never by an independent pass."
+        },
+        {
+          "claim": "The sweep proves grammar only, and only for the places its table names.",
+          "why": "Mid-line commands, double-backtick spans, $-prefixed or assignment-prefixed shell lines and backslash continuations are named limits with grep residual methods; a continuation on a positional-taking command passes silently."
+        },
+        {
+          "claim": "The zsh completion generator still escapes an apostrophe as backslash-quote inside single quotes.",
+          "why": "Out of the stage's scope: the registry's descriptions avoid apostrophes and the generated zsh and bash scripts are syntax-checked, so a regression fails the suite, but the generator itself is unfixed — a scope call for Sal."
+        }
+      ]
+    }
+  ],
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."
+}
