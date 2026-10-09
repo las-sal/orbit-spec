@@ -1,0 +1,9 @@
+{
+  "command": "propose",
+  "timestamp": "2026-10-09T16:00:47Z",
+  "change": "rc05b-git-grammar",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Consumed the rc05b-git-grammar exploration (3 live rules accounted, 0 open questions). Two capabilities MODIFIED: orbit-cli-grammar (1 ADDED requirement for git and gh recorded contracts, the snippet requirement MODIFIED for the operator split) and orbit-pr-lifecycle (the contract requirement's sweep sentence re-pointed). D-rc05b-7's BOUNDED residual carried verbatim into the ADDED requirement's named limit, with a Risks pointer. A propose-time spike refined the capture: `git <key> <flag> -h` decides parse-options builtins without running; log/show/rev-list answer -h first and are probed by running; the strategy is chosen per command by a bogus-flag self-check. Validates --strict; fingerprints 2/2; 16 delta scenarios to declare at apply.",
+  "next_recommended": "/orbit:review rc05b-git-grammar — proposal artifacts ready; review before apply"
+}

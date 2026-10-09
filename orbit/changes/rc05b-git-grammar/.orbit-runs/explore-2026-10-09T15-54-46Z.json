@@ -1,0 +1,25 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-09T15:54:46Z",
+  "change": "rc05b-git-grammar",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Sal took all recommendations. Three rules with Mechanism entries: D-rc05b-5 (split at unquoted shell operators in the shared extractor, modifying orbit-cli-grammar's places table; SOURCED), D-rc05b-7 (git's contract captured by probing real git in a disposable repo for every surface subcommand and flag, rev-parse under a named orbit-side rule; BOUNDED, residual = unrecognised grammar-error messages, method = a bogus-flag self-check per subcommand), D-rc05b-8 (bare-name tree = contract keys; DERIVED). One scope entry: D-rc05b-6, orbit-cli-grammar owns git and the gh sweep move, orbit-pr-lifecycle keeps the stub (two capabilities). Four facts (D-rc05b-1..4); D-rc05b-2 corrected from fourteen operator snippets to twelve. No open questions remain; ready to propose.",
+  "decisions_captured": 8,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 3,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [
+    {
+      "id": "D-rc05b-7",
+      "kind": "a grammar error whose message matches none of the recorded shapes, classified as accepted — a false pass",
+      "method": "the capture also probes a deliberately bogus flag on every subcommand and requires it to classify as rejected; a subcommand where it does not either carries a named orbit-side rule (`rev-parse`) or fails the capture"
+    }
+  ],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose rc05b-git-grammar — 3 live rules accounted, 1 bounded residual named (D-rc05b-7); formalize when you are ready (or /orbit:explore rc05b-git-grammar to keep refining)"
+}
