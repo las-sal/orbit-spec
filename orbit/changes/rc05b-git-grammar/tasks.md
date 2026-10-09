@@ -15,7 +15,7 @@
 
 ## 3. The `git` validator (D5)
 
-- [ ] 3.1 `test/integration/cli-contracts/git-contract-validate.cjs` per D5: longest-key lookup, exact flag names, rejected flags with git's message, unrecorded flags naming `npm run capture:git`, value consumption (separate, `=`, and attached short), `--`, `positional_required`, the `rev-parse` recorded-flags rule, and placeholders as values.
+- [ ] 3.1 `test/integration/cli-contracts/git-contract-validate.cjs` per D5: longest-key lookup (a key recorded unknown failing with git's line, a word matching no key with the re-capture hint), exact flag names, rejected flags with git's message, unrecorded flags naming `npm run capture:git`, value consumption (separate, `=`, and attached short), `--`, `positional_required`, the `rev-parse` recorded-flags rule, and placeholders as values.
 - [ ] 3.2 Validator unit cases, one per D5 branch. Tag `The orbit-side rule rejects what git would accept` and `A flag added after capture asks for re-capture`.
 
 ## 4. One sweep for both recorded tools (D2, D-rc05b-6, D-rc05b-8)

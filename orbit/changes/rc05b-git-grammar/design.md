@@ -86,7 +86,8 @@ does not carry test helpers. The procedure is the ADDED requirement's probe tabl
 129 `git` segments on today's surface (see explore.md, Cases 1–3):
 
 1. **Groups and keys.** `git <a> orbitcapturebogusverb` reporting `unknown subcommand` makes `<a>` a group. A group's
-   key takes the segment's second word as its verb; every other key is one word.
+   key takes the segment's second token as its verb only when it matches `^[a-z][a-z0-9-]*$` (the prototype's test);
+   a group segment with no such token has no key and fails as an unknown command. Every other key is one word.
 2. **Known.** `git <key> -h`: a `usage:` first line means known; `is not a git command` or `unknown subcommand` means
    unknown, recorded with the line.
 3. **Class.** A rejection shape from `git <key> --orbit-capture-bogus -h` means PARSE-OPTIONS. Otherwise, a rejection
@@ -110,8 +111,9 @@ reviewed like `capture:gh`'s.
 ### D5 — The `git` validator is strict, and its messages say which kind of miss
 
 `test/integration/cli-contracts/git-contract-validate.cjs` exports `validate(argv, contract)` with `gh`'s calling
-convention: argv excludes `git`; the result is `{ok, message}`. The lookup takes the longest key. An unknown command
-gets `unknown command "<x>" for "git"`. A flag must match a recorded name exactly, with no abbreviation and no
+convention: argv excludes `git`; the result is `{ok, message}`. The lookup takes the longest key. A key the contract records
+`known: false` returns git's recorded line (`is not a git command`, `unknown subcommand`); a leading word matching no
+recorded key returns `unknown command "<x>" for "git" — re-run npm run capture:git`. A flag must match a recorded name exactly, with no abbreviation and no
 bundling. An attached short value (`-S<x>`) is accepted only on a value-taking short flag. `--name=value` is accepted on any accepted long flag (D3's
 named limit). A rejected flag returns
 git's recorded message. An unrecorded flag returns `flag <f> on git <key> is not in the recorded contract — re-run

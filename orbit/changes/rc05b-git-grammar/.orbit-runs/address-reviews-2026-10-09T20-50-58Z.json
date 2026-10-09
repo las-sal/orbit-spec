@@ -1,0 +1,128 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-09T20:50:58Z",
+  "change": "rc05b-git-grammar",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc05b-git-grammar/.orbit-runs/review-proposal-2026-10-09T20-50-06Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-09T20-50-06Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 2
+  },
+  "pushback_verification": "All three verified against current files; previewed as obvious fixes at triage.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 1,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The validator's answer for a command key recorded unknown, and for a leading word no key matches, is unstated",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+      "line": 59,
+      "classification": "trivial_fix",
+      "action": "stated both unknown-command outcomes in the validator paragraph, design D5 and task 3.1: a key recorded unknown fails with git's recorded line; a leading word matching no key fails as unknown command with the re-capture hint",
+      "evidence": "re-read spec.md:59: the paragraph said only \"look up the longest command key\"; D5 had one string for both cases",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc05b-git-grammar/design.md",
+          "orbit/changes/rc05b-git-grammar/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "An unknown command gets `unknown command \"<x>\" for \"git\"`."
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+            "text": "failing a key the contract records unknown with git's recorded line"
+          },
+          {
+            "path": "orbit/changes/rc05b-git-grammar/design.md",
+            "text": "a leading word matching no recorded key returns"
+          }
+        ],
+        "searched": [
+          "unknown command",
+          "known: false",
+          "longest"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "A group's verb is not required to be a word, as the prototype required",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+      "line": 45,
+      "classification": "trivial_fix",
+      "action": "added the prototype's word test to the key row and design D4 step 1: a group's verb is the second token only when it matches ^[a-z][a-z0-9-]*$; otherwise the segment has no key and fails as unknown",
+      "evidence": "explore.md Case 2 / the prototype required a word; spec.md:45 did not",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc05b-git-grammar/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "key takes the segment's second word as its verb; every other key is one word."
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+            "text": "and only when it matches `^[a-z][a-z0-9-]*$`"
+          },
+          {
+            "path": "orbit/changes/rc05b-git-grammar/design.md",
+            "text": "the prototype's test"
+          }
+        ],
+        "searched": [
+          "verb",
+          "second token",
+          "second word"
+        ],
+        "scope": [
+          "orbit/changes/rc05b-git-grammar/tasks.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "explore.md changed after the pair and is in no walk entry's edit record",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc05b-git-grammar/explore.md",
+      "line": 1,
+      "classification": "stale",
+      "action": "no edit: the finding names a record gap with nothing to change",
+      "evidence": "explore.md was edited on the redesign route address-reviews-2026-10-09T16-28-05Z named (routed_to explore.md); the verification found no defect in it",
+      "outcome": "stale"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Two obvious fixes resolved (the validator's two unknown-command answers; a group verb must be a word); the record-gap suggestion stale.",
+  "iteration": 5,
+  "next_recommended": "/orbit:apply rc05b-git-grammar — user-invoked",
+  "ripple_misses": 0
+}

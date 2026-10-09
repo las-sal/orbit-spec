@@ -42,7 +42,7 @@ beginning `error: unknown option`, `error: invalid option`, `error: unknown swit
 | member | covered by |
 |---|---|
 | a command group | `git <a> orbitcapturebogusverb` reports `unknown subcommand` (`worktree` today) |
-| a command key | a group's key is two words, its second the segment's verb (`worktree remove`); every other key is one word, and its second token is an argument (`push <remote>`) |
+| a command key | a group's key is two words, its second the segment's verb (`worktree remove`) — the segment's second token, and only when it matches `^[a-z][a-z0-9-]*$`; a group segment whose second token is a flag or a placeholder has no key and fails as an unknown command; every other key is one word, and its second token is an argument (`push <remote>`) |
 | a key git knows | `git <key> -h`: a first line beginning `usage:` records it known; `is not a git command` or `unknown subcommand` records it unknown, with that line |
 | the command's probe class | `git <key> --orbit-capture-bogus -h` gives a rejection shape → PARSE-OPTIONS; otherwise `git <key> --orbit-capture-bogus HEAD` gives a rejection shape or a usage page → RUN; otherwise a named orbit-side rule, or the capture fails naming the key and writes nothing |
 | whether a flag takes a value | `git <key> <name>` with nothing after it: `requires a value` records it value-taking |
@@ -56,7 +56,10 @@ beginning `error: unknown option`, `error: invalid option`, `error: unknown swit
 Named limit (the classification). Residual kind: a grammar error whose message matches none of the recorded shapes, classified as accepted — a false pass
 Residual method: the capture also probes a deliberately bogus flag on every subcommand and requires it to classify as rejected; a subcommand where it does not either carries a named orbit-side rule (`rev-parse`) or fails the capture
 
-The `git` validator SHALL look up the longest command key leading the argument vector; match each flag token by its
+The `git` validator SHALL look up the longest command key leading the argument vector — failing a key the contract
+records unknown with git's recorded line, and a leading word that matches no recorded key with `unknown command
+"<x>" for "git"` and the re-capture hint, since that is a subcommand a body gained after capture or an invented one;
+match each flag token by its
 recorded name exactly — no abbreviation, no bundled short flags — refusing an unrecorded or rejected flag (with git's
 recorded message for a rejected one, and a message naming re-capture for an unrecorded one); let a value-taking flag
 consume the next token unless its value is attached; accept `--name=value` on any accepted long flag; read every
