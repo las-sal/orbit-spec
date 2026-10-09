@@ -23,50 +23,63 @@ Domain: every shell construct on a snippet line that separates commands or attac
 | an operator inside quotes (`"&&"`; none today) | an argument: the tokenizer marks quotedness |
 | `;;` (case syntax; none today) | fails extraction, naming the surface and line |
 | a redirection (`>`, `>>`, `<`, `2>`, `2>&1`, `<<`; none today) | the operator and its target are dropped from the argv |
-| `$(`, a backtick, or `(` unquoted (none today) | fails extraction, naming the surface and line |
+| a `(` opening a segment and its matching `)` (one today: the runner launch's subshell, `external-handoff.md`) | grouping, stripped; the commands inside are segments (D-rc05b-12) |
+| `$(` or a backtick unquoted (none today on any shell-fence line or tool-headed span, measured at the proposal walk) | fails extraction, naming the surface and line |
+| an inline span beginning with a word other than the tool | not read: rc05's gate is kept, and a tool command after an operator there is in the places residual (D-rc05b-12) |
 | a newline inside a shell fence | already a line boundary (rc05); a quote spanning lines keeps rc05's join rule |
-Closure: SOURCED — POSIX XCU 2.10's control and redirection operators, plus bash's `|&`; substitution and grouping are refused rather than parsed
+Closure: SOURCED — POSIX XCU 2.10's control and redirection operators, plus bash's `|&`; grouping is stripped, substitution refused rather than parsed
 Moves:
 - READ: applied — the twelve operator snippets were read from the extractor's own output (D-rc05b-2); `orbit-cli-grammar`'s residual names `&&`, `|`, `;` and `$ `
 - ENUMERATE: applied — this table, from the shell grammar's operator list rather than from the surface
 - COHERE: applied — the guard reads lines, not segments; a tool word after an operator outside a fence remains the guard's residual, and the split narrows it only inside extracted text
 - EXECUTE: not applied — nothing is built; the second probe confirmed today's surface carries only the first two rows
-- FALSIFY: applied — a pipeline whose LATER segment is `git` (`… | git apply`) is now extracted; before, a `git` command after `|` was invisible
+- FALSIFY: applied — a pipeline whose LATER segment is `git` (`… | git apply`) is now extracted on a shell-fence line or in a span beginning with the tool; before, a `git` command after `|` was invisible. The proposal walk's fresh pass found the first version of the `(` row would have failed a real line (`external-handoff.md:151`), because the "none today" measure had read only the three tools' snippets
 - CONFORM: applied — R-crc-14 (one tokenizer, stated once in `orbit-cli-grammar`), D-rc05-11 (extraction by shape; the contract decides)
 - FEASIBILITY: not applied — one pass over each line's characters
 - CONSUME: applied — every tool's sweep reads segments: `orbit`'s parser and both recorded validators receive one command per argv; rc05's `orbit` sweep must stay green
 - INVOKE: applied — `npm test`, every build
 
 ### D-rc05b-7 — the `git` contract is captured by probing real git
-Domain: every fact the validator needs about a `git` segment, and how the capture decides it
+Domain: every fact the validator needs about a `git` segment, and how the capture decides it (revised at re-exploration, D-rc05b-11)
 | member | covered by |
 |---|---|
-| a subcommand git knows | probe `git <sub> -h`: a usage page (exit 129) records it; `is not a git command` records it unknown |
-| a two-level subcommand (`worktree add`, `worktree remove`) | keyed with its verb, as `gh`'s `pr view`; probed the same way |
+| every probe | runs in its OWN fresh copy of a template repository (one commit, branch `main`), so no probe sees another's effects (D-rc05b-10) |
+| a command group | `git <a> orbitcapturebogusverb` reports `unknown subcommand` (`worktree` today) |
+| a command key | a group's key is two words, its second the segment's verb; every other key is one word |
+| a key git knows | `git <key> -h`: a first line beginning `usage:` records it known; `is not a git command` or `unknown subcommand` records it unknown, with that line |
 | a subcommand written only as a bare name (`git init`) | in the candidate set: the capture reads bare segments too |
-| a flag that takes no value | bare flag not a grammar error, and `<flag>=x` reports that it takes no value |
-| a flag that requires a value (`-m`, `-c`, `-F`, `-S`, `--since`) | bare flag reports `requires a value` |
-| a flag with an optional value (`--track`, `-u`) | bare flag accepted and `<flag>=x` not refused |
-| a flag written `--name=value` on the surface (`--format=%h`) | recorded by the name before `=` |
-| a numeric flag (`-1`) | recorded as the literal token git accepted |
-| a flag git rejects | recorded rejected, with git's message; the sweep fails with it |
-| a required positional | bare `git <sub>` (and `git <sub> <verb>`) reports a usage page |
+| the command's class | `git <key> --orbit-capture-bogus -h` rejected → PARSE-OPTIONS; else `git <key> --orbit-capture-bogus HEAD` rejected or a usage page → RUN; else a named orbit-side rule, or the capture fails naming the key |
+| whether a flag takes a value | `git <key> <name>` with nothing after: `requires a value` records it value-taking |
+| a flag's acceptance, PARSE-OPTIONS class | `git <key> <flag as written> [x when value-taking] -h`: a usage page records it accepted; a rejection shape records it rejected with git's line; any other line fails the capture naming the probe |
+| a flag's acceptance, RUN class | `git <key> <flag as written> [x when value-taking] HEAD`: a rejection shape or a usage page records it rejected with git's line; anything else records it accepted |
+| a flag written `--name=value` on the surface | probed as written (`--name=x`), recorded by the name before `=` |
+| value arity on a flag git does not report as `requires a value` (`check-ref-format --branch`) | recorded not value-taking: its value reads as a positional, so a missing value on it is not caught |
+| a required positional | `git <key>` alone: a first line beginning `usage:` records one required |
 | `--` | the validator treats every later token as positional |
-| `rev-parse`, which accepts any flag | a named orbit-side rule: recorded flags only |
+| `rev-parse`, which echoes any flag with exit 0 under both bogus probes | the named orbit-side rule: recorded flags only, each recorded as written, unprobed |
 | a placeholder value or positional | passes, as in rc01's validator |
 Closure: BOUNDED — the probe's verdict rests on classifying git's messages, a set git does not publish
 Residual kind: a grammar error whose message matches none of the recorded shapes, classified as accepted — a false pass
 Residual method: the capture also probes a deliberately bogus flag on every subcommand and requires it to classify as rejected; a subcommand where it does not either carries a named orbit-side rule (`rev-parse`) or fails the capture
 Moves:
-- READ: applied — the message shapes and the `rev-parse` exception were read from real git 2.50.1 (D-rc05b-4), and both value-arity forms from `-h` pages
-- ENUMERATE: applied — this table, from the validator's needs (subcommand, flag, value kind, positional) crossed with the surface's forms
-- COHERE: applied — the candidate set comes from the same extractor the sweep reads, so the contract cannot lack a segment the sweep checks except by a surface edit after capture, which fails as an unrecorded entry and asks for re-capture
-- EXECUTE: applied — the spike ran unknown, missing-value and accepted probes on eleven subcommands and observed the shapes in the table
-- FALSIFY: applied — a contract built from the surface's own flags cannot say a valid-but-unused flag is valid; that costs a re-capture when a body adopts one, the same cost a new `gh` verb pays today
-- CONFORM: applied — rc01 (a recorded contract, one validator, deliberate re-capture, no real CLI in the suite), D-rc05-6 (grammar only: the probing runs at capture, never in the suite)
-- FEASIBILITY: applied — the probes execute git in a throwaway repo holding one commit, so state cannot mask grammar; `LANG=C` fixes the messages, `GIT_EDITOR=false`, no stdin, no remote, an empty global config and a timeout keep a probe from waiting; how a capture script reaches the TypeScript extractor is the proposal's to settle
-- CONSUME: applied — the validator and the injection tests of exit (2) read the contract; a missing-value injection needs the value kind, a missing-positional injection the positional flag
+- READ: applied — every row's outcome was read from real git 2.50.1 in the re-exploration's matrix (Case 1); the rejection shapes are `error: unknown option`, `error: invalid option`, `error: unknown switch`, `fatal: unrecognized argument:` and `error: option ... takes no value`
+- ENUMERATE: applied — this table, from the validator's needs (key, class, flag, value kind, positional) crossed with the probe forms the proposal pair found missing (F1: value-taking under `-h`; F2: commands needing a positional; F4: key arity)
+- COHERE: applied — a usage page means ACCEPTED in the PARSE-OPTIONS class (`-h` was reached) and REJECTED in the RUN class (`HEAD` satisfies the positional), and the class is decided first, by the same bogus flag the residual method uses, so the two readings never meet one command
+- EXECUTE: applied — the prototype ran this table over all 129 `git` segments (146 probes, each in a fresh copy): 21 keys, 37 flags, every surface flag recorded accepted (Case 2); over ten invented defects it rejected each with git's line (Case 3)
+- FALSIFY: applied — a contract built from the surface's own flags cannot say a valid-but-unused flag is valid; that costs a re-capture when a body adopts one, the same cost a new `gh` verb pays today; and git rejects `log --format HEAD` while accepting `log --format=%h HEAD`, so a flag is probed only in the form the surface writes
+- CONFORM: applied — rc01 (a recorded contract, one validator, deliberate re-capture, no real CLI in the suite), D-rc05-6 (grammar only: the probing runs at capture, never in the suite), R-crc-6 (this revision came from the walk's redesign route, not from the walk)
+- FEASIBILITY: applied — 146 probes, each copying a one-file repository, ran in seconds; `LANG=C`, `GIT_EDITOR=false`, closed stdin, no remote, `GIT_CONFIG_GLOBAL=/dev/null`, `GIT_CONFIG_NOSYSTEM=1` and a 10-second timeout keep a probe from waiting or reading the user's config
+- CONSUME: applied — the validator reads `known`, `positional_required`, and per flag `takes_value` and `accepted`; exit (2)'s missing-argument injection for `git` has six `positional_required` keys to draw on (Case 2)
 - INVOKE: applied — the capture on the author's command; the validator on `npm test`
+
+### Case 1 — the probe matrix, real git 2.50.1
+The first matrix ran every probe form against one shared repository. `switch -c x HEAD` switched its branch and `init orbitbogusverb` created a nested repository, so later probes read a different state. The second ran each probe in a fresh copy. Readings: `git commit -m -h` runs the commit (`-h` taken as the message); `git commit -m x -h` prints usage. `git rev-list --count` and `--orbit-capture-bogus` both print usage with no positional; with `HEAD`, `--count` exits 0 and the bogus flag still prints usage. `git check-ref-format --branch HEAD` fails on the name (exit 128), and the bogus flag with `HEAD` prints usage. `git worktree orbitbogusverb` reports `unknown subcommand`; `git push origin -h`, `git diff main -h` and `git switch main -h` print each command's own usage. `git rev-parse --orbit-bogus HEAD` echoes the flag, exit 0.
+
+### Case 2 — the prototype over today's surface
+Classes: PARSE-OPTIONS for 16 keys; RUN for `log`, `show`, `rev-list` and `check-ref-format`; the rule for `rev-parse`. `positional_required` for `symbolic-ref`, `check-ref-format`, `merge-base`, `rev-list`, `worktree add` and `worktree remove`. Value-taking: `switch -c`, `commit -m`, `commit -F`, `log -S`. All 37 flags accepted.
+
+### Case 3 — the prototype rejects
+`commit --frobnicate` (unknown option), `log --frobnicate` and `show --nope` (unrecognized argument), `rev-list --frobnicate HEAD` and `check-ref-format --frob x` (usage page, RUN class), `status --short=x` (takes no value), `switch --orbit-x`, `diff --bogus-diff` (invalid option), `worktree frobverb` (unknown subcommand), and `frobnicate` (not a git command): each recorded rejected or unknown, with git's line.
 
 ### D-rc05b-8 — a recorded tool's bare-name tree is its contract's command keys
 Domain: every inline span beginning `git ` or `gh `, by how its tokens meet the contract's keys
@@ -154,6 +167,25 @@ Moves:
   it is the contract's command keys, split on spaces into a tree — the rule rc01's `ghSnippets` already applies, moved
   into the shared extractor. A span whose tokens all resolve to keys with nothing after is prose; a span naming an
   unrecorded subcommand is extracted and fails as unknown, so an invented verb cannot pass as prose.
+- **2026-10-09 — D-rc05b-9: the proposal pair refuted two rows of D-rc05b-7's first probe table and found a third question it left open**
+  Kind: fact
+  Re-entered from the proposal walk's REDESIGN route (address-reviews-2026-10-09T16-28-05Z, entries F1, F2, F4). The `-h` row
+  cannot classify a value-taking flag, because the flag consumes `-h` and the command runs; the run row read a usage page
+  as rejection on commands that print usage for a missing positional (`rev-list --count`, `check-ref-format --branch`);
+  and nothing decided command-key arity. All three reproduced here (Case 1).
+- **2026-10-09 — D-rc05b-10: probes mutate the repository they run in**
+  Kind: fact
+  `switch -c x HEAD` switches the branch and `init <word>` creates a nested repository, so a shared probe repository
+  makes a probe's reading depend on the probes before it (Case 1). Every probe runs in a fresh copy.
+- **2026-10-09 — D-rc05b-11: D-rc05b-7's probe table is revised: commands are classed first by a bogus flag, a value-taking flag is probed with a stand-in value, the RUN class supplies `HEAD` as its positional, and a group's verb is found by a bogus verb**
+  Kind: fact
+  The rule D-rc05b-7 states stands; its Mechanism entry is rewritten in place to the table the prototype executed
+  (Cases 2 and 3). This entry records the revision so the change's artifacts can be repaired against it.
+- **2026-10-09 — D-rc05b-12: Sal's rulings at the proposal walk: subshell grouping stripped, the inline gate kept, the `=value` promise descoped**
+  Kind: scope
+  Sal: "a" on F5, F6 and F3. A `(` opening a segment and its `)` are grouping, stripped (D-rc05b-5's table). An inline span is
+  read only when it begins with the tool, and the rest is in the places residual. The validator accepts `--name=value` on any
+  accepted long flag, so an `=value` written after capture on a flag that takes none is a named limit, not a check.
 
 ## Open questions
 

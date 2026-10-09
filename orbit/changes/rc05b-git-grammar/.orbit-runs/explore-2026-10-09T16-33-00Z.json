@@ -1,0 +1,25 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-09T16:33:00Z",
+  "change": "rc05b-git-grammar",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Resumed in place from the proposal walk's REDESIGN route (F1, F2, F4). A real-git probe matrix reproduced all three and found probes mutate state (D-rc05b-9, D-rc05b-10). D-rc05b-7's Mechanism entry is rewritten (D-rc05b-11): classes decided first by a bogus flag (PARSE-OPTIONS via -h, RUN via a HEAD stand-in, rev-parse by rule), value-taking flags probed with a stand-in, group verbs found by a bogus verb, every probe in a fresh repository copy. A prototype executed it over all 129 git segments (146 probes): every surface flag accepted, ten invented defects rejected with git's line. D-rc05b-5's table carries Sal's walk rulings (D-rc05b-12). Ready for a re-walk that repairs the artifacts against D-rc05b-11.",
+  "decisions_captured": 12,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 3,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [
+    {
+      "id": "D-rc05b-7",
+      "kind": "a grammar error whose message matches none of the recorded shapes, classified as accepted — a false pass",
+      "method": "the capture also probes a deliberately bogus flag on every subcommand and requires it to classify as rejected; a subcommand where it does not either carries a named orbit-side rule (`rev-parse`) or fails the capture"
+    }
+  ],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose rc05b-git-grammar — 3 live rules accounted, 1 bounded residual named (D-rc05b-7); formalize when you are ready (or /orbit:explore rc05b-git-grammar to keep refining)"
+}
