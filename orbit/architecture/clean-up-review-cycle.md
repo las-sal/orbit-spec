@@ -2442,7 +2442,7 @@ the sentence rewritten around cadence position and stated once.
 ### Stage rc05-executable-references — documented `orbit` commands parse against the CLI
 
 Depends-on: rc01-instrument-fidelity
-Complete: [ ]
+Complete: [x] 2026-10-09 (Sal)
 
 Charter: every copyable command on the generated surface is a claim about a tool's grammar, and claims are tested, not
 reviewed. Rescoped at its exploration (2026-10-08, Sal; D-rc05-4, D-rc05-5, D-rc05-6, D-rc05-15 in
@@ -5365,3 +5365,12 @@ the move of rc01's `gh` sweep onto the shared extractor; it depends on rc05. rc0
 by its change at propose, under R-crc-12's first case (D-rc05-14, D-rc05-17). Stage count 37 →
 <!-- src:stages -->38<!-- /src:stages --> at the marked sites (this entry's mark is the third; the previous entry's is
 unmarked as history).
+
+**2026-10-09 — rc05-executable-references RATIFIED (Sal)**, through the architect session's offer. All three exit
+criteria graded MET, (1) and (2) as revised at apply under R-crc-12's first case and recorded in the charter. (1) On
+the generated surface the guard found zero `orbit` lines with a flag outside a shell fence, and every extracted snippet
+parsed against the builder's program: 130 parsed, 35 bare names set aside; the three real defects (backslash before a
+backtick) were fixed in the stage. (2) One injection per place the extractor reads fails the suite naming its surface and
+line, and the parity injections name the command or flag. (3) The system blind pair found no grammar defect in an
+`orbit` snippet. The upstream zsh completion generator's apostrophe escaping stays a scope call for Sal, named in the
+stage's Shipped-as paragraph; `rc05b-git-grammar`, which depends on this stage, is now unblocked.

@@ -211,7 +211,7 @@ file now carries a live mark. Do NOT read this paragraph as the program's full l
 only what rc07 produced. The authoritative list is the program doc's own Open questions section,
 which also carries Q-crc-11, Q-crc-12, Q-crc-20, Q-crc-21, Q-crc-22 and Q-crc-23.
 
-**Twenty-four more stages have shipped since, and the program is TWENTY-SIX stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b, rc03c, rc07b and rc06a ratified 2026-10-04; rc06b, rc08a and rc08b ratified 2026-10-05 — rc08a's exit (3), pending by design, was measured on rc08b's cadence and read 4, not zero; the split parent rc08 took its ENDED mark the same day; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening; rc17a ratified 2026-10-06; rc17d ratified 2026-10-06; rc17b ratified 2026-10-06; rc17c ratified 2026-10-07; rc18 ratified 2026-10-08).
+**Twenty-four more stages have shipped since, and the program is TWENTY-SEVEN stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b, rc03c, rc07b and rc06a ratified 2026-10-04; rc06b, rc08a and rc08b ratified 2026-10-05 — rc08a's exit (3), pending by design, was measured on rc08b's cadence and read 4, not zero; the split parent rc08 took its ENDED mark the same day; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening; rc17a ratified 2026-10-06; rc17d ratified 2026-10-06; rc17b ratified 2026-10-06; rc17c ratified 2026-10-07; rc18 ratified 2026-10-08; rc05 ratified 2026-10-09).
 
 `rc02c-confirmation-semantics` is ARCHIVED (2026-09-21): **the budget stopped being a target.**
 R-crc-11(h) — effort is RECORDED, never TARGETED — retired `budgetExhausted`, the
@@ -736,7 +736,7 @@ the stage's own cycle: that verification left the gate passed with the walk as i
 once walked. Sync: 7 MODIFIED across two capabilities, 7/7 byte-verified; the capability count holds at 24.
 **3066 tests green** (3039 → 3066).
 
-`rc05-executable-references` is ARCHIVED (2026-10-08; all three exit criteria graded MET, (1) and (2) as revised at apply
+`rc05-executable-references` is ARCHIVED and RATIFIED (2026-10-08; ratified 2026-10-09; all three exit criteria graded MET, (1) and (2) as revised at apply
 under R-crc-12's first case): **documented `orbit` commands parse against the CLI.** `src/cli/program.ts` exports
 `buildProgram({hooks})`, the CLI's ONE program, and `src/cli/index.ts` only builds and parses; a test builds it with all
 five hooks skipped, neutralises it, and asks commander's own `parseAsync`, a parse accepted exactly when commander's exit
