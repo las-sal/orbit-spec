@@ -100,6 +100,8 @@ describe('D6 phase 1 — remote and repository resolution', () => {
     expect(view!.args).not.toContain('--repo');
   });
 
+  // @scenario behaviour orbit-pr-lifecycle :: Test instruments derive from a recorded real-CLI contract :: The stub rejects what the real CLI rejects, with the real message
+  // @scenario behaviour orbit-pr-lifecycle :: Test instruments derive from a recorded real-CLI contract :: The selector rule is enforced from the contract
   it('the gh stub rejects the flag form of repo view, so the wrong grammar can never pass again', () => {
     const repo = repoFor();
     const env = { ...process.env, PATH: `${repo.binDir}:${process.env.PATH}` };

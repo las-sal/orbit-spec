@@ -7,9 +7,11 @@
  * surface parses against that program` — its places table, its fence table and
  * its tokenizer paragraph. This module implements them; it states none of them.
  *
- * Tool-agnostic apart from the tool name: `rc05b-git-grammar` consumes it
- * unchanged. Fences are LOCATED by markdown-it (a devDependency), and the same
- * parse serves the extractor and the guard.
+ * Tool-agnostic apart from the tool name. rc05 shipped it for `orbit`; `rc05b-git-grammar`
+ * made the tokenizer operator-aware (a line splits into SEGMENTS at each unquoted control
+ * operator, each classified by its own first token) so `git` and `gh` could consume it, and
+ * did not consume it unchanged. Fences are LOCATED by markdown-it (a devDependency), and
+ * the same parse serves the extractor and the guard.
  */
 import { readFileSync } from 'fs';
 import MarkdownIt, { type Token } from 'markdown-it';
@@ -97,27 +99,48 @@ function infoWord(token: Token): string {
 
 // ─── tokenizer ────────────────────────────────────────────────────
 
-export type TokenizeResult = { ok: true; tokens: string[] } | { ok: false; open: '"' | "'" };
+export type TokenizeResult =
+  | { ok: true; segments: string[][] }
+  | { ok: false; open: '"' | "'" }
+  | { ok: false; refused: '$(' | '`' | ';;' };
+
+/** Control operators, longest first so `&&` is never read as two `&`. */
+const CONTROL_OPERATORS = ['&&', '||', '|&', '|', ';', '&'];
 
 /**
- * Split one command line into tokens by the spec's rules: a quoted value is one
- * token; a backslash escapes as the shell's does (outside quotes the next
- * character; inside double quotes `"`, `\`, `$` and a backtick; inside single
+ * Split one command line into SEGMENTS of tokens by the spec's rules: a quoted
+ * value is one token; a backslash escapes as the shell's does (outside quotes the
+ * next character; inside double quotes `"`, `\`, `$` and a backtick; inside single
  * quotes nothing), so `\"` opens no quote; a `<…>` placeholder (a `<` not
- * followed by whitespace, which is a redirect) is one token,
- * spaces inside and a suffix attached; a trailing ` # …` comment outside quotes
- * is dropped; `…` and `...` are dropped. An open quote at the end is reported, so
- * the caller can join the next line or fail.
+ * followed by whitespace, which is a redirect) is one token, spaces inside and a
+ * suffix attached; a trailing ` # …` comment outside quotes is dropped; `…` and
+ * `...` are dropped. Outside quotes, a control operator (`&&`, `||`, `|&`, `|`,
+ * `;`, `&`), spaced or glued, ends the segment; a redirection and its target are
+ * dropped; a `(` opening a segment and its matching `)` are grouping, stripped.
+ * An open quote at the end is reported, so the caller can join the next line or
+ * fail; an unquoted `$(`, backtick or `;;` is refused.
  */
 export function tokenize(line: string): TokenizeResult {
-  const tokens: string[] = [];
+  const segments: string[][] = [];
+  let tokens: string[] = [];
   let current = '';
   let inToken = false;
+  let dropNext = false;
+  let groups = 0;
   let i = 0;
   const push = () => {
-    if (inToken && current !== '…' && current !== '...') tokens.push(current);
+    if (inToken && current !== '…' && current !== '...') {
+      if (dropNext) dropNext = false;
+      else tokens.push(current);
+    }
     current = '';
     inToken = false;
+  };
+  const endSegment = () => {
+    push();
+    if (tokens.length > 0) segments.push(tokens);
+    tokens = [];
+    dropNext = false;
   };
   while (i < line.length) {
     const c = line[i];
@@ -127,6 +150,40 @@ export function tokenize(line: string): TokenizeResult {
       continue;
     }
     if (c === '#' && !inToken) break;
+    if (c === '`') return { ok: false, refused: '`' };
+    if (c === '$' && line[i + 1] === '(') return { ok: false, refused: '$(' };
+    if (line.startsWith(';;', i)) return { ok: false, refused: ';;' };
+    // A redirection: `>`, `>>`, `>&`, `<<`, a `<` followed by whitespace, and a digit
+    // (the file descriptor) glued before `>`. The operator and its target are dropped.
+    const fdPrefix = inToken && /^\d+$/.test(current);
+    if (c === '>' || line.startsWith('<<', i) || (c === '<' && (i + 1 >= line.length || /\s/.test(line[i + 1])))) {
+      if (fdPrefix && c === '>') {
+        current = '';
+        inToken = false;
+      } else {
+        push();
+      }
+      i += line.startsWith('>>', i) || line.startsWith('>&', i) || line.startsWith('<<', i) ? 2 : 1;
+      dropNext = true;
+      continue;
+    }
+    const operator = CONTROL_OPERATORS.find((op) => line.startsWith(op, i));
+    if (operator) {
+      endSegment();
+      i += operator.length;
+      continue;
+    }
+    if (c === '(' && !inToken && tokens.length === 0) {
+      groups++;
+      i++;
+      continue;
+    }
+    if (c === ')' && groups > 0) {
+      groups--;
+      endSegment();
+      i++;
+      continue;
+    }
     if (c === '\\' && i + 1 < line.length) {
       current += line[i + 1];
       inToken = true;
@@ -173,8 +230,8 @@ export function tokenize(line: string): TokenizeResult {
     inToken = true;
     i++;
   }
-  push();
-  return { ok: true, tokens };
+  endSegment();
+  return { ok: true, segments };
 }
 
 // ─── the bare-name rule ───────────────────────────────────────────
@@ -236,19 +293,28 @@ function extractFenceLines(walk: Walk, token: Token, contentStart: number): void
     const line = contentStart + startIdx + 1;
     if (!result.ok) {
       // Whatever the line's first word: a non-tool line holding a quote open would
-      // otherwise swallow every tool line after it, unseen by the sweep and the guard.
+      // otherwise swallow every tool line after it, unseen by the sweep and the guard;
+      // and a substitution is refused, never parsed.
       walk.out.failures.push({
         surface: walk.surface,
         line,
         snippet: text,
-        message: `unterminated ${result.open} quote at the end of the shell fence`,
+        message:
+          'open' in result
+            ? `unterminated ${result.open} quote at the end of the shell fence`
+            : `unquoted ${result.refused} is refused: substitution is never parsed`,
       });
       i++;
       continue;
     }
-    if (result.tokens[0] === walk.tool) {
-      walk.out.snippets.push({ surface: walk.surface, line, text, tokens: result.tokens, source: 'fence' });
-    } else {
+    for (const tokens of result.segments) {
+      if (tokens[0] === walk.tool) {
+        walk.out.snippets.push({ surface: walk.surface, line, text, tokens, source: 'fence' });
+      }
+    }
+    // The quote that joined lines sits in the segment whose token holds the newline.
+    const joiner = result.segments.find((tokens) => tokens.some((t) => t.includes('\n')));
+    if (joiner && joiner[0] !== walk.tool) {
       // Another tool's quote, closed by a later line, would hold a tool line as data,
       // unseen by the sweep and the guard: each such joined line fails at its own line.
       for (let k = startIdx + 1; k <= i; k++) {
@@ -293,13 +359,19 @@ function extractInline(walk: Walk, parent: Token, offset: number, blockLine: num
         surface: walk.surface,
         line,
         snippet: child.content,
-        message: `unterminated ${result.open} quote in the inline span`,
+        message:
+          'open' in result
+            ? `unterminated ${result.open} quote in the inline span`
+            : `unquoted ${result.refused} is refused: substitution is never parsed`,
       });
       continue;
     }
-    const snippet: Snippet = { surface: walk.surface, line, text: child.content, tokens: result.tokens, source: 'inline' };
-    if (walk.tree && isBareCommandName(result.tokens, walk.tree)) walk.out.bareNames.push(snippet);
-    else walk.out.snippets.push(snippet);
+    for (const tokens of result.segments) {
+      if (tokens[0] !== walk.tool) continue;
+      const snippet: Snippet = { surface: walk.surface, line, text: child.content, tokens, source: 'inline' };
+      if (walk.tree && isBareCommandName(tokens, walk.tree)) walk.out.bareNames.push(snippet);
+      else walk.out.snippets.push(snippet);
+    }
   }
 }
 

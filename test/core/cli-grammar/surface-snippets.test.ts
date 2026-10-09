@@ -6,6 +6,7 @@
 import { describe, expect, it } from 'vitest';
 import { getSkillTemplates } from '../../../src/core/shared/skill-generation.js';
 import { commandTree, parseArgv } from '../../helpers/neutral-program.js';
+import { analyseOrbit, sweepFailures } from '../../helpers/orbit-sweep.js';
 import {
   analyseSurface,
   generatedSurfaces,
@@ -166,44 +167,42 @@ describe('the fence table', () => {
 
 describe('the tokenizer', () => {
   it('keeps a quoted value as one token, single or double', () => {
-    expect(tokenize(`orbit a "x y" 'p q'`)).toEqual({ ok: true, tokens: ['orbit', 'a', 'x y', 'p q'] });
+    expect(tokenize(`orbit a "x y" 'p q'`)).toEqual({ ok: true, segments: [['orbit', 'a', 'x y', 'p q']] });
   });
 
   it('inside double quotes, \\" does not close the quote', () => {
-    expect(tokenize(`orbit a "say \\"hi\\" now" b`)).toEqual({ ok: true, tokens: ['orbit', 'a', 'say "hi" now', 'b'] });
+    expect(tokenize(`orbit a "say \\"hi\\" now" b`)).toEqual({ ok: true, segments: [['orbit', 'a', 'say "hi" now', 'b']] });
   });
 
   it('a backslash escapes as the shell\'s does: outside quotes the next character, inside single quotes nothing', () => {
-    expect(tokenize(`echo \\" it\\'s`)).toEqual({ ok: true, tokens: ['echo', '"', "it's"] });
-    expect(tokenize(`orbit a "x\\\\" 'y\\'`)).toEqual({ ok: true, tokens: ['orbit', 'a', 'x\\', 'y\\'] });
+    expect(tokenize(`echo \\" it\\'s`)).toEqual({ ok: true, segments: [['echo', '"', "it's"]] });
+    expect(tokenize(`orbit a "x\\\\" 'y\\'`)).toEqual({ ok: true, segments: [['orbit', 'a', 'x\\', 'y\\']] });
   });
 
-  it('a `<` followed by whitespace is a redirect, not a placeholder\'s opener', () => {
-    expect(tokenize(`run < '<run-dir>/p.md' > '<run-dir>/log'`)).toEqual({
-      ok: true,
-      tokens: ['run', '<', '<run-dir>/p.md', '>', '<run-dir>/log'],
-    });
+  it('a `<` followed by whitespace is a redirect, not a placeholder\'s opener, and a redirect drops with its target', () => {
+    expect(tokenize(`run < '<run-dir>/p.md' > '<run-dir>/log'`)).toEqual({ ok: true, segments: [['run']] });
+    expect(tokenize(`run <arg> < '<run-dir>/p.md'`)).toEqual({ ok: true, segments: [['run', '<arg>']] });
   });
 
   // @scenario behaviour orbit-cli-grammar :: Every `orbit` snippet on the generated surface parses against that program :: A placeholder with a suffix is one token
   it('keeps a <…> placeholder as one token, spaces inside or a suffix attached, and the snippet parses', async () => {
     const snippet = 'orbit external save <change-name> --as <as> --from <run-dir>/return.md --launch <L> --json';
     const tokens = tokenize(snippet);
-    expect(tokens.ok && (await parseArgv(tokens.tokens.slice(1)))).toEqual({ ok: true, code: null, message: '' });
+    expect(tokens.ok && (await parseArgv(tokens.segments[0].slice(1)))).toEqual({ ok: true, code: null, message: '' });
     expect(tokenize(snippet)).toEqual({
       ok: true,
-      tokens: ['orbit', 'external', 'save', '<change-name>', '--as', '<as>', '--from', '<run-dir>/return.md', '--launch', '<L>', '--json'],
+      segments: [['orbit', 'external', 'save', '<change-name>', '--as', '<as>', '--from', '<run-dir>/return.md', '--launch', '<L>', '--json']],
     });
-    expect(tokenize('orbit show <the change name>')).toEqual({ ok: true, tokens: ['orbit', 'show', '<the change name>'] });
+    expect(tokenize('orbit show <the change name>')).toEqual({ ok: true, segments: [['orbit', 'show', '<the change name>']] });
   });
 
   it('drops a trailing # comment outside quotes, and keeps one inside', () => {
-    expect(tokenize('orbit list --json # the active changes')).toEqual({ ok: true, tokens: ['orbit', 'list', '--json'] });
-    expect(tokenize('orbit a "x # y"')).toEqual({ ok: true, tokens: ['orbit', 'a', 'x # y'] });
+    expect(tokenize('orbit list --json # the active changes')).toEqual({ ok: true, segments: [['orbit', 'list', '--json']] });
+    expect(tokenize('orbit a "x # y"')).toEqual({ ok: true, segments: [['orbit', 'a', 'x # y']] });
   });
 
   it('drops … and ...', () => {
-    expect(tokenize('orbit status … --json ...')).toEqual({ ok: true, tokens: ['orbit', 'status', '--json'] });
+    expect(tokenize('orbit status … --json ...')).toEqual({ ok: true, segments: [['orbit', 'status', '--json']] });
   });
 
   it('reports an open quote at the end', () => {
@@ -214,6 +213,132 @@ describe('the tokenizer', () => {
   it('an unterminated quote in an inline span fails extraction', () => {
     const result = analyse('Run `orbit status --change "demo` now.\n');
     expect(result.failures.map((f) => f.snippet)).toEqual(['orbit status --change "demo']);
+  });
+});
+
+describe('the tokenizer: shell operators (rc05b D1)', () => {
+  it.each([
+    ['&&', 'git add <p> && git commit --only <p>'],
+    ['||', 'git add <p> || git commit --only <p>'],
+    ['|&', 'git add <p> |& git commit --only <p>'],
+    ['|', 'git add <p> | git commit --only <p>'],
+    [';', 'git add <p> ; git commit --only <p>'],
+    ['&', 'git add <p> & git commit --only <p>'],
+  ])('splits at an unquoted %s, spaced', (_op, line) => {
+    expect(tokenize(line)).toEqual({ ok: true, segments: [['git', 'add', '<p>'], ['git', 'commit', '--only', '<p>']] });
+  });
+
+  it.each(['&&', '||', '|&', '|', ';', '&'])('splits at an unquoted %s glued to its words', (op) => {
+    expect(tokenize(`git add x${op}git commit`)).toEqual({ ok: true, segments: [['git', 'add', 'x'], ['git', 'commit']] });
+  });
+
+  it('keeps a quoted operator as an argument, single or double', () => {
+    expect(tokenize(`git commit -m "a && b" 'c | d'`)).toEqual({ ok: true, segments: [['git', 'commit', '-m', 'a && b', 'c | d']] });
+  });
+
+  it('keeps an escaped operator as an argument', () => {
+    expect(tokenize('find . -exec x \\;')).toEqual({ ok: true, segments: [['find', '.', '-exec', 'x', ';']] });
+  });
+
+  it('drops empty segments around operators', () => {
+    expect(tokenize('git add x ; ; git push')).toEqual({ ok: true, segments: [['git', 'add', 'x'], ['git', 'push']] });
+  });
+
+  it.each([
+    ['>', 'git log > out.txt', [['git', 'log']]],
+    ['>>', 'git log >> out.txt', [['git', 'log']]],
+    ['<', 'git apply < patch.diff', [['git', 'apply']]],
+    ['<<', 'cat <<EOF', [['cat']]],
+    ['a digit before >', 'git log 2> err.txt --oneline', [['git', 'log', '--oneline']]],
+    ['>&', 'git log 2>&1 --oneline', [['git', 'log', '--oneline']]],
+    ['a glued >', 'git log>out.txt', [['git', 'log']]],
+  ])('drops a redirection (%s) together with its target', (_kind, line, segments) => {
+    expect(tokenize(line)).toEqual({ ok: true, segments });
+  });
+
+  it('strips a ( opening a segment and its matching ) as grouping', () => {
+    expect(tokenize(`( cd '<run-dir>/worktree' && '<argv[0]>' '<argv[1]>' … < '<p>' > '<run-dir>/runner.log' 2>&1 )`)).toEqual({
+      ok: true,
+      segments: [['cd', '<run-dir>/worktree'], ['<argv[0]>', '<argv[1]>']],
+    });
+    expect(tokenize('(git status) && git push')).toEqual({ ok: true, segments: [['git', 'status'], ['git', 'push']] });
+  });
+
+  it('a ( inside a word is not grouping', () => {
+    expect(tokenize('git log --format=f(x)')).toEqual({ ok: true, segments: [['git', 'log', '--format=f(x)']] });
+  });
+
+  it.each([
+    ['$(', 'git switch $(cat b)'],
+    ['`', 'git switch `cat b`'],
+    [';;', 'a) git push ;;'],
+  ] as const)('refuses an unquoted %s', (construct, line) => {
+    expect(tokenize(line)).toEqual({ ok: false, refused: construct });
+  });
+
+  it('keeps a quoted $( and backtick as text', () => {
+    expect(tokenize(`git commit -m '$(x) \`y\`'`)).toEqual({ ok: true, segments: [['git', 'commit', '-m', '$(x) `y`']] });
+  });
+});
+
+describe('extraction by segment (rc05b D1)', () => {
+  // @scenario behaviour orbit-cli-grammar :: Every `orbit` snippet on the generated surface parses against that program :: A chained snippet splits at its operator
+  it('a chained shell-fence line yields one snippet per tool segment; the failing one names the surface and line', async () => {
+    const text = `${FENCE}bash\norbit validate <name> && orbit status --change <name> --frobnicate\n${FENCE}\n`;
+    const analysis = analyseOrbit([surface(text)]);
+    expect(analysis.snippets.map((s) => ({ line: s.line, tokens: s.tokens }))).toEqual([
+      { line: 2, tokens: ['orbit', 'validate', '<name>'] },
+      { line: 2, tokens: ['orbit', 'status', '--change', '<name>', '--frobnicate'] },
+    ]);
+    expect(await sweepFailures(analysis)).toEqual([
+      `demo/SKILL.md:2: orbit validate <name> && orbit status --change <name> --frobnicate\n    error: unknown option '--frobnicate'`,
+    ]);
+  });
+
+  // @scenario behaviour orbit-cli-grammar :: Every `orbit` snippet on the generated surface parses against that program :: A pipe into another tool leaves one snippet
+  it('an inline span piped into another tool leaves one snippet, without the pipe or the other tool', async () => {
+    const analysis = analyseOrbit([surface('Run `orbit status --change <name> --json | head -1` first.\n')]);
+    expect(analysis.snippets.map((s) => s.tokens)).toEqual([['orbit', 'status', '--change', '<name>', '--json']]);
+    expect(await sweepFailures(analysis)).toEqual([]);
+  });
+
+  // @scenario behaviour orbit-cli-grammar :: Every `orbit` snippet on the generated surface parses against that program :: A command substitution fails extraction
+  it('a command substitution fails extraction, naming the surface, the line and the snippet', () => {
+    const result = analyse(`${FENCE}bash\necho ok\norbit status --change $(cat name.txt)\n${FENCE}\n`);
+    expect(result.snippets).toEqual([]);
+    expect(result.failures.map((f) => ({ file: f.surface.file, line: f.line, snippet: f.snippet }))).toEqual([
+      { file: 'SKILL.md', line: 3, snippet: 'orbit status --change $(cat name.txt)' },
+    ]);
+    expect(result.failures[0].message).toMatch(/unquoted \$\( is refused/);
+  });
+
+  it('a substitution in an inline span beginning with the tool fails extraction', () => {
+    const result = analyse('Run `orbit status --change `x` first.\n');
+    // A single-backtick span cannot hold a backtick; `$(` is the inline form.
+    const sub = analyse('Run `orbit status --change $(cat n)` first.\n');
+    expect(sub.failures.map((f) => f.snippet)).toEqual(['orbit status --change $(cat n)']);
+    expect(result.failures).toEqual([]);
+  });
+
+  it('an inline span beginning with another word is not read, even when a tool segment follows', () => {
+    expect(extracted('Run `cd x && orbit status --frobnicate` here.\n')).toEqual([]);
+  });
+
+  it('an inline tool span reads every segment of that tool, at the span\'s line', () => {
+    const result = analyseSurface(surface('Then `git fetch <r> && git push` and done.\n'), 'git', {
+      names: ['git'],
+      children: [{ names: ['fetch'], children: [] }, { names: ['push'], children: [] }],
+    });
+    expect(result.snippets.map((s) => s.tokens)).toEqual([['git', 'fetch', '<r>']]);
+    expect(result.bareNames.map((s) => s.tokens)).toEqual([['git', 'push']]);
+  });
+
+  it('another tool\'s quote holding a tool line is still caught when the quote opens after an operator', () => {
+    const result = analyse(`${FENCE}bash\norbit list && echo "it\norbit status --frobnicate\nends"\n${FENCE}\n`);
+    expect(result.snippets.map((s) => s.tokens)).toEqual([['orbit', 'list']]);
+    expect(result.failures.map((f) => ({ line: f.line, message: f.message }))).toEqual([
+      { line: 3, message: 'inside a quote opened at line 2 by another command' },
+    ]);
   });
 });
 

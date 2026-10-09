@@ -1,5 +1,5 @@
 /**
- * rc05 exit (2): every check shown able to fail. Each injection goes into a COPY
+ * rc05 exit (2), and rc05b's for `git` and `gh`: every check shown able to fail. Each injection goes into a COPY
  * of the real generated surface, through the shared helper; a snippet or guard
  * injection must fail naming the surface and the line, a parity injection
  * naming the command or flag.
@@ -11,6 +11,7 @@ import { COMMAND_REGISTRY } from '../../../src/core/completions/command-registry
 import type { CommandDefinition } from '../../../src/core/completions/types.js';
 import { analyseOrbit, guardFailureLines, sweepFailures } from '../../helpers/orbit-sweep.js';
 import { fromProgram, fromRegistry, registryDiff } from '../../helpers/registry-parity.js';
+import { analyseRecorded, recordedTool, sweepRecorded } from '../../helpers/recorded-sweep.js';
 import {
   MARKDOWN_INFO,
   SHELL_INFO,
@@ -100,6 +101,57 @@ describe('the sweep fails on an injected defect, naming the surface and the line
     const { surfaces, at } = inject(place, snippet);
     const failures = await sweepFailures(analyseOrbit(surfaces));
     expect(failures).toEqual([`${at}${snippet}\n    ${message}`]);
+  });
+});
+
+/**
+ * rc05b exit (2): the same four places, for the two recorded tools. The missing required
+ * argument is `gh`'s recorded selector rule, and for `git` a command the contract records
+ * `positional_required` (`worktree remove`), given a flag so an inline span is not a bare name.
+ */
+const RECORDED_DEFECTS: { tool: 'git' | 'gh'; defect: string; snippet: string; message: string }[] = [
+  {
+    tool: 'git',
+    defect: 'an unknown flag',
+    snippet: 'git commit --only <paths> --frobnicate',
+    message: 'flag --frobnicate on git commit is not in the recorded contract — re-run npm run capture:git',
+  },
+  {
+    tool: 'git',
+    defect: 'an unknown subcommand',
+    snippet: 'git frobnicate <path>',
+    message: 'unknown command "frobnicate" for "git" — re-run npm run capture:git',
+  },
+  {
+    tool: 'git',
+    defect: 'a missing required argument',
+    snippet: 'git worktree remove --force',
+    message: 'git worktree remove requires an argument',
+  },
+  { tool: 'gh', defect: 'an unknown flag', snippet: 'gh pr view --repo <owner>/<repo> <url> --frobnicate', message: 'unknown flag: --frobnicate' },
+  { tool: 'gh', defect: 'an unknown subcommand', snippet: 'gh pr frobnicate --repo <owner>/<repo>', message: 'unknown command "pr frobnicate" for "gh"' },
+  {
+    tool: 'gh',
+    defect: 'a missing required argument',
+    snippet: 'gh pr view --repo <owner>/<repo> --json isDraft',
+    message: 'argument required when using the --repo flag',
+  },
+];
+
+describe('the recorded-tool sweep fails on an injected defect, naming the surface and the line', () => {
+  const CASES = PLACES.flatMap((place) => RECORDED_DEFECTS.map((defect) => ({ ...defect, place })));
+
+  it('covers twenty-four cases', () => {
+    expect(CASES).toHaveLength(24);
+    expect(recordedTool('git').contract.commands['worktree remove']).toMatchObject({ positional_required: true });
+  });
+
+  it.each(CASES)('$tool: $defect in a $place.place', ({ tool, place, snippet, message }) => {
+    const { contract, validate } = recordedTool(tool);
+    const { surfaces, at } = inject(place, snippet);
+    const analysis = analyseRecorded(surfaces, tool, contract);
+    expect(sweepRecorded(analysis, validate, contract)).toEqual([`${at}${snippet}\n    ${message}`]);
+    expect(guardFailureLines(analysis)).toEqual([]);
   });
 });
 

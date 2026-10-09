@@ -1,0 +1,274 @@
+{
+  "git_version": "git version 2.50.1 (Apple Git-155)",
+  "captured_at": "2026-10-09",
+  "commands": {
+    "add": {
+      "known": true,
+      "class": "parse-options",
+      "positional_required": false,
+      "flags": [
+        {
+          "name": "-A",
+          "takes_value": false,
+          "accepted": true
+        }
+      ]
+    },
+    "branch": {
+      "known": true,
+      "class": "parse-options",
+      "positional_required": false,
+      "flags": [
+        {
+          "name": "--show-current",
+          "takes_value": false,
+          "accepted": true
+        }
+      ]
+    },
+    "check-ref-format": {
+      "known": true,
+      "class": "run",
+      "positional_required": true,
+      "flags": [
+        {
+          "name": "--branch",
+          "takes_value": false,
+          "accepted": true
+        }
+      ]
+    },
+    "commit": {
+      "known": true,
+      "class": "parse-options",
+      "positional_required": false,
+      "flags": [
+        {
+          "name": "--only",
+          "takes_value": false,
+          "accepted": true
+        },
+        {
+          "name": "-F",
+          "takes_value": true,
+          "accepted": true
+        },
+        {
+          "name": "-m",
+          "takes_value": true,
+          "accepted": true
+        }
+      ]
+    },
+    "diff": {
+      "known": true,
+      "class": "parse-options",
+      "positional_required": false,
+      "flags": [
+        {
+          "name": "--name-only",
+          "takes_value": false,
+          "accepted": true
+        },
+        {
+          "name": "--quiet",
+          "takes_value": false,
+          "accepted": true
+        }
+      ]
+    },
+    "fetch": {
+      "known": true,
+      "class": "parse-options",
+      "positional_required": false,
+      "flags": []
+    },
+    "init": {
+      "known": true,
+      "class": "parse-options",
+      "positional_required": false,
+      "flags": []
+    },
+    "log": {
+      "known": true,
+      "class": "run",
+      "positional_required": false,
+      "flags": [
+        {
+          "name": "--diff-filter",
+          "takes_value": true,
+          "accepted": true
+        },
+        {
+          "name": "--format",
+          "takes_value": false,
+          "accepted": true
+        },
+        {
+          "name": "--since",
+          "takes_value": true,
+          "accepted": true
+        },
+        {
+          "name": "-S",
+          "takes_value": true,
+          "accepted": true
+        }
+      ]
+    },
+    "ls-files": {
+      "known": true,
+      "class": "parse-options",
+      "positional_required": false,
+      "flags": [
+        {
+          "name": "--error-unmatch",
+          "takes_value": false,
+          "accepted": true
+        },
+        {
+          "name": "--exclude-standard",
+          "takes_value": false,
+          "accepted": true
+        },
+        {
+          "name": "--others",
+          "takes_value": false,
+          "accepted": true
+        }
+      ]
+    },
+    "merge": {
+      "known": true,
+      "class": "parse-options",
+      "positional_required": false,
+      "flags": [
+        {
+          "name": "--ff-only",
+          "takes_value": false,
+          "accepted": true
+        }
+      ]
+    },
+    "merge-base": {
+      "known": true,
+      "class": "parse-options",
+      "positional_required": true,
+      "flags": []
+    },
+    "push": {
+      "known": true,
+      "class": "parse-options",
+      "positional_required": false,
+      "flags": [
+        {
+          "name": "-u",
+          "takes_value": false,
+          "accepted": true
+        }
+      ]
+    },
+    "rev-list": {
+      "known": true,
+      "class": "run",
+      "positional_required": true,
+      "flags": [
+        {
+          "name": "--count",
+          "takes_value": false,
+          "accepted": true
+        }
+      ]
+    },
+    "rev-parse": {
+      "known": true,
+      "class": "rule",
+      "positional_required": false,
+      "flags": [
+        {
+          "name": "--abbrev-ref",
+          "takes_value": false,
+          "accepted": true
+        },
+        {
+          "name": "--short",
+          "takes_value": false,
+          "accepted": true
+        },
+        {
+          "name": "--symbolic-full-name",
+          "takes_value": false,
+          "accepted": true
+        }
+      ]
+    },
+    "show": {
+      "known": true,
+      "class": "run",
+      "positional_required": false,
+      "flags": []
+    },
+    "status": {
+      "known": true,
+      "class": "parse-options",
+      "positional_required": false,
+      "flags": [
+        {
+          "name": "--porcelain",
+          "takes_value": false,
+          "accepted": true
+        }
+      ]
+    },
+    "switch": {
+      "known": true,
+      "class": "parse-options",
+      "positional_required": false,
+      "flags": [
+        {
+          "name": "--track",
+          "takes_value": false,
+          "accepted": true
+        },
+        {
+          "name": "-c",
+          "takes_value": true,
+          "accepted": true
+        }
+      ]
+    },
+    "symbolic-ref": {
+      "known": true,
+      "class": "parse-options",
+      "positional_required": true,
+      "flags": []
+    },
+    "worktree add": {
+      "known": true,
+      "class": "parse-options",
+      "positional_required": true,
+      "flags": [
+        {
+          "name": "--detach",
+          "takes_value": false,
+          "accepted": true
+        }
+      ]
+    },
+    "worktree remove": {
+      "known": true,
+      "class": "parse-options",
+      "positional_required": true,
+      "flags": [
+        {
+          "name": "--force",
+          "takes_value": false,
+          "accepted": true
+        }
+      ]
+    }
+  },
+  "rules": {
+    "rev_parse_recorded_flags_only": true
+  }
+}

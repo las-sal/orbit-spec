@@ -13,6 +13,7 @@ const { validate } = require('./gh-contract-validate.cjs') as {
 const SEVEN = ['repo view', 'pr list', 'pr create', 'pr view', 'pr edit', 'pr ready', 'pr merge'];
 
 describe('gh contract — freshness (the checked-in file, never the host gh)', () => {
+  // @scenario behaviour orbit-pr-lifecycle :: Test instruments derive from a recorded real-CLI contract :: Re-capture is deliberate and the suite needs no real gh
   it('parses, records a version and the availability probe', () => {
     expect(contract.gh_version).toMatch(/^gh version \d+\.\d+\.\d+/);
     expect(contract.availability_probe.argv).toEqual(['--version']);
@@ -62,6 +63,7 @@ describe('gh contract — the shared validator (argv excludes the leading gh)', 
     ok(['repo', 'view', 'acme/widget', '--json', 'defaultBranchRef']);
   });
 
+  // @scenario behaviour orbit-pr-lifecycle :: Test instruments derive from a recorded real-CLI contract :: The selector rule is enforced from the contract
   it('the selector rule: a selector-taking pr verb with --repo and no selector is rejected with the real message', () => {
     bad(['pr', 'view', '--repo', 'acme/widget', '--json', 'isDraft'], 'argument required when using the --repo flag');
     ok(['pr', 'view', '--repo', 'acme/widget', 'https://github.com/acme/widget/pull/1', '--json', 'isDraft']);
