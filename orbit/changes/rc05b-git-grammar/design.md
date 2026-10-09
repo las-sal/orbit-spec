@@ -29,7 +29,8 @@ still prints usage.
 - Positional COUNTS for `git` beyond whether one is required: git's synopses vary by mode, and no snippet's defect on
   record was a count.
 - POSIX utilities and `node` (`orbit-cli-grammar`'s tool table keeps them uncovered).
-- Any generated-surface text, engine code, or adopter-visible behaviour.
+- Any generated-surface text, engine code, or adopter-visible behaviour, except a template fix for a surface flag the
+  capture records as rejected by real git (task 2.4).
 
 ## Decisions
 
@@ -37,9 +38,14 @@ still prints usage.
 
 `tokenize` gains operator awareness. Outside quotes, `&&`, `||`, `|&`, `|`, `;` and `&` end the current token and the
 current segment whether or not whitespace surrounds them. A redirection (`>`, `>>`, `<` followed by whitespace, `<<`,
-a digit before `>`, `>&`) and its target are dropped. An unquoted `$(`, backtick, `(` or `;;` is an extraction
-failure. The result is a list of segments, each a token list. `extractFenceLines` and `extractInline` emit one
-snippet per segment whose first token is the swept tool, all at the line where the span or fence line starts. The
+a digit before `>`, `>&`) and its target are dropped. A `(` opening a segment and its matching `)` are grouping and
+are stripped, so the runner launch's subshell in `external-handoff.md` yields ordinary segments. An unquoted `$(`,
+backtick or `;;` is an extraction failure; none appears unquoted on today's surface (measured at the proposal walk:
+every shell-fence line and every tool-headed inline span). The result is a list of segments, each a token list. `extractFenceLines` and `extractInline` emit one
+snippet per segment whose first token is the swept tool, all at the line where the span or fence line starts.
+`extractInline` keeps rc05's gate: an inline span is read only when it begins with the tool, and then every segment of
+that tool in it is extracted. A tool command after an operator in a span beginning with another word is in the places
+residual. The
 quote-join rule is unchanged: it decides at the LINE level whether a line was absorbed into another command's quote.
 The guard is untouched, because it reads raw lines and the places residual keeps "mid-line after an operator" outside
 every shell fence and span. The header comment's claim that rc05b "consumes it unchanged" is corrected.
@@ -65,8 +71,10 @@ separate entries, since git has no alias map the capture can read. `rules` names
 The exploration's table distinguished an optional-value flag from a no-value flag. That collapses at propose to
 `takes_value` alone. The validator needs only to know whether a flag consumes the next token. An `=value` written on
 the surface is probed AS WRITTEN, so a value git refuses on a flag that takes none is recorded as rejected with git's
-message. The one form left uncaught is an `=value` added after capture on a flag recorded without one. It fails as an
-unrecorded form, asking for re-capture.
+message. An `=value` added after capture on a long flag that takes none is NOT caught: the validator accepts
+`--name=value` on any accepted long flag, because the contract records which flags git accepts, not which forms. This
+is a named limit in the ADDED requirement's validator paragraph, descoped at the proposal walk rather than recording
+per-flag forms.
 
 ### D4 — The capture: probe strategy chosen per command by a self-check
 
@@ -94,7 +102,8 @@ version, and the diff is reviewed like `capture:gh`'s.
 `test/integration/cli-contracts/git-contract-validate.cjs` exports `validate(argv, contract)` with `gh`'s calling
 convention: argv excludes `git`; the result is `{ok, message}`. The lookup takes the longest key. An unknown command
 gets `unknown command "<x>" for "git"`. A flag must match a recorded name exactly, with no abbreviation and no
-bundling. An attached short value (`-S<x>`) is accepted only on a value-taking short flag. A rejected flag returns
+bundling. An attached short value (`-S<x>`) is accepted only on a value-taking short flag. `--name=value` is accepted on any accepted long flag (D3's
+named limit). A rejected flag returns
 git's recorded message. An unrecorded flag returns `flag <f> on git <key> is not in the recorded contract — re-run
 npm run capture:git`. `--` ends options. `positional_required` with no positional returns `git <key> requires an
 argument`. `rev-parse` applies the recorded-flags rule. Placeholders pass. Strictness is deliberate: a bundled or
@@ -122,7 +131,8 @@ pair. No R-crc-12 revision is needed.
 - **`git`'s contract from `contrib/completion/git-completion.bash`**: a hand-maintained copy inside git's tree, and a third copy here (explore.md).
 - **Splitting operators in a `git`-only pre-pass**: two places that tokenize one snippet, and `orbit`'s residual left open (explore.md).
 - **`git`'s contract beside `gh`'s in `orbit-pr-lifecycle`**: most `git` snippets are review choreography (explore.md).
-- **Three value kinds (none / required / optional) in the contract**: the validator consumes on `required` only; probing the surface's own `=value` form covers the rest (D3).
+- **Three value kinds (none / required / optional) in the contract**: the validator consumes on `required` only (D3).
+- **Recording the form the surface writes per flag** (proposal walk): would catch a post-capture `=value` on a no-value flag; descoped as a named limit, since no defect on record has that shape (D3).
 - **A capture written in `.mjs` that reads `dist/`**: `dist/` carries no test helpers, and duplicating the extractor in the script would make two extractors again (D4).
 
 ## Risks / Trade-offs

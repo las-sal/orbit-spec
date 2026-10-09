@@ -19,8 +19,8 @@ echoes any unknown flag with exit 0 (D-rc05b-4).
 ## What Changes
 
 - The shared extractor splits a snippet at every unquoted shell control operator (`&&`, `||`, `|`, `|&`, `;`, `&`),
-  and each segment is classified by its own first token. Redirections are dropped from the argv. An unquoted `$(`,
-  backtick or `(` fails extraction, naming the surface and line (D-rc05b-5). This narrows the places residual
+  and each segment is classified by its own first token. Redirections are dropped from the argv, and a subshell's `( … )` is
+  stripped as grouping. An unquoted `$(`, backtick or `;;` fails extraction, naming the surface and line (D-rc05b-5). This narrows the places residual
   `orbit-cli-grammar` names for `orbit` too.
 - `git` gets a RECORDED contract, `test/integration/cli-contracts/git-contract.json`, written by a deliberate capture
   (`npm run capture:git`) that PROBES real git in a throwaway repository. It probes every subcommand and flag the shared
@@ -63,4 +63,5 @@ echoes any unknown flag with exit 0 (D-rc05b-4).
 - `test/core/templates/orbit-content-fidelity.test.ts`: rc01's inline `gh` extractor retired; its negative fixtures
   move onto the shared extractor.
 - `test/core/cli-grammar/`: a `git` and `gh` sweep beside `orbit`'s, and the injection matrix extended to both tools.
-- No engine code, no generated-surface text, and no adopter-visible change. Every instrument is test-only.
+- No engine code and no adopter-visible change. Generated-surface text changes only where the capture records a surface
+  flag rejected by real git (task 2.4). Every instrument is test-only.

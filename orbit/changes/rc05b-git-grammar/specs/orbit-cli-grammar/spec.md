@@ -13,13 +13,15 @@ table, guard, tokenizer and fence table, with the tool's own name — over every
 | `gh` | `test/integration/pr-lifecycle/gh-contract.json`, `orbit-pr-lifecycle`'s `Test instruments derive from a recorded real-CLI contract` | the one validator the harness stub loads |
 | `git` | `test/integration/cli-contracts/git-contract.json`, captured as this requirement states | one CommonJS validator over that file |
 
-A recorded tool's bare-name tree SHALL be its contract's command keys, each split on spaces into a path:
+A recorded tool's bare-name tree SHALL be its contract's command keys, each split on spaces into a path, and the
+rule SHALL apply to each segment of an inline span, so `git fetch <r> && git push` yields one validated snippet and
+one prose name:
 
 | member | covered by |
 |---|---|
-| an inline span whose tokens resolve to a key with nothing after (`git push`, `gh pr merge`) | prose, never validated |
-| an inline span whose tokens resolve to a key with more after | extracted and validated |
-| an inline span whose first token after the tool matches no key | extracted; fails as an unknown command, so an invented verb cannot pass as prose |
+| an inline segment whose tokens resolve to a key with nothing after (`git push`, `gh pr merge`) | prose, never validated |
+| an inline segment whose tokens resolve to a key with more after | extracted and validated |
+| an inline segment whose first token after the tool matches no key | extracted; fails as an unknown command, so an invented verb cannot pass as prose |
 | a two-level key's first word alone (`git worktree`) | prose: an interior node of the tree |
 
 Closure of the bare-name table: DERIVED — a span walks the tree to a node with nothing left, to a node with tokens
@@ -50,9 +52,12 @@ Residual method: the capture also probes a deliberately bogus flag on every subc
 The `git` validator SHALL look up the longest command key leading the argument vector; match each flag token by its
 recorded name exactly — no abbreviation, no bundled short flags — refusing an unrecorded or rejected flag (with git's
 recorded message for a rejected one, and a message naming re-capture for an unrecorded one); let a value-taking flag
-consume the next token unless its value is attached; read every token after `--` as a positional; refuse a command
+consume the next token unless its value is attached; accept `--name=value` on any accepted long flag; read every
+token after `--` as a positional; refuse a command
 recorded as requiring a positional when none is given; apply the named orbit-side rules; and treat a `<…>` placeholder
-as a value, exactly as a real value. Positional counts beyond that presence are not checked. A failure SHALL name the
+as a value, exactly as a real value. Positional counts beyond that presence are not checked, and neither is an
+`=value` written after capture on a long flag that takes none (`git status --short=x`): the contract records which
+flags git accepts, not which forms. A failure SHALL name the
 surface (the workflow and the file), the line, the snippet, and the validator's message.
 
 #### Scenario: Today's surface validates for both recorded tools
@@ -141,17 +146,19 @@ leading whitespace, blockquote `>` markers, list markers and a leading `|`, and 
 | an inline single-backtick span beginning `orbit ` | extracted, unless every token resolves to a command of the program with nothing after it: a bare command NAME is prose |
 | a line in an untagged fence, a data-tagged fence, or prose outside every fence | not extracted; the guard |
 | a line whose first token is a placeholder (a runner's argument vector) | not extracted: not `orbit` |
-| an unquoted shell control operator (`&&`, `\|\|`, `\|`, `\|&`, `;`, `&`), spaced or glued to a word, in an extracted line or span | the snippet splits there; each segment is a candidate whose own first token decides its tool, so a segment of another tool is no `orbit` snippet and an `orbit` segment after an operator is extracted |
+| an unquoted shell control operator (`&&`, `\|\|`, `\|`, `\|&`, `;`, `&`), spaced or glued to a word, in a shell-fence line or in an inline span beginning `orbit ` | the snippet splits there; each segment is a candidate whose own first token decides its tool, so a segment of another tool is no `orbit` snippet and an `orbit` segment after an operator is extracted; an inline span beginning with any other word is not read |
 | an operator inside quotes | an argument, never a split |
 | a redirection (`>`, `>>`, `<`, `<<`, a digit before `>`, `>&`) | the operator and its target are dropped from the argument vector |
-| an unquoted `$(`, backtick, `(` or `;;` | fails extraction, naming the surface, the line and the snippet: substitution and grouping are refused, never parsed |
+| a `(` opening a segment, and its matching `)` (a subshell: `( cd <dir> && … )`) | grouping, stripped; the commands inside are segments like any other |
+| an unquoted `$(`, backtick or `;;` | fails extraction, naming the surface, the line and the snippet: substitution is refused, never parsed |
 
-Closure of the operator rows: POSIX XCU 2.10's control and redirection operators, plus bash's `|&`; substitution and
-grouping are refused rather than parsed.
+Closure of the operator rows: POSIX XCU 2.10's control and redirection operators, plus bash's `|&`; grouping is
+stripped, and substitution is refused rather than parsed.
 
 Named limit (the places). Residual kind: a command in a container not listed: a blockquote, an indented code block, an
 HTML block, a table cell, or — outside every shell fence and single-backtick span — mid-line after `&&`, `$ ` or `|`;
-a command in a double-backtick inline span; and, inside
+a command after an operator in a single-backtick span that begins with another word (`cd x && orbit …`); a command
+in a double-backtick inline span; and, inside
 a shell fence, a line prefixed `$ ` or by an assignment (`VAR=1 orbit …`), or a command continued onto the next line by
 a trailing `\` (its `\` reaches the parser as an argument: a false failure on a command that takes no positional,
 and on one that does, a parse that passes while the continued flags go unchecked). Residual method: the guard reads every

@@ -1,7 +1,7 @@
 ## 1. Operator-aware extraction (D1, D-rc05b-5)
 
-- [ ] 1.1 `tokenize` in `test/helpers/surface-snippets.ts` splits at unquoted `&&`, `||`, `|&`, `|`, `;`, `&`, whether spaced or glued, and returns segments. It drops a redirection with its target, keeps a quoted operator as an argument, and reports an unquoted `$(`, backtick, `(` or `;;` as a failure. Unit cases go in `test/core/cli-grammar/surface-snippets.test.ts`.
-- [ ] 1.2 `extractFenceLines` and `extractInline` emit one snippet per segment whose first token is the tool, at the line's own number. The quote-join rule stays line-level, and the header comment's "consumes it unchanged" is corrected.
+- [ ] 1.1 `tokenize` in `test/helpers/surface-snippets.ts` splits at unquoted `&&`, `||`, `|&`, `|`, `;`, `&`, whether spaced or glued, and returns segments. It drops a redirection with its target, keeps a quoted operator as an argument, strips a `(` opening a segment with its matching `)` as grouping, and reports an unquoted `$(`, backtick or `;;` as a failure. Unit cases go in `test/core/cli-grammar/surface-snippets.test.ts`.
+- [ ] 1.2 `extractFenceLines` and `extractInline` emit one snippet per segment whose first token is the tool, at the line's own number; `extractInline` keeps rc05's gate (a span is read only when it begins with the tool). The quote-join rule stays line-level, and the header comment's "consumes it unchanged" is corrected.
 - [ ] 1.3 Tag the three new MODIFIED scenarios (chained split, pipe into another tool, command substitution) with `@scenario` on tests that assert them. Run rc05's `orbit` sweep, injections and extractor suites green with no edits to their expectations.
 - [ ] 1.4 Re-measure: the `git` and `gh` snippet counts after the split, with the twelve operator snippets now yielding per-segment snippets. Record the numbers in this task line.
 
