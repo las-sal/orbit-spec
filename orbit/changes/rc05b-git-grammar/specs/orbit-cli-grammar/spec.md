@@ -28,23 +28,30 @@ Closure of the bare-name table: DERIVED — a span walks the tree to a node with
 left, or out of the tree; the fourth row is the first outcome at an interior node.
 
 The `git` contract SHALL be written only by a deliberate capture, `npm run capture:git`, reviewed as a diff. It is
-the one code in the repository that runs a real `git`, and it runs it in a throwaway repository holding one commit,
-under `LANG=C`, with no stdin, a failing editor, no remote, an empty global configuration and a timeout per probe.
-Its candidate set is every `git` segment the shared extractor finds on the generated surface, bare names included, so
-a command written only as a name is recorded. It records the git version and, per command key, whether git knows the
-command, whether it requires a positional, and each flag the surface writes on it, probed in the form the surface
-writes it: whether git accepts it, git's message when it does not, and whether it requires a value. Git's own response
-decides every entry:
+the one code in the repository that runs a real `git`. Every probe runs in its OWN fresh copy of a template repository
+holding one commit on branch `main` — a probe can mutate its repository (`switch -c` switches the branch, `init <word>`
+creates a nested repository), so no probe may read another's effects — under `LANG=C`, with closed stdin, a failing
+editor, no remote, `GIT_CONFIG_GLOBAL=/dev/null`, `GIT_CONFIG_NOSYSTEM=1` and a 10-second timeout. Its candidate set is
+every `git` segment the shared extractor finds on the generated surface, bare names included, so a command written only
+as a name is recorded. It records the git version and, per command key, whether git knows the command, its probe class,
+whether it requires a positional, and each flag the surface writes on it, probed in the form the surface writes it:
+whether git accepts it, git's line when it does not, and whether it takes a value. A REJECTION SHAPE is a first line
+beginning `error: unknown option`, `error: invalid option`, `error: unknown switch`, `fatal: unrecognized argument:` or
+`error: option ` and ending `takes no value`. Git's own response decides every entry:
 
 | member | covered by |
 |---|---|
-| a command key, one or two words (`commit`, `worktree remove`) | `git <key> -h`: a usage page records it known; `is not a git command` records it unknown |
-| a flag on a command that reads its options before `-h` (its bogus-flag probe `git <key> --orbit-capture-bogus -h` reports an unknown or invalid option) | `git <key> <flag as written> -h`: a usage page records it accepted; an unknown or invalid option records it rejected, with git's message; nothing runs |
-| a flag on a command that answers `-h` before its options (`log`, `show`, `rev-list`: the bogus-flag `-h` probe prints usage) | `git <key> <flag as written>` run in the throwaway repository: an `unrecognized argument`, an unknown or invalid option, or a usage page records it rejected; any other outcome records it accepted; the bogus flag run the same way MUST record rejected |
-| a command neither bogus-flag probe rejects (`rev-parse`, which echoes an unknown flag with exit 0) | the orbit-side rule named in the capture: recorded flags only, each recorded as written; a command reaching this row without a named rule fails the capture |
-| whether a flag requires a value | `git <key> <flag>` with nothing after it: `requires a value` records it value-taking |
-| whether a command requires a positional | `git <key>` alone: a usage page records a positional required |
-| a flag written `--name=value` | probed with its value, recorded by the name before `=` |
+| a command group | `git <a> orbitcapturebogusverb` reports `unknown subcommand` (`worktree` today) |
+| a command key | a group's key is two words, its second the segment's verb (`worktree remove`); every other key is one word, and its second token is an argument (`push <remote>`) |
+| a key git knows | `git <key> -h`: a first line beginning `usage:` records it known; `is not a git command` or `unknown subcommand` records it unknown, with that line |
+| the command's probe class | `git <key> --orbit-capture-bogus -h` gives a rejection shape → PARSE-OPTIONS; otherwise `git <key> --orbit-capture-bogus HEAD` gives a rejection shape or a usage page → RUN; otherwise a named orbit-side rule, or the capture fails naming the key and writes nothing |
+| whether a flag takes a value | `git <key> <name>` with nothing after it: `requires a value` records it value-taking |
+| a flag's acceptance, PARSE-OPTIONS class | `git <key> <flag as written> [x when value-taking] -h`: a usage page records it accepted; a rejection shape records it rejected, with git's line; any other line fails the capture naming the probe |
+| a flag's acceptance, RUN class (`log`, `show`, `rev-list`, `check-ref-format`) | `git <key> <flag as written> [x when value-taking] HEAD`, with `HEAD` standing in for the positional: a rejection shape or a usage page records it rejected, with git's line; anything else records it accepted |
+| a flag written `--name=value` on the surface | probed as written (`--name=x`), recorded by the name before `=` |
+| value arity on a flag git does not report as `requires a value` (`check-ref-format --branch`) | recorded not value-taking: its value reads as a positional, so a missing value on it is not caught |
+| a required positional | `git <key>` alone: a first line beginning `usage:` records one required |
+| a command neither bogus probe rejects (`rev-parse`, which echoes an unknown flag with exit 0) | the orbit-side rule named in the capture: recorded flags only, each recorded as written, unprobed |
 
 Named limit (the classification). Residual kind: a grammar error whose message matches none of the recorded shapes, classified as accepted — a false pass
 Residual method: the capture also probes a deliberately bogus flag on every subcommand and requires it to classify as rejected; a subcommand where it does not either carries a named orbit-side rule (`rev-parse`) or fails the capture
@@ -102,6 +109,25 @@ surface (the workflow and the file), the line, the snippet, and the validator's 
 - **WHEN** the full suite runs
 - **THEN** every `git` case passes from the checked-in contract, the freshness test asserts only that the file parses
   and records a git version, and no test process spawns `git` to validate a snippet
+
+#### Scenario: A flag on a command that needs a positional is recorded accepted
+
+- **WHEN** the capture classifies `rev-list`, whose bogus flag prints usage under `-h` and under `HEAD`, and probes
+  `--count` as `git rev-list --count HEAD`, which exits 0
+- **THEN** `rev-list` is recorded in the RUN class and `--count` accepted, though `git rev-list --count` alone prints
+  usage
+
+#### Scenario: A value-taking flag is probed with a stand-in value
+
+- **WHEN** the capture probes `commit -m`, for which `git commit -m` reports `requires a value`
+- **THEN** it records `-m` value-taking and decides its acceptance from `git commit -m x -h`, never from
+  `git commit -m -h`, which takes `-h` as the message and runs the command
+
+#### Scenario: A group's verb is a key and another command's second word is an argument
+
+- **WHEN** the candidate set holds `git worktree remove --force <dir>` and `git push <remote> <branch>`, and
+  `git worktree orbitcapturebogusverb` reports `unknown subcommand` while `git push orbitcapturebogusverb` does not
+- **THEN** the contract records the key `worktree remove` and the key `push`, with `<remote>` read as an argument
 
 #### Scenario: The capture refuses a command it cannot classify
 

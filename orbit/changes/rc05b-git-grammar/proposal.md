@@ -23,8 +23,9 @@ echoes any unknown flag with exit 0 (D-rc05b-4).
   stripped as grouping. An unquoted `$(`, backtick or `;;` fails extraction, naming the surface and line (D-rc05b-5). This narrows the places residual
   `orbit-cli-grammar` names for `orbit` too.
 - `git` gets a RECORDED contract, `test/integration/cli-contracts/git-contract.json`, written by a deliberate capture
-  (`npm run capture:git`) that PROBES real git in a throwaway repository. It probes every subcommand and flag the shared
-  extractor finds on the surface, bare names included, and git's own errors decide every entry. A flag git rejects is
+  (`npm run capture:git`) that PROBES real git, each probe in a fresh copy of a throwaway repository. It probes every
+  subcommand and flag the shared extractor finds on the surface, bare names included, classing each command first by a
+  bogus flag, and git's own errors decide every entry (D-rc05b-11). A flag git rejects is
   recorded with git's message, and `rev-parse` carries a named orbit-side rule: recorded flags only (D-rc05b-7). One
   CommonJS validator reads the contract, and the suite never spawns `git`.
 - `gh`'s sweep moves onto the shared extractor. rc01's `ghSnippets` and `snippetArgv` are retired, the six `gh`

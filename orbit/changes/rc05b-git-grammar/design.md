@@ -10,10 +10,11 @@ also loads.
 The exploration measured the ground (see explore.md, Decisions D-rc05b-1 to D-rc05b-4): 119 `git` and 34 `gh`
 snippets extracted by the shared extractor unchanged, with no extraction failure and no guard hit. Twelve `git`
 snippets carry `&&` or `|`. git offers no complete introspectable grammar. Real git's errors, probed in a repository
-holding one commit, separate unknown, missing-value and accepted on every subcommand in use except `rev-parse`. A
-second spike at propose found that `git <key> <flag> -h` decides a flag without running anything on the
-parse-options builtins. On `log`, `show` and `rev-list` it does not: they answer `-h` before parsing, so a bogus flag
-still prints usage.
+holding one commit, separate unknown, missing-value and accepted on every subcommand in use except `rev-parse`. The
+proposal pair refuted the first probe table: `-h` cannot classify a value-taking flag, and a usage page is not a
+rejection on a command that needs a positional. Re-exploration executed a revised table against real git, each probe
+in a fresh repository copy (explore.md D-rc05b-9 to D-rc05b-11, Cases 1–3): every surface flag is accepted and ten
+invented defects are rejected.
 
 ## Goals / Non-Goals
 
@@ -62,8 +63,8 @@ re-run through the shared extractor on synthetic surfaces in the same describe b
 ### D3 — The `git` contract and its file shape (D-rc05b-7)
 
 `test/integration/cli-contracts/git-contract.json` holds `git_version`, `captured_at`, `commands` keyed like `gh`'s
-(`"worktree remove"`), and `rules`. Each command records `known`, `positional_required` and `flags: [{name,
-takes_value, accepted, message?}]`, one entry per flag token the surface writes. The short flag and the long flag are
+(`"worktree remove"`), and `rules`. Each command records `known`, `class` (`parse-options` | `run` | `rule`),
+`positional_required` and `flags: [{name, takes_value, accepted, message?}]`, one entry per flag token the surface writes. The short flag and the long flag are
 separate entries, since git has no alias map the capture can read. `rules` names the orbit-side rules,
 `rev_parse_recorded_flags_only: true` today. The directory is new because `git` is not a PR-lifecycle tool here
 (D-rc05b-6). `gh`'s files stay where the harness loads them.
@@ -76,26 +77,35 @@ message. An `=value` added after capture on a long flag that takes none is NOT c
 is a named limit in the ADDED requirement's validator paragraph, descoped at the proposal walk rather than recording
 per-flag forms.
 
-### D4 — The capture: probe strategy chosen per command by a self-check
+### D4 — The capture: classify the command first, then probe each flag in its class (D-rc05b-11)
 
 `scripts/capture-git-contract.capture.ts` runs under its own `scripts/capture.vitest.config.ts`, whose `include`
 names only that file. `npm run capture:git` invokes it, and `vitest run` never collects it (the default `include` is
 `test/**/*.test.ts`). It reaches the TypeScript extractor through the test toolchain. There is no `tsx`, and `dist/`
-does not carry test helpers. Per command key:
+does not carry test helpers. The procedure is the ADDED requirement's probe table, which a prototype executed over all
+129 `git` segments on today's surface (see explore.md, Cases 1–3):
 
-1. `git <key> -h`: known or unknown.
-2. The bogus-flag self-check, `git <key> --orbit-capture-bogus -h`. If it reports an unknown or invalid option, the
-   command is parse-options-first and every flag is probed with `-h` appended, so nothing runs. If it prints usage, the
-   bogus flag is RUN in the throwaway repository. When that reports it rejected, every flag is probed by running
-   (`log`, `show`, `rev-list`: read-only). When neither probe rejects it, the command needs a rule named in the
-   capture's `ORBIT_SIDE_RULES` (`rev-parse`), or the capture fails naming it and writes nothing.
-3. Per flag: the flag as written with `-h` or run, then the flag alone as the last token for `requires a value`.
-4. `git <key>` alone for `positional_required`: a usage page means yes.
+1. **Groups and keys.** `git <a> orbitcapturebogusverb` reporting `unknown subcommand` makes `<a>` a group. A group's
+   key takes the segment's second word as its verb; every other key is one word.
+2. **Known.** `git <key> -h`: a `usage:` first line means known; `is not a git command` or `unknown subcommand` means
+   unknown, recorded with the line.
+3. **Class.** A rejection shape from `git <key> --orbit-capture-bogus -h` means PARSE-OPTIONS. Otherwise, a rejection
+   shape or usage page from `git <key> --orbit-capture-bogus HEAD` means RUN. Otherwise the key needs a rule named in
+   the capture's `ORBIT_SIDE_RULES` (`rev-parse`), or the capture fails naming it and writes nothing.
+4. **Per flag.** `git <key> <name>` alone, and `requires a value` means value-taking. Acceptance is then probed with the
+   flag as written plus `x` when value-taking: under `-h` for PARSE-OPTIONS (usage means accepted, a rejection shape
+   means rejected, any other line fails the capture), and with `HEAD` for RUN (a rejection shape or usage means
+   rejected, anything else accepted).
+5. **Positional.** `git <key>` alone with a `usage:` first line means a positional is required.
 
-Every probe runs with `LANG=C`, `GIT_EDITOR=false`, stdin closed, `GIT_CONFIG_GLOBAL=/dev/null`,
-`GIT_CONFIG_NOSYSTEM=1`, no remote, cwd the throwaway repository, and a 10-second timeout. A probe that runs a
-mutating command (`git add -A` alone) mutates only the throwaway repository. The capture prints a summary and the git
-version, and the diff is reviewed like `capture:gh`'s.
+Every probe runs in a FRESH copy of a template repository (one commit, branch `main`). A probe can mutate its repository
+(`switch -c x HEAD` switched the branch in the first matrix, and `init <word>` created a nested repository), so a shared
+one makes each reading depend on the probes before it. The environment is `LANG=C`, `LC_ALL=C`, `GIT_EDITOR=false`,
+closed stdin, `GIT_CONFIG_GLOBAL=/dev/null`, `GIT_CONFIG_NOSYSTEM=1`, `GIT_TERMINAL_PROMPT=0`, no remote, and a
+10-second timeout. The prototype's run was 146 probes in seconds. The probe-result classifiers (the rejection shapes,
+class, value-taking, acceptance, key arity) are PURE functions over `{status, firstLine}`, so the tests exercise every
+branch with recorded lines and never spawn git. The capture prints a summary and the git version, and the diff is
+reviewed like `capture:gh`'s.
 
 ### D5 — The `git` validator is strict, and its messages say which kind of miss
 
@@ -140,8 +150,8 @@ pair. No R-crc-12 revision is needed.
 - **D-rc05b-7's classification residual**: a git grammar error whose message the capture does not recognise would be
   recorded as accepted. The named limit and its method are stated in `orbit-cli-grammar`'s `Every \`git\` and \`gh\`
   snippet on the generated surface validates against its tool's recorded contract`.
-- **[A probe runs git commands]** → only in a throwaway repository with no remote, a failing editor, closed stdin and a
-  timeout. The commands that answer `-h` first are read-only.
+- **[A probe runs git commands]** → each in its own fresh copy of a throwaway repository, with no remote, a failing
+  editor, closed stdin, no user configuration and a timeout. A probe's mutation dies with its copy (D4).
 - **[The contract is surface-derived]** → a valid flag a body adopts fails until re-capture. The message names
   `npm run capture:git`, the same cost a new `gh` verb pays.
 - **[git version drift]** → the contract records the version it was captured against. The suite reads the file only;

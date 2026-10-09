@@ -1,0 +1,100 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-09T20:47:56Z",
+  "change": "rc05b-git-grammar",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc05b-git-grammar/.orbit-runs/external-proposal-2026-10-09T16-07-07Z.md",
+  "source_command": null,
+  "source_token": "2026-10-09T16-07-07Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 4,
+    "suggestion": 2
+  },
+  "pushback_verification": "Rediscovered pass: X1 and X4 were escalated by convergence; the fresh re-walk resolved their partners. The other four re-checked against current files.",
+  "resolution_summary": {
+    "resolved": 0,
+    "stale_suppressed": 6,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Valid flags can be recorded as rejected when a probe omits required positionals",
+      "marker_source": "external",
+      "file": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+      "line": 41,
+      "classification": "stale",
+      "action": "converged with the fresh half's finding, closed in its log",
+      "evidence": "address-reviews-2026-10-09T20-47-41Z (the fresh pass's re-walk) resolved the converged finding: the RUN class probes with HEAD standing in for the positional",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The contract cannot represent the attached-value distinction the design promises",
+      "marker_source": "external",
+      "file": "orbit/changes/rc05b-git-grammar/design.md",
+      "line": 58,
+      "classification": "stale",
+      "action": "converged with the fresh half's finding, closed in its log",
+      "evidence": "address-reviews-2026-10-09T16-28-05Z (the earlier pass's log) resolved the converged finding: =value descoped to a named limit (Sal: A); re-checked, still in place",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Inline extraction scope conflicts with per-segment classification",
+      "marker_source": "external",
+      "file": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+      "line": 141,
+      "classification": "stale",
+      "action": "converged with the fresh half's finding, closed in its log",
+      "evidence": "address-reviews-2026-10-09T16-28-05Z (the earlier pass's log) resolved the converged finding: the inline gate is kept and the rest named in the places residual (Sal: A); re-checked, still in place",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Command-key discovery is unspecified for the surface-derived capture",
+      "marker_source": "external",
+      "file": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+      "line": 39,
+      "classification": "stale",
+      "action": "converged with the fresh half's finding, closed in its log",
+      "evidence": "address-reviews-2026-10-09T20-47-41Z (the fresh pass's re-walk) resolved the converged finding: a group is detected by a bogus verb, and its key takes the segment's verb",
+      "outcome": "stale"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Tasks permit template changes that the declared scope excludes",
+      "marker_source": "external",
+      "file": "orbit/changes/rc05b-git-grammar/tasks.md",
+      "line": 15,
+      "classification": "stale",
+      "action": "converged with the fresh half's finding, closed in its log",
+      "evidence": "address-reviews-2026-10-09T16-28-05Z (the earlier pass's log) resolved the converged finding: the non-goal is qualified for task 2.4; re-checked, still in place",
+      "outcome": "stale"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Exploration status still says decisions are awaiting promotion",
+      "marker_source": "external",
+      "file": "orbit/changes/rc05b-git-grammar/explore.md",
+      "line": 1,
+      "classification": "stale",
+      "action": "not applied: the convention keeps the header",
+      "evidence": "the propose body's consume mode: \"explore.md persists unchanged as the historical record\"; re-entry resumes it in place, which it now has, with its header still the working token",
+      "outcome": "stale"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Re-walk: all six stale — the two converged with the fresh pass's redesign entries are closed by its re-walk, three by its earlier log, and the explore header is the convention's.",
+  "iteration": 4,
+  "next_recommended": "/orbit:review --as proposal rc05b-git-grammar",
+  "ripple_misses": 0
+}
