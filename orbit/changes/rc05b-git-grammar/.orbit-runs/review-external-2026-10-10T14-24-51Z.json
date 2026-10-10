@@ -1,0 +1,14 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-10-10T14:24:51Z",
+  "change": "rc05b-git-grammar",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "prompt_path": "orbit/changes/rc05b-git-grammar/.orbit-runs/external-prompt-system-2026-10-10T14-24-34Z.md",
+  "target": "codex",
+  "final_assessment": "External review prompt packaged for rc05b-git-grammar (iter 1, mode system) as the external half of a launched blind pair; awaiting findings from codex.",
+  "pair": true,
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/rc05b-git-grammar/.orbit-runs/external-prompt-system-2026-10-10T14-24-34Z.md into the target AI, and save the response as orbit/changes/rc05b-git-grammar/.orbit-runs/external-system-<TS>.md"
+}
