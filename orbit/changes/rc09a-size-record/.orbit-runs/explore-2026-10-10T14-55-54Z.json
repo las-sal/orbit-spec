@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-10T14:55:54Z",
+  "change": "rc09-propose-hygiene",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Named exploration rc09-propose-hygiene scaffolded (six sections, minimal metadata) and cited to clean-up-review-cycle stage rc09-propose-hygiene on the user's accept. Premise written: measure what of the 2026-09-11 charter still stands before proposing.",
+  "decisions_captured": 0,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 0,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:explore rc09-propose-hygiene — continue capturing thinking — no decisions captured yet"
+}

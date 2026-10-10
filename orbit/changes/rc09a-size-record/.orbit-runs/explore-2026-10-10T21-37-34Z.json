@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-10T21:37:34Z",
+  "change": "rc09a-size-record",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "rc09 measured and split (Sal: yes) into rc09a-size-record and rc09b-tool-inventory; this directory continues as rc09a's. Size is a REPORT: four engine-computed figures (new-side changed bytes by a multiset of lines, within 1.3% of git's diff on the archive), an opt-in size_ceiling config map, and a ## Size proposal section whose absence for a breached dimension is a WARNING that fails only --strict. Proximity dropped as overtaken by R-crc-4's amendment; the generalized spike needs nothing new (Q-crc-33 opened); the external-tool spike becomes rc09b's inventory test with exit (2) revised. Four live rules, all accounted; no open questions.",
+  "decisions_captured": 14,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 4,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose rc09a-size-record — 4 live rules accounted; formalize when you are ready (or /orbit:explore rc09a-size-record to keep refining)"
+}

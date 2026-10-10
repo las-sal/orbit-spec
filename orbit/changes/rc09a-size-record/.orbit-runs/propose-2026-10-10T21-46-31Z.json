@@ -1,0 +1,9 @@
+{
+  "command": "propose",
+  "timestamp": "2026-10-10T21:46:31Z",
+  "change": "rc09a-size-record",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Consume-mode proposal for rc09a-size-record from the rc09 exploration (no open questions; four live rules accounted, D-rc09-12 assigned to rc09b and not carried). Three capabilities at R-crc-1's ceiling: orbit-change-size ADDED (5 requirements: the four figures with the new-side multiset byte rule, the opt-in size_ceiling key, the ## Size declaration grammar, validate's declared/undeclared table, the status size field), orbit-propose-modifications (1 ADDED: the post-generation size brief with a checked mirror of the production), orbit-engine-gates (1 MODIFIED: the proximity promise retired). 17 tasks; about 14.7K new-side delta. Validates --strict; one base fingerprint stamped; staged citation merged and the exploration moved.",
+  "next_recommended": "/orbit:review rc09a-size-record — proposal artifacts ready; review before apply"
+}
