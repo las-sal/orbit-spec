@@ -1,0 +1,95 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-10T14:40:56Z",
+  "change": "rc05b-git-grammar",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc05b-git-grammar/.orbit-runs/external-system-2026-10-10T14-32-08Z.md",
+  "source_command": null,
+  "source_token": "2026-10-10T14-32-08Z",
+  "latest_apply_token": "2026-10-09T21-09-57Z",
+  "external_reviewer": "GPT-6 (Codex)",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 0
+  },
+  "pushback_verification": "verified",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 1,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "classification": "stale",
+      "outcome": "stale",
+      "marker_source": "external",
+      "severity": "WARNING",
+      "title": "Capture silently skips additional written forms of the same flag",
+      "file": "scripts/capture-git-contract.capture.ts",
+      "line": 125,
+      "action": "Converged with the fresh pass's \"The capture probes only the first-written form of each flag name, so a second form on the surface is never probed\" (same site, same claim), walked in log 2026-10-10T14-40-38Z: every distinct written form is probed and a name is recorded rejected when any form is, the rejected form second included.",
+      "evidence": "resolved in address-reviews-2026-10-10T14-40-38Z; test/core/cli-grammar/git-capture.test.ts \"a name is rejected when any written form is, with that form's line, though an earlier form was accepted\" passes; the re-capture ran 146 probes"
+    },
+    {
+      "remedy": "repair",
+      "outcome": "resolved",
+      "classification": "trivial_fix",
+      "marker_source": "external",
+      "severity": "WARNING",
+      "title": "Redirection handling does not satisfy the declared operator closure",
+      "file": "test/helpers/surface-snippets.ts",
+      "line": 159,
+      "action": "Pushback: still applies — `git status >| out` split into a segment `out`, `<>` and `<&` were kept as arguments, and a here-document's body lines were read as commands. Repaired within the closure the spec declares: `>|`, `<>`, `<&` and a file-descriptor digit before any redirection are dropped with their target (a `>|` target named `git` is no segment), and an unquoted `<<` or `<<-` is refused at its opening line, so no fence holding a here-document can pass. Body consumption was not built: the extractor does not delimit the body, and the refusal row says so. Measured first: no here-document or rare redirection on today's surface. The spec's redirection row, a new here-document row and the closure sentence, design D1 and the proposal say so; tokenizer cases cover each form, the earlier `<<` case moved from dropped to refused.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+          "test/core/cli-grammar/surface-snippets.test.ts",
+          "orbit/changes/rc05b-git-grammar/design.md",
+          "orbit/changes/rc05b-git-grammar/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "`<<`, a digit before `>`, `>&`",
+          "a digit before `>`, `>&`) and its target are dropped",
+          "['<<', 'cat <<EOF', [['cat']]]"
+        ],
+        "introduced": [
+          {
+            "path": "test/helpers/surface-snippets.ts",
+            "text": "if (line.startsWith('<<', i)) return { ok: false, refused: '<<' };"
+          },
+          {
+            "path": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+            "text": "| an unquoted `<<` or `<<-` (a here-document) |"
+          },
+          {
+            "path": "test/core/cli-grammar/surface-snippets.test.ts",
+            "text": "so no fence holding one passes the sweep (system walk, external W2)"
+          }
+        ],
+        "searched": [
+          "redirection",
+          "<<",
+          ">&"
+        ],
+        "scope": [
+          "test/core/cli-grammar/"
+        ],
+        "kept": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": 0,
+  "final_assessment": "System walk of the external half (2 findings): the capture-forms finding converged with the fresh half's and is stale here, resolved in the fresh log; the redirection closure is repaired — the rest of POSIX XCU 2.10's redirections are dropped with their targets and a here-document is refused at its opening line. 3286 tests green.",
+  "iteration": 7,
+  "next_recommended": "/orbit:review --as system rc05b-git-grammar",
+  "ripple_misses": 0
+}

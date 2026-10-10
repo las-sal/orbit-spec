@@ -38,11 +38,12 @@ invented defects are rejected.
 ### D1 — The tokenizer returns segments; the extractor classifies each (D-rc05b-5)
 
 `tokenize` gains operator awareness. Outside quotes, `&&`, `||`, `|&`, `|`, `;` and `&` end the current token and the
-current segment whether or not whitespace surrounds them. A redirection (`>`, `>>`, `<` followed by whitespace, `<<`,
-a digit before `>`, `>&`) and its target are dropped. A `(` opening a segment and its matching `)` are grouping and
-are stripped, so the runner launch's subshell in `external-handoff.md` yields ordinary segments. An unquoted `$(`,
-backtick or `;;` is an extraction failure; none appears unquoted on today's surface (measured at the proposal walk:
-every shell-fence line and every tool-headed inline span). The result is a list of segments, each a token list. `extractFenceLines` and `extractInline` emit one
+current segment whether or not whitespace surrounds them. A redirection (`>`, `>>`, `>|`, `>&`, `<` followed by
+whitespace, `<>`, `<&`, a digit glued before any of them) and its target are dropped. A `(` opening a segment and its
+matching `)` are grouping and are stripped, so the runner launch's subshell in `external-handoff.md` yields ordinary
+segments. An unquoted `$(`, backtick, `<(`, `>(`, `;;` or `<<`, and a `$(` or backtick inside double quotes, is an
+extraction failure; none appears on today's surface (measured at the proposal walk for the unquoted three, every
+shell-fence line and every tool-headed inline span; at the system walk for the rest). The result is a list of segments, each a token list. `extractFenceLines` and `extractInline` emit one
 snippet per segment whose first token is the swept tool, all at the line where the span or fence line starts.
 `extractInline` keeps rc05's gate: an inline span is read only when it begins with the tool, and then every segment of
 that tool in it is extracted. A tool command after an operator in a span beginning with another word is in the places
@@ -73,7 +74,9 @@ The exploration's table distinguished an optional-value flag from a no-value fla
 `takes_value` alone. The validator needs only to know whether a flag consumes the next token. An `=value` written on
 the surface is probed AS WRITTEN, so a value git refuses on a flag that takes none is recorded as rejected with git's
 message. An `=value` added after capture on a long flag that takes none is NOT caught: the validator accepts
-`--name=value` on any accepted long flag, because the contract records which flags git accepts, not which forms. This
+`--name=value` on any accepted long flag, because the contract records which flags git accepts, not which forms;
+nor, conversely, is a bare form added after capture of a flag recorded from its `=` form (`git log --format %h`).
+Every form written at capture is probed, and a name with any rejected form is recorded rejected. This
 is a named limit in the ADDED requirement's validator paragraph, descoped at the proposal walk rather than recording
 per-flag forms.
 

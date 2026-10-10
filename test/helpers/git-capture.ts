@@ -103,6 +103,35 @@ export function probeForm(flag: WrittenFlag): string {
 }
 
 /**
+ * Every distinct form a key's segments write each flag in, grouped by name, both in
+ * first-written order. Forms are distinct by the form they are probed in, so every
+ * written form reaches a probe, not only the first one written (system walk, fresh W1).
+ */
+export function formsByName(argvs: string[][], key: string): Map<string, WrittenFlag[]> {
+  const forms = new Map<string, WrittenFlag[]>();
+  for (const argv of argvs) {
+    for (const flag of flagsWritten(argv, key)) {
+      const seen = forms.get(flag.name) ?? [];
+      if (!seen.some((f) => probeForm(f) === probeForm(flag))) forms.set(flag.name, [...seen, flag]);
+    }
+  }
+  return forms;
+}
+
+/**
+ * A name's one contract entry: rejected when ANY of its written forms is rejected, with
+ * the first rejected form's line, so a rejected form cannot hide behind an accepted one.
+ */
+export function flagEntry(
+  name: string,
+  takesValue: boolean,
+  acceptances: Array<{ accepted: true } | { accepted: false; message: string }>
+): { name: string; takes_value: boolean; accepted: boolean; message?: string } {
+  const rejected = acceptances.find((a) => !a.accepted);
+  return { name, takes_value: takesValue, ...(rejected ?? { accepted: true }) };
+}
+
+/**
  * The acceptance probe's argument vector: the key's words, the flag as written, the stand-in
  * value `x` when the flag takes a value the surface did not attach, then `-h` for PARSE-OPTIONS
  * or `HEAD` for RUN. Never `<flag> -h` on a value-taking flag, which takes `-h` as the value.

@@ -11,7 +11,9 @@ import {
   acceptanceFrom,
   classFrom,
   firstLineOf,
+  flagEntry,
   flagsWritten,
+  formsByName,
   isGroup,
   isRejection,
   keyOf,
@@ -106,6 +108,21 @@ describe('groups and keys', () => {
     ]);
     expect(flagsWritten(['log', '-S<symbol>'], 'log')).toEqual([{ name: '-S', written: '-S<symbol>' }]);
     expect(flagsWritten(['worktree', 'remove', '--force', '<dir>'], 'worktree remove')).toEqual([{ name: '--force', written: '--force' }]);
+  });
+
+  it('every distinct written form of a flag reaches a probe, the second form too (system walk, fresh W1)', () => {
+    const forms = formsByName([['commit', '--only', '<p>'], ['commit', '--only=<p>'], ['commit', '--only', '<q>'], ['commit', '--only=<q>']], 'commit');
+    expect([...forms]).toEqual([['--only', [{ name: '--only', written: '--only' }, { name: '--only', written: '--only=<p>' }]]]);
+    expect(forms.get('--only')!.map((f) => acceptanceArgs('commit', f, false, 'parse-options'))).toEqual([
+      ['commit', '--only', '-h'],
+      ['commit', '--only=x', '-h'],
+    ]);
+  });
+
+  it('a name is rejected when any written form is, with that form\'s line, though an earlier form was accepted', () => {
+    const rejected = { accepted: false as const, message: "error: option `only' takes no value" };
+    expect(flagEntry('--only', false, [{ accepted: true }, rejected])).toEqual({ name: '--only', takes_value: false, ...rejected });
+    expect(flagEntry('--only', false, [{ accepted: true }, { accepted: true }])).toEqual({ name: '--only', takes_value: false, accepted: true });
   });
 
   it('a flag is probed as written, a placeholder value standing as `x`', () => {

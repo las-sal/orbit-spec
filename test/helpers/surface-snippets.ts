@@ -102,7 +102,17 @@ function infoWord(token: Token): string {
 export type TokenizeResult =
   | { ok: true; segments: string[][] }
   | { ok: false; open: '"' | "'" }
-  | { ok: false; refused: '$(' | '`' | ';;' };
+  | { ok: false; refused: Refused; quoted?: true };
+
+/** What the tokenizer refuses rather than parses: substitution, `;;`, and a here-document. */
+export type Refused = '$(' | '`' | ';;' | '<(' | '>(' | '<<';
+
+/** The extraction failure's message for a refusal. */
+export function refusalMessage(result: { refused: Refused; quoted?: true }): string {
+  if (result.refused === '<<') return "unquoted << is refused: a here-document's body is never parsed";
+  if (result.quoted) return `${result.refused} inside double quotes is refused: substitution is never parsed`;
+  return `unquoted ${result.refused} is refused: substitution is never parsed`;
+}
 
 /** Control operators, longest first so `&&` is never read as two `&`. */
 const CONTROL_OPERATORS = ['&&', '||', '|&', '|', ';', '&'];
@@ -115,10 +125,13 @@ const CONTROL_OPERATORS = ['&&', '||', '|&', '|', ';', '&'];
  * followed by whitespace, which is a redirect) is one token, spaces inside and a
  * suffix attached; a trailing ` # …` comment outside quotes is dropped; `…` and
  * `...` are dropped. Outside quotes, a control operator (`&&`, `||`, `|&`, `|`,
- * `;`, `&`), spaced or glued, ends the segment; a redirection and its target are
- * dropped; a `(` opening a segment and its matching `)` are grouping, stripped.
- * An open quote at the end is reported, so the caller can join the next line or
- * fail; an unquoted `$(`, backtick or `;;` is refused.
+ * `;`, `&`), spaced or glued, ends the segment; a redirection (`>`, `>>`, `>|`,
+ * `>&`, `<` followed by whitespace, `<>`, `<&`, a digit glued before any of them)
+ * and its target are dropped; a `(` opening a segment and its matching `)` are
+ * grouping, stripped. An open quote at the end is reported, so the caller can join
+ * the next line or fail. Refused, never parsed: an unquoted `$(`, backtick, `<(`,
+ * `>(`, `;;` or `<<` (a here-document, whose body lines are data), and a `$(` or
+ * backtick inside double quotes, where the shell still runs it.
  */
 export function tokenize(line: string): TokenizeResult {
   const segments: string[][] = [];
@@ -153,17 +166,24 @@ export function tokenize(line: string): TokenizeResult {
     if (c === '`') return { ok: false, refused: '`' };
     if (c === '$' && line[i + 1] === '(') return { ok: false, refused: '$(' };
     if (line.startsWith(';;', i)) return { ok: false, refused: ';;' };
-    // A redirection: `>`, `>>`, `>&`, `<<`, a `<` followed by whitespace, and a digit
-    // (the file descriptor) glued before `>`. The operator and its target are dropped.
-    const fdPrefix = inToken && /^\d+$/.test(current);
-    if (c === '>' || line.startsWith('<<', i) || (c === '<' && (i + 1 >= line.length || /\s/.test(line[i + 1])))) {
-      if (fdPrefix && c === '>') {
+    if (line.startsWith('<<', i)) return { ok: false, refused: '<<' };
+    if (line.startsWith('<(', i)) return { ok: false, refused: '<(' };
+    if (line.startsWith('>(', i)) return { ok: false, refused: '>(' };
+    // A redirection: `>`, `>>`, `>|`, `>&`, `<` followed by whitespace or the line's end,
+    // `<>`, `<&`, and a digit (the file descriptor) glued before any of them. The operator
+    // and its target are dropped.
+    const redirect =
+      c === '>' ? (/^>[>|&]/.test(line.slice(i, i + 2)) ? 2 : 1)
+      : c === '<' ? (/^<[>&]/.test(line.slice(i, i + 2)) ? 2 : i + 1 >= line.length || /\s/.test(line[i + 1]) ? 1 : 0)
+      : 0;
+    if (redirect > 0) {
+      if (inToken && /^\d+$/.test(current)) {
         current = '';
         inToken = false;
       } else {
         push();
       }
-      i += line.startsWith('>>', i) || line.startsWith('>&', i) || line.startsWith('<<', i) ? 2 : 1;
+      i += redirect;
       dropNext = true;
       continue;
     }
@@ -207,6 +227,8 @@ export function tokenize(line: string): TokenizeResult {
           j += 2;
           continue;
         }
+        if (line[j] === '`') return { ok: false, refused: '`', quoted: true };
+        if (line[j] === '$' && line[j + 1] === '(') return { ok: false, refused: '$(', quoted: true };
         value += line[j];
         j++;
       }
@@ -300,9 +322,7 @@ function extractFenceLines(walk: Walk, token: Token, contentStart: number): void
         line,
         snippet: text,
         message:
-          'open' in result
-            ? `unterminated ${result.open} quote at the end of the shell fence`
-            : `unquoted ${result.refused} is refused: substitution is never parsed`,
+          'open' in result ? `unterminated ${result.open} quote at the end of the shell fence` : refusalMessage(result),
       });
       i++;
       continue;
@@ -360,9 +380,7 @@ function extractInline(walk: Walk, parent: Token, offset: number, blockLine: num
         line,
         snippet: child.content,
         message:
-          'open' in result
-            ? `unterminated ${result.open} quote in the inline span`
-            : `unquoted ${result.refused} is refused: substitution is never parsed`,
+          'open' in result ? `unterminated ${result.open} quote in the inline span` : refusalMessage(result),
       });
       continue;
     }

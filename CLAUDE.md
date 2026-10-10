@@ -740,8 +740,8 @@ once walked. Sync: 7 MODIFIED across two capabilities, 7/7 byte-verified; the ca
 under R-crc-12's first case): **documented `orbit` commands parse against the CLI.** `src/cli/program.ts` exports
 `buildProgram({hooks})`, the CLI's ONE program, and `src/cli/index.ts` only builds and parses; a test builds it with all
 five hooks skipped, neutralises it, and asks commander's own `parseAsync`, a parse accepted exactly when commander's exit
-code is 0. A test-only extractor (`test/helpers/surface-snippets.ts`, `markdown-it` a devDependency, tool-agnostic so
-`rc05b-git-grammar` consumes it unchanged) reads every generated SKILL.md as the generator writes it and every reference,
+code is 0. A test-only extractor (`test/helpers/surface-snippets.ts`, `markdown-it` a devDependency, tool-agnostic;
+`rc05b-git-grammar` taught it shell operators and reads `git` and `gh` through it) reads every generated SKILL.md as the generator writes it and every reference,
 tokenizes by the shell's quoting, and fails a quote that would hide an `orbit` line; a guard fails any `orbit` line with a
 flag outside a shell fence. The sweep parses 130 snippets and sets aside 35 bare command names; the only real defects were
 three backslash-before-backtick slips, fixed and now checked. The completion registry is held to the program both ways (it

@@ -5,7 +5,7 @@ CommonMark-located fences, and named `git` and the `gh` sweep's move as this sta
 Today `git` is the second most-cited tool and nothing checks it: the shared extractor, run unchanged, finds 119 `git`
 snippets across 13 surfaces, 52 of them in review's choreography rather than the PR references (D-rc05b-1). `gh` has
 a recorded contract (rc01), but its sweep still runs its own inline-only extractor over three references, so the six
-`gh` snippets in SKILL.md bodies are never validated, and the repo carries two extractors.
+`gh` mentions in SKILL.md bodies (four snippets, two bare names) are never read, and the repo carries two extractors.
 
 The exploration found two things that block the obvious path. First, twelve `git` snippets chain with `&&` or pipe
 into `| tail -1`, and the tokenizer passes the operator through as an argument, so any `git` validator would read
@@ -20,7 +20,7 @@ echoes any unknown flag with exit 0 (D-rc05b-4).
 
 - The shared extractor splits a snippet at every unquoted shell control operator (`&&`, `||`, `|`, `|&`, `;`, `&`),
   and each segment is classified by its own first token. Redirections are dropped from the argv, and a subshell's `( … )` is
-  stripped as grouping. An unquoted `$(`, backtick or `;;` fails extraction, naming the surface and line (D-rc05b-5). This narrows the places residual
+  stripped as grouping. A substitution (unquoted, or a `$(` or backtick inside double quotes), `;;` or a here-document fails extraction, naming the surface and line (D-rc05b-5). This narrows the places residual
   `orbit-cli-grammar` names for `orbit` too.
 - `git` gets a RECORDED contract, `test/integration/cli-contracts/git-contract.json`, written by a deliberate capture
   (`npm run capture:git`) that PROBES real git, each probe in a fresh copy of a throwaway repository. It probes every
@@ -28,8 +28,8 @@ echoes any unknown flag with exit 0 (D-rc05b-4).
   bogus flag, and git's own errors decide every entry (D-rc05b-11). A flag git rejects is
   recorded with git's message, and `rev-parse` carries a named orbit-side rule: recorded flags only (D-rc05b-7). One
   CommonJS validator reads the contract, and the suite never spawns `git`.
-- `gh`'s sweep moves onto the shared extractor. rc01's `ghSnippets` and `snippetArgv` are retired, the six `gh`
-  snippets in bodies are validated, and the `gh` contract, its validator and the harness stub are unchanged
+- `gh`'s sweep moves onto the shared extractor. rc01's `ghSnippets` and `snippetArgv` are retired, the four `gh`
+  snippets in bodies are validated (the other two mentions are bare names, prose), and the `gh` contract, its validator and the harness stub are unchanged
   (D-rc05b-6).
 - For `git` and `gh`, the bare-name tree is the contract's command keys: a span naming a recorded command with
   nothing after it is prose, and one naming an unrecorded command fails as unknown (D-rc05b-8).

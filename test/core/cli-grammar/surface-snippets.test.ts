@@ -248,10 +248,14 @@ describe('the tokenizer: shell operators (rc05b D1)', () => {
     ['>', 'git log > out.txt', [['git', 'log']]],
     ['>>', 'git log >> out.txt', [['git', 'log']]],
     ['<', 'git apply < patch.diff', [['git', 'apply']]],
-    ['<<', 'cat <<EOF', [['cat']]],
     ['a digit before >', 'git log 2> err.txt --oneline', [['git', 'log', '--oneline']]],
     ['>&', 'git log 2>&1 --oneline', [['git', 'log', '--oneline']]],
     ['a glued >', 'git log>out.txt', [['git', 'log']]],
+    // System walk (external W2): the rest of POSIX XCU 2.10's redirection operators.
+    ['>|, its target never a segment', 'git status >| git', [['git', 'status']]],
+    ['<>', 'git status <> file --short', [['git', 'status', '--short']]],
+    ['<&', 'git apply <&3 --check', [['git', 'apply', '--check']]],
+    ['a digit before <', 'git apply 0< patch.diff --check', [['git', 'apply', '--check']]],
   ])('drops a redirection (%s) together with its target', (_kind, line, segments) => {
     expect(tokenize(line)).toEqual({ ok: true, segments });
   });
@@ -272,8 +276,24 @@ describe('the tokenizer: shell operators (rc05b D1)', () => {
     ['$(', 'git switch $(cat b)'],
     ['`', 'git switch `cat b`'],
     [';;', 'a) git push ;;'],
+    // System walk: process substitution (fresh W2) and a here-document (external W2).
+    ['<(', 'git diff --no-index <(echo a) b'],
+    ['>(', 'git log > >(cat)'],
+    ['<<', 'cat <<EOF'],
+    ['<<', 'cat <<-EOF'],
   ] as const)('refuses an unquoted %s', (construct, line) => {
     expect(tokenize(line)).toEqual({ ok: false, refused: construct });
+  });
+
+  it.each([
+    ['$(', 'git commit -m "$(cat msg)" --only x'],
+    ['`', 'git commit -m "`cat msg`" --only x'],
+  ] as const)('refuses a %s inside double quotes, where the shell runs it (system walk, fresh W2)', (construct, line) => {
+    expect(tokenize(line)).toEqual({ ok: false, refused: construct, quoted: true });
+  });
+
+  it('keeps an escaped $( and backtick inside double quotes as text', () => {
+    expect(tokenize('git commit -m "\\$(x) \\`y\\`"')).toEqual({ ok: true, segments: [['git', 'commit', '-m', '$(x) `y`']] });
   });
 
   it('keeps a quoted $( and backtick as text', () => {
@@ -310,6 +330,20 @@ describe('extraction by segment (rc05b D1)', () => {
       { file: 'SKILL.md', line: 3, snippet: 'orbit status --change $(cat name.txt)' },
     ]);
     expect(result.failures[0].message).toMatch(/unquoted \$\( is refused/);
+  });
+
+  it('a here-document fails extraction at its opening line, so no fence holding one passes the sweep (system walk, external W2)', () => {
+    const result = analyse(`${FENCE}bash\ncat > msg.txt <<'EOF'\norbit status --change <name>\nEOF\n${FENCE}\n`);
+    // The body is not delimited: its lines are still read, but the fence already fails.
+    expect(result.failures.map((f) => ({ line: f.line, message: f.message }))).toEqual([
+      { line: 2, message: "unquoted << is refused: a here-document's body is never parsed" },
+    ]);
+  });
+
+  it('a substitution inside double quotes fails extraction, naming its quoting (system walk, fresh W2)', () => {
+    const result = analyse(`${FENCE}bash\norbit status --change "$(cat name.txt)"\n${FENCE}\n`);
+    expect(result.snippets).toEqual([]);
+    expect(result.failures.map((f) => f.message)).toEqual(['$( inside double quotes is refused: substitution is never parsed']);
   });
 
   it('a substitution in an inline span beginning with the tool fails extraction', () => {

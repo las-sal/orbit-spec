@@ -28,7 +28,8 @@ import {
   acceptanceFrom,
   classFrom,
   firstLineOf,
-  flagsWritten,
+  flagEntry,
+  formsByName,
   isGroup,
   keyOf,
   knownFrom,
@@ -120,17 +121,17 @@ function capture(): void {
       }
       // 3. Class.
       const probeClass: ProbeClass = classFrom(key, probe([...words, BOGUS_FLAG, '-h']), probe([...words, BOGUS_FLAG, 'HEAD']));
-      // 4. Per flag, one entry per name the surface writes.
-      const written = new Map<string, ReturnType<typeof flagsWritten>[number]>();
-      for (const argv of byKey.get(key)!) for (const flag of flagsWritten(argv, key)) if (!written.has(flag.name)) written.set(flag.name, flag);
-      const flags = [...written.values()]
-        .sort((a, b) => a.name.localeCompare(b.name))
-        .map((flag) => {
-          if (probeClass === 'rule') return { name: flag.name, takes_value: false, accepted: true };
-          const takesValue = takesValueFrom(probe([...words, flag.name]));
-          const args = acceptanceArgs(key, flag, takesValue, probeClass);
-          const acceptance = acceptanceFrom(probeClass, `git ${args.join(' ')}`, probe(args));
-          return { name: flag.name, takes_value: takesValue, ...acceptance };
+      // 4. Per flag, one entry per name the surface writes, every written form probed.
+      const flags = [...formsByName(byKey.get(key)!, key)]
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([name, forms]) => {
+          if (probeClass === 'rule') return { name, takes_value: false, accepted: true };
+          const takesValue = takesValueFrom(probe([...words, name]));
+          const acceptances = forms.map((flag) => {
+            const args = acceptanceArgs(key, flag, takesValue, probeClass);
+            return acceptanceFrom(probeClass, `git ${args.join(' ')}`, probe(args));
+          });
+          return flagEntry(name, takesValue, acceptances);
         });
       // 5. Positional.
       const positionalRequired = positionalRequiredFrom(probe(words));

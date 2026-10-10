@@ -66,8 +66,9 @@ consume the next token unless its value is attached; accept `--name=value` on an
 token after `--` as a positional; refuse a command
 recorded as requiring a positional when none is given; apply the named orbit-side rules; and treat a `<…>` placeholder
 as a value, exactly as a real value. Positional counts beyond that presence are not checked, and neither is an
-`=value` written after capture on a long flag that takes none (`git status --short=x`): the contract records which
-flags git accepts, not which forms. A failure SHALL name the
+`=value` written after capture on a long flag that takes none (`git status --short=x`), nor, conversely, a bare form
+written after capture of a flag recorded from its `=` form (`git log --format %h`, which git refuses): the contract
+records which flags git accepts, not which forms. A failure SHALL name the
 surface (the workflow and the file), the line, the snippet, and the validator's message.
 
 #### Scenario: Today's surface validates for both recorded tools
@@ -110,8 +111,8 @@ surface (the workflow and the file), the line, the snippet, and the validator's 
 #### Scenario: The suite needs no git
 
 - **WHEN** the full suite runs
-- **THEN** every `git` case passes from the checked-in contract, the freshness test asserts only that the file parses
-  and records a git version, and no test process spawns `git` to validate a snippet
+- **THEN** every `git` case passes from the checked-in contract, and the contract's own tests assert that the file
+  parses, records a git version and the orbit-side rule, and carries every command key the surface writes
 
 #### Scenario: A flag on a command that needs a positional is recorded accepted
 
@@ -177,12 +178,14 @@ leading whitespace, blockquote `>` markers, list markers and a leading `|`, and 
 | a line whose first token is a placeholder (a runner's argument vector) | not extracted: not `orbit` |
 | an unquoted shell control operator (`&&`, `\|\|`, `\|`, `\|&`, `;`, `&`), spaced or glued to a word, in a shell-fence line or in an inline span beginning `orbit ` | the snippet splits there; each segment is a candidate whose own first token decides its tool, so a segment of another tool is no `orbit` snippet and an `orbit` segment after an operator is extracted; an inline span beginning with any other word is not read |
 | an operator inside quotes | an argument, never a split |
-| a redirection (`>`, `>>`, `<`, `<<`, a digit before `>`, `>&`) | the operator and its target are dropped from the argument vector |
+| a redirection (`>`, `>>`, `>\|`, `>&`, `<` followed by whitespace, `<>`, `<&`, a digit glued before any of them) | the operator and its target are dropped from the argument vector |
 | a `(` opening a segment, and its matching `)` (a subshell: `( cd <dir> && … )`) | grouping, stripped; the commands inside are segments like any other |
-| an unquoted `$(`, backtick or `;;` | fails extraction, naming the surface, the line and the snippet: substitution is refused, never parsed |
+| an unquoted `$(`, backtick, `<(`, `>(` or `;;`, or a `$(` or backtick inside double quotes, where the shell still runs it | fails extraction, naming the surface, the line and the snippet: substitution is refused, never parsed |
+| an unquoted `<<` or `<<-` (a here-document) | fails extraction at its opening line, naming the surface, the line and the snippet: the body is never delimited, so its lines are still read, but no fence holding one can pass |
 
 Closure of the operator rows: POSIX XCU 2.10's control and redirection operators, plus bash's `|&`; grouping is
-stripped, and substitution is refused rather than parsed.
+stripped, and substitution — unquoted or inside double quotes, plus bash's process substitution — and the
+here-document are refused rather than parsed.
 
 Named limit (the places). Residual kind: a command in a container not listed: a blockquote, an indented code block, an
 HTML block, a table cell, or — outside every shell fence and single-backtick span — mid-line after `&&`, `$ ` or `|`;

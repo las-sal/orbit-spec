@@ -29,6 +29,7 @@ describe('the recorded git contract', () => {
     expect(contract.rules.rev_parse_recorded_flags_only).toBe(true);
   });
 
+  // @scenario behaviour orbit-cli-grammar :: Every `git` and `gh` snippet on the generated surface validates against its tool's recorded contract :: The suite needs no git
   it('carries every command key the generated surface uses', () => {
     // A group is a first word that heads a two-word key; the surface's keys follow from it.
     const groups = new Set(Object.keys(contract.commands).filter((k) => k.includes(' ')).map((k) => k.split(' ')[0]));
