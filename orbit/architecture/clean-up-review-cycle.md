@@ -2505,6 +2505,17 @@ missing required argument, injected at each of rc05's extraction sites for each 
 snippet's surface and line, and rc01's inline extractor is retired; (3) the stage's own system blind pair finds zero
 grammar defects in a `git` or `gh` snippet.
 
+**Shipped as (2026-10-10; the charter above stays as declared, its exits as written).** `git`'s contract joined rc05's
+capability: `orbit-cli-grammar` gained the ADDED requirement for both recorded tools, and `orbit-pr-lifecycle`'s
+instrument requirement points at it. `npm run capture:git` probes real git (20 command keys, 26 flags, every written
+form of each flag) and writes `test/integration/cli-contracts/git-contract.json`, which one CommonJS validator reads; the
+suite never spawns git. The shared extractor, which the charter assumed it could consume unchanged, learned the shell:
+it splits a line at its control operators, drops redirections, strips grouping and refuses substitution and
+here-documents, so `git` read 129 segments where rc05's extractor saw 119 lines. The `gh` count in SKILL.md bodies is
+four snippets and two bare names, not six snippets. The system blind pair converged on one capture defect (only a
+flag's first-written form was probed) and each half found one tokenizer closure gap; two walks and a verification closed
+them, and no `git` or `gh` snippet on the surface carried a grammar defect (exit (3)).
+
 ### Stage rc06-scenario-test-map — scenarios are the test contract
 
 Depends-on: (none)

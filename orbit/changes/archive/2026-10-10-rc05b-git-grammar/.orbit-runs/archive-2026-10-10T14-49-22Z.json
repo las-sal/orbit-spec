@@ -1,0 +1,77 @@
+{
+  "command": "archive",
+  "timestamp": "2026-10-10T14:49:22Z",
+  "change": "rc05b-git-grammar",
+  "kind": "lifecycle",
+  "model": "claude-opus-5-5",
+  "final_assessment": "rc05b-git-grammar archived: git and gh snippets on the generated surface validate against recorded contracts through rc05's shared, now shell-aware extractor; review-system passed after the blind pair, two walks and a verification walked to zero.",
+  "archive_path": "orbit/changes/archive/2026-10-10-rc05b-git-grammar",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 3
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-cli-grammar",
+      "orbit-pr-lifecycle"
+    ],
+    "added": 1,
+    "modified": 2,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": 0,
+  "user_decision": null,
+  "consent": "user-invoked",
+  "warnings": [
+    "Pre-archive audit (in flow, no separate emit): category 5 Touchpoints divergence — 3 SUGGESTION, unpredicted by the frozen Touchpoints: CLAUDE.md (the system walk's correction of rc05's paragraph), test/helpers/git-capture.ts (the capture's pure classifiers, split from the capture file so a test can import them without running its git-spawning test), and test/integration/pr-lifecycle/phase1.test.ts (scenario tags only). Category 1 clean: no RENAMED or REMOVED. Category 3 clean: validate --sources reads capabilities 25 and schema-version 5; the architecture doc validates. Category 4: 3/3 delta blocks byte-present in baseline. Category 2 skipped (orbit/lenses/ absent); category 6 not run in flow.",
+    "Sync through the engine's applySpecs: 1 ADDED + 1 MODIFIED into orbit-cli-grammar, 1 MODIFIED into orbit-pr-lifecycle; fingerprints 2/2 verified before the sync; 3/3 delta blocks byte-present. Capability count holds at 25.",
+    "AT-ARCHIVE NOTE 6.2 executed in flow: orbit-cli-grammar's baseline Purpose replaced in place to name the shell-aware extractor, the recorded-contract tools and that the suite never spawns git or gh.",
+    "In flow: CLAUDE.md gained the rc05b paragraph and its shipped-since count moved to twenty-five; the stage section gained its Shipped-as paragraph. Exits graded MET as written: (1) the recorded sweep validates 101 git and 19 gh snippets with zero guard hits; (2) the 24-case injection matrix and the retirement of rc01's inline extractor; (3) the system blind pair found no grammar defect in a git or gh snippet."
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "formed_against": [
+        "2026-10-09T16-06-45Z",
+        "2026-10-09T16-07-07Z",
+        "2026-10-10T14-31-41Z",
+        "2026-10-10T14-32-08Z"
+      ],
+      "disposition": "ready",
+      "reasoning": "Both system halves found no grammar defect in a live snippet; every finding was a false-pass hole in mechanism the stage added, each repaired by implementing or refusing the form and pinned by a case that fails against the earlier helper. The verification's two regressions were closed by a spec row and a one-line loop condition.",
+      "ratified_by": "ai",
+      "accepted": [
+        {
+          "claim": "PASSED means every finding was resolved, not that an independent pass stood clean on the final tree: no independent pass read the two walks' edits after the verification (the forms-reduction row and the open-quote-only join).",
+          "why": "Both edits are small, local, and pinned by tests shown able to fail; the in-context verification read the first walks, and the second walk's edits are the verification's own recommendations."
+        },
+        {
+          "claim": "A here-document's body is not delimited: its lines are read as commands, so a body line naming a tool is checked as one.",
+          "why": "The opening line always fails extraction, so no fence holding a here-document can pass the sweep; none appears on today's surface."
+        },
+        {
+          "claim": "The validator does not record forms: an `=value` added after capture on a flag that takes none, or a bare form added after capture of a flag recorded from its `=` form, passes.",
+          "why": "A named limit in the ADDED requirement; every form written AT capture is probed, so a re-capture after a body edit closes it."
+        },
+        {
+          "claim": "The prose mention `git commit --only` in external-handoff.md validates though real git refuses it without paths.",
+          "why": "Positional counts beyond presence are a stated non-goal, and the sentence is orbit-review-external's baseline text."
+        },
+        {
+          "claim": "The external half ran read-only and could not build: it ran neither the scenario map, validate --strict nor the tests.",
+          "why": "The fresh half and every walk ran all three; the external's findings were reproduced by script at the walk."
+        }
+      ]
+    }
+  ],
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."
+}
