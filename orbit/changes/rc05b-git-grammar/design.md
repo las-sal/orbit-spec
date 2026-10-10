@@ -76,7 +76,8 @@ the surface is probed AS WRITTEN, so a value git refuses on a flag that takes no
 message. An `=value` added after capture on a long flag that takes none is NOT caught: the validator accepts
 `--name=value` on any accepted long flag, because the contract records which flags git accepts, not which forms;
 nor, conversely, is a bare form added after capture of a flag recorded from its `=` form (`git log --format %h`).
-Every form written at capture is probed, and a name with any rejected form is recorded rejected. This
+Every form written at capture is probed; how a name's forms reduce to its one entry is a row of the ADDED
+requirement's capture table. This
 is a named limit in the ADDED requirement's validator paragraph, descoped at the proposal walk rather than recording
 per-flag forms.
 

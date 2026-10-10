@@ -49,6 +49,7 @@ beginning `error: unknown option`, `error: invalid option`, `error: unknown swit
 | a flag's acceptance, PARSE-OPTIONS class | `git <key> <flag as written> [x when value-taking] -h`: a usage page records it accepted; a rejection shape records it rejected, with git's line; any other line fails the capture naming the probe |
 | a flag's acceptance, RUN class (`log`, `show`, `rev-list`, `check-ref-format`) | `git <key> <flag as written> [x when value-taking] HEAD`, with `HEAD` standing in for the positional: a rejection shape or a usage page records it rejected, with git's line; anything else records it accepted |
 | a flag written `--name=value` on the surface | probed as written (`--name=x`), recorded by the name before `=` |
+| a flag the surface writes in more than one form (`--only <p>` and `--only=<p>`) | every distinct form probed; the name's one entry is rejected, with the first rejected form's line, when any form is, and accepted only when every form is |
 | value arity on a flag git does not report as `requires a value` (`check-ref-format --branch`) | recorded not value-taking: its value reads as a positional, so a missing value on it is not caught |
 | a required positional | `git <key>` alone: a first line beginning `usage:` records one required |
 | a command neither bogus probe rejects (`rev-parse`, which echoes an unknown flag with exit 0) | the orbit-side rule named in the capture: recorded flags only, each recorded as written, unprobed |

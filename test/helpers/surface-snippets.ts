@@ -307,7 +307,9 @@ function extractFenceLines(walk: Walk, token: Token, contentStart: number): void
     const startIdx = i;
     let text = lines[i];
     let result = tokenize(text);
-    while (!result.ok && i + 1 < lines.length) {
+    // Only an open quote joins the next line: a refusal fails its own line, and the fence's
+    // later lines are still extracted and checked.
+    while (!result.ok && 'open' in result && i + 1 < lines.length) {
       i++;
       text += '\n' + lines[i];
       result = tokenize(text);

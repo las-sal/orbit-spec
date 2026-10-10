@@ -1,0 +1,123 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-10T14:45:46Z",
+  "change": "rc05b-git-grammar",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc05b-git-grammar/.orbit-runs/review-system-2026-10-10T14-42-57Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-10T14-42-57Z",
+  "latest_apply_token": "2026-10-09T21-09-57Z",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 0
+  },
+  "pushback_verification": "verified",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "remedy": "repair",
+      "outcome": "resolved",
+      "classification": "trivial_fix",
+      "marker_source": "internal-review",
+      "severity": "WARNING",
+      "title": "The requirement states no rule for a flag the surface writes in several forms; the any-rejected reduction lives only in code and design",
+      "file": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+      "line": 51,
+      "action": "Pushback: still applies; the reduction was stated only in design D3 and code. The ADDED requirement's capture table gains a row: a flag the surface writes in more than one form has every distinct form probed, and its one entry is rejected, with the first rejected form's line, when any form is, and accepted only when every form is. Design D3's sentence now points at that row instead of restating the rule (R-crc-14).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc05b-git-grammar/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-10-10T14-40-38Z",
+        "title": "The capture probes only the first-written form of each flag name, so a second form on the surface is never probed",
+        "file": "scripts/capture-git-contract.capture.ts",
+        "kind": "judgement"
+      },
+      "sweep": {
+        "retired": [
+          "and a name with any rejected form is recorded rejected."
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+            "text": "| a flag the surface writes in more than one form (`--only <p>` and `--only=<p>`) | every distinct form probed; the name's one entry is rejected, with the first rejected form's line, when any form is, and accepted only when every form is |"
+          },
+          {
+            "path": "orbit/changes/rc05b-git-grammar/design.md",
+            "text": "how a name's forms reduce to its one entry is a row of the ADDED"
+          }
+        ],
+        "searched": [
+          "any rejected form",
+          "probed in the form the surface writes it",
+          "flagEntry"
+        ],
+        "scope": [
+          "test/helpers/git-capture.ts"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "remedy": "repair",
+      "outcome": "resolved",
+      "classification": "trivial_fix",
+      "marker_source": "internal-review",
+      "severity": "WARNING",
+      "title": "The here-document row says the body's lines are still read; the extractor joins every later fence line into the refusal",
+      "file": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+      "line": 183,
+      "action": "Pushback: still applies; reproduced (a refused line joined every later fence line into one failure). The recommended option taken, making the extractor do what the row says: extractFenceLines joins the next line only while the result is an open quote, so a refused line fails alone at its own line with its own text as the snippet, and every later line of the fence is extracted and checked. That also ends the older behaviour (since rc05) where one refusal masked the fence's later defects. The here-document test now asserts the body's orbit line is extracted, its comment is gone, and a new case pins a refused line followed by an orbit line: one failure, one snippet (snippets [] against the previous helper, per the verification's probe). The quoted-argument row's join rule is unchanged and consistent.",
+      "ripple_cascade": {
+        "applied": [
+          "test/helpers/surface-snippets.ts",
+          "test/core/cli-grammar/surface-snippets.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "while (!result.ok && i + 1 < lines.length)",
+          "The body is not delimited: its lines are still read, but the fence already fails."
+        ],
+        "introduced": [
+          {
+            "path": "test/helpers/surface-snippets.ts",
+            "text": "while (!result.ok && 'open' in result && i + 1 < lines.length)"
+          },
+          {
+            "path": "test/core/cli-grammar/surface-snippets.test.ts",
+            "text": "a refused line fails alone: the fence\\'s next line is extracted, never joined into the failure"
+          }
+        ],
+        "searched": [
+          "join",
+          "joined",
+          "its lines are still read"
+        ],
+        "scope": [
+          "test/core/cli-grammar/"
+        ],
+        "kept": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": 0,
+  "final_assessment": "Walk of the system verification (2 findings), both resolved by repair: the capture table states how a flag written in several forms reduces to its one entry, and a refused fence line fails alone, so the here-document row holds as written. 3287 tests green.",
+  "iteration": 8,
+  "next_recommended": "/orbit:archive rc05b-git-grammar — user-invoked",
+  "ripple_misses": 1
+}

@@ -332,12 +332,18 @@ describe('extraction by segment (rc05b D1)', () => {
     expect(result.failures[0].message).toMatch(/unquoted \$\( is refused/);
   });
 
-  it('a here-document fails extraction at its opening line, so no fence holding one passes the sweep (system walk, external W2)', () => {
+  it('a here-document fails extraction at its opening line; its body lines are still read (system walks)', () => {
     const result = analyse(`${FENCE}bash\ncat > msg.txt <<'EOF'\norbit status --change <name>\nEOF\n${FENCE}\n`);
-    // The body is not delimited: its lines are still read, but the fence already fails.
-    expect(result.failures.map((f) => ({ line: f.line, message: f.message }))).toEqual([
-      { line: 2, message: "unquoted << is refused: a here-document's body is never parsed" },
+    expect(result.failures.map((f) => ({ line: f.line, snippet: f.snippet, message: f.message }))).toEqual([
+      { line: 2, snippet: "cat > msg.txt <<'EOF'", message: "unquoted << is refused: a here-document's body is never parsed" },
     ]);
+    expect(result.snippets.map((s) => ({ line: s.line, tokens: s.tokens }))).toEqual([{ line: 3, tokens: ['orbit', 'status', '--change', '<name>'] }]);
+  });
+
+  it('a refused line fails alone: the fence\'s next line is extracted, never joined into the failure (system walk 2)', () => {
+    const result = analyse(`${FENCE}bash\ngit log $(cat r)\norbit validate <name>\n${FENCE}\n`);
+    expect(result.failures.map((f) => ({ line: f.line, snippet: f.snippet }))).toEqual([{ line: 2, snippet: 'git log $(cat r)' }]);
+    expect(result.snippets.map((s) => ({ line: s.line, tokens: s.tokens }))).toEqual([{ line: 3, tokens: ['orbit', 'validate', '<name>'] }]);
   });
 
   it('a substitution inside double quotes fails extraction, naming its quoting (system walk, fresh W2)', () => {
