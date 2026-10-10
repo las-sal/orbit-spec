@@ -1,0 +1,169 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-10T21:52:58Z",
+  "change": "rc09a-size-record",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 4,
+      "suggestion": 2
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-change-size/spec.md",
+      "line": 166,
+      "title": "Three statements of what --strict fails on disagree; the DUPLICATE row also fails strict",
+      "recommendation": "The validator's createReport (src/core/validation/validator.ts:545) makes --strict fail on ANY WARNING. The issue table makes MALFORMED and DUPLICATE lines WARNINGs, so strict fails on an undeclared breach, a malformed line, or a duplicate line. The sentence at spec.md:166 names only the first two, and proposal.md:28 (\"--strict fails exactly an undeclared breach\") names only the first. Pick the rule and state it once. Either the sentence lists all three, or DUPLICATE drops to INFO, since its first item already declares. Then repoint proposal.md:28 at the requirement instead of restating it.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Keep DUPLICATE a WARNING. Rewrite spec.md:166 to say strict fails on an undeclared breach or any MALFORMED or DUPLICATE line, and reword proposal.md:28 to point at it."
+        },
+        {
+          "label": "B",
+          "body": "Make DUPLICATE an INFO, since the first item declares. Keep spec.md:166 as written and reword proposal.md:28 to match it."
+        }
+      ]
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-change-size/spec.md",
+      "line": 76,
+      "title": "A map with no valid entry is OFF here but ON-comparing-nothing in the explored rule, and the change does not record it",
+      "recommendation": "explore.md's D-rc09-5 Mechanism Domain (Sal: agreed) has the row \"a map with zero valid entries -> on, comparing nothing\", and its COHERE line calls that one rule with \"absent dimension not compared\". The spec's table row reads OFF. The difference is observable. Under ON, status prints a Size: line, `ceiling` is `{}` and not null, and a MALFORMED `## Size` line is a WARNING that fails --strict. Under OFF, none of these happen. design.md D7 says it records 'a narrowing' but names only the dropped merge note. Either add this to D7 with its reason, or restore the explored row.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Keep OFF. Add the narrowing and its reason to design.md D7, beside the dropped merge note."
+        },
+        {
+          "label": "B",
+          "body": "Restore the explored row: ON, comparing nothing. Set `ceiling: {}` in status, and keep malformed-line warnings live."
+        }
+      ]
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "tasks.md",
+      "line": 21,
+      "title": "'Size never moves a gate' cannot be tested by moving the change's figures: the tasks figure is the apply gate's own input",
+      "recommendation": "The scenario (spec.md:214-217) and task 4.3 compare gate rows byte-equal across an 'under' fixture and an 'over' fixture. The apply gate row carries `total` and the reason `N/M tasks complete`, both computed by the same parseCheckboxes that counts `tasks`. A fixture that goes over on tasks therefore changes the apply row. A fixture that adds capabilities or requirements changes the spec artifacts the reviewed gates take as inputs. Built as written, the test fails, or gets quietly narrowed to the dimensions it can hold fixed. Hold the change fixed and move the CEILING instead: one config with maxima above every figure, one with maxima below. Then compare gate rows, position and next_command byte-equal. Reword the scenario's WHEN to say so."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-propose-modifications/spec.md",
+      "line": 5,
+      "title": "The size brief's place relative to the PR choreography's commit is unspecified, so a Declare can land outside the draft PR",
+      "recommendation": "The requirement places the brief 'after every artifact is generated and before the completion emit'. The propose body's PR lifecycle section runs Phase 3 (commit, push, draft PR) after Step 0d's move, and that is also before the completion emit. If the brief runs after Phase 3 under `pr: per-proposal` or `per-architecture`, the Declare route writes `## Size` into proposal.md after the commit. The declaration is then neither in the draft PR nor in Phase 3's enumerated commit scope. State the order: the brief runs after generation and validation (Phase 2) and BEFORE Phase 3. Add the same order to design.md D5 and task 5.1."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-change-size/spec.md",
+      "line": 19,
+      "title": "The byte rule leaves the line and block boundaries open, and the rc04c regression in task 2.4 cannot pin them",
+      "recommendation": "parseDeltaSpec's `raw` is trimEnd'd (requirement-blocks.ts:235), so the last line of a block has no newline. 'Full UTF-8 bytes' of an ADDED block and 'bytes, newline included' of a MODIFIED line can therefore differ by one byte per block, depending on the implementer. The spec also does not say whether a blank line is a line that can count as new, or whether baseline blocks go through extractRequirementsSection's identical trimEnd. State these once in the construct table. On task 2.4: explore.md's Case 1 computed 14.1K with `git diff --no-index -U0` against the baseline at the parent of the commit that added rc04c's proposal.md, not with the multiset rule. The figure is also rounded to 0.1K. Name the baseline commit the fixture uses and the exact expected byte count, or a stated tolerance. Otherwise the 'regression' accepts any value near 14.1K and pins nothing."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-change-size/spec.md",
+      "line": 122,
+      "title": "Declaration edge cases split implementations: unconfigured dimensions, other bullet markers, reason-on-continuation, heading spelling",
+      "recommendation": "The line table does not decide four cases. (1) A well-formed item for a dimension that has no `size_ceiling` entry: the validate table covers only 'each configured dimension', so it is unclear whether that is stale INFO or nothing. (2) `* tasks: x` or `+ tasks: x`: CommonMark list items the production's `-` does not name, so DECLARES and MALFORMED are both possible readings. (3) `- tasks:` with its reason on an indented continuation line: 'empty reason → MALFORMED' and 'continuation is part of the reason' conflict. (4) Whether `## size` or `## Size  ` (trailing spaces) opens the section. Add one row for each to the table, and one scenario for (1)."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-change-size/spec.md",
+      "line": 194,
+      "title": "No failure path for the size computation on the status surface every body reads gate state from",
+      "recommendation": "`orbit status --change <name> --json` is where every body reads gate state. The requirement says `size` is carried 'on every change' and says nothing about an unreadable delta, baseline, proposal.md or tasks.md. One implementation would throw, which takes gate state down with it. Another would degrade. State that a figure which cannot be computed degrades: `size` carries null for that figure, or an `error` string, and status still exits 0. That follows the orientation layer's fault-isolation precedent. Add a scenario."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-change-size/spec.md",
+      "line": 199,
+      "title": "The Size: line's figure format and status-flag reach are unpinned",
+      "recommendation": "The human line 'states the four figures ALONE' but gives no format. Bytes could print raw (40960) or as 40.0K, with or without labels. The only scenario checks the breach suffix. The JSON clause says 'every change' while D4 keeps formatChangeStatus untouched. So `--boot --json`, which spreads that status, will not carry `size`, and nothing says so. Give one example line, and name which `orbit status --change` variants carry the field."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "tasks.md",
+      "line": 37,
+      "title": "The at-archive note omits the baseline capability count that moves 25 → 26",
+      "recommendation": "Syncing `orbit-change-size` adds a 26th baseline capability. CLAUDE.md's `<!-- src:capabilities -->25` span then fails `orbit validate --sources`, and CLAUDE.md's prose capability narrative goes stale. Add an at-archive note beside 6.3 to bump both in the archive commit."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "specs/orbit-propose-modifications/spec.md",
+      "line": 3,
+      "title": "Changes generated by /orbit:ff or /orbit:continue get no size brief",
+      "recommendation": "Fingerprint capture runs at propose, continue and ff, but the size brief runs at propose only. A change that ff creates over the ceiling first hears about it from `orbit validate --strict`. This may be the intended scope, since the charter names propose. If so, say so in one Non-Goals line in design.md, so a reader does not take the omission for an oversight."
+    }
+  ],
+  "commentary": "The engine-side mechanism is well grounded: every figure reads a parser that already runs, the byte rule's error was measured against git over the archive, and keeping size off formatChangeStatus is the right call for R-crc-13. The weak points are where several statements meet. Strictness is stated three ways. The explored config table and the spec disagree on one row with no record. The propose brief's order is not tied to the PR choreography. Probed: createReport's strict rule, parseCheckboxes' group-header and fence behaviour, parseDeltaSpec's trimEnd'd raw, the orbit-engine-gates delta against its baseline (only the one sentence moves), the propose body's section order, and the Mechanism → artifacts record against explore.md's rule set (complete: -3, -4, -5, -7, with -12 assigned).",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "Nothing here breaks a user path. Each issue is a precision repair to a table or a sentence, and none needs a new mechanism. Walk them before apply. The two that would most mislead an implementer are the gate-invariance test, which as written cannot pass, and the strictness rule stated three ways. Both can be repaired in place."
+  },
+  "final_assessment": "0 critical, 6 warning, 4 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc09a-size-record"
+}
