@@ -2487,7 +2487,7 @@ quotes), avoided in the registry's descriptions and left unfixed in the generato
 ### Stage rc05b-git-grammar — the git and gh snippets parse against recorded contracts
 
 Depends-on: rc05-executable-references
-Complete: [ ]
+Complete: [x] 2026-10-10 (Sal)
 
 Split from rc05 at its exploration on 2026-10-08 (Sal: B, D-rc05-15 in
 `orbit/explore/rc05-executable-references/explore.md`), R-crc-9's tenth preventive application. rc05 ships the shared
@@ -5385,3 +5385,12 @@ backtick) were fixed in the stage. (2) One injection per place the extractor rea
 line, and the parity injections name the command or flag. (3) The system blind pair found no grammar defect in an
 `orbit` snippet. The upstream zsh completion generator's apostrophe escaping stays a scope call for Sal, named in the
 stage's Shipped-as paragraph; `rc05b-git-grammar`, which depends on this stage, is now unblocked.
+
+**2026-10-10 — rc05b-git-grammar RATIFIED (Sal)**, through the architect session's offer. All three exit criteria
+graded MET as written. (1) The guard found zero `git` or `gh` commands outside shell fences, and the recorded sweep
+validates every extracted snippet against its tool's contract: 101 `git`, 19 `gh`. (2) The 24-case injection matrix
+fails an unknown flag, an unknown subcommand and a missing argument at each extraction site for both tools, naming
+surface and line, and rc01's inline `gh` extractor is retired. (3) The system blind pair found no grammar defect in a
+`git` or `gh` snippet; its six distinct findings sat in the stage's own new mechanism (the capture's first-form probe,
+two tokenizer closure gaps, their spec text) and were walked to zero through two walks and a verification. The
+readiness record accepts five residuals, headlined by rc07's distinction.
