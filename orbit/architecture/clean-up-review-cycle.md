@@ -1323,9 +1323,16 @@ never deleted.
   form (e.g. `{path, why, line}`), which is new mechanism (R-crc-6, R-crc-7), and measures against the
   first walks' `kept` records how often a kept file carried a live site.
 
+- **Q-crc-33 — does "not applied — no code exists yet" discharge R-crc-7's EXECUTE?** Measured at rc09's exploration
+  (D-rc09-9): across 21 archived explorations, 37 EXECUTE move lines read `applied` and 70 `not applied`, the dominant
+  reason that nothing is built yet — although R-crc-7 admits a CONSTRUCTED case executed by hand. Independent CRITICAL
+  counts per stage show no visible relation to the ratio, so the record neither supports a gate nor refutes the ruling.
+  Standing recommendation: none yet — a reading of R-crc-7 is Sal's; classifying the program's CRITICALs by move would
+  say whether EXECUTE failures are what the unexecuted rules went on to produce
+
 ## Program stages
 
-<!-- src:stages -->38<!-- /src:stages --> small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
+<!-- src:stages -->40<!-- /src:stages --> small stages in four phases (R-crc-2; rc11 moved to Considered & out under R-crc-4; rc02
 split into rc02 + rc02b on 2026-09-12; rc13 added 2026-09-14 and moved to phase 1 the same day;
 rc03a split from rc03 on 2026-09-15 and WITHDRAWN the same day; rc13 split into rc13a + rc13b on
 2026-09-15 under R-crc-9; rc07b split from rc07 the same day under R-crc-9 applied PREVENTIVELY; rc04d split from rc04c on 2026-09-21, the THIRD preventive application, caught at exploration by a size check rather than after a cadence;
@@ -2888,6 +2895,22 @@ edits. Recorded as measured, not graded: the grade is rc08a's.
 Depends-on: (none)
 Complete: [ ]
 
+**SPLIT 2026-10-10 (Sal) into rc09a + rc09b, under R-crc-9: its eleventh preventive application, caught at
+exploration by measuring the stage's own capabilities before anything was proposed.** The heading is kept as the
+program's record of the problem and the charter; the WORK is declared in the two stages that follow. The exploration
+(`orbit/explore/rc09a-size-record/`, opened as `rc09-propose-hygiene` and renamed at this declaration) measured the four
+R-crc-1 figures over 37 archived changes (D-rc09-1..3: changed bytes count the NEW side, 14.1K for rc04c against the
+2026-09-23 clarification's own ~14K estimate) and settled with Sal: size is REPORTED and only an undeclared breach fails,
+under `--strict` (D-rc09-4); the ceiling is an opt-in `size_ceiling:` config map (D-rc09-5); the declaration is a
+`## Size` proposal section (D-rc09-7). Three charter terms are SUPERSEDED, the charter below kept as written: (a) the
+size check "names the split" — it names the breached dimensions and figures, and where to split stays the author's
+judgement (R-crc-10); (b) the size PROXIMITY computation R-crc-4's near-ceiling pair depended on is DROPPED — the
+2026-10-05 amendment made the pair the default preference for every proposal, and a proximity rule could act only by
+overriding the user's own preference (D-rc09-8); (c) the GENERALIZED spike needs nothing new — rc13a–c deliver it as a
+record, each live rule's EXECUTE move line carried into the proposal (D-rc09-11; Q-crc-33). The external-tool spike
+becomes an INVENTORY test (D-rc09-12), and exit (2) is REVISED under R-crc-12's first case, because "a proposal touching
+an external tool" names an input the engine cannot observe.
+
 Charter: propose gains two gates of its own. A SIZE CHECK against R-crc-1 (capabilities,
 requirements, bytes, tasks) that names a split when exceeded. A SPIKE PRECONDITION for any
 change touching an external tool or protocol: a disposable prototype has run the outward path
@@ -2906,6 +2929,34 @@ not only for one touching an external tool or protocol.
 Goal G3. Touches: orbit-propose-modifications, orbit-conventions,
 the validator. Exit: (1) the size check fires on a fixture over the ceiling and names the split;
 (2) a proposal touching an external tool without a cited spike fails strict validation.
+
+### Stage rc09a-size-record — size is reported, and an undeclared breach fails strict validation
+
+Depends-on: (none)
+Complete: [ ]
+
+Declared 2026-10-10 (Sal) from the rc09 exploration's split (D-rc09-13). Charter: rc09's SIZE CHECK, as the split
+paragraph above settles it — the engine computes R-crc-1's four figures (capabilities, requirements touched, NEW-side
+changed bytes, tasks) for a change; an opt-in `size_ceiling:` map in `orbit/config.yaml` holds the maxima; `orbit
+validate <change>` reports a figure over its maximum at WARNING unless the proposal's `## Size` section declares that
+dimension, at INFO when it does; `orbit status --change <name>` carries the figures; the propose body briefs any breach
+before review; `orbit-engine-gates`' "the size computation belongs with rc09" sentence is repointed and the proximity
+promise retired. Goal G3. Touches: a new size capability, orbit-propose-modifications, orbit-engine-gates — at R-crc-1's
+ceiling, measured at exploration. Exit: (1) the size check fires on a fixture over the ceiling and names each breached
+dimension with its figure and maximum, and a declared breach does not fail `--strict`.
+
+### Stage rc09b-tool-inventory — a new tool reaches the surface only with a recorded contract
+
+Depends-on: (none)
+Complete: [ ]
+
+Declared 2026-10-10 (Sal) from the rc09 exploration's split (D-rc09-13); its starting record is D-rc09-12 and its
+Mechanism entry, in the rc09a staging directory. Charter: an inventory test over every shell fence of the generated
+surface — each segment's command head is a tool with a recorded contract, a declared utility or builtin, or a declared
+placeholder, and anything else fails the suite naming surface and line; capturing a contract becomes the price of a new
+tool. The residual is BOUNDED and stated: a tool invoked only in an inline span. Goal G3. Touches: orbit-cli-grammar.
+Exit: (2) as REVISED (R-crc-12's first case): a new command head on the generated surface fails the suite, naming surface
+and line, until a contract or a declared exemption covers it.
 
 ### Stage rc10-apply-closure — the end-to-end run precedes the archive
 
@@ -5374,7 +5425,7 @@ spans located by a dev-only CommonMark library, a guard against commands outside
 holding the completion registry to the program) as ONE new capability. The child takes `git`'s recorded contract and
 the move of rc01's `gh` sweep onto the shared extractor; it depends on rc05. rc05's own charter and exits are revised
 by its change at propose, under R-crc-12's first case (D-rc05-14, D-rc05-17). Stage count 37 →
-<!-- src:stages -->38<!-- /src:stages --> at the marked sites (this entry's mark is the third; the previous entry's is
+38 at the marked sites (this entry's mark is the third; the previous entry's is
 unmarked as history).
 
 **2026-10-09 — rc05-executable-references RATIFIED (Sal)**, through the architect session's offer. All three exit
@@ -5394,3 +5445,12 @@ surface and line, and rc01's inline `gh` extractor is retired. (3) The system bl
 `git` or `gh` snippet; its six distinct findings sat in the stage's own new mechanism (the capture's first-form probe,
 two tokenizer closure gaps, their spec text) and were walked to zero through two walks and a verification. The
 readiness record accepts five residuals, headlined by rc07's distinction.
+
+**2026-10-10 — rc09-propose-hygiene SPLIT (Sal) into rc09a-size-record + rc09b-tool-inventory**, at its exploration,
+under R-crc-9 — the eleventh preventive application. The exploration measured R-crc-1's four figures over the archive
+(eleven rc-stages over on at least one dimension, every one declared or split and ratified), settled size as a REPORT
+that fails `--strict` only on an undeclared breach, dropped the proximity computation R-crc-4's amendment overtook, found
+the generalized spike already delivered as a record by rc13a–c (Q-crc-33 opened), and turned the external-tool spike
+into an inventory test with exit (2) revised. Stage count 38 →
+<!-- src:stages -->40<!-- /src:stages --> at the marked sites (this entry's mark is the third; the previous entry's is
+unmarked as history).
