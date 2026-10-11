@@ -9,7 +9,7 @@ The emit surface already resolves archived changes for `orbit emit archive` and 
 ## Goals / Non-Goals
 
 **Goals:**
-- Render any review pass of an archived change, newest or by token.
+- Render any boundary-conformant review pass of an archived change, newest or by token. A pass that predates the D4 report boundary still fails with the `pre-capability emit` error, exactly as it does on an active change: the strict-input rejection is unchanged, so an archived change whose newest pass predates the boundary renders nothing without an explicit `<TS>` naming a later one.
 - One resolver for archived directories, shared by the emit surface and the report.
 - An archived report's tail says what the engine can honestly compute about an archived change.
 
@@ -20,7 +20,7 @@ The emit surface already resolves archived changes for `orbit emit archive` and 
 
 ## Decisions
 
-**D1 — One shared resolver.** `findArchivedDir` moves out of `emit-composition.ts` into a small module (`src/core/archived-change.ts`) and is exported; the emit surface imports it, and the report resolution calls it. Alternative: a second copy in the status command — rejected, because two copies of one lookup are two rules waiting to diverge (R-crc-14).
+**D1 — One shared resolver.** `findArchivedDir` moves out of `emit-composition.ts` into a small module (`src/core/archived-change.ts`) and is exported; the emit surface imports it, and the report resolution calls it. Alternative: a second copy in the status command — rejected, because two copies of one lookup are two rules waiting to diverge (R-crc-14). The move carries one correction: the resolver matches DIRECTORIES only — today it filters entry names, so a regular file `archive/2026-02-01-foo` beats a directory `archive/2026-01-01-foo` — and the emit surface inherits the fix. The containment check travels too: the report refuses an archived directory whose real path lies outside `orbit/changes/archive/`, the same real-path test the emit surface's `assertContained` runs after every archived resolution, so a symlinked archive entry cannot point the report outside the project.
 
 **D2 — The archived tail is one computed line.** The tail of an archived change's report is the `---` rule plus `Archived: orbit/changes/archive/<YYYY-MM-DD>-<name>`. Alternatives:
 - *Recompute the gate over the archived directory.* Rejected: gates come from today's schema file, and the archived trails were written under `spec-driven` versions 2 through 5, whose cadences differ (a v2-era trail has no `invoked` slot to satisfy). The render would grade old work against rules it never ran under, and the archive emit's `judgements` already record what was believed at archive time.
@@ -28,15 +28,15 @@ The emit surface already resolves archived changes for `orbit emit archive` and 
 
 **D3 — Resolution order is active, then archived.** The same order the emit surface uses for `address-reviews`. A name that is both active and archived (a re-proposed name) renders the active change, which is the one a reader is working on. `validateChangeName` runs first, so a traversal name never reaches either lookup.
 
-**D4 — `renderReport` takes the resolved location.** `renderReport(projectRoot, change, ts?)` gains a resolved `{ changeDir, archived }` argument instead of composing the path itself; `buildReportContext` composes the archived line when `archived` is true and the live tail otherwise. The status command does the resolution and owns the miss error. Alternative: resolve inside `renderReport` — rejected, because the miss error belongs to the command that names the available changes, as it does today.
+**D4 — `renderReport` takes the resolved location, optionally.** `renderReport(projectRoot, change, ts?, location?)` gains an OPTIONAL fourth argument `{ changeDir, archived }`; when it is absent the location is the ACTIVE directory `orbit/changes/<change>` with `archived: false`, exactly today's behaviour. `buildReportContext` composes the archived line when `archived` is true and the live tail otherwise. The status command's `--report` branch does the resolution, owns the miss error, and passes the location. `orbit emit review --render` (`src/commands/emit.ts`) keeps calling `renderReport('.', changeName)`: a review emit only ever targets an active change, so the default is its location. Alternatives: a REQUIRED argument — rejected, because it edits `emit.ts` and some sixty test call sites for no change in behaviour; resolve inside `renderReport` — rejected, because the miss error belongs to the command that names the available changes, as it does today.
 
-**D5 — The miss error names both places.** `Change '<name>' not found — checked orbit/changes/<name> and orbit/changes/archive/*-<name>`, followed by the available active changes as today.
+**D5 — The miss error names both places.** `Change '<name>' not found — checked orbit/changes/<name> and orbit/changes/archive/*-<name>`, followed by `. Available changes:` and the active change names when any exist, and by nothing more when none do.
 
 ## Risks / Trade-offs
 
 - [A reader may expect the gate state of an archived change] → what was believed at archive time is recorded in the archive emit's `judgements`, in the same archived trail; the archived line names that directory.
 - [The fallback makes `--report` resolve differently from the other status forms] → stated in the gateway requirement ("`--report`'s alone"), and the non-goal is recorded here so a later change asks the question per form.
-- [Carrying three MODIFIED blocks carries their nine existing scenarios] → each needs a `@scenario` declaration once apply passes (the scenario map reports them at ERROR after the apply gate); tasks include tagging the existing tests that already exercise them.
+- [Carrying four MODIFIED blocks carries their eighteen existing scenarios] → each needs a `@scenario` declaration once apply passes (the scenario map reports them at ERROR after the apply gate); tasks include tagging the existing tests that already exercise them. `Strict input validation` is carried only to qualify one THEN (its eligibility-line clause now reads "on an active change"); its scenario titles are unchanged, so the tags already pointing at it keep matching.
 
 ## Touchpoints
 

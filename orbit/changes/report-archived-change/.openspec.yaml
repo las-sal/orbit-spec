@@ -6,3 +6,4 @@ base_fingerprints:
     Report grammar — the frame sandwiches the commentary: sha256:ad2536f6595590168487f0bd05ca7804debccde6e273738d0eb20c3ce570a8a0
     Render-time computed context — never stored, never authored: sha256:8360e4956bcf9163d4a0707dddfa3ae3784ace9b6eb992c4f464e1e07d96d634
     The render surface is the status gateway: sha256:eca658a3ef00db6aa1214f88a9ceb1c393ab587040ce9566713f65845dc3883b
+    Strict input validation — fail loud, no partial render: sha256:31960968bf8c7d6502b21a05178a36c982298ebc66071214f59c0c105017f576
