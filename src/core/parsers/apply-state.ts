@@ -61,11 +61,14 @@ export function parseCheckboxes(content: string): CheckboxState {
   // rc10 (system walk, external W1): the engine's ONE CommonMark fence tracker, never a local
   // toggle. A toggle on any run of three backticks closed a four-backtick fence early, so a real
   // task after a fenced example read as fenced and vanished from every count and the archive check.
+  // Each line is fed with its leading whitespace STRIPPED (rc10 verification walk): tasks.md is a list
+  // document, and an example nested under a task item sits at 4+ spaces, where CommonMark's top-level
+  // 0-3 indent rule would not open it and its lines would read as tasks.
   const fence = createFenceTracker();
   const ungroupedUncheckedTexts: string[] = [];
 
   for (const line of lines) {
-    if (fence.handle(line) || fence.inFence) continue;
+    if (fence.handle(line.trimStart()) || fence.inFence) continue;
 
     const header = line.match(GROUP_HEADER);
     if (header && line.startsWith('## ')) {

@@ -98,3 +98,12 @@ describe('parseTouchpoints fence grammar (rc10 system walk)', () => {
     expect(p.entries.map(e => e.targets)).toEqual([['src/real.ts'], ['src/second.ts']]);
   });
 });
+
+describe('parseTouchpoints and a fence nested in a list item (rc10 verification walk)', () => {
+  it('an indented fence inside the section adds no entry and ends nothing, whether or not it opens', () => {
+    const design = '# Design\n\n## Touchpoints\n\n- `src/real.ts` — the real entry, with an example:\n\n    ```markdown\n    ## Not a heading\n    - `fake.ts` — inside\n    ```\n\n- `src/second.ts` — a second\n';
+    const p = parseTouchpoints(design);
+    expect(p.entries.map(e => e.targets)).toEqual([['src/real.ts'], ['src/second.ts']]);
+    expect(p.malformed).toEqual([]);
+  });
+});

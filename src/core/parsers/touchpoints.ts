@@ -60,6 +60,9 @@ export function parseTouchpoints(content: string): TouchpointsParse {
   let inSection = false;
   // rc10 (system walk): the engine's ONE CommonMark fence tracker, never a local toggle — the same
   // repair `parseCheckboxes` took, for the same reason (a three-backtick line closed a four-backtick fence).
+  // Unlike there, lines are NOT stripped of indent: a fence nested in a list item sits at 4+ spaces, and
+  // every line inside it is indented too, so none can match the `## ` heading or a top-level entry
+  // whether or not the fence opens (rc10 verification walk).
   const fence = createFenceTracker();
 
   for (let i = 0; i < lines.length; i++) {

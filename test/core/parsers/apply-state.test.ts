@@ -168,3 +168,16 @@ describe('parseCheckboxes fence grammar (rc10 system walk, external W1)', () => 
     expect(s.groups[0].uncheckedIds).toEqual(['1.1']);
   });
 });
+
+describe('parseCheckboxes reads a fence nested in a list item (rc10 verification walk)', () => {
+  it('an example under a task item at 4+ spaces is fenced; the tasks around it all count', () => {
+    const s = parseCheckboxes('## 1. G\n\n- [ ] 1.1 run the example below\n\n    ```markdown\n    - [ ] 9.9 (User-validation) an example line\n    ```\n- [ ] 1.2 next\n- [x] 1.3 done\n');
+    expect(s.groups[0].uncheckedTexts).toEqual(['1.1 run the example below', '1.2 next']);
+    expect(s.groups[0].checkedIds).toEqual(['1.3']);
+  });
+
+  it('a nested four-backtick fence holding a three-backtick line stays open until its own close', () => {
+    const s = parseCheckboxes('## 1. G\n\n- [ ] 1.1 a\n      ````md\n      ```\n      - [ ] 9.9 inside\n      ````\n- [ ] 1.2 b\n');
+    expect(s.groups[0].uncheckedIds).toEqual(['1.1', '1.2']);
+  });
+});

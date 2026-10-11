@@ -10,3 +10,5 @@ base_fingerprints:
     Archive summary schema reference ships with the skill: sha256:09d48d296e566e456fc706eed9d538ed67e1358c64f85ac23d3a3abb377e6a43
   orbit-engine-gates:
     Inflection-prompt override contract: sha256:a56c60b52d33bc4579965a294dbf97ce5d360af7bf7ba1a0c98b91e5fa06b96d
+  orbit-emit-composition:
+    Payload schema references are proven by execution: sha256:920650f2fe6560e35c6f206b8a65f55a8e731bdbc804809bc497469c6b2bd084
