@@ -323,6 +323,22 @@ describe("the declaration (A breach is declared in the proposal's Size section)"
     expect(d.malformed).toEqual([]);
   });
 
+  it('sibling items indented two or three spaces are each an item of the section', () => {
+    expect(parse(['## Size', '  - tasks: a', '  - capabilities: b']).declared).toEqual(['tasks', 'capabilities']);
+    expect(parse(['## Size', '   - tasks: a', '   - capabilities: b']).declared).toEqual(['tasks', 'capabilities']);
+    expect(parse(['## Size', '- tasks: a', ' - capabilities: b']).declared).toEqual(['tasks', 'capabilities']);
+  });
+
+  it('a bullet nests only at or beyond the content column of the item above it', () => {
+    expect(parse(['## Size', '  - tasks: a', '    - capabilities: nested at the content column']).declared).toEqual(['tasks']);
+    // Five spaces after the marker put the content one space after it (column 2), so indent 2 nests.
+    expect(parse(['## Size', '-     tasks: a', '  - capabilities: nested']).declared).toEqual(['tasks']);
+  });
+
+  it('a `---` under a paragraph is never a setext underline: the section ends only at an ATX heading', () => {
+    expect(parse(['## Size', '- tasks: a', '', 'A paragraph', '---', '- capabilities: b']).declared).toEqual(['tasks', 'capabilities']);
+  });
+
   it('an item indented two or three spaces with no item above it is an item of the section, never dropped', () => {
     expect(parse(['## Size', '  - tasks: two-space top-level item'])).toEqual({ declared: ['tasks'], malformed: [], duplicate: [] });
     expect(parse(['## Size', '', '   - capabilities: three spaces']).declared).toEqual(['capabilities']);

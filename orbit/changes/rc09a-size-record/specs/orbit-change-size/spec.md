@@ -137,17 +137,17 @@ resolves by this table:
 | line under `## Size` | reading |
 |---|---|
 | the heading line | `## Size`, case-sensitive, after at most three spaces of indent (as CommonMark reads a heading), trailing whitespace ignored; `## size` or `### Size` opens no section, so nothing under it declares |
-| an ITEM OF THE SECTION: a list item indented at most one space, or two or three spaces with no item above it in the current list | read by the rows below; the list ends at any heading, at a thematic break, and at an unindented line that is not a list item after a blank line |
+| an ITEM OF THE SECTION: a list item indented at most three spaces and less than the CONTENT COLUMN of the item above it in the current list (that item's indent plus its marker and the spaces after it, as CommonMark nests) | read by the rows below; the list ends at any heading, at a thematic break, and at an unindented line that is not a list item after a blank line |
 | a `-` item `- <dimension>: <reason>` with a known dimension and a reason beginning on that line | DECLARES that dimension |
 | a `-` item with an unknown dimension, no colon, or nothing after the colon on its first line | MALFORMED, naming the line; it declares nothing, and a reason on a continuation line does not rescue it |
 | a `*` or `+` item | MALFORMED, naming the line — only `-` declares, so another marker is visible rather than silently skipped |
 | a second item for an already-declared dimension | DUPLICATE, naming the line; the first item declares |
-| a continuation line, or a bullet that is not an item of the section (nested under the item above it) | part of that item's reason; never an item of the section |
+| a continuation line, or a bullet at or beyond the content column of the item above it (nested under it) | part of that item's reason; never an item of the section |
 | a thematic break (`* * *`, `- - -`) | not read; it is not a list item |
 | prose that is not a list item | not read |
 | fenced content | not read |
 | a second `## Size` heading | merged with the first |
-| the section's end | the next heading of level 1 or 2 (after at most three spaces of indent), or end of file |
+| the section's end | the next ATX heading of level 1 or 2 (`#` or `##`, after at most three spaces of indent), or end of file; a `---` or `===` line is never read as a setext underline, so it ends no section |
 
 The engine reads WHICH dimensions are declared and never what a reason says: whether a breach is justified, and where
 to split instead, stay the author's and the user's judgement (R-crc-10). Declaring a dimension that is not over is

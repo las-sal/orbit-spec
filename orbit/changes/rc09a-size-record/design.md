@@ -88,9 +88,10 @@ is unchanged — it is the record of how the change took shape.
 **D8 — Declaration edge rulings, settled at the proposal walk under R-crc-3.** A declared dimension with no
 configured maximum reads stale (INFO); only `-` declares, and a `*` or `+` item is MALFORMED so it stays visible; the
 reason begins on the item's first line, so a continuation-only reason is MALFORMED; the heading is `## Size`,
-case-sensitive. Each is a row of the declaration table. The section is read as CommonMark reads it: a heading takes up
-to three spaces of indent, a list item indented two or three spaces is an item of the section when no item stands
-above it in the current list, and a thematic break is not an item. "Exactly" in the first reading of this ruling
+case-sensitive. Each is a row of the declaration table. The section reads CommonMark's indentation rules for the
+constructs the table names — a heading takes up to three spaces of indent, a bullet nests only at or beyond the content
+column of the item above it, and a thematic break is not an item — and no others: the table's section-end row states
+what it does not model. "Exactly" in the first reading of this ruling
 meant case and level, never a column; a column-0 grammar would have made `--strict` fail on, or silently drop, an
 item every renderer shows as one.
 
