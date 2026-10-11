@@ -59,20 +59,9 @@ builder's neutralised program (`The CLI's grammar is one program, built by an ex
 SKILL.md and `references/*.md` file of every workflow the generator emits. The check proves GRAMMAR only: nothing is
 executed, and a snippet that parses but is wrong for its moment is not caught. One contract per tool decides grammar,
 and this requirement covers `orbit`. Its places table, guard, tokenizer and fence table are the SHARED extractor's:
-every tool the table below covers is extracted and guarded by them, with the tool's own name where they say `orbit`.
-
-| member | covered by |
-|---|---|
-| `orbit` | commander's own parser over the builder's program, this requirement |
-| `gh` | its recorded contract, through this extractor: `Every \`git\` and \`gh\` snippet on the generated surface validates against its tool's recorded contract` |
-| `git` | its recorded contract, through this extractor: the same requirement |
-| POSIX utilities on the surface (`mv`, `grep`, `mkdir`, `head`, `rmdir`) | not covered: archive and move steps and pipeline fragments, where a grammar contract buys little |
-| `node` and `sh` | not covered: `node -p` evaluates a script, and `sh` appears only inside a prohibition |
-
-Named limit (the tool set). Residual kind: a tool invoked by a snippet the enumeration did not see: one not installed
-on the measuring machine, one written path-prefixed (`./bin/orbit.js`, `node bin/orbit.js`), or one following `&&`,
-`|` or `;` mid-line. Residual method: rerun the enumeration without the PATH filter, splitting each candidate on `&&`,
-`|` and `;`, and classify every unrecognised token by reading its line.
+every recorded tool `Every command head on the generated surface is a recorded tool or a declared exemption` derives
+is extracted and guarded by them, with the tool's own name where they say `orbit`. Which tools are recorded, and which
+command heads are exempt from a contract, is that requirement's to state.
 
 A command is EXTRACTED from the places this table names, and a GUARD covers the others, so a command written in the
 wrong place fails rather than escaping. The guard reads every line outside a shell-tagged fence after stripping its
@@ -380,4 +369,113 @@ surface (the workflow and the file), the line, the snippet, and the validator's 
 
 - **WHEN** the capture meets a command whose bogus-flag probe is not rejected and no orbit-side rule names it
 - **THEN** the capture fails naming the command, and writes no contract
+
+### Requirement: Every command head on the generated surface is a recorded tool or a declared exemption
+
+Every command head the inventory reads on the generated surface SHALL be a RECORDED tool or a DECLARED exemption, and
+any other head SHALL fail the suite, naming the surface (the workflow and the file), the line and the head — so a new
+tool reaches the surface only with a recorded contract, or with an exemption written down here. The surface is every
+generated SKILL.md and `references/*.md` file of every workflow the generator emits, as the shared extractor of
+`Every \`orbit\` snippet on the generated surface parses against that program` reads it: the same markdown parse, the
+same fence table, the same tokenizer and segments.
+
+A RECORDED tool is DERIVED, never listed: `orbit`, whose program `The CLI's grammar is one program, built by an
+exported builder` builds, and each tool the recorded-contract sweep of `Every \`git\` and \`gh\` snippet on the generated
+surface validates against its tool's recorded contract` validates (`git` and `gh` today). A tool gains a row there by
+gaining a contract.
+
+The inventory reads a segment's HEAD: its first token after any assignment prefix (a token matching
+`^[A-Za-z_][A-Za-z0-9_]*=`). Which segments it reads:
+
+| member | covered by |
+|---|---|
+| a segment of a line in a fence whose info string is `bash`, `sh` or `shell`, top-level or nested in a list item or a blockquote | read |
+| a segment of a line in a shell fence inside a `markdown` or `md` fence | read, as the extractor parses the outer fence's content again |
+| a segment of a single-backtick inline span, whose head matches `^[a-z][a-z0-9._-]*$` and some later token of which is a FLAG TOKEN, matching `^--?[A-Za-z0-9]` | read |
+| an inline segment carrying no flag token, or whose head is not a lowercase bare word (a path, a `/orbit:` slash command, capitalised prose) | not read |
+| a shell-fence line or inline span the tokenizer refuses or leaves open | not read: an extraction failure of the shared extractor where it fails one |
+| a comment or blank fence line | not read |
+| a shell-fence line continued by a trailing `\` | each line read as its own command: a continuation line's first token is its head, so a continuation beginning with a flag fails as an unknown head; write the command on one line, never declare the flag |
+| a line in a `json`, untagged or other data-tagged fence, or prose outside every span | not read |
+| a subshell, `( … )` | its grouping is stripped by the tokenizer; each inner segment's head is read |
+| a brace group (`{ …; }`), a reserved word (`if`, `then`, `fi`, …) or a `!` or `time` prefix | read as the head as written (`{`, `if`, `!`), so it fails until declared under `utility`; the tokenizer strips no other grouping |
+
+The declared exemptions SHALL be this requirement's one fenced block whose info string is `inventory`, one line per
+kind, `<kind>: <head> <head> …`, the heads separated by single spaces:
+
+```inventory
+utility: mv mkdir grep rm rmdir head tail cd [ command sh node
+placeholder: <argv[0]>
+prose: argument reach skipped unknown
+```
+
+`utility` holds the POSIX utilities, shell builtins, reserved words and test words the surface writes, and `node`, the runtime orbit
+requires: furniture of the shell, where a grammar contract buys little. `placeholder` holds a head that stands for a
+command recorded elsewhere (`<argv[0]>`, the external runner record). `prose` holds the first word of a message
+template that carries a flag token (`skipped per --fast`), read by the inline row and never a command. The kind set is
+exactly those three.
+
+The suite SHALL hold the inventory EXACT in both directions: a declared head that no read segment of the surface has
+fails, naming the head and its kind, so an exemption leaves with the last line that used it; a declared head that is
+also a recorded tool fails, naming the head, because one head has one standing; and a block that is absent, is not
+the requirement's only `inventory` fence, carries a line not matching the production, repeats a kind, or repeats a
+head fails, naming the requirement and the offending line — an absent block, which has no line, names the
+requirement's heading line. The test reads the block from the requirement as it stands: the
+active change's delta that adds or modifies this requirement when exactly one does (two such deltas fail, naming
+both), the baseline otherwise.
+
+Named limit (the inventory). Residual kind: a tool whose every inline invocation carries no flag token, is
+path-prefixed, or sits in a span the tokenizer refuses; a tool run as an argument of a declared head (`command <tool>
+…`, `sh -c '<…>'`, `node <script> …`, `node bin/orbit.js` among them) or after a declared reserved word; or one
+invoked only in prose, in a double-backtick span, or in a `json` or untagged fence. Residual method: an independent
+review reading a new surface's inline spans and the arguments of every declared head that runs a command; rc05's guard
+already fails a recorded tool's flagged line outside a fence.
+
+#### Scenario: Today's surface passes the inventory
+
+- **WHEN** the inventory reads every generated surface
+- **THEN** every head it reads is a recorded tool or a declared exemption, and every declared head is read at least
+  once
+
+#### Scenario: A new tool in a shell fence fails
+
+- **WHEN** a reference's shell fence gains the line `jq -r .url <path>`
+- **THEN** the suite fails naming that surface, the line and the head `jq`
+
+#### Scenario: A new tool in a flagged inline span fails
+
+- **WHEN** a SKILL.md body gains the inline span `jq -r .url <path>`
+- **THEN** the suite fails naming that surface, the line and the head `jq`
+
+#### Scenario: An inline span without a flag token is not read
+
+- **WHEN** a SKILL.md body gains the inline span `jq output`
+- **THEN** the inventory reads no head from it and the suite passes
+
+#### Scenario: An assignment prefix does not hide the head
+
+- **WHEN** a shell fence gains the line `FOO=1 jq -r .url <path>`
+- **THEN** the suite fails naming the head `jq`
+
+#### Scenario: A head in a markdown-nested shell fence is read
+
+- **WHEN** a shell fence inside a `markdown` fence gains the line `jq -r .url <path>`
+- **THEN** the suite fails naming the head `jq`
+
+#### Scenario: An exemption no line uses fails
+
+- **WHEN** the `inventory` block declares `utility: … rsync` and no read segment of the surface has the head `rsync`
+- **THEN** the suite fails naming `rsync` and its kind `utility`
+
+#### Scenario: An exemption naming a recorded tool fails
+
+- **WHEN** the `inventory` block declares `git` under `utility`
+- **THEN** the suite fails naming `git`
+
+#### Scenario: A malformed exemption block fails
+
+- **WHEN** the requirement carries no `inventory` fence, a second one, a line not matching `<kind>: <head> …`, an
+  unknown kind, a repeated kind or a repeated head
+- **THEN** the suite fails naming the requirement and the offending line (the requirement's heading line when no
+  `inventory` fence exists), and never passes vacuously
 

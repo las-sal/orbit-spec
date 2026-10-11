@@ -2973,6 +2973,16 @@ because every `gh` invocation on the surface is inline (D-rc09b-2), so the chart
 holds. The residual's owner is the named limit of `orbit-cli-grammar`'s `Every command head on the generated surface is
 a recorded tool or a declared exemption`.
 
+Shipped as (2026-10-11; the charter above stays as declared): the change `rc09b-tool-inventory`. ONE capability,
+`orbit-cli-grammar`: an ADDED requirement owning the inventory, and the `orbit` snippet requirement MODIFIED so its
+stale tool-set table became a pointer to it. The test's head walk, `analyseHeads`, reads the shared extractor's own
+parse through a visitor, so the inventory and the three grammar sweeps cannot disagree on a surface's places. The
+recorded tools are DERIVED (`orbit` plus the recorded-contract sweep's tools). The exemptions are the requirement's one
+`inventory` fence, read from the requirement as it stands: the active delta during apply, the baseline after archive,
+with no edit to the test. The list is held EXACT both ways: an unused head fails, and so does a head that is also
+recorded. Exit (2) was observed at apply: a scratch `jq -r .x <path>` in the apply skill failed the suite naming
+`apply/SKILL.md:86` and `jq`, then was reverted; the injection tests are its standing proof. No engine code shipped.
+
 ### Stage rc10-apply-closure — the end-to-end run precedes the archive
 
 Depends-on: rc06a-scenario-map

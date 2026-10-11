@@ -211,7 +211,7 @@ file now carries a live mark. Do NOT read this paragraph as the program's full l
 only what rc07 produced. The authoritative list is the program doc's own Open questions section,
 which also carries Q-crc-11, Q-crc-12, Q-crc-20, Q-crc-21, Q-crc-22 and Q-crc-23.
 
-**Twenty-six more stages have shipped since, and the program is TWENTY-NINE stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b, rc03c, rc07b and rc06a ratified 2026-10-04; rc06b, rc08a and rc08b ratified 2026-10-05 — rc08a's exit (3), pending by design, was measured on rc08b's cadence and read 4, not zero; the split parent rc08 took its ENDED mark the same day; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening; rc17a ratified 2026-10-06; rc17d ratified 2026-10-06; rc17b ratified 2026-10-06; rc17c ratified 2026-10-07; rc18 ratified 2026-10-08; rc05 ratified 2026-10-09; rc05b ratified 2026-10-10; rc09a ratified 2026-10-11).
+**Twenty-seven more stages have shipped since, and the program is TWENTY-NINE stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b, rc03c, rc07b and rc06a ratified 2026-10-04; rc06b, rc08a and rc08b ratified 2026-10-05 — rc08a's exit (3), pending by design, was measured on rc08b's cadence and read 4, not zero; the split parent rc08 took its ENDED mark the same day; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening; rc17a ratified 2026-10-06; rc17d ratified 2026-10-06; rc17b ratified 2026-10-06; rc17c ratified 2026-10-07; rc18 ratified 2026-10-08; rc05 ratified 2026-10-09; rc05b ratified 2026-10-10; rc09a ratified 2026-10-11).
 
 `rc02c-confirmation-semantics` is ARCHIVED (2026-09-21): **the budget stopped being a target.**
 R-crc-11(h) — effort is RECORDED, never TARGETED — retired `budgetExhausted`, the
@@ -786,6 +786,19 @@ promise is retired. Baseline capabilities **25 → 26** (`orbit-change-size` ADD
 external half found the brief unreachable under strict validation. Two walk logs, then an in-context VERIFICATION
 grading four `landed` and one `regressed` (sibling items at two spaces still dropped), walked to zero; a COMPUTED PASSED
 gate. **3366 tests green** (3287 → 3366).
+
+`rc09b-tool-inventory` is ARCHIVED (2026-10-11; split from rc09-propose-hygiene at its exploration): **a new tool reaches
+the generated surface only with a recorded contract or a declared exemption.** `test/core/cli-grammar/tool-inventory.test.ts`
+reads every command head on the surface — each segment of a shell-fence line (list-, blockquote- and markdown-nested
+included) and each segment of a single-backtick inline span with a lowercase bare head and a flag token — through
+`analyseHeads`, a visitor over the shared extractor's own parse. A head that is neither recorded (`orbit` plus the
+recorded-contract sweep's `git` and `gh`, derived) nor declared fails the suite, naming surface, line and head. The
+exemptions are ONE `inventory` fence in `orbit-cli-grammar`'s new requirement (twelve utilities, one placeholder, four
+prose heads), read from the requirement as it stands and held exact both ways. The exploration widened the charter's
+fence-only domain because every `gh` invocation on the surface is inline. The system blind pair on `0bf82a8c` (fresh
+0C/0W/3S forward, external GPT-6 Codex 0C/2W/1S hold) converged on the test restating the lists it derives; walked in
+two logs, then an in-context VERIFICATION grading three `landed` and one `regressed` (design D6 still defined the old
+floor), walked to zero; a COMPUTED PASSED gate. The capability count holds at 26. **3400 tests green** (3366 → 3400).
 
 Read that doc before any rc-stage work; the D-arc section below is the historical
 record of how the engine got here.
