@@ -211,7 +211,7 @@ file now carries a live mark. Do NOT read this paragraph as the program's full l
 only what rc07 produced. The authoritative list is the program doc's own Open questions section,
 which also carries Q-crc-11, Q-crc-20, Q-crc-21, Q-crc-22 and Q-crc-23 (Q-crc-12 was resolved by rc10).
 
-**Twenty-eight more stages have shipped since, and the program is THIRTY stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b, rc03c, rc07b and rc06a ratified 2026-10-04; rc06b, rc08a and rc08b ratified 2026-10-05 — rc08a's exit (3), pending by design, was measured on rc08b's cadence and read 4, not zero; the split parent rc08 took its ENDED mark the same day; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening; rc17a ratified 2026-10-06; rc17d ratified 2026-10-06; rc17b ratified 2026-10-06; rc17c ratified 2026-10-07; rc18 ratified 2026-10-08; rc05 ratified 2026-10-09; rc05b ratified 2026-10-10; rc09a ratified 2026-10-11; rc09b ratified 2026-10-11).
+**Twenty-eight more stages have shipped since, and the program is THIRTY-ONE stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b, rc03c, rc07b and rc06a ratified 2026-10-04; rc06b, rc08a and rc08b ratified 2026-10-05 — rc08a's exit (3), pending by design, was measured on rc08b's cadence and read 4, not zero; the split parent rc08 took its ENDED mark the same day; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening; rc17a ratified 2026-10-06; rc17d ratified 2026-10-06; rc17b ratified 2026-10-06; rc17c ratified 2026-10-07; rc18 ratified 2026-10-08; rc05 ratified 2026-10-09; rc05b ratified 2026-10-10; rc09a ratified 2026-10-11; rc09b ratified 2026-10-11; rc10 ratified 2026-10-11).
 
 `rc02c-confirmation-semantics` is ARCHIVED (2026-09-21): **the budget stopped being a target.**
 R-crc-11(h) — effort is RECORDED, never TARGETED — retired `budgetExhausted`, the
@@ -800,7 +800,7 @@ fence-only domain because every `gh` invocation on the surface is inline. The sy
 two logs, then an in-context VERIFICATION grading three `landed` and one `regressed` (design D6 still defined the old
 floor), walked to zero; a COMPUTED PASSED gate. The capability count holds at 26. **3400 tests green** (3366 → 3400).
 
-`rc10-apply-closure` is ARCHIVED (2026-10-11; awaiting ratification): **the archive seam speaks about every
+`rc10-apply-closure` is ARCHIVED and RATIFIED (2026-10-11; all three exit criteria graded MET, (2) as revised): **the archive seam speaks about every
 user-validation task and every reviewed gate.** A new Step 3.2 disposes of each unchecked `(User-validation` task as
 OBSERVED (checked with its evidence) or DEFERRED (`deferred_validations: [{task, why, when, where}]` on the archive
 emit) and briefs the user before the move, as a report, never a prompt; a task about state that exists only after the

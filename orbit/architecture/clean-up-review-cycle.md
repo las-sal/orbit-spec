@@ -2993,7 +2993,7 @@ recorded. Exit (2) was observed at apply: a scratch `jq -r .x <path>` in the app
 ### Stage rc10-apply-closure — the end-to-end run precedes the archive
 
 Depends-on: rc06a-scenario-map
-Complete: [ ]
+Complete: [x] 2026-10-11 (Sal)
 
 Charter: a change's user-validation tasks are a PRE-ARCHIVE condition rather than a deferred
 annotation: the archive flow requires them checked, or records a reasoned deferral naming
@@ -5526,3 +5526,14 @@ every `gh` invocation on the surface is inline; the stage section's Widened and 
 system blind pair converged on the test restating the lists it derives; two walks, a verification that found one
 regression (design D6 still defining the old floor), and a third walk closed it. The readiness record accepts three
 residuals, headlined by rc07's distinction. With rc09a and rc09b both ratified, the rc09 split is fully delivered.
+
+**2026-10-11 — rc10-apply-closure RATIFIED (Sal)**, through the architect session's offer. Its three exit criteria
+graded MET: (1) the archive write gate refuses an unchecked `(User-validation` task with no deferral, and this stage's
+own archive wrote one with its `why`; (2) as revised at exploration (D-rc10-5) and measured on that same archive — 4.4
+deferred by the post-move rule, briefed before the move, the emit accepted; (3) by the shipped Step 3.4 and the fixture
+run of rc03a's shape (both reviewed gates listed), not yet observed firing live, because this archive had no gate to
+list. The stage section's Shipped-as paragraph records the departures: reports rather than halts, a third capability
+carried at the system walk (Sal: A), bulk archive's per-change emit step, and `blocked` gates listed. Q-crc-12 is
+RESOLVED by it (the post-archive audit walk). The readiness record accepts four residuals, headlined by rc07's
+distinction. Noted at that walk and not acted on: Q-crc-11's entry carries no closure mark, though CLAUDE.md records
+it closed by rc15's exit (1); CLAUDE.md's live-question list still names it.
