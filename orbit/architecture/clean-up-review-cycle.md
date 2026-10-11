@@ -3033,6 +3033,29 @@ status --change <name> --scenarios` and stored in no emit, so there is nothing f
 point at. rc10's exploration decides whether its pre-archive condition reads the surface directly (the
 `observed` column is the natural evidence for a user-validation task).
 
+Shipped as (2026-10-11; the charter above stays as declared, and the departures are these): **the
+archive seam speaks about every user-validation task and every reviewed gate, and the write gate
+makes the deferral record impossible to forget.** A new Step 3.2 disposes of each unchecked
+`(User-validation` task as OBSERVED (the box checked with its evidence) or DEFERRED (`{task, why, when,
+where}` in the archive emit's `deferred_validations`), and BRIEFS the user before the move; a task
+about state that exists only after the move is DEFERRED by rule. The charter's "or halts" became
+REPORTS: the brief is not a prompt, and halting stays the user's, by aborting (R-crc-13). `orbit emit
+archive` refuses the eight cases of the `DEFERRAL REFUSALS` production, stated once in
+`orbit-archive-modifications` and carried as a checked mirror in the archive and bulk-archive bodies.
+Upstream Step 3 stops counting marked tasks (a named edit). Step 3.4 lists every reviewed gate that is
+not passed and not superseded — `blocked` included, which the 2026-09-21 amendment's "unpassed or
+stale" did not name — in ONE prompt, one `continuation` entry per gate. Exit (2) was REVISED at
+exploration (D-rc10-5; R-crc-12's first case): a validation that can only happen after shipping cannot
+run before its own archive, so the exit became "the next archive carrying a user-validation task closes
+it by observation or writes a deferral the write gate accepted" — and this stage's own archive measured
+it, deferring 4.4 by the post-move rule. The charter's "orbit-engine-gates (the tracked gate's
+user-validation subset)" touched the override contract instead; the tracked gate is unchanged. A THIRD
+capability was carried at the system walk (Sal: A): `orbit-emit-composition`'s round-trip requirement,
+whose "and nothing else" seeding rule the archive example made false. Bulk archive runs the step per
+change and gained the per-change emit step its body had always lacked; its missing gate prompt is a
+named limit. The rc06 rider is moot (the map is read-time); the external-first rider and the
+undeclared-scenario stop were not carried (D-rc10-6, D-rc10-9).
+
 ### Stage rc16-retirement-sweep — living prose retires with the limit it described
 
 Depends-on: (none)

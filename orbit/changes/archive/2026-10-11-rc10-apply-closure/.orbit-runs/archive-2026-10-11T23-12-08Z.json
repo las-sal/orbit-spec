@@ -1,0 +1,80 @@
+{
+  "command": "archive",
+  "timestamp": "2026-10-11T23:12:08Z",
+  "change": "rc10-apply-closure",
+  "kind": "lifecycle",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Archived rc10-apply-closure to orbit/changes/archive/2026-10-11-rc10-apply-closure/.",
+  "archive_path": "orbit/changes/archive/2026-10-11-rc10-apply-closure/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-archive-modifications",
+      "orbit-emit-composition",
+      "orbit-engine-gates"
+    ],
+    "added": 1,
+    "modified": 4,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "Pre-archive audit sweep SUGGESTION: orbit/specs/orbit-run-summary-emit/spec.md:19 still says bulk archive's inner /orbit:archive invocations emit; bulk now writes each change's emit through its own step. Not carried: a fourth capability would breach R-crc-1's ceiling.",
+    "Pre-archive audit sweep SUGGESTION: CLAUDE.md:438 names rc10 as the territory for a mechanical stop on a lifecycle BLOCK; rc10 shipped the user-validation closure instead."
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "formed_against": [
+        "2026-10-11T21-44-15Z",
+        "2026-10-11T21-44-36Z",
+        "2026-10-11T22-50-41Z",
+        "2026-10-11T22-51-02Z"
+      ],
+      "disposition": "ready",
+      "reasoning": "Both blind pairs' findings were walked to zero and the verification's two regressions were repaired and exercised by running them. The single-archive seam does what the stage set out to do, and this archive exercised it: the superseded review-proposal stayed silent at Step 3.4, and task 4.4 was deferred by the post-move rule and briefed before the move.",
+      "ratified_by": "ai",
+      "accepted": [
+        {
+          "claim": "PASSED means every finding was resolved, not that an independent pass stood clean on the final tree; the system walks after the pair changed engine code (indent-stripped fence reading, case 8, the ENOENT-only read) that only in-context passes have read.",
+          "why": "Each repair carries a test shown able to fail, and the external half's three findings were reproduced before and after; another independent pass was weighed against that coverage."
+        },
+        {
+          "claim": "/orbit:bulk-archive fires no gate prompt, so a batch archive past an unpassed review-proposal still records no decision.",
+          "why": "Named as the override contract's second limit; a bulk gate prompt is new mechanism outside this change."
+        },
+        {
+          "claim": "No surface reads a deferral after the archive.",
+          "why": "The ADDED requirement's named limit; a cited stage's exit criteria are graded at ratification, and a later stage owns a reader."
+        },
+        {
+          "claim": "The tracked gate's subset rule reads tasks.md through uncheckedTaskLines, which is not fence-aware, so a marked line inside a fence is counted there and by neither archive check.",
+          "why": "Recorded in design Risks; collapsing the two readers is outside this change."
+        }
+      ]
+    }
+  ],
+  "deferred_validations": [
+    {
+      "task": "4.4",
+      "why": "Its assertion is that the archive emit is accepted by the write gate, which exists only after the move this step precedes; deferred by the post-move rule, not skipped.",
+      "when": "this archive's Step 5.5 emit, immediately after the move",
+      "where": "this archive session, by the write gate accepting this payload"
+    }
+  ],
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."
+}

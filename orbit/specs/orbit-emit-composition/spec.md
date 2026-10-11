@@ -961,11 +961,16 @@ A test SHALL submit each example, unchanged, through the engine's real write gat
 | `doc` | an architecture doc created in the disposable project |
 | any other word, or none | the test fails naming the block's opening line |
 
-**Trail seeding.** Where a write-gate check reads the change's trail — today the `judgements` ordering check, which refuses a `formed_against` token that names no accepted independent pass — the test SHALL seed the disposable project's trail, before submission, with ONE minimal independent pass file at every token an example names in a `formed_against` array, and nothing else. Seeding never edits the example; a check that reads trail state no example names is outside what seeding supplies and is named in the residual below.
+**Seeding.** Where a write-gate check reads state beside the payload, the test SHALL seed the disposable project, before submission, by exactly two rules, and nothing else:
+
+- **The trail.** The `judgements` ordering check refuses a `formed_against` token that names no accepted independent pass, so the test seeds ONE minimal independent pass file at every token an example names in a `formed_against` array.
+- **The tasks file.** The archive write gate refuses an unchecked `(User-validation` task without a deferral and a deferral naming no such task (`orbit-archive-modifications`' `User-validation closure at the archive seam`), so the test seeds the target's `tasks.md` with ONE unchecked task carrying the `(User-validation` marker at every task id an example names in a `deferred_validations` array. An example naming none is submitted against a `tasks.md` carrying no marked task.
+
+Seeding never edits the example; a check that reads state no example names is outside what seeding supplies and is named in the residual below.
 
 The schema block remains documentation and may show spine and engine-computed keys, marked as such; the field-set test of `Payload tables agree with their schema references` continues to check that block.
 
-**Named limit.** The round trip is exactly as strong as the write gate's validators. Residual kind: a documented field type or value the write gate does not validate (today most fields of every command; audit-drift's `categories_run`, `findings` and finding `category` are checked by `Audit-drift counts are engine-computed`), a write-gate check reading trail state that no example's `formed_against` names, and the genre-dependent keys exempted above (today `verification`), which no example executes. Residual method: read each command's validators in `emit-composition.ts`; a documented constraint with no validator is outside the round trip and stays a reviewer's claim.
+**Named limit.** The round trip is exactly as strong as the write gate's validators. Residual kind: a documented field type or value the write gate does not validate (today most fields of every command; audit-drift's `categories_run`, `findings` and finding `category` are checked by `Audit-drift counts are engine-computed`), a write-gate check reading trail or tasks-file state that no example's `formed_against` or `deferred_validations` names, and the genre-dependent keys exempted above (today `verification`), which no example executes. Residual method: read each command's validators in `emit-composition.ts`; a documented constraint with no validator is outside the round trip and stays a reviewer's claim.
 
 **Outside this requirement, by name.** The findings formats a reference documents (`external-findings-format.md`, `internal-findings-format.md`) and the review prompt template's output format — whose surfaces are the external-findings readers, not the write gate — and `orbit …` invocations written inside references. Neither is proven by this test.
 
@@ -1001,8 +1006,8 @@ The schema block remains documentation and may show spine and engine-computed ke
 
 #### Scenario: The archive example runs against an archived target with a seeded trail
 
-- **WHEN** the archive reference's example (info string `json example archived`) carries a `readiness` judgement whose `formed_against` names one pass token
-- **THEN** the test creates the archived change directory, writes one minimal independent pass file at that token in its trail, submits the example unchanged, and asserts acceptance
+- **WHEN** the archive reference's example (info string `json example archived`) carries a `readiness` judgement whose `formed_against` names one pass token, and a `deferred_validations` entry naming one task
+- **THEN** the test creates the archived change directory, writes one minimal independent pass file at that token in its trail and one unchecked `(User-validation` task at that id in its `tasks.md`, submits the example unchanged, and asserts acceptance
 
 #### Scenario: An unknown scope word fails the test
 

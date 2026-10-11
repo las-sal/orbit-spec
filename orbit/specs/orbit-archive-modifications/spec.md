@@ -62,7 +62,7 @@ The system SHALL write a JSON summary to `orbit/changes/archive/<YYYY-MM-DD>-<ch
 **THE TERMINAL READINESS RECORD (rc04a).** The archive emit SHALL carry, in its `judgements` array,
 an entry with `kind: "readiness"` (shape and carrier both defined by `orbit-run-summary-emit`)
 whenever the archive concludes a review cadence. The archive is the one emit admitting BOTH kinds,
-so the array may also hold a `continuation` entry from the same seam.
+so the array may also hold `continuation` entries from the same seam, one per gate proceeded past.
 It is the archive's statement of what the AI BELIEVED about the work, formed against the
 independent passes it names, and it is distinct from every record already here: `user_decision`
 records the audit-drift prompt's outcome, a `continuation` entry records a decision to proceed past
@@ -79,10 +79,11 @@ distinction. An empty `formed_against` on a `continuation`/`proceed` also cites 
 DOES hold a cadence position and its emptiness is itself checked against the trail — so
 "cites nothing" alone never settles membership; see `orbit-run-summary-emit`.)
 
-**THE CONTINUATION RECORD AT THIS SEAM.** When the Step 3.4 `review-system` gate prompt is answered
-**Proceed anyway**, the archive emit SHALL carry a `judgements` entry with `kind: "continuation"`
-and `disposition: "proceed"` carrying the gate, its state and its reason AT DECISION TIME as
-`gate`, `gate_state` and `gate_reason`. This entry is the SOLE record of the decision — the
+**THE CONTINUATION RECORD AT THIS SEAM.** When the Step 3.4 gate prompt — whose gate set
+`orbit-engine-gates`' `Inflection-prompt override contract` owns — is answered **Proceed anyway**,
+the archive emit SHALL carry ONE `judgements` entry per gate the prompt listed, each with
+`kind: "continuation"` and `disposition: "proceed"` carrying THAT gate, its state and its reason AT
+DECISION TIME as `gate`, `gate_state` and `gate_reason`. This entry is the SOLE record of the decision — the
 `gate_overridden` field it once accompanied is RETIRED, and emits written before that retirement
 carry the field as a PRIOR GENERATION that readers continue to accept. This seam — not apply's —
 is where the decision is most often taken, and a record that admits the entry while no body is
@@ -117,8 +118,8 @@ relationship the lifecycle is built on.
 
 #### Scenario: Gate override recorded in the summary
 
-- **WHEN** the `review-system` gate is unpassed or stale at archive and the user chooses proceed-anyway at the inflection prompt (per `orbit-engine-gates`' override contract)
-- **THEN** the archive run summary carries a `judgements` entry `{kind: "continuation", disposition: "proceed", gate, gate_state, gate_reason}` captured at decision time (e.g. `{gate: "review-system", gate_state: "unpassed", gate_reason: <gate reason>}`); the entry is absent when no such decision was taken and REQUIRED when proceed-anyway was chosen. This is distinct from `user_decision`, which records the audit-drift prompt outcome.
+- **WHEN** the archive gate prompt lists one or more gates (per `orbit-engine-gates`' override contract — e.g. `review-system` unpassed or stale) and the user chooses proceed-anyway
+- **THEN** the archive run summary carries a `judgements` entry `{kind: "continuation", disposition: "proceed", gate, gate_state, gate_reason}` captured at decision time, one per listed gate (e.g. `{gate: "review-system", gate_state: "unpassed", gate_reason: <gate reason>}`); the entries are absent when no such decision was taken and REQUIRED when proceed-anyway was chosen. This is distinct from `user_decision`, which records the audit-drift prompt outcome.
 
 #### Scenario: Fingerprint override recorded in the summary
 
@@ -189,6 +190,13 @@ relationship the lifecycle is built on.
 - **WHEN** the readiness record carries `disposition: "not-ready"`
 - **THEN** the archive completes normally — sync, move and emit all proceed — and the record stands
   as the dissent
+
+#### Scenario: Two gates proceeded past, two entries
+
+- **WHEN** the archive gate prompt lists `review-proposal` (`unpassed`) and `review-system`
+  (`blocked`) and the user chooses proceed-anyway
+- **THEN** the `judgements` array carries two `continuation` entries, one naming each gate with its
+  own state and reason as reported at decision time
 
 ### Requirement: `.orbit-runs/` directory moves with the change
 
@@ -263,7 +271,10 @@ residue that path renaming alone does not fix — satisfying the deferral record
   and `fingerprints_unverified: [{capability, requirement}]`; present only when the corresponding
   fingerprint outcome occurred, per this capability's `Archive run summary written` requirement),
   plus the `consent` field (`"user-invoked" | "prompted"`; present on every post-capability
-  archive emit, per `orbit-lifecycle-consent`'s emit-field requirement)
+  archive emit, per `orbit-lifecycle-consent`'s emit-field requirement), plus the conditional
+  `deferred_validations` array (`[{task, why, when, where}]`; present only when an unchecked
+  user-validation task was deferred, per this capability's `User-validation closure at the archive
+  seam` requirement)
   — and covers the field list in this capability's own `Archive run summary written` requirement
 
 #### Scenario: Schema shapes match the baselines, not the overlay source
@@ -295,6 +306,13 @@ residue that path renaming alone does not fix — satisfying the deferral record
   `continuation` entry shape this seam also admits (`gate`/`gate_state`/`gate_reason`), in the same
   style the fingerprint fields use, including a `## Field notes` bullet, so
   the reference and the payload table agree per `orbit-emit-composition`'s parity requirement
+
+#### Scenario: The deferral record is documented in the shipped reference
+
+- **WHEN** the shipped archive schema reference is read after init
+- **THEN** it documents the conditional `deferred_validations` array and its four keys, with a
+  `## Field notes` bullet and a `json example` block carrying the field, which the reference round
+  trip submits unchanged through the archive write gate
 
 ### Requirement: Fingerprint-divergence inflection prompt
 
@@ -780,3 +798,127 @@ inside the tail.
 
 - **WHEN** a citing change archives against a program doc whose architecture doc carries no status log (or where no log entry was written at this archive)
 - **THEN** the stage entry is composed from the archive emit's `final_assessment` plus the change name and date, in the same entry shape; one line names the source used, and the tail neither blocks nor prompts
+
+### Requirement: User-validation closure at the archive seam
+
+The archive workflow SHALL dispose of every unchecked task carrying the `(User-validation` marker in
+the change's `tasks.md` — the marker `orbit-engine-gates`' `Tracked-gate pass condition` reads —
+at a Step 3.2 that runs BEFORE the Step 5 move, each as exactly one of two dispositions, which
+partition the marked tasks by whether the box ends checked:
+
+- **OBSERVED** — the validation has happened. The AI checks the box and appends to the task line
+  a one-line note naming the evidence.
+- **DEFERRED** — the validation was not observed at this seam: it can happen only after the change
+  ships (a merge, a later stage, a later session), or it could have happened and has not. The box
+  stays unchecked, and the archive emit carries a `deferred_validations` entry
+  `{task, why, when, where}`: `task` the task id; `why`, `when` and `where` non-empty prose naming
+  why it was not observed here, the moment it will be, and the place.
+
+Before the move, the seam SHALL BRIEF the user in chat with each task, its disposition and, for a
+deferral, its `why`. The brief is a report, not a prompt: halting stays the user's, by aborting
+(R-crc-13). Upstream Step 3's incomplete-tasks count SHALL exclude every task this step owns — a
+named edit to an upstream portion, per `orbit-conventions`' `Generated-file disposition` — and
+every other unchecked task still prompts there unchanged.
+
+`orbit emit archive` SHALL read the archived `tasks.md` with the reader the apply emit's
+`user_validation_tasks` check uses, and REFUSE every case of the production below, naming the task
+or line. The production is the ONE statement of the refusals:
+
+```
+DEFERRAL REFUSALS — the archive write gate refuses each, naming the task or line, and Step 3.2 checks each before the move:
+1 an unchecked task carrying the (User-validation marker, with no deferral naming it
+2 a marked unchecked task with no task id, which no deferral can key
+3 a marked unchecked line the reader places in no ## task group, found by a fence-aware line scan the reader's set lacks
+4 a deferral naming a checked task, an unchecked task without the marker, or no task
+5 a second deferral naming one task
+6 a deferral whose why, when or where is missing, not a string, or empty
+7 a deferral carrying a key other than task, why, when and where
+8 a marked unchecked task whose task id another task line also carries, checked or not, naming both lines
+A missing tasks.md is an empty marked set; any other failure to read it is refused, naming the error. An empty deferred_validations array is accepted and written as absent.
+```
+
+The engine checks the id set, never whether the prose is true (R-crc-10). The completion readout
+SHALL print one line per deferral.
+
+Step 3.2 SHALL check each case of that production against the composed deferrals BEFORE the move,
+so a predictable refusal surfaces while the change is still active: a marked task with no id, in no
+group or with a duplicated id, or an unreadable tasks file, is reported to the user, who repairs
+`tasks.md` before the archive proceeds, or aborts.
+No engine surface runs the write gate before the move, so the archive body carries the production
+as a CHECKED MIRROR, held byte-equal to this fence by a parity test (R-crc-14's mirror corollary). When the emit
+still refuses after the move, the archive SHALL repair the payload and re-run `orbit emit archive`
+against the archived directory, never repeating the sync or the move.
+
+The bulk-archive workflow SHALL run Step 3.2 per change, before that change's sync and move, brief
+that change's dispositions there and again in its batch summary, and write each change's archive
+emit after its move, carrying its deferrals; each emit is checked by the same write gate. Its own task count SHALL exclude the marked tasks Step 3.2 owns, as upstream Step
+3's does, so a change whose only unchecked tasks carry the marker is never classed incomplete or
+offered for skipping.
+
+A task whose assertion is about state that exists only after this step — the baseline after sync,
+the archived directory, or the archive emit — is DEFERRED at this step: the step precedes the sync
+and the move.
+
+**Named limit.** This capability provides no reader of a deferral after the archive. For a change
+citing an architecture stage, a deferred validation is usually one of the stage's exit criteria,
+which the user grades at ratification; for an uncited change, the brief, the emit and the readout
+are its only surfaces.
+
+#### Scenario: An observed validation is closed with its evidence
+
+- **WHEN** archive reaches the seam and task 5.3 carries `(User-validation` and its validation was
+  observed during the change's own cycle
+- **THEN** the AI checks 5.3 with a one-line evidence note before the move, the brief names it
+  OBSERVED, and the emit carries no deferral for it
+
+#### Scenario: A validation possible only after shipping is deferred and printed
+
+- **WHEN** task 6.3 carries `(User-validation` and can be observed only after the change merges
+- **THEN** 6.3 stays unchecked, the emit carries `{task: "6.3", why, when, where}` with all three
+  prose fields non-empty, and the completion readout prints one line for it
+
+#### Scenario: An available but unperformed validation is deferred with its reason
+
+- **WHEN** task 5.3 carries `(User-validation`, could have been run before archive, and was not
+- **THEN** 5.3 is DEFERRED with a `why` saying it was not run, and the brief shows that reason to
+  the user before the move
+
+#### Scenario: An undeferred validation is refused at the write gate
+
+- **WHEN** the archived `tasks.md` holds an unchecked `(User-validation` task 4.4 and the archive
+  payload carries no deferral naming `4.4`
+- **THEN** `orbit emit archive` refuses, naming `4.4`, and writes nothing
+
+#### Scenario: A deferral must name an unchecked marked task
+
+- **WHEN** a deferral names a task that is checked, an unchecked task without the
+  `(User-validation` marker, or no task in the file
+- **THEN** `orbit emit archive` refuses, naming the deferral's task
+
+#### Scenario: A marked line outside every task group is refused before the move
+
+- **WHEN** `tasks.md` opens with `# Tasks` and an unchecked `- [ ] 4.4 (User-validation) …` line
+  before any `## ` group heading
+- **THEN** Step 3.2 reports the line before the move, and `orbit emit archive` refuses it, naming
+  the line
+
+#### Scenario: A task id two task lines carry is refused
+
+- **WHEN** `tasks.md` holds a checked `- [x] 1.1 (User-validation) …` and an unchecked
+  `- [ ] 1.1 (User-validation) …`, or two unchecked marked tasks both numbered `1.1`
+- **THEN** `orbit emit archive` refuses, naming the id and both lines, whatever the deferrals say
+
+#### Scenario: Step 3 no longer asks about validation tasks
+
+- **WHEN** the only unchecked tasks at archive carry the `(User-validation` marker
+- **THEN** upstream Step 3's incomplete-tasks prompt does not fire, and Step 3.2 briefs each task
+  instead
+
+#### Scenario: Bulk archive disposes per change
+
+- **WHEN** `/orbit:bulk-archive` archives a batch in which one change carries an unchecked
+  `(User-validation` task
+- **THEN** the change is not classed incomplete for that task, its Step 3.2 runs before its sync
+  and move, its dispositions appear in the batch summary, and its archive emit carries its
+  deferrals
+
