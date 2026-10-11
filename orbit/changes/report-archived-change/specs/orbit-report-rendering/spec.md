@@ -106,9 +106,10 @@ trail gateway's deepest zoom (bare → `--full` → `--change` → `--report`), 
 verb. The `--change <name>` argument resolves ACTIVE FIRST, as `orbit/changes/<name>/`; on a miss
 it falls back to an ARCHIVED change DIRECTORY, `orbit/changes/archive/<YYYY-MM-DD>-<name>/`, chosen
 by the archive emit's lexically-greatest rule (`orbit-emit-composition`'s `Atomic next_recommended —
-pre-computable and post-write classes` owns it) among entries that are directories — a regular file
-of that name never matches. An archived directory whose real path lies outside
-`orbit/changes/archive/` is refused with a clean error. An invalid name is rejected before either
+pre-computable and post-write classes` owns it) among entries that RESOLVE to a directory, symbolic
+links followed — a regular file of that name never matches, and a symlinked entry is admitted. An
+admitted archived directory whose real path lies outside `orbit/changes/archive/` is refused with a
+clean error, never skipped as a miss. An invalid name is rejected before either
 lookup, and a miss in both fails with a clean error naming both locations checked, exit non-zero. The
 fallback is `--report`'s alone: every other `orbit status` form resolves active changes only. With no `<TS>`, the NEWEST review pass renders — internal emits and external findings
 files competing on the same recency axis, equal tokens breaking by `orbit-orientation`'s
@@ -162,6 +163,11 @@ the same way (the error names the empty renderable set), exit non-zero.
 
 - **WHEN** `orbit/changes/<name>/` is absent, `orbit/changes/archive/2026-01-01-<name>/` is a directory and `orbit/changes/archive/2026-02-01-<name>` is a regular file
 - **THEN** the report renders from `orbit/changes/archive/2026-01-01-<name>/`
+
+#### Scenario: A symlinked archive entry pointing outside the archive is refused
+
+- **WHEN** `orbit/changes/<name>/` is absent and `orbit/changes/archive/2026-01-01-<name>` is a symbolic link to a directory outside `orbit/changes/archive/`
+- **THEN** the command fails with the containment error, not the not-found error; exit non-zero; no partial output
 
 ### Requirement: Strict input validation — fail loud, no partial render
 

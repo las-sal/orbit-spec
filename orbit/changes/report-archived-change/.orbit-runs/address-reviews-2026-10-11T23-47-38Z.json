@@ -1,0 +1,82 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-11T23:47:38Z",
+  "change": "report-archived-change",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/report-archived-change/.orbit-runs/review-proposal-2026-10-11T23-46-31Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-11T23-46-31Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 0
+  },
+  "pushback_verification": "Verified: the gateway requirement read 'among entries that are directories', task 1.1 'only DIRECTORIES match', and design D1 'matches DIRECTORIES only' — none said whether a symlink to a directory matches, while task 3.1 tested a symlinked entry's refusal.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The directory-only rule leaves a symlinked archive entry undefined, so the containment refusal may be unreachable",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-report-rendering/spec.md",
+      "line": 109,
+      "classification": "trivial_fix",
+      "action": "an entry matches when it RESOLVES to a directory, symbolic links followed (fs.statSync), so a symlinked entry is admitted and then refused by the containment check, never skipped as a miss — stated in the gateway requirement (with a new scenario for the outside-pointing symlink), design D1 (with why following links keeps the refusal reachable on both surfaces) and task 1.1; task 1.2 gains the symlink case, task 3.1 names the containment error, and both skip symlink cases where the platform cannot create one",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/report-archived-change/design.md",
+          "orbit/changes/report-archived-change/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "only DIRECTORIES match",
+          "matches DIRECTORIES only",
+          "among entries that are directories"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/report-archived-change/specs/orbit-report-rendering/spec.md",
+            "text": "among entries that RESOLVE to a directory, symbolic links followed"
+          },
+          {
+            "path": "orbit/changes/report-archived-change/specs/orbit-report-rendering/spec.md",
+            "text": "A symlinked archive entry pointing outside the archive is refused"
+          },
+          {
+            "path": "orbit/changes/report-archived-change/design.md",
+            "text": "Following links is what keeps that refusal reachable"
+          },
+          {
+            "path": "orbit/changes/report-archived-change/tasks.md",
+            "text": "a symlink to a directory is returned"
+          }
+        ],
+        "searched": [
+          "DIRECTORIES",
+          "directories",
+          "symlink"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "final_assessment": "One finding resolved as a repair: the resolver's directory rule now follows symbolic links, so the containment refusal is reachable on both surfaces.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply report-archived-change — user-invoked",
+  "ripple_misses": 0
+}
