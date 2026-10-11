@@ -1,0 +1,59 @@
+{
+  "command": "audit-drift",
+  "timestamp": "2026-10-11T23:16:45Z",
+  "change": null,
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "final_assessment": "No critical issues. 2 warning(s) to consider.",
+  "categories_run": [
+    "1",
+    "3",
+    "4",
+    "5",
+    "6"
+  ],
+  "findings": [
+    {
+      "category": "3",
+      "severity": "WARNING",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 559,
+      "title": "Q-crc-12 still reads open with its owner unchanged, but rc10 shipped its recommendation",
+      "recommendation": "Mark Q-crc-12 RESOLVED by rc10-apply-closure: the archive's Step 3.4 now lists every reviewed gate that is not passed and not superseded in one prompt, the re-framed recommendation exactly (blocked included); name the bulk-archive limit as what remains. Drop Q-crc-12 from CLAUDE.md:212's list of live open questions in the same edit."
+    },
+    {
+      "category": "3",
+      "severity": "WARNING",
+      "file": "CLAUDE.md",
+      "line": 438,
+      "title": "CLAUDE.md names rc10 as the territory for a mechanical stop on a lifecycle BLOCK, which rc10 did not take",
+      "recommendation": "The baseline ladder (orbit-conventions' Severity ladder) states the limit with no owner ('until a stage gives apply a precondition'), and rc10's Shipped-as paragraph names no block stop. Replace '(apply carries no precondition; rc10's territory)' with the owner-neutral wording, so no reader believes a shipped stage owns it."
+    },
+    {
+      "category": "3",
+      "severity": "SUGGESTION",
+      "file": "orbit/specs/orbit-run-summary-emit/spec.md",
+      "line": 19,
+      "title": "The emit-scope list says bulk archive's inner /orbit:archive invocations emit; bulk now writes each change's emit through its own step",
+      "recommendation": "Reword the bullet to 'wrapper; writes one archive emit per change (its per-change archive emit step)' in the next change that touches orbit-run-summary-emit. The one-emit-per-change claim still holds."
+    },
+    {
+      "category": "3",
+      "severity": "SUGGESTION",
+      "file": "orbit/specs/orbit-archive-modifications/spec.md",
+      "line": 337,
+      "title": "Two requirements still call Step 3.4's prompt 'the review-system gate prompt'",
+      "recommendation": "The accepted naming lag of rc10's design D7: rename to 'the Step 3.4 gate prompt' in the next change carrying 'Critical-drift prompt, not gate' or 'Fingerprint-divergence inflection prompt'."
+    }
+  ],
+  "stale_suppressed": [],
+  "findings_total": 4,
+  "findings_by_category": {
+    "1": 0,
+    "3": 4,
+    "4": 0,
+    "5": 0,
+    "6": 0
+  },
+  "next_recommended": "/orbit:address-reviews --from-file orbit/.orbit-runs/audit-drift-2026-10-11T23-16-45Z.json — 4 drift(s) detected project-wide; resolve before next workflow step"
+}
