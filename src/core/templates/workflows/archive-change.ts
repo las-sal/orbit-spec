@@ -25,7 +25,8 @@ export const DEFERRAL_REFUSALS = `DEFERRAL REFUSALS — the archive write gate r
 5 a second deferral naming one task
 6 a deferral whose why, when or where is missing, not a string, or empty
 7 a deferral carrying a key other than task, why, when and where
-A missing tasks.md is an empty marked set. An empty deferred_validations array is accepted and written as absent.`;
+8 a marked unchecked task whose task id another task line also carries, checked or not, naming both lines
+A missing tasks.md is an empty marked set; any other failure to read it is refused, naming the error. An empty deferred_validations array is accepted and written as absent.`;
 
 const ARCHIVE_SUMMARY_SCHEMA_REFERENCE = `# Reference: archive run-summary schema
 
@@ -351,9 +352,9 @@ After upstream Step 3 (task-completion check) and BEFORE the Step 3.4 gate promp
 Find every unchecked task in \`tasks.md\` whose line carries the \`(User-validation\` marker — whether or not an apply emit declared it — and dispose of EACH as exactly one of:
 
 - **OBSERVED** — the validation has happened (during the change's own cycle, or here). Check the box and append to the task line a one-line note naming the evidence (an emit token, a commit, what was seen). No deferral entry.
-- **DEFERRED** — the validation was not observed at this seam: it can happen only after the change ships (a merge, a later stage, a later session), OR it could have happened and has not. The box stays unchecked; compose a \`deferred_validations\` entry \`{task, why, when, where}\` for the Step 5.5 payload — \`why\` saying honestly which case it is. A task whose assertion is about the baseline AFTER sync is DEFERRED here: this step precedes the sync.
+- **DEFERRED** — the validation was not observed at this seam: it can happen only after the change ships (a merge, a later stage, a later session), OR it could have happened and has not. The box stays unchecked; compose a \`deferred_validations\` entry \`{task, why, when, where}\` for the Step 5.5 payload — \`why\` saying honestly which case it is. A task whose assertion is about state that exists only AFTER this step — the baseline after sync, the archived directory, or the archive emit — is DEFERRED here: this step precedes the sync and the move.
 
-Then check every case of the production below against \`tasks.md\` and the composed deferrals. An id-less or ungrouped marked task (cases 2 and 3) is REPORTED to the user, who gives it an id or a \`## \` group before the archive proceeds, or aborts; fix any other case in the composed deferrals yourself. This is a CHECKED MIRROR of the production \`orbit-archive-modifications\`' \`User-validation closure at the archive seam\` states once — no engine surface runs the write gate before the move, so the step carries the production itself:
+Then check every case of the production below against \`tasks.md\` and the composed deferrals. A marked task with no id, in no \`## \` group, or with an id another task line carries (cases 2, 3 and 8), or a \`tasks.md\` that cannot be read, is REPORTED to the user, who repairs \`tasks.md\` before the archive proceeds, or aborts; fix any other case in the composed deferrals yourself. This is a CHECKED MIRROR of the production \`orbit-archive-modifications\`' \`User-validation closure at the archive seam\` states once — no engine surface runs the write gate before the move, so the step carries the production itself:
 
 \`\`\`
 ${DEFERRAL_REFUSALS}

@@ -298,13 +298,23 @@ PR). Single-change \`/orbit:archive\` is the seam that flips.
 
 (Per \`orbit-archive-modifications\`' \`User-validation closure at the archive seam\`)
 
-For EACH confirmed change, before its fingerprint check, its Step 8a sync and its Step 8b move, run \`orbit-archive-change\`'s Step 3.2 for that change: dispose of every unchecked \`(User-validation\` task in its \`tasks.md\` as OBSERVED (check the box with a one-line evidence note) or DEFERRED (compose a \`deferred_validations\` entry \`{task, why, when, where}\` for that change's own archive run summary), and check each case of the production below — a CHECKED MIRROR of the owner's fence — against the composed deferrals. An id-less or ungrouped marked task (cases 2 and 3) is reported to the user, who fixes it or skips that change (record it as Skipped in the Step 9 summary) without stopping the rest of the batch.
+For EACH confirmed change, before its fingerprint check, its Step 8a sync and its Step 8b move, run \`orbit-archive-change\`'s Step 3.2 for that change: dispose of every unchecked \`(User-validation\` task in its \`tasks.md\` as OBSERVED (check the box with a one-line evidence note) or DEFERRED (compose a \`deferred_validations\` entry \`{task, why, when, where}\` for that change's own archive run summary), and check each case of the production below — a CHECKED MIRROR of the owner's fence — against the composed deferrals. A marked task with no id, in no group, or with an id another task line carries (cases 2, 3 and 8), or an unreadable \`tasks.md\`, is reported to the user, who repairs it or skips that change (record it as Skipped in the Step 9 summary) without stopping the rest of the batch.
 
 \`\`\`
 ${DEFERRAL_REFUSALS}
 \`\`\`
 
-Each inner archive emit is checked by the same write gate; a refusal after the move is repaired by re-running that change's \`orbit emit archive\`, never by repeating its sync or move. The Step 9 **Bulk Archive Complete** summary BRIEFS each change's dispositions — one line per task: the change, the task id, OBSERVED or DEFERRED and, for a deferral, its \`why\`. The brief reports; it does not prompt.
+BRIEF that change's dispositions in chat right there, BEFORE its sync and move — one line per task: the change, the task id, OBSERVED or DEFERRED and, for a deferral, its \`why\` — so a weak \`why\` reaches the user while the change is still active, and repeat them in the Step 9 **Bulk Archive Complete** summary. The brief reports; it does not prompt (halting that change stays the user's, by stopping the batch).
+
+## Per-change archive emit (rc10 — NEW step inside upstream Step 8, after 8b)
+
+After each change's Step 8b move, write that change's archive run summary exactly as \`orbit-archive-change\`'s Step 5.5 does — compose the payload its \`references/archive-summary-schema.md\` lists, carrying this change's \`consent\`, its fingerprint fields when its check produced any, and its Step 3.2 \`deferred_validations\` — and invoke:
+
+\`\`\`bash
+orbit emit archive --change <name> --payload <payload-file>
+\`\`\`
+
+The engine resolves the change's archived directory itself. Each emit is checked by the same write gate as a single archive's; a refusal after the move is repaired by re-running that change's \`orbit emit archive\`, never by repeating its sync or move.
 
 ## Per-change base-fingerprint check (C2 — NEW step inside upstream Step 8)
 
@@ -341,7 +351,7 @@ user's explicit choice, and record the per-change outcome in the Step 9 summary 
 
 (Per \`orbit-run-summary-emit\` capability)
 
-\`/orbit:bulk-archive\` is a wrapper around \`/orbit:archive\`; each inner \`/orbit:archive\` invocation emits its own \`archive-<TS>.json\` per the universal-spine convention. The outer \`/orbit:bulk-archive\` wrapper adds NO additional "what's next" signal and SHALL NOT emit a separate \`bulk-archive-<TS>.json\`.
+\`/orbit:bulk-archive\` is a wrapper around \`/orbit:archive\`; each archived change gets its own \`archive-<TS>.json\`, written by the per-change archive emit step above per the universal-spine convention. The outer \`/orbit:bulk-archive\` wrapper adds NO additional "what's next" signal and SHALL NOT emit a separate \`bulk-archive-<TS>.json\`.
 
 Downstream consumers see N \`archive-<TS>.json\` files (one per inner archive) and read each independently.`,
     license: 'MIT',

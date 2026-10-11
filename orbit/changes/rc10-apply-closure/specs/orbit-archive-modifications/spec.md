@@ -34,28 +34,31 @@ DEFERRAL REFUSALS — the archive write gate refuses each, naming the task or li
 5 a second deferral naming one task
 6 a deferral whose why, when or where is missing, not a string, or empty
 7 a deferral carrying a key other than task, why, when and where
-A missing tasks.md is an empty marked set. An empty deferred_validations array is accepted and written as absent.
+8 a marked unchecked task whose task id another task line also carries, checked or not, naming both lines
+A missing tasks.md is an empty marked set; any other failure to read it is refused, naming the error. An empty deferred_validations array is accepted and written as absent.
 ```
 
 The engine checks the id set, never whether the prose is true (R-crc-10). The completion readout
 SHALL print one line per deferral.
 
 Step 3.2 SHALL check each case of that production against the composed deferrals BEFORE the move,
-so a predictable refusal surfaces while the change is still active: an id-less or ungrouped marked
-task is reported to the user, who gives it an id or a group before the archive proceeds, or aborts.
+so a predictable refusal surfaces while the change is still active: a marked task with no id, in no
+group or with a duplicated id, or an unreadable tasks file, is reported to the user, who repairs
+`tasks.md` before the archive proceeds, or aborts.
 No engine surface runs the write gate before the move, so the archive body carries the production
 as a CHECKED MIRROR, held byte-equal to this fence by a parity test (R-crc-14's mirror corollary). When the emit
 still refuses after the move, the archive SHALL repair the payload and re-run `orbit emit archive`
 against the archived directory, never repeating the sync or the move.
 
-The bulk-archive workflow SHALL run Step 3.2 per change, before that change's sync and move, and
-brief each change's dispositions in its batch summary; each inner archive emit is checked by the
-same write gate. Its own task count SHALL exclude the marked tasks Step 3.2 owns, as upstream Step
+The bulk-archive workflow SHALL run Step 3.2 per change, before that change's sync and move, brief
+that change's dispositions there and again in its batch summary, and write each change's archive
+emit after its move, carrying its deferrals; each emit is checked by the same write gate. Its own task count SHALL exclude the marked tasks Step 3.2 owns, as upstream Step
 3's does, so a change whose only unchecked tasks carry the marker is never classed incomplete or
 offered for skipping.
 
-A task whose assertion is about the baseline after sync is DEFERRED at this step: the task check
-precedes the sync.
+A task whose assertion is about state that exists only after this step — the baseline after sync,
+the archived directory, or the archive emit — is DEFERRED at this step: the step precedes the sync
+and the move.
 
 **Named limit.** This capability provides no reader of a deferral after the archive. For a change
 citing an architecture stage, a deferred validation is usually one of the stage's exit criteria,
@@ -99,6 +102,12 @@ are its only surfaces.
   before any `## ` group heading
 - **THEN** Step 3.2 reports the line before the move, and `orbit emit archive` refuses it, naming
   the line
+
+#### Scenario: A task id two task lines carry is refused
+
+- **WHEN** `tasks.md` holds a checked `- [x] 1.1 (User-validation) …` and an unchecked
+  `- [ ] 1.1 (User-validation) …`, or two unchecked marked tasks both numbered `1.1`
+- **THEN** `orbit emit archive` refuses, naming the id and both lines, whatever the deferrals say
 
 #### Scenario: Step 3 no longer asks about validation tasks
 

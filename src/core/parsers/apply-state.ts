@@ -2,6 +2,7 @@ import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import { spawnSync } from 'node:child_process';
+import { createFenceTracker } from '../markdown-fence.js';
 
 /**
  * Apply-state helpers (D-arc Stage D5): checkbox arithmetic over tasks.md groups, and
@@ -28,6 +29,8 @@ export interface TaskGroup {
   /** Task ids (e.g. "9.6") of unchecked items when parseable from the text. */
   uncheckedIds: string[];
   checkedIds: string[];
+  /** rc10: raw text of each checked item (first line), so a refusal can quote the line. */
+  checkedTexts: string[];
 }
 
 export interface CheckboxState {
@@ -55,15 +58,14 @@ export function parseCheckboxes(content: string): CheckboxState {
   const lines = content.split(/\r?\n/);
   const groups: TaskGroup[] = [];
   let current: TaskGroup | null = null;
-  let inFence = false;
+  // rc10 (system walk, external W1): the engine's ONE CommonMark fence tracker, never a local
+  // toggle. A toggle on any run of three backticks closed a four-backtick fence early, so a real
+  // task after a fenced example read as fenced and vanished from every count and the archive check.
+  const fence = createFenceTracker();
   const ungroupedUncheckedTexts: string[] = [];
 
   for (const line of lines) {
-    if (/^\s*(`{3,}|~{3,})/.test(line)) {
-      inFence = !inFence;
-      continue;
-    }
-    if (inFence) continue;
+    if (fence.handle(line) || fence.inFence) continue;
 
     const header = line.match(GROUP_HEADER);
     if (header && line.startsWith('## ')) {
@@ -75,6 +77,7 @@ export function parseCheckboxes(content: string): CheckboxState {
         uncheckedTexts: [],
         uncheckedIds: [],
         checkedIds: [],
+        checkedTexts: [],
       };
       groups.push(current);
       continue;
@@ -92,6 +95,7 @@ export function parseCheckboxes(content: string): CheckboxState {
         if (id) current.uncheckedIds.push(id);
       } else {
         current.checked++;
+        current.checkedTexts.push(box[2]);
         if (id) current.checkedIds.push(id);
       }
     }

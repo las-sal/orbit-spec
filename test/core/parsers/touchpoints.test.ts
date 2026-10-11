@@ -89,3 +89,12 @@ describe('matching semantics', () => {
     expect(entrySatisfied(grouped, ['nope.ts'])).toBe(false);
   });
 });
+
+describe('parseTouchpoints fence grammar (rc10 system walk)', () => {
+  it('a three-backtick line inside a four-backtick fence does not close it', () => {
+    const design = '# Design\n\n````markdown\n```\n## Touchpoints\n- `fake.ts` — inside the example\n````\n\n## Touchpoints\n\n- `src/real.ts` — the real entry\n- `src/second.ts` — a second\n';
+    const p = parseTouchpoints(design);
+    expect(p.present).toBe(true);
+    expect(p.entries.map(e => e.targets)).toEqual([['src/real.ts'], ['src/second.ts']]);
+  });
+});

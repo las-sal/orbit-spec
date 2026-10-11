@@ -109,8 +109,13 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // the readout prints one line per deferral, and the schema reference documents `deferred_validations`;
   // bulk archive's Step 3b count excludes the same tasks and runs Step 3.2 per change. Their two function
   // hashes and two generated-skill hashes moved; no other pin did.
-  getArchiveChangeSkillTemplate: 'aca567ada39a2425ed7c8e9154a1d4188ddeaddbded44350a2ba1c617caefc9d',
-  getBulkArchiveChangeSkillTemplate: '2b9aeb85ab637703f70172cdcae9a309ec93d5a5ee0ea98d631c9a3ff6ab86d0',
+  // Moved a SECOND time at rc10's system walk (2026-10-11), a separate act: the DEFERRAL REFUSALS
+  // production gains case 8 (a duplicated task id) and the read-failure rule (external W2, W3); archive's
+  // Step 3.2 reports cases 2, 3 and 8 and widens its DEFERRED rule to post-move state (fresh S2); bulk
+  // archive briefs before each move and gains its per-change archive emit step (fresh W2, S1). The same
+  // four hashes moved; no other pin did.
+  getArchiveChangeSkillTemplate: '325dd7115deb6af3f2a9f913f641cc4303a4f538e62b3b6b3e881d25f87054ad',
+  getBulkArchiveChangeSkillTemplate: '5ba90cd976aa0dca445a1c06e5408a697dfd2712501003847ce0cae26fd4859e',
   getOrbitSyncCommandTemplate: '1067039e869d8dedf7922da46230b53a88253cf3fe27c7a5d60c96bc9a43453f',
   // rc06b-map-readers (2026-10-05) — verify moved DELIBERATELY, the first named edit to an upstream
   // portion under `orbit-conventions`' narrowed `Generated-file disposition`: step 6's test-tracing
@@ -188,8 +193,8 @@ const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
   'orbit-apply-change': '491bbad729e422441417760e937dfd15facaa5b1af64da61336732c7b66336b7', // rc17a apply: the v4 clause (see the function-hash note above)
   'orbit-ff-change': '77ea91cebd3be1e220824780ece9d90d82aa2f70783eedbf314a3298ec1f31e0',
   'orbit-sync-specs': '23adf56ababc77dac8dcc06048b4d74d27ded9bc4f49a57858e17c4ea7866a75',
-  'orbit-archive-change': '98195ad18a7e3c53c0aa96ea39327bcdf08b0faec2e598539fb29c6200ffab3f', // rc10-apply-closure task 2.8 (see the function-hash note above)
-  'orbit-bulk-archive-change': '6b718455b7102dcd515853de11ca9c80805841ca7f735285f859853bfe93d363', // rc10-apply-closure task 2.8 (see the function-hash note above)
+  'orbit-archive-change': '66d0677fef5a24b3adf473a82564a8c448b0f68b9af0c678d01ede3be49e0712', // rc10-apply-closure task 2.8, then its system walk (see the function-hash note above)
+  'orbit-bulk-archive-change': 'd226378d335f02e4fe28a3a2a8bbcefbb07162b489063660a0f1764d2965249e', // rc10-apply-closure task 2.8, then its system walk (see the function-hash note above)
   'orbit-verify-change': '06080070b8f2dfd4e3053c9143845095d0b80c6efcce286cc46e9de37dfe8ea8', // rc06b-map-readers (2026-10-05): moved with the body's step 6 edit, then again at system walk 2's additions edit (see the function-hash note above)
   'orbit-onboard': 'a2d4f3bc2b5fc3562fe264fcb291e0e280f988fe0a10be081a4770c32fe00e2f', // rc17b task 5.1 (see the function-hash note above)
   'orbit-propose': 'b3d4b3192d0848ce438fc06d4dfef6456e41a27c711ead02ad782405ffc9c8f3', // rc13c, then rc03b, then rc05's system walk, then rc09a's size brief (task 5.3) and its system walk: moved with the body (see the function-hash notes above)

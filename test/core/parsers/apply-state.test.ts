@@ -153,3 +153,18 @@ describe('git diff-base helpers', () => {
     fs.rmSync(path.join(repo, 'staged-add.txt'));
   });
 });
+
+describe('parseCheckboxes fence grammar (rc10 system walk, external W1)', () => {
+  it('a three-backtick line inside a four-backtick fence does not close it; tasks after the real close all count', () => {
+    const s = parseCheckboxes('## 1. G\n\n````markdown\n```\n- [ ] 9.9 inside the example\n````\n\n- [ ] 1.1 a\n- [x] 1.2 b\n- [ ] 1.3 c\n');
+    expect(s.tasksRemaining).toBe(2);
+    expect(s.tasksCompleted).toBe(1);
+    expect(s.groups[0].uncheckedIds).toEqual(['1.1', '1.3']);
+    expect(s.groups[0].checkedTexts).toEqual(['1.2 b']);
+  });
+
+  it('a tilde fence is closed only by tildes', () => {
+    const s = parseCheckboxes('## 1. G\n\n~~~\n```\n- [ ] 9.9 inside\n~~~\n- [ ] 1.1 a\n');
+    expect(s.groups[0].uncheckedIds).toEqual(['1.1']);
+  });
+});

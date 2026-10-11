@@ -1,4 +1,5 @@
 import * as fs from 'node:fs';
+import { createFenceTracker } from '../markdown-fence.js';
 
 /**
  * Touchpoints ENTRY GRAMMAR (D-arc Stage D5, orbit-propose-modifications — authored
@@ -57,15 +58,13 @@ export function parseTouchpoints(content: string): TouchpointsParse {
   const lines = content.split(/\r?\n/);
   const result: TouchpointsParse = { present: false, entries: [], malformed: [] };
   let inSection = false;
-  let inFence = false;
+  // rc10 (system walk): the engine's ONE CommonMark fence tracker, never a local toggle — the same
+  // repair `parseCheckboxes` took, for the same reason (a three-backtick line closed a four-backtick fence).
+  const fence = createFenceTracker();
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
-    if (/^\s*(`{3,}|~{3,})/.test(line)) {
-      inFence = !inFence;
-      continue;
-    }
-    if (inFence) continue;
+    if (fence.handle(line) || fence.inFence) continue;
 
     if (/^##\s+Touchpoints\s*$/.test(line)) {
       inSection = true;

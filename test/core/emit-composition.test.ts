@@ -2464,6 +2464,32 @@ describe('archive deferred_validations (rc10)', () => {
     expect(() => archive({ deferred_validations: [deferral('4.4')] })).toThrow(/4\.4 \(User-validation\) observe it' carries the \(User-validation marker outside every '## ' task group/);
   });
 
+  it('reads a real task after a four-backtick fence that holds a three-backtick line (the shared fence tracker)', () => {
+    tasks('## 1. Validation\n\n````markdown\n```\n````\n\n- [ ] 1.1 (User-validation) Real validation\n- [ ] 1.2 (User-validation) A second one\n');
+    expect(() => archive({})).toThrow(/'1\.1' has no deferral/);
+    expect(() => archive({ deferred_validations: [deferral('1.1')] })).toThrow(/'1\.2' has no deferral/);
+    expect(() => archive({ deferred_validations: [deferral('1.1'), deferral('1.2')] })).not.toThrow();
+  });
+
+  it('refuses a tasks.md it cannot read, naming the error; only a missing file is an empty marked set', () => {
+    fs.mkdirSync(path.join(root, ARCHIVED, 'tasks.md'), { recursive: true });
+    expect(() => archive({})).toThrow(/cannot read .*tasks\.md \(EISDIR/);
+    expect(listRuns(`${ARCHIVED}/.orbit-runs`)).toEqual([]);
+  });
+
+  // @scenario behaviour orbit-archive-modifications :: User-validation closure at the archive seam :: A task id two task lines carry is refused
+  it('refuses a marked unchecked task whose id another task line carries, naming both lines', () => {
+    tasks('## 1. G\n\n- [x] 1.1 (User-validation) Observed\n- [ ] 1.1 (User-validation) Still pending\n');
+    expect(() => archive({ deferred_validations: [deferral('1.1')] })).toThrow(
+      /task id '1\.1' is carried by 2 task lines \('- \[x\] 1\.1 \(User-validation\) Observed', '- \[ \] 1\.1 \(User-validation\) Still pending'\)/
+    );
+    tasks('## 1. G\n\n- [ ] 1.1 (User-validation) One\n- [ ] 1.1 (User-validation) Two\n');
+    expect(() => archive({ deferred_validations: [deferral('1.1')] })).toThrow(/task id '1\.1' is carried by 2 task lines/);
+    // An UNMARKED duplicate is outside the closure: the rule keys on marked unchecked tasks.
+    tasks('## 1. G\n\n- [x] 1.1 done\n- [ ] 1.1 again\n');
+    expect(() => archive({})).not.toThrow();
+  });
+
   it('does not read a marked line inside a fence', () => {
     tasks('# Tasks\n\n## 1. Group\n\n- [x] 1.1 done\n\n```\n- [ ] 4.4 (User-validation) an example\n```\n');
     expect(() => archive({})).not.toThrow();

@@ -332,7 +332,8 @@ describe("Emit scope's body-side scenarios (rc06b system walk 1)", () => {
   it('bulk-archive instructs no emit of its own and names the inner archive emits', () => {
     const body = getBulkArchiveChangeSkillTemplate().instructions;
     expect(body).not.toMatch(/orbit emit bulk-archive/);
-    expect(body).toContain('each inner `/orbit:archive` invocation emits its own `archive-<TS>.json`');
+    // rc10 system walk (fresh W2): the body now names the step that writes each change's emit.
+    expect(body).toContain('each archived change gets its own `archive-<TS>.json`, written by the per-change archive emit step above');
     expect(body).toContain('SHALL NOT emit a separate `bulk-archive-<TS>.json`');
   });
 

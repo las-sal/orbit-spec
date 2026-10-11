@@ -953,10 +953,15 @@ function validateDeferredValidationsShape(command: string, payload: Record<strin
 
 function checkDeferredValidations(changeDir: string, payload: Record<string, unknown>): void {
   let content = '';
+  const tasksPath = path.join(changeDir, 'tasks.md');
   try {
-    content = fs.readFileSync(path.join(changeDir, 'tasks.md'), 'utf-8');
-  } catch {
-    // A missing tasks.md is an empty marked set.
+    content = fs.readFileSync(tasksPath, 'utf-8');
+  } catch (e) {
+    // A MISSING tasks.md is an empty marked set; any other read failure is refused, because
+    // treating it as empty would let the archive skip the closure it exists to check.
+    if ((e as NodeJS.ErrnoException).code !== 'ENOENT') {
+      throw new EmitError(`cannot read ${tasksPath} (${(e as Error).message}) — the user-validation closure check needs it.`);
+    }
   }
   const boxes = parseCheckboxes(content);
   const deferrals: Array<{ task: string }> = Array.isArray(payload.deferred_validations)
@@ -965,6 +970,24 @@ function checkDeferredValidations(changeDir: string, payload: Record<string, unk
   const deferred = new Set(deferrals.map(d => d.task.trim()));
 
   const checked = new Set(boxes.groups.flatMap(g => g.checkedIds));
+  // Case 8: a marked unchecked task's id must name ONE task line, or no deferral can key it.
+  const linesById = new Map<string, string[]>();
+  for (const g of boxes.groups) {
+    for (const [mark, texts] of [['x', g.checkedTexts], [' ', g.uncheckedTexts]] as const) {
+      for (const text of texts) {
+        const id = taskIdOf(text);
+        if (id !== null) linesById.set(id, [...(linesById.get(id) ?? []), `- [${mark}] ${text}`]);
+      }
+    }
+  }
+  for (const g of boxes.groups) {
+    for (const text of g.uncheckedTexts) {
+      const id = taskIdOf(text);
+      if (id !== null && text.includes(UV_MARKER) && (linesById.get(id) ?? []).length > 1) {
+        throw new EmitError(`task id '${id}' is carried by ${linesById.get(id)!.length} task lines (${linesById.get(id)!.map(l => `'${l}'`).join(', ')}) — a ${UV_MARKER} task needs an id no other line carries.`);
+      }
+    }
+  }
   const markedUnchecked = new Set<string>();
   const uncheckedUnmarked = new Set<string>();
   for (const g of boxes.groups) {

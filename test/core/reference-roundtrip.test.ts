@@ -209,6 +209,7 @@ function mutate(content: string, from: string, to: string): string {
 
 describe('payload schema references are proven by execution (rc07b)', () => {
   for (const [command, template, refName] of REFERENCES) {
+    // @scenario behaviour orbit-emit-composition :: Payload schema references are proven by execution :: Each scope word is exercised
     it(`${command}: every \`json example\` in ${refName} is accepted by the write gate in every scope it names, and jointly covers its block`, () => {
       const content = referenceContent(template, refName);
       expect(content, `${command} is missing references/${refName}`).toBeDefined();
@@ -233,6 +234,7 @@ describe('payload schema references are proven by execution (rc07b)', () => {
     expect(GENRE_DEPENDENT).toEqual(['verification']);
   });
 
+  // @scenario behaviour orbit-emit-composition :: Payload schema references are proven by execution :: Each scope word is exercised
   it('the audit-drift example runs in BOTH scopes its info string names (change, project)', () => {
     const a = analyze('audit-drift', real('audit-drift', 'run-summary-schema.md'));
     expect(a.examples.map((e) => e.scopes)).toEqual([['change', 'project']]);
@@ -241,6 +243,7 @@ describe('payload schema references are proven by execution (rc07b)', () => {
   // @scenario behaviour orbit-archive-modifications :: Archive run summary written :: Summary contents
   // @scenario behaviour orbit-archive-modifications :: Archive run summary written :: Consent recorded in the summary
   // @scenario behaviour orbit-archive-modifications :: Archive summary schema reference ships with the skill :: The deferral record is documented in the shipped reference
+  // @scenario behaviour orbit-emit-composition :: Payload schema references are proven by execution :: The archive example runs against an archived target with a seeded trail
   it('the archive example runs against an archived target with a seeded trail', () => {
     const a = analyze('archive', real('archive', 'archive-summary-schema.md'));
     expect(a.examples.map((e) => e.scopes)).toEqual([['archived']]);
@@ -259,16 +262,19 @@ describe('negative: each failure is built from a mutated copy of a REAL referenc
   const AUDIT = () => real('audit-drift', 'run-summary-schema.md');
   const auditExampleModel = '  "model": "claude-opus-5-5"\n}\n```';
 
+  // @scenario behaviour orbit-emit-composition :: Payload schema references are proven by execution :: A refused example fails by execution
   it('a refused key fails by execution, carrying the gate\'s `unknown payload key` text', () => {
     const mutated = mutate(AUDIT(), auditExampleModel, '  "depth": "full",\n' + auditExampleModel);
     expect(() => roundTrip('audit-drift', 'audit-drift', mutated)).toThrow(/unknown payload key 'depth' for 'audit-drift'/);
   });
 
+  // @scenario behaviour orbit-emit-composition :: Payload schema references are proven by execution :: An engine-owned key in the example is refused, not stripped
   it('an engine-owned `next_recommended` in the example is refused as engine-owned — nothing is stripped', () => {
     const mutated = mutate(AUDIT(), auditExampleModel, '  "next_recommended": "x",\n' + auditExampleModel);
     expect(() => roundTrip('audit-drift', 'audit-drift', mutated)).toThrow(/payload field 'next_recommended' is engine-owned/);
   });
 
+  // @scenario behaviour orbit-emit-composition :: Payload schema references are proven by execution :: An unknown scope word fails the test
   it('an unknown scope word fails naming the opening line; the example is not submitted', () => {
     const mutated = mutate(AUDIT(), '```json example change project', '```json example archive-dir');
     expect(() => analyze('audit-drift', mutated)).toThrow(/block at line \d+ \(`{4}json example archive-dir`\).*unknown scope word archive-dir/);
@@ -279,6 +285,7 @@ describe('negative: each failure is built from a mutated copy of a REAL referenc
     expect(() => analyze('audit-drift', mutated)).toThrow(/unknown scope word \(none\)/);
   });
 
+  // @scenario behaviour orbit-emit-composition :: Payload schema references are proven by execution :: A schema block without an example fails
   it('a schema block with no example fails naming the reference', () => {
     const content = AUDIT();
     const start = content.indexOf('```json example change project');
@@ -287,6 +294,7 @@ describe('negative: each failure is built from a mutated copy of a REAL referenc
     expect(() => analyze('audit-drift run-summary-schema.md', mutated)).toThrow(/^audit-drift run-summary-schema\.md: schema block at line \d+ .* has no `json example` block/);
   });
 
+  // @scenario behaviour orbit-emit-composition :: Payload schema references are proven by execution :: A documented field missing from every example fails
   it('a documented key absent from every example fails naming the key and the block', () => {
     const content = AUDIT();
     const from = content.slice(content.indexOf('  "stale_suppressed": [\n    { "category": "2"'));
@@ -295,6 +303,7 @@ describe('negative: each failure is built from a mutated copy of a REAL referenc
     expect(() => roundTrip('audit-drift', 'audit-drift', mutated)).toThrow(/documented key 'stale_suppressed' is carried by no example of schema block at line \d+/);
   });
 
+  // @scenario behaviour orbit-emit-composition :: Payload schema references are proven by execution :: An example attaches to the nearest preceding schema block
   it('an example attaches to the NEAREST PRECEDING block: a key both review blocks document, carried only by the change-mode example, fails naming the architecture block', () => {
     // `findings` is documented by BOTH review blocks. Dropped from the architecture-mode example
     // (its scorecard zeroed so the gate's rollup still agrees), a coverage check POOLED across the
@@ -319,6 +328,7 @@ describe('negative: each failure is built from a mutated copy of a REAL referenc
     expect(message).toContain(`documented key 'findings' is carried by no example of schema block at line ${archLine}`);
   });
 
+  // @scenario behaviour orbit-emit-composition :: Payload schema references are proven by execution :: A genre-dependent key is exempt by name, and only by name
   it('omitting `verification` passes (genre-dependent, exempt by name); omitting a key NOT on the list fails', () => {
     const content = real('review', 'run-summary-schema.md');
     // The real tree omits `verification` and passes (asserted by the review round trip above).
