@@ -1,0 +1,133 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-11T23:40:21Z",
+  "change": "report-archived-change",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 2
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "tasks.md",
+      "line": 9,
+      "title": "The production caller src/commands/emit.ts is missing from the renderReport signature change",
+      "recommendation": "D4 changes renderReport's signature, but its callers are status.ts, src/commands/emit.ts:97 (the `orbit emit review --render` path, renderReport('.', changeName)), test/core/report-render.test.ts, test/core/report-render-hardening.test.ts and test/core/canonical-examples.test.ts:180. Task 2.2 names only 'tests and canonical-examples.test.ts', and neither proposal Impact nor design Touchpoints lists emit.ts or the hardening suite. Add emit.ts (it resolves active only: a review emit never targets an archived change, so it passes { changeDir: active, archived: false }) and the hardening test to task 2.2, Impact and Touchpoints.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Keep D4's required argument; list emit.ts and report-render-hardening.test.ts in task 2.2, Impact and Touchpoints."
+        },
+        {
+          "label": "B",
+          "body": "Make the resolved location an optional argument defaulting to the active directory, so emit.ts and the existing tests need no edit; state the default in D4."
+        }
+      ]
+    },
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/specs/orbit-report-rendering/spec.md",
+      "line": 238,
+      "title": "An uncarried baseline scenario still says the tail carries an eligibility line on every render",
+      "recommendation": "`Strict input validation`'s scenario 'A prior-generation self pointer renders' ends 'the tail's eligibility line is the gate's canonical next, computed at render time'. The 152 prior-generation self-pointer emits are the archived ones this change makes renderable, and on an archived change the delta's tail has no eligibility line, so the scenario is false in letter for its main population once this lands. Either carry `Strict input validation` as a fourth MODIFIED block (one capability, four requirements, well inside the ceiling) and qualify the THEN ('on an active change'), or add a sentence to the Render-time requirement's archived clause saying it overrides every other requirement's statement of the tail. Count the carried block's scenarios in task 3.3 if you carry it."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-report-rendering/spec.md",
+      "line": 75,
+      "title": "The Archived: line's path separator is unstated, and CI runs on Windows",
+      "recommendation": "The requirement says '<the archived directory, repo-relative, no trailing slash>' and the scenario shows forward slashes, but `path.relative` gives backslashes on Windows, and .github/workflows/ci.yml runs a windows-latest job. One implementer prints path.relative's output and the golden in task 3.2 fails on Windows; another normalises. State 'with `/` separators on every platform' in the requirement (the engine already does this elsewhere: emit-composition.ts:407 `.split(path.sep).join('/')`), and have task 2.2 compose it that way."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "design.md",
+      "line": 33,
+      "title": "The miss error does not say what happens when there are no active changes",
+      "recommendation": "D5 says the message is 'followed by the available active changes as today', but today's validateChangeExists has two forms: one listing the available changes, and 'No changes exist. Create one with: orbit new change <name>' when there are none. Name which suffix the double-miss error carries when no active change exists, so task 2.1's test can pin it."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "design.md",
+      "line": 23,
+      "title": "The shared resolver does not bring the emit surface's containment check with it",
+      "recommendation": "Every caller of findArchivedDir in emit-composition.ts follows it with assertContained(archived, <archive root>, ...), which stops a symlinked archive entry from pointing outside the project. D1 moves only findArchivedDir, so the report's archived path skips that check. It is read-only, so the risk is small, but D1's 'one rule, not two' reasoning points toward moving the containment check into the shared module or calling it from the report too. Decide which and record it in D1."
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 1202,
+      "title": "Nothing in the change closes Q-crc-26, which still says --report cannot target an archived change",
+      "recommendation": "The program doc's Open questions entry Q-crc-26 states the defect as live and names its owner as 'whichever stage next touches orbit-report-rendering'. This change resolves it but plans no edit. Without one, the doc reads as false after apply and a later stage could take Q-crc-26 up again. Add an at-archive task that marks Q-crc-26 RESOLVED, naming this change."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "proposal.md",
+      "line": 3,
+      "title": "The Why cites D-rc12-1, which no tracked file defines",
+      "recommendation": "`git grep D-rc12` matches only this proposal; the rc12 stage section of clean-up-review-cycle.md (line 3107) carries no decision ids and no staging explore exists. Cite where the dogfood decision is actually recorded, or drop the id. Separately, the 'over thirty archived changes whose passes no reader can render' line could say that five archived changes' newest pass will still fail by design at the pre-capability (D4-generation) boundary: measured over every archived trail, 256 renderable passes normalise and 53 fail, every one at that boundary."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "What I probed: the proposal's feasibility claim. On every archived trail I ran normalisation, same-mode ordering and pass-genre computation against the archived directory in place (the delta's 'sections above the tail render exactly as active' claim). All 256 D4-generation passes went through cleanly. The internal spine check composes the self pointer from the emit's change field, so archived emits validate unchanged, as design.md's Context says. The design is small and well contained; every finding is a gap at the edges (callers, separators, error suffixes, one baseline sentence the new tail falsifies), and none touches the mechanism. One read to disclose: a grep for the marker token over the change directory printed three lines of this cycle's external prompt file. It is a prompt, not a pass, and it carries no findings.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The mechanism is sound, and an execution check over every archived trail backs it. The open items are bookkeeping and precision at the edges. The emit.ts caller and the Windows separator would surface at build or CI time rather than as silent divergence. The uncarried baseline scenario and the Q-crc-26 closure are each a one-edit repair that a walk can make without new mechanism."
+  },
+  "final_assessment": "0 critical, 4 warning, 3 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews report-archived-change"
+}
