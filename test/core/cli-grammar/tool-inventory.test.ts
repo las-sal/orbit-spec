@@ -13,7 +13,7 @@ import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import MarkdownIt from 'markdown-it';
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it } from 'vitest';
 import { createFenceTracker } from '../../../src/core/markdown-fence.js';
 import { recordedTools } from '../../helpers/recorded-sweep.js';
 import {
@@ -291,6 +291,18 @@ describe('the head production', () => {
     expect(headsOf(`${FENCE}bash\n# jq -r .x\njq -r $(cat x)\n\n${FENCE}\n\nSee \`\`jq -r .x\`\`.\n`)).toEqual([]);
   });
 
+  it('reads a test word and a placeholder as heads in a fence', () => {
+    expect(headsOf(`${FENCE}bash\n[ -f x ] && <argv[0]> --flag\n${FENCE}\n`).map((h) => h.head)).toEqual(['[', '<argv[0]>']);
+  });
+
+  it('reads a head in a shell fence nested in a blockquote', () => {
+    expect(headsOf(`> Note\n>\n> ${FENCE}bash\n> jq -r .x\n> ${FENCE}\n`)).toEqual([{ line: 4, head: 'jq', source: 'fence' }]);
+  });
+
+  it('reads each line of a backslash continuation as its own command', () => {
+    expect(headsOf(`${FENCE}bash\norbit status \\\n  --change x --json\n${FENCE}\n`).map((h) => h.head)).toEqual(['orbit', '--change']);
+  });
+
   it('reads nothing outside a shell fence: a json or untagged fence', () => {
     expect(headsOf(`${FENCE}json\njq -r .x\n${FENCE}\n\n${FENCE}\njq -r .x\n${FENCE}\n`)).toEqual([]);
   });
@@ -304,18 +316,27 @@ describe('the tool inventory', () => {
     expect(sweep(generatedSurfaces())).toEqual([]);
   });
 
-  it('the recorded tools are derived: orbit plus the recorded-contract sweep', () => {
-    expect(recordedHeads()).toEqual(['orbit', 'git', 'gh']);
+  it('the recorded tools are derived: orbit, then exactly the recorded-contract sweep\'s tools', () => {
+    const heads = recordedHeads();
+    expect(heads[0]).toBe('orbit');
+    expect(heads.slice(1)).toEqual(recordedTools().map((t) => t.tool));
   });
 
-  it('is not vacuous: every head of explore Case 2 is read', () => {
+  it('a head gains standing by being recorded, with nothing in the inventory edited', () => {
+    const injected = withInlineSpan('jq -r .url <path>');
+    const heads = analyseHeads(withSurface(injected.surface));
+    const inventory = readInventory(inventorySource(repo));
+    expect(inventoryFailures(heads, recordedHeads(), inventory)).toHaveLength(1);
+    expect(inventoryFailures(heads, [...recordedHeads(), 'jq'], inventory)).toEqual([]);
+  });
+
+  // The floor names only what the sweep cannot itself hold: the declared heads are held read by the
+  // exactness rule above, so an exemption leaves with its last use and the floor never pins it.
+  it('is not vacuous: the recorded tools are read where explore Case 2 measured them', () => {
     const heads = analyseHeads(generatedSurfaces());
-    const read = new Set(heads.map((h) => h.head));
-    for (const head of ['orbit', 'git', 'gh', 'mv', 'mkdir', '[', 'grep', 'rm', 'rmdir', 'cd', '<argv[0]>', 'command', 'tail', 'head', 'node', 'sh', 'argument', 'reach', 'skipped', 'unknown']) {
-      expect(read.has(head), head).toBe(true);
-    }
-    expect(heads.filter((h) => h.head === 'gh' && h.source === 'inline').length).toBeGreaterThanOrEqual(15);
     expect(heads.filter((h) => h.head === 'orbit' && h.source === 'fence').length).toBeGreaterThanOrEqual(48);
+    expect(heads.filter((h) => h.head === 'git' && h.source === 'fence').length).toBeGreaterThanOrEqual(14);
+    expect(heads.filter((h) => h.head === 'gh' && h.source === 'inline').length).toBeGreaterThanOrEqual(15);
   });
 });
 
@@ -425,8 +446,14 @@ describe('the exemption block reader', () => {
     expect(failures[0]).toContain(message);
   });
 
+  const roots: string[] = [];
+  afterAll(() => {
+    for (const dir of roots) fs.rmSync(dir, { recursive: true, force: true });
+  });
+
   function root(specs: Record<string, string>): string {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'orbit-inventory-'));
+    roots.push(dir);
     for (const [rel, text] of Object.entries(specs)) {
       fs.mkdirSync(path.dirname(path.join(dir, rel)), { recursive: true });
       fs.writeFileSync(path.join(dir, rel), text);

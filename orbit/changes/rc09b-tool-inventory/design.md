@@ -36,7 +36,7 @@ and `command` are declared utilities.
 ## Decisions
 
 **D1 — one head walk over the extractor's own parse.** Add an exported `analyseHeads(surfaces)` to
-`surface-snippets.ts` that walks the same markdown-it tokens as `walkText`: shell fences (list-nested and
+`surface-snippets.ts` that walks the same markdown-it tokens as `walkText`: shell fences (list-, blockquote- and
 markdown-nested included), the quote-joining loop of `extractFenceLines`, and single-backtick inline spans through
 `tokenize`. It returns `{surface, line, head, source}` per read segment. A refused or open line yields no head and no
 failure of its own: a refused SHELL-FENCE line is already reported by every sweep, because `extractFenceLines` fails it

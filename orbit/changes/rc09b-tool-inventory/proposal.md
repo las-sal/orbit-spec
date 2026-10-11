@@ -13,7 +13,7 @@ therefore also reads inline segments that carry a flag (D-rc09b-1).
 ## What Changes
 
 - A new test, the TOOL INVENTORY, reads every command head on the generated surface: each segment of a shell-fence
-  line (list-nested and markdown-nested fences included), and each segment of a single-backtick inline span whose head
+  line (list-, blockquote- and markdown-nested fences included), and each segment of a single-backtick inline span whose head
   is a lowercase bare word and which carries a flag token. A head that is not a recorded tool and not on the declared
   exemption list FAILS the suite, naming the surface, the line and the head.
 - The recorded tools are DERIVED, never listed: `orbit` (its program) plus every tool the recorded-contract sweep

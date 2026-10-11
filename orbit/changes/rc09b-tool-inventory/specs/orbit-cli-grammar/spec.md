@@ -19,12 +19,13 @@ The inventory reads a segment's HEAD: its first token after any assignment prefi
 
 | member | covered by |
 |---|---|
-| a segment of a line in a fence whose info string is `bash`, `sh` or `shell`, top-level or nested in a list item | read |
+| a segment of a line in a fence whose info string is `bash`, `sh` or `shell`, top-level or nested in a list item or a blockquote | read |
 | a segment of a line in a shell fence inside a `markdown` or `md` fence | read, as the extractor parses the outer fence's content again |
 | a segment of a single-backtick inline span, whose head matches `^[a-z][a-z0-9._-]*$` and some later token of which is a FLAG TOKEN, matching `^--?[A-Za-z0-9]` | read |
 | an inline segment carrying no flag token, or whose head is not a lowercase bare word (a path, a `/orbit:` slash command, capitalised prose) | not read |
 | a shell-fence line or inline span the tokenizer refuses or leaves open | not read: an extraction failure of the shared extractor where it fails one |
 | a comment or blank fence line | not read |
+| a shell-fence line continued by a trailing `\` | each line read as its own command: a continuation line's first token is its head, so a continuation beginning with a flag fails as an unknown head; write the command on one line, never declare the flag |
 | a line in a `json`, untagged or other data-tagged fence, or prose outside every span | not read |
 | a subshell, `( … )` | its grouping is stripped by the tokenizer; each inner segment's head is read |
 | a brace group (`{ …; }`), a reserved word (`if`, `then`, `fi`, …) or a `!` or `time` prefix | read as the head as written (`{`, `if`, `!`), so it fails until declared under `utility`; the tokenizer strips no other grouping |

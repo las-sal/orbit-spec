@@ -2968,6 +2968,11 @@ tool. The residual is BOUNDED and stated: a tool invoked only in an inline span.
 Exit: (2) as REVISED (R-crc-12's first case): a new command head on the generated surface fails the suite, naming surface
 and line, until a contract or a declared exemption covers it.
 
+Widened 2026-10-11 (D-rc09b-1, at exploration): the inventory reads FLAGGED inline segments as well as shell fences,
+because every `gh` invocation on the surface is inline (D-rc09b-2), so the charter's residual sentence above no longer
+holds. The residual's owner is the named limit of `orbit-cli-grammar`'s `Every command head on the generated surface is
+a recorded tool or a declared exemption`.
+
 ### Stage rc10-apply-closure — the end-to-end run precedes the archive
 
 Depends-on: rc06a-scenario-map
