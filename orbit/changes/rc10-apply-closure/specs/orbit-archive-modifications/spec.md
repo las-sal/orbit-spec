@@ -22,25 +22,37 @@ named edit to an upstream portion, per `orbit-conventions`' `Generated-file disp
 every other unchecked task still prompts there unchanged.
 
 `orbit emit archive` SHALL read the archived `tasks.md` with the reader the apply emit's
-`user_validation_tasks` check uses, and REFUSE, naming the task or line: an emit that leaves an
-unchecked marked task with no deferral; a marked unchecked task with no task id, which no deferral
-can key; a marked unchecked line the reader places in no `## ` task group, which the reader cannot
-see; a deferral naming a checked task, an unchecked task without the marker, or no task; a second
-deferral for one task; a deferral whose `why`, `when` or `where` is missing, not a string, or
-empty; and a deferral key other than those four. A missing `tasks.md` is an empty marked set, so a
-deferral against it names no task. An empty `deferred_validations` array is accepted and written
-as absent. The engine checks the id set, never whether the prose is true (R-crc-10). The completion
-readout SHALL print one line per deferral.
+`user_validation_tasks` check uses, and REFUSE every case of the production below, naming the task
+or line. The production is the ONE statement of the refusals:
 
-Step 3.2 SHALL run the same checks against the composed deferrals BEFORE the move, so a predictable
-refusal surfaces while the change is still active: an id-less or ungrouped marked task is reported
-to the user, who gives it an id or a group before the archive proceeds, or aborts. When the emit
+```
+DEFERRAL REFUSALS — the archive write gate refuses each, naming the task or line, and Step 3.2 checks each before the move:
+1 an unchecked task carrying the (User-validation marker, with no deferral naming it
+2 a marked unchecked task with no task id, which no deferral can key
+3 a marked unchecked line the reader places in no ## task group, found by a fence-aware line scan the reader's set lacks
+4 a deferral naming a checked task, an unchecked task without the marker, or no task
+5 a second deferral naming one task
+6 a deferral whose why, when or where is missing, not a string, or empty
+7 a deferral carrying a key other than task, why, when and where
+A missing tasks.md is an empty marked set. An empty deferred_validations array is accepted and written as absent.
+```
+
+The engine checks the id set, never whether the prose is true (R-crc-10). The completion readout
+SHALL print one line per deferral.
+
+Step 3.2 SHALL check each case of that production against the composed deferrals BEFORE the move,
+so a predictable refusal surfaces while the change is still active: an id-less or ungrouped marked
+task is reported to the user, who gives it an id or a group before the archive proceeds, or aborts.
+No engine surface runs the write gate before the move, so the archive body carries the production
+as a CHECKED MIRROR, held byte-equal to this fence by a parity test (R-crc-14's mirror corollary). When the emit
 still refuses after the move, the archive SHALL repair the payload and re-run `orbit emit archive`
 against the archived directory, never repeating the sync or the move.
 
 The bulk-archive workflow SHALL run Step 3.2 per change, before that change's sync and move, and
 brief each change's dispositions in its batch summary; each inner archive emit is checked by the
-same write gate.
+same write gate. Its own task count SHALL exclude the marked tasks Step 3.2 owns, as upstream Step
+3's does, so a change whose only unchecked tasks carry the marker is never classed incomplete or
+offered for skipping.
 
 A task whose assertion is about the baseline after sync is DEFERRED at this step: the task check
 precedes the sync.
@@ -98,8 +110,9 @@ are its only surfaces.
 
 - **WHEN** `/orbit:bulk-archive` archives a batch in which one change carries an unchecked
   `(User-validation` task
-- **THEN** that change's Step 3.2 runs before its sync and move, its dispositions appear in the
-  batch summary, and its archive emit carries its deferrals
+- **THEN** the change is not classed incomplete for that task, its Step 3.2 runs before its sync
+  and move, its dispositions appear in the batch summary, and its archive emit carries its
+  deferrals
 
 ## MODIFIED Requirements
 
