@@ -17,7 +17,7 @@ engine-parsed section of a change artifact.
 
 **Goals:**
 - Compute R-crc-1's four figures for any active change, deterministically and without a diff dependency.
-- Report a breach without blocking it: `--strict` fails only on an undeclared one (D-rc09-4).
+- Report a breach without blocking it; what `--strict` fails on is stated once, in `Validate reports each breach as declared or undeclared` (D-rc09-4).
 - Give the declaration one grammar, stated once, mirrored into the propose body for adopters.
 - Retire `orbit-engine-gates`' promise of a size-proximity computation.
 
@@ -27,6 +27,8 @@ engine-parsed section of a change artifact.
 - Size proximity, or any effect of size on a gate, the position readout or the canonical next (D-rc09-8, R-crc-13).
 - Sizing archived changes. Validate never reads them, and the exploration's probe did that once.
 - The external-tool inventory (rc09b-tool-inventory) and the generalized spike (D-rc09-11; Q-crc-33).
+- A size brief at `/orbit:ff` or `/orbit:continue`. The charter names propose; a change those create over the ceiling
+  hears about it from `orbit validate <change> --strict`.
 
 ## Decisions
 
@@ -52,11 +54,15 @@ and the WARNING would exist only in `--json`.
 **D4 — Status computes `size` at the command layer.** `src/commands/workflow/status.ts` adds `size` to the change's
 JSON output and the `Size:` line to `printStatusText`. `formatChangeStatus` (`instruction-loader.ts`) is NOT
 changed: orientation, the boot render and the gate computation consume `ChangeStatus`, and size must reach none of
-them (the requirement's "never moves a gate"). The human line prints figures alone and names each breach. It shows
+them (the requirement's "never moves a gate"). The field rides the plain change status only; the `--boot`,
+`--scenarios` and `--report` renders return before it is composed, and the requirement says so. A read failure nulls
+its figure and is listed in `size.errors`; status never throws for size. The human line prints figures alone and names each breach. It shows
 no ratio, following rc02c's rule that a ratio is a verdict wearing a figure's clothes.
 
-**D5 — The propose brief runs after generation, before the completion emit, in both modes.** The propose body gets
-a step after artifact generation. It reads `size` from status JSON and follows the four-row table in `Size brief
+**D5 — The propose brief runs after generation and validation, before Step 0d's move, the PR choreography's Phase 3
+and the completion emit, in both modes.** The propose body gets a step after artifact generation; a declaration it
+writes is therefore inside what Phase 3 commits. On Split, the split recommendation replaces the completion prompt to
+review; the emit is still written. It reads `size` from status JSON and follows the four-row table in `Size brief
 after generation`. Split and declare are asked with `AskUserQuestion`. The `## Size` production is interpolated
 from one exported constant in `change-size.ts`. A parity test holds that constant byte-equal to the fence in
 `orbit-change-size`'s declaration requirement, and holds the rendered propose skill to the same text (R-crc-14's
@@ -67,9 +73,18 @@ changed_bytes: 40960, tasks: 19}`, under a comment block in the style of `scenar
 These are R-crc-1's figures read as exact maxima (D-rc09-5). Turning the check on this repo is what makes the next
 stage's proposal the first one sized by the engine.
 
-**D7 — A narrowing from the exploration, recorded.** D-rc09-7's Mechanism entry said a second `## Size` heading
-"merges with the first, with a note". The requirement keeps the merge and drops the note: a note would be a fourth
-issue kind with no consumer, and a repeated heading declares nothing new.
+**D7 — Two narrowings from the exploration, recorded.** (a) D-rc09-7's Mechanism entry said a second `## Size`
+heading "merges with the first, with a note". The requirement keeps the merge and drops the note: a note would be a
+fourth issue kind with no consumer, and a repeated heading declares nothing new. (b) D-rc09-5's table (Sal: agreed)
+read "a map with zero valid entries → on, comparing nothing"; the requirement reads OFF. ON-comparing-nothing would
+print `none over` for a check that compares nothing and fail `--strict` on declarations measured against no maximum,
+and a map with no valid entry already warns once per bad entry. Ratified at the proposal walk (Sal: A). explore.md
+is unchanged — it is the record of how the change took shape.
+
+**D8 — Declaration edge rulings, settled at the proposal walk under R-crc-3.** A declared dimension with no
+configured maximum reads stale (INFO); only `-` declares, and a `*` or `+` item is MALFORMED so it stays visible; the
+reason begins on the item's first line, so a continuation-only reason is MALFORMED; the heading is exactly `## Size`,
+case-sensitive. Each is a row of the declaration table.
 
 ## Alternatives considered
 

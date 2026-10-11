@@ -3,8 +3,10 @@
 ### Requirement: Size brief after generation
 
 The propose body SHALL read the `size` object from `orbit status --change <name> --json` after every artifact is
-generated and before the completion emit, in consume mode and standalone mode alike (the object is owned by
-`orbit-change-size`'s `Status carries the size figures`), and act by this table:
+generated and validated, in consume mode and standalone mode alike — BEFORE Step 0d's move, before the PR
+choreography's Phase 3 (commit, push, draft PR) and before the completion emit, so a declaration it writes lands in
+the proposal that Phase 3 commits (the object is owned by `orbit-change-size`'s `Status carries the size figures`),
+and act by this table:
 
 | `size` | the body |
 |---|---|
@@ -16,7 +18,9 @@ generated and before the completion emit, in consume mode and standalone mode al
 The two routes for an undeclared breach, asked with `AskUserQuestion`, the user's answer deciding:
 
 - **Split** — the change is split before review (R-crc-9). Propose does not split it: it says which dimensions are
-  over and recommends returning to `/orbit:explore <name>` or the architecture doc. The artifacts stay in place.
+  over and recommends returning to `/orbit:explore <name>` or the architecture doc. The artifacts stay in place. The
+  split recommendation REPLACES the body's completion prompt to review the change; the completion emit is still
+  written, and the body says that the emit's pointer names the review only because the artifacts are complete.
 - **Declare** — the body writes a `## Size` section into `proposal.md` (or adds to it), one item per undeclared
   dimension, carrying the user's reason in the user's words.
 
@@ -45,6 +49,16 @@ complete whichever route is taken.
 
 - **WHEN** the user answers split
 - **THEN** the body recommends `/orbit:explore <name>` or the architecture doc, writes no `## Size` section, and leaves every artifact in place
+
+#### Scenario: Split replaces the review prompt
+
+- **WHEN** the user answers split
+- **THEN** the body's closing chat line is the split recommendation, not the prompt to run `/orbit:review <name>`
+
+#### Scenario: A declaration lands before the PR commit
+
+- **WHEN** `pr:` is `per-proposal` and the user answers declare
+- **THEN** the `## Size` section is in `proposal.md` before the PR choreography's Phase 3 commits it
 
 #### Scenario: The mirror matches its owner
 

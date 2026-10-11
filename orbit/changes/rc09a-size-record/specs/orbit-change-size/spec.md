@@ -15,14 +15,24 @@ The engine SHALL compute four figures for an active change, from artifacts it al
 
 | construct | bytes counted |
 |---|---|
-| an ADDED block | its full UTF-8 bytes |
-| a MODIFIED block matched by name to a requirement of the current baseline `orbit/specs/<capability>/spec.md` | the bytes, newline included, of its lines that are absent from that baseline block, counted as a MULTISET: a line present k times in the baseline block absorbs at most k occurrences |
+| an ADDED block | every line of the block, counted as below |
+| a MODIFIED block matched by name to a requirement of the current baseline `orbit/specs/<capability>/spec.md` | its lines that are absent from that baseline block, counted as below, as a MULTISET: a line present k times in the baseline block absorbs at most k occurrences |
 | a MODIFIED block under a RENAMED entry's new name | the same, against the baseline block of the OLD name |
-| a MODIFIED block whose name matches no baseline requirement, or whose capability has no baseline file | its full bytes |
+| a MODIFIED block whose name matches no baseline requirement, or whose capability has no baseline file | every line of the block, counted as below |
 | a REMOVED or RENAMED entry | zero |
 | a deleted line of a MODIFIED block | not counted |
 | fenced content inside a block | part of that block, as `parseDeltaSpec`'s fence mask delimits it |
 | text outside requirement blocks | not counted |
+
+A block's LINES are its text as `parseDeltaSpec` (delta) or `extractRequirementsSection` (baseline) returns it,
+trailing whitespace trimmed, split on `\n`; the same rule reads both sides. A counted line contributes its UTF-8 bytes
+plus 1 for its newline, the block's last line included, and a blank line counts like any other (1 byte). Measured
+this way, rc04c's delta reads exactly 14,438 bytes against the baseline at commit `bc4c12fc` (the parent of the commit
+that added its proposal).
+
+A figure whose input file EXISTS but cannot be read is not computed: it is `null`, and the read failure is reported
+(`Status carries the size figures`; `Validate reports each breach as declared or undeclared`) — never treated as an
+absent file, which would inflate `changed_bytes` or zero a count. The other figures are still computed.
 
 The table is the delta format's four section kinds, as `parseDeltaSpec`'s `DeltaPlan` defines them, plus the text
 outside its blocks. Deletions are not counted, per R-crc-1's 2026-09-23 clarification: the byte figure measures new
@@ -33,8 +43,8 @@ git's diff on 221 blocks and was never more than 1.3% off on a change. A baselin
 
 #### Scenario: An ADDED block counts whole
 
-- **WHEN** a change's only delta is one ADDED block of 1,200 bytes
-- **THEN** `changed_bytes` is 1200, `requirements` is 1 and `capabilities` is 1
+- **WHEN** a change's only delta is one ADDED block of 30 lines whose trimmed text is 1,199 bytes
+- **THEN** `changed_bytes` is 1200 (the 29 inner newlines are in the text; the last line's newline adds 1), `requirements` is 1 and `capabilities` is 1
 
 #### Scenario: A MODIFIED block counts only its new lines
 
@@ -60,6 +70,11 @@ git's diff on 221 blocks and was never more than 1.3% off on a change. A baselin
 
 - **WHEN** a change carries specs but no `tasks.md`
 - **THEN** `tasks` is 0 and the other three figures are computed
+
+#### Scenario: An unreadable baseline nulls the byte figure
+
+- **WHEN** a MODIFIED block's baseline `spec.md` exists but cannot be read
+- **THEN** `changed_bytes` is `null`, the other three figures are computed, and the failure names that path
 
 ### Requirement: The ceiling is opt-in by the size_ceiling config key
 
@@ -113,7 +128,7 @@ this production:
 
 ```
 ## Size
-- <dimension>: <reason>        <dimension> ::= capabilities | requirements | changed_bytes | tasks; <reason> non-empty
+- <dimension>: <reason>        <dimension> ::= capabilities | requirements | changed_bytes | tasks; <reason> non-empty, on the item's first line
 ```
 
 The section is read fence-aware through the engine's shared CommonMark fence tracker, and every line kind under it
@@ -121,10 +136,12 @@ resolves by this table:
 
 | line under `## Size` | reading |
 |---|---|
-| a list item `- <dimension>: <reason>` with a known dimension and a non-empty reason | DECLARES that dimension |
-| a list item with an unknown dimension, no colon, or an empty reason | MALFORMED, naming the line; it declares nothing |
+| the heading line | exactly `## Size`, case-sensitive, trailing whitespace ignored; `## size` or `### Size` opens no section, so nothing under it declares |
+| a `-` list item `- <dimension>: <reason>` with a known dimension and a reason beginning on that line | DECLARES that dimension |
+| a `-` list item with an unknown dimension, no colon, or nothing after the colon on its first line | MALFORMED, naming the line; it declares nothing, and a reason on a continuation line does not rescue it |
+| a `*` or `+` list item | MALFORMED, naming the line — only `-` declares, so another marker is visible rather than silently skipped |
 | a second item for an already-declared dimension | DUPLICATE, naming the line; the first item declares |
-| a continuation line or nested bullet under an item | part of that item's reason |
+| a continuation line or nested bullet under a well-formed item | part of that item's reason; a nested bullet is never an item of the section |
 | prose that is not a list item | not read |
 | fenced content | not read |
 | a second `## Size` heading | merged with the first |
@@ -144,6 +161,16 @@ legal and reads STALE.
 - **WHEN** the section carries `- caps: four`
 - **THEN** that line is reported MALFORMED and declares nothing
 
+#### Scenario: A reason only on a continuation line is malformed
+
+- **WHEN** the section carries `- tasks:` followed by an indented line explaining why
+- **THEN** that item is reported MALFORMED and `tasks` is not declared
+
+#### Scenario: Another list marker is malformed
+
+- **WHEN** the section carries `* tasks: the walk added three`
+- **THEN** that line is reported MALFORMED and `tasks` is not declared
+
 #### Scenario: A fenced example declares nothing
 
 - **WHEN** the section carries a fenced block containing `- tasks: example`
@@ -159,12 +186,14 @@ carrying the path `size` and naming the dimension, its figure and its maximum:
 | figure at or under its maximum, not declared | nothing |
 | figure over its maximum, declared | INFO: "declared" |
 | figure over its maximum, not declared | WARNING: "undeclared" |
-| figure at or under its maximum, declared | INFO: the declaration is stale |
+| figure at or under its maximum, or a dimension with no configured maximum, declared | INFO: the declaration is stale |
+| a figure that could not be computed (an input file exists but cannot be read) | WARNING naming the file; that dimension is not compared |
 | a MALFORMED or DUPLICATE `## Size` line | WARNING naming the line |
 | `proposal.md` absent, or no `## Size` section | nothing declared: every breach is undeclared |
 
-Non-strict validation therefore never fails on size, and `orbit validate <change> --strict` fails exactly when an
-undeclared breach or a malformed declaration stands. Human-mode `orbit validate <change>` SHALL print every `size`
+Non-strict validation therefore never fails on size, and `orbit validate <change> --strict` fails exactly when one of
+the table's WARNING rows stands: an undeclared breach, a MALFORMED or DUPLICATE `## Size` line, or a figure that could
+not be computed. This sentence is the one statement of that rule; other artifacts point here. Human-mode `orbit validate <change>` SHALL print every `size`
 issue beneath the `is valid` line when the report is valid, as it prints the scenario map's INFO lines; a report
 carrying no `size` issue prints exactly as before. With the check OFF the capability contributes no issue. The level
 REPORTS; no gate reads it (R-crc-13).
@@ -184,6 +213,11 @@ REPORTS; no gate reads it (R-crc-13).
 - **WHEN** a change declared over on capabilities later gains a twentieth task with `tasks: 19` configured
 - **THEN** `--strict` fails on the undeclared tasks breach
 
+#### Scenario: Declaring an unconfigured dimension is stale
+
+- **WHEN** `size_ceiling` is `{capabilities: 3}` and the proposal declares `tasks`
+- **THEN** validate reports an INFO naming the `tasks` declaration stale and `--strict` passes on it
+
 #### Scenario: A stale declaration is INFO
 
 - **WHEN** the proposal declares `requirements` and the change touches 8 requirements against a maximum of 12
@@ -193,12 +227,18 @@ REPORTS; no gate reads it (R-crc-13).
 
 `orbit status --change <name> --json` SHALL carry a top-level `size` object on every change: `capabilities`,
 `requirements`, `changed_bytes` and `tasks` as numbers, `ceiling` (the valid configured maxima, or `null` when the
-check is OFF), and `breaches`, a list of `{dimension, figure, maximum, declared}` (empty when the check is OFF). The
-figures are carried whether or not the check is ON, because effort is RECORDED (R-crc-11(h)).
+check is OFF), `breaches`, a list of `{dimension, figure, maximum, declared}` (empty when the check is OFF), and
+`errors`, a list of `{figure, path, message}` for each figure that could not be computed (that figure `null`; empty
+otherwise). A read failure never fails the command: status still renders every gate and exits as it would without
+size. The figures are carried whether or not the check is ON, because effort is RECORDED (R-crc-11(h)). The field
+rides the plain change status only — `orbit status --change <name>` and its `--json`; the `--boot`, `--scenarios` and
+`--report` renders do not carry it.
 
 Human-mode `orbit status --change <name>` SHALL print one `Size:` line when the check is ON, and none when it is OFF.
-The line states the four figures ALONE, then each breach as `<dimension> <figure> > <maximum>` with `declared` or
-`undeclared`, or `none over`; it renders no ratio and no proximity. The figures never enter gate state, the position
+The line states the four figures ALONE, bytes as a raw integer, then each breach as `<dimension> <figure> > <maximum>`
+with `declared` or `undeclared`, or `none over`; it renders no ratio and no proximity. For example:
+`Size: 3 capabilities · 7 requirements · 15012 bytes changed · 17 tasks — none over`. A figure that could not be
+computed prints as `?`. The figures never enter gate state, the position
 readout or the canonical next.
 
 #### Scenario: JSON carries the figures with the check off
@@ -213,5 +253,10 @@ readout or the canonical next.
 
 #### Scenario: Size never moves a gate
 
-- **WHEN** a change's figures move from under to over every maximum
-- **THEN** every gate row, the position readout and `next_command` are unchanged
+- **WHEN** one change is held fixed and `size_ceiling` moves from maxima above every figure to maxima below every figure
+- **THEN** every gate row, the position readout and `next_command` are byte-identical across the two configurations
+
+#### Scenario: A read failure does not fail status
+
+- **WHEN** the change's `tasks.md` exists but cannot be read
+- **THEN** `orbit status --change <name> --json` exits 0 with every gate row, `size.tasks` is `null`, and `size.errors` names `tasks.md`

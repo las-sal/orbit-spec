@@ -25,7 +25,7 @@ This is the size half of rc09-propose-hygiene, split at its exploration (D-rc09-
   `- <dimension>: <reason>`. The engine checks that each breached dimension is named, and never reads the reason
   (D-rc09-7).
 - `orbit validate <change>` reports an undeclared breach at WARNING and a declared one at INFO. Non-strict validation
-  never fails on size; `--strict` fails exactly an undeclared breach. The engine names each breached dimension with
+  never fails on size; what `--strict` fails on is stated once, in that requirement. The engine names each breached dimension with
   its figure and maximum; where to split stays the author's judgement (D-rc09-4).
 - `orbit status --change <name>` carries the figures: always as a JSON field, because effort is recorded
   (R-crc-11(h)), and as a human line when `size_ceiling` is configured. The propose body reads them after generation
