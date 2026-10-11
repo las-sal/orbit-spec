@@ -45,7 +45,7 @@ Moves:
 - COHERE: applied — the refused-line rows defer to rc05b's existing failure rather than adding a second one
 - EXECUTE: applied — Case 2: the exact rule run over today's surface; every head falls in a passing row once twelve utilities, one placeholder and four prose heads are declared; 17 inline spans are refused and not read
 - FALSIFY: applied — Case 1 falsified the fence-only domain (`gh` is 100% inline); the flag rule still passes a tool written inline only without flags, which is the stated residual
-- CONFORM: applied — R-crc-10 (heads are tokens of a generated file, never prose intent); R-crc-12 (exit (2) as revised is still measurable); R-crc-14 (the declared lists stated once — see the open question)
+- CONFORM: applied — R-crc-10 (heads are tokens of a generated file, never prose intent); R-crc-12 (exit (2) as revised is still measurable); R-crc-14 (the declared lists stated once — D-rc09b-3)
 - FEASIBILITY: not applied — one pass over 36 surfaces
 - CONSUME: applied — the suite; a failure names surface and line, as rc05b's matrix does
 - INVOKE: applied — `npm test`, on every change

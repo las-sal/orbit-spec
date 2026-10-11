@@ -73,7 +73,8 @@ COPY of a real surface (the `injections.test.ts` pattern) or into a synthetic bl
 THEN says, by outcome: the two passing scenarios (today's surface; a flagless inline span) assert the sweep passes
 and, for the second, that no head is read from the span; an unknown head (a fence, a flagged inline span, an
 assignment prefix, a markdown-nested fence) asserts surface, line and head; an unused exemption asserts head and kind;
-an exemption naming a recorded tool asserts the head; a malformed block asserts the requirement and the line. The day-one sweep also asserts a non-vacuity floor: at least the Case 2 heads are read.
+an exemption naming a recorded tool asserts the head; a malformed block asserts the requirement and the offending line, or the requirement's heading line for an absent
+block. The day-one sweep also asserts a non-vacuity floor: at least the Case 2 heads are read.
 
 ## Mechanism → artifacts
 

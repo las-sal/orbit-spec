@@ -48,7 +48,8 @@ The suite SHALL hold the inventory EXACT in both directions: a declared head tha
 fails, naming the head and its kind, so an exemption leaves with the last line that used it; a declared head that is
 also a recorded tool fails, naming the head, because one head has one standing; and a block that is absent, is not
 the requirement's only `inventory` fence, carries a line not matching the production, repeats a kind, or repeats a
-head fails, naming the requirement and the line. The test reads the block from the requirement as it stands: the
+head fails, naming the requirement and the offending line — an absent block, which has no line, names the
+requirement's heading line. The test reads the block from the requirement as it stands: the
 active change's delta that adds or modifies this requirement when exactly one does (two such deltas fail, naming
 both), the baseline otherwise.
 
@@ -104,7 +105,8 @@ already fails a recorded tool's flagged line outside a fence.
 
 - **WHEN** the requirement carries no `inventory` fence, a second one, a line not matching `<kind>: <head> …`, an
   unknown kind, a repeated kind or a repeated head
-- **THEN** the suite fails naming the requirement and the line, and never passes vacuously
+- **THEN** the suite fails naming the requirement and the offending line (the requirement's heading line when no
+  `inventory` fence exists), and never passes vacuously
 
 ## MODIFIED Requirements
 
