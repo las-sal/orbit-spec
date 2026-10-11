@@ -1,0 +1,12 @@
+schema: spec-driven
+created: 2026-10-11
+schema_version: 5
+base_fingerprints:
+  orbit-archive-modifications:
+    Archive run summary written: sha256:92760557be28cd47c35b693a2c75d91f244b8c9837780e0447caf69a24e0ad93
+    Archive summary schema reference ships with the skill: sha256:09d48d296e566e456fc706eed9d538ed67e1358c64f85ac23d3a3abb377e6a43
+  orbit-engine-gates:
+    Inflection-prompt override contract: sha256:a56c60b52d33bc4579965a294dbf97ce5d360af7bf7ba1a0c98b91e5fa06b96d
+architecture:
+  doc: clean-up-review-cycle
+  stage: rc10-apply-closure
