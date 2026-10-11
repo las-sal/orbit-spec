@@ -1,0 +1,136 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-11T23:05:55Z",
+  "change": "rc10-apply-closure",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {},
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "The shared fence tracker misreads a fence nested in a list item, so an example inside one now counts as a task",
+      "file": "src/core/parsers/apply-state.ts",
+      "line": 68,
+      "recommendation": "The walk swapped parseCheckboxes' local toggle for createFenceTracker, which opens a fence only at 0-3 spaces of indent (CommonMark's top-level rule). tasks.md is a list document: a fence nested in a task item sits at 4+ spaces, the tracker does not open it, and every checkbox line inside the example now reads as a task. The old toggle (any indent) excluded it. Consequences: the apply emit's counts, the size record's task figure (whose spec says 'outside a fenced block') and the archive write gate all read the example line, and a marked example demands a deferral for a task that does not exist. The Touchpoints parser took the same repair and has the same gap for design.md. No tracked file has this shape today. Either keep CommonMark's grammar but feed the tracker each line with its leading whitespace removed, so it tracks character and length at any indent (the old toggle's reach with the new tracker's closing rule), or leave the tracker as is and state the list-nested limit in design D4 and the size spec's residual.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Feed createFenceTracker the line with its leading whitespace stripped in both parseCheckboxes and parseTouchpoints, so a fence at any indent opens and closes by character and length; add the list-nested case (and the four-backtick case) to both parsers' tests, and say in design D4 why these two readers strip indent."
+        },
+        {
+          "label": "B",
+          "body": "Keep CommonMark's 0-3 indent rule and name the list-nested fence as a limit in design D4 (and a residual the size requirement does not state), accepting that an example nested in a task item reads as tasks."
+        }
+      ],
+      "reproduction": "parseCheckboxes('## 1. G\\n\\n- [ ] 1.1 run the example below\\n\\n    ```markdown\\n    - [ ] 9.9 (User-validation) an example line\\n    ```\\n').groups[0].uncheckedTexts — expected ['1.1 run the example below'] (the old toggle's result); observed ['1.1 run the example below', '9.9 (User-validation) an example line'].",
+      "walk_entry": {
+        "title": "Valid Markdown fences can hide a validation task from the write gate",
+        "file": "src/core/parsers/apply-state.ts"
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "title": "The requirement carried at the walk has no base fingerprint",
+      "file": "orbit/changes/rc10-apply-closure/.openspec.yaml",
+      "line": 7,
+      "recommendation": "Walk 1 carried orbit-emit-composition's 'Payload schema references are proven by execution' as a MODIFIED block but stamped no base: `orbit fingerprint rc10-apply-closure --check --json` reports it 'unverified' with base_hash null, so the archive's Step 3.45 would fire its can't-verify prompt and record fingerprints_unverified for a block whose base is knowable today. Run `orbit fingerprint rc10-apply-closure` (add-missing-only) to capture it, and commit the .openspec.yaml change.",
+      "walk_entry": {
+        "title": "The archive example's tasks.md seeding is attributed to a requirement that states one seeding rule and nothing else",
+        "file": "src/core/templates/workflows/archive-change.ts"
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "Three test files the walk edited are outside every entry's edit record",
+      "file": "test/core/templates/verify-scenario-map.test.ts",
+      "line": 335,
+      "recommendation": "The residual check (git diff from 99d76f32, the commit that added the external return) lists test/core/rc03b-untouched-modules.test.ts, test/core/templates/skill-templates-parity.test.ts and test/core/templates/verify-scenario-map.test.ts, which no entry's file or ripple_cascade.applied names. The first two are the pin moves the walk recorded in their own comments; the third moved an assertion off bulk archive's corrected 'inner /orbit:archive' sentence (fresh W2's edit). A record gap, not a defect: name them on the next walk's entries, or leave them as this note."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Graded the eight walk entries over their sweep scopes. Six landed: the bulk emit step and the pre-move brief read as the requirement now states them, the DEFERRED rule covers post-move state in the requirement and the body alike, the second named limit sits in the override contract and design Risks, the ENOENT-only read refuses a directory with EISDIR, and case 8 holds byte-equal across the spec fence, the mirror constant and both bodies, its engine message naming the id and both lines. The two regressions are both about what a repair left out rather than what it got wrong. The fence repair traded one wrong shape for another: CommonMark's top-level indent rule is right for the trail and report readers the tracker was built for, and wrong for a list document. The carried requirement simply missed the fingerprint stamp that propose would have given it. The case 8 check and the tracker swap were each exercised by running them, not read.",
+  "passes_run": [
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    "0 — VERIFICATION genre: verify-change is a whole-change pass",
+    "4 — orbit/lenses/ absent",
+    "5 — orbit/lenses/ absent",
+    "6 — VERIFICATION genre: audit-drift is a whole-project pass"
+  ],
+  "verification": [
+    {
+      "title": "The archive example's tasks.md seeding is attributed to a requirement that states one seeding rule and nothing else",
+      "file": "src/core/templates/workflows/archive-change.ts",
+      "verdict": "regressed"
+    },
+    {
+      "title": "Bulk archive never tells the AI to write the per-change archive emit that is meant to carry its deferrals",
+      "file": "src/core/templates/workflows/bulk-archive-change.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "On the bulk path the deferral brief arrives only after every move, so the user cannot abort on a weak why",
+      "file": "src/core/templates/workflows/bulk-archive-change.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Task 4.4 asserts a fact that exists only after the step that must dispose of it",
+      "file": "orbit/changes/rc10-apply-closure/tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Bulk archive has no gate prompt, so the defect rc10 closes for /orbit:archive persists through /orbit:bulk-archive",
+      "file": "orbit/changes/rc10-apply-closure/specs/orbit-engine-gates/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Valid Markdown fences can hide a validation task from the write gate",
+      "file": "src/core/parsers/apply-state.ts",
+      "verdict": "regressed"
+    },
+    {
+      "title": "Task-file read failures silently disable validation closure",
+      "file": "src/core/emit-composition.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Duplicate task IDs bypass the checked-task refusal",
+      "file": "src/core/emit-composition.ts",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 1 warning, 2 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-11T22-55-44Z",
+    "2026-10-11T23-02-13Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc10-apply-closure"
+}
