@@ -3,7 +3,8 @@
 ### Requirement: Size brief after generation
 
 The propose body SHALL read the `size` object from `orbit status --change <name> --json` after every artifact is
-generated and validated, in consume mode and standalone mode alike — BEFORE Step 0d's move, before the PR
+generated and `orbit validate <name>` passes NON-STRICT — which size never fails, so a breach never stops the flow before
+the brief that handles it — in consume mode and standalone mode alike — BEFORE Step 0d's move, before the PR
 choreography's Phase 3 (commit, push, draft PR) and before the completion emit, so a declaration it writes lands in
 the proposal that Phase 3 commits (the object is owned by `orbit-change-size`'s `Status carries the size figures`),
 and act by this table:
@@ -19,10 +20,12 @@ The two routes for an undeclared breach, asked with `AskUserQuestion`, the user'
 
 - **Split** — the change is split before review (R-crc-9). Propose does not split it: it says which dimensions are
   over and recommends returning to `/orbit:explore <name>` or the architecture doc. The artifacts stay in place. The
-  split recommendation REPLACES the body's completion prompt to review the change; the completion emit is still
-  written, and the body says that the emit's pointer names the review only because the artifacts are complete.
+  split recommendation REPLACES the body's completion prompt to review the change. The rest of the flow runs
+  unchanged — Step 0d's move, the PR choreography's Phase 3 and the completion emit — so only the closing chat line
+  differs; the body says that the emit's pointer names the review only because the artifacts are complete, and that
+  `orbit validate <name> --strict` keeps failing on the undeclared breach until the change is split.
 - **Declare** — the body writes a `## Size` section into `proposal.md` (or adds to it), one item per undeclared
-  dimension, carrying the user's reason in the user's words.
+  dimension, carrying the user's reason in the user's words, and runs `orbit validate <name> --strict`.
 
 The body carries the declaration's production as a CHECKED MIRROR of `orbit-change-size`'s `A breach is declared in
 the proposal's Size section`, because an adopter's installed skill has neither this repository's specs nor its parser;

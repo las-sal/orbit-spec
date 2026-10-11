@@ -69,7 +69,7 @@ describe('the propose body carries the size brief (rc09a task 5.3)', () => {
   it("the Declare route writes `## Size` with the user's reason in the user's words", () => {
     const s = section();
     expect(s).toMatch(/- \*\*Declare\*\* — write a `## Size` section into `proposal\.md`/);
-    expect(s).toContain("carrying the user's reason in the user's words");
+    expect(s).toContain("carrying the user's reason in the user's words. Then run `orbit validate \"<name>\" --strict`.");
   });
 
   // @scenario text orbit-propose-modifications :: Size brief after generation :: Split leaves the artifacts in place
@@ -78,6 +78,8 @@ describe('the propose body carries the size brief (rc09a task 5.3)', () => {
     expect(s).toMatch(/- \*\*Split\*\* — the change is split before review/);
     expect(s).toContain('`/orbit:explore <name>` or the architecture doc');
     expect(s).toContain('Leave every artifact in place and write no\n  `## Size` section');
+    // The rest of the flow runs unchanged after Split (walk D2: A).
+    expect(s).toContain("The rest of the\n  flow runs unchanged — Step 0d's move, the PR choreography's Phase 3 and the completion emit");
   });
 
   // @scenario text orbit-propose-modifications :: Size brief after generation :: Split replaces the review prompt
@@ -91,8 +93,10 @@ describe('the propose body carries the size brief (rc09a task 5.3)', () => {
   // @scenario text orbit-propose-modifications :: Size brief after generation :: A declaration lands before the PR commit
   it("the brief runs before Step 0d's move, the PR choreography's Phase 3 and the completion emit, in both modes", () => {
     const s = section();
-    expect(s).toContain('in consume mode and standalone mode alike');
+    expect(s).toContain('standalone mode alike');
+    // The validation before the brief is non-strict, so a breach never stops the flow before it.
+    expect(s).toContain('passes NON-STRICT — size never fails\nnon-strict validation');
     expect(s).toContain("BEFORE Step 0d's move, BEFORE the PR choreography's Phase 3 (commit, push, draft PR) and BEFORE the\ncompletion emit");
-    expect(body()).toContain('and the\nsize brief below has run, FIRST');
+    expect(body()).toContain('non-strict validation passes) and the\nsize brief below has run, FIRST');
   });
 });

@@ -9,7 +9,7 @@ The engine SHALL compute four figures for an active change, from artifacts it al
 | `capabilities` | the number of `specs/<capability>/spec.md` files in the change directory; a capability directory with no `spec.md` is not counted |
 | `requirements` | the entries `parseDeltaSpec` returns, summed over every capability: ADDED + MODIFIED + REMOVED + RENAMED, except that a MODIFIED block under a RENAMED entry's new name is not counted a second time |
 | `changed_bytes` | the NEW side of the delta, per the table below |
-| `tasks` | every checkbox in `tasks.md` the tracked gate's own counter (`parseCheckboxes`) reads, checked or not; no `tasks.md` reads zero |
+| `tasks` | every checkbox in `tasks.md` that `parseCheckboxes` reads — the counter `orbit emit apply` derives its task arithmetic from — checked or not: a checkbox under a `## ` group heading, outside a fenced block; no `tasks.md` reads zero |
 
 `changed_bytes` counts, for every construct a delta spec carries:
 
@@ -61,7 +61,7 @@ git's diff on 221 blocks and was never more than 1.3% off on a change. A baselin
 - **WHEN** a delta renames a requirement and carries a MODIFIED block under its new name
 - **THEN** `requirements` counts the pair once, and the block is diffed against the old name's baseline block
 
-#### Scenario: Tasks are counted by the tracked gate's counter
+#### Scenario: Tasks are counted by the apply emit's checkbox counter
 
 - **WHEN** `tasks.md` carries 12 checked and 5 unchecked checkboxes and one checkbox inside a fenced block
 - **THEN** `tasks` is 17
@@ -136,16 +136,18 @@ resolves by this table:
 
 | line under `## Size` | reading |
 |---|---|
-| the heading line | exactly `## Size`, case-sensitive, trailing whitespace ignored; `## size` or `### Size` opens no section, so nothing under it declares |
-| a `-` list item `- <dimension>: <reason>` with a known dimension and a reason beginning on that line | DECLARES that dimension |
-| a `-` list item with an unknown dimension, no colon, or nothing after the colon on its first line | MALFORMED, naming the line; it declares nothing, and a reason on a continuation line does not rescue it |
-| a `*` or `+` list item | MALFORMED, naming the line — only `-` declares, so another marker is visible rather than silently skipped |
+| the heading line | `## Size`, case-sensitive, after at most three spaces of indent (as CommonMark reads a heading), trailing whitespace ignored; `## size` or `### Size` opens no section, so nothing under it declares |
+| an ITEM OF THE SECTION: a list item indented at most one space, or two or three spaces with no item above it in the current list | read by the rows below; the list ends at any heading, at a thematic break, and at an unindented line that is not a list item after a blank line |
+| a `-` item `- <dimension>: <reason>` with a known dimension and a reason beginning on that line | DECLARES that dimension |
+| a `-` item with an unknown dimension, no colon, or nothing after the colon on its first line | MALFORMED, naming the line; it declares nothing, and a reason on a continuation line does not rescue it |
+| a `*` or `+` item | MALFORMED, naming the line — only `-` declares, so another marker is visible rather than silently skipped |
 | a second item for an already-declared dimension | DUPLICATE, naming the line; the first item declares |
-| a continuation line or nested bullet under a well-formed item | part of that item's reason; a nested bullet is never an item of the section |
+| a continuation line, or a bullet that is not an item of the section (nested under the item above it) | part of that item's reason; never an item of the section |
+| a thematic break (`* * *`, `- - -`) | not read; it is not a list item |
 | prose that is not a list item | not read |
 | fenced content | not read |
 | a second `## Size` heading | merged with the first |
-| the section's end | the next heading of level 1 or 2, or end of file |
+| the section's end | the next heading of level 1 or 2 (after at most three spaces of indent), or end of file |
 
 The engine reads WHICH dimensions are declared and never what a reason says: whether a breach is justified, and where
 to split instead, stay the author's and the user's judgement (R-crc-10). Declaring a dimension that is not over is
@@ -196,7 +198,9 @@ Non-strict validation therefore never fails on size, and `orbit validate <change
 the table's WARNING rows stands: an undeclared breach, a MALFORMED or DUPLICATE `## Size` line, a figure that could not
 be computed, or an unreadable `proposal.md`. This sentence is the one statement of that rule; other artifacts point here. Human-mode `orbit validate <change>` SHALL print every `size`
 issue beneath the `is valid` line when the report is valid, as it prints the scenario map's INFO lines; a report
-carrying no `size` issue prints exactly as before. With the check OFF the capability contributes no issue. The level
+carrying no `size` issue prints exactly as before. The bulk run (`orbit validate --changes` or `--all`) prints one line
+per item and no issue of any kind in human mode, so a `size` issue there reaches `--json` and, under `--strict`, the
+item's failure line only; the deprecated `orbit change validate` likewise prints no issue beneath a valid report. With the check OFF the capability contributes no issue. The level
 REPORTS; no gate reads it (R-crc-13).
 
 #### Scenario: An undeclared breach fails strict validation

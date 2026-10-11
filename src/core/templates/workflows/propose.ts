@@ -241,7 +241,7 @@ Every Mechanism entry, and every live rule with none, is disposed of by ONE row 
 
 ### Step 0d — Move the staging directory (with the staged-metadata MERGE)
 
-After all upstream steps complete successfully (artifacts generated, validation passes) and the
+After all upstream steps complete successfully (artifacts generated, non-strict validation passes) and the
 size brief below has run, FIRST merge the staged metadata, THEN bulk-move (D-arc Stage D2):
 
 1. **Staged-metadata MERGE** (before the bulk move): if \`orbit/explore/<name>/.openspec.yaml\`
@@ -312,7 +312,9 @@ detect a parallel change landing on the same requirements (no silent spec data-l
 
 (Per \`orbit-propose-modifications\`' \`Size brief after generation\`; the figures are \`orbit-change-size\`'s.)
 
-**Position**: after every artifact is generated and validated, in consume mode and standalone mode alike —
+**Position**: after every artifact is generated and \`orbit validate "<name>"\` passes NON-STRICT — size never fails
+non-strict validation, so a breach never stops the flow before this brief, which handles it — in consume mode and
+standalone mode alike —
 BEFORE Step 0d's move, BEFORE the PR choreography's Phase 3 (commit, push, draft PR) and BEFORE the
 completion emit, so a declaration written here lands in the proposal Phase 3 commits.
 
@@ -330,10 +332,12 @@ For an undeclared breach, ask with **AskUserQuestion** — the user's answer dec
 
 - **Split** — the change is split before review (R-crc-9). Do not split it here: say which dimensions are over and
   recommend returning to \`/orbit:explore <name>\` or the architecture doc. Leave every artifact in place and write no
-  \`## Size\` section. The split recommendation REPLACES the completion prompt to review (below); the completion emit
-  is still written — say that its pointer names the review only because the artifacts are complete.
+  \`## Size\` section. The split recommendation REPLACES the completion prompt to review (below). The rest of the
+  flow runs unchanged — Step 0d's move, the PR choreography's Phase 3 and the completion emit — so only the closing
+  chat line differs: say that the emit's pointer names the review only because the artifacts are complete, and that
+  \`orbit validate "<name>" --strict\` keeps failing on the undeclared breach until the change is split.
 - **Declare** — write a \`## Size\` section into \`proposal.md\` (or add to an existing one), one item per undeclared
-  dimension, carrying the user's reason in the user's words. Then re-run \`orbit validate "<name>" --strict\`.
+  dimension, carrying the user's reason in the user's words. Then run \`orbit validate "<name>" --strict\`.
 
 The declaration's production — a CHECKED MIRROR of \`orbit-change-size\`'s \`A breach is declared in the proposal's
 Size section\`, carried here because an installed skill has neither the owner's spec nor its parser (a parity test
@@ -343,7 +347,7 @@ holds it byte-equal to the owner's fence):
 ${SIZE_DECLARATION_PRODUCTION}
 \`\`\`
 
-Only \`-\` items declare; the heading is exactly \`## Size\`; the reason begins on the item's first line. The engine
+Only \`-\` items declare; the heading is \`## Size\`, case-sensitive; the reason begins on the item's first line. The engine
 reads WHICH dimensions are declared, never what a reason says. The brief REPORTS: it blocks nothing, and the
 change's artifacts are complete whichever route is taken.
 

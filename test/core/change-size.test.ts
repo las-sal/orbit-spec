@@ -183,7 +183,12 @@ describe('the four figures (Four size figures are computed from the change\'s ar
     expect(size().changed_bytes).toBe(19 + 1 + Buffer.byteLength('é — ✓') + 1);
   });
 
-  // @scenario behaviour orbit-change-size :: Four size figures are computed from the change's artifacts :: Tasks are counted by the tracked gate's counter
+  // @scenario behaviour orbit-change-size :: Four size figures are computed from the change's artifacts :: Tasks are counted by the apply emit's checkbox counter
+  it('tasks: a checkbox above the first group heading is not counted', () => {
+    write('orbit/changes/c1/tasks.md', '- [ ] 0.1 before any group\n\n## 1. W\n\n- [ ] 1.1 t\n');
+    expect(size().tasks).toBe(1);
+  });
+
   it('tasks: 12 checked + 5 unchecked + one fenced checkbox reads 17', () => {
     const lines = [
       '## 1. Work',
@@ -271,8 +276,10 @@ describe("the declaration (A breach is declared in the proposal's Size section)"
     expect(d.malformed).toEqual([]);
   });
 
-  it('the heading is exactly `## Size`, case-sensitive, trailing whitespace ignored', () => {
+  it('the heading is `## Size`, case-sensitive, after at most three spaces of indent, trailing whitespace ignored', () => {
     expect(parse(['## Size   ', '- tasks: x']).declared).toEqual(['tasks']);
+    expect(parse(['   ## Size', '- tasks: x']).declared).toEqual(['tasks']);
+    expect(parse(['    ## Size', '- tasks: x']).declared).toEqual([]); // four spaces: an indented code line, not a heading
     expect(parse(['## size', '- tasks: x']).declared).toEqual([]);
     expect(parse(['### Size', '- tasks: x']).declared).toEqual([]);
   });
@@ -310,10 +317,41 @@ describe("the declaration (A breach is declared in the proposal's Size section)"
     expect(d.duplicate).toEqual([{ line: 5, text: '- tasks: second' }]);
   });
 
-  it('a continuation line or nested bullet under a well-formed item is part of its reason', () => {
+  it('a continuation line or a bullet nested under the item above it is part of its reason', () => {
     const d = parse(['## Size', '- tasks: the walk added three', '  and one more', '  - requirements: nested, not an item']);
     expect(d.declared).toEqual(['tasks']);
     expect(d.malformed).toEqual([]);
+  });
+
+  it('an item indented two or three spaces with no item above it is an item of the section, never dropped', () => {
+    expect(parse(['## Size', '  - tasks: two-space top-level item'])).toEqual({ declared: ['tasks'], malformed: [], duplicate: [] });
+    expect(parse(['## Size', '', '   - capabilities: three spaces']).declared).toEqual(['capabilities']);
+    const star = parse(['## Size', '  * tasks: approved']);
+    expect(star.declared).toEqual([]);
+    expect(star.malformed.map((m) => m.line)).toEqual([4]);
+  });
+
+  it('a bullet indented two or three spaces under an item above it is nested, whether that item declared or not', () => {
+    expect(parse(['## Size', '- caps: four', '  - tasks: nested under a malformed item']).declared).toEqual([]);
+    expect(parse(['## Size', '- tasks: a', '', '  - capabilities: still nested after a blank line']).declared).toEqual(['tasks']);
+  });
+
+  it('the list ends at a heading and at an unindented paragraph after a blank line', () => {
+    expect(parse(['## Size', '- tasks: a', '### Detail', '  - capabilities: b']).declared).toEqual(['tasks', 'capabilities']);
+    expect(parse(['## Size', '- tasks: a', '', 'A new paragraph.', '  - capabilities: b']).declared).toEqual(['tasks', 'capabilities']);
+    // A lazy continuation line (no blank above) does not end the list.
+    expect(parse(['## Size', '- tasks: a', 'lazy continuation', '  - capabilities: b']).declared).toEqual(['tasks']);
+  });
+
+  it('a thematic break is not an item and is not reported MALFORMED', () => {
+    const d = parse(['## Size', '- capabilities: x', '', '* * *', '- - -', '___']);
+    expect(d.declared).toEqual(['capabilities']);
+    expect(d.malformed).toEqual([]);
+  });
+
+  it('a level-1 or level-2 heading indented up to three spaces ends the section', () => {
+    const d = parse([' ## Other', '## Size', '- tasks: y', ' ## Next', '- capabilities: z']);
+    expect(d.declared).toEqual(['tasks']);
   });
 
   it('prose that is not a list item is not read', () => {

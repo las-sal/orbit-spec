@@ -140,7 +140,10 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // generation" step (the four-row table, the Split / Declare routes, the `## Size` production interpolated
   // from `SIZE_DECLARATION_PRODUCTION` as a checked mirror of `orbit-change-size`), Step 0d's opener naming
   // the brief, and the completion-prompt override's Split exception. Both propose hashes moved with it.
-  getOrbitProposeSkillTemplate: '84fd14cec4b5b997af24e03f6de5a2a89abb9524076c699627bd501ea0a000fe',
+  // Moved a second time at rc09a's system walk (2026-10-11): the brief's validation named as non-strict, the
+  // Split route's "the rest of the flow runs unchanged", "run" for "re-run" under Declare, and the heading
+  // line's "exactly" dropped (the parser reads CommonMark indentation) — one re-record for the walk's edits.
+  getOrbitProposeSkillTemplate: 'd47ac6f0ff804d3172069e65a4d914d36ccac4afbd3c7ca9adb68fe7df99e9a4',
   getOrbitProposeCommandTemplate: 'b91222654d5050d7ae7f2f49b5d6c4b34e65638bd8c5ae3e622550eb1329c168',
   getFeedbackSkillTemplate: 'ded61ad85c5050f7bf241870b14bfcdd929f0be68a028c1130fd30a66efbda3b',
   // rc15 (ended-stage-state, 2026-09-29): the orbit-architect body moved ONCE, deliberately — §5 (the
@@ -183,7 +186,7 @@ const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
   'orbit-bulk-archive-change': '601dd7c74804c06a9818428f86030c8cef5311a9fc7c59f2dc14e490007a291d',
   'orbit-verify-change': '06080070b8f2dfd4e3053c9143845095d0b80c6efcce286cc46e9de37dfe8ea8', // rc06b-map-readers (2026-10-05): moved with the body's step 6 edit, then again at system walk 2's additions edit (see the function-hash note above)
   'orbit-onboard': 'a2d4f3bc2b5fc3562fe264fcb291e0e280f988fe0a10be081a4770c32fe00e2f', // rc17b task 5.1 (see the function-hash note above)
-  'orbit-propose': '41036fc096f8c022d56fcd5190d907455473b905811c8af0dbb85056dc4c6801', // rc13c, then rc03b, then rc05's system walk, then rc09a's size brief (task 5.3): moved with the body (see the function-hash notes above)
+  'orbit-propose': 'b3d4b3192d0848ce438fc06d4dfef6456e41a27c711ead02ad782405ffc9c8f3', // rc13c, then rc03b, then rc05's system walk, then rc09a's size brief (task 5.3) and its system walk: moved with the body (see the function-hash notes above)
   'orbit-architect': 'f8b7a68ca470c5a2d2e2f36d42f11b0973c8be58748d86222cca944adb80aed1', // rc15: moved twice with the body — apply, then the system walk; a third time at the post-archive audit walk; a fourth at rc05's apply, the scaffold's escaped backticks (see the function-hash note above)
 };
 

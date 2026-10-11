@@ -6,7 +6,7 @@ the ceiling at a walk goes unnoticed. This change is the size half of rc09-propo
 (see explore.md, D-rc09-13). The exploration ran the computation over the archive before any prose was written:
 Case 1 holds the four figures for 37 changes, and Case 4 tests the multiset byte count against git's diff. Each
 figure reads an artifact the engine already parses: `parseDeltaSpec` and `extractRequirementsSection`
-(`src/core/parsers/requirement-blocks.ts`), and the tracked gate's `parseCheckboxes`
+(`src/core/parsers/requirement-blocks.ts`), and `parseCheckboxes`, the apply emit's task counter
 (`src/core/parsers/apply-state.ts`).
 
 Two precedents shape the surface. `orbit-scenario-map` (rc06a) is an opt-in config key read alone, with validate
@@ -59,10 +59,14 @@ them (the requirement's "never moves a gate"). The field rides the plain change 
 its figure and is listed in `size.errors`; status never throws for size. The human line prints figures alone and names each breach. It shows
 no ratio, following rc02c's rule that a ratio is a verdict wearing a figure's clothes.
 
-**D5 — The propose brief runs after generation and validation, before Step 0d's move, the PR choreography's Phase 3
-and the completion emit, in both modes.** The propose body gets a step after artifact generation; a declaration it
-writes is therefore inside what Phase 3 commits. On Split, the split recommendation replaces the completion prompt to
-review; the emit is still written. It reads `size` from status JSON and follows the four-row table in `Size brief
+**D5 — The propose brief runs after generation and NON-STRICT validation, before Step 0d's move, the PR
+choreography's Phase 3 and the completion emit, in both modes.** The propose body gets a step after artifact
+generation; a declaration it writes is therefore inside what Phase 3 commits. The validation before it is non-strict
+`orbit validate <name>`, which size never fails: a strict run would stop the flow on the very breach the brief exists
+to handle. On Split, the split recommendation replaces the completion prompt to review, and nothing else changes: the
+move, Phase 3 and the emit all run. Skipping the move would leave the staging directory beside the change, a state
+propose's Step 0 refuses; skipping Phase 3 would leave the generated files uncommitted on the branch Phase 1 switched
+to. `--strict` keeps failing until the change is split, which is the record of an undeclared breach. It reads `size` from status JSON and follows the four-row table in `Size brief
 after generation`. Split and declare are asked with `AskUserQuestion`. The `## Size` production is interpolated
 from one exported constant in `change-size.ts`. A parity test holds that constant byte-equal to the fence in
 `orbit-change-size`'s declaration requirement, and holds the rendered propose skill to the same text (R-crc-14's
@@ -83,8 +87,12 @@ is unchanged — it is the record of how the change took shape.
 
 **D8 — Declaration edge rulings, settled at the proposal walk under R-crc-3.** A declared dimension with no
 configured maximum reads stale (INFO); only `-` declares, and a `*` or `+` item is MALFORMED so it stays visible; the
-reason begins on the item's first line, so a continuation-only reason is MALFORMED; the heading is exactly `## Size`,
-case-sensitive. Each is a row of the declaration table.
+reason begins on the item's first line, so a continuation-only reason is MALFORMED; the heading is `## Size`,
+case-sensitive. Each is a row of the declaration table. The section is read as CommonMark reads it: a heading takes up
+to three spaces of indent, a list item indented two or three spaces is an item of the section when no item stands
+above it in the current list, and a thematic break is not an item. "Exactly" in the first reading of this ruling
+meant case and level, never a column; a column-0 grammar would have made `--strict` fail on, or silently drop, an
+item every renderer shows as one.
 
 ## Alternatives considered
 

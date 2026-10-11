@@ -1,0 +1,105 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-11T19:04:43Z",
+  "change": "rc09a-size-record",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc09a-size-record/.orbit-runs/external-system-2026-10-11T18-53-15Z.md",
+  "source_command": null,
+  "source_token": "2026-10-11T18-53-15Z",
+  "latest_apply_token": "2026-10-11T18-46-52Z",
+  "external_reviewer": "GPT-6",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 1
+  },
+  "pushback_verification": "All three verified against HEAD at the walk; two converged with the fresh pass and are recorded stale naming its log, the counter claim confirmed by reading gates.ts countCheckboxes.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 2,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Successful validation is required before the prompt that resolves strict validation failure",
+      "file": "src/core/templates/workflows/propose.ts",
+      "line": 315,
+      "marker_source": "external",
+      "classification": "stale",
+      "action": "converged with the fresh pass; walked in the earlier log",
+      "evidence": "address-reviews-2026-10-11T19-04-25Z (the earlier pass's log) resolved \"Declare says to re-run orbit validate --strict, but the propose body never runs it first\" — the validation before the brief is named NON-STRICT `orbit validate <name>`, which size never fails, in the body's Position line, Step 0d's opener, the requirement and design D5 — and \"The Split route does not say whether Step 0d's move and the PR choreography's Phase 3 still run\" — Split runs the rest of the flow unchanged, --strict failing until the split; re-checked in place",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Declaration parsing silently treats indented top-level items as nested content",
+      "file": "src/core/change-size.ts",
+      "line": 253,
+      "marker_source": "external",
+      "classification": "stale",
+      "action": "converged with the fresh pass; walked in the earlier log",
+      "evidence": "address-reviews-2026-10-11T19-04-25Z (the earlier pass's log) resolved \"The Size-section parser diverges from its CommonMark line table at three edges\": a bullet indented two or three spaces with no item above it is an item of the section, so `## Size\\n  - tasks: approved` declares tasks and `## Size\\n  * tasks: approved` reports line 2 MALFORMED (test/core/change-size.test.ts, re-run green); re-checked in place",
+      "outcome": "stale"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The documented tracked-gate counter is a different counter",
+      "file": "orbit/changes/rc09a-size-record/specs/orbit-change-size/spec.md",
+      "line": 12,
+      "marker_source": "external",
+      "classification": "trivial",
+      "action": "corrected the attribution: `parseCheckboxes` is the counter `orbit emit apply` derives its task arithmetic from (emit-composition.ts), not the tracked gate's, which is `countCheckboxes` in gates.ts; the tasks row now states the counting boundary (a checkbox under a `## ` group heading, outside a fenced block), the scenario is retitled and its tag moved, design's Context line follows, and a test pins a checkbox above the first group heading as uncounted; the counters are not reconciled here",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc09a-size-record/design.md",
+          "test/core/change-size.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the tracked gate's own counter",
+          "the tracked gate's `parseCheckboxes`",
+          "Tasks are counted by the tracked gate's counter"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc09a-size-record/specs/orbit-change-size/spec.md",
+            "text": "the counter `orbit emit apply` derives its task arithmetic from"
+          },
+          {
+            "path": "test/core/change-size.test.ts",
+            "text": "Tasks are counted by the apply emit's checkbox counter"
+          },
+          {
+            "path": "orbit/changes/rc09a-size-record/design.md",
+            "text": "the apply emit's task counter"
+          }
+        ],
+        "searched": [
+          "tracked gate",
+          "parseCheckboxes",
+          "countCheckboxes"
+        ],
+        "scope": [
+          "src/core/artifact-graph/gates.ts",
+          "src/core/emit-composition.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "One resolved, two stale: both warnings converged with the fresh pass and closed in its log; the counter attribution repaired in place.",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system rc09a-size-record",
+  "ripple_misses": 0
+}

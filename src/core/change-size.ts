@@ -221,26 +221,41 @@ export interface SizeDeclaration {
   duplicate: SizeDeclarationLine[];
 }
 
-const SECTION_END = /^#{1,2}(?:[ \t]|$)/;
+/** Headings, read as CommonMark reads them: up to three spaces of indent. */
+const SIZE_OPENER = /^ {0,3}## Size[ \t]*$/;
+const SECTION_END = /^ {0,3}#{1,2}(?:[ \t]|$)/;
+const ANY_HEADING = /^ {0,3}#{1,6}(?:[ \t]|$)/;
+/** A thematic break (`* * *`, `- - -`, `___`) is not a list item and is not read. */
+const THEMATIC_BREAK = /^ {0,3}([-*_])(?:[ \t]*\1){2,}[ \t]*$/;
+const BULLET = /^( *)([-*+])(?:[ \t]+(.*)|[ \t]*)$/;
 
 /**
  * Parse the `## Size` section of a proposal (`A breach is declared in the proposal's Size
  * section`), fence-aware through the shared CommonMark fence tracker. The engine reads WHICH
  * dimensions are declared, never what a reason says.
+ *
+ * A bullet is an item OF THE SECTION when it is indented at most one space, or two or three
+ * spaces with no item above it in the current list; any other bullet is nested under the item
+ * above it and is part of that item's reason. The list context ends at a heading and at an
+ * unindented non-item line after a blank line, as it does for the explore parser's list items.
  */
 export function parseSizeDeclaration(proposalText: string): SizeDeclaration {
   const lines = proposalText.replace(/\r\n?/g, '\n').split('\n');
   const fence = createFenceTracker();
   const out: SizeDeclaration = { declared: [], malformed: [], duplicate: [] };
   let inSection = false;
+  let itemAbove = false;
+  let prevBlank = false;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     const wasInFence = fence.inFence;
     if (fence.handle(line) || wasInFence) continue; // fenced content is not read
 
-    if (line.trimEnd() === '## Size') {
+    if (SIZE_OPENER.test(line)) {
       inSection = true; // a second `## Size` heading merges with the first
+      itemAbove = false;
+      prevBlank = false;
       continue;
     }
     if (SECTION_END.test(line)) {
@@ -249,16 +264,31 @@ export function parseSizeDeclaration(proposalText: string): SizeDeclaration {
     }
     if (!inSection) continue;
 
-    const at = { line: i + 1, text: line };
-    // Only a top-level item (indent under two columns) is an item of the section; a deeper
-    // bullet or line is a continuation of the item above it, never a declaration.
-    if (/^ ?[*+](?:[ \t]|$)/.test(line)) {
-      out.malformed.push(at);
+    const blank = line.trim() === '';
+    const afterBlank = prevBlank;
+    prevBlank = blank;
+    if (blank) continue;
+    if (ANY_HEADING.test(line) || THEMATIC_BREAK.test(line)) {
+      itemAbove = false; // a level-3+ heading or a thematic break ends the list; neither is read
       continue;
     }
-    const item = line.match(/^ ?-(?:[ \t]+(.*))?$/);
-    if (!item) continue; // prose and continuation lines are not read
-    const content = item[1] ?? '';
+
+    const bullet = line.match(BULLET);
+    if (!bullet) {
+      if (afterBlank && !/^[ \t]/.test(line)) itemAbove = false; // a new paragraph ends the list
+      continue; // prose and continuation lines are not read
+    }
+    const indent = bullet[1].length;
+    const topLevel = indent <= 1 || (indent <= 3 && !itemAbove);
+    if (!topLevel) continue; // nested under the item above: part of its reason
+    itemAbove = true;
+
+    const at = { line: i + 1, text: line };
+    if (bullet[2] !== '-') {
+      out.malformed.push(at); // only `-` declares, so another marker is visible, never skipped
+      continue;
+    }
+    const content = bullet[3] ?? '';
     const colon = content.indexOf(':');
     const dimension = colon === -1 ? '' : content.slice(0, colon).trim();
     const reason = colon === -1 ? '' : content.slice(colon + 1).trim();
