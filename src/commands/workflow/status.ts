@@ -27,6 +27,8 @@ import {
 import type { StageState } from '../../core/architecture/state.js';
 import { renderReport } from '../../core/report-render.js';
 import { modelHintFor, withModelHint } from '../../core/model-hints.js';
+import { composeStatusSize, renderSizeLine, type StatusSize } from '../../core/change-size.js';
+import { resolveSizeCeiling } from '../../core/project-config.js';
 import {
   validateChangeExists,
   validateSchemaExists,
@@ -179,22 +181,30 @@ export async function statusCommand(options: StatusOptions): Promise<void> {
     // loadChangeContext will auto-detect schema from metadata if not provided
     const context = loadChangeContext(projectRoot, changeName, options.schema);
     const status = formatChangeStatus(context);
+    // rc09a (design D4): size is composed HERE, at the command layer, never inside
+    // `formatChangeStatus` — orientation, the boot render and the gate computation consume
+    // `ChangeStatus`, and size must reach none of them. A read failure lands in `size.errors`.
+    const size = composeStatusSize(
+      projectRoot,
+      path.join(projectRoot, 'orbit', 'changes', changeName),
+      resolveSizeCeiling(projectRoot)
+    );
 
     spinner?.stop();
 
     if (options.json) {
-      console.log(JSON.stringify(status, null, 2));
+      console.log(JSON.stringify({ ...status, size }, null, 2));
       return;
     }
 
-    printStatusText(status);
+    printStatusText(status, size);
   } catch (error) {
     spinner?.stop();
     throw error;
   }
 }
 
-export function printStatusText(status: ChangeStatus): void {
+export function printStatusText(status: ChangeStatus, size?: StatusSize): void {
   const doneCount = status.artifacts.filter((a) => a.status === 'done').length;
   const total = status.artifacts.length;
 
@@ -218,6 +228,12 @@ export function printStatusText(status: ChangeStatus): void {
   if (status.isComplete) {
     console.log();
     console.log(chalk.green('All artifacts complete!'));
+  }
+
+  // rc09a: one `Size:` line when the check is ON (a ceiling is configured); none when OFF.
+  if (size && size.ceiling) {
+    console.log();
+    console.log(renderSizeLine(size));
   }
 
   // C1: gate rows + position readout.

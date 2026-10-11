@@ -7,6 +7,7 @@
 import type { SkillTemplate, CommandTemplate } from '../types.js';
 import { PR_CHOREOGRAPHY_REFERENCE } from './pr-choreography.js';
 import { EXPLORE_DECISION_ENTRY_PRODUCTION, EXPLORE_MECHANISM_ENTRY_PRODUCTION } from '../../explore-grammar.js';
+import { SIZE_DECLARATION_PRODUCTION } from '../../change-size.js';
 
 export function getOrbitProposeSkillTemplate(): SkillTemplate {
   return {
@@ -240,8 +241,8 @@ Every Mechanism entry, and every live rule with none, is disposed of by ONE row 
 
 ### Step 0d — Move the staging directory (with the staged-metadata MERGE)
 
-After all upstream steps complete successfully (artifacts generated, validation passes),
-FIRST merge the staged metadata, THEN bulk-move (D-arc Stage D2):
+After all upstream steps complete successfully (artifacts generated, validation passes) and the
+size brief below has run, FIRST merge the staged metadata, THEN bulk-move (D-arc Stage D2):
 
 1. **Staged-metadata MERGE** (before the bulk move): if \`orbit/explore/<name>/.openspec.yaml\`
    exists, read it via the change-metadata helpers and merge FIELD-LEVEL into the change's
@@ -307,6 +308,45 @@ detect a parallel change landing on the same requirements (no silent spec data-l
 - If delta specs are edited again later in the session, re-run the stamp so newly touched
   requirements gain fingerprints too (still add-missing-only; safe to repeat).
 
+## Size brief after generation (NEW step — both modes)
+
+(Per \`orbit-propose-modifications\`' \`Size brief after generation\`; the figures are \`orbit-change-size\`'s.)
+
+**Position**: after every artifact is generated and validated, in consume mode and standalone mode alike —
+BEFORE Step 0d's move, BEFORE the PR choreography's Phase 3 (commit, push, draft PR) and BEFORE the
+completion emit, so a declaration written here lands in the proposal Phase 3 commits.
+
+Read the \`size\` object from \`orbit status --change "<name>" --json\` (never compute a figure yourself) and act
+by this table:
+
+| \`size\` | the body |
+|---|---|
+| \`ceiling\` is \`null\` (the check is OFF) | says nothing about size |
+| \`breaches\` is empty | says nothing about size |
+| every breach \`declared\` | states each declared breach in one line, at the completion summary |
+| any breach not \`declared\` | BRIEFS the user before the completion emit: each undeclared dimension with its figure and maximum, and the two routes below |
+
+For an undeclared breach, ask with **AskUserQuestion** — the user's answer decides; never choose for them:
+
+- **Split** — the change is split before review (R-crc-9). Do not split it here: say which dimensions are over and
+  recommend returning to \`/orbit:explore <name>\` or the architecture doc. Leave every artifact in place and write no
+  \`## Size\` section. The split recommendation REPLACES the completion prompt to review (below); the completion emit
+  is still written — say that its pointer names the review only because the artifacts are complete.
+- **Declare** — write a \`## Size\` section into \`proposal.md\` (or add to an existing one), one item per undeclared
+  dimension, carrying the user's reason in the user's words. Then re-run \`orbit validate "<name>" --strict\`.
+
+The declaration's production — a CHECKED MIRROR of \`orbit-change-size\`'s \`A breach is declared in the proposal's
+Size section\`, carried here because an installed skill has neither the owner's spec nor its parser (a parity test
+holds it byte-equal to the owner's fence):
+
+\`\`\`
+${SIZE_DECLARATION_PRODUCTION}
+\`\`\`
+
+Only \`-\` items declare; the heading is exactly \`## Size\`; the reason begins on the item's first line. The engine
+reads WHICH dimensions are declared, never what a reason says. The brief REPORTS: it blocks nothing, and the
+change's artifacts are complete whichever route is taken.
+
 ## PR lifecycle (config-gated — D-arc Stage D6)
 
 **Position (NEW Step 0.5 — this section is placed last for reading, not for running).**
@@ -355,7 +395,7 @@ emit is NOT the last act: commit and push the just-written emit file per the ref
 reach the branch. After a mid-flight failure the emit stays LOCAL; landing it is part of the
 manual recovery the failure note names.
 
-**Completion-prompt override (chat)**: where the upstream steps above prompt "Run \`/orbit:apply\` or ask me to implement", instead prompt: "Run \`/orbit:review <name>\` — review the artifacts before implementation." The upstream text above is kept verbatim; this override is the operative instruction.
+**Completion-prompt override (chat)**: where the upstream steps above prompt "Run \`/orbit:apply\` or ask me to implement", instead prompt: "Run \`/orbit:review <name>\` — review the artifacts before implementation." The upstream text above is kept verbatim; this override is the operative instruction — except after the size brief's **Split** route, whose split recommendation is the closing chat line instead.
 `,
     references: [
       {

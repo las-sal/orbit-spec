@@ -14,7 +14,8 @@ import { parseDeltaSpec, normalizeRequirementName } from '../parsers/requirement
 import { findMainSpecStructureIssues } from '../parsers/spec-structure.js';
 import { FileSystemUtils } from '../../utils/file-system.js';
 import { parse as parseYamlSync } from 'yaml';
-import { resolveScenarioMapConfig, type ScenarioMapConfig } from '../project-config.js';
+import { resolveScenarioMapConfig, resolveSizeCeiling, type ScenarioMapConfig } from '../project-config.js';
+import { computeChangeSize, readSizeDeclaration, sizeBreaches, type SizeCeiling } from '../change-size.js';
 import { computeScenarioMap, scanDeclarations, joinKey, type ScenarioScan } from '../scenario-map.js';
 import { loadChangeContext, formatChangeStatus } from '../artifact-graph/instruction-loader.js';
 
@@ -26,6 +27,8 @@ export class Validator {
    * raises its warnings once, then reuses them for every change (design D6).
    */
   private scenarioRun?: { root: string; config: ScenarioMapConfig; scan?: ScenarioScan };
+  /** rc09a: the size ceiling, read ONCE per Validator so a bulk run warns once (the rc06a pattern). */
+  private sizeRun?: { root: string; ceiling: SizeCeiling | null };
 
   constructor(strictMode: boolean = false) {
     this.strictMode = strictMode;
@@ -282,8 +285,80 @@ export class Validator {
 
     issues.push(...(await this.validateArchitectureCitation(changeDir)));
     issues.push(...this.validateScenarioDeclarations(changeDir));
+    issues.push(...this.validateChangeSize(changeDir));
 
     return this.createReport(issues);
+  }
+
+  /**
+   * rc09a size check (`orbit-change-size`'s `Validate reports each breach as declared or
+   * undeclared` — that requirement's table is the rule; this method is its rows). Every issue
+   * carries the path `size`. With the check OFF it contributes nothing. The level REPORTS; no gate
+   * reads it.
+   */
+  private validateChangeSize(changeDir: string): ValidationIssue[] {
+    const root = this.projectRootFor(changeDir);
+    if (!root) return [];
+    if (!this.sizeRun || this.sizeRun.root !== root) {
+      this.sizeRun = { root, ceiling: resolveSizeCeiling(root) };
+    }
+    const ceiling = this.sizeRun.ceiling;
+    if (!ceiling) return [];
+
+    const issues: ValidationIssue[] = [];
+    const size = computeChangeSize(root, changeDir);
+    for (const e of size.errors) {
+      issues.push({
+        level: 'WARNING',
+        path: 'size',
+        message: `${e.figure} could not be computed: ${e.path} exists but cannot be read (${e.message}); ${e.figure} is not compared`,
+      });
+    }
+    const { declaration, error } = readSizeDeclaration(changeDir);
+    if (error) {
+      issues.push({
+        level: 'WARNING',
+        path: 'size',
+        message: `${error.path} exists but cannot be read (${error.message}); nothing is declared, so every breach is undeclared`,
+      });
+    }
+    for (const m of declaration.malformed) {
+      issues.push({
+        level: 'WARNING',
+        path: 'size',
+        message: `malformed '## Size' line ${m.line}: "${m.text.trim()}" declares nothing (expected '- <dimension>: <reason>', dimension one of capabilities | requirements | changed_bytes | tasks)`,
+      });
+    }
+    for (const d of declaration.duplicate) {
+      issues.push({
+        level: 'WARNING',
+        path: 'size',
+        message: `duplicate '## Size' line ${d.line}: "${d.text.trim()}" repeats a dimension already declared; the first item declares`,
+      });
+    }
+    const { breaches, stale } = sizeBreaches(size, ceiling, declaration);
+    for (const b of breaches) {
+      issues.push(
+        b.declared
+          ? { level: 'INFO', path: 'size', message: `${b.dimension} ${b.figure} > ${b.maximum}: declared` }
+          : {
+              level: 'WARNING',
+              path: 'size',
+              message: `${b.dimension} ${b.figure} > ${b.maximum}: undeclared (split the change, or declare it with '- ${b.dimension}: <reason>' under '## Size' in proposal.md)`,
+            }
+      );
+    }
+    for (const st of stale) {
+      issues.push({
+        level: 'INFO',
+        path: 'size',
+        message:
+          st.maximum === null
+            ? `${st.dimension} is declared but has no configured maximum: the declaration is stale`
+            : `${st.dimension} ${st.figure ?? '?'} <= ${st.maximum} is declared: the declaration is stale`,
+      });
+    }
+    return issues;
   }
 
   /**

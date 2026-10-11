@@ -77,3 +77,17 @@ schema: spec-driven
 # Read the map with: orbit status --change <name> --scenarios
 scenario_map:
   tests: ['test/**/*.test.ts']
+
+# Size ceiling (optional — orbit-change-size, rc09a)
+# The maxima for a change's four size figures: capabilities touched, requirements touched,
+# new-side changed delta bytes, and tasks. A figure STRICTLY GREATER than its maximum is a
+# breach. `orbit validate <change>` reports an undeclared breach at WARNING (so `--strict`
+# fails) and a declared one at INFO; a breach is declared in a `## Size` section of
+# proposal.md, one `- <dimension>: <reason>` item per breached dimension. `orbit status
+# --change <name>` prints a `Size:` line. Size never moves a gate. Absent = off; a dimension
+# with no entry is not compared. These are R-crc-1's figures read as exact maxima.
+size_ceiling:
+  capabilities: 3
+  requirements: 12
+  changed_bytes: 40960
+  tasks: 19

@@ -166,6 +166,14 @@ export class ValidateCommand {
           console.log(`ℹ [INFO] ${issue.path}: ${issue.message}`);
         }
       }
+      // rc09a (design D3): every `size` issue prints beneath a valid report too — a non-strict
+      // run with an undeclared breach is valid, and its WARNING must not exist only in --json.
+      for (const issue of report.issues) {
+        if (issue.path === 'size') {
+          const prefix = issue.level === 'WARNING' ? '⚠' : 'ℹ';
+          console.log(`${prefix} [${issue.level}] ${issue.path}: ${issue.message}`);
+        }
+      }
     } else {
       console.error(`${type === 'change' ? 'Change' : 'Specification'} '${id}' has issues`);
       for (const issue of report.issues) {

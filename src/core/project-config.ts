@@ -2,6 +2,7 @@ import { existsSync, readFileSync, statSync } from 'fs';
 import path from 'path';
 import { parse as parseYaml } from 'yaml';
 import { z } from 'zod';
+import { SIZE_DIMENSIONS, type SizeCeiling, type SizeDimension } from './change-size.js';
 
 /**
  * Zod schema for project configuration.
@@ -69,6 +70,19 @@ export const ProjectConfigSchema = z.object({
     .record(z.string(), z.enum(['blind-pair', 'fresh', 'external']))
     .optional()
     .describe('Per-gate review preference: { <reviewed-gate-id>: blind-pair | fresh | external }'),
+
+  // Optional: the size ceiling (rc09a, `orbit-change-size`) — R-crc-1's maxima, four optional
+  // positive integers. Typed here for documentation only: validate and status read it ON ITS OWN
+  // through `resolveSizeCeiling`, and it reports; it never moves a gate.
+  size_ceiling: z
+    .object({
+      capabilities: z.number().int().positive().optional(),
+      requirements: z.number().int().positive().optional(),
+      changed_bytes: z.number().int().positive().optional(),
+      tasks: z.number().int().positive().optional(),
+    })
+    .optional()
+    .describe('Size ceiling: { capabilities, requirements, changed_bytes, tasks } maxima; a figure over its maximum is a breach'),
 });
 
 export type ProjectConfig = z.infer<typeof ProjectConfigSchema>;
@@ -215,6 +229,53 @@ export function resolveReviewPreference(
     }
   }
   return out;
+}
+
+/**
+ * Resolve the `size_ceiling` key, reading ONLY that key from `orbit/config.yaml` (rc09a design D2;
+ * the `resolveReviewPreference` pattern, so no other field's warning reaches validate or status).
+ * Returns `null` when the check is OFF — absent key, absent or unparseable file (silently), a
+ * non-mapping value (one warning naming the shape), or a mapping with no valid entry — and otherwise
+ * the valid entries. An unknown key warns naming the key; a value that is not a positive integer
+ * warns naming the dimension and the value; each is ignored. The table is `orbit-change-size`'s
+ * `The ceiling is opt-in by the size_ceiling config key`.
+ */
+export function resolveSizeCeiling(projectRoot: string): SizeCeiling | null {
+  let configPath = path.join(projectRoot, 'orbit', 'config.yaml');
+  if (!existsSync(configPath)) {
+    configPath = path.join(projectRoot, 'orbit', 'config.yml');
+    if (!existsSync(configPath)) return null;
+  }
+  let raw: unknown;
+  try {
+    raw = parseYaml(readFileSync(configPath, 'utf-8'));
+  } catch {
+    return null;
+  }
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+  if (!Object.prototype.hasOwnProperty.call(raw, 'size_ceiling')) return null;
+  const value = (raw as Record<string, unknown>).size_ceiling;
+  if (value === null || value === undefined || typeof value !== 'object' || Array.isArray(value)) {
+    console.warn(
+      `Invalid 'size_ceiling' field in config: expected a map of ${SIZE_DIMENSIONS.join(' | ')} to a positive integer, got ${value === null || value === undefined ? 'an empty value' : Array.isArray(value) ? 'a list' : `a scalar (${describeInertValue(value)})`}; the size check is off`
+    );
+    return null;
+  }
+  const ceiling: SizeCeiling = {};
+  for (const [key, max] of Object.entries(value as Record<string, unknown>)) {
+    if (!(SIZE_DIMENSIONS as readonly string[]).includes(key)) {
+      console.warn(`Unknown key '${key}' in 'size_ceiling' (expected ${SIZE_DIMENSIONS.join(' | ')}); ignored`);
+      continue;
+    }
+    if (typeof max !== 'number' || !Number.isInteger(max) || max <= 0) {
+      console.warn(
+        `Invalid 'size_ceiling' value for '${key}': ${describeInertValue(max)} (expected a positive integer); that dimension is not compared`
+      );
+      continue;
+    }
+    ceiling[key as SizeDimension] = max;
+  }
+  return Object.keys(ceiling).length > 0 ? ceiling : null;
 }
 
 const MAX_CONTEXT_SIZE = 50 * 1024; // 50KB hard limit
