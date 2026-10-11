@@ -27,6 +27,7 @@ import { countExploreFile, maturityRecommendation } from './parsers/explore-coun
 import { parseExploreRulesFile } from './parsers/explore-rules.js';
 import {
   parseCheckboxes,
+  taskIdOf,
   captureDiffBase,
   filesTouchedSince,
   firstCommitTouching,
@@ -212,6 +213,10 @@ const COMMANDS: Record<string, CommandSpec> = {
       'fingerprint_overridden',
       'fingerprints_unverified',
       'audit_skipped_via_flag',
+      // rc10: one `{task, why, when, where}` per unchecked user-validation task deferred at Step
+      // 3.2; `orbit-archive-modifications`' `User-validation closure at the archive seam` owns the
+      // refusals, checked here against the archived tasks.md.
+      'deferred_validations',
     ],
   },
 };
@@ -898,6 +903,101 @@ function validatePayload(command: string, payload: Record<string, unknown>): voi
   // required kind-specific extras. Its ORDERING is checked at the write gate instead,
   // because that check needs the emit's resolved <TS> token, which does not exist yet here.
   validateJudgements(command, payload);
+
+  // rc10: the deferral record's SHAPE. Its presence against the tasks file is checked at
+  // composition, which knows the archived directory.
+  validateDeferredValidationsShape(command, payload);
+}
+
+// ---------------------------------------------------------------------------------------
+// rc10: USER-VALIDATION DEFERRALS AT ARCHIVE.
+//
+// `orbit-archive-modifications`' `User-validation closure at the archive seam` states the
+// refusals ONCE, as the `DEFERRAL REFUSALS` production; this is its engine side. Cases 5–7 are
+// shape and run here; cases 1–4 need the archived tasks.md and run at composition. The engine
+// checks the id set, never whether the prose is true (R-crc-10).
+// ---------------------------------------------------------------------------------------
+
+const UV_MARKER = '(User-validation';
+const DEFERRAL_KEYS = ['task', 'why', 'when', 'where'] as const;
+
+function validateDeferredValidationsShape(command: string, payload: Record<string, unknown>): void {
+  if (command !== 'archive' || !('deferred_validations' in payload)) return;
+  const list = payload.deferred_validations;
+  if (!Array.isArray(list)) {
+    throw new EmitError(`'deferred_validations' must be an array of {task, why, when, where}.`);
+  }
+  const seen = new Set<string>();
+  list.forEach((entry, i) => {
+    if (entry === null || typeof entry !== 'object' || Array.isArray(entry)) {
+      throw new EmitError(`deferred_validations[${i}] must be an object {task, why, when, where}.`);
+    }
+    for (const key of Object.keys(entry)) {
+      if (!(DEFERRAL_KEYS as readonly string[]).includes(key)) {
+        throw new EmitError(`deferred_validations[${i}] carries unknown key '${key}' — a deferral is exactly {task, why, when, where}.`);
+      }
+    }
+    for (const key of DEFERRAL_KEYS) {
+      const v = (entry as Record<string, unknown>)[key];
+      if (typeof v !== 'string' || v.trim() === '') {
+        throw new EmitError(`deferred_validations[${i}].${key} must be a non-empty string.`);
+      }
+    }
+    const task = (entry as Record<string, string>).task.trim();
+    if (seen.has(task)) {
+      throw new EmitError(`deferred_validations names task '${task}' twice — one deferral per task.`);
+    }
+    seen.add(task);
+  });
+}
+
+function checkDeferredValidations(changeDir: string, payload: Record<string, unknown>): void {
+  let content = '';
+  try {
+    content = fs.readFileSync(path.join(changeDir, 'tasks.md'), 'utf-8');
+  } catch {
+    // A missing tasks.md is an empty marked set.
+  }
+  const boxes = parseCheckboxes(content);
+  const deferrals: Array<{ task: string }> = Array.isArray(payload.deferred_validations)
+    ? (payload.deferred_validations as Array<{ task: string }>)
+    : [];
+  const deferred = new Set(deferrals.map(d => d.task.trim()));
+
+  const checked = new Set(boxes.groups.flatMap(g => g.checkedIds));
+  const markedUnchecked = new Set<string>();
+  const uncheckedUnmarked = new Set<string>();
+  for (const g of boxes.groups) {
+    for (const text of g.uncheckedTexts) {
+      const id = taskIdOf(text);
+      const marked = text.includes(UV_MARKER);
+      if (marked && id === null) {
+        throw new EmitError(`tasks.md line '- [ ] ${text}' carries the ${UV_MARKER} marker and no task id — no deferral can key it; give it an id.`);
+      }
+      if (id === null) continue;
+      (marked ? markedUnchecked : uncheckedUnmarked).add(id);
+    }
+  }
+  for (const text of boxes.ungroupedUncheckedTexts) {
+    if (text.includes(UV_MARKER)) {
+      throw new EmitError(`tasks.md line '- [ ] ${text}' carries the ${UV_MARKER} marker outside every '## ' task group — move it into a group.`);
+    }
+  }
+  for (const task of deferred) {
+    if (markedUnchecked.has(task)) continue;
+    if (checked.has(task)) {
+      throw new EmitError(`deferred_validations names task '${task}', which is CHECKED — only an unchecked ${UV_MARKER} task is deferred.`);
+    }
+    if (uncheckedUnmarked.has(task)) {
+      throw new EmitError(`deferred_validations names task '${task}', which does not carry the ${UV_MARKER} marker.`);
+    }
+    throw new EmitError(`deferred_validations names task '${task}', which is no task in tasks.md.`);
+  }
+  for (const id of markedUnchecked) {
+    if (!deferred.has(id)) {
+      throw new EmitError(`unchecked ${UV_MARKER} task '${id}' has no deferral — check it with its evidence (OBSERVED) or add a deferred_validations entry (DEFERRED).`);
+    }
+  }
 }
 
 // ---------------------------------------------------------------------------------------
@@ -2008,6 +2108,10 @@ export function composeAndWriteEmit(
       break;
     }
     case 'archive': {
+      checkDeferredValidations(resolved.changeDir as string, payload);
+      if (Array.isArray((emit as any).deferred_validations) && (emit as any).deferred_validations.length === 0) {
+        delete (emit as any).deferred_validations;
+      }
       emit.next_recommended =
         'Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check.';
       break;

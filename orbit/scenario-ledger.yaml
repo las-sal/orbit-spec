@@ -40,3 +40,15 @@ scenarios:
   - key: "orbit-run-summary-emit :: Verify pass recommendation :: Status reader parses verify-pass recommendation"
     kind: untestable
     why: "The THEN is a downstream status reader's best-effort parse of `next_recommended` into `command`/`args`; no reader in this repo performs that parse (the v0.1 bash tool retired at D3), so there is nothing to run. The emit half, that the text leads with the graph's command, is held by the verify-pass behaviour tests in outstanding-passes.test.ts."
+  # rc10-apply-closure (task 3.1) — two authoring claims carried in orbit-archive-modifications' MODIFIED
+  # `Archive run summary written` block. The carrying half (an `accepted` pair and a `warnings` entry
+  # are each persisted as written) is a behaviour test; which of the two a residual belongs in is not.
+  - key: "orbit-archive-modifications :: Archive run summary written :: Residual risk moves out of warnings and into accepted"
+    kind: untestable
+    why: "The THEN classifies a residual by whether independent review output informed it, a judgement the archiving AI makes in a session; the write gate persists whatever it is given, and no check can tell a pass-formed residual written into `warnings` from a seam note."
+  - key: "orbit-archive-modifications :: Archive run summary written :: A seam-arising process note stays in warnings"
+    kind: untestable
+    why: "The same classification seen from the other side: whether a note was formed against an independent pass is the archiving AI's judgement, not a property of the record the engine can read."
+  - key: "orbit-engine-gates :: Inflection-prompt override contract :: The prompt is the only skip surface"
+    kind: untestable
+    why: "The THEN is an absence across every recommendation an AI composes in chat; the engine's eligibility lines are composed from the gate graph and never offer a skip, but a body's prose recommendation is authored in a session and no test can enumerate it."

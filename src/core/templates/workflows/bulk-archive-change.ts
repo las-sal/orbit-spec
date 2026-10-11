@@ -5,6 +5,7 @@
  * templates file into workflow-focused modules.
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
+import { DEFERRAL_REFUSALS } from './archive-change.js';
 
 export function getBulkArchiveChangeSkillTemplate(): SkillTemplate {
   return {
@@ -42,7 +43,7 @@ This skill allows you to batch-archive changes, handling spec conflicts intellig
       - Note which artifacts are \`done\` vs other states
 
    b. **Task completion** - Read \`orbit/changes/<name>/tasks.md\`
-      - Count \`- [ ]\` (incomplete) vs \`- [x]\` (complete)
+      - Count \`- [ ]\` (incomplete) vs \`- [x]\` (complete), excluding every unchecked task carrying the \`(User-validation\` marker — the per-change user-validation closure owns those (orbit named edit, per \`orbit-archive-modifications\`' \`User-validation closure at the archive seam\`), so a change whose only unchecked tasks carry the marker is never classed incomplete or offered for skipping
       - If no tasks file exists, note as "No tasks"
 
    c. **Delta specs** - Check \`orbit/changes/<name>/specs/\` directory
@@ -292,6 +293,18 @@ PROPOSE or FF emit on that change's trail (read-only — no \`gh\` query, since 
 performs no remote work); report its \`url\` when present, and \`attached, no PR recorded\`
 when the record lacks one; a change with no attachment at all is not named (it never had a
 PR). Single-change \`/orbit:archive\` is the seam that flips.
+
+## Per-change user-validation closure (rc10 — NEW step inside upstream Step 8)
+
+(Per \`orbit-archive-modifications\`' \`User-validation closure at the archive seam\`)
+
+For EACH confirmed change, before its fingerprint check, its Step 8a sync and its Step 8b move, run \`orbit-archive-change\`'s Step 3.2 for that change: dispose of every unchecked \`(User-validation\` task in its \`tasks.md\` as OBSERVED (check the box with a one-line evidence note) or DEFERRED (compose a \`deferred_validations\` entry \`{task, why, when, where}\` for that change's own archive run summary), and check each case of the production below — a CHECKED MIRROR of the owner's fence — against the composed deferrals. An id-less or ungrouped marked task (cases 2 and 3) is reported to the user, who fixes it or skips that change (record it as Skipped in the Step 9 summary) without stopping the rest of the batch.
+
+\`\`\`
+${DEFERRAL_REFUSALS}
+\`\`\`
+
+Each inner archive emit is checked by the same write gate; a refusal after the move is repaired by re-running that change's \`orbit emit archive\`, never by repeating its sync or move. The Step 9 **Bulk Archive Complete** summary BRIEFS each change's dispositions — one line per task: the change, the task id, OBSERVED or DEFERRED and, for a deferral, its \`why\`. The brief reports; it does not prompt.
 
 ## Per-change base-fingerprint check (C2 — NEW step inside upstream Step 8)
 

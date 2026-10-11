@@ -99,15 +99,26 @@ function write(root: string, rel: string, content: string): void {
   fs.writeFileSync(p, content);
 }
 
-function seedChangeDir(root: string, rel: string): void {
+function seedChangeDir(root: string, rel: string, validationTasks: string[] = []): void {
   write(root, `${rel}/proposal.md`, '# Proposal\n\n## Why\nw\n');
   write(root, `${rel}/design.md`, '# Design\n');
   write(root, `${rel}/specs/cap/spec.md`, '## ADDED Requirements\n\n### Requirement: R\n\nThe system SHALL r.\n\n#### Scenario: s\n\n- **WHEN** w\n- **THEN** t\n');
-  write(root, `${rel}/tasks.md`, '# Tasks\n\n## 1. Group\n\n- [ ] 1.1 do a thing\n');
+  const marked = validationTasks.map((id) => `- [ ] ${id} (User-validation) observe it after shipping\n`).join('');
+  write(root, `${rel}/tasks.md`, `# Tasks\n\n## 1. Group\n\n- [ ] 1.1 do a thing\n${marked}`);
   write(root, `${rel}/.openspec.yaml`, 'schema: spec-driven\nschema_version: 4\n');
 }
 
-/** Every token an example names in a `formed_against` array (the ONE seeding rule, design D3). */
+/**
+ * The TWO seeding rules. (1) Every token an example names in a `formed_against` array becomes a
+ * pass on the trail (rc07b design D3). (2) Every task an example's `deferred_validations` names
+ * becomes an unchecked `(User-validation` task in the seeded tasks.md (rc10), so the archive write
+ * gate's presence check has the task the deferral keys; an example with no deferral seeds none.
+ */
+function deferredTasks(payload: Record<string, unknown>): string[] {
+  const d = payload.deferred_validations;
+  return Array.isArray(d) ? d.map((e) => String((e as any)?.task)) : [];
+}
+
 function citedTokens(payload: Record<string, unknown>): string[] {
   const j = payload.judgements;
   if (!Array.isArray(j)) return [];
@@ -121,11 +132,11 @@ function submit(command: string, example: Example, scope: Scope): ComposeResult 
     let trailDir: string | null = null;
     let target: { change?: string; doc?: string } = {};
     if (scope === 'change') {
-      seedChangeDir(root, `orbit/changes/${CHANGE}`);
+      seedChangeDir(root, `orbit/changes/${CHANGE}`, deferredTasks(example.payload));
       trailDir = `orbit/changes/${CHANGE}/.orbit-runs`;
       target = { change: CHANGE };
     } else if (scope === 'archived') {
-      seedChangeDir(root, `orbit/changes/archive/2026-10-04-${CHANGE}`);
+      seedChangeDir(root, `orbit/changes/archive/2026-10-04-${CHANGE}`, deferredTasks(example.payload));
       trailDir = `orbit/changes/archive/2026-10-04-${CHANGE}/.orbit-runs`;
       target = { change: CHANGE };
     } else if (scope === 'doc') {
@@ -227,13 +238,19 @@ describe('payload schema references are proven by execution (rc07b)', () => {
     expect(a.examples.map((e) => e.scopes)).toEqual([['change', 'project']]);
   });
 
+  // @scenario behaviour orbit-archive-modifications :: Archive run summary written :: Summary contents
+  // @scenario behaviour orbit-archive-modifications :: Archive run summary written :: Consent recorded in the summary
+  // @scenario behaviour orbit-archive-modifications :: Archive summary schema reference ships with the skill :: The deferral record is documented in the shipped reference
   it('the archive example runs against an archived target with a seeded trail', () => {
     const a = analyze('archive', real('archive', 'archive-summary-schema.md'));
     expect(a.examples.map((e) => e.scopes)).toEqual([['archived']]);
     const ex = a.examples[0];
     expect((ex.payload.judgements as any[]).some((j) => j.kind === 'readiness')).toBe(true);
     expect(citedTokens(ex.payload).length).toBeGreaterThan(0);
+    expect(deferredTasks(ex.payload)).toEqual(['5.3']);
     const result = submit('archive', ex, 'archived');
+    expect(result.emit).toMatchObject({ command: 'archive', change: CHANGE, consent: 'user-invoked', user_decision: 'audit_skipped_via_flag' });
+    for (const k of ['timestamp', 'audit', 'sync_specs', 'deferred_validations']) expect(result.emit, k).toHaveProperty(k);
     expect(result.path).toContain(path.join('orbit', 'changes', 'archive', `2026-10-04-${CHANGE}`, '.orbit-runs', 'archive-'));
   });
 });

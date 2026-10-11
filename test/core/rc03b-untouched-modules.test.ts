@@ -89,6 +89,10 @@ import { fileURLToPath } from "node:url";
  * MOVED a THIRD time at rc18's verification walk (2026-10-08): `gates.ts` — two comments state the superseded test
  * as the gate-id test (V1, comment-only); `emit-composition.ts` — the verify walk clause is gate-neutral (V2).
  * `instruction-loader.ts` did not move.
+ * MOVED at rc10-apply-closure apply (2026-10-11): `emit-composition.ts` only — the archive payload table gains
+ * `deferred_validations`, and the write gate checks it against the archived `tasks.md` (tasks 1.1–1.2). A pin the
+ * task plan did not name (it named the template parity pins only), recorded here as its own act. `gates.ts`,
+ * `trail.ts` and `instruction-loader.ts` did not move, as the proposal's Impact states.
  */
 const PINNED: Record<string, string> = {
   "schemas/spec-driven/schema.yaml": "21e0ae86532a39be558a2b81d23738a6fbf92fbd32b0d01612a65e83d6a96739",
@@ -107,7 +111,7 @@ const PINNED: Record<string, string> = {
   "src/core/artifact-graph/state.ts": "f59f748b94cd94ca2fe022ec5aa66b3251dd1b2c00bddb9a17cbd9273a04d0f2",
   "src/core/artifact-graph/trail.ts": "39b5d110ef53b7e03f49ddf292e86db598a14f426a02e6d84142e16231e37d69",
   "src/core/artifact-graph/types.ts": "d83e0cc6d7fca7b80618ffbb7ce052ee68e35be79e7949a941e989b2e102392c",
-  "src/core/emit-composition.ts": "a58d91e9ebdf9c8ffd86b59dbd4fd37b7633fc96f9802042a83f7aefe33da9d2",
+  "src/core/emit-composition.ts": "2d9504dc17ef6bbe337ed8c6324e98a5105fb1f1ffeaaa58d735462420129b42",
   "src/core/report-render.ts": "ceaf85f5b3254b5dde97b82c94b829de510d1f70669f16d65bd820a55b7ae393",
 };
 

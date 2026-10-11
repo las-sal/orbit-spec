@@ -34,17 +34,29 @@ export interface CheckboxState {
   groups: TaskGroup[];
   tasksCompleted: number;
   tasksRemaining: number;
+  /**
+   * rc10: raw text of each unchecked item outside every `## ` group, which the counts above never
+   * see. Read by the archive write gate so a marked line the reader cannot place is refused by its
+   * text rather than missed.
+   */
+  ungroupedUncheckedTexts: string[];
 }
 
 const GROUP_HEADER = /^##\s+(?:(\d+)\.\s+)?(.*\S)\s*$/;
 const CHECKBOX = /^\s*-\s+\[([ xX])\]\s+(.*\S)\s*$/;
 const TASK_ID = /^(\d+(?:\.\d+)+)\b/;
 
+/** The task id a checkbox item's text opens with (`9.6`), or null — the reader's one id grammar. */
+export function taskIdOf(text: string): string | null {
+  return text.match(TASK_ID)?.[1] ?? null;
+}
+
 export function parseCheckboxes(content: string): CheckboxState {
   const lines = content.split(/\r?\n/);
   const groups: TaskGroup[] = [];
   let current: TaskGroup | null = null;
   let inFence = false;
+  const ungroupedUncheckedTexts: string[] = [];
 
   for (const line of lines) {
     if (/^\s*(`{3,}|~{3,})/.test(line)) {
@@ -68,8 +80,12 @@ export function parseCheckboxes(content: string): CheckboxState {
       continue;
     }
     const box = line.match(CHECKBOX);
+    if (box && !current && box[1] === ' ') {
+      ungroupedUncheckedTexts.push(box[2]);
+      continue;
+    }
     if (box && current) {
-      const id = box[2].match(TASK_ID)?.[1] ?? null;
+      const id = taskIdOf(box[2]);
       if (box[1] === ' ') {
         current.unchecked++;
         current.uncheckedTexts.push(box[2]);
@@ -85,6 +101,7 @@ export function parseCheckboxes(content: string): CheckboxState {
     groups,
     tasksCompleted: groups.reduce((n, g) => n + g.checked, 0),
     tasksRemaining: groups.reduce((n, g) => n + g.unchecked, 0),
+    ungroupedUncheckedTexts,
   };
 }
 

@@ -76,9 +76,9 @@ const RELOCATED: Array<[string, () => SkillTemplate, string[]]> = [
   ['continue-change', getContinueChangeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
   ['apply-change', getApplyChangeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override', 'blocked-by-gate', 'continuation', 'formed_against: []', 'ACCEPTED as a pass', 'Consent at entry', 'consent_era_from', '"user-invoked" | "prompted"', 'orbit emit apply']],
   ['ff-change', getFfChangeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
-  ['bulk-archive-change', getBulkArchiveChangeSkillTemplate, ['# Orbit additions', 'execution disciplines', 'Per-change consent', 'consent_era_from']],
+  ['bulk-archive-change', getBulkArchiveChangeSkillTemplate, ['# Orbit additions', 'execution disciplines', 'Per-change consent', 'consent_era_from', 'Per-change user-validation closure']],
   ['verify-change', getVerifyChangeSkillTemplate, ['execution disciplines', 'Run-summary emit']],
-  ['archive-change', getArchiveChangeSkillTemplate, ['execution disciplines', 'run summary', 'review-system gate inflection', 'continuation', 'formed_against: []', 'ACCEPTED as a pass', 'Consent at entry', 'consent_era_from', 'Sync inheritance']],
+  ['archive-change', getArchiveChangeSkillTemplate, ['execution disciplines', 'run summary', 'Gate inflection prompt', 'User-validation closure', 'DEFERRAL REFUSALS', 'continuation', 'formed_against: []', 'ACCEPTED as a pass', 'Consent at entry', 'consent_era_from', 'Sync inheritance']],
   ['onboard', getOnboardSkillTemplate, ['execution disciplines', 'self-contained', 'Four execution disciplines']],
   ['sync-specs', getSyncSpecsSkillTemplate, ['execution disciplines', 'Consent inheritance']],
   // B3 editorial workflows (net-new relocation; parity proof per D-b3-4)
@@ -449,6 +449,8 @@ describe('orbit content fidelity (B1 relocation)', () => {
       }
     });
 
+    // @scenario text orbit-archive-modifications :: Archive summary schema reference ships with the skill :: Schema shapes match the baselines, not the overlay source
+    // @scenario text orbit-archive-modifications :: Archive summary schema reference ships with the skill :: No predecessor-era vocabulary survives
     it('archive schema content matches the baseline-canonical shape and vocabulary', () => {
       const schema = (getArchiveChangeSkillTemplate().references ?? [])[0].content;
       // canonical shapes (orbit-archive-modifications delta scenarios)

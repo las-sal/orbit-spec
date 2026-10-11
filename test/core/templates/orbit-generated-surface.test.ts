@@ -152,6 +152,7 @@ describe('generated surface fidelity (real init, all workflows, claude + codex)'
     });
   });
 
+  // @scenario behaviour orbit-archive-modifications :: Archive summary schema reference ships with the skill :: Reference exists after init
   it('archive ships its reference on disk for both tools, byte-identical', async () => {
     const claudeRef = await fs.readFile(
       path.join(testDir, '.claude', 'skills', 'orbit-archive-change', 'references', 'archive-summary-schema.md'),

@@ -231,6 +231,12 @@ describe('target resolution and spine composition', () => {
     ).toThrow(/no archived directory matching/);
   });
 
+  // @scenario behaviour orbit-archive-modifications :: Archive run summary written :: Gate override recorded in the summary
+  // @scenario behaviour orbit-archive-modifications :: Archive run summary written :: Fingerprint override recorded in the summary
+  // @scenario behaviour orbit-archive-modifications :: Archive run summary written :: Unverified fingerprints recorded in the summary
+  // @scenario behaviour orbit-archive-modifications :: Archive run summary written :: A gate override at archive carries its continuation successor
+  // @scenario behaviour orbit-archive-modifications :: Archive run summary written :: An override with no independent pass to cite is still recorded
+  // @scenario behaviour orbit-engine-gates :: Inflection-prompt override contract :: Override recorded, not prevented
   it('archive accepts the schema\'s CONDITIONAL fields — fingerprint override/unverified, audit_skipped_via_flag (D6 archive, 2026-09-11; the C1 gate-override field retired at rc04c)', () => {
     write('orbit/changes/archive/2026-09-11-bar/proposal.md', 'p');
     // rc04c: the proceed-anyway decision rides the continuation entry ALONE. `bar` carries no
@@ -1334,6 +1340,7 @@ describe('D6 PR payload fields', () => {
       expect(written.pr_attachment.url).toBeUndefined();
     });
 
+    // @scenario behaviour orbit-archive-modifications :: Archive run summary written :: PR fields recorded at emit-time state
     it('accepts pr_url and pr_state on archive', () => {
       const res = composeAndWriteEmit(
         'archive',
@@ -1544,6 +1551,7 @@ describe('rc04a judgement record', () => {
   });
 
   // ---- 4.2 the pass case -------------------------------------------------
+  // @scenario behaviour orbit-archive-modifications :: Archive run summary written :: Readiness recorded on an archive that concludes a cadence
   it('writes a record citing only earlier, resolvable independent tokens', () => {
     const runs = archived();
     const r = emitArchive([readiness()]);
@@ -1666,6 +1674,7 @@ describe('rc04a judgement record', () => {
     expect(listRuns(RUNS).filter(f => f.startsWith('apply-'))).toHaveLength(0);
   });
 
+  // @scenario behaviour orbit-archive-modifications :: Archive run summary written :: An override with no independent pass to cite is still recorded
   it('REFUSES an empty formed_against on the ARCHIVE seam too — the seam where the decision is most often taken', () => {
     // The refusal direction was pinned on apply only; the archive seam had the acceptance case
     // (the empty-trail 'bar' emit) and a CLI probe that does not survive the session
@@ -1733,6 +1742,8 @@ describe('rc04a judgement record', () => {
   // was going to architecture on an emit that had just archived it. Routing was already
   // descoped from rc04a for having no reader; requiring `destination` re-imported it through
   // the validator. The record now says what the reader already says.
+  // @scenario behaviour orbit-archive-modifications :: Archive run summary written :: A not-ready record is the author's own dissent
+  // @scenario behaviour orbit-archive-modifications :: Archive run summary written :: not-ready does not block
   it('accepts an AI-authored not-ready dissent with no destination', () => {
     const runs = archived();
     const r = emitArchive([readiness({ disposition: 'not-ready', ratified_by: 'ai' })]);
@@ -2364,5 +2375,111 @@ describe('audit-drift counts are engine-computed (rc07b)', () => {
     expect(r.emit.findings_total).toBe(0);
     expect(r.emit.findings_by_category).toEqual({ '2': 0 });
     expect(String(r.emit.next_recommended)).toMatch(/^No project-wide drifts detected/);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// rc10: user-validation deferrals at the archive write gate — the DEFERRAL REFUSALS production
+// (`orbit-archive-modifications`' `User-validation closure at the archive seam`).
+// ---------------------------------------------------------------------------
+
+describe('archive deferred_validations (rc10)', () => {
+  const ARCHIVED = 'orbit/changes/archive/2026-10-11-uv';
+  const deferral = (task: string, extra: Record<string, unknown> = {}) => ({
+    task,
+    why: 'observable only after the change merges',
+    when: 'the next stage archive',
+    where: 'the next stage cycle',
+    ...extra,
+  });
+  const archive = (payload: Record<string, unknown>) =>
+    composeAndWriteEmit(
+      'archive',
+      { change: 'uv' },
+      { final_assessment: 'Archived uv.', archive_path: `${ARCHIVED}/`, model: null, ...payload },
+      { projectRoot: root }
+    );
+  const tasks = (body: string) => write(`${ARCHIVED}/tasks.md`, body);
+  const MARKED = '# Tasks\n\n## 4. Verification\n\n- [x] 4.1 build\n- [ ] 4.4 (User-validation, exit 2) observe the next archive\n- [ ] 4.5 an ordinary task\n';
+
+  // @scenario behaviour orbit-archive-modifications :: User-validation closure at the archive seam :: A validation possible only after shipping is deferred and printed
+  it('accepts and persists a deferral naming an unchecked marked task', () => {
+    tasks(MARKED);
+    const r = archive({ deferred_validations: [deferral('4.4')] });
+    expect(JSON.parse(fs.readFileSync(r.path, 'utf-8')).deferred_validations).toEqual([deferral('4.4')]);
+  });
+
+  // @scenario behaviour orbit-archive-modifications :: User-validation closure at the archive seam :: An undeferred validation is refused at the write gate
+  it('refuses an unchecked marked task with no deferral, naming it, and writes nothing', () => {
+    tasks(MARKED);
+    expect(() => archive({})).toThrow(/'4\.4' has no deferral/);
+    expect(() => archive({ deferred_validations: [] })).toThrow(/'4\.4' has no deferral/);
+    expect(listRuns(`${ARCHIVED}/.orbit-runs`)).toEqual([]);
+  });
+
+  // @scenario behaviour orbit-archive-modifications :: User-validation closure at the archive seam :: An observed validation is closed with its evidence
+  it('needs no deferral once every marked task is checked; an empty array is written as absent', () => {
+    tasks('# Tasks\n\n## 4. Verification\n\n- [x] 4.4 (User-validation) observed: the emit was accepted\n- [ ] 4.5 an ordinary task\n');
+    const r = archive({ deferred_validations: [] });
+    expect('deferred_validations' in JSON.parse(fs.readFileSync(r.path, 'utf-8'))).toBe(false);
+  });
+
+  // @scenario behaviour orbit-archive-modifications :: Archive run summary written :: Two gates proceeded past, two entries
+  it('accepts and persists one continuation entry per gate proceeded past', () => {
+    tasks('# Tasks\n\n## 1. Group\n\n- [ ] 1.1 never applied\n');
+    const entry = (gate: string, gate_state: string, gate_reason: string) => ({
+      kind: 'continuation', disposition: 'proceed', formed_against: [], reasoning: 'archived unapplied by the user', ratified_by: 'user',
+      gate, gate_state, gate_reason,
+    });
+    const both = [
+      entry('review-proposal', 'unpassed', 'no outside review stands on this state'),
+      entry('review-system', 'blocked', 'blocked by incomplete requires: apply'),
+    ];
+    const r = archive({ judgements: both });
+    expect(JSON.parse(fs.readFileSync(r.path, 'utf-8')).judgements).toEqual(both);
+  });
+
+  it('treats a missing tasks.md as an empty marked set', () => {
+    write(`${ARCHIVED}/proposal.md`, 'p');
+    expect(() => archive({})).not.toThrow();
+    expect(() => archive({ deferred_validations: [deferral('4.4')] })).toThrow(/'4\.4', which is no task/);
+  });
+
+  // @scenario behaviour orbit-archive-modifications :: User-validation closure at the archive seam :: A deferral must name an unchecked marked task
+  it('refuses a deferral naming a checked task, an unmarked task, or no task', () => {
+    tasks(MARKED);
+    expect(() => archive({ deferred_validations: [deferral('4.4'), deferral('4.1')] })).toThrow(/'4\.1', which is CHECKED/);
+    expect(() => archive({ deferred_validations: [deferral('4.4'), deferral('4.5')] })).toThrow(/'4\.5', which does not carry/);
+    expect(() => archive({ deferred_validations: [deferral('4.4'), deferral('9.9')] })).toThrow(/'9\.9', which is no task/);
+  });
+
+  it('refuses a marked unchecked task with no id, naming the line', () => {
+    tasks('# Tasks\n\n## 4. Verification\n\n- [ ] (User-validation) observe it\n');
+    expect(() => archive({})).toThrow(/\(User-validation\) observe it' carries the \(User-validation marker and no task id/);
+  });
+
+  // @scenario behaviour orbit-archive-modifications :: User-validation closure at the archive seam :: A marked line outside every task group is refused before the move
+  it('refuses a marked unchecked line outside every ## group, naming the line', () => {
+    tasks('# Tasks\n\n- [ ] 4.4 (User-validation) observe it\n\n## 1. Group\n\n- [x] 1.1 done\n');
+    expect(() => archive({ deferred_validations: [deferral('4.4')] })).toThrow(/4\.4 \(User-validation\) observe it' carries the \(User-validation marker outside every '## ' task group/);
+  });
+
+  it('does not read a marked line inside a fence', () => {
+    tasks('# Tasks\n\n## 1. Group\n\n- [x] 1.1 done\n\n```\n- [ ] 4.4 (User-validation) an example\n```\n');
+    expect(() => archive({})).not.toThrow();
+  });
+
+  it('refuses a duplicate, an empty or non-string prose field, a missing task, and an extra key', () => {
+    tasks(MARKED);
+    expect(() => archive({ deferred_validations: [deferral('4.4'), deferral('4.4')] })).toThrow(/names task '4\.4' twice/);
+    expect(() => archive({ deferred_validations: [deferral('4.4', { why: '  ' })] })).toThrow(/\[0\]\.why must be a non-empty string/);
+    expect(() => archive({ deferred_validations: [deferral('4.4', { when: 3 })] })).toThrow(/\[0\]\.when must be a non-empty string/);
+    const { where: _w, ...noWhere } = deferral('4.4');
+    expect(() => archive({ deferred_validations: [noWhere] })).toThrow(/\[0\]\.where must be a non-empty string/);
+    const { task: _t, ...noTask } = deferral('4.4');
+    expect(() => archive({ deferred_validations: [noTask] })).toThrow(/\[0\]\.task must be a non-empty string/);
+    expect(() => archive({ deferred_validations: [deferral('4.4', { reason: 'x' })] })).toThrow(/unknown key 'reason'/);
+    expect(() => archive({ deferred_validations: { task: '4.4' } })).toThrow(/must be an array/);
+    expect(listRuns(`${ARCHIVED}/.orbit-runs`)).toEqual([]);
   });
 });
