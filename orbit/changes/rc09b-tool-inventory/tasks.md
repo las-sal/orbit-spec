@@ -11,7 +11,7 @@
 
 ## 3. The inventory sweep
 
-- [x] 3.1 `test/core/cli-grammar/tool-inventory.test.ts`: the day-one sweep, with recorded tools derived as `orbit` plus `recordedTools()` (design D3), all four failure kinds collected (design D4), a non-vacuity floor of the Case 2 heads, and the scenario tag for `Today's surface passes the inventory`
+- [x] 3.1 `test/core/cli-grammar/tool-inventory.test.ts`: the day-one sweep, with recorded tools derived as `orbit` plus `recordedTools()` (design D3), all four failure kinds collected (design D4), a non-vacuity floor of the recorded tools' Case 2 counts (the declared heads held read by D4's exactness rule, never by the floor), and the scenario tag for `Today's surface passes the inventory`
 - [x] 3.2 Injection cases into copies of real surfaces, one per scenario of the ADDED requirement, each asserting its scenario's own outcome by design D6 (a pass; surface, line and head; head and kind; or requirement and line), each carrying its `@scenario` tag
 - [x] 3.3 Carry the MODIFIED requirement's scenarios unchanged; confirm `orbit status --change rc09b-tool-inventory --scenarios` lists every delta scenario declared
 

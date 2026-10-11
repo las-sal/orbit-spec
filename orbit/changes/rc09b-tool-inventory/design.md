@@ -74,7 +74,9 @@ THEN says, by outcome: the two passing scenarios (today's surface; a flagless in
 and, for the second, that no head is read from the span; an unknown head (a fence, a flagged inline span, an
 assignment prefix, a markdown-nested fence) asserts surface, line and head; an unused exemption asserts head and kind;
 an exemption naming a recorded tool asserts the head; a malformed block asserts the requirement and the offending line, or the requirement's heading line for an absent
-block. The day-one sweep also asserts a non-vacuity floor: at least the Case 2 heads are read.
+block. The day-one sweep also asserts a non-vacuity floor: the recorded tools are read at least as often as Case 2
+measured them (`orbit` in fences, `git` in fences, `gh` inline). The declared heads are held read by the exactness rule
+of D4, never by the floor, so an exemption leaves with its last use.
 
 ## Mechanism → artifacts
 
