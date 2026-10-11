@@ -300,21 +300,43 @@ interface Walk {
   shellLines: Set<number>;
 }
 
-function extractFenceLines(walk: Walk, token: Token, contentStart: number): void {
+/** One shell-fence command line after the quote join: its tokenized result and the fence lines it spans. */
+interface FenceLine {
+  /** 1-based surface line where the command starts. */
+  line: number;
+  text: string;
+  result: TokenizeResult;
+  /** The fence's content lines, and the 0-based indices this command spans. */
+  lines: string[];
+  startIdx: number;
+  endIdx: number;
+  contentStart: number;
+}
+
+/**
+ * The ONE quote join: a shell fence's content, one command per line, a line whose quote is still
+ * open joined to the next until it closes. Only an open quote joins: a refusal is its own line, and
+ * the fence's later lines are still read.
+ */
+function* fenceLines(token: Token, contentStart: number): Generator<FenceLine> {
   const lines = token.content.replace(/\n$/, '').split('\n');
   let i = 0;
   while (i < lines.length) {
     const startIdx = i;
     let text = lines[i];
     let result = tokenize(text);
-    // Only an open quote joins the next line: a refusal fails its own line, and the fence's
-    // later lines are still extracted and checked.
     while (!result.ok && 'open' in result && i + 1 < lines.length) {
       i++;
       text += '\n' + lines[i];
       result = tokenize(text);
     }
-    const line = contentStart + startIdx + 1;
+    yield { line: contentStart + startIdx + 1, text, result, lines, startIdx, endIdx: i, contentStart };
+    i++;
+  }
+}
+
+function extractFenceLines(walk: Walk, token: Token, contentStart: number): void {
+  for (const { line, text, result, lines, startIdx, endIdx: i } of fenceLines(token, contentStart)) {
     if (!result.ok) {
       // Whatever the line's first word: a non-tool line holding a quote open would
       // otherwise swallow every tool line after it, unseen by the sweep and the guard;
@@ -326,7 +348,6 @@ function extractFenceLines(walk: Walk, token: Token, contentStart: number): void
         message:
           'open' in result ? `unterminated ${result.open} quote at the end of the shell fence` : refusalMessage(result),
       });
-      i++;
       continue;
     }
     for (const tokens of result.segments) {
@@ -350,7 +371,6 @@ function extractFenceLines(walk: Walk, token: Token, contentStart: number): void
         }
       }
     }
-    i++;
   }
 }
 
@@ -366,14 +386,20 @@ function locateInline(parent: Token, child: Token, from: number): { index: numbe
   return m ? { index: m.index, end: m.index + m[0].length } : null;
 }
 
-function extractInline(walk: Walk, parent: Token, offset: number, blockLine: number): void {
+/** Every code span of an inline token, with its 1-based surface line. */
+function* inlineSpans(parent: Token, offset: number, blockLine: number): Generator<{ span: Token; line: number }> {
   let cursor = 0;
   for (const child of parent.children ?? []) {
     if (child.type !== 'code_inline') continue;
     const found = locateInline(parent, child, cursor);
     const before = found ? parent.content.slice(0, found.index) : '';
     if (found) cursor = found.end;
-    const line = offset + (parent.map?.[0] ?? blockLine) + before.split('\n').length;
+    yield { span: child, line: offset + (parent.map?.[0] ?? blockLine) + before.split('\n').length };
+  }
+}
+
+function extractInline(walk: Walk, parent: Token, offset: number, blockLine: number): void {
+  for (const { span: child, line } of inlineSpans(parent, offset, blockLine)) {
     if (child.markup !== '`' || !child.content.startsWith(`${walk.tool} `)) continue;
     const result = tokenize(child.content);
     if (!result.ok) {
@@ -395,8 +421,18 @@ function extractInline(walk: Walk, parent: Token, offset: number, blockLine: num
   }
 }
 
+/**
+ * What a walk does at each place it reads: a shell fence (its 0-based opening line in the surface)
+ * and an inline token. The one walk serves the extractor and the head inventory (rc09b design D1),
+ * so the two cannot disagree on which places a surface has.
+ */
+interface Visitor {
+  shellFence(token: Token, start: number): void;
+  inline(parent: Token, offset: number, blockLine: number): void;
+}
+
 /** Walk one markdown text whose line 0 sits at surface line `offset` (0-based). */
-function walkText(walk: Walk, text: string, offset: number): void {
+function walkText(visitor: Visitor, text: string, offset: number): void {
   // A table cell's inline token carries no map; its row (`tr_open`) does.
   let blockLine = 0;
   for (const token of md.parse(text, {})) {
@@ -405,13 +441,12 @@ function walkText(walk: Walk, text: string, offset: number): void {
       const info = infoWord(token);
       const start = offset + token.map[0];
       if (SHELL_INFO.has(info)) {
-        for (let l = start; l < offset + token.map[1]; l++) walk.shellLines.add(l);
-        extractFenceLines(walk, token, start + 1);
+        visitor.shellFence(token, start);
       } else if (MARKDOWN_INFO.has(info)) {
-        walkText(walk, token.content, start + 1);
+        walkText(visitor, token.content, start + 1);
       }
     } else if (token.type === 'inline') {
-      extractInline(walk, token, offset, blockLine);
+      visitor.inline(token, offset, blockLine);
     }
   }
 }
@@ -429,7 +464,17 @@ export function analyseSurface(surface: Surface, tool: string, tree?: CommandNod
     out: { snippets: [], bareNames: [], failures: [], guard: [] },
     shellLines: new Set(),
   };
-  walkText(walk, surface.text, 0);
+  walkText(
+    {
+      shellFence: (token, start) => {
+        for (let l = start; l < start + (token.map![1] - token.map![0]); l++) walk.shellLines.add(l);
+        extractFenceLines(walk, token, start + 1);
+      },
+      inline: (parent, offset, blockLine) => extractInline(walk, parent, offset, blockLine),
+    },
+    surface.text,
+    0,
+  );
   surface.text.split('\n').forEach((text, idx) => {
     if (!walk.shellLines.has(idx) && guardFails(text, tool)) {
       walk.out.guard.push({ surface, line: idx + 1, text });
@@ -448,6 +493,69 @@ export function analyseSurfaces(surfaces: Surface[], tool: string, tree?: Comman
     all.guard.push(...one.guard);
   }
   return all;
+}
+
+// ─── the head inventory (rc09b) ────────────────────────────────────
+
+/** A command head read on the surface: `orbit-cli-grammar`'s `Every command head on the generated surface is a recorded tool or a declared exemption`. */
+export interface Head {
+  surface: Surface;
+  /** 1-based line where the command (or the span) starts. */
+  line: number;
+  head: string;
+  source: SnippetSource;
+}
+
+const ASSIGNMENT = /^[A-Za-z_][A-Za-z0-9_]*=/;
+const BARE_HEAD = /^[a-z][a-z0-9._-]*$/;
+const FLAG_TOKEN = /^--?[A-Za-z0-9]/;
+
+/** A segment's head: its first token after any assignment prefix, or undefined when nothing follows it. */
+function segmentHead(tokens: string[]): { head: string; index: number } | undefined {
+  const index = tokens.findIndex((t) => !ASSIGNMENT.test(t));
+  return index === -1 ? undefined : { head: tokens[index], index };
+}
+
+/**
+ * Every head the inventory reads (rc09b design D5): each segment of a shell-fence command line,
+ * whatever its head's shape, and each segment of a single-backtick inline span whose head is a
+ * lowercase bare word and some later token of which is a flag token. A refused or open line or
+ * span yields nothing — the shared extractor fails a refused shell-fence line, and a refused span
+ * of an unrecorded tool is the requirement's named limit.
+ */
+export function analyseHeads(surfaces: Surface[]): Head[] {
+  const heads: Head[] = [];
+  for (const surface of surfaces) {
+    walkText(
+      {
+        shellFence: (token, start) => {
+          for (const { line, result } of fenceLines(token, start + 1)) {
+            if (!result.ok) continue;
+            for (const tokens of result.segments) {
+              const h = segmentHead(tokens);
+              if (h) heads.push({ surface, line, head: h.head, source: 'fence' });
+            }
+          }
+        },
+        inline: (parent, offset, blockLine) => {
+          for (const { span, line } of inlineSpans(parent, offset, blockLine)) {
+            if (span.markup !== '`') continue;
+            const result = tokenize(span.content);
+            if (!result.ok) continue;
+            for (const tokens of result.segments) {
+              const h = segmentHead(tokens);
+              if (!h || !BARE_HEAD.test(h.head)) continue;
+              if (!tokens.slice(h.index + 1).some((t) => FLAG_TOKEN.test(t))) continue;
+              heads.push({ surface, line, head: h.head, source: 'inline' });
+            }
+          }
+        },
+      },
+      surface.text,
+      0,
+    );
+  }
+  return heads;
 }
 
 /**
