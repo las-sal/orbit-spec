@@ -1,0 +1,25 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-11T19:50:29Z",
+  "change": "rc09b-tool-inventory",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Re-measured D-rc09-12's Case 3 (Case 1 here): all 34 gh invocations on the generated surface are inline spans, so the charter's fence-only inventory would have passed the tool that motivated it. Sal chose fences (nested included) plus flagged inline segments (D-rc09b-1, BOUNDED, Mechanism entry written; four prose heads and four new utilities to declare). Two open questions carry standing recommendations: the declared lists live as a fenced table in orbit-cli-grammar's requirement, and node/sh/command are declared utilities rather than contracts.",
+  "decisions_captured": 2,
+  "open_questions_count": 2,
+  "open_questions_with_recommendation": "2 of 2",
+  "rules_total": 1,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [
+    {
+      "id": "D-rc09b-1",
+      "kind": "a tool every one of whose inline invocations carries no flag token, or one invoked only in prose or in a `json`/untagged fence",
+      "method": "an independent review reading a new surface's inline spans; rc05's guard already fails a recorded tool's flagged line outside a fence"
+    }
+  ],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:explore rc09b-tool-inventory — continue thinking, or /orbit:propose rc09b-tool-inventory if ready to formalize"
+}

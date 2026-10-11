@@ -1,0 +1,9 @@
+schema: spec-driven
+created: 2026-10-11
+schema_version: 5
+base_fingerprints:
+  orbit-cli-grammar:
+    Every `orbit` snippet on the generated surface parses against that program: sha256:2c2d420a183e6946ba7f06fbb8b475c715d3ccf5c489dc2c2d4bebff3e3e3094
+architecture:
+  doc: clean-up-review-cycle
+  stage: rc09b-tool-inventory
