@@ -2958,7 +2958,7 @@ requirements · 19637 bytes changed · 17 tasks, none over; the walks' repairs g
 ### Stage rc09b-tool-inventory — a new tool reaches the surface only with a recorded contract
 
 Depends-on: (none)
-Complete: [ ]
+Complete: [x] 2026-10-11 (Sal)
 
 Declared 2026-10-10 (Sal) from the rc09 exploration's split (D-rc09-13); its starting record is D-rc09-12 and its
 Mechanism entry, in the rc09a staging directory. Charter: an inventory test over every shell fence of the generated
@@ -5487,3 +5487,12 @@ and fails `--strict`, and a declared breach passes `--strict` with an INFO namin
 converged on the `## Size` parser silently dropping an indented item; two walks, a verification that found one
 regression (sibling items at two spaces), and a third walk closed it. The readiness record accepts four residuals,
 headlined by rc07's distinction. `rc09b-tool-inventory`, its split sibling, remains to be explored.
+
+**2026-10-11 — rc09b-tool-inventory RATIFIED (Sal)**, through the architect session's offer. Its one exit criterion,
+(2) as revised, graded MET as written: a scratch `jq -r .x <path>` in the apply skill failed the suite naming
+`apply/SKILL.md:86` and `jq`, then was reverted, and an injection test per scenario of the ADDED requirement keeps the
+check standing. The exploration widened the charter's fence-only domain to flagged inline segments (D-rc09b-1), because
+every `gh` invocation on the surface is inline; the stage section's Widened and Shipped-as paragraphs record it. The
+system blind pair converged on the test restating the lists it derives; two walks, a verification that found one
+regression (design D6 still defining the old floor), and a third walk closed it. The readiness record accepts three
+residuals, headlined by rc07's distinction. With rc09a and rc09b both ratified, the rc09 split is fully delivered.
