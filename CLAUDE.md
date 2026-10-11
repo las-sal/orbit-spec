@@ -106,7 +106,7 @@ The full plan and design decisions live in the docs below — **read them before
 
 ## The ACTIVE program: clean-up-review-cycle (the D-arc is quiescent)
 
-**Current state, engine-checked:** the program's rulings index holds <!-- src:rulings -->14<!-- /src:rulings --> rulings, and `orbit/specs/` holds <!-- src:capabilities -->25<!-- /src:capabilities --> baseline capabilities. Every marked figure in this file is checked against `orbit/sources.yaml` by `orbit validate --sources`; an UNMARKED figure is invisible to that check.
+**Current state, engine-checked:** the program's rulings index holds <!-- src:rulings -->14<!-- /src:rulings --> rulings, and `orbit/specs/` holds <!-- src:capabilities -->26<!-- /src:capabilities --> baseline capabilities. Every marked figure in this file is checked against `orbit/sources.yaml` by `orbit validate --sources`; an UNMARKED figure is invisible to that check.
 
 As of 2026-09-11 the D-arc's six stages are all archived (d1 complete-ratified; d2–d6
 quiescent, awaiting ratification) and the live program is
@@ -211,7 +211,7 @@ file now carries a live mark. Do NOT read this paragraph as the program's full l
 only what rc07 produced. The authoritative list is the program doc's own Open questions section,
 which also carries Q-crc-11, Q-crc-12, Q-crc-20, Q-crc-21, Q-crc-22 and Q-crc-23.
 
-**Twenty-five more stages have shipped since, and the program is TWENTY-EIGHT stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b, rc03c, rc07b and rc06a ratified 2026-10-04; rc06b, rc08a and rc08b ratified 2026-10-05 — rc08a's exit (3), pending by design, was measured on rc08b's cadence and read 4, not zero; the split parent rc08 took its ENDED mark the same day; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening; rc17a ratified 2026-10-06; rc17d ratified 2026-10-06; rc17b ratified 2026-10-06; rc17c ratified 2026-10-07; rc18 ratified 2026-10-08; rc05 ratified 2026-10-09; rc05b ratified 2026-10-10).
+**Twenty-six more stages have shipped since, and the program is TWENTY-EIGHT stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b, rc03c, rc07b and rc06a ratified 2026-10-04; rc06b, rc08a and rc08b ratified 2026-10-05 — rc08a's exit (3), pending by design, was measured on rc08b's cadence and read 4, not zero; the split parent rc08 took its ENDED mark the same day; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening; rc17a ratified 2026-10-06; rc17d ratified 2026-10-06; rc17b ratified 2026-10-06; rc17c ratified 2026-10-07; rc18 ratified 2026-10-08; rc05 ratified 2026-10-09; rc05b ratified 2026-10-10).
 
 `rc02c-confirmation-semantics` is ARCHIVED (2026-09-21): **the budget stopped being a target.**
 R-crc-11(h) — effort is RECORDED, never TARGETED — retired `budgetExhausted`, the
@@ -768,6 +768,24 @@ only a flag's first-written form; the fresh half found substitution inside doubl
 the redirection closure and here-document bodies. Two walk logs, then an in-context VERIFICATION grading five `landed`
 and two `regressed` (the forms reduction stated only in design; a here-document row describing an extractor that
 swallowed every line after a refusal), walked to zero; a COMPUTED PASSED gate. **3287 tests green** (3145 → 3287).
+
+`rc09a-size-record` is ARCHIVED (2026-10-11; split from rc09-propose-hygiene at its exploration): **the engine measures a
+change against R-crc-1's ceiling.** NEW `src/core/change-size.ts` computes four figures from artifacts the engine already
+reads — capabilities, requirements touched, NEW-side changed bytes (ADDED blocks whole; a MODIFIED block's lines absent
+from its baseline block, counted as a MULTISET — rc04c reads exactly 14,438) and tasks (`parseCheckboxes`, the apply
+emit's counter). An opt-in `size_ceiling:` map in `orbit/config.yaml` holds the maxima (this repo: 3 / 12 / 40960 / 19, a
+breach STRICTLY greater). A proposal declares a breach in a `## Size` section, one `- <dimension>: <reason>` item per
+dimension, parsed fence-aware with CommonMark's indentation (a bullet nests only at the content column of the item
+above it); the engine reads which dimensions are declared, never the reason. `orbit validate <change>` reports an
+undeclared breach at WARNING — so `--strict` fails — and a declared one at INFO, printed beneath a valid report; `orbit
+status --change <name>` carries a `size` JSON field on every change and a `Size:` line when the check is on, composed at
+the command layer so it never reaches a gate. The propose body briefs an undeclared breach after non-strict validation,
+Split or Declare by `AskUserQuestion`, with the production as a checked mirror. `orbit-engine-gates`' size-proximity
+promise is retired. Baseline capabilities **25 → 26** (`orbit-change-size` ADDED). The system blind pair on `1e7db7b9`
+(fresh 0C/2W/2S forward, external GPT-6 0C/2W/1S hold) converged on the parser silently dropping an indented item; the
+external half found the brief unreachable under strict validation. Two walk logs, then an in-context VERIFICATION
+grading four `landed` and one `regressed` (sibling items at two spaces still dropped), walked to zero; a COMPUTED PASSED
+gate. **3366 tests green** (3287 → 3366).
 
 Read that doc before any rc-stage work; the D-arc section below is the historical
 record of how the engine got here.

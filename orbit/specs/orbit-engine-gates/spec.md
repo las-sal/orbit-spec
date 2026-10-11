@@ -553,11 +553,10 @@ trailing `in-context` slot is the check on the walk that resolved the leading sl
 RECOMMENDED first review, not the required one (R-crc-4 as amended 2026-10-05): it is the default
 review preference, which shapes what the readout presents and nothing the gate accepts. Both budgets declare the SAME
 expected cost — three independent passes — and the declaration is ALL they are; nothing consults
-either figure. The proposal gate's cadence is NOT conditional: R-crc-4
-describes a near-ceiling proposal running a blind pair, but no engine surface computes size
-proximity and this stage does not add one (the size computation belongs with rc09, which owns the
-propose-time size check; until it ships, a near-ceiling proposal pair is run by choice, not by the
-cadence). No sizing argument attaches to either budget — not headroom for a repeat, not a
+either figure. The proposal gate's cadence is NOT conditional on size: a change's size is
+REPORTED by `orbit-change-size` (`Status carries the size figures`) and enters no gate, and no
+proximity to the ceiling is computed — the blind pair is already the default review preference for
+every proposal, so a near-ceiling rule could act only by overriding the user's own preference. No sizing argument attaches to either budget — not headroom for a repeat, not a
 threshold to stay under. `budget` records what a cadence is EXPECTED to cost, never what it is
 PERMITTED to cost (R-crc-11(h)): a cost target distorts the behaviour it measures, and the figure
 this change demoted was doing exactly that. The cadence arrays and budgets live in the schema

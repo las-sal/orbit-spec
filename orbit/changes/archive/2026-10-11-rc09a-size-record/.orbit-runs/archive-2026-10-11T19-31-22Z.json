@@ -1,0 +1,73 @@
+{
+  "command": "archive",
+  "timestamp": "2026-10-11T19:31:22Z",
+  "change": "rc09a-size-record",
+  "kind": "lifecycle",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Archived rc09a-size-record to orbit/changes/archive/2026-10-11-rc09a-size-record/ through a computed passed review-system gate; 6 ADDED + 1 MODIFIED synced and byte-verified, fingerprints 1/1 verified, pre-archive audit clean of critical and warning drift.",
+  "archive_path": "orbit/changes/archive/2026-10-11-rc09a-size-record/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-change-size",
+      "orbit-engine-gates",
+      "orbit-propose-modifications"
+    ],
+    "added": 6,
+    "modified": 1,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_clean",
+  "consent": "user-invoked",
+  "warnings": [
+    "AT-ARCHIVE NOTE 6.3 executed: orbit-change-size's TBD baseline Purpose replaced in place.",
+    "AT-ARCHIVE NOTE 6.4 executed: CLAUDE.md's capabilities source mark 25 -> 26, the shipped-since count moved, and the stage paragraph written; the stage's Shipped-as paragraph written in the architecture doc.",
+    "Pre-archive audit SUGGESTIONs (Category 5): six rc04c fixture files under test/fixtures/change-size/ went unpredicted by Touchpoints (fixtures riding along with test/core/change-size.test.ts); test/core/rc03b-untouched-modules.test.ts was predicted and, by design D4, not edited."
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "formed_against": [
+        "2026-10-10T21-52-58Z",
+        "2026-10-10T21-53-20Z",
+        "2026-10-11T18-52-57Z",
+        "2026-10-11T18-53-15Z"
+      ],
+      "disposition": "ready",
+      "reasoning": "Both halves of the system blind pair reviewed the shipping tree; what they found was walked, verified, and the one regression the verification found was walked again. Size reports and never gates, so the residual risk sits in how a declaration is read, not in any lifecycle path.",
+      "ratified_by": "ai",
+      "accepted": [
+        {
+          "claim": "PASSED means every finding was resolved, not that an independent pass stood clean on the final tree",
+          "why": "rc07's distinction: no independent pass reviewed the tree after the walks."
+        },
+        {
+          "claim": "The final parser repair (nesting by content column) and its three table rows were read by no pass after the walk that wrote them",
+          "why": "The verification pass found the regression and the walk fixed it; mutation-checked (the old rule turns the sibling test red), but no reviewer has read the new rule."
+        },
+        {
+          "claim": "The `## Size` parser models only the CommonMark constructs its table names; setext headings and lazy-continuation nuances are stated as not modelled",
+          "why": "Stated once in the owner's section-end row; a full CommonMark reading of the section is Q-crc-15's shape and out of this stage's scope."
+        },
+        {
+          "claim": "The external half ran against an installed CLI, not a fresh build of the reviewed checkout",
+          "why": "The runner's worktree has no dist/ or dependencies; codex reported it in its notes, and the fresh half ran the real build and suites."
+        }
+      ]
+    }
+  ],
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."
+}

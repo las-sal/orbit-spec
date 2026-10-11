@@ -2945,6 +2945,16 @@ promise retired. Goal G3. Touches: a new size capability, orbit-propose-modifica
 ceiling, measured at exploration. Exit: (1) the size check fires on a fixture over the ceiling and names each breached
 dimension with its figure and maximum, and a declared breach does not fail `--strict`.
 
+**Shipped as (2026-10-11; the charter above stays as declared, its exit as written).** `orbit-change-size` is the new
+capability (five requirements); `orbit-propose-modifications` gained the size brief and `orbit-engine-gates`' proximity
+sentence now points at the size requirement. The byte figure is the MULTISET count of a MODIFIED block's new lines, so
+rc04c reads exactly 14,438. The charter did not say how the declaration is read; the walks settled it: a `## Size` item
+is read with CommonMark's indentation rules (a bullet nests only at the content column of the item above it), and the
+section ends only at an ATX heading. The propose brief runs after NON-STRICT validation, which size never fails, and a
+Split leaves the rest of the propose flow unchanged. Exit (1) is met by the CLI tests over a fixture past the ceiling,
+undeclared then declared, and at apply the engine measured the stage itself (task 6.2) at 3 capabilities · 7
+requirements · 19637 bytes changed · 17 tasks, none over; the walks' repairs grew the delta without crossing a maximum.
+
 ### Stage rc09b-tool-inventory — a new tool reaches the surface only with a recorded contract
 
 Depends-on: (none)
