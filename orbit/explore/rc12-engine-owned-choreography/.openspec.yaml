@@ -1,0 +1,5 @@
+schema: spec-driven
+created: 2026-10-11
+architecture:
+  doc: clean-up-review-cycle
+  stage: rc12-engine-owned-choreography
