@@ -56,6 +56,7 @@ schema: spec-driven
 # PR layer. Under `never` (or absent) nothing is probed and no note is emitted.
 # Example:
 #   pr: per-architecture
+pr: per-proposal
 
 # Review preference (optional — orbit-engine-gates, rc17a)
 # A map from reviewed-gate id to blind-pair | fresh | external: which review the readout
